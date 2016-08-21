@@ -1,0 +1,514 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Reflection;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewModdingAPI.Inheritance;
+using StardewValley;
+using StardewValley.Menus;
+using StardewValley.Objects;
+using StardewValley.Tools;
+using Object = StardewValley.Object;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using StardewValley.Events;
+using StardewValley.Quests;
+
+namespace LuckSkill
+{
+    public class LuckSkillMod : Mod
+    {
+        public const int PROFESSION_DAILY_LUCK = 5 * 6;
+        public const int PROFESSION_MOREQUESTS = 5 * 6 + 1;// 4;
+        public const int PROFESSION_SPECIAL_CHARM = 5 * 6 + 2;
+        public const int PROFESSION_A2 = 5 * 6 + 3;
+        public const int PROFESSION_NIGHTLY_EVENTS = 5 * 6 + 4;// 1;
+        public const int PROFESSION_B2 = 5 * 6 + 5;
+        public override void Entry(params object[] objects)
+        {
+            GameEvents.GameLoaded += gameLoaded;
+            TimeEvents.OnNewDay += newDay;
+            MenuEvents.MenuClosed += fishingExp;
+            LocationEvents.CurrentLocationChanged += locChanged;
+            GameEvents.UpdateTick += update;
+            GraphicsEvents.OnPostRenderGuiEvent += draw;
+        }
+
+        private void gameLoaded(object sender, EventArgs args)
+        {
+            enableLuckSkillBar();
+            checkForAllProfessions();
+        }
+
+        private void fishingExp( object sender, EventArgs args )
+        {
+            var ev = args as EventArgsClickableMenuClosed;
+            if (!(ev.PriorMenu is BobberBar))
+                return;
+
+            BobberBar fishing = ev.PriorMenu as BobberBar;
+            float diff = ( float ) Util.GetInstanceField( typeof( BobberBar ), fishing, "difficulty" );
+            bool perfect = ( bool ) Util.GetInstanceField( typeof( BobberBar ), fishing, "perfect" );
+            bool treasure = ( bool ) Util.GetInstanceField( typeof( BobberBar ), fishing, "treasureCaught" );
+            if ( perfect )
+            {
+                //gainLuckExp((int)(diff / 7) + 1);
+            }
+            if ( treasure )
+            {
+                gainLuckExp((int)(diff));
+            }
+        }
+
+        private bool wasEating = false;
+        private bool hadGeode = false;
+        private void update(object sender, EventArgs args)
+        {
+            /*
+            if (Game1.isEating != wasEating)
+            {
+                Log.Async("Eating:" + Game1.isEating);
+                Log.Async(Game1.player.itemToEat + " " + ((Game1.player.itemToEat != null) ? Game1.player.itemToEat.getStack() : -1));
+                Log.Async(Game1.player.ActiveObject + " " +( (Game1.player.ActiveObject != null) ? Game1.player.ActiveObject.getStack() : -1));
+            }
+            wasEating = Game1.isEating;
+            */
+
+            if (Game1.activeClickableMenu != null)
+            {
+                if (Game1.activeClickableMenu is GeodeMenu)
+                {
+                    GeodeMenu menu = Game1.activeClickableMenu as GeodeMenu;
+                    if (menu.geodeSpot.item != null & !hadGeode)
+                    {
+                        gainLuckExp(10);
+                    }
+                    hadGeode = (menu.geodeSpot.item != null);
+                }
+                else if (Game1.activeClickableMenu is LevelUpMenu)
+                {
+                    LevelUpMenu menu = Game1.activeClickableMenu as LevelUpMenu;
+                    int skill = (int)Util.GetInstanceField(typeof(LevelUpMenu), menu, "currentSkill");
+                    if (skill == 5)
+                    {
+                        int level = (int)Util.GetInstanceField(typeof(LevelUpMenu), menu, "currentLevel");
+                        Game1.activeClickableMenu = new LuckLevelUpMenu(skill, level);
+                    }
+                }
+            }
+
+            // This can't just do when it toggles the variables get modified
+            if ( Game1.newDay && Game1.fadeToBlackAlpha > 0.95f )
+            {
+                cacheLevels = Game1.player.newLevels.ToList();
+                cacheItems = Game1.getFarm().shippingBin.ToList();
+            }
+        }
+
+        private bool didInitSkills = false;
+        private void draw( object sender, EventArgs args )
+        {
+            if ( Game1.activeClickableMenu is GameMenu )
+            {
+                GameMenu menu = Game1.activeClickableMenu as GameMenu;
+                if ( menu.currentTab == GameMenu.skillsTab )
+                {
+                    var tabs = ( List< IClickableMenu > ) Util.GetInstanceField(typeof(GameMenu), menu, "pages" );
+                    var skills = (SkillsPage)tabs[GameMenu.skillsTab];
+
+                    if ( !didInitSkills )
+                    {
+                        initLuckSkill(skills);
+                        didInitSkills = true;
+                    }
+                    drawLuckSkill( skills );
+                }
+            }
+            else didInitSkills = false;
+        }
+
+        private void initLuckSkill( SkillsPage skills )
+        {
+            // Bunch of stuff from the constructor
+            int num2 = 0;
+            int num3 = skills.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 4 * Game1.tileSize - Game1.pixelZoom;
+            int num4 = skills.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - Game1.pixelZoom * 3;
+            for (int i = 4; i < 10; i += 5)
+            {
+                int j = 5;
+
+                string text = "";
+                string text2 = "";
+                bool flag = false;
+                int num5 = -1;
+
+                flag = (Game1.player.LuckLevel > i);
+                num5 = getLuckProfessionForSkill( i + 1 );//Game1.player.getProfessionForSkill(5, i + 1);
+                object[] args = new object[] { text, text2, LuckLevelUpMenu.getProfessionDescription(num5) };
+                Util.CallInstanceMethod( typeof( SkillsPage ), skills, "parseProfessionDescription", args );
+                text = (string)args[0];
+                text2 = (string)args[1];
+
+                if (flag && (i + 1) % 5 == 0)
+                {
+                    var skillBars = (List<ClickableTextureComponent>)Util.GetInstanceField( typeof( SkillsPage ), skills, "skillBars" );
+                    skillBars.Add(new ClickableTextureComponent(new Rectangle(num2 + num3 - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6), 14 * Game1.pixelZoom, 9 * Game1.pixelZoom), string.Concat(num5), text, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), (float)Game1.pixelZoom, false, true));
+                }
+                num2 += Game1.pixelZoom * 6;
+            }
+            int k = 5;
+            int num6 = k;
+            if (num6 == 1)
+            {
+                num6 = 3;
+            }
+            else if (num6 == 3)
+            {
+                num6 = 1;
+            }
+            string text3 = "";
+            if (Game1.player.LuckLevel > 0)
+            {
+                text3 = "Luck Increased";
+            }
+            var skillAreas = (List<ClickableTextureComponent>)Util.GetInstanceField(typeof(SkillsPage), skills, "skillAreas");
+            skillAreas.Add(new ClickableTextureComponent(new Rectangle(num3 - Game1.tileSize * 2 - Game1.tileSize * 3 / 4, num4 + k * (Game1.tileSize / 2 + Game1.pixelZoom * 6), Game1.tileSize * 2 + Game1.pixelZoom * 5, 9 * Game1.pixelZoom), string.Concat(num6), text3, null, Rectangle.Empty, 1f));
+        }
+
+        private void drawLuckSkill( SkillsPage skills )
+        {
+            SpriteBatch b = Game1.spriteBatch;
+            int j = 5;
+
+            int num;
+            int num2;
+
+            num = skills.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 4 * Game1.tileSize - 8;
+            num2 = skills.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - Game1.pixelZoom * 2;
+			
+			int num3 = 0;
+			for (int i = 0; i < 10; i++)
+            {
+                bool flag = false;
+                bool flag2 = false;
+                string text = "";
+                int num4 = 0;
+                Rectangle empty = Rectangle.Empty;
+
+                flag = (Game1.player.LuckLevel > i);
+                if (i == 0)
+                {
+                    text = "Luck";
+                }
+                num4 = Game1.player.LuckLevel;
+                flag2 = (Game1.player.addedLuckLevel > 0);
+                empty = new Rectangle(50, 428, 10, 10);
+
+                if (!text.Equals(""))
+                {
+                    b.DrawString(Game1.smallFont, text, new Vector2((float)num - Game1.smallFont.MeasureString(text).X - (float)(Game1.pixelZoom * 4) - (float)Game1.tileSize, (float)(num2 + Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), Game1.textColor);
+                    b.Draw(Game1.mouseCursors, new Vector2((float)(num - Game1.pixelZoom * 16), (float)(num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(empty), Color.Black * 0.3f, 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.85f);
+                    b.Draw(Game1.mouseCursors, new Vector2((float)(num - Game1.pixelZoom * 15), (float)(num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(empty), Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                }
+                if (!flag && (i + 1) % 5 == 0)
+                {
+                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(145, 338, 14, 9)), Color.Black * 0.35f, 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(145 + (flag ? 14 : 0), 338, 14, 9)), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                }
+                else if ((i + 1) % 5 != 0)
+                {
+                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(129, 338, 8, 9)), Color.Black * 0.35f, 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.85f);
+                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(129 + (flag ? 8 : 0), 338, 8, 9)), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                }
+                if (i == 9)
+                {
+                    NumberSprite.draw(num4, b, new Vector2((float)(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 3 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0)), (float)(num2 + Game1.pixelZoom * 4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
+                    NumberSprite.draw(num4, b, new Vector2((float)(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 4 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0)), (float)(num2 + Game1.pixelZoom * 3 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), (flag2 ? Color.LightGreen : Color.SandyBrown) * ((num4 == 0) ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
+                }
+                if ((i + 1) % 5 == 0)
+                {
+                    num3 += Game1.pixelZoom * 6;
+                }
+            }
+        }
+
+        private List<Point> cacheLevels = new List< Point >();
+        private List<Item> cacheItems = new List< Item >();
+        private void newDay( object sender, EventArgs args )
+        {
+            if (Game1.newDay)
+            {
+                gainLuckExp((int)(Game1.dailyLuck * 750));
+            }
+            else
+            {
+                if ( Game1.player.professions.Contains( PROFESSION_DAILY_LUCK ) )
+                {
+                    Game1.dailyLuck += 0.01;
+                }
+                if (Game1.player.professions.Contains(PROFESSION_MOREQUESTS) && Game1.questOfTheDay == null)
+                {
+                    if (Utility.isFestivalDay(Game1.dayOfMonth, Game1.currentSeason) || Utility.isFestivalDay(Game1.dayOfMonth + 1, Game1.currentSeason))
+                    {
+                        // Vanilla code doesn't put quests on these days.
+                    }
+                    else
+                    {
+                        Quest quest = null;
+                        for (uint i = 0; i < 2 && quest == null; ++i)
+                        {
+                            Game1.stats.daysPlayed += i * 999999; // To rig the rng to not just give the same results.
+                            try // Just in case. Want to make sure stats.daysPlayed gets fixed
+                            {
+                                quest = Utility.getQuestOfTheDay();
+                            }
+                            catch (Exception e) { }
+                            Game1.stats.daysPlayed -= i * 999999;
+                        }
+
+                        if ( quest != null )
+                        {
+                            Log.Async("[LuckSkill] Applying quest " + quest + " for today, due to having PROFESSION_MOREQUESTS.");
+                            Game1.questOfTheDay = quest;
+                        }
+                    }
+                }
+                if ( Game1.player.professions.Contains( PROFESSION_NIGHTLY_EVENTS ) && !Game1.weddingToday &&
+                     ( Game1.farmEvent == null || ( Game1.farmEvent is SoundInTheNightEvent &&
+                        ( int ) Util.GetInstanceField( typeof( SoundInTheNightEvent ), Game1.farmEvent, "behavior" ) == 2 ) ) )
+                {
+                    //Log.Async("Doing event check");
+                    FarmEvent ev = null;
+                    //for (uint i = 0; i < 100 && ev == null; ++i) // Testing purposes.
+                    {
+                        Game1.stats.daysPlayed += 999999; // To rig the rng to not just give the same results.
+                        try // Just in case. Want to make sure stats.daysPlayed gets fixed
+                        {
+                            ev = Utility.pickFarmEvent();
+                        }
+                        catch (Exception e) { }
+                        Game1.stats.daysPlayed -= 999999;
+                        //if (ev != null) Log.Async("ev=" + ev + " " + (ev is SoundInTheNightEvent ? (Util.GetInstanceField(typeof(SoundInTheNightEvent), ev, "behavior") + " " + Util.GetInstanceField(typeof(SoundInTheNightEvent), ev, "soundName")) : "?"));
+                        if (ev != null && ev.setUp())
+                        {
+                            ev = null;
+                        }
+                    }
+
+                    if ( ev != null )
+                    {
+                        Log.Async("[LuckSkill] Applying " + ev + " as tonight's nightly event, due to having PROFESSION_NIGHTLY_EVENTS");
+                        if (Game1.farmEvent == null) // showEndOfNightStuff() was already called, so we need to make it think that didn't happen
+                        {
+                            // Utility.consolidateStacks was called on the original list.
+                            // We have a copy of the list, but the items are the same instances.
+                            // So while stacks will be merged in our copy, the "empty" stacks won't be gone.
+                            for (int k = cacheItems.Count<Item>() - 1; k >= 0; k--)
+                            {
+                                if (cacheItems[k] != null && cacheItems[k].Stack <= 0)
+                                {
+                                    cacheItems.RemoveAt(k);
+                                }
+                            }
+
+                            // Don't need to worry about mailForTomorrow. The mail was already applied to the mailbox.
+                            // The reason it is cleared later is because Utility.pickFarmEvent checks it for community
+                            // center completion stuff. But in that case farmEvent is a WorldChangeEvent, so it won't
+                            // reach this far anyways.
+                            Game1.player.newLevels = cacheLevels;
+                            Game1.getFarm().shippingBin = cacheItems;
+                            Game1.showingEndOfNightStuff = false;
+                            Game1.afterFade = null;
+                            Game1.globalFade = false;
+                            Game1.activeClickableMenu = null;
+                            Game1.endOfNightMenus.Clear();
+                        }
+                        else
+                        {
+                            Log.Async("[LuckSkill] However we are replacing a dog attack event.");
+                            // We're replacing the dogs attacking animals left out event. It's pretty much the "fallback" event when another isn't chosen.
+                            // Since we're replacing the existing event the showEndOfNightStuff hasn't happened yet.
+                            // However farmEvent is already null if the attack setup failed. So this probably also increases the chance of a successful attack :P
+                        }
+                        Game1.farmEvent = ev;
+                    }
+
+                }
+            }
+        }
+
+        private void locChanged(object sender, EventArgs args)
+        {
+            if ( HAS_ALL_PROFESSIONS )
+            {
+                Util.DecompileComment("This is where AllProfessions does it.");
+                Util.DecompileComment("This is that mod's code, too (from ILSpy, anyways). Just trying to give credit where credit is due. :P");
+                Util.DecompileComment("Except this only applies for luck professions. Since they don't exist in vanilla AllProfessions doesn't take care of it.");
+                List<int> professions = Game1.player.professions;
+                List<List<int>> list = new List<List<int>> { luckProfessions5, luckProfessions10, };
+                foreach (List<int> current in list)
+                {
+                    bool flag = professions.Intersect(current).Any<int>();
+                    if (flag)
+                    {
+                        foreach (int current2 in current)
+                        {
+                            bool flag2 = !professions.Contains(current2);
+                            if (flag2)
+                            {
+                                professions.Add(current2);
+                                if (current2 == PROFESSION_SPECIAL_CHARM)
+                                {
+                                    Game1.player.hasSpecialCharm = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                Util.DecompileComment("End of AllProfessions code.");
+            }
+
+            // I wanna see this "SpiritAltar"
+            /*
+            var ev = args as EventArgsCurrentLocationChanged;
+            if (ev.NewLocation.name != "SeedShop")
+                return;
+
+            GameLocation loc = ev.NewLocation;
+            foreach (var layer in loc.map.Layers)
+            {
+                //var layer = loc.map.GetLayer("Buildings");
+                Log.Async("Layer: " + layer.Id + " " + layer.LayerWidth + " " + layer.LayerHeight + " " + layer.LayerSize);
+                for (int ix = 0; ix < layer.LayerWidth; ++ix)
+                {
+                    for (int iy = 0; iy < layer.LayerHeight; ++iy)
+                    {
+                        var tile = layer.Tiles[ix, iy];
+                        try
+                        {
+                            if (tile.Properties["Action"] == "Yoba" )
+                            {
+                                Log.Async("Changing action from " + tile.Properties["Action"] + " " + ix + " " + iy);
+                                tile.Properties["Action"] = new xTile.ObjectModel.PropertyValue("SpiritAltar");
+                            }
+                        }
+                        catch (Exception e) { }
+                    }
+                }
+            }*/
+        }
+
+        // Copied from vanilla Farmer.gainExperience
+        public static void gainLuckExp(int howMuch)
+        {
+            int which = 5;
+
+            if (/*which == 5 ||*/ howMuch <= 0)
+            {
+                return;
+            }
+            int num = Farmer.checkForLevelGain(Game1.player.experiencePoints[which], Game1.player.experiencePoints[which] + howMuch);
+            Game1.player.experiencePoints[which] += howMuch;
+            int num2 = -1;
+            if (num != -1)
+            {
+                switch (which)
+                {/*
+                    case 0:
+                        num2 = this.farmingLevel;
+                        this.farmingLevel = num;
+                        break;
+                    case 1:
+                        num2 = this.fishingLevel;
+                        this.fishingLevel = num;
+                        break;
+                    case 2:
+                        num2 = this.foragingLevel;
+                        this.foragingLevel = num;
+                        break;
+                    case 3:
+                        num2 = this.miningLevel;
+                        this.miningLevel = num;
+                        break;
+                    case 4:
+                        num2 = this.combatLevel;
+                        this.combatLevel = num;
+                        break;*/
+                    case 5:
+                        num2 = Game1.player.luckLevel;
+                        Game1.player.luckLevel = num;
+                        break;
+                }
+            }
+            if (num > num2)
+            {
+                for (int i = num2 + 1; i <= num; i++)
+                {
+                    Game1.player.newLevels.Add(new Point(which, i));
+                    Game1.player.newLevels.Count<Point>();
+                }
+            }
+        }
+
+        private int getLuckProfessionForSkill( int level )
+        {
+            if (level != 5 && level != 10)
+                return -1;
+
+            List<int> list = (level == 5 ? luckProfessions5 : luckProfessions10);
+            foreach (int prof in list)
+            {
+                if (Game1.player.professions.Contains(prof))
+                    return prof;
+            }
+
+            return -1;
+        }
+
+        private void enableLuckSkillBar()
+        {
+            try
+            {
+                Type t = Type.GetType("ExperienceBars.ExperienceBarsMod, ExperienceBars");
+                if (t == null)
+                {
+                    Log.Async("[LuckSkill] Experience Bars not found");
+                    return;
+                }
+
+                Log.Async("[LuckSkill] Experience Bars found, adding luck bar.");
+                Util.SetStaticField(t, "renderLuck", true);
+            }
+            catch (Exception e)
+            {
+                Log.Async("Exception showing luck: " + e);
+            }
+        }
+
+        private static bool HAS_ALL_PROFESSIONS = false;
+        private static List<int> luckProfessions5 = new List<int>() { PROFESSION_DAILY_LUCK, PROFESSION_MOREQUESTS };
+        private static List<int> luckProfessions10 = new List<int>() { PROFESSION_SPECIAL_CHARM, PROFESSION_A2, PROFESSION_NIGHTLY_EVENTS, PROFESSION_B2 };
+        private static void checkForAllProfessions()
+        {
+            try
+            {
+                Type t = Type.GetType("AllProfessions.AllProfessions, AllProfessions");
+                if (t == null)
+                {
+                    Log.Async("[LuckSkill] All Professions not found.");
+                    return;
+                }
+
+                Log.Async("[LuckSkill] All Professions found. You will get every luck profession for your level.");
+                HAS_ALL_PROFESSIONS = true;
+            }
+            catch (Exception e)
+            {
+                Log.Async("Exception checking all professions: " + e);
+            }
+        }
+    }
+}
