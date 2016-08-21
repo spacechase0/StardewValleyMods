@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2013 for Windows Desktop
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreeHeartDancePartner", "StardewValleyMP\ThreeHeartDancePartner.csproj", "{E1CBD6A1-F9D8-4FAA-9D5D-BB1E49682FE6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreeHeartDancePartner", "ThreeHeartDancePartner\ThreeHeartDancePartner.csproj", "{E1CBD6A1-F9D8-4FAA-9D5D-BB1E49682FE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
