@@ -1,0 +1,14 @@
+{
+  "Name": "3-heart Dance Partner",
+  "Authour": "spacechase0",
+  "Version": {
+    "MajorVersion": 1,
+    "MinorVersion": 0,
+    "PatchVersion": 1,
+    "Build": ""
+  },
+  "Description": "Makes you only need 3 hearts for a dance partner at the flower festival.",
+  "UniqueID": "ThreeHeartDancePartner",
+  "PerSaveConfigs": false,
+  "EntryDll": "ThreeHeartDancePartner.dll"
+}
