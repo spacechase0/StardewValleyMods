@@ -1,0 +1,14 @@
+{
+  "Name": "Cooking Skill",
+  "Authour": "spacechase0",
+  "Version": {
+    "MajorVersion": 1,
+    "MinorVersion": 0,
+    "PatchVersion": 0,
+    "Build": ""
+  },
+  "Description": "Adds a cooking skill.",
+  "UniqueID": "CookingSkill",
+  "PerSaveConfigs": false,
+  "EntryDll": "CookingSkill.dll"
+}
