@@ -233,6 +233,8 @@ namespace LuckSkill
                     num3 += Game1.pixelZoom * 6;
                 }
             }
+
+            skills.drawMouse(b);
         }
 
         private List<Point> cacheLevels = new List< Point >();
