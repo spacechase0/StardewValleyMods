@@ -402,8 +402,8 @@ namespace CookingSkill
 
                 if (flag && (i + 1) % 5 == 0)
                 {
-                    var skillBars = (List<ClickableTextureComponent>)Util.GetInstanceField( typeof( SkillsPage ), skills, "skillBars" );
-                    skillBars.Add(new ClickableTextureComponent(new Rectangle(num2 + num3 - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6), 14 * Game1.pixelZoom, 9 * Game1.pixelZoom), string.Concat(num5), text, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), (float)Game1.pixelZoom, false, true));
+                    var skillBars = (List<ClickableTextureComponent>)Util.GetInstanceField(typeof(SkillsPage), skills, "skillBars");
+                    skillBars.Add(new ClickableTextureComponent(string.Concat(num5), new Rectangle(num2 + num3 - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6), 14 * Game1.pixelZoom, 9 * Game1.pixelZoom), null, text, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), (float)Game1.pixelZoom, true));
                 }
                 num2 += Game1.pixelZoom * 6;
             }
@@ -453,7 +453,7 @@ namespace CookingSkill
                 }
             }
             var skillAreas = (List<ClickableTextureComponent>)Util.GetInstanceField(typeof(SkillsPage), skills, "skillAreas");
-            skillAreas.Add(new ClickableTextureComponent(new Rectangle(num3 - Game1.tileSize * 2 - Game1.tileSize * 3 / 4, num4 + k * (Game1.tileSize / 2 + Game1.pixelZoom * 6), Game1.tileSize * 2 + Game1.pixelZoom * 5, 9 * Game1.pixelZoom), string.Concat(num6), text3, null, Rectangle.Empty, 1f));
+            skillAreas.Add(new ClickableTextureComponent(string.Concat(num6), new Rectangle(num3 - Game1.tileSize * 2 - Game1.tileSize * 3 / 4, num4 + k * (Game1.tileSize / 2 + Game1.pixelZoom * 6), Game1.tileSize * 2 + Game1.pixelZoom * 5, 9 * Game1.pixelZoom), string.Concat(num6), text3, null, Rectangle.Empty, 1f, false));
         }
 
         private void drawCookingSkill( SkillsPage skills )

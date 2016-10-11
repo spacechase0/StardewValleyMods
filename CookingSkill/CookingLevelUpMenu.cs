@@ -59,7 +59,7 @@ namespace CookingSkill
         {
             this.width = Game1.tileSize * 12;
             this.height = Game1.tileSize * 8;
-            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), "", "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f);
+            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f, false);
         }
 
         public CookingLevelUpMenu(int level)
@@ -69,7 +69,7 @@ namespace CookingSkill
             this.isActive = true;
             this.width = Game1.tileSize * 12;
             this.height = Game1.tileSize * 8;
-            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), "", "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f);
+            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f,false);
             this.newCraftingRecipes.Clear();
             this.extraInfoForLevel.Clear();
             Game1.player.completelyStopAnimatingOrDoingAction();
@@ -140,9 +140,8 @@ namespace CookingSkill
             return list;
         }
 
-        public static List<string> getProfessionDescription(int whichProfession)
+        public static void addProfessionDescription( List< string > list, int whichProfession)
         {
-            List<string> list = new List<string>();
             switch (whichProfession)
             {
                 case CookingSkillMod.PROFESSION_SELLPRICE:
@@ -171,10 +170,9 @@ namespace CookingSkill
                     list.Add("Provides a few random buffs when eating unbuffed food.");
                     break;
             }
-            return list;
         }
 
-        public static string getProfessionTitleFromNumber(int whichProfession)
+        public static string getProfessionName(int whichProfession)
         {
             switch (whichProfession)
             {
@@ -193,6 +191,18 @@ namespace CookingSkill
             }
 
             return "???";
+        }
+
+        public static List< string > getProfessionDescription( int whichProfession )
+        {
+            List<string> list = new List<string>();
+            CookingLevelUpMenu.addProfessionDescription(list, whichProfession);
+            return list;
+        }
+
+        public static string getProfessionTitleFromNumber( int whichProfession )
+        {
+            return getProfessionName(whichProfession);
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)

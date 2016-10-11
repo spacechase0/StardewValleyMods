@@ -71,7 +71,7 @@ namespace CookingSkill
                 }
             }
             Game1.player.craftingRecipes = serializableDictionary;
-            this.trashCan = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 4, this.yPositionOnScreen + height - Game1.tileSize * 3 - Game1.tileSize / 2 - IClickableMenu.borderWidth - 104, Game1.tileSize, 104), "", "", Game1.mouseCursors, new Rectangle(669, 261, 16, 26), (float)Game1.pixelZoom);
+            this.trashCan = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 4, this.yPositionOnScreen + height - Game1.tileSize * 3 - Game1.tileSize / 2 - IClickableMenu.borderWidth - 104, Game1.tileSize, 104), Game1.mouseCursors, new Rectangle(669, 261, 16, 26), (float)Game1.pixelZoom, false);
             List<string> list = new List<string>();
             if (!cooking)
             {
@@ -121,7 +121,7 @@ namespace CookingSkill
                         }
                     }
                     index = num5 / 40;
-                    clickableTextureComponent = new ClickableTextureComponent(new Rectangle(num + num5 % num4 * (Game1.tileSize + num3), num2 + num7 * (Game1.tileSize + 8), Game1.tileSize, craftingRecipe.bigCraftable ? (Game1.tileSize * 2) : Game1.tileSize), "", (cooking && !Game1.player.cookingRecipes.ContainsKey(craftingRecipe.name)) ? "ghosted" : "", craftingRecipe.bigCraftable ? Game1.bigCraftableSpriteSheet : Game1.objectSpriteSheet, craftingRecipe.bigCraftable ? Game1.getArbitrarySourceRect(Game1.bigCraftableSpriteSheet, 16, 32, craftingRecipe.getIndexOfMenuView()) : Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, craftingRecipe.getIndexOfMenuView(), 16, 16), (float)Game1.pixelZoom);
+                    clickableTextureComponent = new ClickableTextureComponent("", new Rectangle(num + num5 % num4 * (Game1.tileSize + num3), num2 + num7 * (Game1.tileSize + 8), Game1.tileSize, craftingRecipe.bigCraftable ? (Game1.tileSize * 2) : Game1.tileSize), null, (cooking && !Game1.player.cookingRecipes.ContainsKey(craftingRecipe.name)) ? "ghosted" : "", craftingRecipe.bigCraftable ? Game1.bigCraftableSpriteSheet : Game1.objectSpriteSheet, craftingRecipe.bigCraftable ? Game1.getArbitrarySourceRect(Game1.bigCraftableSpriteSheet, 16, 32, craftingRecipe.getIndexOfMenuView()) : Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, craftingRecipe.getIndexOfMenuView(), 16, 16), (float)Game1.pixelZoom, false);
                     flag = false;
                     foreach (ClickableTextureComponent current4 in this.pagesOfCraftingRecipes[index].Keys)
                     {
@@ -139,8 +139,8 @@ namespace CookingSkill
             }
             if (this.pagesOfCraftingRecipes.Count<Dictionary<ClickableTextureComponent, CraftingRecipe>>() > 1)
             {
-                this.upButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize * 12 + Game1.tileSize / 2, num2, Game1.tileSize, Game1.tileSize), "", "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 12, -1, -1), 0.8f);
-                this.downButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize * 12 + Game1.tileSize / 2, num2 + Game1.tileSize * 3 + Game1.tileSize / 2, Game1.tileSize, Game1.tileSize), "", "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 11, -1, -1), 0.8f);
+                this.upButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize * 12 + Game1.tileSize / 2, num2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 12, -1, -1), 0.8f, false);
+                this.downButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize * 12 + Game1.tileSize / 2, num2 + Game1.tileSize * 3 + Game1.tileSize / 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 11, -1, -1), 0.8f, false);
             }
         }
 
@@ -259,9 +259,9 @@ namespace CookingSkill
             }
             if (!this.cooking && Game1.player.craftingRecipes.ContainsKey(this.pagesOfCraftingRecipes[this.currentCraftingPage][c].name))
             {
-                Dictionary<string, int> craftingRecipes;
-                string name;
-                (craftingRecipes = Game1.player.craftingRecipes)[name = this.pagesOfCraftingRecipes[this.currentCraftingPage][c].name] = craftingRecipes[name] + this.pagesOfCraftingRecipes[this.currentCraftingPage][c].numberProducedPerCraft;
+                SerializableDictionary<string, int> craftingRecipes = Game1.player.craftingRecipes;
+                string name = this.pagesOfCraftingRecipes[this.currentCraftingPage][c].name;
+                craftingRecipes[name] += this.pagesOfCraftingRecipes[this.currentCraftingPage][c].numberProducedPerCraft;
             }
 
             if (!didCraft)
