@@ -229,6 +229,8 @@ namespace LuckSkill
 
         public static void addProfessionDescriptions(List< String > descriptions, string professionName)
         {
+            if (professionName == "") return; // What
+
             descriptions.Add(professionName);
             if (professionName == getProfessionName(LuckSkillMod.PROFESSION_DAILY_LUCK))
                 descriptions.Add("Better daily luck.");
