@@ -230,6 +230,13 @@ namespace CookingSkill
 				        string[] info = Game1.objectInformation[obj.ParentSheetIndex].Split( '/' );
                         string[] buffData = ((Convert.ToInt32(info[2]) > 0 && info.Count() > 6) ? info[6].Split(' ') : null);
 
+                        bool allZero = true;
+                        foreach ( string bd in buffData )
+                        {
+                            allZero = ( allZero && bd == "0" );
+                        }
+                        if (allZero) buffData = null;
+
                         if (info[3] == "Cooking -7")
                         {
                             // Need to make sure this is the original buff first.
