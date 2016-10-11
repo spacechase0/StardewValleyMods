@@ -61,7 +61,7 @@ namespace LuckSkill
         {
             this.width = Game1.tileSize * 12;
             this.height = Game1.tileSize * 8;
-            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), "", "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f);
+            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f, false);
         }
 
         public LuckLevelUpMenu(int skill,int level)
@@ -71,7 +71,7 @@ namespace LuckSkill
             this.isActive = true;
             this.width = Game1.tileSize * 12;
             this.height = Game1.tileSize * 8;
-            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), "", "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f);
+            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f, false);
             this.newCraftingRecipes.Clear();
             this.extraInfoForLevel.Clear();
             Game1.player.completelyStopAnimatingOrDoingAction();
@@ -197,197 +197,58 @@ namespace LuckSkill
             switch (whichSkill)
             {
                 case 0:
-                    list.Add("+1 Watering Can Proficiency");
-                    list.Add("+1 Hoe Proficiency");
+                    list.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ExtraInfo_Farming1", new object[0]));
+                    list.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ExtraInfo_Farming2", new object[0]));
                     break;
                 case 1:
-                    list.Add("+1 Fishing Rod Proficieny");
+                    list.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ExtraInfo_Fishing", new object[0]));
                     break;
                 case 2:
-                    list.Add("+1 Axe Proficiency");
+                    list.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ExtraInfo_Foraging1", new object[0]));
                     if (whichLevel == 1)
                     {
-                        list.Add("Trees sometimes drop seeds.");
+                        list.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ExtraInfo_Foraging2", new object[0]));
                     }
-                    if (whichLevel == 4)
+                    if (whichLevel == 4 || whichLevel == 8)
                     {
-                        list.Add("+1 Wild berry harvesting.");
-                    }
-                    if (whichLevel == 8)
-                    {
-                        list.Add("+1 Wild berry harvesting.");
+                        list.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ExtraInfo_Foraging3", new object[0]));
                     }
                     break;
                 case 3:
-                    list.Add("+1 Pickaxe Proficiency");
+                    list.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ExtraInfo_Mining", new object[0]));
                     break;
                 case 4:
-                    list.Add("+5 HP");
+                    list.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ExtraInfo_Combat", new object[0]));
                     break;
                 case 5:
-                    list.Add("Luck Increased");
+                    list.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ExtraInfo_Luck", new object[0]));
                     break;
             }
             return list;
         }
 
-        public static List<string> getProfessionDescription(int whichProfession)
+        public static void addProfessionDescriptions(List< String > descriptions, string professionName)
         {
-            List<string> list = new List<string>();
-            switch (whichProfession)
-            {
-                case 0:
-                    list.Add("Rancher");
-                    list.Add("Animal products worth 10% more.");
-                    break;
-                case 1:
-                    list.Add("Tiller");
-                    list.Add("Crops worth 10% more.");
-                    break;
-                case 2:
-                    list.Add("Coopmaster");
-                    list.Add("Befriend coop animals quicker.");
-                    list.Add("Incubation time cut in half.");
-                    break;
-                case 3:
-                    list.Add("Shepherd");
-                    list.Add("Befriend barn animals quicker.");
-                    list.Add("Sheep produce wool faster.");
-                    break;
-                case 4:
-                    list.Add("Artisan");
-                    list.Add("Artisan goods (wine, cheese, oil, etc.) worth 50% more.");
-                    break;
-                case 5:
-                    list.Add("Agriculturist");
-                    list.Add("All crops grow 10% faster.");
-                    break;
-                case 6:
-                    list.Add("Fisher");
-                    list.Add("Fish worth 25% more.");
-                    break;
-                case 7:
-                    list.Add("Trapper");
-                    list.Add("Resources required to craft crab pots reduced.");
-                    break;
-                case 8:
-                    list.Add("Angler");
-                    list.Add("Fish worth 50% more.");
-                    break;
-                case 9:
-                    list.Add("Pirate");
-                    list.Add("Chance to find treasure doubled.");
-                    break;
-                case 10:
-                    list.Add("Mariner");
-                    list.Add("Crab pots no longer produce junk items.");
-                    break;
-                case 11:
-                    list.Add("Luremaster");
-                    list.Add("Crab pots no longer require bait.");
-                    break;
-                case 12:
-                    list.Add("Forester");
-                    list.Add("Wood worth 50% more.");
-                    break;
-                case 13:
-                    list.Add("Gatherer");
-                    list.Add("Chance for double harvest of foraged items.");
-                    break;
-                case 14:
-                    list.Add("Lumberjack");
-                    list.Add("All trees have a chance to drop hardwood.");
-                    break;
-                case 15:
-                    list.Add("Tapper");
-                    list.Add("Syrups worth 25% more.");
-                    break;
-                case 16:
-                    list.Add("Botanist");
-                    list.Add("Foraged items are always highest quality.");
-                    break;
-                case 17:
-                    list.Add("Tracker");
-                    list.Add("Location of forageable items revealed.");
-                    break;
-                case 18:
-                    list.Add("Miner");
-                    list.Add("+1 ore per vein.");
-                    break;
-                case 19:
-                    list.Add("Geologist");
-                    list.Add("Chance for gems to appear in pairs.");
-                    break;
-                case 20:
-                    list.Add("Blacksmith");
-                    list.Add("Metal bars worth 25% more.");
-                    break;
-                case 21:
-                    list.Add("Prospector");
-                    list.Add("Chance to find coal doubled.");
-                    break;
-                case 22:
-                    list.Add("Excavator");
-                    list.Add("Chance to find geodes doubled.");
-                    break;
-                case 23:
-                    list.Add("Gemologist");
-                    list.Add("Gems worth 30% more.");
-                    break;
-                case 24:
-                    list.Add("Fighter");
-                    list.Add("All attacks deal 10% more damage.");
-                    list.Add("+15 HP.");
-                    break;
-                case 25:
-                    list.Add("Scout");
-                    list.Add("Critical strike chance increased by 50%.");
-                    break;
-                case 26:
-                    list.Add("Brute");
-                    list.Add("Deal 15% more damage.");
-                    break;
-                case 27:
-                    list.Add("Defender");
-                    list.Add("+25 HP.");
-                    break;
-                case 28:
-                    list.Add("Acrobat");
-                    list.Add("Cooldown on special moves cut in half.");
-                    break;
-                case 29:
-                    list.Add("Desperado");
-                    list.Add("Critical strikes are deadly.");
-                    break;
-                case LuckSkillMod.PROFESSION_DAILY_LUCK:
-                    list.Add("Lucky");
-                    list.Add("Better daily luck.");
-                    break;
-                case LuckSkillMod.PROFESSION_NIGHTLY_EVENTS:
-                    list.Add("<NEEDS_NAME_E>");
-                    list.Add("Nightly events occur twice as often.");
-                    break;
-                case LuckSkillMod.PROFESSION_SPECIAL_CHARM:
-                    list.Add("Special Charm");
-                    list.Add("Great daily luck most of the time.");
-                    break;
-                case LuckSkillMod.PROFESSION_A2:
-                    list.Add("A2");
-                    list.Add("<TODO>");
-                    break;
-                case LuckSkillMod.PROFESSION_MOREQUESTS:
-                    list.Add("<NEEDS_NAME_Q>");
-                    list.Add("Quests are more likely to appear each day.");
-                    break;
-                case LuckSkillMod.PROFESSION_B2:
-                    list.Add("B2");
-                    list.Add("<TODO>");
-                    break;
-            }
-            return list;
+            if ( professionName == getProfessionName( LuckSkillMod.PROFESSION_DAILY_LUCK ) )
+                descriptions.Add("Better daily luck.");
+            else if ( professionName == getProfessionName( LuckSkillMod.PROFESSION_NIGHTLY_EVENTS ) )
+                descriptions.Add("Nightly events occur twice as often.");
+            else if ( professionName == getProfessionName( LuckSkillMod.PROFESSION_SPECIAL_CHARM ) )
+                descriptions.Add("Great daily luck most of the time.");
+            else if ( professionName == getProfessionName( LuckSkillMod.PROFESSION_A2 ) )
+                descriptions.Add("<TODO>");
+            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_MOREQUESTS ) )
+                descriptions.Add("<NEEDS_NAME_Q>");
+            else if (professionName == getProfessionName( LuckSkillMod.PROFESSION_B2 ) )
+                descriptions.Add("B2");
+            descriptions.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ProfessionName_" + professionName, new object[0]));
+			descriptions.AddRange(Game1.content.LoadString("Strings\\UI:LevelUp_ProfessionDescription_" + professionName, new object[0]).Split(new char[]
+			{
+				'\n'
+			}));
         }
 
-        public static string getProfessionTitleFromNumber(int whichProfession)
+        public static string getProfessionName(int whichProfession)
         {
             switch (whichProfession)
             {
@@ -466,6 +327,23 @@ namespace LuckSkill
                 case LuckSkillMod.PROFESSION_B2:
                     return "B2";
             }
+        }
+
+        public static List<string> getProfessionDescription(int whichProfession)
+        {
+            List<string> expr_05 = new List<string>();
+            LuckLevelUpMenu.addProfessionDescriptions(expr_05, LuckLevelUpMenu.getProfessionName(whichProfession));
+            return expr_05;
+        }
+
+        public static string getProfessionTitleFromNumber(int whichProfession)
+        {
+            if ( whichProfession == LuckSkillMod.PROFESSION_DAILY_LUCK || whichProfession == LuckSkillMod.PROFESSION_SPECIAL_CHARM || whichProfession == LuckSkillMod.PROFESSION_A2 ||
+                 whichProfession == LuckSkillMod.PROFESSION_MOREQUESTS || whichProfession == LuckSkillMod.PROFESSION_NIGHTLY_EVENTS || whichProfession == LuckSkillMod.PROFESSION_B2 )
+            {
+                return getProfessionName(whichProfession);
+            }
+            return Game1.content.LoadString("Strings\\UI:LevelUp_ProfessionName_" + LuckLevelUpMenu.getProfessionName(whichProfession), new object[0]);
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)
@@ -593,13 +471,11 @@ namespace LuckSkill
                 this.isProfessionChooser = false;
                 this.currentLevel = Game1.player.newLevels.First<Point>().Y;
                 this.currentSkill = Game1.player.newLevels.First<Point>().X;
-                this.title = string.Concat(new object[]
-				{
-					"Level ",
-					this.currentLevel,
-					" ",
-					Farmer.getSkillNameFromIndex(this.currentSkill)
-				});
+                this.title = Game1.content.LoadString("Strings\\UI:LevelUp_Title", new object[]
+                {
+                this.currentLevel,
+                Farmer.getSkillNameFromIndex(this.currentSkill)
+                });
                 this.extraInfoForLevel = this.getExtraInfoForLevel(this.currentSkill, this.currentLevel);
                 switch (this.currentSkill)
                 {
@@ -759,7 +635,8 @@ namespace LuckSkill
                     Utility.drawWithShadow(b, Game1.buffsIcons, new Vector2((float)(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, false, 0.88f, -1, -1, 0.35f);
                     b.DrawString(Game1.dialogueFont, this.title, new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.dialogueFont.MeasureString(this.title).X / 2f, (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), Game1.textColor);
                     Utility.drawWithShadow(b, Game1.buffsIcons, new Vector2((float)(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - Game1.tileSize), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, false, 0.88f, -1, -1, 0.35f);
-                    b.DrawString(Game1.smallFont, "Choose a profession:", new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.smallFont.MeasureString("Choose a profession:").X / 2f, (float)(this.yPositionOnScreen + Game1.tileSize + IClickableMenu.spaceToClearTopBorder)), Game1.textColor);
+                    string text = Game1.content.LoadString("Strings\\UI:LevelUp_ChooseProfession", new object[0]);
+                    b.DrawString(Game1.smallFont, text, new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.smallFont.MeasureString(text).X / 2f, (float)(this.yPositionOnScreen + Game1.tileSize + IClickableMenu.spaceToClearTopBorder)), Game1.textColor);
                     b.DrawString(Game1.dialogueFont, this.leftProfessionDescription[0], new Vector2((float)(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + Game1.tileSize / 2), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize * 5 / 2)), this.leftProfessionColor);
                     b.Draw(Game1.mouseCursors, new Vector2((float)(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width / 2 - Game1.tileSize * 2), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize * 5 / 2 - Game1.tileSize / 4)), new Rectangle?(new Rectangle(this.professionsToChoose[0] % 6 * 16, 624 + this.professionsToChoose[0] / 6 * 16, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
                     for (int i = 1; i < this.leftProfessionDescription.Count<string>(); i++)
@@ -787,8 +664,14 @@ namespace LuckSkill
                     }
                     foreach (CraftingRecipe current3 in this.newCraftingRecipes)
                     {
-                        b.DrawString(Game1.smallFont, "New " + (current3.isCookingRecipe ? "cooking" : "crafting") + " recipe: " + current3.name, new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.smallFont.MeasureString("New crafting recipe: " + current3.name).X / 2f - (float)Game1.tileSize, (float)(num + (current3.bigCraftable ? (Game1.tileSize * 3 / 5) : (Game1.tileSize / 5)))), Game1.textColor);
-                        current3.drawMenuView(b, (int)((float)(this.xPositionOnScreen + this.width / 2) + Game1.smallFont.MeasureString("New crafting recipe: " + current3.name).X / 2f - (float)(Game1.tileSize * 3 / 4)), num - Game1.tileSize / 4, 0.88f, true);
+                        string text2 = Game1.content.LoadString("Strings\\UI:LearnedRecipe_" + (current3.isCookingRecipe ? "cooking" : "crafting"), new object[0]);
+                        string text3 = Game1.content.LoadString("Strings\\UI:LevelUp_NewRecipe", new object[]
+                        {
+                            text2,
+                            current3.name
+                        });
+                        b.DrawString(Game1.smallFont, text3, new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.smallFont.MeasureString(text3).X / 2f - (float)Game1.tileSize, (float)(num + (current3.bigCraftable ? (Game1.tileSize * 3 / 5) : (Game1.tileSize / 5)))), Game1.textColor);
+                        current3.drawMenuView(b, (int)((float)(this.xPositionOnScreen + this.width / 2) + Game1.smallFont.MeasureString(text3).X / 2f - (float)(Game1.tileSize * 3 / 4)), num - Game1.tileSize / 4, 0.88f, true);
                         num += (current3.bigCraftable ? (Game1.tileSize * 2) : Game1.tileSize) + Game1.pixelZoom * 2;
                     }
                     this.okButton.draw(b);
