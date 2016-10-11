@@ -159,12 +159,12 @@ namespace CookingSkill
                     list.Add("Home-cooked meals are always at least silver");
                     break;
                 case CookingSkillMod.PROFESSION_BUFFLEVEL:
-                    list.Add("<NEEDS_NAME_BL>");
+                    list.Add("Intense Flavors");
                     list.Add("Food buffs are one level stronger once eaten");
                     list.Add("(+20% for max energy or magnetism)");
                     break;
                 case CookingSkillMod.PROFESSION_BUFFPLAIN:
-                    list.Add("<NEEDS_NAME_BP>");
+                    list.Add("Secret Spices");
                     list.Add("Provides a few random buffs when eating unbuffed food.");
                     break;
             }
@@ -183,9 +183,9 @@ namespace CookingSkill
                 case CookingSkillMod.PROFESSION_SILVER:
                     return "Professional Chef";
                 case CookingSkillMod.PROFESSION_BUFFLEVEL:
-                    return "<NEEDS_NAME_BL>";
+                    return "Intense Flavors";
                 case CookingSkillMod.PROFESSION_BUFFPLAIN:
-                    return "<NEEDS_NAME_BP>";
+                    return "Secret Spices";
             }
 
             return "???";
