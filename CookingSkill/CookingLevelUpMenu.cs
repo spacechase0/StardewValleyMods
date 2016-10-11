@@ -135,8 +135,6 @@ namespace CookingSkill
         {
             List<string> list = new List<string>();
             list.Add("+3% edibility in home-cooked foods");
-            list.Add("+3% chance for silver home-cooked foods");
-            list.Add("+1% chance for gold home-cooked foods");
             return list;
         }
 
