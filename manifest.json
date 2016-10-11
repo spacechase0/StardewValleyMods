@@ -1,0 +1,14 @@
+{
+  "Name": "Luck Skill",
+  "Authour": "spacechase0",
+  "Version": {
+    "MajorVersion": 0,
+    "MinorVersion": 1,
+    "PatchVersion": 0,
+    "Build": ""
+  },
+  "Description": "Adds ways of getting the vanilla luck skill.",
+  "UniqueID": "LuckSkill",
+  "PerSaveConfigs": false,
+  "EntryDll": "LuckSkill.dll"
+}
