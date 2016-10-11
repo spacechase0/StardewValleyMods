@@ -4,7 +4,7 @@
   "Version": {
     "MajorVersion": 0,
     "MinorVersion": 1,
-    "PatchVersion": 1,
+    "PatchVersion": 2,
     "Build": ""
   },
   "Description": "Adds ways of getting the vanilla luck skill.",
