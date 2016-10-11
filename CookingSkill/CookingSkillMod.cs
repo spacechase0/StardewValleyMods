@@ -111,8 +111,10 @@ namespace CookingSkill
                 foreach (NewCraftingPage.ConsumedItem ingr in used )
                     total += ingr.amt;
 
-                for (int iq = 1; iq <= 3; ++iq)
+                for (int iq = 1; iq <= Object.bestQuality; ++iq)
                 {
+                    if (iq == 3) continue; // Not a real quality
+
                     double chance = 0;
                     foreach (NewCraftingPage.ConsumedItem ingr in used )
                     {
