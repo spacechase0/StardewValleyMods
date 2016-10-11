@@ -229,23 +229,28 @@ namespace LuckSkill
 
         public static void addProfessionDescriptions(List< String > descriptions, string professionName)
         {
-            if ( professionName == getProfessionName( LuckSkillMod.PROFESSION_DAILY_LUCK ) )
+            descriptions.Add(professionName);
+            if (professionName == getProfessionName(LuckSkillMod.PROFESSION_DAILY_LUCK))
                 descriptions.Add("Better daily luck.");
-            else if ( professionName == getProfessionName( LuckSkillMod.PROFESSION_NIGHTLY_EVENTS ) )
+            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_NIGHTLY_EVENTS))
                 descriptions.Add("Nightly events occur twice as often.");
-            else if ( professionName == getProfessionName( LuckSkillMod.PROFESSION_SPECIAL_CHARM ) )
+            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_SPECIAL_CHARM))
                 descriptions.Add("Great daily luck most of the time.");
-            else if ( professionName == getProfessionName( LuckSkillMod.PROFESSION_A2 ) )
+            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_A2))
                 descriptions.Add("<TODO>");
-            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_MOREQUESTS ) )
+            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_MOREQUESTS))
                 descriptions.Add("<NEEDS_NAME_Q>");
-            else if (professionName == getProfessionName( LuckSkillMod.PROFESSION_B2 ) )
+            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_B2))
                 descriptions.Add("B2");
-            descriptions.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ProfessionName_" + professionName, new object[0]));
-			descriptions.AddRange(Game1.content.LoadString("Strings\\UI:LevelUp_ProfessionDescription_" + professionName, new object[0]).Split(new char[]
-			{
-				'\n'
-			}));
+            else
+            {
+                descriptions.Remove(professionName);
+                descriptions.Add(Game1.content.LoadString("Strings\\UI:LevelUp_ProfessionName_" + professionName, new object[0]));
+                descriptions.AddRange(Game1.content.LoadString("Strings\\UI:LevelUp_ProfessionDescription_" + professionName, new object[0]).Split(new char[]
+                {
+                    '\n'
+                }));
+            }
         }
 
         public static string getProfessionName(int whichProfession)
