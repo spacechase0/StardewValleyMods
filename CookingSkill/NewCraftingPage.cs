@@ -237,8 +237,8 @@ namespace CookingSkill
             Game1.player.checkForQuestComplete(null, -1, -1, item, null, 2, -1);
             if (this.heldItem == null)
             {
-                if ( consume )
-                    this.pagesOfCraftingRecipes[this.currentCraftingPage][c].consumeIngredients();
+                if (consume)
+                    NewCraftingPage.myConsumeIngredients(this.pagesOfCraftingRecipes[this.currentCraftingPage][c]);
                 this.heldItem = item;
                 didCraft = true;
                 if (playSound)
@@ -250,7 +250,7 @@ namespace CookingSkill
             {
                 this.heldItem.Stack += this.pagesOfCraftingRecipes[this.currentCraftingPage][c].numberProducedPerCraft;
                 if ( consume )
-                    this.pagesOfCraftingRecipes[this.currentCraftingPage][c].consumeIngredients();
+                    NewCraftingPage.myConsumeIngredients( this.pagesOfCraftingRecipes[this.currentCraftingPage][c] );
                 didCraft = true;
                 if (playSound)
                 {
@@ -451,6 +451,85 @@ namespace CookingSkill
 				{
 					' '
 				}) : null, this.lastCookingHover, 0, -1, -1, -1, -1, 1f, this.hoverRecipe);
+            }
+        }
+
+        public class ConsumedItem
+        {
+            public StardewValley.Object item;
+            public int amt;
+
+            public ConsumedItem(StardewValley.Object theItem)
+            {
+                item = theItem;
+                amt = item.Stack;
+            }
+        }
+        public static void myConsumeIngredients(CraftingRecipe recipe, bool actuallyConsume = true, List<ConsumedItem> used = null)
+        {
+            Dictionary<int, int> recipeList = (Dictionary<int, int>)Util.GetInstanceField(typeof(CraftingRecipe), recipe, "recipeList");
+            for (int i = recipeList.Count - 1; i >= 0; i--)
+            {
+                int value = recipeList[recipeList.Keys.ElementAt(i)];
+                bool flag = false;
+                for (int j = Game1.player.items.Count - 1; j >= 0; j--)
+                {
+                    if (Game1.player.items[j] != null && Game1.player.items[j] is StardewValley.Object && !(Game1.player.items[j] as Object).bigCraftable && (((Object)Game1.player.items[j]).parentSheetIndex == recipeList.Keys.ElementAt(i) || ((StardewValley.Object)Game1.player.items[j]).category == recipeList.Keys.ElementAt(i)))
+                    {
+                        int num = recipeList[recipeList.Keys.ElementAt(i)];
+                        Dictionary<int, int> dictionary = recipeList;
+                        int key = recipeList.Keys.ElementAt(i);
+                        dictionary[key] -= Game1.player.items[j].Stack;
+                        ///////////////////////////////////////////////////////
+                        if (used != null)
+                            used.Add(new ConsumedItem(Game1.player.items[j] as StardewValley.Object));
+                        if (actuallyConsume)
+                        ///////////////////////////////////////////////////////
+                        Game1.player.items[j].Stack -= num;
+                        if (Game1.player.items[j].Stack <= 0)
+                        {
+                            Game1.player.items[j] = null;
+                        }
+                        if (recipeList[recipeList.Keys.ElementAt(i)] <= 0)
+                        {
+                            recipeList[recipeList.Keys.ElementAt(i)] = value;
+                            flag = true;
+                            break;
+                        }
+                    }
+                }
+                if (recipe.isCookingRecipe && !flag)
+                {
+                    StardewValley.Locations.FarmHouse homeOfFarmer = Utility.getHomeOfFarmer(Game1.player);
+                    if (homeOfFarmer != null)
+                    {
+                        for (int k = homeOfFarmer.fridge.items.Count - 1; k >= 0; k--)
+                        {
+                            if (homeOfFarmer.fridge.items[k] != null && homeOfFarmer.fridge.items[k] is StardewValley.Object && (((StardewValley.Object)homeOfFarmer.fridge.items[k]).parentSheetIndex == recipeList.Keys.ElementAt(i) || ((Object)homeOfFarmer.fridge.items[k]).category == recipeList.Keys.ElementAt(i)))
+                            {
+                                int num2 = recipeList[recipeList.Keys.ElementAt(i)];
+                                Dictionary<int, int> dictionary = recipeList;
+                                int key = recipeList.Keys.ElementAt(i);
+                                dictionary[key] -= homeOfFarmer.fridge.items[k].Stack;
+                                ///////////////////////////////////////////////////////
+                                if (used != null)
+                                    used.Add(new ConsumedItem(homeOfFarmer.fridge.items[k] as StardewValley.Object));
+                                if (actuallyConsume)
+                                ///////////////////////////////////////////////////////
+                                homeOfFarmer.fridge.items[k].Stack -= num2;
+                                if (homeOfFarmer.fridge.items[k].Stack <= 0)
+                                {
+                                    homeOfFarmer.fridge.items[k] = null;
+                                }
+                                if (recipeList[recipeList.Keys.ElementAt(i)] <= 0)
+                                {
+                                    recipeList[recipeList.Keys.ElementAt(i)] = value;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -69,19 +69,6 @@ namespace CookingSkill
             return 1 + getCookingLevel() * 0.03;
         }
 
-        public static double getExtraSilverChance()
-        {
-            return getCookingLevel() * 0.03;
-        }
-
-        public static double getExtraGoldChance()
-        {
-            if (Game1.player.professions.Contains(PROFESSION_SILVER))
-                return getCookingLevel() * 0.03;
-            else
-                return getCookingLevel() * 0.01;
-        }
-
         public static double getNoConsumeChance()
         {
             if (Game1.player.professions.Contains(PROFESSION_CONSERVATION))
@@ -99,7 +86,7 @@ namespace CookingSkill
             {
                 Object obj = item as Object;
                 int amtCrafted = 0;
-                if ( Game1.player.recipesCooked.ContainsKey( obj.parentSheetIndex ) )
+                if (Game1.player.recipesCooked.ContainsKey(obj.parentSheetIndex))
                 {
                     amtCrafted = Game1.player.recipesCooked[obj.parentSheetIndex];
                 }
@@ -112,13 +99,29 @@ namespace CookingSkill
                     obj.price = (int)(obj.price * 1.2);
                 }
 
-                if (rand.NextDouble() < 0.05 + getExtraGoldChance())
-                {
-                    obj.quality = 2;
-                }
-                else if (Game1.player.professions.Contains(PROFESSION_SILVER) || rand.NextDouble() < 0.25 + getExtraSilverChance())
+                if (Game1.player.professions.Contains(PROFESSION_SILVER))
                 {
                     obj.quality = 1;
+                }
+
+                var used = new List<NewCraftingPage.ConsumedItem>();
+                NewCraftingPage.myConsumeIngredients(recipe, false, used);
+
+                int total = 0;
+                foreach (NewCraftingPage.ConsumedItem ingr in used )
+                    total += ingr.amt;
+
+                for (int iq = 1; iq <= 3; ++iq)
+                {
+                    double chance = 0;
+                    foreach (NewCraftingPage.ConsumedItem ingr in used )
+                    {
+                        if (ingr.item.quality >= iq)
+                            chance += (1.0 / total) * ingr.amt;
+                    }
+
+                    if (rand.NextDouble() < chance)
+                        obj.quality = iq;
                 }
 
                 if (rand.NextDouble() < getNoConsumeChance())
@@ -422,35 +425,13 @@ namespace CookingSkill
             string text3 = "";
             if (cookingLevel > 0)
             {
-                if ( Game1.player.professions.Contains( PROFESSION_SILVER ) )
-                {
-                    text3 = string.Concat(new object[]
-						    {
-							    "+",
-							    (int)((getEdibilityMultiplier() - 1) * 100),
-							    "% edibility in home-cooked food",
-							    Environment.NewLine,
-							    "+",
-							    (int)(getExtraGoldChance() * 100),
-							    "% chance for gold home-cooked food"
-						    });
-                }
-                else 
-                {
-                    text3 = string.Concat(new object[]
-						    {
-							    "+",
-							    (int)((getEdibilityMultiplier() - 1) * 100),
-							    "% edibility in home-cooked food",
-							    Environment.NewLine,
-							    "+",
-							    (int)(getExtraSilverChance() * 100),
-							    "% chance for silver home-cooked food",
-							    "+",
-							    (int)(getExtraGoldChance() * 100),
-							    "% chance for gold home-cooked food"
-						    });
-                }
+                text3 = string.Concat(new object[]
+					    {
+						    "+",
+						    (int)((getEdibilityMultiplier() - 1) * 100),
+						    "% edibility in home-cooked food",
+						    Environment.NewLine,
+					    });
             }
             var skillAreas = (List<ClickableTextureComponent>)Util.GetInstanceField(typeof(SkillsPage), skills, "skillAreas");
             skillAreas.Add(new ClickableTextureComponent(string.Concat(num6), new Rectangle(num3 - Game1.tileSize * 2 - Game1.tileSize * 3 / 4, num4 + k * (Game1.tileSize / 2 + Game1.pixelZoom * 6), Game1.tileSize * 2 + Game1.pixelZoom * 5, 9 * Game1.pixelZoom), string.Concat(num6), text3, null, Rectangle.Empty, 1f, false));
