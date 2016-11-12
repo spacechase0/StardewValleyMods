@@ -183,7 +183,7 @@ namespace CookingSkill
 
         public override void Entry(params object[] objects)
         {
-            GameEvents.GameLoaded += gameLoaded;
+            GameEvents.LoadContent += gameLoaded;
             TimeEvents.OnNewDay += newDay;
             LocationEvents.CurrentLocationChanged += locChanged;
             GameEvents.UpdateTick += update;
