@@ -58,24 +58,49 @@ namespace RushOrders
                     continue;
 
                 // I'm going to edit the description, and I don't want to affect the original shop entry
-                Tool oldTool = tool;
-                if (tool is Axe) tool = new Axe();
-                else if (tool is Pickaxe) tool = new Pickaxe();
-                else if (tool is Hoe) tool = new Hoe();
-                else if (tool is WateringCan) tool = new WateringCan();
-                tool.UpgradeLevel = oldTool.UpgradeLevel;
-                tool.description = "[ RUSH ORDER [" + Environment.NewLine + oldTool.description;
+                Tool toolRush = null, toolNow = null;
+                if (tool is Axe)
+                {
+                    toolRush = new Axe();
+                    toolNow = new Axe();
+                }
+                else if (tool is Pickaxe)
+                {
+                    toolRush = new Pickaxe();
+                    toolNow = new Pickaxe();
+                }
+                else if (tool is Hoe)
+                {
+                    toolRush = new Hoe();
+                    toolNow = new Hoe();
+                }
+                else if (tool is WateringCan)
+                {
+                    toolRush = new WateringCan();
+                    toolNow = new WateringCan();
+                }
+                toolRush.UpgradeLevel = tool.UpgradeLevel;
+                toolNow.UpgradeLevel = tool.UpgradeLevel;
+                toolRush.description = "[ RUSH ORDER [" + Environment.NewLine + tool.description;
+                toolNow.description = "[[ INSTANT ORDER [[" + Environment.NewLine + tool.description;
 
                 int price = getUpgradePrice(tool.upgradeLevel);
                 if (entry.Value[0] == price)
                 {
-                    int[] entryData = (int[])entry.Value.Clone();
-                    entryData[0] = (int)(entryData[0] * ModConfig.PriceFactor.Tool.Rush);
+                    int[] entryDataRush = (int[])entry.Value.Clone();
+                    int[] entryDataNow = (int[])entry.Value.Clone();
+                    entryDataRush[0] = (int)(entry.Value[ 0 ] * ModConfig.PriceFactor.Tool.Rush);
+                    entryDataNow[0] = (int)(entry.Value[ 0 ] * ModConfig.PriceFactor.Tool.Now);
 
-                    if (entryData[0] != entry.Value[0])
+                    if (entryDataRush[0] != entry.Value[0])
                     {
-                        toAddStock.Add(tool, entryData);
-                        toAddItems.Add(tool);
+                        toAddStock.Add(toolRush, entryDataRush);
+                        toAddItems.Add(toolRush);
+                    }
+                    if (entryDataNow[0] != entry.Value[0])
+                    {
+                        toAddStock.Add(toolNow, entryDataNow);
+                        toAddItems.Add(toolNow);
                     }
                 }
             }
@@ -104,14 +129,18 @@ namespace RushOrders
                 int currPrice = getUpgradePrice(Game1.player.toolBeingUpgraded.upgradeLevel);
                 int diff = prevMoney - Game1.player.money;
 
-                if ( diff == ( int )( currPrice * ModConfig.PriceFactor.Tool.Rush) )
+                if (diff == (int)(currPrice * ModConfig.PriceFactor.Tool.Now))
+                {
+                    Game1.player.daysLeftForToolUpgrade = 0;
+                    clint.CurrentDialogue.Pop();
+                    Game1.drawDialogue(Game1.getCharacterFromName("Clint", false), "Thanks. I'll get started right away. It should be ready in a few minutes.");
+                }
+                else if ( diff == ( int )( currPrice * ModConfig.PriceFactor.Tool.Rush) )
                 {
                     Game1.player.daysLeftForToolUpgrade = 1;
                     clint.CurrentDialogue.Pop();
                     Game1.drawDialogue(Game1.getCharacterFromName("Clint", false), "Thanks. I'll get started right away. It should be ready tomorrow.");
                 }
-
-                //Log.Async("Price was " + currPrice + " diff was " + (prevMoney - Game1.player.money));
             }
 
             hadDialogue = haveDialogue;

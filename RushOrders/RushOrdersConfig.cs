@@ -13,12 +13,12 @@ namespace RushOrders
             public class Tool_
             {
                 public double Rush { get; set; } = 1.5;
+                public double Now { get; set; } = 2.0;
             }
 
             public Tool_ Tool { get; set; } = new Tool_();
         }
 
         public PriceFactor_ PriceFactor { get; set; } = new PriceFactor_();
-        //public double PriceFactor_Tool_Rush { get; set; } = 1.5;
     }
 }
