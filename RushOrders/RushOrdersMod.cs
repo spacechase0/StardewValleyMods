@@ -56,7 +56,7 @@ namespace RushOrders
 
                 if (!(tool is Axe || tool is Pickaxe || tool is Hoe || tool is WateringCan))
                     continue;
-
+                
                 // I'm going to edit the description, and I don't want to affect the original shop entry
                 Tool oldTool = tool;
                      if (tool is Axe) tool = new Axe();
@@ -70,7 +70,7 @@ namespace RushOrders
                 if ( entry.Value[ 0 ] == price )
                 {
                     int[] entryData = (int[]) entry.Value.Clone();
-                    entryData[0] = (int)(entryData[0] * ModConfig.PriceFactor_Tool_Rush);
+                    entryData[0] = (int)(entryData[0] * ModConfig.PriceFactor.Tool.Rush);
                     toAddStock.Add(tool, entryData);
                     toAddItems.Add(tool);
                 }
@@ -100,7 +100,7 @@ namespace RushOrders
                 int currPrice = getUpgradePrice(Game1.player.toolBeingUpgraded.upgradeLevel);
                 int diff = prevMoney - Game1.player.money;
 
-                if ( diff == ( int )( currPrice * ModConfig.PriceFactor_Tool_Rush) )
+                if ( diff == ( int )( currPrice * ModConfig.PriceFactor.Tool.Rush) )
                 {
                     Game1.player.daysLeftForToolUpgrade = 1;
                     clint.CurrentDialogue.Pop();
