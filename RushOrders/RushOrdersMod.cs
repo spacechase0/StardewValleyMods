@@ -97,12 +97,12 @@ namespace RushOrders
                     entryDataRush[0] = (int)(entry.Value[ 0 ] * ModConfig.PriceFactor.Tool.Rush);
                     entryDataNow[0] = (int)(entry.Value[ 0 ] * ModConfig.PriceFactor.Tool.Now);
 
-                    if (entryDataRush[0] != entry.Value[0])
+                    if (entryDataRush[0] != entry.Value[0] && ModConfig.PriceFactor.Tool.Rush > 0)
                     {
                         toAddStock.Add(toolRush, entryDataRush);
                         toAddItems.Add(toolRush);
                     }
-                    if (entryDataNow[0] != entry.Value[0])
+                    if (entryDataNow[0] != entry.Value[0] && ModConfig.PriceFactor.Tool.Now > 0)
                     {
                         toAddStock.Add(toolNow, entryDataNow);
                         toAddItems.Add(toolNow);
