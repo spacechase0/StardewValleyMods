@@ -27,7 +27,6 @@ namespace RushOrders
         private static IClickableMenu prevMenu = null;
         public static void addRushOrderToShop(object sender, EventArgs args)
         {
-            Log.trace("d:" + Game1.player.daysLeftForToolUpgrade);
             if (Game1.activeClickableMenu == prevMenu) return;
             if (!(Game1.activeClickableMenu is ShopMenu))
             {
