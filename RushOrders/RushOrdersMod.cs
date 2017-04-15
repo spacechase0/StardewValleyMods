@@ -81,8 +81,13 @@ namespace RushOrders
                 }
                 toolRush.UpgradeLevel = tool.UpgradeLevel;
                 toolNow.UpgradeLevel = tool.UpgradeLevel;
-                toolRush.description = "[ RUSH ORDER [" + Environment.NewLine + tool.description;
-                toolNow.description = "[[ INSTANT ORDER [[" + Environment.NewLine + tool.description;
+                // For 1.2:
+                //toolRush.DisplayName = tool.name + "         *RUSH*";
+                //toolNow.DisplayName  = tool.name + "       =INSTANT=";
+                //toolRush.description = "The tool will take one day to upgrade." + Environment.NewLine + Environment.NewLine + tool.description;
+                //toolNow.description = "The tool will be immediately upgraded." + Environment.NewLine + Environment.NewLine + tool.description;
+                toolRush.description = "* RUSH *" + Environment.NewLine + Environment.NewLine + tool.description;
+                toolNow.description = "= INSTANT =" + Environment.NewLine + Environment.NewLine + tool.description;
 
                 int price = getUpgradePrice(tool.upgradeLevel);
                 if (entry.Value[0] == price)
