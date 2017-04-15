@@ -1,27 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewModdingAPI.Inheritance;
 using StardewValley;
 using StardewValley.Menus;
-using StardewValley.Objects;
 using StardewValley.Tools;
-using Object = StardewValley.Object;
-using Microsoft.Xna.Framework.Input;
 
 namespace RushOrders
 {
     public class RushOrdersMod : Mod
     {
-        public const double RUSH_PRICE_MULTIPLIER = 1.5;
-
-        public override void Entry(params object[] objects)
+        public static RushOrdersMod instance;
+        public static RushOrdersConfig ModConfig { get; private set; }
+        public override void Entry( IModHelper helper )
         {
+            instance = this;
+
+            Log.info("Loading Config");
+            ModConfig = Helper.ReadConfig<RushOrdersConfig>();
+
             GameEvents.UpdateTick += addRushOrderToShop;
             GameEvents.UpdateTick += checkForRushOrder;
         }
@@ -29,6 +27,7 @@ namespace RushOrders
         private static IClickableMenu prevMenu = null;
         public static void addRushOrderToShop(object sender, EventArgs args)
         {
+            Log.trace("d:" + Game1.player.daysLeftForToolUpgrade);
             if (Game1.activeClickableMenu == prevMenu) return;
             if (!(Game1.activeClickableMenu is ShopMenu))
             {
@@ -71,7 +70,7 @@ namespace RushOrders
                 if ( entry.Value[ 0 ] == price )
                 {
                     int[] entryData = (int[]) entry.Value.Clone();
-                    entryData[0] = (int)(entryData[0] * RUSH_PRICE_MULTIPLIER);
+                    entryData[0] = (int)(entryData[0] * ModConfig.PriceFactor_Tool_Rush);
                     toAddStock.Add(tool, entryData);
                     toAddItems.Add(tool);
                 }
@@ -101,7 +100,7 @@ namespace RushOrders
                 int currPrice = getUpgradePrice(Game1.player.toolBeingUpgraded.upgradeLevel);
                 int diff = prevMoney - Game1.player.money;
 
-                if ( diff == ( int )( currPrice * RUSH_PRICE_MULTIPLIER ) )
+                if ( diff == ( int )( currPrice * ModConfig.PriceFactor_Tool_Rush) )
                 {
                     Game1.player.daysLeftForToolUpgrade = 1;
                     clint.CurrentDialogue.Pop();
