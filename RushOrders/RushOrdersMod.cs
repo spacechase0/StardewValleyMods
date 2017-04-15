@@ -56,10 +56,10 @@ namespace RushOrders
 
                 if (!(tool is Axe || tool is Pickaxe || tool is Hoe || tool is WateringCan))
                     continue;
-                
+
                 // I'm going to edit the description, and I don't want to affect the original shop entry
                 Tool oldTool = tool;
-                     if (tool is Axe) tool = new Axe();
+                if (tool is Axe) tool = new Axe();
                 else if (tool is Pickaxe) tool = new Pickaxe();
                 else if (tool is Hoe) tool = new Hoe();
                 else if (tool is WateringCan) tool = new WateringCan();
@@ -67,12 +67,16 @@ namespace RushOrders
                 tool.description = "[ RUSH ORDER [" + Environment.NewLine + oldTool.description;
 
                 int price = getUpgradePrice(tool.upgradeLevel);
-                if ( entry.Value[ 0 ] == price )
+                if (entry.Value[0] == price)
                 {
-                    int[] entryData = (int[]) entry.Value.Clone();
+                    int[] entryData = (int[])entry.Value.Clone();
                     entryData[0] = (int)(entryData[0] * ModConfig.PriceFactor.Tool.Rush);
-                    toAddStock.Add(tool, entryData);
-                    toAddItems.Add(tool);
+
+                    if (entryData[0] != entry.Value[0])
+                    {
+                        toAddStock.Add(tool, entryData);
+                        toAddItems.Add(tool);
+                    }
                 }
             }
             foreach (var elem in toAddStock)
