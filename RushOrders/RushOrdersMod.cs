@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using StardewModdingAPI;
@@ -107,6 +108,8 @@ namespace RushOrders
                 stock.Add(elem.Key, elem.Value);
             foreach (var elem in toAddItems)
                 items.Add(elem);
+            
+            itemsField.SetValue(shop, items.OrderBy(i => i.Name).ToList());
 
             prevMenu = Game1.activeClickableMenu;
         }
