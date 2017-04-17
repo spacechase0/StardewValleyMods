@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using static Microsoft.Xna.Framework.Input.ButtonState;
 using StardewValley.Locations;
+using StardewValley.Buildings;
 
 namespace CustomizeExterior
 {
@@ -25,8 +26,6 @@ namespace CustomizeExterior
         }
 
         private MouseState prevMouse;
-        private int lastRightClick = 0;
-
         private void onUpdate( object sender, EventArgs args)
         {
             MouseState mouse = Mouse.GetState();
@@ -34,7 +33,6 @@ namespace CustomizeExterior
             if ( prevMouse != null && mouse.RightButton == Pressed && prevMouse.RightButton != Pressed)
             {
                 Point pos = new Point(Game1.getMouseX() + Game1.viewport.X, Game1.getMouseY() + Game1.viewport.Y);
-                Log.trace("Right click @ (" + pos.X + ", " + pos.Y + ") in world");
 
                 if (Game1.currentLocation is BuildableGameLocation)
                 {
@@ -46,12 +44,35 @@ namespace CustomizeExterior
                         if ( tileBounds.Contains( pos.X, pos.Y ) )
                         {
                             Log.trace("Right clicked a building: " + building.nameOfIndoors);
+                            checkBuildingClick(building.nameOfIndoors);
                         }
                     }
                 }
             }
 
             prevMouse = mouse;
+        }
+
+        private DateTime recentClickTime;
+        private string recentClickTarget = null;
+        private void checkBuildingClick( string target )
+        {
+            if (recentClickTarget != target)
+            {
+                recentClickTarget = target;
+                recentClickTime = DateTime.Now;
+            }
+            else
+            {
+                if (DateTime.Now - recentClickTime < config.clickWindow)
+                    todoRenameFunction();
+                else recentClickTime = DateTime.Now;
+            }
+        }
+
+        private void todoRenameFunction()
+        {
+            Log.debug("Clicked soon enough");
         }
     }
 }
