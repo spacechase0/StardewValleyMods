@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Input;
 using static Microsoft.Xna.Framework.Input.ButtonState;
 using StardewValley.Locations;
 using StardewValley.Buildings;
-using System.Windows.Forms;
 
 namespace CustomizeExterior
 {
@@ -16,8 +15,6 @@ namespace CustomizeExterior
         public static CustomizeExteriorMod instance;
         public static Config config;
 
-        private static TimeSpan doubleClickWindow;
-
         public override void Entry(IModHelper helper)
         {
             instance = this;
@@ -25,7 +22,7 @@ namespace CustomizeExterior
 
             GameEvents.UpdateTick += onUpdate;
 
-            doubleClickWindow = new TimeSpan(TimeSpan.TicksPerMillisecond * SystemInformation.DoubleClickTime);
+            Log.info("MEOW");
         }
 
         private MouseState prevMouse;
@@ -67,7 +64,7 @@ namespace CustomizeExterior
             }
             else
             {
-                if (DateTime.Now - recentClickTime < doubleClickWindow)
+                if (DateTime.Now - recentClickTime < config.clickWindow)
                     todoRenameFunction();
                 else recentClickTime = DateTime.Now;
             }
