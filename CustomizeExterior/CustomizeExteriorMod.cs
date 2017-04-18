@@ -178,7 +178,7 @@ namespace CustomizeExterior
             }
 
             recentTarget = target;
-            var menu = new SelectDisplayMenu(type, "/");
+            var menu = new SelectDisplayMenu(type, getChosenTexture(target));
             menu.onSelected = onExteriorSelected;
             Game1.activeClickableMenu = menu;
         }
@@ -216,9 +216,9 @@ namespace CustomizeExterior
             }
         }
 
-        public static string getChosenTexture( string type )
+        public static string getChosenTexture( string target )
         {
-            return config.chosen.ContainsKey(type) ? config.chosen[type] : "/";
+            return config.chosen.ContainsKey(target) ? config.chosen[target] : "/";
         }
 
         public static Texture2D getTextureForChoice(string type, string choice)
