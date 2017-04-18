@@ -1,6 +1,7 @@
 ﻿using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using System.Linq;
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -16,6 +17,8 @@ namespace CustomizeExterior
 {
     public class Mod : StardewModdingAPI.Mod
     {
+        public const string SEASONAL_INDICATOR = "%";
+        
         public static Mod instance;
         public static Config config;
         public static ContentManager content;
@@ -30,6 +33,7 @@ namespace CustomizeExterior
             GameEvents.UpdateTick += onUpdate;
             SaveEvents.AfterLoad += afterLoad;
             SaveEvents.AfterSave += afterSave;
+            TimeEvents.SeasonOfYearChanged += onSeasonChange;
         }
 
         private void onContentLoad(object sender, EventArgs args)
@@ -43,37 +47,19 @@ namespace CustomizeExterior
             string path = Path.Combine(Constants.CurrentSavePath, "building-exteriors.json");
             Log.info("Loading per-save config file (\"" + path + "\")...");
             config = Helper.ReadJsonFile<Config>(path) ?? new Config();
-
-            foreach ( var choice in config.chosen )
-            {
-                recentTarget = choice.Key;
-                Log.debug("Saved choice: " + choice.Key + " " + choice.Value);
-
-                string type = null;
-                if (recentTarget == "FarmHouse" || recentTarget == "Greenhouse")
-                {
-                    type = "houses";
-                }
-                else
-                {
-                    foreach (Building building in Game1.getFarm().buildings)
-                    {
-                        if ( building.nameOfIndoors == choice.Key )
-                        {
-                            type = building.buildingType;
-                        }
-                    }
-                }
-
-                if (type != null)
-                    onExteriorSelected(type, choice.Value, false);
-            }
+            syncTexturesWithChoices();
         }
 
         private void afterSave(object sender, EventArgs args)
         {
             Log.info("Saving per-save config file...");
             Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "building-exteriors.json"), config);
+        }
+
+        private void onSeasonChange( object sender, EventArgs args )
+        {
+            Log.debug("Season change, syncing textures...");
+            syncTexturesWithChoices();
         }
 
         public MouseState prevMouse;
@@ -126,10 +112,11 @@ namespace CustomizeExterior
             var choices = Directory.GetDirectories(Path.Combine(Helper.DirectoryPath, "Buildings"));
             foreach ( var choice in choices )
             {
+                Log.info("Choice type: " + Path.GetFileName(choice));
                 var types = Directory.GetFiles(choice);
                 foreach ( var type in types )
                 {
-                    if (Path.GetExtension( type ) != ".xnb")
+                    if (Path.GetExtension(type) != ".xnb" && Path.GetExtension(type) != ".png")
                         continue;
 
                     string choiceStr = Path.GetFileName(choice);
@@ -139,7 +126,48 @@ namespace CustomizeExterior
                     if (!Mod.choices.ContainsKey(typeStr))
                         Mod.choices.Add(typeStr, forType);
 
-                    Log.trace("Added choice: " + typeStr + "::" + choiceStr);
+                    Log.info("\tChoice: " + typeStr);
+                }
+
+                var seasons = Directory.GetDirectories(choice);
+                bool foundSpring = false, foundSummer = false, foundFall = false, foundWinter = false;
+                foreach ( var season in seasons )
+                {
+                    var filename = Path.GetFileName(season);
+                    if (filename == "spring") foundSpring = true;
+                    else if (filename == "summer") foundSummer = true;
+                    else if (filename == "fall") foundFall = true;
+                    else if (filename == "winter") foundWinter = true;
+                }
+                
+                if ( foundSpring && foundSummer && foundFall && foundWinter )
+                {
+                    Log.info("Found a seasonal set: " + Path.GetFileName(choice));
+
+                    var spring = new List<string>(Directory.GetFiles(Path.Combine(choice, "spring")));
+                    var summer = new List<string>(Directory.GetFiles(Path.Combine(choice, "summer")));
+                    var fall = new List<string>(Directory.GetFiles(Path.Combine(choice, "fall")));
+                    var winter = new List<string>(Directory.GetFiles(Path.Combine(choice, "winter")));
+                    spring = spring.Select(b => { return Path.GetFileName(b); }).ToList();
+                    summer = summer.Select(b => { return Path.GetFileName(b); }).ToList();
+                    fall = fall.Select(b => { return Path.GetFileName(b); }).ToList();
+                    winter = winter.Select(b => { return Path.GetFileName(b); }).ToList();
+                    
+                    var common = new List<string>();
+                    foreach ( var building in spring )
+                    {
+                        string choiceStr = Path.GetFileName(choice);
+                        string typeStr = Path.GetFileNameWithoutExtension(building);
+                        if ( summer.Contains( building ) && fall.Contains( building ) && winter.Contains( building ) )
+                        {
+                            List<string> forType = Mod.choices.ContainsKey(typeStr) ? Mod.choices[typeStr] : new List<string>();
+                            forType.Add(SEASONAL_INDICATOR + choiceStr);
+                            if (!Mod.choices.ContainsKey(typeStr))
+                                Mod.choices.Add(typeStr, forType);
+
+                            Log.info("\tChoice: " + typeStr);
+                        }
+                    }
                 }
             }
         }
@@ -216,6 +244,34 @@ namespace CustomizeExterior
             }
         }
 
+        private void syncTexturesWithChoices()
+        {
+            foreach (var choice in config.chosen)
+            {
+                recentTarget = choice.Key;
+                Log.debug("Saved choice: " + choice.Key + " " + choice.Value);
+
+                string type = null;
+                if (recentTarget == "FarmHouse" || recentTarget == "Greenhouse")
+                {
+                    type = "houses";
+                }
+                else
+                {
+                    foreach (Building building in Game1.getFarm().buildings)
+                    {
+                        if (building.nameOfIndoors == choice.Key)
+                        {
+                            type = building.buildingType;
+                        }
+                    }
+                }
+
+                if (type != null)
+                    onExteriorSelected(type, choice.Value, false);
+            }
+        }
+
         public static string getChosenTexture( string target )
         {
             return config.chosen.ContainsKey(target) ? config.chosen[target] : "/";
@@ -223,12 +279,32 @@ namespace CustomizeExterior
 
         public static Texture2D getTextureForChoice(string type, string choice)
         {
-            if (choice == "/")
-                return Game1.content.Load<Texture2D>("Buildings/" + type);
-            else
-                return content.Load<Texture2D>(choice + "/" + type);
+            try
+            {
+                if (choice == "/")
+                    return Game1.content.Load<Texture2D>("Buildings/" + type);
+                else if (choice.StartsWith(SEASONAL_INDICATOR))
+                    return content.Load<Texture2D>(choice.Substring(SEASONAL_INDICATOR.Length) + "/" + Game1.currentSeason + "/" + type);
+                else
+                    return content.Load<Texture2D>(choice + "/" + type);
+            }
+            catch (ContentLoadException e)
+            {
+                if (choice.StartsWith(SEASONAL_INDICATOR))
+                    return loadPng(choice.Substring(SEASONAL_INDICATOR.Length) + "/" + Game1.currentSeason + "/" + type);
+                else
+                    return loadPng(choice + "/" + type);
+            }
         }
-        
+
+        private static Texture2D loadPng( string path )
+        {
+            FileStream fs = File.Open(Path.Combine(instance.Helper.DirectoryPath, "Buildings", path + ".png" ), FileMode.Open);
+            Texture2D tex = Texture2D.FromStream(Game1.graphics.GraphicsDevice, fs);
+            fs.Dispose();
+            return tex;
+        }
+
         private static Texture2D housesHybrid = null;
         private static Texture2D getHousesTexture()
         {
