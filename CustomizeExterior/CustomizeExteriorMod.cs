@@ -10,6 +10,7 @@ using StardewValley.Buildings;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace CustomizeExterior
 {
@@ -18,6 +19,8 @@ namespace CustomizeExterior
         public static CustomizeExteriorMod instance;
         public static Config config;
         public static ContentManager content;
+
+        public static Dictionary<string, List<string>> choices = new Dictionary<string, List<string>>();
 
         public override void Entry(IModHelper helper)
         {
@@ -31,6 +34,7 @@ namespace CustomizeExterior
         private void onLoad(object sender, EventArgs args)
         {
             content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(Helper.DirectoryPath, "Buildings"));
+            compileChoices();
         }
 
         public MouseState prevMouse;
@@ -60,6 +64,31 @@ namespace CustomizeExterior
 
             prevMouse = mouse;
         }
+
+        private void compileChoices()
+        {
+            Log.info("Creating list of building choices...");
+            var choices = Directory.GetDirectories(Path.Combine(Helper.DirectoryPath, "Buildings"));
+            foreach ( var choice in choices )
+            {
+                var types = Directory.GetFiles(choice);
+                foreach ( var type in types )
+                {
+                    Log.trace(Path.GetExtension(type));
+                    if (Path.GetExtension( type ) != ".xnb")
+                        continue;
+
+                    string choiceStr = Path.GetFileName(choice);
+                    string typeStr = Path.GetFileNameWithoutExtension(type);
+                    List<string> forType = CustomizeExteriorMod.choices.ContainsKey(typeStr) ? CustomizeExteriorMod.choices[typeStr] : new List<string>();
+                    forType.Add(choiceStr);
+                    if (!CustomizeExteriorMod.choices.ContainsKey(typeStr))
+                        CustomizeExteriorMod.choices.Add(typeStr, forType);
+
+                    Log.trace("Added choice: " + typeStr + "::" + choiceStr);
+                }
+            }
+        }
         
         private DateTime recentClickTime;
         private string recentClickTarget = null;
@@ -86,10 +115,10 @@ namespace CustomizeExterior
         {
             Log.debug("Target: " + target + " " + type);
 
-            if (!config.choices.ContainsKey(type))
+            if (!choices.ContainsKey(type))
                 return;
 
-            foreach ( var choice in config.choices[ type ] )
+            foreach ( var choice in choices[ type ] )
             {
                 Log.debug("Choice: " + choice);
             }
@@ -120,12 +149,12 @@ namespace CustomizeExterior
             }
         }
 
-        private Texture2D getTextureForChoice(string type, string choice)
+        public static Texture2D getTextureForChoice(string type, string choice)
         {
             if (choice == "/")
                 return Game1.content.Load<Texture2D>("Buildings/" + type);
             else
-                return content.Load<Texture2D>(type + "/" + choice);
+                return content.Load<Texture2D>(choice + "/" + type);
         }
     }
 }

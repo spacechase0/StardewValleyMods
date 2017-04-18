@@ -35,9 +35,9 @@ namespace CustomizeExterior
             active = theActive;
 
             choices.Add("/", null);
-            foreach ( var choice in CustomizeExteriorMod.config.choices[ type ] )
+            foreach ( var choice in CustomizeExteriorMod.choices[ type ] )
             {
-                choices.Add(choice, CustomizeExteriorMod.content.Load<Texture2D>(type + "/" + choice));
+                choices.Add(choice, CustomizeExteriorMod.getTextureForChoice( type, choice ));
             }
 
             size = Game1.viewport.Size.Height - PADDING_OUTER * 2;
