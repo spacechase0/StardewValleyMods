@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
+using static Microsoft.Xna.Framework.Input.ButtonState;
+using Microsoft.Xna.Framework.Input;
 
 namespace CustomizeExterior
 {
@@ -16,6 +18,8 @@ namespace CustomizeExterior
         private const int PADDING_OUTER = 100;
         private const int PADDING_INNER = 50;
         private const int PADDING_IN = 20;
+
+        public Action<string, string> onSelected = null;
 
         private string type;
         private string active;
@@ -41,10 +45,16 @@ namespace CustomizeExterior
             entrySize = ( size - PADDING_INNER * 4 ) / 3;
         }
 
+        public override void receiveLeftClick(int x, int y, bool playSound = true)
+        {
+            justClicked = true;
+        }
+
         public override void receiveRightClick(int x, int y, bool playSound = true)
         {
         }
 
+        bool justClicked = false;
         public override void draw(SpriteBatch b)
         {
             drawTextureBox(b, x, PADDING_OUTER, size, size, Color.White);
@@ -55,7 +65,21 @@ namespace CustomizeExterior
                 int ix = x + PADDING_INNER + (entrySize + PADDING_INNER) * (i % 3);
                 int iy = PADDING_OUTER + PADDING_INNER + (entrySize + PADDING_INNER) * (i / 3);
 
-                drawTextureBox(b, ix, iy, entrySize, entrySize, entry.Key == active ? Color.Goldenrod : (new Rectangle( ix, iy, entrySize, entrySize ).Contains( Game1.getMousePosition() ) ? Color.Wheat : Color.White));
+                Color col = entry.Key == active ? Color.Goldenrod : Color.White;
+                if ( new Rectangle(ix, iy, entrySize, entrySize).Contains(Game1.getMousePosition()) )
+                {
+                    col = Color.Wheat;
+                    if ( justClicked )
+                    {
+                        active = entry.Key;
+                        if (onSelected != null)
+                        {
+                            onSelected.Invoke(type, active);
+                        }
+                        Game1.exitActiveMenu();
+                    }
+                }
+                drawTextureBox(b, ix, iy, entrySize, entrySize, col);
 
                 if (entry.Value != null)
                     b.Draw(entry.Value, new Rectangle(ix + PADDING_IN, iy + PADDING_IN, entrySize - PADDING_IN * 2, entrySize - PADDING_IN * 2), new Rectangle(0, 0, entry.Value.Width, entry.Value.Height), Color.White);
@@ -67,6 +91,8 @@ namespace CustomizeExterior
 
             base.draw(b);
             drawMouse(b);
+
+            justClicked = false;
         }
     }
 }

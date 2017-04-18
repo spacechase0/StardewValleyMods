@@ -9,6 +9,7 @@ using StardewValley.Locations;
 using StardewValley.Buildings;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace CustomizeExterior
 {
@@ -32,7 +33,7 @@ namespace CustomizeExterior
             content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(Helper.DirectoryPath, "Buildings"));
         }
 
-        private MouseState prevMouse;
+        public MouseState prevMouse;
         private void onUpdate( object sender, EventArgs args)
         {
             MouseState mouse = Mouse.GetState();
@@ -83,7 +84,6 @@ namespace CustomizeExterior
 
         private void todoRenameFunction( string target, string type )
         {
-            Log.debug("Clicked soon enough");
             Log.debug("Target: " + target + " " + type);
 
             if (!config.choices.ContainsKey(type))
@@ -94,7 +94,38 @@ namespace CustomizeExterior
                 Log.debug("Choice: " + choice);
             }
 
-            Game1.activeClickableMenu = new SelectDisplayMenu(type, "/");
+            recentTarget = target;
+            var menu = new SelectDisplayMenu(type, "/");
+            menu.onSelected = onExteriorSelected;
+            Game1.activeClickableMenu = menu;
+        }
+
+        private string recentTarget = null;
+        private void onExteriorSelected( string type, string choice )
+        {
+            Log.debug("onExteriorSelected: " + recentTarget + " " + type + " " + choice);
+
+            foreach ( Building building in Game1.getFarm().buildings )
+            {
+                if ( building.buildingType == type && building.nameOfIndoors == recentTarget )
+                {
+                    Texture2D tex = getTextureForChoice( type, choice );
+                    if ( tex == null )
+                        Log.warn("Failed to load chosen texture '" + choice + "' for building type '" + type + "'.");
+                    else
+                        building.texture = tex;
+
+                    break;
+                }
+            }
+        }
+
+        private Texture2D getTextureForChoice(string type, string choice)
+        {
+            if (choice == "/")
+                return Game1.content.Load<Texture2D>("Buildings/" + type);
+            else
+                return content.Load<Texture2D>(type + "/" + choice);
         }
     }
 }
