@@ -199,8 +199,8 @@ namespace CustomizeExterior
 
             Farm farm = Game1.getFarm();
             Texture2D baseTex = farm.houseTextures;
-            Rectangle houseRect = instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "houseSource");
-            Rectangle greenhouseRect = instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "greenhouseSource");
+            Rectangle houseRect = new Rectangle( 0, 0, 160, baseTex.Height );// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "houseSource");
+            Rectangle greenhouseRect = new Rectangle(160, 0, 112, baseTex.Height);// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "greenhouseSource");
 
             GraphicsDevice dev = Game1.graphics.GraphicsDevice;
             RenderTarget2D ret = new RenderTarget2D(dev, baseTex.Width, baseTex.Height);
