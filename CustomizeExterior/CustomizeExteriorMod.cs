@@ -14,28 +14,66 @@ using System.Collections.Generic;
 
 namespace CustomizeExterior
 {
-    public class CustomizeExteriorMod : Mod
+    public class Mod : StardewModdingAPI.Mod
     {
-        public static CustomizeExteriorMod instance;
+        public static Mod instance;
         public static Config config;
         public static ContentManager content;
 
         public static Dictionary<string, List<string>> choices = new Dictionary<string, List<string>>();
-        public static Dictionary<string, string> chosen = new Dictionary<string, string>();
 
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            config = Helper.ReadConfig<Config>();
 
-            GameEvents.LoadContent += onLoad;
+            GameEvents.LoadContent += onContentLoad;
             GameEvents.UpdateTick += onUpdate;
+            SaveEvents.AfterLoad += afterLoad;
+            SaveEvents.AfterSave += afterSave;
         }
 
-        private void onLoad(object sender, EventArgs args)
+        private void onContentLoad(object sender, EventArgs args)
         {
             content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(Helper.DirectoryPath, "Buildings"));
             compileChoices();
+        }
+
+        private void afterLoad(object sender, EventArgs args)
+        {
+            string path = Path.Combine(Constants.SaveFolderName, "building-exteriors.json");
+            Log.info("Loading per-save config file (\"" + path + "\")...");
+            config = Helper.ReadJsonFile<Config>(path) ?? new Config();
+
+            foreach ( var choice in config.chosen )
+            {
+                recentTarget = choice.Key;
+                Log.debug("Saved choice: " + choice.Key + " " + choice.Value);
+
+                string type = null;
+                if (recentTarget == "FarmHouse" || recentTarget == "Greenhouse")
+                {
+                    type = "houses";
+                }
+                else
+                {
+                    foreach (Building building in Game1.getFarm().buildings)
+                    {
+                        if ( building.nameOfIndoors == choice.Key )
+                        {
+                            type = building.buildingType;
+                        }
+                    }
+                }
+
+                if (type != null)
+                    onExteriorSelected(type, choice.Value, false);
+            }
+        }
+
+        private void afterSave(object sender, EventArgs args)
+        {
+            Log.info("Saving per-save config file...");
+            Helper.WriteJsonFile(Path.Combine(Constants.SaveFolderName, "building-exteriors.json"), config);
         }
 
         public MouseState prevMouse;
@@ -96,10 +134,10 @@ namespace CustomizeExterior
 
                     string choiceStr = Path.GetFileName(choice);
                     string typeStr = Path.GetFileNameWithoutExtension(type);
-                    List<string> forType = CustomizeExteriorMod.choices.ContainsKey(typeStr) ? CustomizeExteriorMod.choices[typeStr] : new List<string>();
+                    List<string> forType = Mod.choices.ContainsKey(typeStr) ? Mod.choices[typeStr] : new List<string>();
                     forType.Add(choiceStr);
-                    if (!CustomizeExteriorMod.choices.ContainsKey(typeStr))
-                        CustomizeExteriorMod.choices.Add(typeStr, forType);
+                    if (!Mod.choices.ContainsKey(typeStr))
+                        Mod.choices.Add(typeStr, forType);
 
                     Log.trace("Added choice: " + typeStr + "::" + choiceStr);
                 }
@@ -146,7 +184,8 @@ namespace CustomizeExterior
         }
         
         private string recentTarget = null;
-        private void onExteriorSelected( string type, string choice )
+        private void onExteriorSelected(string type, string choice) { onExteriorSelected(type, choice, true); }
+        private void onExteriorSelected( string type, string choice, bool updateChosen )
         {
             Log.debug("onExteriorSelected: " + recentTarget + " " + type + " " + choice);
             
@@ -156,7 +195,8 @@ namespace CustomizeExterior
                 Log.warn("Failed to load chosen texture '" + choice + "' for building type '" + type + "'.");
                 return;
             }
-            chosen[recentTarget] = choice;
+            if ( updateChosen )
+                config.chosen[recentTarget] = choice;
 
             if ( recentTarget == "FarmHouse" || recentTarget == "Greenhouse" )
             {
@@ -178,7 +218,7 @@ namespace CustomizeExterior
 
         public static string getChosenTexture( string type )
         {
-            return chosen.ContainsKey(type) ? chosen[type] : "/";
+            return config.chosen.ContainsKey(type) ? config.chosen[type] : "/";
         }
 
         public static Texture2D getTextureForChoice(string type, string choice)
