@@ -55,7 +55,7 @@ namespace CustomizeExterior
                 int ix = x + PADDING_INNER + (entrySize + PADDING_INNER) * (i % 3);
                 int iy = PADDING_OUTER + PADDING_INNER + (entrySize + PADDING_INNER) * (i / 3);
 
-                drawTextureBox(b, ix, iy, entrySize, entrySize, Color.White);
+                drawTextureBox(b, ix, iy, entrySize, entrySize, entry.Key == active ? Color.Goldenrod : (new Rectangle( ix, iy, entrySize, entrySize ).Contains( Game1.getMousePosition() ) ? Color.Wheat : Color.White));
 
                 if (entry.Value != null)
                     b.Draw(entry.Value, new Rectangle(ix + PADDING_IN, iy + PADDING_IN, entrySize - PADDING_IN * 2, entrySize - PADDING_IN * 2), new Rectangle(0, 0, entry.Value.Width, entry.Value.Height), Color.White);
@@ -66,6 +66,7 @@ namespace CustomizeExterior
             }
 
             base.draw(b);
+            drawMouse(b);
         }
     }
 }

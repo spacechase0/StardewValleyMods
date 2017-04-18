@@ -94,7 +94,7 @@ namespace CustomizeExterior
                 Log.debug("Choice: " + choice);
             }
 
-            Game1.activeClickableMenu = new SelectDisplayMenu(type, "");
+            Game1.activeClickableMenu = new SelectDisplayMenu(type, "/");
         }
     }
 }
