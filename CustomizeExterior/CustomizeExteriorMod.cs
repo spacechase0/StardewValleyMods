@@ -40,7 +40,7 @@ namespace CustomizeExterior
 
         private void afterLoad(object sender, EventArgs args)
         {
-            string path = Path.Combine(Constants.SaveFolderName, "building-exteriors.json");
+            string path = Path.Combine(Constants.CurrentSavePath, "building-exteriors.json");
             Log.info("Loading per-save config file (\"" + path + "\")...");
             config = Helper.ReadJsonFile<Config>(path) ?? new Config();
 
@@ -73,7 +73,7 @@ namespace CustomizeExterior
         private void afterSave(object sender, EventArgs args)
         {
             Log.info("Saving per-save config file...");
-            Helper.WriteJsonFile(Path.Combine(Constants.SaveFolderName, "building-exteriors.json"), config);
+            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "building-exteriors.json"), config);
         }
 
         public MouseState prevMouse;
