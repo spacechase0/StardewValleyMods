@@ -47,14 +47,30 @@ namespace CustomizeExterior
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
-            justClicked = true;
+            int i = 0;
+            foreach (var entry in choices)
+            {
+                int ix = this.x + PADDING_INNER + (entrySize + PADDING_INNER) * (i % 3);
+                int iy = PADDING_OUTER + PADDING_INNER + (entrySize + PADDING_INNER) * (i / 3);
+                
+                if (new Rectangle(ix, iy, entrySize, entrySize).Contains(x, y))
+                {
+                    active = entry.Key;
+                    if (onSelected != null)
+                    {
+                        onSelected.Invoke(type, active);
+                    }
+                    Game1.exitActiveMenu();
+                }
+
+                ++i;
+            }
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)
         {
         }
-
-        bool justClicked = false;
+        
         public override void draw(SpriteBatch b)
         {
             drawTextureBox(b, x, PADDING_OUTER, size, size, Color.White);
@@ -67,18 +83,7 @@ namespace CustomizeExterior
 
                 Color col = entry.Key == active ? Color.Goldenrod : Color.White;
                 if ( new Rectangle(ix, iy, entrySize, entrySize).Contains(Game1.getMousePosition()) )
-                {
                     col = Color.Wheat;
-                    if ( justClicked )
-                    {
-                        active = entry.Key;
-                        if (onSelected != null)
-                        {
-                            onSelected.Invoke(type, active);
-                        }
-                        Game1.exitActiveMenu();
-                    }
-                }
                 drawTextureBox(b, ix, iy, entrySize, entrySize, col);
 
                 if (entry.Value != null)
@@ -91,8 +96,6 @@ namespace CustomizeExterior
 
             base.draw(b);
             drawMouse(b);
-
-            justClicked = false;
         }
     }
 }

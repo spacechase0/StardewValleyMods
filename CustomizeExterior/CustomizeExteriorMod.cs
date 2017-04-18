@@ -21,6 +21,7 @@ namespace CustomizeExterior
         public static ContentManager content;
 
         public static Dictionary<string, List<string>> choices = new Dictionary<string, List<string>>();
+        public static Dictionary<string, string> chosen = new Dictionary<string, string>();
 
         public override void Entry(IModHelper helper)
         {
@@ -45,7 +46,7 @@ namespace CustomizeExterior
             if ( prevMouse != null && mouse.RightButton == Pressed && prevMouse.RightButton != Pressed)
             {
                 Point pos = new Point(Game1.getMouseX() + Game1.viewport.X, Game1.getMouseY() + Game1.viewport.Y);
-
+                
                 if (Game1.currentLocation is BuildableGameLocation)
                 {
                     var loc = Game1.currentLocation as BuildableGameLocation;
@@ -58,6 +59,22 @@ namespace CustomizeExterior
                             Log.trace("Right clicked a building: " + building.nameOfIndoors);
                             checkBuildingClick(building.nameOfIndoors, building.buildingType);
                         }
+                    }
+                }
+                if ( Game1.currentLocation is Farm )
+                {
+                    Rectangle house = new Rectangle(59 * Game1.tileSize, 11 * Game1.tileSize, 9 * Game1.tileSize, 6 * Game1.tileSize);
+                    Rectangle greenhouse = new Rectangle(25 * Game1.tileSize, 10 * Game1.tileSize, 7 * Game1.tileSize, 6 * Game1.tileSize);
+
+                    if ( house.Contains( pos.X, pos.Y ) )
+                    {
+                        Log.trace("Right clicked the house.");
+                        checkBuildingClick("FarmHouse", "houses");
+                    }
+                    else if ( greenhouse.Contains( pos.X, pos.Y ) )
+                    {
+                        Log.trace("Right clicked the greenhouse.");
+                        checkBuildingClick("Greenhouse", "houses");
                     }
                 }
             }
@@ -74,7 +91,6 @@ namespace CustomizeExterior
                 var types = Directory.GetFiles(choice);
                 foreach ( var type in types )
                 {
-                    Log.trace(Path.GetExtension(type));
                     if (Path.GetExtension( type ) != ".xnb")
                         continue;
 
@@ -128,25 +144,41 @@ namespace CustomizeExterior
             menu.onSelected = onExteriorSelected;
             Game1.activeClickableMenu = menu;
         }
-
+        
         private string recentTarget = null;
         private void onExteriorSelected( string type, string choice )
         {
             Log.debug("onExteriorSelected: " + recentTarget + " " + type + " " + choice);
-
-            foreach ( Building building in Game1.getFarm().buildings )
+            
+            Texture2D tex = getTextureForChoice(type, choice);
+            if (tex == null)
             {
-                if ( building.buildingType == type && building.nameOfIndoors == recentTarget )
-                {
-                    Texture2D tex = getTextureForChoice( type, choice );
-                    if ( tex == null )
-                        Log.warn("Failed to load chosen texture '" + choice + "' for building type '" + type + "'.");
-                    else
-                        building.texture = tex;
+                Log.warn("Failed to load chosen texture '" + choice + "' for building type '" + type + "'.");
+                return;
+            }
+            chosen[recentTarget] = choice;
 
-                    break;
+            if ( recentTarget == "FarmHouse" || recentTarget == "Greenhouse" )
+            {
+                housesHybrid = null;
+                Game1.getFarm().houseTextures = getHousesTexture();
+            }
+            else
+            {
+                foreach ( Building building in Game1.getFarm().buildings )
+                {
+                    if (building.buildingType == type && building.nameOfIndoors == recentTarget)
+                    {
+                        building.texture = tex;
+                        break;
+                    }
                 }
             }
+        }
+
+        public static string getChosenTexture( string type )
+        {
+            return chosen.ContainsKey(type) ? chosen[type] : "/";
         }
 
         public static Texture2D getTextureForChoice(string type, string choice)
@@ -155,6 +187,36 @@ namespace CustomizeExterior
                 return Game1.content.Load<Texture2D>("Buildings/" + type);
             else
                 return content.Load<Texture2D>(choice + "/" + type);
+        }
+        
+        private static Texture2D housesHybrid = null;
+        private static Texture2D getHousesTexture()
+        {
+            if (housesHybrid != null)
+                return housesHybrid;
+
+            Log.trace("Creating hybrid farmhouse/greenhouse texture");
+
+            Farm farm = Game1.getFarm();
+            Texture2D baseTex = farm.houseTextures;
+            Rectangle houseRect = instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "houseSource");
+            Rectangle greenhouseRect = instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "greenhouseSource");
+
+            GraphicsDevice dev = Game1.graphics.GraphicsDevice;
+            RenderTarget2D ret = new RenderTarget2D(dev, baseTex.Width, baseTex.Height);
+            SpriteBatch b = Game1.spriteBatch;
+            dev.SetRenderTarget(ret);
+            {
+                dev.Clear(Color.Transparent);
+                b.Begin();
+                b.Draw(getTextureForChoice("houses", getChosenTexture("FarmHouse")), houseRect, houseRect, Color.White);
+                b.Draw(getTextureForChoice("houses", getChosenTexture("Greenhouse")), greenhouseRect, greenhouseRect, Color.White);
+                b.End();
+            }
+            dev.SetRenderTarget(null);
+
+            housesHybrid = ret;
+            return ret;
         }
     }
 }
