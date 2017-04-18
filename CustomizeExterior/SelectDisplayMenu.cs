@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using StardewValley;
+using StardewValley.BellsAndWhistles;
 
 namespace CustomizeExterior
 {
     class SelectDisplayMenu : IClickableMenu
     {
         private const int PADDING_OUTER = 100;
-        private const int PADDING_INNER = 32;
+        private const int PADDING_INNER = 50;
+        private const int PADDING_IN = 20;
 
         private string type;
         private string active;
@@ -28,6 +30,7 @@ namespace CustomizeExterior
             type = theType;
             active = theActive;
 
+            choices.Add("/", null);
             foreach ( var choice in CustomizeExteriorMod.config.choices[ type ] )
             {
                 choices.Add(choice, CustomizeExteriorMod.content.Load<Texture2D>(type + "/" + choice));
@@ -44,7 +47,6 @@ namespace CustomizeExterior
 
         public override void draw(SpriteBatch b)
         {
-            base.draw(b);
             drawTextureBox(b, x, PADDING_OUTER, size, size, Color.White);
 
             int i = 0;
@@ -52,10 +54,18 @@ namespace CustomizeExterior
             {
                 int ix = x + PADDING_INNER + (entrySize + PADDING_INNER) * (i % 3);
                 int iy = PADDING_OUTER + PADDING_INNER + (entrySize + PADDING_INNER) * (i / 3);
-                b.Draw(entry.Value, new Rectangle(ix, iy, entrySize, entrySize), new Rectangle( 0, 0, entry.Value.Width, entry.Value.Height ), Color.White);
 
+                drawTextureBox(b, ix, iy, entrySize, entrySize, Color.White);
+
+                if (entry.Value != null)
+                    b.Draw(entry.Value, new Rectangle(ix + PADDING_IN, iy + PADDING_IN, entrySize - PADDING_IN * 2, entrySize - PADDING_IN * 2), new Rectangle(0, 0, entry.Value.Width, entry.Value.Height), Color.White);
+                else
+                    SpriteText.drawString(b, entry.Key, ix + PADDING_IN + (entrySize - PADDING_IN * 2 - SpriteText.getWidthOfString(entry.Key)) / 2, iy + PADDING_IN + (entrySize - PADDING_IN * 2 - SpriteText.getHeightOfString(entry.Key)) / 2);
+                
                 ++i;
             }
+
+            base.draw(b);
         }
     }
 }
