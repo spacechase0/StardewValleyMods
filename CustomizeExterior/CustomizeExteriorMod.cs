@@ -112,6 +112,12 @@ namespace CustomizeExterior
             var choices = Directory.GetDirectories(Path.Combine(Helper.DirectoryPath, "Buildings"));
             foreach ( var choice in choices )
             {
+                if (choice == "spring" || choice == "summer" || choice == "fall" || choice == "winter")
+                {
+                    Log.warn("A seasonal texture set was installed incorrectly. '" + choice + "' should not be directly in the Buildings folder.");
+                    continue;
+                }
+
                 Log.info("Choice type: " + Path.GetFileName(choice));
                 var types = Directory.GetFiles(choice);
                 foreach ( var type in types )
@@ -122,7 +128,8 @@ namespace CustomizeExterior
                     string choiceStr = Path.GetFileName(choice);
                     string typeStr = Path.GetFileNameWithoutExtension(type);
                     List<string> forType = Mod.choices.ContainsKey(typeStr) ? Mod.choices[typeStr] : new List<string>();
-                    forType.Add(choiceStr);
+                    if ( !forType.Contains( choiceStr ) )
+                        forType.Add(choiceStr);
                     if (!Mod.choices.ContainsKey(typeStr))
                         Mod.choices.Add(typeStr, forType);
 
@@ -161,7 +168,8 @@ namespace CustomizeExterior
                         if ( summer.Contains( building ) && fall.Contains( building ) && winter.Contains( building ) )
                         {
                             List<string> forType = Mod.choices.ContainsKey(typeStr) ? Mod.choices[typeStr] : new List<string>();
-                            forType.Add(SEASONAL_INDICATOR + choiceStr);
+                            if (!forType.Contains(SEASONAL_INDICATOR + choiceStr))
+                                forType.Add(SEASONAL_INDICATOR + choiceStr);
                             if (!Mod.choices.ContainsKey(typeStr))
                                 Mod.choices.Add(typeStr, forType);
 
