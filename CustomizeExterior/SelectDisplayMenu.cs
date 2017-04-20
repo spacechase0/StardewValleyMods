@@ -29,6 +29,8 @@ namespace CustomizeExterior
         private int size;
         private int entrySize;
 
+        int scroll = 0;
+
         public SelectDisplayMenu( string theType, string theActive )
         {
             type = theType;
@@ -52,6 +54,7 @@ namespace CustomizeExterior
             {
                 int ix = this.x + PADDING_INNER + (entrySize + PADDING_INNER) * (i % 3);
                 int iy = PADDING_OUTER + PADDING_INNER + (entrySize + PADDING_INNER) * (i / 3);
+                iy += scroll;
                 
                 if (new Rectangle(ix, iy, entrySize, entrySize).Contains(x, y))
                 {
@@ -70,29 +73,50 @@ namespace CustomizeExterior
         public override void receiveRightClick(int x, int y, bool playSound = true)
         {
         }
-        
+
+        public override void receiveScrollWheelAction(int dir)
+        {
+            scroll += dir;
+            if (scroll > 0) scroll = 0;
+
+            int cap = PADDING_OUTER + PADDING_INNER + (entrySize + PADDING_INNER) * (choices.Count / 3 - 3) + PADDING_INNER * 2;
+            if (scroll <= -cap) scroll = -cap;
+        }
+
         public override void draw(SpriteBatch b)
         {
             drawTextureBox(b, x, PADDING_OUTER, size, size, Color.White);
 
-            int i = 0;
-            foreach ( var entry in choices )
+            int edge = (int)(10 * Game1.options.zoomLevel);
+
+            b.End();
+            RasterizerState state = new RasterizerState();
+            state.ScissorTestEnable = true;
+            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, state );
+            b.GraphicsDevice.ScissorRectangle = new Rectangle(x + edge, PADDING_OUTER + edge, size - edge * 2, size - edge * 2);
             {
-                int ix = x + PADDING_INNER + (entrySize + PADDING_INNER) * (i % 3);
-                int iy = PADDING_OUTER + PADDING_INNER + (entrySize + PADDING_INNER) * (i / 3);
+                int i = 0;
+                foreach (var entry in choices)
+                {
+                    int ix = x + PADDING_INNER + (entrySize + PADDING_INNER) * (i % 3);
+                    int iy = PADDING_OUTER + PADDING_INNER + (entrySize + PADDING_INNER) * (i / 3);
+                    iy += scroll;
 
-                Color col = entry.Key == active ? Color.Goldenrod : Color.White;
-                if ( new Rectangle(ix, iy, entrySize, entrySize).Contains(Game1.getMousePosition()) )
-                    col = Color.Wheat;
-                drawTextureBox(b, ix, iy, entrySize, entrySize, col);
+                    Color col = entry.Key == active ? Color.Goldenrod : Color.White;
+                    if (new Rectangle(ix, iy, entrySize, entrySize).Contains(Game1.getMousePosition()))
+                        col = Color.Wheat;
+                    drawTextureBox(b, ix, iy, entrySize, entrySize, col);
 
-                if (entry.Value != null)
-                    b.Draw(entry.Value, new Rectangle(ix + PADDING_IN, iy + PADDING_IN, entrySize - PADDING_IN * 2, entrySize - PADDING_IN * 2), new Rectangle(0, 0, entry.Value.Width, entry.Value.Height), Color.White);
-                else
-                    SpriteText.drawString(b, entry.Key, ix + PADDING_IN + (entrySize - PADDING_IN * 2 - SpriteText.getWidthOfString(entry.Key)) / 2, iy + PADDING_IN + (entrySize - PADDING_IN * 2 - SpriteText.getHeightOfString(entry.Key)) / 2);
-                
-                ++i;
+                    if (entry.Value != null)
+                        b.Draw(entry.Value, new Rectangle(ix + PADDING_IN, iy + PADDING_IN, entrySize - PADDING_IN * 2, entrySize - PADDING_IN * 2), new Rectangle(0, 0, entry.Value.Width, entry.Value.Height), Color.White);
+                    else
+                        SpriteText.drawString(b, entry.Key, ix + PADDING_IN + (entrySize - PADDING_IN * 2 - SpriteText.getWidthOfString(entry.Key)) / 2, iy + PADDING_IN + (entrySize - PADDING_IN * 2 - SpriteText.getHeightOfString(entry.Key)) / 2);
+
+                    ++i;
+                }
             }
+            b.End();
+            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
 
             base.draw(b);
             drawMouse(b);
