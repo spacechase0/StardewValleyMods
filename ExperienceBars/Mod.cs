@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Reflection;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewModdingAPI.Inheritance;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Objects;
@@ -19,7 +18,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ExperienceBars
 {
-    public class ExperienceBarsMod : Mod
+    public class Mod : StardewModdingAPI.Mod
     {
         public static readonly int[] expNeededForLevel = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
         
@@ -27,7 +26,7 @@ namespace ExperienceBars
         public static int expBottom = 0;
         public static bool show = true;
 
-        public override void Entry(params object[] objects)
+        public override void Entry( IModHelper helper )
         {
             GraphicsEvents.OnPostRenderHudEvent += renderExpBars;
             ControlEvents.KeyPressed += checkToggle;
