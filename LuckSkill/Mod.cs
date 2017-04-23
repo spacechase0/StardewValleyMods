@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewModdingAPI.Inheritance;
 using StardewValley;
-using StardewValley.Menus;
-using StardewValley.Objects;
-using StardewValley.Tools;
-using Object = StardewValley.Object;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewValley.Events;
+using StardewValley.Menus;
 using StardewValley.Quests;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using SFarmer = StardewValley.Farmer;
 
 namespace LuckSkill
 {
-    public class LuckSkillMod : Mod
+    public class Mod : StardewModdingAPI.Mod
     {
         public const int PROFESSION_DAILY_LUCK = 5 * 6;
         public const int PROFESSION_MOREQUESTS = 5 * 6 + 1;// 4;
@@ -27,8 +21,13 @@ namespace LuckSkill
         public const int PROFESSION_A2 = 5 * 6 + 3;
         public const int PROFESSION_NIGHTLY_EVENTS = 5 * 6 + 4;// 1;
         public const int PROFESSION_B2 = 5 * 6 + 5;
-        public override void Entry(params object[] objects)
+
+        public static Mod instance;
+
+        public override void Entry(IModHelper helper)
         {
+            instance = this;
+
             GameEvents.GameLoaded += gameLoaded;
             TimeEvents.OnNewDay += newDay;
             MenuEvents.MenuClosed += fishingExp;
@@ -62,8 +61,7 @@ namespace LuckSkill
                 gainLuckExp((int)(diff));
             }
         }
-
-        private bool wasEating = false;
+        
         private bool hadGeode = false;
         private void update(object sender, EventArgs args)
         {
@@ -273,7 +271,7 @@ namespace LuckSkill
 
                         if ( quest != null )
                         {
-                            Log.Async("[LuckSkill] Applying quest " + quest + " for today, due to having PROFESSION_MOREQUESTS.");
+                            Log.info("Applying quest " + quest + " for today, due to having PROFESSION_MOREQUESTS.");
                             Game1.questOfTheDay = quest;
                         }
                     }
@@ -302,7 +300,7 @@ namespace LuckSkill
 
                     if ( ev != null )
                     {
-                        Log.Async("[LuckSkill] Applying " + ev + " as tonight's nightly event, due to having PROFESSION_NIGHTLY_EVENTS");
+                        Log.info("Applying " + ev + " as tonight's nightly event, due to having PROFESSION_NIGHTLY_EVENTS");
                         if (Game1.farmEvent == null) // showEndOfNightStuff() was already called, so we need to make it think that didn't happen
                         {
                             // Utility.consolidateStacks was called on the original list.
@@ -330,7 +328,7 @@ namespace LuckSkill
                         }
                         else
                         {
-                            Log.Async("[LuckSkill] However we are replacing a dog attack event.");
+                            Log.info("However we are replacing a dog attack event.");
                             // We're replacing the dogs attacking animals left out event. It's pretty much the "fallback" event when another isn't chosen.
                             // Since we're replacing the existing event the showEndOfNightStuff hasn't happened yet.
                             // However farmEvent is already null if the attack setup failed. So this probably also increases the chance of a successful attack :P
@@ -412,7 +410,7 @@ namespace LuckSkill
             {
                 return;
             }
-            int num = Farmer.checkForLevelGain(Game1.player.experiencePoints[which], Game1.player.experiencePoints[which] + howMuch);
+            int num = SFarmer.checkForLevelGain(Game1.player.experiencePoints[which], Game1.player.experiencePoints[which] + howMuch);
             Game1.player.experiencePoints[which] += howMuch;
             int num2 = -1;
             if (num != -1)
@@ -474,19 +472,19 @@ namespace LuckSkill
         {
             try
             {
-                Type t = Type.GetType("ExperienceBars.ExperienceBarsMod, ExperienceBars");
+                Type t = Type.GetType("ExperienceBars.Mod, ExperienceBars");
                 if (t == null)
                 {
-                    Log.Async("[LuckSkill] Experience Bars not found");
+                    Log.info("Experience Bars not found");
                     return;
                 }
 
-                Log.Async("[LuckSkill] Experience Bars found, adding luck bar.");
+                Log.info("Experience Bars found, adding luck bar.");
                 Util.SetStaticField(t, "renderLuck", true);
             }
             catch (Exception e)
             {
-                Log.Async("Exception showing luck: " + e);
+                Log.error("Exception showing luck: " + e);
             }
         }
 
@@ -500,16 +498,16 @@ namespace LuckSkill
                 Type t = Type.GetType("AllProfessions.AllProfessions, AllProfessions");
                 if (t == null)
                 {
-                    Log.Async("[LuckSkill] All Professions not found.");
+                    Log.info("All Professions not found.");
                     return;
                 }
 
-                Log.Async("[LuckSkill] All Professions found. You will get every luck profession for your level.");
+                Log.info("All Professions found. You will get every luck profession for your level.");
                 HAS_ALL_PROFESSIONS = true;
             }
             catch (Exception e)
             {
-                Log.Async("Exception checking all professions: " + e);
+                Log.error("Exception checking all professions: " + e);
             }
         }
     }

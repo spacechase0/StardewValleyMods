@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using StardewValley;
+using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using StardewValley;
-using StardewValley.Menus;
+using SFarmer = StardewValley.Farmer;
 
 namespace LuckSkill
 {
@@ -92,7 +93,7 @@ namespace LuckSkill
 				"Level ",
 				this.currentLevel,
 				" ",
-				Farmer.getSkillNameFromIndex(this.currentSkill)
+				SFarmer.getSkillNameFromIndex(this.currentSkill)
 			});
             this.extraInfoForLevel = this.getExtraInfoForLevel(this.currentSkill, this.currentLevel);
             switch (this.currentSkill)
@@ -145,7 +146,7 @@ namespace LuckSkill
 				{
 					'/'
 				})[4];
-                if (text.Contains(Farmer.getSkillNameFromIndex(this.currentSkill)) && text.Contains(string.Concat(this.currentLevel)))
+                if (text.Contains(SFarmer.getSkillNameFromIndex(this.currentSkill)) && text.Contains(string.Concat(this.currentLevel)))
                 {
                     this.newCraftingRecipes.Add(new CraftingRecipe(current.Key, false));
                     if (!Game1.player.craftingRecipes.ContainsKey(current.Key))
@@ -161,7 +162,7 @@ namespace LuckSkill
 				{
 					'/'
 				})[3];
-                if (text2.Contains(Farmer.getSkillNameFromIndex(this.currentSkill)) && text2.Contains(string.Concat(this.currentLevel)))
+                if (text2.Contains(SFarmer.getSkillNameFromIndex(this.currentSkill)) && text2.Contains(string.Concat(this.currentLevel)))
                 {
                     this.newCraftingRecipes.Add(new CraftingRecipe(current2.Key, true));
                     if (!Game1.player.cookingRecipes.ContainsKey(current2.Key))
@@ -232,17 +233,17 @@ namespace LuckSkill
             if (professionName == "") return; // What
 
             descriptions.Add(professionName);
-            if (professionName == getProfessionName(LuckSkillMod.PROFESSION_DAILY_LUCK))
+            if (professionName == getProfessionName(Mod.PROFESSION_DAILY_LUCK))
                 descriptions.Add("Better daily luck.");
-            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_NIGHTLY_EVENTS))
+            else if (professionName == getProfessionName(Mod.PROFESSION_NIGHTLY_EVENTS))
                 descriptions.Add("Nightly events occur twice as often.");
-            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_SPECIAL_CHARM))
+            else if (professionName == getProfessionName(Mod.PROFESSION_SPECIAL_CHARM))
                 descriptions.Add("Great daily luck most of the time.");
-            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_A2))
+            else if (professionName == getProfessionName(Mod.PROFESSION_A2))
                 descriptions.Add("<TODO>");
-            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_MOREQUESTS))
+            else if (professionName == getProfessionName(Mod.PROFESSION_MOREQUESTS))
                 descriptions.Add("<NEEDS_NAME_Q>");
-            else if (professionName == getProfessionName(LuckSkillMod.PROFESSION_B2))
+            else if (professionName == getProfessionName(Mod.PROFESSION_B2))
                 descriptions.Add("B2");
             else
             {
@@ -321,17 +322,17 @@ namespace LuckSkill
                     return "Desperado";
                 default:
                     return "";
-                case LuckSkillMod.PROFESSION_DAILY_LUCK:
+                case Mod.PROFESSION_DAILY_LUCK:
                     return "Lucky";
-                case LuckSkillMod.PROFESSION_NIGHTLY_EVENTS:
+                case Mod.PROFESSION_NIGHTLY_EVENTS:
                     return "<NEEDS_NAME_E>";
-                case LuckSkillMod.PROFESSION_SPECIAL_CHARM:
+                case Mod.PROFESSION_SPECIAL_CHARM:
                     return "Special Charm";
-                case LuckSkillMod.PROFESSION_A2:
+                case Mod.PROFESSION_A2:
                     return "A2";
-                case LuckSkillMod.PROFESSION_MOREQUESTS:
+                case Mod.PROFESSION_MOREQUESTS:
                     return "<NEEDS_NAME_Q>";
-                case LuckSkillMod.PROFESSION_B2:
+                case Mod.PROFESSION_B2:
                     return "B2";
             }
         }
@@ -345,8 +346,8 @@ namespace LuckSkill
 
         public static string getProfessionTitleFromNumber(int whichProfession)
         {
-            if ( whichProfession == LuckSkillMod.PROFESSION_DAILY_LUCK || whichProfession == LuckSkillMod.PROFESSION_SPECIAL_CHARM || whichProfession == LuckSkillMod.PROFESSION_A2 ||
-                 whichProfession == LuckSkillMod.PROFESSION_MOREQUESTS || whichProfession == LuckSkillMod.PROFESSION_NIGHTLY_EVENTS || whichProfession == LuckSkillMod.PROFESSION_B2 )
+            if ( whichProfession == Mod.PROFESSION_DAILY_LUCK || whichProfession == Mod.PROFESSION_SPECIAL_CHARM || whichProfession == Mod.PROFESSION_A2 ||
+                 whichProfession == Mod.PROFESSION_MOREQUESTS || whichProfession == Mod.PROFESSION_NIGHTLY_EVENTS || whichProfession == Mod.PROFESSION_B2 )
             {
                 return getProfessionName(whichProfession);
             }
@@ -363,7 +364,7 @@ namespace LuckSkill
 
         public void getImmediateProfessionPerk(int whichProfession)
         {
-            if (whichProfession == LuckSkillMod.PROFESSION_SPECIAL_CHARM)
+            if (whichProfession == Mod.PROFESSION_SPECIAL_CHARM)
             {
                 Game1.player.hasSpecialCharm = true;
                 return;
@@ -481,7 +482,7 @@ namespace LuckSkill
                 this.title = Game1.content.LoadString("Strings\\UI:LevelUp_Title", new object[]
                 {
                 this.currentLevel,
-                Farmer.getSkillNameFromIndex(this.currentSkill)
+                SFarmer.getSkillNameFromIndex(this.currentSkill)
                 });
                 this.extraInfoForLevel = this.getExtraInfoForLevel(this.currentSkill, this.currentLevel);
                 switch (this.currentSkill)
@@ -534,7 +535,7 @@ namespace LuckSkill
 					{
 						'/'
 					})[4];
-                    if (text.Contains(Farmer.getSkillNameFromIndex(this.currentSkill)) && text.Contains(string.Concat(this.currentLevel)))
+                    if (text.Contains(SFarmer.getSkillNameFromIndex(this.currentSkill)) && text.Contains(string.Concat(this.currentLevel)))
                     {
                         this.newCraftingRecipes.Add(new CraftingRecipe(current.Key, false));
                         if (!Game1.player.craftingRecipes.ContainsKey(current.Key))
@@ -550,7 +551,7 @@ namespace LuckSkill
 					{
 						'/'
 					})[3];
-                    if (text2.Contains(Farmer.getSkillNameFromIndex(this.currentSkill)) && text2.Contains(string.Concat(this.currentLevel)))
+                    if (text2.Contains(SFarmer.getSkillNameFromIndex(this.currentSkill)) && text2.Contains(string.Concat(this.currentLevel)))
                     {
                         this.newCraftingRecipes.Add(new CraftingRecipe(current2.Key, true));
                         if (!Game1.player.cookingRecipes.ContainsKey(current2.Key))
