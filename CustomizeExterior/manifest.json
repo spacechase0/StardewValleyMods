@@ -8,7 +8,7 @@
     "Build": ""
   },
   "Description": "Change the exterior of your buildings.",
-  "UniqueID": "CustomizeExterior",
+  "UniqueID": "spacechase0.CustomizeExterior",
   "PerSaveConfigs": false,
   "EntryDll": "CustomizeExterior.dll"
 }
