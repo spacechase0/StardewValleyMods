@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Reflection;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewModdingAPI.Inheritance;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Objects;
@@ -21,8 +20,10 @@ using System.IO;
 namespace CookingSkill
 {
     // This really needs organizing/splitting
-    public class CookingSkillMod : Mod
+    public class Mod : StardewModdingAPI.Mod
     {
+        public static Mod instance;
+
         public static readonly int[] expNeededForLevel = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
         public static List<int> newCookingLevels = new List<int>();
         public static int getCookingLevel()
@@ -47,19 +48,19 @@ namespace CookingSkill
             fixExpLength();
 
             int oldLevel = getCookingLevel();
-            Log.Async("Adding " + amt+ "experience to cooking, from " + Game1.player.experiencePoints[6]);
+            Log.trace("Adding " + amt+ "experience to cooking, from " + Game1.player.experiencePoints[6]);
             Game1.player.experiencePoints[6] += amt;
             if (Game1.player.experiencePoints[6] > expNeededForLevel[expNeededForLevel.Length - 1])
                 Game1.player.experiencePoints[6] = expNeededForLevel[expNeededForLevel.Length - 1];
 
             int newLevel = getCookingLevel();
-            Log.Async("From level " + oldLevel + " to " + newLevel);
+            Log.debug("From level " + oldLevel + " to " + newLevel);
             for ( int i = oldLevel + 1; i <= newLevel; ++i )
             {
                 if (i == 0)
                     continue;
 
-                Log.Async("Adding new cooking level: " + i);
+                Log.debug("Adding new cooking level: " + i);
                 newCookingLevels.Add(i);
             }
         }
@@ -153,7 +154,7 @@ namespace CookingSkill
         {
             if ( args.Command.CalledArgs.Length != 1 )
             {
-                Log.AsyncY("Command format: giveCookingExp <amount>");
+                Log.info("Command format: giveCookingExp <amount>");
                 return;
             }
 
@@ -164,12 +165,12 @@ namespace CookingSkill
             }
             catch ( Exception e )
             {
-                Log.AsyncY( "Bad experience amount." );
+                Log.error( "Bad experience amount." );
                 return;
             }
 
             addCookingExp(amt);
-            Log.AsyncY("Added " + amt + " cooking experience.");
+            Log.info("Added " + amt + " cooking experience.");
         }
 
         public const int PROFESSION_SELLPRICE = 50;
@@ -181,8 +182,10 @@ namespace CookingSkill
 
         public static Texture2D icon;
 
-        public override void Entry(params object[] objects)
+        public override void Entry( IModHelper helper )
         {
+            instance = this;
+
             GameEvents.LoadContent += gameLoaded;
             TimeEvents.OnNewDay += newDay;
             LocationEvents.CurrentLocationChanged += locChanged;
@@ -200,13 +203,13 @@ namespace CookingSkill
             {
                 try
                 {
-                    string iconTex = Path.GetDirectoryName(this.PathOnDisk) + Path.DirectorySeparatorChar + "CookingSkill" + Path.DirectorySeparatorChar + "iconA.png";
+                    string iconTex = Helper.DirectoryPath + Path.DirectorySeparatorChar + "iconA.png";
                     FileStream fs = new FileStream(iconTex, FileMode.Open);
                     icon = Texture2D.FromStream(Game1.graphics.GraphicsDevice, fs);
                 }
                 catch ( Exception e )
                 {
-                    Log.Async( "[CookingSkill] Failed to load icon: " + e );
+                    Log.error( "Failed to load icon: " + e );
                     icon = new Texture2D( Game1.graphics.GraphicsDevice, 16, 16 );
                     icon.SetData( Enumerable.Range( 0, 16 * 16 ).Select( i => new Color( 225, 168, 255 ) ).ToArray() );
                 }
@@ -248,12 +251,12 @@ namespace CookingSkill
                             Buff thisBuff = (buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), 0, (info.Count<string>() > 7) ? Convert.ToInt32(info[7]) : -1, info[0]));
                             int[] oldAttr = (oldBuff == null ? null : ((int[])Util.GetInstanceField(typeof(Buff), oldBuff, "buffAttributes")));
                             int[] thisAttr = (thisBuff == null ? null : ((int[])Util.GetInstanceField(typeof(Buff), thisBuff, "buffAttributes")));
-                            Log.Async("Ate something: " + obj + " " + Game1.objectInformation[obj.ParentSheetIndex] + " " + buffData + " " + oldBuff + " " + thisBuff + " " + oldAttr + " " + thisAttr);
+                            Log.trace("Ate something: " + obj + " " + Game1.objectInformation[obj.ParentSheetIndex] + " " + buffData + " " + oldBuff + " " + thisBuff + " " + oldAttr + " " + thisAttr);
                             if (oldBuff != null && thisBuff != null && Enumerable.SequenceEqual(oldAttr, thisAttr) &&
                                  ((info[5] == "drink" && oldBuff != lastDrink) || (info[5] != "drink" && oldBuff != lastDrink)))
                             {
                                 // Now that we know that this is the original buff, we can buff the buff.
-                                Log.Async("Buffing buff");
+                                Log.trace("Buffing buff");
                                 int[] newAttr = (int[])thisAttr.Clone();
                                 if (Game1.player.professions.Contains(PROFESSION_BUFFLEVEL))
                                 {
@@ -300,7 +303,7 @@ namespace CookingSkill
                             }
                             else if (thisBuff == null && Game1.player.professions.Contains(PROFESSION_BUFFPLAIN))
                             {
-                                Log.Async("Buffing plain");
+                                Log.trace("Buffing plain");
                                 Random rand = new Random();
                                 int[] newAttr = new int[12];
                                 int count = 1 + Math.Min(obj.edibility / 30, 3);
@@ -351,10 +354,10 @@ namespace CookingSkill
                         }
                     }
                 }
-                Log.Async("Eating:" + Game1.isEating);
-                Log.Async("prev:" + prevToEatStack);
-                Log.Async("I:"+Game1.player.itemToEat + " " + ((Game1.player.itemToEat != null) ? Game1.player.itemToEat.getStack() : -1));
-                Log.Async("A:" + Game1.player.ActiveObject + " " + ((Game1.player.ActiveObject != null) ? Game1.player.ActiveObject.getStack() : -1));
+                Log.trace("Eating:" + Game1.isEating);
+                Log.trace("prev:" + prevToEatStack);
+                Log.trace("I:"+Game1.player.itemToEat + " " + ((Game1.player.itemToEat != null) ? Game1.player.itemToEat.getStack() : -1));
+                Log.trace("A:" + Game1.player.ActiveObject + " " + ((Game1.player.ActiveObject != null) ? Game1.player.ActiveObject.getStack() : -1));
                 prevToEatStack = (Game1.player.itemToEat != null ? Game1.player.itemToEat.Stack : -1);
             }
             wasEating = Game1.isEating;
@@ -515,12 +518,12 @@ namespace CookingSkill
 
         private void newDay( object sender, EventArgs args )
         {
-            Log.Async("New day");
+            Log.debug("New day");
             if (!Game1.newDay && Game1.showingEndOfNightStuff)
             {
                 if (Game1.activeClickableMenu is CookingLevelUpMenu)
                     return;
-                Log.Async("Doing cooking menus");
+                Log.debug("Doing cooking menus");
 
                 // This'll mess up if a farm event comes up
                 // Not sure how to do it properly without hooking into showEndOfNightStuff
@@ -532,7 +535,7 @@ namespace CookingSkill
                     for (int i = newCookingLevels.Count() - 1; i >= 0; --i )
                     {
                         int level = newCookingLevels[i];
-                        Log.Async("Doing " + i + ": cooking level " + level + " screen");
+                        Log.debug("Doing " + i + ": cooking level " + level + " screen");
 
                         if (Game1.activeClickableMenu != null)
                             Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
@@ -542,7 +545,7 @@ namespace CookingSkill
                 }
                 else if ( getCookingLevel() >= 5 && !Game1.player.professions.Contains( PROFESSION_SELLPRICE ) &&!Game1.player.professions.Contains( PROFESSION_BUFFTIME ) )
                 {
-                    Log.Async("Putting level 5 profession menu");
+                    Log.debug("Putting level 5 profession menu");
                     if (Game1.activeClickableMenu != null)
                         Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
                     Game1.activeClickableMenu = new CookingLevelUpMenu(5);
@@ -550,7 +553,7 @@ namespace CookingSkill
                 else if (getCookingLevel() >= 10 && !Game1.player.professions.Contains(PROFESSION_CONSERVATION) && !Game1.player.professions.Contains(PROFESSION_SILVER) &&
                          !Game1.player.professions.Contains(PROFESSION_BUFFLEVEL) && !Game1.player.professions.Contains(PROFESSION_BUFFPLAIN))
                 {
-                    Log.Async("Putting level 10 profession menu");
+                    Log.debug("Putting level 10 profession menu");
                     if (Game1.activeClickableMenu != null)
                         Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
                     Game1.activeClickableMenu = new CookingLevelUpMenu(10);
@@ -603,42 +606,26 @@ namespace CookingSkill
         private bool hasLuck = false;
         private void checkForLuck()
         {
-            try
+            if ( !Helper.ModRegistry.IsLoaded( "spacechase0.LuckSkill" ) )
             {
-                Type t = Type.GetType("LuckSkill.LuckSkillMod, LuckSkill");
-                if (t == null)
-                {
-                    Log.Async("[CookingSkill] Luck Skill not found");
-                    return;
-                }
+                Log.info("Luck Skill not found");
+                return;
+            }
 
-                Log.Async("[CookingSkill] Luck found, making a note for later.");
-                hasLuck = true;
-            }
-            catch (Exception e)
-            {
-                Log.Async("Exception checking experience bars: " + e);
-            }
+            Log.info("Luck found, making a note for later.");
+            hasLuck = true;
         }
 
         private void checkForExperienceBars()
         {
-            try
+            if (!Helper.ModRegistry.IsLoaded("spacechase0.ExperienceBars"))
             {
-                Type t = Type.GetType("ExperienceBars.ExperienceBarsMod, ExperienceBars");
-                if (t == null)
-                {
-                    Log.Async("[CookingSkill] Experience Bars not found");
-                    return;
-                }
+                Log.info("Experience Bars not found");
+                return;
+            }
 
-                Log.Async("[CookingSkill] Experience Bars found, adding cooking experience bar renderer.");
-                GraphicsEvents.OnPostRenderHudEvent += drawExperienceBar;
-            }
-            catch (Exception e)
-            {
-                Log.Async("Exception checking experience bars: " + e);
-            }
+            Log.info("Experience Bars found, adding cooking experience bar renderer.");
+            GraphicsEvents.OnPostRenderHudEvent += drawExperienceBar;
         }
 
         private void drawExperienceBar(object sender, EventArgs args_)
@@ -651,7 +638,7 @@ namespace CookingSkill
                 if (Game1.player.experiencePoints.Count() < 7)
                     return;
 
-                Type t = Type.GetType("ExperienceBars.ExperienceBarsMod, ExperienceBars");
+                Type t = Type.GetType("ExperienceBars.Mod, ExperienceBars");
 
                 int level = getCookingLevel();
                 int exp = Game1.player.experiencePoints[6];
@@ -690,7 +677,7 @@ namespace CookingSkill
             }
             catch ( Exception e)
             {
-                Log.Async( "Exception rendering cooking bar: " + e );
+                Log.error( "Exception rendering cooking bar: " + e );
                 GraphicsEvents.OnPostRenderHudEvent -= drawExperienceBar;
             }
         }
@@ -705,16 +692,16 @@ namespace CookingSkill
                 Type t = Type.GetType("AllProfessions.AllProfessions, AllProfessions");
                 if (t == null)
                 {
-                    Log.Async("[CookingSkill] All Professions not found.");
+                    Log.info("[CookingSkill] All Professions not found.");
                     return;
                 }
 
-                Log.Async("[CookingSkill] All Professions found. You will get every cooking profession for your level.");
+                Log.info("[CookingSkill] All Professions found. You will get every cooking profession for your level.");
                 HAS_ALL_PROFESSIONS = true;
             }
             catch (Exception e)
             {
-                Log.Async("Exception checking all professions: " + e);
+                Log.error("Exception checking all professions: " + e);
             }
         }
     }

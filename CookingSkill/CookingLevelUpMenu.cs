@@ -98,18 +98,18 @@ namespace CookingSkill
                 this.isProfessionChooser = true;
                 if (this.currentLevel == 5)
                 {
-                    this.professionsToChoose.Add(CookingSkillMod.PROFESSION_SELLPRICE);
-                    this.professionsToChoose.Add(CookingSkillMod.PROFESSION_BUFFTIME);
+                    this.professionsToChoose.Add(Mod.PROFESSION_SELLPRICE);
+                    this.professionsToChoose.Add(Mod.PROFESSION_BUFFTIME);
                 }
-                else if (Game1.player.professions.Contains(CookingSkillMod.PROFESSION_SELLPRICE))
+                else if (Game1.player.professions.Contains(Mod.PROFESSION_SELLPRICE))
                 {
-                    this.professionsToChoose.Add(CookingSkillMod.PROFESSION_CONSERVATION);
-                    this.professionsToChoose.Add(CookingSkillMod.PROFESSION_SILVER);
+                    this.professionsToChoose.Add(Mod.PROFESSION_CONSERVATION);
+                    this.professionsToChoose.Add(Mod.PROFESSION_SILVER);
                 }
                 else
                 {
-                    this.professionsToChoose.Add(CookingSkillMod.PROFESSION_BUFFLEVEL);
-                    this.professionsToChoose.Add(CookingSkillMod.PROFESSION_BUFFPLAIN);
+                    this.professionsToChoose.Add(Mod.PROFESSION_BUFFLEVEL);
+                    this.professionsToChoose.Add(Mod.PROFESSION_BUFFPLAIN);
                 }
                 this.leftProfessionDescription = CookingLevelUpMenu.getProfessionDescription(this.professionsToChoose[0]);
                 this.rightProfessionDescription = CookingLevelUpMenu.getProfessionDescription(this.professionsToChoose[1]);
@@ -142,28 +142,28 @@ namespace CookingSkill
         {
             switch (whichProfession)
             {
-                case CookingSkillMod.PROFESSION_SELLPRICE:
+                case Mod.PROFESSION_SELLPRICE:
                     list.Add("Gourmet");
                     list.Add("+20% sell price");
                     break;
-                case CookingSkillMod.PROFESSION_BUFFTIME:
+                case Mod.PROFESSION_BUFFTIME:
                     list.Add("Satisfying");
                     list.Add("+25% buff duration once eaten");
                     break;
-                case CookingSkillMod.PROFESSION_CONSERVATION:
+                case Mod.PROFESSION_CONSERVATION:
                     list.Add("Efficient");
                     list.Add("15% chance to not consume ingredients");
                     break;
-                case CookingSkillMod.PROFESSION_SILVER:
+                case Mod.PROFESSION_SILVER:
                     list.Add("Professional Chef");
                     list.Add("Home-cooked meals are always at least silver");
                     break;
-                case CookingSkillMod.PROFESSION_BUFFLEVEL:
+                case Mod.PROFESSION_BUFFLEVEL:
                     list.Add("Intense Flavors");
                     list.Add("Food buffs are one level stronger once eaten");
                     list.Add("(+20% for max energy or magnetism)");
                     break;
-                case CookingSkillMod.PROFESSION_BUFFPLAIN:
+                case Mod.PROFESSION_BUFFPLAIN:
                     list.Add("Secret Spices");
                     list.Add("Provides a few random buffs when eating unbuffed food.");
                     break;
@@ -174,17 +174,17 @@ namespace CookingSkill
         {
             switch (whichProfession)
             {
-                case CookingSkillMod.PROFESSION_SELLPRICE:
+                case Mod.PROFESSION_SELLPRICE:
                     return "Gourmet";
-                case CookingSkillMod.PROFESSION_BUFFTIME:
+                case Mod.PROFESSION_BUFFTIME:
                     return "Satisfying";
-                case CookingSkillMod.PROFESSION_CONSERVATION:
+                case Mod.PROFESSION_CONSERVATION:
                     return "Efficient";
-                case CookingSkillMod.PROFESSION_SILVER:
+                case Mod.PROFESSION_SILVER:
                     return "Professional Chef";
-                case CookingSkillMod.PROFESSION_BUFFLEVEL:
+                case Mod.PROFESSION_BUFFLEVEL:
                     return "Intense Flavors";
-                case CookingSkillMod.PROFESSION_BUFFPLAIN:
+                case Mod.PROFESSION_BUFFPLAIN:
                     return "Secret Spices";
             }
 
@@ -310,7 +310,7 @@ namespace CookingSkill
                 Game1.playSound("bigSelect");
                 this.informationUp = true;
                 this.isProfessionChooser = false;
-                this.currentLevel = CookingSkillMod.newCookingLevels.First();//Game1.player.newLevels.First<Point>().Y;
+                this.currentLevel = Mod.newCookingLevels.First();//Game1.player.newLevels.First<Point>().Y;
                 this.title = string.Concat(new object[]
 				{
 					"Level ",
@@ -325,18 +325,18 @@ namespace CookingSkill
                     this.isProfessionChooser = true;
                     if (this.currentLevel == 5)
                     {
-                        this.professionsToChoose.Add(CookingSkillMod.PROFESSION_SELLPRICE);
-                        this.professionsToChoose.Add(CookingSkillMod.PROFESSION_BUFFTIME);
+                        this.professionsToChoose.Add(Mod.PROFESSION_SELLPRICE);
+                        this.professionsToChoose.Add(Mod.PROFESSION_BUFFTIME);
                     }
-                    else if (Game1.player.professions.Contains(CookingSkillMod.PROFESSION_SELLPRICE))
+                    else if (Game1.player.professions.Contains(Mod.PROFESSION_SELLPRICE))
                     {
-                        this.professionsToChoose.Add(CookingSkillMod.PROFESSION_CONSERVATION);
-                        this.professionsToChoose.Add(CookingSkillMod.PROFESSION_SILVER);
+                        this.professionsToChoose.Add(Mod.PROFESSION_CONSERVATION);
+                        this.professionsToChoose.Add(Mod.PROFESSION_SILVER);
                     }
                     else
                     {
-                        this.professionsToChoose.Add(CookingSkillMod.PROFESSION_BUFFLEVEL);
-                        this.professionsToChoose.Add(CookingSkillMod.PROFESSION_BUFFPLAIN);
+                        this.professionsToChoose.Add(Mod.PROFESSION_BUFFLEVEL);
+                        this.professionsToChoose.Add(Mod.PROFESSION_BUFFPLAIN);
                     }
                     this.leftProfessionDescription = CookingLevelUpMenu.getProfessionDescription(this.professionsToChoose[0]);
                     this.rightProfessionDescription = CookingLevelUpMenu.getProfessionDescription(this.professionsToChoose[1]);
@@ -398,9 +398,9 @@ namespace CookingSkill
                     Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true, null, false);
                     base.drawHorizontalPartition(b, this.yPositionOnScreen + Game1.tileSize * 3, false);
                     base.drawVerticalIntersectingPartition(b, this.xPositionOnScreen + this.width / 2 - Game1.tileSize / 2, this.yPositionOnScreen + Game1.tileSize * 3);
-                    Utility.drawWithShadow(b, CookingSkillMod.icon, new Vector2((float)(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, false, 0.88f, -1, -1, 0.35f);
+                    Utility.drawWithShadow(b, Mod.icon, new Vector2((float)(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, false, 0.88f, -1, -1, 0.35f);
                     b.DrawString(Game1.dialogueFont, this.title, new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.dialogueFont.MeasureString(this.title).X / 2f, (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), Game1.textColor);
-                    Utility.drawWithShadow(b, CookingSkillMod.icon, new Vector2((float)(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - Game1.tileSize), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, false, 0.88f, -1, -1, 0.35f);
+                    Utility.drawWithShadow(b, Mod.icon, new Vector2((float)(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - Game1.tileSize), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, false, 0.88f, -1, -1, 0.35f);
                     b.DrawString(Game1.smallFont, "Choose a profession:", new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.smallFont.MeasureString("Choose a profession:").X / 2f, (float)(this.yPositionOnScreen + Game1.tileSize + IClickableMenu.spaceToClearTopBorder)), Game1.textColor);
                     b.DrawString(Game1.dialogueFont, this.leftProfessionDescription[0], new Vector2((float)(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + Game1.tileSize / 2), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize * 5 / 2)), this.leftProfessionColor);
                     b.Draw(Game1.mouseCursors, new Vector2((float)(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width / 2 - Game1.tileSize * 2), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize * 5 / 2 - Game1.tileSize / 4)), new Rectangle?(new Rectangle(this.professionsToChoose[0] % 6 * 16, 624 + this.professionsToChoose[0] / 6 * 16, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
@@ -418,9 +418,9 @@ namespace CookingSkill
                 else
                 {
                     Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true, null, false);
-                    Utility.drawWithShadow(b, CookingSkillMod.icon, new Vector2((float)(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, false, 0.88f, -1, -1, 0.35f);
+                    Utility.drawWithShadow(b, Mod.icon, new Vector2((float)(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, false, 0.88f, -1, -1, 0.35f);
                     b.DrawString(Game1.dialogueFont, this.title, new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.dialogueFont.MeasureString(this.title).X / 2f, (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), Game1.textColor);
-                    Utility.drawWithShadow(b, CookingSkillMod.icon, new Vector2((float)(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - Game1.tileSize), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, false, 0.88f, -1, -1, 0.35f);
+                    Utility.drawWithShadow(b, Mod.icon, new Vector2((float)(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - Game1.tileSize), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize / 4)), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, false, 0.88f, -1, -1, 0.35f);
                     int num = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + Game1.tileSize * 5 / 4;
                     foreach (string current2 in this.extraInfoForLevel)
                     {

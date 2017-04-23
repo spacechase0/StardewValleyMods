@@ -229,7 +229,7 @@ namespace CookingSkill
         private void clickCraftingRecipe(ClickableTextureComponent c, bool playSound = true)
         {
             Item item = this.pagesOfCraftingRecipes[this.currentCraftingPage][c].createItem();
-            bool consume = CookingSkillMod.onCook(this.pagesOfCraftingRecipes[this.currentCraftingPage][c], item);
+            bool consume = Mod.onCook(this.pagesOfCraftingRecipes[this.currentCraftingPage][c], item);
             Object heldObj = this.heldItem as Object;
             Object itemObj = item as Object;
             bool didCraft = false;
@@ -270,7 +270,7 @@ namespace CookingSkill
             if (this.cooking)
             {
                 Game1.player.cookedRecipe(this.heldItem.parentSheetIndex);
-                CookingSkillMod.addCookingExp(itemObj.edibility);
+                Mod.addCookingExp(itemObj.edibility);
             }
             if (!this.cooking)
             {
@@ -326,7 +326,7 @@ namespace CookingSkill
                         if (this.lastCookingHover == null || !this.lastCookingHover.Name.Equals(this.hoverRecipe.name))
                         {
                             this.lastCookingHover = this.hoverRecipe.createItem();
-                            CookingSkillMod.onCook(this.hoverRecipe, this.lastCookingHover);
+                            Mod.onCook(this.hoverRecipe, this.lastCookingHover);
                         }
                         current.scale = Math.Min(current.scale + 0.02f, current.baseScale + 0.1f);
                     }
