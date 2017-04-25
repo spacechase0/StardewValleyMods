@@ -16,6 +16,14 @@ namespace CookingSkill
     {
         public const int howManyRecipesFitOnPage = 40;
 
+        public const int region_upArrow = 88;
+
+        public const int region_downArrow = 89;
+
+        public const int region_craftingSelectionArea = 8000;
+
+        public const int region_craftingModifier = 200;
+
         private string descriptionText = "";
 
         private string hoverText = "";
@@ -24,19 +32,19 @@ namespace CookingSkill
 
         private Item lastCookingHover;
 
-        private InventoryMenu inventory;
+        public InventoryMenu inventory;
 
         private Item heldItem;
 
-        private List<Dictionary<ClickableTextureComponent, CraftingRecipe>> pagesOfCraftingRecipes = new List<Dictionary<ClickableTextureComponent, CraftingRecipe>>();
+        public List<Dictionary<ClickableTextureComponent, CraftingRecipe>> pagesOfCraftingRecipes = new List<Dictionary<ClickableTextureComponent, CraftingRecipe>>();
 
         private int currentCraftingPage;
 
         private CraftingRecipe hoverRecipe;
 
-        private ClickableTextureComponent upButton;
+        public ClickableTextureComponent upButton;
 
-        private ClickableTextureComponent downButton;
+        public ClickableTextureComponent downButton;
 
         private bool cooking;
 
@@ -46,9 +54,8 @@ namespace CookingSkill
 
         private string hoverTitle = "";
 
-        public NewCraftingPage(int x, int y, int width, int height, bool cooking = false)
-            : base(x, y, width, height, false)
-        {
+        public NewCraftingPage(int x, int y, int width, int height, bool cooking = false) : base(x, y, width, height, false)
+		{
             this.cooking = cooking;
             this.inventory = new InventoryMenu(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + Game1.tileSize * 5 - Game1.tileSize / 4, false, null, null, -1, 3, 0, 0, true);
             this.inventory.showGrayedOutSlots = true;
@@ -71,7 +78,10 @@ namespace CookingSkill
                 }
             }
             Game1.player.craftingRecipes = serializableDictionary;
-            this.trashCan = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 4, this.yPositionOnScreen + height - Game1.tileSize * 3 - Game1.tileSize / 2 - IClickableMenu.borderWidth - 104, Game1.tileSize, 104), Game1.mouseCursors, new Rectangle(669, 261, 16, 26), (float)Game1.pixelZoom, false);
+            this.trashCan = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 4, this.yPositionOnScreen + height - Game1.tileSize * 3 - Game1.tileSize / 2 - IClickableMenu.borderWidth - 104, Game1.tileSize, 104), Game1.mouseCursors, new Rectangle(669, 261, 16, 26), (float)Game1.pixelZoom, false)
+            {
+                myID = 106
+            };
             List<string> list = new List<string>();
             if (!cooking)
             {
@@ -82,7 +92,7 @@ namespace CookingSkill
                         string current2 = enumerator2.Current;
                         list.Add(new string(current2.ToCharArray()));
                     }
-                    goto IL_26B;
+                    goto IL_26A;
                 }
             }
             Game1.playSound("bigSelect");
@@ -90,12 +100,13 @@ namespace CookingSkill
             {
                 list.Add(new string(current3.ToCharArray()));
             }
-        IL_26B:
+        IL_26A:
+            int arg_271_0 = list.Count;
             int num6 = 0;
             while (list.Count > 0)
             {
                 CraftingRecipe craftingRecipe;
-                int index;
+                int num9;
                 ClickableTextureComponent clickableTextureComponent;
                 bool flag;
                 do
@@ -107,7 +118,7 @@ namespace CookingSkill
                     }
                     int num7 = num5 / num4 % (40 / num4);
                     craftingRecipe = new CraftingRecipe(list[num6], cooking);
-                    int num8 = list.Count<string>();
+                    int num8 = list.Count;
                     while (craftingRecipe.bigCraftable && num7 == 40 / num4 - 1 && num8 > 0)
                     {
                         num6 = (num6 + 1) % list.Count;
@@ -120,27 +131,71 @@ namespace CookingSkill
                             this.pagesOfCraftingRecipes.Add(new Dictionary<ClickableTextureComponent, CraftingRecipe>());
                         }
                     }
-                    index = num5 / 40;
-                    clickableTextureComponent = new ClickableTextureComponent("", new Rectangle(num + num5 % num4 * (Game1.tileSize + num3), num2 + num7 * (Game1.tileSize + 8), Game1.tileSize, craftingRecipe.bigCraftable ? (Game1.tileSize * 2) : Game1.tileSize), null, (cooking && !Game1.player.cookingRecipes.ContainsKey(craftingRecipe.name)) ? "ghosted" : "", craftingRecipe.bigCraftable ? Game1.bigCraftableSpriteSheet : Game1.objectSpriteSheet, craftingRecipe.bigCraftable ? Game1.getArbitrarySourceRect(Game1.bigCraftableSpriteSheet, 16, 32, craftingRecipe.getIndexOfMenuView()) : Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, craftingRecipe.getIndexOfMenuView(), 16, 16), (float)Game1.pixelZoom, false);
-                    flag = false;
-                    foreach (ClickableTextureComponent current4 in this.pagesOfCraftingRecipes[index].Keys)
+                    num9 = num5 / 40;
+                    clickableTextureComponent = new ClickableTextureComponent("", new Rectangle(num + num5 % num4 * (Game1.tileSize + num3), num2 + num7 * (Game1.tileSize + 8), Game1.tileSize, craftingRecipe.bigCraftable ? (Game1.tileSize * 2) : Game1.tileSize), null, (cooking && !Game1.player.cookingRecipes.ContainsKey(craftingRecipe.name)) ? "ghosted" : "", craftingRecipe.bigCraftable ? Game1.bigCraftableSpriteSheet : Game1.objectSpriteSheet, craftingRecipe.bigCraftable ? Game1.getArbitrarySourceRect(Game1.bigCraftableSpriteSheet, 16, 32, craftingRecipe.getIndexOfMenuView()) : Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, craftingRecipe.getIndexOfMenuView(), 16, 16), (float)Game1.pixelZoom, false)
                     {
-                        if (current4.bounds.Intersects(clickableTextureComponent.bounds))
+                        myID = 200 + num5,
+                        myAlternateID = (craftingRecipe.bigCraftable ? (200 + num5 + num4) : -500),
+                        rightNeighborID = ((num5 % num4 < num4 - 1) ? (200 + num5 + 1) : ((num7 < 2 && num9 > 0) ? 88 : 89)),
+                        leftNeighborID = ((num5 % num4 > 0) ? (200 + num5 - 1) : -1),
+                        upNeighborID = ((num7 == 0) ? 12344 : (200 + num5 - num4)),
+                        downNeighborID = ((num7 == 40 / num4 - 1 || (num7 == 40 / num4 - 2 && craftingRecipe.bigCraftable) || list.Count <= 10) ? (num5 % num4) : (200 + num5 + (craftingRecipe.bigCraftable ? (num4 * 2) : num4))),
+                        fullyImmutable = true,
+                        region = 8000
+                    };
+                    flag = false;
+                    using (Dictionary<ClickableTextureComponent, CraftingRecipe>.KeyCollection.Enumerator enumerator3 = this.pagesOfCraftingRecipes[num9].Keys.GetEnumerator())
+                    {
+                        while (enumerator3.MoveNext())
                         {
-                            flag = true;
-                            break;
+                            if (enumerator3.Current.bounds.Intersects(clickableTextureComponent.bounds))
+                            {
+                                flag = true;
+                                break;
+                            }
                         }
                     }
                 }
                 while (flag);
-                this.pagesOfCraftingRecipes[index].Add(clickableTextureComponent, craftingRecipe);
+                this.pagesOfCraftingRecipes[num9].Add(clickableTextureComponent, craftingRecipe);
                 list.RemoveAt(num6);
                 num6 = 0;
             }
-            if (this.pagesOfCraftingRecipes.Count<Dictionary<ClickableTextureComponent, CraftingRecipe>>() > 1)
+            if (this.pagesOfCraftingRecipes.Count > 1)
             {
-                this.upButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize * 12 + Game1.tileSize / 2, num2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 12, -1, -1), 0.8f, false);
-                this.downButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize * 12 + Game1.tileSize / 2, num2 + Game1.tileSize * 3 + Game1.tileSize / 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 11, -1, -1), 0.8f, false);
+                this.upButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize * 12 + Game1.tileSize / 2, num2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 12, -1, -1), 0.8f, false)
+                {
+                    myID = 88,
+                    downNeighborID = 89,
+                    rightNeighborID = 106
+                };
+                this.downButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize * 12 + Game1.tileSize / 2, num2 + Game1.tileSize * 3 + Game1.tileSize / 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 11, -1, -1), 0.8f, false)
+                {
+                    myID = 89,
+                    upNeighborID = 88,
+                    rightNeighborID = 106
+                };
+            }
+        }
+
+        public override void snapToDefaultClickableComponent()
+        {
+            this.currentlySnappedComponent = ((this.currentCraftingPage < this.pagesOfCraftingRecipes.Count) ? this.pagesOfCraftingRecipes[this.currentCraftingPage].First<KeyValuePair<ClickableTextureComponent, CraftingRecipe>>().Key : null);
+            this.snapCursorToCurrentSnappedComponent();
+        }
+
+        protected override void actionOnRegionChange(int oldRegion, int newRegion)
+        {
+            base.actionOnRegionChange(oldRegion, newRegion);
+            if (newRegion == 9000 && oldRegion != 0)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    if (this.inventory.inventory.Count > i)
+                    {
+                        this.inventory.inventory[i].upNeighborID = this.currentlySnappedComponent.upNeighborID;
+                    }
+                }
             }
         }
 
@@ -178,23 +233,19 @@ namespace CookingSkill
         {
             base.receiveLeftClick(x, y, true);
             this.heldItem = this.inventory.leftClick(x, y, this.heldItem, true);
-            if (this.upButton != null && this.upButton.containsPoint(x, y))
+            if (this.upButton != null && this.upButton.containsPoint(x, y) && this.currentCraftingPage > 0)
             {
-                if (this.currentCraftingPage > 0)
-                {
-                    Game1.playSound("coin");
-                }
+                Game1.playSound("coin");
                 this.currentCraftingPage = Math.Max(0, this.currentCraftingPage - 1);
                 this.upButton.scale = this.upButton.baseScale;
+                this.upButton.leftNeighborID = this.pagesOfCraftingRecipes[this.currentCraftingPage].Last<KeyValuePair<ClickableTextureComponent, CraftingRecipe>>().Key.myID;
             }
-            if (this.downButton != null && this.downButton.containsPoint(x, y))
+            if (this.downButton != null && this.downButton.containsPoint(x, y) && this.currentCraftingPage < this.pagesOfCraftingRecipes.Count - 1)
             {
-                if (this.currentCraftingPage < this.pagesOfCraftingRecipes.Count - 1)
-                {
-                    Game1.playSound("coin");
-                }
+                Game1.playSound("coin");
                 this.currentCraftingPage = Math.Min(this.pagesOfCraftingRecipes.Count - 1, this.currentCraftingPage + 1);
                 this.downButton.scale = this.downButton.baseScale;
+                this.downButton.leftNeighborID = this.pagesOfCraftingRecipes[this.currentCraftingPage].Last<KeyValuePair<ClickableTextureComponent, CraftingRecipe>>().Key.myID;
             }
             foreach (ClickableTextureComponent current in this.pagesOfCraftingRecipes[this.currentCraftingPage].Keys)
             {
@@ -220,12 +271,11 @@ namespace CookingSkill
             if (this.heldItem != null && !this.isWithinBounds(x, y) && this.heldItem.canBeTrashed())
             {
                 Game1.playSound("throwDownITem");
-                Game1.createItemDebris(this.heldItem, Game1.player.getStandingPosition(), Game1.player.FacingDirection);
+                Game1.createItemDebris(this.heldItem, Game1.player.getStandingPosition(), Game1.player.FacingDirection, null);
                 this.heldItem = null;
             }
         }
 
-        public static uint itemsMade = 0;
         private void clickCraftingRecipe(ClickableTextureComponent c, bool playSound = true)
         {
             Item item = this.pagesOfCraftingRecipes[this.currentCraftingPage][c].createItem();
@@ -233,24 +283,24 @@ namespace CookingSkill
             Object heldObj = this.heldItem as Object;
             Object itemObj = item as Object;
             bool didCraft = false;
-
+            
             Game1.player.checkForQuestComplete(null, -1, -1, item, null, 2, -1);
             if (this.heldItem == null)
             {
                 if (consume)
                     NewCraftingPage.myConsumeIngredients(this.pagesOfCraftingRecipes[this.currentCraftingPage][c]);
-                this.heldItem = item;
                 didCraft = true;
+                this.heldItem = item;
                 if (playSound)
                 {
                     Game1.playSound("coin");
                 }
             }
-            else if ((heldObj != null && itemObj != null && heldObj.quality == itemObj.quality ) && this.heldItem.Name.Equals(item.Name) && this.heldItem.Stack + this.pagesOfCraftingRecipes[this.currentCraftingPage][c].numberProducedPerCraft - 1 < this.heldItem.maximumStackSize())
+            else if (this.heldItem.Name.Equals(item.Name) && heldObj.quality == itemObj.quality &&this.heldItem.Stack + this.pagesOfCraftingRecipes[this.currentCraftingPage][c].numberProducedPerCraft - 1 < this.heldItem.maximumStackSize())
             {
                 this.heldItem.Stack += this.pagesOfCraftingRecipes[this.currentCraftingPage][c].numberProducedPerCraft;
-                if ( consume )
-                    NewCraftingPage.myConsumeIngredients( this.pagesOfCraftingRecipes[this.currentCraftingPage][c] );
+                if (consume)
+                    NewCraftingPage.myConsumeIngredients(this.pagesOfCraftingRecipes[this.currentCraftingPage][c]);
                 didCraft = true;
                 if (playSound)
                 {
@@ -263,7 +313,6 @@ namespace CookingSkill
                 string name = this.pagesOfCraftingRecipes[this.currentCraftingPage][c].name;
                 craftingRecipes[name] += this.pagesOfCraftingRecipes[this.currentCraftingPage][c].numberProducedPerCraft;
             }
-
             if (!didCraft)
                 return;
 
@@ -418,7 +467,7 @@ namespace CookingSkill
             {
                 IClickableMenu.drawToolTip(b, this.hoverText, this.hoverTitle, this.hoverItem, this.heldItem != null, -1, 0, -1, -1, null, -1);
             }
-            else if (this.hoverText != null)
+            else if (!string.IsNullOrEmpty(this.hoverText))
             {
                 IClickableMenu.drawHoverText(b, this.hoverText, Game1.smallFont, (this.heldItem != null) ? Game1.tileSize : 0, (this.heldItem != null) ? Game1.tileSize : 0, -1, null, -1, null, null, 0, -1, -1, -1, -1, 1f, null);
             }
@@ -441,16 +490,16 @@ namespace CookingSkill
             }
             if (this.hoverRecipe != null)
             {
-                IClickableMenu.drawHoverText(b, " ", Game1.smallFont, (this.heldItem != null) ? (Game1.tileSize * 3 / 4) : 0, (this.heldItem != null) ? (Game1.tileSize * 3 / 4) : 0, -1, this.hoverRecipe.name, -1, (this.cooking && this.lastCookingHover != null && Game1.objectInformation[(this.lastCookingHover as StardewValley.Object).parentSheetIndex].Split(new char[]
-				{
-					'/'
-				}).Count<string>() >= 7) ? Game1.objectInformation[(this.lastCookingHover as StardewValley.Object).parentSheetIndex].Split(new char[]
-				{
-					'/'
-				})[6].Split(new char[]
-				{
-					' '
-				}) : null, this.lastCookingHover, 0, -1, -1, -1, -1, 1f, this.hoverRecipe);
+                IClickableMenu.drawHoverText(b, " ", Game1.smallFont, (this.heldItem != null) ? (Game1.tileSize * 3 / 4) : 0, (this.heldItem != null) ? (Game1.tileSize * 3 / 4) : 0, -1, this.hoverRecipe.DisplayName, -1, (this.cooking && this.lastCookingHover != null && Game1.objectInformation[(this.lastCookingHover as StardewValley.Object).parentSheetIndex].Split(new char[]
+                {
+                    '/'
+                }).Length > 7) ? Game1.objectInformation[(this.lastCookingHover as StardewValley.Object).parentSheetIndex].Split(new char[]
+                {
+                    '/'
+                })[7].Split(new char[]
+                {
+                    ' '
+                }) : null, this.lastCookingHover, 0, -1, -1, -1, -1, 1f, this.hoverRecipe);
             }
         }
 

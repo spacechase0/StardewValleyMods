@@ -4,11 +4,11 @@
   "Version": {
     "MajorVersion": 1,
     "MinorVersion": 0,
-    "PatchVersion": 3,
+    "PatchVersion": 4,
     "Build": ""
   },
   "Description": "Adds a cooking skill.",
-  "UniqueID": "CookingSkill",
+  "UniqueID": "spacechase0.CookingSkill",
   "PerSaveConfigs": false,
   "EntryDll": "CookingSkill.dll"
 }

@@ -248,7 +248,11 @@ namespace CookingSkill
                             // Need to make sure this is the original buff first.
                             // So it doesn't get rebuffed from eating a buff food -> non buff food -> buff food or something
                             Buff oldBuff = (info[5] == "drink" ? Game1.buffsDisplay.drink : Game1.buffsDisplay.food);
-                            Buff thisBuff = (buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), 0, (info.Count<string>() > 7) ? Convert.ToInt32(info[7]) : -1, info[0]));
+                            Buff thisBuff = null;
+                            if (info[5] == "drink")
+                                thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 10) ? Convert.ToInt32(buffData[10]) : 0, (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
+                            else 
+                                thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 11) ? Convert.ToInt32(buffData[11]) : 0, (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
                             int[] oldAttr = (oldBuff == null ? null : ((int[])Util.GetInstanceField(typeof(Buff), oldBuff, "buffAttributes")));
                             int[] thisAttr = (thisBuff == null ? null : ((int[])Util.GetInstanceField(typeof(Buff), thisBuff, "buffAttributes")));
                             Log.trace("Ate something: " + obj + " " + Game1.objectInformation[obj.ParentSheetIndex] + " " + buffData + " " + oldBuff + " " + thisBuff + " " + oldAttr + " " + thisAttr);
@@ -278,7 +282,7 @@ namespace CookingSkill
                                     newTime = (int)(newTime * 1.25);
                                 }
 
-                                Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0]);
+                                Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4]);
                                 newBuff.millisecondsDuration = newTime / 10 * 7000;
                                 // ^ The vanilla code decreases the duration based on the time of day.
                                 // This is fine normally, since it ends as the day ends.
@@ -330,7 +334,7 @@ namespace CookingSkill
 
                                 int newTime = 120 + obj.edibility / 10 * 30;
 
-                                Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0]);
+                                Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4]);
                                 newBuff.millisecondsDuration = newTime / 10 * 7000;
 
                                 if (info[5] == "drink")
