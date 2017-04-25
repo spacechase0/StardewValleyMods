@@ -8,7 +8,7 @@
     "Build": ""
   },
   "Description": "Lets you rush order upgrades.",
-  "UniqueID": "RushOrders",
+  "UniqueID": "spacechase0.RushOrders",
   "PerSaveConfigs": false,
   "EntryDll": "RushOrders.dll"
 }
