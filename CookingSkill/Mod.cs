@@ -231,7 +231,7 @@ namespace CookingSkill
                     {
                         Object obj = Game1.player.itemToEat as Object;
 				        string[] info = Game1.objectInformation[obj.ParentSheetIndex].Split( '/' );
-                        string[] buffData = ((Convert.ToInt32(info[2]) > 0 && info.Count() > 6) ? info[6].Split(' ') : null);
+                        string[] buffData = ((Convert.ToInt32(info[2]) > 0 && info.Count() > 7) ? info[7].Split(' ') : null);
 
                         if (buffData != null)
                         {
@@ -247,9 +247,9 @@ namespace CookingSkill
                         {
                             // Need to make sure this is the original buff first.
                             // So it doesn't get rebuffed from eating a buff food -> non buff food -> buff food or something
-                            Buff oldBuff = (info[5] == "drink" ? Game1.buffsDisplay.drink : Game1.buffsDisplay.food);
+                            Buff oldBuff = (info[6] == "drink" ? Game1.buffsDisplay.drink : Game1.buffsDisplay.food);
                             Buff thisBuff = null;
-                            if (info[5] == "drink")
+                            if (info[6] == "drink")
                                 thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 10) ? Convert.ToInt32(buffData[10]) : 0, (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
                             else 
                                 thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 11) ? Convert.ToInt32(buffData[11]) : 0, (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
@@ -257,7 +257,7 @@ namespace CookingSkill
                             int[] thisAttr = (thisBuff == null ? null : ((int[])Util.GetInstanceField(typeof(Buff), thisBuff, "buffAttributes")));
                             Log.trace("Ate something: " + obj + " " + Game1.objectInformation[obj.ParentSheetIndex] + " " + buffData + " " + oldBuff + " " + thisBuff + " " + oldAttr + " " + thisAttr);
                             if (oldBuff != null && thisBuff != null && Enumerable.SequenceEqual(oldAttr, thisAttr) &&
-                                 ((info[5] == "drink" && oldBuff != lastDrink) || (info[5] != "drink" && oldBuff != lastDrink)))
+                                 ((info[6] == "drink" && oldBuff != lastDrink) || (info[6] != "drink" && oldBuff != lastDrink)))
                             {
                                 // Now that we know that this is the original buff, we can buff the buff.
                                 Log.trace("Buffing buff");
@@ -276,7 +276,7 @@ namespace CookingSkill
                                     }
                                 }
 
-                                int newTime = (info.Count<string>() > 7) ? Convert.ToInt32(info[7]) : -1;
+                                int newTime = (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1;
                                 if (newTime != -1 && Game1.player.professions.Contains(PROFESSION_BUFFTIME))
                                 {
                                     newTime = (int)(newTime * 1.25);
@@ -289,7 +289,7 @@ namespace CookingSkill
                                 // However if you have something like TimeSpeed it just means it won't
                                 // last as long later if eaten later in the day.
 
-                                if (info[5] == "drink")
+                                if (info[6] == "drink")
                                 {
                                     Game1.buffsDisplay.drink.removeBuff();
                                     Game1.buffsDisplay.drink = newBuff;
@@ -337,7 +337,7 @@ namespace CookingSkill
                                 Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4]);
                                 newBuff.millisecondsDuration = newTime / 10 * 7000;
 
-                                if (info[5] == "drink")
+                                if (info[6] == "drink")
                                 {
                                     if (Game1.buffsDisplay.drink != null)
                                         Game1.buffsDisplay.drink.removeBuff();
