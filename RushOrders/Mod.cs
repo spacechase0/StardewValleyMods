@@ -149,7 +149,7 @@ namespace RushOrders
             if (clint == null) return;
 
             bool haveDialogue = false;
-            if (clint.CurrentDialogue.Count > 0 && clint.CurrentDialogue.Peek().getCurrentDialogue() == "Thanks. I'll get started on this as soon as I can. It should be ready in a couple days.")
+            if (clint.CurrentDialogue.Count > 0 && clint.CurrentDialogue.Peek().getCurrentDialogue() == Game1.content.LoadString("Strings\\StringsFromCSFiles:Tool.cs.14317"))
                 haveDialogue = true;
 
             if ( !hadDialogue && haveDialogue && Game1.player.daysLeftForToolUpgrade == 2 && Game1.player.toolBeingUpgraded != null )
