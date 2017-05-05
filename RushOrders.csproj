@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E1CBD6A1-F9D8-4FAA-9D5D-BB1E49682FE6}</ProjectGuid>
+    <ProjectGuid>{A534CA13-4195-468F-93A6-C579CCA46058}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RushOrders</RootNamespace>
