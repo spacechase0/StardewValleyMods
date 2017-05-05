@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E1CBD6A1-F9D8-4FAA-9D5D-BB1E49682FE6}</ProjectGuid>
+    <ProjectGuid>{1C3D86AA-C048-4798-BEC5-07D7269CCE53}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ExperienceBars</RootNamespace>
