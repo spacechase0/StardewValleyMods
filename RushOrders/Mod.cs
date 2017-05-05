@@ -33,18 +33,21 @@ namespace RushOrders
             if (Game1.activeClickableMenu is ShopMenu)
             {
                 ShopMenu shop = Game1.activeClickableMenu as ShopMenu;
-                if (shop.portraitPerson.name == "Clint")
+                if (shop.portraitPerson != null)
                 {
-                    addToolRushOrders(shop);
-                }
-                else if ( shop.portraitPerson.name == "Robin" )
-                {
-                    if ((Game1.player.daysUntilHouseUpgrade > 1 || Game1.getFarm().isThereABuildingUnderConstruction() &&
-                        (Game1.getFarm().getBuildingUnderConstruction().daysOfConstructionLeft > 1 ||
-                         Game1.getFarm().getBuildingUnderConstruction().daysUntilUpgrade > 1)) )
+                    if (shop.portraitPerson.name == "Clint")
                     {
-                        if (!(prevMenu is RushConstructionMenu))
-                            doRushBuildingDialogue();
+                        addToolRushOrders(shop);
+                    }
+                    else if (shop.portraitPerson.name == "Robin")
+                    {
+                        if ((Game1.player.daysUntilHouseUpgrade > 1 || Game1.getFarm().isThereABuildingUnderConstruction() &&
+                            (Game1.getFarm().getBuildingUnderConstruction().daysOfConstructionLeft > 1 ||
+                             Game1.getFarm().getBuildingUnderConstruction().daysUntilUpgrade > 1)))
+                        {
+                            if (!(prevMenu is RushConstructionMenu))
+                                doRushBuildingDialogue();
+                        }
                     }
                 }
             }
