@@ -10,5 +10,11 @@
   "Description": "Sleep here. Sleep there. Sleep anywhere!.",
   "UniqueID": "spacechase0.SleepyEye",
   "PerSaveConfigs": false,
-  "EntryDll": "SleepyEye.dll"
+  "EntryDll": "SleepyEye.dll",
+  "MinimumApiVersion":  "1.14-prerelease",
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.SpaceCore"
+    }
+  ]
 }

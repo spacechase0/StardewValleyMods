@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley.Objects;
 using SFarmer = StardewValley.Farmer;
+using SpaceCore;
 
 namespace SleepyEye
 {
@@ -49,7 +50,7 @@ namespace SleepyEye
             TimeSpan useTime = DateTime.Now - (DateTime)startedUsing;
             if ( useTime > TimeSpan.FromSeconds( 7 ) )
             {
-                Mod.instance.saveSleepLocation = true;
+                Sleep.SaveLocation = true;
                 Game1.NewDay(0);
             }
             
