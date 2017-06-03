@@ -36,6 +36,8 @@ namespace SpaceCore
             SaveEvents.AfterLoad += onLoad;
             SaveEvents.AfterSave += onSave;
 
+            Commands.register();
+
             Entoarox.Framework.EntoFramework.GetTypeRegistry().RegisterType<NewHoeDirt>();
             Entoarox.Framework.EntoFramework.GetTypeRegistry().RegisterType<NewCrop>();
 

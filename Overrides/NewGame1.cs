@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using SpaceCore.Events;
+using SpaceCore.Locations;
 using SpaceCore.Utilities;
 using StardewValley;
 using StardewValley.Menus;

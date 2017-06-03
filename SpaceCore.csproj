@@ -50,13 +50,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command.cs" />
+    <Compile Include="Commands.cs" />
     <Compile Include="Content.cs" />
     <Compile Include="Events\EventArgsShowNightEndMenus.cs" />
     <Compile Include="Events\SpaceEvents.cs" />
     <Compile Include="ICustomWeaponDraw.cs" />
     <Compile Include="Interface\TabbedMenu.cs" />
     <Compile Include="Interface\TabMenu.cs" />
-    <Compile Include="ISeasonalLocation.cs" />
+    <Compile Include="Locations\CustomDecoratableLocation.cs" />
+    <Compile Include="Locations\ISeasonalLocation.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Overrides\NewCrop.cs" />
     <Compile Include="Overrides\NewGame1.cs" />

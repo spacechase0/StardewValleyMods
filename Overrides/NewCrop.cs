@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using SpaceCore.Locations;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using System;
