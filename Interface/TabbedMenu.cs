@@ -55,11 +55,13 @@ namespace SpaceCore.Interface
 
         public override void performHoverAction(int x, int y)
         {
+            base.performHoverAction(x, y);
             tabs[currentTab].mouseMove(x - xPositionOnScreen, y - yPositionOnScreen);
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
+            base.receiveLeftClick(x, y, playSound);
             int tabArea = width / tabs.Length;
             for (int i = 0; i < tabs.Length; ++i)
             {

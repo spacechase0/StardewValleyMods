@@ -10,7 +10,7 @@ namespace SpaceCore.Utilities
         public static void hijack( MethodInfo target, MethodInfo replaceWith )
         {
             //*
-            bool withThis = false;// target.CallingConvention.HasFlag(CallingConventions.HasThis);
+            bool withThis = !target.IsStatic && replaceWith.IsStatic; // target.CallingConvention.HasFlag(CallingConventions.HasThis);
             if (target.ReturnType != replaceWith.ReturnType)
                 throw new ArgumentException("Target and replacement methods must match; return type");
             if (target.GetParameters().Length != replaceWith.GetParameters().Length - (withThis ? 1 : 0))

@@ -30,5 +30,25 @@ namespace SpaceCore.Utilities
         {
             SpaceCore.instance.Helper.Reflection.GetPrivateField<T>(type, field).SetValue(value);
         }
+
+        public static void callMethod(object obj, string method, object[] args)
+        {
+            SpaceCore.instance.Helper.Reflection.GetPrivateMethod(obj, method).Invoke(args);
+        }
+
+        public static T callMethod< T >( object obj, string method, object[] args )
+        {
+            return SpaceCore.instance.Helper.Reflection.GetPrivateMethod(obj, method).Invoke< T >(args);
+        }
+
+        public static void callMethod(Type type, string method, object[] args)
+        {
+            SpaceCore.instance.Helper.Reflection.GetPrivateMethod(type, method).Invoke(args);
+        }
+
+        public static T callMethod<T>(Type type, string method, object[] args)
+        {
+            return SpaceCore.instance.Helper.Reflection.GetPrivateMethod(type, method).Invoke<T>(args);
+        }
     }
 }
