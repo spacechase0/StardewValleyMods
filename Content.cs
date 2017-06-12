@@ -95,7 +95,7 @@ namespace SpaceCore
                     {
                         List<int> tanimFrames = new List<int>();
                         foreach (var ttileAnim in ttile.Animation)
-                            tanimFrames.Add(ttileSheet.FirstGlobalId + ttileAnim.Tile);
+                            tanimFrames.Add(ttileSheet.FirstGlobalId + ttileAnim.TileId);
                         animMapping.Add(ttileSheet.FirstGlobalId + ttile.Id, new TileAnimation(tanimFrames.ToArray<int>(), ttile.Animation[0].Duration));
                     }
                 }
@@ -230,7 +230,7 @@ namespace SpaceCore
                 {
                     List<int> tanimFrames = new List<int>();
                     foreach (var ttileAnim in ttile.Animation)
-                        tanimFrames.Add(ttileSheet.FirstGlobalId + ttileAnim.Tile);
+                        tanimFrames.Add(ttileSheet.FirstGlobalId + ttileAnim.TileId);
                     animMapping.Add(ttileSheet.FirstGlobalId + ttile.Id, new TileAnimation(tanimFrames.ToArray<int>(), ttile.Animation[0].Duration));
                 }
             }
