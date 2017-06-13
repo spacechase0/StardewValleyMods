@@ -21,13 +21,18 @@ namespace ExperienceBars
     public class Mod : StardewModdingAPI.Mod
     {
         public static readonly int[] expNeededForLevel = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
-        
+
+        public static Configuration Config;
+
         public static bool renderLuck = false;
         public static int expBottom = 0;
         public static bool show = true;
 
         public override void Entry( IModHelper helper )
         {
+            base.Entry(helper);
+            Config = helper.ReadConfig<Configuration>();
+
             GraphicsEvents.OnPostRenderHudEvent += renderExpBars;
             ControlEvents.KeyPressed += checkToggle;
         }
@@ -35,7 +40,7 @@ namespace ExperienceBars
         public void checkToggle(object sender, EventArgs args)
         {
             EventArgsKeyPressed pressed = args as EventArgsKeyPressed;
-            if ( pressed.KeyPressed == Microsoft.Xna.Framework.Input.Keys.X )
+            if ( pressed.KeyPressed == Config.ToggleDisplay.key )
             {
                 show = !show;
             }
