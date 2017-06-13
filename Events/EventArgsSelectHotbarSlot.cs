@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace SpaceCore.Events
 {
-    public class EventArgsSelectHotbarSlot : EventArgs
+    public class EventArgsSelectHotbarSlot : EventArgsCancelable
     {
         public int Slot { get; set; }
-        public bool Canceled { get; set; } = false;
     }
 }

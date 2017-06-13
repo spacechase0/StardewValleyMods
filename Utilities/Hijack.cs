@@ -53,7 +53,8 @@ namespace SpaceCore.Utilities
                     int* ttar = (int*)target.MethodHandle.Value.ToPointer() + insOffset;
                     int* rtar = (int*)replaceWith.MethodHandle.Value.ToPointer() + insOffset;
 
-                    if (Debugger.IsAttached)
+                    // Debugger.IsAttached section not needed with VS2017? Or whatever caused the change
+                    if (false&&Debugger.IsAttached)
                     {
                         Log.trace("Debugger is attached.");
 

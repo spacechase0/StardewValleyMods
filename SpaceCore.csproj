@@ -35,7 +35,7 @@
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -47,12 +47,14 @@
     <Reference Include="System.Xml" />
     <Reference Include="EntoaroxFramework">
       <HintPath>$(GamePath)\Mods\!EntoaroxFramework\EntoaroxFramework.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Content.cs" />
+    <Compile Include="Events\EventArgsCancelable.cs" />
     <Compile Include="Events\EventArgsSelectHotbarSlot.cs" />
     <Compile Include="Events\EventArgsShowNightEndMenus.cs" />
     <Compile Include="Events\SpaceEvents.cs" />
@@ -84,6 +86,7 @@
     <ProjectReference Include="..\Tiled.Net\Tiled.Net\Tiled.Net.csproj">
       <Project>{28aa2641-4e18-415d-b0af-6bbe3846e50b}</Project>
       <Name>Tiled.Net</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -94,16 +97,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="AfterBuild">
-    <PropertyGroup>
-      <ModPath>$(GamePath)\Mods\$(TargetName)</ModPath>
-    </PropertyGroup>
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).pdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).pdb')" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll.mdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).dll.mdb')" />
-    <Copy SourceFiles="$(TargetDir)\TiledNet.dll" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(ProjectDir)manifest.json" DestinationFolder="$(ModPath)" />
-  </Target>
+  <PropertyGroup>
+    <DeployModFolderName>$(MSBuildProjectName)</DeployModFolderName>
+  </PropertyGroup>
   <Import Project="..\packages\Pathoschild.Stardew.ModBuildConfig.1.6.0\build\Pathoschild.Stardew.ModBuildConfig.targets" Condition="Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.1.6.0\build\Pathoschild.Stardew.ModBuildConfig.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

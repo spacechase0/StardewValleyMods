@@ -57,9 +57,11 @@ namespace SpaceCore
             }
         }
 
+        private object oldCM;
         private int prevLoaderNum = 0;
         private void onUpdate( object sender, EventArgs args )
         {
+            if (Game1.content.GetType().ToString().Contains("Ento")) oldCM = Game1.content;
             Game1.content = TMP_ORIG_CONTENT_MANAGER;
             Reflect.setField(Game1.mapDisplayDevice, "m_contentManager", TMP_ORIG_CONTENT_MANAGER);
 

@@ -19,12 +19,16 @@ namespace SpaceCore.Events
         internal static void InvokeOnBlankSave()
         {
             Log.trace("Event: OnBlankSave");
+            if (OnBlankSave == null)
+                return;
             Util.invokeEvent("SpaceEvents.OnBlankSave", OnBlankSave.GetInvocationList(), null);
         }
 
         internal static void InvokeShowNightEndMenus(EventArgsShowNightEndMenus args)
         {
             Log.trace("Event: ShowNightEndMenus");
+            if (ShowNightEndMenus == null)
+                return;
             Util.invokeEvent( "SpaceEvents.ShowNightEndMenus", ShowNightEndMenus.GetInvocationList(), null, args);
         }
 
@@ -34,6 +38,8 @@ namespace SpaceCore.Events
             args.Slot = slot;
 
             Log.trace("Event: SelectHotbarSlot");
+            if (SelectHotbarSlot == null)
+                return !args.Canceled;
             Util.invokeEvent("SpaceEvents.SelectHotbarSlot", SelectHotbarSlot.GetInvocationList(), null, args);
             return !args.Canceled;
         }

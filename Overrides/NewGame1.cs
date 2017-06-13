@@ -521,7 +521,7 @@ namespace SpaceCore.Overrides
                             return;
                         }
                         if (flag4 && Game1.player.canReleaseTool && (Game1.player.usingTool && Game1.player.CurrentTool != null))
-                            Game1.releaseUseToolButton();
+                                Game1.releaseUseToolButton();
                         else if (flag2 && !Game1.player.UsingTool && !Game1.dialogueUp && ((Game1.pickingTool || Game1.player.CanMove) && (!Game1.player.areAllItemsNull() && !Game1.eventUp)))
                             Game1.pressSwitchToolButton();
                         else if ((!flag2 || Game1.player.ActiveObject == null || (Game1.dialogueUp || Game1.eventUp)) && (flag5 && !Game1.pickingTool && (!Game1.eventUp && !Game1.player.UsingTool)) && Game1.player.CanMove)
