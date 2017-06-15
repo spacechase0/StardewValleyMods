@@ -86,7 +86,7 @@
     <ProjectReference Include="..\Tiled.Net\Tiled.Net\Tiled.Net.csproj">
       <Project>{28aa2641-4e18-415d-b0af-6bbe3846e50b}</Project>
       <Name>Tiled.Net</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
