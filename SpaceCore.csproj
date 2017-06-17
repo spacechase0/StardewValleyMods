@@ -57,6 +57,7 @@
     <Compile Include="Events\EventArgsCancelable.cs" />
     <Compile Include="Events\EventArgsSelectHotbarSlot.cs" />
     <Compile Include="Events\EventArgsShowNightEndMenus.cs" />
+    <Compile Include="Events\EventStage.cs" />
     <Compile Include="Events\SpaceEvents.cs" />
     <Compile Include="ICustomWeaponDraw.cs" />
     <Compile Include="Interface\TabbedMenu.cs" />

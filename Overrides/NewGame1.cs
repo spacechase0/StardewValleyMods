@@ -32,6 +32,7 @@ namespace SpaceCore.Overrides
         public static void showEndOfNightStuff()
         {
             var ev = new EventArgsShowNightEndMenus();
+            ev.Stage = EventStage.Before;
             SpaceEvents.InvokeShowNightEndMenus(ev);
 
             bool flag1 = false;
@@ -50,6 +51,10 @@ namespace SpaceCore.Overrides
                 Game1.player.newLevels.RemoveAt(Game1.player.newLevels.Count - 1);
                 flag2 = true;
             }
+
+            ev.Stage = EventStage.After;
+            SpaceEvents.InvokeShowNightEndMenus(ev);
+
             if (flag2)
                 Game1.playSound("newRecord");
             if (Game1.endOfNightMenus.Count > 0)
