@@ -61,7 +61,6 @@ namespace CustomCritters
                                     Log.warn("Bad patrol point type: " + pt.Type);
 
                                 var dist = Vector2.Distance(position, targ);
-                                data.Behavior.Speed = 10f;
                                 if (dist <= data.Behavior.Speed)
                                 {
                                     position = targ;
