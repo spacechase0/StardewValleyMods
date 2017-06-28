@@ -19,6 +19,7 @@ namespace CustomCritters
             public int FrameWidth { get; set; }
             public int FrameHeight { get; set; }
             public float Scale { get; set; } = 4;
+            public Boolean Flying { get; set; } = true;
         }
         public SpriteData_ SpriteData { get; set; } = new SpriteData_();
 
