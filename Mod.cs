@@ -43,7 +43,7 @@ namespace FlowerColorPicker
             var hoeDirt = Game1.player.currentLocation.terrainFeatures[mouseTilePos] as HoeDirt;
             if (hoeDirt != null && hoeDirt.crop != null)
             {
-                hoeDirt.crop.growCompletely();
+                //hoeDirt.crop.growCompletely();
             }
             if (holding == null || hoeDirt == null || hoeDirt.crop == null || holding.ParentSheetIndex != hoeDirt.crop.indexOfHarvest)
                 return;
