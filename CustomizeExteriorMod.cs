@@ -29,17 +29,12 @@ namespace CustomizeExterior
         {
             instance = this;
 
-            GameEvents.LoadContent += onContentLoad;
+            content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(Helper.DirectoryPath, "Buildings"));
+            compileChoices();
+            
             GameEvents.UpdateTick += onUpdate;
             SaveEvents.AfterLoad += afterLoad;
             SaveEvents.AfterSave += afterSave;
-            TimeEvents.SeasonOfYearChanged += onSeasonChange;
-        }
-
-        private void onContentLoad(object sender, EventArgs args)
-        {
-            content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(Helper.DirectoryPath, "Buildings"));
-            compileChoices();
         }
 
         private void afterLoad(object sender, EventArgs args)
@@ -56,15 +51,22 @@ namespace CustomizeExterior
             Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "building-exteriors.json"), config);
         }
 
-        private void onSeasonChange( object sender, EventArgs args )
+        private void onSeasonChange()
         {
             Log.debug("Season change, syncing textures...");
             syncTexturesWithChoices();
         }
 
         public MouseState prevMouse;
+        public string prevSeason = "";
         private void onUpdate( object sender, EventArgs args)
         {
+            if ( Context.IsWorldReady && Game1.currentSeason != prevSeason )
+            {
+                onSeasonChange();
+                prevSeason = Game1.currentSeason;
+            }
+
             MouseState mouse = Mouse.GetState();
             
             if ( prevMouse != null && mouse.RightButton == Pressed && prevMouse.RightButton != Pressed)
