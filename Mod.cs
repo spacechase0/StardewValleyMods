@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley.Events;
 using StardewValley.Quests;
 using System.IO;
+using SpaceCore.Events;
 
 namespace CookingSkill
 {
@@ -150,9 +151,9 @@ namespace CookingSkill
             }
         }
 
-        private void giveExpCommand( object sender, EventArgsCommand args )
+        private void giveExpCommand( object sender, string[] args )
         {
-            if ( args.Command.CalledArgs.Length != 1 )
+            if ( args.Length != 1 )
             {
                 Log.info("Command format: giveCookingExp <amount>");
                 return;
@@ -161,7 +162,7 @@ namespace CookingSkill
             int amt = 0;
             try
             {
-                amt = Convert.ToInt32(args.Command.CalledArgs[0]);
+                amt = Convert.ToInt32(args[0]);
             }
             catch ( Exception e )
             {
@@ -186,20 +187,7 @@ namespace CookingSkill
         {
             instance = this;
 
-            GameEvents.LoadContent += gameLoaded;
-            TimeEvents.OnNewDay += newDay;
-            LocationEvents.CurrentLocationChanged += locChanged;
-            GameEvents.UpdateTick += update;
-            GraphicsEvents.OnPostRenderGuiEvent += drawAfterGui;
-            Command.RegisterCommand("giveCookingExp", "Give cooking experience", new string[] { "amount" }).CommandFired += giveExpCommand;
-        }
-
-        private void gameLoaded(object sender, EventArgs args)
-        {
-            checkForExperienceBars();
-            checkForLuck();
-            checkForAllProfessions();
-            if ( icon == null )
+            if (icon == null)
             {
                 try
                 {
@@ -207,13 +195,25 @@ namespace CookingSkill
                     FileStream fs = new FileStream(iconTex, FileMode.Open);
                     icon = Texture2D.FromStream(Game1.graphics.GraphicsDevice, fs);
                 }
-                catch ( Exception e )
+                catch (Exception e)
                 {
-                    Log.error( "Failed to load icon: " + e );
-                    icon = new Texture2D( Game1.graphics.GraphicsDevice, 16, 16 );
-                    icon.SetData( Enumerable.Range( 0, 16 * 16 ).Select( i => new Color( 225, 168, 255 ) ).ToArray() );
+                    Log.error("Failed to load icon: " + e);
+                    icon = new Texture2D(Game1.graphics.GraphicsDevice, 16, 16);
+                    icon.SetData(Enumerable.Range(0, 16 * 16).Select(i => new Color(225, 168, 255)).ToArray());
                 }
             }
+
+            Helper.ConsoleCommands.Add("player_givecookingexp", "player_givecookingexp <amount>", giveExpCommand);
+
+            LocationEvents.CurrentLocationChanged += locChanged;
+            GameEvents.UpdateTick += update;
+            GraphicsEvents.OnPostRenderGuiEvent += drawAfterGui;
+            
+            SpaceEvents.ShowNightEndMenus += showLevelMenu;
+
+            checkForExperienceBars();
+            checkForLuck();
+            checkForAllProfessions();
         }
 
         private bool wasEating = false;
@@ -520,48 +520,45 @@ namespace CookingSkill
             }
         }
 
-        private void newDay( object sender, EventArgs args )
+        private void showLevelMenu( object sender, EventArgsShowNightEndMenus args )
         {
-            Log.debug("New day");
-            if (!Game1.newDay && Game1.showingEndOfNightStuff)
+            if (args.Stage == EventStage.Before)
+                return;
+
+            Log.debug("Doing cooking menus");
+
+            // This'll mess up if a farm event comes up
+            // Not sure how to do it properly without hooking into showEndOfNightStuff
+            // Which I can't.
+            // The profession ones are the only important ones, so make sure that they show
+            // up eventually if you don't have the profession, even if you didn't just level.
+            if (newCookingLevels.Count() > 0)
             {
-                if (Game1.activeClickableMenu is CookingLevelUpMenu)
-                    return;
-                Log.debug("Doing cooking menus");
-
-                // This'll mess up if a farm event comes up
-                // Not sure how to do it properly without hooking into showEndOfNightStuff
-                // Which I can't.
-                // The profession ones are the only important ones, so make sure that they show
-                // up eventually if you don't have the profession, even if you didn't just level.
-                if (newCookingLevels.Count() > 0)
+                for (int i = newCookingLevels.Count() - 1; i >= 0; --i )
                 {
-                    for (int i = newCookingLevels.Count() - 1; i >= 0; --i )
-                    {
-                        int level = newCookingLevels[i];
-                        Log.debug("Doing " + i + ": cooking level " + level + " screen");
+                    int level = newCookingLevels[i];
+                    Log.debug("Doing " + i + ": cooking level " + level + " screen");
 
-                        if (Game1.activeClickableMenu != null)
-                            Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
-                        Game1.activeClickableMenu = new CookingLevelUpMenu(level);
-                    }
-                    newCookingLevels.Clear();
-                }
-                else if ( getCookingLevel() >= 5 && !Game1.player.professions.Contains( PROFESSION_SELLPRICE ) &&!Game1.player.professions.Contains( PROFESSION_BUFFTIME ) )
-                {
-                    Log.debug("Putting level 5 profession menu");
                     if (Game1.activeClickableMenu != null)
                         Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
-                    Game1.activeClickableMenu = new CookingLevelUpMenu(5);
+                    Game1.activeClickableMenu = new CookingLevelUpMenu(level);
                 }
-                else if (getCookingLevel() >= 10 && !Game1.player.professions.Contains(PROFESSION_CONSERVATION) && !Game1.player.professions.Contains(PROFESSION_SILVER) &&
-                         !Game1.player.professions.Contains(PROFESSION_BUFFLEVEL) && !Game1.player.professions.Contains(PROFESSION_BUFFPLAIN))
-                {
-                    Log.debug("Putting level 10 profession menu");
-                    if (Game1.activeClickableMenu != null)
-                        Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
-                    Game1.activeClickableMenu = new CookingLevelUpMenu(10);
-                }
+                newCookingLevels.Clear();
+            }
+            else if ( getCookingLevel() >= 5 && !Game1.player.professions.Contains( PROFESSION_SELLPRICE ) &&!Game1.player.professions.Contains( PROFESSION_BUFFTIME ) )
+            {
+                Log.debug("Putting level 5 profession menu");
+                if (Game1.activeClickableMenu != null)
+                    Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
+                Game1.activeClickableMenu = new CookingLevelUpMenu(5);
+            }
+            else if (getCookingLevel() >= 10 && !Game1.player.professions.Contains(PROFESSION_CONSERVATION) && !Game1.player.professions.Contains(PROFESSION_SILVER) &&
+                        !Game1.player.professions.Contains(PROFESSION_BUFFLEVEL) && !Game1.player.professions.Contains(PROFESSION_BUFFPLAIN))
+            {
+                Log.debug("Putting level 10 profession menu");
+                if (Game1.activeClickableMenu != null)
+                    Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
+                Game1.activeClickableMenu = new CookingLevelUpMenu(10);
             }
         }
 
@@ -686,27 +683,19 @@ namespace CookingSkill
             }
         }
 
-        private static bool HAS_ALL_PROFESSIONS = false;
-        private static List<int> professions5 = new List<int>() { PROFESSION_SELLPRICE, PROFESSION_BUFFTIME };
-        private static List<int> professions10 = new List<int>() { PROFESSION_CONSERVATION, PROFESSION_SILVER, PROFESSION_BUFFLEVEL, PROFESSION_BUFFPLAIN };
-        private static void checkForAllProfessions()
+        private bool HAS_ALL_PROFESSIONS = false;
+        private List<int> professions5 = new List<int>() { PROFESSION_SELLPRICE, PROFESSION_BUFFTIME };
+        private List<int> professions10 = new List<int>() { PROFESSION_CONSERVATION, PROFESSION_SILVER, PROFESSION_BUFFLEVEL, PROFESSION_BUFFPLAIN };
+        private void checkForAllProfessions()
         {
-            try
+            if (!Helper.ModRegistry.IsLoaded("community.AllProfessions"))
             {
-                Type t = Type.GetType("AllProfessions.AllProfessions, AllProfessions");
-                if (t == null)
-                {
-                    Log.info("[CookingSkill] All Professions not found.");
-                    return;
-                }
+                Log.info("[CookingSkill] All Professions not found.");
+                return;
+            }
 
-                Log.info("[CookingSkill] All Professions found. You will get every cooking profession for your level.");
-                HAS_ALL_PROFESSIONS = true;
-            }
-            catch (Exception e)
-            {
-                Log.error("Exception checking all professions: " + e);
-            }
+            Log.info("[CookingSkill] All Professions found. You will get every cooking profession for your level.");
+            HAS_ALL_PROFESSIONS = true;
         }
     }
 }
