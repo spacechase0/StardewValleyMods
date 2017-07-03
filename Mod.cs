@@ -30,7 +30,7 @@ namespace SleepyEye
         private void onMenuChange( object sender, EventArgsClickableMenuChanged args )
         {
             var menu = args.NewMenu as ShopMenu;
-            if (menu == null)
+            if (menu == null || menu.portraitPerson == null)
                 return;
 
             if ( menu.portraitPerson.name == "Pierre" )
