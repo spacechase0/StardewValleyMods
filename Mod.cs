@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceCore.Events;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -27,19 +28,54 @@ namespace LuckSkill
         public override void Entry(IModHelper helper)
         {
             instance = this;
-
-            GameEvents.GameLoaded += gameLoaded;
-            TimeEvents.OnNewDay += newDay;
+            
             MenuEvents.MenuClosed += fishingExp;
             LocationEvents.CurrentLocationChanged += locChanged;
             GameEvents.UpdateTick += update;
             GraphicsEvents.OnPostRenderGuiEvent += draw;
-        }
+            TimeEvents.AfterDayStarted += dayStarted;
 
-        private void gameLoaded(object sender, EventArgs args)
-        {
+            SpaceEvents.ShowNightEndMenus += showLevelMenu;
+
             enableLuckSkillBar();
             checkForAllProfessions();
+        }
+
+        private void dayStarted( object sender, EventArgs args )
+        {
+            gainLuckExp((int)(Game1.dailyLuck * 750));
+
+            if (Game1.player.professions.Contains(PROFESSION_DAILY_LUCK))
+            {
+                Game1.dailyLuck += 0.01;
+            }
+            if (Game1.player.professions.Contains(PROFESSION_MOREQUESTS) && Game1.questOfTheDay == null)
+            {
+                if (Utility.isFestivalDay(Game1.dayOfMonth, Game1.currentSeason) || Utility.isFestivalDay(Game1.dayOfMonth + 1, Game1.currentSeason))
+                {
+                    // Vanilla code doesn't put quests on these days.
+                }
+                else
+                {
+                    Quest quest = null;
+                    for (uint i = 0; i < 2 && quest == null; ++i)
+                    {
+                        Game1.stats.daysPlayed += i * 999999; // To rig the rng to not just give the same results.
+                        try // Just in case. Want to make sure stats.daysPlayed gets fixed
+                        {
+                            quest = Utility.getQuestOfTheDay();
+                        }
+                        catch (Exception e) { }
+                        Game1.stats.daysPlayed -= i * 999999;
+                    }
+
+                    if (quest != null)
+                    {
+                        Log.info("Applying quest " + quest + " for today, due to having PROFESSION_MOREQUESTS.");
+                        Game1.questOfTheDay = quest;
+                    }
+                }
+            }
         }
 
         private void fishingExp( object sender, EventArgs args )
@@ -237,105 +273,71 @@ namespace LuckSkill
 
         private List<Point> cacheLevels = new List< Point >();
         private List<Item> cacheItems = new List< Item >();
-        private void newDay( object sender, EventArgs args )
+        private void showLevelMenu(object sender, EventArgsShowNightEndMenus args)
         {
-            if (Game1.newDay)
+            Log.error("NOTE TODO CHANGE METHOD NAME AND ADD HOOK AND MAKE THIS WORK AND STUFF");
+            if (true) return;
+            if (args.Stage == EventStage.Before)
+                return;
+
+            if ( Game1.player.professions.Contains( PROFESSION_NIGHTLY_EVENTS ) && !Game1.weddingToday &&
+                    ( Game1.farmEvent == null || ( Game1.farmEvent is SoundInTheNightEvent &&
+                    ( int ) Util.GetInstanceField( typeof( SoundInTheNightEvent ), Game1.farmEvent, "behavior" ) == 2 ) ) )
             {
-                gainLuckExp((int)(Game1.dailyLuck * 750));
-            }
-            else
-            {
-                if ( Game1.player.professions.Contains( PROFESSION_DAILY_LUCK ) )
+                //Log.Async("Doing event check");
+                FarmEvent ev = null;
+                //for (uint i = 0; i < 100 && ev == null; ++i) // Testing purposes.
                 {
-                    Game1.dailyLuck += 0.01;
-                }
-                if (Game1.player.professions.Contains(PROFESSION_MOREQUESTS) && Game1.questOfTheDay == null)
-                {
-                    if (Utility.isFestivalDay(Game1.dayOfMonth, Game1.currentSeason) || Utility.isFestivalDay(Game1.dayOfMonth + 1, Game1.currentSeason))
+                    Game1.stats.daysPlayed += 999999; // To rig the rng to not just give the same results.
+                    try // Just in case. Want to make sure stats.daysPlayed gets fixed
                     {
-                        // Vanilla code doesn't put quests on these days.
+                        ev = Utility.pickFarmEvent();
+                    }
+                    catch (Exception e) { }
+                    Game1.stats.daysPlayed -= 999999;
+                    //if (ev != null) Log.Async("ev=" + ev + " " + (ev is SoundInTheNightEvent ? (Util.GetInstanceField(typeof(SoundInTheNightEvent), ev, "behavior") + " " + Util.GetInstanceField(typeof(SoundInTheNightEvent), ev, "soundName")) : "?"));
+                    if (ev != null && ev.setUp())
+                    {
+                        ev = null;
+                    }
+                }
+
+                if ( ev != null )
+                {
+                    Log.info("Applying " + ev + " as tonight's nightly event, due to having PROFESSION_NIGHTLY_EVENTS");
+                    if (Game1.farmEvent == null) // showEndOfNightStuff() was already called, so we need to make it think that didn't happen
+                    {
+                        // Utility.consolidateStacks was called on the original list.
+                        // We have a copy of the list, but the items are the same instances.
+                        // So while stacks will be merged in our copy, the "empty" stacks won't be gone.
+                        for (int k = cacheItems.Count<Item>() - 1; k >= 0; k--)
+                        {
+                            if (cacheItems[k] != null && cacheItems[k].Stack <= 0)
+                            {
+                                cacheItems.RemoveAt(k);
+                            }
+                        }
+
+                        // Don't need to worry about mailForTomorrow. The mail was already applied to the mailbox.
+                        // The reason it is cleared later is because Utility.pickFarmEvent checks it for community
+                        // center completion stuff. But in that case farmEvent is a WorldChangeEvent, so it won't
+                        // reach this far anyways.
+                        Game1.player.newLevels = cacheLevels;
+                        Game1.getFarm().shippingBin = cacheItems;
+                        Game1.showingEndOfNightStuff = false;
+                        Game1.afterFade = null;
+                        Game1.globalFade = false;
+                        Game1.activeClickableMenu = null;
+                        Game1.endOfNightMenus.Clear();
                     }
                     else
                     {
-                        Quest quest = null;
-                        for (uint i = 0; i < 2 && quest == null; ++i)
-                        {
-                            Game1.stats.daysPlayed += i * 999999; // To rig the rng to not just give the same results.
-                            try // Just in case. Want to make sure stats.daysPlayed gets fixed
-                            {
-                                quest = Utility.getQuestOfTheDay();
-                            }
-                            catch (Exception e) { }
-                            Game1.stats.daysPlayed -= i * 999999;
-                        }
-
-                        if ( quest != null )
-                        {
-                            Log.info("Applying quest " + quest + " for today, due to having PROFESSION_MOREQUESTS.");
-                            Game1.questOfTheDay = quest;
-                        }
+                        Log.info("However we are replacing a dog attack event.");
+                        // We're replacing the dogs attacking animals left out event. It's pretty much the "fallback" event when another isn't chosen.
+                        // Since we're replacing the existing event the showEndOfNightStuff hasn't happened yet.
+                        // However farmEvent is already null if the attack setup failed. So this probably also increases the chance of a successful attack :P
                     }
-                }
-                if ( Game1.player.professions.Contains( PROFESSION_NIGHTLY_EVENTS ) && !Game1.weddingToday &&
-                     ( Game1.farmEvent == null || ( Game1.farmEvent is SoundInTheNightEvent &&
-                        ( int ) Util.GetInstanceField( typeof( SoundInTheNightEvent ), Game1.farmEvent, "behavior" ) == 2 ) ) )
-                {
-                    //Log.Async("Doing event check");
-                    FarmEvent ev = null;
-                    //for (uint i = 0; i < 100 && ev == null; ++i) // Testing purposes.
-                    {
-                        Game1.stats.daysPlayed += 999999; // To rig the rng to not just give the same results.
-                        try // Just in case. Want to make sure stats.daysPlayed gets fixed
-                        {
-                            ev = Utility.pickFarmEvent();
-                        }
-                        catch (Exception e) { }
-                        Game1.stats.daysPlayed -= 999999;
-                        //if (ev != null) Log.Async("ev=" + ev + " " + (ev is SoundInTheNightEvent ? (Util.GetInstanceField(typeof(SoundInTheNightEvent), ev, "behavior") + " " + Util.GetInstanceField(typeof(SoundInTheNightEvent), ev, "soundName")) : "?"));
-                        if (ev != null && ev.setUp())
-                        {
-                            ev = null;
-                        }
-                    }
-
-                    if ( ev != null )
-                    {
-                        Log.info("Applying " + ev + " as tonight's nightly event, due to having PROFESSION_NIGHTLY_EVENTS");
-                        if (Game1.farmEvent == null) // showEndOfNightStuff() was already called, so we need to make it think that didn't happen
-                        {
-                            // Utility.consolidateStacks was called on the original list.
-                            // We have a copy of the list, but the items are the same instances.
-                            // So while stacks will be merged in our copy, the "empty" stacks won't be gone.
-                            for (int k = cacheItems.Count<Item>() - 1; k >= 0; k--)
-                            {
-                                if (cacheItems[k] != null && cacheItems[k].Stack <= 0)
-                                {
-                                    cacheItems.RemoveAt(k);
-                                }
-                            }
-
-                            // Don't need to worry about mailForTomorrow. The mail was already applied to the mailbox.
-                            // The reason it is cleared later is because Utility.pickFarmEvent checks it for community
-                            // center completion stuff. But in that case farmEvent is a WorldChangeEvent, so it won't
-                            // reach this far anyways.
-                            Game1.player.newLevels = cacheLevels;
-                            Game1.getFarm().shippingBin = cacheItems;
-                            Game1.showingEndOfNightStuff = false;
-                            Game1.afterFade = null;
-                            Game1.globalFade = false;
-                            Game1.activeClickableMenu = null;
-                            Game1.endOfNightMenus.Clear();
-                        }
-                        else
-                        {
-                            Log.info("However we are replacing a dog attack event.");
-                            // We're replacing the dogs attacking animals left out event. It's pretty much the "fallback" event when another isn't chosen.
-                            // Since we're replacing the existing event the showEndOfNightStuff hasn't happened yet.
-                            // However farmEvent is already null if the attack setup failed. So this probably also increases the chance of a successful attack :P
-                        }
-                        Game1.farmEvent = ev;
-                    }
-
+                    Game1.farmEvent = ev;
                 }
             }
         }
@@ -488,27 +490,20 @@ namespace LuckSkill
             }
         }
 
-        private static bool HAS_ALL_PROFESSIONS = false;
-        private static List<int> luckProfessions5 = new List<int>() { PROFESSION_DAILY_LUCK, PROFESSION_MOREQUESTS };
-        private static List<int> luckProfessions10 = new List<int>() { PROFESSION_SPECIAL_CHARM, PROFESSION_A2, PROFESSION_NIGHTLY_EVENTS, PROFESSION_B2 };
-        private static void checkForAllProfessions()
-        {
-            try
-            {
-                Type t = Type.GetType("AllProfessions.AllProfessions, AllProfessions");
-                if (t == null)
-                {
-                    Log.info("All Professions not found.");
-                    return;
-                }
+        private bool HAS_ALL_PROFESSIONS = false;
+        private List<int> luckProfessions5 = new List<int>() { PROFESSION_DAILY_LUCK, PROFESSION_MOREQUESTS };
+        private List<int> luckProfessions10 = new List<int>() { PROFESSION_SPECIAL_CHARM, PROFESSION_A2, PROFESSION_NIGHTLY_EVENTS, PROFESSION_B2 };
 
-                Log.info("All Professions found. You will get every luck profession for your level.");
-                HAS_ALL_PROFESSIONS = true;
-            }
-            catch (Exception e)
+        private void checkForAllProfessions()
+        {
+            if (!Helper.ModRegistry.IsLoaded("community.AllProfessions"))
             {
-                Log.error("Exception checking all professions: " + e);
+                Log.info("All Professions not found.");
+                return;
             }
+
+            Log.info("All Professions found. You will get every luck profession for your level.");
+            HAS_ALL_PROFESSIONS = true;
         }
     }
 }
