@@ -1,0 +1,14 @@
+{
+  "Name": "Object Time Left",
+  "Author": "spacechase0",
+  "Version": {
+    "MajorVersion": 1,
+    "MinorVersion": 0,
+    "PatchVersion": 0,
+    "Build": ""
+  },
+  "Description": "Show how much time is left for an object.",
+  "UniqueID": "spacechase0.ObjectTimeLeft",
+  "PerSaveConfigs": false,
+  "EntryDll": "ObjectTimeLeft.dll"
+}
