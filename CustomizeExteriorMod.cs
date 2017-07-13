@@ -35,6 +35,7 @@ namespace CustomizeExterior
             GameEvents.UpdateTick += onUpdate;
             SaveEvents.AfterLoad += afterLoad;
             SaveEvents.AfterSave += afterSave;
+            LocationEvents.CurrentLocationChanged += afterLocationChange;
         }
 
         private void afterLoad(object sender, EventArgs args)
@@ -49,6 +50,12 @@ namespace CustomizeExterior
         {
             Log.info("Saving per-save config file...");
             Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "building-exteriors.json"), config);
+        }
+
+        private void afterLocationChange(object sender, EventArgsCurrentLocationChanged args)
+        {
+            if (args.NewLocation is Farm)
+                syncTexturesWithChoices();
         }
 
         private void onSeasonChange()
