@@ -35,7 +35,7 @@ namespace LuckSkill
             GraphicsEvents.OnPostRenderGuiEvent += draw;
             TimeEvents.AfterDayStarted += dayStarted;
 
-            SpaceEvents.ShowNightEndMenus += showLevelMenu;
+            SpaceEvents.ChooseNightlyFarmEvent += changeFarmEvent;
 
             enableLuckSkillBar();
             checkForAllProfessions();
@@ -273,16 +273,11 @@ namespace LuckSkill
 
         private List<Point> cacheLevels = new List< Point >();
         private List<Item> cacheItems = new List< Item >();
-        private void showLevelMenu(object sender, EventArgsShowNightEndMenus args)
+        private void changeFarmEvent(object sender, EventArgsChooseNightlyFarmEvent args)
         {
-            Log.error("NOTE TODO CHANGE METHOD NAME AND ADD HOOK AND MAKE THIS WORK AND STUFF");
-            if (true) return;
-            if (args.Stage == EventStage.Before)
-                return;
-
             if ( Game1.player.professions.Contains( PROFESSION_NIGHTLY_EVENTS ) && !Game1.weddingToday &&
-                    ( Game1.farmEvent == null || ( Game1.farmEvent is SoundInTheNightEvent &&
-                    ( int ) Util.GetInstanceField( typeof( SoundInTheNightEvent ), Game1.farmEvent, "behavior" ) == 2 ) ) )
+                    ( args.NightEvent == null || (args.NightEvent is SoundInTheNightEvent &&
+                    ( int ) Util.GetInstanceField( typeof( SoundInTheNightEvent ), args.NightEvent, "behavior" ) == 2 ) ) )
             {
                 //Log.Async("Doing event check");
                 FarmEvent ev = null;
@@ -305,39 +300,7 @@ namespace LuckSkill
                 if ( ev != null )
                 {
                     Log.info("Applying " + ev + " as tonight's nightly event, due to having PROFESSION_NIGHTLY_EVENTS");
-                    if (Game1.farmEvent == null) // showEndOfNightStuff() was already called, so we need to make it think that didn't happen
-                    {
-                        // Utility.consolidateStacks was called on the original list.
-                        // We have a copy of the list, but the items are the same instances.
-                        // So while stacks will be merged in our copy, the "empty" stacks won't be gone.
-                        for (int k = cacheItems.Count<Item>() - 1; k >= 0; k--)
-                        {
-                            if (cacheItems[k] != null && cacheItems[k].Stack <= 0)
-                            {
-                                cacheItems.RemoveAt(k);
-                            }
-                        }
-
-                        // Don't need to worry about mailForTomorrow. The mail was already applied to the mailbox.
-                        // The reason it is cleared later is because Utility.pickFarmEvent checks it for community
-                        // center completion stuff. But in that case farmEvent is a WorldChangeEvent, so it won't
-                        // reach this far anyways.
-                        Game1.player.newLevels = cacheLevels;
-                        Game1.getFarm().shippingBin = cacheItems;
-                        Game1.showingEndOfNightStuff = false;
-                        Game1.afterFade = null;
-                        Game1.globalFade = false;
-                        Game1.activeClickableMenu = null;
-                        Game1.endOfNightMenus.Clear();
-                    }
-                    else
-                    {
-                        Log.info("However we are replacing a dog attack event.");
-                        // We're replacing the dogs attacking animals left out event. It's pretty much the "fallback" event when another isn't chosen.
-                        // Since we're replacing the existing event the showEndOfNightStuff hasn't happened yet.
-                        // However farmEvent is already null if the attack setup failed. So this probably also increases the chance of a successful attack :P
-                    }
-                    Game1.farmEvent = ev;
+                    args.NightEvent = ev;
                 }
             }
         }

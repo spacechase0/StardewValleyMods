@@ -10,5 +10,10 @@
   "Description": "Adds ways of getting the vanilla luck skill.",
   "UniqueID": "spacechase0.LuckSkill",
   "PerSaveConfigs": false,
-  "EntryDll": "LuckSkill.dll"
+  "EntryDll": "LuckSkill.dll",
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.SpaceCore"
+    }
+  ]
 }
