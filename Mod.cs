@@ -526,12 +526,7 @@ namespace CookingSkill
                 return;
 
             Log.debug("Doing cooking menus");
-
-            // This'll mess up if a farm event comes up
-            // Not sure how to do it properly without hooking into showEndOfNightStuff
-            // Which I can't.
-            // The profession ones are the only important ones, so make sure that they show
-            // up eventually if you don't have the profession, even if you didn't just level.
+            
             if (newCookingLevels.Count() > 0)
             {
                 for (int i = newCookingLevels.Count() - 1; i >= 0; --i )
