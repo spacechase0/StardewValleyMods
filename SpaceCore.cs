@@ -41,9 +41,16 @@ namespace SpaceCore
             Entoarox.Framework.EntoFramework.GetTypeRegistry().RegisterType<NewHoeDirt>();
             Entoarox.Framework.EntoFramework.GetTypeRegistry().RegisterType<NewCrop>();
 
-            var y = typeof(NewSerializableDictionary<Vector2, StardewValley.TerrainFeatures.TerrainFeature>);
-            var x = typeof(GameLocation).GetField("terrainFeatures");
-            Helper.Reflection.GetPrivateField<object>(x, "m_fieldType").SetValue(y);
+            if (!Util.UsingMono)
+            {
+                var y = typeof(NewSerializableDictionary<Vector2, StardewValley.TerrainFeatures.TerrainFeature>);
+                var x = typeof(GameLocation).GetField("terrainFeatures");
+                Helper.Reflection.GetPrivateField<object>(x, "m_fieldType").SetValue(y);
+            }
+            else
+            {
+                throw new Exception("TODO MONO");
+            }
 
             try
             {
