@@ -1,4 +1,5 @@
 ﻿using SpaceCore.Utilities;
+using StardewValley.Events;
 using System;
 
 namespace SpaceCore.Events
@@ -15,6 +16,9 @@ namespace SpaceCore.Events
         // So you can prevent something from happening when a hotbar button is pressed
         // NOTE: Only works for the number bar (1234567890-=)
         public static event EventHandler<EventArgsSelectHotbarSlot> SelectHotbarSlot;
+
+        // Lets you hook into Utillity.pickFarmEvent
+        public static event EventHandler<EventArgsChooseNightlyFarmEvent> ChooseNightlyFarmEvent;
 
         internal static void InvokeOnBlankSave()
         {
@@ -42,6 +46,18 @@ namespace SpaceCore.Events
                 return !args.Canceled;
             Util.invokeEvent("SpaceEvents.SelectHotbarSlot", SelectHotbarSlot.GetInvocationList(), null, args);
             return !args.Canceled;
+        }
+
+        internal static FarmEvent InvokeChooseNightlyFarmEvent(FarmEvent vanilla)
+        {
+            var args = new EventArgsChooseNightlyFarmEvent();
+            args.NightEvent = vanilla;
+
+            Log.trace("Event: SelectHotbarSlot");
+            if (ChooseNightlyFarmEvent == null)
+                return args.NightEvent;
+            Util.invokeEvent("SpaceEvents.SelectHotbarSlot", SelectHotbarSlot.GetInvocationList(), null, args);
+            return args.NightEvent;
         }
     }
 }

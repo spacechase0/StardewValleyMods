@@ -55,6 +55,7 @@
     <Compile Include="Commands.cs" />
     <Compile Include="Content.cs" />
     <Compile Include="Events\EventArgsCancelable.cs" />
+    <Compile Include="Events\EventArgsChooseNightlyFarmEvent.cs" />
     <Compile Include="Events\EventArgsSelectHotbarSlot.cs" />
     <Compile Include="Events\EventArgsShowNightEndMenus.cs" />
     <Compile Include="Events\EventStage.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Overrides\NewHoeDirt.cs" />
     <Compile Include="Overrides\NewMeleeWeapon.cs" />
     <Compile Include="Overrides\NewSerializableDictionary.cs" />
+    <Compile Include="Overrides\NewUtility.cs" />
     <Compile Include="Sleep.cs" />
     <Compile Include="SpaceCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

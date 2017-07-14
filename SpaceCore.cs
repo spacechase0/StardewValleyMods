@@ -50,6 +50,7 @@ namespace SpaceCore
                 //SerializableDictionaryHijack.hijack();
                 NewGame1.hijack();
                 NewMeleeWeapon.hijack();
+                NewUtility.hijack();
             }
             catch (Exception e)
             {
