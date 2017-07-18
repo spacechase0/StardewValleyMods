@@ -25,24 +25,37 @@ namespace SpaceCore.Utilities
                     throw new ArgumentException("Target and replacement methods must match; parameter " + (i + + (withThis ? 1 : 0)));
             }
             //*/
-            Log.debug("Hijacking method \"" + target + "\", replacing with \"" + replaceWith + "\".");
+            Log.debug("Hijacking method \"" + target.DeclaringType + ": " + target + "\", replacing with \"" + replaceWith.DeclaringType + ": " + replaceWith + "\".");
 
-            RuntimeHelpers.PrepareMethod(target.MethodHandle);
-            RuntimeHelpers.PrepareMethod(replaceWith.MethodHandle);
+            try
+            {
+                RuntimeHelpers.PrepareMethod(target.MethodHandle);
+            }
+            catch (Exception e)
+            {
+                Log.warn("WARNING (1): " + e);
+            }
+            try
+            {
+                RuntimeHelpers.PrepareMethod(replaceWith.MethodHandle);
+            }
+            catch (Exception e)
+            {
+                Log.warn("WARNING (2): " + e);
+            }
 
-            if (target.IsVirtual)
-            {/*
+            if (target.IsVirtual&&false)
+            {
                 // http://stackoverflow.com/a/38783635
                 unsafe
                 {
-                    UI
-                }*/
+                }
             }
             //else
             {
-                    // http://stackoverflow.com/a/36415711
-                    unsafe
-                    {
+                // http://stackoverflow.com/a/36415711
+                unsafe
+                {
                     int insOffset = 1;
                     if (IntPtr.Size == 4)
                     {
