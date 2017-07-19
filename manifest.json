@@ -11,10 +11,5 @@
   "UniqueID": "spacechase0.SpaceCore",
   "PerSaveConfigs": false,
   "EntryDll": "SpaceCore.dll",
-  "MinimumApiVersion":  "1.14-prerelease",
-  "Dependencies": [
-    {
-      "UniqueID": "Entoarox.EntoaroxFramework"
-    }
-  ]
+  "MinimumApiVersion":  "1.15"
 }

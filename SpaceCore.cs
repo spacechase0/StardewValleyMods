@@ -19,17 +19,14 @@ namespace SpaceCore
     {
         internal static SpaceCore instance;
 
-        public LocalizedContentManager TMP_ORIG_CONTENT_MANAGER;
         public SpaceCore()
         {
-            TMP_ORIG_CONTENT_MANAGER = Game1.content;
         }
 
         public override void Entry(IModHelper helper)
         {
             base.Entry(helper);
             instance = this;
-            Game1.content = TMP_ORIG_CONTENT_MANAGER;
 
             GameEvents.UpdateTick += onUpdate;
 
@@ -38,23 +35,8 @@ namespace SpaceCore
 
             Commands.register();
 
-            Entoarox.Framework.EntoFramework.GetTypeRegistry().RegisterType<NewHoeDirt>();
-            Entoarox.Framework.EntoFramework.GetTypeRegistry().RegisterType<NewCrop>();
-
-            if (!Util.UsingMono)
-            {
-                var y = typeof(NewSerializableDictionary<Vector2, StardewValley.TerrainFeatures.TerrainFeature>);
-                var x = typeof(GameLocation).GetField("terrainFeatures");
-                Helper.Reflection.GetPrivateField<object>(x, "m_fieldType").SetValue(y);
-            }
-            else
-            {
-                throw new Exception("TODO MONO");
-            }
-
             try
             {
-                //SerializableDictionaryHijack.hijack();
                 NewGame1.hijack();
                 NewMeleeWeapon.hijack();
                 NewUtility.hijack();
@@ -65,14 +47,9 @@ namespace SpaceCore
             }
         }
 
-        private object oldCM;
         private int prevLoaderNum = 0;
         private void onUpdate( object sender, EventArgs args )
         {
-            if (Game1.content.GetType().ToString().Contains("Ento")) oldCM = Game1.content;
-            Game1.content = TMP_ORIG_CONTENT_MANAGER;
-            Reflect.setField(Game1.mapDisplayDevice, "m_contentManager", TMP_ORIG_CONTENT_MANAGER);
-
             if (Game1.currentLoader != null)
             {
                 if (Game1.currentLoader.Current == 25 && prevLoaderNum != 25)
