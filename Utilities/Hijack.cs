@@ -44,14 +44,38 @@ namespace SpaceCore.Utilities
                 Log.warn("WARNING (2): " + e);
             }
 
-            if (target.IsVirtual&&false)
+            if (target.IsVirtual)
             {
                 // http://stackoverflow.com/a/38783635
                 unsafe
                 {
+                    UInt64* methodDesc = (UInt64*)(replaceWith.MethodHandle.Value.ToPointer());
+                    int index = (int)(((*methodDesc) >> 32) & 0xFF);
+                    if (IntPtr.Size == 4)
+                    {
+                        uint* classStart = (uint*)replaceWith.DeclaringType.TypeHandle.Value.ToPointer();
+                        classStart += 10;
+                        classStart = (uint*)*classStart;
+                        uint* tar = classStart + index;
+
+                        uint* inj = (uint*)target.MethodHandle.Value.ToPointer() + 2;
+                        //int* tar = (int*)methodToReplace.MethodHandle.Value.ToPointer() + 2;
+                        *tar = *inj;
+                    }
+                    else
+                    {
+                        ulong* classStart = (ulong*)replaceWith.DeclaringType.TypeHandle.Value.ToPointer();
+                        classStart += 8;
+                        classStart = (ulong*)*classStart;
+                        ulong* tar = classStart + index;
+
+                        ulong* inj = (ulong*)target.MethodHandle.Value.ToPointer() + 1;
+                        //ulong* tar = (ulong*)methodToReplace.MethodHandle.Value.ToPointer() + 1;
+                        *tar = *inj;
+                    }
                 }
             }
-            //else
+            else
             {
                 // http://stackoverflow.com/a/36415711
                 unsafe
