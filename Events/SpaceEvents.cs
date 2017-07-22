@@ -53,10 +53,10 @@ namespace SpaceCore.Events
             var args = new EventArgsChooseNightlyFarmEvent();
             args.NightEvent = vanilla;
 
-            Log.trace("Event: SelectHotbarSlot");
+            Log.trace("Event: ChooseNightlyFarmEvent");
             if (ChooseNightlyFarmEvent == null)
                 return args.NightEvent;
-            Util.invokeEvent("SpaceEvents.SelectHotbarSlot", SelectHotbarSlot.GetInvocationList(), null, args);
+            Util.invokeEvent("SpaceEvents.ChooseNightlyFarmEvent", ChooseNightlyFarmEvent.GetInvocationList(), null, args);
             return args.NightEvent;
         }
     }
