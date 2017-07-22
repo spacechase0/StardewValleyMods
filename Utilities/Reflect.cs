@@ -21,6 +21,16 @@ namespace SpaceCore.Utilities
             return SpaceCore.instance.Helper.Reflection.GetPrivateValue< T >(type, field);
         }
 
+        public static T getProperty<T>(object obj, string field)
+        {
+            return SpaceCore.instance.Helper.Reflection.GetPrivateProperty<T>(obj, field).GetValue();
+        }
+
+        public static T getProperty<T>(Type type, string field)
+        {
+            return SpaceCore.instance.Helper.Reflection.GetPrivateProperty<T>(type, field).GetValue();
+        }
+
         public static void setField<T>(object obj, string field, T value)
         {
             SpaceCore.instance.Helper.Reflection.GetPrivateField<T>(obj, field).SetValue(value);
@@ -29,6 +39,16 @@ namespace SpaceCore.Utilities
         public static void setField<T>(Type type, string field, T value)
         {
             SpaceCore.instance.Helper.Reflection.GetPrivateField<T>(type, field).SetValue(value);
+        }
+
+        public static void setProperty<T>(object obj, string field, T value)
+        {
+            SpaceCore.instance.Helper.Reflection.GetPrivateProperty<T>(obj, field).SetValue(value);
+        }
+
+        public static void setProperty<T>(Type type, string field, T value)
+        {
+            SpaceCore.instance.Helper.Reflection.GetPrivateProperty<T>(type, field).SetValue(value);
         }
 
         public static void callMethod(object obj, string method, object[] args)

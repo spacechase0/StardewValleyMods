@@ -261,11 +261,11 @@ namespace SpaceCore.Overrides
                 {
                     double x1 = (double)state2.X;
                     thumbSticks = state3.ThumbSticks;
-                    double num1 = (double)thumbSticks.Right.X * (double)Reflect.getField<float>(typeof(Game1), "thumbstickToMouseModifier");
+                    double num1 = (double)thumbSticks.Right.X * (double)Reflect.getProperty<float>(typeof(Game1), "thumbstickToMouseModifier");
                     int x2 = (int)(x1 + num1);
                     double y1 = (double)state2.Y;
                     thumbSticks = state3.ThumbSticks;
-                    double num2 = (double)thumbSticks.Right.Y * (double)Reflect.getField<float>(typeof(Game1), "thumbstickToMouseModifier");
+                    double num2 = (double)thumbSticks.Right.Y * (double)Reflect.getProperty<float>(typeof(Game1), "thumbstickToMouseModifier");
                     int y2 = (int)(y1 - num2);
                     Mouse.SetPosition(x2, y2);
                     Game1.lastCursorMotionWasMouse = false;
