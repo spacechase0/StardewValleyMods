@@ -1,4 +1,5 @@
-﻿using SpaceCore.Events;
+﻿using Harmony;
+using SpaceCore.Events;
 using SpaceCore.Utilities;
 using StardewValley;
 using StardewValley.Events;
@@ -9,7 +10,7 @@ namespace SpaceCore.Overrides
 {
     public class NewUtility
     {
-        internal static void hijack()
+        internal static void hijack( HarmonyInstance harmony )
         {
             Hijack.hijack(typeof(Utility).GetMethod("pickFarmEvent", BindingFlags.Static | BindingFlags.Public),
                           typeof(NewUtility).GetMethod("pickFarmEvent", BindingFlags.Static | BindingFlags.Public));

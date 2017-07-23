@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Harmony;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore.Utilities;
 using StardewValley;
@@ -11,7 +12,7 @@ namespace SpaceCore.Overrides
 {
     class NewMeleeWeapon
     {
-        internal static void hijack()
+        internal static void hijack( HarmonyInstance harmony )
         {
             Hijack.hijack(typeof(   MeleeWeapon).GetMethod("drawDuringUse", BindingFlags.Static | BindingFlags.Public),
                           typeof(NewMeleeWeapon).GetMethod("drawDuringUse", BindingFlags.Static | BindingFlags.Public));

@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Harmony;
+using Microsoft.Xna.Framework;
 using SpaceCore.Events;
 using SpaceCore.Overrides;
-using SpaceCore.Utilities;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -9,9 +9,7 @@ using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace SpaceCore
 {
@@ -35,11 +33,14 @@ namespace SpaceCore
 
             Commands.register();
 
+            var harmony = HarmonyInstance.Create("spacechase0.SpaceCore");
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
             try
             {
-                NewGame1.hijack();
-                NewMeleeWeapon.hijack();
-                NewUtility.hijack();
+                Log.debug("test");
+                NewGame1.hijack(harmony);
+                NewMeleeWeapon.hijack(harmony);
+                NewUtility.hijack(harmony);
             }
             catch (Exception e)
             {

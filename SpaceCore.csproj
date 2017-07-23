@@ -50,11 +50,8 @@
     <Compile Include="Command.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Content.cs" />
-    <Compile Include="Events\EventArgsCancelable.cs" />
     <Compile Include="Events\EventArgsChooseNightlyFarmEvent.cs" />
-    <Compile Include="Events\EventArgsSelectHotbarSlot.cs" />
     <Compile Include="Events\EventArgsShowNightEndMenus.cs" />
-    <Compile Include="Events\EventStage.cs" />
     <Compile Include="Events\SpaceEvents.cs" />
     <Compile Include="ICustomWeaponDraw.cs" />
     <Compile Include="Interface\TabbedMenu.cs" />
@@ -79,6 +76,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Harmony\Harmony\Harmony.csproj">
+      <Project>{69aee16a-b6e7-4642-8081-3928b32455df}</Project>
+      <Name>Harmony</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tiled.Net\Tiled.Net\Tiled.Net.csproj">
       <Project>{28aa2641-4e18-415d-b0af-6bbe3846e50b}</Project>
       <Name>Tiled.Net</Name>
