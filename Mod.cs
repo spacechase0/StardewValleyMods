@@ -522,9 +522,6 @@ namespace CookingSkill
 
         private void showLevelMenu( object sender, EventArgsShowNightEndMenus args )
         {
-            if (args.Stage == EventStage.Before)
-                return;
-
             Log.debug("Doing cooking menus");
             
             if (newCookingLevels.Count() > 0)
@@ -534,26 +531,20 @@ namespace CookingSkill
                     int level = newCookingLevels[i];
                     Log.debug("Doing " + i + ": cooking level " + level + " screen");
 
-                    if (Game1.activeClickableMenu != null)
-                        Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
-                    Game1.activeClickableMenu = new CookingLevelUpMenu(level);
+                    Game1.endOfNightMenus.Push(new CookingLevelUpMenu(level));
                 }
                 newCookingLevels.Clear();
             }
             else if ( getCookingLevel() >= 5 && !Game1.player.professions.Contains( PROFESSION_SELLPRICE ) &&!Game1.player.professions.Contains( PROFESSION_BUFFTIME ) )
             {
                 Log.debug("Putting level 5 profession menu");
-                if (Game1.activeClickableMenu != null)
-                    Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
-                Game1.activeClickableMenu = new CookingLevelUpMenu(5);
+                Game1.endOfNightMenus.Push(new CookingLevelUpMenu(5));
             }
             else if (getCookingLevel() >= 10 && !Game1.player.professions.Contains(PROFESSION_CONSERVATION) && !Game1.player.professions.Contains(PROFESSION_SILVER) &&
                         !Game1.player.professions.Contains(PROFESSION_BUFFLEVEL) && !Game1.player.professions.Contains(PROFESSION_BUFFPLAIN))
             {
                 Log.debug("Putting level 10 profession menu");
-                if (Game1.activeClickableMenu != null)
-                    Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
-                Game1.activeClickableMenu = new CookingLevelUpMenu(10);
+                Game1.endOfNightMenus.Push(new CookingLevelUpMenu(10));
             }
         }
 
