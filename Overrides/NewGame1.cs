@@ -27,12 +27,11 @@ namespace SpaceCore.Overrides
                           null,
                           null,
                           new HarmonyMethod(typeof(NewGame1).GetMethod("showEndOfNightStuff_mid_IL")));
-            /*
-            Hijack.hijack(typeof(   Game1).GetMethod("showEndOfNightStuff",  BindingFlags.Static   | BindingFlags.   Public ),
-                          typeof(NewGame1).GetMethod("showEndOfNightStuff",  BindingFlags.Static   | BindingFlags.   Public ));
-            */Hijack.hijack(typeof(   Game1).GetMethod("setGraphicsForSeason", BindingFlags.Static   | BindingFlags.   Public ),
-                          typeof(NewGame1).GetMethod("setGraphicsForSeason", BindingFlags.Static   | BindingFlags.   Public ));
+            harmony.Patch(typeof(Game1).GetMethod("setGraphicsForSeason"),
+                          new HarmonyMethod(typeof(NewGame1).GetMethod("setGraphicsForSeason_pre")),
+                          null);
         }
+
         public static void showEndOfNightStuff_mid()
         {
             var ev = new EventArgsShowNightEndMenus();
@@ -56,7 +55,8 @@ namespace SpaceCore.Overrides
             return newInsns;
         }
 
-        public static void setGraphicsForSeason()
+        // TODO: Make this do IL hooking instead of pre + no execute original
+        public static bool setGraphicsForSeason_pre()
         {
             // All I've done is add checks relating to ISeasonalLocation
             foreach (GameLocation location in Game1.locations)
@@ -136,7 +136,8 @@ namespace SpaceCore.Overrides
                     }
                 }
             }
-        }
 
+            return false;
         }
+    }
 }
