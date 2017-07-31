@@ -49,11 +49,9 @@ namespace SpaceCore.Overrides
     [HarmonyPatch(typeof(Game1), "setGraphicsForSeason")]
     internal static class SeasonGraphicsForSeasonalLocationsPatch
     {
-        // TODO: Make this do IL hooking instead of pre + no execute original
-        public static bool Prefix()
+        // All I've done is add checks relating to ISeasonalLocation
+        public static void setGraphicsForSeason()
         {
-            // All I've done is add checks relating to ISeasonalLocation
-            /*
             foreach (GameLocation location in Game1.locations)
             {
                 location.seasonUpdate(Game1.currentSeason, true);
@@ -131,8 +129,13 @@ namespace SpaceCore.Overrides
                     }
                 }
             }
-            //*/
-            return true;
+        }
+
+        // TODO: Make this do IL hooking instead of pre + no execute original
+        internal static bool Prefix()
+        {
+            setGraphicsForSeason();
+            return false;
         }
     }
 }
