@@ -10,16 +10,12 @@ using SFarmer = StardewValley.Farmer;
 
 namespace SpaceCore.Overrides
 {
-    class NewMeleeWeapon
+    [HarmonyPatch(typeof(MeleeWeapon))]
+    [HarmonyPatch("drawDuringUse")]
+    [HarmonyPatch(new[] { typeof(int), typeof(int),typeof(SpriteBatch), typeof(Vector2), typeof(SFarmer), typeof(Rectangle), typeof(int), typeof(bool) } )]
+    internal class CustomWeaponDrawPatch
     {
-        internal static void hijack( HarmonyInstance harmony )
-        {
-            harmony.Patch(typeof(MeleeWeapon).GetMethod("drawDuringUse", BindingFlags.Static | BindingFlags.Public),
-                          new HarmonyMethod(typeof(NewMeleeWeapon).GetMethod("drawDuringUse_pre")),
-                          null);
-        }
-
-        public static bool drawDuringUse_pre(int frameOfFarmerAnimation, int facingDirection, SpriteBatch spriteBatch, Vector2 playerPosition, SFarmer f, Rectangle sourceRect, int type, bool isOnSpecial)
+        internal static bool Prefix(int frameOfFarmerAnimation, int facingDirection, SpriteBatch spriteBatch, Vector2 playerPosition, SFarmer f, Rectangle sourceRect, int type, bool isOnSpecial)
         {
             if (f.CurrentTool is ICustomWeaponDraw)
             {

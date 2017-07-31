@@ -19,46 +19,41 @@ using SObject = StardewValley.Object;
 
 namespace SpaceCore.Overrides
 {
-    class NewGame1
+    [HarmonyPatch(typeof(Game1), "showEndOfNightStuff")]
+    public class ShowEndOfNightStuffHook
     {
-        internal static void hijack( HarmonyInstance harmony )
-        {
-            harmony.Patch(typeof(Game1).GetMethod("showEndOfNightStuff"),
-                          null,
-                          null,
-                          new HarmonyMethod(typeof(NewGame1).GetMethod("showEndOfNightStuff_mid_IL")));
-            harmony.Patch(typeof(Game1).GetMethod("setGraphicsForSeason"),
-                          new HarmonyMethod(typeof(NewGame1).GetMethod("setGraphicsForSeason_pre")),
-                          null);
-        }
-
         public static void showEndOfNightStuff_mid()
         {
             var ev = new EventArgsShowNightEndMenus();
             SpaceEvents.InvokeShowNightEndMenus(ev);
         }
-
-        public static IEnumerable<CodeInstruction> showEndOfNightStuff_mid_IL(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        
+        internal static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
-            
+
             var newInsns = new List<CodeInstruction>();
-            foreach ( var insn in insns )
+            foreach (var insn in insns)
             {
-                if ( insn.opcode == OpCodes.Ldstr && (string) insn.operand == "newRecord" )
+                if (insn.opcode == OpCodes.Ldstr && (string)insn.operand == "newRecord")
                 {
-                    newInsns.Insert(newInsns.Count - 2, new CodeInstruction(OpCodes.Call, typeof(NewGame1).GetMethod("showEndOfNightStuff_mid")));
+                    newInsns.Insert(newInsns.Count - 2, new CodeInstruction(OpCodes.Call, typeof(ShowEndOfNightStuffHook).GetMethod("showEndOfNightStuff_mid")));
                 }
                 newInsns.Add(insn);
             }
 
             return newInsns;
         }
+    }
 
+    [HarmonyPatch(typeof(Game1), "setGraphicsForSeason")]
+    internal static class SeasonGraphicsForSeasonalLocationsPatch
+    {
         // TODO: Make this do IL hooking instead of pre + no execute original
-        public static bool setGraphicsForSeason_pre()
+        public static bool Prefix()
         {
             // All I've done is add checks relating to ISeasonalLocation
+            /*
             foreach (GameLocation location in Game1.locations)
             {
                 location.seasonUpdate(Game1.currentSeason, true);
@@ -136,8 +131,8 @@ namespace SpaceCore.Overrides
                     }
                 }
             }
-
-            return false;
+            //*/
+            return true;
         }
     }
 }

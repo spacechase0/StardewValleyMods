@@ -35,17 +35,6 @@ namespace SpaceCore
 
             var harmony = HarmonyInstance.Create("spacechase0.SpaceCore");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-            try
-            {
-                Log.debug("test");
-                NewGame1.hijack(harmony);
-                NewMeleeWeapon.hijack(harmony);
-                NewUtility.hijack(harmony);
-            }
-            catch (Exception e)
-            {
-                Log.error("Exception hijacking methods: " + e);
-            }
         }
 
         private int prevLoaderNum = 0;
