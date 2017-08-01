@@ -111,5 +111,15 @@ namespace SleepyEye
         {
             return "Tent";
         }
+
+        public override bool canBeDropped()
+        {
+            return true;
+        }
+
+        public override bool canBeTrashed()
+        {
+            return true;
+        }
     }
 }
