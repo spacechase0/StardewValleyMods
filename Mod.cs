@@ -46,7 +46,7 @@ namespace CarryChest
         private bool prevMousePressed = false;
         private void update( object sender, EventArgs args )
         {
-            if (!Context.IsWorldReady)
+            if (!Context.IsWorldReady || !Context.IsPlayerFree || Game1.activeClickableMenu != null)
                 return;
 
             if (prevHolding is Chest && Game1.player.ActiveObject == null && Game1.player.CurrentToolIndex == prevSel)
