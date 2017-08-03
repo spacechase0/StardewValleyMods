@@ -28,18 +28,14 @@ namespace CarryChest
             args.NewLocation.objects.CollectionChanged += locObjectsChanged;
         }
 
-        private Chest mostRecentChest;
-        private Vector2 mostRecent;
+        private Vector2 mostRecentPos;
+        private StardewValley.Object mostRecent;
         private void locObjectsChanged( object sender, NotifyCollectionChangedEventArgs args )
         {
             if (args.Action == NotifyCollectionChangedAction.Add)
             {
-                mostRecent = (Vector2)args.NewItems[0];
-                var obj = Game1.currentLocation.objects[(Vector2)args.NewItems[0]];
-                if (obj is Chest chest)
-                {
-                    mostRecentChest = chest;
-                }
+                mostRecentPos = (Vector2)args.NewItems[0];
+                mostRecent = Game1.currentLocation.objects[mostRecentPos];
             }
         }
         
@@ -51,21 +47,26 @@ namespace CarryChest
             if (!Context.IsWorldReady || !Context.IsPlayerFree || Game1.activeClickableMenu != null)
                 return;
 
-            if (prevHolding is Chest && Game1.player.ActiveObject == null && Game1.player.CurrentToolIndex == prevSel)
+            if (prevHolding is Chest chest && mostRecent is Chest mostRecentChest && Game1.player.ActiveObject == null && Game1.player.CurrentToolIndex == prevSel)
             {
-                Chest chest = prevHolding as Chest;
-                if ( chest.items.Count > 0 && mostRecentChest != null )
-                {
+                mostRecentChest.playerChoiceColor = chest.playerChoiceColor;
+                if (chest.items.Count > 0)
                     mostRecentChest.items = chest.items;
-                }
+
                 prevSel = Game1.player.CurrentToolIndex;
                 prevHolding = Game1.player.ActiveObject;
                 prevMousePressed = true;
                 return;
             }
-            else if ( prevHolding != null && Game1.player.ActiveObject == null && Game1.player.CurrentToolIndex == prevSel )
+            else if ( prevHolding != null && mostRecent != null && Game1.player.ActiveObject == null && Game1.player.CurrentToolIndex == prevSel &&
+                      prevHolding.heldObject != null && prevHolding.minutesUntilReady > 0)
             {
-                Game1.currentLocation.objects[mostRecent] = prevHolding;
+                mostRecent.heldObject = prevHolding.heldObject;
+                mostRecent.minutesUntilReady = prevHolding.minutesUntilReady;
+
+                prevSel = Game1.player.CurrentToolIndex;
+                prevHolding = Game1.player.ActiveObject;
+                prevMousePressed = true;
                 return;
             }
             prevSel = Game1.player.CurrentToolIndex;
