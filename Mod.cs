@@ -29,10 +29,12 @@ namespace CarryChest
         }
 
         private Chest mostRecentChest;
+        private Vector2 mostRecent;
         private void locObjectsChanged( object sender, NotifyCollectionChangedEventArgs args )
         {
             if (args.Action == NotifyCollectionChangedAction.Add)
             {
+                mostRecent = (Vector2)args.NewItems[0];
                 var obj = Game1.currentLocation.objects[(Vector2)args.NewItems[0]];
                 if (obj is Chest chest)
                 {
@@ -61,6 +63,11 @@ namespace CarryChest
                 prevMousePressed = true;
                 return;
             }
+            else if ( prevHolding != null && Game1.player.ActiveObject == null && Game1.player.CurrentToolIndex == prevSel )
+            {
+                Game1.currentLocation.objects[mostRecent] = prevHolding;
+                return;
+            }
             prevSel = Game1.player.CurrentToolIndex;
             prevHolding = Game1.player.ActiveObject;
 
@@ -71,11 +78,15 @@ namespace CarryChest
                 Point pos = new Point(Game1.getMouseX() + Game1.viewport.X, Game1.getMouseY() + Game1.viewport.Y);
                 Vector2 tile = new Vector2(pos.X / Game1.tileSize, pos.Y / Game1.tileSize);
                 
-                if (Game1.currentLocation.objects.ContainsKey(tile) && Game1.currentLocation.objects[tile] is Chest chest)
+                if (Game1.currentLocation.objects.ContainsKey(tile))
                 {
-                    if ( Game1.player.addItemToInventoryBool( chest, true ) )
+                    var obj = Game1.currentLocation.objects[tile];
+                    if (obj is Chest || (obj.heldObject != null && obj.minutesUntilReady > 0))
                     {
-                        Game1.currentLocation.objects.Remove(tile);
+                        if (Game1.player.addItemToInventoryBool(obj, true))
+                        {
+                            Game1.currentLocation.objects.Remove(tile);
+                        }
                     }
                 }
             }
