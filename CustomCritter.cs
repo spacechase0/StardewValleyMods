@@ -72,9 +72,9 @@ namespace CustomCritters
                                 else if (pt.Type == "offset")
                                     targ = position + new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
                                 else if (pt.Type == "startrandom")
-                                    targ += new Vector2((Game1.random.Next(pt.X) - pt.X / 2f) * Game1.tileSize, (Game1.random.Next(pt.Y) - pt.Y / 2f) * Game1.tileSize);
+                                    targ += new Vector2((float)(Game1.random.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(Game1.random.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
                                 else if (pt.Type == "random")
-                                    targ = position + new Vector2((Game1.random.Next(pt.X) - pt.X / 2f) * Game1.tileSize, (Game1.random.Next(pt.Y) - pt.Y / 2f) * Game1.tileSize);
+                                    targ = position + new Vector2((float)(Game1.random.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(Game1.random.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
                                 else if (pt.Type == "wait")
                                     ;
                                 else

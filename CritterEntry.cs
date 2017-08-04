@@ -115,8 +115,8 @@ namespace CustomCritters
             public class PatrolPoint_
             {
                 public string Type { get; set; } = "start";
-                public int X { get; set; }
-                public int Y { get; set; }
+                public float X { get; set; }
+                public float Y { get; set; }
             }
             public List<PatrolPoint_> PatrolPoints { get; set; } = new List<PatrolPoint_>();
             public int PatrolPointDelay { get; set; }
