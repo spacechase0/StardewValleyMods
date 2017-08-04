@@ -13,6 +13,7 @@ namespace CustomCritters
     public class CustomCritter : Critter
     {
         private CritterEntry data;
+        private LightSource light;
 
         public CustomCritter( Vector2 pos, CritterEntry data )
         {
@@ -31,6 +32,16 @@ namespace CustomCritters
             }
             this.sprite = new AnimatedSprite(tex, baseFrame, data.SpriteData.FrameWidth, data.SpriteData.FrameHeight);
             sprite.setCurrentAnimation(frames);
+            
+            if ( data.Light != null )
+            {
+                var col = new Color(255 - data.Light.Color.R, 255 - data.Light.Color.G, 255 - data.Light.Color.B);
+                if (data.Light.VanillaLightId != -1)
+                    light = new LightSource(data.Light.VanillaLightId, position, data.Light.Radius, col);
+                else
+                    light = new LightSource(Mod.instance.Helper.Content.Load<Texture2D>("Critters/" + data.Id + "/light.png"), position, data.Light.Radius, col);
+                Game1.currentLightSources.Add(light);
+            }
         }
         
         private int patrolIndex = 0;
@@ -48,15 +59,24 @@ namespace CustomCritters
                         break;
                     
                     case "patrol":
+                    case "random":
                         {
                             if (patrolWait <= 0)
                             {
-                                var pt = data.Behavior.PatrolPoints[patrolIndex];
+                                var pt = data.Behavior.PatrolPoints[data.Behavior.Type == "patrol" ? patrolIndex : Game1.random.Next(data.Behavior.PatrolPoints.Count)];
 
                                 Vector2 targ = startingPosition;
                                 if (pt.Type == "start") ; // We just did this
-                                else if ( pt.Type == "startoffset" )
+                                else if (pt.Type == "startoffset")
                                     targ += new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
+                                else if (pt.Type == "offset")
+                                    targ = position + new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
+                                else if (pt.Type == "startrandom")
+                                    targ += new Vector2((Game1.random.Next(pt.X) - pt.X / 2f) * Game1.tileSize, (Game1.random.Next(pt.Y) - pt.Y / 2f) * Game1.tileSize);
+                                else if (pt.Type == "random")
+                                    targ = position + new Vector2((Game1.random.Next(pt.X) - pt.X / 2f) * Game1.tileSize, (Game1.random.Next(pt.Y) - pt.Y / 2f) * Game1.tileSize);
+                                else if (pt.Type == "wait")
+                                    ;
                                 else
                                     Log.warn("Bad patrol point type: " + pt.Type);
 
@@ -86,6 +106,10 @@ namespace CustomCritters
                         break;
                 }
             }
+
+            if (light != null)
+                light.position = this.position;
+
             return base.update(time, environment);
         }
 

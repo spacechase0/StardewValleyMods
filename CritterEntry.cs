@@ -262,6 +262,20 @@ namespace CustomCritters
 
         public int SpawnAttempts { get; set; } = 3;
 
+        public class Light_
+        {
+            public int VanillaLightId = 3;
+            public float Radius { get; set; } = 0.5f;
+            public class Color_
+            {
+                public int R { get; set; } = 255;
+                public int G { get; set; } = 255;
+                public int B { get; set; } = 255;
+            }
+            public Color_ Color { get; set; } = new Color_();
+        }
+        public Light_ Light { get; set; } = null;
+
         public virtual bool check( GameLocation loc )
         {
             foreach ( var cond in SpawnConditions )
