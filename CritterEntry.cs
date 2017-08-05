@@ -179,7 +179,7 @@ namespace CustomCritters
                             throw new ArgumentException("Bad ChildrenCombine: " + ChildrenCombine);
                         }
                     }
-                    else if (Chance != 1.0 && Chance > Game1.random.NextDouble())
+                    else if (Chance != 1.0 && Game1.random.NextDouble() > Chance )
                         ret = false;
                     else if ( Variable != null && Variable != "" )
                     {
