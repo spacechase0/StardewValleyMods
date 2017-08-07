@@ -57,10 +57,6 @@ namespace CustomCritters
         {
             if (Game1.CurrentEvent != null)
                 return;
-            
-            var critters = Helper.Reflection.GetPrivateValue<List<Critter>>(args.NewLocation, "critters");
-            if (critters == null || critters.Count > (Game1.currentSeason.Equals("summer") ? 20 : 10))
-                return;
 
             foreach ( var entry in CritterEntry.critters )
             {
