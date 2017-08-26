@@ -82,7 +82,7 @@ namespace CarryChest
                 if (Game1.currentLocation.objects.ContainsKey(tile))
                 {
                     var obj = Game1.currentLocation.objects[tile];
-                    if (obj is Chest || (obj.heldObject != null && obj.minutesUntilReady > 0))
+                    if (obj is Chest || (obj.parentSheetIndex != 156 && obj.heldObject != null && obj.minutesUntilReady > 0))
                     {
                         if (Game1.player.addItemToInventoryBool(obj, true))
                         {
