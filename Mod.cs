@@ -46,10 +46,11 @@ namespace ExperienceBars
             }
         }
 
+        private static bool stopLevelExtenderCompat = false;
         public void renderExpBars(object sender, EventArgs args)
         {
             if (!show || Game1.activeClickableMenu != null) return;
-
+            
             int[] skills = new int[]
             {
                 Game1.player.farmingLevel,
@@ -59,7 +60,32 @@ namespace ExperienceBars
                 Game1.player.combatLevel,
                 Game1.player.luckLevel
             };
-			int[] exp = Game1.player.experiencePoints;
+            int[] exp = Game1.player.experiencePoints;
+
+            bool foundLevelExtender = false;
+            if (Helper.ModRegistry.IsLoaded("Devin Lematty.Level Extender") && !stopLevelExtenderCompat)
+            {
+                try
+                {
+                    var instance = Type.GetType("LevelExtender.ModEntry, LevelExtender").GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+                    var extLevels = Helper.Reflection.GetPrivateValue<int[]>(instance, "sLevs");
+                    var extExp = Helper.Reflection.GetPrivateValue<int[]>(instance, "addedXP");
+                    exp = new int[exp.Length];
+                    for (int i = 0; i < 5; ++i)
+                    {
+                        if (skills[i] < extLevels[i])
+                            continue;
+                        skills[i] = extLevels[i];
+                        exp[i] = extExp[i];
+                    }
+                    foundLevelExtender = true;
+                }
+                catch (Exception e)
+                {
+                    Monitor.Log("Exception during level extender compat: " + e, LogLevel.Error);
+                    stopLevelExtenderCompat = true;
+                }
+            }
 
             int x = 10;
             int y = 10;
@@ -72,20 +98,25 @@ namespace ExperienceBars
                 {
                     nextReq = expNeededForLevel[ 0 ];
                 }
-                else if ( skills[ i ] != 10 )
+                else if ( skills[ i ] < 10 )
                 {
                     prevReq = expNeededForLevel[ skills[ i ] - 1 ];
                     nextReq = expNeededForLevel[ skills[ i ] ];
+                }
+                else if ( foundLevelExtender )
+                {
+                    prevReq = 0;
+                    nextReq = (int)(skills[i] * 1000 + (skills[i] * skills[i] * skills[i] * 0.3));
                 }
 
                 int haveExp = exp[ i ] - prevReq;
                 int needExp = nextReq - prevReq;
                 float progress = ( float ) haveExp / needExp;
-                if ( skills[ i ] == 10 )
+                if ( skills[ i ] == 10 && !foundLevelExtender || skills[ i ] == 100 )
                 {
                     progress = -1;
                 }
-
+                
                 renderSkillBar( x, y, Game1.buffsIcons, getSkillRect( i ), skills[ i ], progress, getSkillColor( i ) );
                 
                 y += 40;
@@ -149,7 +180,8 @@ namespace ExperienceBars
             b.Draw( iconTex, new Rectangle( x, y, 32, 32 ), icon, Color.White );
 
             int extra = 0;
-            if ( level > 9 ) extra = 16;
+            if ( level > 9  ) extra += 16;
+            if ( level > 99 ) extra += 20;
             NumberSprite.draw(level, b, new Vector2(x + 32 + 4 + 16 + extra, y + 16), Color.White, 0.75f, 0, 1, 0);
 
             if (progress < 0 || progress > 100)
