@@ -14,12 +14,13 @@ namespace CustomCritters
     {
         private CritterEntry data;
         private LightSource light;
+        private Random rand;
 
         public CustomCritter( Vector2 pos, CritterEntry data )
         {
             this.position = this.startingPosition = pos;
-            this.startingPosition = position;
             this.data = data;
+            this.rand = new Random(((int)startingPosition.X) << 32 | ((int)startingPosition.Y));
 
             var tex = Mod.instance.Helper.Content.Load<Texture2D>("Critters/" + data.Id + "/critter.png");
 
@@ -46,6 +47,9 @@ namespace CustomCritters
         
         private int patrolIndex = 0;
         private int patrolWait = 0;
+        private bool needTarget = true;
+        private bool waiting = false;
+        private Vector2 target;
         public override bool update(GameTime time, GameLocation environment)
         {
             if (data == null)
@@ -61,43 +65,58 @@ namespace CustomCritters
                     case "patrol":
                     case "random":
                         {
-                            if (patrolWait <= 0)
+                            if (waiting)
                             {
-                                var pt = data.Behavior.PatrolPoints[data.Behavior.Type == "patrol" ? patrolIndex : Game1.random.Next(data.Behavior.PatrolPoints.Count)];
-
-                                Vector2 targ = startingPosition;
-                                if (pt.Type == "start") ; // We just did this
-                                else if (pt.Type == "startoffset")
-                                    targ += new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
-                                else if (pt.Type == "offset")
-                                    targ = position + new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
-                                else if (pt.Type == "startrandom")
-                                    targ += new Vector2((float)(Game1.random.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(Game1.random.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
-                                else if (pt.Type == "random")
-                                    targ = position + new Vector2((float)(Game1.random.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(Game1.random.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
-                                else if (pt.Type == "wait")
-                                    ;
+                                if (patrolWait <= 0)
+                                {
+                                    needTarget = true;
+                                    waiting = false;
+                                }
                                 else
-                                    Log.warn("Bad patrol point type: " + pt.Type);
+                                    patrolWait -= time.ElapsedGameTime.Milliseconds;
+                            }
+                            else
+                            {
+                                if (needTarget)
+                                {
+                                    var pt = data.Behavior.PatrolPoints[data.Behavior.Type == "patrol" ? patrolIndex : Game1.random.Next(data.Behavior.PatrolPoints.Count)];
 
-                                var dist = Vector2.Distance(position, targ);
+                                    target = startingPosition;
+                                    if (pt.Type == "start") ; // We just did this
+                                    else if (pt.Type == "startoffset")
+                                        target += new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
+                                    else if (pt.Type == "offset")
+                                        target = position + new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
+                                    else if (pt.Type == "startrandom")
+                                        target += new Vector2((float)(rand.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(rand.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
+                                    else if (pt.Type == "random")
+                                        target = position + new Vector2((float)(rand.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(rand.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
+                                    else if (pt.Type == "wait")
+                                        ;
+                                    else
+                                        Log.warn("Bad patrol point type: " + pt.Type);
+
+                                    needTarget = false;
+                                }
+
+                                var dist = Vector2.Distance(position, target);
                                 if (dist <= data.Behavior.Speed)
                                 {
-                                    position = targ;
-                                    patrolWait = data.Behavior.PatrolPointDelay + Game1.random.Next( data.Behavior.PatrolPointDelayAddRandom );
+                                    position = target;
+                                    patrolWait = data.Behavior.PatrolPointDelay + Game1.random.Next(data.Behavior.PatrolPointDelayAddRandom);
                                     ++patrolIndex;
                                     if (patrolIndex >= data.Behavior.PatrolPoints.Count)
                                         patrolIndex = 0;
+                                    waiting = true;
                                 }
                                 else
                                 {
-                                    var v = (targ - position);
-                                    Vector2 unit = ( targ - position ) / dist;
+                                    var v = (target - position);
+                                    Vector2 unit = (target - position) / dist;
                                     //Log.trace($"{v.X} {v.Y} {unit.X} {unit.Y}");
                                     position += unit * data.Behavior.Speed;
                                 }
                             }
-                            else patrolWait -= time.ElapsedGameTime.Milliseconds;
                         }
                         break;
 
