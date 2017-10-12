@@ -8,7 +8,7 @@ using StardewValley.Menus;
 
 namespace ThreeHeartDancePartner
 {
-    public class ThreeHeartDancePartnerMod : Mod
+    public class Mod : StardewModdingAPI.Mod
     {
         public override void Entry(IModHelper helper)
         {
