@@ -1,29 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewModdingAPI.Inheritance;
 using StardewValley;
 using StardewValley.Menus;
-using StardewValley.Objects;
-using StardewValley.Tools;
-using Object = StardewValley.Object;
-using Microsoft.Xna.Framework.Input;
 
 namespace ThreeHeartDancePartner
 {
     public class ThreeHeartDancePartnerMod : Mod
     {
-        public override void Entry(params object[] objects)
+        public override void Entry(IModHelper helper)
         {
             GameEvents.UpdateTick += onUpdate;
         }
 
-        public static void onUpdate(object sender, EventArgs args)
+        private void onUpdate(object sender, EventArgs args)
         {
             if (Game1.currentLocation == null || Game1.currentLocation.name != "Temp" || Game1.currentLocation.currentEvent == null)
                 return;
@@ -85,7 +77,7 @@ namespace ThreeHeartDancePartner
                 }
                 catch ( Exception e)
                 {
-                    Log.Async("Excpetion: " + e );
+                    this.Monitor.Log("Exception: " + e, LogLevel.Error);
                     continue;
                 }
             }
