@@ -9,5 +9,6 @@
   },
   "Description": "Makes you only need 3 hearts for a dance partner at the flower festival.",
   "UniqueID": "ThreeHeartDancePartner",
-  "EntryDll": "ThreeHeartDancePartner.dll"
+  "EntryDll": "ThreeHeartDancePartner.dll",
+  "UpdateKeys": [ "Nexus:500" ]
 }
