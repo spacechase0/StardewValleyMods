@@ -179,33 +179,36 @@ namespace CustomCritters
                             throw new ArgumentException("Bad ChildrenCombine: " + ChildrenCombine);
                         }
                     }
-                    else if (Chance != 1.0 && Game1.random.NextDouble() > Chance )
-                        ret = false;
-                    else if ( Variable != null && Variable != "" )
+                    else
                     {
-                        string[] toks = Variable.Split('.');
-
-                        var o = obj;
-                        for ( int i = 0; i < toks.Length; ++i )
-                        {
-                            if (o == null)
-                                break;
-                            var f = o.GetType().GetField(toks[i], BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                            if (f == null)
-                                continue;
-
-                            o = f.GetValue(o);
-                        }
-
-                        if (o != null)
-                        {
-                            if (Is != null && Is != "" && !o.GetType().IsInstanceOfType(Type.GetType(Is)))
-                                ret = false;
-                            else if (ValueEquals != null && ValueEquals != "" && !o.ToString().Equals(ValueEquals))
-                                ret = false;
-                        }
-                        else if (RequireNotNull)
+                        if (Chance != 1.0 && Game1.random.NextDouble() > Chance)
                             ret = false;
+                        if (Variable != null && Variable != "")
+                        {
+                            string[] toks = Variable.Split('.');
+
+                            var o = obj;
+                            for (int i = 0; i < toks.Length; ++i)
+                            {
+                                if (o == null)
+                                    break;
+                                var f = o.GetType().GetField(toks[i], BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                                if (f == null)
+                                    continue;
+
+                                o = f.GetValue(o);
+                            }
+
+                            if (o != null)
+                            {
+                                if (Is != null && Is != "" && !o.GetType().IsInstanceOfType(Type.GetType(Is)))
+                                    ret = false;
+                                else if (ValueEquals != null && ValueEquals != "" && !o.ToString().Equals(ValueEquals))
+                                    ret = false;
+                            }
+                            else if (RequireNotNull)
+                                ret = false;
+                        }
                     }
 
                     if (Not)
