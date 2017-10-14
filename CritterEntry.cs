@@ -194,7 +194,10 @@ namespace CustomCritters
                                     break;
                                 var f = o.GetType().GetField(toks[i], BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                                 if (f == null)
-                                    continue;
+                                {
+                                    o = null;
+                                    break;
+                                }
 
                                 o = f.GetValue(o);
                             }
