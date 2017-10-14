@@ -237,20 +237,24 @@ namespace CustomCritters
                 }
                 else if (LocationType == "terrainfeature")
                 {
-                    foreach ( var tf in loc.terrainFeatures )
+                    var keys = loc.terrainFeatures.Keys.ToList();
+                    keys.Shuffle();
+                    foreach ( var key in keys )
                     {
-                        if (check(tf.Value))
-                            return tf.Key * Game1.tileSize;
+                        if (check(loc.terrainFeatures[key]))
+                            return key * Game1.tileSize;
                     }
 
                     return null;
                 }
                 else if (LocationType == "object")
                 {
-                    foreach (var obj in loc.objects)
+                    var keys = loc.objects.Keys.ToList();
+                    keys.Shuffle();
+                    foreach (var key in keys)
                     {
-                        if (check(obj.Value))
-                            return obj.Key * Game1.tileSize;
+                        if (check(loc.objects[key]))
+                            return key * Game1.tileSize;
                     }
 
                     return null;

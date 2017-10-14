@@ -10,5 +10,6 @@
   "Description": "...",
   "UniqueID": "spacechase0.CustomCritters",
   "PerSaveConfigs": false,
-  "EntryDll": "CustomCritters.dll"
+  "EntryDll": "CustomCritters.dll",
+  "UpdateKeys": [ "Nexus:1255" ]
 }
