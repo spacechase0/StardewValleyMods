@@ -11,5 +11,6 @@
   "UniqueID": "spacechase0.SpaceCore",
   "PerSaveConfigs": false,
   "EntryDll": "SpaceCore.dll",
-  "MinimumApiVersion":  "1.15"
+  "MinimumApiVersion": "1.15",
+  "UpdateKeys": [ "Nexus:1348" ]
 }

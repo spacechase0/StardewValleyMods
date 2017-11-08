@@ -74,7 +74,7 @@ namespace SpaceCore
                     string actualKey = modHelper.Content.GetActualAssetKey(tempKey);
                     Log.debug($"{dir} | {image} | {tempKey} | {actualKey} ");
                     image = Path.Combine(Path.GetDirectoryName(path), image);
-                    modHelper.Content.Load<Texture2D>(image);
+                    //modHelper.Content.Load<Texture2D>(image);
                     image = modHelper.Content.GetActualAssetKey(image);
                 }
 

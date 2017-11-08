@@ -60,6 +60,7 @@
     <Compile Include="Locations\ISeasonalLocation.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Overrides\Game1.cs" />
+    <Compile Include="Overrides\HoeDirt.cs" />
     <Compile Include="Overrides\MeleeWeapon.cs" />
     <Compile Include="Overrides\Utility.cs" />
     <Compile Include="Sleep.cs" />

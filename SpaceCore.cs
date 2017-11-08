@@ -23,7 +23,6 @@ namespace SpaceCore
 
         public override void Entry(IModHelper helper)
         {
-            base.Entry(helper);
             instance = this;
 
             GameEvents.UpdateTick += onUpdate;
