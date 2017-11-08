@@ -10,6 +10,6 @@ namespace JsonAssets.Data
     {
         public string Name { get; set; }
 
-        internal int id;
+        internal int id = -1;
     }
 }

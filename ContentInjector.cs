@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using JsonAssets.Data;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
@@ -19,6 +20,10 @@ namespace JsonAssets
                 return true;
             if (asset.AssetNameEquals("Data\\Crops"))
                 return true;
+            if (asset.AssetNameEquals("Data\\CookingRecipes"))
+                return true;
+            if (asset.AssetNameEquals("Data\\CraftingRecipes"))
+                return true;
             if (asset.AssetNameEquals("Maps\\springobjects"))
                 return true;
             if (asset.AssetNameEquals("TileSheets\\crops"))
@@ -35,6 +40,32 @@ namespace JsonAssets
                 {
                     Log.trace($"Injecting to objects: {obj.GetObjectId()}: {obj.GetObjectInformation()}");
                     data.Add(obj.GetObjectId(), obj.GetObjectInformation());
+                }
+            }
+            else if (asset.AssetNameEquals("Data\\CookingRecipes"))
+            {
+                var data = asset.AsDictionary<string, string>().Data;
+                foreach (var obj in Mod.instance.objects)
+                {
+                    if (obj.Recipe == null)
+                        continue;
+                    if (obj.Category != ObjectData.Category_.Cooking)
+                        continue;
+                    Log.trace($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
+                    data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
+                }
+            }
+            else if (asset.AssetNameEquals("Data\\CraftingRecipes"))
+            {
+                var data = asset.AsDictionary<string, string>().Data;
+                foreach (var obj in Mod.instance.objects)
+                {
+                    if (obj.Recipe == null)
+                        continue;
+                    if (obj.Category == ObjectData.Category_.Cooking)
+                        continue;
+                    Log.trace($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
+                    data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
                 }
             }
             else if (asset.AssetNameEquals("Data\\Crops"))
@@ -57,7 +88,7 @@ namespace JsonAssets
                 {
                     try {
                     Log.trace($"Injecting {obj.Name} sprites");
-                    asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{obj.directory}/{obj.imageName}.png"), null, objectRect(obj.GetObjectId()));
+                    asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{obj.directory}/{obj.imageName}"), null, objectRect(obj.GetObjectId()));
                     if (obj.IsColored)
                         asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{obj.directory}/color.png"), null, objectRect(obj.GetObjectId() + 1));
                     }

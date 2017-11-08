@@ -78,8 +78,8 @@ namespace JsonAssets
 
         public int ResolveObjectId( object data )
         {
-            if (data.GetType() == typeof(int))
-                return (int)data;
+            if (data.GetType() == typeof(long))
+                return (int)(long)data;
             else
                 return objectIds[ (string) data ];
         }
