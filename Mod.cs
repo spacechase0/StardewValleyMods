@@ -90,20 +90,26 @@ namespace JsonAssets
             Dictionary<string, int> ids = new Dictionary<string, int>();
 
             int currId = starting;
+            // First, populate saved IDs
             foreach ( var d in data )
             {
                 if (saved != null && saved.ContainsKey(d.Name))
                 {
                     ids.Add(d.Name, saved[d.Name]);
-                    currId = saved[d.Name] + 1;
+                    currId = Math.Max(currId, saved[d.Name] + 1);
+                    d.id = ids[d.Name];
                 }
-                else
+            }
+            // Next, add in new IDs
+            foreach (var d in data)
+            {
+                if (d.id == -1)
                 {
                     ids.Add(d.Name, currId++);
                     if (type == "objects" && ((ObjectData)d).IsColored)
                         ++currId;
+                    d.id = ids[d.Name];
                 }
-                d.id = ids[d.Name];
             }
 
             Helper.WriteJsonFile(Path.Combine(Helper.DirectoryPath, $"ids-{type}.json"), ids);
