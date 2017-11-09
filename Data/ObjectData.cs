@@ -44,10 +44,14 @@ namespace JsonAssets.Data
                 public object Object { get; set; }
                 public int Count { get; set; }
             }
-            // TODO: CanPurchase, where, and purchase price
             // Possibly friendship option (letters, like vanilla) and/or skill levels (on levelup?)
             public int ResultCount { get; set; } = 1;
             public IList<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
+
+            public bool CanPurchase { get; set; } = false;
+            public int PurchasePrice { get; set; }
+            public string PurchaseFrom { get; set; } = "Gus";
+            public IList<string> PurchaseRequirements { get; set; } = new List<string>();
 
             internal string GetRecipeString( ObjectData parent )
             {
@@ -59,6 +63,14 @@ namespace JsonAssets.Data
                 if (parent.Category != Category_.Cooking)
                     str += "false/";
                 str += "/null"; // TODO: Requirement
+                return str;
+            }
+
+            internal string GetPurchaseRequirementString()
+            {
+                var str = $"1234567890";
+                foreach (var cond in PurchaseRequirements)
+                    str += $"/{cond}";
                 return str;
             }
         }
@@ -80,15 +92,23 @@ namespace JsonAssets.Data
         
         public string Description { get; set; }
         public Category_ Category { get; set; }
+        public bool IsColored { get; set; } = false;
+
+        public int Price { get; set; }
+
+        public Recipe_ Recipe { get; set; }
+
         public int Edibility { get; set; } = SObject.inedible;
         public bool EdibleIsDrink { get; set; } = false;
         public FoodBuffs_ EdibleBuffs = new FoodBuffs_();
-        public int Price { get; set; }
-        // TODO: CanPurchase, where, and purchase price
-        public bool IsColored { get; set; } = false;
-        public Recipe_ Recipe { get; set; }
+
+        public bool CanPurchase { get; set; } = false;
+        public int PurchasePrice { get; set; }
+        public string PurchaseFrom { get; set; } = "Pierre";
+        public IList<string> PurchaseRequirements { get; set; } = new List<string>();
+
         // TODO: Gift taste overrides.
-        
+
         public int GetObjectId() { return id; }
 
         internal string GetObjectInformation()
@@ -105,6 +125,14 @@ namespace JsonAssets.Data
                 var itype = (int)Category;
                 return $"{Name}/{Price}/{Edibility}/Basic {itype}/{Name}/{Description}";
             }
+        }
+
+        internal string GetPurchaseRequirementString()
+        {
+            var str = $"1234567890";
+            foreach (var cond in PurchaseRequirements)
+                str += $"/{cond}";
+            return str;
         }
     }
 }

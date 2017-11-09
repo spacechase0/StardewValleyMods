@@ -31,7 +31,7 @@ namespace JsonAssets.Data
 
         public IList<string> SeedPurchaseRequirements { get; set; } = new List<string>();
         public int SeedPurchasePrice { get; set; }
-        // TODO: Where to sell seeds at?
+        public string SeedPurchaseFrom { get; set; } = "Pierre";
 
         internal ObjectData seed;
         public int GetSeedId() { return seed.id; }
@@ -68,13 +68,6 @@ namespace JsonAssets.Data
             }
             else
                 str += "false";
-            return str;
-        }
-        internal string GetSeedPurchaseRequirementString()
-        {
-            var str = $"{GetSeedId()}";
-            foreach (var cond in SeedPurchaseRequirements)
-                str += $"/{cond}";
             return str;
         }
     }

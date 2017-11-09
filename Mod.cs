@@ -54,6 +54,7 @@ namespace JsonAssets
                         var cropInfo = Helper.ReadJsonFile<CropData>(Path.Combine(cropDir, "crop.json"));
                         cropInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "Crops", Path.GetFileName(cropDir));
                         crops.Add(cropInfo);
+
                         var obj = new ObjectData();
                         obj.directory = cropInfo.directory;
                         obj.imageName = "seeds.png";
@@ -61,6 +62,22 @@ namespace JsonAssets
                         obj.Description = cropInfo.SeedDescription;
                         obj.Category = ObjectData.Category_.Seeds;
                         obj.Price = cropInfo.SeedPurchasePrice;
+
+                        obj.CanPurchase = true;
+                        obj.PurchaseFrom = cropInfo.SeedPurchaseFrom;
+                        obj.PurchasePrice = cropInfo.SeedPurchasePrice;
+                        List<string> seasons = new List<string>();
+                        seasons.Add("spring");
+                        seasons.Add("summer");
+                        seasons.Add("fall");
+                        seasons.Add("winter");
+                        foreach (var season in cropInfo.Seasons)
+                            seasons.Remove(season);
+                        var str = "z";
+                        foreach (var season in seasons) ;
+                            str += " " + seasons;
+                        obj.PurchaseRequirements.Add(str);
+
                         cropInfo.seed = obj;
                         objects.Add(obj);
                     }
@@ -80,24 +97,46 @@ namespace JsonAssets
             if (menu == null || menu.portraitPerson == null)
                 return;
 
-            if (menu.portraitPerson.name == "Pierre")
+            //if (menu.portraitPerson.name == "Pierre")
             {
-                Log.trace("Adding crops to shop");
+                Log.trace($"Adding objects to {menu.portraitPerson.name}'s shop");
 
                 var forSale = Helper.Reflection.GetPrivateValue<List<Item>>(menu, "forSale");
                 var itemPriceAndStock = Helper.Reflection.GetPrivateValue<Dictionary<Item, int[]>>(menu, "itemPriceAndStock");
 
                 var precondMeth = Helper.Reflection.GetPrivateMethod(Game1.currentLocation, "checkEventPrecondition");
-                foreach (var crop in crops)
+                foreach (var obj in objects)
                 {
-                    if (!crop.Seasons.Contains(Game1.currentSeason))
+                    Log.trace(obj.Recipe + " " + obj.Recipe?.CanPurchase + " "+obj.Recipe?.PurchaseFrom);
+                    if ( obj.Recipe != null && obj.Recipe.CanPurchase )
+                    {
+                        Log.trace("a");
+                        if (obj.Recipe.PurchaseFrom != menu.portraitPerson.name)
+                            continue;
+                        Log.trace("b");
+                        if (Game1.player.craftingRecipes.ContainsKey(obj.Name) || Game1.player.cookingRecipes.ContainsKey(obj.Name))
+                            continue;
+                        Log.trace("c "+ obj.Recipe.GetPurchaseRequirementString() + " " + Convert.ToDouble("01.0"));
+                        if (obj.Recipe.PurchaseRequirements.Count > 0 &&
+                            precondMeth.Invoke<int>(new object[] { obj.Recipe.GetPurchaseRequirementString() }) == -1)
+                            continue;
+                        Log.trace("d");
+                        var recipeObj = new StardewValley.Object(obj.id, 1, true, obj.Recipe.PurchasePrice, 0);
+                        forSale.Add(recipeObj);
+                        itemPriceAndStock.Add(recipeObj, new int[] { obj.Recipe.PurchasePrice, int.MaxValue });
+                        Log.trace($"\tAdding recipe for {obj.Name}");
+                    }
+                    if (!obj.CanPurchase)
                         continue;
-                    if (crop.SeedPurchaseRequirements.Count > 0 &&
-                        precondMeth.Invoke<int>(new object[] { crop.GetSeedPurchaseRequirementString() }) == -1)
+                    if (obj.PurchaseFrom != menu.portraitPerson.name)
                         continue;
-                    Item item = new StardewValley.Object(Vector2.Zero, crop.GetSeedId(), int.MaxValue);
+                    if (obj.PurchaseRequirements.Count > 0 &&
+                        precondMeth.Invoke<int>(new object[] { obj.GetPurchaseRequirementString() }) == -1)
+                        continue;
+                    Item item = new StardewValley.Object(Vector2.Zero, obj.id, int.MaxValue);
                     forSale.Add(item);
-                    itemPriceAndStock.Add(item, new int[] { crop.SeedPurchasePrice, int.MaxValue });
+                    itemPriceAndStock.Add(item, new int[] { obj.PurchasePrice, int.MaxValue });
+                    Log.trace($"\tAdding {obj.Name}");
                 }
             }
         }
