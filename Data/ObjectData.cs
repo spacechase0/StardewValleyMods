@@ -62,12 +62,27 @@ namespace JsonAssets.Data
                 return str;
             }
         }
+
+        public class FoodBuffs_
+        {
+            public int Farming { get; set; } = 0;
+            public int Fishing { get; set; } = 0;
+            public int Mining { get; set; } = 0;
+            public int Luck { get; set; } = 0;
+            public int Foraging { get; set; } = 0;
+            public int MaxStamina { get; set; } = 0;
+            public int MagnetRadius { get; set; } = 0;
+            public int Speed { get; set; } = 0;
+            public int Defense { get; set; } = 0;
+            public int Attack { get; set; } = 0;
+            public int Duration { get; set; } = 0;
+        }
         
         public string Description { get; set; }
         public Category_ Category { get; set; }
         public int Edibility { get; set; } = SObject.inedible;
-        // TODO: Edible type to determine food or drink
-        // TODO: Buffs
+        public bool EdibleIsDrink { get; set; } = false;
+        public FoodBuffs_ EdibleBuffs = new FoodBuffs_();
         public int Price { get; set; }
         // TODO: CanPurchase, where, and purchase price
         public bool IsColored { get; set; } = false;
@@ -78,8 +93,18 @@ namespace JsonAssets.Data
 
         internal string GetObjectInformation()
         {
-            var itype = (int)Category;
-            return $"{Name}/{Price}/{Edibility}/Basic {itype}/{Name}/{Description}";
+            if (Category == Category_.Cooking)
+            {
+                var str = $"{Name}/{Price}/{Edibility}/Cooking -7/{Name}/{Description}/";
+                str += (EdibleIsDrink ? "drink" : "food") + "/";
+                str += $"{EdibleBuffs.Farming} {EdibleBuffs.Fishing} {EdibleBuffs.Mining} 0 {EdibleBuffs.Luck} {EdibleBuffs.Foraging} 0 {EdibleBuffs.MaxStamina} {EdibleBuffs.MagnetRadius} {EdibleBuffs.Speed} {EdibleBuffs.Defense} {EdibleBuffs.Attack}/{EdibleBuffs.Duration}";
+                return str;
+            }
+            else
+            {
+                var itype = (int)Category;
+                return $"{Name}/{Price}/{Edibility}/Basic {itype}/{Name}/{Description}";
+            }
         }
     }
 }
