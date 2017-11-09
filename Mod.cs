@@ -8,6 +8,9 @@ using System.IO;
 using JsonAssets.Data;
 using StardewModdingAPI.Events;
 using System.Reflection;
+using StardewValley;
+using Microsoft.Xna.Framework;
+using StardewValley.Menus;
 
 // TODO: Show seeds at stores
 
@@ -20,6 +23,8 @@ namespace JsonAssets
         public override void Entry(IModHelper helper)
         {
             instance = this;
+
+            MenuEvents.MenuChanged += menuChanged;
 
             Log.info("Checking content packs...");
             foreach (var dir in Directory.EnumerateDirectories(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
@@ -67,6 +72,34 @@ namespace JsonAssets
             
             var editors = ((IList<IAssetEditor>)helper.Content.GetType().GetProperty("AssetEditors", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(Helper.Content));
             editors.Add(new ContentInjector());
+        }
+
+        private void menuChanged(object sender, EventArgsClickableMenuChanged args)
+        {
+            var menu = args.NewMenu as ShopMenu;
+            if (menu == null || menu.portraitPerson == null)
+                return;
+
+            if (menu.portraitPerson.name == "Pierre")
+            {
+                Log.trace("Adding crops to shop");
+
+                var forSale = Helper.Reflection.GetPrivateValue<List<Item>>(menu, "forSale");
+                var itemPriceAndStock = Helper.Reflection.GetPrivateValue<Dictionary<Item, int[]>>(menu, "itemPriceAndStock");
+
+                var precondMeth = Helper.Reflection.GetPrivateMethod(Game1.currentLocation, "checkEventPrecondition");
+                foreach (var crop in crops)
+                {
+                    if (!crop.Seasons.Contains(Game1.currentSeason))
+                        continue;
+                    if (crop.SeedPurchaseRequirements.Count > 0 &&
+                        precondMeth.Invoke<int>(new object[] { crop.GetSeedPurchaseRequirementString() }) == -1)
+                        continue;
+                    Item item = new StardewValley.Object(Vector2.Zero, crop.GetSeedId(), int.MaxValue);
+                    forSale.Add(item);
+                    itemPriceAndStock.Add(item, new int[] { crop.SeedPurchasePrice, int.MaxValue });
+                }
+            }
         }
 
         private const int StartingObjectId = 2000;
