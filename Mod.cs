@@ -23,6 +23,7 @@ namespace JsonAssets
             instance = this;
 
             MenuEvents.MenuChanged += menuChanged;
+            SaveEvents.AfterLoad += afterLoad;
 
             Log.info("Checking content packs...");
             foreach (var dir in Directory.EnumerateDirectories(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
@@ -130,6 +131,24 @@ namespace JsonAssets
                     forSale.Add(item);
                     itemPriceAndStock.Add(item, new int[] { obj.PurchasePrice, int.MaxValue });
                     Log.trace($"\tAdding {obj.Name}");
+                }
+            }
+        }
+
+        private void afterLoad( object sender, EventArgs args )
+        {
+            foreach ( var obj in objects )
+            {
+                if ( obj.Recipe != null && obj.Recipe.IsDefault && !Game1.player.knowsRecipe(obj.Name) )
+                {
+                    if ( obj.Category == ObjectData.Category_.Cooking )
+                    {
+                        Game1.player.cookingRecipes.Add(obj.Name, 0);
+                    }
+                    else
+                    {
+                        Game1.player.cookingRecipes.Add(obj.Name, 0);
+                    }
                 }
             }
         }
