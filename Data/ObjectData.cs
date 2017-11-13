@@ -117,6 +117,8 @@ namespace JsonAssets.Data
             {
                 var str = $"{Name}/{Price}/{Edibility}/Cooking -7/{Name}/{Description}/";
                 str += (EdibleIsDrink ? "drink" : "food") + "/";
+                if (EdibleBuffs == null)
+                    EdibleBuffs = new FoodBuffs_();
                 str += $"{EdibleBuffs.Farming} {EdibleBuffs.Fishing} {EdibleBuffs.Mining} 0 {EdibleBuffs.Luck} {EdibleBuffs.Foraging} 0 {EdibleBuffs.MaxStamina} {EdibleBuffs.MagnetRadius} {EdibleBuffs.Speed} {EdibleBuffs.Defense} {EdibleBuffs.Attack}/{EdibleBuffs.Duration}";
                 return str;
             }

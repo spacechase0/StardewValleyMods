@@ -12,8 +12,6 @@ using StardewValley;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
 
-// TODO: Show seeds at stores
-
 namespace JsonAssets
 {
     public class Mod : StardewModdingAPI.Mod
@@ -107,30 +105,25 @@ namespace JsonAssets
                 var precondMeth = Helper.Reflection.GetPrivateMethod(Game1.currentLocation, "checkEventPrecondition");
                 foreach (var obj in objects)
                 {
-                    Log.trace(obj.Recipe + " " + obj.Recipe?.CanPurchase + " "+obj.Recipe?.PurchaseFrom);
                     if ( obj.Recipe != null && obj.Recipe.CanPurchase )
                     {
-                        Log.trace("a");
                         if (obj.Recipe.PurchaseFrom != menu.portraitPerson.name)
                             continue;
-                        Log.trace("b");
                         if (Game1.player.craftingRecipes.ContainsKey(obj.Name) || Game1.player.cookingRecipes.ContainsKey(obj.Name))
                             continue;
-                        Log.trace("c "+ obj.Recipe.GetPurchaseRequirementString() + " " + Convert.ToDouble("01.0"));
-                        if (obj.Recipe.PurchaseRequirements.Count > 0 &&
+                        if (obj.Recipe.PurchaseRequirements != null && obj.Recipe.PurchaseRequirements.Count > 0 &&
                             precondMeth.Invoke<int>(new object[] { obj.Recipe.GetPurchaseRequirementString() }) == -1)
                             continue;
-                        Log.trace("d");
                         var recipeObj = new StardewValley.Object(obj.id, 1, true, obj.Recipe.PurchasePrice, 0);
                         forSale.Add(recipeObj);
-                        itemPriceAndStock.Add(recipeObj, new int[] { obj.Recipe.PurchasePrice, int.MaxValue });
+                        itemPriceAndStock.Add(recipeObj, new int[] { obj.Recipe.PurchasePrice, 1 });
                         Log.trace($"\tAdding recipe for {obj.Name}");
                     }
                     if (!obj.CanPurchase)
                         continue;
                     if (obj.PurchaseFrom != menu.portraitPerson.name)
                         continue;
-                    if (obj.PurchaseRequirements.Count > 0 &&
+                    if (obj.PurchaseRequirements != null && obj.PurchaseRequirements.Count > 0 &&
                         precondMeth.Invoke<int>(new object[] { obj.GetPurchaseRequirementString() }) == -1)
                         continue;
                     Item item = new StardewValley.Object(Vector2.Zero, obj.id, int.MaxValue);
