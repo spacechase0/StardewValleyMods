@@ -38,8 +38,15 @@ namespace JsonAssets
                 var data = asset.AsDictionary<int, string>().Data;
                 foreach (var obj in Mod.instance.objects)
                 {
-                    Log.trace($"Injecting to objects: {obj.GetObjectId()}: {obj.GetObjectInformation()}");
-                    data.Add(obj.GetObjectId(), obj.GetObjectInformation());
+                    try
+                    {
+                        Log.trace($"Injecting to objects: {obj.GetObjectId()}: {obj.GetObjectInformation()}");
+                        data.Add(obj.GetObjectId(), obj.GetObjectInformation());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting object information for " + obj.Name + ": " + e);
+                    }
                 }
             }
             else if (asset.AssetNameEquals("Data\\CookingRecipes"))
@@ -47,12 +54,19 @@ namespace JsonAssets
                 var data = asset.AsDictionary<string, string>().Data;
                 foreach (var obj in Mod.instance.objects)
                 {
-                    if (obj.Recipe == null)
-                        continue;
-                    if (obj.Category != ObjectData.Category_.Cooking)
-                        continue;
-                    Log.trace($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
-                    data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
+                    try
+                    {
+                        if (obj.Recipe == null)
+                            continue;
+                        if (obj.Category != ObjectData.Category_.Cooking)
+                            continue;
+                        Log.trace($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
+                        data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting cooking recipe for " + obj.Name + ": " + e);
+                    }
                 }
             }
             else if (asset.AssetNameEquals("Data\\CraftingRecipes"))
@@ -60,12 +74,19 @@ namespace JsonAssets
                 var data = asset.AsDictionary<string, string>().Data;
                 foreach (var obj in Mod.instance.objects)
                 {
-                    if (obj.Recipe == null)
-                        continue;
-                    if (obj.Category == ObjectData.Category_.Cooking)
-                        continue;
-                    Log.trace($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
-                    data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
+                    try
+                    {
+                        if (obj.Recipe == null)
+                            continue;
+                        if (obj.Category == ObjectData.Category_.Cooking)
+                            continue;
+                        Log.trace($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
+                        data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting crafting recipe for " + obj.Name + ": " + e);
+                    }
                 }
             }
             else if (asset.AssetNameEquals("Data\\Crops"))
@@ -73,8 +94,15 @@ namespace JsonAssets
                 var data = asset.AsDictionary<int, string>().Data;
                 foreach (var crop in Mod.instance.crops)
                 {
-                    Log.trace($"Injecting to crops: {crop.GetSeedId()}: {crop.GetCropInformation()}");
-                    data.Add(crop.GetSeedId(), crop.GetCropInformation());
+                    try
+                    {
+                        Log.trace($"Injecting to crops: {crop.GetSeedId()}: {crop.GetCropInformation()}");
+                        data.Add(crop.GetSeedId(), crop.GetCropInformation());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting crop for " + crop.Name + ": " + e);
+                    }
                 }
             }
             else if (asset.AssetNameEquals("Maps\\springobjects"))
@@ -86,13 +114,17 @@ namespace JsonAssets
 
                 foreach (var obj in Mod.instance.objects)
                 {
-                    try {
-                    Log.trace($"Injecting {obj.Name} sprites");
-                    asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{obj.directory}/{obj.imageName}"), null, objectRect(obj.GetObjectId()));
-                    if (obj.IsColored)
-                        asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{obj.directory}/color.png"), null, objectRect(obj.GetObjectId() + 1));
+                    try
+                    {
+                        Log.trace($"Injecting {obj.Name} sprites");
+                        asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{obj.directory}/{obj.imageName}"), null, objectRect(obj.GetObjectId()));
+                        if (obj.IsColored)
+                            asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{obj.directory}/color.png"), null, objectRect(obj.GetObjectId() + 1));
                     }
-                    catch ( Exception e ){Log.error("EXCEPTION:" + e);}
+                    catch ( Exception e )
+                    {
+                        Log.error("Exception injecting sprite for " + obj.Name + ": " + e);
+                    }
                 }
             }
             else if (asset.AssetNameEquals("TileSheets\\crops"))
@@ -104,8 +136,15 @@ namespace JsonAssets
 
                 foreach (var crop in Mod.instance.crops)
                 {
-                    Log.trace($"Injecting {crop.Name} crop images");
-                    asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{crop.directory}/crop.png"), null, cropRect(crop.GetCropSpriteIndex()));
+                    try
+                    {
+                        Log.trace($"Injecting {crop.Name} crop images");
+                        asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{crop.directory}/crop.png"), null, cropRect(crop.GetCropSpriteIndex()));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting crop sprite for " + crop.Name + ": " + e);
+                    }
                 }
             }
         }
