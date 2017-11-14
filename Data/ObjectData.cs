@@ -34,6 +34,7 @@ namespace JsonAssets.Data
             Junk = SObject.junkCategory,
             Syrup = SObject.syrupCategory,
             MonsterLoot = SObject.monsterLootCategory,
+            ArtisanGoods = SObject.artisanGoodsCategory,
             Seeds = SObject.SeedsCategory,
         }
 
