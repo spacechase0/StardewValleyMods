@@ -81,11 +81,39 @@ namespace JsonAssets
                         objects.Add(obj);
                     }
                 }
+
+                if (Directory.Exists(Path.Combine(dir, "FruitTrees")))
+                {
+                    foreach (var fruitTreeDir in Directory.EnumerateDirectories(Path.Combine(dir, "FruitTrees")))
+                    {
+                        if (!File.Exists(Path.Combine(fruitTreeDir, "tree.json")))
+                            continue;
+                        var fruitTreeInfo = Helper.ReadJsonFile<FruitTreeData>(Path.Combine(fruitTreeDir, "tree.json"));
+                        fruitTreeInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "FruitTrees", Path.GetFileName(fruitTreeDir));
+                        fruitTrees.Add(fruitTreeInfo);
+
+                        var obj = new ObjectData();
+                        obj.directory = fruitTreeInfo.directory;
+                        obj.imageName = "sapling.png";
+                        obj.Name = fruitTreeInfo.SaplingName;
+                        obj.Description = fruitTreeInfo.SaplingDescription;
+                        obj.Category = ObjectData.Category_.Seeds;
+                        obj.Price = fruitTreeInfo.SaplingPurchasePrice;
+
+                        obj.CanPurchase = true;
+                        obj.PurchaseFrom = fruitTreeInfo.SsaplingPurchaseFrom;
+                        obj.PurchasePrice = fruitTreeInfo.SaplingPurchasePrice;
+
+                        fruitTreeInfo.sapling = obj;
+                        objects.Add(obj);
+                    }
+                }
             }
 
             objectIds = AssignIds("objects", StartingObjectId, objects.ToList<DataNeedsId>());
             cropIds = AssignIds("crops", StartingCropId, crops.ToList<DataNeedsId>());
-            
+            fruitTreeIds = AssignIds("fruittrees", StartingFruitTreeId, fruitTrees.ToList<DataNeedsId>());
+
             var editors = ((IList<IAssetEditor>)helper.Content.GetType().GetProperty("AssetEditors", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(Helper.Content));
             editors.Add(new ContentInjector());
         }
@@ -155,10 +183,13 @@ namespace JsonAssets
 
         private const int StartingObjectId = 2000;
         private const int StartingCropId = 100;
+        private const int StartingFruitTreeId = 20;
         internal IList<ObjectData> objects = new List<ObjectData>();
         internal IList<CropData> crops = new List<CropData>();
+        internal IList<FruitTreeData> fruitTrees = new List<FruitTreeData>();
         private IDictionary<string, int> objectIds;
         private IDictionary<string, int> cropIds;
+        private IDictionary<string, int> fruitTreeIds;
 
         public int ResolveObjectId( object data )
         {

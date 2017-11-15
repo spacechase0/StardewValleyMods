@@ -20,6 +20,8 @@ namespace JsonAssets
                 return true;
             if (asset.AssetNameEquals("Data\\Crops"))
                 return true;
+            if (asset.AssetNameEquals("Data\\fruitTrees"))
+                return true;
             if (asset.AssetNameEquals("Data\\CookingRecipes"))
                 return true;
             if (asset.AssetNameEquals("Data\\CraftingRecipes"))
@@ -27,6 +29,8 @@ namespace JsonAssets
             if (asset.AssetNameEquals("Maps\\springobjects"))
                 return true;
             if (asset.AssetNameEquals("TileSheets\\crops"))
+                return true;
+            if (asset.AssetNameEquals("TileSheets\\fruitTrees"))
                 return true;
             return false;
         }
@@ -46,6 +50,38 @@ namespace JsonAssets
                     catch (Exception e)
                     {
                         Log.error("Exception injecting object information for " + obj.Name + ": " + e);
+                    }
+                }
+            }
+            else if (asset.AssetNameEquals("Data\\Crops"))
+            {
+                var data = asset.AsDictionary<int, string>().Data;
+                foreach (var crop in Mod.instance.crops)
+                {
+                    try
+                    {
+                        Log.trace($"Injecting to crops: {crop.GetSeedId()}: {crop.GetCropInformation()}");
+                        data.Add(crop.GetSeedId(), crop.GetCropInformation());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting crop for " + crop.Name + ": " + e);
+                    }
+                }
+            }
+            else if (asset.AssetNameEquals("Data\\fruitTrees"))
+            {
+                var data = asset.AsDictionary<int, string>().Data;
+                foreach (var fruitTree in Mod.instance.fruitTrees)
+                {
+                    try
+                    {
+                        Log.trace($"Injecting to fruit trees: {fruitTree.GetSaplingId()}: {fruitTree.GetFruitTreeInformation()}");
+                        data.Add(fruitTree.GetSaplingId(), fruitTree.GetFruitTreeInformation());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting fruit tree for " + fruitTree.Name + ": " + e);
                     }
                 }
             }
@@ -86,22 +122,6 @@ namespace JsonAssets
                     catch (Exception e)
                     {
                         Log.error("Exception injecting crafting recipe for " + obj.Name + ": " + e);
-                    }
-                }
-            }
-            else if (asset.AssetNameEquals("Data\\Crops"))
-            {
-                var data = asset.AsDictionary<int, string>().Data;
-                foreach (var crop in Mod.instance.crops)
-                {
-                    try
-                    {
-                        Log.trace($"Injecting to crops: {crop.GetSeedId()}: {crop.GetCropInformation()}");
-                        data.Add(crop.GetSeedId(), crop.GetCropInformation());
-                    }
-                    catch (Exception e)
-                    {
-                        Log.error("Exception injecting crop for " + crop.Name + ": " + e);
                     }
                 }
             }
@@ -147,6 +167,26 @@ namespace JsonAssets
                     }
                 }
             }
+            else if (asset.AssetNameEquals("TileSheets\\fruitTrees"))
+            {
+                var oldTex = asset.AsImage().Data;
+                Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
+                asset.ReplaceWith(newTex);
+                asset.AsImage().PatchImage(oldTex);
+
+                foreach (var fruitTree in Mod.instance.fruitTrees)
+                {
+                    try
+                    {
+                        Log.trace($"Injecting {fruitTree.Name} fruit tree images");
+                        asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{fruitTree.directory}/tree.png"), null, fruitTreeRect(fruitTree.GetFruitTreeIndex()));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting fruit tree sprite for " + fruitTree.Name + ": " + e);
+                    }
+                }
+            }
         }
         private Rectangle objectRect(int index)
         {
@@ -155,6 +195,10 @@ namespace JsonAssets
         private Rectangle cropRect(int index)
         {
             return new Rectangle(index % 2 * 128, index / 2 * 32, 128, 32);
+        }
+        private Rectangle fruitTreeRect(int index)
+        {
+            return new Rectangle(0, index * 80, 432, 80);
         }
     }
 }
