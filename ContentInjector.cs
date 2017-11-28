@@ -137,9 +137,9 @@ namespace JsonAssets
                     try
                     {
                         Log.trace($"Injecting {obj.Name} sprites");
-                        asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{obj.directory}/{obj.imageName}"), null, objectRect(obj.GetObjectId()));
+                        asset.AsImage().PatchImage(obj.texture, null, objectRect(obj.GetObjectId()));
                         if (obj.IsColored)
-                            asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{obj.directory}/color.png"), null, objectRect(obj.GetObjectId() + 1));
+                            asset.AsImage().PatchImage(obj.textureColor, null, objectRect(obj.GetObjectId() + 1));
                     }
                     catch ( Exception e )
                     {
@@ -159,7 +159,7 @@ namespace JsonAssets
                     try
                     {
                         Log.trace($"Injecting {crop.Name} crop images");
-                        asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{crop.directory}/crop.png"), null, cropRect(crop.GetCropSpriteIndex()));
+                        asset.AsImage().PatchImage(crop.texture, null, cropRect(crop.GetCropSpriteIndex()));
                     }
                     catch (Exception e)
                     {
@@ -179,7 +179,7 @@ namespace JsonAssets
                     try
                     {
                         Log.trace($"Injecting {fruitTree.Name} fruit tree images");
-                        asset.AsImage().PatchImage(Mod.instance.Helper.Content.Load<Texture2D>($"{fruitTree.directory}/tree.png"), null, fruitTreeRect(fruitTree.GetFruitTreeIndex()));
+                        asset.AsImage().PatchImage(fruitTree.texture, null, fruitTreeRect(fruitTree.GetFruitTreeIndex()));
                     }
                     catch (Exception e)
                     {

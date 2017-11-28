@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
@@ -9,6 +10,9 @@ namespace JsonAssets.Data
     {
         [JsonIgnore]
         internal string directory;
+
+        [JsonIgnore]
+        internal Texture2D texture;
         
         public object Product { get; set; }
         public string SeedName { get; set; }

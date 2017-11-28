@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,11 @@ namespace JsonAssets.Data
     {
         [JsonIgnore]
         internal string directory;
+
         [JsonIgnore]
-        internal string imageName = "object.png";
+        internal Texture2D texture;
+        [JsonIgnore]
+        internal Texture2D textureColor;
 
         [JsonConverter(typeof(StringEnumConverter))]
         public enum Category_

@@ -11,6 +11,7 @@ using System.Reflection;
 using StardewValley;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace JsonAssets
 {
@@ -41,6 +42,9 @@ namespace JsonAssets
                             continue;
                         var objInfo = Helper.ReadJsonFile<ObjectData>(Path.Combine(objDir, "object.json"));
                         objInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "Objects", Path.GetFileName(objDir));
+                        objInfo.texture = Helper.Content.Load<Texture2D>($"{objInfo.directory}/object.png");
+                        if ( objInfo.IsColored )
+                            objInfo.textureColor = Helper.Content.Load<Texture2D>($"{objInfo.directory}/color.png");
                         objects.Add(objInfo);
                     }
                 }
@@ -52,11 +56,12 @@ namespace JsonAssets
                             continue;
                         var cropInfo = Helper.ReadJsonFile<CropData>(Path.Combine(cropDir, "crop.json"));
                         cropInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "Crops", Path.GetFileName(cropDir));
+                        cropInfo.texture = Helper.Content.Load<Texture2D>($"{cropInfo.directory}/crop.png");
                         crops.Add(cropInfo);
 
                         var obj = new ObjectData();
                         obj.directory = cropInfo.directory;
-                        obj.imageName = "seeds.png";
+                        obj.texture = Helper.Content.Load<Texture2D>($"{obj.directory}/seeds.png");
                         obj.Name = cropInfo.SeedName;
                         obj.Description = cropInfo.SeedDescription;
                         obj.Category = ObjectData.Category_.Seeds;
@@ -90,11 +95,12 @@ namespace JsonAssets
                             continue;
                         var fruitTreeInfo = Helper.ReadJsonFile<FruitTreeData>(Path.Combine(fruitTreeDir, "tree.json"));
                         fruitTreeInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "FruitTrees", Path.GetFileName(fruitTreeDir));
+                        fruitTreeInfo.texture = Helper.Content.Load<Texture2D>($"{fruitTreeInfo.directory}/tree.png");
                         fruitTrees.Add(fruitTreeInfo);
 
                         var obj = new ObjectData();
                         obj.directory = fruitTreeInfo.directory;
-                        obj.imageName = "sapling.png";
+                        obj.texture = Helper.Content.Load<Texture2D>($"{obj.directory}/sapling.png");
                         obj.Name = fruitTreeInfo.SaplingName;
                         obj.Description = fruitTreeInfo.SaplingDescription;
                         obj.Category = ObjectData.Category_.Seeds;
