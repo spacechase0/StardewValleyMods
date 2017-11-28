@@ -1,14 +1,10 @@
 {
   "Name": "Json Assets",
   "Author": "spacechase0",
-  "Version": {
-    "MajorVersion": 1,
-    "MinorVersion": 0,
-    "PatchVersion": 0,
-    "Build": ""
-  },
+  "Version": "1.0",
   "Description": "Allow custom stuff.",
   "UniqueID": "spacechase0.JsonAssets",
-  "PerSaveConfigs": false,
-  "EntryDll": "JsonAssets.dll"
+  "MinimumApiVersion": "2.0",
+  "EntryDll": "JsonAssets.dll",
+  "UpdateKeys": []
 }
