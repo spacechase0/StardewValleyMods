@@ -26,11 +26,15 @@ namespace JsonAssets
                 return true;
             if (asset.AssetNameEquals("Data\\CraftingRecipes"))
                 return true;
+            if (asset.AssetNameEquals("Data\\BigCraftablesInformation"))
+                return true;
             if (asset.AssetNameEquals("Maps\\springobjects"))
                 return true;
             if (asset.AssetNameEquals("TileSheets\\crops"))
                 return true;
             if (asset.AssetNameEquals("TileSheets\\fruitTrees"))
+                return true;
+            if (asset.AssetNameEquals("TileSheets\\Craftables"))
                 return true;
             return false;
         }
@@ -116,12 +120,42 @@ namespace JsonAssets
                             continue;
                         if (obj.Category == ObjectData.Category_.Cooking)
                             continue;
-                        Log.trace($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
+                        Log.trace($"Injecting to crafting recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
                         data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
                     }
                     catch (Exception e)
                     {
                         Log.error("Exception injecting crafting recipe for " + obj.Name + ": " + e);
+                    }
+                }
+                foreach (var big in Mod.instance.bigCraftables)
+                {
+                    try
+                    {
+                        if (big.Recipe == null)
+                            continue;
+                        Log.trace($"Injecting to crafting recipes: {big.Name}: {big.Recipe.GetRecipeString(big)}");
+                        data.Add(big.Name, big.Recipe.GetRecipeString(big));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting crafting recipe for " + big.Name + ": " + e);
+                    }
+                }
+            }
+            else if (asset.AssetNameEquals("Data\\BigCraftablesInformation"))
+            {
+                var data = asset.AsDictionary<int, string>().Data;
+                foreach (var big in Mod.instance.bigCraftables)
+                {
+                    try
+                    {
+                        Log.trace($"Injecting to big craftables: {big.GetCraftableId()}: {big.GetCraftableInformation()}");
+                        data.Add(big.GetCraftableId(), big.GetCraftableInformation());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting object information for " + big.Name + ": " + e);
                     }
                 }
             }
@@ -187,6 +221,26 @@ namespace JsonAssets
                     }
                 }
             }
+            else if (asset.AssetNameEquals("TileSheets\\Craftables"))
+            {
+                var oldTex = asset.AsImage().Data;
+                Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
+                asset.ReplaceWith(newTex);
+                asset.AsImage().PatchImage(oldTex);
+
+                foreach (var big in Mod.instance.bigCraftables)
+                {
+                    try
+                    {
+                        Log.trace($"Injecting {big.Name} sprites");
+                        asset.AsImage().PatchImage(big.texture, null, bigCraftableRect(big.GetCraftableId()));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting sprite for " + big.Name + ": " + e);
+                    }
+                }
+            }
         }
         private Rectangle objectRect(int index)
         {
@@ -199,6 +253,10 @@ namespace JsonAssets
         private Rectangle fruitTreeRect(int index)
         {
             return new Rectangle(0, index * 80, 432, 80);
+        }
+        private Rectangle bigCraftableRect(int index)
+        {
+            return new Rectangle(index % 8 * 16, index / 8 * 32, 16, 32);
         }
     }
 }

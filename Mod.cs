@@ -13,6 +13,9 @@ using Microsoft.Xna.Framework;
 using StardewValley.Menus;
 using Microsoft.Xna.Framework.Graphics;
 
+// TODO: Refactor recipes
+// TODO: Handle recipe.IsDefault
+
 namespace JsonAssets
 {
     public class Mod : StardewModdingAPI.Mod
@@ -70,6 +73,7 @@ namespace JsonAssets
                         obj.CanPurchase = true;
                         obj.PurchaseFrom = cropInfo.SeedPurchaseFrom;
                         obj.PurchasePrice = cropInfo.SeedPurchasePrice;
+                        obj.PurchaseRequirements = cropInfo.SeedPurchaseRequirements ?? new List<string>();
                         List<string> seasons = new List<string>();
                         seasons.Add("spring");
                         seasons.Add("summer");
@@ -78,8 +82,8 @@ namespace JsonAssets
                         foreach (var season in cropInfo.Seasons)
                             seasons.Remove(season);
                         var str = "z";
-                        foreach (var season in seasons) ;
-                            str += " " + seasons;
+                        foreach (var season in seasons)
+                            str += " " + season;
                         obj.PurchaseRequirements.Add(str);
 
                         cropInfo.seed = obj;
@@ -114,11 +118,25 @@ namespace JsonAssets
                         objects.Add(obj);
                     }
                 }
+
+                if (Directory.Exists(Path.Combine(dir, "BigCraftables")))
+                {
+                    foreach (var bigDir in Directory.EnumerateDirectories(Path.Combine(dir, "BigCraftables")))
+                    {
+                        if (!File.Exists(Path.Combine(bigDir, "big-craftable.json")))
+                            continue;
+                        var bigInfo = Helper.ReadJsonFile<BigCraftableData>(Path.Combine(bigDir, "big-craftable.json"));
+                        bigInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "BigCraftables", Path.GetFileName(bigDir));
+                        bigInfo.texture = Helper.Content.Load<Texture2D>($"{bigInfo.directory}/big-craftable.png");
+                        bigCraftables.Add(bigInfo);
+                    }
+                }
             }
 
             objectIds = AssignIds("objects", StartingObjectId, objects.ToList<DataNeedsId>());
             cropIds = AssignIds("crops", StartingCropId, crops.ToList<DataNeedsId>());
             fruitTreeIds = AssignIds("fruittrees", StartingFruitTreeId, fruitTrees.ToList<DataNeedsId>());
+            bigCraftableIds = AssignIds("big-craftables", StartingBigCraftableId, bigCraftables.ToList<DataNeedsId>());
 
             var editors = ((IList<IAssetEditor>)helper.Content.GetType().GetProperty("AssetEditors", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(Helper.Content));
             editors.Add(new ContentInjector());
@@ -166,6 +184,34 @@ namespace JsonAssets
                     itemPriceAndStock.Add(item, new int[] { obj.PurchasePrice, int.MaxValue });
                     Log.trace($"\tAdding {obj.Name}");
                 }
+                foreach (var big in bigCraftables)
+                {
+                    if (big.Recipe != null && big.Recipe.CanPurchase)
+                    {
+                        if (big.Recipe.PurchaseFrom != menu.portraitPerson.name)
+                            continue;
+                        if (Game1.player.craftingRecipes.ContainsKey(big.Name) || Game1.player.cookingRecipes.ContainsKey(big.Name))
+                            continue;
+                        if (big.Recipe.PurchaseRequirements != null && big.Recipe.PurchaseRequirements.Count > 0 &&
+                            precondMeth.Invoke<int>(new object[] { big.Recipe.GetPurchaseRequirementString() }) == -1)
+                            continue;
+                        var recipeObj = new StardewValley.Object(new Vector2(0, 0), big.id, true);
+                        forSale.Add(recipeObj);
+                        itemPriceAndStock.Add(recipeObj, new int[] { big.Recipe.PurchasePrice, 1 });
+                        Log.trace($"\tAdding recipe for {big.Name}");
+                    }
+                    if (!big.CanPurchase)
+                        continue;
+                    if (big.PurchaseFrom != menu.portraitPerson.name)
+                        continue;
+                    if (big.PurchaseRequirements != null && big.PurchaseRequirements.Count > 0 &&
+                        precondMeth.Invoke<int>(new object[] { big.GetPurchaseRequirementString() }) == -1)
+                        continue;
+                    Item item = new StardewValley.Object(Vector2.Zero, big.id, false);
+                    forSale.Add(item);
+                    itemPriceAndStock.Add(item, new int[] { big.PurchasePrice, int.MaxValue });
+                    Log.trace($"\tAdding {big.Name}");
+                }
             }
         }
 
@@ -190,12 +236,15 @@ namespace JsonAssets
         private const int StartingObjectId = 2000;
         private const int StartingCropId = 100;
         private const int StartingFruitTreeId = 20;
+        private const int StartingBigCraftableId = 300;
         internal IList<ObjectData> objects = new List<ObjectData>();
         internal IList<CropData> crops = new List<CropData>();
         internal IList<FruitTreeData> fruitTrees = new List<FruitTreeData>();
+        internal IList<BigCraftableData> bigCraftables = new List<BigCraftableData>();
         private IDictionary<string, int> objectIds;
         private IDictionary<string, int> cropIds;
         private IDictionary<string, int> fruitTreeIds;
+        private IDictionary<string, int> bigCraftableIds;
 
         public int ResolveObjectId( object data )
         {
