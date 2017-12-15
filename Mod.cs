@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StardewModdingAPI;
 using System.IO;
 using JsonAssets.Data;
 using StardewModdingAPI.Events;
-using System.Reflection;
 using StardewValley;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
@@ -138,8 +135,7 @@ namespace JsonAssets
             fruitTreeIds = AssignIds("fruittrees", StartingFruitTreeId, fruitTrees.ToList<DataNeedsId>());
             bigCraftableIds = AssignIds("big-craftables", StartingBigCraftableId, bigCraftables.ToList<DataNeedsId>());
 
-            var editors = ((IList<IAssetEditor>)helper.Content.GetType().GetProperty("AssetEditors", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(Helper.Content));
-            editors.Add(new ContentInjector());
+            helper.Content.AssetEditors.Add(new ContentInjector());
         }
 
         private void menuChanged(object sender, EventArgsClickableMenuChanged args)
