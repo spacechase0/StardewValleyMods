@@ -40,8 +40,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="CustomElementHandler">
-      <HintPath>$(GamePath)\Mods\CustomElementHandler\CustomElementHandler.dll</HintPath>
+    <Reference Include="PyTK">
+      <HintPath>$(GamePath)\Mods\PyTK\PyTK.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

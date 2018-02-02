@@ -4,7 +4,7 @@
   "Version": {
     "MajorVersion": 1,
     "MinorVersion": 0,
-    "PatchVersion": 3,
+    "PatchVersion": 1,
     "Build": ""
   },
   "Description": "Lets you place more types of grass.",
@@ -14,7 +14,8 @@
   "UpdateKeys": [ "Nexus:1702" ],
   "Dependencies": [
     {
-      "UniqueID": "Platonymous.CustomElementHandler"
+      "UniqueID": "Platonymous.Toolkit",
+      "MinimumVersion": ""
     }
   ]
 }

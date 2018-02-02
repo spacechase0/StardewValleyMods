@@ -1,6 +1,6 @@
-﻿using CustomElementHandler;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PyTK.CustomElementHandler;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
@@ -31,7 +31,7 @@ namespace MoreGrassStarters
 
         public object getReplacement()
         {
-            return new StardewValley.Object();// new Grass(Grass.springGrass, numberOfWeeds);
+            return new FruitTree(); // new Grass(Grass.springGrass, numberOfWeeds);
         }
 
         public void rebuild(Dictionary<string, string> data, object replacement)
