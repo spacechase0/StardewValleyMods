@@ -26,6 +26,7 @@ namespace JsonAssets
             MenuEvents.MenuChanged += menuChanged;
             SaveEvents.AfterLoad += afterLoad;
             GameEvents.FirstUpdateTick += firstUpdate;
+            PlayerEvents.InventoryChanged += invChanged;
 
             Log.info("Checking content packs...");
             foreach (var dir in Directory.EnumerateDirectories(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
@@ -73,11 +74,14 @@ namespace JsonAssets
                     if (!File.Exists(Path.Combine(objDir, "object.json")))
                         continue;
                     var objInfo = Helper.ReadJsonFile<ObjectData>(Path.Combine(objDir, "object.json"));
-                    objInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "Objects", Path.GetFileName(objDir));
-                    objInfo.texture = Helper.Content.Load<Texture2D>($"{objInfo.directory}/object.png");
+                    objInfo.directory = objDir;
+                    objInfo.texture = Texture2D.FromStream(Game1.graphics.GraphicsDevice, File.OpenRead(Path.Combine(objDir, "object.png")));
                     if (objInfo.IsColored)
-                        objInfo.textureColor = Helper.Content.Load<Texture2D>($"{objInfo.directory}/color.png");
+                        objInfo.textureColor = Texture2D.FromStream(Game1.graphics.GraphicsDevice, File.OpenRead(Path.Combine(objDir, "color.png")));
                     objects.Add(objInfo);
+
+                    if (objInfo.Category == ObjectData.Category_.Ring)
+                        myRings.Add(objInfo);
                 }
             }
             if (Directory.Exists(Path.Combine(dir, "Crops")))
@@ -87,13 +91,13 @@ namespace JsonAssets
                     if (!File.Exists(Path.Combine(cropDir, "crop.json")))
                         continue;
                     var cropInfo = Helper.ReadJsonFile<CropData>(Path.Combine(cropDir, "crop.json"));
-                    cropInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "Crops", Path.GetFileName(cropDir));
-                    cropInfo.texture = Helper.Content.Load<Texture2D>($"{cropInfo.directory}/crop.png");
+                    cropInfo.directory = cropDir;
+                    cropInfo.texture = Texture2D.FromStream(Game1.graphics.GraphicsDevice, File.OpenRead(Path.Combine(cropDir, "crop.png")));
                     crops.Add(cropInfo);
 
                     var obj = new ObjectData();
                     obj.directory = cropInfo.directory;
-                    obj.texture = Helper.Content.Load<Texture2D>($"{obj.directory}/seeds.png");
+                    obj.texture = Texture2D.FromStream(Game1.graphics.GraphicsDevice, File.OpenRead(Path.Combine(cropDir, "seeds.png")));
                     obj.Name = cropInfo.SeedName;
                     obj.Description = cropInfo.SeedDescription;
                     obj.Category = ObjectData.Category_.Seeds;
@@ -127,13 +131,13 @@ namespace JsonAssets
                     if (!File.Exists(Path.Combine(fruitTreeDir, "tree.json")))
                         continue;
                     var fruitTreeInfo = Helper.ReadJsonFile<FruitTreeData>(Path.Combine(fruitTreeDir, "tree.json"));
-                    fruitTreeInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "FruitTrees", Path.GetFileName(fruitTreeDir));
-                    fruitTreeInfo.texture = Helper.Content.Load<Texture2D>($"{fruitTreeInfo.directory}/tree.png");
+                    fruitTreeInfo.directory = fruitTreeDir;
+                    fruitTreeInfo.texture = Texture2D.FromStream(Game1.graphics.GraphicsDevice, File.OpenRead(Path.Combine(fruitTreeDir, "tree.png")));
                     fruitTrees.Add(fruitTreeInfo);
 
                     var obj = new ObjectData();
                     obj.directory = fruitTreeInfo.directory;
-                    obj.texture = Helper.Content.Load<Texture2D>($"{obj.directory}/sapling.png");
+                    obj.texture = Texture2D.FromStream(Game1.graphics.GraphicsDevice, File.OpenRead(Path.Combine(fruitTreeDir, "sapling.png")));
                     obj.Name = fruitTreeInfo.SaplingName;
                     obj.Description = fruitTreeInfo.SaplingDescription;
                     obj.Category = ObjectData.Category_.Seeds;
@@ -155,8 +159,8 @@ namespace JsonAssets
                     if (!File.Exists(Path.Combine(bigDir, "big-craftable.json")))
                         continue;
                     var bigInfo = Helper.ReadJsonFile<BigCraftableData>(Path.Combine(bigDir, "big-craftable.json"));
-                    bigInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "BigCraftables", Path.GetFileName(bigDir));
-                    bigInfo.texture = Helper.Content.Load<Texture2D>($"{bigInfo.directory}/big-craftable.png");
+                    bigInfo.directory = bigDir;
+                    bigInfo.texture = Texture2D.FromStream(Game1.graphics.GraphicsDevice, File.OpenRead(Path.Combine(bigDir, "big-craftable.png")));
                     bigCraftables.Add(bigInfo);
                 }
             }
@@ -250,6 +254,24 @@ namespace JsonAssets
                     {
                         Game1.player.cookingRecipes.Add(obj.Name, 0);
                     }
+                }
+            }
+        }
+        
+        private IList<ObjectData> myRings = new List<ObjectData>();
+        private void invChanged(object sender, EventArgsInventoryChanged args)
+        {
+            IList<int> ringIds = new List<int>();
+            foreach (var ring in myRings)
+                ringIds.Add(ring.id);
+
+            for (int i = 0; i < Game1.player.items.Count; ++i)
+            {
+                var item = Game1.player.items[i];
+                if (item is StardewValley.Object obj && ringIds.Contains(obj.parentSheetIndex))
+                {
+                    Log.trace($"Turning a ring-object of {obj.parentSheetIndex} into a proper ring");
+                    Game1.player.items[i] = new StardewValley.Objects.Ring(obj.parentSheetIndex);
                 }
             }
         }
