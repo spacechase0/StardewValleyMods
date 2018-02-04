@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api.cs" />
     <Compile Include="ContentInjector.cs" />
     <Compile Include="Data\ContentPackData.cs" />
     <Compile Include="Data\FruitTreeData.cs" />

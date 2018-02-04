@@ -25,117 +25,142 @@ namespace JsonAssets
 
             MenuEvents.MenuChanged += menuChanged;
             SaveEvents.AfterLoad += afterLoad;
+            GameEvents.FirstUpdateTick += firstUpdate;
 
             Log.info("Checking content packs...");
             foreach (var dir in Directory.EnumerateDirectories(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
             {
-                if (!File.Exists(Path.Combine(dir, "content-pack.json")))
-                    continue;
-                var packInfo = Helper.ReadJsonFile<ContentPackData>(Path.Combine(dir, "content-pack.json"));
-                Log.info($"\t{packInfo.Name} {packInfo.Version} by {packInfo.Author} - {packInfo.Description}");
-
-                if (Directory.Exists(Path.Combine(dir, "Objects")))
-                {
-                    foreach (var objDir in Directory.EnumerateDirectories(Path.Combine(dir, "Objects")))
-                    {
-                        if (!File.Exists(Path.Combine(objDir, "object.json")))
-                            continue;
-                        var objInfo = Helper.ReadJsonFile<ObjectData>(Path.Combine(objDir, "object.json"));
-                        objInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "Objects", Path.GetFileName(objDir));
-                        objInfo.texture = Helper.Content.Load<Texture2D>($"{objInfo.directory}/object.png");
-                        if ( objInfo.IsColored )
-                            objInfo.textureColor = Helper.Content.Load<Texture2D>($"{objInfo.directory}/color.png");
-                        objects.Add(objInfo);
-                    }
-                }
-                if (Directory.Exists(Path.Combine(dir, "Crops")))
-                {
-                    foreach (var cropDir in Directory.EnumerateDirectories(Path.Combine(dir, "Crops")))
-                    {
-                        if (!File.Exists(Path.Combine(cropDir, "crop.json")))
-                            continue;
-                        var cropInfo = Helper.ReadJsonFile<CropData>(Path.Combine(cropDir, "crop.json"));
-                        cropInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "Crops", Path.GetFileName(cropDir));
-                        cropInfo.texture = Helper.Content.Load<Texture2D>($"{cropInfo.directory}/crop.png");
-                        crops.Add(cropInfo);
-
-                        var obj = new ObjectData();
-                        obj.directory = cropInfo.directory;
-                        obj.texture = Helper.Content.Load<Texture2D>($"{obj.directory}/seeds.png");
-                        obj.Name = cropInfo.SeedName;
-                        obj.Description = cropInfo.SeedDescription;
-                        obj.Category = ObjectData.Category_.Seeds;
-                        obj.Price = cropInfo.SeedPurchasePrice;
-
-                        obj.CanPurchase = true;
-                        obj.PurchaseFrom = cropInfo.SeedPurchaseFrom;
-                        obj.PurchasePrice = cropInfo.SeedPurchasePrice;
-                        obj.PurchaseRequirements = cropInfo.SeedPurchaseRequirements ?? new List<string>();
-                        List<string> seasons = new List<string>();
-                        seasons.Add("spring");
-                        seasons.Add("summer");
-                        seasons.Add("fall");
-                        seasons.Add("winter");
-                        foreach (var season in cropInfo.Seasons)
-                            seasons.Remove(season);
-                        var str = "z";
-                        foreach (var season in seasons)
-                            str += " " + season;
-                        obj.PurchaseRequirements.Add(str);
-
-                        cropInfo.seed = obj;
-                        objects.Add(obj);
-                    }
-                }
-
-                if (Directory.Exists(Path.Combine(dir, "FruitTrees")))
-                {
-                    foreach (var fruitTreeDir in Directory.EnumerateDirectories(Path.Combine(dir, "FruitTrees")))
-                    {
-                        if (!File.Exists(Path.Combine(fruitTreeDir, "tree.json")))
-                            continue;
-                        var fruitTreeInfo = Helper.ReadJsonFile<FruitTreeData>(Path.Combine(fruitTreeDir, "tree.json"));
-                        fruitTreeInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "FruitTrees", Path.GetFileName(fruitTreeDir));
-                        fruitTreeInfo.texture = Helper.Content.Load<Texture2D>($"{fruitTreeInfo.directory}/tree.png");
-                        fruitTrees.Add(fruitTreeInfo);
-
-                        var obj = new ObjectData();
-                        obj.directory = fruitTreeInfo.directory;
-                        obj.texture = Helper.Content.Load<Texture2D>($"{obj.directory}/sapling.png");
-                        obj.Name = fruitTreeInfo.SaplingName;
-                        obj.Description = fruitTreeInfo.SaplingDescription;
-                        obj.Category = ObjectData.Category_.Seeds;
-                        obj.Price = fruitTreeInfo.SaplingPurchasePrice;
-
-                        obj.CanPurchase = true;
-                        obj.PurchaseFrom = fruitTreeInfo.SsaplingPurchaseFrom;
-                        obj.PurchasePrice = fruitTreeInfo.SaplingPurchasePrice;
-
-                        fruitTreeInfo.sapling = obj;
-                        objects.Add(obj);
-                    }
-                }
-
-                if (Directory.Exists(Path.Combine(dir, "BigCraftables")))
-                {
-                    foreach (var bigDir in Directory.EnumerateDirectories(Path.Combine(dir, "BigCraftables")))
-                    {
-                        if (!File.Exists(Path.Combine(bigDir, "big-craftable.json")))
-                            continue;
-                        var bigInfo = Helper.ReadJsonFile<BigCraftableData>(Path.Combine(bigDir, "big-craftable.json"));
-                        bigInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "BigCraftables", Path.GetFileName(bigDir));
-                        bigInfo.texture = Helper.Content.Load<Texture2D>($"{bigInfo.directory}/big-craftable.png");
-                        bigCraftables.Add(bigInfo);
-                    }
-                }
+                loadData(dir);
             }
+        }
 
+        public override object GetApi()
+        {
+            return new Api();
+        }
+        
+        private void firstUpdate(object sender, EventArgs args)
+        {
+            GameEvents.UpdateTick += secondUpdate;
+        }
+
+        private void secondUpdate(object sender, EventArgs args)
+        {
+            GameEvents.UpdateTick -= secondUpdate;
+            
             objectIds = AssignIds("objects", StartingObjectId, objects.ToList<DataNeedsId>());
             cropIds = AssignIds("crops", StartingCropId, crops.ToList<DataNeedsId>());
             fruitTreeIds = AssignIds("fruittrees", StartingFruitTreeId, fruitTrees.ToList<DataNeedsId>());
             bigCraftableIds = AssignIds("big-craftables", StartingBigCraftableId, bigCraftables.ToList<DataNeedsId>());
 
-            helper.Content.AssetEditors.Add(new ContentInjector());
+            Helper.Content.AssetEditors.Add(new ContentInjector());
+        }
+
+        internal void loadData(string dir)
+        {
+            if (!File.Exists(Path.Combine(dir, "content-pack.json")))
+            {
+                Log.warn($"\tNo {dir}/content-pack.json!");
+                return;
+            }
+            var packInfo = Helper.ReadJsonFile<ContentPackData>(Path.Combine(dir, "content-pack.json"));
+            Log.info($"\t{packInfo.Name} {packInfo.Version} by {packInfo.Author} - {packInfo.Description}");
+
+            if (Directory.Exists(Path.Combine(dir, "Objects")))
+            {
+                foreach (var objDir in Directory.EnumerateDirectories(Path.Combine(dir, "Objects")))
+                {
+                    if (!File.Exists(Path.Combine(objDir, "object.json")))
+                        continue;
+                    var objInfo = Helper.ReadJsonFile<ObjectData>(Path.Combine(objDir, "object.json"));
+                    objInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "Objects", Path.GetFileName(objDir));
+                    objInfo.texture = Helper.Content.Load<Texture2D>($"{objInfo.directory}/object.png");
+                    if (objInfo.IsColored)
+                        objInfo.textureColor = Helper.Content.Load<Texture2D>($"{objInfo.directory}/color.png");
+                    objects.Add(objInfo);
+                }
+            }
+            if (Directory.Exists(Path.Combine(dir, "Crops")))
+            {
+                foreach (var cropDir in Directory.EnumerateDirectories(Path.Combine(dir, "Crops")))
+                {
+                    if (!File.Exists(Path.Combine(cropDir, "crop.json")))
+                        continue;
+                    var cropInfo = Helper.ReadJsonFile<CropData>(Path.Combine(cropDir, "crop.json"));
+                    cropInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "Crops", Path.GetFileName(cropDir));
+                    cropInfo.texture = Helper.Content.Load<Texture2D>($"{cropInfo.directory}/crop.png");
+                    crops.Add(cropInfo);
+
+                    var obj = new ObjectData();
+                    obj.directory = cropInfo.directory;
+                    obj.texture = Helper.Content.Load<Texture2D>($"{obj.directory}/seeds.png");
+                    obj.Name = cropInfo.SeedName;
+                    obj.Description = cropInfo.SeedDescription;
+                    obj.Category = ObjectData.Category_.Seeds;
+                    obj.Price = cropInfo.SeedPurchasePrice;
+
+                    obj.CanPurchase = true;
+                    obj.PurchaseFrom = cropInfo.SeedPurchaseFrom;
+                    obj.PurchasePrice = cropInfo.SeedPurchasePrice;
+                    obj.PurchaseRequirements = cropInfo.SeedPurchaseRequirements ?? new List<string>();
+                    List<string> seasons = new List<string>();
+                    seasons.Add("spring");
+                    seasons.Add("summer");
+                    seasons.Add("fall");
+                    seasons.Add("winter");
+                    foreach (var season in cropInfo.Seasons)
+                        seasons.Remove(season);
+                    var str = "z";
+                    foreach (var season in seasons)
+                        str += " " + season;
+                    obj.PurchaseRequirements.Add(str);
+
+                    cropInfo.seed = obj;
+                    objects.Add(obj);
+                }
+            }
+
+            if (Directory.Exists(Path.Combine(dir, "FruitTrees")))
+            {
+                foreach (var fruitTreeDir in Directory.EnumerateDirectories(Path.Combine(dir, "FruitTrees")))
+                {
+                    if (!File.Exists(Path.Combine(fruitTreeDir, "tree.json")))
+                        continue;
+                    var fruitTreeInfo = Helper.ReadJsonFile<FruitTreeData>(Path.Combine(fruitTreeDir, "tree.json"));
+                    fruitTreeInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "FruitTrees", Path.GetFileName(fruitTreeDir));
+                    fruitTreeInfo.texture = Helper.Content.Load<Texture2D>($"{fruitTreeInfo.directory}/tree.png");
+                    fruitTrees.Add(fruitTreeInfo);
+
+                    var obj = new ObjectData();
+                    obj.directory = fruitTreeInfo.directory;
+                    obj.texture = Helper.Content.Load<Texture2D>($"{obj.directory}/sapling.png");
+                    obj.Name = fruitTreeInfo.SaplingName;
+                    obj.Description = fruitTreeInfo.SaplingDescription;
+                    obj.Category = ObjectData.Category_.Seeds;
+                    obj.Price = fruitTreeInfo.SaplingPurchasePrice;
+
+                    obj.CanPurchase = true;
+                    obj.PurchaseFrom = fruitTreeInfo.SsaplingPurchaseFrom;
+                    obj.PurchasePrice = fruitTreeInfo.SaplingPurchasePrice;
+
+                    fruitTreeInfo.sapling = obj;
+                    objects.Add(obj);
+                }
+            }
+
+            if (Directory.Exists(Path.Combine(dir, "BigCraftables")))
+            {
+                foreach (var bigDir in Directory.EnumerateDirectories(Path.Combine(dir, "BigCraftables")))
+                {
+                    if (!File.Exists(Path.Combine(bigDir, "big-craftable.json")))
+                        continue;
+                    var bigInfo = Helper.ReadJsonFile<BigCraftableData>(Path.Combine(bigDir, "big-craftable.json"));
+                    bigInfo.directory = Path.Combine("ContentPacks", Path.GetFileName(dir), "BigCraftables", Path.GetFileName(bigDir));
+                    bigInfo.texture = Helper.Content.Load<Texture2D>($"{bigInfo.directory}/big-craftable.png");
+                    bigCraftables.Add(bigInfo);
+                }
+            }
+
         }
         
         private void menuChanged(object sender, EventArgsClickableMenuChanged args)
@@ -237,10 +262,10 @@ namespace JsonAssets
         internal IList<CropData> crops = new List<CropData>();
         internal IList<FruitTreeData> fruitTrees = new List<FruitTreeData>();
         internal IList<BigCraftableData> bigCraftables = new List<BigCraftableData>();
-        private IDictionary<string, int> objectIds;
-        private IDictionary<string, int> cropIds;
-        private IDictionary<string, int> fruitTreeIds;
-        private IDictionary<string, int> bigCraftableIds;
+        internal IDictionary<string, int> objectIds;
+        internal IDictionary<string, int> cropIds;
+        internal IDictionary<string, int> fruitTreeIds;
+        internal IDictionary<string, int> bigCraftableIds;
 
         public int ResolveObjectId( object data )
         {
