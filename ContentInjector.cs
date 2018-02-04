@@ -29,8 +29,8 @@ namespace JsonAssets
                 return true;
             if (asset.AssetNameEquals("TileSheets\\fruitTrees"))
                 return true;
-            if (asset.AssetNameEquals("TileSheets\\Craftables"))
-                return true;
+            if (asset.AssetNameEquals("TileSheets\\Craftables") || asset.AssetNameEquals("TileSheets\\Craftables_indoor") || asset.AssetNameEquals("TileSheets\\Craftables_outdoor"))
+                return true; // _indoor/_outdoor for Seasonal Immersion compat
             return false;
         }
 
@@ -216,7 +216,7 @@ namespace JsonAssets
                     }
                 }
             }
-            else if (asset.AssetNameEquals("TileSheets\\Craftables"))
+            else if (asset.AssetNameEquals("TileSheets\\Craftables") || asset.AssetNameEquals("TileSheets\\Craftables_indoor") || asset.AssetNameEquals("TileSheets\\Craftables_outdoor"))
             {
                 var oldTex = asset.AsImage().Data;
                 Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));

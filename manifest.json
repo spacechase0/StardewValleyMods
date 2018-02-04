@@ -6,5 +6,5 @@
   "UniqueID": "spacechase0.JsonAssets",
   "MinimumApiVersion": "2.0",
   "EntryDll": "JsonAssets.dll",
-  "UpdateKeys": []
+  "UpdateKeys": [ "Nexus:1720" ]
 }

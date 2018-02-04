@@ -40,6 +40,7 @@ namespace JsonAssets.Data
             MonsterLoot = SObject.monsterLootCategory,
             ArtisanGoods = SObject.artisanGoodsCategory,
             Seeds = SObject.SeedsCategory,
+            Ring = SObject.ringCategory,
         }
 
         public class Recipe_

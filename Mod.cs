@@ -137,7 +137,7 @@ namespace JsonAssets
 
             helper.Content.AssetEditors.Add(new ContentInjector());
         }
-
+        
         private void menuChanged(object sender, EventArgsClickableMenuChanged args)
         {
             var menu = args.NewMenu as ShopMenu;
