@@ -252,8 +252,15 @@ namespace JsonAssets
                     }
                     else
                     {
-                        Game1.player.cookingRecipes.Add(obj.Name, 0);
+                        Game1.player.craftingRecipes.Add(obj.Name, 0);
                     }
+                }
+            }
+            foreach (var big in bigCraftables)
+            {
+                if (big.Recipe != null && big.Recipe.IsDefault && !Game1.player.knowsRecipe(big.Name))
+                {
+                    Game1.player.craftingRecipes.Add(big.Name, 0);
                 }
             }
         }
