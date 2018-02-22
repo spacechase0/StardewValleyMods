@@ -4,7 +4,7 @@
   "Version": "1.0",
   "Description": "Allow custom stuff.",
   "UniqueID": "spacechase0.JsonAssets",
-  "MinimumApiVersion": "2.0",
+  "MinimumApiVersion": "2.5-beta.3",
   "EntryDll": "JsonAssets.dll",
   "UpdateKeys": [ "Nexus:1720" ]
 }
