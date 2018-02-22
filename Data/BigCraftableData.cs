@@ -1,20 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SObject = StardewValley.Object;
 
 namespace JsonAssets.Data
 {
     public class BigCraftableData : DataNeedsId
     {
-        [JsonIgnore]
-        internal string directory;
-
         [JsonIgnore]
         internal Texture2D texture;
 

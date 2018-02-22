@@ -1,16 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
 
 namespace JsonAssets.Data
 {
     public class FruitTreeData : DataNeedsId
     {
-        [JsonIgnore]
-        internal string directory;
-
         [JsonIgnore]
         internal Texture2D texture;
         

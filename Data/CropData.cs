@@ -1,16 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
 
 namespace JsonAssets.Data
 {
     public class CropData : DataNeedsId
     {
-        [JsonIgnore]
-        internal string directory;
-
         [JsonIgnore]
         internal Texture2D texture;
         

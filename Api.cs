@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JsonAssets
 {
@@ -18,9 +14,16 @@ namespace JsonAssets
 
     internal class Api : IApi
     {
+        private readonly Action<string> loadFolder;
+
+        public Api(Action<string> loadFolder)
+        {
+            this.loadFolder = loadFolder;
+        }
+
         public void LoadAssets(string path)
         {
-            Mod.instance.loadData(path);
+            this.loadFolder(path);
         }
 
         public int GetObjectId(string name)
