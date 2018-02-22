@@ -12,7 +12,7 @@ namespace JsonAssets
         int GetBigCraftableId(string name);
     }
 
-    internal class Api : IApi
+    public class Api : IApi
     {
         private readonly Action<string> loadFolder;
 
