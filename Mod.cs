@@ -38,9 +38,13 @@ namespace JsonAssets
             }
         }
 
+        private IApi api;
         public override object GetApi()
         {
-            return new Api(this.loadData);
+            if (api == null)
+                api = new Api(this.loadData);
+
+            return api;
         }
 
         private void firstUpdate(object sender, EventArgs args)
@@ -264,6 +268,8 @@ namespace JsonAssets
                     Log.trace($"\tAdding {big.Name}");
                 }
             }
+
+            ( ( Api ) api ).InvokeAddedItemsToShop();
         }
 
         private void afterLoad(object sender, EventArgs args)

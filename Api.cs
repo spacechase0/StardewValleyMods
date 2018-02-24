@@ -10,6 +10,8 @@ namespace JsonAssets
         int GetCropId(string name);
         int GetFruitTreeId(string name);
         int GetBigCraftableId(string name);
+
+        event EventHandler AddedItemsToShop;
     }
 
     public class Api : IApi
@@ -44,6 +46,16 @@ namespace JsonAssets
         public int GetBigCraftableId(string name)
         {
             return Mod.instance.bigCraftableIds.ContainsKey(name) ? Mod.instance.bigCraftableIds[name] : -1;
+        }
+
+        public event EventHandler AddedItemsToShop;
+
+        internal void InvokeAddedItemsToShop()
+        {
+            Log.trace("Event: AddedItemsToShop");
+            if (AddedItemsToShop == null)
+                return;
+            Util.invokeEvent("JsonAssets.Api.AddedItemsToShop", AddedItemsToShop.GetInvocationList(), null);
         }
     }
 }
