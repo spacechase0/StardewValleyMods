@@ -317,7 +317,7 @@ namespace JsonAssets
 
         private const int StartingObjectId = 2000;
         private const int StartingCropId = 100;
-        private const int StartingFruitTreeId = 20;
+        private const int StartingFruitTreeId = 10;
         private const int StartingBigCraftableId = 300;
         internal IList<ObjectData> objects = new List<ObjectData>();
         internal IList<CropData> crops = new List<CropData>();
