@@ -165,10 +165,13 @@ namespace JsonAssets
                 {
                     try
                     {
-                        Log.trace($"Injecting {obj.Name} sprites");
+                        Log.trace($"Injecting {obj.Name} sprites @ {objectRect(obj.GetObjectId())}");
                         asset.AsImage().PatchImage(obj.texture, null, objectRect(obj.GetObjectId()));
                         if (obj.IsColored)
+                        {
+                            Log.trace($"Injecting {obj.Name} color sprites @ {objectRect(obj.GetObjectId() + 1)}");
                             asset.AsImage().PatchImage(obj.textureColor, null, objectRect(obj.GetObjectId() + 1));
+                        }
                     }
                     catch ( Exception e )
                     {
@@ -187,7 +190,7 @@ namespace JsonAssets
                 {
                     try
                     {
-                        Log.trace($"Injecting {crop.Name} crop images");
+                        Log.trace($"Injecting {crop.Name} crop images @ {cropRect(crop.GetCropSpriteIndex())}");
                         asset.AsImage().PatchImage(crop.texture, null, cropRect(crop.GetCropSpriteIndex()));
                     }
                     catch (Exception e)
@@ -207,7 +210,7 @@ namespace JsonAssets
                 {
                     try
                     {
-                        Log.trace($"Injecting {fruitTree.Name} fruit tree images");
+                        Log.trace($"Injecting {fruitTree.Name} fruit tree images @ {fruitTreeRect(fruitTree.GetFruitTreeIndex())}");
                         asset.AsImage().PatchImage(fruitTree.texture, null, fruitTreeRect(fruitTree.GetFruitTreeIndex()));
                     }
                     catch (Exception e)
@@ -222,12 +225,13 @@ namespace JsonAssets
                 Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
                 asset.ReplaceWith(newTex);
                 asset.AsImage().PatchImage(oldTex);
+                Log.trace($"Big craftables are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
                 foreach (var big in Mod.instance.bigCraftables)
                 {
                     try
                     {
-                        Log.trace($"Injecting {big.Name} sprites");
+                        Log.trace($"Injecting {big.Name} sprites @ {bigCraftableRect(big.GetCraftableId())}");
                         asset.AsImage().PatchImage(big.texture, null, bigCraftableRect(big.GetCraftableId()));
                     }
                     catch (Exception e)
