@@ -207,10 +207,10 @@ namespace JsonAssets
             {
                 Log.trace($"Adding objects to {menu.portraitPerson.name}'s shop");
 
-                var forSale = Helper.Reflection.GetPrivateValue<List<Item>>(menu, "forSale");
-                var itemPriceAndStock = Helper.Reflection.GetPrivateValue<Dictionary<Item, int[]>>(menu, "itemPriceAndStock");
+                var forSale = Helper.Reflection.GetField<List<Item>>(menu, "forSale").GetValue();
+                var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(menu, "itemPriceAndStock").GetValue();
 
-                var precondMeth = Helper.Reflection.GetPrivateMethod(Game1.currentLocation, "checkEventPrecondition");
+                var precondMeth = Helper.Reflection.GetMethod(Game1.currentLocation, "checkEventPrecondition");
                 foreach (var obj in objects)
                 {
                     if (obj.Recipe != null && obj.Recipe.CanPurchase)
