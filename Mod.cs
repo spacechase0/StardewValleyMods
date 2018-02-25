@@ -347,6 +347,7 @@ namespace JsonAssets
             {
                 if (saved != null && saved.ContainsKey(d.Name))
                 {
+                    Log.trace("Existing ID: " + d.Name + " = " + saved[d.Name]);
                     ids.Add(d.Name, saved[d.Name]);
                     currId = Math.Max(currId, saved[d.Name] + 1);
                     d.id = ids[d.Name];
@@ -357,6 +358,7 @@ namespace JsonAssets
             {
                 if (d.id == -1)
                 {
+                    Log.trace("New ID: " + d.Name + " = " + currId);
                     ids.Add(d.Name, currId++);
                     if (type == "objects" && ((ObjectData)d).IsColored)
                         ++currId;
