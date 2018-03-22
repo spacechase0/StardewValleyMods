@@ -11,6 +11,7 @@ namespace JsonAssets
         int GetFruitTreeId(string name);
         int GetBigCraftableId(string name);
 
+        event EventHandler IdsAssigned;
         event EventHandler AddedItemsToShop;
     }
 
@@ -47,9 +48,17 @@ namespace JsonAssets
         {
             return Mod.instance.bigCraftableIds.ContainsKey(name) ? Mod.instance.bigCraftableIds[name] : -1;
         }
+        
+        public event EventHandler IdsAssigned;
+        internal void InvokeIdsAssigned()
+        {
+            Log.trace("Event: IdsAssigned");
+            if (AddedItemsToShop == null)
+                return;
+            Util.invokeEvent("JsonAssets.Api.IdsAssigned", IdsAssigned.GetInvocationList(), null);
+        }
 
         public event EventHandler AddedItemsToShop;
-
         internal void InvokeAddedItemsToShop()
         {
             Log.trace("Event: AddedItemsToShop");

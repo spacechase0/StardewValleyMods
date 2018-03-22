@@ -9,6 +9,9 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using StardewValley.Locations;
+using StardewValley.TerrainFeatures;
+using StardewValley.Objects;
 
 // TODO: Refactor recipes
 // TODO: Handle recipe.IsDefault
@@ -25,6 +28,7 @@ namespace JsonAssets
 
             MenuEvents.MenuChanged += menuChanged;
             SaveEvents.AfterLoad += afterLoad;
+            SaveEvents.AfterSave += afterSave;
             GameEvents.FirstUpdateTick += firstUpdate;
             PlayerEvents.InventoryChanged += invChanged;
 
@@ -55,13 +59,11 @@ namespace JsonAssets
         private void secondUpdate(object sender, EventArgs args)
         {
             GameEvents.UpdateTick -= secondUpdate;
-
-            objectIds = AssignIds("objects", StartingObjectId, objects.ToList<DataNeedsId>());
-            cropIds = AssignIds("crops", StartingCropId, crops.ToList<DataNeedsId>());
-            fruitTreeIds = AssignIds("fruittrees", StartingFruitTreeId, fruitTrees.ToList<DataNeedsId>());
-            bigCraftableIds = AssignIds("big-craftables", StartingBigCraftableId, bigCraftables.ToList<DataNeedsId>());
-
-            Helper.Content.AssetEditors.Add(new ContentInjector());
+            
+            oldObjectIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-objects.json"));
+            oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-crops.json"));
+            oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-fruittrees.json"));
+            oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-big-craftables.json"));
         }
 
         private void loadData(string dir)
@@ -170,7 +172,8 @@ namespace JsonAssets
                         Category = ObjectData.Category_.Seeds,
                         Price = tree.SaplingPurchasePrice,
                         CanPurchase = true,
-                        PurchaseFrom = tree.SsaplingPurchaseFrom,
+                        PurchaseRequirements = tree.SaplingPurchaseRequirements,
+                        PurchaseFrom = tree.SaplingPurchaseFrom,
                         PurchasePrice = tree.SaplingPurchasePrice
                     };
                     objects.Add(tree.sapling);
@@ -274,6 +277,34 @@ namespace JsonAssets
 
         private void afterLoad(object sender, EventArgs args)
         {
+            if (File.Exists(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json")))
+            {
+                oldObjectIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-objects.json"));
+                oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-crops.json"));
+                oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-fruittrees.json"));
+                oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-big-craftables.json"));
+            }
+            else
+                Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
+
+            if (oldObjectIds == null)
+            {
+                oldObjectIds = new Dictionary<string, int>();
+                oldCropIds = new Dictionary<string, int>();
+                oldFruitTreeIds = new Dictionary<string, int>();
+                oldBigCraftableIds = new Dictionary<string, int>();
+            }
+
+            objectIds = AssignIds("objects", StartingObjectId, objects.ToList<DataNeedsId>());
+            cropIds = AssignIds("crops", StartingCropId, crops.ToList<DataNeedsId>());
+            fruitTreeIds = AssignIds("fruittrees", StartingFruitTreeId, fruitTrees.ToList<DataNeedsId>());
+            bigCraftableIds = AssignIds("big-craftables", StartingBigCraftableId, bigCraftables.ToList<DataNeedsId>());
+
+            fixIdsEverywhere();
+            (api as Api).InvokeIdsAssigned();
+
+            Helper.Content.AssetEditors.Add(new ContentInjector());
+
             foreach (var obj in objects)
             {
                 if (obj.Recipe != null && obj.Recipe.IsDefault && !Game1.player.knowsRecipe(obj.Name))
@@ -295,6 +326,14 @@ namespace JsonAssets
                     Game1.player.craftingRecipes.Add(big.Name, 0);
                 }
             }
+        }
+
+        private void afterSave(object sender, EventArgs args)
+        {
+            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-objects.json"), objectIds);
+            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-crops.json"), cropIds);
+            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-fruittrees.json"), fruitTreeIds);
+            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-big-craftables.json"), bigCraftableIds);
         }
 
         private IList<ObjectData> myRings = new List<ObjectData>();
@@ -327,6 +366,10 @@ namespace JsonAssets
         internal IDictionary<string, int> cropIds;
         internal IDictionary<string, int> fruitTreeIds;
         internal IDictionary<string, int> bigCraftableIds;
+        internal IDictionary<string, int> oldObjectIds;
+        internal IDictionary<string, int> oldCropIds;
+        internal IDictionary<string, int> oldFruitTreeIds;
+        internal IDictionary<string, int> oldBigCraftableIds;
 
         public int ResolveObjectId(object data)
         {
@@ -338,22 +381,9 @@ namespace JsonAssets
 
         private Dictionary<string, int> AssignIds(string type, int starting, IList<DataNeedsId> data)
         {
-            var saved = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-{type}.json"));
             Dictionary<string, int> ids = new Dictionary<string, int>();
 
             int currId = starting;
-            // First, populate saved IDs
-            foreach (var d in data)
-            {
-                if (saved != null && saved.ContainsKey(d.Name))
-                {
-                    Log.trace("Existing ID: " + d.Name + " = " + saved[d.Name]);
-                    ids.Add(d.Name, saved[d.Name]);
-                    currId = Math.Max(currId, saved[d.Name] + 1);
-                    d.id = ids[d.Name];
-                }
-            }
-            // Next, add in new IDs
             foreach (var d in data)
             {
                 if (d.id == -1)
@@ -366,8 +396,135 @@ namespace JsonAssets
                 }
             }
 
-            Helper.WriteJsonFile(Path.Combine(Helper.DirectoryPath, $"ids-{type}.json"), ids);
             return ids;
+        }
+
+        private void fixIdsEverywhere()
+        {
+            fixItemList(Game1.player.items);
+            foreach ( var loc in Game1.locations )
+                fixLocation(loc);
+        }
+
+        private void fixLocation( GameLocation loc )
+        {
+            if (loc is FarmHouse fh)
+            {
+                if (fh.fridge != null && fh.fridge.items != null)
+                    fixItemList(fh.fridge.items);
+            }
+
+            IList<Vector2> toRemove = new List<Vector2>();
+            foreach ( var tf in loc.terrainFeatures )
+            {
+                if ( tf.Value is HoeDirt hd )
+                {
+                    if (hd.crop == null)
+                        continue;
+
+                    if (fixId(oldCropIds, cropIds, ref hd.crop.rowInSpriteSheet, Game1.content.Load<Dictionary<int, string>>("Data\\Crops")))
+                        hd.crop = null;
+                    else
+                    {
+                        var key = cropIds.FirstOrDefault(x => x.Value == hd.crop.rowInSpriteSheet).Key;
+                        var c = crops.FirstOrDefault(x => x.Name == key);
+                        if ( c != null ) // Non-JA crop
+                            hd.crop.indexOfHarvest = ResolveObjectId(c.Product);
+                    }
+                }
+                else if ( tf.Value is FruitTree ft )
+                {
+                    if (fixId(oldFruitTreeIds, fruitTreeIds, ref ft.treeType, Game1.content.Load<Dictionary<int, string>>("Data\\fruitTrees")))
+                        toRemove.Add(tf.Key);
+                    else
+                    {
+                        var key = oldFruitTreeIds.FirstOrDefault(x => x.Value == ft.treeType).Key;
+                        var ftt = fruitTrees.FirstOrDefault(x => x.Name == key);
+                        if ( ftt != null ) // Non-JA fruit tree
+                            ft.indexOfFruit = ResolveObjectId(ftt.Product);
+                    }
+                }
+            }
+            foreach (var rem in toRemove)
+                loc.terrainFeatures.Remove(rem);
+
+            toRemove.Clear();
+            foreach ( var obj in loc.objects )
+            {
+                if ( obj.Value is Chest chest )
+                {
+                    fixItemList(chest.items);
+                }
+                else
+                {
+                    if (!obj.Value.bigCraftable)
+                    {
+                        if (fixId(oldObjectIds, objectIds, ref obj.Value.parentSheetIndex, Game1.objectInformation))
+                            toRemove.Add(obj.Key);
+                    }
+                    else
+                    {
+                        if (fixId(oldBigCraftableIds, bigCraftableIds, ref obj.Value.parentSheetIndex, Game1.bigCraftablesInformation))
+                            toRemove.Add(obj.Key);
+                    }
+                }
+                
+                if ( obj.Value.heldObject != null )
+                {
+                    if (fixId(oldObjectIds, objectIds, ref obj.Value.heldObject.parentSheetIndex, Game1.objectInformation))
+                        obj.Value.heldObject = null;
+                }
+            }
+            foreach (var rem in toRemove)
+                loc.objects.Remove(rem);
+
+            if (loc is BuildableGameLocation buildLoc)
+                foreach (var building in buildLoc.buildings)
+                    if (building.indoors != null)
+                        fixLocation(building.indoors);
+        }
+
+        private void fixItemList( List< Item > items )
+        {
+            for ( int i = 0; i < items.Count; ++i )
+            {
+                var item = items[i];
+                if ( item is StardewValley.Object obj )
+                {
+                    if (!obj.bigCraftable)
+                    {
+                        if (fixId(oldObjectIds, objectIds, ref obj.parentSheetIndex, Game1.objectInformation))
+                            items[i] = null;
+                    }
+                    else
+                    {
+                        if (fixId(oldBigCraftableIds, bigCraftableIds, ref obj.parentSheetIndex, Game1.bigCraftablesInformation))
+                            items[i] = null;
+                    }
+                }
+            }
+        }
+
+        // Return true if the item should be deleted, false otherwise.
+        // Only remove something if old has it but not new
+        private bool fixId(IDictionary<string, int> oldIds, IDictionary<string, int> newIds, ref int id, Dictionary<int, string> origData )
+        {
+            if (origData.ContainsKey(id))
+                return false;
+
+            if (oldIds.Values.Contains(id))
+            {
+                int id_ = id;
+                var key = oldIds.FirstOrDefault(x => x.Value == id_).Key;
+
+                if (newIds.ContainsKey(key))
+                {
+                    id = newIds[key];
+                    return false;
+                }
+                else return true;
+            }
+            else return false;
         }
     }
 }

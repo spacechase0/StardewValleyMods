@@ -15,9 +15,9 @@ namespace JsonAssets.Data
 
         public string Season { get; set; }
 
-        public IList<string> SaomgPurchaseRequirements { get; set; } = new List<string>();
+        public IList<string> SaplingPurchaseRequirements { get; set; } = new List<string>();
         public int SaplingPurchasePrice { get; set; }
-        public string SsaplingPurchaseFrom { get; set; } = "Pierre";
+        public string SaplingPurchaseFrom { get; set; } = "Pierre";
 
         internal ObjectData sapling;
         public int GetSaplingId() { return sapling.id; }
