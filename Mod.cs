@@ -29,7 +29,6 @@ namespace JsonAssets
             MenuEvents.MenuChanged += menuChanged;
             SaveEvents.AfterLoad += afterLoad;
             SaveEvents.AfterSave += afterSave;
-            GameEvents.FirstUpdateTick += firstUpdate;
             PlayerEvents.InventoryChanged += invChanged;
 
             Log.info("Loading content packs...");
@@ -49,21 +48,6 @@ namespace JsonAssets
                 api = new Api(this.loadData);
 
             return api;
-        }
-
-        private void firstUpdate(object sender, EventArgs args)
-        {
-            GameEvents.UpdateTick += secondUpdate;
-        }
-
-        private void secondUpdate(object sender, EventArgs args)
-        {
-            GameEvents.UpdateTick -= secondUpdate;
-            
-            oldObjectIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-objects.json"));
-            oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-crops.json"));
-            oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-fruittrees.json"));
-            oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-big-craftables.json"));
         }
 
         private void loadData(string dir)
@@ -202,6 +186,29 @@ namespace JsonAssets
 
         private void menuChanged(object sender, EventArgsClickableMenuChanged args)
         {
+            if ( args.NewMenu is TitleMenu )
+            {
+                // When we go back to the title menu we need to reset things so things don't break when
+                // going back to a save. Also, this is where it is initially done, too.
+                oldObjectIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-objects.json"));
+                oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-crops.json"));
+                oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-fruittrees.json"));
+                oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-big-craftables.json"));
+
+                if (objectIds != null)
+                {
+                    clearIds(ref objectIds, objects.ToList<DataNeedsId>());
+                    clearIds(ref cropIds, crops.ToList<DataNeedsId>());
+                    clearIds(ref fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
+                    clearIds(ref bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
+                }
+
+                var editor = Helper.Content.AssetEditors.Where(x => x is ContentInjector);
+                if ( editor.Count() > 0 )
+                    Helper.Content.AssetEditors.Remove(editor.ElementAt(0));
+                return;
+            }
+
             var menu = args.NewMenu as ShopMenu;
             if (menu == null || menu.portraitPerson == null)
                 return;
@@ -376,7 +383,11 @@ namespace JsonAssets
             if (data.GetType() == typeof(long))
                 return (int)(long)data;
             else
+            {
+                if (!objectIds.ContainsKey((string)data))
+                    Log.warn("Resolving for object " + data + " which we don't have?");
                 return objectIds[(string)data];
+            }
         }
 
         private Dictionary<string, int> AssignIds(string type, int starting, IList<DataNeedsId> data)
@@ -397,6 +408,15 @@ namespace JsonAssets
             }
 
             return ids;
+        }
+
+        private void clearIds(ref IDictionary<string, int> ids, List<DataNeedsId> objs)
+        {
+            ids = null;
+            foreach ( DataNeedsId obj in objs )
+            {
+                obj.id = -1;
+            }
         }
 
         private void fixIdsEverywhere()
