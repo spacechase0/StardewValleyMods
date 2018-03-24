@@ -52,82 +52,89 @@ namespace SpaceCore.Overrides
         // All I've done is add checks relating to ISeasonalLocation
         public static void setGraphicsForSeason()
         {
-            foreach (GameLocation location in Game1.locations)
+            try
             {
-                location.seasonUpdate(Game1.currentSeason, true);
-                if (location.IsOutdoors)
+                foreach (GameLocation location in Game1.locations)
                 {
-                    var seasonalLoc = location as ISeasonalLocation;
-                    if (!location.Name.Equals("Desert") && seasonalLoc == null)
+                    location.seasonUpdate(Game1.currentSeason, true);
+                    if (location.IsOutdoors)
                     {
-                        for (int index = 0; index < location.Map.TileSheets.Count; ++index)
+                        var seasonalLoc = location as ISeasonalLocation;
+                        if (!location.Name.Equals("Desert") && seasonalLoc == null)
                         {
-                            if (!location.Map.TileSheets[index].ImageSource.Contains('_'))
-                                continue;
-                            if (!location.Map.TileSheets[index].ImageSource.Contains("path") && !location.Map.TileSheets[index].ImageSource.Contains("object"))
+                            for (int index = 0; index < location.Map.TileSheets.Count; ++index)
                             {
-                                location.Map.TileSheets[index].ImageSource = "Maps\\" + Game1.currentSeason + "_" + location.Map.TileSheets[index].ImageSource.Split('_')[1];
-                                location.Map.DisposeTileSheets(Game1.mapDisplayDevice);
-                                location.Map.LoadTileSheets(Game1.mapDisplayDevice);
+                                if (!location.Map.TileSheets[index].ImageSource.Contains('_'))
+                                    continue;
+                                if (!location.Map.TileSheets[index].ImageSource.Contains("path") && !location.Map.TileSheets[index].ImageSource.Contains("object"))
+                                {
+                                    location.Map.TileSheets[index].ImageSource = "Maps\\" + Game1.currentSeason + "_" + location.Map.TileSheets[index].ImageSource.Split('_')[1];
+                                    location.Map.DisposeTileSheets(Game1.mapDisplayDevice);
+                                    location.Map.LoadTileSheets(Game1.mapDisplayDevice);
+                                }
                             }
                         }
-                    }
-                    if (Game1.currentSeason.Equals("spring") || (seasonalLoc != null && seasonalLoc.Season == "spring"))
-                    {
-                        foreach (KeyValuePair<Vector2, SObject> keyValuePair in (Dictionary<Vector2, SObject>)location.Objects)
+                        if (Game1.currentSeason.Equals("spring") || (seasonalLoc != null && seasonalLoc.Season == "spring"))
                         {
-                            if ((keyValuePair.Value.Name.Contains("Stump") || keyValuePair.Value.Name.Contains("Boulder") || (keyValuePair.Value.Name.Equals("Stick") || keyValuePair.Value.Name.Equals("Stone"))) && (keyValuePair.Value.ParentSheetIndex >= 378 && keyValuePair.Value.ParentSheetIndex <= 391))
-                                keyValuePair.Value.ParentSheetIndex -= 376;
-                        }
-                        Game1.eveningColor = new Color((int)byte.MaxValue, (int)byte.MaxValue, 0);
-                    }
-                    else if (Game1.currentSeason.Equals("summer") || (seasonalLoc != null && seasonalLoc.Season == "summer"))
-                    {
-                        foreach (KeyValuePair<Vector2, SObject> keyValuePair in (Dictionary<Vector2, SObject>)location.Objects)
-                        {
-                            if (keyValuePair.Value.Name.Contains("Weed"))
+                            foreach (KeyValuePair<Vector2, SObject> keyValuePair in (Dictionary<Vector2, SObject>)location.Objects)
                             {
-                                if (keyValuePair.Value.parentSheetIndex == 792)
-                                    ++keyValuePair.Value.ParentSheetIndex;
-                                else if (Game1.random.NextDouble() < 0.3)
-                                    keyValuePair.Value.ParentSheetIndex = 676;
-                                else if (Game1.random.NextDouble() < 0.3)
-                                    keyValuePair.Value.ParentSheetIndex = 677;
+                                if ((keyValuePair.Value.Name.Contains("Stump") || keyValuePair.Value.Name.Contains("Boulder") || (keyValuePair.Value.Name.Equals("Stick") || keyValuePair.Value.Name.Equals("Stone"))) && (keyValuePair.Value.ParentSheetIndex >= 378 && keyValuePair.Value.ParentSheetIndex <= 391))
+                                    keyValuePair.Value.ParentSheetIndex -= 376;
                             }
+                            Game1.eveningColor = new Color((int)byte.MaxValue, (int)byte.MaxValue, 0);
                         }
-                        Game1.eveningColor = new Color((int)byte.MaxValue, (int)byte.MaxValue, 0);
-                    }
-                    else if (Game1.currentSeason.Equals("fall") || (seasonalLoc != null && seasonalLoc.Season == "fall"))
-                    {
-                        foreach (KeyValuePair<Vector2, SObject> keyValuePair in (Dictionary<Vector2, SObject>)location.Objects)
+                        else if (Game1.currentSeason.Equals("summer") || (seasonalLoc != null && seasonalLoc.Season == "summer"))
                         {
-                            if (keyValuePair.Value.Name.Contains("Weed"))
+                            foreach (KeyValuePair<Vector2, SObject> keyValuePair in (Dictionary<Vector2, SObject>)location.Objects)
                             {
-                                if (keyValuePair.Value.parentSheetIndex == 793)
-                                    ++keyValuePair.Value.ParentSheetIndex;
-                                else
-                                    keyValuePair.Value.ParentSheetIndex = Game1.random.NextDouble() >= 0.5 ? 679 : 678;
+                                if (keyValuePair.Value.Name.Contains("Weed"))
+                                {
+                                    if (keyValuePair.Value.parentSheetIndex == 792)
+                                        ++keyValuePair.Value.ParentSheetIndex;
+                                    else if (Game1.random.NextDouble() < 0.3)
+                                        keyValuePair.Value.ParentSheetIndex = 676;
+                                    else if (Game1.random.NextDouble() < 0.3)
+                                        keyValuePair.Value.ParentSheetIndex = 677;
+                                }
                             }
+                            Game1.eveningColor = new Color((int)byte.MaxValue, (int)byte.MaxValue, 0);
                         }
-                        Game1.eveningColor = new Color((int)byte.MaxValue, (int)byte.MaxValue, 0);
-                        foreach (WeatherDebris weatherDebris in Game1.debrisWeather)
-                            weatherDebris.which = 2;
-                    }
-                    else if (Game1.currentSeason.Equals("winter") || (seasonalLoc != null && seasonalLoc.Season == "winter"))
-                    {
-                        for (int index = location.Objects.Count - 1; index >= 0; --index)
+                        else if (Game1.currentSeason.Equals("fall") || (seasonalLoc != null && seasonalLoc.Season == "fall"))
                         {
-                            SObject @object = location.Objects[location.Objects.Keys.ElementAt<Vector2>(index)];
-                            if (@object.Name.Contains("Weed"))
-                                location.Objects.Remove(location.Objects.Keys.ElementAt<Vector2>(index));
-                            else if ((!@object.Name.Contains("Stump") && !@object.Name.Contains("Boulder") && (!@object.Name.Equals("Stick") && !@object.Name.Equals("Stone")) || @object.ParentSheetIndex > 100) && (location.IsOutdoors && !@object.isHoedirt))
-                                @object.name.Equals("HoeDirt");
+                            foreach (KeyValuePair<Vector2, SObject> keyValuePair in (Dictionary<Vector2, SObject>)location.Objects)
+                            {
+                                if (keyValuePair.Value.Name.Contains("Weed"))
+                                {
+                                    if (keyValuePair.Value.parentSheetIndex == 793)
+                                        ++keyValuePair.Value.ParentSheetIndex;
+                                    else
+                                        keyValuePair.Value.ParentSheetIndex = Game1.random.NextDouble() >= 0.5 ? 679 : 678;
+                                }
+                            }
+                            Game1.eveningColor = new Color((int)byte.MaxValue, (int)byte.MaxValue, 0);
+                            foreach (WeatherDebris weatherDebris in Game1.debrisWeather)
+                                weatherDebris.which = 2;
                         }
-                        foreach (WeatherDebris weatherDebris in Game1.debrisWeather)
-                            weatherDebris.which = 3;
-                        Game1.eveningColor = new Color(245, 225, 170);
+                        else if (Game1.currentSeason.Equals("winter") || (seasonalLoc != null && seasonalLoc.Season == "winter"))
+                        {
+                            for (int index = location.Objects.Count - 1; index >= 0; --index)
+                            {
+                                SObject @object = location.Objects[location.Objects.Keys.ElementAt<Vector2>(index)];
+                                if (@object.Name.Contains("Weed"))
+                                    location.Objects.Remove(location.Objects.Keys.ElementAt<Vector2>(index));
+                                else if ((!@object.Name.Contains("Stump") && !@object.Name.Contains("Boulder") && (!@object.Name.Equals("Stick") && !@object.Name.Equals("Stone")) || @object.ParentSheetIndex > 100) && (location.IsOutdoors && !@object.isHoedirt))
+                                    @object.name.Equals("HoeDirt");
+                            }
+                            foreach (WeatherDebris weatherDebris in Game1.debrisWeather)
+                                weatherDebris.which = 3;
+                            Game1.eveningColor = new Color(245, 225, 170);
+                        }
                     }
                 }
+            }
+            catch ( Exception e )
+            {
+                Log.error("Something went wrong! " + e);
             }
         }
 

@@ -25,7 +25,7 @@ namespace SpaceCore
         {
             instance = this;
 
-            GameEvents.UpdateTick += onUpdate;
+            SpecialisedEvents.UnvalidatedUpdateTick += onUpdate;
 
             SaveEvents.AfterLoad += onLoad;
             SaveEvents.AfterSave += onSave;

@@ -53,6 +53,7 @@
     <Compile Include="Events\EventArgsChooseNightlyFarmEvent.cs" />
     <Compile Include="Events\EventArgsShowNightEndMenus.cs" />
     <Compile Include="Events\SpaceEvents.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="ICustomWeaponDraw.cs" />
     <Compile Include="Interface\TabbedMenu.cs" />
     <Compile Include="Interface\TabMenu.cs" />
