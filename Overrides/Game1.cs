@@ -46,6 +46,15 @@ namespace SpaceCore.Overrides
         }
     }
 
+    [HarmonyPatch(typeof(Game1), "doneEating")]
+    internal static class DoneEatingHook
+    {
+        internal static void Postfix()
+        {
+            SpaceEvents.InvokeOnItemEaten();
+        }
+    }
+
     [HarmonyPatch(typeof(Game1), "setGraphicsForSeason")]
     internal static class SeasonGraphicsForSeasonalLocationsPatch
     {

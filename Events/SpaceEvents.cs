@@ -16,6 +16,10 @@ namespace SpaceCore.Events
         // Lets you hook into Utillity.pickFarmEvent
         public static event EventHandler<EventArgsChooseNightlyFarmEvent> ChooseNightlyFarmEvent;
 
+        // When the player is done eating an item.
+        // Check what item using player.itemToEat
+        public static event EventHandler OnItemEaten;
+
         internal static void InvokeOnBlankSave()
         {
             Log.trace("Event: OnBlankSave");
@@ -42,6 +46,14 @@ namespace SpaceCore.Events
                 return args.NightEvent;
             Util.invokeEvent("SpaceEvents.ChooseNightlyFarmEvent", ChooseNightlyFarmEvent.GetInvocationList(), null, args);
             return args.NightEvent;
+        }
+
+        internal static void InvokeOnItemEaten()
+        {
+            Log.trace("Event: OnItemEaten");
+            if (OnItemEaten == null)
+                return;
+            Util.invokeEvent("SpaceEvents.OnItemEaten", OnItemEaten.GetInvocationList(), null);
         }
     }
 }
