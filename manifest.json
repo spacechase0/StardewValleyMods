@@ -1,0 +1,24 @@
+{
+  "Name": "Magic",
+  "Author": "spacechase0",
+  "Version": "0.1.0",
+  "Description": "Magic!",
+  "UniqueID": "spacechase0.Magic",
+  "PerSaveConfigs": false,
+  "EntryDll": "Magic.dll",
+  "MinimumApiVersion": "1.14-prerelease",
+  "Dependencies": [
+    {
+      "UniqueID": "Entoarox.EntoaroxFramework"
+    },
+    {
+      "UniqueID": "spacechase0.SpaceCore"
+    },
+    {
+      "UniqueID": "Platonymous.Toolkit"
+    },
+    {
+      "UniqueID": "spacechase0.JsonAssets"
+    }
+  ]
+}
