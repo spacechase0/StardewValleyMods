@@ -1,0 +1,23 @@
+{
+  "Name": "Ring of Regeneration",
+  "Description": "Slowly heal over time.",
+  "Category": "Ring",
+  "Edibility": -300,
+  "Price": 10000,
+  "Recipe": {
+    "ResultCount": 1,
+    "Ingredients": [
+      {
+        "Object": 773,
+        "Count": 3,
+      },
+      {
+        "Object": 337,
+        "Count": 3,
+      }
+    ],
+    "CanPurchase": true,
+    "PurchaseFrom": "Marlon",
+    "PurchasePrice": 10000
+  }
+}

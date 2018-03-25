@@ -1,0 +1,26 @@
+{
+  "Name": "Ring of Wide Nets",
+  "Description": "Increases fishing bar size by 50%.",
+  "Category": "Ring",
+  "Edibility": -300,
+  "Price": 5000,
+  "Recipe": {
+    "ResultCount": 1,
+    "Ingredients": [
+      {
+        "Object": 163,
+        "Count": 1,
+      },
+      {
+        "Object": 336,
+        "Count": 5,
+      }
+    ],
+    "CanPurchase": true,
+    "PurchaseFrom": "Willy",
+    "PurchasePrice": 5000,
+    "PurchaseRequirements": [
+      "w rainy"
+    ]
+  }
+}
