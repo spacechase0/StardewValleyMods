@@ -105,10 +105,10 @@ namespace Magic
                 new Point((int)manaPos.X + manaBg.Width * 4 + 20, Game1.viewport.Height - 20 - 50 - 40 - 25 ),
             };*/
             {
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 25 - 60 * 3 ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 25 - 60 * 2 ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 25 - 60 * 1 ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 25 - 60 * 0 ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * 3 ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * 2 ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * 1 ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * 0 ),
             };
 
             SpellBook book = Game1.player.getSpellBook();
@@ -122,11 +122,11 @@ namespace Magic
             }
 
             string prepStr = (book.selectedPrepared + 1) + "/" + book.prepared.Length;
-            b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 + 2, spots[Game1.down].Y + 50 + 70 + 0), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
-            b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 - 2, spots[Game1.down].Y + 50 + 70 + 0), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
-            b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 + 0, spots[Game1.down].Y + 50 + 70 + 2), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
-            b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 + 0, spots[Game1.down].Y + 50 + 70 - 2), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
-            b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25, spots[Game1.down].Y + 50 + 70), Color.White, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
+            b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 + 2, spots[Game1.up].Y - 35 + 0), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
+            b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 - 2, spots[Game1.up].Y - 35 + 0), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
+            b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 + 0, spots[Game1.up].Y - 35 + 2), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
+            b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 + 0, spots[Game1.up].Y - 35 - 2), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
+            b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25, spots[Game1.up].Y - 35), Color.White, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
 
             for (int i = 0; i < Math.Min(spots.Length, prepared.Length); ++i)
             {
