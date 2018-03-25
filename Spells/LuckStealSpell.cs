@@ -23,6 +23,11 @@ namespace Magic.Spells
             return 1;
         }
 
+        public override bool canCast(SFarmer player, int level)
+        {
+            return base.canCast(player, level) && Game1.dailyLuck != 0.12;
+        }
+
         public override void onCast(SFarmer player, int level, int targetX, int targetY)
         {
             Log.debug(player.name + " casted Luck Steal.");
@@ -31,6 +36,7 @@ namespace Magic.Spells
             friendshipData[0] = Math.Max(0, friendshipData[0] - 250);
             Game1.dailyLuck = 0.12;
             Game1.playSound("death");
+            player.addMagicExp(50);
         }
     }
 }

@@ -66,6 +66,7 @@ namespace Magic.Game.Interface
                 Game1.playSound("wand");
                 Game1.warpFarmer(warpTo, (int)cloud.getTileLocation().X, (int)cloud.getTileLocation().Y, false);
                 Game1.player.consumeObject(Mod.ja.GetObjectId("Travel Core"), 1);
+                Game1.player.addMagicExp(25);
             }
 
             if (dragScroll)

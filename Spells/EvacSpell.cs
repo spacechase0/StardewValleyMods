@@ -17,13 +17,14 @@ namespace Magic.Spells
 
         public override int getManaCost(StardewValley.Farmer player, int level)
         {
-            return 50;
+            return 5;
         }
 
         public override void onCast(StardewValley.Farmer player, int level, int targetX, int targetY)
         {
             player.position.X = enterX;
             player.position.Y = enterY;
+            player.addMagicExp(5);
         }
 
         private static float enterX, enterY;

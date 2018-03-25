@@ -57,7 +57,7 @@ namespace Magic.Spells
             }
 
             Game1.buffsDisplay.addOtherBuff(new Buff(farm, fish, mine, 0, luck, forage, 0, 0, 0, 0, def, atk, 60 + level * 120, "spell:light:buff", "Buff (spell)"));
-            player.addMagicExp(10 + level * 10);
+            player.addMagicExp(10);
         }
     }
 }

@@ -30,7 +30,8 @@ namespace Magic.Spells
                     int dur = ( level * 2 + 5 ) * 60;
                     if ( Vector2.Distance(mob.position, new Vector2( targetX, targetY ) ) <= rad )
                     {
-                       new Tendril(mob, new Vector2(targetX, targetY), rad, dur );
+                        new Tendril(mob, new Vector2(targetX, targetY), rad, dur );
+                        player.addMagicExp(3);
                     }
                 }
             }

@@ -81,6 +81,7 @@ namespace Magic.Spells
                         if (Vector2.Distance(mob.position, new Vector2(position.X, position.Y)) <= rad)
                         {
                             mob.takeDamage(300, 0, 0, false, 0);
+                            source.addMagicExp(5);
                         }
                     }
                 }

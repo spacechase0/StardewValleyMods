@@ -114,8 +114,8 @@ namespace Magic.Game.Interface
 
             if ( sel != null )
             {
-                var title = "spell." + sel.FullId + ".name";
-                var desc = "spell." + sel.FullId + ".desc";
+                var title = Mod.instance.Helper.Translation.Get( "spell." + sel.FullId + ".name" );
+                var desc = WrapText( Mod.instance.Helper.Translation.Get( "spell." + sel.FullId + ".desc" ), (int)((WINDOW_WIDTH / 2) / 0.75f) );
 
                 b.DrawString(Game1.dialogueFont, title, new Vector2(xPositionOnScreen + WINDOW_WIDTH / 2 + (WINDOW_WIDTH / 2 - Game1.dialogueFont.MeasureString(title).X) / 2, yPositionOnScreen + 30), Color.Black);
 
@@ -128,7 +128,7 @@ namespace Magic.Game.Interface
                 {
                     b.Draw(icon, new Rectangle(xPositionOnScreen + WINDOW_WIDTH / 2 + (WINDOW_WIDTH / 2 - SEL_ICON_SIZE) / 2, yPositionOnScreen + 85, SEL_ICON_SIZE, SEL_ICON_SIZE), Color.White);
                 }
-                b.DrawString(Game1.dialogueFont, desc, new Vector2(xPositionOnScreen + WINDOW_WIDTH / 2 + 12, yPositionOnScreen + 300), Color.Black);
+                b.DrawString(Game1.dialogueFont, desc, new Vector2(xPositionOnScreen + WINDOW_WIDTH / 2 + 12, yPositionOnScreen + 280), Color.Black, 0, Vector2.Zero, 0.75f, SpriteEffects.None, 0);
 
                 int sx = sel.Icons.Length + 1;
                 for ( int i = 0; i < sel.Icons.Length; ++i )
@@ -242,6 +242,38 @@ namespace Magic.Game.Interface
         public override void receiveRightClick(int x, int y, bool playSound = true)
         {
             justRightClicked = true;
+        }
+
+        // https://gist.github.com/Sankra/5585584
+        // TODO: A better version that handles me doing newlines correctly
+        private string WrapText(string text, int MaxLineWidth)
+        {
+            if (Game1.dialogueFont.MeasureString(text).X < MaxLineWidth)
+            {
+                return text;
+            }
+
+            string[] words = text.Split(new char[] { ' ', '\n' });
+            var wrappedText = new System.Text.StringBuilder();
+            float linewidth = 0f;
+            float spaceWidth = Game1.dialogueFont.MeasureString(" ").X;
+            for (int i = 0; i < words.Length; ++i)
+            {
+                Vector2 size = Game1.dialogueFont.MeasureString(words[i]);
+                if (linewidth + size.X < MaxLineWidth)
+                {
+                    linewidth += size.X + spaceWidth;
+                }
+                else
+                {
+                    wrappedText.Append("\n");
+                    linewidth = size.X + spaceWidth;
+                }
+                wrappedText.Append(words[i]);
+                wrappedText.Append(" ");
+            }
+
+            return wrappedText.ToString();
         }
     }
 }

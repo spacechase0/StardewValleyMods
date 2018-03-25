@@ -385,6 +385,11 @@ namespace Magic
         {
             if (args.Length != 1 || (args.Length > 0 && args[0] == ""))
                 Log.info("Usage: player_learnschool <school>");
+            else if (args[0] == "all")
+            {
+                foreach (var school in School.getSchoolList())
+                    Game1.player.learnSchool(school);
+            }
             else if (!School.getSchoolList().Contains(args[0]))
                 Log.error($"School '{args[0]}' does not exist.");
             else if (!Game1.player.knowsSchool(args[0]))

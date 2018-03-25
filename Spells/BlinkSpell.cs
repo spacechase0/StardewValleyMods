@@ -13,7 +13,7 @@ namespace Magic.Spells
 
         public override int getManaCost(SFarmer player, int level)
         {
-            return 10;
+            return 5;
         }
 
         public override int getMaxCastingLevel()
@@ -27,7 +27,7 @@ namespace Magic.Spells
             player.position.X = targetX - player.GetBoundingBox().Width / 2;
             player.position.Y = targetY - player.GetBoundingBox().Height / 2;
             Game1.playSound("powerup");
-            player.addMagicExp(10);
+            player.addMagicExp(5);
         }
     }
 }

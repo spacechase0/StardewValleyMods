@@ -14,7 +14,7 @@ namespace Magic.Spells
 
         public override int getManaCost(StardewValley.Farmer player, int level)
         {
-            return 0;
+            return level;
         }
 
         public override void onCast(StardewValley.Farmer player, int level, int targetX, int targetY)
@@ -32,7 +32,7 @@ namespace Magic.Spells
             
             Mod.instance.Helper.Player().Modifiers.Add(lightMod);
             GameEvents.UpdateTick += waitForLightExpiration;
-            player.addMagicExp(5 + level * 5);
+            player.addMagicExp(level);
         }
 
         private int lightDur = -1;
