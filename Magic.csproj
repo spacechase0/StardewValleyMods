@@ -106,12 +106,18 @@
     <None Include="assets\Objects\ManaPotion\object.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\Objects\TravelCore\object.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="manifest.json" />
     <None Include="packages.config" />
     <None Include="res\altars.psd" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\Objects\ManaPotion\object.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\Objects\TravelCore\object.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\altars.png">

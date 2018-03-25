@@ -19,12 +19,12 @@ namespace Magic
 
         public override bool canCast(StardewValley.Farmer player, int level)
         {
-            return base.canCast(player, level) && player.currentLocation.IsOutdoors && player.getMount() == null;
+            return base.canCast(player, level) && player.currentLocation.IsOutdoors && player.getMount() == null && player.hasItemInInventory(Mod.ja.GetObjectId("Travel Core"), 1);
         }
 
         public override int getManaCost(StardewValley.Farmer player, int level)
         {
-            return 50;
+            return 0;
         }
 
         public override void onCast(StardewValley.Farmer player, int level, int targetX, int targetY)
