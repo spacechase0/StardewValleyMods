@@ -113,7 +113,7 @@ namespace JsonAssets.Data
 
         internal string GetObjectInformation()
         {
-            if (Category == Category_.Cooking)
+            if (Edibility != SObject.inedible)
             {
                 var str = $"{Name}/{Price}/{Edibility}/Cooking -7/{Name}/{Description}/";
                 str += (EdibleIsDrink ? "drink" : "food") + "/";

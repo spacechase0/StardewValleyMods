@@ -14,7 +14,6 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Objects;
 
 // TODO: Refactor recipes
-// TODO: Handle recipe.IsDefault
 
 namespace JsonAssets
 {
