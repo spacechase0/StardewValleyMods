@@ -17,7 +17,7 @@ namespace Magic
         public static SaveData Data { get; private set; }
         public static Configuration Config { get; private set; }
         
-        private static JsonAssetsApi ja;
+        internal static JsonAssetsApi ja;
 
         public Mod()
         {
@@ -28,8 +28,6 @@ namespace Magic
             instance = this;
 
             Config = Helper.ReadConfig<Configuration>();
-
-            Monitor.Log("HELLO?", LogLevel.Alert);
 
             GameEvents.FirstUpdateTick += firstUpdate;
             SaveEvents.AfterLoad += afterLoad;

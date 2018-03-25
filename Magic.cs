@@ -18,6 +18,7 @@ using SpaceCore;
 
 namespace Magic
 {
+    // TODO: Refactor this mess
     static class Magic
     {
         private static Texture2D spellBg;
@@ -26,7 +27,6 @@ namespace Magic
 
         internal static void init()
         {
-            Mod.instance.Monitor.Log("HELLO?>?", StardewModdingAPI.LogLevel.Alert);
             loadAssets();
 
             SpellBook.init();
@@ -42,8 +42,9 @@ namespace Magic
 
             MoreEvents.ActionTriggered += actionTriggered;
 
-            SpaceEvents.ShowNightEndMenus += showMagicLevelMenus;
             SpaceEvents.OnBlankSave += onBlankSave;
+            SpaceEvents.ShowNightEndMenus += showMagicLevelMenus;
+            SpaceEvents.OnItemEaten += onItemEaten;
 
             GraphicsEvents.OnPostRenderHudEvent += renderHud;
 
@@ -264,6 +265,12 @@ namespace Magic
                 }
                 newMagicLevels.Clear();
             }
+        }
+
+        private static void onItemEaten(object sender, EventArgs args)
+        {
+            if (Game1.player.itemToEat.parentSheetIndex == ja.GetObjectId("Magic Elixir"))
+                Game1.player.addMana(Game1.player.getMaxMana());
         }
 
         public static void placeAltar(string locName, int x, int y, int baseAltarIndex, string school)
