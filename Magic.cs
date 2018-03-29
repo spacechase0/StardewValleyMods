@@ -286,7 +286,7 @@ namespace Magic
             GameLocation loc = Game1.getLocationFromName(locName);
 
             Dictionary<int, SpaceCore.Content.TileAnimation> anims;
-            var tileSheet = Content.loadTilesheet("altars", loc.Map, out anims);
+            var tileSheet = Content.loadTilesheet("altarsobjects", loc.Map, out anims);
             tileSheet.Id = comeLast + tileSheet.Id;
             loc.map.AddTileSheet(tileSheet);
             if (Game1.currentLocation == loc)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset name="altar" tilewidth="16" tileheight="16" tilecount="432" columns="18">
- <image source="altars.png" width="288" height="384"/>
+ <image source="altarsobjects.png" width="288" height="384"/>
  <tile id="0">
   <animation>
    <frame tileid="0" duration="300"/>

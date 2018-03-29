@@ -112,7 +112,7 @@
     <None Include="i18n\default.json" />
     <None Include="manifest.json" />
     <None Include="packages.config" />
-    <None Include="res\altars.psd" />
+    <None Include="res\altarsobjects.psd" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\Objects\ManaPotion\object.png">
@@ -121,7 +121,7 @@
     <Content Include="assets\Objects\TravelCore\object.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\altars.png">
+    <Content Include="res\altarsobjects.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\entities\cloud.png">
@@ -290,7 +290,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="res\altars.tsx">
+    <Content Include="res\altarsobjects.tsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
