@@ -1,21 +1,26 @@
 ﻿using Harmony;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using SpaceCore.Events;
 using SpaceCore.Overrides;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
+using StardewValley.TerrainFeatures;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using SFarmer = StardewValley.Farmer;
 
 namespace SpaceCore
 {
     public class SpaceCore : Mod
     {
         internal static SpaceCore instance;
+        private HarmonyInstance harmony;
 
         public SpaceCore()
         {
@@ -32,8 +37,63 @@ namespace SpaceCore
 
             Commands.register();
 
-            var harmony = HarmonyInstance.Create("spacechase0.SpaceCore");
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            harmony = HarmonyInstance.Create("spacechase0.SpaceCore");
+
+            doPrefix(typeof(HoeDirt), "dayUpdate", typeof(HoeDirtWinterFix));
+            doPostfix(typeof(Utility), "pickFarmEvent", typeof(NightlyFarmEventHook));
+            doTranspiler(typeof(Game1), "showEndOfNightStuff", typeof(ShowEndOfNightStuffHook));
+            doPostfix(typeof(Game1), "doneEating", typeof(DoneEatingHook));
+            doPrefix(typeof(Game1), "setGraphicsForSeason", typeof(SeasonGraphicsForSeasonalLocationsPatch));
+            doPrefix(typeof(MeleeWeapon).GetMethod("drawDuringUse", new[] { typeof(int), typeof(int), typeof(SpriteBatch), typeof(Vector2), typeof(SFarmer), typeof(Rectangle), typeof(int), typeof(bool) }), typeof(CustomWeaponDrawPatch).GetMethod("Prefix"));
+        }
+
+        private void doPrefix(Type origType, string origMethod, Type newType)
+        {
+            doPrefix(origType.GetMethod(origMethod), newType.GetMethod("Prefix"));
+        }
+        private void doPrefix(MethodInfo orig, MethodInfo prefix)
+        {
+            try
+            {
+                Log.trace($"Doing prefix patch {orig}:{prefix}...");
+                harmony.Patch(orig, new HarmonyMethod(prefix), null);
+            }
+            catch (Exception e)
+            {
+                Log.error($"Exception doing prefix patch {orig}:{prefix}: {e}");
+            }
+        }
+        private void doPostfix(Type origType, string origMethod, Type newType)
+        {
+            doPostfix(origType.GetMethod(origMethod), newType.GetMethod("Postfix"));
+        }
+        private void doPostfix(MethodInfo orig, MethodInfo postfix)
+        {
+            try
+            {
+                Log.trace($"Doing postfix patch {orig}:{postfix}...");
+                harmony.Patch(orig, null, new HarmonyMethod(postfix));
+            }
+            catch (Exception e)
+            {
+                Log.error($"Exception doing postfix patch {orig}:{postfix}: {e}");
+            }
+        }
+        private void doTranspiler(Type origType, string origMethod, Type newType)
+        {
+            doTranspiler(origType.GetMethod(origMethod), newType.GetMethod("Transpiler"));
+        }
+        private void doTranspiler(MethodInfo orig, MethodInfo transpiler)
+        {
+            try
+            {
+                Log.trace($"Doing transpiler patch {orig}:{transpiler}...");
+                harmony.Patch(orig, null, null, new HarmonyMethod(transpiler));
+            }
+            catch (Exception e)
+            {
+                Log.error($"Exception doing transpiler patch {orig}:{transpiler}: {e}");
+            }
         }
 
         private int prevLoaderNum = 0;

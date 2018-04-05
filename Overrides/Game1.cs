@@ -27,8 +27,8 @@ namespace SpaceCore.Overrides
             var ev = new EventArgsShowNightEndMenus();
             SpaceEvents.InvokeShowNightEndMenus(ev);
         }
-        
-        internal static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+
+        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
 
@@ -49,7 +49,7 @@ namespace SpaceCore.Overrides
     [HarmonyPatch(typeof(Game1), "doneEating")]
     internal static class DoneEatingHook
     {
-        internal static void Postfix()
+        public static void Postfix()
         {
             SpaceEvents.InvokeOnItemEaten();
         }
@@ -148,7 +148,7 @@ namespace SpaceCore.Overrides
         }
 
         // TODO: Make this do IL hooking instead of pre + no execute original
-        internal static bool Prefix()
+        public static bool Prefix()
         {
             setGraphicsForSeason();
             return false;

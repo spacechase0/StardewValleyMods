@@ -27,7 +27,7 @@ namespace SpaceCore.Overrides
         }
 
         // TODO: Make this do IL hooking instead of pre + no execute original
-        internal static bool Prefix(HoeDirt __instance, GameLocation environment, Vector2 tileLocation)
+        public static bool Prefix(HoeDirt __instance, GameLocation environment, Vector2 tileLocation)
         {
             dayUpdate(__instance, environment, tileLocation);
             return false;
