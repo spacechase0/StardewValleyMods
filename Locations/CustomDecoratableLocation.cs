@@ -1,4 +1,5 @@
-﻿using StardewValley.Locations;
+﻿using Microsoft.Xna.Framework;
+using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +10,39 @@ namespace SpaceCore.Locations
 {
     public abstract class CustomDecoratableLocation : DecoratableLocation
     {
-        public new abstract List<Microsoft.Xna.Framework.Rectangle> getWalls();
-        public new abstract List<Microsoft.Xna.Framework.Rectangle> getFloors();
+        public new abstract List<Rectangle> getWalls();
+        public new abstract List<Rectangle> getFloors();
 
-        public CustomDecoratableLocation() : base() { }
-        public CustomDecoratableLocation(xTile.Map m, string name) : base(m, name) { }
+        public CustomDecoratableLocation() : base()
+        {
+            List<Rectangle> list = getWalls();
+            while (this.wallPaper.Count < list.Count)
+            {
+                this.wallPaper.Add(0);
+            }
+            list = getFloors();
+            while (this.floor.Count < list.Count)
+            {
+                this.floor.Add(0);
+            }
+        }
+        public CustomDecoratableLocation(xTile.Map m, string name) : base(m, name)
+        {
+            List<Rectangle> list = getWalls();
+            while (this.wallPaper.Count < list.Count)
+            {
+                this.wallPaper.Add(0);
+            }
+            list = getFloors();
+            while (this.floor.Count < list.Count)
+            {
+                this.floor.Add(0);
+            }
+        }
 
         public override void setWallpaper(int which, int whichRoom = -1, bool persist = false)
         {
-            List<Microsoft.Xna.Framework.Rectangle> walls = getWalls();
+            List<Rectangle> walls = getWalls();
             if (persist)
             {
                 while (this.wallPaper.Count < walls.Count)
@@ -33,7 +58,7 @@ namespace SpaceCore.Locations
             int index1 = which % 16 + which / 16 * 48;
             if (whichRoom == -1)
             {
-                foreach (Microsoft.Xna.Framework.Rectangle rectangle in walls)
+                foreach (Rectangle rectangle in walls)
                 {
                     for (int x = rectangle.X; x < rectangle.Right; ++x)
                     {
@@ -51,7 +76,7 @@ namespace SpaceCore.Locations
             }
             else
             {
-                Microsoft.Xna.Framework.Rectangle rectangle = walls[Math.Min(walls.Count - 1, whichRoom)];
+                Rectangle rectangle = walls[Math.Min(walls.Count - 1, whichRoom)];
                 for (int x = rectangle.X; x < rectangle.Right; ++x)
                 {
                     this.setMapTileIndex(x, rectangle.Y, index1, "Back", 0);
@@ -69,7 +94,7 @@ namespace SpaceCore.Locations
 
         public override void setFloor(int which, int whichRoom = -1, bool persist = false)
         {
-            List<Microsoft.Xna.Framework.Rectangle> floors = getFloors();
+            List<Rectangle> floors = getFloors();
             if (persist)
             {
                 while (this.floor.Count < floors.Count)
@@ -89,7 +114,7 @@ namespace SpaceCore.Locations
             int index1 = 336 + which % 8 * 2 + which / 8 * 32;
             if (whichRoom == -1)
             {
-                foreach (Microsoft.Xna.Framework.Rectangle rectangle in floors)
+                foreach (Rectangle rectangle in floors)
                 {
                     int x = rectangle.X;
                     while (x < rectangle.Right)
@@ -113,7 +138,7 @@ namespace SpaceCore.Locations
             }
             else
             {
-                Microsoft.Xna.Framework.Rectangle rectangle = floors[whichRoom];
+                Rectangle rectangle = floors[Math.Min(floors.Count - 1, whichRoom)];
                 int x = rectangle.X;
                 while (x < rectangle.Right)
                 {
