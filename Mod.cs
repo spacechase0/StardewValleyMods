@@ -181,6 +181,25 @@ namespace JsonAssets
                     bigCraftables.Add(craftable);
                 }
             }
+
+            // load objects
+            DirectoryInfo hatsDir = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Hats"));
+            if (hatsDir.Exists)
+            {
+                foreach (DirectoryInfo dir in hatsDir.EnumerateDirectories())
+                {
+                    string relativePath = $"Hats/{dir.Name}";
+
+                    // load data
+                    HatData hat = contentPack.ReadJsonFile<HatData>($"{relativePath}/hat.json");
+                    if (hat == null)
+                        continue;
+
+                    // save object
+                    hat.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/hat.png");
+                    hats.Add(hat);
+                }
+            }
         }
 
         private void menuChanged(object sender, EventArgsClickableMenuChanged args)
@@ -193,6 +212,7 @@ namespace JsonAssets
                 oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-crops.json"));
                 oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-fruittrees.json"));
                 oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-big-craftables.json"));
+                oldHatIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-hats.json"));
 
                 if (objectIds != null)
                 {
@@ -200,6 +220,7 @@ namespace JsonAssets
                     clearIds(ref cropIds, crops.ToList<DataNeedsId>());
                     clearIds(ref fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
                     clearIds(ref bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
+                    clearIds(ref hatIds, hats.ToList<DataNeedsId>());
                 }
 
                 var editor = Helper.Content.AssetEditors.Where(x => x is ContentInjector);
@@ -209,12 +230,15 @@ namespace JsonAssets
             }
 
             var menu = args.NewMenu as ShopMenu;
-            if (menu == null || menu.portraitPerson == null)
+            bool hatMouse = false;
+            if (menu.potraitPersonDialogue == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4))
+                hatMouse = true;
+            if (menu == null || menu.portraitPerson == null && !hatMouse)
                 return;
 
             //if (menu.portraitPerson.name == "Pierre")
             {
-                Log.trace($"Adding objects to {menu.portraitPerson.name}'s shop");
+                Log.trace($"Adding objects to {menu.portraitPerson?.name}'s shop");
 
                 var forSale = Helper.Reflection.GetField<List<Item>>(menu, "forSale").GetValue();
                 var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(menu, "itemPriceAndStock").GetValue();
@@ -276,6 +300,16 @@ namespace JsonAssets
                     itemPriceAndStock.Add(item, new int[] { big.PurchasePrice, int.MaxValue });
                     Log.trace($"\tAdding {big.Name}");
                 }
+                if ( hatMouse )
+                {
+                    foreach ( var hat in hats )
+                    {
+                        Item item = new Hat(hat.GetHatId());
+                        forSale.Add(item);
+                        itemPriceAndStock.Add(item, new int[] { hat.PurchasePrice, int.MaxValue });
+                        Log.trace($"\tAdding {hat.Name}");
+                    }
+                }
             }
 
             ( ( Api ) api ).InvokeAddedItemsToShop();
@@ -289,6 +323,7 @@ namespace JsonAssets
                 oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-crops.json"));
                 oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-fruittrees.json"));
                 oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-big-craftables.json"));
+                oldHatIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-hats.json"));
             }
             else
                 Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
@@ -299,12 +334,14 @@ namespace JsonAssets
                 oldCropIds = new Dictionary<string, int>();
                 oldFruitTreeIds = new Dictionary<string, int>();
                 oldBigCraftableIds = new Dictionary<string, int>();
+                oldHatIds = new Dictionary<string, int>();
             }
 
             objectIds = AssignIds("objects", StartingObjectId, objects.ToList<DataNeedsId>());
             cropIds = AssignIds("crops", StartingCropId, crops.ToList<DataNeedsId>());
             fruitTreeIds = AssignIds("fruittrees", StartingFruitTreeId, fruitTrees.ToList<DataNeedsId>());
             bigCraftableIds = AssignIds("big-craftables", StartingBigCraftableId, bigCraftables.ToList<DataNeedsId>());
+            hatIds = AssignIds("hats", StartingHatId, hats.ToList<DataNeedsId>());
 
             fixIdsEverywhere();
             (api as Api).InvokeIdsAssigned();
@@ -340,6 +377,7 @@ namespace JsonAssets
             Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-crops.json"), cropIds);
             Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-fruittrees.json"), fruitTreeIds);
             Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-big-craftables.json"), bigCraftableIds);
+            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-hats.json"), hatIds);
         }
 
         private IList<ObjectData> myRings = new List<ObjectData>();
@@ -364,18 +402,22 @@ namespace JsonAssets
         private const int StartingCropId = 100;
         private const int StartingFruitTreeId = 10;
         private const int StartingBigCraftableId = 300;
+        private const int StartingHatId = 50;
         internal IList<ObjectData> objects = new List<ObjectData>();
         internal IList<CropData> crops = new List<CropData>();
         internal IList<FruitTreeData> fruitTrees = new List<FruitTreeData>();
         internal IList<BigCraftableData> bigCraftables = new List<BigCraftableData>();
+        internal IList<HatData> hats = new List<HatData>();
         internal IDictionary<string, int> objectIds;
         internal IDictionary<string, int> cropIds;
         internal IDictionary<string, int> fruitTreeIds;
         internal IDictionary<string, int> bigCraftableIds;
+        internal IDictionary<string, int> hatIds;
         internal IDictionary<string, int> oldObjectIds;
         internal IDictionary<string, int> oldCropIds;
         internal IDictionary<string, int> oldFruitTreeIds;
         internal IDictionary<string, int> oldBigCraftableIds;
+        internal IDictionary<string, int> oldHatIds;
 
         public int ResolveObjectId(object data)
         {
@@ -505,6 +547,7 @@ namespace JsonAssets
 
         private void fixItemList( List< Item > items )
         {
+            var Game1hats = Game1.content.Load<Dictionary<int, string>>("Data\\hats");
             for ( int i = 0; i < items.Count; ++i )
             {
                 var item = items[i];
@@ -520,6 +563,11 @@ namespace JsonAssets
                         if (fixId(oldBigCraftableIds, bigCraftableIds, ref obj.parentSheetIndex, Game1.bigCraftablesInformation))
                             items[i] = null;
                     }
+                }
+                else if ( item is Hat hat )
+                {
+                    if (fixId(oldHatIds, hatIds, ref hat.which, Game1hats))
+                        items[i] = null;
                 }
             }
         }
