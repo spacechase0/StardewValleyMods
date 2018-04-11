@@ -12,6 +12,7 @@ using StardewValley.Menus;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using StardewValley.Objects;
+using System.Reflection;
 
 // TODO: Refactor recipes
 
@@ -26,9 +27,10 @@ namespace JsonAssets
             instance = this;
 
             MenuEvents.MenuChanged += menuChanged;
-            SaveEvents.AfterLoad += afterLoad;
+            //SaveEvents.AfterLoad += afterLoad;
             SaveEvents.AfterSave += afterSave;
             PlayerEvents.InventoryChanged += invChanged;
+            SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
 
             Log.info("Loading content packs...");
             foreach (IContentPack contentPack in this.Helper.GetContentPacks())
@@ -180,6 +182,18 @@ namespace JsonAssets
                     craftable.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable.png");
                     bigCraftables.Add(craftable);
                 }
+            }
+        }
+
+        private void unsafeUpdate(object sender, EventArgs args)
+        {
+            // I need the items to register before most other things do
+            var saveLoaded = (bool) typeof(Context).GetProperty("IsSaveLoaded", BindingFlags.NonPublic | BindingFlags.Static).GetValue( null );
+            if (saveLoaded && !SaveGame.IsProcessing)
+            {
+                Log.debug("Loading stuff early");
+                afterLoad(sender, args);
+                SpecialisedEvents.UnvalidatedUpdateTick -= unsafeUpdate;
             }
         }
 
