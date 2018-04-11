@@ -23,6 +23,8 @@ namespace JsonAssets
                 return true;
             if (asset.AssetNameEquals("Data\\BigCraftablesInformation"))
                 return true;
+            if (asset.AssetNameEquals("Data\\hats"))
+                return true;
             if (asset.AssetNameEquals("Maps\\springobjects"))
                 return true;
             if (asset.AssetNameEquals("TileSheets\\crops"))
@@ -31,6 +33,8 @@ namespace JsonAssets
                 return true;
             if (asset.AssetNameEquals("TileSheets\\Craftables") || asset.AssetNameEquals("TileSheets\\Craftables_indoor") || asset.AssetNameEquals("TileSheets\\Craftables_outdoor"))
                 return true; // _indoor/_outdoor for Seasonal Immersion compat
+            if (asset.AssetNameEquals("Characters\\Farmer\\hats"))
+                return true;
             return false;
         }
 
@@ -154,6 +158,22 @@ namespace JsonAssets
                     }
                 }
             }
+            else if (asset.AssetNameEquals("Data\\hats"))
+            {
+                var data = asset.AsDictionary<int, string>().Data;
+                foreach (var hat in Mod.instance.hats)
+                {
+                    try
+                    {
+                        Log.trace($"Injecting to hats: {hat.GetHatId()}: {hat.GetHatInformation()}");
+                        data.Add(hat.GetHatId(), hat.GetHatInformation());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting hat information for " + hat.Name + ": " + e);
+                    }
+                }
+            }
             else if (asset.AssetNameEquals("Maps\\springobjects"))
             {
                 var oldTex = asset.AsImage().Data;
@@ -240,6 +260,27 @@ namespace JsonAssets
                     }
                 }
             }
+            else if (asset.AssetNameEquals("Characters\\Farmer\\hats"))
+            {
+                var oldTex = asset.AsImage().Data;
+                Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
+                asset.ReplaceWith(newTex);
+                asset.AsImage().PatchImage(oldTex);
+                Log.trace($"Hats are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
+
+                foreach (var hat in Mod.instance.hats)
+                {
+                    try
+                    {
+                        Log.trace($"Injecting {hat.Name} sprites @ {hatRect(hat.GetHatId())}");
+                        asset.AsImage().PatchImage(hat.texture, null, hatRect(hat.GetHatId()));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error("Exception injecting sprite for " + hat.Name + ": " + e);
+                    }
+                }
+            }
         }
         private Rectangle objectRect(int index)
         {
@@ -256,6 +297,10 @@ namespace JsonAssets
         private Rectangle bigCraftableRect(int index)
         {
             return new Rectangle(index % 8 * 16, index / 8 * 32, 16, 32);
+        }
+        private Rectangle hatRect(int index)
+        {
+            return new Rectangle(index % 12 * 20, index / 12 * 80, 20, 80);
         }
     }
 }
