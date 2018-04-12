@@ -245,7 +245,7 @@ namespace JsonAssets
 
             var menu = args.NewMenu as ShopMenu;
             bool hatMouse = false;
-            if (menu.potraitPersonDialogue == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4))
+            if (menu != null && menu.potraitPersonDialogue == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4))
                 hatMouse = true;
             if (menu == null || menu.portraitPerson == null && !hatMouse)
                 return;
@@ -262,7 +262,7 @@ namespace JsonAssets
                 {
                     if (obj.Recipe != null && obj.Recipe.CanPurchase)
                     {
-                        if (obj.Recipe.PurchaseFrom != menu.portraitPerson.name)
+                        if (obj.Recipe.PurchaseFrom != menu.portraitPerson?.name)
                             continue;
                         if (Game1.player.craftingRecipes.ContainsKey(obj.Name) || Game1.player.cookingRecipes.ContainsKey(obj.Name))
                             continue;
@@ -276,7 +276,7 @@ namespace JsonAssets
                     }
                     if (!obj.CanPurchase)
                         continue;
-                    if (obj.PurchaseFrom != menu.portraitPerson.name)
+                    if (obj.PurchaseFrom != menu.portraitPerson?.name)
                         continue;
                     if (obj.PurchaseRequirements != null && obj.PurchaseRequirements.Count > 0 &&
                         precondMeth.Invoke<int>(new object[] { obj.GetPurchaseRequirementString() }) == -1)
@@ -290,7 +290,7 @@ namespace JsonAssets
                 {
                     if (big.Recipe != null && big.Recipe.CanPurchase)
                     {
-                        if (big.Recipe.PurchaseFrom != menu.portraitPerson.name)
+                        if (big.Recipe.PurchaseFrom != menu.portraitPerson?.name)
                             continue;
                         if (Game1.player.craftingRecipes.ContainsKey(big.Name) || Game1.player.cookingRecipes.ContainsKey(big.Name))
                             continue;
@@ -304,7 +304,7 @@ namespace JsonAssets
                     }
                     if (!big.CanPurchase)
                         continue;
-                    if (big.PurchaseFrom != menu.portraitPerson.name)
+                    if (big.PurchaseFrom != menu.portraitPerson?.name)
                         continue;
                     if (big.PurchaseRequirements != null && big.PurchaseRequirements.Count > 0 &&
                         precondMeth.Invoke<int>(new object[] { big.GetPurchaseRequirementString() }) == -1)
@@ -316,6 +316,7 @@ namespace JsonAssets
                 }
                 if ( hatMouse )
                 {
+                    Log.trace("HATS");
                     foreach ( var hat in hats )
                     {
                         Item item = new Hat(hat.GetHatId());
