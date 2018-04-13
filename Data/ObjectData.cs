@@ -107,7 +107,15 @@ namespace JsonAssets.Data
         public string PurchaseFrom { get; set; } = "Pierre";
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
 
-        // TODO: Gift taste overrides.
+        public class GiftTastes_
+        {
+            public IList<string> Love = new List<string>();
+            public IList<string> Like = new List<string>();
+            public IList<string> Neutral = new List<string>();
+            public IList<string> Dislike = new List<string>();
+            public IList<string> Hate = new List<string>();
+        }
+        public GiftTastes_ GiftTastes;
 
         public int GetObjectId() { return id; }
 

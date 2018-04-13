@@ -262,7 +262,7 @@ namespace JsonAssets
                 {
                     if (obj.Recipe != null && obj.Recipe.CanPurchase)
                     {
-                        if (obj.Recipe.PurchaseFrom != menu.portraitPerson?.name)
+                        if (obj.Recipe.PurchaseFrom != menu.portraitPerson?.name || (obj.Recipe.PurchaseFrom == "HatMouse" && hatMouse) )
                             continue;
                         if (Game1.player.craftingRecipes.ContainsKey(obj.Name) || Game1.player.cookingRecipes.ContainsKey(obj.Name))
                             continue;
@@ -276,7 +276,7 @@ namespace JsonAssets
                     }
                     if (!obj.CanPurchase)
                         continue;
-                    if (obj.PurchaseFrom != menu.portraitPerson?.name)
+                    if (obj.PurchaseFrom != menu.portraitPerson?.name || (obj.PurchaseFrom == "HatMouse" && hatMouse))
                         continue;
                     if (obj.PurchaseRequirements != null && obj.PurchaseRequirements.Count > 0 &&
                         precondMeth.Invoke<int>(new object[] { obj.GetPurchaseRequirementString() }) == -1)
@@ -290,7 +290,7 @@ namespace JsonAssets
                 {
                     if (big.Recipe != null && big.Recipe.CanPurchase)
                     {
-                        if (big.Recipe.PurchaseFrom != menu.portraitPerson?.name)
+                        if (big.Recipe.PurchaseFrom != menu.portraitPerson?.name || (big.Recipe.PurchaseFrom == "HatMouse" && hatMouse))
                             continue;
                         if (Game1.player.craftingRecipes.ContainsKey(big.Name) || Game1.player.cookingRecipes.ContainsKey(big.Name))
                             continue;
@@ -304,7 +304,7 @@ namespace JsonAssets
                     }
                     if (!big.CanPurchase)
                         continue;
-                    if (big.PurchaseFrom != menu.portraitPerson?.name)
+                    if (big.PurchaseFrom != menu.portraitPerson?.name || (big.PurchaseFrom == "HatMouse" && hatMouse))
                         continue;
                     if (big.PurchaseRequirements != null && big.PurchaseRequirements.Count > 0 &&
                         precondMeth.Invoke<int>(new object[] { big.GetPurchaseRequirementString() }) == -1)
@@ -316,7 +316,6 @@ namespace JsonAssets
                 }
                 if ( hatMouse )
                 {
-                    Log.trace("HATS");
                     foreach ( var hat in hats )
                     {
                         Item item = new Hat(hat.GetHatId());
