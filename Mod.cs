@@ -25,7 +25,7 @@ namespace CookingSkill
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        public static SaveData data;
+        public static SaveData data = new SaveData();
 
         public static readonly int[] expNeededForLevel = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
         public static List<int> newCookingLevels = new List<int>();
@@ -54,7 +54,7 @@ namespace CookingSkill
                 data.experience = expNeededForLevel[expNeededForLevel.Length - 1];
 
             int newLevel = getCookingLevel();
-            Log.debug("From level " + oldLevel + " to " + newLevel);
+            Log.trace("From level " + oldLevel + " to " + newLevel);
             for ( int i = oldLevel + 1; i <= newLevel; ++i )
             {
                 if (i == 0)
@@ -209,7 +209,7 @@ namespace CookingSkill
             data = Helper.ReadJsonFile<SaveData>(SaveData.FilePath) ?? new SaveData();
             if ( Game1.player.experiencePoints.Length == 7 )
             {
-                Log.trace("Converting old cooking experience to new");
+                Log.debug("Converting old cooking experience to new");
                 data.experience = Game1.player.experiencePoints[6];
 
                 var oldExp = Game1.player.experiencePoints;
