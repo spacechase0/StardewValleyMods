@@ -74,13 +74,13 @@ namespace ExperienceBars
                     var instance = Type.GetType("LevelExtender.ModEntry, LevelExtender").GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
                     var extLevels = Helper.Reflection.GetField<int[]>(instance, "sLevs").GetValue();
                     var extExp = Helper.Reflection.GetField<int[]>(instance, "addedXP").GetValue();
-                    exp = new int[exp.Length];
+                    exp = (int[]) exp.Clone();
                     for (int i = 0; i < 5; ++i)
                     {
                         if (skills[i] < extLevels[i])
                             continue;
                         skills[i] = extLevels[i];
-                        exp[i] = extExp[i];
+                        exp[i] = skills[i] < 10 ? exp[i] : extExp[i];
                     }
                     foundLevelExtender = true;
                 }
