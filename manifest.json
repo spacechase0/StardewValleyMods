@@ -4,7 +4,7 @@
   "Version": {
     "MajorVersion": 1,
     "MinorVersion": 1,
-    "PatchVersion": 1,
+    "PatchVersion": 2,
     "Build": ""
   },
   "Description": "Shows experience bars in the top-left corner.",

@@ -10,19 +10,19 @@ namespace ExperienceBars
 {
     public interface IApi
     {
-        void drawExperienceBar(Texture2D icon, int level, float percentFull, Color color);
-        void setDrawLuck(bool luck);
+        void DrawExperienceBar(Texture2D icon, int level, float percentFull, Color color);
+        void SetDrawLuck(bool luck);
     }
 
     public class Api : IApi
     {
-        public void drawExperienceBar(Texture2D icon, int level, float percentFull, Color color)
+        public void DrawExperienceBar(Texture2D icon, int level, float percentFull, Color color)
         {
             Mod.renderSkillBar(10, Mod.expBottom + 40, icon, new Rectangle(0, 0, icon.Width, icon.Height), level, percentFull, color);
             Mod.expBottom += 40;
         }
 
-        public void setDrawLuck(bool luck)
+        public void SetDrawLuck(bool luck)
         {
             Mod.renderLuck = luck;
         }
