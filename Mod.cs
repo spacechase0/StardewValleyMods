@@ -17,6 +17,7 @@ using StardewValley.Events;
 using StardewValley.Quests;
 using System.IO;
 using SpaceCore.Events;
+using CookingSkill.Other;
 
 namespace CookingSkill
 {
@@ -625,12 +626,8 @@ namespace CookingSkill
                 if (Game1.player.experiencePoints.Count() < 7)
                     return;
 
-                Type t = Type.GetType("ExperienceBars.Mod, ExperienceBars");
-
                 int level = getCookingLevel();
                 int exp = Game1.player.experiencePoints[6];
-                int x = 10;
-                int y = (int) Util.GetStaticField(t, "expBottom");
 
                 int prevReq = 0, nextReq = 1;
                 if (level == 0)
@@ -651,16 +648,14 @@ namespace CookingSkill
                     progress = -1;
                 }
 
-                object[] args = new object[]
+                var api = Helper.ModRegistry.GetApi<ExperienceBarsApi>("spacechase0.ExperienceBars");
+                if (api == null)
                 {
-                    x, y,
-                    icon, new Rectangle( 0, 0, 16, 16 ), 
-                    level, progress,
-                    new Color( 196, 79, 255 ),
-                };
-                Util.CallStaticMethod(t, "renderSkillBar", args);
-
-                Util.SetStaticField(t, "expBottom", y + 40);
+                    Log.warn("No experience bars API? Turning off");
+                    GraphicsEvents.OnPostRenderHudEvent -= drawExperienceBar;
+                }
+                api.DrawExperienceBar(icon, level, progress, new Color(196, 76, 255));
+                
             }
             catch ( Exception e)
             {

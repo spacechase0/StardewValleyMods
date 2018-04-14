@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Other\ExperienceBars.cs" />
     <Compile Include="CookingLevelUpMenu.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Mod.cs" />
