@@ -25,16 +25,15 @@ namespace CookingSkill
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
+        public static SaveData data;
 
         public static readonly int[] expNeededForLevel = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
         public static List<int> newCookingLevels = new List<int>();
         public static int getCookingLevel()
         {
-            fixExpLength();
-
             for ( int i = expNeededForLevel.Length - 1; i >= 0; --i )
             {
-                if ( Game1.player.experiencePoints[ 6 ] >= expNeededForLevel[ i ] )
+                if ( data.experience >= expNeededForLevel[ i ] )
                 {
                     return i + 1;
                 }
@@ -47,13 +46,12 @@ namespace CookingSkill
         {
             if (amt <= 0)
                 return;
-            fixExpLength();
 
             int oldLevel = getCookingLevel();
-            Log.trace("Adding " + amt+ "experience to cooking, from " + Game1.player.experiencePoints[6]);
-            Game1.player.experiencePoints[6] += amt;
-            if (Game1.player.experiencePoints[6] > expNeededForLevel[expNeededForLevel.Length - 1])
-                Game1.player.experiencePoints[6] = expNeededForLevel[expNeededForLevel.Length - 1];
+            Log.trace("Adding " + amt + " experience to cooking, from " + data.experience);
+            data.experience += amt;
+            if (data.experience > expNeededForLevel[expNeededForLevel.Length - 1])
+                data.experience = expNeededForLevel[expNeededForLevel.Length - 1];
 
             int newLevel = getCookingLevel();
             Log.debug("From level " + oldLevel + " to " + newLevel);
@@ -139,19 +137,6 @@ namespace CookingSkill
             return true;
         }
 
-        private static void fixExpLength()
-        {
-            if ( Game1.player.experiencePoints.Length < 7 )
-            {
-                int[] newExp = new int[7];
-                for ( int i = 0; i < 6; ++i )
-                {
-                    newExp[i] = Game1.player.experiencePoints[i];
-                }
-                Game1.player.experiencePoints = newExp;
-            }
-        }
-
         private void giveExpCommand( object sender, string[] args )
         {
             if ( args.Length != 1 )
@@ -206,6 +191,8 @@ namespace CookingSkill
 
             Helper.ConsoleCommands.Add("player_givecookingexp", "player_givecookingexp <amount>", giveExpCommand);
 
+            SaveEvents.AfterLoad += afterLoad;
+            SaveEvents.AfterSave += afterSave;
             LocationEvents.CurrentLocationChanged += locChanged;
             GameEvents.UpdateTick += update;
             GraphicsEvents.OnPostRenderGuiEvent += drawAfterGui;
@@ -215,6 +202,28 @@ namespace CookingSkill
             checkForExperienceBars();
             checkForLuck();
             checkForAllProfessions();
+        }
+
+        private void afterLoad(object sender, EventArgs args)
+        {
+            data = Helper.ReadJsonFile<SaveData>(SaveData.FilePath) ?? new SaveData();
+            if ( Game1.player.experiencePoints.Length == 7 )
+            {
+                Log.trace("Converting old cooking experience to new");
+                data.experience = Game1.player.experiencePoints[6];
+
+                var oldExp = Game1.player.experiencePoints;
+                Game1.player.experiencePoints = new int[6];
+                for ( int i = 0; i < 6; ++i )
+                {
+                    Game1.player.experiencePoints[i] = oldExp[i];
+                }
+            }
+        }
+
+        private void afterSave(object sender, EventArgs args)
+        {
+            Helper.WriteJsonFile(SaveData.FilePath, data);
         }
 
         private bool wasEating = false;
@@ -623,11 +632,8 @@ namespace CookingSkill
 
             try
             {
-                if (Game1.player.experiencePoints.Count() < 7)
-                    return;
-
                 int level = getCookingLevel();
-                int exp = Game1.player.experiencePoints[6];
+                int exp = data.experience;
 
                 int prevReq = 0, nextReq = 1;
                 if (level == 0)
