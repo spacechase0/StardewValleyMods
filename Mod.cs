@@ -30,11 +30,15 @@ namespace ExperienceBars
 
         public override void Entry( IModHelper helper )
         {
-            base.Entry(helper);
             Config = helper.ReadConfig<Configuration>();
 
             GraphicsEvents.OnPostRenderHudEvent += renderExpBars;
             ControlEvents.KeyPressed += checkToggle;
+        }
+
+        public override object GetApi()
+        {
+            return new Api();
         }
 
         public void checkToggle(object sender, EventArgs args)
