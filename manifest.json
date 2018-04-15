@@ -1,14 +1,10 @@
 {
-  "Name": "Better Shop Menu",
-  "Author": "spacechase0",
-  "Version": {
-    "MajorVersion": 1,
-    "MinorVersion": 0,
-    "PatchVersion": 0,
-    "Build": ""
-  },
-  "Description": "...",
-  "UniqueID": "spacechase0.BetterShopMenu",
-  "PerSaveConfigs": false,
-  "EntryDll": "BetterShopMenu.dll"
+   "Name": "Better Shop Menu",
+   "Author": "spacechase0",
+   "Version": "1.0.0",
+   "Description": "...",
+   "UniqueID": "spacechase0.BetterShopMenu",
+   "EntryDll": "BetterShopMenu.dll",
+   "MinimumApiVersion": "2.0",
+   "UpdateKeys": ["Nexus:2012"]
 }
