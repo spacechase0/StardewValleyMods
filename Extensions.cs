@@ -71,7 +71,7 @@ namespace Magic
             {
                 Data.magicExp -= player.getMagicExpForNextLevel();
                 Data.magicLevel++;
-                if ( Data.magicLevel % 2 == 1 )
+                //if ( Data.magicLevel % 2 == 1 )
                     Data.freePoints++;
                 player.setMaxMana(player.getMagicLevel() == 1 ? 50 : player.getMaxMana() + 10);
                 Magic.newMagicLevels.Add(Data.magicLevel);
