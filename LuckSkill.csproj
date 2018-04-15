@@ -67,6 +67,7 @@
     <Compile Include="Log.cs" />
     <Compile Include="LuckLevelUpMenu.cs" />
     <Compile Include="Mod.cs" />
+    <Compile Include="Other\ExperienceBars.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>

@@ -11,6 +11,7 @@
   "UniqueID": "spacechase0.LuckSkill",
   "PerSaveConfigs": false,
   "EntryDll": "LuckSkill.dll",
+  "UpdateKeys": [ "Nexus:521" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.SpaceCore"

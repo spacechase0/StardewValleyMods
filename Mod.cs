@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LuckSkill.Other;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore.Events;
 using StardewModdingAPI;
@@ -435,22 +436,9 @@ namespace LuckSkill
 
         private void enableLuckSkillBar()
         {
-            try
-            {
-                Type t = Type.GetType("ExperienceBars.Mod, ExperienceBars");
-                if (t == null)
-                {
-                    Log.info("Experience Bars not found");
-                    return;
-                }
-
-                Log.info("Experience Bars found, adding luck bar.");
-                Util.SetStaticField(t, "renderLuck", true);
-            }
-            catch (Exception e)
-            {
-                Log.error("Exception showing luck: " + e);
-            }
+            var api = Helper.ModRegistry.GetApi<ExperienceBarsApi>("spacechase0.ExperienceBars");
+            if (api != null)
+                api.SetDrawLuck(true);
         }
 
         private bool HAS_ALL_PROFESSIONS = false;
