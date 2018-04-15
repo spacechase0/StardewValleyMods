@@ -14,21 +14,24 @@ namespace JumpOver
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
+        public static Configuration Config;
 
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Config = helper.ReadConfig<Configuration>();
 
-            ControlEvents.KeyPressed += keyPressed;
+            InputEvents.ButtonPressed += keyPressed;
         }
 
-        private void keyPressed(object sender, EventArgsKeyPressed args)
+        private void keyPressed(object sender, EventArgsInput args)
         {
             if (!Context.IsWorldReady || !Context.IsPlayerFree || Game1.activeClickableMenu != null)
                 return;
-
-            if ( args.KeyPressed == Keys.Space && Game1.player.yJumpVelocity == 0 )
+            
+            if ( args.Button == Config.keyJump && Game1.player.yJumpVelocity == 0 )
             {
+                // This is terrible for this case, redo it
                 new Jump(Game1.player);
             }
         }
