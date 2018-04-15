@@ -239,11 +239,11 @@ namespace Magic
                 }
                 else if (!Game1.player.knowsSchool(args.Arguments[0]))
                 {
-                    if (Game1.player.getSpellBook().knownSchools.Count >= Game1.player.countStardropsEaten() + 1)
+                    /*if (Game1.player.getSpellBook().knownSchools.Count >= Game1.player.countStardropsEaten() + 1)
                     {
                         Game1.drawObjectDialogue("You lack the power to use this.");
                     }
-                    else
+                    else*/
                     {
                         Game1.playSound("secret1");
                         Game1.player.getSpellBook().knownSchools.Add(args.Arguments[0]);
