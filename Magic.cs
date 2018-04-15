@@ -15,6 +15,7 @@ using System.Linq;
 using System.Reflection;
 using static Magic.Mod;
 using SpaceCore;
+using Magic.Other;
 
 namespace Magic
 {
@@ -322,11 +323,7 @@ namespace Magic
                 Log.info("Experience Bars not found");
                 return;
             }
-
-            Type t = Type.GetType("ExperienceBars.Mod, ExperienceBars");
-            EB_expBottom = t.GetField("expBottom");
-            EB_renderSkillBar = t.GetMethod("renderSkillBar");
-
+            
             Log.info("Experience Bars found, adding magic experience bar renderer.");
             GraphicsEvents.OnPostRenderHudEvent += drawExperienceBar;
         }
@@ -338,14 +335,8 @@ namespace Magic
 
             try
             {
-                if (Game1.player.experiencePoints.Count() < 7)
-                    return;
-
-
                 int level = Game1.player.getMagicLevel();
                 int exp = Game1.player.getMagicExp();
-                int x = 10;
-                int y = (int)EB_expBottom.GetValue(null);
 
                 int haveExp = exp;
                 int needExp = Game1.player.getMagicExpForNextLevel();
@@ -355,16 +346,13 @@ namespace Magic
                     progress = -1;
                 }
 
-                object[] args = new object[]
+                var api = Mod.instance.Helper.ModRegistry.GetApi<ExperienceBarsApi>("spacechase0.ExperienceBars");
+                if (api == null)
                 {
-                    x, y,
-                    expIcon, new Rectangle( 0, 0, 16, 16 ),
-                    level, progress,
-                    new Color( 0, 66, 255 ),
-                };
-                EB_renderSkillBar.Invoke(null, args);
-
-                EB_expBottom.SetValue(null, y + 40);
+                    Log.warn("No experience bars API? Turning off");
+                    GraphicsEvents.OnPostRenderHudEvent -= drawExperienceBar;
+                }
+                api.DrawExperienceBar(expIcon, level, progress, new Color(0, 66, 255));
             }
             catch (Exception e)
             {

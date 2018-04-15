@@ -65,6 +65,7 @@
     <Compile Include="Game\Interface\MagicMenu.cs" />
     <Compile Include="Game\Interface\TeleportMenu.cs" />
     <Compile Include="Magic.cs" />
+    <Compile Include="Other\ExperienceBars.cs" />
     <Compile Include="Other\JsonAssetsApi.cs" />
     <Compile Include="PreparedSpell.cs" />
     <Compile Include="Schools\EldritchSchool.cs" />
