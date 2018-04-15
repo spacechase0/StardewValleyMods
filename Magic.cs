@@ -16,6 +16,7 @@ using System.Reflection;
 using static Magic.Mod;
 using SpaceCore;
 using Magic.Other;
+using StardewModdingAPI;
 
 namespace Magic
 {
@@ -34,8 +35,8 @@ namespace Magic
 
             SaveEvents.AfterLoad += afterLoad;
 
-            ControlEvents.KeyPressed += onKeyPress;
-            ControlEvents.KeyReleased += onKeyRelease;
+            InputEvents.ButtonPressed += onKeyPress;
+            InputEvents.ButtonReleased += onKeyRelease;
             
             TimeEvents.AfterDayStarted += onNewDay;
             LocationEvents.CurrentLocationChanged += EvacSpell.onLocationChanged;
@@ -153,26 +154,30 @@ namespace Magic
             manaFg.SetData(new Color[] { manaCol });
         }
 
-        private static void onKeyPress(object sender, EventArgsKeyPressed args)
+        private static bool castPressed = false;
+        private static void onKeyPress(object sender, EventArgsInput args)
         {
+            if (args.Button == Config.Key_Cast)
+            {
+                castPressed = true;
+            }
+
             if (Data == null || Game1.activeClickableMenu != null) return;
-            if (args.KeyPressed == Config.keySwapSpells.key)
+            if (args.Button == Config.Key_SwapSpells)
             {
                 Game1.player.getSpellBook().swapPreparedSet();
             }
-            else if (Keyboard.GetState().IsKeyDown(Config.keyCast.key) &&
-                      (args.KeyPressed == Keys.D1 || args.KeyPressed == Keys.D2 ||
-                        args.KeyPressed == Keys.D3 || args.KeyPressed == Keys.D4))
+            else if (castPressed &&
+                      (args.Button == Config.Key_Spell1 || args.Button == Config.Key_Spell2 ||
+                        args.Button == Config.Key_Spell3 || args.Button == Config.Key_Spell4))
             {
                 int slot = 0;
-                switch (args.KeyPressed)
-                {
-                    case Keys.D1: slot = 0; break;
-                    case Keys.D2: slot = 1; break;
-                    case Keys.D3: slot = 2; break;
-                    case Keys.D4: slot = 3; break;
-                }
-                Game1.oldKBState = new KeyboardState(Game1.oldKBState.GetPressedKeys().Union(new[] { args.KeyPressed }).ToArray());
+                if (args.Button == Config.Key_Spell1) slot = 0;
+                else if (args.Button == Config.Key_Spell2) slot = 1;
+                else if (args.Button == Config.Key_Spell3) slot = 2;
+                else if (args.Button == Config.Key_Spell4) slot = 3;
+
+                args.SuppressButton();
 
                 SpellBook book = Game1.player.getSpellBook();
                 PreparedSpell[] prepared = book.getPreparedSpells();
@@ -194,9 +199,12 @@ namespace Magic
             }
         }
 
-        private static void onKeyRelease(object sender, EventArgsKeyPressed args)
+        private static void onKeyRelease(object sender, EventArgsInput args)
         {
-            if (Data == null || Game1.activeClickableMenu != null) return;
+            if (args.Button == Config.Key_Cast)
+            {
+                castPressed = false;
+            }
         }
 
         private static void onNewDay(object sender, EventArgs args)
