@@ -21,6 +21,7 @@ namespace MoreRings
         public int Ring_Fishing_LargeBar { get { return ja.GetObjectId("Ring of Wide Nets"); } }
         public int Ring_Combat_Regen { get { return ja.GetObjectId("Ring of Regeneration"); } }
         public int Ring_DiamondBooze { get { return ja.GetObjectId("Ring of Diamond Booze"); } }
+        public int Ring_Refresh { get { return ja.GetObjectId("Refreshing Ring"); } }
 
         public override void Entry(IModHelper helper)
         {
@@ -56,6 +57,7 @@ namespace MoreRings
         }
 
         private int regenCounter = 0;
+        private int refreshCounter = 0;
         private void oneSecond(object sender, EventArgs args)
         {
             if (!Context.IsWorldReady || !Context.IsPlayerFree)
@@ -65,6 +67,12 @@ namespace MoreRings
             {
                 regenCounter = 0;
                 Game1.player.health = Math.Min(Game1.player.health + 1, Game1.player.maxHealth);
+            }
+
+            if (hasRingEquipped(Ring_Refresh) > 0 && refreshCounter++ >= 4 / hasRingEquipped(Ring_Refresh))
+            {
+                refreshCounter = 0;
+                Game1.player.Stamina = Math.Min(Game1.player.Stamina + 1, Game1.player.MaxStamina);
             }
         }
 

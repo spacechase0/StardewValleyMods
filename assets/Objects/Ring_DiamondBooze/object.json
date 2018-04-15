@@ -17,7 +17,7 @@
       }
     ],
     "CanPurchase": true,
-    "PurchaseFrom": "Gus",
+    "PurchaseFrom": "Dwarf",
     "PurchasePrice": 1000
   }
 }

@@ -1,0 +1,23 @@
+{
+  "Name": "Refreshing Ring",
+  "Description": "I wonder what it does.",
+  "Category": "Ring",
+  "Edibility": -300,
+  "Price": 25000,
+  "Recipe": {
+    "ResultCount": 1,
+    "Ingredients": [
+      {
+        "Object": 74,
+        "Count": 1,
+      },
+      {
+        "Object": 337,
+        "Count": 3,
+      }
+    ],
+    "CanPurchase": true,
+    "PurchaseFrom": "Krobus",
+    "PurchasePrice": 25000
+  }
+}
