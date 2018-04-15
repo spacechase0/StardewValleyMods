@@ -4,8 +4,8 @@ namespace Magic
 {
     public class PreparedSpell
     {
-        public string SpellId { get; }
-        public int Level { get; }
+        public string SpellId { get; set; }
+        public int Level { get; set; }
 
         public PreparedSpell() { }
 
