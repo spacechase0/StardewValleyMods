@@ -6,7 +6,7 @@
   "UniqueID": "spacechase0.MoreRings",
   "PerSaveConfigs": false,
   "EntryDll": "MoreRings.dll",
-  "UpdateKeys": [ "Nexus:" ],
+  "UpdateKeys": [ "Nexus:2054" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.JsonAssets",
@@ -14,10 +14,6 @@
     },
     {
       "UniqueID": "spacechase0.SpaceCore",
-      "MinimumVersion": ""
-    },
-    {
-      "UniqueID": "Platonymous.Toolkit",
       "MinimumVersion": ""
     }
   ]
