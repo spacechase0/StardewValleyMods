@@ -38,7 +38,7 @@ namespace LuckSkill
 
             SpaceEvents.ChooseNightlyFarmEvent += changeFarmEvent;
 
-            enableLuckSkillBar();
+            GameEvents.FirstUpdateTick += enableLuckSkillBar;
             checkForAllProfessions();
         }
 
@@ -434,9 +434,10 @@ namespace LuckSkill
             return -1;
         }
 
-        private void enableLuckSkillBar()
+        private void enableLuckSkillBar(object sender, EventArgs args)
         {
             var api = Helper.ModRegistry.GetApi<ExperienceBarsApi>("spacechase0.ExperienceBars");
+            Log.trace("Experience Bars API " + (api == null ? "not " : "") + "found");
             if (api != null)
                 api.SetDrawLuck(true);
         }
