@@ -53,7 +53,7 @@ namespace JsonAssets
         internal void InvokeIdsAssigned()
         {
             Log.trace("Event: IdsAssigned");
-            if (AddedItemsToShop == null)
+            if (IdsAssigned == null)
                 return;
             Util.invokeEvent("JsonAssets.Api.IdsAssigned", IdsAssigned.GetInvocationList(), null);
         }
