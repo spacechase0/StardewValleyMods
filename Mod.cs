@@ -262,17 +262,22 @@ namespace JsonAssets
                 {
                     if (obj.Recipe != null && obj.Recipe.CanPurchase)
                     {
+                        bool add = true;
+                        // Can't use continue here or the item might not sell
                         if (obj.Recipe.PurchaseFrom != menu.portraitPerson?.name || (obj.Recipe.PurchaseFrom == "HatMouse" && hatMouse) )
-                            continue;
+                            add = false;
                         if (Game1.player.craftingRecipes.ContainsKey(obj.Name) || Game1.player.cookingRecipes.ContainsKey(obj.Name))
-                            continue;
+                            add = false;
                         if (obj.Recipe.PurchaseRequirements != null && obj.Recipe.PurchaseRequirements.Count > 0 &&
                             precondMeth.Invoke<int>(new object[] { obj.Recipe.GetPurchaseRequirementString() }) == -1)
-                            continue;
-                        var recipeObj = new StardewValley.Object(obj.id, 1, true, obj.Recipe.PurchasePrice, 0);
-                        forSale.Add(recipeObj);
-                        itemPriceAndStock.Add(recipeObj, new int[] { obj.Recipe.PurchasePrice, 1 });
-                        Log.trace($"\tAdding recipe for {obj.Name}");
+                            add = false;
+                        if (add)
+                        {
+                            var recipeObj = new StardewValley.Object(obj.id, 1, true, obj.Recipe.PurchasePrice, 0);
+                            forSale.Add(recipeObj);
+                            itemPriceAndStock.Add(recipeObj, new int[] { obj.Recipe.PurchasePrice, 1 });
+                            Log.trace($"\tAdding recipe for {obj.Name}");
+                        }
                     }
                     if (!obj.CanPurchase)
                         continue;
@@ -290,17 +295,22 @@ namespace JsonAssets
                 {
                     if (big.Recipe != null && big.Recipe.CanPurchase)
                     {
+                        bool add = true;
+                        // Can't use continue here or the item might not sell
                         if (big.Recipe.PurchaseFrom != menu.portraitPerson?.name || (big.Recipe.PurchaseFrom == "HatMouse" && hatMouse))
-                            continue;
+                            add = false;
                         if (Game1.player.craftingRecipes.ContainsKey(big.Name) || Game1.player.cookingRecipes.ContainsKey(big.Name))
-                            continue;
+                            add = false;
                         if (big.Recipe.PurchaseRequirements != null && big.Recipe.PurchaseRequirements.Count > 0 &&
                             precondMeth.Invoke<int>(new object[] { big.Recipe.GetPurchaseRequirementString() }) == -1)
-                            continue;
-                        var recipeObj = new StardewValley.Object(new Vector2(0, 0), big.id, true);
-                        forSale.Add(recipeObj);
-                        itemPriceAndStock.Add(recipeObj, new int[] { big.Recipe.PurchasePrice, 1 });
-                        Log.trace($"\tAdding recipe for {big.Name}");
+                            add = false;
+                        if (add)
+                        {
+                            var recipeObj = new StardewValley.Object(new Vector2(0, 0), big.id, true);
+                            forSale.Add(recipeObj);
+                            itemPriceAndStock.Add(recipeObj, new int[] { big.Recipe.PurchasePrice, 1 });
+                            Log.trace($"\tAdding recipe for {big.Name}");
+                        }
                     }
                     if (!big.CanPurchase)
                         continue;
