@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using StardewValley.Objects;
-using StardewValley.Tools;
 using SObject = StardewValley.Object;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewValley.Events;
-using StardewValley.Quests;
 using System.IO;
+using SpaceCore.Events;
 using CookingSkill.Other;
 
 namespace CookingSkill
@@ -196,8 +190,7 @@ namespace CookingSkill
             GameEvents.UpdateTick += update;
             GraphicsEvents.OnPostRenderGuiEvent += drawAfterGui;
             
-            //SpaceEvents.ShowNightEndMenus += showLevelMenu;
-            Game1.endOfNightMenus.Push(new CookingLevelUpMenu(5));
+            SpaceEvents.ShowNightEndMenus += showLevelMenu;
 
             checkForExperienceBars();
             checkForLuck();
@@ -530,7 +523,6 @@ namespace CookingSkill
             }
         }
 
-        /*
         private void showLevelMenu( object sender, EventArgsShowNightEndMenus args )
         {
             Log.debug("Doing cooking menus");
@@ -558,7 +550,6 @@ namespace CookingSkill
                 Game1.endOfNightMenus.Push(new CookingLevelUpMenu(10));
             }
         }
-        */
 
         private void locChanged(object sender, EventArgs args)
         {
