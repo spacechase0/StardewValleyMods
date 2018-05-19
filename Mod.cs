@@ -1,28 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using StardewValley.Objects;
-using StardewValley.Tools;
 using SObject = StardewValley.Object;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewValley.Events;
-using StardewValley.Quests;
 using System.IO;
 using CookingSkill.Other;
+using Harmony;
+using System.Reflection.Emit;
 
 namespace CookingSkill
 {
     // This really needs organizing/splitting
     public class Mod : StardewModdingAPI.Mod
     {
+        private HarmonyInstance harmony;
+
         public static Mod instance;
         public static SaveData data = new SaveData();
 
@@ -188,6 +186,9 @@ namespace CookingSkill
                 }
             }
 
+            harmony = HarmonyInstance.Create("spacechase0.CookingSkill");
+            doTranspiler(typeof(Game1), "showEndOfNightStuff", typeof(ShowEndOfNightStuffHook));
+
             Helper.ConsoleCommands.Add("player_givecookingexp", "player_givecookingexp <amount>", giveExpCommand);
 
             SaveEvents.AfterLoad += afterLoad;
@@ -195,9 +196,6 @@ namespace CookingSkill
             PlayerEvents.Warped += locChanged;
             GameEvents.UpdateTick += update;
             GraphicsEvents.OnPostRenderGuiEvent += drawAfterGui;
-            
-            //SpaceEvents.ShowNightEndMenus += showLevelMenu;
-            Game1.endOfNightMenus.Push(new CookingLevelUpMenu(5));
 
             checkForExperienceBars();
             checkForLuck();
@@ -530,11 +528,12 @@ namespace CookingSkill
             }
         }
 
-        /*
-        private void showLevelMenu( object sender, EventArgsShowNightEndMenus args )
+        public static void addLevelMenus()
         {
             Log.debug("Doing cooking menus");
-            
+
+            Game1.endOfNightMenus.Push(new CookingLevelUpMenu(5));
+
             if (newCookingLevels.Count() > 0)
             {
                 for (int i = newCookingLevels.Count() - 1; i >= 0; --i )
@@ -558,7 +557,6 @@ namespace CookingSkill
                 Game1.endOfNightMenus.Push(new CookingLevelUpMenu(10));
             }
         }
-        */
 
         private void locChanged(object sender, EventArgs args)
         {
@@ -685,6 +683,51 @@ namespace CookingSkill
 
             Log.info("[CookingSkill] All Professions found. You will get every cooking profession for your level.");
             HAS_ALL_PROFESSIONS = true;
+        }
+
+        /////
+        /// TEMPORARY UNTIL SPACECORE UPDATES
+        /////
+
+        private void doTranspiler( Type origType, string origMethod, Type newType ) {
+            doTranspiler(origType.GetMethod(origMethod), newType.GetMethod("Transpiler"));
+        }
+
+        private void doTranspiler( MethodInfo orig, MethodInfo transpiler ) {
+            try {
+                Log.trace($"Doing transpiler patch {orig}:{transpiler}...");
+                harmony.Patch(orig, null, null, new HarmonyMethod(transpiler));
+            }
+            catch (Exception e) {
+                Log.error($"Exception doing transpiler patch {orig}:{transpiler}: {e}");
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Game1), "showEndOfNightStuff")]
+    public class ShowEndOfNightStuffHook 
+    {
+        public static void showEndOfNightStuff_mid() 
+        {
+            Log.debug("Injected successfully");
+            Mod.addLevelMenus();
+        }
+
+        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns) 
+        {
+            // TODO: Learn how to use ILGenerator
+
+            var newInsns = new List<CodeInstruction>();
+            foreach (var insn in insns) 
+            {
+                if (insn.opcode == OpCodes.Ldstr && (string)insn.operand == "newRecord") 
+                {
+                    newInsns.Insert(newInsns.Count - 2, new CodeInstruction(OpCodes.Call, typeof(ShowEndOfNightStuffHook).GetMethod("showEndOfNightStuff_mid")));
+                }
+                newInsns.Add(insn);
+            }
+
+            return newInsns;
         }
     }
 }
