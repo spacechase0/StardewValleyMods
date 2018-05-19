@@ -73,9 +73,6 @@
     <Reference Include="StardewModdingAPI">
       <HintPath>..\..\..\Library\Application Support\Steam\steamapps\common\Stardew Valley\Contents\MacOS\StardewModdingAPI.exe</HintPath>
     </Reference>
-    <Reference Include="0Harmony">
-      <HintPath>0Harmony.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Other\ExperienceBars.cs" />
