@@ -91,7 +91,7 @@ namespace CustomCritters
                     ret = false;
                 else if (Seasons != null && Seasons.Count() > 0 && !Seasons.Contains(Game1.currentSeason))
                     ret = false;
-                else if (Locations != null && Locations.Count() > 0 && !Locations.Contains(loc.name))
+                else if (Locations != null && Locations.Count() > 0 && !Locations.Contains(loc.Name))
                     ret = false;
                 else if (Game1.random.NextDouble() >= Math.Max(0.15, (Math.Min(0.5, loc.map.Layers[0].LayerWidth * loc.map.Layers[0].LayerHeight / ChancePerTile))))
                     ret = false;

@@ -4,8 +4,8 @@
   "Version": {
     "MajorVersion": 1,
     "MinorVersion": 2,
-    "PatchVersion": 2,
-    "Build": ""
+    "PatchVersion": 3,
+    "Build": "-unofficial.1.mizzion"
   },
   "Description": "...",
   "UniqueID": "spacechase0.CustomCritters",

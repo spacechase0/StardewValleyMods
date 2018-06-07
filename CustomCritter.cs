@@ -23,6 +23,7 @@ namespace CustomCritters
             this.rand = new Random(((int)startingPosition.X) << 32 | ((int)startingPosition.Y));
 
             var tex = Mod.instance.Helper.Content.Load<Texture2D>("Critters/" + data.Id + "/critter.png");
+            var texStr = Mod.instance.Helper.Content.GetActualAssetKey($"Critters/{data.Id}/critter.png");
 
             this.baseFrame = Game1.random.Next(data.SpriteData.Variations) * (tex.Width / data.SpriteData.FrameWidth);
             
@@ -31,7 +32,7 @@ namespace CustomCritters
             {
                 frames.Add(new FarmerSprite.AnimationFrame(baseFrame + frame.Frame, frame.Duration));
             }
-            this.sprite = new AnimatedSprite(tex, baseFrame, data.SpriteData.FrameWidth, data.SpriteData.FrameHeight);
+            this.sprite = new AnimatedSprite(texStr, baseFrame, data.SpriteData.FrameWidth, data.SpriteData.FrameHeight);
             sprite.setCurrentAnimation(frames);
             
             if ( data.Light != null )
@@ -40,7 +41,7 @@ namespace CustomCritters
                 if (data.Light.VanillaLightId != -1)
                     light = new LightSource(data.Light.VanillaLightId, position, data.Light.Radius, col);
                 else
-                    light = new LightSource(Mod.instance.Helper.Content.Load<Texture2D>("Critters/" + data.Id + "/light.png"), position, data.Light.Radius, col);
+                    light = new LightSource(4, position, data.Light.Radius, col);
                 Game1.currentLightSources.Add(light);
             }
         }
@@ -127,7 +128,7 @@ namespace CustomCritters
             }
 
             if (light != null)
-                light.position = this.position;
+                light.position.Value = this.position;
 
             return base.update(time, environment);
         }
