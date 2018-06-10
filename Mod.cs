@@ -13,6 +13,7 @@ using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using StardewValley.Objects;
 using System.Reflection;
+using Netcode;
 
 // TODO: Refactor recipes
 
@@ -30,7 +31,7 @@ namespace JsonAssets
             //SaveEvents.AfterLoad += afterLoad;
             SaveEvents.AfterSave += afterSave;
             PlayerEvents.InventoryChanged += invChanged;
-            SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
+            //SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
 
             Log.info("Loading content packs...");
             foreach (IContentPack contentPack in this.Helper.GetContentPacks())
@@ -240,6 +241,8 @@ namespace JsonAssets
                 var editor = Helper.Content.AssetEditors.Where(x => x is ContentInjector);
                 if ( editor.Count() > 0 )
                     Helper.Content.AssetEditors.Remove(editor.ElementAt(0));
+
+                SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
                 return;
             }
 
@@ -252,7 +255,7 @@ namespace JsonAssets
 
             //if (menu.portraitPerson.name == "Pierre")
             {
-                Log.trace($"Adding objects to {menu.portraitPerson?.name}'s shop");
+                Log.trace($"Adding objects to {menu.portraitPerson?.Name}'s shop");
 
                 var forSale = Helper.Reflection.GetField<List<Item>>(menu, "forSale").GetValue();
                 var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(menu, "itemPriceAndStock").GetValue();
@@ -264,7 +267,7 @@ namespace JsonAssets
                     {
                         bool add = true;
                         // Can't use continue here or the item might not sell
-                        if (obj.Recipe.PurchaseFrom != menu.portraitPerson?.name || (obj.Recipe.PurchaseFrom == "HatMouse" && hatMouse) )
+                        if (obj.Recipe.PurchaseFrom != menu.portraitPerson?.Name || (obj.Recipe.PurchaseFrom == "HatMouse" && hatMouse) )
                             add = false;
                         if (Game1.player.craftingRecipes.ContainsKey(obj.Name) || Game1.player.cookingRecipes.ContainsKey(obj.Name))
                             add = false;
@@ -281,7 +284,7 @@ namespace JsonAssets
                     }
                     if (!obj.CanPurchase)
                         continue;
-                    if (obj.PurchaseFrom != menu.portraitPerson?.name || (obj.PurchaseFrom == "HatMouse" && hatMouse))
+                    if (obj.PurchaseFrom != menu.portraitPerson?.Name || (obj.PurchaseFrom == "HatMouse" && hatMouse))
                         continue;
                     if (obj.PurchaseRequirements != null && obj.PurchaseRequirements.Count > 0 &&
                         precondMeth.Invoke<int>(new object[] { obj.GetPurchaseRequirementString() }) == -1)
@@ -297,7 +300,7 @@ namespace JsonAssets
                     {
                         bool add = true;
                         // Can't use continue here or the item might not sell
-                        if (big.Recipe.PurchaseFrom != menu.portraitPerson?.name || (big.Recipe.PurchaseFrom == "HatMouse" && hatMouse))
+                        if (big.Recipe.PurchaseFrom != menu.portraitPerson?.Name || (big.Recipe.PurchaseFrom == "HatMouse" && hatMouse))
                             add = false;
                         if (Game1.player.craftingRecipes.ContainsKey(big.Name) || Game1.player.cookingRecipes.ContainsKey(big.Name))
                             add = false;
@@ -314,7 +317,7 @@ namespace JsonAssets
                     }
                     if (!big.CanPurchase)
                         continue;
-                    if (big.PurchaseFrom != menu.portraitPerson?.name || (big.PurchaseFrom == "HatMouse" && hatMouse))
+                    if (big.PurchaseFrom != menu.portraitPerson?.Name || (big.PurchaseFrom == "HatMouse" && hatMouse))
                         continue;
                     if (big.PurchaseRequirements != null && big.PurchaseRequirements.Count > 0 &&
                         precondMeth.Invoke<int>(new object[] { big.GetPurchaseRequirementString() }) == -1)
@@ -411,13 +414,13 @@ namespace JsonAssets
             foreach (var ring in myRings)
                 ringIds.Add(ring.id);
 
-            for (int i = 0; i < Game1.player.items.Count; ++i)
+            for (int i = 0; i < Game1.player.Items.Count; ++i)
             {
-                var item = Game1.player.items[i];
-                if (item is StardewValley.Object obj && ringIds.Contains(obj.parentSheetIndex))
+                var item = Game1.player.Items[i];
+                if (item is StardewValley.Object obj && ringIds.Contains(obj.ParentSheetIndex))
                 {
-                    Log.trace($"Turning a ring-object of {obj.parentSheetIndex} into a proper ring");
-                    Game1.player.items[i] = new StardewValley.Objects.Ring(obj.parentSheetIndex);
+                    Log.trace($"Turning a ring-object of {obj.ParentSheetIndex} into a proper ring");
+                    Game1.player.Items[i] = new StardewValley.Objects.Ring(obj.ParentSheetIndex);
                 }
             }
         }
@@ -486,47 +489,51 @@ namespace JsonAssets
 
         private void fixIdsEverywhere()
         {
-            fixItemList(Game1.player.items);
+            fixItemList(Game1.player.Items);
             foreach ( var loc in Game1.locations )
                 fixLocation(loc);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage( "SMAPI.CommonErrors", "AvoidNetField") ]
         private void fixLocation( GameLocation loc )
         {
             if (loc is FarmHouse fh)
             {
-                if (fh.fridge != null && fh.fridge.items != null)
-                    fixItemList(fh.fridge.items);
+#pragma warning disable AvoidImplicitNetFieldCast
+                if (fh.fridge.Value != null && fh.fridge.Value.items != null)
+#pragma warning restore AvoidImplicitNetFieldCast
+                    fixItemList(fh.fridge.Value.items);
             }
 
             IList<Vector2> toRemove = new List<Vector2>();
-            foreach ( var tf in loc.terrainFeatures )
+            foreach ( var tfk in loc.terrainFeatures.Keys )
             {
-                if ( tf.Value is HoeDirt hd )
+                var tf = loc.terrainFeatures[tfk];
+                if ( tf is HoeDirt hd )
                 {
                     if (hd.crop == null)
                         continue;
 
-                    if (fixId(oldCropIds, cropIds, ref hd.crop.rowInSpriteSheet, Game1.content.Load<Dictionary<int, string>>("Data\\Crops")))
+                    if (fixId(oldCropIds, cropIds, hd.crop.rowInSpriteSheet, Game1.content.Load<Dictionary<int, string>>("Data\\Crops")))
                         hd.crop = null;
                     else
                     {
-                        var key = cropIds.FirstOrDefault(x => x.Value == hd.crop.rowInSpriteSheet).Key;
+                        var key = cropIds.FirstOrDefault(x => x.Value == hd.crop.rowInSpriteSheet.Value).Key;
                         var c = crops.FirstOrDefault(x => x.Name == key);
                         if ( c != null ) // Non-JA crop
-                            hd.crop.indexOfHarvest = ResolveObjectId(c.Product);
+                            hd.crop.indexOfHarvest.Value = ResolveObjectId(c.Product);
                     }
                 }
-                else if ( tf.Value is FruitTree ft )
+                else if ( tf is FruitTree ft )
                 {
-                    if (fixId(oldFruitTreeIds, fruitTreeIds, ref ft.treeType, Game1.content.Load<Dictionary<int, string>>("Data\\fruitTrees")))
-                        toRemove.Add(tf.Key);
+                    if (fixId(oldFruitTreeIds, fruitTreeIds, ft.treeType, Game1.content.Load<Dictionary<int, string>>("Data\\fruitTrees")))
+                        toRemove.Add(tfk);
                     else
                     {
-                        var key = oldFruitTreeIds.FirstOrDefault(x => x.Value == ft.treeType).Key;
+                        var key = oldFruitTreeIds.FirstOrDefault(x => x.Value == ft.treeType.Value).Key;
                         var ftt = fruitTrees.FirstOrDefault(x => x.Name == key);
                         if ( ftt != null ) // Non-JA fruit tree
-                            ft.indexOfFruit = ResolveObjectId(ftt.Product);
+                            ft.indexOfFruit.Value = ResolveObjectId(ftt.Product);
                     }
                 }
             }
@@ -534,42 +541,75 @@ namespace JsonAssets
                 loc.terrainFeatures.Remove(rem);
 
             toRemove.Clear();
-            foreach ( var obj in loc.objects )
+            foreach ( var objk in loc.netObjects.Keys )
             {
-                if ( obj.Value is Chest chest )
+                var obj = loc.netObjects[objk];
+                if ( obj is Chest chest )
                 {
                     fixItemList(chest.items);
                 }
                 else
                 {
-                    if (!obj.Value.bigCraftable)
+                    if (!obj.bigCraftable.Value)
                     {
-                        if (fixId(oldObjectIds, objectIds, ref obj.Value.parentSheetIndex, Game1.objectInformation))
-                            toRemove.Add(obj.Key);
+                        if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, Game1.objectInformation))
+                            toRemove.Add(objk);
                     }
                     else
                     {
-                        if (fixId(oldBigCraftableIds, bigCraftableIds, ref obj.Value.parentSheetIndex, Game1.bigCraftablesInformation))
-                            toRemove.Add(obj.Key);
+                        if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, Game1.bigCraftablesInformation))
+                            toRemove.Add(objk);
                     }
                 }
                 
-                if ( obj.Value.heldObject != null )
+                if ( obj.heldObject.Value != null )
                 {
-                    if (fixId(oldObjectIds, objectIds, ref obj.Value.heldObject.parentSheetIndex, Game1.objectInformation))
-                        obj.Value.heldObject = null;
+                    if (fixId(oldObjectIds, objectIds, obj.heldObject.Value.parentSheetIndex, Game1.objectInformation))
+                        obj.heldObject.Value = null;
                 }
             }
             foreach (var rem in toRemove)
                 loc.objects.Remove(rem);
 
+            toRemove.Clear();
+            foreach (var objk in loc.overlayObjects.Keys)
+            {
+                var obj = loc.overlayObjects[objk];
+                if (obj is Chest chest)
+                {
+                    fixItemList(chest.items);
+                }
+                else
+                {
+                    if (!obj.bigCraftable.Value)
+                    {
+                        if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, Game1.objectInformation))
+                            toRemove.Add(objk);
+                    }
+                    else
+                    {
+                        if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, Game1.bigCraftablesInformation))
+                            toRemove.Add(objk);
+                    }
+                }
+
+                if (obj.heldObject.Value != null)
+                {
+                    if (fixId(oldObjectIds, objectIds, obj.heldObject.Value.parentSheetIndex, Game1.objectInformation))
+                        obj.heldObject.Value = null;
+                }
+            }
+            foreach (var rem in toRemove)
+                loc.overlayObjects.Remove(rem);
+
             if (loc is BuildableGameLocation buildLoc)
                 foreach (var building in buildLoc.buildings)
-                    if (building.indoors != null)
-                        fixLocation(building.indoors);
+                    if (building.indoors.Value != null)
+                        fixLocation(building.indoors.Value);
         }
 
-        private void fixItemList( List< Item > items )
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
+        private void fixItemList( IList< Item > items )
         {
             var Game1hats = Game1.content.Load<Dictionary<int, string>>("Data\\hats");
             for ( int i = 0; i < items.Count; ++i )
@@ -577,20 +617,20 @@ namespace JsonAssets
                 var item = items[i];
                 if ( item is StardewValley.Object obj )
                 {
-                    if (!obj.bigCraftable)
+                    if (!obj.bigCraftable.Value)
                     {
-                        if (fixId(oldObjectIds, objectIds, ref obj.parentSheetIndex, Game1.objectInformation))
+                        if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, Game1.objectInformation))
                             items[i] = null;
                     }
                     else
                     {
-                        if (fixId(oldBigCraftableIds, bigCraftableIds, ref obj.parentSheetIndex, Game1.bigCraftablesInformation))
+                        if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, Game1.bigCraftablesInformation))
                             items[i] = null;
                     }
                 }
                 else if ( item is Hat hat )
                 {
-                    if (fixId(oldHatIds, hatIds, ref hat.which, Game1hats))
+                    if (fixId(oldHatIds, hatIds, hat.which, Game1hats))
                         items[i] = null;
                 }
             }
@@ -598,19 +638,19 @@ namespace JsonAssets
 
         // Return true if the item should be deleted, false otherwise.
         // Only remove something if old has it but not new
-        private bool fixId(IDictionary<string, int> oldIds, IDictionary<string, int> newIds, ref int id, Dictionary<int, string> origData )
+        private bool fixId(IDictionary<string, int> oldIds, IDictionary<string, int> newIds, NetInt id, IDictionary<int, string> origData )
         {
-            if (origData.ContainsKey(id))
+            if (origData.ContainsKey(id.Value))
                 return false;
 
-            if (oldIds.Values.Contains(id))
+            if (oldIds.Values.Contains(id.Value))
             {
-                int id_ = id;
+                int id_ = id.Value;
                 var key = oldIds.FirstOrDefault(x => x.Value == id_).Key;
 
                 if (newIds.ContainsKey(key))
                 {
-                    id = newIds[key];
+                    id.Value = newIds[key];
                     return false;
                 }
                 else return true;
