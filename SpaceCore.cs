@@ -39,12 +39,22 @@ namespace SpaceCore
 
             harmony = HarmonyInstance.Create("spacechase0.SpaceCore");
 
+            Type game1CompilerType = null;
+            foreach (var t in typeof(Game1).Assembly.GetTypes())
+                if (t.FullName == "StardewValley.Game1+<>c")
+                    game1CompilerType = t;
+            MethodInfo showNightEndMethod = null;
+            foreach (var m in game1CompilerType.GetRuntimeMethods())
+                if (m.FullDescription().Contains("showEndOfNightStuff"))
+                    showNightEndMethod = m;
+
             doPrefix(typeof(HoeDirt), "dayUpdate", typeof(HoeDirtWinterFix));
             doPostfix(typeof(Utility), "pickFarmEvent", typeof(NightlyFarmEventHook));
-            doTranspiler(typeof(Game1), "showEndOfNightStuff", typeof(ShowEndOfNightStuffHook));
-            doPostfix(typeof(Game1), "doneEating", typeof(DoneEatingHook));
-            doPrefix(typeof(Game1), "setGraphicsForSeason", typeof(SeasonGraphicsForSeasonalLocationsPatch));
+            doTranspiler(showNightEndMethod, typeof(ShowEndOfNightStuffHook).GetMethod("Transpiler"));
+            doPostfix(typeof(Farmer), "doneEating", typeof(DoneEatingHook));
             doPrefix(typeof(MeleeWeapon).GetMethod("drawDuringUse", new[] { typeof(int), typeof(int), typeof(SpriteBatch), typeof(Vector2), typeof(SFarmer), typeof(Rectangle), typeof(int), typeof(bool) }), typeof(CustomWeaponDrawPatch).GetMethod("Prefix"));
+            doPrefix(typeof(DecoratableLocation), "setWallpaper", typeof(WallpaperHook));
+            doPrefix(typeof(DecoratableLocation), "setFloor", typeof(FlooringHook));
         }
 
         private void doPrefix(Type origType, string origMethod, Type newType)
@@ -119,7 +129,7 @@ namespace SpaceCore
             Log.debug("Previously slept in a tent, replacing player position.");
 
             var loc = Game1.getLocationFromName(data.Location);
-            if (loc == null || loc.name == festivalLocation())
+            if (loc == null || loc.Name == festivalLocation())
             {
                 Game1.addHUDMessage(new HUDMessage("You camped out where the festival was, so you have returned home."));
                 return;
@@ -128,13 +138,15 @@ namespace SpaceCore
             if (loc is MineShaft)
             {
                 Log.trace("Slept in a mine.");
-                var pos = (loc as MineShaft).enterMine(Game1.player, data.MineLevel, false);
-                data.X = pos.X * Game1.tileSize;
-                data.Y = pos.Y * Game1.tileSize;
+                Game1.enterMine(data.MineLevel);
+                data.X = -1;
+                data.Y = -1;
             }
-
-            Game1.player.currentLocation = Game1.currentLocation = loc;
-            Game1.player.position = new Vector2(data.X, data.Y);
+            else
+            {
+                Game1.player.currentLocation = Game1.currentLocation = loc;
+                Game1.player.Position = new Vector2(data.X, data.Y);
+            }
         }
 
         private void onSave(object sender, EventArgs args)
@@ -144,22 +156,25 @@ namespace SpaceCore
 
             Log.debug("Saving tent sleep data");
 
-            if (Game1.player.currentLocation.name == festivalLocation())
+            if (Game1.player.currentLocation.Name == festivalLocation())
             {
                 Log.trace("There'll be a festival here tomorrow, canceling");
                 Game1.addHUDMessage(new HUDMessage("You camped out where the festival was, so you have returned home."));
 
                 var house = Game1.getLocationFromName("FarmHouse") as FarmHouse;
                 Game1.player.currentLocation = Game1.currentLocation = house;
-                Game1.player.position = new Vector2(house.getBedSpot().X * Game1.tileSize, house.getBedSpot().Y * Game1.tileSize);
+                Game1.player.Position = new Vector2(house.getBedSpot().X * Game1.tileSize, house.getBedSpot().Y * Game1.tileSize);
                 Sleep.SaveLocation = false;
                 return;
             }
 
             var data = new Sleep.Data();
-            data.Location = Game1.currentLocation.name;
-            data.X = Game1.player.position.X;
-            data.Y = Game1.player.position.Y;
+            data.Location = Game1.currentLocation.Name;
+            if (data.X != -1 && data.Y != -1)
+            {
+                data.X = Game1.player.position.X;
+                data.Y = Game1.player.position.Y;
+            }
 
             data.Year = Game1.year;
             data.Season = Game1.currentSeason;
@@ -181,7 +196,7 @@ namespace SpaceCore
             {
                 return Game1.temporaryContent.Load<Dictionary<string, string>>("Data\\Festivals\\" + Game1.currentSeason + (object)Game1.dayOfMonth)["conditions"].Split('/')[0];
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

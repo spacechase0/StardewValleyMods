@@ -1,4 +1,5 @@
 ﻿using SpaceCore.Utilities;
+using StardewValley;
 using StardewValley.Events;
 using System;
 
@@ -48,12 +49,12 @@ namespace SpaceCore.Events
             return args.NightEvent;
         }
 
-        internal static void InvokeOnItemEaten()
+        internal static void InvokeOnItemEaten( Farmer farmer)
         {
             Log.trace("Event: OnItemEaten");
             if (OnItemEaten == null)
                 return;
-            Util.invokeEvent("SpaceEvents.OnItemEaten", OnItemEaten.GetInvocationList(), null);
+            Util.invokeEvent("SpaceEvents.OnItemEaten", OnItemEaten.GetInvocationList(), farmer);
         }
     }
 }
