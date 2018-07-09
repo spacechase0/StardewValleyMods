@@ -17,6 +17,11 @@
   * [Hats](#hats)
 * [Gift Tastes](#gift-tastes)
 * [Converting From Legacy Format](#converting-from-legacy-format)
+* [Releasing A Content Pack](#releaseing-a-content-pack)
+* [Troubleshooting](#troubleshooting)
+  * [Target Out of Range](#target-out-of-range)
+  * [Exception Injecting Given Key](#exception-injecting-given-key)
+  * [Exception Injecting Duplicate Key](#exception-injecting-duplicate-key)
 * [See Also](#see-also)
 
 ## Install
@@ -252,6 +257,39 @@ info. Suggestions:
    ```
 2. When editing the Nexus page, add Json Assets under 'Requirements'. Besides reminding players to install it first, it'll also add your content pack to the list on the Json Asset page.
 
+## Troubleshooting
+
+There are some common errors with easy solutions. Your error may look slightly different but the general principal is the same.
+
+### Target Out of Range
+```
+Exception injecting crop sprite for Blue_Mist: System.ArgumentOutOfRangeException: The target area is outside the bounds of the target texture.
+Parameter name: targetArea
+   at StardewModdingAPI.Framework.Content.AssetDataForImage.PatchImage(Texture2D source, Nullable`1 sourceArea, Nullable`1 targetArea, PatchMode patchMode) in C:\source\_Stardew\SMAPI\src\SMAPI\Framework\Content\AssetDataForImage.cs:line 44
+   at JsonAssets.ContentInjector.Edit[T](IAssetData asset) in G:\StardewValley\Mods\JsonAssets\ContentInjector.cs:line 194
+```
+Solution: The sprite is too big. Double check what size the image needs to be for that specific type of item and crop your image accordingly. If you're trying to load tree crops, this error occurs when you have reached the maximum amount of trees the game can handle (a hardcoded number). 
+
+### Exception Injecting Given Key
+```
+Exception injecting cooking recipe for Bulgogi: System.Collections.Generic.KeyNotFoundException: The given key was not present in the dictionary.
+   at System.Collections.Generic.Dictionary`2.get_Item(TKey key)
+   at JsonAssets.Mod.ResolveObjectId(Object data) in G:\StardewValley\Mods\JsonAssets\Mod.cs:line 336
+   at JsonAssets.Data.ObjectData.Recipe_.GetRecipeString(ObjectData parent) in G:\StardewValley\Mods\JsonAssets\Data\ObjectData.cs:line 60
+   at JsonAssets.ContentInjector.Edit[T](IAssetData asset) in G:\StardewValley\Mods\JsonAssets\ContentInjector.cs:line 98
+ ```
+Solution: There is something missing from the recipe. This is caused by not installing a dependency or typing in an item ID/Name wrong. Install the dependencies (often listed on the download page) or open up the `.json` file and see if you typed something wrong.
+ 
+### Exception Injecting Duplicate Key
+```
+Exception injecting cooking recipe for Bacon: System.ArgumentException: An item with the same key has already been added.
+   at System.ThrowHelper.ThrowArgumentException(ExceptionResource resource)
+   at System.Collections.Generic.Dictionary`2.Insert(TKey key, TValue value, Boolean add)
+   at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
+   at JsonAssets.ContentInjector.Edit[T](IAssetData asset) in G:\StardewValley\Mods\JsonAssets\ContentInjector.cs:line 99Exception i
+ ```
+ Solution: There is already an item with that name. This can happen when: using mods that have the same items, having two of the same file in different locations, or accidently naming something with the same name. Double check all folders and rename accordingly. 
+ 
 ## See Also
 
 * [Nexus Page](https://www.nexusmods.com/stardewvalley/mods/1720)
