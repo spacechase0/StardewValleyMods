@@ -57,14 +57,14 @@ namespace ExperienceBars
             
             int[] skills = new int[]
             {
-                Game1.player.farmingLevel,
-                Game1.player.fishingLevel,
-                Game1.player.foragingLevel,
-                Game1.player.miningLevel,
-                Game1.player.combatLevel,
-                Game1.player.luckLevel
+                Game1.player.farmingLevel.Value,
+                Game1.player.fishingLevel.Value,
+                Game1.player.foragingLevel.Value,
+                Game1.player.miningLevel.Value,
+                Game1.player.combatLevel.Value,
+                Game1.player.luckLevel.Value
             };
-            int[] exp = Game1.player.experiencePoints;
+            int[] exp = Game1.player.experiencePoints.ToArray();
 
             bool foundLevelExtender = false;
             if (Helper.ModRegistry.IsLoaded("Devin Lematty.Level Extender") && !stopLevelExtenderCompat)
@@ -93,7 +93,7 @@ namespace ExperienceBars
 
             int x = 10;
             int y = 10;
-            if (Game1.player.currentLocation != null && Game1.player.currentLocation.name == "UndergroundMine")
+            if (Game1.player.currentLocation != null && Game1.player.currentLocation.Name == "UndergroundMine")
                 y += 75;
             for ( int i = 0; i < (renderLuck ? 6 : 5); ++i )
             {
