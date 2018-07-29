@@ -35,7 +35,7 @@ namespace CustomizeExterior
             GameEvents.UpdateTick += onUpdate;
             SaveEvents.AfterLoad += afterLoad;
             SaveEvents.AfterSave += afterSave;
-            LocationEvents.CurrentLocationChanged += afterLocationChange;
+            PlayerEvents.Warped += afterLocationChange;
         }
 
         private void afterLoad(object sender, EventArgs args)
@@ -52,9 +52,9 @@ namespace CustomizeExterior
             Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "building-exteriors.json"), config);
         }
 
-        private void afterLocationChange(object sender, EventArgsCurrentLocationChanged args)
+        private void afterLocationChange(object sender, EventArgsPlayerWarped args)
         {
-            if (args.NewLocation is Farm)
+            if (args.NewLocation is BuildableGameLocation)
                 syncTexturesWithChoices();
         }
 
@@ -86,11 +86,11 @@ namespace CustomizeExterior
                     
                     foreach ( var building in loc.buildings )
                     {
-                        Rectangle tileBounds = new Rectangle(building.tileX * Game1.tileSize, building.tileY * Game1.tileSize, building.tilesWide * Game1.tileSize, building.tilesHigh * Game1.tileSize);
+                        Rectangle tileBounds = new Rectangle(building.tileX.Value * Game1.tileSize, building.tileY.Value * Game1.tileSize, building.tilesWide.Value * Game1.tileSize, building.tilesHigh.Value * Game1.tileSize);
                         if ( tileBounds.Contains( pos.X, pos.Y ) )
                         {
                             Log.trace("Right clicked a building: " + building.nameOfIndoors);
-                            checkBuildingClick(building.nameOfIndoors, building.buildingType);
+                            checkBuildingClick(building.nameOfIndoors, building.buildingType.Value);
                         }
                     }
                 }
@@ -246,15 +246,15 @@ namespace CustomizeExterior
             if ( recentTarget == "FarmHouse" || recentTarget == "Greenhouse" )
             {
                 housesHybrid = null;
-                Game1.getFarm().houseTextures = getHousesTexture();
+                typeof(Farm).GetField("houseTextures").SetValue(null, getHousesTexture());
             }
             else
             {
                 foreach ( Building building in Game1.getFarm().buildings )
                 {
-                    if (building.buildingType == type && building.nameOfIndoors == recentTarget)
+                    if (building.buildingType.Value == type && building.nameOfIndoors == recentTarget)
                     {
-                        building.texture = tex;
+                        building.texture = new Lazy<Texture2D>(() => tex);
                         break;
                     }
                 }
@@ -279,7 +279,7 @@ namespace CustomizeExterior
                     {
                         if (building.nameOfIndoors == choice.Key)
                         {
-                            type = building.buildingType;
+                            type = building.buildingType.Value;
                         }
                     }
                 }
@@ -305,7 +305,7 @@ namespace CustomizeExterior
                 else
                     return content.Load<Texture2D>(choice + "/" + type);
             }
-            catch (ContentLoadException e)
+            catch (ContentLoadException)
             {
                 if (choice.StartsWith(SEASONAL_INDICATOR))
                     return loadPng(choice.Substring(SEASONAL_INDICATOR.Length) + "/" + Game1.currentSeason + "/" + type);
@@ -331,7 +331,7 @@ namespace CustomizeExterior
             Log.trace("Creating hybrid farmhouse/greenhouse texture");
 
             Farm farm = Game1.getFarm();
-            Texture2D baseTex = farm.houseTextures;
+            Texture2D baseTex = Farm.houseTextures;
             Rectangle houseRect = new Rectangle( 0, 0, 160, baseTex.Height );// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "houseSource");
             Rectangle greenhouseRect = new Rectangle(160, 0, 112, baseTex.Height);// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "greenhouseSource");
 

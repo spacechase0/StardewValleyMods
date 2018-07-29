@@ -10,5 +10,12 @@
   "Description": "Change the exterior of your buildings.",
   "UniqueID": "spacechase0.CustomizeExterior",
   "PerSaveConfigs": false,
-  "EntryDll": "CustomizeExterior.dll"
+  "EntryDll": "CustomizeExterior.dll",
+  "UpdateKeys": [ "Nexus:1099" ],
+  "Dependencies": [
+    {
+      "UniqueID": "Entoarox.SeasonalImmersion",
+      "IsRequired": false
+    }
+  ]
 }
