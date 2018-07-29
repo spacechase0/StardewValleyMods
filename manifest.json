@@ -11,4 +11,5 @@
   "UniqueID": "spacechase0.ExtendedReach",
   "PerSaveConfigs": false,
   "EntryDll": "ExtendedReach.dll",
+  "UpdateKeys": [ "Nexus:1493" ]
 }
