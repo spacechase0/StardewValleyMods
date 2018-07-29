@@ -40,6 +40,7 @@ namespace JumpOver
         {
             private StardewValley.Farmer player;
             private float prevJumpVel = 0;
+            //private bool wasGoingOver = false;
 
             public Jump(StardewValley.Farmer thePlayer)
             {
@@ -83,9 +84,11 @@ namespace JumpOver
                     bool n0 = player.currentLocation.isCollidingPosition(bb, Game1.viewport, true, 0, false, player);
                     bool n1 = player.currentLocation.isCollidingPosition(bb1, Game1.viewport, true, 0, false, player);
                     bool n2 = player.currentLocation.isCollidingPosition(bb2, Game1.viewport, true, 0, false, player);
-                    
-                    if ( n0 || ( !n0 && n1 && !n2 ) )
+
+                    Log.trace($"{n0} {n1} {n2}");
+                    if ( n0 || ( !n0 && n1 && !n2 ) /*|| wasGoingOver*/ )
                     {
+                        //wasGoingOver = true;
                         Game1.player.canMove = false;
                         player.position.X += ox * 5;
                         player.position.Y += oy * 5;
