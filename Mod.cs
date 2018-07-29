@@ -19,7 +19,6 @@ namespace FlowerColorPicker
 
         public override void Entry(IModHelper helper)
         {
-            base.Entry(helper);
             instance = this;
 
             ControlEvents.MouseChanged += onMouseChanged;
@@ -45,10 +44,10 @@ namespace FlowerColorPicker
             {
                 //hoeDirt.crop.growCompletely();
             }
-            if (holding == null || hoeDirt == null || hoeDirt.crop == null || holding.ParentSheetIndex != hoeDirt.crop.indexOfHarvest)
+            if (holding == null || hoeDirt == null || hoeDirt.crop == null || holding.ParentSheetIndex != hoeDirt.crop.indexOfHarvest.Value)
                 return;
             
-            hoeDirt.crop.tintColor = holding.color;
+            hoeDirt.crop.tintColor.Value = holding.color.Value;
         }
     }
 }

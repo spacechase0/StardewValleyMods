@@ -10,5 +10,6 @@
   "Description": "Change flower colors. Left click with the grown flower color you want to copy.",
   "UniqueID": "spacechase0.FlowerColorPicker",
   "PerSaveConfigs": false,
-  "EntryDll": "FlowerColorPicker.dll"
+  "EntryDll": "FlowerColorPicker.dll",
+  "UpdateKeys": [ "Nexus:1229" ]
 }
