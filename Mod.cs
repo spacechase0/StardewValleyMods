@@ -204,13 +204,7 @@ namespace CookingSkill
             {
                 Log.debug("Converting old cooking experience to new");
                 data.experience = Game1.player.experiencePoints[6];
-
-                var oldExp = Game1.player.experiencePoints;
-                //Game1.player.experiencePoints = new int[6];
-                for ( int i = 0; i < 6; ++i )
-                {
-                    Game1.player.experiencePoints[i] = oldExp[i];
-                }
+                Game1.player.experiencePoints.RemoveAt(6);
             }
         }
 
@@ -555,26 +549,24 @@ namespace CookingSkill
         {
             if ( HAS_ALL_PROFESSIONS )
             {
-                Util.DecompileComment("This is where AllProfessions does it.");
-                Util.DecompileComment("This is that mod's code, too (from ILSpy, anyways). Just trying to give credit where credit is due. :P");
-                /*List<int> professions = Game1.player.professions;
+                // This is AllProfessions code, updated for 1.3
+                var profs = Game1.player.professions;
                 List<List<int>> list = new List<List<int>> { professions5, professions10, };
                 foreach (List<int> current in list)
                 {
-                    bool flag = professions.Intersect(current).Any<int>();
+                    bool flag = profs.Intersect(current).Any<int>();
                     if (flag)
                     {
                         foreach (int current2 in current)
                         {
-                            bool flag2 = !professions.Contains(current2);
+                            bool flag2 = !profs.Contains(current2);
                             if (flag2)
                             {
-                                professions.Add(current2);
+                                profs.Add(current2);
                             }
                         }
                     }
-                }*/
-                Util.DecompileComment("End of AllProfessions code.");
+                }
             }
         }
 
