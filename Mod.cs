@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using StardewValley.Objects;
-using StardewValley.Tools;
-using Object = StardewValley.Object;
+using SObject = StardewValley.Object;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewValley.Events;
-using StardewValley.Quests;
 using System.IO;
 using SpaceCore.Events;
 using CookingSkill.Other;
@@ -83,9 +76,9 @@ namespace CookingSkill
         // Returns for whether or not we should consume the ingredients
         public static bool onCook( CraftingRecipe recipe, Item item )
         {
-            if (recipe.isCookingRecipe && item is Object)
+            if (recipe.isCookingRecipe && item is SObject)
             {
-                Object obj = item as Object;
+                SObject obj = item as SObject;
                 int amtCrafted = 0;
                 if (Game1.player.recipesCooked.ContainsKey(obj.parentSheetIndex))
                 {
@@ -93,16 +86,16 @@ namespace CookingSkill
                 }
                 Random rand = new Random((int)(Game1.stats.daysPlayed + Game1.uniqueIDForThisGame + (uint)obj.ParentSheetIndex + (uint)amtCrafted));
 
-                obj.edibility = (int)(obj.edibility * getEdibilityMultiplier());
+                obj.Edibility = (int)(obj.edibility * getEdibilityMultiplier());
 
                 if (Game1.player.professions.Contains(PROFESSION_SELLPRICE))
                 {
-                    obj.price = (int)(obj.price * 1.2);
+                    obj.Price = (int)(obj.price * 1.2);
                 }
 
                 if (Game1.player.professions.Contains(PROFESSION_SILVER))
                 {
-                    obj.quality = 1;
+                    obj.Quality = 1;
                 }
 
                 var used = new List<NewCraftingPage.ConsumedItem>();
@@ -112,7 +105,7 @@ namespace CookingSkill
                 foreach (NewCraftingPage.ConsumedItem ingr in used )
                     total += ingr.amt;
 
-                for (int iq = 1; iq <= Object.bestQuality; ++iq)
+                for (int iq = 1; iq <= SObject.bestQuality; ++iq)
                 {
                     if (iq == 3) continue; // Not a real quality
 
@@ -124,7 +117,7 @@ namespace CookingSkill
                     }
 
                     if (rand.NextDouble() < chance)
-                        obj.quality = iq;
+                        obj.Quality = iq;
                 }
 
                 if (rand.NextDouble() < getNoConsumeChance())
@@ -193,7 +186,7 @@ namespace CookingSkill
 
             SaveEvents.AfterLoad += afterLoad;
             SaveEvents.AfterSave += afterSave;
-            LocationEvents.CurrentLocationChanged += locChanged;
+            PlayerEvents.Warped += locChanged;
             GameEvents.UpdateTick += update;
             GraphicsEvents.OnPostRenderGuiEvent += drawAfterGui;
             
@@ -211,13 +204,7 @@ namespace CookingSkill
             {
                 Log.debug("Converting old cooking experience to new");
                 data.experience = Game1.player.experiencePoints[6];
-
-                var oldExp = Game1.player.experiencePoints;
-                Game1.player.experiencePoints = new int[6];
-                for ( int i = 0; i < 6; ++i )
-                {
-                    Game1.player.experiencePoints[i] = oldExp[i];
-                }
+                Game1.player.experiencePoints.RemoveAt(6);
             }
         }
 
@@ -231,15 +218,15 @@ namespace CookingSkill
         private Buff lastFood = null, lastDrink = null;
         private void update(object sender, EventArgs args)
         {
-            if (Game1.isEating != wasEating)
+            if (Game1.player.isEating != wasEating)
             {
-                if ( !Game1.isEating )
+                if ( !Game1.player.isEating )
                 {
                     // Apparently this happens when the ask to eat dialog opens, but they pressed no.
                     // So make sure something was actually consumed.
                     if ( prevToEatStack != -1 && ( prevToEatStack - 1 == Game1.player.itemToEat.Stack ) )
                     {
-                        Object obj = Game1.player.itemToEat as Object;
+                        SObject obj = Game1.player.itemToEat as SObject;
 				        string[] info = Game1.objectInformation[obj.ParentSheetIndex].Split( '/' );
                         string[] buffData = ((Convert.ToInt32(info[2]) > 0 && info.Count() > 7) ? info[7].Split(' ') : null);
 
@@ -368,13 +355,13 @@ namespace CookingSkill
                         }
                     }
                 }
-                Log.trace("Eating:" + Game1.isEating);
+                Log.trace("Eating:" + Game1.player.isEating);
                 Log.trace("prev:" + prevToEatStack);
                 Log.trace("I:"+Game1.player.itemToEat + " " + ((Game1.player.itemToEat != null) ? Game1.player.itemToEat.getStack() : -1));
                 Log.trace("A:" + Game1.player.ActiveObject + " " + ((Game1.player.ActiveObject != null) ? Game1.player.ActiveObject.getStack() : -1));
                 prevToEatStack = (Game1.player.itemToEat != null ? Game1.player.itemToEat.Stack : -1);
             }
-            wasEating = Game1.isEating;
+            wasEating = Game1.player.isEating;
 
             if (Game1.activeClickableMenu != null)
             {
@@ -562,26 +549,24 @@ namespace CookingSkill
         {
             if ( HAS_ALL_PROFESSIONS )
             {
-                Util.DecompileComment("This is where AllProfessions does it.");
-                Util.DecompileComment("This is that mod's code, too (from ILSpy, anyways). Just trying to give credit where credit is due. :P");
-                List<int> professions = Game1.player.professions;
+                // This is AllProfessions code, updated for 1.3
+                var profs = Game1.player.professions;
                 List<List<int>> list = new List<List<int>> { professions5, professions10, };
                 foreach (List<int> current in list)
                 {
-                    bool flag = professions.Intersect(current).Any<int>();
+                    bool flag = profs.Intersect(current).Any<int>();
                     if (flag)
                     {
                         foreach (int current2 in current)
                         {
-                            bool flag2 = !professions.Contains(current2);
+                            bool flag2 = !profs.Contains(current2);
                             if (flag2)
                             {
-                                professions.Add(current2);
+                                profs.Add(current2);
                             }
                         }
                     }
                 }
-                Util.DecompileComment("End of AllProfessions code.");
             }
         }
 
