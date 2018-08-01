@@ -35,15 +35,15 @@ namespace RushOrders
                 ShopMenu shop = Game1.activeClickableMenu as ShopMenu;
                 if (shop.portraitPerson != null)
                 {
-                    if (shop.portraitPerson.name == "Clint")
+                    if (shop.portraitPerson.Name == "Clint")
                     {
                         addToolRushOrders(shop);
                     }
-                    else if (shop.portraitPerson.name == "Robin")
+                    else if (shop.portraitPerson.Name == "Robin")
                     {
                         if ((Game1.player.daysUntilHouseUpgrade > 1 || Game1.getFarm().isThereABuildingUnderConstruction() &&
-                            (Game1.getFarm().getBuildingUnderConstruction().daysOfConstructionLeft > 1 ||
-                             Game1.getFarm().getBuildingUnderConstruction().daysUntilUpgrade > 1)))
+                            (Game1.getFarm().getBuildingUnderConstruction().daysOfConstructionLeft.Value > 1 ||
+                             Game1.getFarm().getBuildingUnderConstruction().daysUntilUpgrade.Value > 1)))
                         {
                             if (!(prevMenu is RushConstructionMenu))
                                 doRushBuildingDialogue();
@@ -54,11 +54,11 @@ namespace RushOrders
             else if (Game1.activeClickableMenu is DialogueBox)
             {
                 DialogueBox diagBox = Game1.activeClickableMenu as DialogueBox;
-                var diag = instance.Helper.Reflection.GetPrivateValue< Dialogue >(diagBox, "characterDialogue");
-                if ( diag != null && diag.speaker != null && diag.speaker.name == "Robin" &&
+                var diag = instance.Helper.Reflection.GetField< Dialogue >(diagBox, "characterDialogue").GetValue();
+                if ( diag != null && diag.speaker != null && diag.speaker.Name == "Robin" &&
                     ( Game1.player.daysUntilHouseUpgrade > 1 || Game1.getFarm().isThereABuildingUnderConstruction() &&
-                     (Game1.getFarm().getBuildingUnderConstruction().daysOfConstructionLeft > 1 ||
-                      Game1.getFarm().getBuildingUnderConstruction().daysUntilUpgrade > 1)) )
+                     (Game1.getFarm().getBuildingUnderConstruction().daysOfConstructionLeft.Value > 1 ||
+                      Game1.getFarm().getBuildingUnderConstruction().daysUntilUpgrade.Value > 1)) )
                 {
                     if (!(prevMenu is RushConstructionMenu))
                         doRushBuildingDialogue();
@@ -108,12 +108,12 @@ namespace RushOrders
                 }
                 toolRush.UpgradeLevel = tool.UpgradeLevel;
                 toolNow.UpgradeLevel = tool.UpgradeLevel;
-                toolRush.DisplayName = tool.name + "         *RUSH*";
-                toolNow.DisplayName  = tool.name + "       =INSTANT=";
+                toolRush.DisplayName = tool.DisplayName + "         *RUSH*";
+                toolNow.DisplayName  = tool.DisplayName + "       =INSTANT=";
                 toolRush.description = "The tool will take one day to upgrade." + Environment.NewLine + Environment.NewLine + tool.description;
                 toolNow.description = "The tool will be immediately upgraded." + Environment.NewLine + Environment.NewLine + tool.description;
                 
-                int price = getToolUpgradePrice(tool.upgradeLevel);
+                int price = getToolUpgradePrice(tool.UpgradeLevel);
                 if (entry.Value[0] == price)
                 {
                     int[] entryDataRush = (int[])entry.Value.Clone();
@@ -155,20 +155,20 @@ namespace RushOrders
             if (clint.CurrentDialogue.Count > 0 && clint.CurrentDialogue.Peek().getCurrentDialogue() == Game1.content.LoadString("Strings\\StringsFromCSFiles:Tool.cs.14317"))
                 haveDialogue = true;
 
-            if ( !hadDialogue && haveDialogue && Game1.player.daysLeftForToolUpgrade == 2 && Game1.player.toolBeingUpgraded != null )
+            if ( !hadDialogue && haveDialogue && Game1.player.daysLeftForToolUpgrade.Value == 2 && Game1.player.toolBeingUpgraded.Value != null )
             {
-                int currPrice = getToolUpgradePrice(Game1.player.toolBeingUpgraded.upgradeLevel);
+                int currPrice = getToolUpgradePrice(Game1.player.toolBeingUpgraded.Value.UpgradeLevel);
                 int diff = prevMoney - Game1.player.money;
 
                 if (diff == (int)(currPrice * ModConfig.PriceFactor.Tool.Now))
                 {
-                    Game1.player.daysLeftForToolUpgrade = 0;
+                    Game1.player.daysLeftForToolUpgrade.Value = 0;
                     clint.CurrentDialogue.Pop();
                     Game1.drawDialogue(Game1.getCharacterFromName("Clint", false), "Thanks. I'll get started right away. It should be ready in a few minutes.");
                 }
                 else if ( diff == ( int )( currPrice * ModConfig.PriceFactor.Tool.Rush) )
                 {
-                    Game1.player.daysLeftForToolUpgrade = 1;
+                    Game1.player.daysLeftForToolUpgrade.Value = 1;
                     clint.CurrentDialogue.Pop();
                     Game1.drawDialogue(Game1.getCharacterFromName("Clint", false), "Thanks. I'll get started right away. It should be ready tomorrow.");
                 }
@@ -200,10 +200,10 @@ namespace RushOrders
             else if (Game1.getFarm().getBuildingUnderConstruction() != null)
             {
                 Building building = Game1.getFarm().getBuildingUnderConstruction();
-                if (building.daysOfConstructionLeft > 0)
-                    building.daysOfConstructionLeft--;
-                else if (building.daysUntilUpgrade > 0)
-                    building.daysUntilUpgrade--;
+                if (building.daysOfConstructionLeft.Value > 0)
+                    building.daysOfConstructionLeft.Value--;
+                else if (building.daysUntilUpgrade.Value > 0)
+                    building.daysUntilUpgrade.Value--;
             }
         }
 
@@ -214,10 +214,10 @@ namespace RushOrders
             else if (Game1.getFarm().getBuildingUnderConstruction() != null)
             {
                 Building building = Game1.getFarm().getBuildingUnderConstruction();
-                if (building.daysOfConstructionLeft > 0)
-                    return building.daysOfConstructionLeft;
-                else if (building.daysUntilUpgrade > 0)
-                    return building.daysUntilUpgrade;
+                if (building.daysOfConstructionLeft.Value > 0)
+                    return building.daysOfConstructionLeft.Value;
+                else if (building.daysUntilUpgrade.Value > 0)
+                    return building.daysUntilUpgrade.Value;
             }
 
             return -1;
@@ -228,22 +228,22 @@ namespace RushOrders
             int num = 0;
             if (Game1.player.daysUntilHouseUpgrade > 0)
             {
-                if (Game1.player.houseUpgradeLevel == 0)
+                if (Game1.player.HouseUpgradeLevel == 0)
                     num = 10000;
-                else if (Game1.player.houseUpgradeLevel == 1)
+                else if (Game1.player.HouseUpgradeLevel == 1)
                     num = 50000;
-                else if (Game1.player.houseUpgradeLevel == 2)
+                else if (Game1.player.HouseUpgradeLevel == 2)
                     num = 100000;
             }
             else if ( Game1.getFarm().getBuildingUnderConstruction() != null )
             {
                 Building building = Game1.getFarm().getBuildingUnderConstruction();
-                if (building.daysOfConstructionLeft > 0)
+                if (building.daysOfConstructionLeft.Value > 0)
                 {
-                    BluePrint bp = new BluePrint(building.buildingType);
+                    BluePrint bp = new BluePrint(building.buildingType.Value);
                     num = bp.moneyRequired;
                 }
-                else if (building.daysUntilUpgrade > 0)
+                else if (building.daysUntilUpgrade.Value > 0)
                 {
                     BluePrint bp = new BluePrint(building.getNameOfNextUpgrade());
                     num = bp.moneyRequired;
