@@ -14,7 +14,14 @@
   * [Objects](#objects)
     * [Crop and Fruit Tree Objects](#crop-and-fruit-tree-objects)
     * [Recipes](#recipes)
+  * [Hats](#hats)
+* [Gift Tastes](#gift-tastes)
 * [Converting From Legacy Format](#converting-from-legacy-format)
+* [Releasing A Content Pack](#releaseing-a-content-pack)
+* [Troubleshooting](#troubleshooting)
+  * [Target Out of Range](#target-out-of-range)
+  * [Exception Injecting Given Key](#exception-injecting-given-key)
+  * [Exception Injecting Duplicate Key](#exception-injecting-duplicate-key)
 * [See Also](#see-also)
 
 ## Install
@@ -31,6 +38,7 @@ Json Assets allows you to add custom objects to the game without having to creat
 * Recipes
 * Craftables (16x16)
 * Big-Craftables (16x32)
+* Hats (upcoming 1.3-stable)
 
 Examples of how to set up all types of objects can be found in the [Blank JSON Assets Template](https://www.nexusmods.com/stardewvalley/mods/1746). I also highly recommend looking up preexisting content packs for further examples:
 
@@ -101,8 +109,8 @@ field                      | purpose
 `SeedDescription`          | Describe what season you plant these in. Also note if it continues to grow after first harvest and how many days it takes to regrow.
 `Type`                     | Available types are `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, and `Seeds`.
 `Season`                   | Seasons must be in lowercase and in quotation marks, so if you want to make your crop last all year, you'd put in "spring", "summer", "fall", "winter". If you want to make winter plants, you will have to require [SpaceCore](http://www.nexusmods.com/stardewvalley/mods/1348) for your content pack.
-`Phases`                   | Determines how long each phase lasts. Crops can have 2-5 phases, and the numbers in phases refer to how many days a plant spends in that phase. Seeds **do not** count as a phase.
-`RegrowthPhase`            | If your plant is a one time harvest set this to `-1`. If it does, this determines how many days it takes for it to regrow. *Requires additional sprite at the end of the crop.png*
+`Phases`                   | Determines how long each phase lasts. Crops can have 2-5 phases, and the numbers in phases refer to how many days a plant spends in that phase. Seeds **do not** count as a phase. If your crop has regrowth, the last number in this set corresponds to how many days it takes for the crop to regrow. Ex. [1, 2, 3, 4, 3] This crop takes 10 days to grow and 3 days to regrow.
+`RegrowthPhase`            | If your plant is a one time harvest set this to `-1`. If it does, this determines which sprite the regrowth starts at. I typically recommend the sprite right before the harvest. *Requires additional sprite at the end of the crop.png*
 `HarvestWithScythe`        | Set to `true` or `false`.
 `TrellisCrop`              | Set to `true` or `false`. Determines if you can pass through a crop or not. Flowers cannot grow on trellises and have colors.
 `Colors`                   | Colors use RGBA for color picking, set to `null` if your plant does not have colors.
@@ -116,7 +124,7 @@ field                      | purpose
 `SeedPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SeedPurchaseRequirements` set this to `null`.
 
 ### FruitTrees
-Fruit trees added by Json Assets work a bit differently than vanilla fruit trees as you have to till/hoe the ground before planting them. This means they cannot be placed on the edges of the greenhouse like vanilla trees.
+Fruit trees added by Json Assets work a bit differently than vanilla fruit trees as you have to till/hoe the ground before planting them. This means they cannot be placed on the edges of the greenhouse like vanilla trees. (7/4/18) There is a proposed fix using Harmony to treat custom trees like vanilla trees.
 
 A fruit trees subfolder is a folder with these files:
 * a `tree.json`;
@@ -180,6 +188,40 @@ field                  | purpose
 `PurchasePrice`        | How much you can purchase the recipe for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 
+### Hats
+Hats are a planned feature for the 1.3-stable version of JsonAssets. Hats are 20x80 and can be added through a `Hats` folder. All hats are purchaseable through [hat mouse](https://stardewvalleywiki.com/Abandoned_House). 
+
+A hats subfolder for a hat is a folder that contains these files:
+
+* a `hat.json`;
+* a `hat.png`;
+
+field                  | purpose
+---------------------- | -------
+`Name`                 | The name you would like your object to have, this should be identical to the subfolder name.
+`Description`          | Description of the product.
+`PurchasePrice`        | How much you can purchase the hat for.
+`ShowHair`             | Set this to `true` or `false` depending on if you want the players' hair to be visible or not. Setting this to `false` is a good idea for masks.
+`IgnoreHairstyleOffset`| Set this to `true` or `false`. When set to `true` the hat will ignore any hairstyle offset.
+
+## Gift Tastes
+
+With the upcoming 1.3-stable release of JsonAssets, gift taste support has been added. You can add gift taste support to any pre-existing content pack by adding the following to the respective `.json` file. It does not matter where you put it. I tend to place it at the bottom of the `.json` but it is personal preferance. 
+
+If it can be gifted to an NPC it has gift taste support built in. This means `hats` and `big-craftables` do not have gift taste support. If you exclude an NPC from the gift taste, their reaction will default to `Neutral`.
+
+```
+ "GiftTastes":
+    {
+        "Love": [],
+        "Like": [],
+        "Neutral": [],
+        "Dislike": [],
+        "Hat": [],
+    },
+```
+An example of a filled out gift taste can be found [here](https://pastebin.com/9K3t2SLL). You can delete unused fields within `GiftTastes`.
+
 ## Converting From Legacy Format
 Before the release of SMAPI 2.5, Json Assets content packs previously needed a `content-pack.json` and had to be installed directly in the Json Assets folder. This is an outdated method and the more current `manifest.json` method should be used.
 
@@ -215,6 +257,39 @@ info. Suggestions:
    ```
 2. When editing the Nexus page, add Json Assets under 'Requirements'. Besides reminding players to install it first, it'll also add your content pack to the list on the Json Asset page.
 
+## Troubleshooting
+
+There are some common errors with easy solutions. Your error may look slightly different but the general principal is the same.
+
+### Target Out of Range
+```
+Exception injecting crop sprite for Blue_Mist: System.ArgumentOutOfRangeException: The target area is outside the bounds of the target texture.
+Parameter name: targetArea
+   at StardewModdingAPI.Framework.Content.AssetDataForImage.PatchImage(Texture2D source, Nullable`1 sourceArea, Nullable`1 targetArea, PatchMode patchMode) in C:\source\_Stardew\SMAPI\src\SMAPI\Framework\Content\AssetDataForImage.cs:line 44
+   at JsonAssets.ContentInjector.Edit[T](IAssetData asset) in G:\StardewValley\Mods\JsonAssets\ContentInjector.cs:line 194
+```
+Solution: The sprite is too big. Double check what size the image needs to be for that specific type of item and crop your image accordingly. If you're trying to load tree crops, this error occurs when you have reached the maximum amount of trees the game can handle (a hardcoded number). 
+
+### Exception Injecting Given Key
+```
+Exception injecting cooking recipe for Bulgogi: System.Collections.Generic.KeyNotFoundException: The given key was not present in the dictionary.
+   at System.Collections.Generic.Dictionary`2.get_Item(TKey key)
+   at JsonAssets.Mod.ResolveObjectId(Object data) in G:\StardewValley\Mods\JsonAssets\Mod.cs:line 336
+   at JsonAssets.Data.ObjectData.Recipe_.GetRecipeString(ObjectData parent) in G:\StardewValley\Mods\JsonAssets\Data\ObjectData.cs:line 60
+   at JsonAssets.ContentInjector.Edit[T](IAssetData asset) in G:\StardewValley\Mods\JsonAssets\ContentInjector.cs:line 98
+ ```
+Solution: There is something missing from the recipe. This is caused by not installing a dependency or typing in an item ID/Name wrong. Install the dependencies (often listed on the download page) or open up the `.json` file and see if you typed something wrong.
+ 
+### Exception Injecting Duplicate Key
+```
+Exception injecting cooking recipe for Bacon: System.ArgumentException: An item with the same key has already been added.
+   at System.ThrowHelper.ThrowArgumentException(ExceptionResource resource)
+   at System.Collections.Generic.Dictionary`2.Insert(TKey key, TValue value, Boolean add)
+   at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
+   at JsonAssets.ContentInjector.Edit[T](IAssetData asset) in G:\StardewValley\Mods\JsonAssets\ContentInjector.cs:line 99Exception i
+ ```
+ Solution: There is already an item with that name. This can happen when: using mods that have the same items, having two of the same file in different locations, or accidently naming something with the same name. Double check all folders and rename accordingly. 
+ 
 ## See Also
 
 * [Nexus Page](https://www.nexusmods.com/stardewvalley/mods/1720)
