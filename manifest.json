@@ -10,5 +10,6 @@
   "Description": "...",
   "UniqueID": "spacechase0.CarryChest",
   "PerSaveConfigs": false,
-  "EntryDll": "CarryChest.dll"
+  "EntryDll": "CarryChest.dll",
+  "UpdateKeys": [ "Nexus:1333" ]
 }

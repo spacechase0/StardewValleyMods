@@ -6,6 +6,7 @@ using StardewValley;
 using StardewValley.Objects;
 using System;
 using System.Collections.Specialized;
+using SObject = StardewValley.Object;
 
 namespace CarryChest
 {
@@ -14,29 +15,31 @@ namespace CarryChest
         public static Mod instance;
         public override void Entry(IModHelper helper)
         {
-            base.Entry(helper);
             instance = this;
 
             GameEvents.UpdateTick += update;
-            LocationEvents.CurrentLocationChanged += locChanged;
+            PlayerEvents.Warped += locChanged;
+            SaveEvents.AfterLoad += afterLoad;
+        }
+
+        private void afterLoad(object sender, EventArgs args)
+        {
+            Game1.currentLocation.netObjects.OnValueAdded += locObjectsChanged;
         }
         
-        private void locChanged( object sender, EventArgsCurrentLocationChanged args )
+        private void locChanged( object sender, EventArgsPlayerWarped args )
         {
             if (args.PriorLocation != null)
-                args.PriorLocation.objects.CollectionChanged -= locObjectsChanged;
-            args.NewLocation.objects.CollectionChanged += locObjectsChanged;
+                args.PriorLocation.netObjects.OnValueAdded -= locObjectsChanged;
+            args.NewLocation.netObjects.OnValueAdded += locObjectsChanged;
         }
 
         private Vector2 mostRecentPos;
         private StardewValley.Object mostRecent;
-        private void locObjectsChanged( object sender, NotifyCollectionChangedEventArgs args )
+        private void locObjectsChanged( Vector2 key, SObject value )
         {
-            if (args.Action == NotifyCollectionChangedAction.Add)
-            {
-                mostRecentPos = (Vector2)args.NewItems[0];
-                mostRecent = Game1.currentLocation.objects[mostRecentPos];
-            }
+            mostRecentPos = (Vector2)key;
+            mostRecent = value;
         }
         
         private int prevSel = -1;
@@ -49,9 +52,11 @@ namespace CarryChest
 
             if (prevHolding is Chest chest && mostRecent is Chest mostRecentChest && Game1.player.ActiveObject == null && Game1.player.CurrentToolIndex == prevSel)
             {
-                mostRecentChest.playerChoiceColor = chest.playerChoiceColor;
+                mostRecentChest.playerChoiceColor.Value = chest.playerChoiceColor.Value;
                 if (chest.items.Count > 0)
-                    mostRecentChest.items = chest.items;
+                {
+                    mostRecentChest.items.CopyFrom(chest.items);
+                }
 
                 prevSel = Game1.player.CurrentToolIndex;
                 prevHolding = Game1.player.ActiveObject;
@@ -59,10 +64,10 @@ namespace CarryChest
                 return;
             }
             else if ( prevHolding != null && mostRecent != null && Game1.player.ActiveObject == null && Game1.player.CurrentToolIndex == prevSel &&
-                      prevHolding.heldObject != null && prevHolding.minutesUntilReady > 0)
+                      prevHolding.heldObject.Value != null && prevHolding.MinutesUntilReady > 0)
             {
-                mostRecent.heldObject = prevHolding.heldObject;
-                mostRecent.minutesUntilReady = prevHolding.minutesUntilReady;
+                mostRecent.heldObject.Value = prevHolding.heldObject.Value;
+                mostRecent.MinutesUntilReady = prevHolding.MinutesUntilReady;
 
                 prevSel = Game1.player.CurrentToolIndex;
                 prevHolding = Game1.player.ActiveObject;
@@ -82,7 +87,7 @@ namespace CarryChest
                 if (Game1.currentLocation.objects.ContainsKey(tile))
                 {
                     var obj = Game1.currentLocation.objects[tile];
-                    if (obj is Chest || (obj.parentSheetIndex != 156 && obj.heldObject != null && obj.minutesUntilReady > 0))
+                    if (obj is Chest || (obj.ParentSheetIndex != 156 && obj.heldObject.Value != null && obj.MinutesUntilReady > 0))
                     {
                         if (Game1.player.addItemToInventoryBool(obj, true))
                         {
