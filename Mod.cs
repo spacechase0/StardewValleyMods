@@ -14,6 +14,7 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Objects;
 using System.Reflection;
 using Netcode;
+using StardewValley.Buildings;
 
 // TODO: Refactor recipes
 
@@ -566,6 +567,11 @@ namespace JsonAssets
                 {
                     if (fixId(oldObjectIds, objectIds, obj.heldObject.Value.parentSheetIndex, Game1.objectInformation))
                         obj.heldObject.Value = null;
+
+                    if ( obj.heldObject.Value is Chest chest2 )
+                    {
+                        fixItemList(chest2.items);
+                    }
                 }
             }
             foreach (var rem in toRemove)
@@ -597,6 +603,11 @@ namespace JsonAssets
                 {
                     if (fixId(oldObjectIds, objectIds, obj.heldObject.Value.parentSheetIndex, Game1.objectInformation))
                         obj.heldObject.Value = null;
+
+                    if (obj.heldObject.Value is Chest chest2)
+                    {
+                        fixItemList(chest2.items);
+                    }
                 }
             }
             foreach (var rem in toRemove)
@@ -604,8 +615,15 @@ namespace JsonAssets
 
             if (loc is BuildableGameLocation buildLoc)
                 foreach (var building in buildLoc.buildings)
+                {
                     if (building.indoors.Value != null)
                         fixLocation(building.indoors.Value);
+                    if ( building is Mill mill )
+                    {
+                        fixItemList(mill.input.Value.items);
+                        fixItemList(mill.output.Value.items);
+                    }
+                }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
