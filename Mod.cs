@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using SpaceCore.Events;
 using CookingSkill.Other;
+using StardewValley.Network;
 
 namespace CookingSkill
 {
@@ -18,7 +19,32 @@ namespace CookingSkill
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        public static SaveData data = new SaveData();
+        //public static SaveData data = new SaveData();
+        public static MultiplayerSaveData dataMp = new MultiplayerSaveData();
+
+        public const string MSG_DATA = "spacechase0.CookingSkill.Data";
+        public const string MSG_EXPERIENCE = "spacechase0.CookingSkill.Experience";
+
+        public static int MyExperience
+        {
+            get
+            {
+                return dataMp.Experience[Game1.player.UniqueMultiplayerID];
+            }
+            set
+            {
+                if (dataMp.Experience[Game1.player.UniqueMultiplayerID] != value)
+                {
+                    dataMp.Experience[Game1.player.UniqueMultiplayerID] = value;
+                    using (var stream = new MemoryStream())
+                    using (var writer = new BinaryWriter(stream))
+                    {
+                        writer.Write(value);
+                        SpaceCore.SpaceCore.BroadcastMessage(MSG_EXPERIENCE, stream.ToArray());
+                    }
+                }
+            }
+        }
 
         public static readonly int[] expNeededForLevel = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
         public static List<int> newCookingLevels = new List<int>();
@@ -26,7 +52,7 @@ namespace CookingSkill
         {
             for ( int i = expNeededForLevel.Length - 1; i >= 0; --i )
             {
-                if ( data.experience >= expNeededForLevel[ i ] )
+                if ( MyExperience >= expNeededForLevel[ i ] )
                 {
                     return i + 1;
                 }
@@ -41,10 +67,11 @@ namespace CookingSkill
                 return;
 
             int oldLevel = getCookingLevel();
-            Log.trace("Adding " + amt + " experience to cooking, from " + data.experience);
-            data.experience += amt;
-            if (data.experience > expNeededForLevel[expNeededForLevel.Length - 1])
-                data.experience = expNeededForLevel[expNeededForLevel.Length - 1];
+            Log.trace("Adding " + amt + " experience to cooking, from " + MyExperience);
+            int exp = MyExperience + amt;
+            if (exp > expNeededForLevel[expNeededForLevel.Length - 1])
+                exp = expNeededForLevel[expNeededForLevel.Length - 1];
+            MyExperience = amt;
 
             int newLevel = getCookingLevel();
             Log.trace("From level " + oldLevel + " to " + newLevel);
@@ -191,26 +218,69 @@ namespace CookingSkill
             GraphicsEvents.OnPostRenderGuiEvent += drawAfterGui;
             
             SpaceEvents.ShowNightEndMenus += showLevelMenu;
+            SpaceEvents.ServerGotClient += clientJoined;
+            SpaceCore.SpaceCore.RegisterMessageHandler(MSG_DATA, onDataMessage);
+            SpaceCore.SpaceCore.RegisterMessageHandler(MSG_EXPERIENCE, onExpMessage);
 
             checkForExperienceBars();
             checkForLuck();
             checkForAllProfessions();
         }
 
+        private void clientJoined(object sender, EventArgsServerGotClient args)
+        {
+            using (var stream = new MemoryStream())
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(dataMp.Experience.Count);
+                foreach ( var exp in dataMp.Experience )
+                {
+                    writer.Write(exp.Key);
+                    writer.Write(exp.Value);
+                }
+
+                var server = (GameServer)sender;
+                SpaceCore.SpaceCore.ServerSendTo(args.FarmerID, MSG_DATA, stream.ToArray());
+            }
+        }
+
+        private void onExpMessage(IncomingMessage msg)
+        {
+            dataMp.Experience[ msg.FarmerID ] = msg.Reader.ReadInt32();
+        }
+
+        private void onDataMessage(IncomingMessage msg)
+        {
+            int count = msg.Reader.ReadInt32();
+            for ( int i = 0; i < count; ++i )
+            {
+                long id = msg.Reader.ReadInt64();
+                int exp = msg.Reader.ReadInt32();
+                dataMp.Experience[id] = exp;
+            }
+        }
+
         private void afterLoad(object sender, EventArgs args)
         {
-            data = Helper.ReadJsonFile<SaveData>(SaveData.FilePath) ?? new SaveData();
+            var oldData = Helper.ReadJsonFile<SaveData>(SaveData.FilePath) ?? new SaveData();
             if ( Game1.player.experiencePoints.Length == 7 )
             {
                 Log.debug("Converting old cooking experience to new");
-                data.experience = Game1.player.experiencePoints[6];
+                oldData.experience = Game1.player.experiencePoints[6];
                 Game1.player.experiencePoints.RemoveAt(6);
+            }
+
+            dataMp = Helper.ReadJsonFile<MultiplayerSaveData>(MultiplayerSaveData.FilePath) ?? new MultiplayerSaveData();
+            if ( oldData.experience != 0 )
+            {
+                Log.debug("Converting SP cooking experience to MP");
+                MyExperience = oldData.experience;
             }
         }
 
         private void afterSave(object sender, EventArgs args)
         {
-            Helper.WriteJsonFile(SaveData.FilePath, data);
+            Helper.WriteJsonFile(MultiplayerSaveData.FilePath, dataMp);
         }
 
         private bool wasEating = false;
@@ -618,7 +688,7 @@ namespace CookingSkill
             try
             {
                 int level = getCookingLevel();
-                int exp = data.experience;
+                int exp = MyExperience;
 
                 int prevReq = 0, nextReq = 1;
                 if (level == 0)
