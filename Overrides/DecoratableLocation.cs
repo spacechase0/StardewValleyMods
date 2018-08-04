@@ -10,7 +10,7 @@ namespace SpaceCore.Overrides
 {
     public class WallpaperHook
     {
-        public bool Prefix(DecoratableLocation __instance, int which, int whichRoom = -1, bool persist = false)
+        public static bool Prefix(DecoratableLocation __instance, int which, int whichRoom, bool persist)
         {
             var cloc = __instance as CustomDecoratableLocation;
             var wallPaper = SpaceCore.instance.Helper.Reflection.GetField<DecorationFacade>(__instance, "wallPaper").GetValue();
@@ -37,7 +37,7 @@ namespace SpaceCore.Overrides
     }
     public class FlooringHook
     {
-        public bool Prefix(DecoratableLocation __instance, int which, int whichRoom = -1, bool persist = false)
+        public static bool Prefix(DecoratableLocation __instance, int which, int whichRoom, bool persist)
         {
             var cloc = __instance as CustomDecoratableLocation;
             var floor = SpaceCore.instance.Helper.Reflection.GetField<DecorationFacade>(__instance, "floor").GetValue();

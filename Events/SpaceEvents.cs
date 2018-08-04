@@ -1,6 +1,7 @@
 ﻿using SpaceCore.Utilities;
 using StardewValley;
 using StardewValley.Events;
+using StardewValley.Network;
 using System;
 
 namespace SpaceCore.Events
@@ -20,6 +21,15 @@ namespace SpaceCore.Events
         // When the player is done eating an item.
         // Check what item using player.itemToEat
         public static event EventHandler OnItemEaten;
+
+        // When a tile "Action" is activated
+        public static event EventHandler<EventArgsAction> ActionActivated;
+
+        // When a tile "TouchAction" is activated
+        public static event EventHandler<EventArgsAction> TouchActionActivated;
+
+        // Server side, when a client joins
+        public static event EventHandler<EventArgsServerGotClient> ServerGotClient;
 
         internal static void InvokeOnBlankSave()
         {
@@ -49,12 +59,41 @@ namespace SpaceCore.Events
             return args.NightEvent;
         }
 
-        internal static void InvokeOnItemEaten( Farmer farmer)
+        internal static void InvokeOnItemEaten(Farmer farmer)
         {
             Log.trace("Event: OnItemEaten");
             if (OnItemEaten == null)
                 return;
             Util.invokeEvent("SpaceEvents.OnItemEaten", OnItemEaten.GetInvocationList(), farmer);
+        }
+
+        internal static bool InvokeActionActivated(Farmer who, string action, xTile.Dimensions.Location pos)
+        {
+            Log.trace("Event: ActionActivated");
+            if (ActionActivated == null)
+                return false;
+            var arg = new EventArgsAction(false, action, pos);
+            return Util.invokeEventCancelable("SpaceEvents.ActionActivated", ActionActivated.GetInvocationList(), who, arg);
+        }
+
+        internal static bool InvokeTouchActionActivated(Farmer who, string action, xTile.Dimensions.Location pos)
+        {
+            Log.trace("Event: TouchActionActivated");
+            if (TouchActionActivated == null)
+                return false;
+            var arg = new EventArgsAction(true, action, pos);
+            return Util.invokeEventCancelable("SpaceEvents.TouchActionActivated", TouchActionActivated.GetInvocationList(), who, arg);
+        }
+
+        internal static void InvokeServerGotClient(GameServer server, long peer)
+        {
+            var args = new EventArgsServerGotClient();
+            args.FarmerID = peer;
+
+            Log.trace("Event: ServerGotClient");
+            if (ServerGotClient == null)
+                return;
+            Util.invokeEvent("SpaceEvents.ServerGotClient", ServerGotClient.GetInvocationList(), server, args);
         }
     }
 }

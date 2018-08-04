@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpaceCore.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -51,6 +52,24 @@ namespace SpaceCore.Utilities
                     Log.error( $"Exception while handling event {name}:\n{e}" );
                 }
             }
+        }
+
+        // Returns if the event was canceled or not
+        public static bool invokeEventCancelable<T>(string name, IEnumerable<Delegate> handlers, object sender, T args) where T : CancelableEventArgs
+        {
+            foreach (EventHandler<T> handler in handlers.Cast<EventHandler<T>>())
+            {
+                try
+                {
+                    handler.Invoke(sender, args);
+                }
+                catch (Exception e)
+                {
+                    Log.error($"Exception while handling event {name}:\n{e}");
+                }
+            }
+
+            return args.Cancel;
         }
     }
 }

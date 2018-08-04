@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace SpaceCore.Overrides
 {
-    [HarmonyPatch(typeof(HoeDirt), "dayUpdate")]
     public class HoeDirtWinterFix
     {
         public static void dayUpdate(HoeDirt hoeDirt, GameLocation environment, Vector2 tileLocation)

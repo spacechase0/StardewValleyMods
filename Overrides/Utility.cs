@@ -8,7 +8,6 @@ using System.Reflection;
 
 namespace SpaceCore.Overrides
 {
-    [HarmonyPatch(typeof(Utility), "pickFarmEvent")]
     internal class NightlyFarmEventHook
     {
         public static void Postfix( ref FarmEvent __result )

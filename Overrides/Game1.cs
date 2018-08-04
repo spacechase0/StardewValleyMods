@@ -19,7 +19,6 @@ using SObject = StardewValley.Object;
 
 namespace SpaceCore.Overrides
 {
-    [HarmonyPatch(typeof(Game1), "showEndOfNightStuff")]
     public class ShowEndOfNightStuffHook
     {
         public static void showEndOfNightStuff_mid()
@@ -46,7 +45,6 @@ namespace SpaceCore.Overrides
         }
     }
 
-    [HarmonyPatch(typeof(Game1), "doneEating")]
     internal static class DoneEatingHook
     {
         public static void Postfix(Farmer __instance)
