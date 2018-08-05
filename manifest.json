@@ -1,15 +1,14 @@
 {
   "Name": "Cooking Skill",
   "Author": "spacechase0",
-  "Version": {
-    "MajorVersion": 1,
-    "MinorVersion": 1,
-    "PatchVersion": 0,
-    "Build": ""
-  },
+  "Version": "1.1.0",
   "Description": "Adds a cooking skill.",
   "UniqueID": "spacechase0.CookingSkill",
-  "PerSaveConfigs": false,
   "EntryDll": "CookingSkill.dll",
-  "UpdateKeys": [ "Nexus:522" ]
+  "UpdateKeys": [ "Nexus:522" ],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.SpaceCore"
+    }
+  ]
 }
