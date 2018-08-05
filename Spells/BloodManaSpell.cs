@@ -26,7 +26,7 @@ namespace Magic.Spells
 
         public override void onCast(SFarmer player, int level, int targetX, int targetY)
         {
-            Log.debug(player.name + " casted Blood Mana.");
+            Log.debug(player.Name + " casted Blood Mana.");
 
             int health = 10 + 10 * level;
             player.health -= health;

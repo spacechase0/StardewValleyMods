@@ -25,7 +25,7 @@ namespace Magic.Spells
             Vector2 target = new Vector2(targetX, targetY);
 
             Tool dummyHoe = new Hoe();
-            Reflect.setField(dummyHoe, "lastUser", player);
+            Mod.instance.Helper.Reflection.GetField<Farmer>(dummyHoe, "lastUser").SetValue(player);
 
             GameLocation loc = player.currentLocation;
             for (int ix = targetX - level; ix <= targetX + level; ++ix)
@@ -42,17 +42,17 @@ namespace Magic.Spells
                     if ( loc.objects.ContainsKey( pos ) )
                     {
                         var obj = loc.objects[pos];
-                        if ( obj.parentSheetIndex == 590 )
+                        if ( obj.ParentSheetIndex == 590 )
                         {
                             loc.digUpArtifactSpot( ix, iy, player);
                             loc.objects.Remove(pos);
                             player.addMana(-1);
                         }
-                        else if ( obj.performToolAction(dummyHoe) )
+                        else if ( obj.performToolAction(dummyHoe, loc) )
                         {
-                            if ( obj.type == "Crafting" && obj.fragility != 2 )
+                            if ( obj.Type == "Crafting" && obj.Fragility != 2 )
                             {
-                                loc.debris.Add(new Debris(obj.bigCraftable ? -obj.parentSheetIndex : obj.parentSheetIndex, pos, pos));
+                                loc.debris.Add(new Debris(obj.bigCraftable.Value ? -obj.ParentSheetIndex : obj.ParentSheetIndex, pos, pos));
                             }
                             obj.performRemoveAction(pos, loc);
                             loc.objects.Remove(pos);
@@ -62,7 +62,7 @@ namespace Magic.Spells
 
                     if ( loc.terrainFeatures.ContainsKey( pos ) )
                     {
-                        if (loc.terrainFeatures[pos].performToolAction(dummyHoe, 0, pos))
+                        if (loc.terrainFeatures[pos].performToolAction(dummyHoe, 0, pos, loc))
                         {
                             loc.terrainFeatures.Remove(pos);
                             player.addMana(-1);

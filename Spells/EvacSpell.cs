@@ -28,7 +28,12 @@ namespace Magic.Spells
         }
 
         private static float enterX, enterY;
-        internal static void onLocationChanged( object sender, EventArgsCurrentLocationChanged args )
+        internal static void onLocationChanged( object sender, EventArgsPlayerWarped args )
+        {
+            enterX = Game1.player.position.X;
+            enterY = Game1.player.position.Y;
+        }
+        internal static void onMineLevelChanged(object sender, EventArgsMineLevelChanged args)
         {
             enterX = Game1.player.position.X;
             enterY = Game1.player.position.Y;

@@ -11,15 +11,15 @@ namespace Magic.Game
 
         public CloudMount()
         {
-            name = displayName = "";
+            Name = displayName = "";
         }
 
-        private bool dismountedOnce = false;
+        //private bool dismountedOnce = false;
         private StardewValley.Farmer prevRider = null;
         public override void update(GameTime time, GameLocation location)
         {
             base.update(time, location);
-            if (rider == null || rider.getMount() != this)
+            if (rider == null || rider.mount != this)
             {
                 /*if (!dismountedOnce)
                 {
@@ -32,7 +32,7 @@ namespace Magic.Game
                 return;
             }
 
-            if ( !location.isOutdoors )
+            if ( !location.IsOutdoors )
             {
                 checkAction(rider, location);
             }
@@ -53,11 +53,11 @@ namespace Magic.Game
             if (rider == null)
                 return false;
 
-            this.dismounting = true;
+            this.dismounting.Value = true;
             this.farmerPassesThrough = false;
             this.rider.temporaryImpassableTile = Rectangle.Empty;
             Vector2 tileForCharacter = Utility.recursiveFindOpenTileForCharacter((Character)this.rider, this.rider.currentLocation, this.rider.getTileLocation(), 9*9);
-            this.dismounting = false;
+            this.dismounting.Value = false;
             this.Halt();
             if (!tileForCharacter.Equals(Vector2.Zero) /*&& (double)Vector2.Distance(tileForCharacter, this.rider.getTileLocation()) < 2.0*/)
             {
@@ -67,8 +67,8 @@ namespace Magic.Game
                 this.rider.freezePause = 5000;
                 this.rider.Halt();
                 this.rider.xOffset = 0.0f;
-                this.dismounting = true;
-                SpaceCore.Utilities.Reflect.setField(this, "dismountTile", tileForCharacter);
+                this.dismounting.Value = true;
+                Mod.instance.Helper.Reflection.GetField<Vector2>(this, "dismountTile").SetValue(tileForCharacter);
                 //Log.trace("dismount tile: " + tileForCharacter.ToString());
             }
             else

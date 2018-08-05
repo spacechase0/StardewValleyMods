@@ -30,10 +30,10 @@ namespace Magic.Spells
 
         public override void onCast(SFarmer player, int level, int targetX, int targetY)
         {
-            Log.debug(player.name + " casted Luck Steal.");
-            var num = Game1.random.Next(player.friendships.Count);
-            var friendshipData = player.friendships[new List<string>(player.friendships.Keys)[num]];
-            friendshipData[0] = Math.Max(0, friendshipData[0] - 250);
+            Log.debug(player.Name + " casted Luck Steal.");
+            var num = Game1.random.Next(player.friendshipData.Count());
+            var friendshipData = player.friendshipData[new List<string>(player.friendshipData.Keys)[num]];
+            friendshipData.Points = Math.Max(0, friendshipData.Points - 250);
             Game1.dailyLuck = 0.12;
             Game1.playSound("death");
             player.addMagicExp(50);

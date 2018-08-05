@@ -4,108 +4,104 @@ using StardewValley;
 using System;
 using static Magic.Mod;
 using SFarmer = StardewValley.Farmer;
+using System.IO;
 
 namespace Magic
 {
     public static class Extensions
     {
+        private static void dataCheck( SFarmer player )
+        {
+            if (!Data.players.ContainsKey(player.UniqueMultiplayerID))
+                Data.players.Add(player.UniqueMultiplayerID, new MultiplayerSaveData.PlayerData());
+        }
+
         public static int getCurrentMana(this SFarmer player)
         {
-            if (player != Game1.player || Data == null)
-                return 0;
-
-            return Data.mana;
+            dataCheck(player);
+            return Data.players[ player.UniqueMultiplayerID ].mana;
         }
 
         public static void addMana(this SFarmer player, int amt)
         {
-            if (player != Game1.player || Data == null)
-                return;
-
-            Data.mana = Math.Max(0, Math.Min(player.getCurrentMana() + amt, player.getMaxMana()));
+            dataCheck(player);
+            Data.players[player.UniqueMultiplayerID].mana = Math.Max(0, Math.Min(player.getCurrentMana() + amt, player.getMaxMana()));
+            if (player == Game1.player)
+                Data.syncMineMini();
         }
 
         public static int getMaxMana(this SFarmer player)
         {
-            if (player != Game1.player || Data == null)
-                return 0;
-
-            return Data.manaCap;
+            dataCheck(player);
+            return Data.players[player.UniqueMultiplayerID].manaCap;
         }
 
         public static void setMaxMana(this SFarmer player, int newCap )
         {
-            if (player != Game1.player || Data == null)
-                return;
-
-            Data.manaCap = newCap;
+            dataCheck(player);
+            Data.players[player.UniqueMultiplayerID].manaCap = newCap;
+            if (player == Game1.player)
+                Data.syncMineMini();
         }
 
         public static int getMagicLevel(this SFarmer player)
         {
-            if (player != Game1.player || Data == null)
-                return 0;
-
-            return Data.magicLevel;
+            dataCheck(player);
+            return Data.players[player.UniqueMultiplayerID].magicLevel;
         }
 
         public static int getMagicExp(this SFarmer player)
         {
-            if (player != Game1.player || Data == null)
-                return 0;
-
-            return Data.magicExp;
+            dataCheck(player);
+            return Data.players[player.UniqueMultiplayerID].magicExp;
         }
 
         public static void addMagicExp(this SFarmer player, int exp)
         {
-            if (player != Game1.player || Data == null)
+            dataCheck(player);
+            if (Data.players[player.UniqueMultiplayerID].magicLevel >= 50)
                 return;
 
-            if (Data.magicLevel >= 50)
-                return;
+            Data.players[player.UniqueMultiplayerID].magicExp += exp;
+            if (player == Game1.player)
+                Data.syncMineMini();
 
-            Data.magicExp += exp;
-            
-            while (Data.magicExp >= player.getMagicExpForNextLevel() )
+            while (Data.players[player.UniqueMultiplayerID].magicExp >= player.getMagicExpForNextLevel() )
             {
-                Data.magicExp -= player.getMagicExpForNextLevel();
-                Data.magicLevel++;
+                Data.players[player.UniqueMultiplayerID].magicExp -= player.getMagicExpForNextLevel();
+                Data.players[player.UniqueMultiplayerID].magicLevel++;
                 //if ( Data.magicLevel % 2 == 1 )
-                    Data.freePoints++;
+                    Data.players[player.UniqueMultiplayerID].freePoints++;
                 player.setMaxMana(player.getMagicLevel() == 1 ? 50 : player.getMaxMana() + 10);
-                Magic.newMagicLevels.Add(Data.magicLevel);
+                Magic.newMagicLevels.Add(Data.players[player.UniqueMultiplayerID].magicLevel);
+                Data.syncMineFull();
             }
         }
 
         public static int getMagicExpForNextLevel(this SFarmer player)
         {
-            if (player != Game1.player || Data == null)
-                return 50;
-
-            return 50 + Data.magicLevel * 50;
+            dataCheck(player);
+            return 50 + Data.players[player.UniqueMultiplayerID].magicLevel * 50;
         }
 
         public static int getFreeSpellPoints(this SFarmer player)
         {
-            if (player != Game1.player || Data == null)
-                return 0;
-
-            return Data.freePoints;
+            dataCheck(player);
+            return Data.players[player.UniqueMultiplayerID].freePoints;
         }
 
-        public static void useSpellPoints(this SFarmer player, int amt)
+        public static void useSpellPoints(this SFarmer player, int amt, bool sync = true)
         {
-            if (player != Game1.player || Data == null)
-                return;
-            Data.freePoints -= amt;
+            dataCheck(player);
+            Data.players[player.UniqueMultiplayerID].freePoints -= amt;
+            if (player == Game1.player)
+                Data.syncMineFull();
         }
 
         public static SpellBook getSpellBook(this SFarmer player)
         {
-            if (player != Game1.player || Data == null)
-                return null;
-            return Data.spellBook;
+            dataCheck(player);
+            return Data.players[player.UniqueMultiplayerID].spellBook;
         }
 
         public static bool knowsSchool(this SFarmer player, string school)
@@ -158,8 +154,10 @@ namespace Magic
 
             Log.debug($"Learning spell {spellId}, level {level + 1}");
             if ( !free )
-                useSpellPoints(player, diff);
+                useSpellPoints(player, diff, false);
             player.getSpellBook().knownSpells[spellId] = level;
+
+            Data.syncMineFull();
         }
 
         public static void learnSpell(this SFarmer player, Spell spell, int level, bool free = false)
@@ -179,7 +177,9 @@ namespace Magic
                 Game1.player.getSpellBook().knownSpells.Remove(spellId);
             else if (Game1.player.getSpellBook().knownSpells[spellId] >= level)
                 Game1.player.getSpellBook().knownSpells[spellId] = level - 1;
-            useSpellPoints(player, -diff);
+            useSpellPoints(player, -diff, false);
+
+            Data.syncMineFull();
         }
 
         public static void forgetSpell(this SFarmer player, Spell spell, int level)
@@ -199,12 +199,21 @@ namespace Magic
 
         public static void castSpell(this SFarmer player, string spellId, int level)
         {
-            Point pos = new Point(Game1.getMouseX() + Game1.viewport.X, Game1.getMouseY() + Game1.viewport.Y);
-            SpellBook.get(spellId).onCast(player, level, pos.X, pos.Y);
+            castSpell(player, SpellBook.get(spellId), level);
         }
 
         public static void castSpell(this SFarmer player, Spell spell, int level)
         {
+            if (player == Game1.player)
+            {
+                using (var stream = new MemoryStream())
+                using (var writer = new BinaryWriter(stream))
+                {
+                    writer.Write(spell.FullId);
+                    writer.Write(level);
+                    SpaceCore.SpaceCore.BroadcastMessage(Magic.MSG_CAST, stream.ToArray());
+                }
+            }
             Point pos = new Point(Game1.getMouseX() + Game1.viewport.X, Game1.getMouseY() + Game1.viewport.Y);
             spell.onCast(player, level, pos.X, pos.Y);
         }

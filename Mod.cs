@@ -14,7 +14,7 @@ namespace Magic
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        public static SaveData Data { get; private set; }
+        public static MultiplayerSaveData Data { get; private set; } = new MultiplayerSaveData();
         public static Configuration Config { get; private set; }
         
         internal static JsonAssetsApi ja;
@@ -53,21 +53,42 @@ namespace Magic
         {
             try
             {
-                Log.info("Loading save data (\"" + SaveData.FilePath + "\")...");
-                Data = Helper.ReadJsonFile<SaveData>(SaveData.FilePath) ?? new SaveData();
+                if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+                {
+                    Log.info("Loading save data (\"" + SaveData.FilePath + "\")...");
+                    var oldData = Helper.ReadJsonFile<SaveData>(SaveData.FilePath);
+
+                    Data = Helper.ReadJsonFile<MultiplayerSaveData>(MultiplayerSaveData.FilePath) ?? new MultiplayerSaveData();
+                    if (oldData != null && !Data.players.ContainsKey(Game1.MasterPlayer.UniqueMultiplayerID))
+                    {
+                        var player = new MultiplayerSaveData.PlayerData();
+                        player.mana = oldData.mana;
+                        player.manaCap = oldData.manaCap;
+                        player.magicLevel = oldData.magicLevel;
+                        player.magicExp = oldData.magicExp;
+                        player.freePoints = oldData.freePoints;
+                        player.spellBook = oldData.spellBook;
+                        
+                        Data.players[Game1.MasterPlayer.UniqueMultiplayerID] = player;
+                    }
+                    
+                    if ( !Data.players.ContainsKey( Game1.player.UniqueMultiplayerID ) )
+                        Data.players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
+                }
             }
             catch ( Exception e )
             {
                 Log.warn("Exception loading save data: " + e);
-                Log.warn("Using default");
-                Data = new SaveData();
             }
         }
         
         private void afterSave(object sender, EventArgs args)
         {
-            Log.info("Saving save data (\"" + SaveData.FilePath + "\")...");
-            Helper.WriteJsonFile(SaveData.FilePath, Data);
+            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+            {
+                Log.info("Saving save data (\"" + MultiplayerSaveData.FilePath + "\")...");
+                Helper.WriteJsonFile(MultiplayerSaveData.FilePath, Data);
+            }
         }
     }
 }

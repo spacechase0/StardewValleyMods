@@ -13,6 +13,10 @@ namespace Magic
         {
             return Mod.instance.Helper.Content.Load<Texture2D>( "res/" + path, ContentSource.ModFolder );
         }
+        public static string loadTextureKey(string path)
+        {
+            return Mod.instance.Helper.Content.GetActualAssetKey("res/" + path, ContentSource.ModFolder);
+        }
 
         public static Map loadMap(string mapName, string variant = "map")
         {

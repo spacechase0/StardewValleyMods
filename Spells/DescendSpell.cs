@@ -37,8 +37,7 @@ namespace Magic.Spells
                 target = 120;
             }
 
-            ms.setNextLevel( target );
-            Game1.warpFarmer(ms.name, 0, 0, false);
+            Game1.enterMine(target);
 
             player.addMagicExp(5);
         }

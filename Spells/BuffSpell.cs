@@ -1,4 +1,5 @@
 ﻿using Magic.Schools;
+using Netcode;
 using StardewValley;
 
 namespace Magic.Spells
@@ -40,7 +41,7 @@ namespace Magic.Spells
             }
 
             Game1.buffsDisplay.clearAllBuffs();
-            Game1.player.buffs.Clear();
+            Mod.instance.Helper.Reflection.GetField<NetArray<int, NetInt>>(Game1.player, "appliedBuffs").GetValue().Clear();
             Game1.player.attack = 0;
 
             int l = level + 1;

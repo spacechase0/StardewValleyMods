@@ -84,7 +84,7 @@ namespace Magic.Spells
                         {
                             if (Vector2.Distance(new Vector2(landX, landY), mob.position) < currRad * Game1.tileSize)
                             {
-                                mob.takeDamage((level + 1) * 5, 0, 0, false, 0);
+                                mob.takeDamage((level + 1) * 5, 0, 0, false, 0, player);
                                 player.addMagicExp(3);
                             }
                         }

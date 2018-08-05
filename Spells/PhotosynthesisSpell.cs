@@ -34,11 +34,12 @@ namespace Magic.Spells
             locs.Add(Game1.getLocationFromName("Farm"));
             locs.Add(Game1.getLocationFromName("Greenhouse"));
             // TODO: API for other places to grow
+            // TODO: Garden pots
             // Such as the SDM farms
 
             foreach (GameLocation loc in locs)
             {
-                foreach (var entry in loc.terrainFeatures)
+                foreach (var entry in loc.terrainFeatures.Pairs)
                 {
                     var tf = entry.Value;
                     if (tf is HoeDirt dirt)
@@ -46,29 +47,29 @@ namespace Magic.Spells
                         if (dirt.crop == null)
                             continue;
 
-                        dirt.crop.currentPhase = Math.Min(dirt.crop.phaseDays.Count - 1, dirt.crop.currentPhase + 1);
-                        dirt.crop.dayOfCurrentPhase = 0;
-                        if (dirt.crop.regrowAfterHarvest != -1 && dirt.crop.currentPhase == dirt.crop.phaseDays.Count - 1)
+                        dirt.crop.currentPhase.Value = Math.Min(dirt.crop.phaseDays.Count - 1, dirt.crop.currentPhase.Value + 1);
+                        dirt.crop.dayOfCurrentPhase.Value = 0;
+                        if (dirt.crop.regrowAfterHarvest.Value != -1 && dirt.crop.currentPhase.Value == dirt.crop.phaseDays.Count - 1)
                         {
-                            dirt.crop.fullyGrown = true;
+                            dirt.crop.fullyGrown.Value = true;
                         }
                     }
                     else if (tf is FruitTree ftree)
                     {
-                        if (ftree.daysUntilMature > 0)
+                        if (ftree.daysUntilMature.Value > 0)
                         {
-                            ftree.daysUntilMature = Math.Max(0, ftree.daysUntilMature - 7);
-                            ftree.growthStage = ftree.daysUntilMature > 0 ? (ftree.daysUntilMature > 7 ? (ftree.daysUntilMature > 14 ? (ftree.daysUntilMature > 21 ? 0 : 1) : 2) : 3) : 4;
+                            ftree.daysUntilMature.Value = Math.Max(0, ftree.daysUntilMature.Value - 7);
+                            ftree.growthStage.Value = ftree.daysUntilMature.Value > 0 ? (ftree.daysUntilMature.Value > 7 ? (ftree.daysUntilMature.Value > 14 ? (ftree.daysUntilMature.Value > 21 ? 0 : 1) : 2) : 3) : 4;
                         }
-                        else if (!ftree.stump && ftree.growthStage == 4 && (Game1.currentSeason == ftree.fruitSeason || loc.name == "Greenhouse"))
+                        else if (!ftree.stump.Value && ftree.growthStage.Value == 4 && (Game1.currentSeason == ftree.fruitSeason.Value || loc.Name == "Greenhouse"))
                         {
-                            ftree.fruitsOnTree = 3;
+                            ftree.fruitsOnTree.Value = 3;
                         }
                     }
                     else if ( tf is Tree tree )
                     {
-                        if (tree.growthStage < 5)
-                            tree.growthStage++;
+                        if (tree.growthStage.Value < 5)
+                            tree.growthStage.Value++;
                     }
                 }
             }

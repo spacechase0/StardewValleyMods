@@ -23,7 +23,7 @@ namespace Magic.Spells
 
         public override void onCast(SFarmer player, int level, int targetX, int targetY)
         {
-            Log.debug(player.name + " casted Blink.");
+            Log.debug(player.Name + " casted Blink.");
             player.position.X = targetX - player.GetBoundingBox().Width / 2;
             player.position.Y = targetY - player.GetBoundingBox().Height / 2;
             Game1.playSound("powerup");

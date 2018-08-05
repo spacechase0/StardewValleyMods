@@ -10,9 +10,6 @@
   "UpdateKeys": [ "Nexus:2007" ],
   "Dependencies": [
     {
-      "UniqueID": "Entoarox.EntoaroxFramework"
-    },
-    {
       "UniqueID": "spacechase0.SpaceCore"
     },
     {

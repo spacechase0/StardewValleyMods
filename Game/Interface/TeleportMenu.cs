@@ -33,8 +33,8 @@ namespace Magic.Game.Interface
         {
             foreach ( var loc in Game1.locations )
             {
-                if (loc.IsOutdoors && !( loc.name.StartsWith( "SDM" ) && loc.name.EndsWith( "Farm" ) ) )
-                    locs.Add(loc.name);
+                if (loc.IsOutdoors && !( loc.Name.StartsWith( "SDM" ) && loc.Name.EndsWith( "Farm" ) ) )
+                    locs.Add(loc.Name);
             }
 
             int x = xPositionOnScreen + 12, y = yPositionOnScreen + 12, w = WINDOW_WIDTH - 24, h = WINDOW_HEIGHT - 24;
@@ -54,11 +54,11 @@ namespace Magic.Game.Interface
 
                 var cloud = new CloudMount();
                 cloud.currentLocation = locObj;
-                cloud.position = new Vector2(mapW * Game1.tileSize / 2, mapH * Game1.tileSize / 2);
+                cloud.Position = new Vector2(mapW * Game1.tileSize / 2, mapH * Game1.tileSize / 2);
                 Vector2 tileForCharacter = Utility.recursiveFindOpenTileForCharacter(cloud, locObj, cloud.getTileLocation(), 9 * 9);
-                cloud.position = new Vector2(tileForCharacter.X * Game1.tileSize, tileForCharacter.Y * Game1.tileSize);
+                cloud.Position = new Vector2(tileForCharacter.X * Game1.tileSize, tileForCharacter.Y * Game1.tileSize);
                 locObj.addCharacter(cloud);
-                Reflect.setField<Horse>(Game1.player, "mount", cloud);
+                Game1.player.mount = cloud;
                 cloud.rider = Game1.player;
 
                 Game1.activeClickableMenu = null;

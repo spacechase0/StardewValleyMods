@@ -15,7 +15,7 @@ namespace Magic.Spells
 
         public override void onCast(SFarmer player, int level, int targetX, int targetY)
         {
-            Log.debug(player.name + " casted " + Id + ".");
+            Log.debug(player.Name + " casted " + Id + ".");
         }
     }
 }

@@ -65,7 +65,7 @@ namespace Magic.Spells
                     Vector2 offset = mob.position - pos;
                     offset.Normalize();
                     offset *= radius;
-                    mob.position = pos + offset;
+                    mob.position.Value = pos + offset;
                 }
 
                 if ( --duration <= 0 )
