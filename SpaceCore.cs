@@ -31,6 +31,9 @@ namespace SpaceCore
 
         public static void BroadcastMessage(string id, byte[] data)
         {
+            if (!Game1.IsMultiplayer)
+                return;
+
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
@@ -52,6 +55,9 @@ namespace SpaceCore
 
         public static void ServerSendTo( long farmerId, string id, byte[] data )
         {
+            if (!Game1.IsServer)
+                return;
+
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
