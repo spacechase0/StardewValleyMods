@@ -41,7 +41,7 @@ namespace SpaceCore
                 if ( Game1.IsServer )
                 {
                     foreach (var key in Game1.otherFarmers.Keys)
-                        Game1.server.sendMessage(key, 234, Game1.otherFarmers[key], stream.ToArray());
+                        Game1.server.sendMessage(key, 234, Game1.player, stream.ToArray());
                 }
                 else
                 {
@@ -58,7 +58,7 @@ namespace SpaceCore
                 //writer.Write((byte)234);
                 writer.Write(id);
                 writer.Write(data);
-                Game1.server.sendMessage(farmerId, 234, Game1.otherFarmers[farmerId], stream.ToArray());
+                Game1.server.sendMessage(farmerId, 234, Game1.player, stream.ToArray());
             }
         }
 

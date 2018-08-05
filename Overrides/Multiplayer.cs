@@ -14,7 +14,7 @@ namespace SpaceCore.Overrides
         public static bool Prefix(Multiplayer __instance, IncomingMessage msg)
         {
             // MTN uses packets 30, 31, and 50
-
+            
             if ( msg.MessageType == 234 )
             {
                 string msgType = msg.Reader.ReadString();
