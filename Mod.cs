@@ -278,7 +278,7 @@ namespace CookingSkill
 
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
                 dataMp = Helper.ReadJsonFile<MultiplayerSaveData>(MultiplayerSaveData.FilePath) ?? new MultiplayerSaveData();
-            if ( oldData.experience != 0 )
+            if ( oldData.experience != 0 && !dataMp.Experience.ContainsKey(Game1.player.UniqueMultiplayerID))
             {
                 Log.debug("Converting SP cooking experience to MP");
                 MyExperience = oldData.experience;
