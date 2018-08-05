@@ -16,11 +16,9 @@ namespace CustomCritters
         public static Mod instance;
         public override void Entry(IModHelper helper)
         {
-            base.Entry(helper);
             instance = this;
 
-            LocationEvents.CurrentLocationChanged += onLocationChanged;
-
+            PlayerEvents.Warped += onLocationChanged;
             /*
             var ce = new Critters.CritterEntry();
             ce.Id = "eemie.bee";
@@ -53,7 +51,7 @@ namespace CustomCritters
             }
         }
 
-        private void onLocationChanged( object sender, EventArgsCurrentLocationChanged args )
+        private void onLocationChanged( object sender, EventArgsPlayerWarped args )
         {
             if (Game1.CurrentEvent != null)
                 return;
