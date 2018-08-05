@@ -110,17 +110,17 @@ namespace CookingSkill
             {
                 SObject obj = item as SObject;
                 int amtCrafted = 0;
-                if (Game1.player.recipesCooked.ContainsKey(obj.parentSheetIndex))
+                if (Game1.player.recipesCooked.ContainsKey(obj.ParentSheetIndex))
                 {
-                    amtCrafted = Game1.player.recipesCooked[obj.parentSheetIndex];
+                    amtCrafted = Game1.player.recipesCooked[obj.ParentSheetIndex];
                 }
                 Random rand = new Random((int)(Game1.stats.daysPlayed + Game1.uniqueIDForThisGame + (uint)obj.ParentSheetIndex + (uint)amtCrafted));
 
-                obj.Edibility = (int)(obj.edibility * getEdibilityMultiplier());
+                obj.Edibility = (int)(obj.Edibility * getEdibilityMultiplier());
 
                 if (Game1.player.professions.Contains(PROFESSION_SELLPRICE))
                 {
-                    obj.Price = (int)(obj.price * 1.2);
+                    obj.Price = (int)(obj.Price * 1.2);
                 }
 
                 if (Game1.player.professions.Contains(PROFESSION_SILVER))
@@ -142,7 +142,7 @@ namespace CookingSkill
                     double chance = 0;
                     foreach (NewCraftingPage.ConsumedItem ingr in used )
                     {
-                        if (ingr.item.quality >= iq)
+                        if (ingr.item.Quality >= iq)
                             chance += (1.0 / total) * ingr.amt;
                     }
 
@@ -173,7 +173,7 @@ namespace CookingSkill
             {
                 amt = Convert.ToInt32(args[0]);
             }
-            catch ( Exception e )
+            catch ( Exception )
             {
                 Log.error( "Bad experience amount." );
                 return;
@@ -276,7 +276,8 @@ namespace CookingSkill
                 Game1.player.experiencePoints.RemoveAt(6);
             }
 
-            dataMp = Helper.ReadJsonFile<MultiplayerSaveData>(MultiplayerSaveData.FilePath) ?? new MultiplayerSaveData();
+            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+                dataMp = Helper.ReadJsonFile<MultiplayerSaveData>(MultiplayerSaveData.FilePath) ?? new MultiplayerSaveData();
             if ( oldData.experience != 0 )
             {
                 Log.debug("Converting SP cooking experience to MP");
@@ -387,7 +388,7 @@ namespace CookingSkill
                                 Log.trace("Buffing plain");
                                 Random rand = new Random();
                                 int[] newAttr = new int[12];
-                                int count = 1 + Math.Min(obj.edibility / 30, 3);
+                                int count = 1 + Math.Min(obj.Edibility / 30, 3);
                                 for (int i = 0; i < count; ++i)
                                 {
                                     int attr = rand.Next(10);
@@ -409,7 +410,7 @@ namespace CookingSkill
                                     newAttr[attr] += amt;
                                 }
 
-                                int newTime = 120 + obj.edibility / 10 * 30;
+                                int newTime = 120 + obj.Edibility / 10 * 30;
 
                                 Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4]);
                                 newBuff.millisecondsDuration = newTime / 10 * 7000;
