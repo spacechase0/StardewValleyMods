@@ -12,6 +12,8 @@ using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using SpaceCore.Events;
+using StardewValley.Network;
 
 namespace CustomizeExterior
 {
@@ -20,10 +22,12 @@ namespace CustomizeExterior
         public const string SEASONAL_INDICATOR = "%";
         
         public static Mod instance;
-        public static Config config;
+        public static Config config = new Config();
         public static ContentManager content;
 
         public static Dictionary<string, List<string>> choices = new Dictionary<string, List<string>>();
+
+        private const string MSG_CHOICES = "spacechase0.CustomizeExterior.Choices";
 
         public override void Entry(IModHelper helper)
         {
@@ -36,20 +40,62 @@ namespace CustomizeExterior
             SaveEvents.AfterLoad += afterLoad;
             SaveEvents.AfterSave += afterSave;
             PlayerEvents.Warped += afterLocationChange;
+
+            SpaceEvents.ServerGotClient += onClientConnected;
+            SpaceCore.SpaceCore.RegisterMessageHandler(MSG_CHOICES, onChoicesReceived);
+        }
+
+        private void onClientConnected(object sender, EventArgsServerGotClient args)
+        {
+            using (var stream = new MemoryStream())
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(config.chosen.Count);
+                foreach (var choice in config.chosen)
+                {
+                    writer.Write(choice.Key);
+                    writer.Write(choice.Value);
+                }
+
+                var server = (GameServer)sender;
+                Log.trace("Sending exteriors data to " + args.FarmerID);
+                SpaceCore.SpaceCore.ServerSendTo(args.FarmerID, MSG_CHOICES, stream.ToArray());
+            }
+        }
+
+        private void onChoicesReceived(IncomingMessage msg)
+        {
+            Log.trace("Got exterior data");
+            int count = msg.Reader.ReadInt32();
+            for (int i = 0; i < count; ++i)
+            {
+                string building = msg.Reader.ReadString();
+                string texId = msg.Reader.ReadString();
+                Log.trace("\t" + building + "=" + texId);
+
+                config.chosen[building] = texId;
+            }
+            syncTexturesWithChoices();
         }
 
         private void afterLoad(object sender, EventArgs args)
         {
-            string path = Path.Combine(Constants.CurrentSavePath, "building-exteriors.json");
-            Log.info("Loading per-save config file (\"" + path + "\")...");
-            config = Helper.ReadJsonFile<Config>(path) ?? new Config();
-            syncTexturesWithChoices();
+            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+            {
+                string path = Path.Combine(Constants.CurrentSavePath, "building-exteriors.json");
+                Log.info("Loading per-save config file (\"" + path + "\")...");
+                config = Helper.ReadJsonFile<Config>(path) ?? new Config();
+                syncTexturesWithChoices();
+            }
         }
 
         private void afterSave(object sender, EventArgs args)
         {
-            Log.info("Saving per-save config file...");
-            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "building-exteriors.json"), config);
+            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+            {
+                Log.info("Saving per-save config file...");
+                Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "building-exteriors.json"), config);
+            }
         }
 
         private void afterLocationChange(object sender, EventArgsPlayerWarped args)
@@ -240,8 +286,24 @@ namespace CustomizeExterior
                 Log.warn("Failed to load chosen texture '" + choice + "' for building type '" + type + "'.");
                 return;
             }
-            if ( updateChosen )
+            if (updateChosen)
+            {
                 config.chosen[recentTarget] = choice;
+
+                if ( Game1.IsMultiplayer )
+                {
+                    using (var stream = new MemoryStream())
+                    using (var writer = new BinaryWriter(stream))
+                    {
+                        writer.Write((int)1);
+                        writer.Write(recentTarget);
+                        writer.Write(choice);
+                        
+                        Log.trace("Broadcasting choice");
+                        SpaceCore.SpaceCore.BroadcastMessage(MSG_CHOICES, stream.ToArray());
+                    }
+                }
+            }
 
             if ( recentTarget == "FarmHouse" || recentTarget == "Greenhouse" )
             {
