@@ -18,7 +18,7 @@ namespace ExperienceBars
     {
         public void DrawExperienceBar(Texture2D icon, int level, float percentFull, Color color)
         {
-            Mod.renderSkillBar(10, Mod.expBottom + 40, icon, new Rectangle(0, 0, icon.Width, icon.Height), level, percentFull, color);
+            Mod.renderSkillBar(10, Mod.expBottom, icon, new Rectangle(0, 0, icon.Width, icon.Height), level, percentFull, color);
             Mod.expBottom += 40;
         }
 
