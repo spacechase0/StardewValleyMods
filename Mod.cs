@@ -29,11 +29,14 @@ namespace CookingSkill
         {
             get
             {
+                if (!dataMp.Experience.ContainsKey(Game1.player.UniqueMultiplayerID))
+                    return 0;
                 return dataMp.Experience[Game1.player.UniqueMultiplayerID];
             }
             set
             {
-                if (dataMp.Experience[Game1.player.UniqueMultiplayerID] != value)
+                if (!dataMp.Experience.ContainsKey(Game1.player.UniqueMultiplayerID) ||
+                     dataMp.Experience[Game1.player.UniqueMultiplayerID] != value)
                 {
                     dataMp.Experience[Game1.player.UniqueMultiplayerID] = value;
                     using (var stream = new MemoryStream())
