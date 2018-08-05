@@ -243,6 +243,7 @@ namespace CookingSkill
                 }
 
                 var server = (GameServer)sender;
+                Log.trace("Sending cooking data to " + args.FarmerID);
                 SpaceCore.SpaceCore.ServerSendTo(args.FarmerID, MSG_DATA, stream.ToArray());
             }
         }
@@ -254,11 +255,13 @@ namespace CookingSkill
 
         private void onDataMessage(IncomingMessage msg)
         {
+            Log.trace("Got cooking experience data!");
             int count = msg.Reader.ReadInt32();
             for ( int i = 0; i < count; ++i )
             {
                 long id = msg.Reader.ReadInt64();
                 int exp = msg.Reader.ReadInt32();
+                Log.trace("\t" + id + "=" + exp);
                 dataMp.Experience[id] = exp;
             }
         }
@@ -283,7 +286,11 @@ namespace CookingSkill
 
         private void afterSave(object sender, EventArgs args)
         {
-            Helper.WriteJsonFile(MultiplayerSaveData.FilePath, dataMp);
+            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+            {
+                Log.trace("Saving to " + MultiplayerSaveData.FilePath);
+                Helper.WriteJsonFile(MultiplayerSaveData.FilePath, dataMp);
+            }
         }
 
         private bool wasEating = false;
@@ -593,7 +600,10 @@ namespace CookingSkill
         private void showLevelMenu( object sender, EventArgsShowNightEndMenus args )
         {
             Log.debug("Doing cooking menus");
-            
+
+            if (Game1.endOfNightMenus.Count == 0)
+                Game1.endOfNightMenus.Push(new SaveGameMenu());
+
             if (newCookingLevels.Count() > 0)
             {
                 for (int i = newCookingLevels.Count() - 1; i >= 0; --i )
