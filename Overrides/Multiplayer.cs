@@ -13,13 +13,13 @@ namespace SpaceCore.Overrides
     {
         public static bool Prefix(Multiplayer __instance, IncomingMessage msg)
         {
-            // MTN uses packets 30, 31, and 50
+            // MTN uses packets 30, 31, and 50, PyTK uses 99
             
             if ( msg.MessageType == 234 )
             {
                 string msgType = msg.Reader.ReadString();
-                if (SpaceCore.instance.messageHandlers.ContainsKey(msgType))
-                    SpaceCore.instance.messageHandlers[msgType].Invoke(msg);
+                if (Networking.messageHandlers.ContainsKey(msgType))
+                    Networking.messageHandlers[msgType].Invoke(msg);
 
                 if (Game1.IsServer)
                 {

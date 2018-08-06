@@ -80,6 +80,7 @@
     <Compile Include="Utilities\Hijack.cs" />
     <Compile Include="Utilities\IWeighted.cs" />
     <Compile Include="Utilities\JsonSerializers.cs" />
+    <Compile Include="Networking.cs" />
     <Compile Include="Utilities\Util.cs" />
   </ItemGroup>
   <ItemGroup>
