@@ -37,6 +37,7 @@ namespace SpaceCore
             SaveEvents.AfterSave += onSave;
 
             Commands.register();
+            Skills.init();
 
             harmony = HarmonyInstance.Create("spacechase0.SpaceCore");
 

@@ -61,11 +61,13 @@
     <Compile Include="Events\SpaceEvents.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ICustomWeaponDraw.cs" />
+    <Compile Include="Interface\SkillLevelUpMenu.cs" />
     <Compile Include="Interface\TabbedMenu.cs" />
     <Compile Include="Interface\TabMenu.cs" />
     <Compile Include="Locations\CustomDecoratableLocation.cs" />
     <Compile Include="Locations\ISeasonalLocation.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="Other\ExperienceBars.cs" />
     <Compile Include="Overrides\DecoratableLocation.cs" />
     <Compile Include="Overrides\Game1.cs" />
     <Compile Include="Overrides\GameLocation.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="Overrides\MeleeWeapon.cs" />
     <Compile Include="Overrides\Multiplayer.cs" />
     <Compile Include="Overrides\Utility.cs" />
+    <Compile Include="Skills.cs" />
     <Compile Include="Sleep.cs" />
     <Compile Include="SpaceCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
