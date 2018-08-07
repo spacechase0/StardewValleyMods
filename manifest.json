@@ -5,7 +5,7 @@
   "Description": "Adds a cooking skill.",
   "UniqueID": "spacechase0.CookingSkill",
   "EntryDll": "CookingSkill.dll",
-  "UpdateKeys": [ "Nexus:522" ],
+  "UpdateKeys": [ "Nexus:522", "Chucklefish:4054", "spacechase0:cooking-skill" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.SpaceCore"

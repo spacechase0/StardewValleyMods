@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using SObject = StardewValley.Object;
+using SpaceCore;
 
 namespace CookingSkill {
     public class NewCraftingPage : IClickableMenu {
@@ -329,7 +330,7 @@ namespace CookingSkill {
             if (this.cooking) {
                 Game1.player.cookedRecipe((int)((NetFieldBase<int, NetInt>)this.heldItem.parentSheetIndex));
                 /////
-                Mod.addCookingExp(itemObj.Edibility);
+                Game1.player.AddCustomSkillExperience(Mod.skill, itemObj.Edibility);
                 /////
             }
             if (!this.cooking)

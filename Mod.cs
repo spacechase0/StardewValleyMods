@@ -12,6 +12,7 @@ using System.IO;
 using SpaceCore.Events;
 using CookingSkill.Other;
 using StardewValley.Network;
+using SpaceCore;
 
 namespace CookingSkill
 {
@@ -19,83 +20,16 @@ namespace CookingSkill
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        //public static SaveData data = new SaveData();
-        public static MultiplayerSaveData dataMp = new MultiplayerSaveData();
-
-        public const string MSG_DATA = "spacechase0.CookingSkill.Data";
-        public const string MSG_EXPERIENCE = "spacechase0.CookingSkill.Experience";
-
-        public static int MyExperience
-        {
-            get
-            {
-                if (!dataMp.Experience.ContainsKey(Game1.player.UniqueMultiplayerID))
-                    return 0;
-                return dataMp.Experience[Game1.player.UniqueMultiplayerID];
-            }
-            set
-            {
-                if (!dataMp.Experience.ContainsKey(Game1.player.UniqueMultiplayerID) ||
-                     dataMp.Experience[Game1.player.UniqueMultiplayerID] != value)
-                {
-                    dataMp.Experience[Game1.player.UniqueMultiplayerID] = value;
-                    using (var stream = new MemoryStream())
-                    using (var writer = new BinaryWriter(stream))
-                    {
-                        writer.Write(value);
-                        SpaceCore.SpaceCore.BroadcastMessage(MSG_EXPERIENCE, stream.ToArray());
-                    }
-                }
-            }
-        }
-
-        public static readonly int[] expNeededForLevel = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
-        public static List<int> newCookingLevels = new List<int>();
-        public static int getCookingLevel()
-        {
-            for ( int i = expNeededForLevel.Length - 1; i >= 0; --i )
-            {
-                if ( MyExperience >= expNeededForLevel[ i ] )
-                {
-                    return i + 1;
-                }
-            }
-
-            return 0;
-        }
-
-        public static void addCookingExp( int amt )
-        {
-            if (amt <= 0)
-                return;
-
-            int oldLevel = getCookingLevel();
-            Log.trace("Adding " + amt + " experience to cooking, from " + MyExperience);
-            int exp = MyExperience + amt;
-            if (exp > expNeededForLevel[expNeededForLevel.Length - 1])
-                exp = expNeededForLevel[expNeededForLevel.Length - 1];
-            MyExperience = amt;
-
-            int newLevel = getCookingLevel();
-            Log.trace("From level " + oldLevel + " to " + newLevel);
-            for ( int i = oldLevel + 1; i <= newLevel; ++i )
-            {
-                if (i == 0)
-                    continue;
-
-                Log.debug("Adding new cooking level: " + i);
-                newCookingLevels.Add(i);
-            }
-        }
+        public static Skill skill;
 
         public static double getEdibilityMultiplier()
         {
-            return 1 + getCookingLevel() * 0.03;
+            return 1 + Game1.player.GetCustomSkillLevel( skill ) * 0.03;
         }
 
         public static double getNoConsumeChance()
         {
-            if (Game1.player.professions.Contains(PROFESSION_CONSERVATION))
+            if (Game1.player.HasCustomProfession(Skill.ProfessionConservation))
                 return 0.15;
             else
                 return 0;
@@ -118,12 +52,12 @@ namespace CookingSkill
 
                 obj.Edibility = (int)(obj.Edibility * getEdibilityMultiplier());
 
-                if (Game1.player.professions.Contains(PROFESSION_SELLPRICE))
+                if (Game1.player.HasCustomProfession(Skill.ProfessionSellPrice))
                 {
                     obj.Price = (int)(obj.Price * 1.2);
                 }
 
-                if (Game1.player.professions.Contains(PROFESSION_SILVER))
+                if (Game1.player.HasCustomProfession(Skill.ProfessionSilver))
                 {
                     obj.Quality = 1;
                 }
@@ -160,36 +94,6 @@ namespace CookingSkill
             return true;
         }
 
-        private void giveExpCommand( object sender, string[] args )
-        {
-            if ( args.Length != 1 )
-            {
-                Log.info("Command format: giveCookingExp <amount>");
-                return;
-            }
-
-            int amt = 0;
-            try
-            {
-                amt = Convert.ToInt32(args[0]);
-            }
-            catch ( Exception )
-            {
-                Log.error( "Bad experience amount." );
-                return;
-            }
-
-            addCookingExp(amt);
-            Log.info("Added " + amt + " cooking experience.");
-        }
-
-        public const int PROFESSION_SELLPRICE = 50;
-        public const int PROFESSION_BUFFTIME = 51;
-        public const int PROFESSION_CONSERVATION = 52;
-        public const int PROFESSION_SILVER = 53;
-        public const int PROFESSION_BUFFLEVEL = 54;
-        public const int PROFESSION_BUFFPLAIN = 55;
-
         public static Texture2D icon;
 
         public override void Entry( IModHelper helper )
@@ -211,87 +115,10 @@ namespace CookingSkill
                     icon.SetData(Enumerable.Range(0, 16 * 16).Select(i => new Color(225, 168, 255)).ToArray());
                 }
             }
-
-            Helper.ConsoleCommands.Add("player_givecookingexp", "player_givecookingexp <amount>", giveExpCommand);
-
-            SaveEvents.AfterLoad += afterLoad;
-            SaveEvents.AfterSave += afterSave;
-            PlayerEvents.Warped += locChanged;
-            GameEvents.UpdateTick += update;
-            GraphicsEvents.OnPostRenderGuiEvent += drawAfterGui;
             
-            SpaceEvents.ShowNightEndMenus += showLevelMenu;
-            SpaceEvents.ServerGotClient += clientJoined;
-            SpaceCore.SpaceCore.RegisterMessageHandler(MSG_DATA, onDataMessage);
-            SpaceCore.SpaceCore.RegisterMessageHandler(MSG_EXPERIENCE, onExpMessage);
+            GameEvents.UpdateTick += update;
 
-            checkForExperienceBars();
-            checkForLuck();
-            checkForAllProfessions();
-        }
-
-        private void clientJoined(object sender, EventArgsServerGotClient args)
-        {
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
-            {
-                writer.Write(dataMp.Experience.Count);
-                foreach ( var exp in dataMp.Experience )
-                {
-                    writer.Write(exp.Key);
-                    writer.Write(exp.Value);
-                }
-
-                var server = (GameServer)sender;
-                Log.trace("Sending cooking data to " + args.FarmerID);
-                SpaceCore.SpaceCore.ServerSendTo(args.FarmerID, MSG_DATA, stream.ToArray());
-            }
-        }
-
-        private void onExpMessage(IncomingMessage msg)
-        {
-            dataMp.Experience[ msg.FarmerID ] = msg.Reader.ReadInt32();
-        }
-
-        private void onDataMessage(IncomingMessage msg)
-        {
-            Log.trace("Got cooking experience data!");
-            int count = msg.Reader.ReadInt32();
-            for ( int i = 0; i < count; ++i )
-            {
-                long id = msg.Reader.ReadInt64();
-                int exp = msg.Reader.ReadInt32();
-                Log.trace("\t" + id + "=" + exp);
-                dataMp.Experience[id] = exp;
-            }
-        }
-
-        private void afterLoad(object sender, EventArgs args)
-        {
-            var oldData = Helper.ReadJsonFile<SaveData>(SaveData.FilePath) ?? new SaveData();
-            if ( Game1.player.experiencePoints.Length == 7 )
-            {
-                Log.debug("Converting old cooking experience to new");
-                oldData.experience = Game1.player.experiencePoints[6];
-                Game1.player.experiencePoints.RemoveAt(6);
-            }
-
-            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-                dataMp = Helper.ReadJsonFile<MultiplayerSaveData>(MultiplayerSaveData.FilePath) ?? new MultiplayerSaveData();
-            if ( oldData.experience != 0 && !dataMp.Experience.ContainsKey(Game1.player.UniqueMultiplayerID))
-            {
-                Log.debug("Converting SP cooking experience to MP");
-                MyExperience = oldData.experience;
-            }
-        }
-
-        private void afterSave(object sender, EventArgs args)
-        {
-            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-            {
-                Log.trace("Saving to " + MultiplayerSaveData.FilePath);
-                Helper.WriteJsonFile(MultiplayerSaveData.FilePath, dataMp);
-            }
+            Skills.RegisterSkill(skill = new Skill());
         }
 
         private bool wasEating = false;
@@ -340,7 +167,7 @@ namespace CookingSkill
                                 // Now that we know that this is the original buff, we can buff the buff.
                                 Log.trace("Buffing buff");
                                 int[] newAttr = (int[])thisAttr.Clone();
-                                if (Game1.player.professions.Contains(PROFESSION_BUFFLEVEL))
+                                if (Game1.player.HasCustomProfession(Skill.ProfessionBuffLevel))
                                 {
                                     for (int i = 0; i < thisAttr.Length; ++i)
                                     {
@@ -355,7 +182,7 @@ namespace CookingSkill
                                 }
 
                                 int newTime = (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1;
-                                if (newTime != -1 && Game1.player.professions.Contains(PROFESSION_BUFFTIME))
+                                if (newTime != -1 && Game1.player.HasCustomProfession(Skill.ProfessionBuffTime))
                                 {
                                     newTime = (int)(newTime * 1.25);
                                 }
@@ -383,7 +210,7 @@ namespace CookingSkill
                                 }
                                 Game1.buffsDisplay.syncIcons();
                             }
-                            else if (thisBuff == null && Game1.player.professions.Contains(PROFESSION_BUFFPLAIN))
+                            else if (thisBuff == null && Game1.player.HasCustomProfession(Skill.ProfessionBuffPlain))
                             {
                                 Log.trace("Buffing plain");
                                 Random rand = new Random();
@@ -453,305 +280,6 @@ namespace CookingSkill
                     Game1.activeClickableMenu = new NewCraftingPage( menu.xPositionOnScreen, menu.yPositionOnScreen, menu.width, menu.height, cooking );
                 }
             }
-        }
-
-        private bool didInitSkills = false;
-        private void drawAfterGui( object sender, EventArgs args )
-        {
-            if ( Game1.activeClickableMenu is GameMenu )
-            {
-                GameMenu menu = Game1.activeClickableMenu as GameMenu;
-                if ( menu.currentTab == GameMenu.skillsTab )
-                {
-                    var tabs = ( List< IClickableMenu > ) Util.GetInstanceField(typeof(GameMenu), menu, "pages" );
-                    var skills = (SkillsPage)tabs[GameMenu.skillsTab];
-
-                    if ( !didInitSkills )
-                    {
-                        initCookingSkill(skills);
-                        didInitSkills = true;
-                    }
-                    drawCookingSkill( skills );
-                }
-            }
-            else didInitSkills = false;
-        }
-
-        private void initCookingSkill( SkillsPage skills )
-        {
-            int cookingLevel = getCookingLevel();
-
-            // Bunch of stuff from the constructor
-            int num2 = 0;
-            int num3 = skills.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 4 * Game1.tileSize - Game1.pixelZoom;
-            int num4 = skills.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - Game1.pixelZoom * 3;
-            for (int i = 4; i < 10; i += 5)
-            {
-                int j = 5;
-                if (hasLuck)
-                    j++;
-
-                string text = "";
-                string text2 = "";
-                bool flag = false;
-                int num5 = -1;
-
-                flag = (cookingLevel > i);
-                num5 = getProfessionForSkill( i + 1 );//Game1.player.getProfessionForSkill(5, i + 1);
-                object[] args = new object[] { text, text2, CookingLevelUpMenu.getProfessionDescription(num5) };
-                Util.CallInstanceMethod( typeof( SkillsPage ), skills, "parseProfessionDescription", args );
-                text = (string)args[0];
-                text2 = (string)args[1];
-
-                if (flag && (i + 1) % 5 == 0)
-                {
-                    var skillBars = (List<ClickableTextureComponent>)Util.GetInstanceField(typeof(SkillsPage), skills, "skillBars");
-                    skillBars.Add(new ClickableTextureComponent(string.Concat(num5), new Rectangle(num2 + num3 - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6), 14 * Game1.pixelZoom, 9 * Game1.pixelZoom), null, text, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), (float)Game1.pixelZoom, true));
-                }
-                num2 += Game1.pixelZoom * 6;
-            }
-            int k = 5;
-            if (hasLuck)
-                k++;
-            int num6 = k;
-            if (num6 == 1)
-            {
-                num6 = 3;
-            }
-            else if (num6 == 3)
-            {
-                num6 = 1;
-            }
-            string text3 = "";
-            if (cookingLevel > 0)
-            {
-                text3 = string.Concat(new object[]
-					    {
-						    "+",
-						    (int)((getEdibilityMultiplier() - 1) * 100),
-						    "% edibility in home-cooked food",
-						    Environment.NewLine,
-					    });
-            }
-            var skillAreas = (List<ClickableTextureComponent>)Util.GetInstanceField(typeof(SkillsPage), skills, "skillAreas");
-            skillAreas.Add(new ClickableTextureComponent(string.Concat(num6), new Rectangle(num3 - Game1.tileSize * 2 - Game1.tileSize * 3 / 4, num4 + k * (Game1.tileSize / 2 + Game1.pixelZoom * 6), Game1.tileSize * 2 + Game1.pixelZoom * 5, 9 * Game1.pixelZoom), string.Concat(num6), text3, null, Rectangle.Empty, 1f, false));
-        }
-
-        private void drawCookingSkill( SkillsPage skills )
-        {
-            int level = getCookingLevel();
-
-            SpriteBatch b = Game1.spriteBatch;
-            int j = 5;
-            if (hasLuck)
-                j++;
-
-            int num;
-            int num2;
-
-            num = skills.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 4 * Game1.tileSize - 8;
-            num2 = skills.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - Game1.pixelZoom * 2;
-
-			int num3 = 0;
-			for (int i = 0; i < 10; i++)
-            {
-                bool flag = false;
-                bool flag2 = false;
-                string text = "";
-                int num4 = 0;
-                Rectangle empty = Rectangle.Empty;
-
-                flag = (level > i);
-                if (i == 0)
-                {
-                    text = "Cooking";
-                }
-                num4 = level;
-                flag2 = false;//(Game1.player.addedLuckLevel > 0);
-                empty = new Rectangle(140, 512, 13, 16);
-
-                if (!text.Equals(""))
-                {
-                    b.DrawString(Game1.smallFont, text, new Vector2((float)num - Game1.smallFont.MeasureString(text).X - (float)(Game1.pixelZoom * 4) - (float)Game1.tileSize, (float)(num2 + Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), Game1.textColor);
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num - Game1.pixelZoom * 16), (float)(num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(empty), Color.Black * 0.3f, 0f, Vector2.Zero, (float)Game1.pixelZoom * 0.75f, SpriteEffects.None, 0.85f);
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num - Game1.pixelZoom * 15), (float)(num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(empty), Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom * 0.75f, SpriteEffects.None, 0.87f);
-                }
-                if (!flag && (i + 1) % 5 == 0)
-                {
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(145, 338, 14, 9)), Color.Black * 0.35f, 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.87f);
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(145 + (flag ? 14 : 0), 338, 14, 9)), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.87f);
-                }
-                else if ((i + 1) % 5 != 0)
-                {
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(129, 338, 8, 9)), Color.Black * 0.35f, 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.85f);
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(129 + (flag ? 8 : 0), 338, 8, 9)), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.87f);
-                }
-                if (i == 9)
-                {
-                    NumberSprite.draw(num4, b, new Vector2((float)(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 3 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0)), (float)(num2 + Game1.pixelZoom * 4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
-                    NumberSprite.draw(num4, b, new Vector2((float)(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 4 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0)), (float)(num2 + Game1.pixelZoom * 3 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), (flag2 ? Color.LightGreen : Color.SandyBrown) * ((num4 == 0) ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
-                }
-                if ((i + 1) % 5 == 0)
-                {
-                    num3 += Game1.pixelZoom * 6;
-                }
-            }
-        }
-
-        private void showLevelMenu( object sender, EventArgsShowNightEndMenus args )
-        {
-            Log.debug("Doing cooking menus");
-
-            if (Game1.endOfNightMenus.Count == 0)
-                Game1.endOfNightMenus.Push(new SaveGameMenu());
-
-            if (newCookingLevels.Count() > 0)
-            {
-                for (int i = newCookingLevels.Count() - 1; i >= 0; --i )
-                {
-                    int level = newCookingLevels[i];
-                    Log.debug("Doing " + i + ": cooking level " + level + " screen");
-
-                    Game1.endOfNightMenus.Push(new CookingLevelUpMenu(level));
-                }
-                newCookingLevels.Clear();
-            }
-            else if ( getCookingLevel() >= 5 && !Game1.player.professions.Contains( PROFESSION_SELLPRICE ) &&!Game1.player.professions.Contains( PROFESSION_BUFFTIME ) )
-            {
-                Log.debug("Putting level 5 profession menu");
-                Game1.endOfNightMenus.Push(new CookingLevelUpMenu(5));
-            }
-            else if (getCookingLevel() >= 10 && !Game1.player.professions.Contains(PROFESSION_CONSERVATION) && !Game1.player.professions.Contains(PROFESSION_SILVER) &&
-                        !Game1.player.professions.Contains(PROFESSION_BUFFLEVEL) && !Game1.player.professions.Contains(PROFESSION_BUFFPLAIN))
-            {
-                Log.debug("Putting level 10 profession menu");
-                Game1.endOfNightMenus.Push(new CookingLevelUpMenu(10));
-            }
-        }
-
-        private void locChanged(object sender, EventArgs args)
-        {
-            if ( HAS_ALL_PROFESSIONS )
-            {
-                // This is AllProfessions code, updated for 1.3
-                var profs = Game1.player.professions;
-                List<List<int>> list = new List<List<int>> { professions5, professions10, };
-                foreach (List<int> current in list)
-                {
-                    bool flag = profs.Intersect(current).Any<int>();
-                    if (flag)
-                    {
-                        foreach (int current2 in current)
-                        {
-                            bool flag2 = !profs.Contains(current2);
-                            if (flag2)
-                            {
-                                profs.Add(current2);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private int getProfessionForSkill( int level )
-        {
-            if (level != 5 && level != 10)
-                return -1;
-
-            List<int> list = (level == 5 ? professions5 : professions10);
-            foreach (int prof in list)
-            {
-                if (Game1.player.professions.Contains(prof))
-                    return prof;
-            }
-
-            return -1;
-        }
-
-        private bool hasLuck = false;
-        private void checkForLuck()
-        {
-            if ( !Helper.ModRegistry.IsLoaded( "spacechase0.LuckSkill" ) )
-            {
-                Log.info("Luck Skill not found");
-                return;
-            }
-
-            Log.info("Luck found, making a note for later.");
-            hasLuck = true;
-        }
-
-        private void checkForExperienceBars()
-        {
-            if (!Helper.ModRegistry.IsLoaded("spacechase0.ExperienceBars"))
-            {
-                Log.info("Experience Bars not found");
-                return;
-            }
-
-            Log.info("Experience Bars found, adding cooking experience bar renderer.");
-            GraphicsEvents.OnPostRenderHudEvent += drawExperienceBar;
-        }
-
-        private void drawExperienceBar(object sender, EventArgs args_)
-        {
-            if (Game1.activeClickableMenu != null)
-                return;
-
-            try
-            {
-                int level = getCookingLevel();
-                int exp = MyExperience;
-
-                int prevReq = 0, nextReq = 1;
-                if (level == 0)
-                {
-                    nextReq = expNeededForLevel[0];
-                }
-                else if (level != 10)
-                {
-                    prevReq = expNeededForLevel[level - 1];
-                    nextReq = expNeededForLevel[level];
-                }
-
-                int haveExp = exp - prevReq;
-                int needExp = nextReq - prevReq;
-                float progress = (float)haveExp / needExp;
-                if (level == 10)
-                {
-                    progress = -1;
-                }
-
-                var api = Helper.ModRegistry.GetApi<ExperienceBarsApi>("spacechase0.ExperienceBars");
-                if (api == null)
-                {
-                    Log.warn("No experience bars API? Turning off");
-                    GraphicsEvents.OnPostRenderHudEvent -= drawExperienceBar;
-                }
-                api.DrawExperienceBar(icon, level, progress, new Color(196, 76, 255));
-                
-            }
-            catch ( Exception e)
-            {
-                Log.error( "Exception rendering cooking bar: " + e );
-                GraphicsEvents.OnPostRenderHudEvent -= drawExperienceBar;
-            }
-        }
-
-        private bool HAS_ALL_PROFESSIONS = false;
-        private List<int> professions5 = new List<int>() { PROFESSION_SELLPRICE, PROFESSION_BUFFTIME };
-        private List<int> professions10 = new List<int>() { PROFESSION_CONSERVATION, PROFESSION_SILVER, PROFESSION_BUFFLEVEL, PROFESSION_BUFFPLAIN };
-        private void checkForAllProfessions()
-        {
-            if (!Helper.ModRegistry.IsLoaded("community.AllProfessions"))
-            {
-                Log.info("[CookingSkill] All Professions not found.");
-                return;
-            }
-
-            Log.info("[CookingSkill] All Professions found. You will get every cooking profession for your level.");
-            HAS_ALL_PROFESSIONS = true;
         }
     }
 }
