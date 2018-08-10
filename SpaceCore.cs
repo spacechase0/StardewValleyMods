@@ -61,6 +61,7 @@ namespace SpaceCore
             doPrefix(typeof(GameLocation), "performAction", typeof(ActionHook));
             doPrefix(typeof(GameLocation), "performTouchAction", typeof(TouchActionHook));
             doPostfix(typeof(GameServer), "sendServerIntroduction", typeof(ServerGotClickHook));
+            doPostfix(typeof(NPC), "receiveGift", typeof(AfterGiftGivenHook));
         }
 
         private void doPrefix(Type origType, string origMethod, Type newType)

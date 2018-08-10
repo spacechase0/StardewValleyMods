@@ -31,6 +31,9 @@ namespace SpaceCore.Events
         // Server side, when a client joins
         public static event EventHandler<EventArgsServerGotClient> ServerGotClient;
 
+        // When a gift is given to someone. Sender is farmer.
+        public static event EventHandler<EventArgsGiftGiven> AfterGiftGiven;
+
         internal static void InvokeOnBlankSave()
         {
             Log.trace("Event: OnBlankSave");
@@ -94,6 +97,15 @@ namespace SpaceCore.Events
             if (ServerGotClient == null)
                 return;
             Util.invokeEvent("SpaceEvents.ServerGotClient", ServerGotClient.GetInvocationList(), server, args);
+        }
+
+        internal static void InvokeAfterGiftGiven(NPC npc, StardewValley.Object obj, Farmer farmer)
+        {
+            Log.trace("Event: AfterGiftGiven");
+            if (AfterGiftGiven == null)
+                return;
+            var arg = new EventArgsGiftGiven(npc, obj);
+            Util.invokeEvent("SpaceEvents.AfterGiftGiven", AfterGiftGiven.GetInvocationList(), farmer, arg);
         }
     }
 }

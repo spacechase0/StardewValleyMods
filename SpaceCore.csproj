@@ -56,6 +56,7 @@
     <Compile Include="Events\CancelableEventArgs.cs" />
     <Compile Include="Events\EventArgsAction.cs" />
     <Compile Include="Events\EventArgsChooseNightlyFarmEvent.cs" />
+    <Compile Include="Events\EventArgsGiftGiven.cs" />
     <Compile Include="Events\EventArgsServerGotClient.cs" />
     <Compile Include="Events\EventArgsShowNightEndMenus.cs" />
     <Compile Include="Events\SpaceEvents.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Overrides\HoeDirt.cs" />
     <Compile Include="Overrides\MeleeWeapon.cs" />
     <Compile Include="Overrides\Multiplayer.cs" />
+    <Compile Include="Overrides\NPC.cs" />
     <Compile Include="Overrides\Utility.cs" />
     <Compile Include="Skills.cs" />
     <Compile Include="Sleep.cs" />
