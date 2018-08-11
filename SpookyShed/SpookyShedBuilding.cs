@@ -17,9 +17,23 @@ namespace MoreBuildings.SpookyShed
 {
     public class SpookyShedBuilding : Building, ISaveElement
     {
+        private static BluePrint blueprint = new BluePrint("SpookyShed");
+
+        public SpookyShedBuilding()
+            : base(blueprint, Vector2.Zero)
+        {
+            indoors.Value = new SpookyShedLocation();
+        }
         public object getReplacement()
         {
-            return new Shed();
+            Building building = new Building(new BluePrint("Shed"), new Vector2(tileX, tileY));
+            building.indoors.Value = indoors.Value;
+            building.daysOfConstructionLeft.Value = daysOfConstructionLeft.Value;
+            building.tilesHigh.Value = tilesHigh.Value;
+            building.tilesWide.Value = tilesWide.Value;
+            building.tileX.Value = tileX.Value;
+            building.tileY.Value = tileY.Value;
+            return building;
         }
 
         public Dictionary<string, string> getAdditionalSaveData()
@@ -29,6 +43,11 @@ namespace MoreBuildings.SpookyShed
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
         {
+            Building building = (Building)replacement;
+            indoors.Value = building.indoors.Value;
+            daysOfConstructionLeft.Value = building.daysOfConstructionLeft.Value;
+            tileX.Value = building.tileX.Value;
+            tileY.Value = building.tileY.Value;
         }
     }
 }

@@ -14,7 +14,6 @@ using System.IO;
 using MoreBuildings.SpookyShed;
 using StardewValley.Locations;
 using MoreBuildings.BigShed;
-using SpaceCore.Events;
 using System.Diagnostics;
 using System.Reflection;
 using MoreBuildings.FishingShack;
@@ -36,8 +35,8 @@ namespace MoreBuildings
             instance = this;
             
             MenuEvents.MenuChanged += menuChanged;
-            PlayerEvents.Warped += locChanged;
-            SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
+            //PlayerEvents.Warped += locChanged;
+            //SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
 
             shed2Exterior = Helper.Content.Load<Texture2D>("BigShed/building.png");
             spookyExterior = Helper.Content.Load<Texture2D>("SpookyShed/building.png");

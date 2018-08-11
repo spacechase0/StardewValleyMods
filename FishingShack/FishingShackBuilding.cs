@@ -17,9 +17,24 @@ namespace MoreBuildings.FishingShack
 {
     public class FishingShackBuilding : Building, ISaveElement
     {
+        private static BluePrint blueprint = new BluePrint("FishShack");
+
+        public FishingShackBuilding()
+            : base(blueprint, Vector2.Zero)
+        {
+            indoors.Value = new FishingShackLocation();
+        }
+
         public object getReplacement()
         {
-            return new Shed();
+            Building building = new Building(new BluePrint("Shed"), new Vector2(tileX, tileY));
+            building.indoors.Value = indoors.Value;
+            building.daysOfConstructionLeft.Value = daysOfConstructionLeft.Value;
+            building.tilesHigh.Value = tilesHigh.Value;
+            building.tilesWide.Value = tilesWide.Value;
+            building.tileX.Value = tileX.Value;
+            building.tileY.Value = tileY.Value;
+            return building;
         }
 
         public Dictionary<string, string> getAdditionalSaveData()
@@ -29,6 +44,11 @@ namespace MoreBuildings.FishingShack
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
         {
+            Building building = (Building)replacement;
+            indoors.Value = building.indoors.Value;
+            daysOfConstructionLeft.Value = building.daysOfConstructionLeft.Value;
+            tileX.Value = building.tileX.Value;
+            tileY.Value = building.tileY.Value;
         }
     }
 }

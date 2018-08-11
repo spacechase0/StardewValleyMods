@@ -1,5 +1,4 @@
-﻿using SpaceCore.Locations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,10 +10,11 @@ using MoreBuildings.SpookyShed;
 using StardewValley.Monsters;
 using Microsoft.Xna.Framework.Graphics;
 using SObject = StardewValley.Object;
+using PyTK.CustomElementHandler;
 
 namespace MoreBuildings.FishingShack
 {
-    public class FishingShackLocation : GameLocation
+    public class FishingShackLocation : Shed, ISaveElement
     {
         public FishingShackLocation()
         :   base( "Maps\\FishShack", "FishShack")
@@ -38,6 +38,30 @@ namespace MoreBuildings.FishingShack
 
             return new SObject(Vector2.Zero, fish[ Game1.random.Next( fish.Length ) ], 1);
             //return base.getFish(millisecondsAfterNibble, bait, waterDepth, who, baitPotency, locationName);
+        }
+
+        public Dictionary<string, string> getAdditionalSaveData()
+        {
+            return new Dictionary<string, string>();
+        }
+
+        public object getReplacement()
+        {
+            Shed shed = new Shed();
+            foreach (Vector2 key in objects.Keys)
+                shed.objects.Add(key, objects[key]);
+            foreach (Vector2 key in terrainFeatures.Keys)
+                shed.terrainFeatures.Add(key, terrainFeatures[key]);
+            return shed;
+        }
+
+        public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
+        {
+            Shed shed = (Shed)replacement;
+            foreach (Vector2 key in shed.objects.Keys)
+                objects.Add(key, shed.objects[key]);
+            foreach (Vector2 key in terrainFeatures.Keys)
+                terrainFeatures.Add(key, shed.terrainFeatures[key]);
         }
     }
 }

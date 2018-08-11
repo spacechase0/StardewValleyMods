@@ -1,5 +1,4 @@
-﻿using SpaceCore.Locations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +14,7 @@ using PyTK.CustomElementHandler;
 
 namespace MoreBuildings.MiniSpa
 {
-    public class MiniSpaLocation : GameLocation
+    public class MiniSpaLocation : Shed, ISaveElement
     {
         public MiniSpaLocation()
         :   base( "Maps\\MiniSpa", "MiniSpa")
@@ -31,6 +30,29 @@ namespace MoreBuildings.MiniSpa
         public override int getExtraMillisecondsPerInGameMinuteForThisLocation()
         {
             return 7000;
+        }
+        public Dictionary<string, string> getAdditionalSaveData()
+        {
+            return new Dictionary<string, string>();
+        }
+
+        public object getReplacement()
+        {
+            Shed shed = new Shed();
+            foreach (Vector2 key in objects.Keys)
+                shed.objects.Add(key, objects[key]);
+            foreach (Vector2 key in terrainFeatures.Keys)
+                shed.terrainFeatures.Add(key, terrainFeatures[key]);
+            return shed;
+        }
+
+        public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
+        {
+            Shed shed = (Shed)replacement;
+            foreach (Vector2 key in shed.objects.Keys)
+                objects.Add(key, shed.objects[key]);
+            foreach (Vector2 key in terrainFeatures.Keys)
+                terrainFeatures.Add(key, shed.terrainFeatures[key]);
         }
     }
 }
