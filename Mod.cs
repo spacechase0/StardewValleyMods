@@ -35,14 +35,15 @@ namespace MoreBuildings
             instance = this;
             
             MenuEvents.MenuChanged += menuChanged;
-            //PlayerEvents.Warped += locChanged;
-            //SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
+            PlayerEvents.Warped += locChanged;
+            SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
 
             shed2Exterior = Helper.Content.Load<Texture2D>("BigShed/building.png");
             spookyExterior = Helper.Content.Load<Texture2D>("SpookyShed/building.png");
             fishingExterior = Helper.Content.Load<Texture2D>("FishingShack/building.png");
             spaExterior = Helper.Content.Load<Texture2D>("MiniSpa/building.png");
             spookyGemTex = Helper.Content.Load<Texture2D>("SpookyShed\\Shrine_Gem.png");
+
         }
 
         private void menuChanged(object sender, EventArgsClickableMenuChanged args)
@@ -78,46 +79,41 @@ namespace MoreBuildings
                     var b = farm.buildings[i];
 
                     // This is probably a new building if it hasn't been converted yet.
-                    if ( b.buildingType.Value == "Shed2" && b.GetType() == typeof( Building ))
+                    if ( b.buildingType.Value == "Shed2" && !(b is BigShedBuilding))
                     {
                         Log.debug($"Converting big shed at ({b.tileX}, {b.tileY}) to actual big shed.");
                         
                         farm.buildings[i] = new BigShedBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
                         farm.buildings[i].daysOfConstructionLeft.Value = b.daysOfConstructionLeft.Value;
-                        farm.buildings[i].humanDoor.Value = b.humanDoor.Value;
                         farm.buildings[i].indoors.Value = b.indoors.Value;
-                        //farm.buildings[i].nameOfIndoors = b.nameOfIndoors;
                         farm.buildings[i].tileX.Value = b.tileX.Value;
                         farm.buildings[i].tileY.Value = b.tileY.Value;
                         farm.buildings[i].tilesWide.Value = b.tilesWide.Value;
                         farm.buildings[i].tilesHigh.Value = b.tilesHigh.Value;
                         farm.buildings[i].load();
                     }
-                    else if (b.buildingType.Value == "SpookyShed" && b.GetType() == typeof(Building))
+                    else if (b.buildingType.Value == "SpookyShed" && !(b is SpookyShedBuilding))
                     {
                         Log.debug($"Converting spooky shed at ({b.tileX}, {b.tileY}) to actual spooky shed.");
 
                         farm.buildings[i] = new SpookyShedBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
                         farm.buildings[i].daysOfConstructionLeft.Value = b.daysOfConstructionLeft.Value;
-                        farm.buildings[i].humanDoor.Value = b.humanDoor.Value;
                         farm.buildings[i].indoors.Value = b.indoors.Value;
-                        //farm.buildings[i].nameOfIndoors = b.nameOfIndoors;
                         farm.buildings[i].tileX.Value = b.tileX.Value;
                         farm.buildings[i].tileY.Value = b.tileY.Value;
                         farm.buildings[i].tilesWide.Value = b.tilesWide.Value;
                         farm.buildings[i].tilesHigh.Value = b.tilesHigh.Value;
                         farm.buildings[i].load();
                     }
-                    else if (b.buildingType.Value == "FishShack" && b.GetType() == typeof(Building))
+                    else if (b.buildingType.Value == "FishShack" && !(b is FishingShackBuilding))
                     {
                         Log.debug($"Converting fishing shack at ({b.tileX}, {b.tileY}) to actual fishing shack.");
 
                         farm.buildings[i] = new FishingShackBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
                         farm.buildings[i].daysOfConstructionLeft.Value = b.daysOfConstructionLeft.Value;
-                        farm.buildings[i].humanDoor.Value = b.humanDoor.Value;
                         farm.buildings[i].indoors.Value = b.indoors.Value;
                         //farm.buildings[i].nameOfIndoors = b.nameOfIndoors;
                         farm.buildings[i].tileX.Value = b.tileX.Value;
@@ -126,16 +122,14 @@ namespace MoreBuildings
                         farm.buildings[i].tilesHigh.Value = b.tilesHigh.Value;
                         farm.buildings[i].load();
                     }
-                    else if (b.buildingType.Value  == "MiniSpa" && b.GetType() == typeof(Building))
+                    else if (b.buildingType.Value  == "MiniSpa" && !(b is MiniSpaBuilding))
                     {
                         Log.debug($"Converting mini spa at ({b.tileX}, {b.tileY}) to actual mini spa.");
 
                         farm.buildings[i] = new MiniSpaBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
                         farm.buildings[i].daysOfConstructionLeft.Value = b.daysOfConstructionLeft.Value;
-                        farm.buildings[i].humanDoor.Value = b.humanDoor.Value;
                         farm.buildings[i].indoors.Value = b.indoors.Value;
-                        //farm.buildings[i].nameOfIndoors = b.nameOfIndoors;
                         farm.buildings[i].tileX.Value = b.tileX.Value;
                         farm.buildings[i].tileY.Value = b.tileY.Value;
                         farm.buildings[i].tilesWide.Value = b.tilesWide.Value;
@@ -164,8 +158,6 @@ namespace MoreBuildings
                                 buildable.buildings[i] = new BigShedBuilding();
                                 buildable.buildings[i].buildingType.Value = b.buildingType.Value;
                                 buildable.buildings[i].humanDoor.Value = b.humanDoor.Value;
-                                buildable.buildings[i].indoors.Value = b.indoors.Value;
-                                //buildable.buildings[i].nameOfIndoors = b.nameOfIndoors;
                                 buildable.buildings[i].tileX.Value = b.tileX.Value;
                                 buildable.buildings[i].tileY.Value = b.tileY.Value;
                                 buildable.buildings[i].tilesWide.Value = b.tilesWide.Value;

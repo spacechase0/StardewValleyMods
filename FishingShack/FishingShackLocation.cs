@@ -14,7 +14,7 @@ using PyTK.CustomElementHandler;
 
 namespace MoreBuildings.FishingShack
 {
-    public class FishingShackLocation : Shed, ISaveElement
+    public class FishingShackLocation : GameLocation, ISaveElement
     {
         public FishingShackLocation()
         :   base( "Maps\\FishShack", "FishShack")
@@ -42,7 +42,11 @@ namespace MoreBuildings.FishingShack
 
         public Dictionary<string, string> getAdditionalSaveData()
         {
-            return new Dictionary<string, string>();
+            var data = new Dictionary<string, string>();
+            if (uniqueName.Value != null)
+                data.Add("u", uniqueName.Value);
+
+            return data;
         }
 
         public object getReplacement()
@@ -52,12 +56,17 @@ namespace MoreBuildings.FishingShack
                 shed.objects.Add(key, objects[key]);
             foreach (Vector2 key in terrainFeatures.Keys)
                 shed.terrainFeatures.Add(key, terrainFeatures[key]);
+
             return shed;
         }
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
         {
             Shed shed = (Shed)replacement;
+
+            if (additionalSaveData.ContainsKey("u"))
+                uniqueName.Value = additionalSaveData["u"];
+
             foreach (Vector2 key in shed.objects.Keys)
                 objects.Add(key, shed.objects[key]);
             foreach (Vector2 key in terrainFeatures.Keys)

@@ -22,16 +22,23 @@ namespace MoreBuildings.FishingShack
         public FishingShackBuilding()
             : base(blueprint, Vector2.Zero)
         {
-            indoors.Value = new FishingShackLocation();
+        }
+
+        public FishingShackBuilding(BluePrint blueprint, Vector2 tileLocation)
+            :base(blueprint,tileLocation)
+        {
+        }
+
+        protected override GameLocation getIndoors(string nameOfIndoorsWithoutUnique)
+        {
+            return new FishingShackLocation();
         }
 
         public object getReplacement()
         {
-            Building building = new Building(new BluePrint("Shed"), new Vector2(tileX, tileY));
+            Mill building = new Mill(new BluePrint("Mill"), new Vector2(tileX, tileY));
             building.indoors.Value = indoors.Value;
             building.daysOfConstructionLeft.Value = daysOfConstructionLeft.Value;
-            building.tilesHigh.Value = tilesHigh.Value;
-            building.tilesWide.Value = tilesWide.Value;
             building.tileX.Value = tileX.Value;
             building.tileY.Value = tileY.Value;
             return building;
@@ -44,7 +51,7 @@ namespace MoreBuildings.FishingShack
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
         {
-            Building building = (Building)replacement;
+            Mill building = (Mill)replacement;
             indoors.Value = building.indoors.Value;
             daysOfConstructionLeft.Value = building.daysOfConstructionLeft.Value;
             tileX.Value = building.tileX.Value;
