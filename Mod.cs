@@ -99,22 +99,6 @@ namespace CookingSkill
         public override void Entry( IModHelper helper )
         {
             instance = this;
-
-            if (icon == null)
-            {
-                try
-                {
-                    string iconTex = Helper.DirectoryPath + Path.DirectorySeparatorChar + "iconA.png";
-                    FileStream fs = new FileStream(iconTex, FileMode.Open);
-                    icon = Texture2D.FromStream(Game1.graphics.GraphicsDevice, fs);
-                }
-                catch (Exception e)
-                {
-                    Log.error("Failed to load icon: " + e);
-                    icon = new Texture2D(Game1.graphics.GraphicsDevice, 16, 16);
-                    icon.SetData(Enumerable.Range(0, 16 * 16).Select(i => new Color(225, 168, 255)).ToArray());
-                }
-            }
             
             GameEvents.UpdateTick += update;
 

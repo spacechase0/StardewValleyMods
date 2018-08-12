@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace CookingSkill
         :   base( "spacechase0.Cooking" )
         {
             Name = "Cooking";
-            Icon = null; // TODO
+            Icon = Mod.instance.Helper.Content.Load<Texture2D>("iconA.png");
 
             ExperienceCurve = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 }; ;
 
