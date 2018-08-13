@@ -113,7 +113,7 @@ namespace SpaceCore.Interface
             var skill = Skills.skills[skillName];
             profPair = null;
             foreach ( var pair in skill.ProfessionsForLevels )
-                if ( pair.Level == currentLevel && Game1.player.professions.Contains( pair.Requires.GetVanillaId() ) )
+                if ( pair.Level == currentLevel && ( pair.Requires == null || Game1.player.professions.Contains( pair.Requires.GetVanillaId() ) ) )
                 {
                     profPair = pair;
                     break;
@@ -429,8 +429,12 @@ namespace SpaceCore.Interface
                         this.professionsToChoose.Add(this.currentSkill * 6 + 5);
                     }
                     */
-                    this.leftProfessionDescription = LevelUpMenu.getProfessionDescription(this.professionsToChoose[0]);
-                    this.rightProfessionDescription = LevelUpMenu.getProfessionDescription(this.professionsToChoose[1]);
+                    var la = new List<string>(new string[] { profPair.First.Name });
+                    la.AddRange(profPair.First.Description.Split('\n'));
+                    var ra = new List<string>(new string[] { profPair.Second.Name });
+                    ra.AddRange(profPair.Second.Description.Split('\n'));
+                    this.leftProfessionDescription = la;// LevelUpMenu.getProfessionDescription(this.professionsToChoose[0]);
+                    this.rightProfessionDescription = ra;//LevelUpMenu.getProfessionDescription(this.professionsToChoose[1]);
                     this.hasUpdatedProfessions = true;
                 }
                 for (int index = this.littleStars.Count - 1; index >= 0; --index)

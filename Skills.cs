@@ -70,6 +70,7 @@ namespace SpaceCore
             public string Id { get; }
             public string Name { get; set; }
             public Texture2D Icon { get; set; }
+            public Texture2D SkillsPageIcon { get; set; }
 
             public IList<Profession> Professions { get; } = new List<Profession>();
 
@@ -81,6 +82,11 @@ namespace SpaceCore
             public virtual List<string> GetExtraLevelUpInfo( int level )
             {
                 return new List<string>();
+            }
+
+            public virtual string GetSkillPageHoverText(int level)
+            {
+                return "";
             }
 
             public virtual void DoLevelPerk( int level )
@@ -100,6 +106,7 @@ namespace SpaceCore
         {
             SaveEvents.AfterLoad += afterLoad;
             SaveEvents.AfterSave += afterSave;
+            MenuEvents.MenuChanged += menuChanged;
             PlayerEvents.Warped += locChanged;
             GraphicsEvents.OnPostRenderHudEvent += drawExpBars;
             SpaceEvents.ShowNightEndMenus += showLevelMenu;
@@ -257,6 +264,14 @@ namespace SpaceCore
                 SpaceCore.instance.Helper.WriteJsonFile(FilePath, exp);
             }
         }
+        private static void menuChanged(object sender, EventArgsClickableMenuChanged args)
+        {
+            if ( args.NewMenu is GameMenu gm )
+            {
+                var tabs = SpaceCore.instance.Helper.Reflection.GetField<List<IClickableMenu>>(gm, "pages").GetValue();
+                tabs[GameMenu.skillsTab] = new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0), gm.height);
+            }
+        }
         private static void showLevelMenu(object sender, EventArgsShowNightEndMenus args)
         {
             Log.debug("Doing skill menus");
@@ -335,6 +350,22 @@ namespace SpaceCore
                 }
                 api.DrawExperienceBar(skill.Icon ?? Game1.staminaRect, level, progress, skill.ExperienceBarColor);
             }
+        }
+
+        internal static Skill.Profession getProfessionFor( Skill skill, int level )
+        {
+            foreach ( var profPair in skill.ProfessionsForLevels )
+            {
+                if ( level == profPair.Level )
+                {
+                    if (Game1.player.HasCustomProfession(profPair.First))
+                        return profPair.First;
+                    else if (Game1.player.HasCustomProfession(profPair.Second))
+                        return profPair.Second;
+                }
+            }
+
+            return null;
         }
     }
 
