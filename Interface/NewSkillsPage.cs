@@ -42,6 +42,11 @@ namespace SpaceCore.Interface
         private int playerPanelTimer;
         private Rectangle playerPanel;
 
+        private int WALLET_MOVE_X = 0;
+        private int WALLET_MOVE_Y = -600;
+        private int WALLET_MOVE_W = 0;
+        private int WALLET_MOVE_H = 0;
+
         public NewSkillsPage(int x, int y, int width, int height)
             : base(x, y, width, height, false)
         {
@@ -51,7 +56,7 @@ namespace SpaceCore.Interface
             if (Game1.player.canUnderstandDwarves)
             {
                 List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1, y1, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11587"), Game1.mouseCursors, new Rectangle(129, 320, 16, 16), 4f, true);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11587"), Game1.mouseCursors, new Rectangle(129, 320, 16, 16), 4f, true);
                 textureComponent.myID = 10201;
                 textureComponent.rightNeighborID = 10202;
                 textureComponent.upNeighborID = 4;
@@ -60,7 +65,7 @@ namespace SpaceCore.Interface
             if (Game1.player.hasRustyKey)
             {
                 List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 68, y1, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11588"), Game1.mouseCursors, new Rectangle(145, 320, 16, 16), 4f, true);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 68 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11588"), Game1.mouseCursors, new Rectangle(145, 320, 16, 16), 4f, true);
                 textureComponent.myID = 10202;
                 textureComponent.rightNeighborID = 10203;
                 textureComponent.leftNeighborID = 10201;
@@ -70,7 +75,7 @@ namespace SpaceCore.Interface
             if (Game1.player.hasClubCard)
             {
                 List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 136, y1, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11589"), Game1.mouseCursors, new Rectangle(161, 320, 16, 16), 4f, true);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 136 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11589"), Game1.mouseCursors, new Rectangle(161, 320, 16, 16), 4f, true);
                 textureComponent.myID = 10203;
                 textureComponent.rightNeighborID = 10204;
                 textureComponent.leftNeighborID = 10202;
@@ -80,7 +85,7 @@ namespace SpaceCore.Interface
             if (Game1.player.hasSpecialCharm)
             {
                 List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 204, y1, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11590"), Game1.mouseCursors, new Rectangle(176, 320, 16, 16), 4f, true);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 204 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11590"), Game1.mouseCursors, new Rectangle(176, 320, 16, 16), 4f, true);
                 textureComponent.myID = 10204;
                 textureComponent.rightNeighborID = 10205;
                 textureComponent.leftNeighborID = 10203;
@@ -90,7 +95,7 @@ namespace SpaceCore.Interface
             if (Game1.player.hasSkullKey)
             {
                 List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 272, y1, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11591"), Game1.mouseCursors, new Rectangle(192, 320, 16, 16), 4f, true);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 272 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11591"), Game1.mouseCursors, new Rectangle(192, 320, 16, 16), 4f, true);
                 textureComponent.myID = 10205;
                 textureComponent.rightNeighborID = 10206;
                 textureComponent.leftNeighborID = 10204;
@@ -100,7 +105,7 @@ namespace SpaceCore.Interface
             if (Game1.player.hasMagnifyingGlass)
             {
                 List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 340, y1, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.magnifyingglass"), Game1.mouseCursors, new Rectangle(208, 320, 16, 16), 4f, true);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 340 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.magnifyingglass"), Game1.mouseCursors, new Rectangle(208, 320, 16, 16), 4f, true);
                 textureComponent.myID = 10205;
                 textureComponent.rightNeighborID = 10206;
                 textureComponent.leftNeighborID = 10204;
@@ -110,7 +115,7 @@ namespace SpaceCore.Interface
             if (Game1.player.hasDarkTalisman)
             {
                 List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 408, y1, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:DarkTalisman"), Game1.mouseCursors, new Rectangle(225, 320, 16, 16), 4f, true);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 408 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:DarkTalisman"), Game1.mouseCursors, new Rectangle(225, 320, 16, 16), 4f, true);
                 textureComponent.myID = 10206;
                 textureComponent.rightNeighborID = 10207;
                 textureComponent.leftNeighborID = 10205;
@@ -120,7 +125,7 @@ namespace SpaceCore.Interface
             if (Game1.player.hasMagicInk)
             {
                 List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 476, y1, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:MagicInk"), Game1.mouseCursors, new Rectangle(241, 320, 16, 16), 4f, true);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 476 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:MagicInk"), Game1.mouseCursors, new Rectangle(241, 320, 16, 16), 4f, true);
                 textureComponent.myID = 10207;
                 textureComponent.leftNeighborID = 10206;
                 textureComponent.upNeighborID = 4;
@@ -129,7 +134,7 @@ namespace SpaceCore.Interface
             if (Game1.player.eventsSeen.Contains(2120303))
             {
                 List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 544, y1, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:BearPaw"), Game1.mouseCursors, new Rectangle(192, 336, 16, 16), 4f, true);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 544 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:BearPaw"), Game1.mouseCursors, new Rectangle(192, 336, 16, 16), 4f, true);
                 textureComponent.myID = 10208;
                 textureComponent.leftNeighborID = 10207;
                 textureComponent.upNeighborID = 4;
@@ -138,7 +143,7 @@ namespace SpaceCore.Interface
             if (Game1.player.eventsSeen.Contains(3910979))
             {
                 List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 612, y1, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:SpringOnionBugs"), Game1.mouseCursors, new Rectangle(208, 336, 16, 16), 4f, true);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 612 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:SpringOnionBugs"), Game1.mouseCursors, new Rectangle(208, 336, 16, 16), 4f, true);
                 textureComponent.myID = 10209;
                 textureComponent.leftNeighborID = 10208;
                 textureComponent.upNeighborID = 4;
@@ -205,6 +210,7 @@ namespace SpaceCore.Interface
             }
 
             //////////////////////////////////
+            num1 = 0;
             num4 = 4;
             while (num4 < 10)
             {
@@ -218,8 +224,13 @@ namespace SpaceCore.Interface
                     Skills.Skill.Profession whichProfession = null;
                     flag = Game1.player.GetCustomSkillLevel(skill) > num4;
                     whichProfession = Skills.getProfessionFor(skill, num4 + 1);// Game1.player.getProfessionForSkill(0, num4 + 1);
-                    var profLines = whichProfession?.Description?.Split('\n');
-                    this.parseProfessionDescription(ref professionBlurb, ref professionTitle, new List<string>(profLines == null ? new string[] { } : profLines));
+                    var profLines = new List<string>();
+                    if (whichProfession != null)
+                    {
+                        profLines.Add(whichProfession.Name);
+                        profLines.AddRange(whichProfession.Description.Split('\n'));
+                    }
+                    this.parseProfessionDescription(ref professionBlurb, ref professionTitle, profLines);
                     if (flag && (num4 + 1) % 5 == 0 && whichProfession != null)
                     {
                         List<ClickableTextureComponent> skillBars = this.skillBars;
@@ -386,7 +397,7 @@ namespace SpaceCore.Interface
                 {
                     this.hoverText = skillBar.hoverText;
                     this.hoverTitle = skillBar.name.StartsWith("C") ? skillBar.name.Substring(1) : LevelUpMenu.getProfessionTitleFromNumber(Convert.ToInt32(skillBar.name));
-                    this.professionImage = Convert.ToInt32(skillBar.name);
+                    this.professionImage = skillBar.name.StartsWith("C") ? 0 : Convert.ToInt32(skillBar.name);
                     skillBar.scale = 0.0f;
                 }
             }
@@ -568,11 +579,18 @@ namespace SpaceCore.Interface
                 if ((double)skillBar.scale == 0.0)
                 {
                     IClickableMenu.drawTextureBox(b, skillBar.bounds.X - 16 - 8, skillBar.bounds.Y - 16 - 16, 96, 96, Color.White);
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(skillBar.bounds.X - 8), (float)(skillBar.bounds.Y - 32 + 16)), new Rectangle?(new Rectangle(this.professionImage % 6 * 16, 624 + this.professionImage / 6 * 16, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+                    if (skillBar.name.StartsWith("C"))
+                    {
+                        // TODO
+                    }
+                    else
+                    {
+                        b.Draw(Game1.mouseCursors, new Vector2((float)(skillBar.bounds.X - 8), (float)(skillBar.bounds.Y - 32 + 16)), new Rectangle?(new Rectangle(this.professionImage % 6 * 16, 624 + this.professionImage / 6 * 16, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+                    }
                 }
             }
-            Game1.drawDialogueBox(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + (int)((double)this.height / 2.0) - 32, this.width - 64 - IClickableMenu.spaceToClearSideBorder * 2, this.height / 4 + 64, false, true, (string)null, false);
-            this.drawBorderLabel(b, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11610"), Game1.smallFont, this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 96, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + (int)((double)this.height / 2.0) - 32);
+            Game1.drawDialogueBox(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32 + WALLET_MOVE_X, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + (int)((double)this.height / 2.0) - 32 + WALLET_MOVE_Y, this.width - 64 - IClickableMenu.spaceToClearSideBorder * 2 + WALLET_MOVE_W, this.height / 4 + 64 + WALLET_MOVE_H, false, true, (string)null, false);
+            this.drawBorderLabel(b, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11610"), Game1.smallFont, this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 96 + WALLET_MOVE_X, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + (int)((double)this.height / 2.0) - 32 + WALLET_MOVE_Y);
             foreach (ClickableTextureComponent specialItem in this.specialItems)
                 specialItem.draw(b);
             if (this.hoverText.Length <= 0)
