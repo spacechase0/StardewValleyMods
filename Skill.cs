@@ -21,6 +21,7 @@ namespace CookingSkill
         {
             Name = "Cooking";
             Icon = Mod.instance.Helper.Content.Load<Texture2D>("iconA.png");
+            SkillsPageIcon = Mod.instance.Helper.Content.Load<Texture2D>("iconB.png");
 
             ExperienceCurve = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 }; ;
 
@@ -77,6 +78,11 @@ namespace CookingSkill
             List<string> list = new List<string>();
             list.Add("+3% edibility in home-cooked foods");
             return list;
+        }
+
+        public override string GetSkillPageHoverText(int level)
+        {
+            return "+" + (3 * level) + "% edibility in home-cooked foods";
         }
     }
 }
