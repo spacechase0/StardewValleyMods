@@ -70,7 +70,6 @@
     <Compile Include="Locations\ISeasonalLocation.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Other\ExperienceBars.cs" />
-    <Compile Include="Overrides\DecoratableLocation.cs" />
     <Compile Include="Overrides\Game1.cs" />
     <Compile Include="Overrides\GameLocation.cs" />
     <Compile Include="Overrides\GameServer.cs" />

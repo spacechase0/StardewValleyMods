@@ -55,8 +55,6 @@ namespace SpaceCore
             doTranspiler(showNightEndMethod, typeof(ShowEndOfNightStuffHook).GetMethod("Transpiler"));
             doPostfix(typeof(Farmer), "doneEating", typeof(DoneEatingHook));
             doPrefix(typeof(MeleeWeapon).GetMethod("drawDuringUse", new[] { typeof(int), typeof(int), typeof(SpriteBatch), typeof(Vector2), typeof(SFarmer), typeof(Rectangle), typeof(int), typeof(bool) }), typeof(CustomWeaponDrawPatch).GetMethod("Prefix"));
-            doPrefix(typeof(DecoratableLocation), "setWallpaper", typeof(WallpaperHook));
-            doPrefix(typeof(DecoratableLocation), "setFloor", typeof(FlooringHook));
             doPrefix(typeof(Multiplayer), "processIncomingMessage", typeof(MultiplayerPackets));
             doPrefix(typeof(GameLocation), "performAction", typeof(ActionHook));
             doPrefix(typeof(GameLocation), "performTouchAction", typeof(TouchActionHook));
