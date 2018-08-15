@@ -581,7 +581,17 @@ namespace SpaceCore.Interface
                     IClickableMenu.drawTextureBox(b, skillBar.bounds.X - 16 - 8, skillBar.bounds.Y - 16 - 16, 96, 96, Color.White);
                     if (skillBar.name.StartsWith("C"))
                     {
-                        // TODO
+                        skillBar.scale = (float)Game1.pixelZoom;
+                        if (skillBar.containsPoint(Game1.getMouseX(), Game1.getMouseY()) && !skillBar.name.Equals("-1") && skillBar.hoverText.Length > 0)
+                        {
+                            var professions = Skills.skills.SelectMany(x => x.Value.Professions).ToList();
+                            var profession = professions.Where(x => $"C{x.Id}" == skillBar.name).FirstOrDefault();
+                            this.hoverText = profession.Description;
+                            this.hoverTitle = profession.Name;
+                            var actuallyAProfessionImage = profession.Icon;
+                            skillBar.scale = 0.0f;
+                            b.Draw(actuallyAProfessionImage, new Vector2((float)(skillBar.bounds.X - Game1.pixelZoom * 2), (float)(skillBar.bounds.Y - Game1.tileSize / 2 + Game1.tileSize / 4)), new Rectangle(0, 0, 16, 16), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+                        }
                     }
                     else
                     {

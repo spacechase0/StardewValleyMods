@@ -347,6 +347,7 @@ namespace SpaceCore
                 {
                     Log.warn("No experience bars API? Turning off");
                     GraphicsEvents.OnPostRenderHudEvent -= drawExpBars;
+                    return;
                 }
                 api.DrawExperienceBar(skill.Icon ?? Game1.staminaRect, level, progress, skill.ExperienceBarColor);
             }
