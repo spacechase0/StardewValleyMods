@@ -227,14 +227,14 @@ namespace SpaceCore.Interface
                     var profLines = new List<string>();
                     if (whichProfession != null)
                     {
-                        profLines.Add(whichProfession.Name);
-                        profLines.AddRange(whichProfession.Description.Split('\n'));
+                        profLines.Add(whichProfession.GetName());
+                        profLines.AddRange(whichProfession.GetDescription().Split('\n'));
                     }
                     this.parseProfessionDescription(ref professionBlurb, ref professionTitle, profLines);
                     if (flag && (num4 + 1) % 5 == 0 && whichProfession != null)
                     {
                         List<ClickableTextureComponent> skillBars = this.skillBars;
-                        ClickableTextureComponent textureComponent = new ClickableTextureComponent("C"+whichProfession.Name, new Rectangle(num1 + num2 - 4 + num4 * 36, num3 + index_ * 56, 56, 36), (string)null, professionBlurb, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), 4f, true);
+                        ClickableTextureComponent textureComponent = new ClickableTextureComponent("C"+whichProfession.Id, new Rectangle(num1 + num2 - 4 + num4 * 36, num3 + index_ * 56, 56, 36), (string)null, professionBlurb, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), 4f, true);
                         textureComponent.myID = num4 + 1 == 5 ? 100 + index_ : 200 + index_;
                         textureComponent.leftNeighborID = num4 + 1 == 5 ? index_ : 100 + index_;
                         textureComponent.rightNeighborID = num4 + 1 == 5 ? 200 + index_ : -1;
@@ -336,7 +336,7 @@ namespace SpaceCore.Interface
                 if (Game1.player.GetCustomSkillLevel(skill) > 0)
                     hoverText = skill.GetSkillPageHoverText(Game1.player.GetCustomSkillLevel(skill));
                 List<ClickableTextureComponent> skillAreas = this.skillAreas;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("C" + skill.Name, new Rectangle(num2 - 128 - 48, num3 + index__ * 56, 148, 36), string.Concat((object)num5), hoverText, (Texture2D)null, Rectangle.Empty, 1f, false);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("C" + skill.GetName(), new Rectangle(num2 - 128 - 48, num3 + index__ * 56, 148, 36), string.Concat((object)num5), hoverText, (Texture2D)null, Rectangle.Empty, 1f, false);
                 textureComponent.myID = index__;
                 textureComponent.downNeighborID = index__ < 4 ? index__ + 1 : 10201;
                 textureComponent.upNeighborID = index__ > 0 ? index__ - 1 : 12341;
@@ -536,7 +536,7 @@ namespace SpaceCore.Interface
                     
                     flag1 = Game1.player.GetCustomSkillLevel(skill) > index1;
                     if (index1 == 0)
-                        text = skill.Name;
+                        text = skill.GetName();
                     number = Game1.player.GetCustomSkillLevel(skill);
                     // TODO: Detect skill buffs? Is that even possible?
                     flag2 = false;// (int)((NetFieldBase<int, NetInt>)Game1.player.addedFarmingLevel) > 0;
@@ -586,9 +586,9 @@ namespace SpaceCore.Interface
                         {
                             var professions = Skills.skills.SelectMany(x => x.Value.Professions).ToList();
                             var profession = professions.Where(x => $"C{x.Id}" == skillBar.name).FirstOrDefault();
-                            this.hoverText = profession.Description;
-                            this.hoverTitle = profession.Name;
-                            var actuallyAProfessionImage = profession.Icon;
+                            this.hoverText = profession.GetDescription();
+                            this.hoverTitle = profession.GetName();
+                            var actuallyAProfessionImage = profession.Icon ?? Game1.staminaRect;
                             skillBar.scale = 0.0f;
                             b.Draw(actuallyAProfessionImage, new Vector2((float)(skillBar.bounds.X - Game1.pixelZoom * 2), (float)(skillBar.bounds.Y - Game1.tileSize / 2 + Game1.tileSize / 4)), new Rectangle(0, 0, 16, 16), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
                         }

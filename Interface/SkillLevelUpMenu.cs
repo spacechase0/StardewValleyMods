@@ -85,7 +85,7 @@ namespace SpaceCore.Interface
                     Game1.addMailForTomorrow("marnieAutoGrabber", false, false);
             }
             */
-            this.title = Game1.content.LoadString("Strings\\UI:LevelUp_Title", (object)this.currentLevel, (object)Skills.skills[currentSkill].Name);
+            this.title = Game1.content.LoadString("Strings\\UI:LevelUp_Title", (object)this.currentLevel, (object)Skills.skills[currentSkill].GetName());
             this.extraInfoForLevel = this.getExtraInfoForLevel(this.currentSkill, this.currentLevel);
             /*
             switch (this.currentSkill)
@@ -252,7 +252,7 @@ namespace SpaceCore.Interface
                 {
                     if ( prof.Id == professionName )
                     {
-                        descriptions.AddRange(prof.Description.Split('\n'));
+                        descriptions.AddRange(prof.GetDescription().Split('\n'));
                         break;
                     }
                 }
@@ -271,7 +271,7 @@ namespace SpaceCore.Interface
                 {
                     if (prof.GetVanillaId() == whichProfession)
                     {
-                        return prof.Name;
+                        return prof.GetName();
                     }
                 }
             }
@@ -429,10 +429,10 @@ namespace SpaceCore.Interface
                         this.professionsToChoose.Add(this.currentSkill * 6 + 5);
                     }
                     */
-                    var la = new List<string>(new string[] { profPair.First.Name });
-                    la.AddRange(profPair.First.Description.Split('\n'));
-                    var ra = new List<string>(new string[] { profPair.Second.Name });
-                    ra.AddRange(profPair.Second.Description.Split('\n'));
+                    var la = new List<string>(new string[] { profPair.First.GetName() });
+                    la.AddRange(profPair.First.GetDescription().Split('\n'));
+                    var ra = new List<string>(new string[] { profPair.Second.GetName() });
+                    ra.AddRange(profPair.Second.GetDescription().Split('\n'));
                     this.leftProfessionDescription = la;// LevelUpMenu.getProfessionDescription(this.professionsToChoose[0]);
                     this.rightProfessionDescription = ra;//LevelUpMenu.getProfessionDescription(this.professionsToChoose[1]);
                     this.hasUpdatedProfessions = true;
@@ -512,7 +512,7 @@ namespace SpaceCore.Interface
                         this.currentLevel = Game1.player.newLevels.First<Point>().Y;
                         this.currentSkill = Game1.player.newLevels.First<Point>().X;
                         */
-                        this.title = Game1.content.LoadString("Strings\\UI:LevelUp_Title", (object)this.currentLevel, (object)Skills.skills[currentSkill].Name);
+                        this.title = Game1.content.LoadString("Strings\\UI:LevelUp_Title", (object)this.currentLevel, (object)Skills.skills[currentSkill].GetName());
                         this.extraInfoForLevel = this.getExtraInfoForLevel(this.currentSkill, this.currentLevel);
                         /*switch (this.currentSkill)
                         {

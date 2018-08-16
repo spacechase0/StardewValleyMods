@@ -19,9 +19,9 @@ namespace SpaceCore
 {
     public class Skills
     {
-        public class Skill
+        public abstract class Skill
         {
-            public class Profession
+            public abstract class Profession
             {
                 public Profession( Skill skill, string id )
                 {
@@ -33,8 +33,8 @@ namespace SpaceCore
                 public string Id { get; }
 
                 public Texture2D Icon { get; set; }
-                public string Name { get; set; }
-                public string Description { get; set; }
+                public abstract string GetName();
+                public abstract string GetDescription();
 
                 public int GetVanillaId()
                 {
@@ -68,7 +68,7 @@ namespace SpaceCore
             }
 
             public string Id { get; }
-            public string Name { get; set; }
+            public abstract string GetName();
             public Texture2D Icon { get; set; }
             public Texture2D SkillsPageIcon { get; set; }
 
@@ -127,7 +127,7 @@ namespace SpaceCore
 
             foreach (var skill in skills )
             {
-                if (skill.Key.ToLower() == name.ToLower() || skill.Value.Name.ToLower() == name.ToLower())
+                if (skill.Key.ToLower() == name.ToLower() || skill.Value.GetName().ToLower() == name.ToLower())
                     return skill.Value;
             }
 
