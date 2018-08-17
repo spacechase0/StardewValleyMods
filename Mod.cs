@@ -469,9 +469,17 @@ namespace JsonAssets
                 return (int)(long)data;
             else
             {
-                if (!objectIds.ContainsKey((string)data))
-                    Log.warn("Resolving for object " + data + " which we don't have?");
-                return objectIds[(string)data];
+                if (objectIds.ContainsKey((string)data))
+                    return objectIds[(string)data];
+
+                foreach ( var obj in Game1.objectInformation )
+                {
+                    if (obj.Value.Split('/')[0] == (string)data)
+                        return obj.Key;
+                }
+
+                Log.warn("No idea what '" + data + "' is!");
+                return 0;
             }
         }
 
