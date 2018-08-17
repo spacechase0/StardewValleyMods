@@ -42,6 +42,8 @@ namespace JsonAssets
                 foreach (string dir in Directory.EnumerateDirectories(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
                     loadData(dir);
             }
+
+            resetAtTitle();
         }
 
         private IApi api;
@@ -218,32 +220,37 @@ namespace JsonAssets
             }
         }
 
+        private void resetAtTitle()
+        {
+            // When we go back to the title menu we need to reset things so things don't break when
+            // going back to a save. Also, this is where it is initially done, too.
+            oldObjectIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-objects.json"));
+            oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-crops.json"));
+            oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-fruittrees.json"));
+            oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-big-craftables.json"));
+            oldHatIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-hats.json"));
+
+            if (objectIds != null)
+            {
+                clearIds(ref objectIds, objects.ToList<DataNeedsId>());
+                clearIds(ref cropIds, crops.ToList<DataNeedsId>());
+                clearIds(ref fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
+                clearIds(ref bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
+                clearIds(ref hatIds, hats.ToList<DataNeedsId>());
+            }
+
+            var editor = Helper.Content.AssetEditors.Where(x => x is ContentInjector);
+            if (editor.Count() > 0)
+                Helper.Content.AssetEditors.Remove(editor.ElementAt(0));
+
+            SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
+        }
+
         private void menuChanged(object sender, EventArgsClickableMenuChanged args)
         {
             if ( args.NewMenu is TitleMenu )
             {
-                // When we go back to the title menu we need to reset things so things don't break when
-                // going back to a save. Also, this is where it is initially done, too.
-                oldObjectIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-objects.json"));
-                oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-crops.json"));
-                oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-fruittrees.json"));
-                oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-big-craftables.json"));
-                oldHatIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-hats.json"));
-
-                if (objectIds != null)
-                {
-                    clearIds(ref objectIds, objects.ToList<DataNeedsId>());
-                    clearIds(ref cropIds, crops.ToList<DataNeedsId>());
-                    clearIds(ref fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
-                    clearIds(ref bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
-                    clearIds(ref hatIds, hats.ToList<DataNeedsId>());
-                }
-
-                var editor = Helper.Content.AssetEditors.Where(x => x is ContentInjector);
-                if ( editor.Count() > 0 )
-                    Helper.Content.AssetEditors.Remove(editor.ElementAt(0));
-
-                SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
+                resetAtTitle();
                 return;
             }
 
@@ -431,21 +438,30 @@ namespace JsonAssets
         private const int StartingFruitTreeId = 10;
         private const int StartingBigCraftableId = 300;
         private const int StartingHatId = 50;
+
         internal IList<ObjectData> objects = new List<ObjectData>();
         internal IList<CropData> crops = new List<CropData>();
         internal IList<FruitTreeData> fruitTrees = new List<FruitTreeData>();
         internal IList<BigCraftableData> bigCraftables = new List<BigCraftableData>();
         internal IList<HatData> hats = new List<HatData>();
+
         internal IDictionary<string, int> objectIds;
         internal IDictionary<string, int> cropIds;
         internal IDictionary<string, int> fruitTreeIds;
         internal IDictionary<string, int> bigCraftableIds;
         internal IDictionary<string, int> hatIds;
+
         internal IDictionary<string, int> oldObjectIds;
         internal IDictionary<string, int> oldCropIds;
         internal IDictionary<string, int> oldFruitTreeIds;
         internal IDictionary<string, int> oldBigCraftableIds;
         internal IDictionary<string, int> oldHatIds;
+
+        internal IDictionary<int, string> origObjects;
+        internal IDictionary<int, string> origCrops;
+        internal IDictionary<int, string> origFruitTrees;
+        internal IDictionary<int, string> origBigCraftables;
+        internal IDictionary<int, string> origHats;
 
         public int ResolveObjectId(object data)
         {
@@ -488,8 +504,22 @@ namespace JsonAssets
             }
         }
 
+        private IDictionary<int, string> cloneIdDictAndRemoveOurs( IDictionary<int, string> full, IDictionary<string, int> ours )
+        {
+            var ret = new Dictionary<int, string>(full);
+            foreach (var obj in ours)
+                ret.Remove(obj.Value);
+            return ret;
+        }
+
         private void fixIdsEverywhere()
         {
+            origObjects = cloneIdDictAndRemoveOurs(Game1.objectInformation, objectIds);
+            origCrops = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\Crops"), cropIds);
+            origFruitTrees = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\fruitTrees"), fruitTreeIds);
+            origBigCraftables = cloneIdDictAndRemoveOurs(Game1.bigCraftablesInformation, bigCraftableIds);
+            origHats = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\hats"), hatIds);
+
             fixItemList(Game1.player.Items);
             foreach ( var loc in Game1.locations )
                 fixLocation(loc);
@@ -515,7 +545,7 @@ namespace JsonAssets
                     if (hd.crop == null)
                         continue;
 
-                    if (fixId(oldCropIds, cropIds, hd.crop.rowInSpriteSheet, Game1.content.Load<Dictionary<int, string>>("Data\\Crops")))
+                    if (fixId(oldCropIds, cropIds, hd.crop.rowInSpriteSheet, origCrops))
                         hd.crop = null;
                     else
                     {
@@ -527,7 +557,7 @@ namespace JsonAssets
                 }
                 else if ( tf is FruitTree ft )
                 {
-                    if (fixId(oldFruitTreeIds, fruitTreeIds, ft.treeType, Game1.content.Load<Dictionary<int, string>>("Data\\fruitTrees")))
+                    if (fixId(oldFruitTreeIds, fruitTreeIds, ft.treeType, origFruitTrees))
                         toRemove.Add(tfk);
                     else
                     {
@@ -553,19 +583,19 @@ namespace JsonAssets
                 {
                     if (!obj.bigCraftable.Value)
                     {
-                        if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, Game1.objectInformation))
+                        if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, origObjects))
                             toRemove.Add(objk);
                     }
                     else
                     {
-                        if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, Game1.bigCraftablesInformation))
+                        if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, origBigCraftables))
                             toRemove.Add(objk);
                     }
                 }
                 
                 if ( obj.heldObject.Value != null )
                 {
-                    if (fixId(oldObjectIds, objectIds, obj.heldObject.Value.parentSheetIndex, Game1.objectInformation))
+                    if (fixId(oldObjectIds, objectIds, obj.heldObject.Value.parentSheetIndex, origObjects))
                         obj.heldObject.Value = null;
 
                     if ( obj.heldObject.Value is Chest chest2 )
@@ -589,19 +619,19 @@ namespace JsonAssets
                 {
                     if (!obj.bigCraftable.Value)
                     {
-                        if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, Game1.objectInformation))
+                        if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, origObjects))
                             toRemove.Add(objk);
                     }
                     else
                     {
-                        if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, Game1.bigCraftablesInformation))
+                        if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, origBigCraftables))
                             toRemove.Add(objk);
                     }
                 }
 
                 if (obj.heldObject.Value != null)
                 {
-                    if (fixId(oldObjectIds, objectIds, obj.heldObject.Value.parentSheetIndex, Game1.objectInformation))
+                    if (fixId(oldObjectIds, objectIds, obj.heldObject.Value.parentSheetIndex, origObjects))
                         obj.heldObject.Value = null;
 
                     if (obj.heldObject.Value is Chest chest2)
@@ -629,7 +659,6 @@ namespace JsonAssets
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
         private void fixItemList( IList< Item > items )
         {
-            var Game1hats = Game1.content.Load<Dictionary<int, string>>("Data\\hats");
             for ( int i = 0; i < items.Count; ++i )
             {
                 var item = items[i];
@@ -637,18 +666,18 @@ namespace JsonAssets
                 {
                     if (!obj.bigCraftable.Value)
                     {
-                        if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, Game1.objectInformation))
+                        if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, origObjects))
                             items[i] = null;
                     }
                     else
                     {
-                        if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, Game1.bigCraftablesInformation))
+                        if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, origBigCraftables))
                             items[i] = null;
                     }
                 }
                 else if ( item is Hat hat )
                 {
-                    if (fixId(oldHatIds, hatIds, hat.which, Game1hats))
+                    if (fixId(oldHatIds, hatIds, hat.which, origHats))
                         items[i] = null;
                 }
             }
