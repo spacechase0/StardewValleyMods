@@ -299,7 +299,6 @@ namespace CookingSkill {
             /////
             Game1.player.checkForQuestComplete((NPC)null, -1, -1, obj, (string)null, 2, -1);
             if (this.heldItem == null) {
-                this.pagesOfCraftingRecipes[this.currentCraftingPage][c].consumeIngredients();
                 /////
                 if (consume)
                     NewCraftingPage.myConsumeIngredients(this.pagesOfCraftingRecipes[this.currentCraftingPage][c]);
@@ -504,9 +503,10 @@ namespace CookingSkill {
                         recipeList[recipeList.Keys.ElementAt<int>(index1)] -= Game1.player.items[index2].Stack;
                         /////
                         if (used != null)
-                            used.Add(new ConsumedItem(Game1.player.items[index1] as SObject));
+                            used.Add(new ConsumedItem(Game1.player.items[index2] as SObject));
                         if (actuallyConsume)
                         /////
+
                         Game1.player.items[index2].Stack -= recipe2;
                         if (Game1.player.items[index2].Stack <= 0)
                             Game1.player.items[index2] = (Item)null;
