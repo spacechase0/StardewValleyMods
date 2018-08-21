@@ -31,8 +31,6 @@ namespace SpaceCore
         {
             instance = this;
 
-            SpecialisedEvents.UnvalidatedUpdateTick += onUpdate;
-
             SaveEvents.AfterLoad += onLoad;
             SaveEvents.AfterSave += onSave;
 
@@ -60,6 +58,7 @@ namespace SpaceCore
             doPrefix(typeof(GameLocation), "performTouchAction", typeof(TouchActionHook));
             doPostfix(typeof(GameServer), "sendServerIntroduction", typeof(ServerGotClickHook));
             doPostfix(typeof(NPC), "receiveGift", typeof(AfterGiftGivenHook));
+            doPostfix(typeof(Game1), "loadForNewGame", typeof(BlankSaveHook));
         }
 
         private void doPrefix(Type origType, string origMethod, Type newType)
@@ -109,20 +108,6 @@ namespace SpaceCore
             {
                 Log.error($"Exception doing transpiler patch {orig}:{transpiler}: {e}");
             }
-        }
-
-        private int prevLoaderNum = 0;
-        private void onUpdate( object sender, EventArgs args )
-        {
-            if (Game1.currentLoader != null)
-            {
-                if (Game1.currentLoader.Current == 25 && prevLoaderNum != 25)
-                {
-                    SpaceEvents.InvokeOnBlankSave();
-                }
-                prevLoaderNum = Game1.currentLoader.Current;
-            }
-            //Log.debug("L:" + (Game1.currentLoader != null ? Game1.currentLoader.Current:-1));
         }
 
         private void onLoad(object sender, EventArgs args)

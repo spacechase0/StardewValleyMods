@@ -10,7 +10,7 @@ using SFarmer = StardewValley.Farmer;
 
 namespace SpaceCore.Overrides
 {
-   internal class CustomWeaponDrawPatch
+    public class CustomWeaponDrawPatch
     {
         public static bool Prefix(int frameOfFarmerAnimation, int facingDirection, SpriteBatch spriteBatch, Vector2 playerPosition, SFarmer f, Rectangle sourceRect, int type, bool isOnSpecial)
         {

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace SpaceCore.Overrides
 {
-    internal class NightlyFarmEventHook
+    public class NightlyFarmEventHook
     {
         public static void Postfix( ref FarmEvent __result )
         {

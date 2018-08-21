@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using SpaceCore.Events;
 using SpaceCore.Locations;
 using SpaceCore.Utilities;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Menus;
@@ -19,6 +20,14 @@ using SObject = StardewValley.Object;
 
 namespace SpaceCore.Overrides
 {
+    public class BlankSaveHook
+    {
+        public static void Postfix(bool loadedGame)
+        {
+            SpaceEvents.InvokeOnBlankSave();
+        }
+    }
+
     public class ShowEndOfNightStuffHook
     {
         public static void showEndOfNightStuff_mid()
@@ -45,7 +54,7 @@ namespace SpaceCore.Overrides
         }
     }
 
-    internal static class DoneEatingHook
+    public static class DoneEatingHook
     {
         public static void Postfix(Farmer __instance)
         {

@@ -328,7 +328,7 @@ namespace SpaceCore
                 {
                     nextReq = skill.ExperienceCurve[0];
                 }
-                else if (level != skill.ExperienceCurve.Length + 1)
+                else if (level < skill.ExperienceCurve.Length)
                 {
                     prevReq = skill.ExperienceCurve[level - 1];
                     nextReq = skill.ExperienceCurve[level];
