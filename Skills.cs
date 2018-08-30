@@ -294,7 +294,7 @@ namespace SpaceCore
         }
         private static void locChanged(object sender, EventArgs args)
         {
-            if (SpaceCore.instance.Helper.ModRegistry.IsLoaded("community.AllProfessions"))
+            if (SpaceCore.instance.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
                 foreach ( var skill in skills )
                 {
