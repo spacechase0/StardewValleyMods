@@ -83,7 +83,7 @@ namespace LuckSkill
             if (level == 10)
             {
                 Game1.getSteamAchievement("Achievement_SingularTalent");
-                if (Game1.player.farmingLevel == 10 && Game1.player.miningLevel == 10 && Game1.player.fishingLevel == 10 && Game1.player.foragingLevel == 10 && Game1.player.combatLevel == 10)
+                if (Game1.player.farmingLevel.Value == 10 && Game1.player.miningLevel.Value == 10 && Game1.player.fishingLevel.Value == 10 && Game1.player.foragingLevel.Value == 10 && Game1.player.combatLevel.Value == 10)
                 {
                     Game1.getSteamAchievement("Achievement_MasterOfTheFiveWays");
                 }
@@ -170,7 +170,7 @@ namespace LuckSkill
                         Game1.player.cookingRecipes.Add(current2.Key, 0);
                         if (!Game1.player.hasOrWillReceiveMail("robinKitchenLetter"))
                         {
-                            Game1.mailbox.Enqueue("robinKitchenLetter");
+                            Game1.mailbox.Add("robinKitchenLetter");
                         }
                     }
                     num += (this.newCraftingRecipes.Last<CraftingRecipe>().bigCraftable ? (Game1.tileSize * 2) : Game1.tileSize);
@@ -412,7 +412,7 @@ namespace LuckSkill
                     position.X = (float)Game1.random.Next(this.xPositionOnScreen + this.width / 2 - 29 * Game1.pixelZoom, this.xPositionOnScreen + this.width / 2 + 29 * Game1.pixelZoom);
                 }
                 position.X = position.X / (float)(Game1.pixelZoom * 5) * (float)Game1.pixelZoom * 5f;
-                this.littleStars.Add(new TemporaryAnimatedSprite(Game1.mouseCursors, new Rectangle(364, 79, 5, 5), 80f, 7, 1, position, false, false, 1f, 0f, Color.White, (float)Game1.pixelZoom, 0f, 0f, 0f, false)
+                this.littleStars.Add(new TemporaryAnimatedSprite(Game1.mouseCursorsName, new Rectangle(364, 79, 5, 5), 80f, 7, 1, position, false, false, 1f, 0f, Color.White, (float)Game1.pixelZoom, 0f, 0f, 0f, false)
                 {
                     local = true
                 });
@@ -613,7 +613,7 @@ namespace LuckSkill
                 Game1.addMailForTomorrow("fishing2", false, false);
             }
             Game1.player.health = Game1.player.maxHealth;
-            Game1.player.Stamina = (float)Game1.player.maxStamina;
+            Game1.player.Stamina = (float)Game1.player.MaxStamina;
         }
 
         public override void draw(SpriteBatch b)

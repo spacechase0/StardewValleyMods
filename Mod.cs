@@ -31,7 +31,7 @@ namespace LuckSkill
             instance = this;
             
             MenuEvents.MenuClosed += fishingExp;
-            LocationEvents.CurrentLocationChanged += locChanged;
+            PlayerEvents.Warped += locChanged;
             GameEvents.UpdateTick += update;
             GraphicsEvents.OnPostRenderGuiEvent += draw;
             TimeEvents.AfterDayStarted += dayStarted;
@@ -66,7 +66,7 @@ namespace LuckSkill
                         {
                             quest = Utility.getQuestOfTheDay();
                         }
-                        catch (Exception e) { }
+                        catch (Exception) { }
                         Game1.stats.daysPlayed -= i * 999999;
                     }
 
@@ -152,7 +152,10 @@ namespace LuckSkill
                 if ( menu.currentTab == GameMenu.skillsTab )
                 {
                     var tabs = ( List< IClickableMenu > ) Util.GetInstanceField(typeof(GameMenu), menu, "pages" );
-                    var skills = (SkillsPage)tabs[GameMenu.skillsTab];
+                    var skills = tabs[GameMenu.skillsTab] as SkillsPage;
+
+                    if (skills == null)
+                        return;
 
                     if ( !didInitSkills )
                     {
@@ -239,7 +242,7 @@ namespace LuckSkill
                     text = "Luck";
                 }
                 num4 = Game1.player.LuckLevel;
-                flag2 = (Game1.player.addedLuckLevel > 0);
+                flag2 = (Game1.player.addedLuckLevel.Value > 0);
                 empty = new Rectangle(50, 428, 10, 10);
 
                 if (!text.Equals(""))
@@ -289,7 +292,7 @@ namespace LuckSkill
                     {
                         ev = Utility.pickFarmEvent();
                     }
-                    catch (Exception e) { }
+                    catch (Exception) { }
                     Game1.stats.daysPlayed -= 999999;
                     //if (ev != null) Log.Async("ev=" + ev + " " + (ev is SoundInTheNightEvent ? (Util.GetInstanceField(typeof(SoundInTheNightEvent), ev, "behavior") + " " + Util.GetInstanceField(typeof(SoundInTheNightEvent), ev, "soundName")) : "?"));
                     if (ev != null && ev.setUp())
@@ -313,7 +316,7 @@ namespace LuckSkill
                 Util.DecompileComment("This is where AllProfessions does it.");
                 Util.DecompileComment("This is that mod's code, too (from ILSpy, anyways). Just trying to give credit where credit is due. :P");
                 Util.DecompileComment("Except this only applies for luck professions. Since they don't exist in vanilla AllProfessions doesn't take care of it.");
-                List<int> professions = Game1.player.professions;
+                var professions = Game1.player.professions;
                 List<List<int>> list = new List<List<int>> { luckProfessions5, luckProfessions10, };
                 foreach (List<int> current in list)
                 {
@@ -405,7 +408,7 @@ namespace LuckSkill
                         break;*/
                     case 5:
                         num2 = Game1.player.luckLevel;
-                        Game1.player.luckLevel = num;
+                        Game1.player.LuckLevel = num;
                         break;
                 }
             }
@@ -448,7 +451,7 @@ namespace LuckSkill
 
         private void checkForAllProfessions()
         {
-            if (!Helper.ModRegistry.IsLoaded("community.AllProfessions"))
+            if (!Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
                 Log.info("All Professions not found.");
                 return;
