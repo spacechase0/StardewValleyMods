@@ -12,6 +12,7 @@ using StardewValley.Objects;
 using Microsoft.Xna.Framework;
 using StardewValley.TerrainFeatures;
 using PyTK.CustomElementHandler;
+using System.Reflection;
 
 namespace MoreBuildings.SpookyShed
 {
@@ -51,6 +52,10 @@ namespace MoreBuildings.SpookyShed
             daysOfConstructionLeft.Value = building.daysOfConstructionLeft.Value;
             tileX.Value = building.tileX.Value;
             tileY.Value = building.tileY.Value;
+
+            //indoors.Value.map = Game1.content.Load<xTile.Map>("Maps\\SpookyShed");
+            indoors.Value.GetType().GetMethod("updateWarps", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(indoors.Value, new object[] { });
+            updateInteriorWarps();
         }
     }
 }

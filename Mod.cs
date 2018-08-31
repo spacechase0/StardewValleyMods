@@ -48,10 +48,8 @@ namespace MoreBuildings
 
         private void menuChanged(object sender, EventArgsClickableMenuChanged args)
         {
-            Monitor.Log("MEOW", LogLevel.Alert);
             if ( args.NewMenu is CarpenterMenu carp )
             {
-                Monitor.Log("CARP", LogLevel.Alert);
                 var blueprints = Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
                 if ( Game1.getFarm().isBuildingConstructed("Shed"))
                     blueprints.Add(new BluePrint("Shed2"));
@@ -178,10 +176,16 @@ namespace MoreBuildings
 
         public void Edit<T>(IAssetData asset)
         {
+            /*
             asset.AsDictionary<string, string>().Data.Add("Shed2", "388 750/7/3/3/2/-1/-1/Shed2/Big Shed/An even bigger Shed./Upgrades/Shed/96/96/20/null/Farm/25000/false");
             asset.AsDictionary<string, string>().Data.Add("SpookyShed", "156 10 768 25 769 25 337 20 388 500/7/3/3/2/-1/-1/SpookyShed/Spooky Shed/An empty building. But spooky, too./Buildings/none/96/96/20/null/Farm/25000/false");
             asset.AsDictionary<string, string>().Data.Add("FishShack", "163 1 390 250 388 500/7/3/3/2/-1/-1/FishShack/Fishing Shack/A shack for fishing./Buildings/none/96/96/20/null/Farm/50000/false");
             asset.AsDictionary<string, string>().Data.Add("MiniSpa", "337 25 390 999 388 999/7/3/3/2/-1/-1/MiniSpa/Mini Spa/A place to relax and recharge./Buildings/none/96/96/20/null/Farm/250000/false");
+            //*/
+            asset.AsDictionary<string, string>().Data.Add("Shed2", "388 1/7/3/3/2/-1/-1/Shed2/Big Shed/An even bigger Shed./Upgrades/Shed/96/96/20/null/Farm/25000/false");
+            asset.AsDictionary<string, string>().Data.Add("SpookyShed", "388 1/7/3/3/2/-1/-1/SpookyShed/Spooky Shed/An empty building. But spooky, too./Buildings/none/96/96/20/null/Farm/25000/false");
+            asset.AsDictionary<string, string>().Data.Add("FishShack", "388 1/7/3/3/2/-1/-1/FishShack/Fishing Shack/A shack for fishing./Buildings/none/96/96/20/null/Farm/50000/false");
+            asset.AsDictionary<string, string>().Data.Add("MiniSpa", "388 1/7/3/3/2/-1/-1/MiniSpa/Mini Spa/A place to relax and recharge./Buildings/none/96/96/20/null/Farm/250000/false");
         }
 
         public bool CanLoad<T>(IAssetInfo asset)

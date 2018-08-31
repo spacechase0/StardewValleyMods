@@ -10,10 +10,12 @@ using MoreBuildings.SpookyShed;
 using StardewValley.Monsters;
 using Microsoft.Xna.Framework.Graphics;
 using PyTK.CustomElementHandler;
+using SpaceCore.Locations;
+using StardewValley.Locations;
 
 namespace MoreBuildings.BigShed
 {
-    public class BigShedLocation : Shed, ISaveElement
+    public class BigShedLocation : DecoratableLocation, ISaveElement
     {
         public BigShedLocation()
         :   base("Maps\\Shed2", "Shed2" )

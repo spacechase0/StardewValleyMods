@@ -14,7 +14,7 @@ using PyTK.CustomElementHandler;
 
 namespace MoreBuildings.MiniSpa
 {
-    public class MiniSpaLocation : Shed, ISaveElement
+    public class MiniSpaLocation : GameLocation, ISaveElement
     {
         public MiniSpaLocation()
         :   base( "Maps\\MiniSpa", "MiniSpa")
