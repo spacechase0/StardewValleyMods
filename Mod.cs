@@ -265,5 +265,10 @@ namespace CookingSkill
                 }
             }
         }
+
+        public override object GetApi()
+        {
+            return new CookingSkillAPI();
+        }
     }
 }

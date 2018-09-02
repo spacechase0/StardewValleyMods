@@ -34,6 +34,9 @@ namespace CookingSkill {
         private bool cooking;
         public ClickableTextureComponent trashCan;
         public float trashCanLidRotation;
+        
+        /// Use an variable function for the fridge items so that it can be changed through the API.
+        public static Func<IList<Item>> fridge = () => Utility.getHomeOfFarmer(Game1.player)?.fridge.Value.items;
 
         /////
         /// Copied from CraftingPage. Changed denoted by /////
@@ -75,7 +78,7 @@ namespace CookingSkill {
             this.downButton = textureComponent3;
         }
 
-        private int craftingPageY() {
+       private int craftingPageY() {
             return this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 16;
         }
 
@@ -270,7 +273,7 @@ namespace CookingSkill {
             foreach (ClickableTextureComponent key in this.pagesOfCraftingRecipes[this.currentCraftingPage].Keys) {
                 int num = Game1.oldKBState.IsKeyDown(Keys.LeftShift) ? 5 : 1;
                 for (int index = 0; index < num; ++index) {
-                    if (key.containsPoint(x, y) && !key.hoverText.Equals("ghosted") && this.pagesOfCraftingRecipes[this.currentCraftingPage][key].doesFarmerHaveIngredientsInInventory(this.cooking ? (IList<Item>)Utility.getHomeOfFarmer(Game1.player).fridge.Value.items : (IList<Item>)null))
+                    if (key.containsPoint(x, y) && !key.hoverText.Equals("ghosted") && this.pagesOfCraftingRecipes[this.currentCraftingPage][key].doesFarmerHaveIngredientsInInventory(this.cooking ? fridge() : (IList<Item>)null))
                         this.clickCraftingRecipe(key, index == 0);
                 }
             }
@@ -345,7 +348,7 @@ namespace CookingSkill {
         public override void receiveRightClick( int x, int y, bool playSound = true ) {
             this.heldItem = this.inventory.rightClick(x, y, this.heldItem, true);
             foreach (ClickableTextureComponent key in this.pagesOfCraftingRecipes[this.currentCraftingPage].Keys) {
-                if (key.containsPoint(x, y) && !key.hoverText.Equals("ghosted") && this.pagesOfCraftingRecipes[this.currentCraftingPage][key].doesFarmerHaveIngredientsInInventory(this.cooking ? (IList<Item>)Utility.getHomeOfFarmer(Game1.player).fridge.Value.items : (IList<Item>)null))
+                if (key.containsPoint(x, y) && !key.hoverText.Equals("ghosted") && this.pagesOfCraftingRecipes[this.currentCraftingPage][key].doesFarmerHaveIngredientsInInventory(this.cooking ? (IList<Item>)fridge() : (IList<Item>)null))
                     this.clickCraftingRecipe(key, true);
             }
         }
@@ -421,7 +424,7 @@ namespace CookingSkill {
             foreach (ClickableTextureComponent key in this.pagesOfCraftingRecipes[this.currentCraftingPage].Keys) {
                 if (key.hoverText.Equals("ghosted"))
                     key.draw(b, Color.Black * 0.35f, 0.89f);
-                else if (!this.pagesOfCraftingRecipes[this.currentCraftingPage][key].doesFarmerHaveIngredientsInInventory(this.cooking ? (IList<Item>)Utility.getHomeOfFarmer(Game1.player).fridge.Value.items : (IList<Item>)null)) {
+                else if (!this.pagesOfCraftingRecipes[this.currentCraftingPage][key].doesFarmerHaveIngredientsInInventory(this.cooking ? (IList<Item>)fridge() : (IList<Item>)null)) {
                     key.draw(b, Color.LightGray * 0.4f, 0.89f);
                 }
                 else {
@@ -521,18 +524,18 @@ namespace CookingSkill {
                 if (recipe.isCookingRecipe && !flag) {
                     StardewValley.Locations.FarmHouse homeOfFarmer = Utility.getHomeOfFarmer(Game1.player);
                     if (homeOfFarmer != null) {
-                        for (int index2 = homeOfFarmer.fridge.Value.items.Count - 1; index2 >= 0; --index2) {
-                            if (homeOfFarmer.fridge.Value.items[index2] != null && homeOfFarmer.fridge.Value.items[index2] is SObject && ((int)((NetFieldBase<int, NetInt>)homeOfFarmer.fridge.Value.items[index2].parentSheetIndex) == recipeList.Keys.ElementAt<int>(index1) || homeOfFarmer.fridge.Value.items[index2].Category == recipeList.Keys.ElementAt<int>(index1))) {
+                        for (int index2 = fridge().Count - 1; index2 >= 0; --index2) {
+                            if (fridge()[index2] != null && fridge()[index2] is SObject && ((int)((NetFieldBase<int, NetInt>)fridge()[index2].parentSheetIndex) == recipeList.Keys.ElementAt<int>(index1) || fridge()[index2].Category == recipeList.Keys.ElementAt<int>(index1))) {
                                 int recipe2 = recipeList[recipeList.Keys.ElementAt<int>(index1)];
-                                recipeList[recipeList.Keys.ElementAt<int>(index1)] -= homeOfFarmer.fridge.Value.items[index2].Stack;
+                                recipeList[recipeList.Keys.ElementAt<int>(index1)] -= fridge()[index2].Stack;
                                 /////
                                 if (used != null)
-                                    used.Add(new ConsumedItem(homeOfFarmer.fridge.Value.items[index2] as SObject));
+                                    used.Add(new ConsumedItem(fridge()[index2] as SObject));
                                 if (actuallyConsume)
                                 /////
-                                homeOfFarmer.fridge.Value.items[index2].Stack -= recipe2;
-                                if (homeOfFarmer.fridge.Value.items[index2].Stack <= 0)
-                                    homeOfFarmer.fridge.Value.items[index2] = (Item)null;
+                                    fridge()[index2].Stack -= recipe2;
+                                if (fridge()[index2].Stack <= 0)
+                                    fridge()[index2] = (Item)null;
                                 if (recipeList[recipeList.Keys.ElementAt<int>(index1)] <= 0) {
                                     recipeList[recipeList.Keys.ElementAt<int>(index1)] = recipe1;
                                     break;
