@@ -45,6 +45,7 @@ Examples of how to set up all types of objects can be found in the [Blank JSON A
 * [Farmer to Florist](https://www.nexusmods.com/stardewvalley/mods/2075) contains examples of big craftables.
 * [Starbrew Valley](https://www.nexusmods.com/stardewvalley/mods/1764) contains examples using all valid EdibleBuff fields.
 * [Fantasy Crops](https://www.nexusmods.com/stardewvalley/mods/1610) contains examples of crops producing vanilla items.
+* [Ragnarok Online Hats](https://www.nexusmods.com/stardewvalley/mods/2717) contains examples of hats.
 
 ### Companion Mods
 Json Assets is a great tool if you want to add one of the above objects, but there are other frameworks out there that pair well with Json Assets:
@@ -58,6 +59,7 @@ There are four main folders you are likely to see when downloading Json Asset co
 * Crops
 * FruitTrees
 * Objects
+* Hats
 
 You will also see a `manifest.json` for SMAPI to read (see [content packs](https://stardewvalleywiki.com/Modding:SMAPI_APIs#Manifest) on the wiki).
 Each of these folders contains subfolders that at minimum contains a `json` and a `png`. 
@@ -189,7 +191,7 @@ field                  | purpose
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 
 ### Hats
-Hats are a planned feature for the 1.3-stable version of JsonAssets. Hats are 20x80 and can be added through a `Hats` folder. All hats are purchaseable through [hat mouse](https://stardewvalleywiki.com/Abandoned_House). 
+Hats are a planned feature for the 1.3-stable version of JsonAssets. Hats are 20x80 and can be added through a `Hats` folder. All hats are purchaseable through [hat mouse](https://stardewvalleywiki.com/Abandoned_House). There is a limit of 87 custom hats. 
 
 A hats subfolder for a hat is a folder that contains these files:
 
@@ -259,7 +261,7 @@ info. Suggestions:
 
 ## Troubleshooting
 
-There are some common errors with easy solutions. Your error may look slightly different but the general principal is the same.
+There are some common errors with easy solutions. Your error may look slightly different but the general principal is the same. For a more in depth FAQ visit [this](https://github.com/paradigmnomad/ppjajsonassetsfaq/blob/master/README.md) link. FAQ is a work in progress.
 
 ### Target Out of Range
 ```
@@ -293,3 +295,4 @@ Exception injecting cooking recipe for Bacon: System.ArgumentException: An item 
 ## See Also
 
 * [Nexus Page](https://www.nexusmods.com/stardewvalley/mods/1720)
+* [FAQ](https://github.com/paradigmnomad/ppjajsonassetsfaq/blob/master/README.md)
