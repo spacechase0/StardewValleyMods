@@ -84,7 +84,7 @@ The `big-craftable.json` contains these fields:
 field                  | purpose
 ---------------------- | -------
   &nbsp;               | See _common fields_ above.
-  `Description`        | Description for what this does. Note if it does anything special like provide light.
+`Description`        | Description for what this does. Note if it does anything special like provide light.
 `ProvidesLight`        | On/Off switch for if it provides light or not. Set to `true` or `false`.
 `Recipe`               | Begins the recipe block.
 `ResultCount`          | How many of the product does the recipe produce.
@@ -92,7 +92,7 @@ field                  | purpose
 `Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used.
 `IsDefault`            | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe:
 `CanPurchase`          | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
-`PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. 
+`PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `PurchasePrice`        | How much you can purchase the recipe for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 
@@ -122,7 +122,7 @@ field                      | purpose
 `MaxIncreasePerFarmLevel`  | How many farming skill experience points you get from harvesting.
 `ExtraChance`              | Value between 0 and 1.
 `SeedPurchasePrice`        | How much you can purchase seeds for.
-`SeedPurchaseFrom`         | Who you can purchase seeds from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. 
+`SeedPurchaseFrom`         | Who you can purchase seeds from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `SeedPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SeedPurchaseRequirements` set this to `null`.
 
 ### FruitTrees
@@ -141,7 +141,7 @@ field                         | purpose
 `SaplingDescription`          | The description of the sapling, often sticks to vanilla format: Takes 28 days to produce a mature `product` tree. Bears `type` in the summer. Only grows if the 8 surrounding \"tiles\" are empty.
 `Season`                      | Season must be in lowercase and in quotation marks. Fruit trees can support only one season. If you want to make winter fruit trees, you will have to require [SpaceCore]
 `SaplingPurchasePrice`        | Determines how much the sapling can be purchased for.
-`SaplingPurchaseFrom`         | Who you can purchase saplings from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. 
+`SaplingPurchaseFrom`         | Who you can purchase saplings from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `SaplingPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SaplingPurchaseRequirements` set this to `null`.
 
 ### Objects
@@ -186,7 +186,7 @@ field                  | purpose
 `Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used.
 `IsDefault`            | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe:
 `CanPurchase`          | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
-`PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. 
+`PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `PurchasePrice`        | How much you can purchase the recipe for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 
