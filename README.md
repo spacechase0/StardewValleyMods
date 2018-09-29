@@ -84,7 +84,7 @@ The `big-craftable.json` contains these fields:
 field                  | purpose
 ---------------------- | -------
   &nbsp;               | See _common fields_ above.
-`Description`        | Description for what this does. Note if it does anything special like provide light.
+`Description`          | Description for what this does. Note if it does anything special like provide light.
 `ProvidesLight`        | On/Off switch for if it provides light or not. Set to `true` or `false`.
 `Recipe`               | Begins the recipe block.
 `ResultCount`          | How many of the product does the recipe produce.
