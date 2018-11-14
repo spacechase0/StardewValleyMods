@@ -65,7 +65,7 @@ namespace JumpOver
                     int tx = (int)player.position.X / Game1.tileSize;
                     int ty = (int)player.position.Y / Game1.tileSize;
                     int ox = 0, oy = 0; // Offset x, y
-                    switch (player.facingDirection)
+                    switch (player.facingDirection.Value)
                     {
                         case Game1.up:    oy = -1; break;
                         case Game1.down:  oy =  1; break;
