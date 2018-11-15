@@ -12,5 +12,6 @@
   "PerSaveConfigs": false,
   "EntryDll": "SpaceCore.dll",
   "MinimumApiVersion": "1.15",
-  "UpdateKeys": [ "Nexus:1348", "Chucklefish:4868", "spacechase0:spacecore" ]
+  "UpdateKeys": [ "Nexus:1348", "Chucklefish:4868" ],
+  "spacechase0": "spacecore"
 }

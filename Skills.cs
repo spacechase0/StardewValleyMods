@@ -268,8 +268,11 @@ namespace SpaceCore
         {
             if ( args.NewMenu is GameMenu gm )
             {
-                var tabs = SpaceCore.instance.Helper.Reflection.GetField<List<IClickableMenu>>(gm, "pages").GetValue();
-                tabs[GameMenu.skillsTab] = new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0), gm.height);
+                if (SpaceCore.instance.Config.CustomSkillPage)
+                {
+                    var tabs = SpaceCore.instance.Helper.Reflection.GetField<List<IClickableMenu>>(gm, "pages").GetValue();
+                    tabs[GameMenu.skillsTab] = new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0), gm.height);
+                }
             }
         }
         private static void showLevelMenu(object sender, EventArgsShowNightEndMenus args)

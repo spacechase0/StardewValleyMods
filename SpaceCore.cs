@@ -20,6 +20,7 @@ namespace SpaceCore
 {
     public class SpaceCore : Mod
     {
+        public Configuration Config { get; set; }
         internal static SpaceCore instance;
         private HarmonyInstance harmony;
 
@@ -30,6 +31,7 @@ namespace SpaceCore
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Config = helper.ReadConfig<Configuration>();
 
             SaveEvents.AfterLoad += onLoad;
             SaveEvents.AfterSave += onSave;
