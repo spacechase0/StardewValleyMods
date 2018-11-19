@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Reflection;
 using MoreBuildings.FishingShack;
 using MoreBuildings.MiniSpa;
+using PyTK.CustomElementHandler;
 
 namespace MoreBuildings
 {
@@ -37,6 +38,7 @@ namespace MoreBuildings
             MenuEvents.MenuChanged += menuChanged;
             PlayerEvents.Warped += locChanged;
             SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
+            SaveHandler.FinishedRebuilding += fixWarps;
 
             shed2Exterior = Helper.Content.Load<Texture2D>("BigShed/building.png");
             spookyExterior = Helper.Content.Load<Texture2D>("SpookyShed/building.png");
@@ -169,6 +171,20 @@ namespace MoreBuildings
             taskWasThere = task != null;
         }
 
+        public void fixWarps(object sender, EventArgs args)
+        {
+            foreach (var loc in Game1.locations)
+                if (loc is BuildableGameLocation buildable)
+                    foreach (var building in buildable.buildings)
+                    {
+                        if (building.indoors.Value == null)
+                            continue;
+
+                        building.indoors.Value.GetType().GetMethod("updateWarps", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(building.indoors.Value, new object[] { });
+                        building.updateInteriorWarps();
+                    }
+        }
+
         public bool CanEdit<T>(IAssetInfo asset)
         {
             return asset.AssetNameEquals("Data\\Blueprints");
@@ -176,16 +192,18 @@ namespace MoreBuildings
 
         public void Edit<T>(IAssetData asset)
         {
-            /*
+            //*
             asset.AsDictionary<string, string>().Data.Add("Shed2", "388 750/7/3/3/2/-1/-1/Shed2/Big Shed/An even bigger Shed./Upgrades/Shed/96/96/20/null/Farm/25000/false");
             asset.AsDictionary<string, string>().Data.Add("SpookyShed", "156 10 768 25 769 25 337 20 388 500/7/3/3/2/-1/-1/SpookyShed/Spooky Shed/An empty building. But spooky, too./Buildings/none/96/96/20/null/Farm/25000/false");
             asset.AsDictionary<string, string>().Data.Add("FishShack", "163 1 390 250 388 500/7/3/3/2/-1/-1/FishShack/Fishing Shack/A shack for fishing./Buildings/none/96/96/20/null/Farm/50000/false");
             asset.AsDictionary<string, string>().Data.Add("MiniSpa", "337 25 390 999 388 999/7/3/3/2/-1/-1/MiniSpa/Mini Spa/A place to relax and recharge./Buildings/none/96/96/20/null/Farm/250000/false");
             //*/
+            /*
             asset.AsDictionary<string, string>().Data.Add("Shed2", "388 1/7/3/3/2/-1/-1/Shed2/Big Shed/An even bigger Shed./Upgrades/Shed/96/96/20/null/Farm/25000/false");
             asset.AsDictionary<string, string>().Data.Add("SpookyShed", "388 1/7/3/3/2/-1/-1/SpookyShed/Spooky Shed/An empty building. But spooky, too./Buildings/none/96/96/20/null/Farm/25000/false");
             asset.AsDictionary<string, string>().Data.Add("FishShack", "388 1/7/3/3/2/-1/-1/FishShack/Fishing Shack/A shack for fishing./Buildings/none/96/96/20/null/Farm/50000/false");
             asset.AsDictionary<string, string>().Data.Add("MiniSpa", "388 1/7/3/3/2/-1/-1/MiniSpa/Mini Spa/A place to relax and recharge./Buildings/none/96/96/20/null/Farm/250000/false");
+            //*/
         }
 
         public bool CanLoad<T>(IAssetInfo asset)

@@ -44,7 +44,7 @@ namespace MoreBuildings.BigShed
 
         public object getReplacement()
         {
-            Shed shed = new Shed();
+            Shed shed = new Shed("Maps\\Shed2", "Shed2");
             foreach (Vector2 key in objects.Keys)
                 shed.objects.Add(key, objects[key]);
             foreach (Vector2 key in terrainFeatures.Keys)

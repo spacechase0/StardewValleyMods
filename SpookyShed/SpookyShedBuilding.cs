@@ -37,6 +37,7 @@ namespace MoreBuildings.SpookyShed
             building.daysOfConstructionLeft.Value = daysOfConstructionLeft.Value;
             building.tileX.Value = tileX.Value;
             building.tileY.Value = tileY.Value;
+            building.humanDoor.Value = humanDoor.Value;
             return building;
         }
 
@@ -53,7 +54,7 @@ namespace MoreBuildings.SpookyShed
             tileX.Value = building.tileX.Value;
             tileY.Value = building.tileY.Value;
 
-            //indoors.Value.map = Game1.content.Load<xTile.Map>("Maps\\SpookyShed");
+            indoors.Value.map = Game1.content.Load<xTile.Map>("Maps\\SpookyShed");
             indoors.Value.GetType().GetMethod("updateWarps", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(indoors.Value, new object[] { });
             updateInteriorWarps();
         }

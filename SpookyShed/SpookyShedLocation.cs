@@ -141,7 +141,7 @@ namespace MoreBuildings.SpookyShed
 
         public object getReplacement()
         {
-            Shed shed = new Shed();
+            Shed shed = new Shed("Maps\\SpookyShed", "SpookyShed");
             foreach (Vector2 key in objects.Keys)
                 shed.objects.Add(key, objects[key]);
             foreach (Vector2 key in terrainFeatures.Keys)

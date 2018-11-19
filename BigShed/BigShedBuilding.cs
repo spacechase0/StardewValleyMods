@@ -53,7 +53,7 @@ namespace MoreBuildings.BigShed
             tileX.Value = building.tileX.Value;
             tileY.Value = building.tileY.Value;
 
-            //indoors.Value.map = Game1.content.Load<xTile.Map>("Maps\\Shed2");
+            indoors.Value.map = Game1.content.Load<xTile.Map>("Maps\\Shed2");
             indoors.Value.GetType().GetMethod("updateWarps", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(indoors.Value, new object[] { });
             updateInteriorWarps();
         }
