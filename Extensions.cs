@@ -197,9 +197,9 @@ namespace Magic
             return spell.canCast(player, level);
         }
 
-        public static void castSpell(this SFarmer player, string spellId, int level)
+        public static void castSpell(this SFarmer player, string spellId, int level, int x = int.MinValue, int y = int.MinValue)
         {
-            castSpell(player, SpellBook.get(spellId), level);
+            castSpell(player, SpellBook.get(spellId), level, x, y);
         }
 
         public static void castSpell(this SFarmer player, Spell spell, int level, int x = int.MinValue, int y = int.MinValue)
