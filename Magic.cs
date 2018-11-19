@@ -53,9 +53,9 @@ namespace Magic
             SpaceEvents.ShowNightEndMenus += showMagicLevelMenus;
             SpaceEvents.OnItemEaten += onItemEaten;
             SpaceEvents.ActionActivated += actionTriggered;
-            SpaceCore.SpaceCore.RegisterMessageHandler(MSG_DATA, onNetworkData);
-            SpaceCore.SpaceCore.RegisterMessageHandler(MSG_MINIDATA, onNetworkMiniData);
-            SpaceCore.SpaceCore.RegisterMessageHandler(MSG_CAST, onNetworkCast);
+            SpaceCore.Networking.RegisterMessageHandler(MSG_DATA, onNetworkData);
+            SpaceCore.Networking.RegisterMessageHandler(MSG_MINIDATA, onNetworkMiniData);
+            SpaceCore.Networking.RegisterMessageHandler(MSG_CAST, onNetworkCast);
             SpaceEvents.ServerGotClient += onClientConnected;
 
             GraphicsEvents.OnPostRenderHudEvent += renderHud;
@@ -88,7 +88,7 @@ namespace Magic
 
         private static void onNetworkCast( IncomingMessage msg )
         {
-            Game1.getFarmer(msg.FarmerID).castSpell(msg.Reader.ReadString(), msg.Reader.ReadInt32());
+            Game1.getFarmer(msg.FarmerID).castSpell(msg.Reader.ReadString(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32());
         }
 
         private static void onClientConnected(object sender, EventArgsServerGotClient args)
@@ -105,7 +105,7 @@ namespace Magic
                     writer.Write(entry.Key);
                     writer.Write(JsonConvert.SerializeObject(entry.Value, MultiplayerSaveData.networkSerializerSettings));
                 }
-                SpaceCore.SpaceCore.BroadcastMessage(Magic.MSG_DATA, stream.ToArray());
+                SpaceCore.Networking.BroadcastMessage(Magic.MSG_DATA, stream.ToArray());
             }
         }
 

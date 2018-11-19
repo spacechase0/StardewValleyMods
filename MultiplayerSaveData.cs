@@ -38,7 +38,7 @@ namespace Magic
                 writer.Write((int)1);
                 writer.Write(Game1.player.UniqueMultiplayerID);
                 writer.Write(JsonConvert.SerializeObject(players[Game1.player.UniqueMultiplayerID], networkSerializerSettings));
-                SpaceCore.SpaceCore.BroadcastMessage(Magic.MSG_DATA, stream.ToArray());
+                SpaceCore.Networking.BroadcastMessage(Magic.MSG_DATA, stream.ToArray());
             }
         }
         internal void syncMineMini()
@@ -50,7 +50,7 @@ namespace Magic
                 writer.Write(players[Game1.player.UniqueMultiplayerID].manaCap);
                 writer.Write(players[Game1.player.UniqueMultiplayerID].magicLevel);
                 writer.Write(players[Game1.player.UniqueMultiplayerID].magicExp);
-                SpaceCore.SpaceCore.BroadcastMessage(Magic.MSG_MINIDATA, stream.ToArray());
+                SpaceCore.Networking.BroadcastMessage(Magic.MSG_MINIDATA, stream.ToArray());
             }
         }
     }
