@@ -45,6 +45,7 @@ Examples of how to set up all types of objects can be found in the [Blank JSON A
 * [Farmer to Florist](https://www.nexusmods.com/stardewvalley/mods/2075) contains examples of big craftables.
 * [Starbrew Valley](https://www.nexusmods.com/stardewvalley/mods/1764) contains examples using all valid EdibleBuff fields.
 * [Fantasy Crops](https://www.nexusmods.com/stardewvalley/mods/1610) contains examples of crops producing vanilla items.
+* [Ragnarok Online Hats](https://www.nexusmods.com/stardewvalley/mods/2717) contains examples of hats.
 
 ### Companion Mods
 Json Assets is a great tool if you want to add one of the above objects, but there are other frameworks out there that pair well with Json Assets:
@@ -58,6 +59,7 @@ There are four main folders you are likely to see when downloading Json Asset co
 * Crops
 * FruitTrees
 * Objects
+* Hats
 
 You will also see a `manifest.json` for SMAPI to read (see [content packs](https://stardewvalleywiki.com/Modding:SMAPI_APIs#Manifest) on the wiki).
 Each of these folders contains subfolders that at minimum contains a `json` and a `png`. 
@@ -82,7 +84,7 @@ The `big-craftable.json` contains these fields:
 field                  | purpose
 ---------------------- | -------
   &nbsp;               | See _common fields_ above.
-  `Description`        | Description for what this does. Note if it does anything special like provide light.
+`Description`          | Description for what this does. Note if it does anything special like provide light.
 `ProvidesLight`        | On/Off switch for if it provides light or not. Set to `true` or `false`.
 `Recipe`               | Begins the recipe block.
 `ResultCount`          | How many of the product does the recipe produce.
@@ -90,7 +92,7 @@ field                  | purpose
 `Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used.
 `IsDefault`            | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe:
 `CanPurchase`          | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
-`PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. 
+`PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `PurchasePrice`        | How much you can purchase the recipe for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 
@@ -120,7 +122,7 @@ field                      | purpose
 `MaxIncreasePerFarmLevel`  | How many farming skill experience points you get from harvesting.
 `ExtraChance`              | Value between 0 and 1.
 `SeedPurchasePrice`        | How much you can purchase seeds for.
-`SeedPurchaseFrom`         | Who you can purchase seeds from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. 
+`SeedPurchaseFrom`         | Who you can purchase seeds from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `SeedPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SeedPurchaseRequirements` set this to `null`.
 
 ### FruitTrees
@@ -139,7 +141,7 @@ field                         | purpose
 `SaplingDescription`          | The description of the sapling, often sticks to vanilla format: Takes 28 days to produce a mature `product` tree. Bears `type` in the summer. Only grows if the 8 surrounding \"tiles\" are empty.
 `Season`                      | Season must be in lowercase and in quotation marks. Fruit trees can support only one season. If you want to make winter fruit trees, you will have to require [SpaceCore]
 `SaplingPurchasePrice`        | Determines how much the sapling can be purchased for.
-`SaplingPurchaseFrom`         | Who you can purchase saplings from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. 
+`SaplingPurchaseFrom`         | Who you can purchase saplings from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `SaplingPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SaplingPurchaseRequirements` set this to `null`.
 
 ### Objects
@@ -184,12 +186,12 @@ field                  | purpose
 `Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used.
 `IsDefault`            | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe:
 `CanPurchase`          | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
-`PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. 
+`PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `PurchasePrice`        | How much you can purchase the recipe for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 
 ### Hats
-Hats are a planned feature for the 1.3-stable version of JsonAssets. Hats are 20x80 and can be added through a `Hats` folder. All hats are purchaseable through [hat mouse](https://stardewvalleywiki.com/Abandoned_House). 
+Hats are a planned feature for the 1.3-stable version of JsonAssets. Hats are 20x80 and can be added through a `Hats` folder. All hats are purchaseable through [hat mouse](https://stardewvalleywiki.com/Abandoned_House). There is a limit of 87 custom hats. 
 
 A hats subfolder for a hat is a folder that contains these files:
 
@@ -259,7 +261,7 @@ info. Suggestions:
 
 ## Troubleshooting
 
-There are some common errors with easy solutions. Your error may look slightly different but the general principal is the same.
+There are some common errors with easy solutions. Your error may look slightly different but the general principal is the same. For a more in depth FAQ visit [this](https://github.com/paradigmnomad/ppjajsonassetsfaq/blob/master/README.md) link. FAQ is a work in progress.
 
 ### Target Out of Range
 ```
@@ -293,3 +295,4 @@ Exception injecting cooking recipe for Bacon: System.ArgumentException: An item 
 ## See Also
 
 * [Nexus Page](https://www.nexusmods.com/stardewvalley/mods/1720)
+* [FAQ](https://github.com/paradigmnomad/ppjajsonassetsfaq/blob/master/README.md)
