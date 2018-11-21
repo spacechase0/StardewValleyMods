@@ -123,9 +123,9 @@ namespace MoreRings
         private int hasRingEquipped( int id )
         {
             int num = 0;
-            if (Game1.player.leftRing != null && Game1.player.leftRing.parentSheetIndex == id)
+            if (Game1.player.leftRing.Value != null && Game1.player.leftRing.Value.ParentSheetIndex == id)
                 ++num;
-            if (Game1.player.rightRing != null && Game1.player.rightRing.parentSheetIndex == id)
+            if (Game1.player.rightRing.Value != null && Game1.player.rightRing.Value.ParentSheetIndex == id)
                 ++num;
             return num;
         }
