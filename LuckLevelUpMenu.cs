@@ -237,14 +237,14 @@ namespace LuckSkill
                 descriptions.Add("Better daily luck.");
             else if (professionName == getProfessionName(Mod.PROFESSION_NIGHTLY_EVENTS))
                 descriptions.Add("Nightly events occur twice as often.");
-            else if (professionName == getProfessionName(Mod.PROFESSION_SPECIAL_CHARM))
-                descriptions.Add("Great daily luck most of the time.");
+            else if (professionName == getProfessionName(Mod.PROFESSION_A1))
+                descriptions.Add("<TODO> A1");
             else if (professionName == getProfessionName(Mod.PROFESSION_A2))
-                descriptions.Add("<TODO>");
+                descriptions.Add("<TODO> A2");
             else if (professionName == getProfessionName(Mod.PROFESSION_MOREQUESTS))
                 descriptions.Add("<NEEDS_NAME_Q>");
             else if (professionName == getProfessionName(Mod.PROFESSION_B2))
-                descriptions.Add("B2");
+                descriptions.Add("<TODO> B2");
             else
             {
                 descriptions.Remove(professionName);
@@ -326,8 +326,8 @@ namespace LuckSkill
                     return "Lucky";
                 case Mod.PROFESSION_NIGHTLY_EVENTS:
                     return "<NEEDS_NAME_E>";
-                case Mod.PROFESSION_SPECIAL_CHARM:
-                    return "Special Charm";
+                case Mod.PROFESSION_A1:
+                    return "A1";
                 case Mod.PROFESSION_A2:
                     return "A2";
                 case Mod.PROFESSION_MOREQUESTS:
@@ -346,7 +346,7 @@ namespace LuckSkill
 
         public static string getProfessionTitleFromNumber(int whichProfession)
         {
-            if ( whichProfession == Mod.PROFESSION_DAILY_LUCK || whichProfession == Mod.PROFESSION_SPECIAL_CHARM || whichProfession == Mod.PROFESSION_A2 ||
+            if ( whichProfession == Mod.PROFESSION_DAILY_LUCK || whichProfession == Mod.PROFESSION_A1 || whichProfession == Mod.PROFESSION_A2 ||
                  whichProfession == Mod.PROFESSION_MOREQUESTS || whichProfession == Mod.PROFESSION_NIGHTLY_EVENTS || whichProfession == Mod.PROFESSION_B2 )
             {
                 return getProfessionName(whichProfession);
@@ -364,12 +364,6 @@ namespace LuckSkill
 
         public void getImmediateProfessionPerk(int whichProfession)
         {
-            if (whichProfession == Mod.PROFESSION_SPECIAL_CHARM)
-            {
-                Game1.player.hasSpecialCharm = true;
-                return;
-            }
-
             if (whichProfession == 24)
             {
                 Game1.player.maxHealth += 15;

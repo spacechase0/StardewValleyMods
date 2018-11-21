@@ -19,7 +19,7 @@ namespace LuckSkill
     {
         public const int PROFESSION_DAILY_LUCK = 5 * 6;
         public const int PROFESSION_MOREQUESTS = 5 * 6 + 1;// 4;
-        public const int PROFESSION_SPECIAL_CHARM = 5 * 6 + 2;
+        public const int PROFESSION_A1 = 5 * 6 + 2;
         public const int PROFESSION_A2 = 5 * 6 + 3;
         public const int PROFESSION_NIGHTLY_EVENTS = 5 * 6 + 4;// 1;
         public const int PROFESSION_B2 = 5 * 6 + 5;
@@ -329,10 +329,6 @@ namespace LuckSkill
                             if (flag2)
                             {
                                 professions.Add(current2);
-                                if (current2 == PROFESSION_SPECIAL_CHARM)
-                                {
-                                    Game1.player.hasSpecialCharm = true;
-                                }
                             }
                         }
                     }
@@ -447,7 +443,7 @@ namespace LuckSkill
 
         private bool HAS_ALL_PROFESSIONS = false;
         private List<int> luckProfessions5 = new List<int>() { PROFESSION_DAILY_LUCK, PROFESSION_MOREQUESTS };
-        private List<int> luckProfessions10 = new List<int>() { PROFESSION_SPECIAL_CHARM, PROFESSION_A2, PROFESSION_NIGHTLY_EVENTS, PROFESSION_B2 };
+        private List<int> luckProfessions10 = new List<int>() { PROFESSION_A1, PROFESSION_A2, PROFESSION_NIGHTLY_EVENTS, PROFESSION_B2 };
 
         private void checkForAllProfessions()
         {

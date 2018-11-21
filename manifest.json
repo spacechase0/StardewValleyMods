@@ -1,15 +1,16 @@
 {
   "Name": "Luck Skill",
   "Author": "spacechase0",
-  "Version": "0.1.8",
+  "Version": "0.1.9",
   "Description": "Adds ways of getting the vanilla luck skill.",
   "UniqueID": "spacechase0.LuckSkill",
   "PerSaveConfigs": false,
   "EntryDll": "LuckSkill.dll",
-  "UpdateKeys": [ "Nexus:521", "Chucklefish:4053", "spacechase0:luck-skill" ],
+  "UpdateKeys": [ "Nexus:521", "Chucklefish:4053" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.SpaceCore"
     }
-  ]
+  ],
+  "spacechase0": "luck-skill"
 }
