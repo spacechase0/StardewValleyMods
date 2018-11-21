@@ -6,5 +6,6 @@
   "UniqueID": "spacechase0.JumpOver",
   "PerSaveConfigs": false,
   "EntryDll": "JumpOver.dll",
-  "UpdateKeys": [ "Nexus:1844", "Chucklefish:5190", "spacechase0:jump-over" ]
+  "UpdateKeys": [ "Nexus:1844", "Chucklefish:5190" ],
+  "spacechase0": "jump-over"
 }
