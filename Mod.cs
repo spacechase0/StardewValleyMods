@@ -17,7 +17,7 @@ namespace ThreeHeartDancePartner
 
         private void onUpdate(object sender, EventArgs args)
         {
-            if (Game1.currentLocation == null || Game1.currentLocation.name != "Temp" || Game1.currentLocation.currentEvent == null)
+            if (Game1.currentLocation == null || Game1.currentLocation.Name != "Temp" || Game1.currentLocation.currentEvent == null)
                 return;
             Event @event = Game1.currentLocation.currentEvent;
             //Dictionary<string, string> data = (Dictionary<string, string>)Util.GetInstanceField(typeof(Event), @event, "festivalData");
@@ -27,7 +27,7 @@ namespace ThreeHeartDancePartner
 
             foreach ( NPC npc in @event.actors )
             {
-                if ( !npc.datable || npc.hasPartnerForDance) continue;
+                if ( !npc.datable.Value || npc.HasPartnerForDance) continue;
                 try
                 {
                     if (npc.CurrentDialogue.Count() <= 0) return;
@@ -40,10 +40,10 @@ namespace ThreeHeartDancePartner
                     {
                         NPC who = npc;
                         // The original stuff, only the relationship point check is modified. (1000 -> 750)
-                        if (!who.hasPartnerForDance && Game1.player.getFriendshipLevelForNPC(who.name) >= 750)
+                        if (!who.HasPartnerForDance && Game1.player.getFriendshipLevelForNPC(who.Name) >= 750)
                         {
                             string s = "";
-                            switch (who.gender)
+                            switch (who.Gender)
                             {
                                 case 0:
                                     s = "You want to be my partner for the flower dance?#$b#Okay. I look forward to it.$h";
@@ -52,23 +52,21 @@ namespace ThreeHeartDancePartner
                                     s = "You want to be my partner for the flower dance?#$b#Okay! I'd love to.$h";
                                     break;
                             }
-                            if (Game1.IsMultiplayer)
-                            {
-                                MultiplayerUtility.sendMessageToEveryone(0, who.name, Game1.player.uniqueMultiplayerID);
-                            }
                             try
                             {
-                                Game1.player.changeFriendship(250, Game1.getCharacterFromName(who.name));
+                                Game1.player.changeFriendship(250, Game1.getCharacterFromName(who.Name));
                             }
                             catch (Exception)
                             {
                             }
-                            if (!Game1.IsMultiplayer || Game1.IsServer)
-                            {
-                                Game1.player.dancePartner = who;
-                                who.hasPartnerForDance = true;
-                            }
+                            Game1.player.dancePartner.Value = (Character)who;
                             who.setNewDialogue(s, false, false);
+
+                            foreach (NPC actor in @event.actors)
+                            {
+                                if (actor.CurrentDialogue != null && actor.CurrentDialogue.Count > 0 && actor.CurrentDialogue.Peek().getCurrentDialogue().Equals("..."))
+                                    actor.CurrentDialogue.Clear();
+                            }
 
                             // Okay, looks like I need to fix the current dialog box
                             Game1.activeClickableMenu = new DialogueBox(new Dialogue(s, who) { removeOnNextMove = false });

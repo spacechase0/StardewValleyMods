@@ -4,11 +4,12 @@
   "Version": {
     "MajorVersion": 1,
     "MinorVersion": 0,
-    "PatchVersion": 2,
+    "PatchVersion": 3,
     "Build": null
   },
   "Description": "Makes you only need 3 hearts for a dance partner at the flower festival.",
   "UniqueID": "ThreeHeartDancePartner",
   "EntryDll": "ThreeHeartDancePartner.dll",
-  "UpdateKeys": [ "Nexus:500" ]
+  "UpdateKeys": [ "Nexus:500", "Chucklefish:3767" ],
+  "spacechase0": "three-heart-dance-partner"
 }
