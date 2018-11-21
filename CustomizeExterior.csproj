@@ -60,6 +60,7 @@
     <ProjectReference Include="..\SpaceCore\SpaceCore.csproj">
       <Project>{ba657cb4-93ed-4c3a-a66e-86954beb4ce6}</Project>
       <Name>SpaceCore</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

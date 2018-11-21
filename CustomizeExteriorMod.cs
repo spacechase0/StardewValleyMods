@@ -42,7 +42,7 @@ namespace CustomizeExterior
             PlayerEvents.Warped += afterLocationChange;
 
             SpaceEvents.ServerGotClient += onClientConnected;
-            SpaceCore.SpaceCore.RegisterMessageHandler(MSG_CHOICES, onChoicesReceived);
+            SpaceCore.Networking.RegisterMessageHandler(MSG_CHOICES, onChoicesReceived);
         }
 
         private void onClientConnected(object sender, EventArgsServerGotClient args)
@@ -59,7 +59,7 @@ namespace CustomizeExterior
 
                 var server = (GameServer)sender;
                 Log.trace("Sending exteriors data to " + args.FarmerID);
-                SpaceCore.SpaceCore.ServerSendTo(args.FarmerID, MSG_CHOICES, stream.ToArray());
+                SpaceCore.Networking.ServerSendTo(args.FarmerID, MSG_CHOICES, stream.ToArray());
             }
         }
 
@@ -298,9 +298,9 @@ namespace CustomizeExterior
                         writer.Write((int)1);
                         writer.Write(recentTarget);
                         writer.Write(choice);
-                        
+
                         Log.trace("Broadcasting choice");
-                        SpaceCore.SpaceCore.BroadcastMessage(MSG_CHOICES, stream.ToArray());
+                        SpaceCore.Networking.BroadcastMessage(MSG_CHOICES, stream.ToArray());
                     }
                 }
             }
