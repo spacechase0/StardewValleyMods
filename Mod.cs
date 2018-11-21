@@ -19,12 +19,9 @@ namespace SleepyEye
 
         public override void Entry(IModHelper helper)
         {
-            base.Entry(helper);
             instance = this;
 
             MenuEvents.MenuChanged += onMenuChange;
-
-            Entoarox.Framework.EntoFramework.GetTypeRegistry().RegisterType<TentTool>();
         }
 
         private void onMenuChange( object sender, EventArgsClickableMenuChanged args )
@@ -33,12 +30,12 @@ namespace SleepyEye
             if (menu == null || menu.portraitPerson == null)
                 return;
 
-            if ( menu.portraitPerson.name == "Pierre" )
+            if ( menu.portraitPerson.Name == "Pierre" )
             {
                 Log.debug("Adding tent to shop");
 
-                var forSale = Helper.Reflection.GetPrivateValue<List<Item>>(menu, "forSale");
-                var itemPriceAndStock = Helper.Reflection.GetPrivateValue<Dictionary<Item, int[]>>(menu, "itemPriceAndStock");
+                var forSale = Helper.Reflection.GetField<List<Item>>(menu, "forSale").GetValue();
+                var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(menu, "itemPriceAndStock").GetValue();
 
                 var item = new TentTool();
                 forSale.Add(item);

@@ -11,21 +11,22 @@ using StardewModdingAPI;
 using StardewValley.Objects;
 using SFarmer = StardewValley.Farmer;
 using SpaceCore;
+using PyTK.CustomElementHandler;
 
 namespace SleepyEye
 {
-    public class TentTool : Tool//, ISaveElement
+    public class TentTool : Tool, ISaveElement
     {
         private SFarmer user;
         private DateTime? startedUsing = null;
 
         public TentTool()
         {
-            name = "Tent";
+            Name = "Tent";
             description = loadDescription();
 
-            numAttachmentSlots = 0;
-            indexOfMenuItemView = 0;
+            numAttachmentSlots.Value = 0;
+            IndexOfMenuItemView = 0;
             Stack = 1;
         }
 
@@ -67,23 +68,23 @@ namespace SleepyEye
             TimeSpan useTime = DateTime.Now - (DateTime)startedUsing;
 
             if (who.facingDirection == Game1.up)
-                ((FarmerSprite)who.sprite).animate(112, time);
+                ((FarmerSprite)who.Sprite).animate(112, time);
             else if (who.facingDirection == Game1.right)
-                ((FarmerSprite)who.sprite).animate(104, time);
+                ((FarmerSprite)who.Sprite).animate(104, time);
             else if (who.facingDirection == Game1.down)
-                ((FarmerSprite)who.sprite).animate(96, time);
+                ((FarmerSprite)who.Sprite).animate(96, time);
             else if (who.facingDirection == Game1.left)
-                ((FarmerSprite)who.sprite).animate(120, time);
+                ((FarmerSprite)who.Sprite).animate(120, time);
         }
 
-        public override void drawInMenu(SpriteBatch b, Vector2 location, float scaleSize, float transparency, float layerDepth, bool drawStackNumber)
+        public override void drawInMenu(SpriteBatch b, Vector2 location, float scaleSize, float transparency, float layerDepth, bool drawStackNumber, Color color, bool drawShadow)
         {
             b.Draw(Mod.instance.Helper.Content.Load<Texture2D>("Maps/" + Game1.currentSeason + "_outdoorsTileSheet", ContentSource.GameContent), new Vector2( location.X + Game1.tileSize / 2, location.Y + Game1.tileSize / 2 ), new Rectangle(224, 96, 48, 80), Color.White, 0, new Vector2( 24, 40 ), scaleSize * 0.8f, SpriteEffects.None, 0);
         }
 
         public override void draw(SpriteBatch b)
         {
-            CurrentParentTileIndex = indexOfMenuItemView = -999;
+            CurrentParentTileIndex = IndexOfMenuItemView = -999;
             if (startedUsing == null)
                 return;
             
@@ -120,6 +121,30 @@ namespace SleepyEye
         public override bool canBeTrashed()
         {
             return true;
+        }
+
+        public override Item getOne()
+        {
+            return new TentTool();
+        }
+
+        public object getReplacement()
+        {
+            return new StardewValley.Object();
+        }
+
+        public Dictionary<string, string> getAdditionalSaveData()
+        {
+            return new Dictionary<string, string>();
+        }
+
+        public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
+        {
+            Name = "Tent";
+            description = loadDescription();
+
+            numAttachmentSlots.Value = 0;
+            IndexOfMenuItemView = 0;
         }
     }
 }
