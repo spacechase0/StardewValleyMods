@@ -1,15 +1,11 @@
 {
   "Name": "Custom Critters",
   "Author": "spacechase0",
-  "Version": {
-    "MajorVersion": 1,
-    "MinorVersion": 2,
-    "PatchVersion": 3,
-    "Build": "-unofficial.1.mizzion"
-  },
+  "Version": "1.2.5",
   "Description": "...",
   "UniqueID": "spacechase0.CustomCritters",
   "PerSaveConfigs": false,
   "EntryDll": "CustomCritters.dll",
-  "UpdateKeys": [ "Nexus:1255" ]
+  "UpdateKeys": [ "Nexus:1255", "Chucklefish:4791" ],
+  "spacechase0": "custom-critters"
 }
