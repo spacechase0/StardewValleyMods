@@ -1,15 +1,11 @@
 {
   "Name": "Extended Reach",
   "Author": "spacechase0",
-  "Version": {
-    "MajorVersion": 1,
-    "MinorVersion": 0,
-    "PatchVersion": 0,
-    "Build": ""
-  },
+  "Version": "1.0.1",
   "Description": "...",
   "UniqueID": "spacechase0.ExtendedReach",
   "PerSaveConfigs": false,
   "EntryDll": "ExtendedReach.dll",
-  "UpdateKeys": [ "Nexus:1493" ]
+  "UpdateKeys": [ "Nexus:1493", "Chucklefish:4997" ],
+  "spacechase0": "extended-reach"
 }
