@@ -1,15 +1,11 @@
 {
   "Name": "Carry Chest",
   "Author": "spacechase0",
-  "Version": {
-    "MajorVersion": 1,
-    "MinorVersion": 2,
-    "PatchVersion": 1,
-    "Build": ""
-  },
+  "Version": "1.2.2",
   "Description": "...",
   "UniqueID": "spacechase0.CarryChest",
   "PerSaveConfigs": false,
   "EntryDll": "CarryChest.dll",
-  "UpdateKeys": [ "Nexus:1333" ]
+  "UpdateKeys": [ "Nexus:1333", "Chucklefish:4851" ],
+  "spacechase0": "carry-chest"
 }
