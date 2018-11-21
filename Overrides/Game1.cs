@@ -61,4 +61,12 @@ namespace SpaceCore.Overrides
             SpaceEvents.InvokeOnItemEaten( __instance);
         }
     }
+
+    public class WarpFarmerHook
+    {
+        public static bool Prefix(ref LocationRequest locationRequest, int tileX, int tileY, int facingDirectionAfterWarp)
+        {
+            return !SpaceEvents.InvokeBeforeWarp(ref locationRequest, tileX, tileY, facingDirectionAfterWarp);
+        }
+}
 }

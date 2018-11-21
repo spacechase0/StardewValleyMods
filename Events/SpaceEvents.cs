@@ -34,6 +34,9 @@ namespace SpaceCore.Events
         // When a gift is given to someone. Sender is farmer.
         public static event EventHandler<EventArgsGiftGiven> AfterGiftGiven;
 
+        // Before the player is about to warp. Can cancel warping or change the target location.
+        public static event EventHandler<EventArgsBeforeWarp> BeforeWarp;
+
         internal static void InvokeOnBlankSave()
         {
             Log.trace("Event: OnBlankSave");
@@ -106,6 +109,17 @@ namespace SpaceCore.Events
                 return;
             var arg = new EventArgsGiftGiven(npc, obj);
             Util.invokeEvent("SpaceEvents.AfterGiftGiven", AfterGiftGiven.GetInvocationList(), farmer, arg);
+        }
+
+        internal static bool InvokeBeforeWarp(ref LocationRequest req, int targetX, int targetY, int facing)
+        {
+            Log.trace("Event: BeforeWarp");
+            if (BeforeWarp == null)
+                return false;
+            var arg = new EventArgsBeforeWarp(req, targetX, targetY, facing);
+            bool ret = Util.invokeEventCancelable("SpaceEvents.BeforeWarp", BeforeWarp.GetInvocationList(), Game1.player, arg);
+            req = arg.WarpTargetLocation;
+            return ret;
         }
     }
 }

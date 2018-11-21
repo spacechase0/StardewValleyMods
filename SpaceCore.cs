@@ -61,11 +61,12 @@ namespace SpaceCore
             doPostfix(typeof(GameServer), "sendServerIntroduction", typeof(ServerGotClickHook));
             doPostfix(typeof(NPC), "receiveGift", typeof(AfterGiftGivenHook));
             doPostfix(typeof(Game1), "loadForNewGame", typeof(BlankSaveHook));
+            doPrefix(typeof(Game1).GetMethod("warpFarmer", new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int) }), typeof(WarpFarmerHook).GetMethod("Prefix"));
         }
 
         private void doPrefix(Type origType, string origMethod, Type newType)
         {
-            doPrefix(origType.GetMethod(origMethod), newType.GetMethod("Prefix"));
+            doPrefix(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Prefix"));
         }
         private void doPrefix(MethodInfo orig, MethodInfo prefix)
         {
@@ -81,7 +82,7 @@ namespace SpaceCore
         }
         private void doPostfix(Type origType, string origMethod, Type newType)
         {
-            doPostfix(origType.GetMethod(origMethod), newType.GetMethod("Postfix"));
+            doPostfix(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Postfix"));
         }
         private void doPostfix(MethodInfo orig, MethodInfo postfix)
         {
@@ -97,7 +98,7 @@ namespace SpaceCore
         }
         private void doTranspiler(Type origType, string origMethod, Type newType)
         {
-            doTranspiler(origType.GetMethod(origMethod), newType.GetMethod("Transpiler"));
+            doTranspiler(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Transpiler"));
         }
         private void doTranspiler(MethodInfo orig, MethodInfo transpiler)
         {
