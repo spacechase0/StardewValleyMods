@@ -1,14 +1,11 @@
 {
   "Name": "Object Time Left",
   "Author": "spacechase0",
-  "Version": {
-    "MajorVersion": 1,
-    "MinorVersion": 0,
-    "PatchVersion": 0,
-    "Build": ""
-  },
+  "Version": "1.0.2",
   "Description": "Show how much time is left for an object.",
   "UniqueID": "spacechase0.ObjectTimeLeft",
   "PerSaveConfigs": false,
-  "EntryDll": "ObjectTimeLeft.dll"
+  "EntryDll": "ObjectTimeLeft.dll",
+  "UpdateKeys": [ "Nexus:1315", "Chucklefish:4842" ],
+  "spacechase0": "object-time-left"
 }

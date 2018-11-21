@@ -5,6 +5,6 @@ namespace ObjectTimeLeft
 {
     public class Configuration
     {
-        public InputButton ToggleDisplay { get; set; } = new InputButton(Keys.T);
+        public InputButton ToggleDisplay { get; set; } = new InputButton(Keys.L);
     }
 }

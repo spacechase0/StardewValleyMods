@@ -16,7 +16,6 @@ namespace ObjectTimeLeft
 
         public override void Entry(IModHelper helper)
         {
-            base.Entry(helper);
             instance = this;
             Config = helper.ReadConfig<Configuration>();
 
@@ -34,6 +33,11 @@ namespace ObjectTimeLeft
             }
         }
 
+        private void update(object sender,EventArgs args)
+        {
+            //Log.trace(""+Game1.getFarm());
+        }
+
         private void draw(object sender, EventArgs args)
         {
             if (!showing)
@@ -42,19 +46,19 @@ namespace ObjectTimeLeft
                 return;
             var sb = Game1.spriteBatch;
 
-            foreach ( var entry in Game1.currentLocation.objects )
+            foreach ( var entryKey in Game1.currentLocation.netObjects.Keys )
             {
-                var obj = entry.Value;
-                if (obj.minutesUntilReady <= 0 || obj.minutesUntilReady == 999999)
+                var obj = Game1.currentLocation.netObjects[ entryKey ];
+                if (obj.MinutesUntilReady <= 0 || obj.MinutesUntilReady == 999999 || obj.Name == "Stone")
                     continue;
 
                 float num = (float)(4.0 * Math.Round(Math.Sin(DateTime.Now.TimeOfDay.TotalMilliseconds / 250.0), 2));
-                float x = entry.Key.X;
-                float y = entry.Key.Y;
+                float x = entryKey.X;
+                float y = entryKey.Y;
                 Vector2 pos = Game1.GlobalToLocal(Game1.viewport, new Vector2( x * Game1.tileSize, y * Game1.tileSize ));
                 x = pos.X;
                 y = pos.Y;
-                string str = "" + obj.minutesUntilReady / 10;
+                string str = "" + obj.MinutesUntilReady / 10;
                 float w = Game1.dialogueFont.MeasureString(str).X;
                 x += (Game1.tileSize - w) / 2;
 
