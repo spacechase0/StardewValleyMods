@@ -124,7 +124,8 @@ namespace JsonAssets.Data
         {
             if (Edibility != SObject.inedible)
             {
-                var str = $"{Name}/{Price}/{Edibility}/Cooking -7/{Name}/{Description}/";
+                var itype = (int)Category;
+                var str = $"{Name}/{Price}/{Edibility}{Category} {itype}/{Name}/{Description}/";
                 str += (EdibleIsDrink ? "drink" : "food") + "/";
                 if (EdibleBuffs == null)
                     EdibleBuffs = new FoodBuffs_();

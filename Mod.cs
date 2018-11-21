@@ -15,6 +15,8 @@ using StardewValley.Objects;
 using System.Reflection;
 using Netcode;
 using StardewValley.Buildings;
+using Harmony;
+using System.Text.RegularExpressions;
 
 // TODO: Refactor recipes
 
@@ -23,6 +25,7 @@ namespace JsonAssets
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
+        private HarmonyInstance harmony;
 
         public override void Entry(IModHelper helper)
         {
@@ -44,6 +47,32 @@ namespace JsonAssets
             }
 
             resetAtTitle();
+
+            try
+            {
+                harmony = HarmonyInstance.Create("spacechase0.JsonAssets");
+                harmony.Patch(typeof(StardewValley.Object).GetMethod("canBePlacedHere"), new HarmonyMethod(), null, null);
+            }
+            catch (Exception e)
+            {
+                Log.error("Exception doing harmony stuff: " + e);
+            }
+        }
+        private void doPrefix(Type origType, string origMethod, Type newType)
+        {
+            doPrefix(origType.GetMethod(origMethod), newType.GetMethod("Prefix"));
+        }
+        private void doPrefix(MethodInfo orig, MethodInfo prefix)
+        {
+            try
+            {
+                Log.trace($"Doing prefix patch {orig}:{prefix}...");
+                harmony.Patch(orig, new HarmonyMethod(prefix), null);
+            }
+            catch (Exception e)
+            {
+                Log.error($"Exception doing prefix patch {orig}:{prefix}: {e}");
+            }
         }
 
         private IApi api;
@@ -70,6 +99,7 @@ namespace JsonAssets
             this.loadData(contentPack);
         }
 
+        private Regex SeasonLimiter = new Regex("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private void loadData(IContentPack contentPack)
         {
             Log.info($"\t{contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author} - {contentPack.Manifest.Description}");
@@ -129,8 +159,45 @@ namespace JsonAssets
                         PurchasePrice = crop.SeedPurchasePrice,
                         PurchaseRequirements = crop.SeedPurchaseRequirements ?? new List<string>()
                     };
-                    string[] excludeSeasons = new[] { "spring", "summer", "fall", "winter" }.Except(crop.Seasons).ToArray();
-                    crop.seed.PurchaseRequirements.Add($"z {string.Join(" ", excludeSeasons)}");
+
+                    // TODO: Clean up this chunk
+                    // I copy/pasted it from the unofficial update decompiled
+                    string str = "";
+                    string[] array = new string[]
+                    {
+                            "spring",
+                            "summer",
+                            "fall",
+                            "winter"
+                    }.Except(crop.Seasons).ToArray<string>();
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        string season = array[i];
+                        str += string.Format("/z {0}", season);
+                    }
+                    string strtrimstart = str.TrimStart(new char[] { '/' });
+                    if (crop.SeedPurchaseRequirements != null && crop.SeedPurchaseRequirements.Count > 0)
+                    {
+                        for (int index = 0; index < crop.SeedPurchaseRequirements.Count; index++)
+                        {
+                            if (SeasonLimiter.IsMatch(crop.SeedPurchaseRequirements[index]))
+                            {
+                                crop.SeedPurchaseRequirements[index] = strtrimstart;
+                                Log.warn(string.Format("        Faulty season requirements for {0}!\n", crop.SeedName) + string.Format("        Fixed season requirements: {0}", crop.SeedPurchaseRequirements[index]));
+                            }
+                        }
+                        if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart(new char[] { '/' })))
+                        {
+                            Log.trace(string.Format("        Adding season requirements for {0}:\n", crop.SeedName) + string.Format("        New season requirements: {0}", strtrimstart));
+                            crop.seed.PurchaseRequirements.Add(strtrimstart);
+                        }
+                    }
+                    else
+                    {
+                        Log.trace(string.Format("        Adding season requirements for {0}:\n", crop.SeedName) + string.Format("        New season requirements: {0}", strtrimstart));
+                        crop.seed.PurchaseRequirements.Add(strtrimstart);
+                    }
+
                     objects.Add(crop.seed);
                 }
             }
