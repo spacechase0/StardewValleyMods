@@ -195,8 +195,8 @@ namespace RushOrders
 
         public static void rushBuilding()
         {
-            if (Game1.player.daysUntilHouseUpgrade > 0)
-                Game1.player.daysUntilHouseUpgrade--;
+            if (Game1.player.daysUntilHouseUpgrade.Value > 0)
+                Game1.player.daysUntilHouseUpgrade.Value--;
             else if (Game1.getFarm().getBuildingUnderConstruction() != null)
             {
                 Building building = Game1.getFarm().getBuildingUnderConstruction();
@@ -209,8 +209,8 @@ namespace RushOrders
 
         public static int getBuildingDaysLeft()
         {
-            if (Game1.player.daysUntilHouseUpgrade > 0)
-                return Game1.player.daysUntilHouseUpgrade;
+            if (Game1.player.daysUntilHouseUpgrade.Value > 0)
+                return Game1.player.daysUntilHouseUpgrade.Value;
             else if (Game1.getFarm().getBuildingUnderConstruction() != null)
             {
                 Building building = Game1.getFarm().getBuildingUnderConstruction();
@@ -226,7 +226,7 @@ namespace RushOrders
         public static int getBuildingRushPrice()
         {
             int num = 0;
-            if (Game1.player.daysUntilHouseUpgrade > 0)
+            if (Game1.player.daysUntilHouseUpgrade.Value > 0)
             {
                 if (Game1.player.HouseUpgradeLevel == 0)
                     num = 10000;
