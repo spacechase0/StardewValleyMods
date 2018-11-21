@@ -1,21 +1,17 @@
 {
   "Name": "More Grass Starters",
   "Author": "spacechase0, eemie",
-  "Version": {
-    "MajorVersion": 1,
-    "MinorVersion": 0,
-    "PatchVersion": 1,
-    "Build": ""
-  },
+  "Version": "1.0.2",
   "Description": "Lets you place more types of grass.",
   "UniqueID": "spacechase0.MoreGrassStarters",
   "PerSaveConfigs": false,
   "EntryDll": "MoreGrassStarters.dll",
-  "UpdateKeys": [ "Nexus:1702" ],
+  "UpdateKeys": [ "Nexus:1702", "Chucklefish:5129" ],
   "Dependencies": [
     {
       "UniqueID": "Platonymous.Toolkit",
       "MinimumVersion": ""
     }
-  ]
+  ],
+  "spacechase0": "more-grass-starters"
 }

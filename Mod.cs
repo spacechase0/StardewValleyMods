@@ -34,10 +34,10 @@ namespace MoreGrassStarters
             if (menu == null || menu.portraitPerson == null)
                 return;
 
-            if (menu.portraitPerson.name == "Pierre")
+            if (menu.portraitPerson.Name == "Pierre")
             {
-                var forSale = Helper.Reflection.GetPrivateValue<List<Item>>(menu, "forSale");
-                var itemPriceAndStock = Helper.Reflection.GetPrivateValue<Dictionary<Item, int[]>>(menu, "itemPriceAndStock");
+                var forSale = Helper.Reflection.GetField<List<Item>>(menu, "forSale").GetValue();
+                var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(menu, "itemPriceAndStock").GetValue();
 
                 for (int i = Grass.caveGrass; i < 5 + GrassStarterItem.ExtraGrassTypes; ++i)
                 {

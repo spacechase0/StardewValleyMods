@@ -26,7 +26,7 @@ namespace MoreGrassStarters
         {
             whichGrass = which;
             name = "Grass (" + which + ")";
-            price = 100;
+            Price = 100;
             ParentSheetIndex = 297;
         }
 
@@ -49,7 +49,7 @@ namespace MoreGrassStarters
         {
             Vector2 index1 = new Vector2((float)(x / Game1.tileSize), (float)(y / Game1.tileSize));
             this.health = 10;
-            this.owner = who == null ? Game1.player.uniqueMultiplayerID : who.uniqueMultiplayerID;
+            this.owner.Value = who == null ? Game1.player.UniqueMultiplayerID : who.UniqueMultiplayerID;
 
             if (location.objects.ContainsKey(index1) || location.terrainFeatures.ContainsKey(index1))
                 return false;
@@ -83,7 +83,7 @@ namespace MoreGrassStarters
             b.Draw(tex, pos - new Vector2(-4, 24), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, (f.getStandingY() + 3) / 10000f);
         }
 
-        public override void drawInMenu(SpriteBatch b, Vector2 pos, float scale, float transparency, float layerDepth, bool drawStackNumber)
+        public override void drawInMenu(SpriteBatch b, Vector2 pos, float scale, float transparency, float layerDepth, bool drawStackNumber, Color color, bool drawShadow)
         {
             Texture2D tex = GrassStarterItem.tex;
             int texOffset = 20 + whichGrass * 20;
@@ -95,7 +95,7 @@ namespace MoreGrassStarters
             b.Draw(tex, pos + new Vector2( 4, 0 ), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4 * scale, SpriteEffects.None, layerDepth);
 
             if (drawStackNumber && this.maximumStackSize() > 1 && ((double)scale > 0.3 && this.Stack != int.MaxValue) && this.Stack > 1)
-                Utility.drawTinyDigits(this.stack, b, pos + new Vector2((float)(Game1.tileSize - Utility.getWidthOfTinyDigitString(this.stack, 3f * scale)) + 3f * scale, (float)((double)Game1.tileSize - 18.0 * (double)scale + 2.0)), 3f * scale, 1f, Color.White);
+                Utility.drawTinyDigits(this.Stack, b, pos + new Vector2((float)(Game1.tileSize - Utility.getWidthOfTinyDigitString(this.stack, 3f * scale)) + 3f * scale, (float)((double)Game1.tileSize - 18.0 * (double)scale + 2.0)), 3f * scale, 1f, Color.White);
         }
 
         // Custom Element Handler
@@ -115,7 +115,7 @@ namespace MoreGrassStarters
         {
             whichGrass = int.Parse(additionalSaveData["whichGrass"]);
             name = "Grass (" + whichGrass + ")";
-            price = 100;
+            Price = 100;
             ParentSheetIndex = 297;
         }
     }
