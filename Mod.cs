@@ -17,6 +17,7 @@ using Netcode;
 using StardewValley.Buildings;
 using Harmony;
 using System.Text.RegularExpressions;
+using JsonAssets.Overrides;
 
 // TODO: Refactor recipes
 
@@ -51,7 +52,7 @@ namespace JsonAssets
             try
             {
                 harmony = HarmonyInstance.Create("spacechase0.JsonAssets");
-                harmony.Patch(typeof(StardewValley.Object).GetMethod("canBePlacedHere"), new HarmonyMethod(), null, null);
+                doPrefix(typeof(StardewValley.Object), "canBePlacedHere", typeof(ObjectCanPlantHereOverride));
             }
             catch (Exception e)
             {
