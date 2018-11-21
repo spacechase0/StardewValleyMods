@@ -10,7 +10,6 @@ namespace JsonAssets.Overrides
     {
         public static bool Prefix(StardewValley.Object __instance, GameLocation l, Vector2 tile, ref bool __result)
         {
-            Log.trace("meow:" + __instance.ParentSheetIndex);
             if (!__instance.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
             {
                 if (__instance.Category == StardewValley.Object.SeedsCategory)
@@ -24,13 +23,11 @@ namespace JsonAssets.Overrides
                             break;
                         }
                     }
-                    Log.trace("meow2:" + isTree);
 
                     var lobj = l.objects.ContainsKey(tile) ? l.objects[tile] : null;
                     if (isTree)
                     {
                         __result = lobj == null && !l.isTileOccupiedForPlacement(tile, __instance);
-                        Log.trace("meow3:" + __result);
                         return false;
                     }
                     else
