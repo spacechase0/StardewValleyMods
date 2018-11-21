@@ -1,10 +1,11 @@
 {
    "Name": "Better Shop Menu",
    "Author": "spacechase0",
-   "Version": "1.0.0",
+   "Version": "1.0.1",
    "Description": "...",
    "UniqueID": "spacechase0.BetterShopMenu",
    "EntryDll": "BetterShopMenu.dll",
    "MinimumApiVersion": "2.0",
-   "UpdateKeys": ["Nexus:2012"]
+   "UpdateKeys": ["Nexus:2012", "Chucklefish:5245" ],
+   "spacechase0": "better-shop-menu"
 }

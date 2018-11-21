@@ -53,9 +53,9 @@ namespace BetterShopMenu
             foreach ( var item in initialItems )
             {
                 var obj = item as SObject;
-                if (!categories.Contains(item.category) && (obj == null || !obj.isRecipe))
-                    categories.Add(item.category);
-                if (obj != null && obj.isRecipe)
+                if (!categories.Contains(item.Category) && (obj == null || !obj.IsRecipe))
+                    categories.Add(item.Category);
+                if (obj != null && obj.IsRecipe)
                     hasRecipes = true;
             }
             currCategory = -1;
@@ -231,9 +231,9 @@ namespace BetterShopMenu
             if (cat == -1)
                 return true;
             if (cat == categories.Count)
-                return obj != null && obj.isRecipe;
-            if (categories[ cat ] == item.category)
-                return (obj == null || !obj.isRecipe);
+                return obj != null && obj.IsRecipe;
+            if (categories[ cat ] == item.Category)
+                return (obj == null || !obj.IsRecipe);
             return false;
         }
     }
