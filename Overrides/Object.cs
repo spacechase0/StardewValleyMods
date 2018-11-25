@@ -45,4 +45,14 @@ namespace JsonAssets.Overrides
                 return true;
         }
     }
+
+    public static class ObjectNoActionHook
+    {
+        public static bool Prefix(StardewValley.Object __instance)
+        {
+            if (__instance.bigCraftable.Value && Mod.instance.bigCraftableIds.Values.Contains(__instance.ParentSheetIndex))
+                return false;
+            return true;
+        }
+    }
 }

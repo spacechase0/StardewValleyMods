@@ -53,6 +53,7 @@ namespace JsonAssets
             {
                 harmony = HarmonyInstance.Create("spacechase0.JsonAssets");
                 doPrefix(typeof(StardewValley.Object), "canBePlacedHere", typeof(ObjectCanPlantHereOverride));
+                doPrefix(typeof(StardewValley.Object), "checkForAction", typeof(ObjectNoActionHook));
             }
             catch (Exception e)
             {
