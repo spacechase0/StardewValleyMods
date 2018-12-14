@@ -55,4 +55,19 @@ namespace JsonAssets.Overrides
             return true;
         }
     }
+
+    public static class ObjectCollectionShippingHook
+    {
+        public static void Postfix(int index, ref bool __result)
+        {
+            foreach (var ring in Mod.instance.myRings)
+            {
+                if (ring.GetObjectId() == index)
+                {
+                    __result = false;
+                    break;
+                }
+            }
+        }
+    }
 }

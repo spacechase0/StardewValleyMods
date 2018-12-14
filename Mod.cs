@@ -54,6 +54,7 @@ namespace JsonAssets
                 harmony = HarmonyInstance.Create("spacechase0.JsonAssets");
                 doPrefix(typeof(StardewValley.Object), "canBePlacedHere", typeof(ObjectCanPlantHereOverride));
                 doPrefix(typeof(StardewValley.Object), "checkForAction", typeof(ObjectNoActionHook));
+                doPostfix(typeof(StardewValley.Object), "isIndexOkForBasicShippedCategory", typeof(ObjectCollectionShippingHook));
             }
             catch (Exception e)
             {
@@ -74,6 +75,22 @@ namespace JsonAssets
             catch (Exception e)
             {
                 Log.error($"Exception doing prefix patch {orig}:{prefix}: {e}");
+            }
+        }
+        private void doPostfix(Type origType, string origMethod, Type newType)
+        {
+            doPostfix(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Postfix"));
+        }
+        private void doPostfix(MethodInfo orig, MethodInfo postfix)
+        {
+            try
+            {
+                Log.trace($"Doing postfix patch {orig}:{postfix}...");
+                harmony.Patch(orig, null, new HarmonyMethod(postfix));
+            }
+            catch (Exception e)
+            {
+                Log.error($"Exception doing postfix patch {orig}:{postfix}: {e}");
             }
         }
 
@@ -484,7 +501,7 @@ namespace JsonAssets
             Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-hats.json"), hatIds);
         }
 
-        private IList<ObjectData> myRings = new List<ObjectData>();
+        internal IList<ObjectData> myRings = new List<ObjectData>();
         private void invChanged(object sender, EventArgsInventoryChanged args)
         {
             IList<int> ringIds = new List<int>();
