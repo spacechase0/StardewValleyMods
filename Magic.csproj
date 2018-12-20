@@ -287,8 +287,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="2.1.0-beta-20180428" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="2.2.0" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
