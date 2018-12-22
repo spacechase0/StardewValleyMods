@@ -4,8 +4,8 @@
   "Version": "1.0.1",
   "Description": "Reach tile actions like chests or the mailbox from anywhere.",
   "UniqueID": "spacechase0.ExtendedReach",
-  "PerSaveConfigs": false,
   "EntryDll": "ExtendedReach.dll",
+  "MinimumApiVersion": "2.9.0",
   "UpdateKeys": [ "Nexus:1493", "Chucklefish:4997" ],
   "spacechase0": "extended-reach"
 }
