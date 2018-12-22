@@ -8,7 +8,6 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Network;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,6 +17,8 @@ namespace SpaceCore
 {
     public class Skills
     {
+        private static IDataHelper DataApi => SpaceCore.instance.Helper.Data;
+
         public abstract class Skill
         {
             public abstract class Profession
@@ -93,7 +94,8 @@ namespace SpaceCore
             }
         }
 
-        private static string FilePath => Path.Combine(Constants.CurrentSavePath, "spacecore-skills.json");
+        private static string DataKey = "skills";
+        private static string LegacyFilePath => Path.Combine(Constants.CurrentSavePath, "spacecore-skills.json");
         private const string MSG_DATA = "spacechase0.SpaceCore.SkillData";
         private const string MSG_EXPERIENCE = "spacechase0.SpaceCore.SkillExperience";
 
@@ -104,6 +106,7 @@ namespace SpaceCore
         internal static void init(IModEvents events)
         {
             events.GameLoop.SaveLoaded += onSaveLoaded;
+            events.GameLoop.Saving += onSaving;
             events.GameLoop.Saved += onSaved;
             events.Display.MenuChanged += onMenuChanged;
             events.Player.Warped += onWarped;
@@ -256,8 +259,21 @@ namespace SpaceCore
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
-                if (File.Exists(FilePath))
-                    exp = JsonConvert.DeserializeObject<Dictionary<long, Dictionary<string, int>>>(File.ReadAllText(FilePath));
+                exp = DataApi.ReadSaveData<Dictionary<long, Dictionary<string, int>>>(DataKey);
+                if (exp == null && File.Exists(LegacyFilePath))
+                    exp = JsonConvert.DeserializeObject<Dictionary<long, Dictionary<string, int>>>(File.ReadAllText(LegacyFilePath));
+            }
+        }
+
+        /// <summary>Raised before the game begins writes data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onSaving(object sender, SavingEventArgs e)
+        {
+            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+            {
+                Log.trace("Saving custom data");
+                DataApi.WriteSaveData(DataKey, exp);
             }
         }
 
@@ -268,8 +284,11 @@ namespace SpaceCore
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
-                Log.trace("Saving to " + FilePath);
-                File.WriteAllText(FilePath, JsonConvert.SerializeObject(exp));
+                if (File.Exists(LegacyFilePath))
+                {
+                    Log.trace($"Deleting legacy data file at {LegacyFilePath}");
+                    File.Delete(LegacyFilePath);
+                }
             }
         }
 

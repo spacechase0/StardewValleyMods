@@ -31,6 +31,7 @@ namespace SpaceCore
             Config = helper.ReadConfig<Configuration>();
 
             helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
+            helper.Events.GameLoop.Saving += onSaving;
             helper.Events.GameLoop.Saved += onSaved;
 
             Commands.register();
@@ -115,10 +116,14 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            var dataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
-            var data = File.Exists(dataPath)
-                ? JsonConvert.DeserializeObject<Sleep.Data>(File.ReadAllText(dataPath))
-                : null;
+            var data = Helper.Data.ReadSaveData<Sleep.Data>("sleepy-eye");
+            if (data == null)
+            {
+                var legacyDataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
+                data = File.Exists(legacyDataPath)
+                    ? JsonConvert.DeserializeObject<Sleep.Data>(File.ReadAllText(legacyDataPath))
+                    : null;
+            }
             if (data == null || data.Year != Game1.year || data.Season != Game1.currentSeason || data.Day != Game1.dayOfMonth)
                 return;
 
@@ -145,10 +150,10 @@ namespace SpaceCore
             }
         }
 
-        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
+        /// <summary>Raised before the game begins writes data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaved(object sender, SavedEventArgs e)
+        private void onSaving(object sender, SavingEventArgs e)
         {
             if (!Sleep.SaveLocation)
                 return;
@@ -184,8 +189,21 @@ namespace SpaceCore
                 data.MineLevel = (Game1.currentLocation as MineShaft).mineLevel;
             }
 
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json"), JsonConvert.SerializeObject(data));
+            Helper.Data.WriteSaveData("sleepy-eye", data);
             Sleep.SaveLocation = false;
+        }
+
+        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaved(object sender, SavedEventArgs e)
+        {
+            var legacyDataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
+            if (File.Exists(legacyDataPath))
+            {
+                Log.trace($"Deleting legacy tent sleep data file: {legacyDataPath}");
+                File.Delete(legacyDataPath);
+            }
         }
 
         // TODO: Move somewhere more sensible (and make public)?
