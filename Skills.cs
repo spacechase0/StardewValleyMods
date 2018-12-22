@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace SpaceCore
 {
@@ -253,7 +254,10 @@ namespace SpaceCore
         private static void afterLoad(object sender, EventArgs args)
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-                exp = SpaceCore.instance.Helper.ReadJsonFile<Dictionary<long, Dictionary<string, int>>>(FilePath) ?? new Dictionary<long, Dictionary<string, int>>();
+            {
+                if (File.Exists(FilePath))
+                    exp = JsonConvert.DeserializeObject<Dictionary<long, Dictionary<string, int>>>(File.ReadAllText(FilePath));
+            }
         }
 
         private static void afterSave(object sender, EventArgs args)
@@ -261,7 +265,7 @@ namespace SpaceCore
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
                 Log.trace("Saving to " + FilePath);
-                SpaceCore.instance.Helper.WriteJsonFile(FilePath, exp);
+                File.WriteAllText(FilePath, JsonConvert.SerializeObject(exp));
             }
         }
         private static void menuChanged(object sender, EventArgsClickableMenuChanged args)

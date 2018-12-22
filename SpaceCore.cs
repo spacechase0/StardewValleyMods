@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using SFarmer = StardewValley.Farmer;
+using Newtonsoft.Json;
 
 namespace SpaceCore
 {
@@ -23,10 +23,6 @@ namespace SpaceCore
         public Configuration Config { get; set; }
         internal static SpaceCore instance;
         private HarmonyInstance harmony;
-
-        public SpaceCore()
-        {
-        }
 
         public override void Entry(IModHelper helper)
         {
@@ -54,7 +50,7 @@ namespace SpaceCore
             doPostfix(typeof(Utility), "pickFarmEvent", typeof(NightlyFarmEventHook));
             doTranspiler(showNightEndMethod, typeof(ShowEndOfNightStuffHook).GetMethod("Transpiler"));
             doPostfix(typeof(Farmer), "doneEating", typeof(DoneEatingHook));
-            doPrefix(typeof(MeleeWeapon).GetMethod("drawDuringUse", new[] { typeof(int), typeof(int), typeof(SpriteBatch), typeof(Vector2), typeof(SFarmer), typeof(Rectangle), typeof(int), typeof(bool) }), typeof(CustomWeaponDrawPatch).GetMethod("Prefix"));
+            doPrefix(typeof(MeleeWeapon).GetMethod("drawDuringUse", new[] { typeof(int), typeof(int), typeof(SpriteBatch), typeof(Vector2), typeof(Farmer), typeof(Rectangle), typeof(int), typeof(bool) }), typeof(CustomWeaponDrawPatch).GetMethod("Prefix"));
             doPrefix(typeof(Multiplayer), "processIncomingMessage", typeof(MultiplayerPackets));
             doPrefix(typeof(GameLocation), "performAction", typeof(ActionHook));
             doPrefix(typeof(GameLocation), "performTouchAction", typeof(TouchActionHook));
@@ -115,7 +111,10 @@ namespace SpaceCore
 
         private void onLoad(object sender, EventArgs args)
         {
-            var data = Helper.ReadJsonFile<Sleep.Data>(Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json"));
+            var dataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
+            var data = File.Exists(dataPath)
+                ? JsonConvert.DeserializeObject<Sleep.Data>(File.ReadAllText(dataPath))
+                : null;
             if (data == null || data.Year != Game1.year || data.Season != Game1.currentSeason || data.Day != Game1.dayOfMonth)
                 return;
 
@@ -178,7 +177,7 @@ namespace SpaceCore
                 data.MineLevel = (Game1.currentLocation as MineShaft).mineLevel;
             }
 
-            Helper.WriteJsonFile<Sleep.Data>(Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json"), data);
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json"), JsonConvert.SerializeObject(data));
             Sleep.SaveLocation = false;
         }
 
