@@ -1,14 +1,9 @@
-﻿//using CustomElementHandler;
-using StardewValley;
+﻿using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
-using StardewValley.Objects;
 using SFarmer = StardewValley.Farmer;
 using SpaceCore;
 using PyTK.CustomElementHandler;
