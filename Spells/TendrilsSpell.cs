@@ -51,7 +51,7 @@ namespace Magic.Spells
                 this.pos = pos;
                 radius = rad;
                 duration = dur;
-                tex = Content.loadTexture("magic/earth/tendrils/tendril.png");
+                tex = Content.loadTexture("magic/nature/tendrils/tendril.png");
 
                 GameEvents.UpdateTick += update;
                 GraphicsEvents.OnPreRenderHudEvent += render;
