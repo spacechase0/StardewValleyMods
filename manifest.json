@@ -5,7 +5,7 @@
   "Description": "...",
   "UniqueID": "spacechase0.SpaceCore",
   "EntryDll": "SpaceCore.dll",
-  "MinimumApiVersion": "1.15",
+  "MinimumApiVersion": "2.9.0",
   "UpdateKeys": [ "Nexus:1348", "Chucklefish:4868" ],
   "spacechase0": "spacecore"
 }

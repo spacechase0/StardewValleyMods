@@ -1,7 +1,6 @@
 ﻿using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SpaceCore.Events;
 using SpaceCore.Overrides;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -24,16 +23,18 @@ namespace SpaceCore
         internal static SpaceCore instance;
         private HarmonyInstance harmony;
 
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
             Config = helper.ReadConfig<Configuration>();
 
-            SaveEvents.AfterLoad += onLoad;
-            SaveEvents.AfterSave += onSave;
+            helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
+            helper.Events.GameLoop.Saved += onSaved;
 
             Commands.register();
-            Skills.init();
+            Skills.init(helper.Events);
 
             harmony = HarmonyInstance.Create("spacechase0.SpaceCore");
 
@@ -109,7 +110,10 @@ namespace SpaceCore
             }
         }
 
-        private void onLoad(object sender, EventArgs args)
+        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             var dataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
             var data = File.Exists(dataPath)
@@ -141,7 +145,10 @@ namespace SpaceCore
             }
         }
 
-        private void onSave(object sender, EventArgs args)
+        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaved(object sender, SavedEventArgs e)
         {
             if (!Sleep.SaveLocation)
                 return;
