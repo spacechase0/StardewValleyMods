@@ -19,9 +19,11 @@ namespace CustomizeExterior
     public class Mod : StardewModdingAPI.Mod
     {
         public const string SEASONAL_INDICATOR = "%";
-        
+
+        private static readonly TimeSpan clickWindow = new TimeSpan(250 * TimeSpan.TicksPerMillisecond);
+
         public static Mod instance;
-        public static Config config = new Config();
+        public static SavedExteriors savedExteriors = new SavedExteriors();
         public static ContentManager content;
 
         public static Dictionary<string, List<string>> choices = new Dictionary<string, List<string>>();
@@ -37,6 +39,7 @@ namespace CustomizeExterior
             
             helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
             helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
+            helper.Events.GameLoop.Saving += onSaving;
             helper.Events.GameLoop.Saved += onSaved;
             helper.Events.Input.ButtonPressed += onButtonPressed;
             helper.Events.Player.Warped += onWarped;
@@ -50,8 +53,8 @@ namespace CustomizeExterior
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
-                writer.Write(config.chosen.Count);
-                foreach (var choice in config.chosen)
+                writer.Write(savedExteriors.chosen.Count);
+                foreach (var choice in savedExteriors.chosen)
                 {
                     writer.Write(choice.Key);
                     writer.Write(choice.Value);
@@ -73,7 +76,7 @@ namespace CustomizeExterior
                 string texId = msg.Reader.ReadString();
                 Log.trace("\t" + building + "=" + texId);
 
-                config.chosen[building] = texId;
+                savedExteriors.chosen[building] = texId;
             }
             syncTexturesWithChoices();
         }
@@ -85,17 +88,30 @@ namespace CustomizeExterior
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
-                string path = Path.Combine(Constants.CurrentSavePath, "building-exteriors.json");
-                if (File.Exists(path))
+                savedExteriors = this.Helper.Data.ReadSaveData<SavedExteriors>("building-exteriors");
+                if (savedExteriors == null)
                 {
-                    Log.info($"Loading per-save config file (\"{path}\")...");
-                    config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(path));
+                    string legacyPath = Path.Combine(Constants.CurrentSavePath, "building-exteriors.json");
+                    if (File.Exists(legacyPath))
+                    {
+                        Log.info($"Loading per-save config file (\"{legacyPath}\")...");
+                        savedExteriors = JsonConvert.DeserializeObject<SavedExteriors>(File.ReadAllText(legacyPath));
+                    }
                 }
-                if (config == null)
-                    config = new Config();
+                if (savedExteriors == null)
+                    savedExteriors = new SavedExteriors();
 
                 syncTexturesWithChoices();
             }
+        }
+
+        /// <summary>Raised before the game begins writes data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaving(object sender, SavingEventArgs e)
+        {
+            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+                this.Helper.Data.WriteSaveData("building-exteriors", savedExteriors);
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
@@ -105,8 +121,12 @@ namespace CustomizeExterior
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
-                Log.info("Saving per-save config file...");
-                File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "building-exteriors.json"), JsonConvert.SerializeObject(config));
+                string legacyPath = Path.Combine(Constants.CurrentSavePath, "building-exteriors.json");
+                if (File.Exists(legacyPath))
+                {
+                    Log.info("Removing legacy data file...");
+                    File.Delete(legacyPath);
+                }
             }
         }
 
@@ -267,7 +287,7 @@ namespace CustomizeExterior
             }
             else
             {
-                if (DateTime.Now - recentClickTime < config.clickWindow)
+                if (DateTime.Now - recentClickTime < clickWindow)
                     todoRenameFunction( target, type );
                 else recentClickTime = DateTime.Now;
             }
@@ -307,7 +327,7 @@ namespace CustomizeExterior
             }
             if (updateChosen)
             {
-                config.chosen[recentTarget] = choice;
+                savedExteriors.chosen[recentTarget] = choice;
 
                 if ( Game1.IsMultiplayer )
                 {
@@ -344,7 +364,7 @@ namespace CustomizeExterior
 
         private void syncTexturesWithChoices()
         {
-            foreach (var choice in config.chosen)
+            foreach (var choice in savedExteriors.chosen)
             {
                 recentTarget = choice.Key;
                 Log.debug("Saved choice: " + choice.Key + " " + choice.Value);
@@ -372,7 +392,7 @@ namespace CustomizeExterior
 
         public static string getChosenTexture( string target )
         {
-            return config.chosen.ContainsKey(target) ? config.chosen[target] : "/";
+            return savedExteriors.chosen.ContainsKey(target) ? savedExteriors.chosen[target] : "/";
         }
 
         public static Texture2D getTextureForChoice(string type, string choice)
