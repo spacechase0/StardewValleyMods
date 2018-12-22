@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
-using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Objects;
-using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
+using System.Linq;
+using StardewModdingAPI.Events;
 using SObject = StardewValley.Object;
 
 namespace CarryChest
@@ -13,39 +13,41 @@ namespace CarryChest
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
+
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
 
-            GameEvents.UpdateTick += update;
-            PlayerEvents.Warped += locChanged;
-            SaveEvents.AfterLoad += afterLoad;
-        }
-
-        private void afterLoad(object sender, EventArgs args)
-        {
-            Game1.currentLocation.netObjects.OnValueAdded += locObjectsChanged;
-        }
-        
-        private void locChanged( object sender, EventArgsPlayerWarped args )
-        {
-            if (args.PriorLocation != null)
-                args.PriorLocation.netObjects.OnValueAdded -= locObjectsChanged;
-            args.NewLocation.netObjects.OnValueAdded += locObjectsChanged;
+            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.World.ObjectListChanged += onObjectListChanged;
         }
 
         private Vector2 mostRecentPos;
         private StardewValley.Object mostRecent;
-        private void locObjectsChanged( Vector2 key, SObject value )
+
+        /// <summary>Raised after objects are added or removed in a location.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onObjectListChanged( object sender, ObjectListChangedEventArgs e )
         {
-            mostRecentPos = (Vector2)key;
-            mostRecent = value;
+            if (e.Location == Game1.currentLocation && e.Added.Any())
+            {
+                KeyValuePair<Vector2, SObject> lastObj = e.Added.Last();
+                mostRecentPos = lastObj.Key;
+                mostRecent = lastObj.Value;
+            }
         }
-        
+
         private int prevSel = -1;
         private StardewValley.Object prevHolding;
         private bool prevMousePressed = false;
-        private void update( object sender, EventArgs args )
+
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onUpdateTicked( object sender, UpdateTickedEventArgs e )
         {
             if (!Context.IsWorldReady || !Context.IsPlayerFree || Game1.activeClickableMenu != null)
                 return;
