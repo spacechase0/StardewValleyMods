@@ -40,7 +40,7 @@ namespace ExperienceBars
         /// <param name="e">The event arguments.</param>
         public void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if ( e.Button == Config.ToggleDisplay )
+            if ( e.Button == Config.ToggleBars )
             {
                 show = !show;
             }

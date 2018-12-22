@@ -4,6 +4,6 @@ namespace ExperienceBars
 {
     public class Configuration
     {
-        public SButton ToggleDisplay { get; set; } = SButton.X;
+        public SButton ToggleBars { get; set; } = SButton.X;
     }
 }
