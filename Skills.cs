@@ -262,6 +262,8 @@ namespace SpaceCore
                 exp = DataApi.ReadSaveData<Dictionary<long, Dictionary<string, int>>>(DataKey);
                 if (exp == null && File.Exists(LegacyFilePath))
                     exp = JsonConvert.DeserializeObject<Dictionary<long, Dictionary<string, int>>>(File.ReadAllText(LegacyFilePath));
+                if (exp == null)
+                    exp = new Dictionary<long, Dictionary<string, int>>();
             }
         }
 
