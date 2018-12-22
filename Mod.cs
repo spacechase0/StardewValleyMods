@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StardewModdingAPI;
-using StardewValley;
+﻿using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley.BellsAndWhistles;
+using StardewValley;
 using System.IO;
 
 namespace CustomCritters
@@ -18,55 +12,47 @@ namespace CustomCritters
         {
             instance = this;
 
-            PlayerEvents.Warped += onLocationChanged;
-            /*
-            var ce = new Critters.CritterEntry();
-            ce.Id = "eemie.bee";
-            var a = new Critters.CritterEntry.Animation_();
-            a.Frames.Add(new Critters.CritterEntry.Animation_.AnimationFrame_());
-            ce.Animations.Add("test",a);
-            ce.SpawnConditions.Add(new Critters.CritterEntry.SpawnCondition_());
-            var sl = new Critters.CritterEntry.SpawnLocation_();
-            sl.Conditions.Add(new Critters.CritterEntry.SpawnLocation_.ConditionEntry_());
-            ce.SpawnLocations.Add(sl);
-            helper.WriteJsonFile("test.json", ce);
-            */
+            helper.Events.Player.Warped += onWarped;
 
             Log.info("Creating critter types...");
-            foreach ( var file in Directory.EnumerateDirectories( Path.Combine( helper.DirectoryPath, "Critters" ) ) )
+            foreach ( var folderPath in Directory.EnumerateDirectories( Path.Combine( helper.DirectoryPath, "Critters" ) ) )
             {
-                var ce = helper.ReadJsonFile<CritterEntry>(Path.Combine(file, "critter.json"));
+                var pack = helper.ContentPacks.CreateFake(folderPath);
+                var ce = pack.ReadJsonFile<CritterEntry>("critter.json");
                 if ( ce == null )
                 {
-                    Log.warn("\tFailed to load critter data for " + file);
+                    Log.warn($"\tFailed to load critter data for {folderPath}: no critter.json found.");
                     continue;
                 }
-                else if ( !File.Exists( Path.Combine(file, "critter.png" ) ) )
+                if ( !File.Exists( Path.Combine(folderPath, "critter.png" ) ) )
                 {
-                    Log.warn("\tCritter " + file + " has no image, skipping");
+                    Log.warn($"\tCritter {folderPath} has no image, skipping");
                     continue;
                 }
-                Log.info("\tCritter type: " + ce.Id);
+                Log.info($"\tCritter type: {ce.Id}");
                 CritterEntry.Register(ce);
             }
         }
 
-        private void onLocationChanged( object sender, EventArgsPlayerWarped args )
+        /// <summary>Raised after a player warps to a new location.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onWarped( object sender, WarpedEventArgs e )
         {
-            if (Game1.CurrentEvent != null)
+            if (!e.IsLocalPlayer || Game1.CurrentEvent != null)
                 return;
 
             foreach ( var entry in CritterEntry.critters )
             {
                 for (int i = 0; i < entry.Value.SpawnAttempts; ++i)
                 {
-                    if (entry.Value.check(args.NewLocation))
+                    if (entry.Value.check(e.NewLocation))
                     {
-                        var spot = entry.Value.pickSpot(args.NewLocation);
+                        var spot = entry.Value.pickSpot(e.NewLocation);
                         if (spot == null)
                             continue;
 
-                        args.NewLocation.addCritter(entry.Value.makeCritter(spot.Value));
+                        e.NewLocation.addCritter(entry.Value.makeCritter(spot.Value));
                     }
                 }
             }
