@@ -1,15 +1,10 @@
 ﻿using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
-using static Microsoft.Xna.Framework.Input.ButtonState;
-using Microsoft.Xna.Framework.Input;
 
 namespace CustomizeExterior
 {
@@ -59,10 +54,7 @@ namespace CustomizeExterior
                 if (new Rectangle(ix, iy, entrySize, entrySize).Contains(x, y))
                 {
                     active = entry.Key;
-                    if (onSelected != null)
-                    {
-                        onSelected.Invoke(type, active);
-                    }
+                    onSelected?.Invoke(type, active);
                     Game1.exitActiveMenu();
                 }
 

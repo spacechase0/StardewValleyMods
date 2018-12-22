@@ -4,14 +4,13 @@ using StardewModdingAPI.Events;
 using System.Linq;
 using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using static Microsoft.Xna.Framework.Input.ButtonState;
 using StardewValley.Locations;
 using StardewValley.Buildings;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using SpaceCore.Events;
 using StardewValley.Network;
 
@@ -36,10 +35,11 @@ namespace CustomizeExterior
             content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(Helper.DirectoryPath, "Buildings"));
             compileChoices();
             
-            GameEvents.UpdateTick += onUpdate;
-            SaveEvents.AfterLoad += afterLoad;
-            SaveEvents.AfterSave += afterSave;
-            PlayerEvents.Warped += afterLocationChange;
+            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
+            helper.Events.GameLoop.Saved += onSaved;
+            helper.Events.Input.ButtonPressed += onButtonPressed;
+            helper.Events.Player.Warped += onWarped;
 
             SpaceEvents.ServerGotClient += onClientConnected;
             SpaceCore.Networking.RegisterMessageHandler(MSG_CHOICES, onChoicesReceived);
@@ -78,29 +78,44 @@ namespace CustomizeExterior
             syncTexturesWithChoices();
         }
 
-        private void afterLoad(object sender, EventArgs args)
+        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
                 string path = Path.Combine(Constants.CurrentSavePath, "building-exteriors.json");
-                Log.info("Loading per-save config file (\"" + path + "\")...");
-                config = Helper.ReadJsonFile<Config>(path) ?? new Config();
+                if (File.Exists(path))
+                {
+                    Log.info($"Loading per-save config file (\"{path}\")...");
+                    config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(path));
+                }
+                if (config == null)
+                    config = new Config();
+
                 syncTexturesWithChoices();
             }
         }
 
-        private void afterSave(object sender, EventArgs args)
+        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaved(object sender, SavedEventArgs e)
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
                 Log.info("Saving per-save config file...");
-                Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "building-exteriors.json"), config);
+                File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "building-exteriors.json"), JsonConvert.SerializeObject(config));
             }
         }
 
-        private void afterLocationChange(object sender, EventArgsPlayerWarped args)
+        /// <summary>Raised after a player warps to a new location. NOTE: this event is currently only raised for the current player.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onWarped(object sender, WarpedEventArgs e)
         {
-            if (args.NewLocation is BuildableGameLocation)
+            if (e.IsLocalPlayer && e.NewLocation is BuildableGameLocation)
                 syncTexturesWithChoices();
         }
 
@@ -110,55 +125,59 @@ namespace CustomizeExterior
             syncTexturesWithChoices();
         }
 
-        public MouseState prevMouse;
         public string prevSeason = "";
-        private void onUpdate( object sender, EventArgs args)
+
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onUpdateTicked( object sender, UpdateTickedEventArgs e)
         {
             if ( Context.IsWorldReady && Game1.currentSeason != prevSeason )
             {
                 onSeasonChange();
                 prevSeason = Game1.currentSeason;
             }
+        }
 
-            MouseState mouse = Mouse.GetState();
-            
-            if ( prevMouse != null && mouse.RightButton == Pressed && prevMouse.RightButton != Pressed)
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onButtonPressed(object sender, ButtonPressedEventArgs e)
+        {
+            if (Context.IsPlayerFree && e.Button == SButton.MouseRight)
             {
-                Point pos = new Point(Game1.getMouseX() + Game1.viewport.X, Game1.getMouseY() + Game1.viewport.Y);
-                
+                Point pos = new Point((int)e.Cursor.AbsolutePixels.X,  (int)e.Cursor.AbsolutePixels.Y);
                 if (Game1.currentLocation is BuildableGameLocation)
                 {
                     var loc = Game1.currentLocation as BuildableGameLocation;
-                    
-                    foreach ( var building in loc.buildings )
+
+                    foreach (Building building in loc.buildings)
                     {
                         Rectangle tileBounds = new Rectangle(building.tileX.Value * Game1.tileSize, building.tileY.Value * Game1.tileSize, building.tilesWide.Value * Game1.tileSize, building.tilesHigh.Value * Game1.tileSize);
-                        if ( tileBounds.Contains( pos.X, pos.Y ) )
+                        if (tileBounds.Contains(pos.X, pos.Y))
                         {
-                            Log.trace("Right clicked a building: " + building.nameOfIndoors);
+                            Log.trace($"Right clicked a building: {building.nameOfIndoors}");
                             checkBuildingClick(building.nameOfIndoors, building.buildingType.Value);
                         }
                     }
                 }
-                if ( Game1.currentLocation is Farm )
+                if (Game1.currentLocation is Farm)
                 {
                     Rectangle house = new Rectangle(59 * Game1.tileSize, 11 * Game1.tileSize, 9 * Game1.tileSize, 6 * Game1.tileSize);
                     Rectangle greenhouse = new Rectangle(25 * Game1.tileSize, 10 * Game1.tileSize, 7 * Game1.tileSize, 6 * Game1.tileSize);
 
-                    if ( house.Contains( pos.X, pos.Y ) )
+                    if (house.Contains(pos.X, pos.Y))
                     {
                         Log.trace("Right clicked the house.");
                         checkBuildingClick("FarmHouse", "houses");
                     }
-                    else if ( greenhouse.Contains( pos.X, pos.Y ) )
+                    else if (greenhouse.Contains(pos.X, pos.Y))
                     {
                         Log.trace("Right clicked the greenhouse.");
                         checkBuildingClick("Greenhouse", "houses");
                     }
                 }
             }
-
-            prevMouse = mouse;
         }
 
         private void compileChoices()
@@ -210,10 +229,10 @@ namespace CustomizeExterior
                     var summer = new List<string>(Directory.GetFiles(Path.Combine(choice, "summer")));
                     var fall = new List<string>(Directory.GetFiles(Path.Combine(choice, "fall")));
                     var winter = new List<string>(Directory.GetFiles(Path.Combine(choice, "winter")));
-                    spring = spring.Select(b => { return Path.GetFileName(b); }).ToList();
-                    summer = summer.Select(b => { return Path.GetFileName(b); }).ToList();
-                    fall = fall.Select(b => { return Path.GetFileName(b); }).ToList();
-                    winter = winter.Select(b => { return Path.GetFileName(b); }).ToList();
+                    spring = spring.Select(Path.GetFileName).ToList();
+                    summer = summer.Select(Path.GetFileName).ToList();
+                    fall = fall.Select(Path.GetFileName).ToList();
+                    winter = winter.Select(Path.GetFileName).ToList();
                     
                     var common = new List<string>();
                     foreach ( var building in spring )
@@ -237,7 +256,6 @@ namespace CustomizeExterior
         
         private DateTime recentClickTime;
         private string recentClickTarget = null;
-        private string recentClickTargetType = null;
         private void checkBuildingClick( string target, string type )
         {
             if (Game1.activeClickableMenu != null) return;
@@ -245,7 +263,6 @@ namespace CustomizeExterior
             if (recentClickTarget != target)
             {
                 recentClickTarget = target;
-                recentClickTargetType = type;
                 recentClickTime = DateTime.Now;
             }
             else
@@ -269,8 +286,10 @@ namespace CustomizeExterior
             }
 
             recentTarget = target;
-            var menu = new SelectDisplayMenu(type, getChosenTexture(target));
-            menu.onSelected = onExteriorSelected;
+            var menu = new SelectDisplayMenu(type, getChosenTexture(target))
+            {
+                onSelected = onExteriorSelected
+            };
             Game1.activeClickableMenu = menu;
         }
         
@@ -295,7 +314,7 @@ namespace CustomizeExterior
                     using (var stream = new MemoryStream())
                     using (var writer = new BinaryWriter(stream))
                     {
-                        writer.Write((int)1);
+                        writer.Write(1);
                         writer.Write(recentTarget);
                         writer.Write(choice);
 
@@ -392,7 +411,6 @@ namespace CustomizeExterior
 
             Log.trace("Creating hybrid farmhouse/greenhouse texture");
 
-            Farm farm = Game1.getFarm();
             Texture2D baseTex = Farm.houseTextures;
             Rectangle houseRect = new Rectangle( 0, 0, 160, baseTex.Height );// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "houseSource");
             Rectangle greenhouseRect = new Rectangle(160, 0, 112, baseTex.Height);// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "greenhouseSource");
