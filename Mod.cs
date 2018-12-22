@@ -1,4 +1,6 @@
-﻿using StardewModdingAPI;
+﻿using System;
+using System.Collections.Generic;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System.IO;
@@ -14,23 +16,23 @@ namespace CustomCritters
 
             helper.Events.Player.Warped += onWarped;
 
-            Log.info("Creating critter types...");
-            foreach ( var folderPath in Directory.EnumerateDirectories( Path.Combine( helper.DirectoryPath, "Critters" ) ) )
+            // load content packs
+            Log.info("Loading critter content packs...");
+            foreach (IContentPack contentPack in this.GetContentPacks())
             {
-                var pack = helper.ContentPacks.CreateFake(folderPath);
-                var ce = pack.ReadJsonFile<CritterEntry>("critter.json");
-                if ( ce == null )
+                CritterEntry data = contentPack.ReadJsonFile<CritterEntry>("critter.json");
+                if (data == null)
                 {
-                    Log.warn($"\tFailed to load critter data for {folderPath}: no critter.json found.");
+                    Log.warn($"   {contentPack.Manifest.Name}: ignored (no critter.json file).");
                     continue;
                 }
-                if ( !File.Exists( Path.Combine(folderPath, "critter.png" ) ) )
+                if (!File.Exists(Path.Combine(contentPack.DirectoryPath, "critter.png")))
                 {
-                    Log.warn($"\tCritter {folderPath} has no image, skipping");
+                    Log.warn($"   {contentPack.Manifest.Name}: ignored (no critter.png file).");
                     continue;
                 }
-                Log.info($"\tCritter type: {ce.Id}");
-                CritterEntry.Register(ce);
+                Log.info( contentPack.Manifest.Name == data.Id ? contentPack.Manifest.Name : $"   {contentPack.Manifest.Name} (id: {data.Id})");
+                CritterEntry.Register(data);
             }
         }
 
@@ -55,6 +57,29 @@ namespace CustomCritters
                         e.NewLocation.addCritter(entry.Value.makeCritter(spot.Value));
                     }
                 }
+            }
+        }
+
+        /// <summary>Load available content packs.</summary>
+        private IEnumerable<IContentPack> GetContentPacks()
+        {
+            // SMAPI content packs
+            foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
+                yield return contentPack;
+
+            // legacy content packs
+            string legacyRoot = Path.Combine(this.Helper.DirectoryPath, "Critters");
+            Directory.CreateDirectory(legacyRoot);
+            foreach (string folderPath in Directory.EnumerateDirectories(legacyRoot))
+            {
+                yield return this.Helper.ContentPacks.CreateTemporary(
+                    directoryPath: folderPath, 
+                    id: Guid.NewGuid().ToString("N"),
+                    name: new DirectoryInfo(folderPath).Name,
+                    description: null, 
+                    author: null, 
+                    version: new SemanticVersion(1, 0, 0)
+                );
             }
         }
     }
