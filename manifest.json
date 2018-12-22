@@ -8,6 +8,7 @@
   "MinimumApiVersion": "2.9.0",
   "UpdateKeys": [ "Nexus:1099", "Chucklefish:4675" ],
   "Dependencies": [
+    { "UniqueID": "spacechase0.SpaceCore" },
     { "UniqueID": "Entoarox.SeasonalImmersion", "IsRequired": false }
   ],
   "spacechase0": "customize-exterior"
