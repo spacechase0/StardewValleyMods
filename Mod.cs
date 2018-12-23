@@ -4,6 +4,7 @@ using StardewValley;
 using System;
 using System.IO;
 using Magic.Other;
+using Newtonsoft.Json;
 
 namespace Magic
 {
@@ -14,10 +15,6 @@ namespace Magic
         public static Configuration Config { get; private set; }
         
         internal static JsonAssetsApi ja;
-
-        public Mod()
-        {
-        }
 
         public override void Entry(IModHelper helper)
         {
@@ -51,20 +48,26 @@ namespace Magic
             {
                 if (!Game1.IsMultiplayer || Game1.IsMasterGame)
                 {
-                    Log.info("Loading save data (\"" + SaveData.FilePath + "\")...");
-                    var oldData = Helper.ReadJsonFile<SaveData>(SaveData.FilePath);
+                    Log.info($"Loading save data (\"{SaveData.FilePath}\")...");
+                    var oldData = File.Exists(SaveData.FilePath)
+                        ? JsonConvert.DeserializeObject<SaveData>(File.ReadAllText(SaveData.FilePath))
+                        : null;
+                    Data = File.Exists(MultiplayerSaveData.FilePath)
+                        ? JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.FilePath))
+                        : new MultiplayerSaveData();
 
-                    Data = Helper.ReadJsonFile<MultiplayerSaveData>(MultiplayerSaveData.FilePath) ?? new MultiplayerSaveData();
                     if (oldData != null && !Data.players.ContainsKey(Game1.MasterPlayer.UniqueMultiplayerID))
                     {
-                        var player = new MultiplayerSaveData.PlayerData();
-                        player.mana = oldData.mana;
-                        player.manaCap = oldData.manaCap;
-                        player.magicLevel = oldData.magicLevel;
-                        player.magicExp = oldData.magicExp;
-                        player.freePoints = oldData.freePoints;
-                        player.spellBook = oldData.spellBook;
-                        
+                        var player = new MultiplayerSaveData.PlayerData
+                        {
+                            mana = oldData.mana,
+                            manaCap = oldData.manaCap,
+                            magicLevel = oldData.magicLevel,
+                            magicExp = oldData.magicExp,
+                            freePoints = oldData.freePoints,
+                            spellBook = oldData.spellBook
+                        };
+
                         Data.players[Game1.MasterPlayer.UniqueMultiplayerID] = player;
                     }
                     
@@ -82,8 +85,8 @@ namespace Magic
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
-                Log.info("Saving save data (\"" + MultiplayerSaveData.FilePath + "\")...");
-                Helper.WriteJsonFile(MultiplayerSaveData.FilePath, Data);
+                Log.info($"Saving save data (\"{MultiplayerSaveData.FilePath}\")...");
+                File.WriteAllText(MultiplayerSaveData.FilePath, JsonConvert.SerializeObject(Data));
             }
         }
     }
