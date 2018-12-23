@@ -29,18 +29,19 @@ namespace JsonAssets
         public static Mod instance;
         private HarmonyInstance harmony;
 
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
 
-            MenuEvents.MenuChanged += menuChanged;
-            //SaveEvents.AfterLoad += afterLoad;
-            SaveEvents.AfterSave += afterSave;
-            PlayerEvents.InventoryChanged += invChanged;
-            //SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
+            helper.Events.Display.MenuChanged += onMenuChanged;
+            helper.Events.GameLoop.Saved += onSaved;
+            helper.Events.Player.InventoryChanged += onInventoryChanged;
+            //helper.Events.Specialised.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
 
             Log.info("Loading content packs...");
-            foreach (IContentPack contentPack in this.Helper.GetContentPacks())
+            foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
                 loadData(contentPack);
             if (Directory.Exists(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
             {
@@ -71,7 +72,7 @@ namespace JsonAssets
             try
             {
                 Log.trace($"Doing prefix patch {orig}:{prefix}...");
-                harmony.Patch(orig, new HarmonyMethod(prefix), null);
+                harmony.Patch(orig, new HarmonyMethod(prefix));
             }
             catch (Exception e)
             {
@@ -95,27 +96,25 @@ namespace JsonAssets
             }
         }
 
-        private IApi api;
+        private Api api;
         public override object GetApi()
         {
-            if (api == null)
-                api = new Api(this.loadData);
-
-            return api;
+            return api ?? (api = new Api(this.loadData));
         }
 
         private void loadData(string dir)
         {
-            // read info
-            if (!File.Exists(Path.Combine(dir, "content-pack.json")))
+            // read initial info
+            IContentPack temp = this.Helper.ContentPacks.CreateFake(dir);
+            ContentPackData info = temp.ReadJsonFile<ContentPackData>("content-pack.json");
+            if (info == null)
             {
                 Log.warn($"\tNo {dir}/content-pack.json!");
                 return;
             }
-            ContentPackData info = this.Helper.ReadJsonFile<ContentPackData>(Path.Combine(dir, "content-pack.json"));
 
             // load content pack
-            IContentPack contentPack = this.Helper.CreateTransitionalContentPack(dir, id: Guid.NewGuid().ToString("N"), name: info.Name, description: info.Description, author: info.Author, version: new SemanticVersion(info.Version));
+            IContentPack contentPack = this.Helper.ContentPacks.CreateTemporary(dir, id: Guid.NewGuid().ToString("N"), name: info.Name, description: info.Description, author: info.Author, version: new SemanticVersion(info.Version));
             this.loadData(contentPack);
         }
 
@@ -201,7 +200,7 @@ namespace JsonAssets
                                 Log.warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
                             }
                         }
-                        if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart(new char[] { '/' })))
+                        if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart('/')))
                         {
                             Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
                             crop.seed.PurchaseRequirements.Add(strtrimstart);
@@ -290,15 +289,18 @@ namespace JsonAssets
             }
         }
 
-        private void unsafeUpdate(object sender, EventArgs args)
+        /// <summary>Raised after the game state is updated (≈60 times per second), regardless of normal SMAPI validation. This event is not thread-safe and may be invoked while game logic is running asynchronously. Changes to game state in this method may crash the game or corrupt an in-progress save. Do not use this event unless you're fully aware of the context in which your code will be run. Mods using this event will trigger a stability warning in the SMAPI console.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onUnvalidatedUpdateTicked(object sender, UnvalidatedUpdateTickedEventArgs e)
         {
             // I need the items to register before most other things do
             var saveLoaded = (bool) typeof(Context).GetProperty("IsSaveLoaded", BindingFlags.NonPublic | BindingFlags.Static).GetValue( null );
             if (saveLoaded && !SaveGame.IsProcessing)
             {
                 Log.debug("Loading stuff early");
-                afterLoad(sender, args);
-                SpecialisedEvents.UnvalidatedUpdateTick -= unsafeUpdate;
+                onSaveLoaded();
+                Helper.Events.Specialised.UnvalidatedUpdateTicked -= onUnvalidatedUpdateTicked;
             }
         }
 
@@ -316,18 +318,24 @@ namespace JsonAssets
             if (editor != null)
                 Helper.Content.AssetEditors.Remove(editor);
 
-            SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
+            Helper.Events.Specialised.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
         }
 
-        private void menuChanged(object sender, EventArgsClickableMenuChanged args)
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( args.NewMenu is TitleMenu )
+            if ( e.NewMenu == null )
+                return;
+
+            if ( e.NewMenu is TitleMenu )
             {
                 resetAtTitle();
                 return;
             }
 
-            var menu = args.NewMenu as ShopMenu;
+            var menu = e.NewMenu as ShopMenu;
             bool hatMouse = menu != null && menu.potraitPersonDialogue == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4);
             if (menu == null || menu.portraitPerson == null && !hatMouse)
                 return;
@@ -421,7 +429,8 @@ namespace JsonAssets
             ( ( Api ) api ).InvokeAddedItemsToShop();
         }
 
-        private void afterLoad(object sender, EventArgs args)
+        /// <summary>Raised immediately when the save is loaded, before it's fully initialised.</summary>
+        private void onSaveLoaded()
         {
             // load object ID mappings from save folder
             IDictionary<TKey, TValue> LoadDictionary<TKey, TValue>(string filename)
@@ -446,7 +455,7 @@ namespace JsonAssets
             hatIds = AssignIds("hats", StartingHatId, hats.ToList<DataNeedsId>());
 
             fixIdsEverywhere();
-            (api as Api).InvokeIdsAssigned();
+            api.InvokeIdsAssigned();
 
             // init
             Helper.Content.AssetEditors.Add(new ContentInjector());
@@ -474,7 +483,10 @@ namespace JsonAssets
             }
         }
 
-        private void afterSave(object sender, EventArgs args)
+        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaved(object sender, SavedEventArgs e)
         {
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(objectIds));
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(cropIds));
@@ -484,8 +496,15 @@ namespace JsonAssets
         }
 
         internal IList<ObjectData> myRings = new List<ObjectData>();
-        private void invChanged(object sender, EventArgsInventoryChanged args)
+
+        /// <summary>Raised after items are added or removed to a player's inventory. NOTE: this event is currently only raised for the current player.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onInventoryChanged(object sender, InventoryChangedEventArgs e)
         {
+            if (!e.IsLocalPlayer)
+                return;
+
             IList<int> ringIds = new List<int>();
             foreach (var ring in myRings)
                 ringIds.Add(ring.id);
