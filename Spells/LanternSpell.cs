@@ -15,10 +15,10 @@ namespace Magic.Spells
             return level;
         }
 
-        public override void onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             if (player != Game1.player)
-                return;
+                return null;
 
             int power = 4;
             if (level == 1)
@@ -27,6 +27,8 @@ namespace Magic.Spells
                 power = 16;
             player.currentLocation.sharedLights.Add(new LightSource(1, Game1.player.position, power));
             player.addMagicExp(level);
+
+            return null;
         }
     }
 }

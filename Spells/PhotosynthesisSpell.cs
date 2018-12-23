@@ -28,7 +28,7 @@ namespace Magic.Spells
             return base.canCast(player, level) && player.hasItemInInventory(SObject.prismaticShardIndex, 1);
         }
 
-        public override void onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             List<GameLocation> locs = new List<GameLocation>();
             locs.Add(Game1.getLocationFromName("Farm"));
@@ -75,6 +75,7 @@ namespace Magic.Spells
             }
 
             player.consumeObject( SObject.prismaticShardIndex, 1 );
+            return null;
         }
     }
 }

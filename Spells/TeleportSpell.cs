@@ -27,9 +27,10 @@ namespace Magic
             return 0;
         }
 
-        public override void onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             Game1.activeClickableMenu = new TeleportMenu();
+            return null;
         }
     }
 }

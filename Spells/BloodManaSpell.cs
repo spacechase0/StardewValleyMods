@@ -23,9 +23,9 @@ namespace Magic.Spells
             return player.getCurrentMana() != player.getMaxMana() && player.health > 10 + 10 * level;
         }
 
-        public override void onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            Log.debug(player.Name + " casted Blood Mana.");
+            Log.debug($"{player.Name} cast Blood Mana.");
 
             int health = 10 + 10 * level;
             player.health -= health;
@@ -40,6 +40,8 @@ namespace Magic.Spells
             player.addMagicExp(-mana);
             if (player.getMagicExp() < 0)
                 player.addMagicExp(-player.getMagicExp());
+
+            return null;
         }
     }
 }

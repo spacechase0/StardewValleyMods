@@ -35,9 +35,7 @@ namespace Magic.Spells
             return player.knowsSpell(FullId, level) && player.getCurrentMana() >= getManaCost( player, level );
         }
 
-        // Support non-instant casting?
-
-        public abstract void onCast(Farmer player, int level, int targetX, int targetY);
+        public abstract IActiveEffect onCast(Farmer player, int level, int targetX, int targetY);
 
         public virtual void loadIcon()
         {

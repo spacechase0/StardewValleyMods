@@ -28,19 +28,20 @@ namespace Magic.Spells
             return 10;
         }
 
-        public override void onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             if (player != Game1.player)
-                return;
+                return null;
 
             foreach ( var buff in Game1.buffsDisplay.otherBuffs )
             {
                 if (buff.source == "spell:life:haste")
-                    return;
+                    return null;
             }
 
             Game1.buffsDisplay.addOtherBuff(new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, level + 1, 0, 0, 60 + level * 120, "spell:air:haste", "Haste (spell)"));
             player.addMagicExp(10);
+            return null;
         }
     }
 }

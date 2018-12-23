@@ -26,15 +26,17 @@ namespace Magic.Spells
             return base.canCast(player, level) && Game1.dailyLuck != 0.12;
         }
 
-        public override void onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            Log.debug(player.Name + " casted Luck Steal.");
+            Log.debug($"{player.Name} cast Luck Steal.");
             var num = Game1.random.Next(player.friendshipData.Count());
             var friendshipData = player.friendshipData[new List<string>(player.friendshipData.Keys)[num]];
             friendshipData.Points = Math.Max(0, friendshipData.Points - 250);
             Game1.dailyLuck = 0.12;
             Game1.playSound("death");
             player.addMagicExp(50);
+
+            return null;
         }
     }
 }

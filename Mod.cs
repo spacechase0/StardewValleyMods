@@ -22,14 +22,17 @@ namespace Magic
 
             Config = Helper.ReadConfig<Configuration>();
 
-            GameEvents.FirstUpdateTick += firstUpdate;
-            SaveEvents.AfterLoad += afterLoad;
-            SaveEvents.AfterSave += afterSave;
+            helper.Events.GameLoop.GameLaunched += onGameLaunched;
+            helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
+            helper.Events.GameLoop.Saved += onSaved;
 
-            Magic.init();
+            Magic.init(helper.Events, helper.Input);
         }
 
-        private void firstUpdate(object sender, EventArgs args)
+        /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var api = Helper.ModRegistry.GetApi<JsonAssetsApi>("spacechase0.JsonAssets");
             if (api == null)
@@ -42,7 +45,10 @@ namespace Magic
             api.LoadAssets(Path.Combine(Helper.DirectoryPath, "assets"));
         }
 
-        private void afterLoad(object sender, EventArgs args)
+        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             try
             {
@@ -75,13 +81,16 @@ namespace Magic
                         Data.players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
                 }
             }
-            catch ( Exception e )
+            catch ( Exception ex )
             {
-                Log.warn("Exception loading save data: " + e);
+                Log.warn($"Exception loading save data: {ex}");
             }
         }
-        
-        private void afterSave(object sender, EventArgs args)
+
+        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaved(object sender, SavedEventArgs e)
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {

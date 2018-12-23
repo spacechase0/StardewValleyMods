@@ -13,9 +13,10 @@ namespace Magic.Spells
             return 0;
         }
 
-        public override void onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            Log.debug(player.Name + " casted " + Id + ".");
+            Log.debug($"{player.Name} cast {Id}.");
+            return null;
         }
     }
 }

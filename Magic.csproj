@@ -49,6 +49,7 @@
     <Compile Include="Command.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Content.cs" />
+    <Compile Include="IActiveEffect.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Game\CloudMount.cs" />

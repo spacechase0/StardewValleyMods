@@ -20,20 +20,16 @@ namespace Magic.Spells
             return 5;
         }
 
-        public override void onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             player.position.X = enterX;
             player.position.Y = enterY;
             player.addMagicExp(5);
+            return null;
         }
 
         private static float enterX, enterY;
-        internal static void onLocationChanged( object sender, EventArgsPlayerWarped args )
-        {
-            enterX = Game1.player.position.X;
-            enterY = Game1.player.position.Y;
-        }
-        internal static void onMineLevelChanged(object sender, EventArgsMineLevelChanged args)
+        internal static void onLocationChanged()
         {
             enterX = Game1.player.position.X;
             enterY = Game1.player.position.Y;
