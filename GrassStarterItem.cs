@@ -2,18 +2,15 @@
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
+using SObject = StardewValley.Object;
 
 namespace MoreGrassStarters
 {
-    public class GrassStarterItem : StardewValley.Object, ISaveElement
+    public class GrassStarterItem : SObject, ISaveElement
     {
-        private static Texture2D tex = Game1.content.Load<Texture2D>("TerrainFeatures\\grass");
+        private static readonly Texture2D tex = Game1.content.Load<Texture2D>("TerrainFeatures\\grass");
         public static Texture2D tex2;
         private int whichGrass = 1;
         public static int ExtraGrassTypes => tex2 == null ? 0 : tex2.Height / 20;
@@ -25,7 +22,7 @@ namespace MoreGrassStarters
         public GrassStarterItem(int which)
         {
             whichGrass = which;
-            name = "Grass (" + which + ")";
+            name = $"Grass ({which})";
             Price = 100;
             ParentSheetIndex = 297;
         }
@@ -49,7 +46,7 @@ namespace MoreGrassStarters
         {
             Vector2 index1 = new Vector2((float)(x / Game1.tileSize), (float)(y / Game1.tileSize));
             this.health = 10;
-            this.owner.Value = who == null ? Game1.player.UniqueMultiplayerID : who.UniqueMultiplayerID;
+            this.owner.Value = who?.UniqueMultiplayerID ?? Game1.player.UniqueMultiplayerID;
 
             if (location.objects.ContainsKey(index1) || location.terrainFeatures.ContainsKey(index1))
                 return false;
@@ -101,20 +98,21 @@ namespace MoreGrassStarters
         // Custom Element Handler
         public object getReplacement()
         {
-            return new StardewValley.Object(297, stack);
+            return new SObject(297, stack);
         }
 
         public Dictionary<string, string> getAdditionalSaveData()
         {
-            var dict = new Dictionary<string, string>();
-            dict["whichGrass"] = whichGrass.ToString();
-            return dict;
+            return new Dictionary<string, string>
+            {
+                ["whichGrass"] = whichGrass.ToString()
+            };
         }
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
         {
             whichGrass = int.Parse(additionalSaveData["whichGrass"]);
-            name = "Grass (" + whichGrass + ")";
+            name = $"Grass ({whichGrass})";
             Price = 100;
             ParentSheetIndex = 297;
         }
