@@ -10,32 +10,35 @@ namespace ThreeHeartDancePartner
 {
     public class Mod : StardewModdingAPI.Mod
     {
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            GameEvents.UpdateTick += onUpdate;
+            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
         }
 
-        private void onUpdate(object sender, EventArgs args)
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onUpdateTicked(object sender, EventArgs e)
         {
-            if (Game1.currentLocation == null || Game1.currentLocation.Name != "Temp" || Game1.currentLocation.currentEvent == null)
-                return;
-            Event @event = Game1.currentLocation.currentEvent;
-            //Dictionary<string, string> data = (Dictionary<string, string>)Util.GetInstanceField(typeof(Event), @event, "festivalData");
-
-            if (!@event.FestivalName.Equals("Flower Dance"))
+            Event @event = Game1.currentLocation?.currentEvent;
+            if (Game1.currentLocation?.Name != "Temp" || @event?.FestivalName.Equals("Flower Dance") != true)
                 return;
 
             foreach ( NPC npc in @event.actors )
             {
-                if ( !npc.datable.Value || npc.HasPartnerForDance) continue;
+                if ( !npc.datable.Value || npc.HasPartnerForDance)
+                    continue;
+
                 try
                 {
-                    if (npc.CurrentDialogue.Count() <= 0) return;
-                    Dialogue reject = new Dialogue( Game1.content.Load<Dictionary<string, string>>("Characters\\Dialogue\\" + npc.name)["danceRejection"], npc );
+                    if (!npc.CurrentDialogue.Any()) return;
+                    Dialogue reject = new Dialogue( Game1.content.Load<Dictionary<string, string>>($"Characters\\Dialogue\\{npc.Name}")["danceRejection"], npc );
                     Dialogue curr = npc.CurrentDialogue.Peek();
-                    if (reject == null || curr == null) continue;
+                    if (curr == null)
+                        continue;
 
-                    //Log.Async("Dialogue " + curr.getCurrentDialogue() + " " + reject.getCurrentDialogue());
                     if ( curr.getCurrentDialogue() == reject.getCurrentDialogue() )
                     {
                         NPC who = npc;
@@ -45,10 +48,10 @@ namespace ThreeHeartDancePartner
                             string s = "";
                             switch (who.Gender)
                             {
-                                case 0:
+                                case NPC.male:
                                     s = "You want to be my partner for the flower dance?#$b#Okay. I look forward to it.$h";
                                     break;
-                                case 1:
+                                case NPC.female:
                                     s = "You want to be my partner for the flower dance?#$b#Okay! I'd love to.$h";
                                     break;
                             }
@@ -73,10 +76,9 @@ namespace ThreeHeartDancePartner
                         }
                     }
                 }
-                catch ( Exception e)
+                catch ( Exception ex)
                 {
-                    this.Monitor.Log("Exception: " + e, LogLevel.Error);
-                    continue;
+                    this.Monitor.Log($"Exception: {ex}", LogLevel.Error);
                 }
             }
         }
