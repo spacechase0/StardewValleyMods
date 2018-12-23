@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
-using StardewModdingAPI;
-using StardewValley;
+﻿using StardewModdingAPI;
 
 namespace JumpOver
 {
