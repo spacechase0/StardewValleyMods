@@ -28,7 +28,7 @@ namespace ObjectTimeLeft
         /// <param name="e">The event arguments.</param>
         private void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (e.Button == Config.ToggleDisplay)
+            if (e.Button == Config.ToggleKey)
                 showing = !showing;
         }
 

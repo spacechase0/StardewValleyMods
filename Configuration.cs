@@ -4,6 +4,6 @@ namespace ObjectTimeLeft
 {
     public class Configuration
     {
-        public SButton ToggleDisplay { get; set; } = SButton.L;
+        public SButton ToggleKey { get; set; } = SButton.L;
     }
 }
