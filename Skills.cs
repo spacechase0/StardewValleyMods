@@ -257,7 +257,7 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private static void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+            if (Context.IsMainPlayer)
             {
                 exp = DataApi.ReadSaveData<Dictionary<long, Dictionary<string, int>>>(DataKey);
                 if (exp == null && File.Exists(LegacyFilePath))
@@ -272,7 +272,7 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private static void onSaving(object sender, SavingEventArgs e)
         {
-            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+            if (Context.IsMainPlayer)
             {
                 Log.trace("Saving custom data");
                 DataApi.WriteSaveData(DataKey, exp);
@@ -284,7 +284,7 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private static void onSaved(object sender, SavedEventArgs e)
         {
-            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+            if (Context.IsMainPlayer)
             {
                 if (File.Exists(LegacyFilePath))
                 {

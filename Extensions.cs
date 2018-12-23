@@ -1,11 +1,10 @@
 ﻿using StardewValley;
-using SFarmer = StardewValley.Farmer;
 
 namespace SpaceCore
 {
     public static class Extensions
     {
-        public static int countStardropsEaten(this SFarmer player)
+        public static int countStardropsEaten(this Farmer player)
         {
             int count = 0;
             if (Game1.player.hasOrWillReceiveMail("CF_Fair"))

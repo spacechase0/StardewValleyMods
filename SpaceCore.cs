@@ -48,18 +48,18 @@ namespace SpaceCore
                 if (m.FullDescription().Contains("showEndOfNightStuff"))
                     showNightEndMethod = m;
 
-            doPrefix(typeof(HoeDirt), "dayUpdate", typeof(HoeDirtWinterFix));
-            doPostfix(typeof(Utility), "pickFarmEvent", typeof(NightlyFarmEventHook));
-            doTranspiler(showNightEndMethod, typeof(ShowEndOfNightStuffHook).GetMethod("Transpiler"));
-            doPostfix(typeof(Farmer), "doneEating", typeof(DoneEatingHook));
-            doPrefix(typeof(MeleeWeapon).GetMethod("drawDuringUse", new[] { typeof(int), typeof(int), typeof(SpriteBatch), typeof(Vector2), typeof(Farmer), typeof(Rectangle), typeof(int), typeof(bool) }), typeof(CustomWeaponDrawPatch).GetMethod("Prefix"));
-            doPrefix(typeof(Multiplayer), "processIncomingMessage", typeof(MultiplayerPackets));
-            doPrefix(typeof(GameLocation), "performAction", typeof(ActionHook));
-            doPrefix(typeof(GameLocation), "performTouchAction", typeof(TouchActionHook));
-            doPostfix(typeof(GameServer), "sendServerIntroduction", typeof(ServerGotClickHook));
-            doPostfix(typeof(NPC), "receiveGift", typeof(AfterGiftGivenHook));
-            doPostfix(typeof(Game1), "loadForNewGame", typeof(BlankSaveHook));
-            doPrefix(typeof(Game1).GetMethod("warpFarmer", new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int) }), typeof(WarpFarmerHook).GetMethod("Prefix"));
+            doPrefix(typeof(HoeDirt), nameof(HoeDirt.dayUpdate), typeof(HoeDirtWinterFix));
+            doPostfix(typeof(Utility), nameof(Utility.pickFarmEvent), typeof(NightlyFarmEventHook));
+            doTranspiler(showNightEndMethod, typeof(ShowEndOfNightStuffHook).GetMethod(nameof(ShowEndOfNightStuffHook.Transpiler)));
+            doPostfix(typeof(Farmer), nameof(Farmer.doneEating), typeof(DoneEatingHook));
+            doPrefix(typeof(MeleeWeapon).GetMethod(nameof(MeleeWeapon.drawDuringUse), new[] { typeof(int), typeof(int), typeof(SpriteBatch), typeof(Vector2), typeof(Farmer), typeof(Rectangle), typeof(int), typeof(bool) }), typeof(CustomWeaponDrawPatch).GetMethod(nameof(CustomWeaponDrawPatch.Prefix)));
+            doPrefix(typeof(Multiplayer), nameof(Multiplayer.processIncomingMessage), typeof(MultiplayerPackets));
+            doPrefix(typeof(GameLocation), nameof(GameLocation.performAction), typeof(ActionHook));
+            doPrefix(typeof(GameLocation), nameof(GameLocation.performTouchAction), typeof(TouchActionHook));
+            doPostfix(typeof(GameServer), nameof(GameServer.sendServerIntroduction), typeof(ServerGotClickHook));
+            doPostfix(typeof(NPC), nameof(NPC.receiveGift), typeof(AfterGiftGivenHook));
+            doPostfix(typeof(Game1), nameof(Game1.loadForNewGame), typeof(BlankSaveHook));
+            doPrefix(typeof(Game1).GetMethod(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int) }), typeof(WarpFarmerHook).GetMethod(nameof(WarpFarmerHook.Prefix)));
         }
 
         private void doPrefix(Type origType, string origMethod, Type newType)
@@ -211,7 +211,7 @@ namespace SpaceCore
         {
             try
             {
-                return Game1.temporaryContent.Load<Dictionary<string, string>>("Data\\Festivals\\" + Game1.currentSeason + (object)Game1.dayOfMonth)["conditions"].Split('/')[0];
+                return Game1.temporaryContent.Load<Dictionary<string, string>>($"Data\\Festivals\\{Game1.currentSeason}{Game1.dayOfMonth}")["conditions"].Split('/')[0];
             }
             catch (Exception)
             {
