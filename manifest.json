@@ -4,8 +4,8 @@
   "Version": "1.0.2",
   "Description": "Show how much time is left for an object.",
   "UniqueID": "spacechase0.ObjectTimeLeft",
-  "PerSaveConfigs": false,
   "EntryDll": "ObjectTimeLeft.dll",
+  "MinimumApiVersion": "2.9.0",
   "UpdateKeys": [ "Nexus:1315", "Chucklefish:4842" ],
   "spacechase0": "object-time-left"
 }
