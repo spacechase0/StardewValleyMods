@@ -11,7 +11,6 @@ using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SFarmer = StardewValley.Farmer;
 
 namespace LuckSkill
 {
@@ -375,7 +374,7 @@ namespace LuckSkill
             {
                 return;
             }
-            int num = SFarmer.checkForLevelGain(Game1.player.experiencePoints[which], Game1.player.experiencePoints[which] + howMuch);
+            int num = Farmer.checkForLevelGain(Game1.player.experiencePoints[which], Game1.player.experiencePoints[which] + howMuch);
             Game1.player.experiencePoints[which] += howMuch;
             int num2 = -1;
             if (num != -1)
