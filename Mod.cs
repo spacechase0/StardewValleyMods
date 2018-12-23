@@ -90,7 +90,7 @@ namespace JumpOver
                     bool n1 = player.currentLocation.isCollidingPosition(bb1, Game1.viewport, true, 0, false, player);
                     bool n2 = player.currentLocation.isCollidingPosition(bb2, Game1.viewport, true, 0, false, player);
 
-                    Log.trace($"{n0} {n1} {n2}");
+                    //Log.trace($"{n0} {n1} {n2}");
                     if ( n0 || ( !n0 && n1 && !n2 ) /*|| wasGoingOver*/ )
                     {
                         //wasGoingOver = true;
