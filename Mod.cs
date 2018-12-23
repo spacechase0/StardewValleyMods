@@ -49,10 +49,10 @@ namespace ThreeHeartDancePartner
                             switch (who.Gender)
                             {
                                 case NPC.male:
-                                    s = "You want to be my partner for the flower dance?#$b#Okay. I look forward to it.$h";
+                                    s = Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1633");
                                     break;
                                 case NPC.female:
-                                    s = "You want to be my partner for the flower dance?#$b#Okay! I'd love to.$h";
+                                    s = Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1634");
                                     break;
                             }
                             try
@@ -62,8 +62,8 @@ namespace ThreeHeartDancePartner
                             catch (Exception)
                             {
                             }
-                            Game1.player.dancePartner.Value = (Character)who;
-                            who.setNewDialogue(s, false, false);
+                            Game1.player.dancePartner.Value = who;
+                            who.setNewDialogue(s);
 
                             foreach (NPC actor in @event.actors)
                             {
