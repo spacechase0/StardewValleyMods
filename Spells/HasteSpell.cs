@@ -9,7 +9,7 @@ namespace Magic.Spells
         {
         }
 
-        public override bool canCast(StardewValley.Farmer player, int level)
+        public override bool canCast(Farmer player, int level)
         {
             if (player == Game1.player)
             {
@@ -23,12 +23,12 @@ namespace Magic.Spells
             return base.canCast(player, level);
         }
 
-        public override int getManaCost(StardewValley.Farmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return 10;
         }
 
-        public override void onCast(StardewValley.Farmer player, int level, int targetX, int targetY)
+        public override void onCast(Farmer player, int level, int targetX, int targetY)
         {
             if (player != Game1.player)
                 return;

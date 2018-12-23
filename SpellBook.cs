@@ -3,7 +3,7 @@ using Magic.Schools;
 using Magic.Spells;
 using System.Collections.Generic;
 using System.Linq;
-using SFarmer = StardewValley.Farmer;
+using StardewValley;
 
 namespace Magic
 {
@@ -21,7 +21,7 @@ namespace Magic
 
         public static Spell get( string id )
         {
-            if (id == null || id == "")
+            if (string.IsNullOrEmpty(id))
                 return null;
             if (!spells.ContainsKey(id))
                 return null;// UNKNOWN_SPELL;
@@ -63,7 +63,7 @@ namespace Magic
 
 
         [JsonIgnore]
-        public SFarmer Owner { get; internal set; }
+        public Farmer Owner { get; internal set; }
 
         public Dictionary<string, int> knownSpells = new Dictionary<string, int>();
         public HashSet<string> knownSchools = new HashSet<string>();

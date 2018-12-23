@@ -1,12 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Magic;
 using Magic.Schools;
 using Magic.Spells;
 using StardewValley;
 using StardewValley.Menus;
-using System.Linq;
-//using StardewMountain.Combat.Magic;
 
 namespace Magic.Game.Interface
 {

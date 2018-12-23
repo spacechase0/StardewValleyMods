@@ -1,13 +1,9 @@
-﻿using MoreRings.Other;
-using SpaceCore.Utilities;
-using StardewModdingAPI;
+﻿using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using Magic.Other;
 
 namespace Magic
 {

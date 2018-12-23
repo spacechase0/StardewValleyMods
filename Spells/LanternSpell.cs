@@ -1,7 +1,6 @@
-﻿using StardewModdingAPI.Events;
-using Magic.Schools;
+﻿using Magic.Schools;
 using StardewValley;
-using System;
+using System.Linq;
 
 namespace Magic.Spells
 {
@@ -11,12 +10,12 @@ namespace Magic.Spells
         {
         }
 
-        public override int getManaCost(StardewValley.Farmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return level;
         }
 
-        public override void onCast(StardewValley.Farmer player, int level, int targetX, int targetY)
+        public override void onCast(Farmer player, int level, int targetX, int targetY)
         {
             if (player != Game1.player)
                 return;

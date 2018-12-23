@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using SpaceCore.Utilities;
 using Magic.Schools;
 using StardewValley;
 using StardewValley.Tools;
@@ -12,12 +11,12 @@ namespace Magic.Spells
         {
         }
 
-        public override int getManaCost(StardewValley.Farmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override void onCast(StardewValley.Farmer player, int level, int targetX, int targetY)
+        public override void onCast(Farmer player, int level, int targetX, int targetY)
         {
             level += 1;
             targetX /= Game1.tileSize;

@@ -1,7 +1,6 @@
 ﻿using Magic.Game;
 using StardewValley;
 using System;
-using SFarmer = StardewValley.Farmer;
 
 namespace Magic.Spells
 {
@@ -28,12 +27,12 @@ namespace Magic.Spells
             SoundHit = sndHit;
         }
 
-        public override int getManaCost(SFarmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return ManaBase + ManaIncr * level;
         }
 
-        public override void onCast(SFarmer player, int level, int targetX, int targetY)
+        public override void onCast(Farmer player, int level, int targetX, int targetY)
         {
             Log.debug(player.Name + " casted " + Id + ".");
 

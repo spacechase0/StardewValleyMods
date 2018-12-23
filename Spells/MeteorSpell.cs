@@ -5,7 +5,6 @@ using Magic.Schools;
 using StardewValley;
 using StardewValley.Monsters;
 using System;
-using SFarmer = StardewValley.Farmer;
 using SObject = StardewValley.Object;
 
 namespace Magic.Spells
@@ -16,12 +15,12 @@ namespace Magic.Spells
         {
         }
 
-        public override int getManaCost(StardewValley.Farmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override bool canCast(StardewValley.Farmer player, int level)
+        public override bool canCast(Farmer player, int level)
         {
             return base.canCast(player, level) && player.hasItemInInventory(SObject.iridium, 1);
         }
@@ -31,7 +30,7 @@ namespace Magic.Spells
             return 1;
         }
 
-        public override void onCast(StardewValley.Farmer player, int level, int targetX, int targetY)
+        public override void onCast(Farmer player, int level, int targetX, int targetY)
         {
             new Meteor(player, targetX, targetY);
             player.consumeObject(SObject.iridium, 1);
@@ -41,13 +40,13 @@ namespace Magic.Spells
     internal class Meteor
     {
         private readonly GameLocation loc;
-        private readonly SFarmer source;
+        private readonly Farmer source;
 
         private Vector2 position = new Vector2();
         private float yVelocity;
         private float height = 1000;
 
-        public Meteor(SFarmer theSource, int tx, int ty)
+        public Meteor(Farmer theSource, int tx, int ty)
         {
             loc = theSource.currentLocation;
             source = theSource;

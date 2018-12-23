@@ -1,7 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Magic.Schools;
+﻿using Magic.Schools;
 using StardewValley;
-using SFarmer = StardewValley.Farmer;
 using System.Collections.Generic;
 using System;
 
@@ -13,7 +11,7 @@ namespace Magic.Spells
         {
         }
 
-        public override int getManaCost(SFarmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return 0;
         }
@@ -23,12 +21,12 @@ namespace Magic.Spells
             return 1;
         }
 
-        public override bool canCast(SFarmer player, int level)
+        public override bool canCast(Farmer player, int level)
         {
             return base.canCast(player, level) && Game1.dailyLuck != 0.12;
         }
 
-        public override void onCast(SFarmer player, int level, int targetX, int targetY)
+        public override void onCast(Farmer player, int level, int targetX, int targetY)
         {
             Log.debug(player.Name + " casted Luck Steal.");
             var num = Game1.random.Next(player.friendshipData.Count());

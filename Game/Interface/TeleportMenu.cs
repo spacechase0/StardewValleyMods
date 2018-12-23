@@ -1,13 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SpaceCore.Utilities;
 using StardewValley;
-using StardewValley.Characters;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
-//using SpaceCore.Utilities;
-//using StardewValley.Characters;
 
 namespace Magic.Game.Interface
 {

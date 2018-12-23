@@ -1,7 +1,4 @@
-﻿using SpaceCore.Utilities;
-using StardewModdingAPI;
-using StardewValley;
-using System.Collections.Generic;
+﻿using StardewModdingAPI;
 using System.IO;
 
 namespace Magic

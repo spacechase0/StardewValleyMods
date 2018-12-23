@@ -1,21 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using SpaceCore.Events;
 using StardewModdingAPI.Events;
 using Magic.Game.Interface;
 using Magic.Schools;
 using Magic.Spells;
 using StardewValley;
-using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using static Magic.Mod;
-using SpaceCore;
 using Magic.Other;
-using StardewModdingAPI;
 using StardewValley.Network;
 using Newtonsoft.Json;
 using System.IO;
@@ -316,7 +311,7 @@ namespace Magic
         internal static List<int> newMagicLevels = new List<int>();
         private static void showMagicLevelMenus(object sender, EventArgsShowNightEndMenus args)
         {
-            if (newMagicLevels.Count() > 0)
+            if (newMagicLevels.Any())
             {
                 for (int i = newMagicLevels.Count() - 1; i >= 0; --i)
                 {
@@ -339,7 +334,7 @@ namespace Magic
 
         public static void placeAltar(string locName, int x, int y, int baseAltarIndex, string school)
         {
-            Log.debug("Placing altar @ " + locName + "(" + x + ", " + y + ")");
+            Log.debug($"Placing altar @ {locName}({x}, {y})");
 
             // AddTileSheet sorts the tilesheets by ID after adding them.
             // The game sometimes refers to tilesheets by their index (such as in Beach.fixBridge)

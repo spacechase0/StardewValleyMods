@@ -15,7 +15,6 @@ namespace Magic.Game
         }
 
         //private bool dismountedOnce = false;
-        private StardewValley.Farmer prevRider = null;
         public override void update(GameTime time, GameLocation location)
         {
             base.update(time, location);
@@ -39,7 +38,6 @@ namespace Magic.Game
 
             rider.speed = 10;
             rider.temporaryImpassableTile = new Rectangle((int)rider.position.X - Game1.tileSize, (int)rider.position.Y - Game1.tileSize, Game1.tileSize * 3, Game1.tileSize * 3);
-            prevRider = rider;
         }
 
         public override void draw(SpriteBatch b)
@@ -48,7 +46,7 @@ namespace Magic.Game
             b.Draw(tex, getLocalPosition(Game1.viewport) + new Vector2( -Game1.tileSize * 0.90f, -Game1.tileSize * 0.75f ), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
         }
 
-        public override bool checkAction(StardewValley.Farmer who, GameLocation l)
+        public override bool checkAction(Farmer who, GameLocation l)
         {
             if (rider == null)
                 return false;
