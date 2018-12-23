@@ -41,7 +41,7 @@ namespace RushOrders
                     }
                     else if (shop.portraitPerson.Name == "Robin")
                     {
-                        if ((Game1.player.daysUntilHouseUpgrade > 1 || Game1.getFarm().isThereABuildingUnderConstruction() &&
+                        if ((Game1.player.daysUntilHouseUpgrade.Value > 1 || Game1.getFarm().isThereABuildingUnderConstruction() &&
                             (Game1.getFarm().getBuildingUnderConstruction().daysOfConstructionLeft.Value > 1 ||
                              Game1.getFarm().getBuildingUnderConstruction().daysUntilUpgrade.Value > 1)))
                         {
@@ -56,7 +56,7 @@ namespace RushOrders
                 DialogueBox diagBox = Game1.activeClickableMenu as DialogueBox;
                 var diag = instance.Helper.Reflection.GetField< Dialogue >(diagBox, "characterDialogue").GetValue();
                 if ( diag != null && diag.speaker != null && diag.speaker.Name == "Robin" &&
-                    ( Game1.player.daysUntilHouseUpgrade > 1 || Game1.getFarm().isThereABuildingUnderConstruction() &&
+                    ( Game1.player.daysUntilHouseUpgrade.Value > 1 || Game1.getFarm().isThereABuildingUnderConstruction() &&
                      (Game1.getFarm().getBuildingUnderConstruction().daysOfConstructionLeft.Value > 1 ||
                       Game1.getFarm().getBuildingUnderConstruction().daysUntilUpgrade.Value > 1)) )
                 {
@@ -151,9 +151,7 @@ namespace RushOrders
             NPC clint = Game1.getCharacterFromName("Clint");
             if (clint == null) return;
 
-            bool haveDialogue = false;
-            if (clint.CurrentDialogue.Count > 0 && clint.CurrentDialogue.Peek().getCurrentDialogue() == Game1.content.LoadString("Strings\\StringsFromCSFiles:Tool.cs.14317"))
-                haveDialogue = true;
+            bool haveDialogue = clint.CurrentDialogue.Count > 0 && clint.CurrentDialogue.Peek().getCurrentDialogue() == Game1.content.LoadString("Strings\\StringsFromCSFiles:Tool.cs.14317");
 
             if ( !hadDialogue && haveDialogue && Game1.player.daysLeftForToolUpgrade.Value == 2 && Game1.player.toolBeingUpgraded.Value != null )
             {
@@ -164,13 +162,13 @@ namespace RushOrders
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 0;
                     clint.CurrentDialogue.Pop();
-                    Game1.drawDialogue(Game1.getCharacterFromName("Clint", false), "Thanks. I'll get started right away. It should be ready in a few minutes.");
+                    Game1.drawDialogue(Game1.getCharacterFromName("Clint"), "Thanks. I'll get started right away. It should be ready in a few minutes.");
                 }
                 else if ( diff == ( int )( currPrice * ModConfig.PriceFactor.Tool.Rush) )
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 1;
                     clint.CurrentDialogue.Pop();
-                    Game1.drawDialogue(Game1.getCharacterFromName("Clint", false), "Thanks. I'll get started right away. It should be ready tomorrow.");
+                    Game1.drawDialogue(Game1.getCharacterFromName("Clint"), "Thanks. I'll get started right away. It should be ready tomorrow.");
                 }
             }
 
