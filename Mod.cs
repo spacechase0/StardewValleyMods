@@ -14,72 +14,64 @@ namespace ThreeHeartDancePartner
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.Display.MenuChanged += onMenuChanged;
         }
 
-        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onUpdateTicked(object sender, EventArgs e)
+        private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            Event @event = Game1.currentLocation?.currentEvent;
-            if (Game1.currentLocation?.Name != "Temp" || @event?.FestivalName.Equals("Flower Dance") != true)
+            // get dialog box
+            if (!(e.NewMenu is DialogueBox dialogBox))
                 return;
 
-            foreach ( NPC npc in @event.actors )
-            {
-                if ( !npc.datable.Value || npc.HasPartnerForDance)
-                    continue;
+            // get festival
+            Event festival = Game1.currentLocation?.currentEvent;
+            if (Game1.currentLocation?.Name != "Temp" || festival?.FestivalName != "Flower Dance")
+                return;
 
+            // check if rejection dialogue
+            Dialogue dialog = this.Helper.Reflection.GetField<Dialogue>(dialogBox, "characterDialogue").GetValue();
+            NPC npc = dialog.speaker;
+            if (!npc.datable.Value || npc.HasPartnerForDance)
+                return;
+            string rejectionText = new Dialogue(Game1.content.Load<Dictionary<string, string>>($"Characters\\Dialogue\\{dialog.speaker.Name}")["danceRejection"], dialog.speaker).getCurrentDialogue();
+            if (dialog.getCurrentDialogue() != rejectionText)
+                return;
+
+            // replace with accept dialog
+            // The original stuff, only the relationship point check is modified. (1000 -> 750)
+            if (!npc.HasPartnerForDance && Game1.player.getFriendshipLevelForNPC(npc.Name) >= 750)
+            {
+                string s = "";
+                switch (npc.Gender)
+                {
+                    case NPC.male:
+                        s = Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1633");
+                        break;
+                    case NPC.female:
+                        s = Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1634");
+                        break;
+                }
                 try
                 {
-                    if (!npc.CurrentDialogue.Any()) return;
-                    Dialogue reject = new Dialogue( Game1.content.Load<Dictionary<string, string>>($"Characters\\Dialogue\\{npc.Name}")["danceRejection"], npc );
-                    Dialogue curr = npc.CurrentDialogue.Peek();
-                    if (curr == null)
-                        continue;
-
-                    if ( curr.getCurrentDialogue() == reject.getCurrentDialogue() )
-                    {
-                        NPC who = npc;
-                        // The original stuff, only the relationship point check is modified. (1000 -> 750)
-                        if (!who.HasPartnerForDance && Game1.player.getFriendshipLevelForNPC(who.Name) >= 750)
-                        {
-                            string s = "";
-                            switch (who.Gender)
-                            {
-                                case NPC.male:
-                                    s = Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1633");
-                                    break;
-                                case NPC.female:
-                                    s = Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1634");
-                                    break;
-                            }
-                            try
-                            {
-                                Game1.player.changeFriendship(250, Game1.getCharacterFromName(who.Name));
-                            }
-                            catch (Exception)
-                            {
-                            }
-                            Game1.player.dancePartner.Value = who;
-                            who.setNewDialogue(s);
-
-                            foreach (NPC actor in @event.actors)
-                            {
-                                if (actor.CurrentDialogue != null && actor.CurrentDialogue.Count > 0 && actor.CurrentDialogue.Peek().getCurrentDialogue().Equals("..."))
-                                    actor.CurrentDialogue.Clear();
-                            }
-
-                            // Okay, looks like I need to fix the current dialog box
-                            Game1.activeClickableMenu = new DialogueBox(new Dialogue(s, who) { removeOnNextMove = false });
-                        }
-                    }
+                    Game1.player.changeFriendship(250, Game1.getCharacterFromName(npc.Name));
                 }
-                catch ( Exception ex)
+                catch (Exception)
                 {
-                    this.Monitor.Log($"Exception: {ex}", LogLevel.Error);
                 }
+                Game1.player.dancePartner.Value = npc;
+                npc.setNewDialogue(s);
+
+                foreach (NPC actor in festival.actors)
+                {
+                    if (actor.CurrentDialogue != null && actor.CurrentDialogue.Count > 0 && actor.CurrentDialogue.Peek().getCurrentDialogue().Equals("..."))
+                        actor.CurrentDialogue.Clear();
+                }
+
+                // Okay, looks like I need to fix the current dialog box
+                Game1.activeClickableMenu = new DialogueBox(new Dialogue(s, npc) { removeOnNextMove = false });
             }
         }
     }
