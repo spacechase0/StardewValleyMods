@@ -18,6 +18,7 @@ using StardewValley.Buildings;
 using Harmony;
 using System.Text.RegularExpressions;
 using JsonAssets.Overrides;
+using Newtonsoft.Json;
 
 // TODO: Refactor recipes
 
@@ -422,26 +423,22 @@ namespace JsonAssets
 
         private void afterLoad(object sender, EventArgs args)
         {
-            if (File.Exists(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json")))
+            // load object ID mappings from save folder
+            IDictionary<TKey, TValue> LoadDictionary<TKey, TValue>(string filename)
             {
-                oldObjectIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-objects.json"));
-                oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-crops.json"));
-                oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-fruittrees.json"));
-                oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-big-craftables.json"));
-                oldHatIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-hats.json"));
+                string path = Path.Combine(Constants.CurrentSavePath, "JsonAssets", filename);
+                return File.Exists(path)
+                    ? JsonConvert.DeserializeObject<Dictionary<TKey, TValue>>(File.ReadAllText(path))
+                    : new Dictionary<TKey, TValue>();
             }
-            else
-                Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
+            Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
+            oldObjectIds = LoadDictionary<string, int>("ids-objects.json");
+            oldCropIds = LoadDictionary<string, int>("ids-crops.json");
+            oldFruitTreeIds = LoadDictionary<string, int>("ids-fruittrees.json");
+            oldBigCraftableIds = LoadDictionary<string, int>("ids-big-craftables.json");
+            oldHatIds = LoadDictionary<string, int>("ids-hats.json");
 
-            if (oldObjectIds == null)
-            {
-                oldObjectIds = new Dictionary<string, int>();
-                oldCropIds = new Dictionary<string, int>();
-                oldFruitTreeIds = new Dictionary<string, int>();
-                oldBigCraftableIds = new Dictionary<string, int>();
-                oldHatIds = new Dictionary<string, int>();
-            }
-
+            // assign IDs
             objectIds = AssignIds("objects", StartingObjectId, objects.ToList<DataNeedsId>());
             cropIds = AssignIds("crops", StartingCropId, crops.ToList<DataNeedsId>());
             fruitTreeIds = AssignIds("fruittrees", StartingFruitTreeId, fruitTrees.ToList<DataNeedsId>());
@@ -451,6 +448,7 @@ namespace JsonAssets
             fixIdsEverywhere();
             (api as Api).InvokeIdsAssigned();
 
+            // init
             Helper.Content.AssetEditors.Add(new ContentInjector());
 
             foreach (var obj in objects)
@@ -478,11 +476,11 @@ namespace JsonAssets
 
         private void afterSave(object sender, EventArgs args)
         {
-            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-objects.json"), objectIds);
-            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-crops.json"), cropIds);
-            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-fruittrees.json"), fruitTreeIds);
-            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-big-craftables.json"), bigCraftableIds);
-            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-hats.json"), hatIds);
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(objectIds));
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(cropIds));
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(fruitTreeIds));
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(bigCraftableIds));
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(hatIds));
         }
 
         internal IList<ObjectData> myRings = new List<ObjectData>();
