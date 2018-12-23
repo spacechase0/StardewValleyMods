@@ -44,7 +44,7 @@ namespace RushOrders
             {
                 case ShopMenu shop:
                 {
-                    switch (shop.portraitPerson.Name)
+                    switch (shop.portraitPerson?.Name)
                     {
                         case "Clint":
                             addToolRushOrders(shop);
