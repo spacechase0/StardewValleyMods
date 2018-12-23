@@ -305,24 +305,15 @@ namespace JsonAssets
         {
             // When we go back to the title menu we need to reset things so things don't break when
             // going back to a save. Also, this is where it is initially done, too.
-            oldObjectIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-objects.json"));
-            oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-crops.json"));
-            oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-fruittrees.json"));
-            oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-big-craftables.json"));
-            oldHatIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-hats.json"));
+            clearIds(out objectIds, objects.ToList<DataNeedsId>());
+            clearIds(out cropIds, crops.ToList<DataNeedsId>());
+            clearIds(out fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
+            clearIds(out bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
+            clearIds(out hatIds, hats.ToList<DataNeedsId>());
 
-            if (objectIds != null)
-            {
-                clearIds(out objectIds, objects.ToList<DataNeedsId>());
-                clearIds(out cropIds, crops.ToList<DataNeedsId>());
-                clearIds(out fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
-                clearIds(out bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
-                clearIds(out hatIds, hats.ToList<DataNeedsId>());
-            }
-
-            var editor = Helper.Content.AssetEditors.Where(x => x is ContentInjector);
-            if (editor.Any())
-                Helper.Content.AssetEditors.Remove(editor.ElementAt(0));
+            var editor = Helper.Content.AssetEditors.FirstOrDefault(p => p is ContentInjector);
+            if (editor != null)
+                Helper.Content.AssetEditors.Remove(editor);
 
             SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
         }
