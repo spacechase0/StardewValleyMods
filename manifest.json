@@ -6,7 +6,7 @@
   "UniqueID": "spacechase0.MoreBuildings",
   "PerSaveConfigs": false,
   "EntryDll": "MoreBuildings.dll",
-  "UpdateKeys": [ "Nexus:2757", "Chucklefish:" ],
+  "UpdateKeys": [ "Nexus:2757", "Chucklefish:5524" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.SpaceCore"
