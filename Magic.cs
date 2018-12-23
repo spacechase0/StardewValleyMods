@@ -35,14 +35,14 @@ namespace Magic
         public const string MSG_MINIDATA = "spacechase0.Magic.MiniData";
         public const string MSG_CAST = "spacechase0.Magic.Cast";
 
-        internal static void init(IModEvents events, IInputHelper inputHelper)
+        internal static void init(IModEvents events, IInputHelper inputHelper, Func<long> getNewId)
         {
             Magic.events = events;
             Magic.inputHelper = inputHelper;
 
             loadAssets();
 
-            SpellBook.init();
+            SpellBook.init(getNewId);
 
             events.GameLoop.SaveLoaded += onSaveLoaded;
             events.GameLoop.UpdateTicked += onUpdateTicked;

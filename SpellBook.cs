@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Magic.Schools;
 using Magic.Spells;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Magic
     {
         //private static Spell UNKNOWN_SPELL = new DummySpell("unknown");
 
-        private static Dictionary<string, Spell> spells = new Dictionary<string, Spell>();
+        private static readonly Dictionary<string, Spell> spells = new Dictionary<string, Spell>();
 
         public static void register( Spell spell )
         {
@@ -34,14 +35,14 @@ namespace Magic
             return spells.Keys.ToList<string>();
         }
 
-        internal static void init()
+        internal static void init(Func<long> getNewId)
         {
             register(new ClearDebrisSpell());
             register(new TillSpell());
             register(new WaterSpell());
             register(new BlinkSpell());
 
-            register(new LanternSpell());
+            register(new LanternSpell(getNewId));
             register(new TendrilsSpell());
             register(new ShockwaveSpell());
             register(new PhotosynthesisSpell());
