@@ -55,7 +55,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting object information for " + obj.Name + ": " + e);
+                        Log.error($"Exception injecting object information for {obj.Name}: {e}");
                     }
                 }
             }
@@ -71,7 +71,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting crop for " + crop.Name + ": " + e);
+                        Log.error($"Exception injecting crop for {crop.Name}: {e}");
                     }
                 }
             }
@@ -87,7 +87,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting fruit tree for " + fruitTree.Name + ": " + e);
+                        Log.error($"Exception injecting fruit tree for {fruitTree.Name}: {e}");
                     }
                 }
             }
@@ -107,7 +107,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting cooking recipe for " + obj.Name + ": " + e);
+                        Log.error($"Exception injecting cooking recipe for {obj.Name}: {e}");
                     }
                 }
             }
@@ -127,7 +127,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting crafting recipe for " + obj.Name + ": " + e);
+                        Log.error($"Exception injecting crafting recipe for {obj.Name}: {e}");
                     }
                 }
                 foreach (var big in Mod.instance.bigCraftables)
@@ -141,7 +141,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting crafting recipe for " + big.Name + ": " + e);
+                        Log.error($"Exception injecting crafting recipe for {big.Name}: {e}");
                     }
                 }
             }
@@ -157,7 +157,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting object information for " + big.Name + ": " + e);
+                        Log.error($"Exception injecting object information for {big.Name}: {e}");
                     }
                 }
             }
@@ -173,7 +173,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting hat information for " + hat.Name + ": " + e);
+                        Log.error($"Exception injecting hat information for {hat.Name}: {e}");
                     }
                 }
             }
@@ -193,7 +193,7 @@ namespace JsonAssets
                     string[] sections = npc.Value.Split('/');
                     if ( sections.Length != 11 )
                     {
-                        Log.warn("Bad gift taste data for " + npc.Key + "!");
+                        Log.warn($"Bad gift taste data for {npc.Key}!");
                         continue;
                     }
 
@@ -231,7 +231,7 @@ namespace JsonAssets
                     string neutralIdStr = string.Join(" ", neutralIds);
                     newData[npc.Key] = $"{loveStr}/{loveIdStr}/{likeStr}/{likeIdStr}/{dislikeStr}/{dislikeIdStr}/{hateStr}/{hateIdStr}/{neutralStr}/{neutralIdStr}/ ";
 
-                    Log.trace("Adding gift tastes for " + npc.Key + ": " + newData[ npc.Key ]);
+                    Log.trace($"Adding gift tastes for {npc.Key}: {newData[npc.Key]}");
                 }
                 asset.ReplaceWith(newData);
             }
@@ -256,7 +256,7 @@ namespace JsonAssets
                     }
                     catch ( Exception e )
                     {
-                        Log.error("Exception injecting sprite for " + obj.Name + ": " + e);
+                        Log.error($"Exception injecting sprite for {obj.Name}: {e}");
                     }
                 }
             }
@@ -276,7 +276,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting crop sprite for " + crop.Name + ": " + e);
+                        Log.error($"Exception injecting crop sprite for {crop.Name}: {e}");
                     }
                 }
             }
@@ -296,7 +296,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting fruit tree sprite for " + fruitTree.Name + ": " + e);
+                        Log.error($"Exception injecting fruit tree sprite for {fruitTree.Name}: {e}");
                     }
                 }
             }
@@ -317,7 +317,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting sprite for " + big.Name + ": " + e);
+                        Log.error($"Exception injecting sprite for {big.Name}: {e}");
                     }
                 }
             }
@@ -338,7 +338,7 @@ namespace JsonAssets
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception injecting sprite for " + hat.Name + ": " + e);
+                        Log.error($"Exception injecting sprite for {hat.Name}: {e}");
                     }
                 }
             }

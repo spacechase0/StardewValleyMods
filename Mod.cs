@@ -58,7 +58,7 @@ namespace JsonAssets
             }
             catch (Exception e)
             {
-                Log.error("Exception doing harmony stuff: " + e);
+                Log.error($"Exception doing harmony stuff: {e}");
             }
         }
         private void doPrefix(Type origType, string origMethod, Type newType)
@@ -118,7 +118,7 @@ namespace JsonAssets
             this.loadData(contentPack);
         }
 
-        private Regex SeasonLimiter = new Regex("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private readonly Regex SeasonLimiter = new Regex("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private void loadData(IContentPack contentPack)
         {
             Log.info($"\t{contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author} - {contentPack.Manifest.Description}");
@@ -182,17 +182,12 @@ namespace JsonAssets
                     // TODO: Clean up this chunk
                     // I copy/pasted it from the unofficial update decompiled
                     string str = "";
-                    string[] array = new string[]
+                    string[] array =  new[] { "spring", "summer", "fall", "winter" }
+                        .Except(crop.Seasons)
+                        .ToArray();
+                    foreach (var season in array)
                     {
-                            "spring",
-                            "summer",
-                            "fall",
-                            "winter"
-                    }.Except(crop.Seasons).ToArray<string>();
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        string season = array[i];
-                        str += string.Format("/z {0}", season);
+                        str += $"/z {season}";
                     }
                     string strtrimstart = str.TrimStart(new char[] { '/' });
                     if (crop.SeedPurchaseRequirements != null && crop.SeedPurchaseRequirements.Count > 0)
@@ -202,18 +197,18 @@ namespace JsonAssets
                             if (SeasonLimiter.IsMatch(crop.SeedPurchaseRequirements[index]))
                             {
                                 crop.SeedPurchaseRequirements[index] = strtrimstart;
-                                Log.warn(string.Format("        Faulty season requirements for {0}!\n", crop.SeedName) + string.Format("        Fixed season requirements: {0}", crop.SeedPurchaseRequirements[index]));
+                                Log.warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
                             }
                         }
                         if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart(new char[] { '/' })))
                         {
-                            Log.trace(string.Format("        Adding season requirements for {0}:\n", crop.SeedName) + string.Format("        New season requirements: {0}", strtrimstart));
+                            Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
                             crop.seed.PurchaseRequirements.Add(strtrimstart);
                         }
                     }
                     else
                     {
-                        Log.trace(string.Format("        Adding season requirements for {0}:\n", crop.SeedName) + string.Format("        New season requirements: {0}", strtrimstart));
+                        Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
                         crop.seed.PurchaseRequirements.Add(strtrimstart);
                     }
 
@@ -318,15 +313,15 @@ namespace JsonAssets
 
             if (objectIds != null)
             {
-                clearIds(ref objectIds, objects.ToList<DataNeedsId>());
-                clearIds(ref cropIds, crops.ToList<DataNeedsId>());
-                clearIds(ref fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
-                clearIds(ref bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
-                clearIds(ref hatIds, hats.ToList<DataNeedsId>());
+                clearIds(out objectIds, objects.ToList<DataNeedsId>());
+                clearIds(out cropIds, crops.ToList<DataNeedsId>());
+                clearIds(out fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
+                clearIds(out bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
+                clearIds(out hatIds, hats.ToList<DataNeedsId>());
             }
 
             var editor = Helper.Content.AssetEditors.Where(x => x is ContentInjector);
-            if (editor.Count() > 0)
+            if (editor.Any())
                 Helper.Content.AssetEditors.Remove(editor.ElementAt(0));
 
             SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
@@ -341,9 +336,7 @@ namespace JsonAssets
             }
 
             var menu = args.NewMenu as ShopMenu;
-            bool hatMouse = false;
-            if (menu != null && menu.potraitPersonDialogue == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4))
-                hatMouse = true;
+            bool hatMouse = menu != null && menu.potraitPersonDialogue == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4);
             if (menu == null || menu.portraitPerson == null && !hatMouse)
                 return;
 
@@ -564,7 +557,7 @@ namespace JsonAssets
                         return obj.Key;
                 }
 
-                Log.warn("No idea what '" + data + "' is!");
+                Log.warn($"No idea what '{data}' is!");
                 return 0;
             }
         }
@@ -578,7 +571,7 @@ namespace JsonAssets
             {
                 if (d.id == -1)
                 {
-                    Log.trace("New ID: " + d.Name + " = " + currId);
+                    Log.trace($"New ID: {d.Name} = {currId}");
                     ids.Add(d.Name, currId++);
                     if (type == "objects" && ((ObjectData)d).IsColored)
                         ++currId;
@@ -589,7 +582,7 @@ namespace JsonAssets
             return ids;
         }
 
-        private void clearIds(ref IDictionary<string, int> ids, List<DataNeedsId> objs)
+        private void clearIds(out IDictionary<string, int> ids, List<DataNeedsId> objs)
         {
             ids = null;
             foreach ( DataNeedsId obj in objs )
@@ -625,7 +618,7 @@ namespace JsonAssets
             if (loc is FarmHouse fh)
             {
 #pragma warning disable AvoidImplicitNetFieldCast
-                if (fh.fridge.Value != null && fh.fridge.Value.items != null)
+                if (fh.fridge.Value?.items != null)
 #pragma warning restore AvoidImplicitNetFieldCast
                     fixItemList(fh.fridge.Value.items);
             }
