@@ -30,9 +30,7 @@ namespace Magic.Spells
             else if (level == 2)
                 power = 16;
 
-            // TODO for Stardew Valley 1.3.33: replace the next line with this
-            // player.currentLocation.sharedLights.Add(getUnusedLightSourceID(player.currentLocation), new LightSource(1, Game1.player.position, power));
-            player.currentLocation.sharedLights.Add(new LightSource(1, Game1.player.position, power));
+            player.currentLocation.sharedLights.Add(getUnusedLightSourceID(player.currentLocation), new LightSource(1, Game1.player.position, power));
             player.addMagicExp(level);
 
             return null;
