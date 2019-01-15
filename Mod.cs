@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StardewModdingAPI;
 using System.Reflection;
 using Harmony;
 using StardewValley;
-using System.Reflection.Emit;
 
 namespace ExtendedReach
 {
@@ -23,12 +18,12 @@ namespace ExtendedReach
             try
             {
                 harmony = HarmonyInstance.Create("spacechase0.ExtendedReach");
-                doTranspiler(typeof(Utility), "canGrabSomethingFromHere");
-                doTranspiler(typeof(Utility), "checkForCharacterInteractionAtTile");
-                doTranspiler(typeof(Game1), "pressActionButton");
-                doTranspiler(typeof(Game1), "pressUseToolButton");
-                doTranspiler(typeof(Game1), "tryToCheckAt");
-                doTranspiler(typeof(GameLocation), "isActionableTile");
+                doTranspiler(typeof(Utility), nameof(Utility.canGrabSomethingFromHere));
+                doTranspiler(typeof(Utility), nameof(Utility.checkForCharacterInteractionAtTile));
+                doTranspiler(typeof(Game1), nameof(Game1.pressActionButton));
+                doTranspiler(typeof(Game1), nameof(Game1.pressUseToolButton));
+                doTranspiler(typeof(Game1), nameof(Game1.tryToCheckAt));
+                doTranspiler(typeof(GameLocation), nameof(GameLocation.isActionableTile));
             }
             catch ( Exception e )
             {
@@ -39,7 +34,7 @@ namespace ExtendedReach
 
         private void doTranspiler(Type origType, string origMethod)
         {
-            doTranspiler(origType.GetMethod(origMethod), typeof(TileRadiusFix).GetMethod("IncreaseRadiusChecks"));
+            doTranspiler(origType.GetMethod(origMethod), typeof(TileRadiusFix).GetMethod(nameof(TileRadiusFix.IncreaseRadiusChecks)));
         }
         private void doTranspiler(MethodInfo orig, MethodInfo transpiler)
         {
