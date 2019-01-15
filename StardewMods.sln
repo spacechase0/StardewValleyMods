@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28407.52
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".root", ".root", "{E0242685-15E6-4A07-999C-2E8CA1933C1F}"
 	ProjectSection(SolutionItems) = preProject
@@ -82,6 +82,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreMachines", "MoreMachines\MoreMachines.csproj", "{2F72F9E0-8F3B-492D-B9A6-36E68F5A34ED}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "archived", "archived", "{F17372E6-ACE5-4175-9A9F-C9A4C4EBA5B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiled.Net", "Tiled.Net\Tiled.Net\Tiled.Net.csproj", "{28AA2641-4E18-415D-B0AF-6BBE3846E50B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -371,6 +373,14 @@ Global
 		{2F72F9E0-8F3B-492D-B9A6-36E68F5A34ED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F72F9E0-8F3B-492D-B9A6-36E68F5A34ED}.Release|x86.ActiveCfg = Release|Any CPU
 		{2F72F9E0-8F3B-492D-B9A6-36E68F5A34ED}.Release|x86.Build.0 = Release|Any CPU
+		{28AA2641-4E18-415D-B0AF-6BBE3846E50B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28AA2641-4E18-415D-B0AF-6BBE3846E50B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28AA2641-4E18-415D-B0AF-6BBE3846E50B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{28AA2641-4E18-415D-B0AF-6BBE3846E50B}.Debug|x86.Build.0 = Debug|Any CPU
+		{28AA2641-4E18-415D-B0AF-6BBE3846E50B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28AA2641-4E18-415D-B0AF-6BBE3846E50B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28AA2641-4E18-415D-B0AF-6BBE3846E50B}.Release|x86.ActiveCfg = Release|Any CPU
+		{28AA2641-4E18-415D-B0AF-6BBE3846E50B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

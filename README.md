@@ -14,11 +14,12 @@ solution folder.
 
    ```bash
    # Bash (Linux/Mac)
-   cat mod-list.txt | grep -e '^[^#]' | while read -r repo; do git clone https://github.com/spacechase0/repo.git; done
+   cat mod-list.txt | grep -e '^[^#]' | while read -r repo; do git clone https://github.com/spacechase0/$repo.git; done
    ```
 
-3. Open the solution in Visual Studio.
-4. Unload the projects in the 'archived' solution folder.
+3. Clone Tiled.Net
+4. Open the solution in Visual Studio.
+5. Unload the projects in the 'archived' solution folder.
 
 ### Update all mod repos
 To update all repos to match the server (assuming you have no local changes):
