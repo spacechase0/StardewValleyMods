@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using System;
 
 namespace JsonAssets.Overrides
 {

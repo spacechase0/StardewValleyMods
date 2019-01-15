@@ -18,6 +18,7 @@ using StardewValley.Buildings;
 using Harmony;
 using System.Text.RegularExpressions;
 using JsonAssets.Overrides;
+using Newtonsoft.Json;
 
 // TODO: Refactor recipes
 
@@ -28,18 +29,19 @@ namespace JsonAssets
         public static Mod instance;
         private HarmonyInstance harmony;
 
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
 
-            MenuEvents.MenuChanged += menuChanged;
-            //SaveEvents.AfterLoad += afterLoad;
-            SaveEvents.AfterSave += afterSave;
-            PlayerEvents.InventoryChanged += invChanged;
-            //SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
+            helper.Events.Display.MenuChanged += onMenuChanged;
+            helper.Events.GameLoop.Saved += onSaved;
+            helper.Events.Player.InventoryChanged += onInventoryChanged;
+            //helper.Events.Specialised.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
 
             Log.info("Loading content packs...");
-            foreach (IContentPack contentPack in this.Helper.GetContentPacks())
+            foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
                 loadData(contentPack);
             if (Directory.Exists(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
             {
@@ -58,7 +60,7 @@ namespace JsonAssets
             }
             catch (Exception e)
             {
-                Log.error("Exception doing harmony stuff: " + e);
+                Log.error($"Exception doing harmony stuff: {e}");
             }
         }
         private void doPrefix(Type origType, string origMethod, Type newType)
@@ -70,7 +72,7 @@ namespace JsonAssets
             try
             {
                 Log.trace($"Doing prefix patch {orig}:{prefix}...");
-                harmony.Patch(orig, new HarmonyMethod(prefix), null);
+                harmony.Patch(orig, new HarmonyMethod(prefix));
             }
             catch (Exception e)
             {
@@ -94,31 +96,29 @@ namespace JsonAssets
             }
         }
 
-        private IApi api;
+        private Api api;
         public override object GetApi()
         {
-            if (api == null)
-                api = new Api(this.loadData);
-
-            return api;
+            return api ?? (api = new Api(this.loadData));
         }
 
         private void loadData(string dir)
         {
-            // read info
-            if (!File.Exists(Path.Combine(dir, "content-pack.json")))
+            // read initial info
+            IContentPack temp = this.Helper.ContentPacks.CreateFake(dir);
+            ContentPackData info = temp.ReadJsonFile<ContentPackData>("content-pack.json");
+            if (info == null)
             {
                 Log.warn($"\tNo {dir}/content-pack.json!");
                 return;
             }
-            ContentPackData info = this.Helper.ReadJsonFile<ContentPackData>(Path.Combine(dir, "content-pack.json"));
 
             // load content pack
-            IContentPack contentPack = this.Helper.CreateTransitionalContentPack(dir, id: Guid.NewGuid().ToString("N"), name: info.Name, description: info.Description, author: info.Author, version: new SemanticVersion(info.Version));
+            IContentPack contentPack = this.Helper.ContentPacks.CreateTemporary(dir, id: Guid.NewGuid().ToString("N"), name: info.Name, description: info.Description, author: info.Author, version: new SemanticVersion(info.Version));
             this.loadData(contentPack);
         }
 
-        private Regex SeasonLimiter = new Regex("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private readonly Regex SeasonLimiter = new Regex("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private void loadData(IContentPack contentPack)
         {
             Log.info($"\t{contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author} - {contentPack.Manifest.Description}");
@@ -182,17 +182,12 @@ namespace JsonAssets
                     // TODO: Clean up this chunk
                     // I copy/pasted it from the unofficial update decompiled
                     string str = "";
-                    string[] array = new string[]
+                    string[] array =  new[] { "spring", "summer", "fall", "winter" }
+                        .Except(crop.Seasons)
+                        .ToArray();
+                    foreach (var season in array)
                     {
-                            "spring",
-                            "summer",
-                            "fall",
-                            "winter"
-                    }.Except(crop.Seasons).ToArray<string>();
-                    for (int i = 0; i < array.Length; i++)
-                    {
-                        string season = array[i];
-                        str += string.Format("/z {0}", season);
+                        str += $"/z {season}";
                     }
                     string strtrimstart = str.TrimStart(new char[] { '/' });
                     if (crop.SeedPurchaseRequirements != null && crop.SeedPurchaseRequirements.Count > 0)
@@ -202,18 +197,18 @@ namespace JsonAssets
                             if (SeasonLimiter.IsMatch(crop.SeedPurchaseRequirements[index]))
                             {
                                 crop.SeedPurchaseRequirements[index] = strtrimstart;
-                                Log.warn(string.Format("        Faulty season requirements for {0}!\n", crop.SeedName) + string.Format("        Fixed season requirements: {0}", crop.SeedPurchaseRequirements[index]));
+                                Log.warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
                             }
                         }
-                        if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart(new char[] { '/' })))
+                        if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart('/')))
                         {
-                            Log.trace(string.Format("        Adding season requirements for {0}:\n", crop.SeedName) + string.Format("        New season requirements: {0}", strtrimstart));
+                            Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
                             crop.seed.PurchaseRequirements.Add(strtrimstart);
                         }
                     }
                     else
                     {
-                        Log.trace(string.Format("        Adding season requirements for {0}:\n", crop.SeedName) + string.Format("        New season requirements: {0}", strtrimstart));
+                        Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
                         crop.seed.PurchaseRequirements.Add(strtrimstart);
                     }
 
@@ -294,15 +289,18 @@ namespace JsonAssets
             }
         }
 
-        private void unsafeUpdate(object sender, EventArgs args)
+        /// <summary>Raised after the game state is updated (≈60 times per second), regardless of normal SMAPI validation. This event is not thread-safe and may be invoked while game logic is running asynchronously. Changes to game state in this method may crash the game or corrupt an in-progress save. Do not use this event unless you're fully aware of the context in which your code will be run. Mods using this event will trigger a stability warning in the SMAPI console.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onUnvalidatedUpdateTicked(object sender, UnvalidatedUpdateTickedEventArgs e)
         {
             // I need the items to register before most other things do
             var saveLoaded = (bool) typeof(Context).GetProperty("IsSaveLoaded", BindingFlags.NonPublic | BindingFlags.Static).GetValue( null );
             if (saveLoaded && !SaveGame.IsProcessing)
             {
                 Log.debug("Loading stuff early");
-                afterLoad(sender, args);
-                SpecialisedEvents.UnvalidatedUpdateTick -= unsafeUpdate;
+                onSaveLoaded();
+                Helper.Events.Specialised.UnvalidatedUpdateTicked -= onUnvalidatedUpdateTicked;
             }
         }
 
@@ -310,40 +308,35 @@ namespace JsonAssets
         {
             // When we go back to the title menu we need to reset things so things don't break when
             // going back to a save. Also, this is where it is initially done, too.
-            oldObjectIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-objects.json"));
-            oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-crops.json"));
-            oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-fruittrees.json"));
-            oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-big-craftables.json"));
-            oldHatIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Helper.DirectoryPath, $"ids-hats.json"));
+            clearIds(out objectIds, objects.ToList<DataNeedsId>());
+            clearIds(out cropIds, crops.ToList<DataNeedsId>());
+            clearIds(out fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
+            clearIds(out bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
+            clearIds(out hatIds, hats.ToList<DataNeedsId>());
 
-            if (objectIds != null)
-            {
-                clearIds(ref objectIds, objects.ToList<DataNeedsId>());
-                clearIds(ref cropIds, crops.ToList<DataNeedsId>());
-                clearIds(ref fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
-                clearIds(ref bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
-                clearIds(ref hatIds, hats.ToList<DataNeedsId>());
-            }
+            var editor = Helper.Content.AssetEditors.FirstOrDefault(p => p is ContentInjector);
+            if (editor != null)
+                Helper.Content.AssetEditors.Remove(editor);
 
-            var editor = Helper.Content.AssetEditors.Where(x => x is ContentInjector);
-            if (editor.Count() > 0)
-                Helper.Content.AssetEditors.Remove(editor.ElementAt(0));
-
-            SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
+            Helper.Events.Specialised.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
         }
 
-        private void menuChanged(object sender, EventArgsClickableMenuChanged args)
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( args.NewMenu is TitleMenu )
+            if ( e.NewMenu == null )
+                return;
+
+            if ( e.NewMenu is TitleMenu )
             {
                 resetAtTitle();
                 return;
             }
 
-            var menu = args.NewMenu as ShopMenu;
-            bool hatMouse = false;
-            if (menu != null && menu.potraitPersonDialogue == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4))
-                hatMouse = true;
+            var menu = e.NewMenu as ShopMenu;
+            bool hatMouse = menu != null && menu.potraitPersonDialogue == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4);
             if (menu == null || menu.portraitPerson == null && !hatMouse)
                 return;
 
@@ -436,28 +429,25 @@ namespace JsonAssets
             ( ( Api ) api ).InvokeAddedItemsToShop();
         }
 
-        private void afterLoad(object sender, EventArgs args)
+        /// <summary>Raised immediately when the save is loaded, before it's fully initialised.</summary>
+        private void onSaveLoaded()
         {
-            if (File.Exists(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json")))
+            // load object ID mappings from save folder
+            IDictionary<TKey, TValue> LoadDictionary<TKey, TValue>(string filename)
             {
-                oldObjectIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-objects.json"));
-                oldCropIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-crops.json"));
-                oldFruitTreeIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-fruittrees.json"));
-                oldBigCraftableIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-big-craftables.json"));
-                oldHatIds = Helper.ReadJsonFile<Dictionary<string, int>>(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-hats.json"));
+                string path = Path.Combine(Constants.CurrentSavePath, "JsonAssets", filename);
+                return File.Exists(path)
+                    ? JsonConvert.DeserializeObject<Dictionary<TKey, TValue>>(File.ReadAllText(path))
+                    : new Dictionary<TKey, TValue>();
             }
-            else
-                Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
+            Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
+            oldObjectIds = LoadDictionary<string, int>("ids-objects.json");
+            oldCropIds = LoadDictionary<string, int>("ids-crops.json");
+            oldFruitTreeIds = LoadDictionary<string, int>("ids-fruittrees.json");
+            oldBigCraftableIds = LoadDictionary<string, int>("ids-big-craftables.json");
+            oldHatIds = LoadDictionary<string, int>("ids-hats.json");
 
-            if (oldObjectIds == null)
-            {
-                oldObjectIds = new Dictionary<string, int>();
-                oldCropIds = new Dictionary<string, int>();
-                oldFruitTreeIds = new Dictionary<string, int>();
-                oldBigCraftableIds = new Dictionary<string, int>();
-                oldHatIds = new Dictionary<string, int>();
-            }
-
+            // assign IDs
             objectIds = AssignIds("objects", StartingObjectId, objects.ToList<DataNeedsId>());
             cropIds = AssignIds("crops", StartingCropId, crops.ToList<DataNeedsId>());
             fruitTreeIds = AssignIds("fruittrees", StartingFruitTreeId, fruitTrees.ToList<DataNeedsId>());
@@ -465,8 +455,9 @@ namespace JsonAssets
             hatIds = AssignIds("hats", StartingHatId, hats.ToList<DataNeedsId>());
 
             fixIdsEverywhere();
-            (api as Api).InvokeIdsAssigned();
+            api.InvokeIdsAssigned();
 
+            // init
             Helper.Content.AssetEditors.Add(new ContentInjector());
 
             foreach (var obj in objects)
@@ -492,18 +483,28 @@ namespace JsonAssets
             }
         }
 
-        private void afterSave(object sender, EventArgs args)
+        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaved(object sender, SavedEventArgs e)
         {
-            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-objects.json"), objectIds);
-            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-crops.json"), cropIds);
-            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-fruittrees.json"), fruitTreeIds);
-            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-big-craftables.json"), bigCraftableIds);
-            Helper.WriteJsonFile(Path.Combine(Constants.CurrentSavePath, "JsonAssets", $"ids-hats.json"), hatIds);
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(objectIds));
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(cropIds));
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(fruitTreeIds));
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(bigCraftableIds));
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(hatIds));
         }
 
         internal IList<ObjectData> myRings = new List<ObjectData>();
-        private void invChanged(object sender, EventArgsInventoryChanged args)
+
+        /// <summary>Raised after items are added or removed to a player's inventory. NOTE: this event is currently only raised for the current player.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onInventoryChanged(object sender, InventoryChangedEventArgs e)
         {
+            if (!e.IsLocalPlayer)
+                return;
+
             IList<int> ringIds = new List<int>();
             foreach (var ring in myRings)
                 ringIds.Add(ring.id);
@@ -564,7 +565,7 @@ namespace JsonAssets
                         return obj.Key;
                 }
 
-                Log.warn("No idea what '" + data + "' is!");
+                Log.warn($"No idea what '{data}' is!");
                 return 0;
             }
         }
@@ -578,7 +579,7 @@ namespace JsonAssets
             {
                 if (d.id == -1)
                 {
-                    Log.trace("New ID: " + d.Name + " = " + currId);
+                    Log.trace($"New ID: {d.Name} = {currId}");
                     ids.Add(d.Name, currId++);
                     if (type == "objects" && ((ObjectData)d).IsColored)
                         ++currId;
@@ -589,7 +590,7 @@ namespace JsonAssets
             return ids;
         }
 
-        private void clearIds(ref IDictionary<string, int> ids, List<DataNeedsId> objs)
+        private void clearIds(out IDictionary<string, int> ids, List<DataNeedsId> objs)
         {
             ids = null;
             foreach ( DataNeedsId obj in objs )
@@ -625,7 +626,7 @@ namespace JsonAssets
             if (loc is FarmHouse fh)
             {
 #pragma warning disable AvoidImplicitNetFieldCast
-                if (fh.fridge.Value != null && fh.fridge.Value.items != null)
+                if (fh.fridge.Value?.items != null)
 #pragma warning restore AvoidImplicitNetFieldCast
                     fixItemList(fh.fridge.Value.items);
             }
