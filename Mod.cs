@@ -11,7 +11,6 @@ using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SFarmer = StardewValley.Farmer;
 
 namespace LuckSkill
 {
@@ -26,23 +25,28 @@ namespace LuckSkill
 
         public static Mod instance;
 
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
             
-            MenuEvents.MenuClosed += fishingExp;
-            PlayerEvents.Warped += locChanged;
-            GameEvents.UpdateTick += update;
-            GraphicsEvents.OnPostRenderGuiEvent += draw;
-            TimeEvents.AfterDayStarted += dayStarted;
+            helper.Events.Display.MenuChanged += onMenuChanged;
+            helper.Events.Player.Warped += onWarped;
+            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.Display.RenderedActiveMenu += onRenderedActiveMenu;
+            helper.Events.GameLoop.DayStarted += onDayStarted;
+            helper.Events.GameLoop.GameLaunched += onGameLaunched;
 
             SpaceEvents.ChooseNightlyFarmEvent += changeFarmEvent;
 
-            GameEvents.FirstUpdateTick += enableLuckSkillBar;
             checkForAllProfessions();
         }
 
-        private void dayStarted( object sender, EventArgs args )
+        /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onDayStarted( object sender, DayStartedEventArgs args )
         {
             gainLuckExp((int)(Game1.dailyLuck * 750));
 
@@ -72,20 +76,22 @@ namespace LuckSkill
 
                     if (quest != null)
                     {
-                        Log.info("Applying quest " + quest + " for today, due to having PROFESSION_MOREQUESTS.");
+                        Log.info($"Applying quest {quest} for today, due to having PROFESSION_MOREQUESTS.");
                         Game1.questOfTheDay = quest;
                     }
                 }
             }
         }
 
-        private void fishingExp( object sender, EventArgs args )
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onMenuChanged( object sender, MenuChangedEventArgs e )
         {
-            var ev = args as EventArgsClickableMenuClosed;
-            if (!(ev.PriorMenu is BobberBar))
+            // fishingExp
+            if (!(e.OldMenu is BobberBar fishing) || e.NewMenu != null)
                 return;
 
-            BobberBar fishing = ev.PriorMenu as BobberBar;
             float diff = ( float ) Util.GetInstanceField( typeof( BobberBar ), fishing, "difficulty" );
             bool perfect = ( bool ) Util.GetInstanceField( typeof( BobberBar ), fishing, "perfect" );
             bool treasure = ( bool ) Util.GetInstanceField( typeof( BobberBar ), fishing, "treasureCaught" );
@@ -100,7 +106,11 @@ namespace LuckSkill
         }
         
         private bool hadGeode = false;
-        private void update(object sender, EventArgs args)
+
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             /*
             if (Game1.isEating != wasEating)
@@ -144,7 +154,11 @@ namespace LuckSkill
         }
 
         private bool didInitSkills = false;
-        private void draw( object sender, EventArgs args )
+
+        /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onRenderedActiveMenu( object sender, RenderedActiveMenuEventArgs e )
         {
             if ( Game1.activeClickableMenu is GameMenu )
             {
@@ -303,14 +317,20 @@ namespace LuckSkill
 
                 if ( ev != null )
                 {
-                    Log.info("Applying " + ev + " as tonight's nightly event, due to having PROFESSION_NIGHTLY_EVENTS");
+                    Log.info($"Applying {ev} as tonight's nightly event, due to having PROFESSION_NIGHTLY_EVENTS");
                     args.NightEvent = ev;
                 }
             }
         }
 
-        private void locChanged(object sender, EventArgs args)
+        /// <summary>Raised after a player warps to a new location.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onWarped(object sender, WarpedEventArgs e)
         {
+            if (!e.IsLocalPlayer)
+                return;
+
             if ( HAS_ALL_PROFESSIONS )
             {
                 Util.DecompileComment("This is where AllProfessions does it.");
@@ -375,7 +395,7 @@ namespace LuckSkill
             {
                 return;
             }
-            int num = SFarmer.checkForLevelGain(Game1.player.experiencePoints[which], Game1.player.experiencePoints[which] + howMuch);
+            int num = Farmer.checkForLevelGain(Game1.player.experiencePoints[which], Game1.player.experiencePoints[which] + howMuch);
             Game1.player.experiencePoints[which] += howMuch;
             int num2 = -1;
             if (num != -1)
@@ -433,12 +453,12 @@ namespace LuckSkill
             return -1;
         }
 
-        private void enableLuckSkillBar(object sender, EventArgs args)
+        private void onGameLaunched(object sender, EventArgs args)
         {
+            // enableLuckSkillBar
             var api = Helper.ModRegistry.GetApi<ExperienceBarsApi>("spacechase0.ExperienceBars");
-            Log.trace("Experience Bars API " + (api == null ? "not " : "") + "found");
-            if (api != null)
-                api.SetDrawLuck(true);
+            Log.trace($"Experience Bars API {(api == null ? "not " : "")}found");
+            api?.SetDrawLuck(true);
         }
 
         private bool HAS_ALL_PROFESSIONS = false;
