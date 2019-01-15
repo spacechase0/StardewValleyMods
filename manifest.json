@@ -4,14 +4,12 @@
   "Version": "1.0.4",
   "Description": "Change the exterior of your buildings.",
   "UniqueID": "spacechase0.CustomizeExterior",
-  "PerSaveConfigs": false,
   "EntryDll": "CustomizeExterior.dll",
+  "MinimumApiVersion": "2.9.0",
   "UpdateKeys": [ "Nexus:1099", "Chucklefish:4675" ],
   "Dependencies": [
-    {
-      "UniqueID": "Entoarox.SeasonalImmersion",
-      "IsRequired": false
-    }
+    { "UniqueID": "spacechase0.SpaceCore" },
+    { "UniqueID": "Entoarox.SeasonalImmersion", "IsRequired": false }
   ],
   "spacechase0": "customize-exterior"
 }
