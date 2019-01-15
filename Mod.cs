@@ -15,6 +15,11 @@ namespace RushOrders
     {
         public static Mod instance;
         public static RushOrdersConfig ModConfig { get; private set; }
+        private static bool hadDialogue = false;
+        private static int prevMoney = 0;
+
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry( IModHelper helper )
         {
             instance = this;
@@ -22,49 +27,46 @@ namespace RushOrders
             Log.info("Loading Config");
             ModConfig = Helper.ReadConfig<RushOrdersConfig>();
 
-            GameEvents.UpdateTick += checkCurrentMenu;
-            GameEvents.UpdateTick += checkToolUpgradeForRushOrder;
+            helper.Events.Display.MenuChanged += onMenuChanged;
+            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
         }
-        
-        private static IClickableMenu prevMenu = null;
-        public static void checkCurrentMenu(object sender, EventArgs args)
+
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        public void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (Game1.activeClickableMenu == prevMenu) return;
-            if (Game1.activeClickableMenu is ShopMenu)
+            if (!Context.IsWorldReady)
+                return;
+
+            // add rush option to menu
+            switch (Game1.activeClickableMenu)
             {
-                ShopMenu shop = Game1.activeClickableMenu as ShopMenu;
-                if (shop.portraitPerson != null)
+                case ShopMenu shop:
                 {
-                    if (shop.portraitPerson.Name == "Clint")
+                    switch (shop.portraitPerson?.Name)
                     {
-                        addToolRushOrders(shop);
-                    }
-                    else if (shop.portraitPerson.Name == "Robin")
-                    {
-                        if ((Game1.player.daysUntilHouseUpgrade > 1 || Game1.getFarm().isThereABuildingUnderConstruction() &&
-                            (Game1.getFarm().getBuildingUnderConstruction().daysOfConstructionLeft.Value > 1 ||
-                             Game1.getFarm().getBuildingUnderConstruction().daysUntilUpgrade.Value > 1)))
-                        {
-                            if (!(prevMenu is RushConstructionMenu))
+                        case "Clint":
+                            addToolRushOrders(shop);
+                            break;
+
+                        case "Robin":
+                            if (this.HasBuildingToRush() && !(e.OldMenu is RushConstructionMenu))
                                 doRushBuildingDialogue();
-                        }
+                            break;
                     }
+                    break;
                 }
-            }
-            else if (Game1.activeClickableMenu is DialogueBox)
-            {
-                DialogueBox diagBox = Game1.activeClickableMenu as DialogueBox;
-                var diag = instance.Helper.Reflection.GetField< Dialogue >(diagBox, "characterDialogue").GetValue();
-                if ( diag != null && diag.speaker != null && diag.speaker.Name == "Robin" &&
-                    ( Game1.player.daysUntilHouseUpgrade > 1 || Game1.getFarm().isThereABuildingUnderConstruction() &&
-                     (Game1.getFarm().getBuildingUnderConstruction().daysOfConstructionLeft.Value > 1 ||
-                      Game1.getFarm().getBuildingUnderConstruction().daysUntilUpgrade.Value > 1)) )
+
+                case DialogueBox diagBox:
                 {
-                    if (!(prevMenu is RushConstructionMenu))
+                    var diag = instance.Helper.Reflection.GetField<Dialogue>(diagBox, "characterDialogue").GetValue();
+                    if (diag?.speaker != null && diag.speaker.Name == "Robin" && this.HasBuildingToRush() && !(e.OldMenu is RushConstructionMenu))
                         doRushBuildingDialogue();
+
+                    break;
                 }
             }
-            prevMenu = Game1.activeClickableMenu;
         }
 
         private static void addToolRushOrders( ShopMenu shop )
@@ -139,42 +141,50 @@ namespace RushOrders
                 items.Add(elem);
             
             itemsField.SetValue(shop, items.OrderBy(i => i.Name).ToList());
-
-            prevMenu = Game1.activeClickableMenu;
         }
 
-        private static bool hadDialogue = false;
-        private static int prevMoney = 0;
-        private static void checkToolUpgradeForRushOrder(object sender, EventArgs args)
+        /// <summary>Get whether there's a building being upgraded or constructed that can be rushed.</summary>
+        private bool HasBuildingToRush()
         {
-            if (Game1.player == null) return;
+            // farmhouse upgrade
+            if (Game1.player.daysUntilHouseUpgrade.Value > 1)
+                return true;
+
+            // building
+            Building constructing = Game1.getFarm().getBuildingUnderConstruction();
+            return constructing != null && (constructing.daysOfConstructionLeft.Value > 1 || constructing.daysUntilUpgrade.Value > 1);
+        }
+
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onUpdateTicked(object sender, EventArgs e)
+        {
+            if (!Context.IsWorldReady)
+                return;
+
+            // add tool rush order
             NPC clint = Game1.getCharacterFromName("Clint");
-            if (clint == null) return;
-
-            bool haveDialogue = false;
-            if (clint.CurrentDialogue.Count > 0 && clint.CurrentDialogue.Peek().getCurrentDialogue() == Game1.content.LoadString("Strings\\StringsFromCSFiles:Tool.cs.14317"))
-                haveDialogue = true;
-
-            if ( !hadDialogue && haveDialogue && Game1.player.daysLeftForToolUpgrade.Value == 2 && Game1.player.toolBeingUpgraded.Value != null )
+            bool hasDialog = clint?.CurrentDialogue.Count > 0 && clint.CurrentDialogue.Peek().getCurrentDialogue() == Game1.content.LoadString("Strings\\StringsFromCSFiles:Tool.cs.14317");
+            if ( hasDialog && !hadDialogue && Game1.player.daysLeftForToolUpgrade.Value == 2 && Game1.player.toolBeingUpgraded.Value != null )
             {
-                int currPrice = getToolUpgradePrice(Game1.player.toolBeingUpgraded.Value.UpgradeLevel);
+                int curPrice = getToolUpgradePrice(Game1.player.toolBeingUpgraded.Value.UpgradeLevel);
                 int diff = prevMoney - Game1.player.money;
 
-                if (diff == (int)(currPrice * ModConfig.PriceFactor.Tool.Now))
+                if (diff == (int)(curPrice * ModConfig.PriceFactor.Tool.Now))
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 0;
                     clint.CurrentDialogue.Pop();
-                    Game1.drawDialogue(Game1.getCharacterFromName("Clint", false), "Thanks. I'll get started right away. It should be ready in a few minutes.");
+                    Game1.drawDialogue(clint, "Thanks. I'll get started right away. It should be ready in a few minutes.");
                 }
-                else if ( diff == ( int )( currPrice * ModConfig.PriceFactor.Tool.Rush) )
+                else if ( diff == ( int )( curPrice * ModConfig.PriceFactor.Tool.Rush) )
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 1;
                     clint.CurrentDialogue.Pop();
-                    Game1.drawDialogue(Game1.getCharacterFromName("Clint", false), "Thanks. I'll get started right away. It should be ready tomorrow.");
+                    Game1.drawDialogue(clint, "Thanks. I'll get started right away. It should be ready tomorrow.");
                 }
             }
-
-            hadDialogue = haveDialogue;
+            hadDialogue = hasDialog;
             prevMoney = Game1.player.money;
         }
 
