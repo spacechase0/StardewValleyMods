@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using System;
 
 namespace ObjectTimeLeft
 {
@@ -14,45 +12,42 @@ namespace ObjectTimeLeft
 
         private bool showing = true;
 
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
             Config = helper.ReadConfig<Configuration>();
 
-            GraphicsEvents.OnPreRenderHudEvent += draw;
-
-            ControlEvents.KeyPressed += checkToggle;
+            helper.Events.Display.RenderingHud += onRenderingHud;
+            helper.Events.Input.ButtonPressed += onButtonPressed;
         }
 
-        public void checkToggle(object sender, EventArgs args)
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            EventArgsKeyPressed pressed = args as EventArgsKeyPressed;
-            if (pressed.KeyPressed == Config.ToggleDisplay.key)
-            {
+            if (e.Button == Config.ToggleKey)
                 showing = !showing;
-            }
         }
 
-        private void update(object sender,EventArgs args)
+        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onRenderingHud(object sender, RenderingHudEventArgs e)
         {
-            //Log.trace(""+Game1.getFarm());
-        }
-
-        private void draw(object sender, EventArgs args)
-        {
-            if (!showing)
+            if (!showing || !Context.IsPlayerFree)
                 return;
-            if (!Context.IsWorldReady || !Context.IsPlayerFree)
-                return;
-            var sb = Game1.spriteBatch;
 
+            var sb = e.SpriteBatch;
             foreach ( var entryKey in Game1.currentLocation.netObjects.Keys )
             {
                 var obj = Game1.currentLocation.netObjects[ entryKey ];
                 if (obj.MinutesUntilReady <= 0 || obj.MinutesUntilReady == 999999 || obj.Name == "Stone")
                     continue;
 
-                float num = (float)(4.0 * Math.Round(Math.Sin(DateTime.Now.TimeOfDay.TotalMilliseconds / 250.0), 2));
+                //float num = (float)(4.0 * Math.Round(Math.Sin(DateTime.Now.TimeOfDay.TotalMilliseconds / 250.0), 2));
                 float x = entryKey.X;
                 float y = entryKey.Y;
                 Vector2 pos = Game1.GlobalToLocal(Game1.viewport, new Vector2( x * Game1.tileSize, y * Game1.tileSize ));

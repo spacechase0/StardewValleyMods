@@ -1,10 +1,9 @@
-﻿using Microsoft.Xna.Framework.Input;
-using StardewValley;
+﻿using StardewModdingAPI;
 
 namespace ObjectTimeLeft
 {
     public class Configuration
     {
-        public InputButton ToggleDisplay { get; set; } = new InputButton(Keys.L);
+        public SButton ToggleKey { get; set; } = SButton.L;
     }
 }
