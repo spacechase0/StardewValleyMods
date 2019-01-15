@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StardewModdingAPI;
-using StardewValley;
 using StardewModdingAPI.Events;
-using StardewValley.BellsAndWhistles;
+using StardewValley;
 using System.IO;
 
 namespace CustomCritters
@@ -18,57 +14,72 @@ namespace CustomCritters
         {
             instance = this;
 
-            PlayerEvents.Warped += onLocationChanged;
-            /*
-            var ce = new Critters.CritterEntry();
-            ce.Id = "eemie.bee";
-            var a = new Critters.CritterEntry.Animation_();
-            a.Frames.Add(new Critters.CritterEntry.Animation_.AnimationFrame_());
-            ce.Animations.Add("test",a);
-            ce.SpawnConditions.Add(new Critters.CritterEntry.SpawnCondition_());
-            var sl = new Critters.CritterEntry.SpawnLocation_();
-            sl.Conditions.Add(new Critters.CritterEntry.SpawnLocation_.ConditionEntry_());
-            ce.SpawnLocations.Add(sl);
-            helper.WriteJsonFile("test.json", ce);
-            */
+            helper.Events.Player.Warped += onWarped;
 
-            Log.info("Creating critter types...");
-            foreach ( var file in Directory.EnumerateDirectories( Path.Combine( helper.DirectoryPath, "Critters" ) ) )
+            // load content packs
+            Log.info("Loading critter content packs...");
+            foreach (IContentPack contentPack in this.GetContentPacks())
             {
-                var ce = helper.ReadJsonFile<CritterEntry>(Path.Combine(file, "critter.json"));
-                if ( ce == null )
+                CritterEntry data = contentPack.ReadJsonFile<CritterEntry>("critter.json");
+                if (data == null)
                 {
-                    Log.warn("\tFailed to load critter data for " + file);
+                    Log.warn($"   {contentPack.Manifest.Name}: ignored (no critter.json file).");
                     continue;
                 }
-                else if ( !File.Exists( Path.Combine(file, "critter.png" ) ) )
+                if (!File.Exists(Path.Combine(contentPack.DirectoryPath, "critter.png")))
                 {
-                    Log.warn("\tCritter " + file + " has no image, skipping");
+                    Log.warn($"   {contentPack.Manifest.Name}: ignored (no critter.png file).");
                     continue;
                 }
-                Log.info("\tCritter type: " + ce.Id);
-                CritterEntry.Register(ce);
+                Log.info( contentPack.Manifest.Name == data.Id ? contentPack.Manifest.Name : $"   {contentPack.Manifest.Name} (id: {data.Id})");
+                CritterEntry.Register(data);
             }
         }
 
-        private void onLocationChanged( object sender, EventArgsPlayerWarped args )
+        /// <summary>Raised after a player warps to a new location.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onWarped( object sender, WarpedEventArgs e )
         {
-            if (Game1.CurrentEvent != null)
+            if (!e.IsLocalPlayer || Game1.CurrentEvent != null)
                 return;
 
             foreach ( var entry in CritterEntry.critters )
             {
                 for (int i = 0; i < entry.Value.SpawnAttempts; ++i)
                 {
-                    if (entry.Value.check(args.NewLocation))
+                    if (entry.Value.check(e.NewLocation))
                     {
-                        var spot = entry.Value.pickSpot(args.NewLocation);
+                        var spot = entry.Value.pickSpot(e.NewLocation);
                         if (spot == null)
                             continue;
 
-                        args.NewLocation.addCritter(entry.Value.makeCritter(spot.Value));
+                        e.NewLocation.addCritter(entry.Value.makeCritter(spot.Value));
                     }
                 }
+            }
+        }
+
+        /// <summary>Load available content packs.</summary>
+        private IEnumerable<IContentPack> GetContentPacks()
+        {
+            // SMAPI content packs
+            foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
+                yield return contentPack;
+
+            // legacy content packs
+            string legacyRoot = Path.Combine(this.Helper.DirectoryPath, "Critters");
+            Directory.CreateDirectory(legacyRoot);
+            foreach (string folderPath in Directory.EnumerateDirectories(legacyRoot))
+            {
+                yield return this.Helper.ContentPacks.CreateTemporary(
+                    directoryPath: folderPath, 
+                    id: Guid.NewGuid().ToString("N"),
+                    name: new DirectoryInfo(folderPath).Name,
+                    description: null, 
+                    author: null, 
+                    version: new SemanticVersion(1, 0, 0)
+                );
             }
         }
     }

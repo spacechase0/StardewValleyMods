@@ -4,14 +4,15 @@ using StardewValley;
 using StardewValley.BellsAndWhistles;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CustomCritters
 {
     public class CustomCritter : Critter
     {
+        /// <summary>The light type IDs recognised by the game.</summary>
+        /// <remarks>Setting an invalid light ID will crash the game. Valid IDs are based on <see cref="LightSource.loadTextureFromConstantValue"/>.</remarks>
+        private readonly HashSet<int> validLightIds = new HashSet<int>(new[] { LightSource.lantern, LightSource.windowLight, LightSource.sconceLight, LightSource.cauldronLight, LightSource.indoorWindowLight });
+
         private CritterEntry data;
         private LightSource light;
         private Random rand;
@@ -38,10 +39,9 @@ namespace CustomCritters
             if ( data.Light != null )
             {
                 var col = new Color(255 - data.Light.Color.R, 255 - data.Light.Color.G, 255 - data.Light.Color.B);
-                if (data.Light.VanillaLightId != -1)
-                    light = new LightSource(data.Light.VanillaLightId, position, data.Light.Radius, col);
-                else
-                    light = new LightSource(4, position, data.Light.Radius, col);
+                light = this.validLightIds.Contains(data.Light.VanillaLightId) 
+                    ? new LightSource(data.Light.VanillaLightId, position, data.Light.Radius, col) 
+                    : new LightSource(LightSource.sconceLight, position, data.Light.Radius, col);
                 Game1.currentLightSources.Add(light);
             }
         }
