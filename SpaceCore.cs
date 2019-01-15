@@ -1,7 +1,6 @@
 ﻿using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SpaceCore.Events;
 using SpaceCore.Overrides;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -14,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using SFarmer = StardewValley.Farmer;
+using Newtonsoft.Json;
 
 namespace SpaceCore
 {
@@ -24,20 +23,19 @@ namespace SpaceCore
         internal static SpaceCore instance;
         private HarmonyInstance harmony;
 
-        public SpaceCore()
-        {
-        }
-
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
             Config = helper.ReadConfig<Configuration>();
 
-            SaveEvents.AfterLoad += onLoad;
-            SaveEvents.AfterSave += onSave;
+            helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
+            helper.Events.GameLoop.Saving += onSaving;
+            helper.Events.GameLoop.Saved += onSaved;
 
             Commands.register();
-            Skills.init();
+            Skills.init(helper.Events);
 
             harmony = HarmonyInstance.Create("spacechase0.SpaceCore");
 
@@ -50,18 +48,18 @@ namespace SpaceCore
                 if (m.FullDescription().Contains("showEndOfNightStuff"))
                     showNightEndMethod = m;
 
-            doPrefix(typeof(HoeDirt), "dayUpdate", typeof(HoeDirtWinterFix));
-            doPostfix(typeof(Utility), "pickFarmEvent", typeof(NightlyFarmEventHook));
-            doTranspiler(showNightEndMethod, typeof(ShowEndOfNightStuffHook).GetMethod("Transpiler"));
-            doPostfix(typeof(Farmer), "doneEating", typeof(DoneEatingHook));
-            doPrefix(typeof(MeleeWeapon).GetMethod("drawDuringUse", new[] { typeof(int), typeof(int), typeof(SpriteBatch), typeof(Vector2), typeof(SFarmer), typeof(Rectangle), typeof(int), typeof(bool) }), typeof(CustomWeaponDrawPatch).GetMethod("Prefix"));
-            doPrefix(typeof(Multiplayer), "processIncomingMessage", typeof(MultiplayerPackets));
-            doPrefix(typeof(GameLocation), "performAction", typeof(ActionHook));
-            doPrefix(typeof(GameLocation), "performTouchAction", typeof(TouchActionHook));
-            doPostfix(typeof(GameServer), "sendServerIntroduction", typeof(ServerGotClickHook));
-            doPostfix(typeof(NPC), "receiveGift", typeof(AfterGiftGivenHook));
-            doPostfix(typeof(Game1), "loadForNewGame", typeof(BlankSaveHook));
-            doPrefix(typeof(Game1).GetMethod("warpFarmer", new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int) }), typeof(WarpFarmerHook).GetMethod("Prefix"));
+            doPrefix(typeof(HoeDirt), nameof(HoeDirt.dayUpdate), typeof(HoeDirtWinterFix));
+            doPostfix(typeof(Utility), nameof(Utility.pickFarmEvent), typeof(NightlyFarmEventHook));
+            doTranspiler(showNightEndMethod, typeof(ShowEndOfNightStuffHook).GetMethod(nameof(ShowEndOfNightStuffHook.Transpiler)));
+            doPostfix(typeof(Farmer), nameof(Farmer.doneEating), typeof(DoneEatingHook));
+            doPrefix(typeof(MeleeWeapon).GetMethod(nameof(MeleeWeapon.drawDuringUse), new[] { typeof(int), typeof(int), typeof(SpriteBatch), typeof(Vector2), typeof(Farmer), typeof(Rectangle), typeof(int), typeof(bool) }), typeof(CustomWeaponDrawPatch).GetMethod(nameof(CustomWeaponDrawPatch.Prefix)));
+            doPrefix(typeof(Multiplayer), nameof(Multiplayer.processIncomingMessage), typeof(MultiplayerPackets));
+            doPrefix(typeof(GameLocation), nameof(GameLocation.performAction), typeof(ActionHook));
+            doPrefix(typeof(GameLocation), nameof(GameLocation.performTouchAction), typeof(TouchActionHook));
+            doPostfix(typeof(GameServer), nameof(GameServer.sendServerIntroduction), typeof(ServerGotClickHook));
+            doPostfix(typeof(NPC), nameof(NPC.receiveGift), typeof(AfterGiftGivenHook));
+            doPostfix(typeof(Game1), nameof(Game1.loadForNewGame), typeof(BlankSaveHook));
+            doPrefix(typeof(Game1).GetMethod(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int) }), typeof(WarpFarmerHook).GetMethod(nameof(WarpFarmerHook.Prefix)));
         }
 
         private void doPrefix(Type origType, string origMethod, Type newType)
@@ -113,9 +111,19 @@ namespace SpaceCore
             }
         }
 
-        private void onLoad(object sender, EventArgs args)
+        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            var data = Helper.ReadJsonFile<Sleep.Data>(Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json"));
+            var data = Helper.Data.ReadSaveData<Sleep.Data>("sleepy-eye");
+            if (data == null)
+            {
+                var legacyDataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
+                data = File.Exists(legacyDataPath)
+                    ? JsonConvert.DeserializeObject<Sleep.Data>(File.ReadAllText(legacyDataPath))
+                    : null;
+            }
             if (data == null || data.Year != Game1.year || data.Season != Game1.currentSeason || data.Day != Game1.dayOfMonth)
                 return;
 
@@ -142,7 +150,10 @@ namespace SpaceCore
             }
         }
 
-        private void onSave(object sender, EventArgs args)
+        /// <summary>Raised before the game begins writes data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaving(object sender, SavingEventArgs e)
         {
             if (!Sleep.SaveLocation)
                 return;
@@ -178,8 +189,21 @@ namespace SpaceCore
                 data.MineLevel = (Game1.currentLocation as MineShaft).mineLevel;
             }
 
-            Helper.WriteJsonFile<Sleep.Data>(Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json"), data);
+            Helper.Data.WriteSaveData("sleepy-eye", data);
             Sleep.SaveLocation = false;
+        }
+
+        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onSaved(object sender, SavedEventArgs e)
+        {
+            var legacyDataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
+            if (File.Exists(legacyDataPath))
+            {
+                Log.trace($"Deleting legacy tent sleep data file: {legacyDataPath}");
+                File.Delete(legacyDataPath);
+            }
         }
 
         // TODO: Move somewhere more sensible (and make public)?
@@ -187,7 +211,7 @@ namespace SpaceCore
         {
             try
             {
-                return Game1.temporaryContent.Load<Dictionary<string, string>>("Data\\Festivals\\" + Game1.currentSeason + (object)Game1.dayOfMonth)["conditions"].Split('/')[0];
+                return Game1.temporaryContent.Load<Dictionary<string, string>>($"Data\\Festivals\\{Game1.currentSeason}{Game1.dayOfMonth}")["conditions"].Split('/')[0];
             }
             catch (Exception)
             {

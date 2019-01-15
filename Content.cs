@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using xTile;
 using xTile.Layers;
 using xTile.Dimensions;
@@ -12,7 +9,6 @@ using StardewModdingAPI;
 using Tiled;
 using System.IO;
 using xTile.ObjectModel;
-using Microsoft.Xna.Framework.Content;
 using System.Xml.Serialization;
 
 namespace SpaceCore

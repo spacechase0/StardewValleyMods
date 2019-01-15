@@ -8,17 +8,17 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Network;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace SpaceCore
 {
     public class Skills
     {
+        private static IDataHelper DataApi => SpaceCore.instance.Helper.Data;
+
         public abstract class Skill
         {
             public abstract class Profession
@@ -94,7 +94,8 @@ namespace SpaceCore
             }
         }
 
-        private static string FilePath => Path.Combine(Constants.CurrentSavePath, "spacecore-skills.json");
+        private static string DataKey = "skills";
+        private static string LegacyFilePath => Path.Combine(Constants.CurrentSavePath, "spacecore-skills.json");
         private const string MSG_DATA = "spacechase0.SpaceCore.SkillData";
         private const string MSG_EXPERIENCE = "spacechase0.SpaceCore.SkillExperience";
 
@@ -102,13 +103,14 @@ namespace SpaceCore
         private static Dictionary<long, Dictionary<string, int>> exp = new Dictionary<long, Dictionary<string, int>>();
         internal static List<KeyValuePair<string, int>> myNewLevels = new List<KeyValuePair<string, int>>();
 
-        internal static void init()
+        internal static void init(IModEvents events)
         {
-            SaveEvents.AfterLoad += afterLoad;
-            SaveEvents.AfterSave += afterSave;
-            MenuEvents.MenuChanged += menuChanged;
-            PlayerEvents.Warped += locChanged;
-            GraphicsEvents.OnPostRenderHudEvent += drawExpBars;
+            events.GameLoop.SaveLoaded += onSaveLoaded;
+            events.GameLoop.Saving += onSaving;
+            events.GameLoop.Saved += onSaved;
+            events.Display.MenuChanged += onMenuChanged;
+            events.Player.Warped += onWarped;
+            events.Display.RenderedHud += onRenderedHud;
             SpaceEvents.ShowNightEndMenus += showLevelMenu;
             SpaceEvents.ServerGotClient += clientJoined;
             Networking.RegisterMessageHandler(MSG_DATA, onDataMessage);
@@ -250,23 +252,54 @@ namespace SpaceCore
             }
         }
 
-        private static void afterLoad(object sender, EventArgs args)
+        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-                exp = SpaceCore.instance.Helper.ReadJsonFile<Dictionary<long, Dictionary<string, int>>>(FilePath) ?? new Dictionary<long, Dictionary<string, int>>();
-        }
-
-        private static void afterSave(object sender, EventArgs args)
-        {
-            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
+            if (Context.IsMainPlayer)
             {
-                Log.trace("Saving to " + FilePath);
-                SpaceCore.instance.Helper.WriteJsonFile(FilePath, exp);
+                exp = DataApi.ReadSaveData<Dictionary<long, Dictionary<string, int>>>(DataKey);
+                if (exp == null && File.Exists(LegacyFilePath))
+                    exp = JsonConvert.DeserializeObject<Dictionary<long, Dictionary<string, int>>>(File.ReadAllText(LegacyFilePath));
+                if (exp == null)
+                    exp = new Dictionary<long, Dictionary<string, int>>();
             }
         }
-        private static void menuChanged(object sender, EventArgsClickableMenuChanged args)
+
+        /// <summary>Raised before the game begins writes data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onSaving(object sender, SavingEventArgs e)
         {
-            if ( args.NewMenu is GameMenu gm )
+            if (Context.IsMainPlayer)
+            {
+                Log.trace("Saving custom data");
+                DataApi.WriteSaveData(DataKey, exp);
+            }
+        }
+
+        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onSaved(object sender, SavedEventArgs e)
+        {
+            if (Context.IsMainPlayer)
+            {
+                if (File.Exists(LegacyFilePath))
+                {
+                    Log.trace($"Deleting legacy data file at {LegacyFilePath}");
+                    File.Delete(LegacyFilePath);
+                }
+            }
+        }
+
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onMenuChanged(object sender, MenuChangedEventArgs e)
+        {
+            if ( e.NewMenu is GameMenu gm )
             {
                 if (SpaceCore.instance.Config.CustomSkillPage)
                 {
@@ -295,9 +328,13 @@ namespace SpaceCore
                 myNewLevels.Clear();
             }
         }
-        private static void locChanged(object sender, EventArgs args)
+
+        /// <summary>Raised after a player warps to a new location.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onWarped(object sender, WarpedEventArgs e)
         {
-            if (SpaceCore.instance.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
+            if (e.IsLocalPlayer && SpaceCore.instance.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
                 foreach ( var skill in skills )
                 {
@@ -315,11 +352,16 @@ namespace SpaceCore
                 }
             }
         }
-        private static void drawExpBars(object sender, EventArgs args)
+
+        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onRenderedHud(object sender, RenderedHudEventArgs e)
         {
             if (Game1.activeClickableMenu != null || Game1.eventUp)
                 return;
 
+            // draw exp bars
             foreach ( var skillPair in skills )
             {
                 var skill = skillPair.Value;
@@ -349,7 +391,7 @@ namespace SpaceCore
                 if (api == null)
                 {
                     Log.warn("No experience bars API? Turning off");
-                    GraphicsEvents.OnPostRenderHudEvent -= drawExpBars;
+                    SpaceCore.instance.Helper.Events.Display.RenderedHud -= onRenderedHud;
                     return;
                 }
                 api.DrawExperienceBar(skill.Icon ?? Game1.staminaRect, level, progress, skill.ExperienceBarColor);

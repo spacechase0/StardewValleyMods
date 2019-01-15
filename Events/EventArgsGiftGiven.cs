@@ -1,21 +1,17 @@
 ﻿using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SObject = StardewValley.Object;
 
 namespace SpaceCore.Events
 {
     public class EventArgsGiftGiven
     {
-        internal EventArgsGiftGiven(NPC npc, StardewValley.Object o)
+        internal EventArgsGiftGiven(NPC npc, SObject o)
         {
             Npc = npc;
             Gift = o;
         }
 
         public NPC Npc { get; }
-        public StardewValley.Object Gift { get; }
+        public SObject Gift { get; }
     }
 }

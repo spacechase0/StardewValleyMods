@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley.Locations;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceCore.Locations
 {
@@ -42,15 +38,15 @@ namespace SpaceCore.Locations
         }
         protected override void doSetVisibleWallpaper(int whichRoom, int which)
         {
-            List<Microsoft.Xna.Framework.Rectangle> rooms = getWalls();
+            List<Rectangle> rooms = getWalls();
             int tileSheetIndex = which % 16 + which / 16 * 48;
             if (whichRoom == -1)
             {
-                using (List<Microsoft.Xna.Framework.Rectangle>.Enumerator enumerator = rooms.GetEnumerator())
+                using (List<Rectangle>.Enumerator enumerator = rooms.GetEnumerator())
                 {
                     while (enumerator.MoveNext())
                     {
-                        Microsoft.Xna.Framework.Rectangle r = enumerator.Current;
+                        Rectangle r = enumerator.Current;
                         for (int x = r.X; x < r.Right; x++)
                         {
                             base.setMapTileIndex(x, r.Y, tileSheetIndex, "Back", 0);
@@ -73,7 +69,7 @@ namespace SpaceCore.Locations
             }
             if (rooms.Count > whichRoom)
             {
-                Microsoft.Xna.Framework.Rectangle r2 = rooms[whichRoom];
+                Rectangle r2 = rooms[whichRoom];
                 for (int x2 = r2.X; x2 < r2.Right; x2++)
                 {
                     base.setMapTileIndex(x2, r2.Y, tileSheetIndex, "Back", 0);
@@ -95,15 +91,15 @@ namespace SpaceCore.Locations
 
         protected override void doSetVisibleFloor(int whichRoom, int which)
         {
-            List<Microsoft.Xna.Framework.Rectangle> rooms = getFloors();
+            List<Rectangle> rooms = getFloors();
             int tileSheetIndex = 336 + which % 8 * 2 + which / 8 * 32;
             if (whichRoom == -1)
             {
-                using (List<Microsoft.Xna.Framework.Rectangle>.Enumerator enumerator = rooms.GetEnumerator())
+                using (List<Rectangle>.Enumerator enumerator = rooms.GetEnumerator())
                 {
                     while (enumerator.MoveNext())
                     {
-                        Microsoft.Xna.Framework.Rectangle r = enumerator.Current;
+                        Rectangle r = enumerator.Current;
                         for (int x = r.X; x < r.Right; x += 2)
                         {
                             for (int y = r.Y; y < r.Bottom; y += 2)
@@ -132,7 +128,7 @@ namespace SpaceCore.Locations
             }
             if (rooms.Count > whichRoom)
             {
-                Microsoft.Xna.Framework.Rectangle r2 = rooms[whichRoom];
+                Rectangle r2 = rooms[whichRoom];
                 for (int x2 = r2.X; x2 < r2.Right; x2 += 2)
                 {
                     for (int y2 = r2.Y; y2 < r2.Bottom; y2 += 2)

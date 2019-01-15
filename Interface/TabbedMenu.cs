@@ -3,11 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceCore.Interface
 {
@@ -18,11 +13,6 @@ namespace SpaceCore.Interface
 
         public TabbedMenu( int w, int h ) : base((Game1.viewport.Width - w) / 2, (Game1.viewport.Height - h) / 2, w, h, true)
         {
-        }
-
-        public override void update(GameTime time)
-        {
-            base.update(time);
         }
 
         public override void draw(SpriteBatch b)

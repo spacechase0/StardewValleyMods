@@ -2,10 +2,10 @@
   "Name": "SpaceCore",
   "Author": "spacechase0",
   "Version": "1.2.2",
-  "Description": "...",
+  "Description": "Required by a few mods.",
   "UniqueID": "spacechase0.SpaceCore",
   "EntryDll": "SpaceCore.dll",
-  "MinimumApiVersion": "1.15",
+  "MinimumApiVersion": "2.9.0",
   "UpdateKeys": [ "Nexus:1348", "Chucklefish:4868" ],
   "spacechase0": "spacecore"
 }

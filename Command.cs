@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceCore
 {
     public static class Command
     {
-        private static Dictionary<string, Action<string[]>> commands = new Dictionary< string, Action< string[] > >();
+        private static readonly Dictionary<string, Action<string[]>> commands = new Dictionary< string, Action< string[] > >();
 
         internal static void register( string name, Action< string[] > callback )
         {

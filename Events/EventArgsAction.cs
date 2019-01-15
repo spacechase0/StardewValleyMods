@@ -1,6 +1,4 @@
-﻿using StardewValley;
-using StardewValley.Events;
-using xTile.Dimensions;
+﻿using xTile.Dimensions;
 
 namespace SpaceCore.Events
 {

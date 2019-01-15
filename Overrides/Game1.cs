@@ -1,22 +1,9 @@
 ﻿using Harmony;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using SpaceCore.Events;
-using SpaceCore.Locations;
-using SpaceCore.Utilities;
-using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Locations;
-using StardewValley.Menus;
-using StardewValley.Network;
-using StardewValley.Tools;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using SFarmer = StardewValley.Farmer;
-using SObject = StardewValley.Object;
 
 namespace SpaceCore.Overrides
 {
