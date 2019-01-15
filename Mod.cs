@@ -1,11 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+﻿using System.Linq;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Objects;
-using System;
-using System.Collections.Specialized;
 using SObject = StardewValley.Object;
 
 namespace CarryChest
@@ -13,90 +11,78 @@ namespace CarryChest
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
+
+        /// <summary>The previously selected chest on the toolbar.</summary>
+        private Chest previousHeldChest;
+
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
 
-            GameEvents.UpdateTick += update;
-            PlayerEvents.Warped += locChanged;
-            SaveEvents.AfterLoad += afterLoad;
+            helper.Events.GameLoop.UpdateTicking += onUpdateTicking;
+            helper.Events.Input.ButtonPressed += onButtonPressed;
+            helper.Events.World.ObjectListChanged += onObjectListChanged;
         }
 
-        private void afterLoad(object sender, EventArgs args)
+        /// <summary>Raised before the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onUpdateTicking(object sender, UpdateTickingEventArgs e)
         {
-            Game1.currentLocation.netObjects.OnValueAdded += locObjectsChanged;
-        }
-        
-        private void locChanged( object sender, EventArgsPlayerWarped args )
-        {
-            if (args.PriorLocation != null)
-                args.PriorLocation.netObjects.OnValueAdded -= locObjectsChanged;
-            args.NewLocation.netObjects.OnValueAdded += locObjectsChanged;
-        }
-
-        private Vector2 mostRecentPos;
-        private StardewValley.Object mostRecent;
-        private void locObjectsChanged( Vector2 key, SObject value )
-        {
-            mostRecentPos = (Vector2)key;
-            mostRecent = value;
-        }
-        
-        private int prevSel = -1;
-        private StardewValley.Object prevHolding;
-        private bool prevMousePressed = false;
-        private void update( object sender, EventArgs args )
-        {
-            if (!Context.IsWorldReady || !Context.IsPlayerFree || Game1.activeClickableMenu != null)
+            if (!Context.IsPlayerFree)
                 return;
 
-            if (prevHolding is Chest chest && mostRecent is Chest mostRecentChest && Game1.player.ActiveObject == null && Game1.player.CurrentToolIndex == prevSel)
+            // track toolbar info before the game handles any user input
+            this.previousHeldChest = Game1.player.CurrentItem as Chest;
+        }
+
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onButtonPressed(object sender, ButtonPressedEventArgs e)
+        {
+            if (!Context.IsPlayerFree)
+                return;
+
+            // pick up clicked chest
+            if (e.Button == SButton.MouseLeft && Game1.player.CurrentItem == null)
             {
-                mostRecentChest.playerChoiceColor.Value = chest.playerChoiceColor.Value;
-                if (chest.items.Count > 0)
+                GameLocation location = Game1.currentLocation;
+                Vector2 tile = e.Cursor.Tile;
+                if (location.objects.TryGetValue(tile, out SObject obj) && obj is Chest chest && chest.playerChest.Value && Game1.player.addItemToInventoryBool(obj, true))
                 {
-                    mostRecentChest.items.CopyFrom(chest.items);
-                }
-
-                prevSel = Game1.player.CurrentToolIndex;
-                prevHolding = Game1.player.ActiveObject;
-                prevMousePressed = true;
-                return;
-            }
-            else if ( prevHolding != null && mostRecent != null && Game1.player.ActiveObject == null && Game1.player.CurrentToolIndex == prevSel &&
-                      prevHolding.heldObject.Value != null && prevHolding.MinutesUntilReady > 0)
-            {
-                mostRecent.heldObject.Value = prevHolding.heldObject.Value;
-                mostRecent.MinutesUntilReady = prevHolding.MinutesUntilReady;
-
-                prevSel = Game1.player.CurrentToolIndex;
-                prevHolding = Game1.player.ActiveObject;
-                prevMousePressed = true;
-                return;
-            }
-            prevSel = Game1.player.CurrentToolIndex;
-            prevHolding = Game1.player.ActiveObject;
-
-            var mouse = Mouse.GetState();
-            if ( mouse.LeftButton == ButtonState.Pressed && !prevMousePressed && 
-                 Game1.player.ActiveObject == null && Game1.player.CurrentTool == null)
-            {
-                Point pos = new Point(Game1.getMouseX() + Game1.viewport.X, Game1.getMouseY() + Game1.viewport.Y);
-                Vector2 tile = new Vector2(pos.X / Game1.tileSize, pos.Y / Game1.tileSize);
-                
-                if (Game1.currentLocation.objects.ContainsKey(tile))
-                {
-                    var obj = Game1.currentLocation.objects[tile];
-                    if (obj is Chest || (obj.ParentSheetIndex != 156 && obj.heldObject.Value != null && obj.MinutesUntilReady > 0))
-                    {
-                        if (Game1.player.addItemToInventoryBool(obj, true))
-                        {
-                            Game1.currentLocation.objects.Remove(tile);
-                        }
-                    }
+                    location.objects.Remove(tile);
+                    this.Helper.Input.Suppress(e.Button);
                 }
             }
-            prevMousePressed = mouse.LeftButton == ButtonState.Pressed;
+        }
+
+        /// <summary>Raised after objects are added or removed in a location.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onObjectListChanged(object sender, ObjectListChangedEventArgs e)
+        {
+            if (!Context.IsPlayerFree)
+                return;
+
+            // transfer fields for placed chest
+            if (this.previousHeldChest != null && e.Location == Game1.currentLocation)
+            {
+                var placed = e.Added.Select(p => p.Value).OfType<Chest>().LastOrDefault();
+                if (placed != null)
+                {
+                    Chest original = this.previousHeldChest;
+                    
+                    placed.Name = original.Name;
+                    placed.playerChoiceColor.Value = original.playerChoiceColor.Value;
+                    placed.heldObject.Value = original.heldObject.Value;
+                    placed.MinutesUntilReady = original.MinutesUntilReady;
+                    if (original.items.Any())
+                        placed.items.CopyFrom(original.items);
+                }
+            }
         }
     }
 }

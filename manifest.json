@@ -2,10 +2,10 @@
   "Name": "Carry Chest",
   "Author": "spacechase0",
   "Version": "1.2.2",
-  "Description": "...",
+  "Description": "Carry chests with their contents.",
   "UniqueID": "spacechase0.CarryChest",
-  "PerSaveConfigs": false,
   "EntryDll": "CarryChest.dll",
+  "MinimumApiVersion": "2.9.0",
   "UpdateKeys": [ "Nexus:1333", "Chucklefish:4851" ],
   "spacechase0": "carry-chest"
 }
