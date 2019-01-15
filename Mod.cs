@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley.Menus;
 using StardewValley;
+using StardewValley.Menus;
 using SObject = StardewValley.Object;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace BetterShopMenu
 {
@@ -21,10 +16,10 @@ namespace BetterShopMenu
         {
             instance = this;
 
-            MenuEvents.MenuChanged += onMenuChanged;
-            GameEvents.UpdateTick += tick;
-            GraphicsEvents.OnPostRenderGuiEvent += render;
-            ControlEvents.MouseChanged += mouseChanged;
+            helper.Events.Display.MenuChanged += onMenuChanged;
+            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.Display.RenderedActiveMenu += onRenderedActiveMenu;
+            helper.Events.Input.ButtonPressed += onButtonPressed;
         }
 
         private ShopMenu shop;
@@ -159,15 +154,19 @@ namespace BetterShopMenu
             }
         }
 
-        private void tick(object sender, EventArgs args)
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (shop == null)
-                return;
-            else if ( firstTick )
+            if ( shop != null && firstTick )
                 initShop2();
         }
 
-        private void render(object sender, EventArgs args)
+        /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onRenderedActiveMenu(object sender, RenderedActiveMenuEventArgs e)
         {
             if (shop == null)
                 return;
@@ -191,30 +190,33 @@ namespace BetterShopMenu
             shop.drawMouse(Game1.spriteBatch);
         }
 
-        private void mouseChanged(object sender, EventArgsMouseStateChanged mouse )
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onButtonPressed(object sender, ButtonPressedEventArgs e )
         {
             if (shop == null)
                 return;
 
-            if (mouse.PriorState.LeftButton == ButtonState.Released && mouse.NewState.LeftButton == ButtonState.Pressed)
+            if (e.Button == SButton.MouseLeft || e.Button == SButton.MouseRight)
             {
-                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 550, 200, 72).Contains(mouse.NewPosition.X, mouse.NewPosition.Y))
-                    changeCategory(1);
-                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 630, 200, 48).Contains(mouse.NewPosition.X, mouse.NewPosition.Y))
-                    changeSorting(1);
-            }
-            else if (mouse.PriorState.RightButton == ButtonState.Released && mouse.NewState.RightButton == ButtonState.Pressed)
-            {
-                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 550, 200, 72).Contains(mouse.NewPosition.X, mouse.NewPosition.Y))
-                    changeCategory(-1);
-                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 630, 200, 48).Contains(mouse.NewPosition.X, mouse.NewPosition.Y))
-                    changeSorting(-1);
+                int x = (int) e.Cursor.ScreenPixels.X;
+                int y = (int) e.Cursor.ScreenPixels.Y;
+                int direction = e.Button == SButton.MouseLeft ? 1 : -1;
+
+                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 550, 200, 72).Contains(x, y))
+                    changeCategory(direction);
+                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 630, 200, 48).Contains(x, y))
+                    changeSorting(direction);
             }
         }
 
-        private void onMenuChanged(object sender, EventArgsClickableMenuChanged args)
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( args.NewMenu != null && args.NewMenu is ShopMenu shopMenu )
+            if ( e.NewMenu is ShopMenu shopMenu )
             {
                 Log.trace("Found shop menu!");
                 initShop(shopMenu);
