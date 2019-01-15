@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using StardewValley;
-using xTile;
-using MoreBuildings.SpookyShed;
 using StardewValley.Monsters;
 using Microsoft.Xna.Framework.Graphics;
-using xTile.Tiles;
-using xTile.ObjectModel;
 using PyTK.CustomElementHandler;
 
 namespace MoreBuildings.SpookyShed
@@ -58,10 +50,10 @@ namespace MoreBuildings.SpookyShed
         {
             base.drawAboveAlwaysFrontLayer(b);
 
-            foreach (Character character in this.characters)
+            foreach (NPC character in this.characters)
             {
-                if (character is Monster)
-                    (character as Monster).drawAboveAllLayers(b);
+                if (character is Monster monster)
+                    monster.drawAboveAllLayers(b);
             }
         }
 

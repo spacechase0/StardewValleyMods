@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using StardewValley;
 using StardewValley.Buildings;
-using xTile;
-using Microsoft.Xna.Framework.Graphics;
-using StardewValley.Locations;
-using StardewValley.Objects;
 using Microsoft.Xna.Framework;
-using StardewValley.TerrainFeatures;
 using PyTK.CustomElementHandler;
 using System.Reflection;
 
@@ -18,7 +9,7 @@ namespace MoreBuildings.FishingShack
 {
     public class FishingShackBuilding : Building, ISaveElement
     {
-        private static BluePrint blueprint = new BluePrint("FishShack");
+        private static readonly BluePrint blueprint = new BluePrint("FishShack");
 
         public FishingShackBuilding()
             : base(blueprint, Vector2.Zero)

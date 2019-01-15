@@ -5,16 +5,10 @@ using StardewValley.Menus;
 using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using StardewValley.Buildings;
-using Microsoft.Xna.Framework;
-using System.IO;
 using MoreBuildings.SpookyShed;
 using StardewValley.Locations;
 using MoreBuildings.BigShed;
-using System.Diagnostics;
 using System.Reflection;
 using MoreBuildings.FishingShack;
 using MoreBuildings.MiniSpa;
@@ -31,13 +25,15 @@ namespace MoreBuildings
         private Texture2D spaExterior;
         public Texture2D spookyGemTex;
 
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
             
-            MenuEvents.MenuChanged += menuChanged;
-            PlayerEvents.Warped += locChanged;
-            SpecialisedEvents.UnvalidatedUpdateTick += unsafeUpdate;
+            helper.Events.Display.MenuChanged += onMenuChanged;
+            helper.Events.Player.Warped += onWarped;
+            helper.Events.Specialised.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
             SaveHandler.FinishedRebuilding += fixWarps;
 
             shed2Exterior = Helper.Content.Load<Texture2D>("BigShed/building.png");
@@ -48,9 +44,12 @@ namespace MoreBuildings
 
         }
 
-        private void menuChanged(object sender, EventArgsClickableMenuChanged args)
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( args.NewMenu is CarpenterMenu carp )
+            if ( e.NewMenu is CarpenterMenu carp )
             {
                 var blueprints = Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
                 if ( Game1.getFarm().isBuildingConstructed("Shed"))
@@ -61,17 +60,23 @@ namespace MoreBuildings
             }
         }
 
-        private void locChanged(object sender, EventArgsPlayerWarped args)
+        /// <summary>Raised after a player warps to a new location. NOTE: this event is currently only raised for the current player.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onWarped(object sender, WarpedEventArgs e)
         {
-            if ( args.PriorLocation is MiniSpaLocation )
+            if (!e.IsLocalPlayer)
+                return;
+
+            if ( e.OldLocation is MiniSpaLocation )
             {
                 Game1.player.changeOutOfSwimSuit();
                 Game1.player.swimming.Value = false;
             }
 
-            BuildableGameLocation farm = args.NewLocation as BuildableGameLocation;
+            BuildableGameLocation farm = e.NewLocation as BuildableGameLocation;
             if (farm == null)
-                farm = args.PriorLocation as BuildableGameLocation;
+                farm = e.OldLocation as BuildableGameLocation;
             if ( farm != null )
             {
                 for ( int i = 0; i < farm.buildings.Count; ++i )
@@ -141,7 +146,11 @@ namespace MoreBuildings
         }
 
         bool taskWasThere = false;
-        private void unsafeUpdate(object sender, EventArgs args)
+
+        /// <summary>Raised after the game state is updated (≈60 times per second), regardless of normal SMAPI validation. This event is not thread-safe and may be invoked while game logic is running asynchronously. Changes to game state in this method may crash the game or corrupt an in-progress save. Do not use this event unless you're fully aware of the context in which your code will be run. Mods using this event will trigger a stability warning in the SMAPI console.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onUnvalidatedUpdateTicked(object sender, EventArgs e)
         {
             var task = (Task) typeof(Game1).GetField("_newDayTask", BindingFlags.Static | BindingFlags.NonPublic).GetValue( null );
             if ( task != null && !taskWasThere )

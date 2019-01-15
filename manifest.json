@@ -4,16 +4,12 @@
   "Version": "1.0.1",
   "Description": "Adds a few buildings to the game.",
   "UniqueID": "spacechase0.MoreBuildings",
-  "PerSaveConfigs": false,
   "EntryDll": "MoreBuildings.dll",
-  "UpdateKeys": [ "Nexus:2757", "Chucklefish:" ],
+  "MinimumApiVersion": "2.9.0",
+  "UpdateKeys": [ "Nexus:2757", "Chucklefish:5524" ],
   "Dependencies": [
-    {
-      "UniqueID": "spacechase0.SpaceCore"
-    },
-    {
-      "UniqueID": "Platonymous.Toolkit"
-    }
+    { "UniqueID": "spacechase0.SpaceCore" },
+    { "UniqueID": "Platonymous.Toolkit" }
   ],
   "spacechase0": "more-buildings"
 }
