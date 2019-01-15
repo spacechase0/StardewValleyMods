@@ -5,14 +5,9 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using SObject = StardewValley.Object;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
-using SpaceCore.Events;
-using CookingSkill.Other;
-using StardewValley.Network;
 using SpaceCore;
+using SObject = StardewValley.Object;
 
 namespace CookingSkill
 {
@@ -40,9 +35,8 @@ namespace CookingSkill
         // Returns for whether or not we should consume the ingredients
         public static bool onCook( CraftingRecipe recipe, Item item )
         {
-            if (recipe.isCookingRecipe && item is SObject)
+            if (recipe.isCookingRecipe && item is SObject obj)
             {
-                SObject obj = item as SObject;
                 int amtCrafted = 0;
                 if (Game1.player.recipesCooked.ContainsKey(obj.ParentSheetIndex))
                 {
@@ -84,31 +78,31 @@ namespace CookingSkill
                         obj.Quality = iq;
                 }
 
-                if (rand.NextDouble() < getNoConsumeChance())
-                {
-                    return false;
-                }
-                else return true;
+                return rand.NextDouble() >= getNoConsumeChance();
             }
 
             return true;
         }
 
-        public static Texture2D icon;
-
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry( IModHelper helper )
         {
             instance = this;
-            
-            GameEvents.UpdateTick += update;
+
+            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
 
             Skills.RegisterSkill(skill = new Skill());
         }
 
         private bool wasEating = false;
         private int prevToEatStack = -1;
-        private Buff lastFood = null, lastDrink = null;
-        private void update(object sender, EventArgs args)
+        private Buff lastDrink = null;
+
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             if (Game1.player.isEating != wasEating)
             {
@@ -190,7 +184,6 @@ namespace CookingSkill
                                     Game1.buffsDisplay.food.removeBuff();
                                     Game1.buffsDisplay.food = newBuff;
                                     Game1.buffsDisplay.food.addBuff();
-                                    lastFood = newBuff;
                                 }
                                 Game1.buffsDisplay.syncIcons();
                             }
@@ -240,7 +233,6 @@ namespace CookingSkill
                                         Game1.buffsDisplay.drink.removeBuff();
                                     Game1.buffsDisplay.drink = newBuff;
                                     Game1.buffsDisplay.drink.addBuff();
-                                    lastFood = newBuff;
                                 }
                                 Game1.buffsDisplay.syncIcons();
                             }
