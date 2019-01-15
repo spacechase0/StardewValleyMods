@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using SpaceCore.Utilities;
 using Magic.Schools;
 using StardewValley;
 using StardewValley.Tools;
@@ -12,12 +11,12 @@ namespace Magic.Spells
         {
         }
 
-        public override int getManaCost(StardewValley.Farmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override void onCast(StardewValley.Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             level += 1;
             targetX /= Game1.tileSize;
@@ -33,7 +32,7 @@ namespace Magic.Spells
                 for (int iy = targetY - level; iy <= targetY + level; ++iy)
                 {
                     if (player.getCurrentMana() <= 0)
-                        return;
+                        return null;
 
                     Vector2 pos = new Vector2(ix, iy);
                     if (loc.terrainFeatures.ContainsKey(pos))
@@ -82,6 +81,8 @@ namespace Magic.Spells
                     }
                 }
             }
+
+            return null;
         }
     }
 }

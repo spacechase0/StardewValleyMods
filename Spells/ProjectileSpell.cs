@@ -1,7 +1,6 @@
 ﻿using Magic.Game;
 using StardewValley;
 using System;
-using SFarmer = StardewValley.Farmer;
 
 namespace Magic.Spells
 {
@@ -28,20 +27,22 @@ namespace Magic.Spells
             SoundHit = sndHit;
         }
 
-        public override int getManaCost(SFarmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return ManaBase + ManaIncr * level;
         }
 
-        public override void onCast(SFarmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            Log.debug(player.Name + " casted " + Id + ".");
+            Log.debug($"{player.Name} cast {Id}.");
 
             int dmg = DamageBase + DamageIncr * level;
             float dir = ( float ) -Math.Atan2(player.getStandingY() - targetY, targetX - player.getStandingX());
             player.currentLocation.projectiles.Add(new SpellProjectile(player, this, dmg, dir, 3f + 2 * level));
             if ( Sound != null )
                 Game1.playSound(Sound);
+
+            return null;
         }
     }
 }

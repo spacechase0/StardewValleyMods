@@ -3,26 +3,25 @@ using Magic.Spells;
 using StardewValley;
 using System;
 using static Magic.Mod;
-using SFarmer = StardewValley.Farmer;
 using System.IO;
 
 namespace Magic
 {
     public static class Extensions
     {
-        private static void dataCheck( SFarmer player )
+        private static void dataCheck( Farmer player )
         {
             if (!Data.players.ContainsKey(player.UniqueMultiplayerID))
                 Data.players.Add(player.UniqueMultiplayerID, new MultiplayerSaveData.PlayerData());
         }
 
-        public static int getCurrentMana(this SFarmer player)
+        public static int getCurrentMana(this Farmer player)
         {
             dataCheck(player);
             return Data.players[ player.UniqueMultiplayerID ].mana;
         }
 
-        public static void addMana(this SFarmer player, int amt)
+        public static void addMana(this Farmer player, int amt)
         {
             dataCheck(player);
             Data.players[player.UniqueMultiplayerID].mana = Math.Max(0, Math.Min(player.getCurrentMana() + amt, player.getMaxMana()));
@@ -30,13 +29,13 @@ namespace Magic
                 Data.syncMineMini();
         }
 
-        public static int getMaxMana(this SFarmer player)
+        public static int getMaxMana(this Farmer player)
         {
             dataCheck(player);
             return Data.players[player.UniqueMultiplayerID].manaCap;
         }
 
-        public static void setMaxMana(this SFarmer player, int newCap )
+        public static void setMaxMana(this Farmer player, int newCap )
         {
             dataCheck(player);
             Data.players[player.UniqueMultiplayerID].manaCap = newCap;
@@ -44,19 +43,19 @@ namespace Magic
                 Data.syncMineMini();
         }
 
-        public static int getMagicLevel(this SFarmer player)
+        public static int getMagicLevel(this Farmer player)
         {
             dataCheck(player);
             return Data.players[player.UniqueMultiplayerID].magicLevel;
         }
 
-        public static int getMagicExp(this SFarmer player)
+        public static int getMagicExp(this Farmer player)
         {
             dataCheck(player);
             return Data.players[player.UniqueMultiplayerID].magicExp;
         }
 
-        public static void addMagicExp(this SFarmer player, int exp)
+        public static void addMagicExp(this Farmer player, int exp)
         {
             dataCheck(player);
             if (Data.players[player.UniqueMultiplayerID].magicLevel >= 50)
@@ -78,19 +77,19 @@ namespace Magic
             }
         }
 
-        public static int getMagicExpForNextLevel(this SFarmer player)
+        public static int getMagicExpForNextLevel(this Farmer player)
         {
             dataCheck(player);
             return 50 + Data.players[player.UniqueMultiplayerID].magicLevel * 50;
         }
 
-        public static int getFreeSpellPoints(this SFarmer player)
+        public static int getFreeSpellPoints(this Farmer player)
         {
             dataCheck(player);
             return Data.players[player.UniqueMultiplayerID].freePoints;
         }
 
-        public static void useSpellPoints(this SFarmer player, int amt, bool sync = true)
+        public static void useSpellPoints(this Farmer player, int amt, bool sync = true)
         {
             dataCheck(player);
             Data.players[player.UniqueMultiplayerID].freePoints -= amt;
@@ -98,26 +97,26 @@ namespace Magic
                 Data.syncMineFull();
         }
 
-        public static SpellBook getSpellBook(this SFarmer player)
+        public static SpellBook getSpellBook(this Farmer player)
         {
             dataCheck(player);
             return Data.players[player.UniqueMultiplayerID].spellBook;
         }
 
-        public static bool knowsSchool(this SFarmer player, string school)
+        public static bool knowsSchool(this Farmer player, string school)
         {
             if (player != Game1.player || Data == null)
                 return false;
             return player.getSpellBook().knownSchools.Contains(school);
         }
 
-        public static void learnSchool(this SFarmer player, string school)
+        public static void learnSchool(this Farmer player, string school)
         {
             if (!knowsSchool(player, school))
                 player.getSpellBook().knownSchools.Add(school);
         }
 
-        public static bool knowsSpell(this SFarmer player, string spellId, int level)
+        public static bool knowsSpell(this Farmer player, string spellId, int level)
         {
             if (player != Game1.player || Data == null)
                 return false;
@@ -125,12 +124,12 @@ namespace Magic
                    player.getSpellBook().knownSpells[spellId] >= level;
         }
 
-        public static bool knowsSpell(this SFarmer player, Spell spell, int level)
+        public static bool knowsSpell(this Farmer player, Spell spell, int level)
         {
             return knowsSpell(player, spell.FullId, level);
         }
 
-        public static int knowsSpellLevel(this SFarmer player, string spellId)
+        public static int knowsSpellLevel(this Farmer player, string spellId)
         {
             if (player != Game1.player || Data == null)
                 return -1;
@@ -139,12 +138,12 @@ namespace Magic
             return player.getSpellBook().knownSpells[spellId];
         }
 
-        public static int knowsSpellLevel(this SFarmer player, Spell spell)
+        public static int knowsSpellLevel(this Farmer player, Spell spell)
         {
             return knowsSpellLevel(player, spell.FullId);
         }
 
-        public static void learnSpell(this SFarmer player, string spellId, int level, bool free = false)
+        public static void learnSpell(this Farmer player, string spellId, int level, bool free = false)
         {
             int known = knowsSpellLevel(player, spellId);
             int diff = level - known;
@@ -160,12 +159,12 @@ namespace Magic
             Data.syncMineFull();
         }
 
-        public static void learnSpell(this SFarmer player, Spell spell, int level, bool free = false)
+        public static void learnSpell(this Farmer player, Spell spell, int level, bool free = false)
         {
             learnSpell(player, spell.FullId, level, free);
         }
 
-        public static void forgetSpell(this SFarmer player, string spellId, int level)
+        public static void forgetSpell(this Farmer player, string spellId, int level)
         {
             int known = knowsSpellLevel(player, spellId);
             if (level > known)
@@ -182,27 +181,27 @@ namespace Magic
             Data.syncMineFull();
         }
 
-        public static void forgetSpell(this SFarmer player, Spell spell, int level)
+        public static void forgetSpell(this Farmer player, Spell spell, int level)
         {
             forgetSpell(player, spell.FullId, level);
         }
 
-        public static bool canCastSpell(this SFarmer player, string spellId, int level)
+        public static bool canCastSpell(this Farmer player, string spellId, int level)
         {
             return SpellBook.get(spellId).canCast(player, level);
         }
         
-        public static bool canCastSpell(this SFarmer player, Spell spell, int level)
+        public static bool canCastSpell(this Farmer player, Spell spell, int level)
         {
             return spell.canCast(player, level);
         }
 
-        public static void castSpell(this SFarmer player, string spellId, int level, int x = int.MinValue, int y = int.MinValue)
+        public static IActiveEffect castSpell(this Farmer player, string spellId, int level, int x = int.MinValue, int y = int.MinValue)
         {
-            castSpell(player, SpellBook.get(spellId), level, x, y);
+            return castSpell(player, SpellBook.get(spellId), level, x, y);
         }
 
-        public static void castSpell(this SFarmer player, Spell spell, int level, int x = int.MinValue, int y = int.MinValue)
+        public static IActiveEffect castSpell(this Farmer player, Spell spell, int level, int x = int.MinValue, int y = int.MinValue)
         {
             if (player == Game1.player)
             {
@@ -219,7 +218,8 @@ namespace Magic
             Point pos = new Point(x, y);
             if (x == int.MinValue && y == int.MinValue)
                 pos = new Point(Game1.getMouseX() + Game1.viewport.X, Game1.getMouseY() + Game1.viewport.Y);
-            spell.onCast(player, level, pos.X, pos.Y);
+
+            return spell.onCast(player, level, pos.X, pos.Y);
         }
     }
 }

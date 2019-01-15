@@ -17,19 +17,20 @@ namespace Magic
             return 1;
         }
 
-        public override bool canCast(StardewValley.Farmer player, int level)
+        public override bool canCast(Farmer player, int level)
         {
             return base.canCast(player, level) && player.currentLocation.IsOutdoors && player.mount == null && player.hasItemInInventory(Mod.ja.GetObjectId("Travel Core"), 1);
         }
 
-        public override int getManaCost(StardewValley.Farmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override void onCast(StardewValley.Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             Game1.activeClickableMenu = new TeleportMenu();
+            return null;
         }
     }
 }

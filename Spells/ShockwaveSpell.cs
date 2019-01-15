@@ -4,6 +4,7 @@ using Magic.Schools;
 using StardewValley;
 using StardewValley.Monsters;
 using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Magic.Spells
 {
@@ -13,33 +14,31 @@ namespace Magic.Spells
         {
         }
 
-        public override bool canCast(StardewValley.Farmer player, int level)
+        public override bool canCast(Farmer player, int level)
         {
             return base.canCast(player, level) && player.yJumpVelocity == 0;
         }
 
-        public override int getManaCost(StardewValley.Farmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override void onCast(StardewValley.Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             player.jump();
-            new Shockwave(player, level);
+            return new Shockwave(player, level);
         }
 
-        private class Shockwave
+        private class Shockwave : IActiveEffect
         {
-            private StardewValley.Farmer player;
-            private int level;
+            private readonly Farmer player;
+            private readonly int level;
 
-            public Shockwave( StardewValley.Farmer player, int level )
+            public Shockwave( Farmer player, int level )
             {
                 this.player = player;
                 this.level = level;
-
-                GameEvents.UpdateTick += update;
             }
 
             private bool jumping = true;
@@ -47,7 +46,11 @@ namespace Magic.Spells
             private float landX, landY;
             private float timer = 0;
             private int currRad = 0;
-            private void update( object sender, EventArgs args )
+
+            /// <summary>Update the effect state if needed.</summary>
+            /// <param name="e">The update tick event args.</param>
+            /// <returns>Returns true if the effect is still active, or false if it can be discarded.</returns>
+            public bool Update(UpdateTickedEventArgs e)
             {
                 if (jumping)
                 {
@@ -61,14 +64,14 @@ namespace Magic.Spells
                 }
                 if (!jumping)
                 {
-                    if ( --timer > 0 )
+                    if (--timer > 0)
                     {
-                        return;
+                        return true;
                     }
                     timer = 10;
 
                     int spotsForCurrRadius = 1 + currRad * 7;
-                    for ( int i = 0; i < spotsForCurrRadius; ++i )
+                    for (int i = 0; i < spotsForCurrRadius; ++i)
                     {
                         Game1.playSound("hoeHit");
                         float ix = landX + (float)Math.Cos(Math.PI * 2 / spotsForCurrRadius * i) * currRad * Game1.tileSize;
@@ -90,10 +93,16 @@ namespace Magic.Spells
                         }
                     }
 
-                    if ( currRad >= 1 + ( level + 1 ) * 2 )
-                        GameEvents.UpdateTick -= update;
+                    if (currRad >= 1 + (level + 1) * 2)
+                        return false;
                 }
+
+                return true;
             }
+
+            /// <summary>Draw the effect to the screen if needed.</summary>
+            /// <param name="spriteBatch">The sprite batch being drawn.</param>
+            public void Draw(SpriteBatch spriteBatch) { }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using SFarmer = StardewValley.Farmer;
+﻿using StardewValley;
 
 namespace Magic.Spells
 {
@@ -8,14 +8,15 @@ namespace Magic.Spells
         {
         }
 
-        public override int getManaCost(SFarmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override void onCast(SFarmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            Log.debug(player.Name + " casted " + Id + ".");
+            Log.debug($"{player.Name} cast {Id}.");
+            return null;
         }
     }
 }

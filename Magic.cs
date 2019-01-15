@@ -1,53 +1,57 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using SpaceCore.Events;
 using StardewModdingAPI.Events;
 using Magic.Game.Interface;
 using Magic.Schools;
 using Magic.Spells;
 using StardewValley;
-using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using static Magic.Mod;
-using SpaceCore;
 using Magic.Other;
-using StardewModdingAPI;
 using StardewValley.Network;
 using Newtonsoft.Json;
 using System.IO;
+using StardewModdingAPI;
 
 namespace Magic
 {
     // TODO: Refactor this mess
     static class Magic
     {
+        private static IModEvents events;
+        private static IInputHelper inputHelper;
+
         private static Texture2D spellBg;
         private static Texture2D manaBg;
         private static Texture2D manaFg;
+
+        /// <summary>The active effects, spells, or projectiles which should be updated or drawn.</summary>
+        private static readonly IList<IActiveEffect> activeEffects = new List<IActiveEffect>();
 
         public const string MSG_DATA = "spacechase0.Magic.Data";
         public const string MSG_MINIDATA = "spacechase0.Magic.MiniData";
         public const string MSG_CAST = "spacechase0.Magic.Cast";
 
-        internal static void init()
+        internal static void init(IModEvents events, IInputHelper inputHelper, Func<long> getNewId)
         {
+            Magic.events = events;
+            Magic.inputHelper = inputHelper;
+
             loadAssets();
 
-            SpellBook.init();
+            SpellBook.init(getNewId);
 
-            SaveEvents.AfterLoad += afterLoad;
+            events.GameLoop.SaveLoaded += onSaveLoaded;
+            events.GameLoop.UpdateTicked += onUpdateTicked;
 
-            InputEvents.ButtonPressed += onKeyPress;
-            InputEvents.ButtonReleased += onKeyRelease;
+            events.Input.ButtonPressed += onButtonPressed;
+            events.Input.ButtonReleased += onButtonReleased;
             
-            TimeEvents.AfterDayStarted += onNewDay;
-            PlayerEvents.Warped += EvacSpell.onLocationChanged;
-            MineEvents.MineLevelChanged += EvacSpell.onMineLevelChanged;
-            PlayerEvents.Warped += eventChecks;
+            events.GameLoop.DayStarted += onDayStarted;
+            events.Player.Warped += onWarped;
             
             SpaceEvents.OnBlankSave += onBlankSave;
             SpaceEvents.ShowNightEndMenus += showMagicLevelMenus;
@@ -58,7 +62,8 @@ namespace Magic
             SpaceCore.Networking.RegisterMessageHandler(MSG_CAST, onNetworkCast);
             SpaceEvents.ServerGotClient += onClientConnected;
 
-            GraphicsEvents.OnPostRenderHudEvent += renderHud;
+            events.Display.RenderingHud += onRenderingHud;
+            events.Display.RenderedHud += onRenderedHud;
 
             checkForExperienceBars();
 
@@ -88,7 +93,9 @@ namespace Magic
 
         private static void onNetworkCast( IncomingMessage msg )
         {
-            Game1.getFarmer(msg.FarmerID).castSpell(msg.Reader.ReadString(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32());
+            IActiveEffect effect = Game1.getFarmer(msg.FarmerID).castSpell(msg.Reader.ReadString(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32());
+            if (effect != null)
+                activeEffects.Add(effect);
         }
 
         private static void onClientConnected(object sender, EventArgsServerGotClient args)
@@ -118,7 +125,10 @@ namespace Magic
             placeAltar("WitchHut", 6, 8, 54 * 7, SchoolId.Eldritch);
         }
 
-        public static void afterLoad( object sender, EventArgs args )
+        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        public static void onSaveLoaded( object sender, SaveLoadedEventArgs e )
         {
             Data.players[ Game1.player.UniqueMultiplayerID ].spellBook.Owner = Game1.player;
             foreach ( var farmer in Game1.otherFarmers )
@@ -127,11 +137,39 @@ namespace Magic
             }
         }
 
-        public static void renderHud( object sender, EventArgs args )
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (Game1.activeClickableMenu != null || Game1.eventUp) return;
-            if (Game1.player.getMaxMana() == 0) return;
-            SpriteBatch b = Game1.spriteBatch;
+            // update active effects
+            for (int i = activeEffects.Count - 1; i >= 0; i--)
+            {
+                IActiveEffect effect = activeEffects[i];
+                if (!effect.Update(e))
+                    activeEffects.RemoveAt(i);
+            }
+        }
+
+        /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open). Content drawn to the sprite batch at this point will appear under the HUD.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onRenderingHud( object sender, RenderingHudEventArgs e )
+        {
+            // draw active effects
+            foreach (IActiveEffect effect in activeEffects)
+                effect.Draw(e.SpriteBatch);
+        }
+
+        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        public static void onRenderedHud( object sender, RenderedHudEventArgs e )
+        {
+            if (Game1.activeClickableMenu != null || Game1.eventUp || Game1.player.getMaxMana() == 0)
+                return;
+
+            SpriteBatch b = e.SpriteBatch;
             
             Vector2 manaPos = new Vector2(20, Game1.viewport.Height - manaBg.Height * 4 - 20);
             b.Draw(manaBg, manaPos, new Rectangle(0, 0, manaBg.Width, manaBg.Height), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1);
@@ -209,29 +247,33 @@ namespace Magic
         }
 
         private static bool castPressed = false;
-        private static void onKeyPress(object sender, EventArgsInput args)
+
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (args.Button == Config.Key_Cast)
+            if (e.Button == Config.Key_Cast)
             {
                 castPressed = true;
             }
 
             if (Data == null || Game1.activeClickableMenu != null) return;
-            if (args.Button == Config.Key_SwapSpells)
+            if (e.Button == Config.Key_SwapSpells)
             {
                 Game1.player.getSpellBook().swapPreparedSet();
             }
             else if (castPressed &&
-                      (args.Button == Config.Key_Spell1 || args.Button == Config.Key_Spell2 ||
-                        args.Button == Config.Key_Spell3 || args.Button == Config.Key_Spell4))
+                      (e.Button == Config.Key_Spell1 || e.Button == Config.Key_Spell2 ||
+                        e.Button == Config.Key_Spell3 || e.Button == Config.Key_Spell4))
             {
                 int slot = 0;
-                if (args.Button == Config.Key_Spell1) slot = 0;
-                else if (args.Button == Config.Key_Spell2) slot = 1;
-                else if (args.Button == Config.Key_Spell3) slot = 2;
-                else if (args.Button == Config.Key_Spell4) slot = 3;
+                if (e.Button == Config.Key_Spell1) slot = 0;
+                else if (e.Button == Config.Key_Spell2) slot = 1;
+                else if (e.Button == Config.Key_Spell3) slot = 2;
+                else if (e.Button == Config.Key_Spell4) slot = 3;
 
-                args.SuppressButton();
+                Magic.inputHelper.Suppress(e.Button);
 
                 SpellBook book = Game1.player.getSpellBook();
                 PreparedSpell[] prepared = book.getPreparedSpells();
@@ -247,31 +289,50 @@ namespace Magic
                 if (Game1.player.canCastSpell(toCast, prep.Level))
                 {
                     Log.trace("Casting " + prep.SpellId);
-                    Game1.player.castSpell(toCast, prep.Level);
+
+                    IActiveEffect effect = Game1.player.castSpell(toCast, prep.Level);
+                    if (effect != null)
+                        activeEffects.Add(effect);
                     Game1.player.addMana(-toCast.getManaCost(Game1.player, prep.Level));
                 }
             }
         }
 
-        private static void onKeyRelease(object sender, EventArgsInput args)
+        /// <summary>Raised after the player releases a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onButtonReleased(object sender, ButtonReleasedEventArgs e)
         {
-            if (args.Button == Config.Key_Cast)
+            if (e.Button == Config.Key_Cast)
             {
                 castPressed = false;
             }
         }
 
-        private static void onNewDay(object sender, EventArgs args)
+        /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onDayStarted(object sender, DayStartedEventArgs e)
         {
             Game1.player.addMana(Game1.player.getMaxMana());
         }
 
-        private static void eventChecks( object sender, EventArgsPlayerWarped args )
+        /// <summary>Raised after a player warps to a new location.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void onWarped( object sender, WarpedEventArgs e )
         {
-            if ( args.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains( 90000 ) &&
+            if (!e.IsLocalPlayer)
+                return;
+
+            // update spells
+            EvacSpell.onLocationChanged();
+
+            // check events
+            if ( e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains( 90000 ) &&
                  Game1.player.friendshipData.ContainsKey( "Wizard" ) && Game1.player.friendshipData[ "Wizard" ].Points > 750 )
             {
-                args.NewLocation.currentEvent = new Event("WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/move farmer 0 -8 0/speak Wizard \"TODO#$b#Find one of the five altars and learn some magic.#$b#Q to start casting, then 1-4 to choose the spell.#$b#TAB to switch between spell sets.\"/textAboveHead Wizard \"MAGIC\"/pause 750/fade 750/end", 90000);
+                e.NewLocation.currentEvent = new Event("WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/move farmer 0 -8 0/speak Wizard \"TODO#$b#Find one of the five altars and learn some magic.#$b#Q to start casting, then 1-4 to choose the spell.#$b#TAB to switch between spell sets.\"/textAboveHead Wizard \"MAGIC\"/pause 750/fade 750/end", 90000);
                 Game1.eventUp = true;
                 Game1.displayHUD = false;
                 Game1.player.CanMove = false;
@@ -316,7 +377,7 @@ namespace Magic
         internal static List<int> newMagicLevels = new List<int>();
         private static void showMagicLevelMenus(object sender, EventArgsShowNightEndMenus args)
         {
-            if (newMagicLevels.Count() > 0)
+            if (newMagicLevels.Any())
             {
                 for (int i = newMagicLevels.Count() - 1; i >= 0; --i)
                 {
@@ -339,7 +400,7 @@ namespace Magic
 
         public static void placeAltar(string locName, int x, int y, int baseAltarIndex, string school)
         {
-            Log.debug("Placing altar @ " + locName + "(" + x + ", " + y + ")");
+            Log.debug($"Placing altar @ {locName}({x}, {y})");
 
             // AddTileSheet sorts the tilesheets by ID after adding them.
             // The game sometimes refers to tilesheets by their index (such as in Beach.fixBridge)
@@ -386,10 +447,13 @@ namespace Magic
             }
             
             Log.info("Experience Bars found, adding magic experience bar renderer.");
-            GraphicsEvents.OnPostRenderHudEvent += drawExperienceBar;
+            Magic.events.Display.RenderedHud += drawExperienceBar;
         }
 
-        private static void drawExperienceBar(object sender, EventArgs args_)
+        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void drawExperienceBar(object sender, RenderedHudEventArgs e)
         {
             if (Game1.activeClickableMenu != null)
                 return;
@@ -411,14 +475,14 @@ namespace Magic
                 if (api == null)
                 {
                     Log.warn("No experience bars API? Turning off");
-                    GraphicsEvents.OnPostRenderHudEvent -= drawExperienceBar;
+                    events.Display.RenderedHud -= drawExperienceBar;
                 }
                 api.DrawExperienceBar(expIcon, level, progress, new Color(0, 66, 255));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.error("Exception rendering magic experience bar: " + e);
-                GraphicsEvents.OnPostRenderHudEvent -= drawExperienceBar;
+                Log.error("Exception rendering magic experience bar: " + ex);
+                events.Display.RenderedHud -= drawExperienceBar;
             }
         }
 

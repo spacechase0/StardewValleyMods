@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Magic.Schools;
-using SFarmer = StardewValley.Farmer;
+using StardewValley;
 
 namespace Magic.Spells
 {
@@ -28,16 +28,14 @@ namespace Magic.Spells
             return 3;
         }
 
-        public abstract int getManaCost(SFarmer player, int level);
+        public abstract int getManaCost(Farmer player, int level);
 
-        public virtual bool canCast(SFarmer player, int level)
+        public virtual bool canCast(Farmer player, int level)
         {
             return player.knowsSpell(FullId, level) && player.getCurrentMana() >= getManaCost( player, level );
         }
 
-        // Support non-instant casting?
-
-        public abstract void onCast(SFarmer player, int level, int targetX, int targetY);
+        public abstract IActiveEffect onCast(Farmer player, int level, int targetX, int targetY);
 
         public virtual void loadIcon()
         {

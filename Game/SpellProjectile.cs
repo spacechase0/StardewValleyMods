@@ -1,19 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Magic;
 using Magic.Spells;
 using StardewValley;
 using StardewValley.Monsters;
 using StardewValley.Projectiles;
 using StardewValley.TerrainFeatures;
 using System;
-using SFarmer = StardewValley.Farmer;
 
 namespace Magic.Game
 {
     class SpellProjectile : Projectile
     {
-        private readonly SFarmer source;
+        private readonly Farmer source;
         private readonly ProjectileSpell spell;
         private readonly int damage;
         private readonly float dir;
@@ -22,7 +20,7 @@ namespace Magic.Game
         private Texture2D tex;
         private string texId;
 
-        public SpellProjectile(SFarmer theSource, ProjectileSpell theSpell, int dmg, float theDir, float theVel )
+        public SpellProjectile(Farmer theSource, ProjectileSpell theSpell, int dmg, float theDir, float theVel )
         {
             source = theSource;
             spell = theSpell;

@@ -1,7 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Magic.Schools;
+﻿using Magic.Schools;
 using StardewValley;
-using SFarmer = StardewValley.Farmer;
 
 namespace Magic.Spells
 {
@@ -11,7 +9,7 @@ namespace Magic.Spells
         {
         }
 
-        public override int getManaCost(SFarmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return 5;
         }
@@ -21,13 +19,15 @@ namespace Magic.Spells
             return 1;
         }
 
-        public override void onCast(SFarmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            Log.debug(player.Name + " casted Blink.");
+            Log.debug($"{player.Name} cast Blink.");
             player.position.X = targetX - player.GetBoundingBox().Width / 2;
             player.position.Y = targetY - player.GetBoundingBox().Height / 2;
             Game1.playSound("powerup");
             player.addMagicExp(5);
+
+            return null;
         }
     }
 }

@@ -10,24 +10,24 @@ namespace Magic.Spells
         {
         }
 
-        public override bool canCast(StardewValley.Farmer player, int level)
+        public override bool canCast(Farmer player, int level)
         {
             return base.canCast(player, level) && player.currentLocation is MineShaft;
         }
 
-        public override int getManaCost(StardewValley.Farmer player, int level)
+        public override int getManaCost(Farmer player, int level)
         {
             return 15;
         }
 
-        public override void onCast(StardewValley.Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             if (player != Game1.player)
-                return;
+                return null;
 
             var ms = player.currentLocation as MineShaft;
             if (ms == null)
-                return;
+                return null;
 
             int target = ms.mineLevel + 1 + 2 * level;
             if ( ms.mineLevel <= 120 && target >= 120 )
@@ -40,6 +40,7 @@ namespace Magic.Spells
             Game1.enterMine(target);
 
             player.addMagicExp(5);
+            return null;
         }
     }
 }
