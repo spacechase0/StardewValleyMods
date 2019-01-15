@@ -10,74 +10,68 @@ namespace ThreeHeartDancePartner
 {
     public class Mod : StardewModdingAPI.Mod
     {
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            GameEvents.UpdateTick += onUpdate;
+            helper.Events.Display.MenuChanged += onMenuChanged;
         }
 
-        private void onUpdate(object sender, EventArgs args)
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (Game1.currentLocation == null || Game1.currentLocation.Name != "Temp" || Game1.currentLocation.currentEvent == null)
-                return;
-            Event @event = Game1.currentLocation.currentEvent;
-            //Dictionary<string, string> data = (Dictionary<string, string>)Util.GetInstanceField(typeof(Event), @event, "festivalData");
-
-            if (!@event.FestivalName.Equals("Flower Dance"))
+            // get dialog box
+            if (!(e.NewMenu is DialogueBox dialogBox))
                 return;
 
-            foreach ( NPC npc in @event.actors )
+            // get festival
+            Event festival = Game1.currentLocation?.currentEvent;
+            if (Game1.currentLocation?.Name != "Temp" || festival?.FestivalName != "Flower Dance")
+                return;
+
+            // check if rejection dialogue
+            Dialogue dialog = this.Helper.Reflection.GetField<Dialogue>(dialogBox, "characterDialogue").GetValue();
+            NPC npc = dialog.speaker;
+            if (!npc.datable.Value || npc.HasPartnerForDance)
+                return;
+            string rejectionText = new Dialogue(Game1.content.Load<Dictionary<string, string>>($"Characters\\Dialogue\\{dialog.speaker.Name}")["danceRejection"], dialog.speaker).getCurrentDialogue();
+            if (dialog.getCurrentDialogue() != rejectionText)
+                return;
+
+            // replace with accept dialog
+            // The original stuff, only the relationship point check is modified. (1000 -> 750)
+            if (!npc.HasPartnerForDance && Game1.player.getFriendshipLevelForNPC(npc.Name) >= 750)
             {
-                if ( !npc.datable.Value || npc.HasPartnerForDance) continue;
+                string s = "";
+                switch (npc.Gender)
+                {
+                    case NPC.male:
+                        s = Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1633");
+                        break;
+                    case NPC.female:
+                        s = Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1634");
+                        break;
+                }
                 try
                 {
-                    if (npc.CurrentDialogue.Count() <= 0) return;
-                    Dialogue reject = new Dialogue( Game1.content.Load<Dictionary<string, string>>("Characters\\Dialogue\\" + npc.name)["danceRejection"], npc );
-                    Dialogue curr = npc.CurrentDialogue.Peek();
-                    if (reject == null || curr == null) continue;
-
-                    //Log.Async("Dialogue " + curr.getCurrentDialogue() + " " + reject.getCurrentDialogue());
-                    if ( curr.getCurrentDialogue() == reject.getCurrentDialogue() )
-                    {
-                        NPC who = npc;
-                        // The original stuff, only the relationship point check is modified. (1000 -> 750)
-                        if (!who.HasPartnerForDance && Game1.player.getFriendshipLevelForNPC(who.Name) >= 750)
-                        {
-                            string s = "";
-                            switch (who.Gender)
-                            {
-                                case 0:
-                                    s = "You want to be my partner for the flower dance?#$b#Okay. I look forward to it.$h";
-                                    break;
-                                case 1:
-                                    s = "You want to be my partner for the flower dance?#$b#Okay! I'd love to.$h";
-                                    break;
-                            }
-                            try
-                            {
-                                Game1.player.changeFriendship(250, Game1.getCharacterFromName(who.Name));
-                            }
-                            catch (Exception)
-                            {
-                            }
-                            Game1.player.dancePartner.Value = (Character)who;
-                            who.setNewDialogue(s, false, false);
-
-                            foreach (NPC actor in @event.actors)
-                            {
-                                if (actor.CurrentDialogue != null && actor.CurrentDialogue.Count > 0 && actor.CurrentDialogue.Peek().getCurrentDialogue().Equals("..."))
-                                    actor.CurrentDialogue.Clear();
-                            }
-
-                            // Okay, looks like I need to fix the current dialog box
-                            Game1.activeClickableMenu = new DialogueBox(new Dialogue(s, who) { removeOnNextMove = false });
-                        }
-                    }
+                    Game1.player.changeFriendship(250, Game1.getCharacterFromName(npc.Name));
                 }
-                catch ( Exception e)
+                catch (Exception)
                 {
-                    this.Monitor.Log("Exception: " + e, LogLevel.Error);
-                    continue;
                 }
+                Game1.player.dancePartner.Value = npc;
+                npc.setNewDialogue(s);
+
+                foreach (NPC actor in festival.actors)
+                {
+                    if (actor.CurrentDialogue != null && actor.CurrentDialogue.Count > 0 && actor.CurrentDialogue.Peek().getCurrentDialogue().Equals("..."))
+                        actor.CurrentDialogue.Clear();
+                }
+
+                // Okay, looks like I need to fix the current dialog box
+                Game1.activeClickableMenu = new DialogueBox(new Dialogue(s, npc) { removeOnNextMove = false });
             }
         }
     }
