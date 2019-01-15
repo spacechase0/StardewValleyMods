@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -17,21 +13,26 @@ namespace MoreGrassStarters
     {
         public static Mod instance;
 
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            MenuEvents.MenuChanged += menuChanged;
+
+            helper.Events.Display.MenuChanged += onMenuChanged;
 
             if ( File.Exists(Path.Combine(Helper.DirectoryPath, "grass.png")) )
             {
                 GrassStarterItem.tex2 = Mod.instance.Helper.Content.Load<Texture2D>("grass.png");
             }
         }
-        
-        private void menuChanged(object sender, EventArgsClickableMenuChanged args)
+
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            var menu = args.NewMenu as ShopMenu;
-            if (menu == null || menu.portraitPerson == null)
+            if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson == null)
                 return;
 
             if (menu.portraitPerson.Name == "Pierre")
