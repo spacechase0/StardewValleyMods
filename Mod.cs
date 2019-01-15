@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Menus;
-using StardewValley.Objects;
-using StardewValley.Tools;
-using Object = StardewValley.Object;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -27,13 +20,14 @@ namespace ExperienceBars
         public static bool renderLuck = false;
         public static int expBottom = 0;
         public static bool show = true;
+        private static bool stopLevelExtenderCompat = false;
 
         public override void Entry( IModHelper helper )
         {
             Config = helper.ReadConfig<Configuration>();
 
-            GraphicsEvents.OnPostRenderHudEvent += renderExpBars;
-            ControlEvents.KeyPressed += checkToggle;
+            helper.Events.Display.RenderedHud += onRenderedHud;
+            helper.Events.Input.ButtonPressed += onButtonPressed;
         }
 
         public override object GetApi()
@@ -41,19 +35,26 @@ namespace ExperienceBars
             return new Api();
         }
 
-        public void checkToggle(object sender, EventArgs args)
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        public void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            EventArgsKeyPressed pressed = args as EventArgsKeyPressed;
-            if ( pressed.KeyPressed == Config.ToggleDisplay.key )
+            if ( e.Button == Config.ToggleBars )
             {
                 show = !show;
             }
         }
 
-        private static bool stopLevelExtenderCompat = false;
-        public void renderExpBars(object sender, EventArgs args)
+        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        public void onRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (!show || Game1.activeClickableMenu != null) return;
+            // renderExpBars
+
+            if (!show || Game1.activeClickableMenu != null)
+                return;
             
             int[] skills = new int[]
             {
@@ -84,9 +85,9 @@ namespace ExperienceBars
                     }
                     foundLevelExtender = true;
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Monitor.Log("Exception during level extender compat: " + e, LogLevel.Error);
+                    Monitor.Log("Exception during level extender compat: " + ex, LogLevel.Error);
                     stopLevelExtenderCompat = true;
                 }
             }

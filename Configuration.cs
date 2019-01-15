@@ -1,15 +1,9 @@
-﻿using Microsoft.Xna.Framework.Input;
-using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StardewModdingAPI;
 
 namespace ExperienceBars
 {
     public class Configuration
     {
-        public InputButton ToggleDisplay { get; set; } = new InputButton(Keys.X);
+        public SButton ToggleBars { get; set; } = SButton.X;
     }
 }

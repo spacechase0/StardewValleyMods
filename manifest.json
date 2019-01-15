@@ -4,8 +4,8 @@
   "Version": "1.1.3",
   "Description": "Shows experience bars in the top-left corner.",
   "UniqueID": "spacechase0.ExperienceBars",
-  "PerSaveConfigs": false,
   "EntryDll": "ExperienceBars.dll",
+  "MinimumApiVersion": "2.9.0",
   "UpdateKeys": [ "Nexus:509", "Chucklefish:3905" ],
   "spacechase0": "experience-bars"
 }
