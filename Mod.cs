@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using Microsoft.Xna.Framework.Input;
 using StardewValley;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using Microsoft.Xna.Framework;
 
 namespace FlowerColorPicker
 {
@@ -17,37 +11,35 @@ namespace FlowerColorPicker
     {
         public static Mod instance;
 
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
 
-            ControlEvents.MouseChanged += onMouseChanged;
+            helper.Events.Input.ButtonPressed += onButtonPressed;
         }
 
-        private void onMouseChanged( object sender, EventArgsMouseStateChanged args )
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (!Context.IsWorldReady)
-                return;
-            if (!(args.NewState.LeftButton == ButtonState.Pressed && args.PriorState.LeftButton == ButtonState.Released))
+            if (!Context.IsWorldReady || e.Button != SButton.MouseLeft)
                 return;
 
-            float mouseTileX = (args.NewPosition.X + Game1.viewport.X) / Game1.tileSize;
-            float mouseTileY = (args.NewPosition.Y + Game1.viewport.Y) / Game1.tileSize;
-            Vector2 mouseTilePos = new Vector2(mouseTileX, mouseTileY);
-
-            if (!Game1.player.currentLocation.terrainFeatures.ContainsKey(mouseTilePos))
+            // get dirt under cursor
+            Vector2 mouseTilePos = e.Cursor.Tile;
+            if (!Game1.player.currentLocation.terrainFeatures.TryGetValue(mouseTilePos, out TerrainFeature terrainFeature) || !(terrainFeature is HoeDirt dirt))
                 return;
 
-            var holding = Game1.player.ActiveObject as ColoredObject;
-            var hoeDirt = Game1.player.currentLocation.terrainFeatures[mouseTilePos] as HoeDirt;
-            if (hoeDirt != null && hoeDirt.crop != null)
-            {
-                //hoeDirt.crop.growCompletely();
-            }
-            if (holding == null || hoeDirt == null || hoeDirt.crop == null || holding.ParentSheetIndex != hoeDirt.crop.indexOfHarvest.Value)
+            // get held colored object
+            if (!(Game1.player.ActiveObject is ColoredObject held))
                 return;
-            
-            hoeDirt.crop.tintColor.Value = holding.color.Value;
+
+            // apply color
+            if (dirt.crop != null && held.ParentSheetIndex == dirt.crop.indexOfHarvest.Value)
+                dirt.crop.tintColor.Value = held.color.Value;
         }
     }
 }
