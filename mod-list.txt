@@ -1,0 +1,42 @@
+## This file contains a list of GitHub repositories to sync.
+## Each line should contain a repository name.
+## Blank lines, or those starting with #, are ignored.
+
+# main mods
+BetterShopMenu
+BiggerBackpack
+Bow
+CarryChest
+ColorfulChests
+ConsoleCode
+CookingSkill
+CustomCritters
+CustomizeExterior
+ExperienceBars
+ExtendedReach
+FlowerColorPicker
+JsonAssets
+JumpOver
+LuckSkill
+Magic
+MapImageExporter
+MoreBuildings
+MoreGrassStarters
+MoreMachines
+MoreRings
+ObjectTimeLeft
+RushOrders
+SeedCatalogue
+SleepyEye
+SpaceCore_SDV
+Spenny
+ThreeHeartDancePartner
+ToolGeodes
+
+# archived
+Cobalt
+CustomCrops
+CustomFarmTypes
+EventRemembrance
+ShipAnywhere
+StardewValleyMP
