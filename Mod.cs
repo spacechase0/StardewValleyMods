@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StardewModdingAPI;
-using StardewModdingAPI.Events;
 using MoreRings.Other;
 using System.IO;
 using StardewValley.Menus;
 using StardewValley;
 using SpaceCore.Events;
+using StardewModdingAPI.Events;
 
 namespace MoreRings
 {
@@ -23,18 +19,23 @@ namespace MoreRings
         public int Ring_DiamondBooze { get { return ja.GetObjectId("Ring of Diamond Booze"); } }
         public int Ring_Refresh { get { return ja.GetObjectId("Refreshing Ring"); } }
 
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
 
-            GameEvents.FirstUpdateTick += firstUpdate;
-            MenuEvents.MenuChanged += menuChanged;
-            GameEvents.OneSecondTick += oneSecond;
+            helper.Events.GameLoop.GameLaunched += onGameLaunched;
+            helper.Events.Display.MenuChanged += onMenuChanged;
+            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
 
             SpaceEvents.OnItemEaten += onItemEaten;
         }
 
-        private void firstUpdate(object sender, EventArgs args)
+        /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var api = Helper.ModRegistry.GetApi<JsonAssetsApi>("spacechase0.JsonAssets");
             if ( api == null )
@@ -47,9 +48,12 @@ namespace MoreRings
             api.LoadAssets(Path.Combine(Helper.DirectoryPath, "assets"));
         }
 
-        private void menuChanged(object sender, EventArgsClickableMenuChanged args)
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( args.NewMenu is BobberBar bobber && hasRingEquipped( Ring_Fishing_LargeBar ) > 0 )
+            if ( e.NewMenu is BobberBar bobber && hasRingEquipped( Ring_Fishing_LargeBar ) > 0 )
             {
                 var field = Helper.Reflection.GetField<int>(bobber, "bobberBarHeight");
                 field.SetValue((int)(field.GetValue() * 1.50));
@@ -58,9 +62,13 @@ namespace MoreRings
 
         private int regenCounter = 0;
         private int refreshCounter = 0;
-        private void oneSecond(object sender, EventArgs args)
+
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (!Context.IsWorldReady || !Context.IsPlayerFree)
+            if (!Context.IsPlayerFree || !e.IsOneSecond)
                 return;
 
             if ( hasRingEquipped( Ring_Combat_Regen ) > 0 && regenCounter++ >= 4 / hasRingEquipped( Ring_Combat_Regen ) )
