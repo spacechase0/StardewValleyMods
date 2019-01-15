@@ -4,8 +4,8 @@
   "Version": "1.1.1",
   "Description": "Lets you jump over things.",
   "UniqueID": "spacechase0.JumpOver",
-  "PerSaveConfigs": false,
   "EntryDll": "JumpOver.dll",
+  "MinimumApiVersion": "2.9.0",
   "UpdateKeys": [ "Nexus:1844", "Chucklefish:5190" ],
   "spacechase0": "jump-over"
 }

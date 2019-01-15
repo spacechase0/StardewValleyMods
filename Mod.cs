@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using Microsoft.Xna.Framework.Input;
 using StardewValley;
-using Microsoft.Xna.Framework;
 
 namespace JumpOver
 {
@@ -16,49 +10,60 @@ namespace JumpOver
         public static Mod instance;
         public static Configuration Config;
 
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             instance = this;
             Config = helper.ReadConfig<Configuration>();
 
-            InputEvents.ButtonPressed += keyPressed;
+            helper.Events.Input.ButtonPressed += onButtonPressed;
         }
 
-        private void keyPressed(object sender, EventArgsInput args)
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             if (!Context.IsWorldReady || !Context.IsPlayerFree || Game1.activeClickableMenu != null)
                 return;
             
-            if ( args.Button == Config.keyJump && Game1.player.yJumpVelocity == 0 )
+            if ( e.Button == Config.keyJump && Game1.player.yJumpVelocity == 0 )
             {
                 // This is terrible for this case, redo it
-                new Jump(Game1.player);
+                new Jump(Game1.player, Helper.Events);
             }
         }
 
         internal class Jump
         {
-            private StardewValley.Farmer player;
+            private readonly Farmer player;
+            private readonly IModEvents events;
             private float prevJumpVel = 0;
+
             //private bool wasGoingOver = false;
 
-            public Jump(StardewValley.Farmer thePlayer)
+            public Jump(StardewValley.Farmer thePlayer, IModEvents events)
             {
                 player = thePlayer;
+                this.events = events;
                 prevJumpVel = player.yJumpVelocity;
 
                 player.jump(8);
 
-                GameEvents.UpdateTick += update;
+                events.GameLoop.UpdateTicked += onUpdateTicked;
             }
 
-            private void update(object sender, EventArgs args)
+            /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+            /// <param name="sender">The event sender.</param>
+            /// <param name="e">The event arguments.</param>
+            private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
             {
                 if (player.yJumpVelocity == 0 && prevJumpVel < 0)
                 {
                     player.canMove = true;
 
-                    GameEvents.UpdateTick -= update;
+                    events.GameLoop.UpdateTicked -= onUpdateTicked;
                 }
                 else
                 {
@@ -85,7 +90,7 @@ namespace JumpOver
                     bool n1 = player.currentLocation.isCollidingPosition(bb1, Game1.viewport, true, 0, false, player);
                     bool n2 = player.currentLocation.isCollidingPosition(bb2, Game1.viewport, true, 0, false, player);
 
-                    Log.trace($"{n0} {n1} {n2}");
+                    //Log.trace($"{n0} {n1} {n2}");
                     if ( n0 || ( !n0 && n1 && !n2 ) /*|| wasGoingOver*/ )
                     {
                         //wasGoingOver = true;
