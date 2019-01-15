@@ -2,10 +2,7 @@
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CSharp;
 using StardewModdingAPI;
 
@@ -19,17 +16,17 @@ namespace ConsoleCode
         {
             instance = this;
 
-            Helper.ConsoleCommands.Add("cs", "Execute C# code.", commands);
+            helper.ConsoleCommands.Add("cs", "Execute C# code.", onCommandReceived);
         }
 
-        private void commands( string cmd, string[] args )
+        private void onCommandReceived( string cmd, string[] args )
         {
             string line = string.Join(" ", args);
             if ( args[0] == "--script" )
             {
                 line = File.ReadAllText(Path.Combine(Helper.DirectoryPath, args[1]));
             }
-            Log.trace("Input: " + line);
+            Log.trace($"Input: {line}");
             try
             {
                 var func = makeFunc(line);
@@ -39,14 +36,14 @@ namespace ConsoleCode
                 else if (result is string)
                     Log.info($"Output: \"{result}\"");
                 else
-                    Log.info("Output: " + result);
+                    Log.info($"Output: {result}");
             }
             catch (CompilationException e)
             {
                 Log.error("Error(s) when compiling: ");
-                foreach ( var error in e.Results.Errors )
+                foreach ( CompilerError error in e.Results.Errors )
                 {
-                    Log.error("" + error);
+                    Log.error($"{error}");
                 }
             }
             catch (Exception e)
