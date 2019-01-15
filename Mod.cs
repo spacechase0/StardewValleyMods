@@ -1,15 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using StardewModdingAPI;
-using StardewModdingAPI.Events;
+﻿using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Locations;
 using StardewValley.Menus;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StardewModdingAPI.Events;
 
 namespace SleepyEye
 {
@@ -21,26 +14,25 @@ namespace SleepyEye
         {
             instance = this;
 
-            MenuEvents.MenuChanged += onMenuChange;
+            helper.Events.Display.MenuChanged += onMenuChanged;
         }
 
-        private void onMenuChange( object sender, EventArgsClickableMenuChanged args )
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void onMenuChanged( object sender, MenuChangedEventArgs e )
         {
-            var menu = args.NewMenu as ShopMenu;
-            if (menu == null || menu.portraitPerson == null)
+            if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson.Name != "Pierre")
                 return;
 
-            if ( menu.portraitPerson.Name == "Pierre" )
-            {
-                Log.debug("Adding tent to shop");
+            Log.debug("Adding tent to shop");
 
-                var forSale = Helper.Reflection.GetField<List<Item>>(menu, "forSale").GetValue();
-                var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(menu, "itemPriceAndStock").GetValue();
+            var forSale = Helper.Reflection.GetField<List<Item>>(menu, "forSale").GetValue();
+            var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(menu, "itemPriceAndStock").GetValue();
 
-                var item = new TentTool();
-                forSale.Add(item);
-                itemPriceAndStock.Add(item, new int[] { item.salePrice(), item.Stack });
-            } 
+            var item = new TentTool();
+            forSale.Add(item);
+            itemPriceAndStock.Add(item, new int[] { item.salePrice(), item.Stack });
         }
     }
 }
