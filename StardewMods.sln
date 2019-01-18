@@ -85,6 +85,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "archived", "archived", "{F1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiled.Net", "Tiled.Net\Tiled.Net\Tiled.Net.csproj", "{28AA2641-4E18-415D-B0AF-6BBE3846E50B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimalSocialMenu", "AnimalSocialMenu\AnimalSocialMenu.csproj", "{A4B257C6-803A-4CC8-82F9-86AB0FDFDC28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -381,6 +383,14 @@ Global
 		{28AA2641-4E18-415D-B0AF-6BBE3846E50B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{28AA2641-4E18-415D-B0AF-6BBE3846E50B}.Release|x86.ActiveCfg = Release|Any CPU
 		{28AA2641-4E18-415D-B0AF-6BBE3846E50B}.Release|x86.Build.0 = Release|Any CPU
+		{A4B257C6-803A-4CC8-82F9-86AB0FDFDC28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4B257C6-803A-4CC8-82F9-86AB0FDFDC28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4B257C6-803A-4CC8-82F9-86AB0FDFDC28}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A4B257C6-803A-4CC8-82F9-86AB0FDFDC28}.Debug|x86.Build.0 = Debug|Any CPU
+		{A4B257C6-803A-4CC8-82F9-86AB0FDFDC28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4B257C6-803A-4CC8-82F9-86AB0FDFDC28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4B257C6-803A-4CC8-82F9-86AB0FDFDC28}.Release|x86.ActiveCfg = Release|Any CPU
+		{A4B257C6-803A-4CC8-82F9-86AB0FDFDC28}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

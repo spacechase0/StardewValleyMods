@@ -3,6 +3,7 @@
 ## Blank lines, or those starting with #, are ignored.
 
 # main mods
+AnimalSocialMenu
 BetterShopMenu
 BiggerBackpack
 Bow
