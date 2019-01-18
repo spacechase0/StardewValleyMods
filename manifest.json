@@ -1,7 +1,7 @@
 {
    "Name": "Better Shop Menu",
    "Author": "spacechase0",
-   "Version": "1.0.1",
+   "Version": "1.0.2",
    "Description": "Adds buttons to filter shops by category, and sort by item name or price.",
    "UniqueID": "spacechase0.BetterShopMenu",
    "EntryDll": "BetterShopMenu.dll",
