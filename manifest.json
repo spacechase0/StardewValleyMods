@@ -1,7 +1,7 @@
 {
   "Name": "Extended Reach",
   "Author": "spacechase0",
-  "Version": "1.0.1",
+  "Version": "1.0.2",
   "Description": "Reach tile actions like chests or the mailbox from anywhere.",
   "UniqueID": "spacechase0.ExtendedReach",
   "EntryDll": "ExtendedReach.dll",
