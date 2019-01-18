@@ -203,7 +203,11 @@ namespace CustomizeExterior
         private void compileChoices()
         {
             Log.info("Creating list of building choices...");
-            var choices = Directory.GetDirectories(Path.Combine(Helper.DirectoryPath, "Buildings"));
+            var buildingsPath = Path.Combine(Helper.DirectoryPath, "Buildings");
+            if (!Directory.Exists(buildingsPath))
+                Directory.CreateDirectory(buildingsPath);
+
+            var choices = Directory.GetDirectories(buildingsPath);
             foreach ( var choice in choices )
             {
                 if (choice == "spring" || choice == "summer" || choice == "fall" || choice == "winter")
