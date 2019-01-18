@@ -22,7 +22,6 @@ Magic
 MapImageExporter
 MoreBuildings
 MoreGrassStarters
-MoreMachines
 MoreRings
 ObjectTimeLeft
 RushOrders
@@ -38,5 +37,6 @@ Cobalt
 CustomCrops
 CustomFarmTypes
 EventRemembrance
+MoreMachines
 ShipAnywhere
 StardewValleyMP
