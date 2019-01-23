@@ -19,6 +19,8 @@ namespace MoreRings
         public int Ring_DiamondBooze { get { return ja.GetObjectId("Ring of Diamond Booze"); } }
         public int Ring_Refresh { get { return ja.GetObjectId("Refreshing Ring"); } }
 
+        private MoreRingsApi moreRings;
+
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
@@ -46,6 +48,8 @@ namespace MoreRings
             ja = api;
 
             api.LoadAssets(Path.Combine(Helper.DirectoryPath, "assets"));
+
+            moreRings = Helper.ModRegistry.GetApi<MoreRingsApi>("bcmpinc.WearMoreRings");
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
@@ -130,6 +134,9 @@ namespace MoreRings
 
         private int hasRingEquipped( int id )
         {
+            if (moreRings != null)
+                return moreRings.CountEquippedRings(Game1.player, id);
+
             int num = 0;
             if (Game1.player.leftRing.Value != null && Game1.player.leftRing.Value.ParentSheetIndex == id)
                 ++num;

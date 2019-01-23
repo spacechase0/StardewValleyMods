@@ -44,6 +44,7 @@
     <Compile Include="Log.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Other\JsonAssetsApi.cs" />
+    <Compile Include="Other\MoreRingsApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
