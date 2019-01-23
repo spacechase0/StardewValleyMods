@@ -58,11 +58,20 @@ namespace AnimalSocialMenu
         // This draws over it with the social icon instead of the inventory one
         private void drawSocialIcon(object sender, RenderedActiveMenuEventArgs e)
         {
-            var menu = Game1.activeClickableMenu as GameMenu;
-            if (menu.invisible)
+            // For some reason this check is necessary despite removing it in the onMenuChanged event.
+            if (!(Game1.activeClickableMenu is GameMenu menu))
+            {
+                Helper.Events.Display.RenderedActiveMenu -= drawSocialIcon;
+                return;
+            }
+            if (menu.invisible || myTabIndex == -1)
                 return;
 
             var tabs = Helper.Reflection.GetField<List<ClickableComponent>>(menu, "tabs").GetValue();
+            if (tabs.Count <= myTabIndex)
+            {
+                return;
+            }
             var tab = tabs[myTabIndex];
             e.SpriteBatch.Draw(Game1.mouseCursors, new Vector2((float)tab.bounds.X, (float)(tab.bounds.Y + (menu.currentTab == menu.getTabNumberFromName(tab.name) ? 8 : 0))), new Rectangle?(new Rectangle(2 * 16, 368, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.0001f);
 
