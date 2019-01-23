@@ -6,6 +6,8 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewValley.Locations;
+using Microsoft.Xna.Framework.Input;
 
 // TODO: Render on skills page?
 
@@ -42,7 +44,16 @@ namespace ExperienceBars
         {
             if ( e.Button == Config.ToggleBars )
             {
-                show = !show;
+                if (show && (Game1.GetKeyboardState().IsKeyDown(Keys.LeftShift) || Game1.GetKeyboardState().IsKeyDown(Keys.RightShift)))
+                {
+                    Config.X = (int)e.Cursor.ScreenPixels.X;
+                    Config.Y = (int)e.Cursor.ScreenPixels.Y;
+                    Helper.WriteConfig(Config);
+                }
+                else
+                {
+                    show = !show;
+                }
             }
         }
 
@@ -92,9 +103,10 @@ namespace ExperienceBars
                 }
             }
 
-            int x = 10;
-            int y = 10;
-            if (Game1.player.currentLocation != null && Game1.player.currentLocation.Name == "UndergroundMine")
+            int x = Config.X;
+            int y = Config.Y; ;
+            if (Game1.player.currentLocation != null && Game1.player.currentLocation is MineShaft &&
+                x <= 25 && y <= 75)
                 y += 75;
             for ( int i = 0; i < (renderLuck ? 6 : 5); ++i )
             {
