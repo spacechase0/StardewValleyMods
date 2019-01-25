@@ -19,6 +19,7 @@ using Harmony;
 using System.Text.RegularExpressions;
 using JsonAssets.Overrides;
 using Newtonsoft.Json;
+using StardewValley.Tools;
 
 // TODO: Refactor recipes
 
@@ -269,7 +270,7 @@ namespace JsonAssets
                 }
             }
 
-            // load objects
+            // load hats
             DirectoryInfo hatsDir = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Hats"));
             if (hatsDir.Exists)
             {
@@ -285,6 +286,26 @@ namespace JsonAssets
                     // save object
                     hat.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/hat.png");
                     hats.Add(hat);
+                }
+            }
+
+            // Load weapons
+            // load objects
+            DirectoryInfo weaponsDir = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Weapons"));
+            if (weaponsDir.Exists)
+            {
+                foreach (DirectoryInfo dir in weaponsDir.EnumerateDirectories())
+                {
+                    string relativePath = $"Weapons/{dir.Name}";
+
+                    // load data
+                    WeaponData weapon = contentPack.ReadJsonFile<WeaponData>($"{relativePath}/weapon.json");
+                    if (weapon == null)
+                        continue;
+
+                    // save object
+                    weapon.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/weapon.png");
+                    weapons.Add(weapon);
                 }
             }
         }
@@ -313,6 +334,7 @@ namespace JsonAssets
             clearIds(out fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
             clearIds(out bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
             clearIds(out hatIds, hats.ToList<DataNeedsId>());
+            clearIds(out weaponIds, weapons.ToList<DataNeedsId>());
 
             var editor = Helper.Content.AssetEditors.FirstOrDefault(p => p is ContentInjector);
             if (editor != null)
@@ -424,6 +446,20 @@ namespace JsonAssets
                         Log.trace($"\tAdding {hat.Name}");
                     }
                 }
+                foreach (var weapon in weapons)
+                {
+                    if (!weapon.CanPurchase)
+                        continue;
+                    if (weapon.PurchaseFrom != menu.portraitPerson?.Name || (weapon.PurchaseFrom == "HatMouse" && hatMouse))
+                        continue;
+                    if (weapon.PurchaseRequirements != null && weapon.PurchaseRequirements.Count > 0 &&
+                        precondMeth.Invoke<int>(new object[] { weapon.GetPurchaseRequirementString() }) == -1)
+                        continue;
+                    Item item = new StardewValley.Tools.MeleeWeapon(weapon.id);
+                    forSale.Add(item);
+                    itemPriceAndStock.Add(item, new int[] { weapon.PurchasePrice, int.MaxValue });
+                    Log.trace($"\tAdding {weapon.Name}");
+                }
             }
 
             ( ( Api ) api ).InvokeAddedItemsToShop();
@@ -446,6 +482,7 @@ namespace JsonAssets
             oldFruitTreeIds = LoadDictionary<string, int>("ids-fruittrees.json");
             oldBigCraftableIds = LoadDictionary<string, int>("ids-big-craftables.json");
             oldHatIds = LoadDictionary<string, int>("ids-hats.json");
+            oldWeaponIds = LoadDictionary<string, int>("ids-weapons.json");
 
             // assign IDs
             objectIds = AssignIds("objects", StartingObjectId, objects.ToList<DataNeedsId>());
@@ -453,6 +490,7 @@ namespace JsonAssets
             fruitTreeIds = AssignIds("fruittrees", StartingFruitTreeId, fruitTrees.ToList<DataNeedsId>());
             bigCraftableIds = AssignIds("big-craftables", StartingBigCraftableId, bigCraftables.ToList<DataNeedsId>());
             hatIds = AssignIds("hats", StartingHatId, hats.ToList<DataNeedsId>());
+            weaponIds = AssignIds("weapons", StartingWeaponId, weapons.ToList<DataNeedsId>());
 
             fixIdsEverywhere();
             api.InvokeIdsAssigned();
@@ -493,6 +531,7 @@ namespace JsonAssets
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(fruitTreeIds));
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(bigCraftableIds));
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(hatIds));
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(weaponIds));
         }
 
         internal IList<ObjectData> myRings = new List<ObjectData>();
@@ -525,30 +564,35 @@ namespace JsonAssets
         private const int StartingFruitTreeId = 10;
         private const int StartingBigCraftableId = 300;
         private const int StartingHatId = 50;
+        private const int StartingWeaponId = 64;
 
         internal IList<ObjectData> objects = new List<ObjectData>();
         internal IList<CropData> crops = new List<CropData>();
         internal IList<FruitTreeData> fruitTrees = new List<FruitTreeData>();
         internal IList<BigCraftableData> bigCraftables = new List<BigCraftableData>();
         internal IList<HatData> hats = new List<HatData>();
+        internal IList<WeaponData> weapons = new List<WeaponData>();
 
         internal IDictionary<string, int> objectIds;
         internal IDictionary<string, int> cropIds;
         internal IDictionary<string, int> fruitTreeIds;
         internal IDictionary<string, int> bigCraftableIds;
         internal IDictionary<string, int> hatIds;
+        internal IDictionary<string, int> weaponIds;
 
         internal IDictionary<string, int> oldObjectIds;
         internal IDictionary<string, int> oldCropIds;
         internal IDictionary<string, int> oldFruitTreeIds;
         internal IDictionary<string, int> oldBigCraftableIds;
         internal IDictionary<string, int> oldHatIds;
+        internal IDictionary<string, int> oldWeaponIds;
 
         internal IDictionary<int, string> origObjects;
         internal IDictionary<int, string> origCrops;
         internal IDictionary<int, string> origFruitTrees;
         internal IDictionary<int, string> origBigCraftables;
         internal IDictionary<int, string> origHats;
+        internal IDictionary<int, string> origWeapons;
 
         public int ResolveObjectId(object data)
         {
@@ -614,6 +658,7 @@ namespace JsonAssets
             origFruitTrees = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\fruitTrees"), fruitTreeIds);
             origBigCraftables = cloneIdDictAndRemoveOurs(Game1.bigCraftablesInformation, bigCraftableIds);
             origHats = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\hats"), hatIds);
+            origWeapons = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\weapons"), weaponIds);
 
             fixItemList(Game1.player.Items);
             foreach ( var loc in Game1.locations )
@@ -773,6 +818,15 @@ namespace JsonAssets
                 else if ( item is Hat hat )
                 {
                     if (fixId(oldHatIds, hatIds, hat.which, origHats))
+                        items[i] = null;
+                }
+                else if ( item is MeleeWeapon weapon )
+                {
+                    if (fixId(oldWeaponIds, weaponIds, weapon.initialParentTileIndex, origWeapons))
+                        items[i] = null;
+                    else if (fixId(oldWeaponIds, weaponIds, weapon.currentParentTileIndex, origWeapons))
+                        items[i] = null;
+                    else if (fixId(oldWeaponIds, weaponIds, weapon.currentParentTileIndex, origWeapons))
                         items[i] = null;
                 }
             }

@@ -26,6 +26,8 @@ namespace JsonAssets
                 return true;
             if (asset.AssetNameEquals("Data\\hats"))
                 return true;
+            if (asset.AssetNameEquals("Data\\weapons"))
+                return true;
             if (asset.AssetNameEquals("Data\\NPCGiftTastes"))
                 return true;
             if (asset.AssetNameEquals("Maps\\springobjects"))
@@ -37,6 +39,8 @@ namespace JsonAssets
             if (asset.AssetNameEquals("TileSheets\\Craftables") || asset.AssetNameEquals("TileSheets\\Craftables_indoor") || asset.AssetNameEquals("TileSheets\\Craftables_outdoor"))
                 return true; // _indoor/_outdoor for Seasonal Immersion compat
             if (asset.AssetNameEquals("Characters\\Farmer\\hats"))
+                return true;
+            if (asset.AssetNameEquals("TileSheets\\weapons"))
                 return true;
             return false;
         }
@@ -174,6 +178,22 @@ namespace JsonAssets
                     catch (Exception e)
                     {
                         Log.error($"Exception injecting hat information for {hat.Name}: {e}");
+                    }
+                }
+            }
+            else if (asset.AssetNameEquals("Data\\weapons"))
+            {
+                var data = asset.AsDictionary<int, string>().Data;
+                foreach (var weapon in Mod.instance.weapons)
+                {
+                    try
+                    {
+                        Log.trace($"Injecting to hats: {weapon.GetWeaponId()}: {weapon.GetWeaponInformation()}");
+                        data.Add(weapon.GetWeaponId(), weapon.GetWeaponInformation());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error($"Exception injecting hat information for {weapon.Name}: {e}");
                     }
                 }
             }
@@ -342,6 +362,27 @@ namespace JsonAssets
                     }
                 }
             }
+            else if (asset.AssetNameEquals("TileSheets\\weapons"))
+            {
+                var oldTex = asset.AsImage().Data;
+                Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
+                asset.ReplaceWith(newTex);
+                asset.AsImage().PatchImage(oldTex);
+                Log.trace($"Weapons are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
+
+                foreach (var weapon in Mod.instance.weapons)
+                {
+                    try
+                    {
+                        Log.trace($"Injecting {weapon.Name} sprites @ {hatRect(weapon.GetWeaponId())}");
+                        asset.AsImage().PatchImage(weapon.texture, null, weaponRect(weapon.GetWeaponId()));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error($"Exception injecting sprite for {weapon.Name}: {e}");
+                    }
+                }
+            }
         }
         private Rectangle objectRect(int index)
         {
@@ -362,6 +403,10 @@ namespace JsonAssets
         private Rectangle hatRect(int index)
         {
             return new Rectangle(index % 12 * 20, index / 12 * 80, 20, 80);
+        }
+        private Rectangle weaponRect(int index)
+        {
+            return new Rectangle(index % 8 * 16, index / 8 * 16, 16, 16);
         }
     }
 }

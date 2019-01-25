@@ -52,6 +52,7 @@
     <Compile Include="Data\DataNeedsId.cs" />
     <Compile Include="Data\BigCraftableData.cs" />
     <Compile Include="Data\HatData.cs" />
+    <Compile Include="Data\WeaponData.cs" />
     <Compile Include="Data\ObjectData.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Mod.cs" />
