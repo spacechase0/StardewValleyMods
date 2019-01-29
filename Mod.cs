@@ -88,7 +88,7 @@ namespace ProfitCalculator
                         avgPerHarvest = (min + max) / 2;
                     }
 
-                    Monitor.Log($"{name} {value} {harvests} {avgPerHarvest} {cost}");
+                    //Monitor.Log($"{name} {value} {harvests} {avgPerHarvest} {cost}");
                     profit = (value * harvests * avgPerHarvest) - cost;
                 }
 
