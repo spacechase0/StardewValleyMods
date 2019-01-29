@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
+using StardewValley.Menus;
 
 namespace SpaceCore
 {
@@ -60,6 +61,7 @@ namespace SpaceCore
             doPostfix(typeof(NPC), nameof(NPC.receiveGift), typeof(AfterGiftGivenHook));
             doPostfix(typeof(Game1), nameof(Game1.loadForNewGame), typeof(BlankSaveHook));
             doPrefix(typeof(Game1).GetMethod(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int) }), typeof(WarpFarmerHook).GetMethod(nameof(WarpFarmerHook.Prefix)));
+            doPostfix(typeof(GameMenu), nameof(GameMenu.getTabNumberFromName), typeof(GameMenuTabNameHook));
         }
 
         private void doPrefix(Type origType, string origMethod, Type newType)

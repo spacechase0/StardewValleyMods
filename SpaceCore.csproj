@@ -66,9 +66,11 @@
     <Compile Include="Locations\CustomDecoratableLocation.cs" />
     <Compile Include="Locations\ISeasonalLocation.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="Menus.cs" />
     <Compile Include="Other\ExperienceBars.cs" />
     <Compile Include="Overrides\Game1.cs" />
     <Compile Include="Overrides\GameLocation.cs" />
+    <Compile Include="Overrides\GameMenu.cs" />
     <Compile Include="Overrides\GameServer.cs" />
     <Compile Include="Overrides\HoeDirt.cs" />
     <Compile Include="Overrides\MeleeWeapon.cs" />
