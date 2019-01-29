@@ -29,7 +29,7 @@ namespace AnotherHungerMod
             Config = helper.ReadConfig<Configuration>();
             hungerBar = helper.Content.Load<Texture2D>("res/hungerbar.png");
 
-            helper.ConsoleCommands.Add("add_fullness", "Add to your fullness", commands);
+            helper.ConsoleCommands.Add("player_addfullness", "Add to your fullness", commands);
 
             helper.Events.Display.RenderedHud += renderHungerBar;
             SpaceEvents.AfterGiftGiven += onGiftGiven;
@@ -44,10 +44,10 @@ namespace AnotherHungerMod
 
         private void commands(string cmd, string[] args)
         {
-            if (cmd == "add_fullness")
+            if (cmd == "player_addfullness")
             {
                 if (args.Length != 1)
-                    Log.info("Usage: add_fullness <amt>");
+                    Log.info("Usage: player_addfullness <amt>");
                 else
                     Game1.player.UseFullness(-double.Parse(args[0]));
             }
