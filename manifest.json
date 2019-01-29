@@ -1,7 +1,7 @@
 {
   "Name": "Magic",
   "Author": "spacechase0",
-  "Version": "0.1.5",
+  "Version": "0.1.6",
   "Description": "Magic!",
   "UniqueID": "spacechase0.Magic",
   "EntryDll": "Magic.dll",
