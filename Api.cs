@@ -10,6 +10,8 @@ namespace JsonAssets
         int GetCropId(string name);
         int GetFruitTreeId(string name);
         int GetBigCraftableId(string name);
+        int GetHatId(string name);
+        int GetWeaponId(string name);
 
         event EventHandler IdsAssigned;
         event EventHandler AddedItemsToShop;
@@ -48,7 +50,17 @@ namespace JsonAssets
         {
             return Mod.instance.bigCraftableIds.ContainsKey(name) ? Mod.instance.bigCraftableIds[name] : -1;
         }
-        
+
+        public int GetHatId(string name)
+        {
+            return Mod.instance.hatIds.ContainsKey(name) ? Mod.instance.hatIds[name] : -1;
+        }
+
+        public int GetWeaponId(string name)
+        {
+            return Mod.instance.weaponIds.ContainsKey(name) ? Mod.instance.weaponIds[name] : -1;
+        }
+
         public event EventHandler IdsAssigned;
         internal void InvokeIdsAssigned()
         {
