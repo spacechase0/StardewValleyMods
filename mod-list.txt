@@ -4,6 +4,7 @@
 
 # main mods
 AnimalSocialMenu
+AnotherHungerMod
 BetterShopMenu
 BiggerBackpack
 Bow
@@ -30,6 +31,7 @@ SeedCatalogue
 SleepyEye
 SpaceCore_SDV
 Spenny
+StardewProfitCalculator
 ThreeHeartDancePartner
 ToolGeodes
 
