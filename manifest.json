@@ -5,5 +5,6 @@
   "Description": "Commands to calculate profits",
   "UniqueID": "spacechase0.ProfitCalculator",
   "EntryDll": "ProfitCalculator.dll",
-  "UpdateKeys": []
+  "UpdateKeys": [ "Nexus:3378" ],
+  "spacechase0": "profit-calculator",
 }
