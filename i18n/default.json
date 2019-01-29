@@ -1,4 +1,19 @@
 ﻿{
+  "event.wizard.1": "It is time for you to learn the ways of magic.",
+  "event.wizard.2": "Find one of the five altars and learn some magic.",
+  "event.wizard.3": "Q to start casting, then 1-4 to choose the spell.",
+  "event.wizard.4": "TAB to switch between spell sets.",
+  "event.wizard.abovehead": "MAGIC",
+
+  "school.toil.name": "toil",
+  "school.nature.name": "nature",
+  "school.life.name": "life",
+  "school.elemental.name": "elemental",
+  "school.eldritch.name": "eldritch",
+
+  "altar.glow": "A glowing altar.",
+  "altar.attuned": "You are now attuned to {{school}}.",
+
   "spell.toil:cleardebris.name": "Clear Debris",
   "spell.toil:cleardebris.desc": "Clear debris around the targeted area.\nHigher levels can clear larger types of debris.",
   "spell.toil:till.name": "Till",
