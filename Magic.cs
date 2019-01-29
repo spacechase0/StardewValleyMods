@@ -118,11 +118,11 @@ namespace Magic
 
         private static void onBlankSave( object sender, EventArgs args )
         {
-            placeAltar("FarmCave", 5, 2, 54 * 3, SchoolId.Toil);
-            placeAltar("Woods", 49, 26, 54 * 2, SchoolId.Nature);
-            placeAltar("SeedShop", 36, 16, 54 * 4, SchoolId.Life);
-            placeAltar("WizardHouseBasement", 8, 3, 54 * 1, SchoolId.Elemental);
-            placeAltar("WitchHut", 6, 8, 54 * 7, SchoolId.Eldritch);
+            placeAltar(Mod.Config.ToilAltarLocation, Mod.Config.ToilAltarX, Mod.Config.ToilAltarY, 54 * 3, SchoolId.Toil);
+            placeAltar(Mod.Config.NatureAltarLocation, Mod.Config.NatureAltarX, Mod.Config.NatureAltarY, 54 * 2, SchoolId.Nature);
+            placeAltar(Mod.Config.LifeAltarLocation, Mod.Config.LifeAltarX, Mod.Config.LifeAltarY, 54 * 4, SchoolId.Life);
+            placeAltar(Mod.Config.ElementalAltarLocation, Mod.Config.ElementalAltarX, Mod.Config.ElementalAltarY, 54 * 1, SchoolId.Elemental);
+            placeAltar(Mod.Config.EldritchAltarLocation, Mod.Config.EldritchAltarX, Mod.Config.EldritchAltarY, 54 * 7, SchoolId.Eldritch);
         }
 
         /// <summary>Raised after the player loads a save slot.</summary>
