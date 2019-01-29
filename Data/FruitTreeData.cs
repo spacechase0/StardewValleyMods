@@ -19,6 +19,9 @@ namespace JsonAssets.Data
         public int SaplingPurchasePrice { get; set; }
         public string SaplingPurchaseFrom { get; set; } = "Pierre";
 
+        public Dictionary<string, string> SaplingNameLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> SaplingDescriptionLocalization = new Dictionary<string, string>();
+
         internal ObjectData sapling;
         public int GetSaplingId() { return sapling.id; }
         public int GetFruitTreeIndex() { return id; }

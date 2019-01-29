@@ -177,7 +177,9 @@ namespace JsonAssets
                         CanPurchase = true,
                         PurchaseFrom = crop.SeedPurchaseFrom,
                         PurchasePrice = crop.SeedPurchasePrice,
-                        PurchaseRequirements = crop.SeedPurchaseRequirements ?? new List<string>()
+                        PurchaseRequirements = crop.SeedPurchaseRequirements ?? new List<string>(),
+                        NameLocalization = crop.SeedNameLocalization,
+                        DescriptionLocalization = crop.SeedDescriptionLocalization
                     };
 
                     // TODO: Clean up this chunk
@@ -245,7 +247,9 @@ namespace JsonAssets
                         CanPurchase = true,
                         PurchaseRequirements = tree.SaplingPurchaseRequirements,
                         PurchaseFrom = tree.SaplingPurchaseFrom,
-                        PurchasePrice = tree.SaplingPurchasePrice
+                        PurchasePrice = tree.SaplingPurchasePrice,
+                        NameLocalization = tree.SaplingNameLocalization,
+                        DescriptionLocalization = tree.SaplingDescriptionLocalization
                     };
                     objects.Add(tree.sapling);
                 }

@@ -32,14 +32,13 @@ namespace JsonAssets.Data
         public IList<string> SeedPurchaseRequirements { get; set; } = new List<string>();
         public int SeedPurchasePrice { get; set; }
         public string SeedPurchaseFrom { get; set; } = "Pierre";
+        
+        public Dictionary<string, string> SeedNameLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> SeedDescriptionLocalization = new Dictionary<string, string>();
 
         internal ObjectData seed;
         public int GetSeedId() { return seed.id; }
         public int GetCropSpriteIndex() { return id; }
-        internal string GetSeedObjectInformation()
-        {
-            return $"{SeedName}/{SeedPurchasePrice}/-300/Seeds -74/{SeedName}/{SeedDescription}";
-        }
         internal string GetCropInformation()
         {
             string str = "";

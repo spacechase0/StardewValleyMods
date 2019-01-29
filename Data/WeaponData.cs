@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using StardewValley;
 using StardewValley.Tools;
 using System.Collections.Generic;
 using SObject = StardewValley.Object;
@@ -39,12 +40,35 @@ namespace JsonAssets.Data
         public int PurchasePrice { get; set; }
         public string PurchaseFrom { get; set; } = "Pierre";
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
+        
+        public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
+
+        public string LocalizedName()
+        {
+            var currLang = LocalizedContentManager.CurrentLanguageCode;
+            if (currLang == LocalizedContentManager.LanguageCode.en)
+                return Name;
+            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
+                return Name;
+            return NameLocalization[currLang.ToString()];
+        }
+
+        public string LocalizedDescription()
+        {
+            var currLang = LocalizedContentManager.CurrentLanguageCode;
+            if (currLang == LocalizedContentManager.LanguageCode.en)
+                return Name;
+            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
+                return Name;
+            return DescriptionLocalization[currLang.ToString()];
+        }
 
         public int GetWeaponId() { return id; }
 
         internal string GetWeaponInformation()
         {
-            return $"{Name}/{Description}/{MinimumDamage}/{MaximumDamage}/{Knockback}/{Speed}/{Accuracy}/{Defense}/{(int)Type}/{MineDropVar}/{MineDropMinimumLevel}/{ExtraSwingArea}/{CritChance}/{CritMultiplier}";
+            return $"{Name}/{LocalizedDescription()}/{MinimumDamage}/{MaximumDamage}/{Knockback}/{Speed}/{Accuracy}/{Defense}/{(int)Type}/{MineDropVar}/{MineDropMinimumLevel}/{ExtraSwingArea}/{CritChance}/{CritMultiplier}/{LocalizedName()}";
         }
 
         internal string GetPurchaseRequirementString()

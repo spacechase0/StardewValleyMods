@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using StardewValley;
 using System.Collections.Generic;
 
 namespace JsonAssets.Data
@@ -58,13 +59,34 @@ namespace JsonAssets.Data
         public string PurchaseFrom { get; set; } = "Pierre";
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
 
-        // TODO: Gift taste overrides.
+        public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
+
+        public string LocalizedName()
+        {
+            var currLang = LocalizedContentManager.CurrentLanguageCode;
+            if (currLang == LocalizedContentManager.LanguageCode.en)
+                return Name;
+            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
+                return Name;
+            return NameLocalization[currLang.ToString()];
+        }
+
+        public string LocalizedDescription()
+        {
+            var currLang = LocalizedContentManager.CurrentLanguageCode;
+            if (currLang == LocalizedContentManager.LanguageCode.en)
+                return Name;
+            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
+                return Name;
+            return DescriptionLocalization[currLang.ToString()];
+        }
 
         public int GetCraftableId() { return id; }
 
         internal string GetCraftableInformation()
         {
-            string str = $"{Name}/{Price}/-300/Crafting -9/{Description}/true/true/0";
+            string str = $"{Name}/{Price}/-300/Crafting -9/{LocalizedDescription()}/true/true/0/{LocalizedName()}";
             if (ProvidesLight)
                 str += "/true";
             return str;

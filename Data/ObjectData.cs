@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using StardewValley;
 using System.Collections.Generic;
 using SObject = StardewValley.Object;
 
@@ -119,6 +120,29 @@ namespace JsonAssets.Data
         }
         public GiftTastes_ GiftTastes;
 
+        public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
+
+        public string LocalizedName()
+        {
+            var currLang = LocalizedContentManager.CurrentLanguageCode;
+            if (currLang == LocalizedContentManager.LanguageCode.en)
+                return Name;
+            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
+                return Name;
+            return NameLocalization[currLang.ToString()];
+        }
+
+        public string LocalizedDescription()
+        {
+            var currLang = LocalizedContentManager.CurrentLanguageCode;
+            if (currLang == LocalizedContentManager.LanguageCode.en)
+                return Name;
+            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
+                return Name;
+            return DescriptionLocalization[currLang.ToString()];
+        }
+
         public int GetObjectId() { return id; }
 
         internal string GetObjectInformation()
@@ -126,7 +150,7 @@ namespace JsonAssets.Data
             if (Edibility != SObject.inedible)
             {
                 var itype = (int)Category;
-                var str = $"{Name}/{Price}/{Edibility}/{Category} {itype}/{Name}/{Description}/";
+                var str = $"{Name}/{Price}/{Edibility}/{Category} {itype}/{LocalizedName()}/{LocalizedDescription()}/";
                 str += (EdibleIsDrink ? "drink" : "food") + "/";
                 if (EdibleBuffs == null)
                     EdibleBuffs = new FoodBuffs_();
@@ -136,7 +160,7 @@ namespace JsonAssets.Data
             else
             {
                 var itype = (int)Category;
-                return $"{Name}/{Price}/{Edibility}/Basic {itype}/{Name}/{Description}";
+                return $"{Name}/{Price}/{Edibility}/Basic {itype}/{LocalizedName()}/{LocalizedDescription()}";
             }
         }
 

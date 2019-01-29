@@ -188,12 +188,12 @@ namespace JsonAssets
                 {
                     try
                     {
-                        Log.trace($"Injecting to hats: {weapon.GetWeaponId()}: {weapon.GetWeaponInformation()}");
+                        Log.trace($"Injecting to weapons: {weapon.GetWeaponId()}: {weapon.GetWeaponInformation()}");
                         data.Add(weapon.GetWeaponId(), weapon.GetWeaponInformation());
                     }
                     catch (Exception e)
                     {
-                        Log.error($"Exception injecting hat information for {weapon.Name}: {e}");
+                        Log.error($"Exception injecting weapon information for {weapon.Name}: {e}");
                     }
                 }
             }
@@ -374,7 +374,7 @@ namespace JsonAssets
                 {
                     try
                     {
-                        Log.trace($"Injecting {weapon.Name} sprites @ {hatRect(weapon.GetWeaponId())}");
+                        Log.trace($"Injecting {weapon.Name} sprites @ {weaponRect(weapon.GetWeaponId())}");
                         asset.AsImage().PatchImage(weapon.texture, null, weaponRect(weapon.GetWeaponId()));
                     }
                     catch (Exception e)
