@@ -35,6 +35,7 @@ namespace JsonAssets.Data
             ArtisanGoods = -26, //SObject.artisanGoodsCategory,
             Seeds = -74, //SObject.SeedsCategory,
             Ring = -96, //SObject.ringCategory,
+            AnimalGoods = -18, //SObject.sellAtPierresAndMarnies
         }
 
         public class Recipe_
