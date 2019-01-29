@@ -230,12 +230,12 @@ field                  | purpose
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 
 ### Weapons
-Weapons are 16x16 and can be added via Json Assets through the `Objects` folder. 
+Weapons are 16x16 and can be added via Json Assets through the `Weapons` folder. 
 
 A weapon subfolder is a folder that contains these files:
 
-* an `object.json`;
-* an `object.png`;
+* a `weapon.json`;
+* a `weapon.png`;
 
 field                  | purpose
 ---------------------- | -------
@@ -245,12 +245,20 @@ field                  | purpose
 `MinimumDamage`        | The minimum number of damage points an enemy hit with this weapon will receive.
 `MaximumDamage`        | The maximum number of damage points an enemy hit with this weapon will receive.
 `Knockback`            | How far the enemy will be pushed back from the player after being hit with this weapon.
+`Speed`                | How fast the swing of the weapon is.
+`Accurary`             | How accurate the weapon is.
 `Defense`              |
 `MineDropVar`          |
-`MineDropMinimumLevel` | The first level the weapon can drop
+`MineDropMinimumLevel` | The first level the weapon can drop when in the mines.
 `ExtraSwingArea`       |
 `CritChance`           | The chance the weapon will land a critical hit.
-`CritMultiplier`       |
+`CritMultiplier`       | Damage multiplied by this number is how much damage a critical hit does.
+`CanPurchase`          | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
+`PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor. For weapons, `Marlon` is recommended.
+`PurchasePrice`        | How much you can purchase the recipe for.
+`PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
+
+Weapons do not support gift taste.
 
 ## Gift Tastes
 
