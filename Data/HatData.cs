@@ -32,9 +32,9 @@ namespace JsonAssets.Data
         {
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             if (currLang == LocalizedContentManager.LanguageCode.en)
-                return Name;
+                return Description;
             if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return Name;
+                return Description;
             return DescriptionLocalization[currLang.ToString()];
         }
 
