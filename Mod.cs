@@ -39,7 +39,7 @@ namespace JsonAssets
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.GameLoop.Saved += onSaved;
             helper.Events.Player.InventoryChanged += onInventoryChanged;
-            //helper.Events.Specialised.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
+            helper.Events.Specialised.LoadStageChanged += onLoadStageChanged;
 
             Log.info("Loading content packs...");
             foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
@@ -64,6 +64,7 @@ namespace JsonAssets
                 Log.error($"Exception doing harmony stuff: {e}");
             }
         }
+
         private void doPrefix(Type origType, string origMethod, Type newType)
         {
             doPrefix(origType.GetMethod(origMethod), newType.GetMethod("Prefix"));
@@ -314,25 +315,10 @@ namespace JsonAssets
             }
         }
 
-        /// <summary>Raised after the game state is updated (≈60 times per second), regardless of normal SMAPI validation. This event is not thread-safe and may be invoked while game logic is running asynchronously. Changes to game state in this method may crash the game or corrupt an in-progress save. Do not use this event unless you're fully aware of the context in which your code will be run. Mods using this event will trigger a stability warning in the SMAPI console.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void onUnvalidatedUpdateTicked(object sender, UnvalidatedUpdateTickedEventArgs e)
-        {
-            // I need the items to register before most other things do
-            var saveLoaded = (bool) typeof(Context).GetProperty("IsSaveLoaded", BindingFlags.NonPublic | BindingFlags.Static).GetValue( null );
-            if (saveLoaded && !SaveGame.IsProcessing)
-            {
-                Log.debug("Loading stuff early");
-                onSaveLoaded();
-                Helper.Events.Specialised.UnvalidatedUpdateTicked -= onUnvalidatedUpdateTicked;
-            }
-        }
-
         private void resetAtTitle()
         {
             // When we go back to the title menu we need to reset things so things don't break when
-            // going back to a save. Also, this is where it is initially done, too.
+            // going back to a save.
             clearIds(out objectIds, objects.ToList<DataNeedsId>());
             clearIds(out cropIds, crops.ToList<DataNeedsId>());
             clearIds(out fruitTreeIds, fruitTrees.ToList<DataNeedsId>());
@@ -343,8 +329,15 @@ namespace JsonAssets
             var editor = Helper.Content.AssetEditors.FirstOrDefault(p => p is ContentInjector);
             if (editor != null)
                 Helper.Content.AssetEditors.Remove(editor);
+        }
 
-            Helper.Events.Specialised.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
+        private void onLoadStageChanged(object sender, LoadStageChangedEventArgs e)
+        {
+            Log.debug("Loading stuff early");
+            if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveParsed)
+            {
+                onSaveLoaded();
+            }
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
