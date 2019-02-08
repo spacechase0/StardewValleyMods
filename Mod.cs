@@ -39,6 +39,7 @@ namespace JsonAssets
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.GameLoop.Saved += onSaved;
             helper.Events.Player.InventoryChanged += onInventoryChanged;
+            helper.Events.GameLoop.SaveCreated += onCreated;
             helper.Events.Specialised.LoadStageChanged += onLoadStageChanged;
 
             Log.info("Loading content packs...");
@@ -331,12 +332,18 @@ namespace JsonAssets
                 Helper.Content.AssetEditors.Remove(editor);
         }
 
+        private void onCreated(object sender, SaveCreatedEventArgs e)
+        {
+            Log.debug("Loading stuff early (creation)");
+            initStuff( onCreate: true );
+        }
+
         private void onLoadStageChanged(object sender, LoadStageChangedEventArgs e)
         {
-            Log.debug("Loading stuff early");
+            Log.debug("Loading stuff early (loading)");
             if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveParsed)
             {
-                onSaveLoaded();
+                initStuff( onCreate: false );
             }
         }
 
@@ -461,25 +468,27 @@ namespace JsonAssets
 
             ( ( Api ) api ).InvokeAddedItemsToShop();
         }
-
-        /// <summary>Raised immediately when the save is loaded, before it's fully initialised.</summary>
-        private void onSaveLoaded()
+        
+        private void initStuff( bool onCreate )
         {
             // load object ID mappings from save folder
-            IDictionary<TKey, TValue> LoadDictionary<TKey, TValue>(string filename)
+            if (!onCreate)
             {
-                string path = Path.Combine(Constants.CurrentSavePath, "JsonAssets", filename);
-                return File.Exists(path)
-                    ? JsonConvert.DeserializeObject<Dictionary<TKey, TValue>>(File.ReadAllText(path))
-                    : new Dictionary<TKey, TValue>();
+                IDictionary<TKey, TValue> LoadDictionary<TKey, TValue>(string filename)
+                {
+                    string path = Path.Combine(Constants.CurrentSavePath, "JsonAssets", filename);
+                    return File.Exists(path)
+                        ? JsonConvert.DeserializeObject<Dictionary<TKey, TValue>>(File.ReadAllText(path))
+                        : new Dictionary<TKey, TValue>();
+                }
+                Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
+                oldObjectIds = LoadDictionary<string, int>("ids-objects.json");
+                oldCropIds = LoadDictionary<string, int>("ids-crops.json");
+                oldFruitTreeIds = LoadDictionary<string, int>("ids-fruittrees.json");
+                oldBigCraftableIds = LoadDictionary<string, int>("ids-big-craftables.json");
+                oldHatIds = LoadDictionary<string, int>("ids-hats.json");
+                oldWeaponIds = LoadDictionary<string, int>("ids-weapons.json");
             }
-            Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
-            oldObjectIds = LoadDictionary<string, int>("ids-objects.json");
-            oldCropIds = LoadDictionary<string, int>("ids-crops.json");
-            oldFruitTreeIds = LoadDictionary<string, int>("ids-fruittrees.json");
-            oldBigCraftableIds = LoadDictionary<string, int>("ids-big-craftables.json");
-            oldHatIds = LoadDictionary<string, int>("ids-hats.json");
-            oldWeaponIds = LoadDictionary<string, int>("ids-weapons.json");
 
             // assign IDs
             objectIds = AssignIds("objects", StartingObjectId, objects.ToList<DataNeedsId>());
