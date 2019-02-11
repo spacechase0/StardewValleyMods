@@ -229,7 +229,7 @@ namespace CookingSkill
                                 }
                                 else
                                 {
-                                    if (Game1.buffsDisplay.food != null)
+                                    if (Game1.buffsDisplay.drink != null)
                                         Game1.buffsDisplay.drink.removeBuff();
                                     Game1.buffsDisplay.drink = newBuff;
                                     Game1.buffsDisplay.drink.addBuff();
