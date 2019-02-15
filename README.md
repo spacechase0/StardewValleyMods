@@ -7,7 +7,6 @@
 * [Introduction](#introduction)
 * [Basic Features](#basic-features)
   * [Overview](#overview)
-  * [Common Fields](#common-fields)
   * [Big Craftables](#bigcraftables)
   * [Crops](#crops)
   * [Fruit Trees](#fruittrees)
@@ -15,7 +14,9 @@
     * [Crop and Fruit Tree Objects](#crop-and-fruit-tree-objects)
     * [Recipes](#recipes)
   * [Hats](#hats)
+  * [Weapons](#weapons)
 * [Gift Tastes](#gift-tastes)
+* [Localization](#localization)
 * [Converting From Legacy Format](#converting-from-legacy-format)
 * [Releasing A Content Pack](#releaseing-a-content-pack)
 * [Troubleshooting](#troubleshooting)
@@ -38,14 +39,15 @@ Json Assets allows you to add custom objects to the game without having to creat
 * Recipes
 * Craftables (16x16)
 * Big-Craftables (16x32)
-* Hats (upcoming 1.3-stable)
+* Hats (20x80)
+* Weapons
 
 Examples of how to set up all types of objects can be found in the [Blank JSON Assets Template](https://www.nexusmods.com/stardewvalley/mods/1746). I also highly recommend looking up preexisting content packs for further examples:
 
 * [Farmer to Florist](https://www.nexusmods.com/stardewvalley/mods/2075) contains examples of big craftables.
 * [Starbrew Valley](https://www.nexusmods.com/stardewvalley/mods/1764) contains examples using all valid EdibleBuff fields.
 * [Fantasy Crops](https://www.nexusmods.com/stardewvalley/mods/1610) contains examples of crops producing vanilla items.
-* [Ragnarok Online Hats](https://www.nexusmods.com/stardewvalley/mods/2717) contains examples of hats.
+* [PPJA Home of Abandoned Mods](https://www.nexusmods.com/stardewvalley/mods/3374) contains examples of hats & weapons.
 
 ### Companion Mods
 Json Assets is a great tool if you want to add one of the above objects, but there are other frameworks out there that pair well with Json Assets:
@@ -54,23 +56,16 @@ Json Assets is a great tool if you want to add one of the above objects, but the
 
 ## Basic Features
 ### Overview
-There are four main folders you are likely to see when downloading Json Asset content packs:
+There are six main folders you are likely to see when downloading Json Asset content packs:
 * BigCraftables
 * Crops
 * FruitTrees
-* Objects
+* Objects 
 * Hats
+* Weapons
 
 You will also see a `manifest.json` for SMAPI to read (see [content packs](https://stardewvalleywiki.com/Modding:SMAPI_APIs#Manifest) on the wiki).
 Each of these folders contains subfolders that at minimum contains a `json` and a `png`. 
-
-### Common Fields
-All `json` files (excluding `manifest.json`) support these common fields:
-
-field         | purpose
-------------- | -------
-`Name`        | The name you would like your object to have, this should be identical to the subfolder name.
-`Price`       | How much your item sells for.
 
 ### BigCraftables
 Big craftables are objects like scarecrows that are 16x32.
@@ -83,7 +78,8 @@ The `big-craftable.json` contains these fields:
 
 field                  | purpose
 ---------------------- | -------
-  &nbsp;               | See _common fields_ above.
+`Name`                 | The name you would like your object to have, this should be identical to the subfolder name.
+`Price`                | How much your item sells for.
 `Description`          | Description for what this does. Note if it does anything special like provide light.
 `ProvidesLight`        | On/Off switch for if it provides light or not. Set to `true` or `false`.
 `Recipe`               | Begins the recipe block.
@@ -105,7 +101,8 @@ A crop subfolder is a folder with these files:
 
 field                      | purpose
 -------------------------- | -------
-  &nbsp;                   | See _common fields_ above.
+`Name`                     | The name you would like your object to have, this should be identical to the subfolder name.
+`Price`                    | How much your item sells for.
 `Product`                  | Determines what the crop produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the [objects ID number](https://pastebin.com/TBsGu6Em) and not include a corresponding `Objects` folder.
 `SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter.
 `SeedDescription`          | Describe what season you plant these in. Also note if it continues to grow after first harvest and how many days it takes to regrow.
@@ -135,7 +132,8 @@ A fruit trees subfolder is a folder with these files:
 
 field                         | purpose
 ----------------------------- | -------
-  &nbsp;                      | See _common fields_ above.
+`Name`                        | The name you would like your object to have, this should be identical to the subfolder name.
+`Price`                       | How much your item sells for.
 `Product`                     | Determines what the fruit tree produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the [objects ID number](https://pastebin.com/TBsGu6Em) and not include a corresponding `Objects` folder.
 `SaplingName`                 | The name of the sapling, typically product + sapling.
 `SaplingDescription`          | The description of the sapling, often sticks to vanilla format: Takes 28 days to produce a mature `product` tree. Bears `type` in the summer. Only grows if the 8 surrounding \"tiles\" are empty.
@@ -156,7 +154,8 @@ An object subfolder for crops & fruit trees is a folder that contains these file
 
 field                         | purpose
 ----------------------------- | -------
-  &nbsp;                      | See _common fields_ above.
+`Name`                        | The name you would like your object to have, this should be identical to the subfolder name.
+`Price`                       | How much your item sells for.
 `Description`                 | Description of the product.
 `Category`                    | This should match the `crop.json` `Type` or for fruit trees should be one of the following: `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, and `Seeds`.
 `Edibility`                   | Edibility is for health, energy is calculated by the game. For inedibile items, set to -300.
@@ -173,7 +172,8 @@ An object subfolder for a recipe is a folder that contains these files:
 
 field                  | purpose
 ---------------------- | -------
-  &nbsp;               | See _common fields_ above.
+`Name`                 | The name you would like your object to have, this should be identical to the subfolder name.
+`Price`                | How much your item sells for.
 `Description`          | Description of the product.
 `Category`             | Set to either `Crafting` or `Cooking` depending on the menu you want it to appear in.
 `Edibility`            | Edibility is for health, energy is calculated by the game. For inedibile items, set to -300.
@@ -191,7 +191,7 @@ field                  | purpose
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 
 ### Hats
-Hats are a planned feature for the 1.3-stable version of JsonAssets. Hats are 20x80 and can be added through a `Hats` folder. All hats are purchaseable through [hat mouse](https://stardewvalleywiki.com/Abandoned_House). There is a limit of 87 custom hats. 
+Hats are 20x80 and can be added through a `Hats` folder. All hats are purchaseable through [hat mouse](https://stardewvalleywiki.com/Abandoned_House). There is a limit of 87 custom hats. 
 
 A hats subfolder for a hat is a folder that contains these files:
 
@@ -206,9 +206,40 @@ field                  | purpose
 `ShowHair`             | Set this to `true` or `false` depending on if you want the players' hair to be visible or not. Setting this to `false` is a good idea for masks.
 `IgnoreHairstyleOffset`| Set this to `true` or `false`. When set to `true` the hat will ignore any hairstyle offset.
 
+### Weapons
+Weapons are 16x16 and can be added via Json Assets through the `Weapons` folder. 
+
+A weapon subfolder is a folder that contains these files:
+
+* a `weapon.json`;
+* a `weapon.png`;
+
+field                  | purpose
+---------------------- | -------
+`Name`                 | The name you would like your object to have, this should be identical to the subfolder name.
+`Description`          | Description of the product.
+`Category`             | Depending on the weapon set this to one of the following: `sword`, `dagger`, or `club`. `Slingshot` is untested.
+`MinimumDamage`        | The minimum number of damage points an enemy hit with this weapon will receive.
+`MaximumDamage`        | The maximum number of damage points an enemy hit with this weapon will receive.
+`Knockback`            | How far the enemy will be pushed back from the player after being hit with this weapon.
+`Speed`                | How fast the swing of the weapon is.
+`Accurary`             | How accurate the weapon is.
+`Defense`              | When blocking, how much protection it provides. * This could be a
+`MineDropVar`          | * I'm honestly not sure what this one is
+`MineDropMinimumLevel` | The first level the weapon can drop when in the mines.
+`ExtraSwingArea`       |
+`CritChance`           | The chance the weapon will land a critical hit.
+`CritMultiplier`       | Damage multiplied by this number is how much damage a critical hit does.
+`CanPurchase`          | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
+`PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor. For weapons, `Marlon` is recommended.
+`PurchasePrice`        | How much you can purchase the recipe for.
+`PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
+
+Weapons do not support gift taste.
+
 ## Gift Tastes
 
-With the upcoming 1.3-stable release of JsonAssets, gift taste support has been added. You can add gift taste support to any pre-existing content pack by adding the following to the respective `.json` file. It does not matter where you put it. I tend to place it at the bottom of the `.json` but it is personal preferance. 
+You can add gift taste support to any pre-existing content pack by adding the following to the respective `.json` file. It does not matter where you put it. I tend to place it at the bottom of the `.json` but it is personal preferance. 
 
 If it can be gifted to an NPC it has gift taste support built in. This means `hats` and `big-craftables` do not have gift taste support. If you exclude an NPC from the gift taste, their reaction will default to `Neutral`.
 
@@ -223,6 +254,28 @@ If it can be gifted to an NPC it has gift taste support built in. This means `ha
     },
 ```
 An example of a filled out gift taste can be found [here](https://pastebin.com/9K3t2SLL). You can delete unused fields within `GiftTastes`.
+
+## Localization
+
+JsonAssets supports name localization without the need for a seperate or different download. These lines can be added to the bottom of their respective `json` files. Most localization is the same except "Crops have their loc. fields prefixed with"Seed", fruit trees prefixed with "Sapling"."
+
+Examples:
+```
+ "NameLocalization": { "es": "spanish weapon (name)" },
+    "DescriptionLocalization": { "es": "spanish weapon (desc)" }
+```
+
+For Crops:
+```
+"SeedNameLocalization": { "es": "spanish seed (name)" },
+    "SeedDescriptionLocalization": { "es": "spanish seed (desc)" }
+```
+
+For Saplings:
+```
+"SaplingNameLocalization": { "es": "spanish ftree (name)" },
+    "SaplingDescriptionLocalization": { "es": "spanish ftree (desc)" }
+```
 
 ## Converting From Legacy Format
 Before the release of SMAPI 2.5, Json Assets content packs previously needed a `content-pack.json` and had to be installed directly in the Json Assets folder. This is an outdated method and the more current `manifest.json` method should be used.
