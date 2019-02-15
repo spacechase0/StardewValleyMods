@@ -542,6 +542,9 @@ namespace JsonAssets
         /// <param name="e">The event arguments.</param>
         private void onSaved(object sender, SavedEventArgs e)
         {
+            if (!Directory.Exists(Path.Combine(Constants.CurrentSavePath, "JsonAssets")))
+                Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
+
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(objectIds));
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(cropIds));
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(fruitTreeIds));
