@@ -41,6 +41,7 @@ namespace JsonAssets
             helper.Events.Player.InventoryChanged += onInventoryChanged;
             helper.Events.GameLoop.SaveCreated += onCreated;
             helper.Events.Specialised.LoadStageChanged += onLoadStageChanged;
+            helper.Events.Multiplayer.PeerContextReceived += clientConnected;
 
             Log.info("Loading content packs...");
             foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
@@ -335,15 +336,24 @@ namespace JsonAssets
         private void onCreated(object sender, SaveCreatedEventArgs e)
         {
             Log.debug("Loading stuff early (creation)");
-            initStuff( onCreate: true );
+            initStuff( loadIdFiles: true );
         }
 
         private void onLoadStageChanged(object sender, LoadStageChangedEventArgs e)
         {
-            Log.debug("Loading stuff early (loading)");
             if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveParsed)
             {
-                initStuff( onCreate: false );
+                Log.debug("Loading stuff early (loading)");
+                initStuff( loadIdFiles: false );
+            }
+        }
+
+        private void clientConnected(object sender, PeerContextReceivedEventArgs e)
+        {
+            if (!Context.IsMainPlayer)
+            {
+                Log.debug("Loading stuff early (MP client)");
+                initStuff( loadIdFiles: true );
             }
         }
 
@@ -469,10 +479,10 @@ namespace JsonAssets
             ( ( Api ) api ).InvokeAddedItemsToShop();
         }
         
-        private void initStuff( bool onCreate )
+        private void initStuff( bool loadIdFiles )
         {
             // load object ID mappings from save folder
-            if (!onCreate)
+            if (!loadIdFiles)
             {
                 IDictionary<TKey, TValue> LoadDictionary<TKey, TValue>(string filename)
                 {
