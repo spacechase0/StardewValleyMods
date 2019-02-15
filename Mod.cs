@@ -319,6 +319,7 @@ namespace JsonAssets
 
         private void resetAtTitle()
         {
+            didInit = false;
             // When we go back to the title menu we need to reset things so things don't break when
             // going back to a save.
             clearIds(out objectIds, objects.ToList<DataNeedsId>());
@@ -350,7 +351,7 @@ namespace JsonAssets
 
         private void clientConnected(object sender, PeerContextReceivedEventArgs e)
         {
-            if (!Context.IsMainPlayer)
+            if (!Context.IsMainPlayer && !didInit)
             {
                 Log.debug("Loading stuff early (MP client)");
                 initStuff( loadIdFiles: true );
@@ -478,9 +479,14 @@ namespace JsonAssets
 
             ( ( Api ) api ).InvokeAddedItemsToShop();
         }
-        
+
+        private bool didInit = false;
         private void initStuff( bool loadIdFiles )
         {
+            if (didInit)
+                return;
+            didInit = true;
+
             // load object ID mappings from save folder
             if (!loadIdFiles)
             {
