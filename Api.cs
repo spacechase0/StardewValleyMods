@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace JsonAssets
 {
@@ -12,6 +13,13 @@ namespace JsonAssets
         int GetBigCraftableId(string name);
         int GetHatId(string name);
         int GetWeaponId(string name);
+
+        IDictionary<string, int> GetAllObjectIds();
+        IDictionary<string, int> GetAllCropIds();
+        IDictionary<string, int> GetAllFruitTreeIds();
+        IDictionary<string, int> GetAllBigCraftableIds();
+        IDictionary<string, int> GetAllHatIds();
+        IDictionary<string, int> GetAllWeaponIds();
 
         event EventHandler IdsAssigned;
         event EventHandler AddedItemsToShop;
@@ -59,6 +67,36 @@ namespace JsonAssets
         public int GetWeaponId(string name)
         {
             return Mod.instance.weaponIds.ContainsKey(name) ? Mod.instance.weaponIds[name] : -1;
+        }
+
+        public IDictionary<string, int> GetAllObjectIds()
+        {
+            return new Dictionary<string, int>(Mod.instance.objectIds);
+        }
+
+        public IDictionary<string, int> GetAllCropIds()
+        {
+            return new Dictionary<string, int>(Mod.instance.cropIds);
+        }
+
+        public IDictionary<string, int> GetAllFruitTreeIds()
+        {
+            return new Dictionary<string, int>(Mod.instance.fruitTreeIds);
+        }
+
+        public IDictionary<string, int> GetAllBigCraftableIds()
+        {
+            return new Dictionary<string, int>(Mod.instance.bigCraftableIds);
+        }
+
+        public IDictionary<string, int> GetAllHatIds()
+        {
+            return new Dictionary<string, int>(Mod.instance.hatIds);
+        }
+
+        public IDictionary<string, int> GetAllWeaponIds()
+        {
+            return new Dictionary<string, int>(Mod.instance.weaponIds);
         }
 
         public event EventHandler IdsAssigned;
