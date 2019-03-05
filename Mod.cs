@@ -122,6 +122,13 @@ namespace JsonAssets
             this.loadData(contentPack);
         }
 
+        private Dictionary<string, IContentPack> dupObjects = new Dictionary<string, IContentPack>();
+        private Dictionary<string, IContentPack> dupCrops = new Dictionary<string, IContentPack>();
+        private Dictionary<string, IContentPack> dupFruitTrees = new Dictionary<string, IContentPack>();
+        private Dictionary<string, IContentPack> dupBigCraftables = new Dictionary<string, IContentPack>();
+        private Dictionary<string, IContentPack> dupHats = new Dictionary<string, IContentPack>();
+        private Dictionary<string, IContentPack> dupWeapons = new Dictionary<string, IContentPack>();
+
         private readonly Regex SeasonLimiter = new Regex("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private void loadData(IContentPack contentPack)
         {
@@ -149,6 +156,12 @@ namespace JsonAssets
                     // save ring
                     if (obj.Category == ObjectData.Category_.Ring)
                         this.myRings.Add(obj);
+
+                    // Duplicate check
+                    if (dupObjects.ContainsKey(obj.Name))
+                        Log.error($"Duplicate object: {obj.Name} just added by {contentPack.Manifest.Name}, already added by {dupObjects[obj.Name].Manifest.Name}!");
+                    else
+                        dupObjects[obj.Name] = contentPack;
                 }
             }
 
@@ -219,6 +232,12 @@ namespace JsonAssets
                     }
 
                     objects.Add(crop.seed);
+
+                    // Duplicate check
+                    if (dupCrops.ContainsKey(crop.Name))
+                        Log.error($"Duplicate crop: {crop.Name} just added by {contentPack.Manifest.Name}, already added by {dupCrops[crop.Name].Manifest.Name}!");
+                    else
+                        dupCrops[crop.Name] = contentPack;
                 }
             }
 
@@ -255,6 +274,12 @@ namespace JsonAssets
                         DescriptionLocalization = tree.SaplingDescriptionLocalization
                     };
                     objects.Add(tree.sapling);
+
+                    // Duplicate check
+                    if (dupFruitTrees.ContainsKey(tree.Name))
+                        Log.error($"Duplicate fruit tree: {tree.Name} just added by {contentPack.Manifest.Name}, already added by {dupFruitTrees[tree.Name].Manifest.Name}!");
+                    else
+                        dupFruitTrees[tree.Name] = contentPack;
                 }
             }
 
@@ -274,6 +299,12 @@ namespace JsonAssets
                     // save craftable
                     craftable.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable.png");
                     bigCraftables.Add(craftable);
+
+                    // Duplicate check
+                    if (dupBigCraftables.ContainsKey(craftable.Name))
+                        Log.error($"Duplicate big craftable: {craftable.Name} just added by {contentPack.Manifest.Name}, already added by {dupBigCraftables[craftable.Name].Manifest.Name}!");
+                    else
+                        dupBigCraftables[craftable.Name] = contentPack;
                 }
             }
 
@@ -293,6 +324,12 @@ namespace JsonAssets
                     // save object
                     hat.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/hat.png");
                     hats.Add(hat);
+
+                    // Duplicate check
+                    if (dupHats.ContainsKey(hat.Name))
+                        Log.error($"Duplicate hat: {hat.Name} just added by {contentPack.Manifest.Name}, already added by {dupHats[hat.Name].Manifest.Name}!");
+                    else
+                        dupBigCraftables[hat.Name] = contentPack;
                 }
             }
 
@@ -313,6 +350,12 @@ namespace JsonAssets
                     // save object
                     weapon.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/weapon.png");
                     weapons.Add(weapon);
+
+                    // Duplicate check
+                    if (dupWeapons.ContainsKey(weapon.Name))
+                        Log.error($"Duplicate weapon: {weapon.Name} just added by {contentPack.Manifest.Name}, already added by {dupWeapons[weapon.Name].Manifest.Name}!");
+                    else
+                        dupBigCraftables[weapon.Name] = contentPack;
                 }
             }
         }
