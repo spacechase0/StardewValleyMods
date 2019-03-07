@@ -19,5 +19,11 @@
     "CanPurchase": true,
     "PurchaseFrom": "Marlon",
     "PurchasePrice": 250
+  },
+  "NameLocalization": { //Korean localisation
+  	"ko": "트래블 코어"
+  },
+  "DescriptionLocalization": {
+  	"ko": "마법 주문의 촉매제입니다."
   }
 }
