@@ -380,7 +380,7 @@ namespace JsonAssets
         private void onCreated(object sender, SaveCreatedEventArgs e)
         {
             Log.debug("Loading stuff early (creation)");
-            initStuff( loadIdFiles: true );
+            initStuff( loadIdFiles: false );
         }
 
         private void onLoadStageChanged(object sender, LoadStageChangedEventArgs e)
@@ -388,7 +388,37 @@ namespace JsonAssets
             if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveParsed)
             {
                 Log.debug("Loading stuff early (loading)");
-                initStuff( loadIdFiles: false );
+                initStuff( loadIdFiles: true );
+            }
+            else if ( e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveLoadedLocations )
+            {
+                Log.debug("Fixing IDs");
+                fixIdsEverywhere();
+            }
+            else if ( e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded )
+            {
+                Log.debug("Adding default recipes");
+                foreach (var obj in objects)
+                {
+                    if (obj.Recipe != null && obj.Recipe.IsDefault && !Game1.player.knowsRecipe(obj.Name))
+                    {
+                        if (obj.Category == ObjectData.Category_.Cooking)
+                        {
+                            Game1.player.cookingRecipes.Add(obj.Name, 0);
+                        }
+                        else
+                        {
+                            Game1.player.craftingRecipes.Add(obj.Name, 0);
+                        }
+                    }
+                }
+                foreach (var big in bigCraftables)
+                {
+                    if (big.Recipe != null && big.Recipe.IsDefault && !Game1.player.knowsRecipe(big.Name))
+                    {
+                        Game1.player.craftingRecipes.Add(big.Name, 0);
+                    }
+                }
             }
         }
 
@@ -397,7 +427,7 @@ namespace JsonAssets
             if (!Context.IsMainPlayer && !didInit)
             {
                 Log.debug("Loading stuff early (MP client)");
-                initStuff( loadIdFiles: true );
+                initStuff( loadIdFiles: false );
             }
         }
 
@@ -531,7 +561,7 @@ namespace JsonAssets
             didInit = true;
 
             // load object ID mappings from save folder
-            if (!loadIdFiles)
+            if (loadIdFiles)
             {
                 IDictionary<TKey, TValue> LoadDictionary<TKey, TValue>(string filename)
                 {
@@ -547,6 +577,21 @@ namespace JsonAssets
                 oldBigCraftableIds = LoadDictionary<string, int>("ids-big-craftables.json");
                 oldHatIds = LoadDictionary<string, int>("ids-hats.json");
                 oldWeaponIds = LoadDictionary<string, int>("ids-weapons.json");
+
+                Log.trace("OLD IDS START");
+                foreach (var id in oldObjectIds)
+                    Log.trace("\tObject " + id.Key + " = " + id.Value);
+                foreach (var id in oldCropIds)
+                    Log.trace("\tCrop " + id.Key + " = " + id.Value);
+                foreach (var id in oldFruitTreeIds)
+                    Log.trace("\tFruit Tree " + id.Key + " = " + id.Value);
+                foreach (var id in oldBigCraftableIds)
+                    Log.trace("\tBigCraftable " + id.Key + " = " + id.Value);
+                foreach (var id in oldHatIds)
+                    Log.trace("\tHat " + id.Key + " = " + id.Value);
+                foreach (var id in oldWeaponIds)
+                    Log.trace("\tWeapon " + id.Key + " = " + id.Value);
+                Log.trace("OLD IDS END");
             }
 
             // assign IDs
@@ -556,34 +601,11 @@ namespace JsonAssets
             bigCraftableIds = AssignIds("big-craftables", StartingBigCraftableId, bigCraftables.ToList<DataNeedsId>());
             hatIds = AssignIds("hats", StartingHatId, hats.ToList<DataNeedsId>());
             weaponIds = AssignIds("weapons", StartingWeaponId, weapons.ToList<DataNeedsId>());
-
-            fixIdsEverywhere();
+            
             api.InvokeIdsAssigned();
 
             // init
             Helper.Content.AssetEditors.Add(new ContentInjector());
-
-            foreach (var obj in objects)
-            {
-                if (obj.Recipe != null && obj.Recipe.IsDefault && !Game1.player.knowsRecipe(obj.Name))
-                {
-                    if (obj.Category == ObjectData.Category_.Cooking)
-                    {
-                        Game1.player.cookingRecipes.Add(obj.Name, 0);
-                    }
-                    else
-                    {
-                        Game1.player.craftingRecipes.Add(obj.Name, 0);
-                    }
-                }
-            }
-            foreach (var big in bigCraftables)
-            {
-                if (big.Recipe != null && big.Recipe.IsDefault && !Game1.player.knowsRecipe(big.Name))
-                {
-                    Game1.player.craftingRecipes.Add(big.Name, 0);
-                }
-            }
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
@@ -895,6 +917,11 @@ namespace JsonAssets
                     else if (fixId(oldWeaponIds, weaponIds, weapon.currentParentTileIndex, origWeapons))
                         items[i] = null;
                     else if (fixId(oldWeaponIds, weaponIds, weapon.currentParentTileIndex, origWeapons))
+                        items[i] = null;
+                }
+                else if ( item is Ring ring )
+                {
+                    if (fixId(oldObjectIds, objectIds, ring.indexInTileSheet, origObjects))
                         items[i] = null;
                 }
             }
