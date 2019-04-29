@@ -24,6 +24,8 @@ namespace Magic
     {
         public static Skill Skill;
 
+        public static EventHandler<AnalyzeEventArgs> OnAnalyzeCast;
+
         private static IModEvents events;
         private static IInputHelper inputHelper;
 
@@ -64,9 +66,12 @@ namespace Magic
             SpaceCore.Networking.RegisterMessageHandler(MSG_MINIDATA, onNetworkMiniData);
             SpaceCore.Networking.RegisterMessageHandler(MSG_CAST, onNetworkCast);
             SpaceEvents.ServerGotClient += onClientConnected;
+            SpaceEvents.ChooseNightlyFarmEvent += TEST_nightlyfarmevent;
 
             events.Display.RenderingHud += onRenderingHud;
             events.Display.RenderedHud += onRenderedHud;
+
+            OnAnalyzeCast += onAnalyze;
 
             SpaceCore.Skills.RegisterSkill(Skill = new Skill());
 
@@ -74,6 +79,96 @@ namespace Magic
             Command.register("player_setmaxmana", setMaxManaCommand);
             Command.register("player_learnspell", learnSpellCommand);
             Command.register("magicmenu", magicMenuCommand);
+        }
+
+        private static void TEST_nightlyfarmevent(object sender, EventArgsChooseNightlyFarmEvent e)
+        {
+            foreach (var stuff in Game1.player.friendshipData.Values)
+                stuff.Points = 0;
+            e.NightEvent = new StardewValley.Events.SoundInTheNightEvent(StardewValley.Events.SoundInTheNightEvent.meteorite);
+        }
+
+        private static void onAnalyze(object sender, AnalyzeEventArgs e)
+        {
+            var farmer = sender as Farmer;
+
+            List<string> spellsLearnt = new List<string>();
+            if ( farmer.CurrentItem != null )
+            {
+                if ( farmer.CurrentTool != null )
+                {
+                    if (farmer.CurrentTool is StardewValley.Tools.Axe || farmer.CurrentTool is StardewValley.Tools.Pickaxe)
+                        spellsLearnt.Add("toil:cleardebris");
+                    else if (farmer.CurrentTool is StardewValley.Tools.Hoe)
+                        spellsLearnt.Add("toil:till");
+                    else if (farmer.CurrentTool is StardewValley.Tools.WateringCan)
+                        spellsLearnt.Add("toil:water");
+                }
+                else if ( farmer.CurrentItem is StardewValley.Objects.Boots )
+                {
+                    spellsLearnt.Add("life:evac");
+                }
+                else if ( farmer.ActiveObject != null )
+                {
+                    if ( !farmer.ActiveObject.bigCraftable.Value )
+                    {
+                        int index = farmer.ActiveObject.ParentSheetIndex;
+                        if (index == 395) // Coffee
+                            spellsLearnt.Add("life:haste");
+                        else if (index == 773) // Life elixir
+                            spellsLearnt.Add("life:heal");
+                        else if (index == 86) // Earth crystal
+                            spellsLearnt.Add("nature:shockwave");
+                        else if (index == 82) // Fire quartz
+                            spellsLearnt.Add("elemental:fireball");
+                        else if (index == 161) // Ice Pip
+                            spellsLearnt.Add("elemental:frostbolt");
+                    }
+                }
+            }
+            foreach ( var lightSource in farmer.currentLocation.sharedLights.Values )
+            {
+                if ( Utility.distance(e.TargetX, lightSource.position.X, e.TargetY, lightSource.position.Y) < lightSource.radius )
+                {
+                    spellsLearnt.Add("nature:lantern");
+                    break;
+                }
+            }
+            var tilePos = new Vector2(e.TargetX / Game1.tileSize, e.TargetY / Game1.tileSize);
+            if ( farmer.currentLocation.terrainFeatures.ContainsKey(tilePos) && farmer.currentLocation.terrainFeatures[ tilePos ] is StardewValley.TerrainFeatures.HoeDirt hd )
+            {
+                if (hd.crop != null)
+                    spellsLearnt.Add("nature:tendrils");
+            }
+            // TODO: Add proper tilesheet check
+            if (farmer.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y].TileIndex == 173)
+                spellsLearnt.Add("elemental:descend");
+            if ( farmer.currentLocation is Farm farm )
+            {
+                foreach ( var clump in farm.resourceClumps )
+                {
+                    if (clump.parentSheetIndex.Value == 622 && new Rectangle((int)clump.tile.Value.X, (int)clump.tile.Value.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
+                        spellsLearnt.Add("eldritch:meteor");
+                }
+            }
+            if (farmer.currentLocation.doesTileHaveProperty((int)tilePos.X, (int)tilePos.Y, "Action", "Buildings") == "EvilShrineLeft")
+                spellsLearnt.Add("eldritch:lucksteal");
+            if (farmer.currentLocation is StardewValley.Locations.MineShaft ms && ms.mineLevel == 100 && ms.waterTiles[(int)tilePos.X, (int)tilePos.Y])
+                spellsLearnt.Add("eldritch:bloodmana");
+
+            for (int i = spellsLearnt.Count - 1; i >= 0; --i)
+                if (farmer.knowsSpell(spellsLearnt[i], 0))
+                    spellsLearnt.RemoveAt(i);
+            if (spellsLearnt.Count > 0)
+            {
+                Game1.playSound("secret2");
+                foreach (var spell in spellsLearnt)
+                {
+                    Log.debug("Player learnt spell: " + spell);
+                    farmer.learnSpell(spell, 0, true);
+                    Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", Mod.instance.Helper.Translation.Get("spell." + spell + ".name")));
+                }
+            }
         }
 
         private static void onNetworkData(IncomingMessage msg)
@@ -118,11 +213,7 @@ namespace Magic
 
         private static void onBlankSave( object sender, EventArgs args )
         {
-            placeAltar(Mod.Config.ToilAltarLocation, Mod.Config.ToilAltarX, Mod.Config.ToilAltarY, 54 * 3, SchoolId.Toil);
-            placeAltar(Mod.Config.NatureAltarLocation, Mod.Config.NatureAltarX, Mod.Config.NatureAltarY, 54 * 2, SchoolId.Nature);
-            placeAltar(Mod.Config.LifeAltarLocation, Mod.Config.LifeAltarX, Mod.Config.LifeAltarY, 54 * 4, SchoolId.Life);
-            placeAltar(Mod.Config.ElementalAltarLocation, Mod.Config.ElementalAltarX, Mod.Config.ElementalAltarY, 54 * 1, SchoolId.Elemental);
-            placeAltar(Mod.Config.EldritchAltarLocation, Mod.Config.EldritchAltarX, Mod.Config.EldritchAltarY, 54 * 7, SchoolId.Eldritch);
+            placeAltar(Mod.Config.AltarLocation, Mod.Config.AltarX, Mod.Config.AltarY, 54 * 4);
         }
 
         /// <summary>Raised after the player loads a save slot.</summary>
@@ -343,7 +434,7 @@ namespace Magic
             EvacSpell.onLocationChanged();
 
             // check events
-            if ( e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains( 90000 ) &&
+            if ( e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains( 90001 ) &&
                  Game1.player.friendshipData.ContainsKey( "Wizard" ) && Game1.player.friendshipData[ "Wizard" ].Points > 750 )
             {
                 string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{7}\"/pause 750/fade 750/end";
@@ -357,7 +448,7 @@ namespace Magic
                                                    Mod.instance.Helper.Translation.Get("event.wizard.8"),
                                                    Mod.instance.Helper.Translation.Get("event.wizard.9"),
                                                    Mod.instance.Helper.Translation.Get("event.wizard.abovehead"));
-                e.NewLocation.currentEvent = new Event(eventStr, 90000);
+                e.NewLocation.currentEvent = new Event(eventStr, 90001);
                 Game1.eventUp = true;
                 Game1.displayHUD = false;
                 Game1.player.CanMove = false;
@@ -365,7 +456,10 @@ namespace Magic
 
                 Game1.player.AddCustomSkillExperience(Skill, Skill.ExperienceCurve[0]);
                 Game1.player.addMana(Game1.player.getMaxMana());
-                Game1.player.eventsSeen.Add(90000);
+                Game1.player.learnSpell("arcane:analyze", 0, true);
+                Game1.player.learnSpell("arcane:magicmissle", 0, true);
+                Game1.player.learnSpell("arcane:enchant", 0, true);
+                Game1.player.eventsSeen.Add(90001);
             }
         }
 
@@ -392,7 +486,7 @@ namespace Magic
                 Game1.player.addMana(Game1.player.getMaxMana());
         }
 
-        public static void placeAltar(string locName, int x, int y, int baseAltarIndex, string school)
+        public static void placeAltar(string locName, int x, int y, int baseAltarIndex)
         {
             Log.debug($"Placing altar @ {locName}({x}, {y})");
 
@@ -423,12 +517,12 @@ namespace Magic
             buildings.Tiles[x + 0, y + 1] = anims[baseAltarIndex + 0 + 2 * 18].makeTile(tileSheet, buildings);
             buildings.Tiles[x + 1, y + 1] = anims[baseAltarIndex + 1 + 2 * 18].makeTile(tileSheet, buildings);
             buildings.Tiles[x + 2, y + 1] = anims[baseAltarIndex + 2 + 2 * 18].makeTile(tileSheet, buildings);
-            loc.setTileProperty(x + 0, y + 0, "Buildings", "Action", "MagicAltar " + school);
-            loc.setTileProperty(x + 1, y + 0, "Buildings", "Action", "MagicAltar " + school);
-            loc.setTileProperty(x + 2, y + 0, "Buildings", "Action", "MagicAltar " + school);
-            loc.setTileProperty(x + 0, y + 1, "Buildings", "Action", "MagicAltar " + school);
-            loc.setTileProperty(x + 1, y + 1, "Buildings", "Action", "MagicAltar " + school);
-            loc.setTileProperty(x + 2, y + 1, "Buildings", "Action", "MagicAltar " + school);
+            loc.setTileProperty(x + 0, y + 0, "Buildings", "Action", "MagicAltar");
+            loc.setTileProperty(x + 1, y + 0, "Buildings", "Action", "MagicAltar");
+            loc.setTileProperty(x + 2, y + 0, "Buildings", "Action", "MagicAltar");
+            loc.setTileProperty(x + 0, y + 1, "Buildings", "Action", "MagicAltar");
+            loc.setTileProperty(x + 1, y + 1, "Buildings", "Action", "MagicAltar");
+            loc.setTileProperty(x + 2, y + 1, "Buildings", "Action", "MagicAltar");
         }
 
         private static void addManaCommand(string[] args)

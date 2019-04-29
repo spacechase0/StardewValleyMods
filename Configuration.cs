@@ -11,24 +11,8 @@ namespace Magic
         public SButton Key_Spell3 = SButton.D3;
         public SButton Key_Spell4 = SButton.D4;
 
-        public string ToilAltarLocation = "FarmCave";
-        public int ToilAltarX = 5;
-        public int ToilAltarY = 2;
-
-        public string NatureAltarLocation = "Woods";
-        public int NatureAltarX = 49;
-        public int NatureAltarY = 28;
-
-        public string LifeAltarLocation = "SeedShop";
-        public int LifeAltarX = 36;
-        public int LifeAltarY = 16;
-
-        public string ElementalAltarLocation = "WizardHouseBasement";
-        public int ElementalAltarX = 8;
-        public int ElementalAltarY = 3;
-
-        public string EldritchAltarLocation = "WitchHut";
-        public int EldritchAltarX = 6;
-        public int EldritchAltarY = 8;
+        public string AltarLocation = "SeedShop";
+        public int AltarX = 36;
+        public int AltarY = 16;
     }
 }

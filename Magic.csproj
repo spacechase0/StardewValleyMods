@@ -46,6 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalyzeEventArgs.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Content.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Schools\SchoolId.cs" />
     <Compile Include="Schools\ToilSchool.cs" />
     <Compile Include="SpellBook.cs" />
+    <Compile Include="Spells\AnalyzeSpell.cs" />
     <Compile Include="Spells\LuckStealSpell.cs" />
     <Compile Include="Spells\BlinkSpell.cs" />
     <Compile Include="Spells\BloodManaSpell.cs" />
@@ -128,6 +130,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\interface\spellbg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\magic\arcane\analyze\1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\magic\eldritch\bloodmana\1.png">

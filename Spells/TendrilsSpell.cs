@@ -23,6 +23,11 @@ namespace Magic.Spells
             return 0;
         }
 
+        public override int getMaxCastingLevel()
+        {
+            return 1;
+        }
+
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             TendrilGroup tendrils = new TendrilGroup();
@@ -30,8 +35,8 @@ namespace Magic.Spells
             {
                 if ( npc is Monster mob )
                 {
-                    float rad = (7 - level * 2) * Game1.tileSize / 2;
-                    int dur = ( level * 2 + 5 ) * 60;
+                    float rad = Game1.tileSize;
+                    int dur = 11 * 60;
                     if ( Vector2.Distance(mob.position, new Vector2( targetX, targetY ) ) <= rad )
                     {
                         tendrils.Add(new Tendril(mob, new Vector2(targetX, targetY), rad, dur ));
