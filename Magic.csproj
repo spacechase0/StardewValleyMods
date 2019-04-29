@@ -89,6 +89,7 @@
     <Compile Include="Spells\ProjectileSpell.cs" />
     <Compile Include="Spells\ShockwaveSpell.cs" />
     <Compile Include="Spells\Spell.cs" />
+    <Compile Include="Spells\RewindSpell.cs" />
     <Compile Include="Spells\TeleportSpell.cs" />
     <Compile Include="Spells\TendrilsSpell.cs" />
     <Compile Include="Spells\TillSpell.cs" />
@@ -130,6 +131,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\interface\spellbg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\magic\arcane\rewind\1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\magic\arcane\analyze\1.png">
