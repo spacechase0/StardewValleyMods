@@ -7,6 +7,7 @@ using StardewValley.Tools;
 using System.Collections.Generic;
 using System.Reflection;
 using Netcode;
+using SpaceCore;
 
 namespace Magic.Spells
 {
@@ -55,7 +56,7 @@ namespace Magic.Spells
                             obj.performRemoveAction(pos, loc);
                             loc.objects.Remove(pos);
                             player.addMana(-1);
-                            player.addMagicExp(1);
+                            player.AddCustomSkillExperience(Magic.Skill,1);
                         }
                         else
                         {
@@ -63,7 +64,7 @@ namespace Magic.Spells
                             dummyPick.DoFunction(loc, ix * Game1.tileSize, iy * Game1.tileSize, 0, player);
                             player.stamina = oldStam;
                             player.addMana(-1);
-                            player.addMagicExp(1);
+                            player.AddCustomSkillExperience(Magic.Skill,1);
                         }
                     }
 
@@ -80,7 +81,7 @@ namespace Magic.Spells
                             if (tf.performToolAction(dummyAxe, 0, pos, loc) || tf is Grass || (tf is Tree && tf.performToolAction(dummyAxe, 0, pos, loc)))
                             {
                                 if ( tf is Tree )
-                                    player.addMagicExp(10);
+                                    player.AddCustomSkillExperience(Magic.Skill,10);
                                 loc.terrainFeatures.Remove(pos);
                             }
                             if (tf is Grass && loc is Farm)
@@ -113,7 +114,7 @@ namespace Magic.Spells
                                     if (rc.performToolAction(dummyAxe, 1, pos, loc) || rc.performToolAction(dummyPick, 1, pos, loc))
                                     {
                                         clumps.Remove(rc);
-                                        player.addMagicExp(25);
+                                        player.AddCustomSkillExperience(Magic.Skill,25);
                                     }
                                     break;
                                 }

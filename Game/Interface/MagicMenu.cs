@@ -49,9 +49,6 @@ namespace Magic.Game.Interface
                 int ix = xPositionOnScreen - SCHOOL_ICON_SIZE - 12, iy = yPositionOnScreen;
                 foreach (string schoolId in School.getSchoolList())
                 {
-                    if (!spellbook.knownSchools.Contains(schoolId))
-                        continue;
-
                     var school = School.getSchool(schoolId);
                     drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), ix, iy, SCHOOL_ICON_SIZE + 24, SCHOOL_ICON_SIZE + 24, Color.White, 1f, false);
                     //drawTextureBox(b, ix, iy, 64 + 24, 64 + 24, Color.White);

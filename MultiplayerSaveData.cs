@@ -8,15 +8,13 @@ namespace Magic
 {
     public class MultiplayerSaveData
     {
-        public static string FilePath => Path.Combine(Constants.CurrentSavePath, "magic-mp.json");
+        public static string FilePath => Path.Combine(Constants.CurrentSavePath, "magic0.2.json");
 
         public class PlayerData
         {
             public int mana = 0;
             public int manaCap = 0;
-
-            public int magicLevel = 0;
-            public int magicExp = 0;
+            
             public int freePoints = 0;
 
             public SpellBook spellBook = new SpellBook();
@@ -47,8 +45,6 @@ namespace Magic
             {
                 writer.Write(players[Game1.player.UniqueMultiplayerID].mana);
                 writer.Write(players[Game1.player.UniqueMultiplayerID].manaCap);
-                writer.Write(players[Game1.player.UniqueMultiplayerID].magicLevel);
-                writer.Write(players[Game1.player.UniqueMultiplayerID].magicExp);
                 SpaceCore.Networking.BroadcastMessage(Magic.MSG_MINIDATA, stream.ToArray());
             }
         }

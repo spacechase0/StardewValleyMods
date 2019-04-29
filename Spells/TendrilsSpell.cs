@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using StardewModdingAPI.Events;
+using SpaceCore;
 
 namespace Magic.Spells
 {
@@ -34,7 +35,7 @@ namespace Magic.Spells
                     if ( Vector2.Distance(mob.position, new Vector2( targetX, targetY ) ) <= rad )
                     {
                         tendrils.Add(new Tendril(mob, new Vector2(targetX, targetY), rad, dur ));
-                        player.addMagicExp(3);
+                        player.AddCustomSkillExperience(Magic.Skill, 3);
                     }
                 }
             }

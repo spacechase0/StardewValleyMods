@@ -1,4 +1,5 @@
 ﻿using Magic.Schools;
+using SpaceCore;
 using StardewValley;
 
 namespace Magic.Spells
@@ -40,7 +41,7 @@ namespace Magic.Spells
             }
 
             Game1.buffsDisplay.addOtherBuff(new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, level + 1, 0, 0, 60 + level * 120, "spell:air:haste", "Haste (spell)"));
-            player.addMagicExp(10);
+            player.AddCustomSkillExperience(Magic.Skill,10);
             return null;
         }
     }

@@ -73,7 +73,6 @@ namespace Magic
         public Farmer Owner { get; internal set; }
 
         public Dictionary<string, int> knownSpells = new Dictionary<string, int>();
-        public HashSet<string> knownSchools = new HashSet<string>();
         public PreparedSpell[][] prepared =
         new PreparedSpell[2][]
         {

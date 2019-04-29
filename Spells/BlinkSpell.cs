@@ -1,4 +1,5 @@
 ﻿using Magic.Schools;
+using SpaceCore;
 using StardewValley;
 
 namespace Magic.Spells
@@ -25,7 +26,7 @@ namespace Magic.Spells
             player.position.X = targetX - player.GetBoundingBox().Width / 2;
             player.position.Y = targetY - player.GetBoundingBox().Height / 2;
             Game1.playSound("powerup");
-            player.addMagicExp(5);
+            player.AddCustomSkillExperience(Magic.Skill,5);
 
             return null;
         }

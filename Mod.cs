@@ -54,28 +54,10 @@ namespace Magic
             {
                 if (!Game1.IsMultiplayer || Game1.IsMasterGame)
                 {
-                    Log.info($"Loading save data (\"{SaveData.FilePath}\")...");
-                    var oldData = File.Exists(SaveData.FilePath)
-                        ? JsonConvert.DeserializeObject<SaveData>(File.ReadAllText(SaveData.FilePath))
-                        : null;
+                    Log.info($"Loading save data (\"{MultiplayerSaveData.FilePath}\")...");
                     Data = File.Exists(MultiplayerSaveData.FilePath)
                         ? JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.FilePath))
                         : new MultiplayerSaveData();
-
-                    if (oldData != null && !Data.players.ContainsKey(Game1.MasterPlayer.UniqueMultiplayerID))
-                    {
-                        var player = new MultiplayerSaveData.PlayerData
-                        {
-                            mana = oldData.mana,
-                            manaCap = oldData.manaCap,
-                            magicLevel = oldData.magicLevel,
-                            magicExp = oldData.magicExp,
-                            freePoints = oldData.freePoints,
-                            spellBook = oldData.spellBook
-                        };
-
-                        Data.players[Game1.MasterPlayer.UniqueMultiplayerID] = player;
-                    }
                     
                     if ( !Data.players.ContainsKey( Game1.player.UniqueMultiplayerID ) )
                         Data.players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();

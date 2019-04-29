@@ -15,12 +15,15 @@ using StardewValley.Network;
 using Newtonsoft.Json;
 using System.IO;
 using StardewModdingAPI;
+using SpaceCore;
 
 namespace Magic
 {
     // TODO: Refactor this mess
     static class Magic
     {
+        public static Skill Skill;
+
         private static IModEvents events;
         private static IInputHelper inputHelper;
 
@@ -51,10 +54,10 @@ namespace Magic
             events.Input.ButtonReleased += onButtonReleased;
             
             events.GameLoop.DayStarted += onDayStarted;
+            events.GameLoop.TimeChanged += onTimeChanged;
             events.Player.Warped += onWarped;
             
             SpaceEvents.OnBlankSave += onBlankSave;
-            SpaceEvents.ShowNightEndMenus += showMagicLevelMenus;
             SpaceEvents.OnItemEaten += onItemEaten;
             SpaceEvents.ActionActivated += actionTriggered;
             SpaceCore.Networking.RegisterMessageHandler(MSG_DATA, onNetworkData);
@@ -65,11 +68,10 @@ namespace Magic
             events.Display.RenderingHud += onRenderingHud;
             events.Display.RenderedHud += onRenderedHud;
 
-            checkForExperienceBars();
+            SpaceCore.Skills.RegisterSkill(Skill = new Skill());
 
             Command.register("player_addmana", addManaCommand);
             Command.register("player_setmaxmana", setMaxManaCommand);
-            Command.register("player_learnschool", learnSchoolCommand);
             Command.register("player_learnspell", learnSpellCommand);
             Command.register("magicmenu", magicMenuCommand);
         }
@@ -87,8 +89,6 @@ namespace Magic
         {
             Mod.Data.players[msg.FarmerID].mana = msg.Reader.ReadInt32();
             Mod.Data.players[msg.FarmerID].manaCap = msg.Reader.ReadInt32();
-            Mod.Data.players[msg.FarmerID].magicLevel = msg.Reader.ReadInt32();
-            Mod.Data.players[msg.FarmerID].magicExp = msg.Reader.ReadInt32();
         }
 
         private static void onNetworkCast( IncomingMessage msg )
@@ -317,6 +317,17 @@ namespace Magic
             Game1.player.addMana(Game1.player.getMaxMana());
         }
 
+        private static void onTimeChanged(object sender, TimeChangedEventArgs e)
+        {
+            int manaRegen = Game1.player.GetCustomSkillLevel(Skill);
+            if (Game1.player.HasCustomProfession(Skill.ProfessionManaRegen2))
+                manaRegen *= 3;
+            else if (Game1.player.HasCustomProfession(Skill.ProfessionManaRegen1))
+                manaRegen *= 2;
+
+            Game1.player.addMana(manaRegen);
+        }
+
         /// <summary>Raised after a player warps to a new location.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
@@ -348,8 +359,8 @@ namespace Magic
                 Game1.displayHUD = false;
                 Game1.player.CanMove = false;
                 Game1.player.showNotCarrying();
-                
-                Game1.player.addMagicExp(Game1.player.getMagicExpForNextLevel());
+
+                Game1.player.AddCustomSkillExperience(Skill, Skill.ExperienceCurve[0]);
                 Game1.player.addMana(Game1.player.getMaxMana());
                 Game1.player.eventsSeen.Add(90000);
             }
@@ -362,44 +373,13 @@ namespace Magic
             {
                 if ( !Game1.player.eventsSeen.Contains(90000) )
                 {
-                    Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("altar.glow"));
-                }
-                else if (!Game1.player.knowsSchool(actionArgs[1]))
-                {
-                    /*if (Game1.player.getSpellBook().knownSchools.Count >= Game1.player.countStardropsEaten() + 1)
-                    {
-                        Game1.drawObjectDialogue("You lack the power to use this.");
-                    }
-                    else*/
-                    {
-                        Game1.playSound("secret1");
-                        Game1.player.getSpellBook().knownSchools.Add(actionArgs[1]);
-                        Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("altar.attuned", new { school = Mod.instance.Helper.Translation.Get($"school.{actionArgs[1]}.name") }));
-                    }
+                    //Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("altar.glow"));
                 }
                 else
                 {
                     Game1.playSound("secret1");
                     Game1.activeClickableMenu = new MagicMenu(School.getSchool(actionArgs[1]));
                 }
-            }
-        }
-
-        internal static List<int> newMagicLevels = new List<int>();
-        private static void showMagicLevelMenus(object sender, EventArgsShowNightEndMenus args)
-        {
-            if (newMagicLevels.Any())
-            {
-                for (int i = newMagicLevels.Count() - 1; i >= 0; --i)
-                {
-                    int level = newMagicLevels[i];
-                    Log.debug("Doing " + i + ": magic level " + level + " screen");
-
-                    if (Game1.activeClickableMenu != null)
-                        Game1.endOfNightMenus.Push(Game1.activeClickableMenu);
-                    Game1.activeClickableMenu = new MagicLevelUpMenu(level);
-                }
-                newMagicLevels.Clear();
             }
         }
 
@@ -448,55 +428,6 @@ namespace Magic
             loc.setTileProperty(x + 2, y + 1, "Buildings", "Action", "MagicAltar " + school);
         }
 
-        internal static Texture2D expIcon = Content.loadTexture("interface/magicexpicon.png");
-        private static void checkForExperienceBars()
-        {
-            if (!Mod.instance.Helper.ModRegistry.IsLoaded("spacechase0.ExperienceBars"))
-            {
-                Log.info("Experience Bars not found");
-                return;
-            }
-            
-            Log.info("Experience Bars found, adding magic experience bar renderer.");
-            Magic.events.Display.RenderedHud += drawExperienceBar;
-        }
-
-        /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private static void drawExperienceBar(object sender, RenderedHudEventArgs e)
-        {
-            if (Game1.activeClickableMenu != null)
-                return;
-
-            try
-            {
-                int level = Game1.player.getMagicLevel();
-                int exp = Game1.player.getMagicExp();
-
-                int haveExp = exp;
-                int needExp = Game1.player.getMagicExpForNextLevel();
-                float progress = (float)haveExp / needExp;
-                if (level == 50)
-                {
-                    progress = -1;
-                }
-
-                var api = Mod.instance.Helper.ModRegistry.GetApi<ExperienceBarsApi>("spacechase0.ExperienceBars");
-                if (api == null)
-                {
-                    Log.warn("No experience bars API? Turning off");
-                    events.Display.RenderedHud -= drawExperienceBar;
-                }
-                api.DrawExperienceBar(expIcon, level, progress, new Color(0, 66, 255));
-            }
-            catch (Exception ex)
-            {
-                Log.error("Exception rendering magic experience bar: " + ex);
-                events.Display.RenderedHud -= drawExperienceBar;
-            }
-        }
-
         private static void addManaCommand(string[] args)
         {
             Game1.player.addMana(int.Parse(args[0]));
@@ -504,20 +435,6 @@ namespace Magic
         private static void setMaxManaCommand(string[] args)
         {
             Game1.player.setMaxMana(int.Parse(args[0]));
-        }
-        private static void learnSchoolCommand(string[] args)
-        {
-            if (args.Length != 1 || (args.Length > 0 && args[0] == ""))
-                Log.info("Usage: player_learnschool <school>");
-            else if (args[0] == "all")
-            {
-                foreach (var school in School.getSchoolList())
-                    Game1.player.learnSchool(school);
-            }
-            else if (!School.getSchoolList().Contains(args[0]))
-                Log.error($"School '{args[0]}' does not exist.");
-            else if (!Game1.player.knowsSchool(args[0]))
-                Game1.player.learnSchool(args[0]);
         }
         private static void learnSpellCommand(string[] args)
         {

@@ -5,6 +5,7 @@ using StardewValley;
 using StardewValley.Monsters;
 using System;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceCore;
 
 namespace Magic.Spells
 {
@@ -88,7 +89,7 @@ namespace Magic.Spells
                             if (Vector2.Distance(new Vector2(landX, landY), mob.position) < currRad * Game1.tileSize)
                             {
                                 mob.takeDamage((level + 1) * 5, 0, 0, false, 0, player);
-                                player.addMagicExp(3);
+                                player.AddCustomSkillExperience(Magic.Skill, 3);
                             }
                         }
                     }

@@ -6,6 +6,7 @@ using StardewValley.Monsters;
 using StardewValley.Projectiles;
 using StardewValley.TerrainFeatures;
 using System;
+using SpaceCore;
 
 namespace Magic.Game
 {
@@ -53,7 +54,7 @@ namespace Magic.Game
 
             loc.damageMonster(npc.GetBoundingBox(), damage, damage + 1, false, source);
             if (source != null)
-                source.addMagicExp(damage);
+                source.AddCustomSkillExperience(Magic.Skill,damage);
             disappear(loc);
         }
 

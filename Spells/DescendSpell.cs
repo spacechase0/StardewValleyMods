@@ -1,4 +1,5 @@
 ﻿using Magic.Schools;
+using SpaceCore;
 using StardewValley;
 using StardewValley.Locations;
 
@@ -39,7 +40,7 @@ namespace Magic.Spells
 
             Game1.enterMine(target);
 
-            player.addMagicExp(5);
+            player.AddCustomSkillExperience(Magic.Skill,5);
             return null;
         }
     }

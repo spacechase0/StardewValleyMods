@@ -6,6 +6,7 @@ using StardewValley;
 using StardewValley.Monsters;
 using System;
 using SObject = StardewValley.Object;
+using SpaceCore;
 
 namespace Magic.Spells
 {
@@ -84,7 +85,7 @@ namespace Magic.Spells
                         if (Vector2.Distance(mob.position, new Vector2(position.X, position.Y)) <= rad)
                         {
                             mob.takeDamage(300, 0, 0, false, 0, source);
-                            source.addMagicExp(5);
+                            source.AddCustomSkillExperience(Magic.Skill,5);
                         }
                     }
                 }

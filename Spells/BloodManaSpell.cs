@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Magic.Schools;
 using StardewValley;
+using SpaceCore;
 
 namespace Magic.Spells
 {
@@ -37,9 +38,11 @@ namespace Magic.Spells
             player.addMana(mana);
             player.currentLocation.debris.Add(new Debris(mana, new Vector2((float)(Game1.player.getStandingX() + 8), (float)Game1.player.getStandingY()), Color.Blue, 1f, (Character)Game1.player));
             Game1.playSound("powerup");
-            player.addMagicExp(-mana);
-            if (player.getMagicExp() < 0)
-                player.addMagicExp(-player.getMagicExp());
+            player.AddCustomSkillExperience(Magic.Skill,-mana);
+            /*
+            if (player.GetCustomSkillExperience(Magic.Skill) < 0)
+                player.AddCustomSkillExperience(Magic.Skill,-player.getMagicExp());
+            */
 
             return null;
         }

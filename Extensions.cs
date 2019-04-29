@@ -43,46 +43,6 @@ namespace Magic
                 Data.syncMineMini();
         }
 
-        public static int getMagicLevel(this Farmer player)
-        {
-            dataCheck(player);
-            return Data.players[player.UniqueMultiplayerID].magicLevel;
-        }
-
-        public static int getMagicExp(this Farmer player)
-        {
-            dataCheck(player);
-            return Data.players[player.UniqueMultiplayerID].magicExp;
-        }
-
-        public static void addMagicExp(this Farmer player, int exp)
-        {
-            dataCheck(player);
-            if (Data.players[player.UniqueMultiplayerID].magicLevel >= 50)
-                return;
-
-            Data.players[player.UniqueMultiplayerID].magicExp += exp;
-            if (player == Game1.player)
-                Data.syncMineMini();
-
-            while (Data.players[player.UniqueMultiplayerID].magicExp >= player.getMagicExpForNextLevel() )
-            {
-                Data.players[player.UniqueMultiplayerID].magicExp -= player.getMagicExpForNextLevel();
-                Data.players[player.UniqueMultiplayerID].magicLevel++;
-                //if ( Data.magicLevel % 2 == 1 )
-                    Data.players[player.UniqueMultiplayerID].freePoints++;
-                player.setMaxMana(player.getMagicLevel() == 1 ? 50 : player.getMaxMana() + 10);
-                Magic.newMagicLevels.Add(Data.players[player.UniqueMultiplayerID].magicLevel);
-                Data.syncMineFull();
-            }
-        }
-
-        public static int getMagicExpForNextLevel(this Farmer player)
-        {
-            dataCheck(player);
-            return 50 + Data.players[player.UniqueMultiplayerID].magicLevel * 50;
-        }
-
         public static int getFreeSpellPoints(this Farmer player)
         {
             dataCheck(player);
@@ -101,19 +61,6 @@ namespace Magic
         {
             dataCheck(player);
             return Data.players[player.UniqueMultiplayerID].spellBook;
-        }
-
-        public static bool knowsSchool(this Farmer player, string school)
-        {
-            if (player != Game1.player || Data == null)
-                return false;
-            return player.getSpellBook().knownSchools.Contains(school);
-        }
-
-        public static void learnSchool(this Farmer player, string school)
-        {
-            if (!knowsSchool(player, school))
-                player.getSpellBook().knownSchools.Add(school);
         }
 
         public static bool knowsSpell(this Farmer player, string spellId, int level)

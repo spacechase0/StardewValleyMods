@@ -1,6 +1,7 @@
 ﻿using StardewModdingAPI.Events;
 using Magic.Schools;
 using StardewValley;
+using SpaceCore;
 
 namespace Magic.Spells
 {
@@ -24,7 +25,7 @@ namespace Magic.Spells
         {
             player.position.X = enterX;
             player.position.Y = enterY;
-            player.addMagicExp(5);
+            player.AddCustomSkillExperience(Magic.Skill,5);
             return null;
         }
 
