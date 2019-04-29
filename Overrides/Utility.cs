@@ -7,7 +7,7 @@ namespace SpaceCore.Overrides
     {
         public static void Postfix( ref FarmEvent __result )
         {
-            SpaceEvents.InvokeChooseNightlyFarmEvent( __result );
+            __result = SpaceEvents.InvokeChooseNightlyFarmEvent( __result );
         }
     }
 }
