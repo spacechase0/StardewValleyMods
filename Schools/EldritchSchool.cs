@@ -20,7 +20,7 @@ namespace Magic.Schools
 
         public override Spell[] GetSpellsTier3()
         {
-            return new Spell[] { /*SpellBook.get("dark:lucksteal")*/ };
+            return new Spell[] { SpellBook.get("eldritch:spirit") };
         }
     }
 }

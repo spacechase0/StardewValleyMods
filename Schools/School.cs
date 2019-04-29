@@ -44,6 +44,7 @@ namespace Magic.Schools
         private static void init()
         {
             schools = new Dictionary<string, School>();
+            registerSchool(new ArcaneSchool());
             registerSchool(new ElementalSchool());
             registerSchool(new NatureSchool());
             registerSchool(new LifeSchool());

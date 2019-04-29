@@ -37,6 +37,11 @@ namespace Magic
 
         internal static void init(Func<long> getNewId)
         {
+            register(new DummySpell("arcane", "analyze"));
+            register(new DummySpell("arcane", "magicmissle"));
+            register(new DummySpell("arcane", "enchant"));
+            register(new DummySpell("arcane", "rewind"));
+
             register(new ClearDebrisSpell());
             register(new TillSpell());
             register(new WaterSpell());
@@ -60,6 +65,7 @@ namespace Magic
             register(new MeteorSpell());
             register(new BloodManaSpell());
             register(new LuckStealSpell());
+            register(new DummySpell("eldritch", "spirit"));
         }
 
 

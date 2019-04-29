@@ -5,6 +5,7 @@
   "event.wizard.4": "TAB to switch between spell sets.",
   "event.wizard.abovehead": "MAGIC",
 
+  "school.arcane.name": "arcane",
   "school.toil.name": "toil",
   "school.nature.name": "nature",
   "school.life.name": "life",
@@ -13,6 +14,15 @@
 
   "altar.glow": "A glowing altar.",
   "altar.attuned": "You are now attuned to {{school}}.",
+
+  "spell.arcane:analyze.name": "Analyze",
+  "spell.arcane:analyze.desc": "Examine an item for magical inspiration.",
+  "spell.arcane:magicmissle.name": "Magic Missle",
+  "spell.arcane:magicmissle.desc": "An somewhat weak but seeking projectile.",
+  "spell.arcane:enchant.name": "Enchant",
+  "spell.arcane:enchant.desc": "Catalyst: Money\nRaise the quality of an item.\nPrice is sale price difference between old and new quality.",
+  "spell.arcane:rewind.name": "Rewind",
+  "spell.arcane:rewind.desc": "Catalyst: Gold Bar\nTurn back time.",
 
   "spell.toil:cleardebris.name": "Clear Debris",
   "spell.toil:cleardebris.desc": "Clear debris around the targeted area.\nHigher levels can clear larger types of debris.",
@@ -55,5 +65,7 @@
   "spell.eldritch:bloodmana.name": "Blood Mana",
   "spell.eldritch:bloodmana.desc": "Catalyst: Your life",
   "spell.eldritch:lucksteal.name": "Luck Steal",
-  "spell.eldritch:lucksteal.desc": "Catalyst: The happiness of your loved ones"
+  "spell.eldritch:lucksteal.desc": "Catalyst: The happiness of your loved ones",
+  "spell.eldritch:spirit.name": "Spirit",
+  "spell.eldritch:spirit.desc": "Summon a lost spirit to fight for you."
 }
