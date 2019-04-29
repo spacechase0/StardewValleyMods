@@ -332,11 +332,16 @@ namespace Magic
             if ( e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains( 90000 ) &&
                  Game1.player.friendshipData.ContainsKey( "Wizard" ) && Game1.player.friendshipData[ "Wizard" ].Points > 750 )
             {
-                string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}\"/textAboveHead Wizard \"{4}\"/pause 750/fade 750/end";
+                string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{7}\"/pause 750/fade 750/end";
                 eventStr = string.Format(eventStr, Mod.instance.Helper.Translation.Get("event.wizard.1"),
                                                    Mod.instance.Helper.Translation.Get("event.wizard.2"),
                                                    Mod.instance.Helper.Translation.Get("event.wizard.3"),
                                                    Mod.instance.Helper.Translation.Get("event.wizard.4"),
+                                                   Mod.instance.Helper.Translation.Get("event.wizard.5"),
+                                                   Mod.instance.Helper.Translation.Get("event.wizard.6"),
+                                                   Mod.instance.Helper.Translation.Get("event.wizard.7"),
+                                                   Mod.instance.Helper.Translation.Get("event.wizard.8"),
+                                                   Mod.instance.Helper.Translation.Get("event.wizard.9"),
                                                    Mod.instance.Helper.Translation.Get("event.wizard.abovehead"));
                 e.NewLocation.currentEvent = new Event(eventStr, 90000);
                 Game1.eventUp = true;
