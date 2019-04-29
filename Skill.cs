@@ -45,12 +45,25 @@ namespace Magic
             }
         }
 
+        public class ManaCapProfession : GenericProfession
+        {
+            public ManaCapProfession(Skill skill, string theId)
+            : base(skill, theId)
+            {
+            }
+
+            public override void DoImmediateProfessionPerk()
+            {
+                Game1.player.setMaxMana(Game1.player.getMaxMana() + 250);
+            }
+        }
+
         public static GenericProfession ProfessionUpgradePoint1 = null;
         public static GenericProfession ProfessionUpgradePoint2 = null;
         public static GenericProfession Profession_12 = null;
         public static GenericProfession ProfessionManaRegen1 = null;
         public static GenericProfession ProfessionManaRegen2 = null;
-        public static GenericProfession Profession_22 = null;
+        public static GenericProfession ProfessionManaCap = null;
 
         public Skill()
         : base("spacechase0.Magic")
@@ -71,7 +84,7 @@ namespace Magic
 
             ProfessionManaRegen1 = new GenericProfession(this, "ManaRegen1");
             ProfessionManaRegen1.Icon = null; // TODO
-            ProfessionManaRegen1.Name = "<TODO>";
+            ProfessionManaRegen1.Name = "Mana Regen I";
             ProfessionManaRegen1.Description = "+1 mana regen per level";
             Professions.Add(ProfessionManaRegen1);
 
@@ -95,17 +108,17 @@ namespace Magic
             // Level 10 - track B
             ProfessionManaRegen2 = new GenericProfession(this, "ManaRegen2");
             ProfessionManaRegen2.Icon = null; // TODO
-            ProfessionManaRegen2.Name = "<TODO>";
+            ProfessionManaRegen2.Name = "Mana Regen II";
             ProfessionManaRegen2.Description = "+2 mana regen per level";
             Professions.Add(ProfessionManaRegen2);
 
-            Profession_22 = new GenericProfession(this, "TODO_22");
-            Profession_22.Icon = null; // TODO
-            Profession_22.Name = "<TODO>";
-            Profession_22.Description = "<TODO>";
-            Professions.Add(Profession_22);
+            ProfessionManaCap = new ManaCapProfession(this, "ManaCap");
+            ProfessionManaCap.Icon = null; // TODO
+            ProfessionManaCap.Name = "Mana Reserve";
+            ProfessionManaCap.Description = "+250 max mana";
+            Professions.Add(ProfessionManaCap);
 
-            ProfessionsForLevels.Add(new ProfessionPair(10, ProfessionManaRegen2, Profession_22, ProfessionManaRegen1));
+            ProfessionsForLevels.Add(new ProfessionPair(10, ProfessionManaRegen2, ProfessionManaCap, ProfessionManaRegen1));
         }
 
         public override string GetName()
