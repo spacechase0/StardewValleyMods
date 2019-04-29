@@ -55,16 +55,16 @@ namespace Magic.Spells
                             }
                             obj.performRemoveAction(pos, loc);
                             loc.objects.Remove(pos);
-                            player.addMana(-1);
-                            player.AddCustomSkillExperience(Magic.Skill,1);
+                            player.addMana(-3);
+                            player.AddCustomSkillExperience(Magic.Skill, 1);
                         }
                         else
                         {
                             var oldStam = player.stamina;
                             dummyPick.DoFunction(loc, ix * Game1.tileSize, iy * Game1.tileSize, 0, player);
                             player.stamina = oldStam;
-                            player.addMana(-1);
-                            player.AddCustomSkillExperience(Magic.Skill,1);
+                            player.addMana(-3);
+                            player.AddCustomSkillExperience(Magic.Skill, 1);
                         }
                     }
 
@@ -76,12 +76,12 @@ namespace Magic.Spells
                             TerrainFeature tf = loc.terrainFeatures[pos];
                             if (tf is Tree)
                             {
-                                player.addMana(-1);
+                                player.addMana(-3);
                             }
                             if (tf.performToolAction(dummyAxe, 0, pos, loc) || tf is Grass || (tf is Tree && tf.performToolAction(dummyAxe, 0, pos, loc)))
                             {
                                 if ( tf is Tree )
-                                    player.AddCustomSkillExperience(Magic.Skill,10);
+                                    player.AddCustomSkillExperience(Magic.Skill,5);
                                 loc.terrainFeatures.Remove(pos);
                             }
                             if (tf is Grass && loc is Farm)
@@ -110,11 +110,11 @@ namespace Magic.Spells
                             {
                                 if (new Rectangle((int)rc.tile.X, (int)rc.tile.Y, rc.width.Value, rc.height.Value).Contains(ix, iy))
                                 {
-                                    player.addMana(-1);
+                                    player.addMana(-3);
                                     if (rc.performToolAction(dummyAxe, 1, pos, loc) || rc.performToolAction(dummyPick, 1, pos, loc))
                                     {
                                         clumps.Remove(rc);
-                                        player.AddCustomSkillExperience(Magic.Skill,25);
+                                        player.AddCustomSkillExperience(Magic.Skill,10);
                                     }
                                     break;
                                 }

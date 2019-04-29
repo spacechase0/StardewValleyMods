@@ -20,7 +20,7 @@ namespace Magic.Spells
 
         public override int getManaCost(Farmer player, int level)
         {
-            return 0;
+            return 10;
         }
 
         public override int getMaxCastingLevel()

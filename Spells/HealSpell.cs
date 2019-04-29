@@ -13,7 +13,7 @@ namespace Magic.Spells
 
         public override int getManaCost(Farmer player, int level)
         {
-            return 5 + 5 * level;
+            return 7;
         }
 
         public override bool canCast(Farmer player, int level)
@@ -23,11 +23,11 @@ namespace Magic.Spells
 
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            int health = 10 + 15 * level;
+            int health = 10 + 15 * level + player.CombatLevel * 2;
             player.health += health;
             player.currentLocation.debris.Add(new Debris(health, new Vector2((float)(Game1.player.getStandingX() + 8), (float)Game1.player.getStandingY()), Color.Green, 1f, (Character)Game1.player));
             Game1.playSound("healSound");
-            player.AddCustomSkillExperience(Magic.Skill,health / 2);
+            player.AddCustomSkillExperience(Magic.Skill, health / 2);
 
             return null;
         }

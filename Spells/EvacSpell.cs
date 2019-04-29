@@ -18,14 +18,14 @@ namespace Magic.Spells
 
         public override int getManaCost(Farmer player, int level)
         {
-            return 5;
+            return 25;
         }
 
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             player.position.X = enterX;
             player.position.Y = enterY;
-            player.AddCustomSkillExperience(Magic.Skill,5);
+            player.AddCustomSkillExperience(Magic.Skill, 5);
             return null;
         }
 

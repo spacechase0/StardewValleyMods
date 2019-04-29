@@ -41,7 +41,7 @@ namespace Magic.Spells
             }
 
             Game1.buffsDisplay.addOtherBuff(new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, level + 1, 0, 0, 60 + level * 120, "spell:air:haste", "Haste (spell)"));
-            player.AddCustomSkillExperience(Magic.Skill,10);
+            player.AddCustomSkillExperience(Magic.Skill, 5);
             return null;
         }
     }

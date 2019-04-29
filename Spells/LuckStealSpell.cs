@@ -34,7 +34,7 @@ namespace Magic.Spells
             friendshipData.Points = Math.Max(0, friendshipData.Points - 250);
             Game1.dailyLuck = 0.12;
             Game1.playSound("death");
-            player.AddCustomSkillExperience(Magic.Skill,50);
+            player.AddCustomSkillExperience(Magic.Skill, 50);
 
             return null;
         }

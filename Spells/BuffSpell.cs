@@ -27,7 +27,7 @@ namespace Magic.Spells
 
         public override int getManaCost(Farmer player, int level)
         {
-            return 10;
+            return 25;
         }
 
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)

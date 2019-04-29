@@ -57,8 +57,8 @@ namespace Magic
             register(new BuffSpell());
             register(new EvacSpell());
 
-            register(new ProjectileSpell(SchoolId.Elemental, "frostbolt", 1, 4, 10, 20, "flameSpell", "flameSpellHit"));
-            register(new ProjectileSpell(SchoolId.Elemental, "fireball", 1, 4, 10, 20, "flameSpell", "flameSpellHit"));
+            register(new ProjectileSpell(SchoolId.Elemental, "frostbolt", 5, 10, 20, "flameSpell", "flameSpellHit"));
+            register(new ProjectileSpell(SchoolId.Elemental, "fireball", 5, 10, 20, "flameSpell", "flameSpellHit"));
             register(new DescendSpell());
             register(new TeleportSpell());
 

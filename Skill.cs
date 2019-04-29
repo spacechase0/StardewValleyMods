@@ -85,7 +85,7 @@ namespace Magic
             ProfessionManaRegen1 = new GenericProfession(this, "ManaRegen1");
             ProfessionManaRegen1.Icon = null; // TODO
             ProfessionManaRegen1.Name = "Mana Regen I";
-            ProfessionManaRegen1.Description = "+1 mana regen per level";
+            ProfessionManaRegen1.Description = "+0.5 mana regen per level";
             Professions.Add(ProfessionManaRegen1);
 
             ProfessionsForLevels.Add(new ProfessionPair(5, ProfessionUpgradePoint1, ProfessionManaRegen1));
@@ -109,7 +109,7 @@ namespace Magic
             ProfessionManaRegen2 = new GenericProfession(this, "ManaRegen2");
             ProfessionManaRegen2.Icon = null; // TODO
             ProfessionManaRegen2.Name = "Mana Regen II";
-            ProfessionManaRegen2.Description = "+2 mana regen per level";
+            ProfessionManaRegen2.Description = "+1 mana regen per level";
             Professions.Add(ProfessionManaRegen2);
 
             ProfessionManaCap = new ManaCapProfession(this, "ManaCap");

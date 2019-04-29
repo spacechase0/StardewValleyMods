@@ -17,7 +17,7 @@ namespace Magic.Spells
 
         public override int getManaCost(Farmer player, int level)
         {
-            return level;
+            return level * 3;
         }
 
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
@@ -32,7 +32,7 @@ namespace Magic.Spells
                 power = 16;
 
             player.currentLocation.sharedLights.Add(getUnusedLightSourceID(player.currentLocation), new LightSource(1, Game1.player.position, power));
-            player.AddCustomSkillExperience(Magic.Skill,level);
+            player.AddCustomSkillExperience(Magic.Skill, level);
 
             return null;
         }

@@ -54,7 +54,7 @@ namespace Magic.Game
 
             loc.damageMonster(npc.GetBoundingBox(), damage, damage + 1, false, source);
             if (source != null)
-                source.AddCustomSkillExperience(Magic.Skill,damage);
+                source.AddCustomSkillExperience(Magic.Skill, damage / (theOneWhoFiredMe.Get(loc) as Farmer).CombatLevel);
             disappear(loc);
         }
 

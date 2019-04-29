@@ -404,15 +404,17 @@ namespace Magic
             Game1.player.addMana(Game1.player.getMaxMana());
         }
 
+        private static float carryoverManaRegen = 0;
         private static void onTimeChanged(object sender, TimeChangedEventArgs e)
         {
-            int manaRegen = Game1.player.GetCustomSkillLevel(Skill);
+            float manaRegen = Game1.player.GetCustomSkillLevel(Skill) / 2 + carryoverManaRegen;
             if (Game1.player.HasCustomProfession(Skill.ProfessionManaRegen2))
                 manaRegen *= 3;
             else if (Game1.player.HasCustomProfession(Skill.ProfessionManaRegen1))
                 manaRegen *= 2;
 
-            Game1.player.addMana(manaRegen);
+            Game1.player.addMana((int)manaRegen);
+            carryoverManaRegen = manaRegen - (int)manaRegen;
         }
 
         /// <summary>Raised after a player warps to a new location.</summary>
