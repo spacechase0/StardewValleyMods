@@ -188,6 +188,9 @@ namespace Magic
                 targetArea.X += (int)manaPos.X;
                 targetArea.Y += (int)manaPos.Y;
                 b.Draw(manaFg, targetArea, new Rectangle(0, 0, 1, 1), Color.White);
+
+                if ((double)Game1.getOldMouseX() >= (double)targetArea.X && (double)Game1.getOldMouseY() >= (double)targetArea.Y && (double)Game1.getOldMouseX() < (double)targetArea.X + targetArea.Width && Game1.getOldMouseY() < targetArea.Y + targetArea.Height)
+                    Game1.drawWithBorder(Math.Max(0, (int)Game1.player.getCurrentMana()).ToString() + "/" + Game1.player.getMaxMana(), Color.Black * 0.0f, Color.White, new Vector2(Game1.getOldMouseX(), Game1.getOldMouseY() - 32));
             }
 
             Point[] spots =

@@ -128,6 +128,7 @@ namespace Magic
         public override void DoLevelPerk(int level)
         {
             Game1.player.setMaxMana(Game1.player.getMaxMana() + 100);
+            Game1.player.useSpellPoints(-1);
         }
     }
 }
