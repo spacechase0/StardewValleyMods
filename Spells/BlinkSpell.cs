@@ -22,7 +22,6 @@ namespace Magic.Spells
 
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            Log.debug($"{player.Name} cast Blink.");
             player.position.X = targetX - player.GetBoundingBox().Width / 2;
             player.position.Y = targetY - player.GetBoundingBox().Height / 2;
             Game1.playSound("powerup");

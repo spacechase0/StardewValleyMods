@@ -22,7 +22,6 @@ namespace Magic.Spells
 
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            Log.debug($"{player.Name} cast Analyze.");
             if (Magic.OnAnalyzeCast != null)
                 SpaceCore.Utilities.Util.invokeEvent< AnalyzeEventArgs >("OnAnalyzeCast", Magic.OnAnalyzeCast.GetInvocationList(), player, new AnalyzeEventArgs(targetX, targetY));
 

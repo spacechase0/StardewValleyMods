@@ -54,7 +54,7 @@ namespace Magic
 
             public override void DoImmediateProfessionPerk()
             {
-                Game1.player.setMaxMana(Game1.player.getMaxMana() + 250);
+                Game1.player.setMaxMana(Game1.player.getMaxMana() + 500);
             }
         }
 
@@ -115,7 +115,7 @@ namespace Magic
             ProfessionManaCap = new ManaCapProfession(this, "ManaCap");
             ProfessionManaCap.Icon = null; // TODO
             ProfessionManaCap.Name = "Mana Reserve";
-            ProfessionManaCap.Description = "+250 max mana";
+            ProfessionManaCap.Description = "+500 max mana";
             Professions.Add(ProfessionManaCap);
 
             ProfessionsForLevels.Add(new ProfessionPair(10, ProfessionManaRegen2, ProfessionManaCap, ProfessionManaRegen1));

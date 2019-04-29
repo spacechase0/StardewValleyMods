@@ -66,7 +66,6 @@ namespace Magic
             SpaceCore.Networking.RegisterMessageHandler(MSG_MINIDATA, onNetworkMiniData);
             SpaceCore.Networking.RegisterMessageHandler(MSG_CAST, onNetworkCast);
             SpaceEvents.ServerGotClient += onClientConnected;
-            SpaceEvents.ChooseNightlyFarmEvent += TEST_nightlyfarmevent;
 
             events.Display.RenderingHud += onRenderingHud;
             events.Display.RenderedHud += onRenderedHud;
@@ -79,13 +78,6 @@ namespace Magic
             Command.register("player_setmaxmana", setMaxManaCommand);
             Command.register("player_learnspell", learnSpellCommand);
             Command.register("magicmenu", magicMenuCommand);
-        }
-
-        private static void TEST_nightlyfarmevent(object sender, EventArgsChooseNightlyFarmEvent e)
-        {
-            foreach (var stuff in Game1.player.friendshipData.Values)
-                stuff.Points = 0;
-            e.NightEvent = new StardewValley.Events.SoundInTheNightEvent(StardewValley.Events.SoundInTheNightEvent.meteorite);
         }
 
         private static void onAnalyze(object sender, AnalyzeEventArgs e)
@@ -128,7 +120,7 @@ namespace Magic
             }
             foreach ( var lightSource in farmer.currentLocation.sharedLights.Values )
             {
-                if ( Utility.distance(e.TargetX, lightSource.position.X, e.TargetY, lightSource.position.Y) < lightSource.radius )
+                if ( Utility.distance(e.TargetX, lightSource.position.X, e.TargetY, lightSource.position.Y) < lightSource.radius.Value * Game1.tileSize )
                 {
                     spellsLearnt.Add("nature:lantern");
                     break;
@@ -141,7 +133,8 @@ namespace Magic
                     spellsLearnt.Add("nature:tendrils");
             }
             // TODO: Add proper tilesheet check
-            if (farmer.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y].TileIndex == 173)
+            var tile = farmer.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y];
+            if (tile != null && tile.TileIndex == 173)
                 spellsLearnt.Add("elemental:descend");
             if ( farmer.currentLocation is Farm farm )
             {
@@ -161,12 +154,12 @@ namespace Magic
                     spellsLearnt.RemoveAt(i);
             if (spellsLearnt.Count > 0)
             {
-                Game1.playSound("secret2");
+                Game1.playSound("secret1");
                 foreach (var spell in spellsLearnt)
                 {
                     Log.debug("Player learnt spell: " + spell);
                     farmer.learnSpell(spell, 0, true);
-                    Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", Mod.instance.Helper.Translation.Get("spell." + spell + ".name")));
+                    Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") }));
                 }
             }
         }

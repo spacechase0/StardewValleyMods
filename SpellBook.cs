@@ -37,7 +37,7 @@ namespace Magic
 
         internal static void init(Func<long> getNewId)
         {
-            register(new DummySpell("arcane", "analyze"));
+            register(new AnalyzeSpell());
             register(new DummySpell("arcane", "magicmissle"));
             register(new DummySpell("arcane", "enchant"));
             register(new DummySpell("arcane", "rewind"));
