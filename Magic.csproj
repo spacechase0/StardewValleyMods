@@ -72,6 +72,7 @@
     <Compile Include="Schools\SchoolId.cs" />
     <Compile Include="Schools\ToilSchool.cs" />
     <Compile Include="SpellBook.cs" />
+    <Compile Include="Spells\EnchantSpell.cs" />
     <Compile Include="Spells\AnalyzeSpell.cs" />
     <Compile Include="Spells\LuckStealSpell.cs" />
     <Compile Include="Spells\BlinkSpell.cs" />
@@ -131,6 +132,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\interface\spellbg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\magic\arcane\disenchant\1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\magic\arcane\enchant\1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\magic\arcane\rewind\1.png">

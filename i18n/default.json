@@ -36,6 +36,8 @@
   "spell.arcane:analyze.desc": "Examine an item for magical inspiration.",
   "spell.arcane:magicmissle.name": "Magic Missle",
   "spell.arcane:magicmissle.desc": "An somewhat weak but seeking projectile.",
+  "spell.arcane:disenchant.name": "Disenchant",
+  "spell.arcane:disenchant.desc": "Lower the quality of an item.\nSale price difference between old and new quality is refunded into wallet.",
   "spell.arcane:enchant.name": "Enchant",
   "spell.arcane:enchant.desc": "Catalyst: Money\nRaise the quality of an item.\nPrice is sale price difference between old and new quality.",
   "spell.arcane:rewind.name": "Rewind",

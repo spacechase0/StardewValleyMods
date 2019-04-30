@@ -454,6 +454,7 @@ namespace Magic
                 Game1.player.learnSpell("arcane:analyze", 0, true);
                 Game1.player.learnSpell("arcane:magicmissle", 0, true);
                 Game1.player.learnSpell("arcane:enchant", 0, true);
+                Game1.player.learnSpell("arcane:disenchant", 0, true);
                 Game1.player.eventsSeen.Add(90001);
             }
         }

@@ -50,7 +50,7 @@ namespace Magic.Game.Interface
                 foreach (string schoolId in School.getSchoolList())
                 {
                     var school = School.getSchool(schoolId);
-                    drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), ix, iy, SCHOOL_ICON_SIZE + 24, SCHOOL_ICON_SIZE + 24, Color.White, 1f, false);
+                    drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), ix, iy, SCHOOL_ICON_SIZE + 24, SCHOOL_ICON_SIZE + 24, active == school ? Color.Green : Color.White, 1f, false);
                     //drawTextureBox(b, ix, iy, 64 + 24, 64 + 24, Color.White);
                     b.Draw(Game1.staminaRect, new Rectangle(ix + 12, iy + 12, SCHOOL_ICON_SIZE, SCHOOL_ICON_SIZE), Color.Aqua);
 
@@ -83,6 +83,8 @@ namespace Magic.Game.Interface
                         int x = xPositionOnScreen + (WINDOW_WIDTH / 2 - 24) / sx * (s + 1);
 
                         var spell = spells[t][s];
+                        if (!Game1.player.knowsSpell(spell, 0))
+                            continue;
                         if ( justLeftClicked && new Rectangle( x - SPELL_ICON_SIZE / 2, y - SPELL_ICON_SIZE / 2, SPELL_ICON_SIZE, SPELL_ICON_SIZE ).Contains( Game1.getOldMouseX(), Game1.getOldMouseY() ) )
                         {
                             sel = spell;
@@ -151,7 +153,7 @@ namespace Magic.Game.Interface
                         {
                             if ( justLeftClicked )
                                 Game1.player.learnSpell(sel, i);
-                            else if ( justRightClicked )
+                            else if ( justRightClicked && i != 0 )
                                 Game1.player.forgetSpell(sel, i);
                         }
                     }

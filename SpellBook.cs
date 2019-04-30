@@ -39,7 +39,8 @@ namespace Magic
         {
             register(new AnalyzeSpell());
             register(new DummySpell("arcane", "magicmissle"));
-            register(new DummySpell("arcane", "enchant"));
+            register(new EnchantSpell(false));
+            register(new EnchantSpell(true));
             register(new RewindSpell());
 
             register(new ClearDebrisSpell());
