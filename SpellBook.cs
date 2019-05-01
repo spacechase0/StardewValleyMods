@@ -66,7 +66,7 @@ namespace Magic
             register(new MeteorSpell());
             register(new BloodManaSpell());
             register(new LuckStealSpell());
-            register(new DummySpell("eldritch", "spirit"));
+            register(new SpiritSpell());
         }
 
 

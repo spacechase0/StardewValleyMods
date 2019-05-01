@@ -72,6 +72,7 @@
     <Compile Include="Schools\SchoolId.cs" />
     <Compile Include="Schools\ToilSchool.cs" />
     <Compile Include="SpellBook.cs" />
+    <Compile Include="Spells\SpiritSpell.cs" />
     <Compile Include="Spells\EnchantSpell.cs" />
     <Compile Include="Spells\AnalyzeSpell.cs" />
     <Compile Include="Spells\LuckStealSpell.cs" />
@@ -153,6 +154,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\magic\eldritch\bloodmana\3.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\magic\eldritch\spirit\1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\magic\eldritch\lucksteal\1.png">
