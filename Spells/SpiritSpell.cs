@@ -66,7 +66,7 @@ namespace Magic.Spells
             {
                 if ( character is Monster mob )
                 {
-                    float dist = Utility.distance(mob.Position.X, summoner.Position.X, mob.Position.Y, summoner.Position.Y);
+                    float dist = Utility.distance(mob.GetBoundingBox().Center.X, summoner.Position.X, mob.GetBoundingBox().Center.Y, summoner.Position.Y);
                     if ( dist < nearestDist )
                     {
                         nearestDist = dist;
@@ -90,10 +90,9 @@ namespace Magic.Spells
                     {
                         attackTimer = 45;
                         int baseDmg = 20 * (summoner.CombatLevel + 1);
-                        Rectangle rect = new Rectangle((int)(nearestMob.Position.X - Game1.tileSize / 2), (int)(nearestMob.Position.Y - Game1.tileSize / 2), Game1.tileSize, Game1.tileSize);
                         var oldPos = summoner.Position;
-                        summoner.Position = nearestMob.Position;
-                        summoner.currentLocation.damageMonster(rect, (int)(baseDmg * 0.75f), (int)(baseDmg * 1.5f), false, 1, 0, 0.1f, 2, false, summoner);
+                        summoner.Position = new Vector2(nearestMob.GetBoundingBox().Center.X, nearestMob.GetBoundingBox().Center.Y);
+                        summoner.currentLocation.damageMonster(nearestMob.GetBoundingBox(), (int)(baseDmg * 0.75f), (int)(baseDmg * 1.5f), false, 1, 0, 0.1f, 2, false, summoner);
                         summoner.Position = oldPos;
                     }
                 }

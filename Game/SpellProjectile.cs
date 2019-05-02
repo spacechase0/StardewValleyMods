@@ -17,17 +17,21 @@ namespace Magic.Game
         private readonly int damage;
         private readonly float dir;
         private readonly float vel;
+        private readonly bool seeking;
 
         private Texture2D tex;
         private string texId;
 
-        public SpellProjectile(Farmer theSource, ProjectileSpell theSpell, int dmg, float theDir, float theVel )
+        private Monster seekTarget;
+
+        public SpellProjectile(Farmer theSource, ProjectileSpell theSpell, int dmg, float theDir, float theVel, bool theSeeking)
         {
             source = theSource;
             spell = theSpell;
             damage = dmg;
             dir = theDir;
             vel = theVel;
+            seeking = theSeeking;
 
             theOneWhoFiredMe.Set(theSource.currentLocation, source );
             position.Value = source.getStandingPosition();
@@ -40,6 +44,26 @@ namespace Magic.Game
 
             tex = Content.loadTexture("magic/" + spell.ParentSchoolId + "/" + spell.Id + "/projectile.png");
             texId = Content.loadTextureKey("magic/" + spell.ParentSchoolId + "/" + spell.Id + "/projectile.png");
+
+            if (seeking)
+            {
+                float nearestDist = float.MaxValue;
+                Monster nearestMob = null;
+                foreach (var character in theSource.currentLocation.characters)
+                {
+                    if (character is Monster mob)
+                    {
+                        float dist = Utility.distance(mob.Position.X, position.X, mob.Position.Y, position.Y);
+                        if (dist < nearestDist)
+                        {
+                            nearestDist = dist;
+                            nearestMob = mob;
+                        }
+                    }
+                }
+
+                seekTarget = nearestMob;
+            }
         }
 
         public override void behaviorOnCollisionWithMineWall(int tileX, int tileY)
@@ -52,15 +76,16 @@ namespace Magic.Game
             if (!(npc is Monster))
                 return;
 
-            loc.damageMonster(npc.GetBoundingBox(), damage, damage + 1, false, source);
-            if (source != null)
+            bool didDmg = loc.damageMonster(npc.GetBoundingBox(), damage, damage + 1, false, source);
+            if (source != null && didDmg)
                 source.AddCustomSkillExperience(Magic.Skill, damage / ((theOneWhoFiredMe.Get(loc) as Farmer).CombatLevel + 1));
             disappear(loc);
         }
 
         public override void behaviorOnCollisionWithOther(GameLocation loc)
         {
-            disappear(loc);
+            if ( !seeking )
+                disappear(loc);
         }
 
         public override void behaviorOnCollisionWithPlayer(GameLocation loc, Farmer farmer)
@@ -69,12 +94,44 @@ namespace Magic.Game
 
         public override void behaviorOnCollisionWithTerrainFeature(TerrainFeature t, Vector2 tileLocation, GameLocation loc)
         {
-            disappear( loc );
+            if ( !seeking )
+                disappear( loc );
+        }
+
+        public override bool isColliding(GameLocation location)
+        {
+            if ( seeking )
+            {
+                return location.doesPositionCollideWithCharacter(getBoundingBox(), false) != null;
+            }
+            else return base.isColliding(location);
         }
 
         public override Rectangle getBoundingBox()
         {
             return new Rectangle(( int )(position.X - Game1.tileSize), (int)(position.Y - Game1.tileSize), Game1.tileSize / 2, Game1.tileSize / 2);
+        }
+
+        public override bool update(GameTime time, GameLocation location)
+        {
+            if (seeking)
+            {
+                if (seekTarget == null || seekTarget.Health <= 0 || seekTarget.currentLocation == null)
+                {
+                    disappear(location);
+                    return true;
+                }
+                else
+                {
+                    Vector2 unit = new Vector2(seekTarget.GetBoundingBox().Center.X + 32, seekTarget.GetBoundingBox().Center.Y + 32) - position;
+                    unit.Normalize();
+
+                    xVelocity.Value = unit.X * vel;
+                    yVelocity.Value = unit.Y * vel;
+                }
+            }
+
+            return base.update(time, location);
         }
 
         public override void updatePosition(GameTime time)

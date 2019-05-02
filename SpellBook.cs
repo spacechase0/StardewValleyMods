@@ -38,7 +38,7 @@ namespace Magic
         internal static void init(Func<long> getNewId)
         {
             register(new AnalyzeSpell());
-            register(new DummySpell("arcane", "magicmissle"));
+            register(new ProjectileSpell(SchoolId.Arcane, "magicmissle", 5, 7, 15, "flameSpell", "flameSpellHit", seeking: true));
             register(new EnchantSpell(false));
             register(new EnchantSpell(true));
             register(new RewindSpell());
@@ -58,8 +58,8 @@ namespace Magic
             register(new BuffSpell());
             register(new EvacSpell());
 
-            register(new ProjectileSpell(SchoolId.Elemental, "frostbolt", 5, 10, 20, "flameSpell", "flameSpellHit"));
-            register(new ProjectileSpell(SchoolId.Elemental, "fireball", 5, 10, 20, "flameSpell", "flameSpellHit"));
+            register(new ProjectileSpell(SchoolId.Elemental, "frostbolt", 7, 10, 20, "flameSpell", "flameSpellHit"));
+            register(new ProjectileSpell(SchoolId.Elemental, "fireball", 7, 10, 20, "flameSpell", "flameSpellHit"));
             register(new DescendSpell());
             register(new TeleportSpell());
 
