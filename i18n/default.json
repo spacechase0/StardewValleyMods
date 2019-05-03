@@ -10,6 +10,8 @@
   "event.wizard.9": "(These controls can be adjusted in Magic's config file.)",
   "event.wizard.abovehead": "MAGIC",
 
+  "tv.analyzehints.name": "Magical Analytics",
+  "tv.analyzehints.notmagical": "*static*",
   "tv.analyzehints.1": "Looking to use magic to work around the farm? Try analyzing your tools.",
   "tv.analyzehints.2": "Need a quick escape? I wonder if some boots will give you some inspiration.",
   "tv.analyzehints.3": "Sunlight is pretty nice, but not always available. I wonder if artificial lights can be recreated?",

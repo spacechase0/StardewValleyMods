@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using System.IO;
 using StardewModdingAPI;
 using SpaceCore;
+using StardewValley.Objects;
 
 namespace Magic
 {
@@ -78,6 +79,8 @@ namespace Magic
             Command.register("player_setmaxmana", setMaxManaCommand);
             Command.register("player_learnspell", learnSpellCommand);
             Command.register("magicmenu", magicMenuCommand);
+
+            PyTK.CustomTV.CustomTVMod.addChannel("magic", Mod.instance.Helper.Translation.Get("tv.analyzehints.name"), onTvChannelSelected);
         }
 
         private static void onAnalyze(object sender, AnalyzeEventArgs e)
@@ -487,6 +490,18 @@ namespace Magic
             }
             if (Game1.player.itemToEat.ParentSheetIndex == ja.GetObjectId("Magic Elixir"))
                 Game1.player.addMana(Game1.player.getMaxMana());
+        }
+        
+        private static void onTvChannelSelected(TV tv, TemporaryAnimatedSprite sprite, Farmer farmer, string answer)
+        {
+            TemporaryAnimatedSprite tas = new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(540, 305, 42, 28), 150f, 2, 999999, tv.getScreenPosition(), false, false, (float)((double)(tv.boundingBox.Bottom - 1) / 10000.0 + 9.99999974737875E-06), 0.0f, Color.White, tv.getScreenSizeModifier(), 0.0f, 0.0f, 0.0f, false);
+
+            string transKey = "tv.analyzehints.notmagical";
+            Random r = new Random((int)Game1.stats.DaysPlayed + (int)(Game1.uniqueIDForThisGame / 2));
+            if (Game1.player.getMaxMana() > 0)
+                transKey = "tv.analyzehints." + (r.Next(12) + 1);
+
+            PyTK.CustomTV.CustomTVMod.showProgram(tas, Mod.instance.Helper.Translation.Get(transKey));
         }
 
         public static void placeAltar(string locName, int x, int y, int baseAltarIndex)
