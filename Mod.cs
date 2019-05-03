@@ -60,6 +60,7 @@ namespace JsonAssets
                 doPrefix(typeof(StardewValley.Object), "canBePlacedHere", typeof(ObjectCanPlantHereOverride));
                 doPrefix(typeof(StardewValley.Object), "checkForAction", typeof(ObjectNoActionHook));
                 doPostfix(typeof(StardewValley.Object), "isIndexOkForBasicShippedCategory", typeof(ObjectCollectionShippingHook));
+                doPrefix(typeof(StardewValley.Objects.Ring), "loadDisplayFields", typeof(RingLoadDisplayFieldsHook));
             }
             catch (Exception e)
             {
