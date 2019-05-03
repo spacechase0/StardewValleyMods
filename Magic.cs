@@ -217,6 +217,8 @@ namespace Magic
             Data.players[ Game1.player.UniqueMultiplayerID ].spellBook.Owner = Game1.player;
             foreach ( var farmer in Game1.otherFarmers )
             {
+                if (!Data.players.ContainsKey(farmer.Key))
+                    continue;
                 Data.players[farmer.Key].spellBook.Owner = farmer.Value;
             }
         }
@@ -478,6 +480,11 @@ namespace Magic
 
         private static void onItemEaten(object sender, EventArgs args)
         {
+            if (Game1.player.itemToEat == null)
+            {
+                Log.warn("No item eaten for the item eat event?!?");
+                return;
+            }
             if (Game1.player.itemToEat.ParentSheetIndex == ja.GetObjectId("Magic Elixir"))
                 Game1.player.addMana(Game1.player.getMaxMana());
         }
