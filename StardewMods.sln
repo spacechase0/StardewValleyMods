@@ -91,6 +91,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherHungerMod", "Another
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfitCalculator", "StardewProfitCalculator\ProfitCalculator.csproj", "{F516D462-4A51-4414-BFA5-E82761AF15E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomNPCFixes", "CustomNPCFixes\CustomNPCFixes.csproj", "{505F7D71-20B2-4010-AC06-79B1229A74C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentPatcherAnimations", "ContentPatcherAnimations\ContentPatcherAnimations.csproj", "{B0BB0171-260E-40FE-95DC-4377CE916FF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -411,6 +415,22 @@ Global
 		{F516D462-4A51-4414-BFA5-E82761AF15E5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F516D462-4A51-4414-BFA5-E82761AF15E5}.Release|x86.ActiveCfg = Release|Any CPU
 		{F516D462-4A51-4414-BFA5-E82761AF15E5}.Release|x86.Build.0 = Release|Any CPU
+		{505F7D71-20B2-4010-AC06-79B1229A74C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{505F7D71-20B2-4010-AC06-79B1229A74C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{505F7D71-20B2-4010-AC06-79B1229A74C6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{505F7D71-20B2-4010-AC06-79B1229A74C6}.Debug|x86.Build.0 = Debug|Any CPU
+		{505F7D71-20B2-4010-AC06-79B1229A74C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{505F7D71-20B2-4010-AC06-79B1229A74C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{505F7D71-20B2-4010-AC06-79B1229A74C6}.Release|x86.ActiveCfg = Release|Any CPU
+		{505F7D71-20B2-4010-AC06-79B1229A74C6}.Release|x86.Build.0 = Release|Any CPU
+		{B0BB0171-260E-40FE-95DC-4377CE916FF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0BB0171-260E-40FE-95DC-4377CE916FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0BB0171-260E-40FE-95DC-4377CE916FF0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B0BB0171-260E-40FE-95DC-4377CE916FF0}.Debug|x86.Build.0 = Debug|Any CPU
+		{B0BB0171-260E-40FE-95DC-4377CE916FF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0BB0171-260E-40FE-95DC-4377CE916FF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0BB0171-260E-40FE-95DC-4377CE916FF0}.Release|x86.ActiveCfg = Release|Any CPU
+		{B0BB0171-260E-40FE-95DC-4377CE916FF0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

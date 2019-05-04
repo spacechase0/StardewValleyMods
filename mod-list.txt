@@ -11,9 +11,11 @@ Bow
 CarryChest
 ColorfulChests
 ConsoleCode
+ContentPatchesAnimations
 CookingSkill
 CustomCritters
 CustomizeExterior
+CustomNPCFixes
 ExperienceBars
 ExtendedReach
 FlowerColorPicker
