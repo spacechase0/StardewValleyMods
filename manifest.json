@@ -5,7 +5,7 @@
   "Description": "Animations for content patcher",
   "UniqueID": "spacechase0.ContentPatcherAnimations",
   "EntryDll": "ContentPatcherAnimations.dll",
-  "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+  "UpdateKeys": [ "Nexus:3853", "Chucklefish:5740" ],
   "Dependencies": [
     {
       "UniqueID": "Pathoschild.ContentPatcher"

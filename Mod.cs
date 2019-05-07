@@ -21,7 +21,9 @@ namespace ContentPatcherAnimations
     public class PatchData
     {
         public Func<bool> IsActive;
+        public Func<Texture2D> TargetFunc;
         public Texture2D Target;
+        public Func<Texture2D> SourceFunc;
         public Texture2D Source;
         public int CurrentFrame = 0;
     }
@@ -64,7 +66,7 @@ namespace ContentPatcherAnimations
             ++frameCounter;
             foreach ( var patch in animatedPatches )
             {
-                if (!patch.Value.IsActive.Invoke())
+                if (!patch.Value.IsActive.Invoke() || patch.Value.Source == null || patch.Value.Target == null)
                     continue;
 
                 if ( frameCounter % patch.Key.AnimationFrameTime == 0 )
@@ -85,7 +87,8 @@ namespace ContentPatcherAnimations
         {
             foreach ( var patch in animatedPatches )
             {
-                patch.Value.Target = FindTargetTexture(patch.Key.Target);
+                patch.Value.Source = patch.Value.SourceFunc();
+                patch.Value.Target = patch.Value.TargetFunc();
             }
         }
 
@@ -101,11 +104,6 @@ namespace ContentPatcherAnimations
                         if (patch.LogName == "")
                         {
                             Log.error("Animated patches must specify a LogName!");
-                            continue;
-                        }
-                        if (patch.Target.Contains("{{") || patch.FromFile.Contains("{{"))
-                        {
-                            Log.error("Dynamic tokens not supported for animations! Patch: " + patch.LogName);
                             continue;
                         }
                         
@@ -132,16 +130,13 @@ namespace ContentPatcherAnimations
                             continue;
                         }
                         var appliedProp = targetPatch.GetType().GetProperty("IsApplied", PublicI);
-                        Log.trace("Applied prop:" + appliedProp);
-
+                        var sourceProp = targetPatch.GetType().GetProperty("FromLocalAsset", PublicI);
+                        var targetProp = targetPatch.GetType().GetProperty("TargetAsset", PublicI);
+                        var tokValProp = sourceProp.GetValue(targetPatch).GetType().GetProperty("Value", PublicI);
+                        
                         data.IsActive = () => (bool)appliedProp.GetValue(targetPatch);
-                        data.Source = pack.LoadAsset<Texture2D>(patch.FromFile);
-                        data.Target = FindTargetTexture(patch.Target);
-                        if ( data.Target == null )
-                        {
-                            Log.error("Failed to find target texture " + patch.Target + "! Patch: " + patch.LogName);
-                            continue;
-                        }
+                        data.SourceFunc = () => pack.LoadAsset<Texture2D>((string)tokValProp.GetValue(sourceProp.GetValue(targetPatch)));
+                        data.TargetFunc = () => FindTargetTexture((string)targetProp.GetValue(targetPatch));
 
                         animatedPatches.Add(patch, data);
                     }

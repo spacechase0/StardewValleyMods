@@ -12,9 +12,9 @@ namespace ContentPatcherAnimations
     {
         public string LogName; // To identify, to check if it is active
         public string Action; // To make sure this is an EditImage
-        public string Target; // So we know what asset
 
-        public string FromFile;
+        // Target and FromFile are taken from CP since it handles tokens
+        
         public Rectangle FromArea;
         public Rectangle ToArea;
 
