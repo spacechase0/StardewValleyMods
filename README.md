@@ -18,7 +18,7 @@
 * [Gift Tastes](#gift-tastes)
 * [Localization](#localization)
 * [Converting From Legacy Format](#converting-from-legacy-format)
-* [Releasing A Content Pack](#releaseing-a-content-pack)
+* [Releasing A Content Pack](#releasing-a-content-pack)
 * [Troubleshooting](#troubleshooting)
   * [Target Out of Range](#target-out-of-range)
   * [Exception Injecting Given Key](#exception-injecting-given-key)
@@ -122,6 +122,11 @@ field                      | purpose
 `SeedPurchaseFrom`         | Who you can purchase seeds from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `SeedPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SeedPurchaseRequirements` set this to `null`.
 
+**Facts about Custom Crops**:
+* Sprites are 32px tall and there are 2 per row. Vanilla `Tilesheets\crops` is 256 x 672 px
+* JA starts numbering crops at ID 100, and the first sprites are placed at 0,1600.
+* The last sprites would be at Y = 4064 to 4095. There is room for (4096-1600)/32*2 = 156 extra crops. (this one was verified with a log that hit the limit: https://log.smapi.io/E9DwBNxu )
+
 ### FruitTrees
 Fruit trees added by Json Assets work a bit differently than vanilla fruit trees as you have to till/hoe the ground before planting them. This means they cannot be placed on the edges of the greenhouse like vanilla trees. (7/4/18) There is a proposed fix using Harmony to treat custom trees like vanilla trees.
 
@@ -141,6 +146,12 @@ field                         | purpose
 `SaplingPurchasePrice`        | Determines how much the sapling can be purchased for.
 `SaplingPurchaseFrom`         | Who you can purchase saplings from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `SaplingPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SaplingPurchaseRequirements` set this to `null`.
+
+**Facts about Custom Trees**:
+* Sprites are 80px tall and there is only 1 tree per row. Vanilla `Tilesheets\fruitTrees` has partial sprites for a 7th tree and is 432 x 560 px
+* JA starts numbering its trees at ID 10, and the first sprites are placed at 0,800.
+* As each sprite is 80px tall, the last sprite has to be at Y = 4000 to 4079 since the one after that would go from Y = 4080 to 4159.
+There is room for (4080-800)/80 = 41 extra trees.
 
 ### Objects
 #### Crop and Fruit Tree Objects
@@ -349,3 +360,4 @@ Exception injecting cooking recipe for Bacon: System.ArgumentException: An item 
 
 * [Nexus Page](https://www.nexusmods.com/stardewvalley/mods/1720)
 * [FAQ](https://github.com/paradigmnomad/ppjajsonassetsfaq/blob/master/README.md)
+* Facts courtesy of MouseyPounds 
