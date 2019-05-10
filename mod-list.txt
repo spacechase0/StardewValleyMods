@@ -10,6 +10,7 @@ BiggerBackpack
 Bow
 CarryChest
 ColorfulChests
+CombatLevelDamageScaler
 ConsoleCode
 ContentPatchesAnimations
 CookingSkill
