@@ -34,7 +34,7 @@ namespace RushOrders
 
         public override object GetApi()
         {
-            return new Api();
+            return (api = new Api());
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
