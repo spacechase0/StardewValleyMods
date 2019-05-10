@@ -10,6 +10,10 @@
     {
       "UniqueID": "Pathoschild.ContentPatcher",
       "Version": "1.7"
+    },
+    {
+      "UniqudID": "Platonymous.ScaleUp",
+      "IsRequired": false
     }
   ],
   "spacechase0": "content-patcher-animations"

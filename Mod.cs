@@ -68,12 +68,12 @@ namespace ContentPatcherAnimations
             {
                 if (!patch.Value.IsActive.Invoke() || patch.Value.Source == null || patch.Value.Target == null)
                     continue;
-
+                
                 if ( frameCounter % patch.Key.AnimationFrameTime == 0 )
                 {
                     if (++patch.Value.CurrentFrame >= patch.Key.AnimationFrameCount)
                         patch.Value.CurrentFrame = 0;
-
+                    
                     var sourceRect = patch.Key.FromArea;
                     sourceRect.X += patch.Value.CurrentFrame * sourceRect.Width;
                     var cols = new Color[sourceRect.Width * sourceRect.Height];
@@ -87,8 +87,15 @@ namespace ContentPatcherAnimations
         {
             foreach ( var patch in animatedPatches )
             {
-                patch.Value.Source = patch.Value.SourceFunc();
-                patch.Value.Target = patch.Value.TargetFunc();
+                try
+                {
+                    patch.Value.Source = patch.Value.SourceFunc();
+                    patch.Value.Target = patch.Value.TargetFunc();
+                }
+                catch ( Exception e )
+                {
+                    Log.error("Exception loading " + patch.Key.LogName + " textures: " + e);
+                }
             }
         }
 
@@ -146,7 +153,13 @@ namespace ContentPatcherAnimations
 
         private Texture2D FindTargetTexture(string target)
         {
-            return Game1.content.Load<Texture2D>(target);
+            var tex = Game1.content.Load<Texture2D>(target);
+            if ( tex.GetType().Name == "ScaledTexture2D" )
+            {
+                Log.trace("Found ScaledTexture2D from PyTK: " + target);
+                tex = Helper.Reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
+            }
+            return tex;
             /*
             switch ( target.ToLower() )
             {
