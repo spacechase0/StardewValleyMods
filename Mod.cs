@@ -15,6 +15,7 @@ namespace RushOrders
     {
         public static Mod instance;
         public static RushOrdersConfig ModConfig { get; private set; }
+        private static Api api;
         private static bool hadDialogue = false;
         private static int prevMoney = 0;
 
@@ -29,6 +30,11 @@ namespace RushOrders
 
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+        }
+
+        public override object GetApi()
+        {
+            return new Api();
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
@@ -176,12 +182,14 @@ namespace RushOrders
                     Game1.player.daysLeftForToolUpgrade.Value = 0;
                     clint.CurrentDialogue.Pop();
                     Game1.drawDialogue(clint, "Thanks. I'll get started right away. It should be ready in a few minutes.");
+                    api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
                 else if ( diff == ( int )( curPrice * ModConfig.PriceFactor.Tool.Rush) )
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 1;
                     clint.CurrentDialogue.Pop();
                     Game1.drawDialogue(clint, "Thanks. I'll get started right away. It should be ready tomorrow.");
+                    api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
             }
             hadDialogue = hasDialog;
@@ -215,6 +223,7 @@ namespace RushOrders
                 else if (building.daysUntilUpgrade.Value > 0)
                     building.daysUntilUpgrade.Value--;
             }
+            api.InvokeBuildingRushed();
         }
 
         public static int getBuildingDaysLeft()
