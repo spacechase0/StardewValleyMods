@@ -162,8 +162,54 @@ namespace Magic
                 {
                     Log.debug("Player learnt spell: " + spell);
                     farmer.learnSpell(spell, 0, true);
-                    Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") }));
+                    //Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") }));
+                    Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") })));
                 }
+            }
+
+            // Temporary - 0.3.0 will add dungeons to get these
+            bool knowsAll = true;
+            foreach ( var schoolId in School.getSchoolList() )
+            {
+                var school = School.getSchool(schoolId);
+
+                bool knowsAllSchool = true;
+                foreach ( var spell in school.GetSpellsTier1() )
+                {
+                    if (!farmer.knowsSpell(spell, 0))
+                    {
+                        knowsAll = knowsAllSchool = false;
+                        break;
+                    }
+                }
+                foreach (var spell in school.GetSpellsTier2())
+                {
+                    if (!farmer.knowsSpell(spell, 0))
+                    {
+                        knowsAll = knowsAllSchool = false;
+                        break;
+                    }
+                }
+
+                // Have to know all other spells for the arcane one
+                if (schoolId == SchoolId.Arcane)
+                    continue;
+
+                var ancientSpell = school.GetSpellsTier3()[0];
+                if ( knowsAllSchool && !farmer.knowsSpell(ancientSpell, 0 ) )
+                {
+                    Log.debug("Player learnt ancient spell: " + ancientSpell);
+                    farmer.learnSpell(ancientSpell, 0, true);
+                    Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = Mod.instance.Helper.Translation.Get("spell." + ancientSpell.FullId + ".name") })));
+                }
+            }
+
+            var rewindSpell = School.getSchool( SchoolId.Arcane ).GetSpellsTier3()[0];
+            if (knowsAll && !farmer.knowsSpell(rewindSpell, 0))
+            {
+                Log.debug("Player learnt ancient spell: " + rewindSpell);
+                farmer.learnSpell(rewindSpell, 0, true);
+                Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = Mod.instance.Helper.Translation.Get("spell." + rewindSpell.FullId + ".name") })));
             }
         }
 

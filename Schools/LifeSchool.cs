@@ -10,17 +10,17 @@ namespace Magic.Schools
 
         public override Spell[] GetSpellsTier1()
         {
-            return new Spell[] { SpellBook.get("life:heal"), SpellBook.get("life:haste") };
+            return new Spell[] { SpellBook.get("life:evac") };
         }
 
         public override Spell[] GetSpellsTier2()
         {
-            return new Spell[] { SpellBook.get("life:buff") };
+            return new Spell[] { SpellBook.get("life:heal"), SpellBook.get("life:haste") };
         }
 
         public override Spell[] GetSpellsTier3()
         {
-            return new Spell[] { SpellBook.get("life:evac") };
+            return new Spell[] { SpellBook.get("life:buff") };
         }
     }
 }

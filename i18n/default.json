@@ -26,6 +26,7 @@
   "tv.analyzehints.12": "I saw someone cast a spell to regain mana!? It looked like it hurt. Rumor has it they learned this technique while fishing for Lava Eels.",
 
   "spell.learn": "You learned a spell: {{spellName}}",
+  "spell.learn.ancient": "You learned an ancient spell: {{spellName}}",
 
   "school.arcane.name": "arcane",
   "school.toil.name": "toil",
