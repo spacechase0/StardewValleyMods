@@ -58,7 +58,7 @@
   "spell.nature:lantern.name": "Lantern",
   "spell.nature:lantern.desc": "Summon a light to follow you.\nHigher levels create more light.",
   "spell.nature:tendrils.name": "Tendrils",
-  "spell.nature:tendrils.desc": "Summon tendrils to stop a foe in their path.\nHigher levels give them less room to move.",
+  "spell.nature:tendrils.desc": "Summon tendrils to stop a foe in their path.",
   "spell.nature:shockwave.name": "Shockwave",
   "spell.nature:shockwave.desc": "Jump into the air and slam down, sending out a shockwave.\n Higher levels are larger and more fierce.",
   "spell.nature:photosynthesis.name": "Photosynthesis",
