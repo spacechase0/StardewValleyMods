@@ -23,6 +23,16 @@ namespace CustomNPCFixes
 
             // Similarly, this needs to be called again so that pathing works.
             NPC.populateRoutesFromLocationToLocationList();
+            
+            // Schedules for new NPCs don't work the first time.
+            foreach ( var npc in Utility.getAllCharacters() )
+            {
+                if ( npc.Schedule == null )
+                {
+                    npc.Schedule = npc.getSchedule(Game1.dayOfMonth);
+                    npc.checkSchedule(Game1.timeOfDay);
+                }
+            }
         }
     }
 }
