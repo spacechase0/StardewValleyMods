@@ -97,7 +97,7 @@ namespace BetterShopMenu
             categoryNames.Add(SObject.weaponCategory, "Weapons");
             categoryNames.Add(SObject.bootsCategory, "Boots");
             categoryNames.Add(SObject.toolCategory, "Tools");
-            categoryNames.Add(categories.Count, "Recipes");
+            categoryNames.Add(categories.Count == 0 ? 1 : categories.Count, "Recipes");
 
             syncStock();
         }
@@ -209,6 +209,8 @@ namespace BetterShopMenu
             var poof = Helper.Reflection.GetField<TemporaryAnimatedSprite>(shop, "poof").GetValue();
             var heldItem = Helper.Reflection.GetField<Item>(shop, "heldItem").GetValue();
             var currentItemIndex = Helper.Reflection.GetField<int>(shop, "currentItemIndex").GetValue();
+            var scrollBar = Helper.Reflection.GetField<ClickableTextureComponent>(shop, "scrollBar").GetValue();
+            var scrollBarRunner = Helper.Reflection.GetField<Rectangle>(shop, "scrollBarRunner").GetValue();
             const int UNIT_WIDTH = 160;
             const int UNIT_HEIGHT = 144;
             int unitsWide = (shop.width - 32) / UNIT_WIDTH;
@@ -245,7 +247,12 @@ namespace BetterShopMenu
             }
             if (poof != null)
                 poof.draw(Game1.spriteBatch, false, 0, 0, 1f);
-            // scrollbar override
+            // arrows already drawn
+            if (forSale.Count > 18)
+            {
+                IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), scrollBarRunner.X, scrollBarRunner.Y, scrollBarRunner.Width, scrollBarRunner.Height, Color.White, 4f, true);
+                scrollBar.draw(Game1.spriteBatch);
+            }
             if ( hover != null )
             {
                 string hoverText = hover.getDescription();
@@ -284,7 +291,10 @@ namespace BetterShopMenu
                 if (Config.GridLayout)
                 {
                     Helper.Input.Suppress(e.Button);
-                    doGridLayoutLeftClick(e);
+                    if (e.Button == SButton.MouseRight)
+                        doGridLayoutRightClick(e);
+                    else
+                        doGridLayoutLeftClick(e);
                 }
             }
         }
@@ -298,10 +308,14 @@ namespace BetterShopMenu
             var poof = Helper.Reflection.GetField<TemporaryAnimatedSprite>(shop, "poof").GetValue();
             var heldItem = Helper.Reflection.GetField<Item>(shop, "heldItem").GetValue();
             var currentItemIndex = Helper.Reflection.GetField<int>(shop, "currentItemIndex").GetValue();
+            var sellPercentage = Helper.Reflection.GetField<float>(shop, "sellPercentage").GetValue();
+            var scrollBar = Helper.Reflection.GetField<ClickableTextureComponent>(shop, "scrollBar").GetValue();
+            var scrollBarRunner = Helper.Reflection.GetField<Rectangle>(shop, "scrollBarRunner").GetValue();
+            var downArrow = Helper.Reflection.GetField<ClickableTextureComponent>(shop, "downArrow").GetValue();
+            var upArrow = Helper.Reflection.GetField<ClickableTextureComponent>(shop, "upArrow").GetValue();
             const int UNIT_WIDTH = 160;
             const int UNIT_HEIGHT = 144;
             int unitsWide = (shop.width - 32) / UNIT_WIDTH;
-            var sellPercentage = Helper.Reflection.GetField<float>(shop, "sellPercentage").GetValue();
 
             int x = (int)e.Cursor.ScreenPixels.X;
             int y = (int)e.Cursor.ScreenPixels.Y;
@@ -313,6 +327,53 @@ namespace BetterShopMenu
             }
 
             // Copying a lot from left click code
+            if ( downArrow.containsPoint(x, y) && currentItemIndex < Math.Max(0, forSale.Count - 18))
+            {
+                downArrow.scale = downArrow.baseScale;
+                Helper.Reflection.GetField<int>(shop, "currentItemIndex").SetValue(currentItemIndex += 1);
+                if ( forSale.Count > 0 )
+                {
+                    scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, (forSale.Count / 6) - 1 + 1) * currentItemIndex + upArrow.bounds.Bottom + 4;
+                    if ( currentItemIndex == forSale.Count / 6 - 1)
+                    {
+                        scrollBar.bounds.Y = downArrow.bounds.Y - scrollBar.bounds.Height - 4;
+                    }
+                }
+                Game1.playSound("shwip");
+            }
+            else if (upArrow.containsPoint(x, y) && currentItemIndex > 0)
+            {
+                upArrow.scale = upArrow.baseScale;
+                Helper.Reflection.GetField<int>(shop, "currentItemIndex").SetValue(currentItemIndex -= 1);
+                if (forSale.Count > 0)
+                {
+                    scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, (forSale.Count / 6) - 1 + 1) * currentItemIndex + upArrow.bounds.Bottom + 4;
+                    if (currentItemIndex == forSale.Count / 6 - 1)
+                    {
+                        scrollBar.bounds.Y = downArrow.bounds.Y - scrollBar.bounds.Height - 4;
+                    }
+                }
+                Game1.playSound("shwip");
+            }
+            else if (scrollBarRunner.Contains(x, y))
+            {
+                int y1 = scrollBar.bounds.Y;
+                scrollBar.bounds.Y = Math.Min(shop.yPositionOnScreen + shop.height - 64 - 12 - scrollBar.bounds.Height, Math.Max(y, shop.yPositionOnScreen + upArrow.bounds.Height + 20));
+                currentItemIndex = Math.Min(forSale.Count / 6 - 1, Math.Max(0, (int)((double)forSale.Count / 6 * (double) ( (float)(y - scrollBarRunner.Y) / (float)scrollBarRunner.Height))));
+                Helper.Reflection.GetField<int>(shop, "currentItemIndex").SetValue(currentItemIndex);
+                if (forSale.Count > 0)
+                {
+                    scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, (forSale.Count / 6) - 1 + 1) * currentItemIndex + upArrow.bounds.Bottom + 4;
+                    if (currentItemIndex == forSale.Count / 6 - 1)
+                    {
+                        scrollBar.bounds.Y = downArrow.bounds.Y - scrollBar.bounds.Height - 4;
+                    }
+                }
+                int y2 = scrollBar.bounds.Y;
+                if (y1 == y2)
+                    return;
+                Game1.playSound("shiny4");
+            }
             Vector2 clickableComponent = shop.inventory.snapToClickableComponent(x, y);
             if (heldItem == null)
             {
@@ -395,10 +456,10 @@ namespace BetterShopMenu
             var poof = Helper.Reflection.GetField<TemporaryAnimatedSprite>(shop, "poof").GetValue();
             var heldItem = Helper.Reflection.GetField<Item>(shop, "heldItem").GetValue();
             var currentItemIndex = Helper.Reflection.GetField<int>(shop, "currentItemIndex").GetValue();
+            var sellPercentage = Helper.Reflection.GetField<float>(shop, "sellPercentage").GetValue();
             const int UNIT_WIDTH = 160;
             const int UNIT_HEIGHT = 144;
             int unitsWide = (shop.width - 32) / UNIT_WIDTH;
-            var sellPercentage = Helper.Reflection.GetField<float>(shop, "sellPercentage").GetValue();
 
             int x = (int)e.Cursor.ScreenPixels.X;
             int y = (int)e.Cursor.ScreenPixels.Y;
