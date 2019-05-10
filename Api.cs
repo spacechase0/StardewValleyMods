@@ -13,7 +13,7 @@ namespace RushOrders
         event EventHandler BuildingRushed;
     }
 
-    internal class Api : IApi
+    public class Api : IApi
     {
         public event EventHandler<Tool> ToolRushed;
         internal void InvokeToolRushed(Tool tool)
