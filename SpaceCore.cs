@@ -30,7 +30,7 @@ namespace SpaceCore
         {
             instance = this;
             Config = helper.ReadConfig<Configuration>();
-
+            
             helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
             helper.Events.GameLoop.Saving += onSaving;
             helper.Events.GameLoop.Saved += onSaved;
@@ -118,6 +118,7 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
+            // Sleep position stuff
             var data = Helper.Data.ReadSaveData<Sleep.Data>("sleepy-eye");
             if (data == null)
             {

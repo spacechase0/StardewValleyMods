@@ -45,6 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Configuration.cs" />
