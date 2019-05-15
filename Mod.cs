@@ -614,6 +614,9 @@ namespace JsonAssets
         /// <param name="e">The event arguments.</param>
         private void onSaved(object sender, SavedEventArgs e)
         {
+            if (!Game1.IsMasterGame)
+                return;
+
             if (!Directory.Exists(Path.Combine(Constants.CurrentSavePath, "JsonAssets")))
                 Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
 
