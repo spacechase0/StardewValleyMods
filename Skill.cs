@@ -135,7 +135,7 @@ namespace Magic
 
         public override string GetSkillPageHoverText(int level)
         {
-            return "+" + level + "mana regen";
+            return "+" + level + " mana regen";
         }
 
         public override void DoLevelPerk(int level)
