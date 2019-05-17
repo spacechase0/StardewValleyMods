@@ -60,7 +60,7 @@ namespace Magic
 
         public static GenericProfession ProfessionUpgradePoint1 = null;
         public static GenericProfession ProfessionUpgradePoint2 = null;
-        public static GenericProfession Profession_12 = null;
+        public static GenericProfession Profession_FifthSpellSlot = null;
         public static GenericProfession ProfessionManaRegen1 = null;
         public static GenericProfession ProfessionManaRegen2 = null;
         public static GenericProfession ProfessionManaCap = null;
@@ -97,13 +97,13 @@ namespace Magic
             ProfessionUpgradePoint2.Description = "+2 spell upgrade points";
             Professions.Add(ProfessionUpgradePoint2);
 
-            Profession_12 = new GenericProfession(this, "TODO_12");
-            Profession_12.Icon = null; // TODO
-            Profession_12.Name = "<TODO>";
-            Profession_12.Description = "<TODO>";
-            Professions.Add(Profession_12);
+            Profession_FifthSpellSlot = new GenericProfession(this, "FifthSpellSlot");
+            Profession_FifthSpellSlot.Icon = null; // TODO
+            Profession_FifthSpellSlot.Name = "Memory";
+            Profession_FifthSpellSlot.Description = "Adds a fifth spell per spell set.";
+            Professions.Add(Profession_FifthSpellSlot);
 
-            ProfessionsForLevels.Add(new ProfessionPair(10, ProfessionUpgradePoint2, Profession_12, ProfessionUpgradePoint1));
+            ProfessionsForLevels.Add(new ProfessionPair(10, ProfessionUpgradePoint2, Profession_FifthSpellSlot, ProfessionUpgradePoint1));
 
             // Level 10 - track B
             ProfessionManaRegen2 = new GenericProfession(this, "ManaRegen2");

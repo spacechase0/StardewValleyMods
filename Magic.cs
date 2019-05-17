@@ -86,7 +86,7 @@ namespace Magic
         private static void onAnalyze(object sender, AnalyzeEventArgs e)
         {
             var farmer = sender as Farmer;
-            if (farmer != Game.player)
+            if (farmer != Game1.player)
                 return;
 
             List<string> spellsLearnt = new List<string>();
@@ -330,8 +330,13 @@ namespace Magic
                     Game1.drawWithBorder(Math.Max(0, (int)Game1.player.getCurrentMana()).ToString() + "/" + Game1.player.getMaxMana(), Color.Black * 0.0f, Color.White, new Vector2(Game1.getOldMouseX(), Game1.getOldMouseY() - 32));
             }
 
+            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.Profession_FifthSpellSlot);
+
+            int spotYAffector = -1;
+            if (hasFifthSpellSlot)
+                spotYAffector = 0;
             Point[] spots =
-            new Point[4]/*
+            new Point[5]/*
             {
                 new Point((int)manaPos.X + manaBg.Width * 4 + 20 + 40, Game1.viewport.Height - 20 - 50 - 30 - 50 - 25),
                 new Point((int)manaPos.X + manaBg.Width * 4 + 20 + 50 + 30, Game1.viewport.Height - 20 - 50 - 40 - 25),
@@ -339,10 +344,11 @@ namespace Magic
                 new Point((int)manaPos.X + manaBg.Width * 4 + 20, Game1.viewport.Height - 20 - 50 - 40 - 25 ),
             };*/
             {
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * 3 ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * 2 ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * 1 ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * 0 ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * ( 4 + spotYAffector ) ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * ( 3 + spotYAffector ) ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * ( 2 + spotYAffector ) ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * ( 1 + spotYAffector ) ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * ( 0 + spotYAffector ) ),
             };
 
             SpellBook book = Game1.player.getSpellBook();
@@ -350,7 +356,7 @@ namespace Magic
                 return;
             PreparedSpell[] prepared = book.getPreparedSpells();
 
-            for (int i = 0; i < spots.Length; ++i)
+            for (int i = 0; i < (hasFifthSpellSlot ? 5 : 4); ++i)
             {
                 b.Draw(spellBg, new Rectangle(spots[i].X, spots[i].Y, 50, 50), Color.White);
             }
@@ -362,8 +368,11 @@ namespace Magic
             b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 + 0, spots[Game1.up].Y - 35 - 2), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
             b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25, spots[Game1.up].Y - 35), Color.White, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
 
-            for (int i = 0; i < Math.Min(spots.Length, prepared.Length); ++i)
+            for (int i = 0; i < (hasFifthSpellSlot ? 5 : 4); ++i)
             {
+                if (i >= prepared.Length)
+                    break;
+
                 PreparedSpell prep = prepared[i];
                 if (prep == null)
                     continue;
@@ -393,6 +402,8 @@ namespace Magic
         /// <param name="e">The event arguments.</param>
         private static void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
+            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.Profession_FifthSpellSlot);
+
             if (e.Button == Config.Key_Cast)
             {
                 castPressed = true;
@@ -404,14 +415,16 @@ namespace Magic
                 Game1.player.getSpellBook().swapPreparedSet();
             }
             else if (castPressed &&
-                      (e.Button == Config.Key_Spell1 || e.Button == Config.Key_Spell2 ||
-                        e.Button == Config.Key_Spell3 || e.Button == Config.Key_Spell4))
+                     (e.Button == Config.Key_Spell1 || e.Button == Config.Key_Spell2 ||
+                      e.Button == Config.Key_Spell3 || e.Button == Config.Key_Spell4 ||
+                      (e.Button == Config.Key_Spell5 && hasFifthSpellSlot)))
             {
                 int slot = 0;
                 if (e.Button == Config.Key_Spell1) slot = 0;
                 else if (e.Button == Config.Key_Spell2) slot = 1;
                 else if (e.Button == Config.Key_Spell3) slot = 2;
                 else if (e.Button == Config.Key_Spell4) slot = 3;
+                else if (e.Button == Config.Key_Spell5) slot = 4;
 
                 Magic.inputHelper.Suppress(e.Button);
 
@@ -517,9 +530,9 @@ namespace Magic
             string[] actionArgs = args.ActionString.Split(' ');
             if (args.Action == "MagicAltar")
             {
-                if ( !Game1.player.eventsSeen.Contains(90000) )
+                if ( !Game1.player.eventsSeen.Contains(90001) )
                 {
-                    //Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("altar.glow"));
+                    Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("altar.glow"));
                 }
                 else
                 {

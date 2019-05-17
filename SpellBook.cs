@@ -77,8 +77,8 @@ namespace Magic
         public PreparedSpell[][] prepared =
         new PreparedSpell[2][]
         {
-            new PreparedSpell[4] { null, null, null, null },
-            new PreparedSpell[4] { null, null, null, null },
+            new PreparedSpell[5] { null, null, null, null, null },
+            new PreparedSpell[5] { null, null, null, null, null },
         };
         public int selectedPrepared = 0;
 
@@ -89,7 +89,7 @@ namespace Magic
         public PreparedSpell[] getPreparedSpells()
         {
             if (selectedPrepared >= prepared.Length)
-                return new PreparedSpell[4];
+                return new PreparedSpell[5];
             return prepared[selectedPrepared];
         }
 

@@ -4,6 +4,7 @@ using Magic.Schools;
 using Magic.Spells;
 using StardewValley;
 using StardewValley.Menus;
+using SpaceCore;
 
 namespace Magic.Game.Interface
 {
@@ -35,11 +36,12 @@ namespace Magic.Game.Interface
         public override void draw(SpriteBatch b)
         {
             var spellbook = Game1.player.getSpellBook();
+            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.Profession_FifthSpellSlot);
 
-            var hotbarH = 12 + 48 * 4 + 12 * 3 + 12;
-            var gap = ( WINDOW_HEIGHT - hotbarH * 2 ) / 3;
-            drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + gap, 48 + 24, hotbarH, Color.White);
-            drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + WINDOW_HEIGHT - hotbarH - gap, 48 + 24, hotbarH, Color.White);
+            var hotbarH = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
+            var gap = ( WINDOW_HEIGHT - hotbarH * 2 ) / 3 + (hasFifthSpellSlot ? 25 : 0);
+            //drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + gap, 48 + 24, hotbarH, Color.White);
+            //drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + WINDOW_HEIGHT - hotbarH - gap, 48 + 24, hotbarH, Color.White);
             drawTextureBox(b, xPositionOnScreen, yPositionOnScreen, WINDOW_WIDTH, WINDOW_HEIGHT, Color.White);
             drawTextureBox(b, xPositionOnScreen, yPositionOnScreen, WINDOW_WIDTH / 2, WINDOW_HEIGHT, Color.White);
             b.Draw(Game1.staminaRect, new Rectangle(xPositionOnScreen + 12, yPositionOnScreen + 12, WINDOW_WIDTH / 2 - 24, WINDOW_HEIGHT - 24), Color.Black);
@@ -161,12 +163,12 @@ namespace Magic.Game.Interface
 
                 b.DrawString(Game1.dialogueFont, "Free points: " + Game1.player.getFreeSpellPoints(), new Vector2(xPositionOnScreen + WINDOW_WIDTH / 2 + 12 + 24, yPositionOnScreen + WINDOW_HEIGHT - 12 - 32 - 20), Color.Black);
             }
-
+            //*
             {
-                int y = yPositionOnScreen + gap + 12;
+                int y = yPositionOnScreen + gap + 12 + (hasFifthSpellSlot ? -32 : 0);
                 foreach (var preps in spellbook.prepared)
                 {
-                    for ( int i = 0; i < preps.Length; ++i )
+                    for ( int i = 0; i < (hasFifthSpellSlot ? 5 : 4); ++i )
                     {
                         var prep = preps[i];
 
@@ -203,6 +205,7 @@ namespace Magic.Game.Interface
                     y += gap + 12;
                 }
             }
+            //*/
 
             if ( justLeftClicked )
             {

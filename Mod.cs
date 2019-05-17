@@ -58,7 +58,26 @@ namespace Magic
                     Data = File.Exists(MultiplayerSaveData.FilePath)
                         ? JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.FilePath))
                         : new MultiplayerSaveData();
-                    
+
+                    foreach (var magic in Data.players)
+                    {
+                        if (magic.Value.spellBook.prepared[0].Length == 4)
+                        {
+                            var newSpells = new PreparedSpell[5];
+                            for (int i = 0; i < 4; ++i)
+                                newSpells[i] = magic.Value.spellBook.prepared[0][i];
+                            magic.Value.spellBook.prepared[0] = newSpells;
+                        }
+
+                        if (magic.Value.spellBook.prepared[1].Length == 4)
+                        {
+                            var newSpells = new PreparedSpell[5];
+                            for (int i = 0; i < 4; ++i)
+                                newSpells[i] = magic.Value.spellBook.prepared[1][i];
+                            magic.Value.spellBook.prepared[1] = newSpells;
+                        }
+                    }
+
                     if ( !Data.players.ContainsKey( Game1.player.UniqueMultiplayerID ) )
                         Data.players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
                 }

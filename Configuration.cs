@@ -10,6 +10,7 @@ namespace Magic
         public SButton Key_Spell2 = SButton.D2;
         public SButton Key_Spell3 = SButton.D3;
         public SButton Key_Spell4 = SButton.D4;
+        public SButton Key_Spell5 = SButton.D5;
 
         public string AltarLocation = "SeedShop";
         public int AltarX = 36;
