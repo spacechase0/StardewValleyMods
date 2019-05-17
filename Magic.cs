@@ -86,6 +86,8 @@ namespace Magic
         private static void onAnalyze(object sender, AnalyzeEventArgs e)
         {
             var farmer = sender as Farmer;
+            if (farmer != Game.player)
+                return;
 
             List<string> spellsLearnt = new List<string>();
             if ( farmer.CurrentItem != null )
