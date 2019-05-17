@@ -572,12 +572,12 @@ namespace JsonAssets
                         : new Dictionary<TKey, TValue>();
                 }
                 Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
-                oldObjectIds = LoadDictionary<string, int>("ids-objects.json");
-                oldCropIds = LoadDictionary<string, int>("ids-crops.json");
-                oldFruitTreeIds = LoadDictionary<string, int>("ids-fruittrees.json");
-                oldBigCraftableIds = LoadDictionary<string, int>("ids-big-craftables.json");
-                oldHatIds = LoadDictionary<string, int>("ids-hats.json");
-                oldWeaponIds = LoadDictionary<string, int>("ids-weapons.json");
+                oldObjectIds = LoadDictionary<string, int>("ids-objects.json") ?? new Dictionary<string, int>();
+                oldCropIds = LoadDictionary<string, int>("ids-crops.json") ?? new Dictionary<string, int>();
+                oldFruitTreeIds = LoadDictionary<string, int>("ids-fruittrees.json") ?? new Dictionary<string, int>();
+                oldBigCraftableIds = LoadDictionary<string, int>("ids-big-craftables.json") ?? new Dictionary<string, int>();
+                oldHatIds = LoadDictionary<string, int>("ids-hats.json") ?? new Dictionary<string, int>();
+                oldWeaponIds = LoadDictionary<string, int>("ids-weapons.json") ?? new Dictionary<string, int>();
 
                 Log.trace("OLD IDS START");
                 foreach (var id in oldObjectIds)
