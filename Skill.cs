@@ -76,7 +76,7 @@ namespace Magic
             ExperienceBarColor = new Microsoft.Xna.Framework.Color(0, 66, 255);
 
             // Level 5
-            ProfessionUpgradePoint1 = new GenericProfession(this, "UpgradePoints1");
+            ProfessionUpgradePoint1 = new UpgradePointProfession(this, "UpgradePoints1");
             ProfessionUpgradePoint1.Icon = null; // TODO
             ProfessionUpgradePoint1.Name = "Potential";
             ProfessionUpgradePoint1.Description = "+2 spell upgrade points";
@@ -91,7 +91,7 @@ namespace Magic
             ProfessionsForLevels.Add(new ProfessionPair(5, ProfessionUpgradePoint1, ProfessionManaRegen1));
 
             // Level 10 - track A
-            ProfessionUpgradePoint2 = new GenericProfession(this, "UpgradePoints2");
+            ProfessionUpgradePoint2 = new UpgradePointProfession(this, "UpgradePoints2");
             ProfessionUpgradePoint2.Icon = null; // TODO
             ProfessionUpgradePoint2.Name = "Prodigy";
             ProfessionUpgradePoint2.Description = "+2 spell upgrade points";
