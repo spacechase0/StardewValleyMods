@@ -36,7 +36,7 @@ namespace Magic.Game.Interface
         public override void draw(SpriteBatch b)
         {
             var spellbook = Game1.player.getSpellBook();
-            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.Profession_FifthSpellSlot);
+            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
             var hotbarH = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
             var gap = ( WINDOW_HEIGHT - hotbarH * 2 ) / 3 + (hasFifthSpellSlot ? 25 : 0);

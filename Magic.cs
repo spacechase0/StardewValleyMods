@@ -330,7 +330,7 @@ namespace Magic
                     Game1.drawWithBorder(Math.Max(0, (int)Game1.player.getCurrentMana()).ToString() + "/" + Game1.player.getMaxMana(), Color.Black * 0.0f, Color.White, new Vector2(Game1.getOldMouseX(), Game1.getOldMouseY() - 32));
             }
 
-            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.Profession_FifthSpellSlot);
+            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
             int spotYAffector = -1;
             if (hasFifthSpellSlot)
@@ -402,7 +402,7 @@ namespace Magic
         /// <param name="e">The event arguments.</param>
         private static void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.Profession_FifthSpellSlot);
+            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
             if (e.Button == Config.Key_Cast)
             {
