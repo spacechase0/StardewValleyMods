@@ -472,6 +472,7 @@ namespace SpaceCore.Interface
                                 this.leftProfessionColor = Color.Green;
                                 if ((Game1input.GetMouseState().LeftButton == ButtonState.Pressed && this.oldMouseState.LeftButton == ButtonState.Released || Game1.options.gamepadControls && (Game1input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A))) && this.readyToClose())
                                 {
+                                    this.getLevelPerk(this.currentSkill, this.currentLevel);
                                     Game1.player.professions.Add(this.professionsToChoose[0]);
                                     this.getImmediateProfessionPerk(this.professionsToChoose[0]);
                                     this.isActive = false;
@@ -484,6 +485,7 @@ namespace SpaceCore.Interface
                                 this.rightProfessionColor = Color.Green;
                                 if ((Game1input.GetMouseState().LeftButton == ButtonState.Pressed && this.oldMouseState.LeftButton == ButtonState.Released || Game1.options.gamepadControls && (Game1input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A))) && this.readyToClose())
                                 {
+                                    this.getLevelPerk(this.currentSkill, this.currentLevel);
                                     Game1.player.professions.Add(this.professionsToChoose[1]);
                                     this.getImmediateProfessionPerk(this.professionsToChoose[1]);
                                     this.isActive = false;
