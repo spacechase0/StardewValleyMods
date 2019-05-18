@@ -111,7 +111,7 @@ namespace Magic
             learnSpell(player, spell.FullId, level, free);
         }
 
-        public static void forgetSpell(this Farmer player, string spellId, int level)
+        public static void forgetSpell(this Farmer player, string spellId, int level, bool sync = true)
         {
             int known = knowsSpellLevel(player, spellId);
             if (level > known)
@@ -128,9 +128,9 @@ namespace Magic
             Data.syncMineFull();
         }
 
-        public static void forgetSpell(this Farmer player, Spell spell, int level)
+        public static void forgetSpell(this Farmer player, Spell spell, int level, bool sync = true)
         {
-            forgetSpell(player, spell.FullId, level);
+            forgetSpell(player, spell.FullId, level, sync);
         }
 
         public static bool canCastSpell(this Farmer player, string spellId, int level)
