@@ -943,7 +943,7 @@ namespace JsonAssets
             foreach (var entry in dict)
             {
                 if (origObjects.ContainsKey(entry.Key))
-                    newDict.Add(entry);
+                    newDict.Add(entry.Key, entry.Value);
                 else if (oldObjectIds.Values.Contains(entry.Key))
                 {
                     var key = oldObjectIds.FirstOrDefault(x => x.Value == entry.Key).Key;
@@ -961,7 +961,7 @@ namespace JsonAssets
             foreach (var entry in dict)
             {
                 if (origObjects.ContainsKey(entry.Key))
-                    newDict.Add(entry);
+                    newDict.Add(entry.Key, entry.Value);
                 else if (oldObjectIds.Values.Contains(entry.Key))
                 {
                     var key = oldObjectIds.FirstOrDefault(x => x.Value == entry.Key).Key;
