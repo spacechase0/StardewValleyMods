@@ -166,7 +166,9 @@ namespace MoreBuildings
                                 var b = buildable.buildings[i];
                                 buildable.buildings[i] = new BigShedBuilding();
                                 buildable.buildings[i].buildingType.Value = b.buildingType.Value;
+                                buildable.buildings[i].daysOfConstructionLeft.Value = 1;
                                 buildable.buildings[i].humanDoor.Value = b.humanDoor.Value;
+                                buildable.buildings[i].indoors.Value = b.indoors.Value;
                                 buildable.buildings[i].tileX.Value = b.tileX.Value;
                                 buildable.buildings[i].tileY.Value = b.tileY.Value;
                                 buildable.buildings[i].tilesWide.Value = b.tilesWide.Value;
