@@ -137,7 +137,7 @@ namespace AnotherHungerMod
             {
                 if (fullBuff == null)
                 {
-                    fullBuff = new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5, 3, 10, "Fullness", "Fullness");
+                    fullBuff = new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 10, "Fullness", "Fullness");
                     Game1.buffsDisplay.addOtherBuff(fullBuff);
                 }
                 fullBuff.millisecondsDuration = 7000 * (int)((fullness - Config.PositiveBuffThreshold) / Config.DrainPer10Min);
