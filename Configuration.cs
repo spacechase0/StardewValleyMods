@@ -8,6 +8,9 @@ namespace AnotherHungerMod
 {
     public class Configuration
     {
+        public int FullnessUiX = 10;
+        public int FullnessUiY = 350;
+
         public int MaxFullness = 100;
         public double EdibilityMultiplier = 1;
         public double DrainPer10Min = 0.8;

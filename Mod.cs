@@ -60,7 +60,7 @@ namespace AnotherHungerMod
 
             SpriteBatch b = e.SpriteBatch;
 
-            Vector2 pos = new Vector2(20, (Game1.viewport.Height - hungerBar.Height * 4) / 2);
+            Vector2 pos = new Vector2(Config.FullnessUiX, Config.FullnessUiY);
             b.Draw(hungerBar, pos, new Rectangle(0, 0, hungerBar.Width, hungerBar.Height), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1);
             if (Game1.player.GetFullness() > 0)
             {
