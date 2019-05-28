@@ -87,7 +87,6 @@ namespace AnotherHungerMod
 
         private void onItemEaten(object sender, EventArgs e)
         {
-            Log.trace("MEOW? " + sender + Game1.player.itemToEat);
             if (sender != Game1.player)
                 return;
 
@@ -196,6 +195,8 @@ namespace AnotherHungerMod
 
         private void onPeerContextReceived(object sender, PeerContextReceivedEventArgs e)
         {
+            if (!Game1.IsServer)
+                return;
             //Log.debug($"Sending hunger data to {e.Peer.PlayerID}");
             var data = Helper.Data.ReadSaveData<SaveData>($"spacechase0.AnotherHungerMod.{e.Peer.PlayerID}") ?? new SaveData();
             Helper.Multiplayer.SendMessage(data, MSG_HUNGERDATA, null, new long[] { e.Peer.PlayerID });
