@@ -448,12 +448,15 @@ namespace JsonAssets
 
             var menu = e.NewMenu as ShopMenu;
             bool hatMouse = menu != null && menu.potraitPersonDialogue == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4);
-            if (menu == null || menu.portraitPerson == null && !hatMouse)
+            string portraitPerson = menu?.portraitPerson?.Name;
+            if (portraitPerson == null && Game1.currentLocation.Name == "Hospital")
+                portraitPerson = "Harvey";
+            if (menu == null || ( portraitPerson == null || portraitPerson == "" ) && !hatMouse)
                 return;
 
             //if (menu.portraitPerson.name == "Pierre")
             {
-                Log.trace($"Adding objects to {menu.portraitPerson?.Name}'s shop");
+                Log.trace($"Adding objects to {portraitPerson}'s shop");
 
                 var forSale = Helper.Reflection.GetField<List<Item>>(menu, "forSale").GetValue();
                 var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(menu, "itemPriceAndStock").GetValue();
@@ -465,7 +468,7 @@ namespace JsonAssets
                     {
                         bool add = true;
                         // Can't use continue here or the item might not sell
-                        if (obj.Recipe.PurchaseFrom != menu.portraitPerson?.Name || (obj.Recipe.PurchaseFrom == "HatMouse" && hatMouse) )
+                        if (obj.Recipe.PurchaseFrom != portraitPerson || (obj.Recipe.PurchaseFrom == "HatMouse" && hatMouse) )
                             add = false;
                         if (Game1.player.craftingRecipes.ContainsKey(obj.Name) || Game1.player.cookingRecipes.ContainsKey(obj.Name))
                             add = false;
@@ -482,7 +485,7 @@ namespace JsonAssets
                     }
                     if (!obj.CanPurchase)
                         continue;
-                    if (obj.PurchaseFrom != menu.portraitPerson?.Name || (obj.PurchaseFrom == "HatMouse" && hatMouse))
+                    if (obj.PurchaseFrom != portraitPerson || (obj.PurchaseFrom == "HatMouse" && hatMouse))
                         continue;
                     if (obj.PurchaseRequirements != null && obj.PurchaseRequirements.Count > 0 &&
                         precondMeth.Invoke<int>(new object[] { obj.GetPurchaseRequirementString() }) == -1)
@@ -498,7 +501,7 @@ namespace JsonAssets
                     {
                         bool add = true;
                         // Can't use continue here or the item might not sell
-                        if (big.Recipe.PurchaseFrom != menu.portraitPerson?.Name || (big.Recipe.PurchaseFrom == "HatMouse" && hatMouse))
+                        if (big.Recipe.PurchaseFrom != portraitPerson || (big.Recipe.PurchaseFrom == "HatMouse" && hatMouse))
                             add = false;
                         if (Game1.player.craftingRecipes.ContainsKey(big.Name) || Game1.player.cookingRecipes.ContainsKey(big.Name))
                             add = false;
@@ -515,7 +518,7 @@ namespace JsonAssets
                     }
                     if (!big.CanPurchase)
                         continue;
-                    if (big.PurchaseFrom != menu.portraitPerson?.Name || (big.PurchaseFrom == "HatMouse" && hatMouse))
+                    if (big.PurchaseFrom != portraitPerson || (big.PurchaseFrom == "HatMouse" && hatMouse))
                         continue;
                     if (big.PurchaseRequirements != null && big.PurchaseRequirements.Count > 0 &&
                         precondMeth.Invoke<int>(new object[] { big.GetPurchaseRequirementString() }) == -1)
@@ -539,7 +542,7 @@ namespace JsonAssets
                 {
                     if (!weapon.CanPurchase)
                         continue;
-                    if (weapon.PurchaseFrom != menu.portraitPerson?.Name || (weapon.PurchaseFrom == "HatMouse" && hatMouse))
+                    if (weapon.PurchaseFrom != portraitPerson || (weapon.PurchaseFrom == "HatMouse" && hatMouse))
                         continue;
                     if (weapon.PurchaseRequirements != null && weapon.PurchaseRequirements.Count > 0 &&
                         precondMeth.Invoke<int>(new object[] { weapon.GetPurchaseRequirementString() }) == -1)
