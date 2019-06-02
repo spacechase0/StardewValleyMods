@@ -97,7 +97,7 @@ namespace MoreBuildings.SpookyShed
                 {
                     var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
                     pos = pos * Game1.tileSize;
-                    this.characters.Add(new SquidKid(pos));
+                    this.characters.Add(new SquidKid(pos) { currentLocation = this } );
                 }
             }
             else if (currSpawnerItem == VOID_ESSENCE)
