@@ -48,13 +48,6 @@ namespace ContentPatcherAnimations
         {
             instance = this;
 
-            var modData = helper.ModRegistry.Get("Pathoschild.ContentPatcher");
-            contentPatcher = (StardewModdingAPI.Mod) modData.GetType().GetProperty("Mod", PrivateI | PublicI).GetValue(modData);
-            var patchManager = contentPatcher.GetType().GetField("PatchManager", PrivateI).GetValue(contentPatcher);
-            cpPatches = (IEnumerable) patchManager.GetType().GetField("Patches", PrivateI).GetValue(patchManager);
-
-            CollectPatches();
-
             Helper.Events.GameLoop.UpdateTicked += UpdateAnimations;
             Helper.Events.GameLoop.SaveCreated += UpdateTargetTextures;
             Helper.Events.GameLoop.SaveLoaded += UpdateTargetTextures;
@@ -63,6 +56,16 @@ namespace ContentPatcherAnimations
 
         private void UpdateAnimations(object sender, UpdateTickedEventArgs e)
         {
+            if ( contentPatcher == null )
+            {
+                var modData = Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
+                contentPatcher = (StardewModdingAPI.Mod)modData.GetType().GetProperty("Mod", PrivateI | PublicI).GetValue(modData);
+                var patchManager = contentPatcher.GetType().GetField("PatchManager", PrivateI).GetValue(contentPatcher);
+                cpPatches = (IEnumerable)patchManager.GetType().GetField("Patches", PrivateI).GetValue(patchManager);
+
+                CollectPatches();
+            }
+
             ++frameCounter;
             foreach ( var patch in animatedPatches )
             {
@@ -108,7 +111,8 @@ namespace ContentPatcherAnimations
                 {
                     if (patch.AnimationFrameTime > 0 && patch.AnimationFrameCount > 0)
                     {
-                        if (patch.LogName == "")
+                        Log.trace("Loading animated patch from content pack " + pack.Manifest.UniqueID);
+                        if (patch.LogName == null || patch.LogName == "")
                         {
                             Log.error("Animated patches must specify a LogName!");
                             continue;
@@ -133,7 +137,7 @@ namespace ContentPatcherAnimations
                         }
                         if (targetPatch == null)
                         {
-                            Log.error("Failed to find patch with name " + patch.LogName + "!?!?");
+                            Log.error("Failed to find patch with name \"" + patch.LogName + "\"!?!?");
                             continue;
                         }
                         var appliedProp = targetPatch.GetType().GetProperty("IsApplied", PublicI);
