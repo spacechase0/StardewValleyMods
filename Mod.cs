@@ -209,27 +209,30 @@ namespace JsonAssets
                     {
                         str += $"/z {season}";
                     }
-                    string strtrimstart = str.TrimStart(new char[] { '/' });
-                    if (crop.SeedPurchaseRequirements != null && crop.SeedPurchaseRequirements.Count > 0)
+                    if (str != "")
                     {
-                        for (int index = 0; index < crop.SeedPurchaseRequirements.Count; index++)
+                        string strtrimstart = str.TrimStart(new char[] { '/' });
+                        if (crop.SeedPurchaseRequirements != null && crop.SeedPurchaseRequirements.Count > 0)
                         {
-                            if (SeasonLimiter.IsMatch(crop.SeedPurchaseRequirements[index]))
+                            for (int index = 0; index < crop.SeedPurchaseRequirements.Count; index++)
                             {
-                                crop.SeedPurchaseRequirements[index] = strtrimstart;
-                                Log.warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
+                                if (SeasonLimiter.IsMatch(crop.SeedPurchaseRequirements[index]))
+                                {
+                                    crop.SeedPurchaseRequirements[index] = strtrimstart;
+                                    Log.warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
+                                }
+                            }
+                            if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart('/')))
+                            {
+                                Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
+                                crop.seed.PurchaseRequirements.Add(strtrimstart);
                             }
                         }
-                        if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart('/')))
+                        else
                         {
                             Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
                             crop.seed.PurchaseRequirements.Add(strtrimstart);
                         }
-                    }
-                    else
-                    {
-                        Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
-                        crop.seed.PurchaseRequirements.Add(strtrimstart);
                     }
 
                     objects.Add(crop.seed);
