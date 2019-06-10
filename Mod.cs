@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 using JsonAssets.Overrides;
 using Newtonsoft.Json;
 using StardewValley.Tools;
+using JsonAssets.Other.ContentPatcher;
 
 // TODO: Refactor recipes
 
@@ -39,6 +40,7 @@ namespace JsonAssets
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.GameLoop.Saved += onSaved;
             helper.Events.Player.InventoryChanged += onInventoryChanged;
+            helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.GameLoop.SaveCreated += onCreated;
             helper.Events.Specialised.LoadStageChanged += onLoadStageChanged;
             helper.Events.Multiplayer.PeerContextReceived += clientConnected;
@@ -105,6 +107,11 @@ namespace JsonAssets
         public override object GetApi()
         {
             return api ?? (api = new Api(this.loadData));
+        }
+
+        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            ContentPatcherIntegration.Initialize();
         }
 
         private void loadData(string dir)

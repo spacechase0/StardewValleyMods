@@ -7,5 +7,11 @@
   "EntryDll": "JsonAssets.dll",
   "MinimumApiVersion": "2.10.2",
   "UpdateKeys": [ "Nexus:1720", "Chucklefish:5138" ],
-  "spacechase0": "json-assets"
+  "spacechase0": "json-assets",
+  "Dependencies": [
+    {
+      "UniqueID": "Pathoschild.ContentPatcher",
+      "IsRequired": false
+    }
+  ]
 }
