@@ -89,6 +89,8 @@ namespace JsonAssets.Other.ContentPatcher
         {
             cp = Mod.instance.Helper.ModRegistry.GetApi<IContentPatcherApi>("Pathoschild.ContentPatcher");
             ja = Mod.instance.Helper.ModRegistry.GetApi<IApi>("spacechase0.JsonAssets");
+            if (cp == null)
+                return;
 
             ja.IdsAssigned += (s, e) => idsAssigned = true;
             ja.IdsAssigned += (s, e) => idsAssignedGen++;

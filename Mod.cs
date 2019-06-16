@@ -502,7 +502,12 @@ namespace JsonAssets
                         continue;
                     Item item = new StardewValley.Object(Vector2.Zero, obj.id, int.MaxValue);
                     forSale.Add(item);
-                    itemPriceAndStock.Add(item, new int[] { obj.PurchasePrice, int.MaxValue });
+                    int price = obj.PurchasePrice;
+                    if ( obj.Category == ObjectData.Category_.Seeds )
+                    {
+                        price = (int)(price * Game1.MasterPlayer.difficultyModifier);
+                    }
+                    itemPriceAndStock.Add(item, new int[] { price, int.MaxValue });
                     Log.trace($"\tAdding {obj.Name}");
                 }
                 foreach (var big in bigCraftables)
