@@ -28,6 +28,8 @@
   "spell.learn": "You learned a spell: {{spellName}}",
   "spell.learn.ancient": "You learned an ancient spell: {{spellName}}",
 
+  "altar.glow": "A glowing altar",
+
   "school.arcane.name": "arcane",
   "school.toil.name": "toil",
   "school.nature.name": "nature",
@@ -38,7 +40,7 @@
   "spell.arcane:analyze.name": "Analyze",
   "spell.arcane:analyze.desc": "Examine an item for magical inspiration.",
   "spell.arcane:magicmissle.name": "Magic Missle",
-  "spell.arcane:magicmissle.desc": "An somewhat weak but seeking projectile.",
+  "spell.arcane:magicmissle.desc": "A somewhat weak but seeking projectile.",
   "spell.arcane:disenchant.name": "Disenchant",
   "spell.arcane:disenchant.desc": "Lower the quality of an item.\nSale price difference between old and new quality is refunded into wallet.",
   "spell.arcane:enchant.name": "Enchant",
