@@ -235,8 +235,8 @@ field                  | purpose
 `Knockback`            | How far the enemy will be pushed back from the player after being hit with this weapon.
 `Speed`                | How fast the swing of the weapon is.
 `Accurary`             | How accurate the weapon is.
-`Defense`              | When blocking, how much protection it provides. * This could be a
-`MineDropVar`          | * I'm honestly not sure what this one is
+`Defense`              | When blocking, how much protection it provides.
+`MineDropVar`          | 
 `MineDropMinimumLevel` | The first level the weapon can drop when in the mines.
 `ExtraSwingArea`       |
 `CritChance`           | The chance the weapon will land a critical hit.
