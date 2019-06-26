@@ -34,13 +34,15 @@
 ## Introduction
 ### What is Json Assets?
 Json Assets allows you to add custom objects to the game without having to create a SMAPI mod or altering vanilla files. Currently, Json Assets supports the following types of items:
-* Crops
-* Fruit Trees
-* Recipes
+* Crops (JA Max 156)
+* Fruit Trees (JA Max 41)
+* Recipes 
 * Craftables (16x16)
-* Big-Craftables (16x32)
-* Hats (20x80)
-* Weapons
+* Big-Craftables (16x32) (JA Max 724)
+* Hats (20x80) (JA Max 562)
+* Weapons (JA Max 1984)
+
+Objects (Recipes, Craftables (16x16), Crop Objects etc.) have a total limit of 4144.
 
 Examples of how to set up all types of objects can be found in the [Blank JSON Assets Template](https://www.nexusmods.com/stardewvalley/mods/1746). I also highly recommend looking up preexisting content packs for further examples:
 
