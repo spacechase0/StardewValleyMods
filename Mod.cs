@@ -141,12 +141,11 @@ namespace ContentPatcherAnimations
                             continue;
                         }
                         var appliedProp = targetPatch.GetType().GetProperty("IsApplied", PublicI);
-                        var sourceProp = targetPatch.GetType().GetProperty("FromLocalAsset", PublicI);
+                        var sourceProp = targetPatch.GetType().GetProperty("FromAsset", PublicI);
                         var targetProp = targetPatch.GetType().GetProperty("TargetAsset", PublicI);
-                        var tokValProp = sourceProp.GetValue(targetPatch).GetType().GetProperty("Value", PublicI);
                         
                         data.IsActive = () => (bool)appliedProp.GetValue(targetPatch);
-                        data.SourceFunc = () => pack.LoadAsset<Texture2D>((string)tokValProp.GetValue(sourceProp.GetValue(targetPatch)));
+                        data.SourceFunc = () => pack.LoadAsset<Texture2D>((string)sourceProp.GetValue(targetPatch));
                         data.TargetFunc = () => FindTargetTexture((string)targetProp.GetValue(targetPatch));
 
                         animatedPatches.Add(patch, data);
