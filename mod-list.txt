@@ -12,7 +12,7 @@ CarryChest
 ColorfulChests
 CombatLevelDamageScaler
 ConsoleCode
-ContentPatchesAnimations
+ContentPatcherAnimations
 CookingSkill
 CustomCritters
 CustomizeExterior
@@ -35,6 +35,7 @@ SleepyEye
 SpaceCore_SDV
 Spenny
 StardewProfitCalculator
+Terraforming
 ThreeHeartDancePartner
 ToolGeodes
 

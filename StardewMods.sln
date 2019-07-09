@@ -97,6 +97,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentPatcherAnimations", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatLevelDamageScaler", "CombatLevelDamageScaler\CombatLevelDamageScaler.csproj", "{BBFD98D1-255C-41ED-AA74-E965FED1ECB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Terraforming", "Terraforming\Terraforming.csproj", "{3F979F1D-6D46-45EE-9201-8A4E9864FCBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -441,6 +443,14 @@ Global
 		{BBFD98D1-255C-41ED-AA74-E965FED1ECB2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BBFD98D1-255C-41ED-AA74-E965FED1ECB2}.Release|x86.ActiveCfg = Release|Any CPU
 		{BBFD98D1-255C-41ED-AA74-E965FED1ECB2}.Release|x86.Build.0 = Release|Any CPU
+		{3F979F1D-6D46-45EE-9201-8A4E9864FCBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F979F1D-6D46-45EE-9201-8A4E9864FCBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F979F1D-6D46-45EE-9201-8A4E9864FCBF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3F979F1D-6D46-45EE-9201-8A4E9864FCBF}.Debug|x86.Build.0 = Debug|Any CPU
+		{3F979F1D-6D46-45EE-9201-8A4E9864FCBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F979F1D-6D46-45EE-9201-8A4E9864FCBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F979F1D-6D46-45EE-9201-8A4E9864FCBF}.Release|x86.ActiveCfg = Release|Any CPU
+		{3F979F1D-6D46-45EE-9201-8A4E9864FCBF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
