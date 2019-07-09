@@ -19,5 +19,11 @@
     "CanPurchase": true,
     "PurchaseFrom": "Marlon",
     "PurchasePrice": 3000
+  },
+  "NameLocalization": {
+	"ko": "매직 엘릭서" 
+  },
+  "DescriptionLocalization": {
+	"ko": "체력과 마나를 회복시켜주는 영약입니다." 
   }
 }
