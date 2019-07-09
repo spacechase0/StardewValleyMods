@@ -3,7 +3,7 @@ using System;
 
 namespace ConsoleCode
 {
-    class Log
+    public class Log
     {
         public static void trace(String str)
         {
