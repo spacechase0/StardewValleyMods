@@ -5,6 +5,6 @@
   "Description": "Scales damage up based on your combat level.",
   "UniqueID": "spacechase0.CombatLevelDamageScaler",
   "EntryDll": "CombatLevelDamageScaler.dll",
-  "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+  "UpdateKeys": [ "Nexus:3905", "Chucklefish:5754" ],
   "spacechase0": "combat-level-damage-scaler"
 }
