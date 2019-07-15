@@ -6,7 +6,6 @@
 AnimalSocialMenu
 AnotherHungerMod
 BetterShopMenu
-BiggerBackpack
 Bow
 CarryChest
 ColorfulChests
