@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore.Events;
+using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -25,12 +27,14 @@ namespace AnotherHungerMod
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             Config = helper.ReadConfig<Configuration>();
             hungerBar = helper.Content.Load<Texture2D>("res/hungerbar.png");
 
             helper.ConsoleCommands.Add("player_addfullness", "Add to your fullness", commands);
 
+            helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.Display.RenderedHud += renderHungerBar;
             SpaceEvents.AfterGiftGiven += onGiftGiven;
             SpaceEvents.OnItemEaten += onItemEaten;
@@ -40,6 +44,24 @@ namespace AnotherHungerMod
             helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
             helper.Events.Multiplayer.PeerContextReceived += onPeerContextReceived;
             helper.Events.Multiplayer.ModMessageReceived += onModMessageReceived;
+        }
+
+        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            if (capi != null)
+            {
+                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
+                capi.RegisterSimpleOption(ModManifest, "Fullness UI (X)", "The X position of the fullness UI.", () => Config.FullnessUiX, (int val) => Config.FullnessUiX = val);
+                capi.RegisterSimpleOption(ModManifest, "Fullness UI (Y)", "The Y position of the fullness UI.", () => Config.FullnessUiY, (int val) => Config.FullnessUiY = val);
+                capi.RegisterSimpleOption(ModManifest, "Max Fullness", "Maximum amount of fullness you can have.", () => Config.MaxFullness, (int val) => Config.MaxFullness = val);
+                capi.RegisterSimpleOption(ModManifest, "Edibility Multiplier", "A multiplier for the amount of fullness you get, based on the food's edibility.", () => (float) Config.EdibilityMultiplier, (float val) => Config.EdibilityMultiplier = val);
+                capi.RegisterSimpleOption(ModManifest, "Fullness Drain", "The amount of fullness to drain every 10 minutes in-game.", () => (float) Config.DrainPer10Min, (float val) => Config.DrainPer10Min = val);
+                capi.RegisterSimpleOption(ModManifest, "Positive Buff Threshold", "The amount of fullness you need for positive buffs to apply.", () => Config.PositiveBuffThreshold, (int val) => Config.PositiveBuffThreshold = val);
+                capi.RegisterSimpleOption(ModManifest, "Negative Buff Threshold", "The amount of fullness you need before negative buffs apply.", () => Config.NegativeBuffThreshold, (int val) => Config.NegativeBuffThreshold = val);
+                capi.RegisterSimpleOption(ModManifest, "Starvation Damage", "The amount of starvation damage taken every 10 minutes when you have no fullness.", () => Config.StarvationDamagePer10Min, (int val) => Config.StarvationDamagePer10Min = val);
+                capi.RegisterSimpleOption(ModManifest, "Unfed Spouse Penalty", "The relationship points penalty for not feeding your spouse.", () => Config.RelationshipHitForNotFeedingSpouse, (int val) => Config.RelationshipHitForNotFeedingSpouse = val);
+            }
         }
 
         private void commands(string cmd, string[] args)
@@ -136,7 +158,7 @@ namespace AnotherHungerMod
             {
                 if (fullBuff == null)
                 {
-                    fullBuff = new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 10, "Fullness", "Fullness");
+                    fullBuff = new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 10, "Fullness", "Fullness");
                     Game1.buffsDisplay.addOtherBuff(fullBuff);
                 }
                 fullBuff.millisecondsDuration = 7000 * (int)((fullness - Config.PositiveBuffThreshold) / Config.DrainPer10Min);
