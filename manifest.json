@@ -1,7 +1,7 @@
 {
   "Name": "Animal Social Menu",
   "Author": "spacechase0",
-  "Version": "1.0.1",
+  "Version": "1.0.2",
   "Description": "Social menu for animals.",
   "UniqueID": "spacechase0.AnimalSocialMenu",
   "EntryDll": "AnimalSocialMenu.dll",

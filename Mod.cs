@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -20,6 +21,7 @@ namespace AnimalSocialMenu
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             Helper.Events.Display.MenuChanged += onMenuChanged;
             myTabId = SpaceCore.Menus.ReserveGameMenuTab( "animals" );
