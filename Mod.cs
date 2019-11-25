@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -19,18 +21,30 @@ namespace BetterShopMenu
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
             Config = helper.ReadConfig<Configuration>();
 
+            helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
             helper.Events.Display.RenderedActiveMenu += onRenderedActiveMenu;
             helper.Events.Input.ButtonPressed += onButtonPressed;
         }
 
+        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            if (capi != null)
+            {
+                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
+                capi.RegisterSimpleOption(ModManifest, "Grid Layout)", "Whether or not to use the grid layout in shops.", () => Config.GridLayout, (bool val) => Config.GridLayout = val);
+            }
+        }
+
         private ShopMenu shop;
         private bool firstTick = false;
-        private List<Item> initialItems;
-        private Dictionary<Item, int[]> initialStock;
+        private List<ISalable> initialItems;
+        private Dictionary<ISalable, int[]> initialStock;
         private List<int> categories;
         private int currCategory;
         bool hasRecipes;
@@ -45,16 +59,17 @@ namespace BetterShopMenu
         {
             firstTick = false;
 
-            initialItems = Helper.Reflection.GetField<List<Item>>(shop, "forSale").GetValue();
-            initialStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(shop, "itemPriceAndStock").GetValue();
+            initialItems = Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").GetValue();
+            initialStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").GetValue();
 
             categories = new List<int>();
             hasRecipes = false;
-            foreach ( var item in initialItems )
+            foreach ( var salable in initialItems )
             {
+                var item = salable as Item;
                 var obj = item as SObject;
-                if (!categories.Contains(item.Category) && (obj == null || !obj.IsRecipe))
-                    categories.Add(item.Category);
+                if (!categories.Contains(item?.Category ?? 0) && (obj == null || !obj.IsRecipe))
+                    categories.Add(item?.Category ?? 0);
                 if (obj != null && obj.IsRecipe)
                     hasRecipes = true;
             }
@@ -124,8 +139,8 @@ namespace BetterShopMenu
         }
         private void syncStock()
         {
-            var items = new List<Item>();
-            var stock = new Dictionary<Item, int[]>();
+            var items = new List<ISalable>();
+            var stock = new Dictionary<ISalable, int[]>();
             foreach (var item in initialItems)
             {
                 if (itemMatchesCategory(item, currCategory))
@@ -141,15 +156,15 @@ namespace BetterShopMenu
                 }
             }
 
-            Helper.Reflection.GetField<List<Item>>(shop, "forSale").SetValue(items);
-            Helper.Reflection.GetField<Dictionary<Item, int[]>>(shop, "itemPriceAndStock").SetValue(stock);
+            Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").SetValue(items);
+            Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").SetValue(stock);
 
             doSorting();
         }
         private void doSorting()
         {
-            var items = Helper.Reflection.GetField<List<Item>>(shop, "forSale").GetValue();
-            var stock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(shop, "itemPriceAndStock").GetValue();
+            var items = Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").GetValue();
+            var stock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").GetValue();
             if ( sorting != 0 )
             {
                 if (sorting == 1)
@@ -202,8 +217,8 @@ namespace BetterShopMenu
 
         private void drawGridLayout()
         {
-            var forSale = Helper.Reflection.GetField<List<Item>>(shop, "forSale").GetValue();
-            var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(shop, "itemPriceAndStock").GetValue();
+            var forSale = Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").GetValue();
+            var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").GetValue();
             var currency = Helper.Reflection.GetField<int>(shop, "currency").GetValue();
             var animations = Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(shop, "animations").GetValue();
             var poof = Helper.Reflection.GetField<TemporaryAnimatedSprite>(shop, "poof").GetValue();
@@ -214,7 +229,7 @@ namespace BetterShopMenu
             const int UNIT_WIDTH = 160;
             const int UNIT_HEIGHT = 144;
             int unitsWide = (shop.width - 32) / UNIT_WIDTH;
-            Item hover = null;
+            ISalable hover = null;
 
             //IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), shop.xPositionOnScreen + shop.width - shop.inventory.width - 32 - 24, shop.yPositionOnScreen + shop.height - 256 + 40, shop.inventory.width + 56, shop.height - 448 + 20, Color.White, 4f, true);
             IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f, true);
@@ -224,7 +239,7 @@ namespace BetterShopMenu
                 int iy = i / unitsWide;
                 Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UNIT_WIDTH, shop.yPositionOnScreen + 16 + iy * UNIT_HEIGHT - currentItemIndex * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
                 IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), rect.X, rect.Y, rect.Width, rect.Height, rect.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) ? Color.Wheat : Color.White, 4f, false);
-                forSale[i].drawInMenu(Game1.spriteBatch, new Vector2(rect.X + 48, rect.Y + 16), 1f);
+                forSale[i].drawInMenu(Game1.spriteBatch, new Vector2(rect.X + 48, rect.Y + 16), 1f, 1, 1, StackDrawType.Draw, Color.White, true);
                 int price = itemPriceAndStock[forSale[i]][0];
                 var priceStr = price.ToString();
                 SpriteText.drawString(Game1.spriteBatch, priceStr, rect.Right - SpriteText.getWidthOfString(priceStr) - 16, rect.Y + 80, alpha: ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) >= price ? 1f : 0.5f);
@@ -262,7 +277,7 @@ namespace BetterShopMenu
                 if (itemPriceAndStock != null && hover != null && (itemPriceAndStock.ContainsKey(hover) && itemPriceAndStock[hover].Length > 2))
                     getHoveredItemExtraItemIndex = itemPriceAndStock[hover][2];
                 int getHoveredItemExtraItemAmount = 5;
-                IClickableMenu.drawToolTip(Game1.spriteBatch, hoverText, boldTitleText, hover, heldItem != null, -1, currency, getHoveredItemExtraItemIndex, getHoveredItemExtraItemAmount, (CraftingRecipe)null, hoverPrice);
+                IClickableMenu.drawToolTip(Game1.spriteBatch, hoverText, boldTitleText,(Item) hover, heldItem != null, -1, currency, getHoveredItemExtraItemIndex, getHoveredItemExtraItemAmount, (CraftingRecipe)null, hoverPrice);
             }
             if (heldItem != null)
                 heldItem.drawInMenu(Game1.spriteBatch, new Vector2((float)(Game1.getOldMouseX() + 8), (float)(Game1.getOldMouseY() + 8)), 1f);
@@ -301,12 +316,12 @@ namespace BetterShopMenu
 
         private void doGridLayoutLeftClick(ButtonPressedEventArgs e)
         {
-            var forSale = Helper.Reflection.GetField<List<Item>>(shop, "forSale").GetValue();
-            var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(shop, "itemPriceAndStock").GetValue();
+            var forSale = Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").GetValue();
+            var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").GetValue();
             var currency = Helper.Reflection.GetField<int>(shop, "currency").GetValue();
             var animations = Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(shop, "animations").GetValue();
             var poof = Helper.Reflection.GetField<TemporaryAnimatedSprite>(shop, "poof").GetValue();
-            var heldItem = Helper.Reflection.GetField<Item>(shop, "heldItem").GetValue();
+            var heldItem = Helper.Reflection.GetField<ISalable>(shop, "heldItem").GetValue();
             var currentItemIndex = Helper.Reflection.GetField<int>(shop, "currentItemIndex").GetValue();
             var sellPercentage = Helper.Reflection.GetField<float>(shop, "sellPercentage").GetValue();
             var scrollBar = Helper.Reflection.GetField<ClickableTextureComponent>(shop, "scrollBar").GetValue();
@@ -380,41 +395,48 @@ namespace BetterShopMenu
                 Item obj = shop.inventory.leftClick(x, y, null, false);
                 if (obj != null)
                 {
-                    ShopMenu.chargePlayer(Game1.player, currency, -((obj is StardewValley.Object ? (int)((double)(obj as StardewValley.Object).sellToStorePrice() * (double)sellPercentage) : (int)((double)(obj.salePrice() / 2) * (double)sellPercentage)) * obj.Stack));
-                    int num = obj.Stack / 8 + 2;
-                    for (int index = 0; index < num; ++index)
+                    if (shop.onSell != null)
                     {
-                        animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
-                        {
-                            alphaFade = 0.025f,
-                            motion = new Vector2((float)Game1.random.Next(-3, 4), -4f),
-                            acceleration = new Vector2(0.0f, 0.5f),
-                            delayBeforeAnimationStart = index * 25,
-                            scale = 2f
-                        });
-                        animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
-                        {
-                            scale = 4f,
-                            alphaFade = 0.025f,
-                            delayBeforeAnimationStart = index * 50,
-                            motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(shop.xPositionOnScreen - 36), (float)(shop.yPositionOnScreen + shop.height - shop.inventory.height - 16)), 8f),
-                            acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(shop.xPositionOnScreen - 36), (float)(shop.yPositionOnScreen + shop.height - shop.inventory.height - 16)), 0.5f)
-                        });
+                        shop.onSell(obj);
                     }
-                    if (obj is StardewValley.Object && (obj as StardewValley.Object).Edibility != -300)
+                    else
                     {
-                        Item one = obj.getOne();
-                        one.Stack = obj.Stack;
-                        (Game1.getLocationFromName("SeedShop") as StardewValley.Locations.SeedShop).itemsToStartSellingTomorrow.Add(one);
+                        ShopMenu.chargePlayer(Game1.player, currency, -((obj is StardewValley.Object ? (int)((double)(obj as StardewValley.Object).sellToStorePrice() * (double)sellPercentage) : (int)((double)(obj.salePrice() / 2) * (double)sellPercentage)) * obj.Stack));
+                        int num = obj.Stack / 8 + 2;
+                        for (int index = 0; index < num; ++index)
+                        {
+                            animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
+                            {
+                                alphaFade = 0.025f,
+                                motion = new Vector2((float)Game1.random.Next(-3, 4), -4f),
+                                acceleration = new Vector2(0.0f, 0.5f),
+                                delayBeforeAnimationStart = index * 25,
+                                scale = 2f
+                            });
+                            animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
+                            {
+                                scale = 4f,
+                                alphaFade = 0.025f,
+                                delayBeforeAnimationStart = index * 50,
+                                motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(shop.xPositionOnScreen - 36), (float)(shop.yPositionOnScreen + shop.height - shop.inventory.height - 16)), 8f),
+                                acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(shop.xPositionOnScreen - 36), (float)(shop.yPositionOnScreen + shop.height - shop.inventory.height - 16)), 0.5f)
+                            });
+                        }
+                        if (obj is StardewValley.Object && (obj as StardewValley.Object).Edibility != -300)
+                        {
+                            Item one = obj.getOne();
+                            one.Stack = obj.Stack;
+                            (Game1.getLocationFromName("SeedShop") as StardewValley.Locations.SeedShop).itemsToStartSellingTomorrow.Add(one);
+                        }
+                        Game1.playSound("sell");
+                        Game1.playSound("purchase");
                     }
-                    Game1.playSound("sell");
-                    Game1.playSound("purchase");
                 }
             }
             else
             {
-                heldItem = shop.inventory.leftClick(x, y, heldItem, true);
-                Helper.Reflection.GetField<Item>(shop, "heldItem").SetValue(heldItem);
+                heldItem = shop.inventory.leftClick(x, y, (Item)heldItem, true);
+                Helper.Reflection.GetField<ISalable>(shop, "heldItem").SetValue(heldItem);
             }
             for (int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i)
             {
@@ -437,10 +459,10 @@ namespace BetterShopMenu
                         Game1.dayTimeMoneyBox.moneyShakeTimer = 1000;
                         Game1.playSound("cancel");
                     }
-                    if (heldItem != null && Game1.options.SnappyMenus && (Game1.activeClickableMenu != null && Game1.activeClickableMenu is ShopMenu) && Game1.player.addItemToInventoryBool(heldItem, false))
+                    if (heldItem != null && Game1.options.SnappyMenus && (Game1.activeClickableMenu != null && Game1.activeClickableMenu is ShopMenu) && Game1.player.addItemToInventoryBool((Item)heldItem, false))
                     {
                         heldItem = (Item)null;
-                        Helper.Reflection.GetField<Item>(shop, "heldItem").SetValue(heldItem);
+                        Helper.Reflection.GetField<ISalable>(shop, "heldItem").SetValue(heldItem);
                         DelayedAction.playSoundAfterDelay("coin", 100, (GameLocation)null);
                     }
                 }
@@ -449,12 +471,12 @@ namespace BetterShopMenu
 
         private void doGridLayoutRightClick(ButtonPressedEventArgs e)
         {
-            var forSale = Helper.Reflection.GetField<List<Item>>(shop, "forSale").GetValue();
-            var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(shop, "itemPriceAndStock").GetValue();
+            var forSale = Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").GetValue();
+            var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").GetValue();
             var currency = Helper.Reflection.GetField<int>(shop, "currency").GetValue();
             var animations = Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(shop, "animations").GetValue();
             var poof = Helper.Reflection.GetField<TemporaryAnimatedSprite>(shop, "poof").GetValue();
-            var heldItem = Helper.Reflection.GetField<Item>(shop, "heldItem").GetValue();
+            var heldItem = Helper.Reflection.GetField<ISalable>(shop, "heldItem").GetValue();
             var currentItemIndex = Helper.Reflection.GetField<int>(shop, "currentItemIndex").GetValue();
             var sellPercentage = Helper.Reflection.GetField<float>(shop, "sellPercentage").GetValue();
             const int UNIT_WIDTH = 160;
@@ -477,36 +499,43 @@ namespace BetterShopMenu
                 Item obj = shop.inventory.rightClick(x, y, null, false);
                 if (obj != null)
                 {
-                    ShopMenu.chargePlayer(Game1.player, currency, -((obj is StardewValley.Object ? (int)((double)(obj as StardewValley.Object).sellToStorePrice() * (double)sellPercentage) : (int)((double)(obj.salePrice() / 2) * (double)sellPercentage)) * obj.Stack));
-                    Item obj2 = (Item)null;
-                    if (Game1.mouseClickPolling > 300)
-                        Game1.playSound("purchaseRepeat");
-                    else
-                        Game1.playSound("purchaseClick");
-                    animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 64, 256, 64, 64), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
+                    if (shop.onSell != null)
                     {
-                        alphaFade = 0.025f,
-                        motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 12f),
-                        acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 0.5f)
-                    });
-                    if (obj is StardewValley.Object && (obj as StardewValley.Object).Edibility != -300)
-                    {
-                        (Game1.getLocationFromName("SeedShop") as StardewValley.Locations.SeedShop).itemsToStartSellingTomorrow.Add(obj.getOne());
+                        shop.onSell(obj);
                     }
-                    if (shop.inventory.getItemAt(x, y) == null)
+                    else
                     {
-                        Game1.playSound("sell");
-                        animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White, 8, false, 100f, 0, -1, -1f, -1, 0)
+                        ShopMenu.chargePlayer(Game1.player, currency, -((obj is StardewValley.Object ? (int)((double)(obj as StardewValley.Object).sellToStorePrice() * (double)sellPercentage) : (int)((double)(obj.salePrice() / 2) * (double)sellPercentage)) * obj.Stack));
+                        Item obj2 = (Item)null;
+                        if (Game1.mouseClickPolling > 300)
+                            Game1.playSound("purchaseRepeat");
+                        else
+                            Game1.playSound("purchaseClick");
+                        animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 64, 256, 64, 64), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
                         {
-                            motion = new Vector2(0.0f, -0.5f)
+                            alphaFade = 0.025f,
+                            motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 12f),
+                            acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 0.5f)
                         });
+                        if (obj is StardewValley.Object && (obj as StardewValley.Object).Edibility != -300)
+                        {
+                            (Game1.getLocationFromName("SeedShop") as StardewValley.Locations.SeedShop).itemsToStartSellingTomorrow.Add(obj.getOne());
+                        }
+                        if (shop.inventory.getItemAt(x, y) == null)
+                        {
+                            Game1.playSound("sell");
+                            animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White, 8, false, 100f, 0, -1, -1f, -1, 0)
+                            {
+                                motion = new Vector2(0.0f, -0.5f)
+                            });
+                        }
                     }
                 }
             }
             else
             {
-                heldItem = shop.inventory.leftClick(x, y, heldItem, true);
-                Helper.Reflection.GetField<Item>(shop, "heldItem").SetValue(heldItem);
+                heldItem = shop.inventory.leftClick(x, y, (Item)heldItem, true);
+                Helper.Reflection.GetField<ISalable>(shop, "heldItem").SetValue(heldItem);
             }
             for (int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i)
             {
@@ -525,10 +554,10 @@ namespace BetterShopMenu
                         itemPriceAndStock.Remove(forSale[index2]);
                         forSale.RemoveAt(index2);
                     }
-                    if (heldItem == null || !Game1.options.SnappyMenus || (Game1.activeClickableMenu == null || !(Game1.activeClickableMenu is ShopMenu)) || !Game1.player.addItemToInventoryBool(heldItem, false))
+                    if (heldItem == null || !Game1.options.SnappyMenus || (Game1.activeClickableMenu == null || !(Game1.activeClickableMenu is ShopMenu)) || !Game1.player.addItemToInventoryBool((Item)heldItem, false))
                         break;
                     heldItem = (Item)null;
-                    Helper.Reflection.GetField<Item>(shop, "heldItem").SetValue(heldItem);
+                    Helper.Reflection.GetField<ISalable>(shop, "heldItem").SetValue(heldItem);
                     DelayedAction.playSoundAfterDelay("coin", 100, (GameLocation)null);
                     break;
                 }
@@ -551,14 +580,14 @@ namespace BetterShopMenu
             }
         }
 
-        private bool itemMatchesCategory( Item item, int cat )
+        private bool itemMatchesCategory(ISalable item, int cat )
         {
             var obj = item as SObject;
             if (cat == -1)
                 return true;
             if (cat == categories.Count)
                 return obj != null && obj.IsRecipe;
-            if (categories[ cat ] == item.Category)
+            if (categories[ cat ] == ((item as Item)?.Category ?? 0))
                 return (obj == null || !obj.IsRecipe);
             return false;
         }
