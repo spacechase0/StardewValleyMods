@@ -62,9 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CookingSkillAPI.cs" />
     <Compile Include="Other\ExperienceBars.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="NewCraftingPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -92,7 +90,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" version="2.2.0" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" version="3.0.0-beta.7" />
   </ItemGroup>
+  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

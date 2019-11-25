@@ -8,6 +8,8 @@ using StardewValley.Menus;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
 using SObject = StardewValley.Object;
+using StardewValley.Objects;
+using SpaceShared;
 
 namespace CookingSkill
 {
@@ -33,7 +35,7 @@ namespace CookingSkill
 
         // Modifies the item based on professions and stuff
         // Returns for whether or not we should consume the ingredients
-        public static bool onCook( CraftingRecipe recipe, Item item )
+        public static bool onCook( CraftingRecipe recipe, Item item, List<Chest> additionalItems )
         {
             if (recipe.isCookingRecipe && item is SObject obj)
             {
@@ -57,7 +59,7 @@ namespace CookingSkill
                 }
 
                 var used = new List<NewCraftingPage.ConsumedItem>();
-                NewCraftingPage.myConsumeIngredients(recipe, false, used);
+                NewCraftingPage.myConsumeIngredients(recipe, additionalItems, false, used);
 
                 int total = 0;
                 foreach (NewCraftingPage.ConsumedItem ingr in used )
@@ -89,6 +91,7 @@ namespace CookingSkill
         public override void Entry( IModHelper helper )
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
 
@@ -241,8 +244,8 @@ namespace CookingSkill
                 }
                 Log.trace("Eating:" + Game1.player.isEating);
                 Log.trace("prev:" + prevToEatStack);
-                Log.trace("I:"+Game1.player.itemToEat + " " + ((Game1.player.itemToEat != null) ? Game1.player.itemToEat.getStack() : -1));
-                Log.trace("A:" + Game1.player.ActiveObject + " " + ((Game1.player.ActiveObject != null) ? Game1.player.ActiveObject.getStack() : -1));
+                Log.trace("I:"+Game1.player.itemToEat + " " + ((Game1.player.itemToEat != null) ? Game1.player.itemToEat.Stack : -1));
+                Log.trace("A:" + Game1.player.ActiveObject + " " + ((Game1.player.ActiveObject != null) ? Game1.player.ActiveObject.Stack : -1));
                 prevToEatStack = (Game1.player.itemToEat != null ? Game1.player.itemToEat.Stack : -1);
             }
             wasEating = Game1.player.isEating;
@@ -253,14 +256,13 @@ namespace CookingSkill
                 {
                     CraftingPage menu = Game1.activeClickableMenu as CraftingPage;
                     bool cooking = ( bool ) Util.GetInstanceField( typeof( CraftingPage), Game1.activeClickableMenu, "cooking" );
-                    Game1.activeClickableMenu = new NewCraftingPage( menu.xPositionOnScreen, menu.yPositionOnScreen, menu.width, menu.height, cooking );
+                    bool standaloneMenu = ( bool ) Util.GetInstanceField( typeof( CraftingPage), Game1.activeClickableMenu, "_standaloneMenu");
+                    List<Chest> containers = ( List<Chest> ) Util.GetInstanceField( typeof( CraftingPage), Game1.activeClickableMenu, "_materialContainers");
+                    NewCraftingPage myCraftingPage = new NewCraftingPage(menu.xPositionOnScreen, menu.yPositionOnScreen, menu.width, menu.height, cooking, standaloneMenu, containers);
+                    myCraftingPage.exitFunction = Game1.activeClickableMenu.exitFunction;
+                    Game1.activeClickableMenu = myCraftingPage;
                 }
             }
-        }
-
-        public override object GetApi()
-        {
-            return new CookingSkillAPI();
         }
     }
 }
