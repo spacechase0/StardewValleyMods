@@ -1,5 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using CarryChest.Overrides;
+using Harmony;
 using Microsoft.Xna.Framework;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -12,6 +17,8 @@ namespace CarryChest
     {
         public static Mod instance;
 
+        private HarmonyInstance harmony;
+
         /// <summary>The previously selected chest on the toolbar.</summary>
         private Chest previousHeldChest;
 
@@ -20,10 +27,47 @@ namespace CarryChest
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             helper.Events.GameLoop.UpdateTicking += onUpdateTicking;
             helper.Events.Input.ButtonPressed += onButtonPressed;
             helper.Events.World.ObjectListChanged += onObjectListChanged;
+
+            harmony = HarmonyInstance.Create(ModManifest.UniqueID);
+            doPrefix(typeof(Item), nameof(Item.canStackWith), typeof(ItemCanStackHook));
+            doPostfix(typeof(StardewValley.Object), nameof(StardewValley.Object.getDescription), typeof(ObjectDescriptionHook));
+        }
+        private void doPrefix(Type origType, string origMethod, Type newType)
+        {
+            doPrefix(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Prefix"));
+        }
+        private void doPrefix(MethodInfo orig, MethodInfo prefix)
+        {
+            try
+            {
+                Log.trace($"Doing prefix patch {orig}:{prefix}...");
+                harmony.Patch(orig, new HarmonyMethod(prefix));
+            }
+            catch (Exception e)
+            {
+                Log.error($"Exception doing prefix patch {orig}:{prefix}: {e}");
+            }
+        }
+        private void doPostfix(Type origType, string origMethod, Type newType)
+        {
+            doPostfix(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Postfix"));
+        }
+        private void doPostfix(MethodInfo orig, MethodInfo postfix)
+        {
+            try
+            {
+                Log.trace($"Doing postfix patch {orig}:{postfix}...");
+                harmony.Patch(orig, null, new HarmonyMethod(postfix));
+            }
+            catch (Exception e)
+            {
+                Log.error($"Exception doing postfix patch {orig}:{postfix}: {e}");
+            }
         }
 
         /// <summary>Raised before the game state is updated (≈60 times per second).</summary>
