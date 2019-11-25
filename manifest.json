@@ -1,7 +1,7 @@
 {
   "Name": "More Grass Starters",
   "Author": "spacechase0, eemie",
-  "Version": "1.0.3",
+  "Version": "1.0.4",
   "Description": "Lets you place more types of grass.",
   "UniqueID": "spacechase0.MoreGrassStarters",
   "EntryDll": "MoreGrassStarters.dll",

@@ -6,6 +6,7 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Menus;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 
 namespace MoreGrassStarters
 {
@@ -18,6 +19,7 @@ namespace MoreGrassStarters
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             helper.Events.Display.MenuChanged += onMenuChanged;
 
@@ -37,8 +39,8 @@ namespace MoreGrassStarters
 
             if (menu.portraitPerson.Name == "Pierre")
             {
-                var forSale = Helper.Reflection.GetField<List<Item>>(menu, "forSale").GetValue();
-                var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(menu, "itemPriceAndStock").GetValue();
+                var forSale = Helper.Reflection.GetField<List<ISalable>>(menu, "forSale").GetValue();
+                var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(menu, "itemPriceAndStock").GetValue();
 
                 for (int i = Grass.caveGrass; i < 5 + GrassStarterItem.ExtraGrassTypes; ++i)
                 {

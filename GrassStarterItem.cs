@@ -80,7 +80,7 @@ namespace MoreGrassStarters
             b.Draw(tex, pos - new Vector2(-4, 24), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, (f.getStandingY() + 3) / 10000f);
         }
 
-        public override void drawInMenu(SpriteBatch b, Vector2 pos, float scale, float transparency, float layerDepth, bool drawStackNumber, Color color, bool drawShadow)
+        public override void drawInMenu(SpriteBatch b, Vector2 pos, float scale, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
             Texture2D tex = GrassStarterItem.tex;
             int texOffset = 20 + whichGrass * 20;
@@ -91,8 +91,8 @@ namespace MoreGrassStarters
             }
             b.Draw(tex, pos + new Vector2( 4, 0 ), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4 * scale, SpriteEffects.None, layerDepth);
 
-            if (drawStackNumber && this.maximumStackSize() > 1 && ((double)scale > 0.3 && this.Stack != int.MaxValue) && this.Stack > 1)
-                Utility.drawTinyDigits(this.Stack, b, pos + new Vector2((float)(Game1.tileSize - Utility.getWidthOfTinyDigitString(this.stack, 3f * scale)) + 3f * scale, (float)((double)Game1.tileSize - 18.0 * (double)scale + 2.0)), 3f * scale, 1f, Color.White);
+            if ((drawStackNumber == StackDrawType.Draw && this.maximumStackSize() > 1 && this.Stack > 1 || drawStackNumber == StackDrawType.Draw_OneInclusive) && (double)scale > 0.3 && this.Stack != int.MaxValue)
+            Utility.drawTinyDigits(this.Stack, b, pos + new Vector2((float)(Game1.tileSize - Utility.getWidthOfTinyDigitString(this.stack, 3f * scale)) + 3f * scale, (float)((double)Game1.tileSize - 18.0 * (double)scale + 2.0)), 3f * scale, 1f, Color.White);
         }
 
         // Custom Element Handler
