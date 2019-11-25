@@ -76,7 +76,7 @@ namespace Magic.Spells
                         Game1.removeSquareDebrisFromTile(ix, iy);
                         loc.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(ix * (float)Game1.tileSize, iy * (float)Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f, 0, -1, -1f, -1, 0));
                         loc.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(ix * (float)Game1.tileSize, iy * (float)Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, Vector2.Distance(pos, target) * 30f, 0, -1, -1f, -1, 0));
-                        loc.checkForBuriedItem(ix, iy, false, false);
+                        loc.checkForBuriedItem(ix, iy, false, false, player);
                         player.addMana(-3);
                         player.AddCustomSkillExperience(Magic.Skill, 2);
                     }

@@ -1,5 +1,6 @@
 ﻿using Magic.Schools;
 using SpaceCore;
+using SpaceShared;
 using StardewValley;
 
 namespace Magic.Spells
@@ -23,7 +24,7 @@ namespace Magic.Spells
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             if (Magic.OnAnalyzeCast != null)
-                SpaceCore.Utilities.Util.invokeEvent< AnalyzeEventArgs >("OnAnalyzeCast", Magic.OnAnalyzeCast.GetInvocationList(), player, new AnalyzeEventArgs(targetX, targetY));
+                Util.invokeEvent< AnalyzeEventArgs >("OnAnalyzeCast", Magic.OnAnalyzeCast.GetInvocationList(), player, new AnalyzeEventArgs(targetX, targetY));
 
             return null;
         }

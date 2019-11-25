@@ -1,4 +1,5 @@
-﻿using StardewValley;
+﻿using SpaceShared;
+using StardewValley;
 
 namespace Magic.Spells
 {

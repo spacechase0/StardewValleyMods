@@ -37,7 +37,7 @@ namespace Magic.Game
             }
 
             rider.speed = 10;
-            rider.temporaryImpassableTile = new Rectangle((int)rider.position.X - Game1.tileSize, (int)rider.position.Y - Game1.tileSize, Game1.tileSize * 3, Game1.tileSize * 3);
+            rider.TemporaryPassableTiles.Add(new Rectangle((int)rider.position.X - Game1.tileSize, (int)rider.position.Y - Game1.tileSize, Game1.tileSize * 3, Game1.tileSize * 3));
         }
 
         public override void draw(SpriteBatch b)
@@ -53,7 +53,7 @@ namespace Magic.Game
 
             this.dismounting.Value = true;
             this.farmerPassesThrough = false;
-            this.rider.temporaryImpassableTile = Rectangle.Empty;
+            this.rider.TemporaryPassableTiles.Clear();
             Vector2 tileForCharacter = Utility.recursiveFindOpenTileForCharacter((Character)this.rider, this.rider.currentLocation, this.rider.getTileLocation(), 9*9);
             this.dismounting.Value = false;
             this.Halt();

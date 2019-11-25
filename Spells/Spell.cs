@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Magic.Schools;
 using StardewValley;
+using SpaceShared;
 
 namespace Magic.Spells
 {

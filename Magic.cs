@@ -17,6 +17,7 @@ using System.IO;
 using StardewModdingAPI;
 using SpaceCore;
 using StardewValley.Objects;
+using SpaceShared;
 
 namespace Magic
 {

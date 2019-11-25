@@ -4,6 +4,7 @@ using StardewValley;
 using System;
 using static Magic.Mod;
 using System.IO;
+using SpaceShared;
 
 namespace Magic
 {
