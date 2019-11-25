@@ -54,7 +54,7 @@ namespace RushOrders
                     if ( i == 0 )
                     {
                         int cost = Mod.getBuildingRushPrice();
-                        if (Game1.player.money < cost)
+                        if (Game1.player.Money < cost)
                         {
                             q = "You do not have enough money.";
                             showingBroke = true;
@@ -62,7 +62,7 @@ namespace RushOrders
                         }
                         else
                         {
-                            Game1.player.money -= cost;
+                            Game1.player.Money -= cost;
                             Game1.playSound("coin");
                             Mod.rushBuilding();
                             if (Mod.getBuildingDaysLeft() > 1)

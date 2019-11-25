@@ -8,6 +8,8 @@ using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Tools;
 using StardewValley.Buildings;
+using SpaceShared;
+using SpaceShared.APIs;
 
 namespace RushOrders
 {
@@ -24,10 +26,12 @@ namespace RushOrders
         public override void Entry( IModHelper helper )
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             Log.info("Loading Config");
             ModConfig = Helper.ReadConfig<RushOrdersConfig>();
 
+            helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
         }
@@ -35,6 +39,18 @@ namespace RushOrders
         public override object GetApi()
         {
             return (api = new Api());
+        }
+
+        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            if (capi != null)
+            {
+                capi.RegisterModConfig(ModManifest, () => ModConfig = new RushOrdersConfig(), () => Helper.WriteConfig(ModConfig));
+                capi.RegisterSimpleOption(ModManifest, "Price: Tool - One day", "The price multiplier for a one-day tool upgrade.", () => (float)ModConfig.PriceFactor.Tool.Rush, (float val) => ModConfig.PriceFactor.Tool.Rush = val);
+                capi.RegisterSimpleOption(ModManifest, "Price: Tool - Instant", "The price multiplier for an instant upgrade.", () => (float)ModConfig.PriceFactor.Tool.Rush, (float val) => ModConfig.PriceFactor.Tool.Now = val);
+                capi.RegisterSimpleOption(ModManifest, "Price: Building - Accelerate", "The price multiplier to accelerate building construction by one day.", () => (float)ModConfig.PriceFactor.Building.RushOneDay, (float val) => ModConfig.PriceFactor.Building.RushOneDay = val);
+            }
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
@@ -77,14 +93,11 @@ namespace RushOrders
 
         private static void addToolRushOrders( ShopMenu shop )
         {
-            FieldInfo stockField = typeof(ShopMenu).GetField("itemPriceAndStock", BindingFlags.NonPublic | BindingFlags.Instance);
-            FieldInfo itemsField = typeof(ShopMenu).GetField("forSale", BindingFlags.NonPublic | BindingFlags.Instance);
-            
-            Dictionary<Item, int[]> toAddStock = new Dictionary<Item, int[]>();
-            Dictionary<Item, int[]> stock = (Dictionary < Item, int[]>) stockField.GetValue(shop);
-            List<Item> toAddItems = new List<Item>();
-            List<Item> items = (List<Item>)itemsField.GetValue(shop);
-            foreach ( KeyValuePair< Item, int[] > entry in stock )
+            Dictionary<ISalable, int[]> toAddStock = new Dictionary<ISalable, int[]>();
+            Dictionary<ISalable, int[]> stock = shop.itemPriceAndStock;
+            List<ISalable> toAddItems = new List<ISalable>();
+            List<ISalable> items = shop.forSale;
+            foreach ( KeyValuePair<ISalable, int[] > entry in stock )
             {
                 if (!(entry.Key is Tool)) continue;
                 Tool tool = entry.Key as Tool;
@@ -145,8 +158,8 @@ namespace RushOrders
                 stock.Add(elem.Key, elem.Value);
             foreach (var elem in toAddItems)
                 items.Add(elem);
-            
-            itemsField.SetValue(shop, items.OrderBy(i => i.Name).ToList());
+
+            shop.forSale = items.OrderBy(i => i.Name).ToList();
         }
 
         /// <summary>Get whether there's a building being upgraded or constructed that can be rushed.</summary>
@@ -175,7 +188,7 @@ namespace RushOrders
             if ( hasDialog && !hadDialogue && Game1.player.daysLeftForToolUpgrade.Value == 2 && Game1.player.toolBeingUpgraded.Value != null )
             {
                 int curPrice = getToolUpgradePrice(Game1.player.toolBeingUpgraded.Value.UpgradeLevel);
-                int diff = prevMoney - Game1.player.money;
+                int diff = prevMoney - Game1.player.Money;
 
                 if (diff == (int)(curPrice * ModConfig.PriceFactor.Tool.Now))
                 {
@@ -193,7 +206,7 @@ namespace RushOrders
                 }
             }
             hadDialogue = hasDialog;
-            prevMoney = Game1.player.money;
+            prevMoney = Game1.player.Money;
         }
 
         private static void doRushBuildingDialogue()
