@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using SpaceCore.Events;
 using StardewValley.Network;
+using SpaceShared;
 
 namespace CustomizeExterior
 {
@@ -33,6 +34,7 @@ namespace CustomizeExterior
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(Helper.DirectoryPath, "Buildings"));
             compileChoices();

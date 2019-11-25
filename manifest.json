@@ -1,7 +1,7 @@
 {
   "Name": "Customize Exterior",
   "Author": "spacechase0",
-  "Version": "1.0.6",
+  "Version": "1.0.7",
   "Description": "Change the exterior of your buildings.",
   "UniqueID": "spacechase0.CustomizeExterior",
   "EntryDll": "CustomizeExterior.dll",
