@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley.Locations;
 using Microsoft.Xna.Framework.Input;
+using SpaceShared;
+using SpaceShared.APIs;
 
 // TODO: Render on skills page?
 
@@ -26,8 +28,10 @@ namespace ExperienceBars
 
         public override void Entry( IModHelper helper )
         {
+            Log.Monitor = Monitor;
             Config = helper.ReadConfig<Configuration>();
 
+            helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.Display.RenderedHud += onRenderedHud;
             helper.Events.Input.ButtonPressed += onButtonPressed;
         }
@@ -35,6 +39,18 @@ namespace ExperienceBars
         public override object GetApi()
         {
             return new Api();
+        }
+
+        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            if (capi != null)
+            {
+                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
+                capi.RegisterSimpleOption(ModManifest, "UI X", "The X position of the UI on-screen.", () => Config.X, (int val) => Config.X = val);
+                capi.RegisterSimpleOption(ModManifest, "UI Y", "The Y position of the UI on-screen.", () => Config.Y, (int val) => Config.Y = val);
+                capi.RegisterSimpleOption(ModManifest, "Key: Toggle Display", "Press this key to toggle the display.\nHolding Shift lets you move the display as well. ", () => Config.ToggleBars, (SButton val) => Config.ToggleBars = val);
+            }
         }
 
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
@@ -98,7 +114,7 @@ namespace ExperienceBars
                 }
                 catch (Exception ex)
                 {
-                    Monitor.Log("Exception during level extender compat: " + ex, LogLevel.Error);
+                    Log.error("Exception during level extender compat: " + ex);
                     stopLevelExtenderCompat = true;
                 }
             }
