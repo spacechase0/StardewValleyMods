@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -14,6 +15,7 @@ namespace ThreeHeartDancePartner
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            Log.Monitor = Monitor;
             helper.Events.Display.MenuChanged += onMenuChanged;
         }
 
