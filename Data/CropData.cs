@@ -14,6 +14,14 @@ namespace JsonAssets.Data
         public string SeedName { get; set; }
         public string SeedDescription { get; set; }
 
+        public enum CropType_
+        {
+            Normal,
+            IndoorsOnly,
+            Paddy,
+        }
+        public CropType_ CropType { get; set; } = CropType_.Normal;
+
         public IList<string> Seasons { get; set; } = new List<string>();
         public IList<int> Phases { get; set; } = new List<int>();
         public int RegrowthPhase { get; set; } = -1;
@@ -31,6 +39,7 @@ namespace JsonAssets.Data
 
         public IList<string> SeedPurchaseRequirements { get; set; } = new List<string>();
         public int SeedPurchasePrice { get; set; }
+        public int SeedSellPrice { get; set; } = -1;
         public string SeedPurchaseFrom { get; set; } = "Pierre";
         
         public Dictionary<string, string> SeedNameLocalization = new Dictionary<string, string>();

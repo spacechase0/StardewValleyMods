@@ -46,28 +46,40 @@
   <ItemGroup>
     <Compile Include="Api.cs" />
     <Compile Include="ContentInjector.cs" />
+    <Compile Include="Data\PantsData.cs" />
     <Compile Include="Data\ContentPackData.cs" />
+    <Compile Include="Data\DataSeparateTextureIndex.cs" />
     <Compile Include="Data\FruitTreeData.cs" />
     <Compile Include="Data\CropData.cs" />
     <Compile Include="Data\DataNeedsId.cs" />
     <Compile Include="Data\BigCraftableData.cs" />
     <Compile Include="Data\HatData.cs" />
+    <Compile Include="Data\ClothingData.cs" />
+    <Compile Include="Data\ShirtData.cs" />
+    <Compile Include="Data\TailoringRecipeData.cs" />
     <Compile Include="Data\WeaponData.cs" />
     <Compile Include="Data\ObjectData.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Other\ContentPatcher.cs" />
+    <Compile Include="Overrides\Crop.cs" />
     <Compile Include="Overrides\Ring.cs" />
     <Compile Include="Overrides\Object.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.0.0-beta.2" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.0.0-beta.7" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SpaceCore_SDV\SpaceCore.csproj">
+      <Project>{ba657cb4-93ed-4c3a-a66e-86954beb4ce6}</Project>
+      <Name>SpaceCore</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

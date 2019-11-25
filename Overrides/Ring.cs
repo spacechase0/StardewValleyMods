@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Netcode;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 using System;

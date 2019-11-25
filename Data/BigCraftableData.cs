@@ -45,7 +45,7 @@ namespace JsonAssets.Data
                 return str;
             }
         }
-        
+
         public string Description { get; set; }
 
         public int Price { get; set; }

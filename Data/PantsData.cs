@@ -1,19 +1,26 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using StardewValley;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace JsonAssets.Data
 {
-    class HatData : DataNeedsId
+    class PantsData : DataSeparateTextureIndex
     {
         [JsonIgnore]
         internal Texture2D texture;
 
         public string Description { get; set; }
-        public int PurchasePrice { get; set; }
-        public bool ShowHair { get; set; }
-        public bool IgnoreHairstyleOffset { get; set; }
+
+        public int Price { get; set; }
+
+        public Color DefaultColor { get; set; } = new Color(255, 235, 203);
+        public bool Dyeable { get; set; } = false;
 
         public string Metadata { get; set; } = "";
 
@@ -40,11 +47,12 @@ namespace JsonAssets.Data
             return DescriptionLocalization[currLang.ToString()];
         }
 
-        public int GetHatId() { return id; }
+        public int GetClothingId() { return id; }
+        public int GetTextureIndex() { return textureIndex; }
 
-        internal string GetHatInformation()
+        internal string GetClothingInformation()
         {
-            return $"{Name}/{LocalizedDescription()}/" + ( ShowHair ? "true" : "false" ) + "/" + (IgnoreHairstyleOffset ? "true" : "false") + $"/{Metadata}/{LocalizedName()}";
+            return $"{Name}/{LocalizedName()}/{LocalizedDescription()}/{GetTextureIndex()}/-1/{Price}/{DefaultColor.R} {DefaultColor.G} {DefaultColor.B}/{Dyeable}/Pants/{Metadata}";
         }
     }
 }

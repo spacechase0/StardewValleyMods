@@ -21,6 +21,8 @@ using JsonAssets.Overrides;
 using Newtonsoft.Json;
 using StardewValley.Tools;
 using JsonAssets.Other.ContentPatcher;
+using StardewValley.Network;
+using SpaceShared;
 
 // TODO: Refactor recipes
 
@@ -36,14 +38,18 @@ namespace JsonAssets
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.GameLoop.Saved += onSaved;
             helper.Events.Player.InventoryChanged += onInventoryChanged;
             helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.GameLoop.SaveCreated += onCreated;
-            helper.Events.Specialised.LoadStageChanged += onLoadStageChanged;
+            helper.Events.Specialized.LoadStageChanged += onLoadStageChanged;
             helper.Events.Multiplayer.PeerContextReceived += clientConnected;
+
+            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\crops", 32);
+            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\fruitTrees", 80);
 
             Log.info("Loading content packs...");
             foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
@@ -61,8 +67,11 @@ namespace JsonAssets
                 harmony = HarmonyInstance.Create("spacechase0.JsonAssets");
                 doPrefix(typeof(StardewValley.Object), "canBePlacedHere", typeof(ObjectCanPlantHereOverride));
                 doPrefix(typeof(StardewValley.Object), "checkForAction", typeof(ObjectNoActionHook));
+                doPrefix(typeof(StardewValley.Object), "loadDisplayName", typeof(ObjectDisplayNameHook));
                 doPostfix(typeof(StardewValley.Object), "isIndexOkForBasicShippedCategory", typeof(ObjectCollectionShippingHook));
                 doPrefix(typeof(StardewValley.Objects.Ring), "loadDisplayFields", typeof(RingLoadDisplayFieldsHook));
+                doPrefix(typeof(StardewValley.Crop), nameof(Crop.isPaddyCrop), typeof(PaddyCropHook));
+                doTranspiler(typeof(StardewValley.Crop), nameof(Crop.newDay), typeof(IndoorOnlyCropHook));
             }
             catch (Exception e)
             {
@@ -102,6 +111,22 @@ namespace JsonAssets
                 Log.error($"Exception doing postfix patch {orig}:{postfix}: {e}");
             }
         }
+        private void doTranspiler(Type origType, string origMethod, Type newType)
+        {
+            doTranspiler(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Transpiler"));
+        }
+        private void doTranspiler(MethodInfo orig, MethodInfo transpiler)
+        {
+            try
+            {
+                Log.trace($"Doing transpiler patch {orig}:{transpiler}...");
+                harmony.Patch(orig, null, null, new HarmonyMethod(transpiler));
+            }
+            catch (Exception e)
+            {
+                Log.error($"Exception doing transpiler patch {orig}:{transpiler}: {e}");
+            }
+        }
 
         private Api api;
         public override object GetApi()
@@ -136,6 +161,8 @@ namespace JsonAssets
         private Dictionary<string, IContentPack> dupBigCraftables = new Dictionary<string, IContentPack>();
         private Dictionary<string, IContentPack> dupHats = new Dictionary<string, IContentPack>();
         private Dictionary<string, IContentPack> dupWeapons = new Dictionary<string, IContentPack>();
+        private Dictionary<string, IContentPack> dupShirts = new Dictionary<string, IContentPack>();
+        private Dictionary<string, IContentPack> dupPants = new Dictionary<string, IContentPack>();
 
         private readonly Regex SeasonLimiter = new Regex("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private void loadData(IContentPack contentPack)
@@ -152,7 +179,7 @@ namespace JsonAssets
 
                     // load data
                     ObjectData obj = contentPack.ReadJsonFile<ObjectData>($"{relativePath}/object.json");
-                    if (obj == null)
+                    if (obj == null || (obj.DisableWithMod != null && Helper.ModRegistry.IsLoaded(obj.DisableWithMod)))
                         continue;
 
                     // save object
@@ -183,7 +210,7 @@ namespace JsonAssets
 
                     // load data
                     CropData crop = contentPack.ReadJsonFile<CropData>($"{relativePath}/crop.json");
-                    if (crop == null)
+                    if (crop == null || (crop.DisableWithMod != null && Helper.ModRegistry.IsLoaded(crop.DisableWithMod)))
                         continue;
 
                     // save crop
@@ -197,7 +224,7 @@ namespace JsonAssets
                         Name = crop.SeedName,
                         Description = crop.SeedDescription,
                         Category = ObjectData.Category_.Seeds,
-                        Price = crop.SeedPurchasePrice,
+                        Price = crop.SeedSellPrice == -1 ? crop.SeedPurchasePrice : crop.SeedSellPrice,
                         CanPurchase = true,
                         PurchaseFrom = crop.SeedPurchaseFrom,
                         PurchasePrice = crop.SeedPurchasePrice,
@@ -262,7 +289,7 @@ namespace JsonAssets
 
                     // load data
                     FruitTreeData tree = contentPack.ReadJsonFile<FruitTreeData>($"{relativePath}/tree.json");
-                    if (tree == null)
+                    if (tree == null || (tree.DisableWithMod != null && Helper.ModRegistry.IsLoaded(tree.DisableWithMod)))
                         continue;
 
                     // save fruit tree
@@ -304,7 +331,7 @@ namespace JsonAssets
 
                     // load data
                     BigCraftableData craftable = contentPack.ReadJsonFile<BigCraftableData>($"{relativePath}/big-craftable.json");
-                    if (craftable == null)
+                    if (craftable == null || (craftable.DisableWithMod != null && Helper.ModRegistry.IsLoaded(craftable.DisableWithMod)))
                         continue;
 
                     // save craftable
@@ -329,7 +356,7 @@ namespace JsonAssets
 
                     // load data
                     HatData hat = contentPack.ReadJsonFile<HatData>($"{relativePath}/hat.json");
-                    if (hat == null)
+                    if (hat == null || (hat.DisableWithMod != null && Helper.ModRegistry.IsLoaded(hat.DisableWithMod)))
                         continue;
 
                     // save object
@@ -340,12 +367,11 @@ namespace JsonAssets
                     if (dupHats.ContainsKey(hat.Name))
                         Log.error($"Duplicate hat: {hat.Name} just added by {contentPack.Manifest.Name}, already added by {dupHats[hat.Name].Manifest.Name}!");
                     else
-                        dupBigCraftables[hat.Name] = contentPack;
+                        dupHats[hat.Name] = contentPack;
                 }
             }
 
             // Load weapons
-            // load objects
             DirectoryInfo weaponsDir = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Weapons"));
             if (weaponsDir.Exists)
             {
@@ -355,7 +381,7 @@ namespace JsonAssets
 
                     // load data
                     WeaponData weapon = contentPack.ReadJsonFile<WeaponData>($"{relativePath}/weapon.json");
-                    if (weapon == null)
+                    if (weapon == null || (weapon.DisableWithMod != null && Helper.ModRegistry.IsLoaded(weapon.DisableWithMod)))
                         continue;
 
                     // save object
@@ -366,7 +392,82 @@ namespace JsonAssets
                     if (dupWeapons.ContainsKey(weapon.Name))
                         Log.error($"Duplicate weapon: {weapon.Name} just added by {contentPack.Manifest.Name}, already added by {dupWeapons[weapon.Name].Manifest.Name}!");
                     else
-                        dupBigCraftables[weapon.Name] = contentPack;
+                        dupWeapons[weapon.Name] = contentPack;
+                }
+            }
+
+            // Load shirts
+            DirectoryInfo shirtsDir = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Shirts"));
+            if (shirtsDir.Exists)
+            {
+                foreach (DirectoryInfo dir in shirtsDir.EnumerateDirectories())
+                {
+                    string relativePath = $"Shirts/{dir.Name}";
+
+                    // load data
+                    ShirtData shirt = contentPack.ReadJsonFile<ShirtData>($"{relativePath}/shirt.json");
+                    if (shirt == null || (shirt.DisableWithMod != null && Helper.ModRegistry.IsLoaded(shirt.DisableWithMod)))
+                        continue;
+
+                    // save shirt
+                    shirt.textureMale = contentPack.LoadAsset<Texture2D>($"{relativePath}/male.png");
+                    if (shirt.Dyeable)
+                        shirt.textureMaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/male-color.png");
+                    if (shirt.HasFemaleVariant)
+                    {
+                        shirt.textureFemale = contentPack.LoadAsset<Texture2D>($"{relativePath}/female.png");
+                        if (shirt.Dyeable)
+                            shirt.textureFemaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/female-color.png");
+                    }
+                    shirts.Add(shirt);
+
+                    // Duplicate check
+                    if (dupShirts.ContainsKey(shirt.Name))
+                        Log.error($"Duplicate shirt: {shirt.Name} just added by {contentPack.Manifest.Name}, already added by {dupWeapons[shirt.Name].Manifest.Name}!");
+                    else
+                        dupShirts[shirt.Name] = contentPack;
+                }
+            }
+
+            // Load pants
+            DirectoryInfo pantsDir = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Pants"));
+            if (pantsDir.Exists)
+            {
+                foreach (DirectoryInfo dir in pantsDir.EnumerateDirectories())
+                {
+                    string relativePath = $"Pants/{dir.Name}";
+
+                    // load data
+                    PantsData pants = contentPack.ReadJsonFile<PantsData>($"{relativePath}/pants.json");
+                    if (pants == null || (pants.DisableWithMod != null && Helper.ModRegistry.IsLoaded(pants.DisableWithMod)))
+                        continue;
+
+                    // save pants
+                    pants.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/pants.png");
+                    pantss.Add(pants);
+
+                    // Duplicate check
+                    if (dupPants.ContainsKey(pants.Name))
+                        Log.error($"Duplicate pants: {pants.Name} just added by {contentPack.Manifest.Name}, already added by {dupWeapons[pants.Name].Manifest.Name}!");
+                    else
+                        dupPants[pants.Name] = contentPack;
+                }
+            }
+
+            // Load tailoring
+            DirectoryInfo tailoringDir = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Tailoring"));
+            if (tailoringDir.Exists)
+            {
+                foreach (DirectoryInfo dir in tailoringDir.EnumerateDirectories())
+                {
+                    string relativePath = $"Tailoring/{dir.Name}";
+
+                    // load data
+                    TailoringRecipeData recipe = contentPack.ReadJsonFile<TailoringRecipeData>($"{relativePath}/recipe.json");
+                    if (recipe == null || (recipe.DisableWithMod != null && Helper.ModRegistry.IsLoaded(recipe.DisableWithMod)))
+                        continue;
+
+                    tailoring.Add(recipe);
                 }
             }
         }
@@ -382,6 +483,10 @@ namespace JsonAssets
             clearIds(out bigCraftableIds, bigCraftables.ToList<DataNeedsId>());
             clearIds(out hatIds, hats.ToList<DataNeedsId>());
             clearIds(out weaponIds, weapons.ToList<DataNeedsId>());
+            List<DataNeedsId> clothing = new List<DataNeedsId>();
+            clothing.AddRange(shirts);
+            clothing.AddRange(pantss);
+            clearIds(out clothingIds, clothing.ToList<DataNeedsId>());
 
             var editor = Helper.Content.AssetEditors.FirstOrDefault(p => p is ContentInjector);
             if (editor != null)
@@ -459,7 +564,7 @@ namespace JsonAssets
             var menu = e.NewMenu as ShopMenu;
             bool hatMouse = menu != null && menu.potraitPersonDialogue == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4);
             string portraitPerson = menu?.portraitPerson?.Name;
-            if (portraitPerson == null && Game1.currentLocation.Name == "Hospital")
+            if (portraitPerson == null && Game1.currentLocation?.Name == "Hospital")
                 portraitPerson = "Harvey";
             if (menu == null || ( portraitPerson == null || portraitPerson == "" ) && !hatMouse)
                 return;
@@ -468,8 +573,8 @@ namespace JsonAssets
             {
                 Log.trace($"Adding objects to {portraitPerson}'s shop");
 
-                var forSale = Helper.Reflection.GetField<List<Item>>(menu, "forSale").GetValue();
-                var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(menu, "itemPriceAndStock").GetValue();
+                var forSale = Helper.Reflection.GetField<List<ISalable>>(menu, "forSale").GetValue();
+                var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(menu, "itemPriceAndStock").GetValue();
 
                 var precondMeth = Helper.Reflection.GetMethod(Game1.currentLocation, "checkEventPrecondition");
                 foreach (var obj in objects)
@@ -596,6 +701,7 @@ namespace JsonAssets
                 oldBigCraftableIds = LoadDictionary<string, int>("ids-big-craftables.json") ?? new Dictionary<string, int>();
                 oldHatIds = LoadDictionary<string, int>("ids-hats.json") ?? new Dictionary<string, int>();
                 oldWeaponIds = LoadDictionary<string, int>("ids-weapons.json") ?? new Dictionary<string, int>();
+                oldClothingIds = LoadDictionary<string, int>("ids-clothing.json") ?? new Dictionary<string, int>();
 
                 Log.trace("OLD IDS START");
                 foreach (var id in oldObjectIds)
@@ -610,6 +716,8 @@ namespace JsonAssets
                     Log.trace("\tHat " + id.Key + " = " + id.Value);
                 foreach (var id in oldWeaponIds)
                     Log.trace("\tWeapon " + id.Key + " = " + id.Value);
+                foreach (var id in oldClothingIds)
+                    Log.trace("\tClothing " + id.Key + " = " + id.Value);
                 Log.trace("OLD IDS END");
             }
 
@@ -620,7 +728,18 @@ namespace JsonAssets
             bigCraftableIds = AssignIds("big-craftables", StartingBigCraftableId, bigCraftables.ToList<DataNeedsId>());
             hatIds = AssignIds("hats", StartingHatId, hats.ToList<DataNeedsId>());
             weaponIds = AssignIds("weapons", StartingWeaponId, weapons.ToList<DataNeedsId>());
-            
+            List<DataNeedsId> clothing = new List<DataNeedsId>();
+            clothing.AddRange(shirts);
+            clothing.AddRange(pantss);
+            clothingIds = AssignIds("clothing", StartingClothingId, clothing.ToList<DataNeedsId>());
+
+            AssignTextureIndices("shirts", StartingShirtTextureIndex, shirts.ToList<DataSeparateTextureIndex>());
+            AssignTextureIndices("pants", StartingPantsTextureIndex, pantss.ToList<DataSeparateTextureIndex>());
+
+            Log.trace("Resetting max shirt/pants value");
+            Helper.Reflection.GetField<int>(typeof(Clothing), "_maxShirtValue").SetValue(-1);
+            Helper.Reflection.GetField<int>(typeof(Clothing), "_maxPantsValue").SetValue(-1);
+
             api.InvokeIdsAssigned();
 
             // init
@@ -644,6 +763,7 @@ namespace JsonAssets
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(bigCraftableIds));
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(hatIds));
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(weaponIds));
+            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(clothingIds));
         }
 
         internal IList<ObjectData> myRings = new List<ObjectData>();
@@ -675,8 +795,11 @@ namespace JsonAssets
         private const int StartingCropId = 100;
         private const int StartingFruitTreeId = 10;
         private const int StartingBigCraftableId = 300;
-        private const int StartingHatId = 50;
+        private const int StartingHatId = 80;
         private const int StartingWeaponId = 64;
+        private const int StartingClothingId = 3000;
+        private const int StartingShirtTextureIndex = 750;
+        private const int StartingPantsTextureIndex = 20;
 
         internal IList<ObjectData> objects = new List<ObjectData>();
         internal IList<CropData> crops = new List<CropData>();
@@ -684,6 +807,9 @@ namespace JsonAssets
         internal IList<BigCraftableData> bigCraftables = new List<BigCraftableData>();
         internal IList<HatData> hats = new List<HatData>();
         internal IList<WeaponData> weapons = new List<WeaponData>();
+        internal IList<ShirtData> shirts = new List<ShirtData>();
+        internal IList<PantsData> pantss = new List<PantsData>();
+        internal IList<TailoringRecipeData> tailoring = new List<TailoringRecipeData>();
 
         internal IDictionary<string, int> objectIds;
         internal IDictionary<string, int> cropIds;
@@ -691,6 +817,7 @@ namespace JsonAssets
         internal IDictionary<string, int> bigCraftableIds;
         internal IDictionary<string, int> hatIds;
         internal IDictionary<string, int> weaponIds;
+        internal IDictionary<string, int> clothingIds;
 
         internal IDictionary<string, int> oldObjectIds;
         internal IDictionary<string, int> oldCropIds;
@@ -698,6 +825,7 @@ namespace JsonAssets
         internal IDictionary<string, int> oldBigCraftableIds;
         internal IDictionary<string, int> oldHatIds;
         internal IDictionary<string, int> oldWeaponIds;
+        internal IDictionary<string, int> oldClothingIds;
 
         internal IDictionary<int, string> origObjects;
         internal IDictionary<int, string> origCrops;
@@ -705,6 +833,7 @@ namespace JsonAssets
         internal IDictionary<int, string> origBigCraftables;
         internal IDictionary<int, string> origHats;
         internal IDictionary<int, string> origWeapons;
+        internal IDictionary<int, string> origClothing;
 
         public int ResolveObjectId(object data)
         {
@@ -716,6 +845,26 @@ namespace JsonAssets
                     return objectIds[(string)data];
 
                 foreach ( var obj in Game1.objectInformation )
+                {
+                    if (obj.Value.Split('/')[0] == (string)data)
+                        return obj.Key;
+                }
+
+                Log.warn($"No idea what '{data}' is!");
+                return 0;
+            }
+        }
+
+        public int ResolveClothingId(object data)
+        {
+            if (data.GetType() == typeof(long))
+                return (int)(long)data;
+            else
+            {
+                if (clothingIds.ContainsKey((string)data))
+                    return clothingIds[(string)data];
+
+                foreach (var obj in Game1.clothingInformation)
                 {
                     if (obj.Value.Split('/')[0] == (string)data)
                         return obj.Key;
@@ -746,6 +895,24 @@ namespace JsonAssets
             return ids;
         }
 
+        private void AssignTextureIndices(string type, int starting, IList<DataSeparateTextureIndex> data)
+        {
+            Dictionary<string, int> idxs = new Dictionary<string, int>();
+
+            int currIdx = starting;
+            foreach (var d in data)
+            {
+                if (d.textureIndex == -1)
+                {
+                    Log.trace($"New texture index: {d.Name} = {currIdx}");
+                    idxs.Add(d.Name, currIdx++);
+                    if (type == "shirts" && ((ClothingData)d).HasFemaleVariant)
+                        ++currIdx;
+                    d.textureIndex = idxs[d.Name];
+                }
+            }
+        }
+
         private void clearIds(out IDictionary<string, int> ids, List<DataNeedsId> objs)
         {
             ids = null;
@@ -771,16 +938,29 @@ namespace JsonAssets
             origBigCraftables = cloneIdDictAndRemoveOurs(Game1.bigCraftablesInformation, bigCraftableIds);
             origHats = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\hats"), hatIds);
             origWeapons = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\weapons"), weaponIds);
+            origClothing = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\ClothingInformation"), clothingIds);
 
             fixItemList(Game1.player.Items);
+#pragma warning disable AvoidNetField
+            if (Game1.player.leftRing.Value != null && fixId(oldObjectIds, objectIds, Game1.player.leftRing.Value.parentSheetIndex, origObjects))
+                Game1.player.leftRing.Value = null;
+            if (Game1.player.rightRing.Value != null && fixId(oldObjectIds, objectIds, Game1.player.rightRing.Value.parentSheetIndex, origObjects))
+                Game1.player.rightRing.Value = null;
+            if (Game1.player.hat.Value != null && fixId(oldObjectIds, objectIds, Game1.player.hat.Value.parentSheetIndex, origObjects))
+                Game1.player.hat.Value = null;
+            if (Game1.player.shirtItem.Value != null && fixId(oldClothingIds, clothingIds, Game1.player.shirtItem.Value.parentSheetIndex, origClothing))
+                Game1.player.shirtItem.Value = null;
+            if (Game1.player.pantsItem.Value != null && fixId(oldClothingIds, clothingIds, Game1.player.pantsItem.Value.parentSheetIndex, origClothing))
+                Game1.player.pantsItem.Value = null;
+#pragma warning restore AvoidNetField
             foreach ( var loc in Game1.locations )
                 fixLocation(loc);
 
-            Game1.player.basicShipped = fixIdDict(Game1.player.basicShipped);
-            Game1.player.mineralsFound = fixIdDict(Game1.player.mineralsFound);
-            Game1.player.recipesCooked = fixIdDict(Game1.player.recipesCooked);
-            Game1.player.archaeologyFound = fixIdDict2(Game1.player.archaeologyFound);
-            Game1.player.fishCaught = fixIdDict2(Game1.player.fishCaught);
+            fixIdDict(Game1.player.basicShipped);
+            fixIdDict(Game1.player.mineralsFound);
+            fixIdDict(Game1.player.recipesCooked);
+            fixIdDict2(Game1.player.archaeologyFound);
+            fixIdDict2(Game1.player.fishCaught);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage( "SMAPI.CommonErrors", "AvoidNetField") ]
@@ -803,6 +983,7 @@ namespace JsonAssets
                     if (hd.crop == null)
                         continue;
 
+                    var oldId = hd.crop.rowInSpriteSheet.Value;
                     if (fixId(oldCropIds, cropIds, hd.crop.rowInSpriteSheet, origCrops))
                         hd.crop = null;
                     else
@@ -810,19 +991,26 @@ namespace JsonAssets
                         var key = cropIds.FirstOrDefault(x => x.Value == hd.crop.rowInSpriteSheet.Value).Key;
                         var c = crops.FirstOrDefault(x => x.Name == key);
                         if ( c != null ) // Non-JA crop
+                        {
+                            Log.trace("Fixing crop product: From " + hd.crop.indexOfHarvest.Value + " to " + c.Product + "=" + ResolveObjectId(c.Product));
                             hd.crop.indexOfHarvest.Value = ResolveObjectId(c.Product);
+                        }
                     }
                 }
                 else if ( tf is FruitTree ft )
                 {
+                    var oldId = ft.treeType.Value;
                     if (fixId(oldFruitTreeIds, fruitTreeIds, ft.treeType, origFruitTrees))
                         toRemove.Add(tfk);
                     else
                     {
-                        var key = oldFruitTreeIds.FirstOrDefault(x => x.Value == ft.treeType.Value).Key;
+                        var key = fruitTreeIds.FirstOrDefault(x => x.Value == ft.treeType.Value).Key;
                         var ftt = fruitTrees.FirstOrDefault(x => x.Name == key);
                         if ( ftt != null ) // Non-JA fruit tree
+                        {
+                            Log.trace("Fixing fruit tree product: From " + ft.indexOfFruit.Value + " to " + ftt.Product + "=" + ResolveObjectId(ftt.Product));
                             ft.indexOfFruit.Value = ResolveObjectId(ftt.Product);
+                        }
                     }
                 }
             }
@@ -911,7 +1099,43 @@ namespace JsonAssets
                         fixItemList(mill.input.Value.items);
                         fixItemList(mill.output.Value.items);
                     }
+                    else if ( building is FishPond pond )
+                    {
+                        if (fixId(oldObjectIds, objectIds, pond.fishType, origObjects))
+                            pond.fishType.Value = -1;
+                        if (pond.GetFishObject() != null && fixId(oldObjectIds, objectIds, pond.GetFishObject().parentSheetIndex, origObjects))
+                            Helper.Reflection.GetField<StardewValley.Object>(pond, "_fishObject").SetValue(null);
+                        if (pond.sign.Value != null && fixId(oldObjectIds, objectIds, pond.sign.Value.parentSheetIndex, origObjects))
+                            pond.sign.Value = null;
+                        if (pond.output.Value != null && fixId(oldObjectIds, objectIds, pond.output.Value.parentSheetIndex, origObjects))
+                            pond.output.Value = null;
+                        if (pond.neededItem.Value != null && fixId(oldObjectIds, objectIds, pond.neededItem.Value.parentSheetIndex, origObjects))
+                            pond.neededItem.Value = null;
+                    }
                 }
+            
+            if (loc is DecoratableLocation decoLoc)
+                foreach (var furniture in decoLoc.furniture)
+                {
+                    if (furniture is StorageFurniture storage)
+                        fixItemList(storage.heldItems);
+                }
+            
+            if (loc is Farm farm)
+            {
+                foreach (var animal in farm.Animals.Values)
+                {
+                    if (animal.currentProduce.Value != -1)
+                        if (fixId(oldObjectIds, objectIds, animal.currentProduce, origObjects))
+                            animal.currentProduce.Value = -1;
+                    if (animal.defaultProduceIndex.Value != -1)
+                        if (fixId(oldObjectIds, objectIds, animal.defaultProduceIndex, origObjects))
+                            animal.defaultProduceIndex.Value = 0;
+                    if (animal.deluxeProduceIndex.Value != -1)
+                        if (fixId(oldObjectIds, objectIds, animal.deluxeProduceIndex, origObjects))
+                            animal.deluxeProduceIndex.Value = 0;
+                }
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
@@ -952,43 +1176,62 @@ namespace JsonAssets
                     if (fixId(oldObjectIds, objectIds, ring.indexInTileSheet, origObjects))
                         items[i] = null;
                 }
+                else if ( item is Clothing clothing )
+                {
+                    if (fixId(oldClothingIds, clothingIds, clothing.parentSheetIndex, origClothing))
+                        items[i] = null;
+                }
             }
         }
 
-        private SerializableDictionary<int, int> fixIdDict(SerializableDictionary<int, int> dict)
+        private void fixIdDict(NetIntDictionary<int, NetInt> dict)
         {
-            var newDict = new SerializableDictionary<int, int>();
-            foreach (var entry in dict)
+            var toRemove = new List<int>();
+            var toAdd = new Dictionary<int, int>();
+            foreach (var entry in dict.Keys)
             {
-                if (origObjects.ContainsKey(entry.Key))
-                    newDict.Add(entry.Key, entry.Value);
-                else if (oldObjectIds.Values.Contains(entry.Key))
+                if (origObjects.ContainsKey(entry))
+                    continue;
+                else if (oldObjectIds.Values.Contains(entry))
                 {
-                    var key = oldObjectIds.FirstOrDefault(x => x.Value == entry.Key).Key;
+                    var key = oldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
 
                     if (objectIds.ContainsKey(key))
-                        newDict.Add(objectIds[key], entry.Value);
+                    {
+                        toRemove.Add(entry);
+                        toAdd.Add(objectIds[key], dict[entry]);
+                    }
                 }
             }
-            return newDict;
+            foreach (var entry in toRemove)
+                dict.Remove(entry);
+            foreach (var entry in toAdd)
+                dict.Add(entry.Key, entry.Value);
         }
 
-        private SerializableDictionary<int, int[]> fixIdDict2(SerializableDictionary<int, int[]> dict)
+        private void fixIdDict2(NetIntIntArrayDictionary dict)
         {
-            var newDict = new SerializableDictionary<int, int[]>();
-            foreach (var entry in dict)
+            var toRemove = new List<int>();
+            var toAdd = new Dictionary<int, int[]>();
+            foreach (var entry in dict.Keys)
             {
-                if (origObjects.ContainsKey(entry.Key))
-                    newDict.Add(entry.Key, entry.Value);
-                else if (oldObjectIds.Values.Contains(entry.Key))
+                if (origObjects.ContainsKey(entry))
+                    continue;
+                else if (oldObjectIds.Values.Contains(entry))
                 {
-                    var key = oldObjectIds.FirstOrDefault(x => x.Value == entry.Key).Key;
+                    var key = oldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
 
                     if (objectIds.ContainsKey(key))
-                        newDict.Add(objectIds[key], entry.Value);
+                    {
+                        toRemove.Add(entry);
+                        toAdd.Add(objectIds[key], dict[entry]);
+                    }
                 }
             }
-            return newDict;
+            foreach (var entry in toRemove)
+                dict.Remove(entry);
+            foreach (var entry in toAdd)
+                dict.Add(entry.Key, entry.Value);
         }
 
         // Return true if the item should be deleted, false otherwise.
@@ -1006,9 +1249,14 @@ namespace JsonAssets
                 if (newIds.ContainsKey(key))
                 {
                     id.Value = newIds[key];
+                    Log.trace("Changing ID: " + key + " from ID " + id_ + " to " + id.Value);
                     return false;
                 }
-                else return true;
+                else
+                {
+                    Log.trace("Deleting missing item " + key + " with old ID " + id_);
+                    return true;
+                }
             }
             else return false;
         }

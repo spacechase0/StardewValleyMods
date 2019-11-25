@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
+using StardewValley;
+using StardewValley.TerrainFeatures;
+using System;
 using System.Collections.Generic;
 
 namespace JsonAssets
@@ -13,6 +18,7 @@ namespace JsonAssets
         int GetBigCraftableId(string name);
         int GetHatId(string name);
         int GetWeaponId(string name);
+        int GetClothingId(string name);
 
         IDictionary<string, int> GetAllObjectIds();
         IDictionary<string, int> GetAllCropIds();
@@ -20,9 +26,13 @@ namespace JsonAssets
         IDictionary<string, int> GetAllBigCraftableIds();
         IDictionary<string, int> GetAllHatIds();
         IDictionary<string, int> GetAllWeaponIds();
+        IDictionary<string, int> GetAllClothingIds();
 
         event EventHandler IdsAssigned;
         event EventHandler AddedItemsToShop;
+
+        bool TryGetCustomSprite(object entity, out Texture2D texture, out Rectangle sourceRect);
+        bool TryGetCustomSpriteSheet(object entity, out Texture2D texture, out Rectangle sourceRect);
     }
 
     public class Api : IApi
@@ -81,6 +91,13 @@ namespace JsonAssets
             return Mod.instance.weaponIds.ContainsKey(name) ? Mod.instance.weaponIds[name] : -1;
         }
 
+        public int GetClothingId(string name)
+        {
+            if (Mod.instance.clothingIds == null)
+                return -1;
+            return Mod.instance.clothingIds.ContainsKey(name) ? Mod.instance.clothingIds[name] : -1;
+        }
+
         public IDictionary<string, int> GetAllObjectIds()
         {
             if (Mod.instance.objectIds == null)
@@ -123,6 +140,13 @@ namespace JsonAssets
             return new Dictionary<string, int>(Mod.instance.weaponIds);
         }
 
+        public IDictionary<string, int> GetAllClothingIds()
+        {
+            if (Mod.instance.clothingIds == null)
+                return new Dictionary<string, int>();
+            return new Dictionary<string, int>(Mod.instance.clothingIds);
+        }
+
         public event EventHandler IdsAssigned;
         internal void InvokeIdsAssigned()
         {
@@ -139,6 +163,75 @@ namespace JsonAssets
             if (AddedItemsToShop == null)
                 return;
             Util.invokeEvent("JsonAssets.Api.AddedItemsToShop", AddedItemsToShop.GetInvocationList(), null);
+        }
+
+        public bool TryGetCustomSprite(object entity, out Texture2D texture, out Rectangle sourceRect)
+        {
+            Texture2D tex = null;
+            Rectangle rect = new Rectangle();
+            if (entity is FruitTree fruitTree)
+            {
+                tex = FruitTree.texture;
+                if ( fruitTree.stump.Value )
+                {
+                    rect = new Rectangle(384, fruitTree.treeType.Value * 5 * 16 + 48, 48, 32);
+                }
+                else if ( fruitTree.growthStage.Value <= 3 )
+                {
+                    rect = new Rectangle(fruitTree.growthStage.Value * 48, fruitTree.treeType.Value * 5 * 16, 48, 80);
+                }
+                else
+                {
+                    rect = new Rectangle((12 + (fruitTree.GreenHouseTree ? 1 : Utility.getSeasonNumber(Game1.currentSeason)) * 3) * 16, fruitTree.treeType.Value * 5 * 16, 48, 16 + 64);
+                }
+            }
+            else if (entity is Crop crop)
+            {
+                tex = Game1.cropSpriteSheet;
+                rect = Mod.instance.Helper.Reflection.GetMethod(crop, "getSourceRect").Invoke<Rectangle>(crop.rowInSpriteSheet.Value);
+            }
+            else
+            {
+                texture = null;
+                sourceRect = new Rectangle();
+                return false;
+            }
+
+            var target = SpaceCore.TileSheetExtensions.GetAdjustedTileSheetTarget(tex, rect);
+            texture = target.TileSheet == 0 ? tex : SpaceCore.TileSheetExtensions.GetTileSheet(tex, target.TileSheet);
+            sourceRect = rect;
+            sourceRect.Y = target.Y;
+
+            return true;
+        }
+
+        public bool TryGetCustomSpriteSheet(object entity, out Texture2D texture, out Rectangle sourceRect)
+        {
+            Texture2D tex = null;
+            Rectangle rect = new Rectangle();
+            if (entity is FruitTree fruitTree)
+            {
+                tex = FruitTree.texture;
+                rect = ContentInjector.fruitTreeRect(fruitTree.treeType.Value);
+            }
+            else if (entity is Crop crop)
+            {
+                tex = Game1.cropSpriteSheet;
+                rect = ContentInjector.cropRect(crop.rowInSpriteSheet.Value);
+            }
+            else
+            {
+                texture = null;
+                sourceRect = new Rectangle();
+                return false;
+            }
+
+            var target = SpaceCore.TileSheetExtensions.GetAdjustedTileSheetTarget(tex, rect);
+            texture = target.TileSheet == 0 ? tex : SpaceCore.TileSheetExtensions.GetTileSheet(tex, target.TileSheet);
+            sourceRect = rect;
+            sourceRect.Y = target.Y;
+
+            return true;
         }
     }
 }

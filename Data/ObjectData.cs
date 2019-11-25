@@ -92,7 +92,7 @@ namespace JsonAssets.Data
             public int Attack { get; set; } = 0;
             public int Duration { get; set; } = 0;
         }
-        
+
         public string Description { get; set; }
         public Category_ Category { get; set; }
         public bool IsColored { get; set; } = false;
@@ -122,6 +122,8 @@ namespace JsonAssets.Data
 
         public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
         public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
+
+        public List<string> ContextTags = new List<string>();
 
         public string LocalizedName()
         {
