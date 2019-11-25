@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -18,6 +19,7 @@ namespace ProfitCalculator
 
         public override void Entry(IModHelper helper)
         {
+            Log.Monitor = Monitor;
             helper.ConsoleCommands.Add("profits_crops", "Calculate profits for crops", perPlanting);
         }
 
@@ -26,8 +28,8 @@ namespace ProfitCalculator
             var season = "";
             if (args.Length >= 1)
                 season = args[0];
-            Monitor.Log((season == "") ? "Doing for all seasons" : $"Doing for season {season}", LogLevel.Info);
-            Monitor.Log("NOTE: This takes into account your farming level", LogLevel.Info);
+            Log.info((season == "") ? "Doing for all seasons" : $"Doing for season {season}");
+            Log.info("NOTE: This takes into account your farming level");
 
             var tmp = Game1.player;
 
@@ -104,7 +106,7 @@ namespace ProfitCalculator
             for ( int i = 0; i < profits.Count; ++i )
             {
                 var p = profits[i];
-                Monitor.Log($"{i+1}. " + string.Format("{0,-20}", p.crop) + string.Format("{0,10}", p.profit) + "g", LogLevel.Info);
+                Log.info($"{i+1}. " + string.Format("{0,-20}", p.crop) + string.Format("{0,10}", p.profit) + "g");
             }
         }
     }
