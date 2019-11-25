@@ -1,9 +1,10 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.CSharp;
+using Mono.CSharp;
+using SpaceShared;
 using StardewModdingAPI;
 
 namespace ConsoleCode
@@ -15,13 +16,14 @@ namespace ConsoleCode
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             helper.ConsoleCommands.Add("cs", "Execute C# code.", onCommandReceived);
         }
 
         private void onCommandReceived( string cmd, string[] args )
         {
-            string line = string.Join(" ", args);
+            string line = string.Join(" ", args).Replace('`', '"');
             if ( args[0] == "--script" )
             {
                 line = File.ReadAllText(Path.Combine(Helper.DirectoryPath, args[1]));
@@ -30,7 +32,8 @@ namespace ConsoleCode
             try
             {
                 var func = makeFunc(line);
-                object result = func.Invoke(null, new object[] { });
+                object result = null;
+                func.Invoke(ref result);
                 if (result == null)
                     Log.info("Output: <null>");
                 else if (result is string)
@@ -38,29 +41,25 @@ namespace ConsoleCode
                 else
                     Log.info($"Output: {result}");
             }
-            catch (CompilationException e)
-            {
-                Log.error("Error(s) when compiling: ");
-                foreach ( CompilerError error in e.Results.Errors )
-                {
-                    Log.error($"{error}");
-                }
-            }
             catch (Exception e)
             {
                 Log.error("Exception: " + e);
             }
         }
-
-        int num = 0;
-        private MethodInfo makeFunc(string userCode)
+        
+        private CompiledMethod makeFunc(string userCode)
         {
+            var settings = new CompilerSettings()
+            {
+                Unsafe = true,
+            };
+
             var libs = new List<string>();
             foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
-                    libs.Add(asm.Location);
+                    settings.AssemblyReferences.Add(asm.CodeBase);
                 }
                 catch (Exception e)
                 {
@@ -68,8 +67,8 @@ namespace ConsoleCode
                 }
             }
 
-            string code = @"
-using System;
+            var eval = new Evaluator(new CompilerContext(settings, new ConsoleReportPrinter()));
+            var code = @"using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -77,47 +76,9 @@ using StardewModdingAPI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
-using xTile;
-namespace ConsoleCode
-{
-    public class UserCode<ITER>
-    {
-        public static IModHelper Helper { get { return ConsoleCode.Mod.instance.Helper; } }
-        public static object func()
-        {
-            <USER_CODE>
-            return null;
-        }
-    }
-}
-";
-
-            code = code.Replace("<ITER>", num.ToString());
-            code = code.Replace("<USER_CODE>", userCode);
-
-            //Log.trace(code);
-
-            var provider = new CSharpCodeProvider();
-            var @params = new CompilerParameters();
-            @params.GenerateInMemory = true;
-            @params.GenerateExecutable = false;
-            @params.IncludeDebugInformation = true;
-            foreach (var lib in libs)
-                @params.ReferencedAssemblies.Add(lib);
-            CompilerResults results = provider.CompileAssemblyFromSource(@params, code);
-            if (results.Errors.Count > 0)
-                throw new CompilationException(results);
-            return results.CompiledAssembly.GetType($"ConsoleCode.UserCode{num++}").GetMethod("func");
-        }
-
-        private class CompilationException : Exception
-        {
-            public CompilerResults Results { get; }
-
-            public CompilationException( CompilerResults results )
-            {
-                Results = results;
-            }
+using xTile;";
+            eval.Compile(code);
+            return eval.Compile("IModHelper Helper = ConsoleCode.Mod.instance.Helper;\n" + userCode);
         }
     }
 }
