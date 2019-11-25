@@ -15,6 +15,7 @@ using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewModdingAPI.Events;
 using Microsoft.Xna.Framework;
+using SpaceShared;
 
 namespace ContentPatcherAnimations
 {
@@ -47,6 +48,7 @@ namespace ContentPatcherAnimations
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             Helper.Events.GameLoop.UpdateTicked += UpdateAnimations;
             Helper.Events.GameLoop.SaveCreated += UpdateTargetTextures;
