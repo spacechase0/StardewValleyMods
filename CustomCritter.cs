@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using System;

@@ -4,6 +4,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System.IO;
+using SpaceShared;
 
 namespace CustomCritters
 {
@@ -13,6 +14,7 @@ namespace CustomCritters
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             helper.Events.Player.Warped += onWarped;
 
