@@ -1,4 +1,6 @@
 ﻿using System;
+using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -15,9 +17,21 @@ namespace JumpOver
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
             Config = helper.ReadConfig<Configuration>();
 
+            helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.Input.ButtonPressed += onButtonPressed;
+        }
+
+        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            if (capi != null)
+            {
+                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
+                capi.RegisterSimpleOption(ModManifest, "Jump Key", "The key to jump", () => Config.keyJump, (SButton val) => Config.keyJump = val);
+            }
         }
 
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
@@ -49,7 +63,7 @@ namespace JumpOver
                 this.events = events;
                 prevJumpVel = player.yJumpVelocity;
 
-                player.jump(8);
+                player.synchronizedJump(8);
 
                 events.GameLoop.UpdateTicked += onUpdateTicked;
             }
