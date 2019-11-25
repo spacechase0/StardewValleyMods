@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore.Events;
 using SpaceCore.Interface;
-using SpaceCore.Other;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -12,6 +11,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using SpaceShared;
+using SpaceShared.APIs;
 
 namespace SpaceCore
 {
@@ -301,7 +302,7 @@ namespace SpaceCore
         {
             if ( e.NewMenu is GameMenu gm )
             {
-                if (SpaceCore.instance.Config.CustomSkillPage)
+                if (SpaceCore.instance.Config.CustomSkillPage && Skills.skills.Count > 0)
                 {
                     var tabs = SpaceCore.instance.Helper.Reflection.GetField<List<IClickableMenu>>(gm, "pages").GetValue();
                     tabs[GameMenu.skillsTab] = new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0), gm.height);
@@ -387,7 +388,7 @@ namespace SpaceCore
                     progress = -1;
                 }
 
-                var api = SpaceCore.instance.Helper.ModRegistry.GetApi<ExperienceBarsApi>("spacechase0.ExperienceBars");
+                var api = SpaceCore.instance.Helper.ModRegistry.GetApi<ExperienceBarsAPI>("spacechase0.ExperienceBars");
                 if (api == null)
                 {
                     Log.warn("No experience bars API? Turning off");

@@ -50,7 +50,6 @@
     <Compile Include="Commands.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Content.cs" />
-    <Compile Include="Events\CancelableEventArgs.cs" />
     <Compile Include="Events\EventArgsAction.cs" />
     <Compile Include="Events\EventArgsBeforeWarp.cs" />
     <Compile Include="Events\EventArgsChooseNightlyFarmEvent.cs" />
@@ -66,9 +65,7 @@
     <Compile Include="Interface\TabMenu.cs" />
     <Compile Include="Locations\CustomDecoratableLocation.cs" />
     <Compile Include="Locations\ISeasonalLocation.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="Menus.cs" />
-    <Compile Include="Other\ExperienceBars.cs" />
     <Compile Include="Overrides\Game1.cs" />
     <Compile Include="Overrides\GameLocation.cs" />
     <Compile Include="Overrides\GameMenu.cs" />
@@ -77,16 +74,17 @@
     <Compile Include="Overrides\MeleeWeapon.cs" />
     <Compile Include="Overrides\Multiplayer.cs" />
     <Compile Include="Overrides\NPC.cs" />
+    <Compile Include="Overrides\SpriteBatch.cs" />
     <Compile Include="Overrides\Utility.cs" />
     <Compile Include="Skills.cs" />
     <Compile Include="Sleep.cs" />
     <Compile Include="SpaceCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TileSheetExtensions.cs" />
     <Compile Include="Utilities\Hijack.cs" />
     <Compile Include="Utilities\IWeighted.cs" />
     <Compile Include="Utilities\JsonSerializers.cs" />
     <Compile Include="Networking.cs" />
-    <Compile Include="Utilities\Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="manifest.json" />
@@ -100,7 +98,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="2.2.0" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.0.0-beta.7" />
   </ItemGroup>
+  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

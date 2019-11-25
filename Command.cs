@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpaceShared;
+using System;
 using System.Collections.Generic;
 
 namespace SpaceCore
