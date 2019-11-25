@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -16,6 +17,7 @@ namespace FlowerColorPicker
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             helper.Events.Input.ButtonPressed += onButtonPressed;
         }
