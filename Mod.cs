@@ -1,4 +1,5 @@
-﻿using StardewModdingAPI;
+﻿using SpaceShared;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 
@@ -13,6 +14,7 @@ namespace Spenny
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
         }

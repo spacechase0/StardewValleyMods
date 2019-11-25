@@ -1,7 +1,7 @@
 {
   "Name": "Spenny",
   "Author": "spacechase0",
-  "Version": "1.0.1",
+  "Version": "1.0.2",
   "Description": "Spinning Penny. Spenny.",
   "UniqueID": "spacechase0.Spenny",
   "EntryDll": "Spenny.dll",
