@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore.Events;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -30,6 +31,7 @@ namespace LuckSkill
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
             
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.Player.Warped += onWarped;
@@ -48,11 +50,11 @@ namespace LuckSkill
         /// <param name="e">The event arguments.</param>
         private void onDayStarted( object sender, DayStartedEventArgs args )
         {
-            gainLuckExp((int)(Game1.dailyLuck * 750));
+            gainLuckExp((int)(Game1.player.team.sharedDailyLuck.Value * 750));
 
             if (Game1.player.professions.Contains(PROFESSION_DAILY_LUCK))
             {
-                Game1.dailyLuck += 0.01;
+                Game1.player.team.sharedDailyLuck.Value += 0.01;
             }
             if (Game1.player.professions.Contains(PROFESSION_MOREQUESTS) && Game1.questOfTheDay == null)
             {
@@ -92,9 +94,9 @@ namespace LuckSkill
             if (!(e.OldMenu is BobberBar fishing) || e.NewMenu != null)
                 return;
 
-            float diff = ( float ) Util.GetInstanceField( typeof( BobberBar ), fishing, "difficulty" );
-            bool perfect = ( bool ) Util.GetInstanceField( typeof( BobberBar ), fishing, "perfect" );
-            bool treasure = ( bool ) Util.GetInstanceField( typeof( BobberBar ), fishing, "treasureCaught" );
+            float diff = Helper.Reflection.GetField<float>(fishing, "difficulty").GetValue();
+            bool perfect = Helper.Reflection.GetField<bool>(fishing, "perfect").GetValue();
+            bool treasure = Helper.Reflection.GetField<bool>(fishing, "treasureCaught").GetValue();
             if ( perfect )
             {
                 //gainLuckExp((int)(diff / 7) + 1);
@@ -136,20 +138,13 @@ namespace LuckSkill
                 else if (Game1.activeClickableMenu is LevelUpMenu)
                 {
                     LevelUpMenu menu = Game1.activeClickableMenu as LevelUpMenu;
-                    int skill = (int)Util.GetInstanceField(typeof(LevelUpMenu), menu, "currentSkill");
+                    int skill = Helper.Reflection.GetField<int>(menu, "currentSkill").GetValue();
                     if (skill == 5)
                     {
-                        int level = (int)Util.GetInstanceField(typeof(LevelUpMenu), menu, "currentLevel");
+                        int level = Helper.Reflection.GetField<int>(menu, "currentLevel").GetValue();
                         Game1.activeClickableMenu = new LuckLevelUpMenu(skill, level);
                     }
                 }
-            }
-
-            // This can't just do when it toggles the variables get modified
-            if ( Game1.newDay && Game1.fadeToBlackAlpha > 0.95f )
-            {
-                cacheLevels = Game1.player.newLevels.ToList();
-                cacheItems = Game1.getFarm().shippingBin.ToList();
             }
         }
 
@@ -165,7 +160,7 @@ namespace LuckSkill
                 GameMenu menu = Game1.activeClickableMenu as GameMenu;
                 if ( menu.currentTab == GameMenu.skillsTab )
                 {
-                    var tabs = ( List< IClickableMenu > ) Util.GetInstanceField(typeof(GameMenu), menu, "pages" );
+                    var tabs = Helper.Reflection.GetField< List < IClickableMenu > >(menu, "pages" ).GetValue();
                     var skills = tabs[GameMenu.skillsTab] as SkillsPage;
 
                     if (skills == null)
@@ -200,13 +195,13 @@ namespace LuckSkill
                 flag = (Game1.player.LuckLevel > i);
                 num5 = getLuckProfessionForSkill( i + 1 );//Game1.player.getProfessionForSkill(5, i + 1);
                 object[] args = new object[] { text, text2, LuckLevelUpMenu.getProfessionDescription(num5) };
-                Util.CallInstanceMethod( typeof( SkillsPage ), skills, "parseProfessionDescription", args );
+                Helper.Reflection.GetMethod(skills, "parseProfessionDescription").Invoke(args);
                 text = (string)args[0];
                 text2 = (string)args[1];
 
                 if (flag && (i + 1) % 5 == 0)
                 {
-                    var skillBars = (List<ClickableTextureComponent>)Util.GetInstanceField( typeof( SkillsPage ), skills, "skillBars" );
+                    var skillBars = Helper.Reflection.GetField< List < ClickableTextureComponent > >(skills, "skillBars" ).GetValue();
                     skillBars.Add(new ClickableTextureComponent(string.Concat(num5), new Rectangle(num2 + num3 - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6), 14 * Game1.pixelZoom, 9 * Game1.pixelZoom), null, text, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), (float)Game1.pixelZoom, true));
                 }
                 num2 += Game1.pixelZoom * 6;
@@ -226,7 +221,7 @@ namespace LuckSkill
             {
                 text3 = "Luck Increased";
             }
-            var skillAreas = (List<ClickableTextureComponent>)Util.GetInstanceField(typeof(SkillsPage), skills, "skillAreas");
+            var skillAreas = Helper.Reflection.GetField<List<ClickableTextureComponent>>(skills, "skillAreas").GetValue();
             skillAreas.Add(new ClickableTextureComponent(string.Concat(num6), new Rectangle(num3 - Game1.tileSize * 2 - Game1.tileSize * 3 / 4, num4 + k * (Game1.tileSize / 2 + Game1.pixelZoom * 6), Game1.tileSize * 2 + Game1.pixelZoom * 5, 9 * Game1.pixelZoom), string.Concat(num6), text3, null, Rectangle.Empty, 1f, false));
         }
 
@@ -288,14 +283,12 @@ namespace LuckSkill
 
             skills.drawMouse(b);
         }
-
-        private List<Point> cacheLevels = new List< Point >();
-        private List<Item> cacheItems = new List< Item >();
+        
         private void changeFarmEvent(object sender, EventArgsChooseNightlyFarmEvent args)
         {
             if ( Game1.player.professions.Contains( PROFESSION_NIGHTLY_EVENTS ) && !Game1.weddingToday &&
                     ( args.NightEvent == null || (args.NightEvent is SoundInTheNightEvent &&
-                    ( int ) Util.GetInstanceField( typeof( SoundInTheNightEvent ), args.NightEvent, "behavior" ) == 2 ) ) )
+                    Helper.Reflection.GetField<int>(args.NightEvent, "behavior").GetValue() == 2 ) ) )
             {
                 //Log.Async("Doing event check");
                 FarmEvent ev = null;
@@ -333,9 +326,9 @@ namespace LuckSkill
 
             if ( HAS_ALL_PROFESSIONS )
             {
-                Util.DecompileComment("This is where AllProfessions does it.");
-                Util.DecompileComment("This is that mod's code, too (from ILSpy, anyways). Just trying to give credit where credit is due. :P");
-                Util.DecompileComment("Except this only applies for luck professions. Since they don't exist in vanilla AllProfessions doesn't take care of it.");
+                // This is where AllProfessions does it.
+                // This is that mod's code, too (from ILSpy, anyways). Just trying to give credit where credit is due. :P
+                // Except this only applies for luck professions. Since they don't exist in vanilla AllProfessions doesn't take care of it.
                 var professions = Game1.player.professions;
                 List<List<int>> list = new List<List<int>> { luckProfessions5, luckProfessions10, };
                 foreach (List<int> current in list)
@@ -353,7 +346,7 @@ namespace LuckSkill
                         }
                     }
                 }
-                Util.DecompileComment("End of AllProfessions code.");
+                //End of AllProfessions code.
             }
 
             // I wanna see this "SpiritAltar"
