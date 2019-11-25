@@ -1,11 +1,12 @@
 ﻿using System;
 using StardewModdingAPI;
-using MoreRings.Other;
 using System.IO;
 using StardewValley.Menus;
 using StardewValley;
 using SpaceCore.Events;
 using StardewModdingAPI.Events;
+using SpaceShared.APIs;
+using SpaceShared;
 
 namespace MoreRings
 {
@@ -13,7 +14,7 @@ namespace MoreRings
     {
         public static Mod instance;
 
-        private JsonAssetsApi ja;
+        private JsonAssetsAPI ja;
         public int Ring_Fishing_LargeBar { get { return ja.GetObjectId("Ring of Wide Nets"); } }
         public int Ring_Combat_Regen { get { return ja.GetObjectId("Ring of Regeneration"); } }
         public int Ring_DiamondBooze { get { return ja.GetObjectId("Ring of Diamond Booze"); } }
@@ -26,6 +27,7 @@ namespace MoreRings
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.Display.MenuChanged += onMenuChanged;
@@ -39,7 +41,7 @@ namespace MoreRings
         /// <param name="e">The event arguments.</param>
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var api = Helper.ModRegistry.GetApi<JsonAssetsApi>("spacechase0.JsonAssets");
+            var api = Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
             if ( api == null )
             {
                 Log.error("No Json Assets API???");

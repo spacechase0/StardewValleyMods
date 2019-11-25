@@ -1,7 +1,7 @@
 {
   "Name": "More Rings",
   "Author": "spacechase0, ParadigmNomad (sprites)",
-  "Version": "1.0.3",
+  "Version": "1.0.4",
   "Description": "Adds more ring types.",
   "UniqueID": "spacechase0.MoreRings",
   "EntryDll": "MoreRings.dll",
