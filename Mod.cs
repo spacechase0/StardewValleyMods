@@ -1,4 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
+using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -17,10 +19,22 @@ namespace ObjectTimeLeft
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
             Config = helper.ReadConfig<Configuration>();
 
+            helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.Display.RenderingHud += onRenderingHud;
             helper.Events.Input.ButtonPressed += onButtonPressed;
+        }
+
+        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            if (capi != null)
+            {
+                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
+                capi.RegisterSimpleOption(ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Config.ToggleKey, (SButton val) => Config.ToggleKey = val);
+            }
         }
 
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
