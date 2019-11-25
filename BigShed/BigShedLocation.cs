@@ -9,7 +9,7 @@ namespace MoreBuildings.BigShed
     public class BigShedLocation : DecoratableLocation, ISaveElement
     {
         public BigShedLocation()
-        :   base("Maps\\Shed2", "Shed2" )
+        :   base("Maps\\Shed2_", "Shed2" )
         {
         }
 

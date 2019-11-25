@@ -24,7 +24,7 @@ namespace MoreBuildings.FishingShack
             }
         }
 
-        public override SObject getFish(float millisecondsAfterNibble, int bait, int waterDepth, StardewValley.Farmer who, double baitPotency, string locationName = null)
+        public override SObject getFish(float millisecondsAfterNibble, int bait, int waterDepth, StardewValley.Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null)
         {
             var fish = new int[] { 128, 129, 130, 131, 132, 136, 137, 1338, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 682, 698, 699, 700, 701, 702, 704, 705, 706, 707, 708, 734, 775, 795, 796 };
 

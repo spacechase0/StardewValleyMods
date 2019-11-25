@@ -4,6 +4,7 @@ using StardewValley;
 using StardewValley.Monsters;
 using Microsoft.Xna.Framework.Graphics;
 using PyTK.CustomElementHandler;
+using SpaceShared;
 
 namespace MoreBuildings.SpookyShed
 {

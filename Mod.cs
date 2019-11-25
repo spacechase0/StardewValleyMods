@@ -13,6 +13,9 @@ using System.Reflection;
 using MoreBuildings.FishingShack;
 using MoreBuildings.MiniSpa;
 using PyTK.CustomElementHandler;
+using Harmony;
+using MoreBuildings.Overrides;
+using SpaceShared;
 
 namespace MoreBuildings
 {
@@ -30,10 +33,11 @@ namespace MoreBuildings
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
             
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.Player.Warped += onWarped;
-            helper.Events.Specialised.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
+            helper.Events.Specialized.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
             SaveHandler.FinishedRebuilding += fixWarps;
 
             shed2Exterior = Helper.Content.Load<Texture2D>("BigShed/building.png");
@@ -42,6 +46,8 @@ namespace MoreBuildings
             spaExterior = Helper.Content.Load<Texture2D>("MiniSpa/building.png");
             spookyGemTex = Helper.Content.Load<Texture2D>("SpookyShed\\Shrine_Gem.png");
 
+            var harmony = HarmonyInstance.Create("spacechase0.MoreBuildings");
+            harmony.Patch(typeof(Shed).GetMethod(nameof(Shed.updateLayout)), prefix: new HarmonyMethod(typeof(ShedUpdateLayoutWorkaround).GetMethod("Prefix")));
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
@@ -52,8 +58,8 @@ namespace MoreBuildings
             if ( e.NewMenu is CarpenterMenu carp )
             {
                 var blueprints = Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
-                if ( Game1.getFarm().isBuildingConstructed("Shed"))
-                    blueprints.Add(new BluePrint("Shed2"));
+                //if ( Game1.getFarm().isBuildingConstructed("Shed"))
+                //    blueprints.Add(new BluePrint("Shed2"));
                 blueprints.Add(new BluePrint("SpookyShed"));
                 blueprints.Add(new BluePrint("FishShack"));
                 blueprints.Add(new BluePrint("MiniSpa"));
@@ -160,7 +166,7 @@ namespace MoreBuildings
                     if ( loc is BuildableGameLocation buildable )
                     {
                         for ( int i = 0; i < buildable.buildings.Count; ++i )
-                        {
+                        {/*
                             if ( buildable.buildings[ i ].buildingType.Value == "Shed" && buildable.buildings[i].daysUntilUpgrade.Value == 1 )
                             {
                                 var b = buildable.buildings[i];
@@ -174,7 +180,7 @@ namespace MoreBuildings
                                 buildable.buildings[i].tilesWide.Value = b.tilesWide.Value;
                                 buildable.buildings[i].tilesHigh.Value = b.tilesHigh.Value;
                                 buildable.buildings[i].load();
-                            }
+                            }*/
                         }
                     }
                 }
@@ -191,7 +197,8 @@ namespace MoreBuildings
                         if (building.indoors.Value == null)
                             continue;
 
-                        building.indoors.Value.GetType().GetMethod("updateWarps", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(building.indoors.Value, new object[] { });
+
+                        building.indoors.Value.updateWarps();
                         building.updateInteriorWarps();
                     }
         }
@@ -219,7 +226,7 @@ namespace MoreBuildings
 
         public bool CanLoad<T>(IAssetInfo asset)
         {
-            if (asset.AssetNameEquals("Buildings\\Shed2") || asset.AssetNameEquals("Maps\\Shed2"))
+            if (asset.AssetNameEquals("Buildings\\Shed2") || asset.AssetNameEquals("Maps\\Shed2_"))
                 return true;
             if (asset.AssetNameEquals("Buildings\\SpookyShed") || asset.AssetNameEquals("Maps\\SpookyShed"))
                 return true;
@@ -234,7 +241,7 @@ namespace MoreBuildings
         {
             if (asset.AssetNameEquals("Buildings\\Shed2"))
                 return (T)(object)shed2Exterior;
-            else if (asset.AssetNameEquals("Maps\\Shed2"))
+            else if (asset.AssetNameEquals("Maps\\Shed2_"))
                 return (T)(object)Helper.Content.Load<xTile.Map>("BigShed/map.tbin");
             if (asset.AssetNameEquals("Buildings\\SpookyShed"))
                 return (T)(object)spookyExterior;

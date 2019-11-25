@@ -52,7 +52,7 @@
     <Compile Include="MiniSpa\MiniSpaBuilding.cs" />
     <Compile Include="MiniSpa\MiniSpaLocation.cs" />
     <Compile Include="Mod.cs" />
-    <Compile Include="Log.cs" />
+    <Compile Include="Overrides\Shed.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpookyShed\SpookyShedBuilding.cs" />
     <Compile Include="SpookyShed\SpookyShedLocation.cs" />
@@ -102,8 +102,12 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="2.2.0" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.0.0-beta.7" />
   </ItemGroup>
+  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
