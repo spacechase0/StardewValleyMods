@@ -1,0 +1,11 @@
+{
+  "Name": "Bug Net",
+  "Author": "spacechase0, ParadigmNomad, Keychain",
+  "Version": "1.0.0",
+  "Description": "Catch bugs and stuff.",
+  "UniqueID": "spacechase0.BugNet",
+  "EntryDll": "BugNet.dll",
+  "MinimumApiVersion": "2.9.0",
+  "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+  "spacechase0": "bug-net"
+}
