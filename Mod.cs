@@ -3,6 +3,7 @@ using StardewModdingAPI;
 using System.Reflection;
 using Harmony;
 using StardewValley;
+using SpaceShared;
 
 namespace ExtendedReach
 {
@@ -14,6 +15,7 @@ namespace ExtendedReach
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             try
             {
