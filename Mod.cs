@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Harmony;
 using Microsoft.Xna.Framework;
 using Netcode;
 using SpaceShared;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
 using xTile.ObjectModel;
 
@@ -18,8 +20,22 @@ namespace CustomNPCFixes
         {
             Log.Monitor = Monitor;
 
-            helper.Events.GameLoop.SaveCreated += doNpcFixes;
-            helper.Events.GameLoop.SaveLoaded += doNpcFixes;
+            // We need to make sure to run after Content Patcher, which registers its events after its first update tick.
+            helper.Events.GameLoop.UpdateTicked += onUpdate;
+        }
+
+        private bool firstTick = true;
+        private void onUpdate(object sender, UpdateTickedEventArgs e)
+        {
+            if ( firstTick )
+            {
+                firstTick = false;
+
+                Helper.Events.GameLoop.SaveCreated += doNpcFixes;
+                Helper.Events.GameLoop.SaveLoaded += doNpcFixes;
+
+                Helper.Events.GameLoop.DayStarted += (s, a) => { Game1.fixProblems(); fixSchedules(); }; // See comments in doNpcFixes. This handles conditional spawning.
+            }
         }
 
         public void doNpcFixes(object sender, EventArgs args)
@@ -31,9 +47,14 @@ namespace CustomNPCFixes
             NPC.populateRoutesFromLocationToLocationList();
 
             // Schedules for new NPCs don't work the first time.
-            foreach ( var npc in Utility.getAllCharacters() )
+            fixSchedules();
+        }
+
+        private void fixSchedules()
+        {
+            foreach (var npc in Utility.getAllCharacters())
             {
-                if ( npc.Schedule == null )
+                if (npc.Schedule == null)
                 {
                     try
                     {
