@@ -483,14 +483,14 @@ namespace JsonAssets
                         }
 
                         Log.trace($"Injecting {shirt.Name} sprites @ {rects}");
-                        asset.AsImage().PatchImage(shirt.textureMale, null, shirtRectPlain(shirt.GetMaleIndex()));
+                        asset.AsImage().PatchExtendedTileSheet(shirt.textureMale, null, shirtRectPlain(shirt.GetMaleIndex()));
                         if (shirt.Dyeable)
-                            asset.AsImage().PatchImage(shirt.textureMaleColor, null, shirtRectDye(shirt.GetMaleIndex()));
+                            asset.AsImage().PatchExtendedTileSheet(shirt.textureMaleColor, null, shirtRectDye(shirt.GetMaleIndex()));
                         if (shirt.HasFemaleVariant)
                         {
-                            asset.AsImage().PatchImage(shirt.textureFemale, null, shirtRectPlain(shirt.GetFemaleIndex()));
+                            asset.AsImage().PatchExtendedTileSheet(shirt.textureFemale, null, shirtRectPlain(shirt.GetFemaleIndex()));
                             if (shirt.Dyeable)
-                                asset.AsImage().PatchImage(shirt.textureFemaleColor, null, shirtRectDye(shirt.GetFemaleIndex()));
+                                asset.AsImage().PatchExtendedTileSheet(shirt.textureFemaleColor, null, shirtRectDye(shirt.GetFemaleIndex()));
                         }
                     }
                     catch (Exception e)
@@ -512,7 +512,7 @@ namespace JsonAssets
                     try
                     {
                         Log.trace($"Injecting {pants.Name} sprites @ {pantsRect(pants.GetTextureIndex())}");
-                        asset.AsImage().PatchImage(pants.texture, null, pantsRect(pants.GetTextureIndex()));
+                        asset.AsImage().PatchExtendedTileSheet(pants.texture, null, pantsRect(pants.GetTextureIndex()));
                     }
                     catch (Exception e)
                     {

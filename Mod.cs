@@ -50,6 +50,8 @@ namespace JsonAssets
 
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\crops", 32);
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\fruitTrees", 80);
+            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\shirts", 32);
+            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\pants", 688);
 
             Log.info("Loading content packs...");
             foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
