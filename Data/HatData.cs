@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace JsonAssets.Data
 {
-    class HatData : DataNeedsId
+    public class HatData : DataNeedsId
     {
         [JsonIgnore]
         internal Texture2D texture;

@@ -28,6 +28,7 @@ namespace JsonAssets
         IDictionary<string, int> GetAllWeaponIds();
         IDictionary<string, int> GetAllClothingIds();
 
+        event EventHandler ItemsRegistered;
         event EventHandler IdsAssigned;
         event EventHandler AddedItemsToShop;
 
@@ -145,6 +146,15 @@ namespace JsonAssets
             if (Mod.instance.clothingIds == null)
                 return new Dictionary<string, int>();
             return new Dictionary<string, int>(Mod.instance.clothingIds);
+        }
+
+        public event EventHandler ItemsRegistered;
+        internal void InvokeItemsRegistered()
+        {
+            Log.trace("Event: ItemsRegistered");
+            if (ItemsRegistered == null)
+                return;
+            Util.invokeEvent("JsonAssets.Api.ItemsRegistered", ItemsRegistered.GetInvocationList(), null);
         }
 
         public event EventHandler IdsAssigned;

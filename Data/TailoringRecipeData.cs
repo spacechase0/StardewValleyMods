@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace JsonAssets.Data
 {
-    class TailoringRecipeData
+    public class TailoringRecipeData
     {
         public string DisableWithMod { get; set; }
 

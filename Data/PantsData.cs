@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace JsonAssets.Data
 {
-    class PantsData : DataSeparateTextureIndex
+    public class PantsData : DataSeparateTextureIndex
     {
         [JsonIgnore]
         internal Texture2D texture;

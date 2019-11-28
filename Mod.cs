@@ -45,6 +45,7 @@ namespace JsonAssets
             helper.Events.Player.InventoryChanged += onInventoryChanged;
             helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.GameLoop.SaveCreated += onCreated;
+            helper.Events.GameLoop.UpdateTicked += onTick;
             helper.Events.Specialized.LoadStageChanged += onLoadStageChanged;
             helper.Events.Multiplayer.PeerContextReceived += clientConnected;
 
@@ -52,18 +53,7 @@ namespace JsonAssets
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\fruitTrees", 80);
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\shirts", 32);
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\pants", 688);
-
-            Log.info("Loading content packs...");
-            foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
-                loadData(contentPack);
-            if (Directory.Exists(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
-            {
-                foreach (string dir in Directory.EnumerateDirectories(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
-                    loadData(dir);
-            }
-
-            resetAtTitle();
-
+            
             try
             {
                 harmony = HarmonyInstance.Create("spacechase0.JsonAssets");
@@ -141,6 +131,29 @@ namespace JsonAssets
             ContentPatcherIntegration.Initialize();
         }
 
+        bool firstTick = true;
+        private void onTick(object sender, UpdateTickedEventArgs e)
+        {
+            // This needs to run after GameLaunched, because of the event 
+            if (firstTick)
+            {
+                firstTick = false;
+
+                Log.info("Loading content packs...");
+                foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
+                    loadData(contentPack);
+                if (Directory.Exists(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
+                {
+                    foreach (string dir in Directory.EnumerateDirectories(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
+                        loadData(dir);
+                }
+                api.InvokeItemsRegistered();
+
+                resetAtTitle();
+            }
+
+        }
+
         private void loadData(string dir)
         {
             // read initial info
@@ -157,14 +170,182 @@ namespace JsonAssets
             this.loadData(contentPack);
         }
 
-        private Dictionary<string, IContentPack> dupObjects = new Dictionary<string, IContentPack>();
-        private Dictionary<string, IContentPack> dupCrops = new Dictionary<string, IContentPack>();
-        private Dictionary<string, IContentPack> dupFruitTrees = new Dictionary<string, IContentPack>();
-        private Dictionary<string, IContentPack> dupBigCraftables = new Dictionary<string, IContentPack>();
-        private Dictionary<string, IContentPack> dupHats = new Dictionary<string, IContentPack>();
-        private Dictionary<string, IContentPack> dupWeapons = new Dictionary<string, IContentPack>();
-        private Dictionary<string, IContentPack> dupShirts = new Dictionary<string, IContentPack>();
-        private Dictionary<string, IContentPack> dupPants = new Dictionary<string, IContentPack>();
+        public void RegisterObject(IManifest source, ObjectData obj)
+        {
+            objects.Add(obj);
+
+            // save ring
+            if (obj.Category == ObjectData.Category_.Ring)
+                this.myRings.Add(obj);
+
+            // Duplicate check
+            if (dupObjects.ContainsKey(obj.Name))
+                Log.error($"Duplicate object: {obj.Name} just added by {source.Name}, already added by {dupObjects[obj.Name].Name}!");
+            else
+                dupObjects[obj.Name] = source;
+        }
+
+        public void RegisterCrop(IManifest source, CropData crop, Texture2D seedTex)
+        {
+            crops.Add(crop);
+
+            // save seeds
+            crop.seed = new ObjectData
+            {
+                texture = seedTex,
+                Name = crop.SeedName,
+                Description = crop.SeedDescription,
+                Category = ObjectData.Category_.Seeds,
+                Price = crop.SeedSellPrice == -1 ? crop.SeedPurchasePrice : crop.SeedSellPrice,
+                CanPurchase = true,
+                PurchaseFrom = crop.SeedPurchaseFrom,
+                PurchasePrice = crop.SeedPurchasePrice,
+                PurchaseRequirements = crop.SeedPurchaseRequirements ?? new List<string>(),
+                NameLocalization = crop.SeedNameLocalization,
+                DescriptionLocalization = crop.SeedDescriptionLocalization
+            };
+
+            // TODO: Clean up this chunk
+            // I copy/pasted it from the unofficial update decompiled
+            string str = "";
+            string[] array = new[] { "spring", "summer", "fall", "winter" }
+                .Except(crop.Seasons)
+                .ToArray();
+            foreach (var season in array)
+            {
+                str += $"/z {season}";
+            }
+            if (str != "")
+            {
+                string strtrimstart = str.TrimStart(new char[] { '/' });
+                if (crop.SeedPurchaseRequirements != null && crop.SeedPurchaseRequirements.Count > 0)
+                {
+                    for (int index = 0; index < crop.SeedPurchaseRequirements.Count; index++)
+                    {
+                        if (SeasonLimiter.IsMatch(crop.SeedPurchaseRequirements[index]))
+                        {
+                            crop.SeedPurchaseRequirements[index] = strtrimstart;
+                            Log.warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
+                        }
+                    }
+                    if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart('/')))
+                    {
+                        Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
+                        crop.seed.PurchaseRequirements.Add(strtrimstart);
+                    }
+                }
+                else
+                {
+                    Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
+                    crop.seed.PurchaseRequirements.Add(strtrimstart);
+                }
+            }
+
+            objects.Add(crop.seed);
+
+            // Duplicate check
+            if (dupCrops.ContainsKey(crop.Name))
+                Log.error($"Duplicate crop: {crop.Name} just added by {source.Name}, already added by {dupCrops[crop.Name].Name}!");
+            else
+                dupCrops[crop.Name] = source;
+        }
+
+        public void RegisterFruitTree(IManifest source, FruitTreeData tree, Texture2D saplingTex)
+        {
+            fruitTrees.Add(tree);
+
+            // save seed
+            tree.sapling = new ObjectData
+            {
+                texture = saplingTex,
+                Name = tree.SaplingName,
+                Description = tree.SaplingDescription,
+                Category = ObjectData.Category_.Seeds,
+                Price = tree.SaplingPurchasePrice,
+                CanPurchase = true,
+                PurchaseRequirements = tree.SaplingPurchaseRequirements,
+                PurchaseFrom = tree.SaplingPurchaseFrom,
+                PurchasePrice = tree.SaplingPurchasePrice,
+                NameLocalization = tree.SaplingNameLocalization,
+                DescriptionLocalization = tree.SaplingDescriptionLocalization
+            };
+            objects.Add(tree.sapling);
+
+            // Duplicate check
+            if (dupFruitTrees.ContainsKey(tree.Name))
+                Log.error($"Duplicate fruit tree: {tree.Name} just added by {source.Name}, already added by {dupFruitTrees[tree.Name].Name}!");
+            else
+                dupFruitTrees[tree.Name] = source;
+        }
+
+        public void RegisterBigCraftable(IManifest source, BigCraftableData craftable)
+        {
+            bigCraftables.Add(craftable);
+
+            // Duplicate check
+            if (dupBigCraftables.ContainsKey(craftable.Name))
+                Log.error($"Duplicate big craftable: {craftable.Name} just added by {source.Name}, already added by {dupBigCraftables[craftable.Name].Name}!");
+            else
+                dupBigCraftables[craftable.Name] = source;
+        }
+
+        public void RegisterHat(IManifest source, HatData hat)
+        {
+            hats.Add(hat);
+
+            // Duplicate check
+            if (dupHats.ContainsKey(hat.Name))
+                Log.error($"Duplicate hat: {hat.Name} just added by {source.Name}, already added by {dupHats[hat.Name].Name}!");
+            else
+                dupHats[hat.Name] = source;
+        }
+
+        public void RegisterWeapon(IManifest source, WeaponData weapon)
+        {
+            weapons.Add(weapon);
+
+            // Duplicate check
+            if (dupWeapons.ContainsKey(weapon.Name))
+                Log.error($"Duplicate weapon: {weapon.Name} just added by {source.Name}, already added by {dupWeapons[weapon.Name].Name}!");
+            else
+                dupWeapons[weapon.Name] = source;
+        }
+
+        public void RegisterShirt(IManifest source, ShirtData shirt)
+        {
+            shirts.Add(shirt);
+
+            // Duplicate check
+            if (dupShirts.ContainsKey(shirt.Name))
+                Log.error($"Duplicate shirt: {shirt.Name} just added by {source.Name}, already added by {dupShirts[shirt.Name].Name}!");
+            else
+                dupShirts[shirt.Name] = source;
+        }
+
+        public void RegisterPants(IManifest source, PantsData pants)
+        {
+            pantss.Add(pants);
+
+            // Duplicate check
+            if (dupPants.ContainsKey(pants.Name))
+                Log.error($"Duplicate shirt: {pants.Name} just added by {source.Name}, already added by {dupPants[pants.Name].Name}!");
+            else
+                dupPants[pants.Name] = source;
+        }
+
+        public void RegisterTailoringRecipe(IManifest source, TailoringRecipeData recipe)
+        {
+            tailoring.Add(recipe);
+        }
+
+        private Dictionary<string, IManifest> dupObjects = new Dictionary<string, IManifest>();
+        private Dictionary<string, IManifest> dupCrops = new Dictionary<string, IManifest>();
+        private Dictionary<string, IManifest> dupFruitTrees = new Dictionary<string, IManifest>();
+        private Dictionary<string, IManifest> dupBigCraftables = new Dictionary<string, IManifest>();
+        private Dictionary<string, IManifest> dupHats = new Dictionary<string, IManifest>();
+        private Dictionary<string, IManifest> dupWeapons = new Dictionary<string, IManifest>();
+        private Dictionary<string, IManifest> dupShirts = new Dictionary<string, IManifest>();
+        private Dictionary<string, IManifest> dupPants = new Dictionary<string, IManifest>();
 
         private readonly Regex SeasonLimiter = new Regex("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private void loadData(IContentPack contentPack)
@@ -190,15 +371,7 @@ namespace JsonAssets
                         obj.textureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
                     this.objects.Add(obj);
 
-                    // save ring
-                    if (obj.Category == ObjectData.Category_.Ring)
-                        this.myRings.Add(obj);
-
-                    // Duplicate check
-                    if (dupObjects.ContainsKey(obj.Name))
-                        Log.error($"Duplicate object: {obj.Name} just added by {contentPack.Manifest.Name}, already added by {dupObjects[obj.Name].Manifest.Name}!");
-                    else
-                        dupObjects[obj.Name] = contentPack;
+                    RegisterObject(contentPack.Manifest, obj);
                 }
             }
 
@@ -217,67 +390,8 @@ namespace JsonAssets
 
                     // save crop
                     crop.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/crop.png");
-                    crops.Add(crop);
 
-                    // save seeds
-                    crop.seed = new ObjectData
-                    {
-                        texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"),
-                        Name = crop.SeedName,
-                        Description = crop.SeedDescription,
-                        Category = ObjectData.Category_.Seeds,
-                        Price = crop.SeedSellPrice == -1 ? crop.SeedPurchasePrice : crop.SeedSellPrice,
-                        CanPurchase = true,
-                        PurchaseFrom = crop.SeedPurchaseFrom,
-                        PurchasePrice = crop.SeedPurchasePrice,
-                        PurchaseRequirements = crop.SeedPurchaseRequirements ?? new List<string>(),
-                        NameLocalization = crop.SeedNameLocalization,
-                        DescriptionLocalization = crop.SeedDescriptionLocalization
-                    };
-
-                    // TODO: Clean up this chunk
-                    // I copy/pasted it from the unofficial update decompiled
-                    string str = "";
-                    string[] array =  new[] { "spring", "summer", "fall", "winter" }
-                        .Except(crop.Seasons)
-                        .ToArray();
-                    foreach (var season in array)
-                    {
-                        str += $"/z {season}";
-                    }
-                    if (str != "")
-                    {
-                        string strtrimstart = str.TrimStart(new char[] { '/' });
-                        if (crop.SeedPurchaseRequirements != null && crop.SeedPurchaseRequirements.Count > 0)
-                        {
-                            for (int index = 0; index < crop.SeedPurchaseRequirements.Count; index++)
-                            {
-                                if (SeasonLimiter.IsMatch(crop.SeedPurchaseRequirements[index]))
-                                {
-                                    crop.SeedPurchaseRequirements[index] = strtrimstart;
-                                    Log.warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
-                                }
-                            }
-                            if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart('/')))
-                            {
-                                Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
-                                crop.seed.PurchaseRequirements.Add(strtrimstart);
-                            }
-                        }
-                        else
-                        {
-                            Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
-                            crop.seed.PurchaseRequirements.Add(strtrimstart);
-                        }
-                    }
-
-                    objects.Add(crop.seed);
-
-                    // Duplicate check
-                    if (dupCrops.ContainsKey(crop.Name))
-                        Log.error($"Duplicate crop: {crop.Name} just added by {contentPack.Manifest.Name}, already added by {dupCrops[crop.Name].Manifest.Name}!");
-                    else
-                        dupCrops[crop.Name] = contentPack;
+                    RegisterCrop(contentPack.Manifest, crop, contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"));
                 }
             }
 
@@ -296,30 +410,7 @@ namespace JsonAssets
 
                     // save fruit tree
                     tree.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/tree.png");
-                    fruitTrees.Add(tree);
-
-                    // save seed
-                    tree.sapling = new ObjectData
-                    {
-                        texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/sapling.png"),
-                        Name = tree.SaplingName,
-                        Description = tree.SaplingDescription,
-                        Category = ObjectData.Category_.Seeds,
-                        Price = tree.SaplingPurchasePrice,
-                        CanPurchase = true,
-                        PurchaseRequirements = tree.SaplingPurchaseRequirements,
-                        PurchaseFrom = tree.SaplingPurchaseFrom,
-                        PurchasePrice = tree.SaplingPurchasePrice,
-                        NameLocalization = tree.SaplingNameLocalization,
-                        DescriptionLocalization = tree.SaplingDescriptionLocalization
-                    };
-                    objects.Add(tree.sapling);
-
-                    // Duplicate check
-                    if (dupFruitTrees.ContainsKey(tree.Name))
-                        Log.error($"Duplicate fruit tree: {tree.Name} just added by {contentPack.Manifest.Name}, already added by {dupFruitTrees[tree.Name].Manifest.Name}!");
-                    else
-                        dupFruitTrees[tree.Name] = contentPack;
+                    RegisterFruitTree(contentPack.Manifest, tree, contentPack.LoadAsset<Texture2D>($"{relativePath}/sapling.png"));
                 }
             }
 
@@ -338,13 +429,7 @@ namespace JsonAssets
 
                     // save craftable
                     craftable.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable.png");
-                    bigCraftables.Add(craftable);
-
-                    // Duplicate check
-                    if (dupBigCraftables.ContainsKey(craftable.Name))
-                        Log.error($"Duplicate big craftable: {craftable.Name} just added by {contentPack.Manifest.Name}, already added by {dupBigCraftables[craftable.Name].Manifest.Name}!");
-                    else
-                        dupBigCraftables[craftable.Name] = contentPack;
+                    RegisterBigCraftable(contentPack.Manifest, craftable);
                 }
             }
 
@@ -363,13 +448,7 @@ namespace JsonAssets
 
                     // save object
                     hat.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/hat.png");
-                    hats.Add(hat);
-
-                    // Duplicate check
-                    if (dupHats.ContainsKey(hat.Name))
-                        Log.error($"Duplicate hat: {hat.Name} just added by {contentPack.Manifest.Name}, already added by {dupHats[hat.Name].Manifest.Name}!");
-                    else
-                        dupHats[hat.Name] = contentPack;
+                    RegisterHat(contentPack.Manifest, hat);
                 }
             }
 
@@ -388,13 +467,7 @@ namespace JsonAssets
 
                     // save object
                     weapon.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/weapon.png");
-                    weapons.Add(weapon);
-
-                    // Duplicate check
-                    if (dupWeapons.ContainsKey(weapon.Name))
-                        Log.error($"Duplicate weapon: {weapon.Name} just added by {contentPack.Manifest.Name}, already added by {dupWeapons[weapon.Name].Manifest.Name}!");
-                    else
-                        dupWeapons[weapon.Name] = contentPack;
+                    RegisterWeapon(contentPack.Manifest, weapon);
                 }
             }
 
@@ -421,13 +494,7 @@ namespace JsonAssets
                         if (shirt.Dyeable)
                             shirt.textureFemaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/female-color.png");
                     }
-                    shirts.Add(shirt);
-
-                    // Duplicate check
-                    if (dupShirts.ContainsKey(shirt.Name))
-                        Log.error($"Duplicate shirt: {shirt.Name} just added by {contentPack.Manifest.Name}, already added by {dupWeapons[shirt.Name].Manifest.Name}!");
-                    else
-                        dupShirts[shirt.Name] = contentPack;
+                    RegisterShirt(contentPack.Manifest, shirt);
                 }
             }
 
@@ -446,13 +513,7 @@ namespace JsonAssets
 
                     // save pants
                     pants.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/pants.png");
-                    pantss.Add(pants);
-
-                    // Duplicate check
-                    if (dupPants.ContainsKey(pants.Name))
-                        Log.error($"Duplicate pants: {pants.Name} just added by {contentPack.Manifest.Name}, already added by {dupWeapons[pants.Name].Manifest.Name}!");
-                    else
-                        dupPants[pants.Name] = contentPack;
+                    RegisterPants(contentPack.Manifest, pants);
                 }
             }
 
@@ -469,7 +530,7 @@ namespace JsonAssets
                     if (recipe == null || (recipe.DisableWithMod != null && Helper.ModRegistry.IsLoaded(recipe.DisableWithMod)))
                         continue;
 
-                    tailoring.Add(recipe);
+                    RegisterTailoringRecipe(contentPack.Manifest, recipe);
                 }
             }
         }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace JsonAssets.Data
 {
-    class ShirtData : ClothingData
+    public class ShirtData : ClothingData
     {
         [JsonIgnore]
         internal Texture2D textureMaleColor;
