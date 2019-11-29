@@ -766,22 +766,22 @@ namespace JsonAssets
                 oldWeaponIds = LoadDictionary<string, int>("ids-weapons.json") ?? new Dictionary<string, int>();
                 oldClothingIds = LoadDictionary<string, int>("ids-clothing.json") ?? new Dictionary<string, int>();
 
-                Log.trace("OLD IDS START");
+                Log.verbose("OLD IDS START");
                 foreach (var id in oldObjectIds)
-                    Log.trace("\tObject " + id.Key + " = " + id.Value);
+                    Log.verbose("\tObject " + id.Key + " = " + id.Value);
                 foreach (var id in oldCropIds)
-                    Log.trace("\tCrop " + id.Key + " = " + id.Value);
+                    Log.verbose("\tCrop " + id.Key + " = " + id.Value);
                 foreach (var id in oldFruitTreeIds)
-                    Log.trace("\tFruit Tree " + id.Key + " = " + id.Value);
+                    Log.verbose("\tFruit Tree " + id.Key + " = " + id.Value);
                 foreach (var id in oldBigCraftableIds)
-                    Log.trace("\tBigCraftable " + id.Key + " = " + id.Value);
+                    Log.verbose("\tBigCraftable " + id.Key + " = " + id.Value);
                 foreach (var id in oldHatIds)
-                    Log.trace("\tHat " + id.Key + " = " + id.Value);
+                    Log.verbose("\tHat " + id.Key + " = " + id.Value);
                 foreach (var id in oldWeaponIds)
-                    Log.trace("\tWeapon " + id.Key + " = " + id.Value);
+                    Log.verbose("\tWeapon " + id.Key + " = " + id.Value);
                 foreach (var id in oldClothingIds)
-                    Log.trace("\tClothing " + id.Key + " = " + id.Value);
-                Log.trace("OLD IDS END");
+                    Log.verbose("\tClothing " + id.Key + " = " + id.Value);
+                Log.verbose("OLD IDS END");
             }
 
             // assign IDs
@@ -947,7 +947,7 @@ namespace JsonAssets
             {
                 if (d.id == -1)
                 {
-                    Log.trace($"New ID: {d.Name} = {currId}");
+                    Log.verbose($"New ID: {d.Name} = {currId}");
                     ids.Add(d.Name, currId++);
                     if (type == "objects" && ((ObjectData)d).IsColored)
                         ++currId;
@@ -967,7 +967,7 @@ namespace JsonAssets
             {
                 if (d.textureIndex == -1)
                 {
-                    Log.trace($"New texture index: {d.Name} = {currIdx}");
+                    Log.verbose($"New texture index: {d.Name} = {currIdx}");
                     idxs.Add(d.Name, currIdx++);
                     if (type == "shirts" && ((ClothingData)d).HasFemaleVariant)
                         ++currIdx;
@@ -1055,7 +1055,7 @@ namespace JsonAssets
                         var c = crops.FirstOrDefault(x => x.Name == key);
                         if ( c != null ) // Non-JA crop
                         {
-                            Log.trace("Fixing crop product: From " + hd.crop.indexOfHarvest.Value + " to " + c.Product + "=" + ResolveObjectId(c.Product));
+                            Log.verbose("Fixing crop product: From " + hd.crop.indexOfHarvest.Value + " to " + c.Product + "=" + ResolveObjectId(c.Product));
                             hd.crop.indexOfHarvest.Value = ResolveObjectId(c.Product);
                         }
                     }
@@ -1071,7 +1071,7 @@ namespace JsonAssets
                         var ftt = fruitTrees.FirstOrDefault(x => x.Name == key);
                         if ( ftt != null ) // Non-JA fruit tree
                         {
-                            Log.trace("Fixing fruit tree product: From " + ft.indexOfFruit.Value + " to " + ftt.Product + "=" + ResolveObjectId(ftt.Product));
+                            Log.verbose("Fixing fruit tree product: From " + ft.indexOfFruit.Value + " to " + ftt.Product + "=" + ResolveObjectId(ftt.Product));
                             ft.indexOfFruit.Value = ResolveObjectId(ftt.Product);
                         }
                     }
@@ -1312,12 +1312,12 @@ namespace JsonAssets
                 if (newIds.ContainsKey(key))
                 {
                     id.Value = newIds[key];
-                    Log.trace("Changing ID: " + key + " from ID " + id_ + " to " + id.Value);
+                    Log.verbose("Changing ID: " + key + " from ID " + id_ + " to " + id.Value);
                     return false;
                 }
                 else
                 {
-                    Log.trace("Deleting missing item " + key + " with old ID " + id_);
+                    Log.verbose("Deleting missing item " + key + " with old ID " + id_);
                     return true;
                 }
             }
