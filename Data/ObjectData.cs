@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using StardewValley;
@@ -95,6 +96,8 @@ namespace JsonAssets.Data
 
         public string Description { get; set; }
         public Category_ Category { get; set; }
+        public string CategoryTextOverride { get; set; }
+        public Color CategoryColorOverride { get; set; } = new Color(0, 0, 0, 0);
         public bool IsColored { get; set; } = false;
 
         public int Price { get; set; }

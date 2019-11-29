@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using JsonAssets.Data;
+using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -93,6 +94,53 @@ namespace JsonAssets.Overrides
                     string[] strArray = str.Split('/');
                     __result = strArray[strArray.Length - 1];
                 }
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    public static class ObjectCategoryTextOverride
+    {
+        public static bool Prefix(StardewValley.Object __instance, ref string __result )
+        {
+            ObjectData objData = null;
+            foreach ( var obj in Mod.instance.objects )
+            {
+                if ( obj.GetObjectId() == __instance.ParentSheetIndex )
+                {
+                    objData = obj;
+                    break;
+                }
+            }
+
+            if ( objData != null && objData.CategoryTextOverride != null)
+            {
+                __result = objData.CategoryTextOverride;
+                return false;
+            }
+
+            return true;
+        }
+    }
+    public static class ObjectCategoryColorOverride
+    {
+        public static bool Prefix(StardewValley.Object __instance, ref Color __result)
+        {
+            ObjectData objData = null;
+            foreach (var obj in Mod.instance.objects)
+            {
+                if (obj.GetObjectId() == __instance.ParentSheetIndex)
+                {
+                    objData = obj;
+                    break;
+                }
+            }
+
+            if (objData != null && objData.CategoryColorOverride.A != 0)
+            {
+                __result = objData.CategoryColorOverride;
                 return false;
             }
 

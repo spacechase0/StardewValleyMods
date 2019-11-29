@@ -60,6 +60,8 @@ namespace JsonAssets
                 doPrefix(typeof(StardewValley.Object), "canBePlacedHere", typeof(ObjectCanPlantHereOverride));
                 doPrefix(typeof(StardewValley.Object), "checkForAction", typeof(ObjectNoActionHook));
                 doPrefix(typeof(StardewValley.Object), "loadDisplayName", typeof(ObjectDisplayNameHook));
+                doPrefix(typeof(StardewValley.Object), "getCategoryName", typeof(ObjectCategoryTextOverride));
+                doPrefix(typeof(StardewValley.Object), "getCategoryColor", typeof(ObjectCategoryColorOverride));
                 doPostfix(typeof(StardewValley.Object), "isIndexOkForBasicShippedCategory", typeof(ObjectCollectionShippingHook));
                 doPrefix(typeof(StardewValley.Objects.Ring), "loadDisplayFields", typeof(RingLoadDisplayFieldsHook));
                 doPrefix(typeof(StardewValley.Crop), nameof(Crop.isPaddyCrop), typeof(PaddyCropHook));
@@ -141,11 +143,25 @@ namespace JsonAssets
 
                 Log.info("Loading content packs...");
                 foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
-                    loadData(contentPack);
+                    try
+                    {
+                        loadData(contentPack);
+                    }
+                    catch (Exception e1)
+                    {
+                        Log.error("Exception loading content pack: " + e1);
+                    }
                 if (Directory.Exists(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
                 {
                     foreach (string dir in Directory.EnumerateDirectories(Path.Combine(Helper.DirectoryPath, "ContentPacks")))
-                        loadData(dir);
+                        try
+                        {
+                            loadData(dir);
+                        }
+                        catch (Exception e2)
+                        {
+                            Log.error("Exception loading content pack: " + e2);
+                        }
                 }
                 api.InvokeItemsRegistered();
 
@@ -369,7 +385,6 @@ namespace JsonAssets
                     obj.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
                     if (obj.IsColored)
                         obj.textureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
-                    this.objects.Add(obj);
 
                     RegisterObject(contentPack.Manifest, obj);
                 }
