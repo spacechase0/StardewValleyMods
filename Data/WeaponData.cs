@@ -11,7 +11,7 @@ namespace JsonAssets.Data
     public class WeaponData : DataNeedsId
     {
         [JsonIgnore]
-        internal Texture2D texture;
+        public Texture2D texture;
 
         [JsonConverter(typeof(StringEnumConverter))]
         public enum Type_

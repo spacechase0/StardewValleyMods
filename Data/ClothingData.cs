@@ -13,9 +13,9 @@ namespace JsonAssets.Data
     public class ClothingData : DataSeparateTextureIndex
     {
         [JsonIgnore]
-        internal Texture2D textureMale;
+        public Texture2D textureMale;
         [JsonIgnore]
-        internal Texture2D textureFemale;
+        public Texture2D textureFemale;
 
         public string Description { get; set; }
         public bool HasFemaleVariant { get; set; } = false;

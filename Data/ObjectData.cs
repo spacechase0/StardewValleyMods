@@ -10,9 +10,9 @@ namespace JsonAssets.Data
     public class ObjectData : DataNeedsId
     {
         [JsonIgnore]
-        internal Texture2D texture;
+        public Texture2D texture;
         [JsonIgnore]
-        internal Texture2D textureColor;
+        public Texture2D textureColor;
 
         [JsonConverter(typeof(StringEnumConverter))]
         public enum Category_

@@ -7,7 +7,7 @@ namespace JsonAssets.Data
     public class FruitTreeData : DataNeedsId
     {
         [JsonIgnore]
-        internal Texture2D texture;
+        public Texture2D texture;
         
         public object Product { get; set; }
         public string SaplingName { get; set; }

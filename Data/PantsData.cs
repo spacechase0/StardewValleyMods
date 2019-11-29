@@ -13,7 +13,7 @@ namespace JsonAssets.Data
     public class PantsData : DataSeparateTextureIndex
     {
         [JsonIgnore]
-        internal Texture2D texture;
+        public Texture2D texture;
 
         public string Description { get; set; }
 

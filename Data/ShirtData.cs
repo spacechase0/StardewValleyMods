@@ -13,8 +13,8 @@ namespace JsonAssets.Data
     public class ShirtData : ClothingData
     {
         [JsonIgnore]
-        internal Texture2D textureMaleColor;
+        public Texture2D textureMaleColor;
         [JsonIgnore]
-        internal Texture2D textureFemaleColor;
+        public Texture2D textureFemaleColor;
     }
 }

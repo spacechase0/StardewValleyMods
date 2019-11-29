@@ -8,7 +8,7 @@ namespace JsonAssets.Data
     public class CropData : DataNeedsId
     {
         [JsonIgnore]
-        internal Texture2D texture;
+        public Texture2D texture;
         
         public object Product { get; set; }
         public string SeedName { get; set; }
