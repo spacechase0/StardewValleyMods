@@ -1179,10 +1179,19 @@ namespace JsonAssets
                     }
                     else if ( building is FishPond pond )
                     {
-                        if (fixId(oldObjectIds, objectIds, pond.fishType, origObjects))
-                            pond.fishType.Value = -1;
-                        if (pond.GetFishObject() != null && fixId(oldObjectIds, objectIds, pond.GetFishObject().parentSheetIndex, origObjects))
+                        if (pond.fishType.Value == -1)
+                        {
                             Helper.Reflection.GetField<StardewValley.Object>(pond, "_fishObject").SetValue(null);
+                            continue;
+                        }
+
+                        if (fixId(oldObjectIds, objectIds, pond.fishType, origObjects))
+                        {
+                            pond.fishType.Value = -1;
+                            pond.currentOccupants.Value = 0;
+                            pond.maxOccupants.Value = 0;
+                            Helper.Reflection.GetField<StardewValley.Object>(pond, "_fishObject").SetValue(null);
+                        }
                         if (pond.sign.Value != null && fixId(oldObjectIds, objectIds, pond.sign.Value.parentSheetIndex, origObjects))
                             pond.sign.Value = null;
                         if (pond.output.Value != null && fixId(oldObjectIds, objectIds, pond.output.Value.parentSheetIndex, origObjects))
