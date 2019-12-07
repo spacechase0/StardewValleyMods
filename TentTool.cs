@@ -72,7 +72,7 @@ namespace SleepyEye
                 ((FarmerSprite)who.Sprite).animate(120, time);
         }
 
-        public override void drawInMenu(SpriteBatch b, Vector2 location, float scaleSize, float transparency, float layerDepth, bool drawStackNumber, Color color, bool drawShadow)
+        public override void drawInMenu(SpriteBatch b, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
             b.Draw(Mod.instance.Helper.Content.Load<Texture2D>("Maps/" + Game1.currentSeason + "_outdoorsTileSheet", ContentSource.GameContent), new Vector2( location.X + Game1.tileSize / 2, location.Y + Game1.tileSize / 2 ), new Rectangle(224, 96, 48, 80), Color.White, 0, new Vector2( 24, 40 ), scaleSize * 0.8f, SpriteEffects.None, 0);
         }

@@ -1,7 +1,7 @@
 {
   "Name": "Sleepy Eye",
   "Author": "spacechase0",
-  "Version": "1.0.3",
+  "Version": "1.0.4",
   "Description": "Sleep here. Sleep there. Sleep anywhere!",
   "UniqueID": "spacechase0.SleepyEye",
   "EntryDll": "SleepyEye.dll",

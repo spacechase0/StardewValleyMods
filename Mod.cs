@@ -3,6 +3,7 @@ using StardewValley;
 using StardewValley.Menus;
 using System.Collections.Generic;
 using StardewModdingAPI.Events;
+using SpaceShared;
 
 namespace SleepyEye
 {
@@ -13,6 +14,7 @@ namespace SleepyEye
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
 
             helper.Events.Display.MenuChanged += onMenuChanged;
         }
