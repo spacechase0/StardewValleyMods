@@ -40,14 +40,33 @@ namespace SpaceCore
 
             harmony = HarmonyInstance.Create("spacechase0.SpaceCore");
 
-            Type game1CompilerType = null;
-            foreach (var t in typeof(Game1).Assembly.GetTypes())
-                if (t.FullName == "StardewValley.Game1+<>c")
-                    game1CompilerType = t;
             MethodInfo showNightEndMethod = null;
-            foreach (var m in game1CompilerType.GetRuntimeMethods())
-                if (m.FullDescription().Contains("showEndOfNightStuff"))
-                    showNightEndMethod = m;
+            try
+            {
+                Type game1CompilerType = null;
+                foreach (var t in typeof(Game1).Assembly.GetTypes())
+                    if (t.FullName == "StardewValley.Game1+<>c")
+                        game1CompilerType = t;
+                foreach (var m in game1CompilerType.GetRuntimeMethods())
+                    if (m.FullDescription().Contains("showEndOfNightStuff"))
+                        showNightEndMethod = m;
+            }
+            catch (Exception e1)
+            {
+                Log.trace("Failed to find Windows showEndOfNightStuff lambda: " + e1);
+                try
+                {
+                    Type game1CompilerType = typeof(Game1);
+                    foreach (var m in game1CompilerType.GetRuntimeMethods())
+                        if (m.FullDescription().Contains("<showEndOfNightStuff>m__"))
+                            showNightEndMethod = m;
+                }
+                catch (Exception e2)
+                {
+                    Log.error("Failed to find Mac/Linux showEndOfNightStuff lambda: " + e2);
+                }
+            }
+            Log.trace("showEndOfNightStuff: " + showNightEndMethod);
 
             doPrefix(typeof(HoeDirt), nameof(HoeDirt.dayUpdate), typeof(HoeDirtWinterFix));
             doPostfix(typeof(Utility), nameof(Utility.pickFarmEvent), typeof(NightlyFarmEventHook));
