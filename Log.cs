@@ -7,6 +7,11 @@ namespace SpaceShared
     {
         public static IMonitor Monitor;
 
+        public static void verbose(String str)
+        {
+            Monitor.VerboseLog(str);
+        }
+
         public static void trace(String str)
         {
             Monitor.Log(str, LogLevel.Trace);
