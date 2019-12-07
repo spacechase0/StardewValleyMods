@@ -24,7 +24,7 @@
 * [Localization](#localization)
 * [Tokens in Fields](tokens-in-fields)
 * [Converting From Legacy Format](#converting-from-legacy-format)
-* [Releasing A Content Pack](#releaseing-a-content-pack)
+* [Releasing A Content Pack](#releasing-a-content-pack)
 * [Troubleshooting](#troubleshooting)
   * [Target Out of Range](#target-out-of-range)
   * [Exception Injecting Given Key](#exception-injecting-given-key)
@@ -123,7 +123,7 @@ field                      | purpose
 `Product`                  | Determines what the crop produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the [objects ID number](https://pastebin.com/TBsGu6Em) and not include a corresponding `Objects` folder.
 `SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter.
 `SeedDescription`          | Describe what season you plant these in. Also note if it continues to grow after first harvest and how many days it takes to regrow.
-`Type`                     | Available types are `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, and `Seeds`.
+`Type`                     | Vanilla types are `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, and `Seeds`. 
 `CropType`                 | Available types are `Normal`, `IndoorsOnly`, and `Paddy`. If no `CropType` is specified (largely affecting pre-SDV1.4 crops) `Normal` is the default. `IndoorsOnly` means it can only grow when inside (greenhouse or garden pot). `Paddy` means it follows the same rules as rice (SDV1.4) and does not need watered if planted around a water source.
 `Season`                   | Seasons must be in lowercase and in quotation marks, so if you want to make your crop last all year, you'd put in "spring", "summer", "fall", "winter". If you want to make winter plants, you will have to require [SpaceCore](http://www.nexusmods.com/stardewvalley/mods/1348) for your content pack.
 `Phases`                   | Determines how long each phase lasts. Crops can have 2-5 phases, and the numbers in phases refer to how many days a plant spends in that phase. Seeds **do not** count as a phase. If your crop has regrowth, the last number in this set corresponds to how many days it takes for the crop to regrow. Ex. [1, 2, 3, 4, 3] This crop takes 10 days to grow and 3 days to regrow.
@@ -146,7 +146,6 @@ field                      | purpose
 * The crop limit has been removed as of v.1.4.0.
 
 ### FruitTrees
-Fruit trees added by Json Assets work a bit differently than vanilla fruit trees as you have to till/hoe the ground before planting them. This means they cannot be placed on the edges of the greenhouse like vanilla trees. (7/4/18) T
 
 A fruit trees subfolder is a folder with these files:
 * a `tree.json`;
@@ -185,7 +184,9 @@ field                         | purpose
 `Name`                        | The name you would like your object to have, this should be identical to the subfolder name.
 `Price`                       | How much your item sells for.
 `Description`                 | Description of the product.
-`Category`                    | This should match the `crop.json` `Type` or for fruit trees should be one of the following: `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, and `Seeds`.
+`Category`                    | This should match the `crop.json` `Type` or for fruit trees use one of the following categories: `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, and `Seeds`.
+`CategoryTextOverride`        | _(optional_) Visually allows you to alter what category the item appears as. Examples include: `herb`, `spice`, `hybrid`.
+`CategoryColorOverride`       | _(optional)_ Works the same as `Colors` field using RGBA, but only allows one input. Alters the text color of the category.
 `Edibility`                   | Edibility is for health, energy is calculated by the game. For inedibile items, set to -300.
 `IsColored`                   | _(optional)_ Set this value to `true` if your product is colored.
 `Recipe`                      | Set to `null`.
@@ -234,7 +235,7 @@ field                  | purpose
 `ShowHair`             | Set this to `true` or `false` depending on if you want the players' hair to be visible or not. Setting this to `false` is a good idea for masks.
 `IgnoreHairstyleOffset`| Set this to `true` or `false`. When set to `true` the hat will ignore any hairstyle offset.
 
-Hates do not support gift tastes.
+Hats do not support gift tastes.
 
 ### Weapons
 Weapons are 16x16 and can be added via Json Assets through the `Weapons` folder. 
@@ -266,7 +267,6 @@ field                  | purpose
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 
 Weapons do not support gift taste.
-
 
 ### Shirts and Pants
 
@@ -316,6 +316,7 @@ field                  | purpose
 Pants to do not support gift tastes. Pants do not support context tags. Pants added this way will also not show up in the character creation screen.
 
 ### Tailoring
+
 Tailoring is the recipe used to craft (tailor) a shirt or pants.
 
 A tailoring subfolder is a folder that contains these files:
@@ -397,7 +398,8 @@ For Saplings:
     "SaplingDescriptionLocalization": { "es": "spanish ftree (desc)" }
 ```
 
-##Tokens in Fields
+## Tokens in Fields
+
 [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915) can use Json Assets as tokens. An example of this would be sending an `object` through a mail. Note: You cannot send cooking recipes via Content Patcher. You will need to use the [Mail Framework Mod](https://www.nexusmods.com/stardewvalley/mods/1536) to send cooking recipes.
 
 Example:
