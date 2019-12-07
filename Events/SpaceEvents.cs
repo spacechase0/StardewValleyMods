@@ -1,4 +1,5 @@
 ﻿using SpaceCore.Utilities;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Events;
 using StardewValley.Network;

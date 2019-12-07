@@ -1,4 +1,5 @@
-﻿using xTile.Dimensions;
+﻿using SpaceShared;
+using xTile.Dimensions;
 
 namespace SpaceCore.Events
 {

@@ -15,6 +15,9 @@ using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
 using StardewValley.Menus;
+using System.Linq;
+using SpaceShared;
+using SpaceShared.APIs;
 
 namespace SpaceCore
 {
@@ -29,8 +32,10 @@ namespace SpaceCore
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            Log.Monitor = Monitor;
             Config = helper.ReadConfig<Configuration>();
-            
+
+            helper.Events.GameLoop.UpdateTicked += onUpdate;
             helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
             helper.Events.GameLoop.Saving += onSaving;
             helper.Events.GameLoop.Saved += onSaved;
@@ -51,7 +56,7 @@ namespace SpaceCore
                     if (m.FullDescription().Contains("showEndOfNightStuff"))
                         showNightEndMethod = m;
             }
-            catch (Exception e1)
+            catch ( Exception e1 )
             {
                 Log.trace("Failed to find Windows showEndOfNightStuff lambda: " + e1);
                 try
@@ -61,7 +66,7 @@ namespace SpaceCore
                         if (m.FullDescription().Contains("<showEndOfNightStuff>m__"))
                             showNightEndMethod = m;
                 }
-                catch (Exception e2)
+                catch ( Exception e2 )
                 {
                     Log.error("Failed to find Mac/Linux showEndOfNightStuff lambda: " + e2);
                 }
@@ -81,6 +86,11 @@ namespace SpaceCore
             doPostfix(typeof(Game1), nameof(Game1.loadForNewGame), typeof(BlankSaveHook));
             doPrefix(typeof(Game1).GetMethod(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int) }), typeof(WarpFarmerHook).GetMethod(nameof(WarpFarmerHook.Prefix)));
             doPostfix(typeof(GameMenu), nameof(GameMenu.getTabNumberFromName), typeof(GameMenuTabNameHook));
+            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ),                    typeof( SpriteEffects ), typeof( float ) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix1)));
+            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ),                                                                                                 }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix2)));
+            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix3)));
+            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( float   ), typeof( SpriteEffects ), typeof( float ) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix4)));
+            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color )                                                                                                  }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix5)));
         }
 
         private void doPrefix(Type origType, string origMethod, Type newType)
@@ -130,6 +140,21 @@ namespace SpaceCore
             {
                 Log.error($"Exception doing transpiler patch {orig}:{transpiler}: {e}");
             }
+        }
+
+        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            if (capi != null)
+            {
+                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
+                capi.RegisterSimpleOption(ModManifest, "Custom Skill Page", "Whether or not to show the custom skill page.\nThis will move the wallet so that there is room for more skills.", () => Config.CustomSkillPage, (bool val) => Config.CustomSkillPage = val);
+            }
+        }
+
+        private void onUpdate(object sender, UpdateTickedEventArgs e)
+        {
+            TileSheetExtensions.UpdateReferences();
         }
 
         /// <summary>Raised after the player loads a save slot.</summary>

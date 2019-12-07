@@ -10,6 +10,7 @@ using Tiled;
 using System.IO;
 using xTile.ObjectModel;
 using System.Xml.Serialization;
+using SpaceShared;
 
 namespace SpaceCore
 {
