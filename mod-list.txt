@@ -7,6 +7,7 @@ AnimalSocialMenu
 AnotherHungerMod
 BetterShopMenu
 Bow
+BugNet
 CarryChest
 ColorfulChests
 CombatLevelDamageScaler
@@ -19,6 +20,7 @@ CustomNPCFixes
 ExperienceBars
 ExtendedReach
 FlowerColorPicker
+GenericModConfigMenu
 JsonAssets
 JumpOver
 LuckSkill
@@ -32,10 +34,12 @@ RushOrders
 SeedCatalogue
 SleepyEye
 SpaceCore_SDV
+SpaceShared
 Spenny
 StardewProfitCalculator
 Terraforming
 ThreeHeartDancePartner
+ThrowableAxe
 ToolGeodes
 
 # archived
