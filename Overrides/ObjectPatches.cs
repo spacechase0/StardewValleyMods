@@ -1,17 +1,20 @@
-﻿using JsonAssets.Data;
+﻿using System.Diagnostics.CodeAnalysis;
+using JsonAssets.Data;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Objects;
+using SObject = StardewValley.Object;
 
 namespace JsonAssets.Overrides
 {
-    public class ObjectCanPlantHereOverride
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming convention is set by Harmony.")]
+    public class ObjectPatches
     {
-        public static bool Prefix(StardewValley.Object __instance, GameLocation l, Vector2 tile, ref bool __result)
+        public static bool CanBePlacedHere_Prefix(SObject __instance, GameLocation l, Vector2 tile, ref bool __result)
         {
             if (!__instance.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
             {
-                if (__instance.Category == StardewValley.Object.SeedsCategory)
+                if (__instance.Category == SObject.SeedsCategory)
                 {
                     bool isTree = false;
                     foreach (var tree in Mod.instance.fruitTrees)
@@ -23,15 +26,15 @@ namespace JsonAssets.Overrides
                         }
                     }
 
-                    var lobj = l.objects.ContainsKey(tile) ? l.objects[tile] : null;
+                    var tileObj = l.objects.ContainsKey(tile) ? l.objects[tile] : null;
                     if (isTree)
                     {
-                        __result = lobj == null && !l.isTileOccupiedForPlacement(tile, __instance);
+                        __result = tileObj == null && !l.isTileOccupiedForPlacement(tile, __instance);
                         return false;
                     }
                     else
                     {
-                        if (l.isTileHoeDirt(tile) || (lobj is IndoorPot))
+                        if (l.isTileHoeDirt(tile) || tileObj is IndoorPot)
                             __result = !l.isTileOccupiedForPlacement(tile, __instance);
                         else
                             __result = false;
@@ -43,52 +46,29 @@ namespace JsonAssets.Overrides
             else
                 return true;
         }
-    }
 
-    public static class ObjectNoActionHook
-    {
-        public static bool Prefix(StardewValley.Object __instance)
+        public static bool CheckForAction_Prefix(SObject __instance)
         {
             if (__instance.bigCraftable.Value && Mod.instance.bigCraftableIds.Values.Contains(__instance.ParentSheetIndex))
                 return false;
             return true;
         }
-    }
 
-    public static class ObjectCollectionShippingHook
-    {
-        public static void Postfix(int index, ref bool __result)
-        {
-            foreach (var ring in Mod.instance.myRings)
-            {
-                if (ring.GetObjectId() == index)
-                {
-                    __result = false;
-                    break;
-                }
-            }
-        }
-    }
-
-    public static class ObjectDisplayNameHook
-    {
-        public static bool Prefix(StardewValley.Object __instance, ref string __result)
+        public static bool LoadDisplayName_Prefix(SObject __instance, ref string __result)
         {
             if (!__instance.Name?.Contains("Honey") == true)
                 return true;
 
-            if ( !__instance.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex) )
+            if (!__instance.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
             {
-                string str;
-                Game1.objectInformation.TryGetValue(__instance.ParentSheetIndex, out str);
+                Game1.objectInformation.TryGetValue(__instance.ParentSheetIndex, out string str);
                 if (!string.IsNullOrEmpty(str))
                     __result = str.Split('/')[4];
                 return false;
             }
-            else if (__instance.bigCraftable.Value && Mod.instance.bigCraftableIds.Values.Contains(__instance.ParentSheetIndex) )
+            else if (__instance.bigCraftable.Value && Mod.instance.bigCraftableIds.Values.Contains(__instance.ParentSheetIndex))
             {
-                string str;
-                Game1.bigCraftablesInformation.TryGetValue(__instance.ParentSheetIndex, out str);
+                Game1.bigCraftablesInformation.TryGetValue(__instance.ParentSheetIndex, out string str);
                 if (!string.IsNullOrEmpty(str))
                 {
                     string[] strArray = str.Split('/');
@@ -99,23 +79,20 @@ namespace JsonAssets.Overrides
 
             return true;
         }
-    }
 
-    public static class ObjectCategoryTextOverride
-    {
-        public static bool Prefix(StardewValley.Object __instance, ref string __result )
+        public static bool GetCategoryName_Prefix(SObject __instance, ref string __result)
         {
             ObjectData objData = null;
-            foreach ( var obj in Mod.instance.objects )
+            foreach (var obj in Mod.instance.objects)
             {
-                if ( obj.GetObjectId() == __instance.ParentSheetIndex )
+                if (obj.GetObjectId() == __instance.ParentSheetIndex)
                 {
                     objData = obj;
                     break;
                 }
             }
 
-            if ( objData != null && objData.CategoryTextOverride != null)
+            if (objData?.CategoryTextOverride != null)
             {
                 __result = objData.CategoryTextOverride;
                 return false;
@@ -123,10 +100,20 @@ namespace JsonAssets.Overrides
 
             return true;
         }
-    }
-    public static class ObjectCategoryColorOverride
-    {
-        public static bool Prefix(StardewValley.Object __instance, ref Color __result)
+
+        public static void IsIndexOkForBasicShippedCategory_Postfix(int index, ref bool __result)
+        {
+            foreach (var ring in Mod.instance.myRings)
+            {
+                if (ring.GetObjectId() == index)
+                {
+                    __result = false;
+                    break;
+                }
+            }
+        }
+
+        public static bool GetCategoryColor_Prefix(SObject __instance, ref Color __result)
         {
             ObjectData objData = null;
             foreach (var obj in Mod.instance.objects)
