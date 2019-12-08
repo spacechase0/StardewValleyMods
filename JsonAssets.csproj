@@ -61,9 +61,9 @@
     <Compile Include="Data\ObjectData.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Other\ContentPatcher.cs" />
-    <Compile Include="Overrides\Crop.cs" />
-    <Compile Include="Overrides\Ring.cs" />
-    <Compile Include="Overrides\Object.cs" />
+    <Compile Include="Overrides\CropPatches.cs" />
+    <Compile Include="Overrides\RingPatches.cs" />
+    <Compile Include="Overrides\ObjectPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
