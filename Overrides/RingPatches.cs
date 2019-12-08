@@ -24,11 +24,10 @@ namespace JsonAssets.Overrides
                 __result = true;
                 return false;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.error("Exception doing ring stuff! Ring index: " + __instance.indexInTileSheet + "\nException: " + e);
-                __result = false;
-                return false;
+                Log.error($"Failed in {nameof(LoadDisplayFields_Prefix)} for #{__instance?.indexInTileSheet}:\n{ex}");
+                return true;
             }
         }
     }

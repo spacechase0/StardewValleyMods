@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using JsonAssets.Data;
+using SpaceShared;
 using StardewValley;
 
 namespace JsonAssets.Overrides
@@ -14,51 +16,68 @@ namespace JsonAssets.Overrides
     {
         public static bool IsPaddyCrop_Prefix(Crop __instance, ref bool __result)
         {
-            var cropData = Mod.instance.crops.FirstOrDefault(c => c.GetCropSpriteIndex() == __instance.rowInSpriteSheet.Value);
-            if (cropData == null)
-                return true;
-
-            if (cropData.CropType == CropData.CropType_.Paddy)
+            try
             {
-                __result = true;
-                return false;
-            }
+                var cropData = Mod.instance.crops.FirstOrDefault(c => c.GetCropSpriteIndex() == __instance.rowInSpriteSheet.Value);
+                if (cropData == null)
+                    return true;
 
-            return true;
+                if (cropData.CropType == CropData.CropType_.Paddy)
+                {
+                    __result = true;
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.error($"Failed in {nameof(IsPaddyCrop_Prefix)}:\n{ex}");
+                return true;
+            }
         }
 
-        public static IEnumerable<CodeInstruction> NewDay_Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        public static IEnumerable<CodeInstruction> NewDay_Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> instructions)
         {
+            instructions = instructions.ToArray();
+
             // TODO: Learn how to use ILGenerator
-
-            var newInsns = new List<CodeInstruction>();
-            bool justHooked = false;
-            foreach (var insn in insns)
+            try
             {
-                // The only reference to 90 is the index of the cactus fruit for checking if it is an indoor only crop
-                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == 90)
+                var newInstructions = new List<CodeInstruction>();
+                bool justHooked = false;
+                foreach (var instr in instructions)
                 {
-                    // By default the check is for the crop's product index.
-                    // We want the crop index itself instead since theoretically two crops could have the same product, but be different types.
-                    newInsns[newInsns.Count - 2].operand = typeof(Crop).GetField(nameof(Crop.rowInSpriteSheet));
+                    // The only reference to 90 is the index of the cactus fruit for checking if it is an indoor only crop
+                    if (instr.opcode == OpCodes.Ldc_I4_S && (sbyte)instr.operand == 90)
+                    {
+                        // By default the check is for the crop's product index.
+                        // We want the crop index itself instead since theoretically two crops could have the same product, but be different types.
+                        newInstructions[newInstructions.Count - 2].operand = typeof(Crop).GetField(nameof(Crop.rowInSpriteSheet));
 
-                    // Call our method
-                    newInsns.Add(new CodeInstruction(OpCodes.Call, typeof(CropPatches).GetMethod(nameof(IsIndoorOnlyCrop))));
-                    justHooked = true; // We need to change the next insn, whihc is a bna.un.s, to a different type of branch.
+                        // Call our method
+                        newInstructions.Add(new CodeInstruction(OpCodes.Call, typeof(CropPatches).GetMethod(nameof(IsIndoorOnlyCrop))));
+                        justHooked = true; // We need to change the next insn, whihc is a bna.un.s, to a different type of branch.
+                    }
+                    else if (justHooked)
+                    {
+                        instr.opcode = OpCodes.Brfalse_S;
+                        newInstructions.Add(instr);
+                        justHooked = false;
+                    }
+                    else
+                    {
+                        newInstructions.Add(instr);
+                    }
                 }
-                else if (justHooked)
-                {
-                    insn.opcode = OpCodes.Brfalse_S;
-                    newInsns.Add(insn);
-                    justHooked = false;
-                }
-                else
-                {
-                    newInsns.Add(insn);
-                }
+
+                return newInstructions;
             }
-
-            return newInsns;
+            catch (Exception ex)
+            {
+                Log.error($"Failed in {nameof(NewDay_Transpiler)}:\n{ex}");
+                return instructions;
+            }
         }
 
         public static bool IsIndoorOnlyCrop(int cropRow)
