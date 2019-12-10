@@ -411,6 +411,11 @@ namespace JsonAssets
                     {
                         Log.verbose($"Injecting {big.Name} sprites @ {bigCraftableRect(big.GetCraftableId())}");
                         asset.AsImage().PatchImage(big.texture, null, bigCraftableRect(big.GetCraftableId()));
+                        if (big.ReserveNextIndex)
+                        {
+                            Log.verbose($"Injecting {big.Name} reserved extra sprite @ {bigCraftableRect(big.GetCraftableId() + 1)}");
+                            asset.AsImage().PatchImage(big.texture2, null, bigCraftableRect(big.GetCraftableId() + 1));
+                        }
                     }
                     catch (Exception e)
                     {

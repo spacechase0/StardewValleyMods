@@ -10,6 +10,11 @@ namespace JsonAssets.Data
         [JsonIgnore]
         public Texture2D texture;
 
+        [JsonIgnore]
+        public Texture2D texture2;
+
+        public bool ReserveNextIndex { get; set; }
+
         public class Recipe_
         {
             public class Ingredient

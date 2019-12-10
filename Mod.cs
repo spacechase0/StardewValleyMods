@@ -426,9 +426,11 @@ namespace JsonAssets
                     BigCraftableData craftable = contentPack.ReadJsonFile<BigCraftableData>($"{relativePath}/big-craftable.json");
                     if (craftable == null || (craftable.DisableWithMod != null && Helper.ModRegistry.IsLoaded(craftable.DisableWithMod)))
                         continue;
-
+                    
                     // save craftable
                     craftable.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable.png");
+                    if (craftable.ReserveNextIndex)
+                        craftable.texture2 = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable-2.png");
                     RegisterBigCraftable(contentPack.Manifest, craftable);
                 }
             }
@@ -951,6 +953,8 @@ namespace JsonAssets
                     ids.Add(d.Name, currId++);
                     if (type == "objects" && ((ObjectData)d).IsColored)
                         ++currId;
+                    else if (type == "big-craftables" && ((BigCraftableData)d).ReserveNextIndex)
+                        ++currId;
                     d.id = ids[d.Name];
                 }
             }
@@ -1009,7 +1013,7 @@ namespace JsonAssets
                 Game1.player.leftRing.Value = null;
             if (Game1.player.rightRing.Value != null && fixId(oldObjectIds, objectIds, Game1.player.rightRing.Value.parentSheetIndex, origObjects))
                 Game1.player.rightRing.Value = null;
-            if (Game1.player.hat.Value != null && fixId(oldObjectIds, objectIds, Game1.player.hat.Value.parentSheetIndex, origObjects))
+            if (Game1.player.hat.Value != null && fixId(oldHatIds, hatIds, Game1.player.hat.Value.parentSheetIndex, origHats))
                 Game1.player.hat.Value = null;
             if (Game1.player.shirtItem.Value != null && fixId(oldClothingIds, clothingIds, Game1.player.shirtItem.Value.parentSheetIndex, origClothing))
                 Game1.player.shirtItem.Value = null;
