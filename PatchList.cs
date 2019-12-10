@@ -14,9 +14,7 @@ namespace ContentPatcherAnimations
         public string Action; // To make sure this is an EditImage
 
         // Target and FromFile are taken from CP since it handles tokens
-        
-        public Rectangle FromArea;
-        public Rectangle ToArea;
+        // Same for FromARea and ToArea
 
         // MINE
         public int AnimationFrameTime = -1;

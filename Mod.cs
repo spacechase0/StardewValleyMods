@@ -26,6 +26,8 @@ namespace ContentPatcherAnimations
         public Texture2D Target;
         public Func<Texture2D> SourceFunc;
         public Texture2D Source;
+        public Func<Rectangle> FromAreaFunc;
+        public Func<Rectangle> ToAreaFunc;
         public int CurrentFrame = 0;
     }
 
@@ -79,11 +81,14 @@ namespace ContentPatcherAnimations
                     if (++patch.Value.CurrentFrame >= patch.Key.AnimationFrameCount)
                         patch.Value.CurrentFrame = 0;
                     
-                    var sourceRect = patch.Key.FromArea;
+                    var sourceRect = patch.Value.FromAreaFunc.Invoke();
                     sourceRect.X += patch.Value.CurrentFrame * sourceRect.Width;
+                    var targetRect = patch.Value.ToAreaFunc.Invoke();
+                    if ( targetRect == Rectangle.Empty )
+                        targetRect = new Rectangle(0, 0, sourceRect.Width, sourceRect.Height);
                     var cols = new Color[sourceRect.Width * sourceRect.Height];
                     patch.Value.Source.GetData(0, sourceRect, cols, 0, cols.Length);
-                    patch.Value.Target.SetData(0, patch.Key.ToArea, cols, 0, cols.Length);
+                    patch.Value.Target.SetData(0, targetRect, cols, 0, cols.Length);
                 }
             }
         }
@@ -119,11 +124,6 @@ namespace ContentPatcherAnimations
                             Log.error("Animated patches must specify a LogName!");
                             continue;
                         }
-                        
-                        if ( patch.ToArea == new Rectangle() )
-                        {
-                            patch.ToArea = new Rectangle(0, 0, patch.FromArea.Width, patch.FromArea.Height);
-                        }
 
                         PatchData data = new PatchData();
 
@@ -149,6 +149,8 @@ namespace ContentPatcherAnimations
                         data.IsActive = () => (bool)appliedProp.GetValue(targetPatch);
                         data.SourceFunc = () => pack.LoadAsset<Texture2D>((string)sourceProp.GetValue(targetPatch));
                         data.TargetFunc = () => FindTargetTexture((string)targetProp.GetValue(targetPatch));
+                        data.FromAreaFunc = () => GetRectangleFromPatch(targetPatch, "FromArea");
+                        data.ToAreaFunc = () => GetRectangleFromPatch(targetPatch, "ToArea");
 
                         animatedPatches.Add(patch, data);
                     }
@@ -165,93 +167,20 @@ namespace ContentPatcherAnimations
                 tex = Helper.Reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
             }
             return tex;
-            /*
-            switch ( target.ToLower() )
+        }
+
+        private Rectangle GetRectangleFromPatch(object targetPatch, string rectName)
+        {
+            var rect = targetPatch.GetType().GetField(rectName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(targetPatch);
+            var tryGetRectValue = rect.GetType().GetMethod("TryGetRectangle");
+
+            object[] args = new object[] { null, null };
+            if ( !((bool) tryGetRectValue.Invoke(rect, args)) )
             {
-                case "buildings\\houses":
-                    return Farm.houseTextures;
-                case "characters\\farmer\\accessories":
-                    return FarmerRenderer.accessoriesTexture;
-                case "characters\\farmer\\hairstyles":
-                    return FarmerRenderer.hairStylesTexture;
-                case "characters\\farmer\\hats":
-                    return FarmerRenderer.hatsTexture;
-                case "characters\\farmer\\shirts":
-                    return FarmerRenderer.shirtsTexture;
-                case "loosesprites\\lighting\\greenlight":
-                    return Game1.cauldronLight;
-                case "loosesprites\\lighting\\indoorwindowlight":
-                    return Game1.indoorWindowLight;
-                case "loosesprites\\lighting\\lantern":
-                    return Game1.lantern;
-                case "loosesprites\\lighting\\sconcelight":
-                    return Game1.sconceLight;
-                case "loosesprites\\lighting\\windowlight":
-                    return Game1.windowLight;
-                case "loosesprites\\controllermaps":
-                    return Game1.controllerMaps;
-                case "loosesprites\\cursors":
-                    return Game1.mouseCursors;
-                case "loosesprites\\daybg":
-                    return Game1.daybg;
-                case "loosesprites\\font_bold":
-                    return SpriteText.spriteTexture;
-                case "loosesprites\\font_colored":
-                    return SpriteText.coloredTexture;
-                case "loosesprites\\nightbg":
-                    return Game1.nightbg;
-                case "loosesprites\\shadow":
-                    return Game1.shadowTexture;
-                case "tilesheets\\crops":
-                    return Game1.cropSpriteSheet;
-                case "tilesheets\\debris":
-                    return Game1.debrisSpriteSheet;
-                case "tilesheets\\emotes":
-                    return Game1.emoteSpriteSheet;
-                case "tilesheets\\furniture":
-                    return Furniture.furnitureTexture;
-                case "tilesheets\\projectiles":
-                    return Projectile.projectileSheet;
-                case "tilesheets\\rain":
-                    return Game1.rainTexture;
-                case "tilesheets\\tools":
-                    return (Texture2D) typeof(Game1).GetField("_toolSpriteSheet", PrivateS).GetValue(null);
-                case "tilesheets\\weapons":
-                    return Tool.weaponsTexture;
-                case "maps\\menutiles":
-                    return Game1.menuTexture;
-                case "maps\\springobjects":
-                    return Game1.objectSpriteSheet;
-                case "maps\\walls_and_floors":
-                    return Wallpaper.wallpaperTexture;
-                case "tilesheets\\animations":
-                    return Game1.animations;
-                case "tilesheets\\buffsicons":
-                    return Game1.buffsIcons;
-                case "tilesheets\\craftables":
-                    return Game1.bigCraftableSpriteSheet;
-                case "tilesheets\\fruittrees":
-                    return FruitTree.texture;
-                case "terrainfeatures\\flooring":
-                    return Flooring.floorsTexture;
-                case "terrainfeatures\\hoedirt":
-                    return HoeDirt.lightTexture;
-                case "terrainfeatures\\hoedirtdark":
-                    return HoeDirt.darkTexture;
-                case "terrainfeatures\\hoedirtsnow":
-                    return HoeDirt.snowTexture;
+                return Rectangle.Empty;
             }
 
-            // bushes
-            // trees
-            // animals
-            // buildings
-            // characters
-            // fences
-            // portraits
-
-            return null;
-            */
+            return (Rectangle)args[0];
         }
     }
 }
