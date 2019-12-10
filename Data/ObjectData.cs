@@ -38,6 +38,7 @@ namespace JsonAssets.Data
             Seeds = -74, //SObject.SeedsCategory,
             Ring = -96, //SObject.ringCategory,
             AnimalGoods = -18, //SObject.sellAtPierresAndMarnies
+            Greens = -81, //SObject.GreensCategory
         }
 
         public class Recipe_
