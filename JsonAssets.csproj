@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Api.cs" />
     <Compile Include="ContentInjector.cs" />
+    <Compile Include="Data\DataNeedsIdWithTexture.cs" />
     <Compile Include="Data\PantsData.cs" />
     <Compile Include="Data\ContentPackData.cs" />
     <Compile Include="Data\DataSeparateTextureIndex.cs" />

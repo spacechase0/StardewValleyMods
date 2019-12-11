@@ -171,22 +171,22 @@ namespace JsonAssets.Other.ContentPatcher
             tokens.Add(new IdToken("Hat", ja.GetAllHatIds));
             tokens.Add(new IdToken("Weapon", ja.GetAllWeaponIds));
             tokens.Add(new IdToken("Clothing", ja.GetAllClothingIds));
-            tokens.Add(new SpriteTilesheetToken("Object", Mod.instance.objects.ToList<DataNeedsIdWithTexture>())));
+            tokens.Add(new SpriteTilesheetToken("Object", Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("Object", true, Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("Object", false, Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("Crop", Mod.instance.crops.ToList<DataNeedsIdWithTexture>())));
+            tokens.Add(new SpriteTilesheetToken("Crop", Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("Crop", true, Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("Crop", false, Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("FruitTree", Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>())));
+            tokens.Add(new SpriteTilesheetToken("FruitTree", Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("FruitTree", true, Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("FruitTree", false, Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("BigCraftable", Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>())));
+            tokens.Add(new SpriteTilesheetToken("BigCraftable", Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("BigCraftable", true, Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("BigCraftable", false, Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("Hat", Mod.instance.hats.ToList<DataNeedsIdWithTexture>())));
+            tokens.Add(new SpriteTilesheetToken("Hat", Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("Hat", true, Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("Hat", false, Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("Weapon", Mod.instance.weapons.ToList<DataNeedsIdWithTexture>())));
+            tokens.Add(new SpriteTilesheetToken("Weapon", Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("Weapon", true, Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
             tokens.Add(new SpriteCoordinateToken("Weapon", false, Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
             // TODO: Shirt tilesheet

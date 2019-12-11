@@ -61,7 +61,7 @@ namespace JsonAssets.Overrides
         {
             try
             {
-                if (__instance.bigCraftable.Value && Mod.instance.bigCraftableIds.Values.Contains(__instance.ParentSheetIndex))
+                if (__instance.bigCraftable.Value && Mod.instance.bigCraftableIds.Values.Contains(__instance.ParentSheetIndex) && __instance.name.Contains("Chair"))
                     return false;
                 return true;
             }
