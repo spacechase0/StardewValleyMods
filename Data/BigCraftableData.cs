@@ -5,11 +5,8 @@ using System.Collections.Generic;
 
 namespace JsonAssets.Data
 {
-    public class BigCraftableData : DataNeedsId
+    public class BigCraftableData : DataNeedsIdWithTexture
     {
-        [JsonIgnore]
-        public Texture2D texture;
-
         [JsonIgnore]
         public Texture2D texture2;
 

@@ -8,11 +8,8 @@ using SObject = StardewValley.Object;
 
 namespace JsonAssets.Data
 {
-    public class WeaponData : DataNeedsId
+    public class WeaponData : DataNeedsIdWithTexture
     {
-        [JsonIgnore]
-        public Texture2D texture;
-
         [JsonConverter(typeof(StringEnumConverter))]
         public enum Type_
         {

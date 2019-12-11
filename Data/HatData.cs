@@ -5,11 +5,8 @@ using System.Collections.Generic;
 
 namespace JsonAssets.Data
 {
-    public class HatData : DataNeedsId
+    public class HatData : DataNeedsIdWithTexture
     {
-        [JsonIgnore]
-        internal Texture2D texture;
-
         public string Description { get; set; }
         public int PurchasePrice { get; set; }
         public bool ShowHair { get; set; }

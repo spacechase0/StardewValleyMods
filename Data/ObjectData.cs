@@ -8,10 +8,8 @@ using SObject = StardewValley.Object;
 
 namespace JsonAssets.Data
 {
-    public class ObjectData : DataNeedsId
+    public class ObjectData : DataNeedsIdWithTexture
     {
-        [JsonIgnore]
-        public Texture2D texture;
         [JsonIgnore]
         public Texture2D textureColor;
 

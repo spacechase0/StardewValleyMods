@@ -6,6 +6,7 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Crafting;
+using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
 
@@ -45,8 +46,8 @@ namespace JsonAssets
                 return true;
             if (asset.AssetNameEquals("TileSheets\\fruitTrees"))
                 return true;
-            if (asset.AssetNameEquals("TileSheets\\Craftables") || asset.AssetNameEquals("TileSheets\\Craftables_indoor") || asset.AssetNameEquals("TileSheets\\Craftables_outdoor"))
-                return true; // _indoor/_outdoor for Seasonal Immersion compat
+            if (asset.AssetNameEquals("TileSheets\\Craftables"))
+                return true;
             if (asset.AssetNameEquals("Characters\\Farmer\\hats"))
                 return true;
             if (asset.AssetNameEquals("TileSheets\\weapons"))
@@ -350,6 +351,12 @@ namespace JsonAssets
                             Log.verbose($"Injecting {obj.Name} color sprites @ {objectRect(obj.GetObjectId() + 1)}");
                             asset.AsImage().PatchImage(obj.textureColor, null, objectRect(obj.GetObjectId() + 1));
                         }
+
+                        var rect = objectRect(obj.GetObjectId());
+                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(Game1.objectSpriteSheet, rect).TileSheet;
+                        obj.tilesheet = asset.AssetName;
+                        obj.tilesheetX = rect.X;
+                        obj.tilesheetY = rect.Y;
                     }
                     catch ( Exception e )
                     {
@@ -370,6 +377,12 @@ namespace JsonAssets
                     {
                         Log.verbose($"Injecting {crop.Name} crop images @ {cropRect(crop.GetCropSpriteIndex())}");
                         asset.AsImage().PatchExtendedTileSheet(crop.texture, null, cropRect(crop.GetCropSpriteIndex()));
+                        
+                        var rect = cropRect(crop.GetCropSpriteIndex());
+                        int ts = TileSheetExtensions.GetAdjustedTileSheetTarget(Game1.cropSpriteSheet, rect).TileSheet;
+                        crop.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                        crop.tilesheetX = rect.X;
+                        crop.tilesheetY = rect.Y;
                     }
                     catch (Exception e)
                     {
@@ -390,6 +403,12 @@ namespace JsonAssets
                     {
                         Log.verbose($"Injecting {fruitTree.Name} fruit tree images @ {fruitTreeRect(fruitTree.GetFruitTreeIndex())}");
                         asset.AsImage().PatchExtendedTileSheet(fruitTree.texture, null, fruitTreeRect(fruitTree.GetFruitTreeIndex()));
+                        
+                        var rect = fruitTreeRect(fruitTree.GetFruitTreeIndex());
+                        int ts = TileSheetExtensions.GetAdjustedTileSheetTarget(FruitTree.texture, rect).TileSheet;
+                        fruitTree.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                        fruitTree.tilesheetX = rect.X;
+                        fruitTree.tilesheetY = rect.Y;
                     }
                     catch (Exception e)
                     {
@@ -397,7 +416,7 @@ namespace JsonAssets
                     }
                 }
             }
-            else if (asset.AssetNameEquals("TileSheets\\Craftables") || asset.AssetNameEquals("TileSheets\\Craftables_indoor") || asset.AssetNameEquals("TileSheets\\Craftables_outdoor"))
+            else if (asset.AssetNameEquals("TileSheets\\Craftables"))
             {
                 var oldTex = asset.AsImage().Data;
                 Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
@@ -416,6 +435,12 @@ namespace JsonAssets
                             Log.verbose($"Injecting {big.Name} reserved extra sprite @ {bigCraftableRect(big.GetCraftableId() + 1)}");
                             asset.AsImage().PatchImage(big.texture2, null, bigCraftableRect(big.GetCraftableId() + 1));
                         }
+
+                        var rect = bigCraftableRect(big.GetCraftableId());
+                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(Game1.bigCraftableSpriteSheet, rect).TileSheet;
+                        big.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                        big.tilesheetX = rect.X;
+                        big.tilesheetY = rect.Y;
                     }
                     catch (Exception e)
                     {
@@ -437,6 +462,12 @@ namespace JsonAssets
                     {
                         Log.verbose($"Injecting {hat.Name} sprites @ {hatRect(hat.GetHatId())}");
                         asset.AsImage().PatchImage(hat.texture, null, hatRect(hat.GetHatId()));
+
+                        var rect = hatRect(hat.GetHatId());
+                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(FarmerRenderer.hatsTexture, rect).TileSheet;
+                        hat.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                        hat.tilesheetX = rect.X;
+                        hat.tilesheetY = rect.Y;
                     }
                     catch (Exception e)
                     {
@@ -458,6 +489,12 @@ namespace JsonAssets
                     {
                         Log.verbose($"Injecting {weapon.Name} sprites @ {weaponRect(weapon.GetWeaponId())}");
                         asset.AsImage().PatchImage(weapon.texture, null, weaponRect(weapon.GetWeaponId()));
+
+                        var rect = weaponRect(weapon.GetWeaponId());
+                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(Tool.weaponsTexture, rect).TileSheet;
+                        weapon.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                        weapon.tilesheetX = rect.X;
+                        weapon.tilesheetY = rect.Y;
                     }
                     catch (Exception e)
                     {

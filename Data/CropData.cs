@@ -5,11 +5,8 @@ using System.Collections.Generic;
 
 namespace JsonAssets.Data
 {
-    public class CropData : DataNeedsId
+    public class CropData : DataNeedsIdWithTexture
     {
-        [JsonIgnore]
-        public Texture2D texture;
-        
         public object Product { get; set; }
         public string SeedName { get; set; }
         public string SeedDescription { get; set; }

@@ -4,11 +4,8 @@ using System.Collections.Generic;
 
 namespace JsonAssets.Data
 {
-    public class FruitTreeData : DataNeedsId
+    public class FruitTreeData : DataNeedsIdWithTexture
     {
-        [JsonIgnore]
-        public Texture2D texture;
-        
         public object Product { get; set; }
         public string SaplingName { get; set; }
         public string SaplingDescription { get; set; }

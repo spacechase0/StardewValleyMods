@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace JsonAssets.Data
 {
-    public abstract class DataSeparateTextureIndex : DataNeedsId
+    public abstract class DataNeedsIdWithTexture : DataNeedsId
     {
-        internal int textureIndex = -1;
+        [JsonIgnore]
+        public Texture2D texture;
 
         // The following is mainly data for the Content Patcher integration.
 
