@@ -30,6 +30,11 @@ namespace SpaceCore
         internal static Dictionary<string, ExtensionData> extendedTextureAssets = new Dictionary<string, ExtensionData>();
         private static Dictionary<Texture2D, ExtensionData> extendedTextures = new Dictionary<Texture2D, ExtensionData>();
 
+        internal static void init()
+        {
+            SpaceCore.instance.Helper.Content.AssetLoaders.Add(new ExtendedTileSheetLoader());
+        }
+
         public static void RegisterExtendedTileSheet(string asset, int unitSize)
         {
             if (extendedTextureAssets.ContainsKey(asset))
@@ -45,6 +50,13 @@ namespace SpaceCore
         {
             if (extendedTextures.ContainsKey(tex))
                 return extendedTextures[tex].UnitSize;
+            return -1;
+        }
+
+        public static int GetTileSheetUnitSize(string asset)
+        {
+            if (extendedTextureAssets.ContainsKey(asset))
+                return extendedTextureAssets[asset].UnitSize;
             return -1;
         }
 
@@ -75,6 +87,17 @@ namespace SpaceCore
         public static AdjustedTarget GetAdjustedTileSheetTarget(Texture2D tex, Rectangle sourceRect )
         {
             int unit = GetTileSheetUnitSize(tex);
+            return GetAdjustedTileSheetTargetImpl(unit, sourceRect);
+        }
+
+        public static AdjustedTarget GetAdjustedTileSheetTarget(string asset, Rectangle sourceRect)
+        {
+            int unit = GetTileSheetUnitSize(asset);
+            return GetAdjustedTileSheetTargetImpl(unit, sourceRect);
+        }
+
+        private static AdjustedTarget GetAdjustedTileSheetTargetImpl(int unit, Rectangle sourceRect)
+        {
             if (unit <= 0)
                 return new AdjustedTarget(0, sourceRect.Y); // Something went wrong or this tilesheet isn't affected
             /*if (sourceRect.Height != unit || sourceRect.Y % unit != 0)
@@ -158,5 +181,32 @@ namespace SpaceCore
             }
         }
         */
+    }
+
+    public class ExtendedTileSheetLoader : IAssetLoader
+    {
+        public bool CanLoad<T>(IAssetInfo asset)
+        {
+            foreach ( var extAsset in TileSheetExtensions.extendedTextureAssets )
+            {
+                for (int i = 0; i < extAsset.Value.Extensions.Count; ++i)
+                    if (asset.AssetNameEquals(extAsset.Key + (i + 2).ToString()))
+                        return true;
+            }
+
+            return false;
+        }
+
+        public T Load<T>(IAssetInfo asset)
+        {
+            foreach (var extAsset in TileSheetExtensions.extendedTextureAssets)
+            {
+                for (int i = 0; i < extAsset.Value.Extensions.Count; ++i)
+                    if (asset.AssetNameEquals(extAsset.Key + (i + 2).ToString()))
+                        return (T) (object) extAsset.Value.Extensions[i];
+            }
+
+            return default(T);
+        }
     }
 }

@@ -42,6 +42,7 @@ namespace SpaceCore
 
             Commands.register();
             Skills.init(helper.Events);
+            TileSheetExtensions.init();
 
             harmony = HarmonyInstance.Create("spacechase0.SpaceCore");
 
