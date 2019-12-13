@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using Newtonsoft.Json;
+using SpaceCore;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -578,26 +579,70 @@ namespace JsonAssets
             }
             else if (e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded)
             {
-                Log.debug("Adding default recipes");
+                Log.debug("Adding default/leveled recipes");
                 foreach (var obj in objects)
                 {
-                    if (obj.Recipe != null && obj.Recipe.IsDefault && !Game1.player.knowsRecipe(obj.Name))
+                    if (obj.Recipe != null)
                     {
-                        if (obj.Category == ObjectData.Category_.Cooking)
+                        bool unlockedByLevel = false;
+                        if ( obj.Recipe.SkillUnlockName?.Length > 0 && obj.Recipe.SkillUnlockLevel > 0 )
                         {
-                            Game1.player.cookingRecipes.Add(obj.Name, 0);
+                            int level = 0;
+                            switch ( obj.Recipe.SkillUnlockName )
+                            {
+                                case "Farming": level = Game1.player.farmingLevel.Value; break;
+                                case "Fishing": level = Game1.player.fishingLevel.Value; break;
+                                case "Foraging": level = Game1.player.foragingLevel.Value; break;
+                                case "Mining": level = Game1.player.miningLevel.Value; break;
+                                case "Combat": level = Game1.player.combatLevel.Value; break;
+                                case "Luck": level = Game1.player.luckLevel.Value; break;
+                                default: level = Game1.player.GetCustomSkillLevel(obj.Recipe.SkillUnlockName); break;
+                            }
+
+                            if ( level >= obj.Recipe.SkillUnlockLevel )
+                            {
+                                unlockedByLevel = true;
+                            }
                         }
-                        else
+                        if ((obj.Recipe.IsDefault || unlockedByLevel) && !Game1.player.knowsRecipe(obj.Name))
                         {
-                            Game1.player.craftingRecipes.Add(obj.Name, 0);
+                            if (obj.Category == ObjectData.Category_.Cooking)
+                            {
+                                Game1.player.cookingRecipes.Add(obj.Name, 0);
+                            }
+                            else
+                            {
+                                Game1.player.craftingRecipes.Add(obj.Name, 0);
+                            }
                         }
                     }
                 }
                 foreach (var big in bigCraftables)
                 {
-                    if (big.Recipe != null && big.Recipe.IsDefault && !Game1.player.knowsRecipe(big.Name))
+                    if (big.Recipe != null)
                     {
-                        Game1.player.craftingRecipes.Add(big.Name, 0);
+                        bool unlockedByLevel = false;
+                        if (big.Recipe.SkillUnlockName?.Length > 0 && big.Recipe.SkillUnlockLevel > 0)
+                        {
+                            int level = 0;
+                            switch (big.Recipe.SkillUnlockName)
+                            {
+                                case "Farming": level = Game1.player.farmingLevel.Value; break;
+                                case "Fishing": level = Game1.player.fishingLevel.Value; break;
+                                case "Foraging": level = Game1.player.foragingLevel.Value; break;
+                                case "Mining": level = Game1.player.miningLevel.Value; break;
+                                case "Combat": level = Game1.player.combatLevel.Value; break;
+                                case "Luck": level = Game1.player.luckLevel.Value; break;
+                                default: level = Game1.player.GetCustomSkillLevel(big.Recipe.SkillUnlockName); break;
+                            }
+
+                            if (level >= big.Recipe.SkillUnlockLevel)
+                            {
+                                unlockedByLevel = true;
+                            }
+                        }
+                        if ((big.Recipe.IsDefault || unlockedByLevel) && !Game1.player.knowsRecipe(big.Name))
+                            Game1.player.craftingRecipes.Add(big.Name, 0);
                     }
                 }
             }

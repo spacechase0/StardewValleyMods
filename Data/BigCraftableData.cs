@@ -19,7 +19,10 @@ namespace JsonAssets.Data
                 public object Object { get; set; }
                 public int Count { get; set; }
             }
-            // Possibly friendship option (letters, like vanilla) and/or skill levels (on levelup?)
+
+            public string SkillUnlockName { get; set; } = null;
+            public int SkillUnlockLevel { get; set; } = -1;
+
             public int ResultCount { get; set; } = 1;
             public IList<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
 
@@ -35,7 +38,11 @@ namespace JsonAssets.Data
                 foreach (var ingredient in Ingredients)
                     str += Mod.instance.ResolveObjectId(ingredient.Object) + " " + ingredient.Count + " ";
                 str = str.Substring(0, str.Length - 1);
-                str += $"/what is this for?/{parent.id}/true/null";
+                str += $"/what is this for?/{parent.id}/true/";
+                if (SkillUnlockName?.Length > 0 && SkillUnlockLevel > 0)
+                    str += SkillUnlockName + " " + SkillUnlockLevel;
+                else
+                    str += "null";
                 return str;
             }
 

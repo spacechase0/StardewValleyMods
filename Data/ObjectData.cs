@@ -46,7 +46,10 @@ namespace JsonAssets.Data
                 public object Object { get; set; }
                 public int Count { get; set; }
             }
-            // Possibly friendship option (letters, like vanilla) and/or skill levels (on levelup?)
+
+            public string SkillUnlockName { get; set; } = null;
+            public int SkillUnlockLevel { get; set; } = -1;
+
             public int ResultCount { get; set; } = 1;
             public IList<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
 
@@ -65,7 +68,10 @@ namespace JsonAssets.Data
                 str += $"/what is this for?/{parent.id}/";
                 if (parent.Category != Category_.Cooking)
                     str += "false/";
-                str += "/null"; // TODO: Requirement
+                if (SkillUnlockName?.Length > 0 && SkillUnlockLevel > 0)
+                    str += "/" + SkillUnlockName + " " + SkillUnlockLevel;
+                else
+                    str += "/null";
                 return str;
             }
 

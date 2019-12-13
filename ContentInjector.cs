@@ -353,8 +353,8 @@ namespace JsonAssets
                         }
 
                         var rect = objectRect(obj.GetObjectId());
-                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(Game1.objectSpriteSheet, rect).TileSheet;
-                        obj.tilesheet = asset.AssetName;
+                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
+                        obj.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                         obj.tilesheetX = rect.X;
                         obj.tilesheetY = rect.Y;
                     }
@@ -379,7 +379,7 @@ namespace JsonAssets
                         asset.AsImage().PatchExtendedTileSheet(crop.texture, null, cropRect(crop.GetCropSpriteIndex()));
                         
                         var rect = cropRect(crop.GetCropSpriteIndex());
-                        int ts = TileSheetExtensions.GetAdjustedTileSheetTarget(Game1.cropSpriteSheet, rect).TileSheet;
+                        int ts = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
                         crop.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                         crop.tilesheetX = rect.X;
                         crop.tilesheetY = rect.Y;
@@ -405,7 +405,7 @@ namespace JsonAssets
                         asset.AsImage().PatchExtendedTileSheet(fruitTree.texture, null, fruitTreeRect(fruitTree.GetFruitTreeIndex()));
                         
                         var rect = fruitTreeRect(fruitTree.GetFruitTreeIndex());
-                        int ts = TileSheetExtensions.GetAdjustedTileSheetTarget(FruitTree.texture, rect).TileSheet;
+                        int ts = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
                         fruitTree.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                         fruitTree.tilesheetX = rect.X;
                         fruitTree.tilesheetY = rect.Y;
@@ -437,7 +437,7 @@ namespace JsonAssets
                         }
 
                         var rect = bigCraftableRect(big.GetCraftableId());
-                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(Game1.bigCraftableSpriteSheet, rect).TileSheet;
+                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
                         big.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                         big.tilesheetX = rect.X;
                         big.tilesheetY = rect.Y;
@@ -464,7 +464,7 @@ namespace JsonAssets
                         asset.AsImage().PatchImage(hat.texture, null, hatRect(hat.GetHatId()));
 
                         var rect = hatRect(hat.GetHatId());
-                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(FarmerRenderer.hatsTexture, rect).TileSheet;
+                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
                         hat.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                         hat.tilesheetX = rect.X;
                         hat.tilesheetY = rect.Y;
@@ -491,7 +491,7 @@ namespace JsonAssets
                         asset.AsImage().PatchImage(weapon.texture, null, weaponRect(weapon.GetWeaponId()));
 
                         var rect = weaponRect(weapon.GetWeaponId());
-                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(Tool.weaponsTexture, rect).TileSheet;
+                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
                         weapon.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                         weapon.tilesheetX = rect.X;
                         weapon.tilesheetY = rect.Y;
