@@ -38,7 +38,7 @@ namespace JsonAssets.Data
                 foreach (var ingredient in Ingredients)
                     str += Mod.instance.ResolveObjectId(ingredient.Object) + " " + ingredient.Count + " ";
                 str = str.Substring(0, str.Length - 1);
-                str += $"/what is this for?/{parent.id}/true/";
+                str += $"/what is this for?/{parent.id} {ResultCount}/true/";
                 if (SkillUnlockName?.Length > 0 && SkillUnlockLevel > 0)
                     str += SkillUnlockName + " " + SkillUnlockLevel;
                 else
