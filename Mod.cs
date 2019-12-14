@@ -1317,9 +1317,9 @@ namespace JsonAssets
                 {
                     var key = oldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
 
+                    toRemove.Add(entry);
                     if (objectIds.ContainsKey(key))
                     {
-                        toRemove.Add(entry);
                         toAdd.Add(objectIds[key], dict[entry]);
                     }
                 }
@@ -1342,9 +1342,9 @@ namespace JsonAssets
                 {
                     var key = oldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
 
+                    toRemove.Add(entry);
                     if (objectIds.ContainsKey(key))
                     {
-                        toRemove.Add(entry);
                         toAdd.Add(objectIds[key], dict[entry]);
                     }
                 }
