@@ -43,6 +43,8 @@ namespace JsonAssets.Data
                     str += SkillUnlockName + " " + SkillUnlockLevel;
                 else
                     str += "null";
+                if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
+                    str += "/" + parent.LocalizedName();
                 return str;
             }
 
