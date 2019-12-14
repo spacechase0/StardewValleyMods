@@ -187,6 +187,11 @@ namespace CustomizeExterior
                 {
                     Rectangle house = new Rectangle(59 * Game1.tileSize, 11 * Game1.tileSize, 9 * Game1.tileSize, 6 * Game1.tileSize);
                     Rectangle greenhouse = new Rectangle(25 * Game1.tileSize, 10 * Game1.tileSize, 7 * Game1.tileSize, 6 * Game1.tileSize);
+                    if ( Game1.whichFarm == Farm.fourCorners_layout )
+                    {
+                        greenhouse.X = 36 * Game1.tileSize;
+                        greenhouse.Y = 25 * Game1.tileSize;
+                    }
 
                     if (house.Contains(pos.X, pos.Y))
                     {
