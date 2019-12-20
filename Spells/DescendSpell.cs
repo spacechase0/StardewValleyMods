@@ -13,7 +13,7 @@ namespace Magic.Spells
 
         public override bool canCast(Farmer player, int level)
         {
-            return base.canCast(player, level) && player.currentLocation is MineShaft;
+            return base.canCast(player, level) && player.currentLocation is MineShaft ms && ms.mineLevel != MineShaft.quarryMineShaft;
         }
 
         public override int getManaCost(Farmer player, int level)
