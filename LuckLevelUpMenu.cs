@@ -431,6 +431,7 @@ namespace LuckSkill
                         {
                             Game1.player.professions.Add(this.professionsToChoose[0]);
                             this.getImmediateProfessionPerk(this.professionsToChoose[0]);
+                            RemoveLevelFromLevelList();
                             this.isActive = false;
                             this.informationUp = false;
                             this.isProfessionChooser = false;
@@ -443,6 +444,7 @@ namespace LuckSkill
                         {
                             Game1.player.professions.Add(this.professionsToChoose[1]);
                             this.getImmediateProfessionPerk(this.professionsToChoose[1]);
+                            RemoveLevelFromLevelList();
                             this.isActive = false;
                             this.informationUp = false;
                             this.isProfessionChooser = false;
@@ -567,6 +569,7 @@ namespace LuckSkill
                     if ((this.oldMouseState.LeftButton == ButtonState.Pressed || (Game1.options.gamepadControls && Game1.oldPadState.IsButtonDown(Buttons.A))) && this.readyToClose())
                     {
                         this.getLevelPerk(this.currentSkill, this.currentLevel);
+                        RemoveLevelFromLevelList();
                         this.isActive = false;
                         this.informationUp = false;
                     }
@@ -608,6 +611,19 @@ namespace LuckSkill
             }
             Game1.player.health = Game1.player.maxHealth;
             Game1.player.Stamina = (float)Game1.player.MaxStamina;
+        }
+        
+        public virtual void RemoveLevelFromLevelList()
+        {
+            for (int index = 0; index < Game1.player.newLevels.Count; ++index)
+            {
+                Point newLevel = Game1.player.newLevels[index];
+                if (newLevel.X == this.currentSkill && newLevel.Y == this.currentLevel)
+                {
+                    Game1.player.newLevels.RemoveAt(index);
+                    --index;
+                }
+            }
         }
 
         public override void draw(SpriteBatch b)
