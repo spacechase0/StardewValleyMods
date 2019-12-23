@@ -60,11 +60,14 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Harmony">
+      <HintPath>$(GamePath)\smapi-internal\0Harmony.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LuckLevelUpMenu.cs" />
     <Compile Include="Mod.cs" />
-    <Compile Include="Other\ExperienceBars.cs" />
+    <Compile Include="Overrides\Farmer.cs" />
+    <Compile Include="Overrides\LevelUpMenu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

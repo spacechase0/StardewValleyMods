@@ -1,28 +1,34 @@
-﻿using LuckSkill.Other;
+﻿using Harmony;
+using LuckSkill.Overrides;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore.Events;
 using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Events;
+using StardewValley.Locations;
 using StardewValley.Menus;
+using StardewValley.Objects;
 using StardewValley.Quests;
+using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace LuckSkill
 {
-    public class Mod : StardewModdingAPI.Mod
+    public class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
         public const int PROFESSION_DAILY_LUCK = 5 * 6;
-        public const int PROFESSION_MOREQUESTS = 5 * 6 + 1;// 4;
-        public const int PROFESSION_A1 = 5 * 6 + 2;
-        public const int PROFESSION_A2 = 5 * 6 + 3;
+        public const int PROFESSION_MORE_QUESTS = 5 * 6 + 1;// 4;
+        public const int PROFESSION_CHANCE_MAX_LUCK = 5 * 6 + 2;
+        public const int PROFESSION_NO_BAD_LUCK = 5 * 6 + 3;
         public const int PROFESSION_NIGHTLY_EVENTS = 5 * 6 + 4;// 1;
-        public const int PROFESSION_B2 = 5 * 6 + 5;
+        public const int PROFESSION_JUNIMO_HELP = 5 * 6 + 5;
 
         public static Mod instance;
 
@@ -33,16 +39,53 @@ namespace LuckSkill
             instance = this;
             Log.Monitor = Monitor;
             
-            helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.Player.Warped += onWarped;
-            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
             helper.Events.Display.RenderedActiveMenu += onRenderedActiveMenu;
             helper.Events.GameLoop.DayStarted += onDayStarted;
+            helper.Events.GameLoop.DayEnding += onDayEnding;
             helper.Events.GameLoop.GameLaunched += onGameLaunched;
 
             SpaceEvents.ChooseNightlyFarmEvent += changeFarmEvent;
 
+            try
+            {
+                var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
+                Log.trace("Doing harmony patches...");
+                harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.gainExperience)), transpiler: new HarmonyMethod(AccessTools.Method(typeof(ExperienceGainFix), nameof(ExperienceGainFix.Transpiler))));
+                harmony.Patch(AccessTools.Constructor(typeof(LevelUpMenu), new Type[] { typeof(int), typeof(int) }), transpiler: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuLuckProfessionConstructorFix), nameof(LevelUpMenuLuckProfessionConstructorFix.Transpiler))) );
+                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), "getProfessionName"), postfix: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuProfessionNameHook), nameof(LevelUpMenuProfessionNameHook.Postfix))) );
+                //harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), nameof(LevelUpMenu.AddMissedProfessionChoices)), transpiler: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuMissedStuffPatch), nameof(LevelUpMenuMissedStuffPatch.Transpiler))) );
+                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), nameof(LevelUpMenu.AddMissedLevelRecipes)), transpiler: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuMissedStuffPatch), nameof(LevelUpMenuMissedStuffPatch.Transpiler))) );
+            }
+            catch ( Exception e )
+            {
+                Log.trace("Exception doing harmony: " + e);
+            }
+
             checkForAllProfessions();
+        }
+
+        public bool CanEdit<T>(IAssetInfo asset)
+        {
+            return asset.AssetNameEquals("Strings\\UI");
+        }
+
+        public void Edit<T>(IAssetData asset)
+        {
+            Func<int, string> getProfName = (id) => Helper.Reflection.GetMethod(typeof(LevelUpMenu), "getProfessionName").Invoke<string>(id);
+
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(PROFESSION_DAILY_LUCK), "Fortunate");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(PROFESSION_DAILY_LUCK), "Better daily luck.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(PROFESSION_NIGHTLY_EVENTS), "Shooting Star");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(PROFESSION_NIGHTLY_EVENTS), "Nightly events occur twice as often.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(PROFESSION_CHANCE_MAX_LUCK), "Lucky");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(PROFESSION_CHANCE_MAX_LUCK), "20% chance for max daily luck.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(PROFESSION_NO_BAD_LUCK), "Un-unlucky");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(PROFESSION_NO_BAD_LUCK), "Never have bad luck.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(PROFESSION_MORE_QUESTS), "Popular Helper");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(PROFESSION_MORE_QUESTS), "Daily quests occur three times as often.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(PROFESSION_JUNIMO_HELP), "Spirit Child");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(PROFESSION_JUNIMO_HELP), "Giving fits makes junimos happy. They might help your farm.\n(15% chance for some form of farm advancement.)");
         }
 
         /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
@@ -50,13 +93,26 @@ namespace LuckSkill
         /// <param name="e">The event arguments.</param>
         private void onDayStarted( object sender, DayStartedEventArgs args )
         {
-            gainLuckExp((int)(Game1.player.team.sharedDailyLuck.Value * 750));
+            Game1.player.gainExperience(Farmer.luckSkill, (int)(Game1.player.team.sharedDailyLuck.Value * 750));
 
             if (Game1.player.professions.Contains(PROFESSION_DAILY_LUCK))
             {
                 Game1.player.team.sharedDailyLuck.Value += 0.01;
             }
-            if (Game1.player.professions.Contains(PROFESSION_MOREQUESTS) && Game1.questOfTheDay == null)
+            if (Game1.player.professions.Contains(PROFESSION_CHANCE_MAX_LUCK))
+            {
+                Random r = new Random((int)(Game1.uniqueIDForThisGame+Game1.stats.DaysPlayed * 3));
+                if (r.NextDouble() <= 0.20)
+                {
+                    Game1.player.team.sharedDailyLuck.Value = 0.12;
+                }
+            }
+            if (Game1.player.professions.Contains(PROFESSION_NO_BAD_LUCK))
+            {
+                if (Game1.player.team.sharedDailyLuck.Value < 0)
+                    Game1.player.team.sharedDailyLuck.Value = 0;
+            }
+            if (Game1.player.professions.Contains(PROFESSION_MORE_QUESTS) && Game1.questOfTheDay == null)
             {
                 if (Utility.isFestivalDay(Game1.dayOfMonth, Game1.currentSeason) || Utility.isFestivalDay(Game1.dayOfMonth + 1, Game1.currentSeason))
                 {
@@ -72,8 +128,10 @@ namespace LuckSkill
                         {
                             quest = Utility.getQuestOfTheDay();
                         }
-                        catch (Exception) { }
-                        Game1.stats.daysPlayed -= i * 999999;
+                        finally
+                        {
+                            Game1.stats.daysPlayed -= i * 999999;
+                        }
                     }
 
                     if (quest != null)
@@ -85,65 +143,139 @@ namespace LuckSkill
             }
         }
 
-        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void onMenuChanged( object sender, MenuChangedEventArgs e )
+        private void onDayEnding(object sender, DayEndingEventArgs args)
         {
-            // fishingExp
-            if (!(e.OldMenu is BobberBar fishing) || e.NewMenu != null)
-                return;
-
-            float diff = Helper.Reflection.GetField<float>(fishing, "difficulty").GetValue();
-            bool perfect = Helper.Reflection.GetField<bool>(fishing, "perfect").GetValue();
-            bool treasure = Helper.Reflection.GetField<bool>(fishing, "treasureCaught").GetValue();
-            if ( perfect )
+            if ( Game1.player.professions.Contains(PROFESSION_JUNIMO_HELP))
             {
-                //gainLuckExp((int)(diff / 7) + 1);
-            }
-            if ( treasure )
-            {
-                gainLuckExp((int)(diff));
-            }
-        }
-        
-        private bool hadGeode = false;
-
-        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
-        {
-            /*
-            if (Game1.isEating != wasEating)
-            {
-                Log.Async("Eating:" + Game1.isEating);
-                Log.Async(Game1.player.itemToEat + " " + ((Game1.player.itemToEat != null) ? Game1.player.itemToEat.getStack() : -1));
-                Log.Async(Game1.player.ActiveObject + " " +( (Game1.player.ActiveObject != null) ? Game1.player.ActiveObject.getStack() : -1));
-            }
-            wasEating = Game1.isEating;
-            */
-
-            if (Game1.activeClickableMenu != null)
-            {
-                if (Game1.activeClickableMenu is GeodeMenu)
+                int rolls = 0;
+                foreach ( var friendKey in Game1.player.friendshipData.Keys )
                 {
-                    GeodeMenu menu = Game1.activeClickableMenu as GeodeMenu;
-                    if (menu.geodeSpot.item != null & !hadGeode)
-                    {
-                        gainLuckExp(10);
-                    }
-                    hadGeode = (menu.geodeSpot.item != null);
+                    var data = Game1.player.friendshipData[friendKey];
+                    if (data.GiftsToday > 0)
+                        rolls++;
                 }
-                else if (Game1.activeClickableMenu is LevelUpMenu)
+
+                Random r = new Random((int)(Game1.uniqueIDForThisGame + Game1.stats.DaysPlayed));
+                while ( rolls-- > 0 )
                 {
-                    LevelUpMenu menu = Game1.activeClickableMenu as LevelUpMenu;
-                    int skill = Helper.Reflection.GetField<int>(menu, "currentSkill").GetValue();
-                    if (skill == 5)
+                    if (r.NextDouble() > 0.15)
+                        continue;
+
+                    Action advanceCrops = () =>
                     {
-                        int level = Helper.Reflection.GetField<int>(menu, "currentLevel").GetValue();
-                        Game1.activeClickableMenu = new LuckLevelUpMenu(skill, level);
+                        List<GameLocation> locs = new List<GameLocation>();
+                        locs.AddRange(Game1.locations);
+                        for (int i = 0; i < locs.Count; ++i)
+                        {
+                            GameLocation loc = locs[i];
+                            if (loc is BuildableGameLocation bgl)
+                                locs.AddRange(bgl.buildings.Select(b => b.indoors.Value));
+
+                            foreach (var entry in loc.objects.Pairs)
+                            {
+                                var obj = entry.Value;
+                                if ( obj is IndoorPot pot )
+                                {
+                                    var dirt = pot.hoeDirt.Value;
+                                    if (dirt.crop == null || dirt.crop.fullyGrown.Value)
+                                        continue;
+
+                                    dirt.crop.newDay(HoeDirt.watered, dirt.fertilizer.Value, (int)entry.Key.X, (int)entry.Key.Y, loc);
+                                }
+                            }
+                            foreach (var entry in loc.terrainFeatures.Pairs)
+                            {
+                                var tf = entry.Value;
+                                if (tf is HoeDirt dirt)
+                                {
+                                    if (dirt.crop == null || dirt.crop.fullyGrown.Value)
+                                        continue;
+
+                                    dirt.crop.newDay(HoeDirt.watered, dirt.fertilizer.Value, (int)entry.Key.X, (int)entry.Key.Y, loc);
+                                }
+                                else if (tf is FruitTree ftree)
+                                {
+                                    ftree.dayUpdate(loc, entry.Key);
+                                }
+                                else if (tf is Tree tree)
+                                {
+                                    tree.dayUpdate(loc, entry.Key);
+                                }
+                            }
+                        }
+
+                        Game1.showGlobalMessage("The junimos advanced your crops!");
+                    };
+                    Action<AnimalHouse> advanceBarn = (AnimalHouse house) =>
+                    {
+                        foreach (var animal in house.Animals.Values)
+                        {
+                            animal.friendshipTowardFarmer.Value = Math.Min( 1000, animal.friendshipTowardFarmer.Value + 100 );
+                        }
+                        Game1.showGlobalMessage("The junimos made some of your animals more fond of you!");
+                    };
+                    Action grassAndFences = () =>
+                    {
+                        var farm = Game1.getFarm();
+                        foreach ( var entry in farm.terrainFeatures.Values )
+                        {
+                            if ( entry is Grass grass )
+                            {
+                                grass.numberOfWeeds.Value = 4;
+                            }
+                        }
+                        foreach (var entry in farm.Objects.Values)
+                        {
+                            if ( entry is Fence fence )
+                            {
+                                fence.repair();
+                            }
+                        }
+                        Game1.showGlobalMessage("The junimos grew your grass and repaired your fences!");
+                    };
+
+                    if ( r.Next() <= 0.05 && Game1.player.addItemToInventoryBool(new StardewValley.Object(StardewValley.Object.prismaticShardIndex, 1)) )
+                    {
+                        Game1.showGlobalMessage("The junimos gave you a prismatic shard!");
+                        continue;
                     }
+
+                    var animalHouses = new List<AnimalHouse>();
+                    foreach ( var loc in Game1.locations )
+                    {
+                        if ( loc is BuildableGameLocation bgl )
+                        {
+                            foreach ( var building in bgl.buildings )
+                            {
+                                if ( building.indoors.Value is AnimalHouse ah )
+                                {
+                                    bool foundAnimalWithRoomForGrowth = false;
+                                    foreach ( var animal in ah.Animals.Values )
+                                    {
+                                        if ( animal.friendshipTowardFarmer.Value < 1000 )
+                                        {
+                                            foundAnimalWithRoomForGrowth = true;
+                                            break;
+                                        }
+                                    }
+                                    if (foundAnimalWithRoomForGrowth)
+                                        animalHouses.Add(ah);
+                                }
+                            }
+                        }
+                    }
+
+                    List<Action> choices = new List<Action>();
+                    choices.Add(advanceCrops);
+                    choices.Add(advanceCrops);
+                    choices.Add(advanceCrops);
+                    foreach ( var ah in animalHouses )
+                    {
+                        choices.Add(() => advanceBarn(ah));
+                    }
+                    choices.Add(grassAndFences);
+
+                    choices[r.Next(choices.Count)]();
                 }
             }
         }
@@ -194,7 +326,7 @@ namespace LuckSkill
 
                 flag = (Game1.player.LuckLevel > i);
                 num5 = getLuckProfessionForSkill( i + 1 );//Game1.player.getProfessionForSkill(5, i + 1);
-                object[] args = new object[] { text, text2, LuckLevelUpMenu.getProfessionDescription(num5) };
+                object[] args = new object[] { text, text2, LevelUpMenu.getProfessionDescription(num5) };
                 Helper.Reflection.GetMethod(skills, "parseProfessionDescription").Invoke(args);
                 text = (string)args[0];
                 text2 = (string)args[1];
@@ -379,58 +511,6 @@ namespace LuckSkill
             }*/
         }
 
-        // Copied from vanilla Farmer.gainExperience
-        public static void gainLuckExp(int howMuch)
-        {
-            int which = 5;
-
-            if (/*which == 5 ||*/ howMuch <= 0)
-            {
-                return;
-            }
-            int num = Farmer.checkForLevelGain(Game1.player.experiencePoints[which], Game1.player.experiencePoints[which] + howMuch);
-            Game1.player.experiencePoints[which] += howMuch;
-            int num2 = -1;
-            if (num != -1)
-            {
-                switch (which)
-                {/*
-                    case 0:
-                        num2 = this.farmingLevel;
-                        this.farmingLevel = num;
-                        break;
-                    case 1:
-                        num2 = this.fishingLevel;
-                        this.fishingLevel = num;
-                        break;
-                    case 2:
-                        num2 = this.foragingLevel;
-                        this.foragingLevel = num;
-                        break;
-                    case 3:
-                        num2 = this.miningLevel;
-                        this.miningLevel = num;
-                        break;
-                    case 4:
-                        num2 = this.combatLevel;
-                        this.combatLevel = num;
-                        break;*/
-                    case 5:
-                        num2 = Game1.player.luckLevel;
-                        Game1.player.LuckLevel = num;
-                        break;
-                }
-            }
-            if (num > num2)
-            {
-                for (int i = num2 + 1; i <= num; i++)
-                {
-                    Game1.player.newLevels.Add(new Point(which, i));
-                    Game1.player.newLevels.Count<Point>();
-                }
-            }
-        }
-
         private int getLuckProfessionForSkill( int level )
         {
             if (level != 5 && level != 10)
@@ -449,14 +529,14 @@ namespace LuckSkill
         private void onGameLaunched(object sender, EventArgs args)
         {
             // enableLuckSkillBar
-            var api = Helper.ModRegistry.GetApi<ExperienceBarsApi>("spacechase0.ExperienceBars");
+            var api = Helper.ModRegistry.GetApi<ExperienceBarsAPI>("spacechase0.ExperienceBars");
             Log.trace($"Experience Bars API {(api == null ? "not " : "")}found");
             api?.SetDrawLuck(true);
         }
 
         private bool HAS_ALL_PROFESSIONS = false;
-        private List<int> luckProfessions5 = new List<int>() { PROFESSION_DAILY_LUCK, PROFESSION_MOREQUESTS };
-        private List<int> luckProfessions10 = new List<int>() { PROFESSION_A1, PROFESSION_A2, PROFESSION_NIGHTLY_EVENTS, PROFESSION_B2 };
+        private List<int> luckProfessions5 = new List<int>() { PROFESSION_DAILY_LUCK, PROFESSION_MORE_QUESTS };
+        private List<int> luckProfessions10 = new List<int>() { PROFESSION_CHANCE_MAX_LUCK, PROFESSION_NO_BAD_LUCK, PROFESSION_NIGHTLY_EVENTS, PROFESSION_JUNIMO_HELP };
 
         private void checkForAllProfessions()
         {
