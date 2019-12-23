@@ -39,6 +39,7 @@ namespace SpaceCore.Interface
         public ClickableComponent rightProfession;
         private Rectangle sourceRectForLevelIcon;
         private string title;
+        public bool hasMovedSelection;
 
         private Skills.Skill.ProfessionPair profPair;
 
@@ -161,8 +162,6 @@ namespace SpaceCore.Interface
             */
             Game1.player.freezePause = 100;
             this.gameWindowSizeChanged(Rectangle.Empty, Rectangle.Empty);
-            if (!Game1.options.SnappyMenus)
-                return;
             if (this.isProfessionChooser)
             {
                 this.leftProfession = new ClickableComponent(new Rectangle(this.xPositionOnScreen, this.yPositionOnScreen + 128, this.width / 2, this.height), "")
@@ -177,7 +176,11 @@ namespace SpaceCore.Interface
                 };
             }
             this.populateClickableComponentList();
-            this.snapToDefaultClickableComponent();
+        }
+
+        public bool CanReceiveInput()
+        {
+            return this.informationUp && this.timerBeforeStart <= 0;
         }
 
         public override void snapToDefaultClickableComponent()
@@ -193,6 +196,16 @@ namespace SpaceCore.Interface
                 this.snapCursorToCurrentSnappedComponent();
             }
         }
+
+        public override void applyMovementKey(int direction)
+        {
+            if (!this.CanReceiveInput())
+                return;
+            if (direction == 3 || direction == 1)
+                this.hasMovedSelection = true;
+            base.applyMovementKey(direction);
+        }
+
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
         {
@@ -407,10 +420,22 @@ namespace SpaceCore.Interface
             }
             else
             {
-                if (this.isProfessionChooser && !this.hasUpdatedProfessions)
+                if (/*this.isProfessionChooser &&*/ !this.hasUpdatedProfessions)
                 {
-                    this.professionsToChoose.Add(profPair.First.GetVanillaId());
-                    this.professionsToChoose.Add(profPair.Second.GetVanillaId());
+                    var skill = Skills.skills[currentSkill];
+                    profPair = null;
+                    foreach (var pair in skill.ProfessionsForLevels)
+                        if (pair.Level == currentLevel && (pair.Requires == null || Game1.player.professions.Contains(pair.Requires.GetVanillaId())))
+                        {
+                            profPair = pair;
+                            break;
+                        }
+                    if ( profPair != null )
+                    {
+                        this.isProfessionChooser = true;
+                        this.professionsToChoose.Add(profPair.First.GetVanillaId());
+                        this.professionsToChoose.Add(profPair.Second.GetVanillaId());
+                    }
                     /*
                     if (this.currentLevel == 5)
                     {
@@ -428,12 +453,15 @@ namespace SpaceCore.Interface
                         this.professionsToChoose.Add(this.currentSkill * 6 + 5);
                     }
                     */
-                    var la = new List<string>(new string[] { profPair.First.GetName() });
-                    la.AddRange(profPair.First.GetDescription().Split('\n'));
-                    var ra = new List<string>(new string[] { profPair.Second.GetName() });
-                    ra.AddRange(profPair.Second.GetDescription().Split('\n'));
-                    this.leftProfessionDescription = la;// LevelUpMenu.getProfessionDescription(this.professionsToChoose[0]);
-                    this.rightProfessionDescription = ra;//LevelUpMenu.getProfessionDescription(this.professionsToChoose[1]);
+                    if (profPair != null)
+                    {
+                        var la = new List<string>(new string[] { profPair.First.GetName() });
+                        la.AddRange(profPair.First.GetDescription().Split('\n'));
+                        var ra = new List<string>(new string[] { profPair.Second.GetName() });
+                        ra.AddRange(profPair.Second.GetDescription().Split('\n'));
+                        this.leftProfessionDescription = la;// LevelUpMenu.getProfessionDescription(this.professionsToChoose[0]);
+                        this.rightProfessionDescription = ra;//LevelUpMenu.getProfessionDescription(this.professionsToChoose[1]);
+                    }
                     this.hasUpdatedProfessions = true;
                 }
                 for (int index = this.littleStars.Count - 1; index >= 0; --index)
@@ -456,6 +484,10 @@ namespace SpaceCore.Interface
                 if (this.timerBeforeStart > 0)
                 {
                     this.timerBeforeStart -= time.ElapsedGameTime.Milliseconds;
+                    if (this.timerBeforeStart > 0 || !Game1.options.SnappyMenus)
+                        return;
+                    this.populateClickableComponentList();
+                    this.snapToDefaultClickableComponent();
                 }
                 else
                 {
@@ -472,7 +504,6 @@ namespace SpaceCore.Interface
                                 this.leftProfessionColor = Color.Green;
                                 if ((Game1input.GetMouseState().LeftButton == ButtonState.Pressed && this.oldMouseState.LeftButton == ButtonState.Released || Game1.options.gamepadControls && (Game1input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A))) && this.readyToClose())
                                 {
-                                    this.getLevelPerk(this.currentSkill, this.currentLevel);
                                     Game1.player.professions.Add(this.professionsToChoose[0]);
                                     this.getImmediateProfessionPerk(this.professionsToChoose[0]);
                                     this.isActive = false;
@@ -485,7 +516,6 @@ namespace SpaceCore.Interface
                                 this.rightProfessionColor = Color.Green;
                                 if ((Game1input.GetMouseState().LeftButton == ButtonState.Pressed && this.oldMouseState.LeftButton == ButtonState.Released || Game1.options.gamepadControls && (Game1input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A))) && this.readyToClose())
                                 {
-                                    this.getLevelPerk(this.currentSkill, this.currentLevel);
                                     Game1.player.professions.Add(this.professionsToChoose[1]);
                                     this.getImmediateProfessionPerk(this.professionsToChoose[1]);
                                     this.isActive = false;
