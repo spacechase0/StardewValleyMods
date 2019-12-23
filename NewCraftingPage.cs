@@ -603,7 +603,12 @@ namespace CookingSkill
                     {
                         int recipe2 = recipeList[recipeList.Keys.ElementAt<int>(index1)];
                         recipe1 -= Game1.player.items[index2].Stack;
-                        Game1.player.items[index2].Stack -= recipe2;
+                        /////
+                        if (used != null)
+                            used.Add(new ConsumedItem(Game1.player.items[index2] as SObject));
+                        if (actuallyConsume)
+                        /////
+                            Game1.player.items[index2].Stack -= recipe2;
                         if (Game1.player.items[index2].Stack <= 0)
                             Game1.player.items[index2] = (Item)null;
                         if (recipe1 <= 0)
