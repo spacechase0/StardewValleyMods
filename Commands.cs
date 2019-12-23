@@ -21,7 +21,7 @@ namespace SpaceCore
                 Log.info("Usage: player_giveexp <skill> <amt>");
             }
 
-            var skillName = args[0];
+            var skillName = args[0].ToLower();
             int amt = int.Parse(args[1]);
 
                  if (skillName == "farming" ) Game1.player.gainExperience(Farmer.farmingSkill,  amt);
