@@ -18,7 +18,7 @@ namespace Magic.Spells
                 foreach (var buff in Game1.buffsDisplay.otherBuffs)
                 {
                     if (buff.source == "spell:life:buff")
-                        return true;
+                        return false;
                 }
             }
 
@@ -41,7 +41,7 @@ namespace Magic.Spells
                     return null;
             }
 
-            Game1.buffsDisplay.clearAllBuffs();
+            //Game1.buffsDisplay.clearAllBuffs();
             Mod.instance.Helper.Reflection.GetField<NetArray<int, NetInt>>(Game1.player, "appliedBuffs").GetValue().Clear();
             Game1.player.attack = 0;
 
@@ -49,16 +49,16 @@ namespace Magic.Spells
             int farm = l, fish = l, mine = l, luck = l, forage = l, def = l, atk = 2;
             if (l == 2)
             {
-                def = 3;
+                //def = 3;
                 atk = 5;
             }
             else if (l == 3)
             {
-                def = 5;
+                //def = 5;
                 atk = 10;
             }
 
-            Game1.buffsDisplay.addOtherBuff(new Buff(farm, fish, mine, 0, luck, forage, 0, 0, 0, 0, def, atk, 60 + level * 120, "spell:light:buff", "Buff (spell)"));
+            Game1.buffsDisplay.addOtherBuff(new Buff(farm, fish, mine, 0, luck, forage, 0, 0, 0, 0, def, atk, 60 + level * 120, "spell:life:buff", "Buff (spell)"));
             player.AddCustomSkillExperience(Magic.Skill,10);
             return null;
         }
