@@ -32,4 +32,38 @@ namespace LuckSkill.Overrides
             return newInsns;
         }
     }
+
+    public static class FarmerGetProfessionHook
+    {
+        public static void Postfix(Farmer __instance, int skillType, int skillLevel, ref int __result)
+        {
+            if (skillType != Farmer.luckSkill)
+                return;
+
+            if (skillLevel == 5)
+            {
+                if (__instance.professions.Contains(Mod.PROFESSION_DAILY_LUCK))
+                    __result = Mod.PROFESSION_DAILY_LUCK;
+                else if (__instance.professions.Contains(Mod.PROFESSION_MORE_QUESTS))
+                    __result = Mod.PROFESSION_MORE_QUESTS;
+            }
+            else if (skillLevel == 10)
+            {
+                if (__instance.professions.Contains(Mod.PROFESSION_DAILY_LUCK))
+                {
+                    if (__instance.professions.Contains(Mod.PROFESSION_CHANCE_MAX_LUCK))
+                        __result = Mod.PROFESSION_CHANCE_MAX_LUCK;
+                    else if (__instance.professions.Contains(Mod.PROFESSION_NO_BAD_LUCK))
+                        __result = Mod.PROFESSION_NO_BAD_LUCK;
+                }
+                else if (__instance.professions.Contains(Mod.PROFESSION_MORE_QUESTS))
+                {
+                    if (__instance.professions.Contains(Mod.PROFESSION_NIGHTLY_EVENTS))
+                        __result = Mod.PROFESSION_NIGHTLY_EVENTS;
+                    else if (__instance.professions.Contains(Mod.PROFESSION_JUNIMO_HELP))
+                        __result = Mod.PROFESSION_JUNIMO_HELP;
+                }
+            }
+        }
+    }
 }

@@ -2,6 +2,7 @@
 using LuckSkill.Overrides;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Netcode;
 using SpaceCore.Events;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -51,10 +52,11 @@ namespace LuckSkill
             {
                 var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
                 Log.trace("Doing harmony patches...");
+                harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.getProfessionForSkill)), postfix: new HarmonyMethod(AccessTools.Method(typeof(FarmerGetProfessionHook), nameof(LevelUpMenuProfessionNameHook.Postfix))));
                 harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.gainExperience)), transpiler: new HarmonyMethod(AccessTools.Method(typeof(ExperienceGainFix), nameof(ExperienceGainFix.Transpiler))));
                 harmony.Patch(AccessTools.Constructor(typeof(LevelUpMenu), new Type[] { typeof(int), typeof(int) }), transpiler: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuLuckProfessionConstructorFix), nameof(LevelUpMenuLuckProfessionConstructorFix.Transpiler))) );
                 harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), "getProfessionName"), postfix: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuProfessionNameHook), nameof(LevelUpMenuProfessionNameHook.Postfix))) );
-                //harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), nameof(LevelUpMenu.AddMissedProfessionChoices)), transpiler: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuMissedStuffPatch), nameof(LevelUpMenuMissedStuffPatch.Transpiler))) );
+                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), nameof(LevelUpMenu.AddMissedProfessionChoices)), transpiler: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuMissedStuffPatch), nameof(LevelUpMenuMissedStuffPatch.Transpiler))) );
                 harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), nameof(LevelUpMenu.AddMissedLevelRecipes)), transpiler: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuMissedStuffPatch), nameof(LevelUpMenuMissedStuffPatch.Transpiler))) );
             }
             catch ( Exception e )
@@ -420,7 +422,7 @@ namespace LuckSkill
         {
             if ( Game1.player.professions.Contains( PROFESSION_NIGHTLY_EVENTS ) && !Game1.weddingToday &&
                     ( args.NightEvent == null || (args.NightEvent is SoundInTheNightEvent &&
-                    Helper.Reflection.GetField<int>(args.NightEvent, "behavior").GetValue() == 2 ) ) )
+                    Helper.Reflection.GetField<NetInt>(args.NightEvent, "behavior").GetValue().Value == 2 ) ) )
             {
                 //Log.Async("Doing event check");
                 FarmEvent ev = null;
