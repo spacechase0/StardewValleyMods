@@ -52,6 +52,7 @@
     <Compile Include="Content.cs" />
     <Compile Include="Events\EventArgsAction.cs" />
     <Compile Include="Events\EventArgsBeforeWarp.cs" />
+    <Compile Include="Events\EventArgsBombExploded.cs" />
     <Compile Include="Events\EventArgsChooseNightlyFarmEvent.cs" />
     <Compile Include="Events\EventArgsGiftGiven.cs" />
     <Compile Include="Events\EventArgsServerGotClient.cs" />

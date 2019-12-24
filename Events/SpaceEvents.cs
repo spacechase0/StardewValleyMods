@@ -1,4 +1,5 @@
-﻿using SpaceCore.Utilities;
+﻿using Microsoft.Xna.Framework;
+using SpaceCore.Utilities;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Events;
@@ -37,6 +38,9 @@ namespace SpaceCore.Events
 
         // Before the player is about to warp. Can cancel warping or change the target location.
         public static event EventHandler<EventArgsBeforeWarp> BeforeWarp;
+
+        // When a bomb explodes
+        public static event EventHandler<EventArgsBombExploded> BombExploded;
 
         internal static void InvokeOnBlankSave()
         {
@@ -121,6 +125,15 @@ namespace SpaceCore.Events
             bool ret = Util.invokeEventCancelable("SpaceEvents.BeforeWarp", BeforeWarp.GetInvocationList(), Game1.player, arg);
             req = arg.WarpTargetLocation;
             return ret;
+        }
+
+        internal static void InvokeBombExploded(Farmer who, Vector2 tileLocation, int radius)
+        {
+            Log.trace("Event: BombExploded");
+            if (BombExploded == null)
+                return;
+            var arg = new EventArgsBombExploded(tileLocation, radius);
+            Util.invokeEvent("SpaceEvents.BombExploded", BombExploded.GetInvocationList(), who, arg);
         }
     }
 }

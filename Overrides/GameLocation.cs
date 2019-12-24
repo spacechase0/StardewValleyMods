@@ -20,4 +20,12 @@ namespace SpaceCore.Overrides
             return !SpaceEvents.InvokeTouchActionActivated(Game1.player, fullActionString, new Location(0,0));
         }
     }
+
+    public static class ExplodeHook
+    {
+        public static void Postfix(GameLocation __instance, Vector2 tileLocation, int radius, Farmer who)
+        {
+            SpaceEvents.InvokeBombExploded(who, tileLocation, radius);
+        }
+    }
 }
