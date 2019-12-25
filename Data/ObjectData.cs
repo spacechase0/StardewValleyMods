@@ -109,6 +109,10 @@ namespace JsonAssets.Data
 
         public int Price { get; set; }
 
+        public bool CanTrash { get; set; } = true;
+        public bool CanSell { get; set; } = true;
+        public bool CanBeGifted { get; set; } = true;
+
         public Recipe_ Recipe { get; set; }
 
         public int Edibility { get; set; } = SObject.inedible;

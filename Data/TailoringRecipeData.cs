@@ -10,6 +10,7 @@ namespace JsonAssets.Data
 {
     public class TailoringRecipeData
     {
+        public string EnableWithMod { get; set; }
         public string DisableWithMod { get; set; }
 
         public IList<string> FirstItemTags { get; set; } = new List<string>(new string[] { "item_cloth" });

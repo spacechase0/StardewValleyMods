@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using JsonAssets.Data;
 using Microsoft.Xna.Framework;
@@ -147,6 +148,12 @@ namespace JsonAssets.Overrides
                         break;
                     }
                 }
+                if ( Mod.instance.objectIds.Values.Contains(index) )
+                {
+                    var obj = new List<ObjectData>(Mod.instance.objects).Find(od => od.GetObjectId() == index);
+                    if ( obj != null && !obj.CanSell )
+                        __result = false;
+                }
             }
             catch (Exception ex)
             {
@@ -180,6 +187,23 @@ namespace JsonAssets.Overrides
             {
                 Log.error($"Failed in {nameof(GetCategoryColor_Prefix)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
                 return true;
+            }
+        }
+        
+        public static void CanBeGivenAsGift_Postfix(StardewValley.Object __instance, ref bool __result)
+        {
+            try
+            {
+                if (!__instance.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
+                {
+                    var obj = new List<ObjectData>(Mod.instance.objects).Find(od => od.GetObjectId() == __instance.ParentSheetIndex);
+                    if (obj != null && !obj.CanBeGifted)
+                        __result = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.error($"Failed in {nameof(CanBeGivenAsGift_Postfix)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
             }
         }
     }

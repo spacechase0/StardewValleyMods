@@ -81,8 +81,8 @@ namespace JsonAssets
                     prefix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.GetCategoryColor_Prefix))
                 );
                 harmony.Patch(
-                    original: AccessTools.Method(typeof(SObject), nameof(SObject.isIndexOkForBasicShippedCategory)),
-                    prefix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.IsIndexOkForBasicShippedCategory_Postfix))
+                    original: AccessTools.Method(typeof(SObject), nameof(SObject.canBeGivenAsGift)),
+                    postfix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.CanBeGivenAsGift_Postfix))
                 );
 
                 // ring patches
@@ -100,6 +100,16 @@ namespace JsonAssets
                 harmony.Patch(
                     original: AccessTools.Method(typeof(Crop), nameof(Crop.newDay)),
                     transpiler: new HarmonyMethod(typeof(CropPatches), nameof(CropPatches.NewDay_Transpiler))
+                );
+
+                // item patches
+                harmony.Patch(
+                    original: AccessTools.Method(typeof(Item), nameof(Item.canBeDropped)),
+                    postfix: new HarmonyMethod(typeof(ItemPatches), nameof(ItemPatches.CanBeDropped_Postfix))
+                );
+                harmony.Patch(
+                    original: AccessTools.Method(typeof(Item), nameof(Item.canBeTrashed)),
+                    postfix: new HarmonyMethod(typeof(ItemPatches), nameof(ItemPatches.CanBeTrashed_Postfix))
                 );
             }
             catch (Exception e)
@@ -364,7 +374,7 @@ namespace JsonAssets
 
                     // load data
                     ObjectData obj = contentPack.ReadJsonFile<ObjectData>($"{relativePath}/object.json");
-                    if (obj == null || (obj.DisableWithMod != null && Helper.ModRegistry.IsLoaded(obj.DisableWithMod)))
+                    if (obj == null || (obj.DisableWithMod != null && Helper.ModRegistry.IsLoaded(obj.DisableWithMod)) || (obj.EnableWithMod != null && !Helper.ModRegistry.IsLoaded(obj.EnableWithMod)))
                         continue;
 
                     // save object
@@ -386,7 +396,7 @@ namespace JsonAssets
 
                     // load data
                     CropData crop = contentPack.ReadJsonFile<CropData>($"{relativePath}/crop.json");
-                    if (crop == null || (crop.DisableWithMod != null && Helper.ModRegistry.IsLoaded(crop.DisableWithMod)))
+                    if (crop == null || (crop.DisableWithMod != null && Helper.ModRegistry.IsLoaded(crop.DisableWithMod)) || (crop.EnableWithMod != null && !Helper.ModRegistry.IsLoaded(crop.EnableWithMod)))
                         continue;
 
                     // save crop
@@ -406,7 +416,7 @@ namespace JsonAssets
 
                     // load data
                     FruitTreeData tree = contentPack.ReadJsonFile<FruitTreeData>($"{relativePath}/tree.json");
-                    if (tree == null || (tree.DisableWithMod != null && Helper.ModRegistry.IsLoaded(tree.DisableWithMod)))
+                    if (tree == null || (tree.DisableWithMod != null && Helper.ModRegistry.IsLoaded(tree.DisableWithMod)) || (tree.EnableWithMod != null && !Helper.ModRegistry.IsLoaded(tree.EnableWithMod)))
                         continue;
 
                     // save fruit tree
@@ -425,7 +435,7 @@ namespace JsonAssets
 
                     // load data
                     BigCraftableData craftable = contentPack.ReadJsonFile<BigCraftableData>($"{relativePath}/big-craftable.json");
-                    if (craftable == null || (craftable.DisableWithMod != null && Helper.ModRegistry.IsLoaded(craftable.DisableWithMod)))
+                    if (craftable == null || (craftable.DisableWithMod != null && Helper.ModRegistry.IsLoaded(craftable.DisableWithMod)) || (craftable.EnableWithMod != null && !Helper.ModRegistry.IsLoaded(craftable.EnableWithMod)))
                         continue;
                     
                     // save craftable
@@ -446,7 +456,7 @@ namespace JsonAssets
 
                     // load data
                     HatData hat = contentPack.ReadJsonFile<HatData>($"{relativePath}/hat.json");
-                    if (hat == null || (hat.DisableWithMod != null && Helper.ModRegistry.IsLoaded(hat.DisableWithMod)))
+                    if (hat == null || (hat.DisableWithMod != null && Helper.ModRegistry.IsLoaded(hat.DisableWithMod)) || (hat.EnableWithMod != null && !Helper.ModRegistry.IsLoaded(hat.EnableWithMod)))
                         continue;
 
                     // save object
@@ -465,7 +475,7 @@ namespace JsonAssets
 
                     // load data
                     WeaponData weapon = contentPack.ReadJsonFile<WeaponData>($"{relativePath}/weapon.json");
-                    if (weapon == null || (weapon.DisableWithMod != null && Helper.ModRegistry.IsLoaded(weapon.DisableWithMod)))
+                    if (weapon == null || (weapon.DisableWithMod != null && Helper.ModRegistry.IsLoaded(weapon.DisableWithMod)) || (weapon.EnableWithMod != null && !Helper.ModRegistry.IsLoaded(weapon.EnableWithMod)))
                         continue;
 
                     // save object
@@ -484,7 +494,7 @@ namespace JsonAssets
 
                     // load data
                     ShirtData shirt = contentPack.ReadJsonFile<ShirtData>($"{relativePath}/shirt.json");
-                    if (shirt == null || (shirt.DisableWithMod != null && Helper.ModRegistry.IsLoaded(shirt.DisableWithMod)))
+                    if (shirt == null || (shirt.DisableWithMod != null && Helper.ModRegistry.IsLoaded(shirt.DisableWithMod)) || (shirt.EnableWithMod != null && !Helper.ModRegistry.IsLoaded(shirt.EnableWithMod)))
                         continue;
 
                     // save shirt
@@ -511,7 +521,7 @@ namespace JsonAssets
 
                     // load data
                     PantsData pants = contentPack.ReadJsonFile<PantsData>($"{relativePath}/pants.json");
-                    if (pants == null || (pants.DisableWithMod != null && Helper.ModRegistry.IsLoaded(pants.DisableWithMod)))
+                    if (pants == null || (pants.DisableWithMod != null && Helper.ModRegistry.IsLoaded(pants.DisableWithMod)) || (pants.EnableWithMod != null && !Helper.ModRegistry.IsLoaded(pants.EnableWithMod)))
                         continue;
 
                     // save pants
@@ -530,7 +540,7 @@ namespace JsonAssets
 
                     // load data
                     TailoringRecipeData recipe = contentPack.ReadJsonFile<TailoringRecipeData>($"{relativePath}/recipe.json");
-                    if (recipe == null || (recipe.DisableWithMod != null && Helper.ModRegistry.IsLoaded(recipe.DisableWithMod)))
+                    if (recipe == null || (recipe.DisableWithMod != null && Helper.ModRegistry.IsLoaded(recipe.DisableWithMod)) || (recipe.EnableWithMod != null && !Helper.ModRegistry.IsLoaded(recipe.EnableWithMod)))
                         continue;
 
                     RegisterTailoringRecipe(contentPack.Manifest, recipe);
@@ -1073,6 +1083,8 @@ namespace JsonAssets
             fixIdDict(Game1.player.recipesCooked);
             fixIdDict2(Game1.player.archaeologyFound);
             fixIdDict2(Game1.player.fishCaught);
+
+            api.InvokeIdsFixed();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
@@ -1238,6 +1250,19 @@ namespace JsonAssets
             if (loc is DecoratableLocation decoLoc)
                 foreach (var furniture in decoLoc.furniture)
                 {
+                    if (furniture.heldObject.Value != null)
+                    {
+                        if (!furniture.heldObject.Value.bigCraftable.Value)
+                        {
+                            if (fixId(oldObjectIds, objectIds, furniture.heldObject.Value.parentSheetIndex, origObjects))
+                                furniture.heldObject.Value = null;
+                        }
+                        else
+                        {
+                            if (fixId(oldBigCraftableIds, bigCraftableIds, furniture.heldObject.Value.parentSheetIndex, origBigCraftables))
+                                furniture.heldObject.Value = null;
+                        }
+                    }
                     if (furniture is StorageFurniture storage)
                         fixItemList(storage.heldItems);
                 }

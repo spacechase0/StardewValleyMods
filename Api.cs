@@ -31,6 +31,7 @@ namespace JsonAssets
         event EventHandler ItemsRegistered;
         event EventHandler IdsAssigned;
         event EventHandler AddedItemsToShop;
+        event EventHandler IdsFixed;
 
         bool TryGetCustomSprite(object entity, out Texture2D texture, out Rectangle sourceRect);
         bool TryGetCustomSpriteSheet(object entity, out Texture2D texture, out Rectangle sourceRect);
@@ -173,6 +174,15 @@ namespace JsonAssets
             if (AddedItemsToShop == null)
                 return;
             Util.invokeEvent("JsonAssets.Api.AddedItemsToShop", AddedItemsToShop.GetInvocationList(), null);
+        }
+
+        public event EventHandler IdsFixed;
+        internal void InvokeIdsFixed()
+        {
+            Log.trace("Event: IdsFixed");
+            if (IdsFixed == null)
+                return;
+            Util.invokeEvent("JsonAssets.Api.IdsFixed", IdsFixed.GetInvocationList(), null);
         }
 
         public bool TryGetCustomSprite(object entity, out Texture2D texture, out Rectangle sourceRect)
