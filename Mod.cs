@@ -182,6 +182,14 @@ namespace JsonAssets
             this.loadData(contentPack);
         }
 
+        internal Dictionary<IManifest, List<string>> objectsByContentPack = new Dictionary<IManifest, List<string>>();
+        internal Dictionary<IManifest, List<string>> cropsByContentPack = new Dictionary<IManifest, List<string>>();
+        internal Dictionary<IManifest, List<string>> fruitTreesByContentPack = new Dictionary<IManifest, List<string>>();
+        internal Dictionary<IManifest, List<string>> bigCraftablesByContentPack = new Dictionary<IManifest, List<string>>();
+        internal Dictionary<IManifest, List<string>> hatsByContentPack = new Dictionary<IManifest, List<string>>();
+        internal Dictionary<IManifest, List<string>> weaponsByContentPack = new Dictionary<IManifest, List<string>>();
+        internal Dictionary<IManifest, List<string>> clothingByContentPack = new Dictionary<IManifest, List<string>>();
+
         public void RegisterObject(IManifest source, ObjectData obj)
         {
             objects.Add(obj);
@@ -195,6 +203,10 @@ namespace JsonAssets
                 Log.error($"Duplicate object: {obj.Name} just added by {source.Name}, already added by {dupObjects[obj.Name].Name}!");
             else
                 dupObjects[obj.Name] = source;
+
+            if (!objectsByContentPack.ContainsKey(source))
+                objectsByContentPack.Add(source, new List<string>());
+            objectsByContentPack[source].Add(obj.Name);
         }
 
         public void RegisterCrop(IManifest source, CropData crop, Texture2D seedTex)
@@ -260,6 +272,10 @@ namespace JsonAssets
                 Log.error($"Duplicate crop: {crop.Name} just added by {source.Name}, already added by {dupCrops[crop.Name].Name}!");
             else
                 dupCrops[crop.Name] = source;
+
+            if (!cropsByContentPack.ContainsKey(source))
+                cropsByContentPack.Add(source, new List<string>());
+            cropsByContentPack[source].Add(crop.Name);
         }
 
         public void RegisterFruitTree(IManifest source, FruitTreeData tree, Texture2D saplingTex)
@@ -288,6 +304,10 @@ namespace JsonAssets
                 Log.error($"Duplicate fruit tree: {tree.Name} just added by {source.Name}, already added by {dupFruitTrees[tree.Name].Name}!");
             else
                 dupFruitTrees[tree.Name] = source;
+
+            if (!fruitTreesByContentPack.ContainsKey(source))
+                fruitTreesByContentPack.Add(source, new List<string>());
+            fruitTreesByContentPack[source].Add(tree.Name);
         }
 
         public void RegisterBigCraftable(IManifest source, BigCraftableData craftable)
@@ -299,6 +319,10 @@ namespace JsonAssets
                 Log.error($"Duplicate big craftable: {craftable.Name} just added by {source.Name}, already added by {dupBigCraftables[craftable.Name].Name}!");
             else
                 dupBigCraftables[craftable.Name] = source;
+
+            if (!bigCraftablesByContentPack.ContainsKey(source))
+                bigCraftablesByContentPack.Add(source, new List<string>());
+            bigCraftablesByContentPack[source].Add(craftable.Name);
         }
 
         public void RegisterHat(IManifest source, HatData hat)
@@ -310,6 +334,10 @@ namespace JsonAssets
                 Log.error($"Duplicate hat: {hat.Name} just added by {source.Name}, already added by {dupHats[hat.Name].Name}!");
             else
                 dupHats[hat.Name] = source;
+
+            if (!hatsByContentPack.ContainsKey(source))
+                hatsByContentPack.Add(source, new List<string>());
+            hatsByContentPack[source].Add(hat.Name);
         }
 
         public void RegisterWeapon(IManifest source, WeaponData weapon)
@@ -321,6 +349,10 @@ namespace JsonAssets
                 Log.error($"Duplicate weapon: {weapon.Name} just added by {source.Name}, already added by {dupWeapons[weapon.Name].Name}!");
             else
                 dupWeapons[weapon.Name] = source;
+
+            if (!weaponsByContentPack.ContainsKey(source))
+                weaponsByContentPack.Add(source, new List<string>());
+            weaponsByContentPack[source].Add(weapon.Name);
         }
 
         public void RegisterShirt(IManifest source, ShirtData shirt)
@@ -332,6 +364,10 @@ namespace JsonAssets
                 Log.error($"Duplicate shirt: {shirt.Name} just added by {source.Name}, already added by {dupShirts[shirt.Name].Name}!");
             else
                 dupShirts[shirt.Name] = source;
+
+            if (!clothingByContentPack.ContainsKey(source))
+                clothingByContentPack.Add(source, new List<string>());
+            clothingByContentPack[source].Add(shirt.Name);
         }
 
         public void RegisterPants(IManifest source, PantsData pants)
@@ -343,6 +379,10 @@ namespace JsonAssets
                 Log.error($"Duplicate shirt: {pants.Name} just added by {source.Name}, already added by {dupPants[pants.Name].Name}!");
             else
                 dupPants[pants.Name] = source;
+
+            if (!clothingByContentPack.ContainsKey(source))
+                clothingByContentPack.Add(source, new List<string>());
+            clothingByContentPack[source].Add(pants.Name);
         }
 
         public void RegisterTailoringRecipe(IManifest source, TailoringRecipeData recipe)
@@ -1068,7 +1108,7 @@ namespace JsonAssets
                 Game1.player.leftRing.Value = null;
             if (Game1.player.rightRing.Value != null && fixId(oldObjectIds, objectIds, Game1.player.rightRing.Value.parentSheetIndex, origObjects))
                 Game1.player.rightRing.Value = null;
-            if (Game1.player.hat.Value != null && fixId(oldHatIds, hatIds, Game1.player.hat.Value.parentSheetIndex, origHats))
+            if (Game1.player.hat.Value != null && fixId(oldHatIds, hatIds, Game1.player.hat.Value.which, origHats))
                 Game1.player.hat.Value = null;
             if (Game1.player.shirtItem.Value != null && fixId(oldClothingIds, clothingIds, Game1.player.shirtItem.Value.parentSheetIndex, origClothing))
                 Game1.player.shirtItem.Value = null;

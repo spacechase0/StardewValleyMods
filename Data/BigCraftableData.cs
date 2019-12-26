@@ -97,9 +97,10 @@ namespace JsonAssets.Data
 
         internal string GetCraftableInformation()
         {
-            string str = $"{Name}/{Price}/-300/Crafting -9/{LocalizedDescription()}/true/true/0/{LocalizedName()}";
+            string str = $"{Name}/{Price}/-300/Crafting -9/{LocalizedDescription()}/true/true/0";
             if (ProvidesLight)
                 str += "/true";
+            str += $"/{LocalizedName()}";
             return str;
         }
 

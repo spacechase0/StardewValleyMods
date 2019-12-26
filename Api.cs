@@ -28,6 +28,14 @@ namespace JsonAssets
         IDictionary<string, int> GetAllWeaponIds();
         IDictionary<string, int> GetAllClothingIds();
 
+        List<string> GetAllObjectsFromContentPack(string cp);
+        List<string> GetAllCropsFromContentPack(string cp);
+        List<string> GetAllFruitTreesFromContentPack(string cp);
+        List<string> GetAllBigCraftablesFromContentPack(string cp);
+        List<string> GetAllHatsFromContentPack(string cp);
+        List<string> GetAllWeaponsFromContentPack(string cp);
+        List<string> GetAllClothingFromContentPack(string cp);
+
         event EventHandler ItemsRegistered;
         event EventHandler IdsAssigned;
         event EventHandler AddedItemsToShop;
@@ -147,6 +155,62 @@ namespace JsonAssets
             if (Mod.instance.clothingIds == null)
                 return new Dictionary<string, int>();
             return new Dictionary<string, int>(Mod.instance.clothingIds);
+        }
+
+        public List<string> GetAllObjectsFromContentPack(string cp)
+        {
+            foreach (var entry in Mod.instance.objectsByContentPack)
+                if (entry.Key.UniqueID == cp)
+                    return new List<string>(entry.Value);
+            return null;
+        }
+
+        public List<string> GetAllCropsFromContentPack(string cp)
+        {
+            foreach (var entry in Mod.instance.cropsByContentPack)
+                if (entry.Key.UniqueID == cp)
+                    return new List<string>(entry.Value);
+            return null;
+        }
+
+        public List<string> GetAllFruitTreesFromContentPack(string cp)
+        {
+            foreach (var entry in Mod.instance.fruitTreesByContentPack)
+                if (entry.Key.UniqueID == cp)
+                    return new List<string>(entry.Value);
+            return null;
+        }
+
+        public List<string> GetAllBigCraftablesFromContentPack(string cp)
+        {
+            foreach (var entry in Mod.instance.bigCraftablesByContentPack)
+                if (entry.Key.UniqueID == cp)
+                    return new List<string>(entry.Value);
+            return null;
+        }
+
+        public List<string> GetAllHatsFromContentPack(string cp)
+        {
+            foreach (var entry in Mod.instance.hatsByContentPack)
+                if (entry.Key.UniqueID == cp)
+                    return new List<string>(entry.Value);
+            return null;
+        }
+
+        public List<string> GetAllWeaponsFromContentPack(string cp)
+        {
+            foreach (var entry in Mod.instance.weaponsByContentPack)
+                if (entry.Key.UniqueID == cp)
+                    return new List<string>(entry.Value);
+            return null;
+        }
+
+        public List<string> GetAllClothingFromContentPack(string cp)
+        {
+            foreach (var entry in Mod.instance.clothingByContentPack)
+                if (entry.Key.UniqueID == cp)
+                    return new List<string>(entry.Value);
+            return null;
         }
 
         public event EventHandler ItemsRegistered;
