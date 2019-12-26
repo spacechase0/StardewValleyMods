@@ -1,7 +1,9 @@
 ﻿using Harmony;
 using StardewValley;
+using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -30,6 +32,29 @@ namespace LuckSkill.Overrides
             }
 
             return newInsns;
+        }
+    }
+
+    public static class OverpoweredGeodeFix
+    {
+        public static void Prefix(Farmer __instance, int which, ref int howMuch)
+        {
+            if ( which == Farmer.luckSkill && Game1.currentLocation is MineShaft ms)
+            {
+                bool foundGeode = false;
+                var st = new StackTrace();
+                foreach (var frame in st.GetFrames())
+                {
+                    if ( frame.GetMethod().Name.Contains("checkStoneForItems") )
+                    {
+                        foundGeode = true;
+                        break;
+                    }
+                }
+
+                if (foundGeode)
+                    howMuch /= ms.getMineArea(-1);
+            }
         }
     }
 
