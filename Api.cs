@@ -41,6 +41,10 @@ namespace JsonAssets
         event EventHandler AddedItemsToShop;
         event EventHandler IdsFixed;
 
+        bool FixIdsInItem(Item item);
+        void FixIdsInItemList(List<Item> items);
+        void FixIdsInLocation(GameLocation location);
+
         bool TryGetCustomSprite(object entity, out Texture2D texture, out Rectangle sourceRect);
         bool TryGetCustomSpriteSheet(object entity, out Texture2D texture, out Rectangle sourceRect);
     }
@@ -247,6 +251,21 @@ namespace JsonAssets
             if (IdsFixed == null)
                 return;
             Util.invokeEvent("JsonAssets.Api.IdsFixed", IdsFixed.GetInvocationList(), null);
+        }
+
+        public bool FixIdsInItem(Item item)
+        {
+            return Mod.instance.fixItem(item);
+        }
+
+        public void FixIdsInItemList(List<Item> items)
+        {
+            Mod.instance.fixItemList(items);
+        }
+
+        public void FixIdsInLocation(GameLocation location)
+        {
+            Mod.instance.fixLocation(location);
         }
 
         public bool TryGetCustomSprite(object entity, out Texture2D texture, out Rectangle sourceRect)

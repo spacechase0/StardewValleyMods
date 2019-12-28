@@ -1128,7 +1128,90 @@ namespace JsonAssets
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
-        private void fixLocation(GameLocation loc)
+        internal bool fixItem(Item item)
+        {
+            if (item is Hat hat)
+            {
+                if (fixId(oldHatIds, hatIds, hat.which, origHats))
+                    return true;
+            }
+            else if (item is MeleeWeapon weapon)
+            {
+                if (fixId(oldWeaponIds, weaponIds, weapon.initialParentTileIndex, origWeapons))
+                    return true;
+                else if (fixId(oldWeaponIds, weaponIds, weapon.currentParentTileIndex, origWeapons))
+                    return true;
+                else if (fixId(oldWeaponIds, weaponIds, weapon.currentParentTileIndex, origWeapons))
+                    return true;
+            }
+            else if (item is Ring ring)
+            {
+                if (fixId(oldObjectIds, objectIds, ring.indexInTileSheet, origObjects))
+                    return true;
+            }
+            else if (item is Clothing clothing)
+            {
+                if (fixId(oldClothingIds, clothingIds, clothing.parentSheetIndex, origClothing))
+                    return true;
+            }
+            else if (!(item is StardewValley.Object))
+                return false;
+            var obj = item as StardewValley.Object;
+
+            if (obj is Chest chest)
+            {
+                fixItemList(chest.items);
+            }
+            else if (obj is IndoorPot pot)
+            {
+                var hd = pot.hoeDirt.Value;
+                if (hd == null || hd.crop == null)
+                    return false;
+
+                var oldId = hd.crop.rowInSpriteSheet.Value;
+                if (fixId(oldCropIds, cropIds, hd.crop.rowInSpriteSheet, origCrops))
+                    hd.crop = null;
+                else
+                {
+                    var key = cropIds.FirstOrDefault(x => x.Value == hd.crop.rowInSpriteSheet.Value).Key;
+                    var c = crops.FirstOrDefault(x => x.Name == key);
+                    if (c != null) // Non-JA crop
+                    {
+                        Log.verbose("Fixing crop product: From " + hd.crop.indexOfHarvest.Value + " to " + c.Product + "=" + ResolveObjectId(c.Product));
+                        hd.crop.indexOfHarvest.Value = ResolveObjectId(c.Product);
+                    }
+                }
+            }
+            else
+            {
+                if (!obj.bigCraftable.Value)
+                {
+                    if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, origObjects))
+                        return true;
+                }
+                else
+                {
+                    if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, origBigCraftables))
+                        return true;
+                }
+            }
+
+            if (obj.heldObject.Value != null)
+            {
+                if (fixId(oldObjectIds, objectIds, obj.heldObject.Value.parentSheetIndex, origObjects))
+                    obj.heldObject.Value = null;
+
+                if (obj.heldObject.Value is Chest chest2)
+                {
+                    fixItemList(chest2.items);
+                }
+            }
+
+            return false;
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
+        internal void fixLocation(GameLocation loc)
         {
             if (loc is FarmHouse fh)
             {
@@ -1185,33 +1268,9 @@ namespace JsonAssets
             foreach (var objk in loc.netObjects.Keys)
             {
                 var obj = loc.netObjects[objk];
-                if (obj is Chest chest)
+                if ( fixItem(obj) )
                 {
-                    fixItemList(chest.items);
-                }
-                else
-                {
-                    if (!obj.bigCraftable.Value)
-                    {
-                        if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, origObjects))
-                            toRemove.Add(objk);
-                    }
-                    else
-                    {
-                        if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, origBigCraftables))
-                            toRemove.Add(objk);
-                    }
-                }
-
-                if (obj.heldObject.Value != null)
-                {
-                    if (fixId(oldObjectIds, objectIds, obj.heldObject.Value.parentSheetIndex, origObjects))
-                        obj.heldObject.Value = null;
-
-                    if (obj.heldObject.Value is Chest chest2)
-                    {
-                        fixItemList(chest2.items);
-                    }
+                    toRemove.Add(objk);
                 }
             }
             foreach (var rem in toRemove)
@@ -1325,7 +1384,7 @@ namespace JsonAssets
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
-        private void fixItemList(IList<Item> items)
+        internal void fixItemList(IList<Item> items)
         {
             for (int i = 0; i < items.Count; ++i)
             {
