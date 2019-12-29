@@ -21,9 +21,11 @@
     "PurchasePrice": 250
   },
   "NameLocalization": { //Korean localisation
-  	"ko": "트래블 코어"
+  	"ko": "트래블 코어",
+	"zh": "传送核心", //Chinese (Simplified)
   },
   "DescriptionLocalization": {
-  	"ko": "마법 주문의 촉매제입니다."
+  	"ko": "마법 주문의 촉매제입니다.",
+	"zh": "触媒之一。", //Chinese (Simplified)
   }
 }
