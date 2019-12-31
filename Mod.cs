@@ -1039,13 +1039,24 @@ namespace JsonAssets
         {
             Dictionary<string, int> ids = new Dictionary<string, int>();
 
+            int[] bigSkip = new int[] { 309, 310, 311, 326, 628, 629, 630, 631, 632, 633 };
+
             int currId = starting;
             foreach (var d in data)
             {
                 if (d.id == -1)
                 {
                     Log.verbose($"New ID: {d.Name} = {currId}");
-                    ids.Add(d.Name, currId++);
+                    int id = currId++;
+                    if (type == "big-craftables")
+                    {
+                        while (bigSkip.Contains(id))
+                        {
+                            id = currId++;
+                        }
+                    }
+
+                    ids.Add(d.Name, id);
                     if (type == "objects" && ((ObjectData)d).IsColored)
                         ++currId;
                     else if (type == "big-craftables" && ((BigCraftableData)d).ReserveNextIndex)
