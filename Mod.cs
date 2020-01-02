@@ -805,10 +805,10 @@ namespace JsonAssets
                     if (big.PurchaseRequirements != null && big.PurchaseRequirements.Count > 0 &&
                         precondMeth.Invoke<int>(new object[] { big.GetPurchaseRequirementString() }) == -1)
                         continue;
+                    Log.trace($"\tAdding {big.Name}");
                     Item item = new SObject(Vector2.Zero, big.id, false);
                     forSale.Add(item);
                     itemPriceAndStock.Add(item, new int[] { big.PurchasePrice, int.MaxValue });
-                    Log.trace($"\tAdding {big.Name}");
                 }
                 if (hatMouse)
                 {
@@ -1200,6 +1200,8 @@ namespace JsonAssets
             {
                 if (!obj.bigCraftable.Value)
                 {
+                    if (fixId(oldObjectIds, objectIds, obj.preservedParentSheetIndex, origObjects))
+                        obj.preservedParentSheetIndex.Value = -1;
                     if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, origObjects))
                         return true;
                 }
