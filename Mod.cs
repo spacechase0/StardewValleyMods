@@ -613,6 +613,8 @@ namespace JsonAssets
         {
             Log.debug("Loading stuff early (creation)");
             initStuff(loadIdFiles: false);
+
+            api.InvokeIdsFixed();
         }
 
         private void onLoadStageChanged(object sender, LoadStageChangedEventArgs e)
@@ -1190,6 +1192,7 @@ namespace JsonAssets
                     {
                         Log.verbose("Fixing crop product: From " + hd.crop.indexOfHarvest.Value + " to " + c.Product + "=" + ResolveObjectId(c.Product));
                         hd.crop.indexOfHarvest.Value = ResolveObjectId(c.Product);
+                        fixId(oldObjectIds, objectIds, hd.crop.netSeedIndex, origObjects);
                     }
                 }
             }
@@ -1252,6 +1255,7 @@ namespace JsonAssets
                         {
                             Log.verbose("Fixing crop product: From " + hd.crop.indexOfHarvest.Value + " to " + c.Product + "=" + ResolveObjectId(c.Product));
                             hd.crop.indexOfHarvest.Value = ResolveObjectId(c.Product);
+                            fixId(oldObjectIds, objectIds, hd.crop.netSeedIndex, origObjects);
                         }
                     }
                 }
