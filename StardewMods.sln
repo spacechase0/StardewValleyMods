@@ -105,6 +105,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericModConfigMenu", "Gen
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SpaceShared", "SpaceShared\SpaceShared.shproj", "{061610A4-7D02-4F52-A921-F59ED123C2A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheftOfTheWinterStar", "TheftOfTheWinterStar\TheftOfTheWinterStar.csproj", "{9495A8BB-CF71-4C86-9EB4-F03247FD0E54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeaponReskinner", "WeaponReskinner\WeaponReskinner.csproj", "{2E3F690E-C7C5-4F5A-8FAE-86E54B3C2699}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterMeteorites", "BetterMeteorites\BetterMeteorites.csproj", "{1C746787-2FEA-4328-924D-B3AFAE701B10}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SpaceShared\SpaceShared.projitems*{0069e22a-8331-464c-8843-3eca4c826b13}*SharedItemsImports = 4
@@ -115,9 +121,11 @@ Global
 		SpaceShared\SpaceShared.projitems*{16c65e62-e346-4aea-809a-36ebc0442607}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{1c1289bd-f40b-4343-aa8a-4f151f887463}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{1c3d86aa-c048-4798-bec5-07d7269cce53}*SharedItemsImports = 4
+		SpaceShared\SpaceShared.projitems*{1c746787-2fea-4328-924d-b3afae701b10}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{218d2aac-1c05-4d68-8efb-7b244a1f2606}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{273b7946-725e-4dcf-8a8c-0d9e5b2d2eec}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{2bb75a79-9eeb-4c00-9ce7-f8e53397dc7b}*SharedItemsImports = 4
+		SpaceShared\SpaceShared.projitems*{2e3f690e-c7c5-4f5a-8fae-86e54b3c2699}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{34eac087-758b-4d03-b597-9623286f482d}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{3a1edfb2-9cb9-4b27-b463-71c5521ca2db}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{505f7d71-20b2-4010-ac06-79b1229a74c6}*SharedItemsImports = 4
@@ -126,6 +134,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{6e9ba154-07eb-43c8-8e5a-94247ff28556}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{7b0e3c65-34bf-48e0-99f1-7b28869f3f5b}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{9002aaed-277d-40f9-a6ac-91698952124c}*SharedItemsImports = 4
+		SpaceShared\SpaceShared.projitems*{9495a8bb-cf71-4c86-9eb4-f03247fd0e54}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{95e3b0c8-60b2-49cc-91a4-b8ea936681d4}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{a4b257c6-803a-4cc8-82f9-86ab0fdfdc28}*SharedItemsImports = 4
 		SpaceShared\SpaceShared.projitems*{a534ca13-4195-468f-93a6-c579cca46058}*SharedItemsImports = 4
@@ -512,6 +521,30 @@ Global
 		{C3D5972F-CB65-4C85-8E1C-55C78A99940A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C3D5972F-CB65-4C85-8E1C-55C78A99940A}.Release|x86.ActiveCfg = Release|Any CPU
 		{C3D5972F-CB65-4C85-8E1C-55C78A99940A}.Release|x86.Build.0 = Release|Any CPU
+		{9495A8BB-CF71-4C86-9EB4-F03247FD0E54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9495A8BB-CF71-4C86-9EB4-F03247FD0E54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9495A8BB-CF71-4C86-9EB4-F03247FD0E54}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9495A8BB-CF71-4C86-9EB4-F03247FD0E54}.Debug|x86.Build.0 = Debug|Any CPU
+		{9495A8BB-CF71-4C86-9EB4-F03247FD0E54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9495A8BB-CF71-4C86-9EB4-F03247FD0E54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9495A8BB-CF71-4C86-9EB4-F03247FD0E54}.Release|x86.ActiveCfg = Release|Any CPU
+		{9495A8BB-CF71-4C86-9EB4-F03247FD0E54}.Release|x86.Build.0 = Release|Any CPU
+		{2E3F690E-C7C5-4F5A-8FAE-86E54B3C2699}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E3F690E-C7C5-4F5A-8FAE-86E54B3C2699}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E3F690E-C7C5-4F5A-8FAE-86E54B3C2699}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2E3F690E-C7C5-4F5A-8FAE-86E54B3C2699}.Debug|x86.Build.0 = Debug|Any CPU
+		{2E3F690E-C7C5-4F5A-8FAE-86E54B3C2699}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E3F690E-C7C5-4F5A-8FAE-86E54B3C2699}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E3F690E-C7C5-4F5A-8FAE-86E54B3C2699}.Release|x86.ActiveCfg = Release|Any CPU
+		{2E3F690E-C7C5-4F5A-8FAE-86E54B3C2699}.Release|x86.Build.0 = Release|Any CPU
+		{1C746787-2FEA-4328-924D-B3AFAE701B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C746787-2FEA-4328-924D-B3AFAE701B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C746787-2FEA-4328-924D-B3AFAE701B10}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1C746787-2FEA-4328-924D-B3AFAE701B10}.Debug|x86.Build.0 = Debug|Any CPU
+		{1C746787-2FEA-4328-924D-B3AFAE701B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C746787-2FEA-4328-924D-B3AFAE701B10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C746787-2FEA-4328-924D-B3AFAE701B10}.Release|x86.ActiveCfg = Release|Any CPU
+		{1C746787-2FEA-4328-924D-B3AFAE701B10}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

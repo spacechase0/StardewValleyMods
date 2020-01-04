@@ -5,6 +5,7 @@
 # main mods
 AnimalSocialMenu
 AnotherHungerMod
+BetterMeteorites
 BetterShopMenu
 Bow
 BugNet
@@ -38,9 +39,11 @@ SpaceShared
 Spenny
 StardewProfitCalculator
 Terraforming
+TheftOfTheWinterStar
 ThreeHeartDancePartner
 ThrowableAxe
 ToolGeodes
+WeaponReskinner
 
 # archived
 Cobalt
