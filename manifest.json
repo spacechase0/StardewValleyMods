@@ -1,0 +1,21 @@
+{
+  "Name": "Theft of the Winter Star",
+  "Author": "spacechase0, ParadigmNomad",
+  "Version": "1.0.0",
+  "Description": "Someone stole the deocrations for the Feast of the Winter Star!",
+  "UniqueID": "spacechase0.TheftOfTheWinterStar",
+  "EntryDll": "TheftOfTheWinterStar.dll",
+  "MinimumApiVersion": "2.10.2",
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.SpaceCore",
+      "MinimumVersion": "1.3.3"
+    },
+    {
+      "UniqueID": "spacechase0.JsonAssets",
+      "MinimumVersion": "1.5.3"
+    }
+  ],
+  "UpdateKeys": [ "Nexus:5062", "Chucklefish:5915" ],
+  "spacechase0": "theft-of-the-winter-star"
+}
