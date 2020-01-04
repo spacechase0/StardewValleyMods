@@ -40,6 +40,8 @@ namespace JsonAssets
                 return true;
             if (asset.AssetNameEquals("Data\\TailoringRecipes"))
                 return true;
+            if (asset.AssetNameEquals("Data\\Boots"))
+                return true;
             if (asset.AssetNameEquals("Maps\\springobjects"))
                 return true;
             if (asset.AssetNameEquals("TileSheets\\crops"))
@@ -55,6 +57,8 @@ namespace JsonAssets
             if (asset.AssetNameEquals("Characters\\Farmer\\shirts"))
                 return true;
             if (asset.AssetNameEquals("Characters\\Farmer\\pants"))
+                return true;
+            if (asset.AssetNameEquals("Characters\\Farmer\\shoeColors"))
                 return true;
             return false;
         }
@@ -333,6 +337,22 @@ namespace JsonAssets
                     }
                 }
             }
+            else if (asset.AssetNameEquals("Data\\Boots"))
+            {
+                var data = asset.AsDictionary<int, string>().Data;
+                foreach (var boots in Mod.instance.bootss)
+                {
+                    try
+                    {
+                        Log.verbose($"Injecting to boots: {boots.GetObjectId()}: {boots.GetBootsInformation()}");
+                        data.Add(boots.GetObjectId(), boots.GetBootsInformation());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error($"Exception injecting boots information for {boots.Name}: {e}");
+                    }
+                }
+            }
             else if (asset.AssetNameEquals("Maps\\springobjects"))
             {
                 var oldTex = asset.AsImage().Data;
@@ -361,6 +381,25 @@ namespace JsonAssets
                     catch ( Exception e )
                     {
                         Log.error($"Exception injecting sprite for {obj.Name}: {e}");
+                    }
+                }
+
+                foreach (var boots in Mod.instance.bootss)
+                {
+                    try
+                    {
+                        Log.verbose($"Injecting {boots.Name} sprites @ {objectRect(boots.GetObjectId())}");
+                        asset.AsImage().PatchImage(boots.texture, null, objectRect(boots.GetObjectId()));
+
+                        var rect = objectRect(boots.GetObjectId());
+                        int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
+                        boots.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                        boots.tilesheetX = rect.X;
+                        boots.tilesheetY = rect.Y;
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error($"Exception injecting sprite for {boots.Name}: {e}");
                     }
                 }
             }
@@ -562,6 +601,27 @@ namespace JsonAssets
                     }
                 }
             }
+            else if (asset.AssetNameEquals("Characters\\Farmer\\shoeColors"))
+            {
+                var oldTex = asset.AsImage().Data;
+                Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
+                asset.ReplaceWith(newTex);
+                asset.AsImage().PatchImage(oldTex);
+                Log.trace($"Boots are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
+
+                foreach (var boots in Mod.instance.bootss)
+                {
+                    try
+                    {
+                        Log.verbose($"Injecting {boots.Name} sprites @ {bootsRect(boots.GetTextureIndex())}");
+                        asset.AsImage().PatchExtendedTileSheet(boots.textureColor, null, bootsRect(boots.GetTextureIndex()));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.error($"Exception injecting sprite for {boots.Name}: {e}");
+                    }
+                }
+            }
         }
         internal static Rectangle objectRect(int index)
         {
@@ -600,6 +660,10 @@ namespace JsonAssets
         internal static Rectangle pantsRect(int index)
         {
             return new Rectangle(index % 10 * 192, index / 10 * 688, 192, 688);
+        }
+        internal static Rectangle bootsRect(int index)
+        {
+            return new Rectangle(0, index, 4, 1);
         }
     }
 }
