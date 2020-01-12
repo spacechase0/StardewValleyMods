@@ -331,18 +331,21 @@ namespace TheftOfTheWinterSTar
                                 if (!hd.crop.seasonsToGrowIn.Contains(Game1.currentSeason))
                                     hd.crop.seasonsToGrowIn.Add(Game1.currentSeason);
                             }
+                            /*
                             else
                             {
                                 var cropData = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
                                 if ( !cropData.ContainsKey(hd.crop.netSeedIndex.Value))
                                 {
-                                    Log.warn("no crop " + hd.crop.netSeedIndex.Value + "? ");
+                                    if ( hd.crop.netSeedIndex.Value != -1 )
+                                        Log.warn("no crop " + hd.crop.netSeedIndex.Value + "? ");
                                     continue;
                                 }
                                 string[] seasons = cropData[hd.crop.netSeedIndex.Value].Split('/')[1].Split(' ');
                                 hd.crop.seasonsToGrowIn.Clear();
                                 hd.crop.seasonsToGrowIn.AddRange(seasons);
                             }
+                            */
                         }
                     }
                 }
