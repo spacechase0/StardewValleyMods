@@ -7,6 +7,9 @@ namespace JsonAssets.Data
 {
     public class CropData : DataNeedsIdWithTexture
     {
+        [JsonIgnore]
+        public Texture2D giantTex;
+
         public object Product { get; set; }
         public string SeedName { get; set; }
         public string SeedDescription { get; set; }

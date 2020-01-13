@@ -102,6 +102,12 @@ namespace JsonAssets
                     transpiler: new HarmonyMethod(typeof(CropPatches), nameof(CropPatches.NewDay_Transpiler))
                 );
 
+                // GiantCrop patches
+                harmony.Patch(
+                    original: AccessTools.Method(typeof(GiantCrop), nameof(GiantCrop.draw)),
+                    prefix: new HarmonyMethod(typeof(GiantCropPatches), nameof(GiantCropPatches.Draw_Prefix))
+                );
+
                 // item patches
                 harmony.Patch(
                     original: AccessTools.Method(typeof(Item), nameof(Item.canBeDropped)),
@@ -166,6 +172,7 @@ namespace JsonAssets
 
         }
 
+        private static readonly Regex nameToId = new Regex("[^a-zA-Z0-9_.]");
         private void loadData(string dir)
         {
             // read initial info
@@ -178,7 +185,8 @@ namespace JsonAssets
             }
 
             // load content pack
-            IContentPack contentPack = this.Helper.ContentPacks.CreateTemporary(dir, id: Guid.NewGuid().ToString("N"), name: info.Name, description: info.Description, author: info.Author, version: new SemanticVersion(info.Version));
+            string id = nameToId.Replace(info.Name, "");
+            IContentPack contentPack = this.Helper.ContentPacks.CreateTemporary(dir, id: id, name: info.Name, description: info.Description, author: info.Author, version: new SemanticVersion(info.Version));
             this.loadData(contentPack);
         }
 
@@ -458,6 +466,8 @@ namespace JsonAssets
 
                     // save crop
                     crop.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/crop.png");
+                    if (contentPack.HasFile($"{relativePath}/giant.png"))
+                        crop.giantTex = contentPack.LoadAsset<Texture2D>($"{relativePath}/giant.png");
 
                     RegisterCrop(contentPack.Manifest, crop, contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"));
                 }
@@ -1010,16 +1020,16 @@ namespace JsonAssets
             }
         }
 
-        private const int StartingObjectId = 2000;
-        private const int StartingCropId = 100;
-        private const int StartingFruitTreeId = 10;
-        private const int StartingBigCraftableId = 300;
-        private const int StartingHatId = 80;
-        private const int StartingWeaponId = 64;
-        private const int StartingClothingId = 3000;
-        private const int StartingShirtTextureIndex = 750;
-        private const int StartingPantsTextureIndex = 20;
-        private const int StartingBootsId = 100;
+        internal const int StartingObjectId = 2000;
+        internal const int StartingCropId = 100;
+        internal const int StartingFruitTreeId = 10;
+        internal const int StartingBigCraftableId = 300;
+        internal const int StartingHatId = 80;
+        internal const int StartingWeaponId = 64;
+        internal const int StartingClothingId = 3000;
+        internal const int StartingShirtTextureIndex = 750;
+        internal const int StartingPantsTextureIndex = 20;
+        internal const int StartingBootsId = 100;
 
         internal IList<ObjectData> objects = new List<ObjectData>();
         internal IList<CropData> crops = new List<CropData>();
@@ -1468,6 +1478,17 @@ namespace JsonAssets
                     if (animal.deluxeProduceIndex.Value != -1)
                         if (fixId(oldObjectIds, objectIds, animal.deluxeProduceIndex, origObjects))
                             animal.deluxeProduceIndex.Value = 0;
+                }
+
+                var clumpsToRemove = new List<ResourceClump>();
+                foreach ( var clump in farm.resourceClumps )
+                {
+                    if (fixId(oldObjectIds, objectIds, clump.parentSheetIndex, origObjects))
+                        clumpsToRemove.Add(clump);
+                }
+                foreach ( var clump in clumpsToRemove )
+                {
+                    farm.resourceClumps.Remove(clump);
                 }
             }
         }

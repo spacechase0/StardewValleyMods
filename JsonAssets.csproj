@@ -63,6 +63,7 @@
     <Compile Include="Data\ObjectData.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Other\ContentPatcher.cs" />
+    <Compile Include="Overrides\GiantCropPatches.cs" />
     <Compile Include="Overrides\CropPatches.cs" />
     <Compile Include="Overrides\ItemPatches.cs" />
     <Compile Include="Overrides\RingPatches.cs" />

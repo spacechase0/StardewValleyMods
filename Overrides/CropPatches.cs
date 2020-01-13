@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using JsonAssets.Data;
+using Netcode;
 using SpaceShared;
 using StardewValley;
 
@@ -44,6 +45,7 @@ namespace JsonAssets.Overrides
             // TODO: Learn how to use ILGenerator
             try
             {
+                // Pass 1 - indoor crop check
                 var newInstructions = new List<CodeInstruction>();
                 bool justHooked = false;
                 foreach (var instr in instructions)
@@ -71,6 +73,39 @@ namespace JsonAssets.Overrides
                     }
                 }
 
+                // Pass 2 - giant crop check
+                instructions = newInstructions;
+                newInstructions = new List<CodeInstruction>();
+                int hookCountdown = 0;
+                justHooked = false;
+                object label = null;
+                foreach ( var instr in instructions )
+                {
+                    // If this is the spot for our hook, inject it
+                    if (hookCountdown > 0 && --hookCountdown == 0)
+                    {
+                        newInstructions.Add(new CodeInstruction(OpCodes.Ldarg_0));
+                        newInstructions.Add(new CodeInstruction(OpCodes.Ldfld, typeof(Crop).GetField(nameof(Crop.rowInSpriteSheet)))); // We use the rowInSpriteSheet. See comments on previous pass
+                        newInstructions.Add(new CodeInstruction(OpCodes.Call, typeof(CropPatches).GetMethod(nameof(CheckCanBeGiant))));
+                        newInstructions.Add(new CodeInstruction(OpCodes.Brtrue_S, label));
+                    }
+
+                    // The only reference to 276 is the index of the pumpkin for checking for giant crops growing
+                    if (instr.opcode == OpCodes.Ldc_I4 && (int)instr.operand == 276)
+                    {
+                        // In two instructions (after this and the next), we want our check
+                        hookCountdown = 2;
+                        justHooked = true;
+                    }
+                    // If this is the instruction after the previous check, we want to borrow the label for our own use
+                    else if ( justHooked )
+                    {
+                        label = instr.operand;
+                        justHooked = false;
+                    }
+                    newInstructions.Add(instr);
+                }
+
                 return newInstructions;
             }
             catch (Exception ex)
@@ -89,6 +124,15 @@ namespace JsonAssets.Overrides
             if (cropData == null)
                 return false;
             return cropData.CropType == CropData.CropType_.IndoorsOnly;
+        }
+
+        public static bool CheckCanBeGiant(NetInt cropRow_)
+        {
+            int cropRow = cropRow_.Value;
+            var cropData = Mod.instance.crops.FirstOrDefault(c => c.GetCropSpriteIndex() == cropRow);
+            if (cropData == null)
+                return false;
+            return cropData.giantTex != null;
         }
     }
 }
