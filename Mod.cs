@@ -163,6 +163,7 @@ namespace LuckSkill
                 {
                     if (r.NextDouble() > 0.15)
                         continue;
+                    rolls = 0;
 
                     Action advanceCrops = () =>
                     {
@@ -171,10 +172,12 @@ namespace LuckSkill
                         for (int i = 0; i < locs.Count; ++i)
                         {
                             GameLocation loc = locs[i];
+                            if (loc == null) // From buildings without a valid indoors
+                                continue;
                             if (loc is BuildableGameLocation bgl)
                                 locs.AddRange(bgl.buildings.Select(b => b.indoors.Value));
 
-                            foreach (var entry in loc.objects.Pairs)
+                            foreach (var entry in loc.objects.Pairs.ToList())
                             {
                                 var obj = entry.Value;
                                 if ( obj is IndoorPot pot )
@@ -186,7 +189,7 @@ namespace LuckSkill
                                     dirt.crop.newDay(HoeDirt.watered, dirt.fertilizer.Value, (int)entry.Key.X, (int)entry.Key.Y, loc);
                                 }
                             }
-                            foreach (var entry in loc.terrainFeatures.Pairs)
+                            foreach (var entry in loc.terrainFeatures.Pairs.ToList())
                             {
                                 var tf = entry.Value;
                                 if (tf is HoeDirt dirt)
@@ -432,7 +435,7 @@ namespace LuckSkill
                     Game1.stats.daysPlayed += 999999; // To rig the rng to not just give the same results.
                     try // Just in case. Want to make sure stats.daysPlayed gets fixed
                     {
-                        ev = Utility.pickFarmEvent();
+                        ev = pickFarmEvent();
                     }
                     catch (Exception) { }
                     Game1.stats.daysPlayed -= 999999;
@@ -449,6 +452,58 @@ namespace LuckSkill
                     args.NightEvent = ev;
                 }
             }
+        }
+
+        private FarmEvent pickFarmEvent()
+        {
+            Random random = new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2);
+            if (Game1.weddingToday)
+                return (FarmEvent)null;
+            foreach (Farmer onlineFarmer in Game1.getOnlineFarmers())
+            {
+                Friendship spouseFriendship = onlineFarmer.GetSpouseFriendship();
+                if (spouseFriendship != null && spouseFriendship.IsMarried() && spouseFriendship.WeddingDate == Game1.Date)
+                    return (FarmEvent)null;
+            }
+            if (Game1.stats.DaysPlayed == 31U)
+                return (FarmEvent)new SoundInTheNightEvent(4);
+            if (Game1.player.mailForTomorrow.Contains("jojaPantry%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaPantry"))
+                return (FarmEvent)new WorldChangeEvent(0);
+            if (Game1.player.mailForTomorrow.Contains("ccPantry%&NL&%") || Game1.player.mailForTomorrow.Contains("ccPantry"))
+                return (FarmEvent)new WorldChangeEvent(1);
+            if (Game1.player.mailForTomorrow.Contains("jojaVault%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaVault"))
+                return (FarmEvent)new WorldChangeEvent(6);
+            if (Game1.player.mailForTomorrow.Contains("ccVault%&NL&%") || Game1.player.mailForTomorrow.Contains("ccVault"))
+                return (FarmEvent)new WorldChangeEvent(7);
+            if (Game1.player.mailForTomorrow.Contains("jojaBoilerRoom%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaBoilerRoom"))
+                return (FarmEvent)new WorldChangeEvent(2);
+            if (Game1.player.mailForTomorrow.Contains("ccBoilerRoom%&NL&%") || Game1.player.mailForTomorrow.Contains("ccBoilerRoom"))
+                return (FarmEvent)new WorldChangeEvent(3);
+            if (Game1.player.mailForTomorrow.Contains("jojaCraftsRoom%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaCraftsRoom"))
+                return (FarmEvent)new WorldChangeEvent(4);
+            if (Game1.player.mailForTomorrow.Contains("ccCraftsRoom%&NL&%") || Game1.player.mailForTomorrow.Contains("ccCraftsRoom"))
+                return (FarmEvent)new WorldChangeEvent(5);
+            if (Game1.player.mailForTomorrow.Contains("jojaFishTank%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaFishTank"))
+                return (FarmEvent)new WorldChangeEvent(8);
+            if (Game1.player.mailForTomorrow.Contains("ccFishTank%&NL&%") || Game1.player.mailForTomorrow.Contains("ccFishTank"))
+                return (FarmEvent)new WorldChangeEvent(9);
+            if (Game1.player.mailForTomorrow.Contains("ccMovieTheaterJoja%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaMovieTheater"))
+                return (FarmEvent)new WorldChangeEvent(10);
+            if (Game1.player.mailForTomorrow.Contains("ccMovieTheater%&NL&%") || Game1.player.mailForTomorrow.Contains("ccMovieTheater"))
+                return (FarmEvent)new WorldChangeEvent(11);
+            if (Game1.MasterPlayer.eventsSeen.Contains(191393) && (Game1.isRaining || Game1.isLightning) && (!Game1.MasterPlayer.mailReceived.Contains("abandonedJojaMartAccessible") && !Game1.MasterPlayer.mailReceived.Contains("ccMovieTheater")))
+                return (FarmEvent)new WorldChangeEvent(12);
+            if (random.NextDouble() < 0.01 && !Game1.currentSeason.Equals("winter"))
+                return (FarmEvent)new FairyEvent();
+            if (random.NextDouble() < 0.01)
+                return (FarmEvent)new WitchEvent();
+            if (random.NextDouble() < 0.01)
+                return (FarmEvent)new SoundInTheNightEvent(1);
+            if (random.NextDouble() < 0.01 && Game1.year > 1)
+                return (FarmEvent)new SoundInTheNightEvent(0);
+            if (random.NextDouble() < 0.01)
+                return (FarmEvent)new SoundInTheNightEvent(3);
+            return (FarmEvent)null;
         }
 
         /// <summary>Raised after a player warps to a new location.</summary>

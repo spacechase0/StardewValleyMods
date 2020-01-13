@@ -53,7 +53,13 @@ namespace LuckSkill.Overrides
                 }
 
                 if (foundGeode)
-                    howMuch /= ms.getMineArea(-1);
+                {
+                    int msa = ms.getMineArea(-1);
+                    if (msa != 0)
+                    {
+                        howMuch /= msa;
+                    }
+                }
             }
         }
     }
