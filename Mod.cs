@@ -71,6 +71,7 @@ namespace ContentPatcherAnimations
             }
 
             ++frameCounter;
+            Game1.graphics.GraphicsDevice.Textures[0] = null;
             foreach ( var patch in animatedPatches )
             {
                 if (!patch.Value.IsActive.Invoke() || patch.Value.Source == null || patch.Value.Target == null)
