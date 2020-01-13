@@ -6,6 +6,6 @@
   "UniqueID": "spacechase0.GenericModConfigMenu",
   "EntryDll": "GenericModConfigMenu.dll",
   "MinimumApiVersion": "2.10.2",
-  "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
-  "spacechase0": "generic-mod-config-menu",
+  "UpdateKeys": [ "Nexus:5098", "Chucklefish:5898" ],
+  "spacechase0": "generic-mod-config-menu"
 }

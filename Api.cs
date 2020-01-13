@@ -13,7 +13,8 @@ namespace GenericModConfigMenu
     public interface IApi
     {
         void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile);
-        
+
+        void RegisterLabel(IManifest mod, string labelName, string labelDesc);
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func< bool > optionGet, Action< bool > optionSet);
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func< int > optionGet, Action< int > optionSet);
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func< float > optionGet, Action< float > optionSet);
@@ -38,6 +39,13 @@ namespace GenericModConfigMenu
             if ( Mod.instance.configs.ContainsKey( mod ) )
                 throw new ArgumentException( "Mod already registered" );
             Mod.instance.configs.Add( mod, new ModConfig( mod, revertToDefault, saveToFile ) );
+        }
+
+        public void RegisterLabel(IManifest mod, string labelName, string labelDesc)
+        {
+            if (!Mod.instance.configs.ContainsKey(mod))
+                throw new ArgumentException("Mod not registered");
+            Mod.instance.configs[mod].Options.Add(new LabelModOption(labelName, labelDesc));
         }
 
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<bool> optionGet, Action<bool> optionSet) => RegisterSimpleOption<bool>(mod, optionName, optionDesc, optionGet, optionSet);

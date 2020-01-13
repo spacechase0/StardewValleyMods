@@ -132,8 +132,19 @@ namespace GenericModConfigMenu
                     textbox.Callback = (Element e) => s.Value = (e as Textbox).String;
                     other = textbox;
                 }
+                else if ( opt is LabelModOption l )
+                {
+                    label.LocalPosition = new Vector2(table.Size.X / 2 - label.Font.MeasureString(label.String).X / 2, 0);
+                    if (l.Name == "")
+                        label = null;
+                    other = null;
+                }
 
-                if (other2 == null)
+                if (label == null)
+                    table.AddRow(new Element[] { });
+                else if (other == null)
+                    table.AddRow(new Element[] { label });
+                else if (other2 == null)
                     table.AddRow(new Element[] { label, other });
                 else
                     table.AddRow(new Element[] { label, other, other2 });

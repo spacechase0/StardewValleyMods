@@ -51,6 +51,7 @@
     <Compile Include="ModOption\ChoiceModOption.cs" />
     <Compile Include="ModOption\ComplexModOption.cs" />
     <Compile Include="ModOption\ClampedModOption.cs" />
+    <Compile Include="ModOption\LabelModOption.cs" />
     <Compile Include="ModOption\SimpleModOption.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpecificModConfigMenu.cs" />
