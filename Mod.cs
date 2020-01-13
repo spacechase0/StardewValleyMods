@@ -29,8 +29,8 @@ namespace SleepyEye
 
             Log.debug("Adding tent to shop");
 
-            var forSale = Helper.Reflection.GetField<List<Item>>(menu, "forSale").GetValue();
-            var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<Item, int[]>>(menu, "itemPriceAndStock").GetValue();
+            var forSale = menu.forSale;
+            var itemPriceAndStock = menu.itemPriceAndStock;
 
             var item = new TentTool();
             forSale.Add(item);
