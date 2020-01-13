@@ -46,7 +46,7 @@ namespace Magic.Spells
             Game1.player.attack = 0;
 
             int l = level + 1;
-            int farm = l, fish = l, mine = l, luck = l, forage = l, def = l, atk = 2;
+            int farm = l, fish = l, mine = l, luck = l, forage = l, def = 0 /*1*/, atk = 2;
             if (l == 2)
             {
                 //def = 3;
