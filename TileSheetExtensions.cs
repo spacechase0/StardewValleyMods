@@ -122,14 +122,15 @@ namespace SpaceCore
 
         public static void PatchExtendedTileSheet(this IAssetDataForImage asset, Texture2D source, Rectangle? sourceArea = null, Rectangle? targetArea = null, PatchMode patchMode = PatchMode.Replace )
         {
-            if (!extendedTextureAssets.ContainsKey(asset.AssetName) || !targetArea.HasValue )
+            string assetName = asset.AssetName.Replace('/', '\\');
+            if (!extendedTextureAssets.ContainsKey(assetName) || !targetArea.HasValue )
             {
                 asset.PatchImage(source, sourceArea, targetArea, patchMode);
                 return;
             }
-            extendedTextures.Remove(extendedTextureAssets[asset.AssetName].BaseTileSheet);
-            extendedTextureAssets[asset.AssetName].BaseTileSheet = asset.Data;
-            extendedTextures.Add(extendedTextureAssets[asset.AssetName].BaseTileSheet, extendedTextureAssets[asset.AssetName]);
+            extendedTextures.Remove(extendedTextureAssets[assetName].BaseTileSheet);
+            extendedTextureAssets[assetName].BaseTileSheet = asset.Data;
+            extendedTextures.Add(extendedTextureAssets[assetName].BaseTileSheet, extendedTextureAssets[assetName]);
 
             var adjustedTarget = GetAdjustedTileSheetTarget(asset.Data, targetArea.Value);
             Log.trace("Tilesheet target:" + adjustedTarget.TileSheet + " " + adjustedTarget.Y);
@@ -148,7 +149,7 @@ namespace SpaceCore
 
                 Rectangle r = targetArea.Value;
                 r.Y = adjustedTarget.Y;
-                Log.trace($"Ext-patching on {asset.AssetName}={extendedTextureAssets[asset.AssetName].AssetPath}: {r}/{asset.Data.Width}x{asset.Data.Height}");
+                Log.trace($"Ext-patching on {assetName}={extendedTextureAssets[assetName].AssetPath}: {r}/{asset.Data.Width}x{asset.Data.Height}");
                 asset.PatchImage(source, sourceArea, r, patchMode);
             }
             finally
