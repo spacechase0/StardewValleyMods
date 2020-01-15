@@ -1112,7 +1112,7 @@ namespace JsonAssets
         {
             Dictionary<string, int> ids = new Dictionary<string, int>();
 
-            int[] bigSkip = new int[] { 309, 310, 311, 326, 628, 629, 630, 631, 632, 633 };
+            int[] bigSkip = new int[] { 309, 310, 311, 326, 434, 599, 621, 628, 629, 630, 631, 632, 633, 645 };
 
             int currId = starting;
             foreach (var d in data)
