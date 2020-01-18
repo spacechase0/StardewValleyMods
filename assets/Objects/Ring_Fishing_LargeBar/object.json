@@ -22,5 +22,15 @@
     "PurchaseRequirements": [
       "w rainy"
     ]
-  }
+  },
+      "NameLocalization":
+    {
+
+        "zh": "猎网指环", //Chinese (Simplified)
+    },
+    "DescriptionLocalization":
+    {
+
+        "zh": "增加钓竿50%捕获区域。", //Chinese (Simplified)
+    }
 }
