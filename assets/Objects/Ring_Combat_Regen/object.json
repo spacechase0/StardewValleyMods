@@ -19,5 +19,15 @@
     "CanPurchase": true,
     "PurchaseFrom": "Marlon",
     "PurchasePrice": 10000
-  }
+  },
+      "NameLocalization":
+    {
+
+        "zh": "再生之戒", //Chinese (Simplified)
+    },
+    "DescriptionLocalization":
+    {
+
+        "zh": "戴上它，能感觉到身体在缓慢愈合。", //Chinese (Simplified)
+    }
 }

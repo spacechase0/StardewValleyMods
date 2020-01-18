@@ -19,5 +19,15 @@
     "CanPurchase": true,
     "PurchaseFrom": "Krobus",
     "PurchasePrice": 25000
-  }
+  },
+      "NameLocalization":
+    {
+
+        "zh": "醒灵之戒", //Chinese (Simplified)
+    },
+    "DescriptionLocalization":
+    {
+
+        "zh": "我想知道它是干什么的。", //Chinese (Simplified)
+    }
 }
