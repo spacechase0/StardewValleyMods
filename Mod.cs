@@ -1383,6 +1383,11 @@ namespace JsonAssets
                 {
                     fixItemList(chest.items);
                 }
+                else if (obj is Sign sign)
+                {
+                    if (!fixItem(sign.displayItem.Value))
+                        sign.displayItem.Value = null;
+                }
                 else
                 {
                     if (!obj.bigCraftable.Value)
