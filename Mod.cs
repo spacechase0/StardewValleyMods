@@ -1200,8 +1200,8 @@ namespace JsonAssets
                 Game1.player.pantsItem.Value = null;
             if (Game1.player.boots.Value != null && fixId(oldObjectIds, objectIds, Game1.player.boots.Value.parentSheetIndex, origObjects))
                 Game1.player.boots.Value = null;
-            else if (Game1.player.boots.Value != null)
-                Game1.player.boots.Value.reloadData();
+            /*else if (Game1.player.boots.Value != null)
+                Game1.player.boots.Value.reloadData();*/
 #pragma warning restore AvoidNetField
             foreach (var loc in Game1.locations)
                 fixLocation(loc);
@@ -1246,8 +1246,8 @@ namespace JsonAssets
             {
                 if (fixId(oldObjectIds, objectIds, boots.parentSheetIndex, origObjects))
                     return true;
-                else
-                    boots.reloadData();
+                /*else
+                    boots.reloadData();*/
             }
             else if (!(item is StardewValley.Object))
                 return false;
@@ -1545,8 +1545,8 @@ namespace JsonAssets
                 {
                     if (fixId(oldObjectIds, objectIds, boots.parentSheetIndex, origObjects))
                         items[i] = null;
-                    else
-                        boots.reloadData();
+                    /*else
+                        boots.reloadData();*/
                 }
             }
         }
