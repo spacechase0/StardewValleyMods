@@ -77,6 +77,10 @@ namespace JsonAssets
                     prefix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.GetCategoryName_Prefix))
                 );
                 harmony.Patch(
+                    original: AccessTools.Method(typeof(SObject), nameof(SObject.isIndexOkForBasicShippedCategory)),
+                    postfix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.IsIndexOkForBasicShippedCategory_Postfix))
+                );
+                harmony.Patch(
                     original: AccessTools.Method(typeof(SObject), nameof(SObject.getCategoryColor)),
                     prefix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.GetCategoryColor_Prefix))
                 );
@@ -1206,7 +1210,7 @@ namespace JsonAssets
             foreach (var loc in Game1.locations)
                 fixLocation(loc);
 
-            fixIdDict(Game1.player.basicShipped);
+            fixIdDict(Game1.player.basicShipped, removeUnshippable: true);
             fixIdDict(Game1.player.mineralsFound);
             fixIdDict(Game1.player.recipesCooked);
             fixIdDict2(Game1.player.archaeologyFound);
@@ -1551,7 +1555,7 @@ namespace JsonAssets
             }
         }
 
-        private void fixIdDict(NetIntDictionary<int, NetInt> dict)
+        private void fixIdDict(NetIntDictionary<int, NetInt> dict, bool removeUnshippable = false)
         {
             var toRemove = new List<int>();
             var toAdd = new Dictionary<int, int>();
@@ -1562,11 +1566,16 @@ namespace JsonAssets
                 else if (oldObjectIds.Values.Contains(entry))
                 {
                     var key = oldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
+                    bool isRing = myRings.FirstOrDefault(r => r.id == entry) != null;
+                    bool canShip = objects.FirstOrDefault(o => o.id == entry)?.CanSell ?? true;
 
                     toRemove.Add(entry);
                     if (objectIds.ContainsKey(key))
                     {
-                        toAdd.Add(objectIds[key], dict[entry]);
+                        if (removeUnshippable && (!canShip || isRing))
+                            ;// Log.warn("Found unshippable");
+                        else
+                            toAdd.Add(objectIds[key], dict[entry]);
                     }
                 }
             }
