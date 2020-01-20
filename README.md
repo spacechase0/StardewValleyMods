@@ -352,24 +352,13 @@ Boots do not support gift tastes. By default boots are sold by Marlon but can be
 
 ### Giant Crops
 
-Giant crops require [More Giant Crops](LINK) to be installed. Giant crops work the same way as vanilla giant crops. It is not recommended to make regrowable crops have a giant variant as once they become giant and are harvested they will not replant themselves. This is not a bug and is intended behavior. Mods that include giant regrowable crops should include a disclaimer so users are aware that they may lose their regrowing crops. Below is a sample disclaimer created by SpringsSong:
+Giant crops work the same way as vanilla giant crops. It is not recommended to make regrowable crops have a giant variant as once they become giant and are harvested they will not replant themselves. This is not a bug and is intended behavior. Mods that include giant regrowable crops should include a disclaimer so users are aware that they may lose their regrowing crops. Below is a sample disclaimer created by SpringsSong:
 
 ```
 Giant Crops were never meant to be regrown, they were meant to be a one-off of the crop when the proper conditions were met. If you use the regrowing crops variant of these giant crops, you will lose your crops when you harvest them. This is intentional, not a bug, and will not be fixed.
 ```
 
-Giant crops are 48x63. How they are added depends on what type of giant crop you are trying to create:
-
-#### For Custom Crops
-
-Custom giant crops need to be placed inside the corresponding `Crops` folder and named `giant.png`.
-
-#### For Vanilla Crops (Coming Soon!)
-
-More Giant Crops includes an `assets` folder. Inside the assets folder, save the giant crop's png as the objects ID number.
-
-Example:
-Parsnip has an object ID number of 24. Its giant crop image would be named `24.png`. The folder path would look like `\Stardew Valley\Mods\MoreGiantCrops\assets\24.png`,
+Giant crops are 48x63. Custom giant crops need to be placed inside the corresponding `Crops` folder and named `giant.png`.
 
 ### Tailoring
 
