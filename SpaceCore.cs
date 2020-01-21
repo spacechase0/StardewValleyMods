@@ -95,6 +95,11 @@ namespace SpaceCore
             doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color )                                                                                                  }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix5)));
         }
 
+        public override object GetApi()
+        {
+            return new Api();
+        }
+
         private void doPrefix(Type origType, string origMethod, Type newType)
         {
             doPrefix(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Prefix"));
