@@ -15,6 +15,7 @@ namespace SpaceCore
         string[] GetCustomSkills();
         int GetLevelForCustomSkill(Farmer farmer, string skill);
         void AddExperienceForCustomSkill(Farmer farmer, string skill, int amt);
+        int GetProfessionId(string skill, string profession);
     }
 
     public class Api : IApi
@@ -32,6 +33,11 @@ namespace SpaceCore
         public void AddExperienceForCustomSkill(Farmer farmer, string skill, int amt)
         {
             farmer.AddCustomSkillExperience(skill, amt);
+        }
+
+        public int GetProfessionId(string skill, string profession)
+        {
+            return Skills.GetSkill(skill).Professions.Single(p => p.Id == profession).GetVanillaId();
         }
     }
 }
