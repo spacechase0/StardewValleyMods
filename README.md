@@ -18,7 +18,9 @@
   * [Shirts & Pants](#shirts-and-pants)
     * [Shirts](#shirts)
     * [Pants](#pants)
+  * [Boots](#boots)
   * [Tailoring](#tailoring)
+* [Giant Crops](#giant-crops)
 * [Gift Tastes](#gift-tastes)
 * [Context Tags](#context-tags)
 * [Localization](#localization)
@@ -49,6 +51,7 @@ Json Assets allows you to add custom objects to the game without having to creat
 * Hats (20x80)
 * Weapons (16x16)
 * Shirts & Pants
+* Boots (16x16)
 * Tailoring Recipes
 
 Examples of how to set up all types of objects can be found in the [PPJA Resource Collection](https://www.nexusmods.com/stardewvalley/mods/4590). I also highly recommend looking up preexisting content packs for further examples:
@@ -61,10 +64,11 @@ Examples of how to set up all types of objects can be found in the [PPJA Resourc
 ### Companion Mods
 Json Assets is a great tool if you want to add one of the above objects, but there are other frameworks out there that pair well with Json Assets:
 
- * [Custom Farming Redux](https://www.nexusmods.com/stardewvalley/mods/991) to add machines.
+ * [Producer Framework Mod](https://www.nexusmods.com/stardewvalley/mods/4970) to add machines.
  * [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915).
  * [Better Artisan Good Icons](https://www.nexusmods.com/stardewvalley/mods/2080) to customize the appearance of artisan products.
  * [Mail Framework Mod](https://www.nexusmods.com/stardewvalley/mods/1536) to send objects & cooking/crafting recipes.
+ * [Shop Tile Framework](https://www.nexusmods.com/stardewvalley/mods/5005) to add shops easier with full JA pack support.
 
 ## Basic Features
 ### Overview
@@ -77,6 +81,7 @@ There are nine main folders you are likely to see when downloading Json Asset co
 * Weapons
 * Shirts
 * Pants
+* Boots
 * Tailoring
 
 You will also see a `manifest.json` for SMAPI to read (see [content packs](https://stardewvalleywiki.com/Modding:SMAPI_APIs#Manifest) on the wiki).
@@ -87,7 +92,7 @@ Big craftables are objects like scarecrows that are 16x32.
 
 A big craftable subfolder is a folder with these files:
 * a `big-craftable.json`;
-* a `big-craftable.png`. Size: 16x32
+* a `big-craftable.png`; Size: 16x32
 
 The `big-craftable.json` contains these fields:
 
@@ -99,13 +104,16 @@ field                  | purpose
 `ProvidesLight`        | On/Off switch for if it provides light or not. Set to `true` or `false`.
 `Recipe`               | Begins the recipe block.
 `ResultCount`          | How many of the product does the recipe produce.
-`Ingredients`          | If using a vanilla object, you will have to use the [objects ID number](https://pastebin.com/TBsGu6Em). If using a custom object added by Json Assets, you will have to use the name. Ex. "Honeysuckle".
+`Ingredients`          | If using a vanilla object, you will have to use the objects ID number. If using a custom object added by Json Assets, you will have to use the name. Ex. "Honeysuckle".
 `Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used.
 `IsDefault`            | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe:
 `CanPurchase`          | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
 `PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `PurchasePrice`        | How much you can purchase the recipe for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
+`SkillUnlockName`      | The name of the [skill](https://stardewvalleywiki.com/Skills) required for unlock.
+`SkillUnlockLevel`     | The level, 1 - 10, required to unlock.
+`ReserveNextIndex`     | _(optional)_ Used for animations with PFM. Set to `true` or `false`.
 
 Big Craftables do not support gift tastes.
 
@@ -114,13 +122,14 @@ Big Craftables do not support gift tastes.
 A crop subfolder is a folder with these files:
 * a `crop.json`;
 * a `crop.png`; Size: 128x32
-* a `seeds.png`. Size: 16x16
+* a `seeds.png`; Size: 16x16
+* _(optional)_ a `giant.png`; Size: 48x63 See [Giant Crops](#giant-crops) for more information.
 
 field                      | purpose
 -------------------------- | -------
 `Name`                     | The name you would like your object to have, this should be identical to the subfolder name.
 `Price`                    | How much your item sells for.
-`Product`                  | Determines what the crop produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the [objects ID number](https://pastebin.com/TBsGu6Em) and not include a corresponding `Objects` folder.
+`Product`                  | Determines what the crop produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the objects ID number and not include a corresponding `Objects` folder.
 `SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter.
 `SeedDescription`          | Describe what season you plant these in. Also note if it continues to grow after first harvest and how many days it takes to regrow.
 `Type`                     | Vanilla types are `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, and `Seeds`. 
@@ -150,13 +159,13 @@ field                      | purpose
 A fruit trees subfolder is a folder with these files:
 * a `tree.json`;
 * a `tree.png`; Size: 432x80
-* a `sapling.png`. Size: 16x16
+* a `sapling.png`; Size: 16x16
 
 field                         | purpose
 ----------------------------- | -------
 `Name`                        | The name you would like your object to have, this should be identical to the subfolder name.
 `Price`                       | How much your item sells for.
-`Product`                     | Determines what the fruit tree produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the [objects ID number](https://pastebin.com/TBsGu6Em) and not include a corresponding `Objects` folder.
+`Product`                     | Determines what the fruit tree produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the objects ID number and not include a corresponding `Objects` folder.
 `SaplingName`                 | The name of the sapling, typically product + sapling.
 `SaplingDescription`          | The description of the sapling, often sticks to vanilla format: Takes 28 days to produce a mature `product` tree. Bears `type` in the summer. Only grows if the 8 surrounding \"tiles\" are empty.
 `Season`                      | Season must be in lowercase and in quotation marks. Fruit trees can support only one season. If you want to make winter fruit trees, you will have to require [SpaceCore]
@@ -177,14 +186,14 @@ An object subfolder for crops & fruit trees is a folder that contains these file
 
 * an `object.json`;
 * an `object.png`; Size: 16x16
-* _(optional)_ a `color.png`. Size: 16x16, this will be a grayscale version of the part you want colored. *[See Mizu's Flowers](https://www.nexusmods.com/stardewvalley/mods/2028) for an example*.
+* _(optional)_ a `color.png`; Size: 16x16, this will be a grayscale version of the part you want colored. *[See Mizu's Flowers](https://www.nexusmods.com/stardewvalley/mods/2028) for an example*.
 
 field                         | purpose
 ----------------------------- | -------
 `Name`                        | The name you would like your object to have, this should be identical to the subfolder name.
 `Price`                       | How much your item sells for.
 `Description`                 | Description of the product.
-`Category`                    | This should match the `crop.json` `Type` or for fruit trees use one of the following categories: `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, and `Seeds`.
+`Category`                    | This should match the `crop.json` `Type` or for fruit trees use one of the following categories: `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, `Greens`,and `Seeds`.
 `CategoryTextOverride`        | _(optional_) Visually allows you to alter what category the item appears as. Examples include: `herb`, `spice`, `hybrid`.
 `CategoryColorOverride`       | _(optional)_ Works the same as `Colors` field using RGBA, but only allows one input. Alters the text color of the category.
 `Edibility`                   | Edibility is for health, energy is calculated by the game. For inedibile items, set to -300.
@@ -211,13 +220,15 @@ field                  | purpose
 `IsColored`            | Set to `false`.
 `Recipe`               | Begins the recipe block.
 `ResultCount`          | How many of the product does the recipe produce.
-`Ingredients`          | If using a vanilla object, you will have to use the [objects ID number](https://pastebin.com/TBsGu6Em). If using a custom object added by Json Assets, you will have to use the name. Ex. "Honeysuckle".
+`Ingredients`          | If using a vanilla object, you will have to use the objects ID number. If using a custom object added by Json Assets, you will have to use the name. Ex. "Honeysuckle".
 `Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used.
 `IsDefault`            | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe:
 `CanPurchase`          | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
 `PurchaseFrom`         | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `PurchasePrice`        | How much you can purchase the recipe for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
+`SkillUnlockName`      | The name of the [skill](https://stardewvalleywiki.com/Skills) required for unlock.
+`SkillUnlockLevel`     | The level, 1 - 10, required to unlock.
 
 ### Hats
 Hats are 20x80 and can be added through a `Hats` folder. All hats are purchaseable through [hat mouse](https://stardewvalleywiki.com/Abandoned_House). There is a limit of 87 custom hats. 
@@ -277,8 +288,10 @@ Shirts are 8x32 and can be added via Json Assets through the `Shirts` folder.
 
 A shirt subfolder is a folder that contains these files:
 
-* a `female.png`; (optional)
+* _(optional)_ a `female.png`; 
 * a `male.png`;
+* _(optional)_ a `male-color.png`. Size: 16x16, this will be a grayscale version of the part you want colored. *[See Mizu's Flowers](https://www.nexusmods.com/stardewvalley/mods/2028) for an example*.
+* _(optional)_ a `female-color.png`. Size: 16x16, this will be a grayscale version of the part you want colored. *[See Mizu's Flowers](https://www.nexusmods.com/stardewvalley/mods/2028) for an example*.
 * a `shirt.json`;
 
 `female.png` and `male.png` can be identical sprites.
@@ -290,7 +303,7 @@ field                  | purpose
 `HasFemaleVariant`     | Select `true` or `false`.
 `Price`                | How much the item sells for.
 `Dyable`               | Can the clothing item be dyed. Set to `true` or `false`.
-`DefaultColor`         | Colors use RGBA for color picking. Remove if not being used. Can only have one color option.
+`DefaultColor`         | Colors use RGBA for color picking. Remove if not being used. Can only have one color option. 
 
 Shirts do not support gift tastes. Shirts do not support context tags. Shirts added this way will also not show up in the character creation screen.
 
@@ -311,9 +324,41 @@ field                  | purpose
 `Description`          | Description of the product.
 `Price`                | How much the item sells for.
 `Dyable`               | Can the clothing item be dyed. Set to `true` or `false`.
-`DefaultColor`         | Colors use RGBA for color picking. Remove if not being used. Can only have one color option.
+`DefaultColor`         | Colors use RGBA for color picking. Remove if not being used. Can only have one color option. Default color for pants is `255, 235, 203, 255`
 
 Pants to do not support gift tastes. Pants do not support context tags. Pants added this way will also not show up in the character creation screen.
+
+### Boots
+
+Boots are 16x16 and can be added via Json Assets through the `Boots` folder.
+
+A boots subfolder is a folder that contains these files:
+
+* a `boots.json`;
+* a `boots.png`;
+* a `color.png`; 
+
+The `color.png` is a horizonal strip that is 1px high, that contains all the colors used in the `boots.png`.
+
+field                  | purpose
+---------------------- | -------
+`Name`                 | The name you would like your boots to have, this should be identical to the subfolder name.
+`Description`          | Description of the shoes.
+`Price`                | How much the item sells for.
+`Defense`              | How much resistance the boots provide.
+`Immunity`             | How much immunity the boots provide.
+
+Boots do not support gift tastes. By default boots are sold by Marlon but can be made purchaseable from other NPCs using the standard `PurchaseFrom` fields.
+
+### Giant Crops
+
+Giant crops work the same way as vanilla giant crops. It is not recommended to make regrowable crops have a giant variant as once they become giant and are harvested they will not replant themselves. This is not a bug and is intended behavior. Mods that include giant regrowable crops should include a disclaimer so users are aware that they may lose their regrowing crops. Below is a sample disclaimer created by SpringsSong:
+
+```
+Giant Crops were never meant to be regrown, they were meant to be a one-off of the crop when the proper conditions were met. If you use the regrowing crops variant of these giant crops, you will lose your crops when you harvest them. This is intentional, not a bug, and will not be fixed.
+```
+
+Giant crops are 48x63. Custom giant crops need to be placed inside the corresponding `Crops` folder and named `giant.png`.
 
 ### Tailoring
 
@@ -366,7 +411,7 @@ Example:
         "color_yellow",
         "fruit_tree_item",
         "fruit_item"
-        ]
+        ],
 ```
 
 You can include as much or as little information you want to with context tags.
@@ -382,19 +427,19 @@ Examples:
 
 For Anything not a crop/sapling:
 ```
- "NameLocalization": { "es": "spanish weapon (name)" },
+    "NameLocalization": { "es": "spanish weapon (name)" },
     "DescriptionLocalization": { "es": "spanish weapon (desc)" }
 ```
 
 For Crops:
 ```
-"SeedNameLocalization": { "es": "spanish seed (name)" },
+    "SeedNameLocalization": { "es": "spanish seed (name)" },
     "SeedDescriptionLocalization": { "es": "spanish seed (desc)" }
 ```
 
 For Saplings:
 ```
-"SaplingNameLocalization": { "es": "spanish ftree (name)" },
+    "SaplingNameLocalization": { "es": "spanish ftree (name)" },
     "SaplingDescriptionLocalization": { "es": "spanish ftree (desc)" }
 ```
 
@@ -430,7 +475,7 @@ To learn how to set up a `manifest.json` please visit the [wiki page](https://st
    "Author": "ParadigmNomad & Eemie (Port) & Mizu (Sprites)",
    "Description": "A port of Mizu's sprites for JsonAssets.",
    "Version": "1.4",
-   "UniqueID": "Mizu Flowers",
+   "UniqueID": "Mizu.Flowers",
 
    "ContentPackFor": {
        "UniqueID": "spacechase0.JsonAssets"
@@ -461,16 +506,16 @@ There are some common errors with easy solutions. Your error may look slightly d
 
 ### Target Out of Range
 ```
-Exception injecting crop sprite for Blue_Mist: System.ArgumentOutOfRangeException: The target area is outside the bounds of the target texture.
-Parameter name: targetArea
+   Exception injecting crop sprite for Blue_Mist: System.ArgumentOutOfRangeException: The target area is outside the bounds of the target texture.
+   Parameter name: targetArea
    at StardewModdingAPI.Framework.Content.AssetDataForImage.PatchImage(Texture2D source, Nullable`1 sourceArea, Nullable`1 targetArea, PatchMode patchMode) in C:\source\_Stardew\SMAPI\src\SMAPI\Framework\Content\AssetDataForImage.cs:line 44
    at JsonAssets.ContentInjector.Edit[T](IAssetData asset) in G:\StardewValley\Mods\JsonAssets\ContentInjector.cs:line 194
 ```
-Solution: The sprite is too big. Double check what size the image needs to be for that specific type of item and crop your image accordingly. If you're trying to load tree crops, this error occurs when you have reached the maximum amount of trees the game can handle (a hardcoded number). 
+Solution: The sprite is too big. Double check what size the image needs to be for that specific type of item and crop your image accordingly. 
 
 ### Exception Injecting Given Key
 ```
-Exception injecting cooking recipe for Bulgogi: System.Collections.Generic.KeyNotFoundException: The given key was not present in the dictionary.
+   Exception injecting cooking recipe for Bulgogi: System.Collections.Generic.KeyNotFoundException: The given key was not present in the dictionary.
    at System.Collections.Generic.Dictionary`2.get_Item(TKey key)
    at JsonAssets.Mod.ResolveObjectId(Object data) in G:\StardewValley\Mods\JsonAssets\Mod.cs:line 336
    at JsonAssets.Data.ObjectData.Recipe_.GetRecipeString(ObjectData parent) in G:\StardewValley\Mods\JsonAssets\Data\ObjectData.cs:line 60
@@ -480,7 +525,7 @@ Solution: There is something missing from the recipe. This is caused by not inst
  
 ### Exception Injecting Duplicate Key
 ```
-Exception injecting cooking recipe for Bacon: System.ArgumentException: An item with the same key has already been added.
+   Exception injecting cooking recipe for Bacon: System.ArgumentException: An item with the same key has already been added.
    at System.ThrowHelper.ThrowArgumentException(ExceptionResource resource)
    at System.Collections.Generic.Dictionary`2.Insert(TKey key, TValue value, Boolean add)
    at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
