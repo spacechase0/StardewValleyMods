@@ -12,8 +12,9 @@ namespace JsonAssets.Other.ContentPatcher
 {
     public abstract class BaseToken
     {
-        public string Type { get; }
-        public string TokenName { get; }
+        /// CP at the moment (in the beta I got) doesn't like public getters
+        internal string Type { get; }
+        internal string TokenName { get; }
         private int oldGen = -1;
 
         public BaseToken(string type, string name)
@@ -22,12 +23,33 @@ namespace JsonAssets.Other.ContentPatcher
             TokenName = Type + name;
         }
 
+        public bool AllowsInput()
+        {
+            return true;
+        }
+
+        public bool RequiresInput()
+        {
+            return true;
+        }
+
+        public bool CanHaveMultipleValues(string input)
+        {
+            return false;
+        }
+
+        public abstract IEnumerable<string> GetValidInputs();
+
+        public abstract bool TryValidateInput(string input, out string error);
+        
         public virtual bool IsReady()
         {
             return ContentPatcherIntegration.idsAssigned;
         }
 
-        public bool UpdateContext()
+        public abstract IEnumerable<string> GetValues(string input);
+
+        public virtual bool UpdateContext()
         {
             if (oldGen != ContentPatcherIntegration.idsAssignedGen)
             {
@@ -38,28 +60,46 @@ namespace JsonAssets.Other.ContentPatcher
             return false;
         }
 
-        public abstract IEnumerable<string> GetValue(string input);
-
         protected abstract void UpdateContextImpl();
     }
 
     public class IdToken : BaseToken
     {
+        private int StartingId;
         private Func<IDictionary<string, int>> idsFunc;
-        private IDictionary<string, int> ids;
+        private IDictionary<string, int> ids = new Dictionary<string, int>();
 
-        public IdToken(string type, Func<IDictionary<string, int>> theIdsFunc)
+        public IdToken(string type, int startingId, Func<IDictionary<string, int>> theIdsFunc)
         :   base(type, "Id")
         {
+            StartingId = startingId;
             idsFunc = theIdsFunc;
         }
 
-        protected override void UpdateContextImpl()
+        public override IEnumerable<string> GetValidInputs()
         {
-            ids = idsFunc();
+            return ids.Keys;
         }
 
-        public override IEnumerable<string> GetValue(string input)
+        public bool HasBoundedRangeValues(string input, out int min, out int max)
+        {
+            min = StartingId;
+            max = int.MaxValue;
+            return true;
+        }
+
+        public override bool TryValidateInput(string input, out string error)
+        {
+            error = "";
+            if (!ids.ContainsKey(input))
+            {
+                error = $"Invalid name for {Type}: {input}";
+                return false;
+            }
+            return true;
+        }
+
+        public override IEnumerable<string> GetValues(string input)
         {
             if (!IsReady())
                 return new string[0];
@@ -70,66 +110,125 @@ namespace JsonAssets.Other.ContentPatcher
                 return new string[0];
             return new string[] { ids[input].ToString() };
         }
+
+        protected override void UpdateContextImpl()
+        {
+            ids = idsFunc();
+        }
     }
     
     public class SpriteTilesheetToken : BaseToken
     {
-        private List<DataNeedsIdWithTexture> objs;
-        private IDictionary<string, string> tilesheets;
+        private Func<List<DataNeedsIdWithTexture>> objsFunc;
+        private IDictionary<string, string> tilesheets = new Dictionary<string, string>();
 
-        public SpriteTilesheetToken(string type, List<DataNeedsIdWithTexture> objs)
+        public SpriteTilesheetToken(string type, Func<List<DataNeedsIdWithTexture>> func)
         : base(type, "SpriteTilesheet")
         {
-            this.objs = objs;
+            this.objsFunc = func;
         }
 
-        protected override void UpdateContextImpl()
+        public override IEnumerable<string> GetValidInputs()
         {
-            var dict = new Dictionary<string, string>();
-            foreach (var obj in objs)
-            {
-                dict.Add(obj.Name, obj.tilesheet);
-            }
-            tilesheets = dict;
+            return tilesheets.Keys;
         }
 
-        public override IEnumerable<string> GetValue(string input)
+        public override bool TryValidateInput(string input, out string error)
+        {
+            error = "";
+            if (!tilesheets.ContainsKey(input))
+            {
+                error = $"Invalid name for {Type}: {input}";
+                return false;
+            }
+            return true;
+        }
+
+        public override bool IsReady()
+        {
+            return base.IsReady() && tilesheets != null && tilesheets.Count > 0 && !string.IsNullOrEmpty(tilesheets.First().Value);
+        }
+
+        public override IEnumerable<string> GetValues(string input)
         {
             if (!IsReady())
                 return new string[0];
 
             if (input == "")
                 return tilesheets.Values.Select((i) => i.ToString()).ToArray<string>();
-            if (!tilesheets.ContainsKey(input))
+            if (!tilesheets.ContainsKey(input) || string.IsNullOrEmpty(tilesheets[input]))
                 return new string[0];
             return new string[] { tilesheets[input].ToString() };
+        }
+
+        public override bool UpdateContext()
+        {
+            if (base.UpdateContext())
+                return true;
+
+            var objs = objsFunc();
+            if (objs.Count == 0)
+                return false;
+
+            var obj = objs[0];
+            if ( !string.IsNullOrEmpty(obj.tilesheet) && tilesheets.Count > 0 && string.IsNullOrEmpty(tilesheets.First().Value) )
+            {
+                UpdateContextImpl();
+                return true;
+            }
+
+            return false;
+        }
+
+        protected override void UpdateContextImpl()
+        {
+            var dict = new Dictionary<string, string>();
+            var objs = objsFunc();
+            foreach (var obj in objs)
+            {
+                dict.Add(obj.Name, obj.tilesheet);
+            }
+            tilesheets = dict;
         }
     }
 
     public class SpriteCoordinateToken : BaseToken
     {
         public readonly bool coordinateIsX;
-        private List<DataNeedsIdWithTexture> objs;
-        private IDictionary<string, int> coordinates;
+        private Func<List<DataNeedsIdWithTexture>> objsFunc;
+        private IDictionary<string, int> coordinates = new Dictionary<string, int>();
         
-        public SpriteCoordinateToken(string type, bool coordinateIsX, List<DataNeedsIdWithTexture> objs )
+        public SpriteCoordinateToken(string type, bool coordinateIsX, Func<List<DataNeedsIdWithTexture>> func )
         : base(type, "Sprite" + (coordinateIsX ? "X" : "Y"))
         {
             this.coordinateIsX = coordinateIsX;
-            this.objs = objs;
+            this.objsFunc = func;
         }
 
-        protected override void UpdateContextImpl()
+        public override IEnumerable<string> GetValidInputs()
         {
-            var dict = new Dictionary<string, int>();
-            foreach ( var obj in objs )
-            {
-                dict.Add(obj.Name, coordinateIsX ? obj.tilesheetX : obj.tilesheetY);
-            }
-            coordinates = dict;
+            return coordinates.Keys;
         }
 
-        public override IEnumerable<string> GetValue(string input)
+        public bool HasBoundedRangeValues(string input, out int min, out int max)
+        {
+            min = 0;
+            max = 4096;
+            return true;
+        }
+
+        public override bool TryValidateInput(string input, out string error)
+        {
+            error = "";
+            if (!coordinates.ContainsKey(input))
+            {
+                error = $"Invalid name for {Type}: {input}";
+                return false;
+            }
+            return true;
+        }
+
+        public override IEnumerable<string> GetValues(string input)
         {
             if (!IsReady())
                 return new string[0];
@@ -138,7 +237,37 @@ namespace JsonAssets.Other.ContentPatcher
                 return coordinates.Values.Select((i) => i.ToString()).ToArray<string>();
             if (!coordinates.ContainsKey(input))
                 return new string[0];
-            return new string[] { coordinates[input].ToString() };
+            return new string[] { (coordinates[input]/*-(coordinateIsX?0:16)*/).ToString() };
+        }
+
+        public override bool UpdateContext()
+        {
+            if (base.UpdateContext())
+                return true;
+
+            var objs = objsFunc();
+            if (objs.Count == 0)
+                return false;
+
+            var obj = objs[0];
+            if (!string.IsNullOrEmpty(obj.tilesheet) && coordinates.Count > 0 && coordinates.First().Value == 0)
+            {
+                UpdateContextImpl();
+                return true;
+            }
+
+            return false;
+        }
+
+        protected override void UpdateContextImpl()
+        {
+            var dict = new Dictionary<string, int>();
+            var objs = objsFunc();
+            foreach (var obj in objs)
+            {
+                dict.Add(obj.Name, coordinateIsX ? obj.tilesheetX : obj.tilesheetY);
+            }
+            coordinates = dict;
         }
     }
 
@@ -164,31 +293,31 @@ namespace JsonAssets.Other.ContentPatcher
             Mod.instance.Helper.Events.GameLoop.ReturnedToTitle += (s, e) => idsAssigned = false;
 
             tokens = new List<BaseToken>();
-            tokens.Add(new IdToken("Object", ja.GetAllObjectIds));
-            tokens.Add(new IdToken("Crop", ja.GetAllCropIds));
-            tokens.Add(new IdToken("FruitTree", ja.GetAllFruitTreeIds));
-            tokens.Add(new IdToken("BigCraftable", ja.GetAllBigCraftableIds));
-            tokens.Add(new IdToken("Hat", ja.GetAllHatIds));
-            tokens.Add(new IdToken("Weapon", ja.GetAllWeaponIds));
-            tokens.Add(new IdToken("Clothing", ja.GetAllClothingIds));
-            tokens.Add(new SpriteTilesheetToken("Object", Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Object", true, Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Object", false, Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("Crop", Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Crop", true, Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Crop", false, Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("FruitTree", Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("FruitTree", true, Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("FruitTree", false, Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("BigCraftable", Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("BigCraftable", true, Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("BigCraftable", false, Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("Hat", Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Hat", true, Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Hat", false, Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("Weapon", Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Weapon", true, Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Weapon", false, Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new IdToken("Object", Mod.StartingObjectId, ja.GetAllObjectIds));
+            tokens.Add(new IdToken("Crop", Mod.StartingCropId, ja.GetAllCropIds));
+            tokens.Add(new IdToken("FruitTree", Mod.StartingFruitTreeId, ja.GetAllFruitTreeIds));
+            tokens.Add(new IdToken("BigCraftable", Mod.StartingBigCraftableId, ja.GetAllBigCraftableIds));
+            tokens.Add(new IdToken("Hat", Mod.StartingHatId, ja.GetAllHatIds));
+            tokens.Add(new IdToken("Weapon", Mod.StartingWeaponId, ja.GetAllWeaponIds));
+            tokens.Add(new IdToken("Clothing", Mod.StartingClothingId, ja.GetAllClothingIds));
+            tokens.Add(new SpriteTilesheetToken("Object", () => Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("Object", true, () => Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("Object", false, () => Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteTilesheetToken("Crop", () => Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("Crop", true, () => Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("Crop", false, () => Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteTilesheetToken("FruitTree", () => Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("FruitTree", true, () => Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("FruitTree", false, () => Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteTilesheetToken("BigCraftable", () => Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("BigCraftable", true, () => Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("BigCraftable", false, () => Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteTilesheetToken("Hat", () => Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("Hat", true, () => Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("Hat", false, () => Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteTilesheetToken("Weapon", () => Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("Weapon", true, () => Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
+            tokens.Add(new SpriteCoordinateToken("Weapon", false, () => Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
             // TODO: Shirt tilesheet
             // TODO: Shirt x
             // TODO: Shirt y
@@ -198,7 +327,8 @@ namespace JsonAssets.Other.ContentPatcher
 
             foreach (var token in tokens)
             {
-                cp.RegisterToken(Mod.instance.ModManifest, token.TokenName, token.UpdateContext, token.IsReady, token.GetValue, true, true);
+                //cp.RegisterToken(Mod.instance.ModManifest, token.TokenName, token.UpdateContext, token.IsReady, token.GetValue, true, true);
+                cp.RegisterToken(Mod.instance.ModManifest, token.TokenName, token);
             }
         }
     }
