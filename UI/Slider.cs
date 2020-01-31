@@ -19,6 +19,8 @@ namespace GenericModConfigMenu.UI
         public T Maximum { get; set; }
         public T Value { get; set; }
 
+        public T Interval { get; set; }
+
         public Action<Element> Callback { get; set; }
 
         private bool dragging = false;
@@ -44,6 +46,9 @@ namespace GenericModConfigMenu.UI
                 {
                     Value = Util.Clamp<T>(Minimum, (T)(object)(float)(perc * ((float)(object)Maximum - (float)(object)Minimum) + (float)(object)Minimum), Maximum);
                 }
+
+                Value = Util.Adjust(Value, Interval);
+
                 if ( Callback != null )
                     Callback.Invoke(this);
             }

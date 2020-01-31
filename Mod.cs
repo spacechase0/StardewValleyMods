@@ -36,7 +36,9 @@ namespace GenericModConfigMenu
             helper.Events.GameLoop.UpdateTicking += onUpdate;
             helper.Events.Display.WindowResized += onWindowResized;
             helper.Events.Display.Rendered += onRendered;
+            helper.Events.Input.MouseWheelScrolled += onMouseWheelScrolled;
         }
+
 
         public override object GetApi()
         {
@@ -136,6 +138,11 @@ namespace GenericModConfigMenu
                 if (TitleMenu.subMenu == null && Helper.Reflection.GetField<bool>(tm, "titleInPosition").GetValue())
                     configButton.Draw(e.SpriteBatch);
             }
+        }
+
+        private void onMouseWheelScrolled(object sender, MouseWheelScrolledEventArgs e)
+        {
+            Dropdown.ActiveDropdown?.receiveScrollWheelAction(e.Delta);
         }
     }
 }

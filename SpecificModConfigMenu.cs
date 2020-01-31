@@ -2,6 +2,7 @@
 using GenericModConfigMenu.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -74,6 +75,7 @@ namespace GenericModConfigMenu
                     slider.Value = ci.Value;
                     slider.Minimum = ci.Minimum;
                     slider.Maximum = ci.Maximum;
+                    slider.Interval = ci.Interval;
                     slider.Callback = (Element e) =>
                     {
                         ci.Value = (e as Slider<int>).Value;
@@ -92,6 +94,7 @@ namespace GenericModConfigMenu
                     slider.Value = cf.Value;
                     slider.Minimum = cf.Minimum;
                     slider.Maximum = cf.Maximum;
+                    slider.Interval = cf.Interval;
                     slider.Callback = (Element e) =>
                     {
                         cf.Value = (e as Slider<float>).Value;
@@ -104,6 +107,7 @@ namespace GenericModConfigMenu
                     var dropdown = new Dropdown() { Choices = cs.Choices };
                     dropdown.LocalPosition = new Vector2(table.Size.X / 7 * 4, 0);
                     dropdown.Value = cs.Value;
+                    dropdown.MaxValuesAtOnce = Math.Min(dropdown.Choices.Length, 5);
                     dropdown.Callback = (Element e) => cs.Value = (e as Dropdown).Value;
                     other = dropdown;
                 }
@@ -177,7 +181,8 @@ namespace GenericModConfigMenu
 
         public override void receiveScrollWheelAction(int direction)
         {
-            table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
+            if (Mouse.GetState().LeftButton != ButtonState.Pressed)
+                table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
         }
 
         public override bool readyToClose()

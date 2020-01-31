@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StardewModdingAPI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,14 +11,20 @@ namespace GenericModConfigMenu.ModOption
     {
         public string Name { get; }
         public string Description { get; }
+
+        public string Id { get; }
+
+        public IManifest Owner { get; }
         
         public abstract void SyncToMod();
         public abstract void Save();
 
-        public BaseModOption( string name, string desc )
+        public BaseModOption( string name, string desc, string id, IManifest mod)
         {
             Name = name;
             Description = desc;
+            Id = id;
+            Owner = mod;
         }
     }
 }
