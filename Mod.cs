@@ -143,6 +143,10 @@ namespace GenericModConfigMenu
         private void onMouseWheelScrolled(object sender, MouseWheelScrolledEventArgs e)
         {
             Dropdown.ActiveDropdown?.receiveScrollWheelAction(e.Delta);
+            if (ModConfigMenu.ActiveConfigMenu is ModConfigMenu mcm)
+                mcm.receiveScrollWheelActionSmapi(e.Delta);
+            if (SpecificModConfigMenu.ActiveConfigMenu is SpecificModConfigMenu smcm)
+                smcm.receiveScrollWheelActionSmapi(e.Delta);
         }
     }
 }

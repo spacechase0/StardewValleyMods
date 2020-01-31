@@ -16,7 +16,8 @@ namespace GenericModConfigMenu
     public class ModConfigMenu : IClickableMenu
     {
         private RootElement ui;
-        private Table table;
+        public Table table;
+        public static IClickableMenu ActiveConfigMenu;
 
         public ModConfigMenu()
         {
@@ -33,11 +34,16 @@ namespace GenericModConfigMenu
                 table.AddRow( new Element[] { label } );
             }
             ui.AddChild(table);
+
+            ActiveConfigMenu = this;
         }
 
-        public override void receiveScrollWheelAction(int direction)
+        public void receiveScrollWheelActionSmapi(int direction)
         {
-            table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
+            if (TitleMenu.subMenu == this)
+                table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
+            else
+                ActiveConfigMenu = null;
         }
 
         public override void update(GameTime time)

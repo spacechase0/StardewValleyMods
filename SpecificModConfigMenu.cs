@@ -21,6 +21,7 @@ namespace GenericModConfigMenu
         private RootElement ui = new RootElement();
         private Table table;
         private List<Label> optHovers = new List<Label>();
+        public static IClickableMenu ActiveConfigMenu;
 
         public SpecificModConfigMenu(IManifest modManifest)
         {
@@ -177,14 +178,21 @@ namespace GenericModConfigMenu
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             table.ForceUpdateEvenHidden();
+
+            ActiveConfigMenu = this;
         }
 
-        public override void receiveScrollWheelAction(int direction)
+        public void receiveScrollWheelActionSmapi(int direction)
         {
-            if (Mouse.GetState().LeftButton != ButtonState.Pressed)
-                table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
+            if (TitleMenu.subMenu == this)
+            {
+                if (Dropdown.ActiveDropdown == null)
+                    table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
+            }
+            else
+                ActiveConfigMenu = null;
         }
-
+        
         public override bool readyToClose()
         {
             return false;
