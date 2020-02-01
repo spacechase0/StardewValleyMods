@@ -163,7 +163,7 @@ namespace GenericModConfigMenu
 
             var cancelLabel = new Label() { String = "Cancel" };
             cancelLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 300, Game1.viewport.Height - 50);
-            cancelLabel.Callback = (Element e) => TitleMenu.subMenu = new ModConfigMenu();
+            cancelLabel.Callback = (Element e) => cancel();
             ui.AddChild(cancelLabel);
 
             var defaultLabel = new Label() { String = "Default" };
@@ -184,7 +184,7 @@ namespace GenericModConfigMenu
 
         public void receiveScrollWheelActionSmapi(int direction)
         {
-            if (TitleMenu.subMenu == this)
+            if (TitleMenu.subMenu == this || Game1.activeClickableMenu == this)
             {
                 if (Dropdown.ActiveDropdown == null)
                     table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
@@ -242,7 +242,11 @@ namespace GenericModConfigMenu
             foreach (var opt in modConfig.Options)
                 opt.SyncToMod();
             modConfig.SaveToFile.Invoke();
-            TitleMenu.subMenu = new SpecificModConfigMenu(mod);
+           
+            if (TitleMenu.subMenu == this)
+                TitleMenu.subMenu = new SpecificModConfigMenu(mod);
+            else if (Game1.activeClickableMenu == this)
+                Game1.activeClickableMenu = new SpecificModConfigMenu(mod);
         }
 
         private void save()
@@ -250,7 +254,18 @@ namespace GenericModConfigMenu
             foreach (var opt in modConfig.Options)
                 opt.Save();
             modConfig.SaveToFile.Invoke();
-            TitleMenu.subMenu = new ModConfigMenu();
+            if (TitleMenu.subMenu == this)
+                TitleMenu.subMenu = new ModConfigMenu();
+            else if (Game1.activeClickableMenu == this)
+                Game1.activeClickableMenu = null;
+        }
+
+        private void cancel()
+        {
+            if (TitleMenu.subMenu == this)
+                TitleMenu.subMenu = new ModConfigMenu();
+            else if (Game1.activeClickableMenu == this)
+                Game1.activeClickableMenu = null;
         }
 
         private SimpleModOption<SButton> keybindingOpt;
