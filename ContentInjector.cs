@@ -14,57 +14,64 @@ namespace JsonAssets
 {
     public class ContentInjector : IAssetEditor
     {
+        private List<string> files;
+        public ContentInjector()
+        {
+            files = new List<string>(new string[]
+            {
+                "Data\\ObjectInformation",
+                "Data\\ObjectContextTags",
+                "Data\\Crops",
+                "Data\\fruitTrees",
+                "Data\\CookingRecipes",
+                "Data\\CraftingRecipes",
+                "Data\\BigCraftablesInformation",
+                "Data\\hats",
+                "Data\\weapons",
+                "Data\\NPCGiftTastes",
+                "Data\\ClothingInformation",
+                "Data\\TailoringRecipes",
+                "Data\\Boots",
+                "Maps\\springobjects",
+                "TileSheets\\crops",
+                "TileSheets\\fruitTrees",
+                "TileSheets\\Craftables",
+                "Characters\\Farmer\\hats",
+                "TileSheets\\weapons",
+                "Characters\\Farmer\\shirts",
+                "Characters\\Farmer\\pants",
+                "Characters\\Farmer\\shoeColors"
+            });
+        }
+
+        public void InvalidateUsed()
+        {
+            Mod.instance.Helper.Content.InvalidateCache((a) =>
+            {
+                foreach (var file in files)
+                {
+                    if (a.AssetNameEquals(file))
+                        return true;
+                }
+                return false;
+            });
+        }
+
         public bool CanEdit<T>(IAssetInfo asset)
         {
-            if (asset.AssetNameEquals("Data\\ObjectInformation"))
-                return true;
-            if (asset.AssetNameEquals("Data\\ObjectContextTags"))
-                return true;
-            if (asset.AssetNameEquals("Data\\Crops"))
-                return true;
-            if (asset.AssetNameEquals("Data\\fruitTrees"))
-                return true;
-            if (asset.AssetNameEquals("Data\\CookingRecipes"))
-                return true;
-            if (asset.AssetNameEquals("Data\\CraftingRecipes"))
-                return true;
-            if (asset.AssetNameEquals("Data\\BigCraftablesInformation"))
-                return true;
-            if (asset.AssetNameEquals("Data\\hats"))
-                return true;
-            if (asset.AssetNameEquals("Data\\weapons"))
-                return true;
-            if (asset.AssetNameEquals("Data\\NPCGiftTastes"))
-                return true;
-            if (asset.AssetNameEquals("Data\\ClothingInformation"))
-                return true;
-            if (asset.AssetNameEquals("Data\\TailoringRecipes"))
-                return true;
-            if (asset.AssetNameEquals("Data\\Boots"))
-                return true;
-            if (asset.AssetNameEquals("Maps\\springobjects"))
-                return true;
-            if (asset.AssetNameEquals("TileSheets\\crops"))
-                return true;
-            if (asset.AssetNameEquals("TileSheets\\fruitTrees"))
-                return true;
-            if (asset.AssetNameEquals("TileSheets\\Craftables"))
-                return true;
-            if (asset.AssetNameEquals("Characters\\Farmer\\hats"))
-                return true;
-            if (asset.AssetNameEquals("TileSheets\\weapons"))
-                return true;
-            if (asset.AssetNameEquals("Characters\\Farmer\\shirts"))
-                return true;
-            if (asset.AssetNameEquals("Characters\\Farmer\\pants"))
-                return true;
-            if (asset.AssetNameEquals("Characters\\Farmer\\shoeColors"))
-                return true;
+            foreach (var file in files )
+            {
+                if (asset.AssetNameEquals(file))
+                    return true;
+            }
             return false;
         }
 
         public void Edit<T>(IAssetData asset)
         {
+            if (!Mod.instance.didInit)
+                return;
+
             if (asset.AssetNameEquals("Data\\ObjectInformation"))
             {
                 var data = asset.AsDictionary<int, string>().Data;
