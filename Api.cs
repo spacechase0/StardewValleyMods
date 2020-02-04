@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -159,7 +160,10 @@ namespace GenericModConfigMenu
             if (!Mod.instance.configs.ContainsKey(mod))
                 throw new ArgumentException("Mod not registered");
 
-            Game1.activeClickableMenu = new SpecificModConfigMenu(mod);
+            if (Game1.activeClickableMenu is TitleMenu)
+                TitleMenu.subMenu = new SpecificModConfigMenu(mod);
+            else
+                Game1.activeClickableMenu = new SpecificModConfigMenu(mod);
         }
         
     }
