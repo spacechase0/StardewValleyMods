@@ -65,5 +65,19 @@ namespace GenericModConfigMenu
             Log.trace("Changing to mod config page for mod " + modManifest.UniqueID);
             TitleMenu.subMenu = new SpecificModConfigMenu(modManifest);
         }
+
+        public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
+        {
+            ui = new RootElement();
+
+            Vector2 newSize = new Vector2(800, Game1.viewport.Height - 64);
+            table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 32);
+            foreach (Element opt in table.Children)
+                opt.LocalPosition = new Vector2(newSize.X / (table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
+
+            table.Size = newSize;
+            table.Scrollbar.Update();
+            ui.AddChild(table);
+        }
     }
 }

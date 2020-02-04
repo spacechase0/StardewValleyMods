@@ -156,6 +156,16 @@ namespace GenericModConfigMenu
             }
             ui.AddChild(table);
 
+            addDefaultLabels(modManifest);
+
+            // We need to update widgets at least once so ComplexModOptionWidget's get initialized
+            table.ForceUpdateEvenHidden();
+
+            ActiveConfigMenu = this;
+        }
+
+        private void addDefaultLabels(IManifest modManifest)
+        {
             var titleLabel = new Label() { String = modManifest.Name };
             titleLabel.LocalPosition = new Vector2((Game1.viewport.Width - titleLabel.Font.MeasureString(titleLabel.String).X) / 2, 12);
             titleLabel.HoverTextColor = titleLabel.IdleTextColor;
@@ -172,14 +182,9 @@ namespace GenericModConfigMenu
             ui.AddChild(defaultLabel);
 
             var saveLabel = new Label() { String = "Save" };
-            saveLabel.LocalPosition = new Vector2(Game1.viewport.Width/ 2 + 200, Game1.viewport.Height - 50);
+            saveLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 + 200, Game1.viewport.Height - 50);
             saveLabel.Callback = (Element e) => save();
             ui.AddChild(saveLabel);
-
-            // We need to update widgets at least once so ComplexModOptionWidget's get initialized
-            table.ForceUpdateEvenHidden();
-
-            ActiveConfigMenu = this;
         }
 
         public void receiveScrollWheelActionSmapi(int direction)
@@ -286,6 +291,25 @@ namespace GenericModConfigMenu
             Mod.instance.Helper.Events.Input.ButtonPressed -= assignKeybinding;
             keybindingOpt = null;
             keybindingLabel = null;
+        }
+
+        public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
+        {
+            ui = new RootElement();
+
+            Vector2 newSize = new Vector2(Game1.viewport.Width - 200, Game1.viewport.Height - 64 - 100);
+            
+            foreach (Element opt in table.Children)
+            {
+                opt.LocalPosition = new Vector2(newSize.X / (table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
+                if (opt is Slider slider)
+                    slider.Width = (int) (newSize.X / (table.Size.X / slider.Width));
+            }
+
+            table.Size = newSize;
+            table.Scrollbar.Update();
+            ui.AddChild(table);
+            addDefaultLabels(mod);
         }
     }
 }
