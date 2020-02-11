@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,8 @@ namespace GenericModConfigMenu.ModOption
         private Func<SpriteBatch, Vector2, object, object> drawFunc;
         private Action<object> saveFunc;
 
-        public ComplexModOption( string name, string desc, Func<Vector2, object, object> update, Func<SpriteBatch, Vector2, object, object> draw, Action<object> save )
-        :   base( name, desc )
+        public ComplexModOption( string name, string desc, Func<Vector2, object, object> update, Func<SpriteBatch, Vector2, object, object> draw, Action<object> save, IManifest mod )
+        :   base( name, desc, name, mod )
         {
             updateFunc = update;
             drawFunc = draw;

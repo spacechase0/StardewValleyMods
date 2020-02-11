@@ -2,6 +2,7 @@
 using GenericModConfigMenu.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -20,6 +21,7 @@ namespace GenericModConfigMenu
         private RootElement ui = new RootElement();
         private Table table;
         private List<Label> optHovers = new List<Label>();
+        public static IClickableMenu ActiveConfigMenu;
 
         public SpecificModConfigMenu(IManifest modManifest)
         {
@@ -74,6 +76,7 @@ namespace GenericModConfigMenu
                     slider.Value = ci.Value;
                     slider.Minimum = ci.Minimum;
                     slider.Maximum = ci.Maximum;
+                    slider.Interval = ci.Interval;
                     slider.Callback = (Element e) =>
                     {
                         ci.Value = (e as Slider<int>).Value;
@@ -92,6 +95,7 @@ namespace GenericModConfigMenu
                     slider.Value = cf.Value;
                     slider.Minimum = cf.Minimum;
                     slider.Maximum = cf.Maximum;
+                    slider.Interval = cf.Interval;
                     slider.Callback = (Element e) =>
                     {
                         cf.Value = (e as Slider<float>).Value;
@@ -104,6 +108,7 @@ namespace GenericModConfigMenu
                     var dropdown = new Dropdown() { Choices = cs.Choices };
                     dropdown.LocalPosition = new Vector2(table.Size.X / 7 * 4, 0);
                     dropdown.Value = cs.Value;
+                    dropdown.MaxValuesAtOnce = Math.Min(dropdown.Choices.Length, 5);
                     dropdown.Callback = (Element e) => cs.Value = (e as Dropdown).Value;
                     other = dropdown;
                 }
@@ -151,6 +156,16 @@ namespace GenericModConfigMenu
             }
             ui.AddChild(table);
 
+            addDefaultLabels(modManifest);
+
+            // We need to update widgets at least once so ComplexModOptionWidget's get initialized
+            table.ForceUpdateEvenHidden();
+
+            ActiveConfigMenu = this;
+        }
+
+        private void addDefaultLabels(IManifest modManifest)
+        {
             var titleLabel = new Label() { String = modManifest.Name };
             titleLabel.LocalPosition = new Vector2((Game1.viewport.Width - titleLabel.Font.MeasureString(titleLabel.String).X) / 2, 12);
             titleLabel.HoverTextColor = titleLabel.IdleTextColor;
@@ -158,7 +173,7 @@ namespace GenericModConfigMenu
 
             var cancelLabel = new Label() { String = "Cancel" };
             cancelLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 300, Game1.viewport.Height - 50);
-            cancelLabel.Callback = (Element e) => TitleMenu.subMenu = new ModConfigMenu();
+            cancelLabel.Callback = (Element e) => cancel();
             ui.AddChild(cancelLabel);
 
             var defaultLabel = new Label() { String = "Default" };
@@ -167,19 +182,22 @@ namespace GenericModConfigMenu
             ui.AddChild(defaultLabel);
 
             var saveLabel = new Label() { String = "Save" };
-            saveLabel.LocalPosition = new Vector2(Game1.viewport.Width/ 2 + 200, Game1.viewport.Height - 50);
+            saveLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 + 200, Game1.viewport.Height - 50);
             saveLabel.Callback = (Element e) => save();
             ui.AddChild(saveLabel);
-
-            // We need to update widgets at least once so ComplexModOptionWidget's get initialized
-            table.ForceUpdateEvenHidden();
         }
 
-        public override void receiveScrollWheelAction(int direction)
+        public void receiveScrollWheelActionSmapi(int direction)
         {
-            table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
+            if (TitleMenu.subMenu == this || Game1.activeClickableMenu == this)
+            {
+                if (Dropdown.ActiveDropdown == null)
+                    table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
+            }
+            else
+                ActiveConfigMenu = null;
         }
-
+        
         public override bool readyToClose()
         {
             return false;
@@ -229,7 +247,11 @@ namespace GenericModConfigMenu
             foreach (var opt in modConfig.Options)
                 opt.SyncToMod();
             modConfig.SaveToFile.Invoke();
-            TitleMenu.subMenu = new SpecificModConfigMenu(mod);
+           
+            if (TitleMenu.subMenu == this)
+                TitleMenu.subMenu = new SpecificModConfigMenu(mod);
+            else if (Game1.activeClickableMenu == this)
+                Game1.activeClickableMenu = new SpecificModConfigMenu(mod);
         }
 
         private void save()
@@ -237,7 +259,18 @@ namespace GenericModConfigMenu
             foreach (var opt in modConfig.Options)
                 opt.Save();
             modConfig.SaveToFile.Invoke();
-            TitleMenu.subMenu = new ModConfigMenu();
+            if (TitleMenu.subMenu == this)
+                TitleMenu.subMenu = new ModConfigMenu();
+            else if (Game1.activeClickableMenu == this)
+                Game1.activeClickableMenu = null;
+        }
+
+        private void cancel()
+        {
+            if (TitleMenu.subMenu == this)
+                TitleMenu.subMenu = new ModConfigMenu();
+            else if (Game1.activeClickableMenu == this)
+                Game1.activeClickableMenu = null;
         }
 
         private SimpleModOption<SButton> keybindingOpt;
@@ -258,6 +291,25 @@ namespace GenericModConfigMenu
             Mod.instance.Helper.Events.Input.ButtonPressed -= assignKeybinding;
             keybindingOpt = null;
             keybindingLabel = null;
+        }
+
+        public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
+        {
+            ui = new RootElement();
+
+            Vector2 newSize = new Vector2(Game1.viewport.Width - 200, Game1.viewport.Height - 64 - 100);
+            
+            foreach (Element opt in table.Children)
+            {
+                opt.LocalPosition = new Vector2(newSize.X / (table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
+                if (opt is Slider slider)
+                    slider.Width = (int) (newSize.X / (table.Size.X / slider.Width));
+            }
+
+            table.Size = newSize;
+            table.Scrollbar.Update();
+            ui.AddChild(table);
+            addDefaultLabels(mod);
         }
     }
 }

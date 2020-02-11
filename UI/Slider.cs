@@ -11,17 +11,30 @@ using StardewValley.Menus;
 
 namespace GenericModConfigMenu.UI
 {
-    class Slider<T> : Element
+    class Slider : Element
     {
         public int Width { get; set; }
 
+        public Action<Element> Callback { get; set; }
+
+        protected bool dragging = false;
+
+        public override void Draw(SpriteBatch b)
+        {
+        }
+
+        public override void Update()
+        {
+        }
+    }
+
+    class Slider<T> : Slider
+    {
         public T Minimum { get; set; }
         public T Maximum { get; set; }
         public T Value { get; set; }
 
-        public Action<Element> Callback { get; set; }
-
-        private bool dragging = false;
+        public T Interval { get; set; }
 
         public override void Update()
         {
@@ -33,7 +46,7 @@ namespace GenericModConfigMenu.UI
             if (Mouse.GetState().LeftButton == ButtonState.Released)
                 dragging = false;
 
-            if ( dragging )
+            if (dragging)
             {
                 float perc = (Game1.getOldMouseX() - Position.X) / (float)Width;
                 if (Value is int)
@@ -44,7 +57,10 @@ namespace GenericModConfigMenu.UI
                 {
                     Value = Util.Clamp<T>(Minimum, (T)(object)(float)(perc * ((float)(object)Maximum - (float)(object)Minimum) + (float)(object)Minimum), Maximum);
                 }
-                if ( Callback != null )
+
+                Value = Util.Adjust(Value, Interval);
+
+                if (Callback != null)
                     Callback.Invoke(this);
             }
         }

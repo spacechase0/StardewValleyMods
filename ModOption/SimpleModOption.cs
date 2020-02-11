@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StardewModdingAPI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,12 @@ namespace GenericModConfigMenu.ModOption
         public virtual T Value
         {
             get { return state; }
-            set { state = value; }
+            set {
+                if (!state.Equals(value))
+                    Mod.instance.configs[Owner].ChangeHandler.ForEach(c => c.Invoke(Id, value));
+
+                state = value; 
+            }
         }
 
         public override void SyncToMod()
@@ -29,8 +35,8 @@ namespace GenericModConfigMenu.ModOption
             setter.Invoke(state);
         }
 
-        public SimpleModOption( string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter )
-        :   base( name, desc )
+        public SimpleModOption( string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, string id, IManifest mod )
+        :   base( name, desc, id, mod )
         {
             Type = type;
             getter = theGetter;

@@ -22,5 +22,16 @@ namespace GenericModConfigMenu
                 return max;
             return t;
         }
+
+        public static T Adjust<T>(T value, T interval)
+        {
+            if (value is float vFloat && interval is float iFloat)
+                value = (T)(object)(float)((decimal) vFloat - ((decimal) vFloat %  (decimal) iFloat));
+
+            if (value is int vInt && interval is int iInt)
+                value = (T)(object)(vInt - vInt % iInt);
+
+            return value;
+        }
     }
 }
