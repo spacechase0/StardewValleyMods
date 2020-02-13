@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Magic.Schools;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
@@ -101,25 +102,33 @@ namespace Magic.Spells
 
                     if (level >= 3)
                     {
-                        ICollection< ResourceClump > clumps = (NetCollection<ResourceClump>) loc.GetType().GetField("resourceClumps", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(loc);
-                        if (loc is Woods)
-                            clumps = (loc as Woods).stumps;
-                        if ( clumps != null )
+                        try
                         {
-                            foreach ( var rc in clumps )
+                            ICollection<ResourceClump> clumps = (NetCollection<ResourceClump>)loc.GetType().GetField("resourceClumps", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(loc);
+
+                            if (loc is Woods)
+                                clumps = (loc as Woods).stumps;
+                            if (clumps != null)
                             {
-                                if (new Rectangle((int)rc.tile.X, (int)rc.tile.Y, rc.width.Value, rc.height.Value).Contains(ix, iy))
+                                foreach (var rc in clumps)
                                 {
-                                    player.addMana(-3);
-                                    if (rc.performToolAction(dummyAxe, 1, pos, loc) || rc.performToolAction(dummyPick, 1, pos, loc))
+                                    if (new Rectangle((int)rc.tile.X, (int)rc.tile.Y, rc.width.Value, rc.height.Value).Contains(ix, iy))
                                     {
-                                        clumps.Remove(rc);
-                                        player.AddCustomSkillExperience(Magic.Skill,10);
+                                        player.addMana(-3);
+                                        if (rc.performToolAction(dummyAxe, 1, pos, loc) || rc.performToolAction(dummyPick, 1, pos, loc))
+                                        {
+                                            clumps.Remove(rc);
+                                            player.AddCustomSkillExperience(Magic.Skill, 10);
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
                         }
+                        // Something in GetField above gets upset if this tries to get called outside of the farm for some reason
+                        catch (System.NullReferenceException e)
+                        { }
+                        catch (System.InvalidCastException e) { }
                     }
                 }
             }
