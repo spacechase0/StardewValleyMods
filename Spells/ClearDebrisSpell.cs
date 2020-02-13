@@ -125,10 +125,10 @@ namespace Magic.Spells
                                 }
                             }
                         }
-                        catch(System.NullReferenceException e)
-                        {
-                            // Something in GetField above gets upset if this tries to get called outside of the farm for some reason
-                        }
+                        // Something in GetField above gets upset if this tries to get called outside of the farm for some reason
+                        catch (System.NullReferenceException e)
+                        { }
+                        catch (System.InvalidCastException e) { }
                     }
                 }
             }
