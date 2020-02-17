@@ -166,7 +166,7 @@ namespace Magic
                     Log.debug("Player learnt spell: " + spell);
                     farmer.learnSpell(spell, 0, true);
                     //Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") }));
-                    Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") })));
+                    Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = SpellBook.get(spell).getTranslatedName() })));
                 }
             }
 
@@ -203,7 +203,7 @@ namespace Magic
                 {
                     Log.debug("Player learnt ancient spell: " + ancientSpell);
                     farmer.learnSpell(ancientSpell, 0, true);
-                    Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = Mod.instance.Helper.Translation.Get("spell." + ancientSpell.FullId + ".name") })));
+                    Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = ancientSpell.getTranslatedName() })));
                 }
             }
 
@@ -212,7 +212,7 @@ namespace Magic
             {
                 Log.debug("Player learnt ancient spell: " + rewindSpell);
                 farmer.learnSpell(rewindSpell, 0, true);
-                Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = Mod.instance.Helper.Translation.Get("spell." + rewindSpell.FullId + ".name") })));
+                Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = rewindSpell.getTranslatedName() })));
             }
         }
 
