@@ -36,9 +36,13 @@ namespace Magic.Spells
             return player.knowsSpell(FullId, level) && player.getCurrentMana() >= getManaCost( player, level );
         }
 
-        public virtual string getTranslation(string path)
+        public virtual string getTranslatedName()
         {
-            return Mod.instance.Helper.Translation.Get(path);
+            return Mod.instance.Helper.Translation.Get("spell." + FullId + ".name");
+        }
+        public virtual string getTranslatedDescription()
+        {
+            return Mod.instance.Helper.Translation.Get("spell." + FullId + ".desc");
         }
         
         public abstract IActiveEffect onCast(Farmer player, int level, int targetX, int targetY);
