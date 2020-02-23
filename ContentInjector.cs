@@ -476,10 +476,13 @@ namespace JsonAssets
                     {
                         Log.verbose($"Injecting {big.Name} sprites @ {bigCraftableRect(big.GetCraftableId())}");
                         asset.AsImage().PatchImage(big.texture, null, bigCraftableRect(big.GetCraftableId()));
-                        if (big.ReserveNextIndex)
+                        if (big.ReserveExtraIndexCount > 0)
                         {
-                            Log.verbose($"Injecting {big.Name} reserved extra sprite @ {bigCraftableRect(big.GetCraftableId() + 1)}");
-                            asset.AsImage().PatchImage(big.texture2, null, bigCraftableRect(big.GetCraftableId() + 1));
+                            for ( int i = 0; i < big.ReserveExtraIndexCount; ++i )
+                            {
+                                Log.verbose($"Injecting {big.Name} reserved extra sprite {i + 1} @ {bigCraftableRect(big.GetCraftableId() + i + 1)}");
+                                asset.AsImage().PatchImage(big.extraTextures[i], null, bigCraftableRect(big.GetCraftableId() + i + 1));
+                            }
                         }
 
                         var rect = bigCraftableRect(big.GetCraftableId());

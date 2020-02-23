@@ -8,9 +8,10 @@ namespace JsonAssets.Data
     public class BigCraftableData : DataNeedsIdWithTexture
     {
         [JsonIgnore]
-        public Texture2D texture2;
+        public Texture2D[] extraTextures;
 
-        public bool ReserveNextIndex { get; set; } = false;
+        public bool ReserveNextIndex { get; set; } = false; // Deprecated
+        public int ReserveExtraIndexCount { get; set; } = 0;
 
         public class Recipe_
         {

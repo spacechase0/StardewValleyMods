@@ -514,8 +514,14 @@ namespace JsonAssets
                     
                     // save craftable
                     craftable.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable.png");
-                    if (craftable.ReserveNextIndex)
-                        craftable.texture2 = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable-2.png");
+                    if (craftable.ReserveNextIndex && craftable.ReserveExtraIndexCount == 0)
+                        craftable.ReserveExtraIndexCount = 1;
+                    if (craftable.ReserveExtraIndexCount > 0)
+                    {
+                        craftable.extraTextures = new Texture2D[craftable.ReserveExtraIndexCount];
+                        for ( int i = 0; i < craftable.ReserveExtraIndexCount; ++i )
+                            craftable.extraTextures[i] = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable-{i + 2}.png");
+                    }
                     RegisterBigCraftable(contentPack.Manifest, craftable);
                 }
             }
@@ -1136,8 +1142,8 @@ namespace JsonAssets
                     ids.Add(d.Name, id);
                     if (type == "objects" && d is ObjectData objd && objd.IsColored)
                         ++currId;
-                    else if (type == "big-craftables" && ((BigCraftableData)d).ReserveNextIndex)
-                        ++currId;
+                    else if (type == "big-craftables" && ((BigCraftableData)d).ReserveExtraIndexCount > 0)
+                        currId += ((BigCraftableData)d).ReserveExtraIndexCount;
                     d.id = ids[d.Name];
                 }
             }
@@ -1321,6 +1327,27 @@ namespace JsonAssets
                 if (fh.fridge.Value?.items != null)
 #pragma warning restore AvoidImplicitNetFieldCast
                     fixItemList(fh.fridge.Value.items);
+            }
+            if ( loc is Cabin cabin )
+            {
+                var player = cabin.farmhand.Value;
+                fixItemList(player.Items);
+#pragma warning disable AvoidNetField
+                if (player.leftRing.Value != null && fixId(oldObjectIds, objectIds, player.leftRing.Value.parentSheetIndex, origObjects))
+                    player.leftRing.Value = null;
+                if (player.rightRing.Value != null && fixId(oldObjectIds, objectIds, player.rightRing.Value.parentSheetIndex, origObjects))
+                    player.rightRing.Value = null;
+                if (player.hat.Value != null && fixId(oldHatIds, hatIds, player.hat.Value.which, origHats))
+                    player.hat.Value = null;
+                if (player.shirtItem.Value != null && fixId(oldClothingIds, clothingIds, player.shirtItem.Value.parentSheetIndex, origClothing))
+                    player.shirtItem.Value = null;
+                if (player.pantsItem.Value != null && fixId(oldClothingIds, clothingIds, player.pantsItem.Value.parentSheetIndex, origClothing))
+                    player.pantsItem.Value = null;
+                if (player.boots.Value != null && fixId(oldObjectIds, objectIds, player.boots.Value.parentSheetIndex, origObjects))
+                    player.boots.Value = null;
+                /*else if (player.boots.Value != null)
+                    player.boots.Value.reloadData();*/
+#pragma warning restore AvoidNetField
             }
 
             IList<Vector2> toRemove = new List<Vector2>();
