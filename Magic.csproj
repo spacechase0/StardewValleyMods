@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalyzeEventArgs.cs" />
+    <Compile Include="Api.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Content.cs" />

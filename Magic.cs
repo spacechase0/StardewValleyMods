@@ -73,6 +73,10 @@ namespace Magic
             events.Display.RenderedHud += onRenderedHud;
 
             OnAnalyzeCast += onAnalyze;
+            OnAnalyzeCast += (sender, e) =>
+            {
+                Mod.instance.api.InvokeOnAnalyzeCast(sender as Farmer);
+            };
 
             SpaceCore.Skills.RegisterSkill(Skill = new Skill());
 
