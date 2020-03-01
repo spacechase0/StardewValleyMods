@@ -35,7 +35,8 @@ namespace JsonAssets.Data
             Seeds = SObject.SeedsCategory,
             Ring = SObject.ringCategory,
             AnimalGoods = SObject.sellAtPierresAndMarnies,
-            Greens = SObject.GreensCategory
+            Greens = SObject.GreensCategory,
+            Artifact = int.MinValue, // Special case
         }
 
         public class Recipe_
@@ -165,7 +166,7 @@ namespace JsonAssets.Data
             if (Edibility != SObject.inedible)
             {
                 var itype = (int)Category;
-                var str = $"{Name}/{Price}/{Edibility}/{Category} {itype}/{LocalizedName()}/{LocalizedDescription()}/";
+                var str = $"{Name}/{Price}/{Edibility}/" + (Category == Category_.Artifact ? "Arch" : $"{Category} {itype}") + $"/{LocalizedName()}/{LocalizedDescription()}/";
                 str += (EdibleIsDrink ? "drink" : "food") + "/";
                 if (EdibleBuffs == null)
                     EdibleBuffs = new FoodBuffs_();
@@ -175,7 +176,7 @@ namespace JsonAssets.Data
             else
             {
                 var itype = (int)Category;
-                return $"{Name}/{Price}/{Edibility}/Basic {itype}/{LocalizedName()}/{LocalizedDescription()}";
+                return $"{Name}/{Price}/{Edibility}/" + (Category == Category_.Artifact ? "Arch" : $"Basic {itype}") + $"/{LocalizedName()}/{LocalizedDescription()}";
             }
         }
 
