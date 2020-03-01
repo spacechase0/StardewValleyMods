@@ -45,7 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
-    <Compile Include="ContentInjector.cs" />
+    <Compile Include="ContentInjector2.cs" />
+    <Compile Include="ContentInjector1.cs" />
     <Compile Include="Data\DataNeedsIdWithTexture.cs" />
     <Compile Include="Data\BootsData.cs" />
     <Compile Include="Data\PantsData.cs" />

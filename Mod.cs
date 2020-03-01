@@ -33,7 +33,8 @@ namespace JsonAssets
     {
         public static Mod instance;
         private HarmonyInstance harmony;
-        private ContentInjector content;
+        private ContentInjector1 content1;
+        private ContentInjector2 content2;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -51,7 +52,7 @@ namespace JsonAssets
             helper.Events.Specialized.LoadStageChanged += onLoadStageChanged;
             helper.Events.Multiplayer.PeerContextReceived += clientConnected;
 
-            helper.Content.AssetEditors.Add(content = new ContentInjector());
+            helper.Content.AssetEditors.Add(content1 = new ContentInjector1());
 
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\crops", 32);
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\fruitTrees", 80);
@@ -663,7 +664,8 @@ namespace JsonAssets
             clothing.AddRange(pantss);
             clearIds(out clothingIds, clothing.ToList<DataNeedsId>());
 
-            content.InvalidateUsed();
+            content1.InvalidateUsed();
+            Helper.Content.AssetEditors.Remove(content2);
         }
 
         private void onCreated(object sender, SaveCreatedEventArgs e)
@@ -982,7 +984,8 @@ namespace JsonAssets
 
             api.InvokeIdsAssigned();
 
-            content.InvalidateUsed();
+            content1.InvalidateUsed();
+            Helper.Content.AssetEditors.Add(content2 = new ContentInjector2());
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>

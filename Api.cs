@@ -315,12 +315,12 @@ namespace JsonAssets
             if (entity is FruitTree fruitTree)
             {
                 tex = FruitTree.texture;
-                rect = ContentInjector.fruitTreeRect(fruitTree.treeType.Value);
+                rect = ContentInjector1.fruitTreeRect(fruitTree.treeType.Value);
             }
             else if (entity is Crop crop)
             {
                 tex = Game1.cropSpriteSheet;
-                rect = ContentInjector.cropRect(crop.rowInSpriteSheet.Value);
+                rect = ContentInjector1.cropRect(crop.rowInSpriteSheet.Value);
             }
             else
             {
