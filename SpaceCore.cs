@@ -57,6 +57,14 @@ namespace SpaceCore
                     if (m.FullDescription().Contains("showEndOfNightStuff"))
                         showNightEndMethod = m;
             }
+            catch (ReflectionTypeLoadException e)
+            {
+                Log.error($"Weird exception doing finding Windows showEndOfNightStuff: {e}");
+                foreach (var le in e.LoaderExceptions)
+                {
+                    Log.error("LE: " + le);
+                }
+            }
             catch ( Exception e1 )
             {
                 Log.trace("Failed to find Windows showEndOfNightStuff lambda: " + e1);
