@@ -14,56 +14,50 @@ namespace JsonAssets
 {
     public class ContentInjector1 : IAssetEditor
     {
-        private List<string> files;
+        private delegate void injector(IAssetData asset);
+        private Dictionary<string, injector> files;
         public ContentInjector1()
         {
-            files = new List<string>(new string[]
+            Func<string, string> normalize = Mod.instance.Helper.Content.NormalizeAssetName;
+
+            //normalize with 
+            files = new Dictionary<string, injector>()
             {
-                "Data\\ObjectInformation",
-                "Data\\ObjectContextTags",
-                "Data\\Crops",
-                "Data\\fruitTrees",
-                "Data\\CookingRecipes",
-                "Data\\CraftingRecipes",
-                "Data\\BigCraftablesInformation",
-                "Data\\hats",
-                "Data\\weapons",
-                "Data\\ClothingInformation",
-                "Data\\TailoringRecipes",
-                "Data\\Boots",
-                "Maps\\springobjects",
-                "TileSheets\\crops",
-                "TileSheets\\fruitTrees",
-                "TileSheets\\Craftables",
-                "Characters\\Farmer\\hats",
-                "TileSheets\\weapons",
-                "Characters\\Farmer\\shirts",
-                "Characters\\Farmer\\pants",
-                "Characters\\Farmer\\shoeColors"
-            });
+                {normalize("Data\\ObjectInformation"), injectDataObjectInformation},
+                {normalize("Data\\ObjectContextTags"), injectDataObjectContextTags},
+                {normalize("Data\\Crops"), injectDataCrops},
+                {normalize("Data\\fruitTrees"), injectDataFruitTrees},
+                {normalize("Data\\CookingRecipes"), injectDataCookingRecipes},
+                {normalize("Data\\CraftingRecipes"), injectDataCraftingRecipes},
+                {normalize("Data\\BigCraftablesInformation"), injectDataBigCraftablesInformation},
+                {normalize("Data\\hats"), injectDataHats},
+                {normalize("Data\\weapons"), injectDataWeapons},
+                {normalize("Data\\ClothingInformation"), injectDataClothingInformation},
+                {normalize("Data\\TailoringRecipes"), injectDataTailoringRecipes},
+                {normalize("Data\\Boots"), injectDataBoots},
+                {normalize("Maps\\springobjects"), injectMapsSpringobjects},
+                {normalize("TileSheets\\crops"), injectTileSheetsCrops},
+                {normalize("TileSheets\\fruitTrees"), injectTileSheetsFruitTrees},
+                {normalize("TileSheets\\Craftables"), injectTileSheetsCraftables},
+                {normalize("Characters\\Farmer\\hats"), injectCharactersFarmerHats},
+                {normalize("TileSheets\\weapons"), injectTileSheetsWeapons},
+                {normalize("Characters\\Farmer\\shirts"), injectCharactersFarmerShirts},
+                {normalize("Characters\\Farmer\\pants"), injectCharactersFarmerPants},
+                {normalize("Characters\\Farmer\\shoeColors"), injectCharactersFarmerShoeColors}
+            };
         }
 
         public void InvalidateUsed()
         {
             Mod.instance.Helper.Content.InvalidateCache((a) =>
             {
-                foreach (var file in files)
-                {
-                    if (a.AssetNameEquals(file))
-                        return true;
-                }
-                return false;
+                return files.ContainsKey(a.AssetName);
             });
         }
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
-            foreach (var file in files )
-            {
-                if (asset.AssetNameEquals(file))
-                    return true;
-            }
-            return false;
+            return files.ContainsKey(asset.AssetName);
         }
 
         public void Edit<T>(IAssetData asset)
@@ -71,92 +65,9 @@ namespace JsonAssets
             if (!Mod.instance.didInit)
                 return;
 
-            if (asset.AssetNameEquals("Data\\ObjectInformation"))
-            {
-                injectDataObjectInformation(asset);
-            }
-            else if (asset.AssetNameEquals("Data\\ObjectContextTags"))
-            {
-                injectDataObjectContextTags(asset);
-            }
-            else if (asset.AssetNameEquals("Data\\Crops"))
-            {
-                injectDataCrops(asset);
-            }
-            else if (asset.AssetNameEquals("Data\\fruitTrees"))
-            {
-                injectDataFruitTrees(asset);
-            }
-            else if (asset.AssetNameEquals("Data\\CookingRecipes"))
-            {
-                injectDataCookingRecipes(asset);
-            }
-            else if (asset.AssetNameEquals("Data\\CraftingRecipes"))
-            {
-                injectDataCraftingRecipes(asset);
-            }
-            else if (asset.AssetNameEquals("Data\\BigCraftablesInformation"))
-            {
-                injectDataBigCraftablesInformation(asset);
-            }
-            else if (asset.AssetNameEquals("Data\\hats"))
-            {
-                injectDataHats(asset);
-            }
-            else if (asset.AssetNameEquals("Data\\weapons"))
-            {
-                injectDataWeapons(asset);
-            }
-            else if (asset.AssetNameEquals("Data\\ClothingInformation"))
-            {
-                injectDataClothingInformation(asset);
-            }
-            else if (asset.AssetNameEquals("Data\\TailoringRecipes"))
-            {
-                injectDataTailoringRecipes(asset);
-            }
-            else if (asset.AssetNameEquals("Data\\Boots"))
-            {
-                injectDataBoots(asset);
-            }
-            else if (asset.AssetNameEquals("Maps\\springobjects"))
-            {
-                injectMapsSpringobjects(asset);
-            }
-            else if (asset.AssetNameEquals("TileSheets\\crops"))
-            {
-                injectTileSheetsCrops(asset);
-            }
-            else if (asset.AssetNameEquals("TileSheets\\fruitTrees"))
-            {
-                injectTileSheetsFruitTrees(asset);
-            }
-            else if (asset.AssetNameEquals("TileSheets\\Craftables"))
-            {
-                injectTileSheetsCraftables(asset);
-            }
-            else if (asset.AssetNameEquals("Characters\\Farmer\\hats"))
-            {
-                injectCharactersFarmerHats(asset);
-            }
-            else if (asset.AssetNameEquals("TileSheets\\weapons"))
-            {
-                injectTileSheetsWeapons(asset);
-            }
-            else if (asset.AssetNameEquals("Characters\\Farmer\\shirts"))
-            {
-                injectCharactersFarmerShirts(asset);
-            }
-            else if (asset.AssetNameEquals("Characters\\Farmer\\pants"))
-            {
-                injectCharactersFarmerPants(asset);
-            }
-            else if (asset.AssetNameEquals("Characters\\Farmer\\shoeColors"))
-            {
-                injectCharactersFarmerShoeColors(asset);
-            }
+            files[asset.AssetName](asset);
         }
-        //IAssetData asset
+
         private void injectDataObjectInformation(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
