@@ -27,12 +27,18 @@ namespace GenericModConfigMenu
             table.RowHeight = 50;
             table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64);
             table.Size = new Vector2(800, Game1.viewport.Height - 128);
+
+            var heading = new Label() { String = "Configure Mods", Bold = true };
+            heading.LocalPosition = new Vector2((800 - heading.Measure().X) / 2, heading.LocalPosition.Y);
+            table.AddRow( new Element[] { heading } );
+
             foreach (var modConfigEntry in Mod.instance.configs.OrderBy(pair => pair.Key.Name))
             {
                 var label = new Label() { String = modConfigEntry.Key.Name };
                 label.Callback = (Element e) => changeToModPage(modConfigEntry.Key);
                 table.AddRow( new Element[] { label } );
             }
+
             ui.AddChild(table);
 
             ActiveConfigMenu = this;
