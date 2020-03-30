@@ -38,7 +38,7 @@ namespace GenericModConfigMenu.UI
 
         public override void Update()
         {
-            var bounds = new Rectangle((int)Position.X, (int)Position.Y, Width, 30);
+            var bounds = new Rectangle((int)Position.X, (int)Position.Y, Width, 24);
             bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot ().Obscured;
 
             if (hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
@@ -77,11 +77,11 @@ namespace GenericModConfigMenu.UI
                 perc = ((float)(object)Value - (float)(object)Minimum) / (float)((float)(object)Maximum - (float)(object)Minimum);
             }
 
-            Rectangle back = new Rectangle((int)Position.X, (int)Position.Y + 10, Width, 10);
-            Rectangle front = new Rectangle((int)(Position.X + perc * Width) - 5, (int)Position.Y, 10, 30);
+            Rectangle back = new Rectangle((int)Position.X, (int)Position.Y, Width, 24);
+            Rectangle front = new Rectangle((int)(Position.X + perc * (Width - 40)), (int)Position.Y, 40, 24);
 
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), back.X, back.Y, back.Width, back.Height, Color.DarkGoldenrod, Game1.pixelZoom, false);
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), front.X, front.Y, front.Width, front.Height, Color.Gold, Game1.pixelZoom, false);
+            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), back.X, back.Y, back.Width, back.Height, Color.White, Game1.pixelZoom, false);
+			b.Draw(Game1.mouseCursors, new Vector2(front.X, front.Y), new Rectangle(420, 441, 10, 6), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.9f);
         }
     }
 }
