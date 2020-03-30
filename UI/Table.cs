@@ -25,16 +25,15 @@ namespace GenericModConfigMenu.UI
             }
         }
 
+        public const int RowPadding = 16;
         private int rowHeight;
         public int RowHeight
         {
             get { return rowHeight; }
             set
             {
-                rowHeight = value;
-                Scrollbar.FrontSize = (int)((Size.Y / (value * rows.Count)) * Size.Y);
-                if (Scrollbar.FrontSize > Scrollbar.BackSize.Y)
-                    Scrollbar.FrontSize = (int)Scrollbar.BackSize.Y;
+                rowHeight = value + RowPadding;
+                UpdateScrollbar();
             }
         }
 
@@ -57,7 +56,14 @@ namespace GenericModConfigMenu.UI
             {
                 AddChild(child);
             }
-            RowHeight = RowHeight;
+            UpdateScrollbar();
+        }
+
+        private void UpdateScrollbar()
+        {
+            Scrollbar.FrontSize = (int)((Size.Y / (rowHeight * rows.Count)) * Size.Y);
+            if (Scrollbar.FrontSize > Scrollbar.BackSize.Y)
+                Scrollbar.FrontSize = (int)Scrollbar.BackSize.Y;
         }
 
         public override void Update()
@@ -68,7 +74,7 @@ namespace GenericModConfigMenu.UI
                 foreach (var element in row)
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, ir * RowHeight - Scrollbar.ScrollPercent * rows.Count * RowHeight);
-                    if (element.Position.Y + Size.Y < Position.Y || element.Position.Y > Position.Y + Size.Y)
+                    if (element.Position.Y + RowHeight - RowPadding < Position.Y || element.Position.Y > Position.Y + Size.Y)
                         continue;
                     element.Update();
                 }
@@ -96,13 +102,13 @@ namespace GenericModConfigMenu.UI
 
         public override void Draw(SpriteBatch b)
         {
-            IClickableMenu.drawTextureBox(b, (int) Position.X - 24, (int) Position.Y - 24, (int) Size.X + 48, (int) Size.Y + 48, Color.White);
+            IClickableMenu.drawTextureBox(b, (int) Position.X - 32, (int) Position.Y - 32, (int) Size.X + 64, (int) Size.Y + 64, Color.White);
             
             foreach (var row in rows)
             {
                 foreach (var element in row)
                 {
-                    if (element.Position.Y + RowHeight < Position.Y || element.Position.Y > Position.Y + Size.Y)
+                    if (element.Position.Y + RowHeight - RowPadding < Position.Y || element.Position.Y > Position.Y + Size.Y)
                         continue;
                     if (element == RenderLast)
                         continue;
