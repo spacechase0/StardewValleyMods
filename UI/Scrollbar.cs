@@ -19,7 +19,7 @@ namespace GenericModConfigMenu.UI
         public int FrameSize { get; set; }
 
         public int TopRow { get; private set; }
-        public int MaxTopRow => Math.Max (0, Rows - FrameSize);
+        public int MaxTopRow => Math.Max(0, Rows - FrameSize);
 
         public float ScrollPercent => (MaxTopRow > 0) ? TopRow / (float)MaxTopRow : 0f;
 

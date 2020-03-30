@@ -39,7 +39,7 @@ namespace GenericModConfigMenu.UI
         public override void Update()
         {
             var bounds = new Rectangle((int)Position.X, (int)Position.Y, Width, 24);
-            bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot ().Obscured;
+            bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot().Obscured;
 
             if (hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
                 dragging = true;
@@ -81,7 +81,7 @@ namespace GenericModConfigMenu.UI
             Rectangle front = new Rectangle((int)(Position.X + perc * (Width - 40)), (int)Position.Y, 40, 24);
 
             IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), back.X, back.Y, back.Width, back.Height, Color.White, Game1.pixelZoom, false);
-			b.Draw(Game1.mouseCursors, new Vector2(front.X, front.Y), new Rectangle(420, 441, 10, 6), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.9f);
+            b.Draw(Game1.mouseCursors, new Vector2(front.X, front.Y), new Rectangle(420, 441, 10, 6), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.9f);
         }
     }
 }

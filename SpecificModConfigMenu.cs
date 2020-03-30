@@ -31,7 +31,7 @@ namespace GenericModConfigMenu
 
             table = new Table();
             table.RowHeight = 50;
-            table.Size = new Vector2(Math.Min (1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
+            table.Size = new Vector2(Math.Min(1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
             table.LocalPosition = new Vector2((Game1.viewport.Width - table.Size.X) / 2, (Game1.viewport.Height - table.Size.Y) / 2);
             foreach (var opt in modConfig.Options)
             {
@@ -316,7 +316,7 @@ namespace GenericModConfigMenu
         {
             ui = new RootElement();
 
-            Vector2 newSize = new Vector2(Math.Min (1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
+            Vector2 newSize = new Vector2(Math.Min(1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
 
             foreach (Element opt in table.Children)
             {

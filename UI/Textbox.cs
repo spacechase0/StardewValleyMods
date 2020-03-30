@@ -48,7 +48,7 @@ namespace GenericModConfigMenu.UI
         public override void Update()
         {
             var bounds = new Rectangle((int)Position.X, (int)Position.Y, 192, 48);
-            bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot ().Obscured;
+            bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot().Obscured;
 
             if (Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed && Callback != null)
             {
@@ -120,7 +120,7 @@ namespace GenericModConfigMenu.UI
         {
             if ( command == '\b' && String.Length > 0 )
             {
-				Game1.playSound("tinyWhip");
+                Game1.playSound("tinyWhip");
                 String = String.Substring(0, String.Length - 1);
                 if (Callback != null)
                     Callback.Invoke(this);

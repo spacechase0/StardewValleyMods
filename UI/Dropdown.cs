@@ -37,7 +37,7 @@ namespace GenericModConfigMenu.UI
         public override void Update()
         {
             var bounds1 = new Rectangle((int)Position.X, (int)Position.Y, 300, 44);
-            bool hover = bounds1.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot ().Obscured;
+            bool hover = bounds1.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot().Obscured;
 
             if (hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
@@ -50,7 +50,7 @@ namespace GenericModConfigMenu.UI
             {
                 if (Mouse.GetState().LeftButton == ButtonState.Released)
                 {
-					Game1.playSound("drumkit6");
+                    Game1.playSound("drumkit6");
                     dropped = false;
                     if (Parent.RenderLast == this)
                         Parent.RenderLast = null;

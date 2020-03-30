@@ -26,7 +26,7 @@ namespace GenericModConfigMenu.UI
         {
             var size = Measure();
             var bounds = new Rectangle((int)Position.X, (int)Position.Y, (int)size.X, (int)size.Y);
-            Hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot ().Obscured;
+            Hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot().Obscured;
 
             if (Hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed && Callback != null)
                 Callback.Invoke(this);
