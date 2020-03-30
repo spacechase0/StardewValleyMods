@@ -139,7 +139,8 @@ namespace GenericModConfigMenu
                 }
                 else if ( opt is LabelModOption l )
                 {
-                    label.LocalPosition = new Vector2(table.Size.X / 2 - label.Font.MeasureString(label.String).X / 2, 0);
+                    label.LocalPosition = new Vector2(table.Size.X / 2 - label.Measure().X / 2, 0);
+                    label.Bold = true;
                     if (l.Name == "")
                         label = null;
                     other = null;
@@ -166,22 +167,22 @@ namespace GenericModConfigMenu
 
         private void addDefaultLabels(IManifest modManifest)
         {
-            var titleLabel = new Label() { String = modManifest.Name };
-            titleLabel.LocalPosition = new Vector2((Game1.viewport.Width - titleLabel.Font.MeasureString(titleLabel.String).X) / 2, 12 + 32);
+            var titleLabel = new Label() { String = modManifest.Name, Bold = true };
+            titleLabel.LocalPosition = new Vector2((Game1.viewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
             titleLabel.HoverTextColor = titleLabel.IdleTextColor;
             ui.AddChild(titleLabel);
 
-            var cancelLabel = new Label() { String = "Cancel" };
+            var cancelLabel = new Label() { String = "Cancel", Bold = true };
             cancelLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 300, Game1.viewport.Height - 50 - 36);
             cancelLabel.Callback = (Element e) => cancel();
             ui.AddChild(cancelLabel);
 
-            var defaultLabel = new Label() { String = "Default" };
+            var defaultLabel = new Label() { String = "Default", Bold = true };
             defaultLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 50, Game1.viewport.Height - 50 - 36);
             defaultLabel.Callback = (Element e) => revertToDefault();
             ui.AddChild(defaultLabel);
 
-            var saveLabel = new Label() { String = "Save" };
+            var saveLabel = new Label() { String = "Save", Bold = true };
             saveLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 + 200, Game1.viewport.Height - 50 - 36);
             saveLabel.Callback = (Element e) => save();
             ui.AddChild(saveLabel);

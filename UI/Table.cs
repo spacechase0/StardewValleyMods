@@ -73,7 +73,8 @@ namespace GenericModConfigMenu.UI
                 foreach (var element in row)
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, ir * RowHeight - Scrollbar.TopRow * RowHeight);
-                    if (element.Position.Y < Position.Y || element.Position.Y + RowHeight - RowPadding > Position.Y + Size.Y)
+                    if (!(element is Label) && // Labels must update anyway to get rid of hovertext on scrollwheel
+                            (element.Position.Y < Position.Y || element.Position.Y + RowHeight - RowPadding > Position.Y + Size.Y))
                         continue;
                     element.Update();
                 }
