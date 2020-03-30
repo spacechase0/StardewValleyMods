@@ -193,7 +193,7 @@ namespace GenericModConfigMenu
             if (TitleMenu.subMenu == this || Game1.activeClickableMenu == this)
             {
                 if (Dropdown.ActiveDropdown == null)
-                    table.Scrollbar.Scroll(direction / -120);
+                    table.Scrollbar.ScrollBy(direction / -120);
             }
             else
                 ActiveConfigMenu = null;
@@ -246,6 +246,7 @@ namespace GenericModConfigMenu
 
         private void revertToDefault()
         {
+            Game1.playSound("backpackIN");
             modConfig.RevertToDefault.Invoke();
             foreach (var opt in modConfig.Options)
                 opt.SyncToMod();
@@ -259,6 +260,7 @@ namespace GenericModConfigMenu
 
         private void save()
         {
+            Game1.playSound("money");
             foreach (var opt in modConfig.Options)
                 opt.Save();
             modConfig.SaveToFile.Invoke();
@@ -270,6 +272,7 @@ namespace GenericModConfigMenu
 
         private void cancel()
         {
+            Game1.playSound("bigDeSelect");
             if (TitleMenu.subMenu == this)
                 TitleMenu.subMenu = new ModConfigMenu();
             else if (Game1.activeClickableMenu == this)
@@ -280,6 +283,7 @@ namespace GenericModConfigMenu
         private Label keybindingLabel;
         private void doKeybindingFor( SimpleModOption<SButton> opt, Label label )
         {
+            Game1.playSound("breathin");
             keybindingOpt = opt;
             keybindingLabel = label;
             ui.Obscured = true;
@@ -292,8 +296,13 @@ namespace GenericModConfigMenu
                 return;
             if ( !e.Button.TryGetKeyboard(out Keys keys) && !e.Button.TryGetController(out _) )
                 return;
-            if ( e.Button.ToString() != "Escape" )
+            if ( e.Button.ToString() == "Escape" )
             {
+                Game1.playSound("bigDeSelect");
+            }
+            else
+            {
+                Game1.playSound("coin");
                 keybindingOpt.Value = e.Button;
                 keybindingLabel.String = e.Button.ToString();
             }

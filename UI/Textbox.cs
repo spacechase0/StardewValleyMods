@@ -120,6 +120,7 @@ namespace GenericModConfigMenu.UI
         {
             if ( command == '\b' && String.Length > 0 )
             {
+				Game1.playSound("tinyWhip");
                 String = String.Substring(0, String.Length - 1);
                 if (Callback != null)
                     Callback.Invoke(this);

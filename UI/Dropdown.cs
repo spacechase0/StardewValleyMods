@@ -41,6 +41,7 @@ namespace GenericModConfigMenu.UI
 
             if (hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
+                Game1.playSound("shwip");
                 dropped = true;
                 Parent.RenderLast = this;
             }
@@ -49,6 +50,7 @@ namespace GenericModConfigMenu.UI
             {
                 if (Mouse.GetState().LeftButton == ButtonState.Released)
                 {
+					Game1.playSound("drumkit6");
                     dropped = false;
                     if (Parent.RenderLast == this)
                         Parent.RenderLast = null;

@@ -35,6 +35,7 @@ namespace GenericModConfigMenu.UI
 
             if (hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed && Callback != null)
             {
+                Game1.playSound("drumkit6");
                 Checked = !Checked;
                 Callback.Invoke(this);
             }

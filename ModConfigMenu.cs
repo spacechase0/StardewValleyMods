@@ -47,7 +47,7 @@ namespace GenericModConfigMenu
         public void receiveScrollWheelActionSmapi(int direction)
         {
             if (TitleMenu.subMenu == this)
-                table.Scrollbar.Scroll(direction / -120);
+                table.Scrollbar.ScrollBy(direction / -120);
             else
                 ActiveConfigMenu = null;
         }
@@ -69,6 +69,7 @@ namespace GenericModConfigMenu
         private void changeToModPage( IManifest modManifest )
         {
             Log.trace("Changing to mod config page for mod " + modManifest.UniqueID);
+            Game1.playSound("bigSelect");
             TitleMenu.subMenu = new SpecificModConfigMenu(modManifest);
         }
 

@@ -25,14 +25,23 @@ namespace GenericModConfigMenu.UI
 
         private bool dragScroll = false;
 
-        public void Scroll(int amount)
+        public void ScrollBy(int amount)
         {
-            ScrollTo(TopRow + amount);
+            int row = Util.Clamp(0, TopRow + amount, MaxTopRow);
+            if ( row != TopRow )
+            {
+                Game1.playSound("shwip");
+                TopRow = row;
+            }
         }
 
         public void ScrollTo(int row)
         {
-            TopRow = Util.Clamp(0, row, MaxTopRow);
+            if ( TopRow != row )
+            {
+                Game1.playSound("shiny4");
+                TopRow = Util.Clamp(0, row, MaxTopRow);
+            }
         }
 
         public override void Update()
