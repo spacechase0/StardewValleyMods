@@ -30,7 +30,11 @@ namespace GenericModConfigMenu
             Texture2D tex = Helper.Content.Load<Texture2D>("assets/config-button.png");
             configButton = new Button(tex);
             configButton.LocalPosition = new Vector2(36, Game1.viewport.Height - 100);
-            configButton.Callback = (Element e) => TitleMenu.subMenu = new ModConfigMenu();
+            configButton.Callback = (Element e) =>
+            {
+                Game1.playSound("newArtifact");
+                TitleMenu.subMenu = new ModConfigMenu();
+            };
 
             helper.Events.GameLoop.GameLaunched += onLaunched;
             helper.Events.GameLoop.UpdateTicking += onUpdate;
@@ -121,7 +125,7 @@ namespace GenericModConfigMenu
         {
             if (Game1.activeClickableMenu is TitleMenu tm)
             {
-                if (TitleMenu.subMenu == null && Helper.Reflection.GetField<bool>(tm, "titleInPosition").GetValue())
+                if (TitleMenu.subMenu == null && Helper.Reflection.GetMethod(tm, "ShouldAllowInteraction").Invoke<bool>())
                     configButton.Update();
             }
         }
@@ -135,7 +139,7 @@ namespace GenericModConfigMenu
         {
             if ( Game1.activeClickableMenu is TitleMenu tm )
             {
-                if (TitleMenu.subMenu == null && Helper.Reflection.GetField<bool>(tm, "titleInPosition").GetValue())
+                if (TitleMenu.subMenu == null && Helper.Reflection.GetMethod(tm, "ShouldAllowInteraction").Invoke<bool>())
                     configButton.Draw(e.SpriteBatch);
             }
         }
