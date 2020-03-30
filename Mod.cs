@@ -19,6 +19,7 @@ namespace GenericModConfigMenu
     {
         public static Mod instance;
 
+        private RootElement ui;
         private Button configButton;
         internal Dictionary<IManifest, ModConfig> configs = new Dictionary<IManifest, ModConfig>();
 
@@ -26,6 +27,8 @@ namespace GenericModConfigMenu
         {
             instance = this;
             Log.Monitor = Monitor;
+
+            ui = new RootElement();
 
             Texture2D tex = Helper.Content.Load<Texture2D>("assets/config-button.png");
             configButton = new Button(tex);
@@ -35,6 +38,8 @@ namespace GenericModConfigMenu
                 Game1.playSound("newArtifact");
                 TitleMenu.subMenu = new ModConfigMenu();
             };
+
+            ui.AddChild(configButton);
 
             helper.Events.GameLoop.GameLaunched += onLaunched;
             helper.Events.GameLoop.UpdateTicking += onUpdate;

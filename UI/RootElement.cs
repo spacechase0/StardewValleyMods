@@ -8,6 +8,8 @@ namespace GenericModConfigMenu.UI
 {
     public class RootElement : Container
     {
+        public bool Obscured { get; set; } = false;
+
         internal override RootElement GetRootImpl()
         {
             return this;

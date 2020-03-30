@@ -221,6 +221,8 @@ namespace GenericModConfigMenu
 
             if ( keybindingOpt != null )
             {
+                b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.viewport.Width, Game1.viewport.Height), new Color(0, 0, 0, 192));
+
                 int boxX = (Game1.viewport.Width - 650) / 2, boxY = (Game1.viewport.Height - 200) / 2;
                 IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
 
@@ -280,6 +282,7 @@ namespace GenericModConfigMenu
         {
             keybindingOpt = opt;
             keybindingLabel = label;
+            ui.Obscured = true;
             Mod.instance.Helper.Events.Input.ButtonPressed += assignKeybinding;
         }
 
@@ -287,11 +290,17 @@ namespace GenericModConfigMenu
         {
             if ( keybindingOpt == null )
                 return;
-            keybindingOpt.Value = e.Button;
-            keybindingLabel.String = e.Button.ToString();
+            if ( !e.Button.TryGetKeyboard(out Keys keys) && !e.Button.TryGetController(out _) )
+                return;
+            if ( e.Button.ToString() != "Escape" )
+            {
+                keybindingOpt.Value = e.Button;
+                keybindingLabel.String = e.Button.ToString();
+            }
             Mod.instance.Helper.Events.Input.ButtonPressed -= assignKeybinding;
             keybindingOpt = null;
             keybindingLabel = null;
+            ui.Obscured = false;
         }
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)

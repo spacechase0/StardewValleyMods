@@ -31,7 +31,7 @@ namespace GenericModConfigMenu.UI
         public override void Update()
         {
             var bounds = new Rectangle((int)Position.X, (int)Position.Y, CheckedTextureRect.Width * 4, CheckedTextureRect.Height * 4);
-            bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
+            bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot ().Obscured;
 
             if (hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed && Callback != null)
             {
