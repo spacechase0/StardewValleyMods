@@ -47,13 +47,13 @@ namespace GenericModConfigMenu
                 if ( opt is ComplexModOption c )
                 {
                     var custom = new ComplexModOptionWidget(c);
-                    custom.LocalPosition = new Vector2( table.Size.X / 5 * 3, 0 );
+                    custom.LocalPosition = new Vector2( table.Size.X / 2, 0 );
                     other = custom;
                 }
                 else if ( opt is SimpleModOption<bool> b )
                 {
                     var checkbox = new Checkbox();
-                    checkbox.LocalPosition = new Vector2( table.Size.X / 3 * 2, 0 );
+                    checkbox.LocalPosition = new Vector2( table.Size.X / 2, 0 );
                     checkbox.Checked = b.Value;
                     checkbox.Callback = (Element e) => b.Value = (e as Checkbox).Checked;
                     other = checkbox;
@@ -61,7 +61,7 @@ namespace GenericModConfigMenu
                 else if ( opt is SimpleModOption<SButton> k )
                 {
                     var label2 = new Label() { String = k.Value.ToString() };
-                    label2.LocalPosition = new Vector2(table.Size.X / 3 * 2, 0);
+                    label2.LocalPosition = new Vector2(table.Size.X / 2, 0);
                     label2.Callback = (Element e) => doKeybindingFor(k, e as Label);
                     other = label2;
                 }
@@ -106,7 +106,7 @@ namespace GenericModConfigMenu
                 else if (opt is ChoiceModOption<string> cs)
                 {
                     var dropdown = new Dropdown() { Choices = cs.Choices };
-                    dropdown.LocalPosition = new Vector2(table.Size.X / 7 * 4, 0);
+                    dropdown.LocalPosition = new Vector2(table.Size.X / 2, 0);
                     dropdown.Value = cs.Value;
                     dropdown.MaxValuesAtOnce = Math.Min(dropdown.Choices.Length, 5);
                     dropdown.Callback = (Element e) => cs.Value = (e as Dropdown).Value;
@@ -116,7 +116,7 @@ namespace GenericModConfigMenu
                 else if (opt is SimpleModOption<int> i)
                 {
                     var intbox = new Intbox();
-                    intbox.LocalPosition = new Vector2(table.Size.X / 5 * 3, 0);
+                    intbox.LocalPosition = new Vector2(table.Size.X / 2 - 8, 0);
                     intbox.Value = i.Value;
                     intbox.Callback = (Element e) => i.Value = (e as Intbox).Value;
                     other = intbox;
@@ -124,7 +124,7 @@ namespace GenericModConfigMenu
                 else if (opt is SimpleModOption<float> f)
                 {
                     var floatbox = new Floatbox();
-                    floatbox.LocalPosition = new Vector2(table.Size.X / 5 * 3, 0);
+                    floatbox.LocalPosition = new Vector2(table.Size.X / 2 - 8, 0);
                     floatbox.Value = f.Value;
                     floatbox.Callback = (Element e) => f.Value = (e as Floatbox).Value;
                     other = floatbox;
@@ -132,14 +132,14 @@ namespace GenericModConfigMenu
                 else if (opt is SimpleModOption<string> s)
                 {
                     var textbox = new Textbox();
-                    textbox.LocalPosition = new Vector2(table.Size.X / 5 * 3, 0);
+                    textbox.LocalPosition = new Vector2(table.Size.X / 2 - 8, 0);
                     textbox.String = s.Value;
                     textbox.Callback = (Element e) => s.Value = (e as Textbox).String;
                     other = textbox;
                 }
                 else if ( opt is LabelModOption l )
                 {
-                    label.LocalPosition = new Vector2(table.Size.X / 2 - label.Measure().X / 2, 0);
+                    label.LocalPosition = new Vector2(-8, 0);
                     label.Bold = true;
                     if (l.Name == "")
                         label = null;
