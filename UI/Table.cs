@@ -19,9 +19,8 @@ namespace GenericModConfigMenu.UI
             get { return size; }
             set
             {
-                size = value;
-                Scrollbar.LocalPosition = new Vector2(value.X - 24, Scrollbar.LocalPosition.Y);
-                Scrollbar.BackSize = new Vector2( Scrollbar.BackSize.X, value.Y);
+                size = new Vector2(value.X, ((int) value.Y) / RowHeight * RowHeight);
+                UpdateScrollbar();
             }
         }
 
@@ -45,7 +44,6 @@ namespace GenericModConfigMenu.UI
         {
             Scrollbar = new Scrollbar();
             Scrollbar.LocalPosition = new Vector2(0, 0);
-            Scrollbar.BackSize = new Vector2(24, 0);
             AddChild(Scrollbar);
         }
 
@@ -61,9 +59,10 @@ namespace GenericModConfigMenu.UI
 
         private void UpdateScrollbar()
         {
-            Scrollbar.FrontSize = (int)((Size.Y / (rowHeight * rows.Count)) * Size.Y);
-            if (Scrollbar.FrontSize > Scrollbar.BackSize.Y)
-                Scrollbar.FrontSize = (int)Scrollbar.BackSize.Y;
+            Scrollbar.LocalPosition = new Vector2(Size.X + 48, Scrollbar.LocalPosition.Y);
+            Scrollbar.Height = (int) Size.Y;
+            Scrollbar.Rows = rows.Count;
+            Scrollbar.FrameSize = (int) (Size.Y / RowHeight);
         }
 
         public override void Update()
@@ -73,8 +72,8 @@ namespace GenericModConfigMenu.UI
             {
                 foreach (var element in row)
                 {
-                    element.LocalPosition = new Vector2(element.LocalPosition.X, ir * RowHeight - Scrollbar.ScrollPercent * rows.Count * RowHeight);
-                    if (element.Position.Y + RowHeight - RowPadding < Position.Y || element.Position.Y > Position.Y + Size.Y)
+                    element.LocalPosition = new Vector2(element.LocalPosition.X, ir * RowHeight - Scrollbar.TopRow * RowHeight);
+                    if (element.Position.Y < Position.Y || element.Position.Y + RowHeight - RowPadding > Position.Y + Size.Y)
                         continue;
                     element.Update();
                 }
@@ -108,7 +107,7 @@ namespace GenericModConfigMenu.UI
             {
                 foreach (var element in row)
                 {
-                    if (element.Position.Y + RowHeight - RowPadding < Position.Y || element.Position.Y > Position.Y + Size.Y)
+                    if (element.Position.Y < Position.Y || element.Position.Y + RowHeight - RowPadding > Position.Y + Size.Y)
                         continue;
                     if (element == RenderLast)
                         continue;

@@ -24,9 +24,9 @@ namespace GenericModConfigMenu
             ui = new RootElement();
 
             table = new Table();
+            table.RowHeight = 50;
             table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64);
             table.Size = new Vector2(800, Game1.viewport.Height - 128);
-            table.RowHeight = 50;
             foreach (var modConfigEntry in Mod.instance.configs.OrderBy(pair => pair.Key.Name))
             {
                 var label = new Label() { String = modConfigEntry.Key.Name };
@@ -41,7 +41,7 @@ namespace GenericModConfigMenu
         public void receiveScrollWheelActionSmapi(int direction)
         {
             if (TitleMenu.subMenu == this)
-                table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
+                table.Scrollbar.Scroll(direction / -120);
             else
                 ActiveConfigMenu = null;
         }

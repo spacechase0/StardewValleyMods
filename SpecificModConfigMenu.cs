@@ -30,9 +30,9 @@ namespace GenericModConfigMenu
             modConfig = Mod.instance.configs[mod];
 
             table = new Table();
-            table.Size = new Vector2(Math.Min (1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
-            table.LocalPosition = new Vector2((Game1.viewport.Width - table.Size.X) / 2, 122);
             table.RowHeight = 50;
+            table.Size = new Vector2(Math.Min (1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
+            table.LocalPosition = new Vector2((Game1.viewport.Width - table.Size.X) / 2, (Game1.viewport.Height - table.Size.Y) / 2);
             foreach (var opt in modConfig.Options)
             {
                 opt.SyncToMod();
@@ -192,7 +192,7 @@ namespace GenericModConfigMenu
             if (TitleMenu.subMenu == this || Game1.activeClickableMenu == this)
             {
                 if (Dropdown.ActiveDropdown == null)
-                    table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
+                    table.Scrollbar.Scroll(direction / -120);
             }
             else
                 ActiveConfigMenu = null;
@@ -298,7 +298,7 @@ namespace GenericModConfigMenu
             ui = new RootElement();
 
             Vector2 newSize = new Vector2(Math.Min (1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
-            
+
             foreach (Element opt in table.Children)
             {
                 opt.LocalPosition = new Vector2(newSize.X / (table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
@@ -307,7 +307,7 @@ namespace GenericModConfigMenu
             }
 
             table.Size = newSize;
-            table.LocalPosition = new Vector2((Game1.viewport.Width - table.Size.X) / 2, 122);
+            table.LocalPosition = new Vector2((Game1.viewport.Width - table.Size.X) / 2, (Game1.viewport.Height - table.Size.Y) / 2);
             table.Scrollbar.Update();
             ui.AddChild(table);
             addDefaultLabels(mod);
