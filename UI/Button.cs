@@ -21,6 +21,8 @@ namespace GenericModConfigMenu.UI
 
         public bool Hover { get; private set; } = false;
 
+        private float scale = 1f;
+
         public Button(Texture2D tex)
         {
             Texture = tex;
@@ -31,7 +33,12 @@ namespace GenericModConfigMenu.UI
         public override void Update()
         {
             var bounds = new Rectangle((int)Position.X, (int)Position.Y, IdleTextureRect.Width, IdleTextureRect.Height);
-            Hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot().Obscured;
+            bool newHover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot().Obscured;
+            if (newHover && !Hover)
+                Game1.playSound("Cowboy_Footstep");
+            Hover = newHover;
+
+            scale = Hover ? Math.Min(scale + 0.013f, 1.083f) : Math.Max(scale - 0.013f, 1f);
 
             if (Hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed && Callback != null)
                 Callback.Invoke(this);
@@ -39,7 +46,8 @@ namespace GenericModConfigMenu.UI
 
         public override void Draw(SpriteBatch b)
         {
-            b.Draw(Texture, Position, Hover ? HoverTextureRect : IdleTextureRect, Color.White);
+            Vector2 origin = new Vector2(Texture.Width / 4f, Texture.Height / 2f);
+            b.Draw(Texture, Position + origin, Hover ? HoverTextureRect : IdleTextureRect, Color.White, 0f, origin, scale, SpriteEffects.None, 0f);
             Game1.activeClickableMenu?.drawMouse(b);
         }
     }
