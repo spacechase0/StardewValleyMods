@@ -20,15 +20,15 @@ namespace GenericModConfigMenu.UI
 
         public Action<Element> Callback { get; set; }
 
-        public bool Hover { get; private set; } = false;
+        public override int Width => (int)Measure().X;
+        public override int Height => (int)Measure().Y;
+        public override string HoveredSound => (Callback != null) ? "shiny4" : null;
 
-        public override void Update()
+        public override void Update(bool hidden = false)
         {
-            var size = Measure();
-            var bounds = new Rectangle((int)Position.X, (int)Position.Y, (int)size.X, (int)size.Y);
-            Hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot().Obscured;
+            base.Update(hidden);            
 
-            if (Hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed && Callback != null)
+            if (Clicked && Callback != null)
                 Callback.Invoke(this);
         }
 

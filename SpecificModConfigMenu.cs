@@ -60,6 +60,8 @@ namespace GenericModConfigMenu
                 }
                 else if ( opt is SimpleModOption<SButton> k )
                 {
+                    if (Constants.TargetPlatform == GamePlatform.Android)
+                        continue; // TODO: Support virtual keyboard input.
                     var label2 = new Label() { String = k.Value.ToString() };
                     label2.LocalPosition = new Vector2(table.Size.X / 2, 0);
                     label2.Callback = (Element e) => doKeybindingFor(k, e as Label);
@@ -72,7 +74,7 @@ namespace GenericModConfigMenu
                     other2 = label2;
                     var slider = new Slider<int>();
                     slider.LocalPosition = new Vector2(table.Size.X / 2, 0);
-                    slider.Width = (int)table.Size.X / 3;
+                    slider.RequestWidth = (int)table.Size.X / 3;
                     slider.Value = ci.Value;
                     slider.Minimum = ci.Minimum;
                     slider.Maximum = ci.Maximum;
@@ -91,7 +93,7 @@ namespace GenericModConfigMenu
                     other2 = label2;
                     var slider = new Slider<float>();
                     slider.LocalPosition = new Vector2(table.Size.X / 2, 0);
-                    slider.Width = (int)table.Size.X / 3;
+                    slider.RequestWidth = (int)table.Size.X / 3;
                     slider.Value = cf.Value;
                     slider.Minimum = cf.Minimum;
                     slider.Maximum = cf.Maximum;
@@ -115,6 +117,8 @@ namespace GenericModConfigMenu
                 // The following need to come after the Clamped/ChoiceModOption's since those subclass these
                 else if (opt is SimpleModOption<int> i)
                 {
+                    if (Constants.TargetPlatform == GamePlatform.Android)
+                        continue; // TODO: Support virtual keyboard input.
                     var intbox = new Intbox();
                     intbox.LocalPosition = new Vector2(table.Size.X / 2 - 8, 0);
                     intbox.Value = i.Value;
@@ -123,6 +127,8 @@ namespace GenericModConfigMenu
                 }
                 else if (opt is SimpleModOption<float> f)
                 {
+                    if (Constants.TargetPlatform == GamePlatform.Android)
+                        continue; // TODO: Support virtual keyboard input.
                     var floatbox = new Floatbox();
                     floatbox.LocalPosition = new Vector2(table.Size.X / 2 - 8, 0);
                     floatbox.Value = f.Value;
@@ -131,6 +137,8 @@ namespace GenericModConfigMenu
                 }
                 else if (opt is SimpleModOption<string> s)
                 {
+                    if (Constants.TargetPlatform == GamePlatform.Android)
+                        continue; // TODO: Support virtual keyboard input.
                     var textbox = new Textbox();
                     textbox.LocalPosition = new Vector2(table.Size.X / 2 - 8, 0);
                     textbox.String = s.Value;
@@ -237,10 +245,13 @@ namespace GenericModConfigMenu
 
             drawMouse(b);
 
-            foreach ( var label in optHovers )
+            if (Constants.TargetPlatform != GamePlatform.Android)
             {
-                if (label.Hover)
-                    drawToolTip(b, (string) label.UserData, label.String, null);
+                foreach ( var label in optHovers )
+                {
+                    if (label.Hover)
+                        drawToolTip(b, (string) label.UserData, label.String, null);
+                }
             }
         }
 
@@ -322,7 +333,7 @@ namespace GenericModConfigMenu
             {
                 opt.LocalPosition = new Vector2(newSize.X / (table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
                 if (opt is Slider slider)
-                    slider.Width = (int) (newSize.X / (table.Size.X / slider.Width));
+                    slider.RequestWidth = (int)(newSize.X / (table.Size.X / slider.Width));
             }
 
             table.Size = newSize;

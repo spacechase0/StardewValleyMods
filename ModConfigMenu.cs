@@ -41,7 +41,21 @@ namespace GenericModConfigMenu
 
             ui.AddChild(table);
 
+            if (Constants.TargetPlatform == GamePlatform.Android)
+                initializeUpperRightCloseButton();
+
             ActiveConfigMenu = this;
+        }
+
+        public override void receiveLeftClick(int x, int y, bool playSound = true)
+        {
+            if (upperRightCloseButton != null && readyToClose() && upperRightCloseButton.containsPoint(x, y))
+            {
+                if (playSound)
+                    Game1.playSound("bigDeSelect");
+                if (TitleMenu.subMenu != null && Game1.activeClickableMenu != null)
+                    TitleMenu.subMenu = null;
+            }
         }
 
         public void receiveScrollWheelActionSmapi(int direction)
@@ -62,7 +76,8 @@ namespace GenericModConfigMenu
         {
             base.draw(b);
             b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.viewport.Width, Game1.viewport.Height), new Color(0, 0, 0, 192));
-
+            if ( upperRightCloseButton != null )
+                upperRightCloseButton.draw(b); // bring it above the backdrop
             ui.Draw(b);
         }
 

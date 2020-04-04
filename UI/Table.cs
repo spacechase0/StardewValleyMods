@@ -60,13 +60,19 @@ namespace GenericModConfigMenu.UI
         private void UpdateScrollbar()
         {
             Scrollbar.LocalPosition = new Vector2(Size.X + 48, Scrollbar.LocalPosition.Y);
-            Scrollbar.Height = (int) Size.Y;
+            Scrollbar.RequestHeight = (int)Size.Y;
             Scrollbar.Rows = rows.Count;
-            Scrollbar.FrameSize = (int) (Size.Y / RowHeight);
+            Scrollbar.FrameSize = (int)(Size.Y / RowHeight);
         }
 
-        public override void Update()
+        public override int Width => (int)Size.X;
+        public override int Height => (int)Size.Y;
+
+        public override void Update(bool hidden = false)
         {
+            base.Update(hidden);
+            if (hidden) return;
+
             int ir = 0;
             foreach (var row in rows)
             {
@@ -81,11 +87,9 @@ namespace GenericModConfigMenu.UI
                 ++ir;
             }
             Scrollbar.Update();
-
-            //base.Update();
         }
 
-        public void ForceUpdateEvenHidden()
+        public void ForceUpdateEvenHidden(bool hidden = false)
         {
             int ir = 0;
             foreach (var row in rows)
@@ -93,11 +97,11 @@ namespace GenericModConfigMenu.UI
                 foreach (var element in row)
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, ir * RowHeight - Scrollbar.ScrollPercent * rows.Count * RowHeight);
-                    element.Update();
+                    element.Update(hidden || element.Position.Y < Position.Y || element.Position.Y + RowHeight - RowPadding > Position.Y + Size.Y);
                 }
                 ++ir;
             }
-            Scrollbar.Update();
+            Scrollbar.Update(hidden);
         }
 
         public override void Draw(SpriteBatch b)

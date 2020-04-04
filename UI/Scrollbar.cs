@@ -13,7 +13,7 @@ namespace GenericModConfigMenu.UI
 {
     public class Scrollbar : Element
     {
-        public int Height { get; set; }
+        public int RequestHeight { get; set; }
 
         public int Rows { get; set; }
         public int FrameSize { get; set; }
@@ -44,31 +44,29 @@ namespace GenericModConfigMenu.UI
             }
         }
 
-        public override void Update()
-        {
-            var bounds = new Rectangle((int)Position.X, (int)Position.Y, 24, (int)Height);
-            bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
+        public override int Width => 24;
+        public override int Height => RequestHeight;
 
-            if (hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
-            {
+        public override void Update(bool hidden = false)
+        {
+            base.Update(hidden);
+
+            if (Clicked)
                 dragScroll = true;
-            }
             if (dragScroll && Mouse.GetState().LeftButton == ButtonState.Released)
-            {
                 dragScroll = false;
-            }
 
             if (dragScroll)
             {
                 int my = Game1.getMouseY();
                 int relY = (int)(my - Position.Y - 40 / 2);
-                ScrollTo((int)Math.Round(relY / (float) (Height - 40) * MaxTopRow));
+                ScrollTo((int)Math.Round(relY / (float)(Height - 40) * MaxTopRow));
             }
         }
 
         public override void Draw(SpriteBatch b)
         {
-            Rectangle back = new Rectangle((int)Position.X, (int)Position.Y, 24, Height);
+            Rectangle back = new Rectangle((int)Position.X, (int)Position.Y, Width, Height);
             Vector2 front = new Vector2(back.X, back.Y + (Height - 40) * ScrollPercent);
 
             IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), back.X, back.Y, back.Width, back.Height, Color.White, Game1.pixelZoom, false);

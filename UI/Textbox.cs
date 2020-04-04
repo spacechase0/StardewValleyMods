@@ -45,14 +45,16 @@ namespace GenericModConfigMenu.UI
             font = Game1.smallFont;
         }
 
-        public override void Update()
-        {
-            var bounds = new Rectangle((int)Position.X, (int)Position.Y, 192, 48);
-            bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot().Obscured;
+        public override int Width => 192;
+        public override int Height => 48;
 
-            if (Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed && Callback != null)
+        public override void Update(bool hidden = false)
+        {
+            base.Update(hidden);
+
+            if (ClickGestured && Callback != null)
             {
-                if (hover)
+                if (Hover)
                     Selected = true;
                 else
                     Selected = false;

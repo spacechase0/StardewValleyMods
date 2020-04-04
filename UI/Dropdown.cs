@@ -34,14 +34,16 @@ namespace GenericModConfigMenu.UI
 
         public static Dropdown ActiveDropdown;
 
-        public override void Update()
-        {
-            var bounds1 = new Rectangle((int)Position.X, (int)Position.Y, 300, 44);
-            bool hover = bounds1.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) && !GetRoot().Obscured;
+        public override int Width => 300;
+        public override int Height => 44;
+        public override string ClickedSound => "shwip";
 
-            if (hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
+        public override void Update(bool hidden = false)
+        {
+            base.Update(hidden);
+
+            if (Clicked)
             {
-                Game1.playSound("shwip");
                 dropped = true;
                 Parent.RenderLast = this;
             }
@@ -57,8 +59,7 @@ namespace GenericModConfigMenu.UI
                 }
 
                 var bounds2 = new Rectangle((int)Position.X, (int)Position.Y, 300, 44 * MaxValuesAtOnce);
-                hover = bounds2.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
-                if (hover)
+                if (bounds2.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                 {
                     int choice = (Game1.getOldMouseY() - (int)Position.Y) / 44;
                     ActiveChoice = choice + ActivePosition;

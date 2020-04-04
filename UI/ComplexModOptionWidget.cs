@@ -17,8 +17,12 @@ namespace GenericModConfigMenu.UI
             ModOption = modOption;
         }
 
-        public override void Update()
+        public override int Width => 0;
+        public override int Height => 0;
+
+        public override void Update(bool hidden = false)
         {
+            // intentionally not calling Element.Update
             ModOption.Update(Position);
         }
 
