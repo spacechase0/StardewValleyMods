@@ -109,6 +109,7 @@ namespace GenericModConfigMenu
                 {
                     var dropdown = new Dropdown() { Choices = cs.Choices };
                     dropdown.LocalPosition = new Vector2(table.Size.X / 2, 0);
+                    dropdown.RequestWidth = (int)table.Size.X / 2;
                     dropdown.Value = cs.Value;
                     dropdown.MaxValuesAtOnce = Math.Min(dropdown.Choices.Length, 5);
                     dropdown.Callback = (Element e) => cs.Value = (e as Dropdown).Value;
