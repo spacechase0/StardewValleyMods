@@ -13,18 +13,22 @@ namespace GenericModConfigMenu.UI
 {
     class Slider : Element
     {
-        public int Width { get; set; }
+        public int RequestWidth { get; set; }
 
         public Action<Element> Callback { get; set; }
 
         protected bool dragging = false;
 
+        public override int Width => RequestWidth;
+        public override int Height => 24;
+
         public override void Draw(SpriteBatch b)
         {
         }
 
-        public override void Update()
+        public override void Update(bool hidden = false)
         {
+            base.Update(hidden);
         }
     }
 
@@ -36,12 +40,11 @@ namespace GenericModConfigMenu.UI
 
         public T Interval { get; set; }
 
-        public override void Update()
+        public override void Update(bool hidden = false)
         {
-            var bounds = new Rectangle((int)Position.X, (int)Position.Y, Width, 30);
-            bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
+            base.Update(hidden);
 
-            if (hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
+            if (Clicked)
                 dragging = true;
             if (Mouse.GetState().LeftButton == ButtonState.Released)
                 dragging = false;
@@ -77,11 +80,11 @@ namespace GenericModConfigMenu.UI
                 perc = ((float)(object)Value - (float)(object)Minimum) / (float)((float)(object)Maximum - (float)(object)Minimum);
             }
 
-            Rectangle back = new Rectangle((int)Position.X, (int)Position.Y + 10, Width, 10);
-            Rectangle front = new Rectangle((int)(Position.X + perc * Width) - 5, (int)Position.Y, 10, 30);
+            Rectangle back = new Rectangle((int)Position.X, (int)Position.Y, Width, Height);
+            Rectangle front = new Rectangle((int)(Position.X + perc * (Width - 40)), (int)Position.Y, 40, Height);
 
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), back.X, back.Y, back.Width, back.Height, Color.DarkGoldenrod, Game1.pixelZoom, false);
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), front.X, front.Y, front.Width, front.Height, Color.Gold, Game1.pixelZoom, false);
+            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), back.X, back.Y, back.Width, back.Height, Color.White, Game1.pixelZoom, false);
+            b.Draw(Game1.mouseCursors, new Vector2(front.X, front.Y), new Rectangle(420, 441, 10, 6), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.9f);
         }
     }
 }

@@ -24,24 +24,44 @@ namespace GenericModConfigMenu
             ui = new RootElement();
 
             table = new Table();
-            table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 32);
-            table.Size = new Vector2(800, Game1.viewport.Height - 64);
             table.RowHeight = 50;
+            table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64);
+            table.Size = new Vector2(800, Game1.viewport.Height - 128);
+
+            var heading = new Label() { String = "Configure Mods", Bold = true };
+            heading.LocalPosition = new Vector2((800 - heading.Measure().X) / 2, heading.LocalPosition.Y);
+            table.AddRow( new Element[] { heading } );
+
             foreach (var modConfigEntry in Mod.instance.configs.OrderBy(pair => pair.Key.Name))
             {
                 var label = new Label() { String = modConfigEntry.Key.Name };
                 label.Callback = (Element e) => changeToModPage(modConfigEntry.Key);
                 table.AddRow( new Element[] { label } );
             }
+
             ui.AddChild(table);
 
+            if (Constants.TargetPlatform == GamePlatform.Android)
+                initializeUpperRightCloseButton();
+
             ActiveConfigMenu = this;
+        }
+
+        public override void receiveLeftClick(int x, int y, bool playSound = true)
+        {
+            if (upperRightCloseButton != null && readyToClose() && upperRightCloseButton.containsPoint(x, y))
+            {
+                if (playSound)
+                    Game1.playSound("bigDeSelect");
+                if (TitleMenu.subMenu != null && Game1.activeClickableMenu != null)
+                    TitleMenu.subMenu = null;
+            }
         }
 
         public void receiveScrollWheelActionSmapi(int direction)
         {
             if (TitleMenu.subMenu == this)
-                table.Scrollbar.Scroll(((float)table.RowHeight / (table.RowHeight * table.RowCount)) * direction / -120);
+                table.Scrollbar.ScrollBy(direction / -120);
             else
                 ActiveConfigMenu = null;
         }
@@ -56,13 +76,15 @@ namespace GenericModConfigMenu
         {
             base.draw(b);
             b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.viewport.Width, Game1.viewport.Height), new Color(0, 0, 0, 192));
-
+            if ( upperRightCloseButton != null )
+                upperRightCloseButton.draw(b); // bring it above the backdrop
             ui.Draw(b);
         }
 
         private void changeToModPage( IManifest modManifest )
         {
             Log.trace("Changing to mod config page for mod " + modManifest.UniqueID);
+            Game1.playSound("bigSelect");
             TitleMenu.subMenu = new SpecificModConfigMenu(modManifest);
         }
 
@@ -70,8 +92,8 @@ namespace GenericModConfigMenu
         {
             ui = new RootElement();
 
-            Vector2 newSize = new Vector2(800, Game1.viewport.Height - 64);
-            table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 32);
+            Vector2 newSize = new Vector2(800, Game1.viewport.Height - 128);
+            table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64);
             foreach (Element opt in table.Children)
                 opt.LocalPosition = new Vector2(newSize.X / (table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
 

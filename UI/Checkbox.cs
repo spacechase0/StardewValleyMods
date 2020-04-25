@@ -28,12 +28,15 @@ namespace GenericModConfigMenu.UI
             UncheckedTextureRect = OptionsCheckbox.sourceRectUnchecked;
         }
 
-        public override void Update()
-        {
-            var bounds = new Rectangle((int)Position.X, (int)Position.Y, CheckedTextureRect.Width * 4, CheckedTextureRect.Height * 4);
-            bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
+        public override int Width => CheckedTextureRect.Width * 4;
+        public override int Height => CheckedTextureRect.Height * 4;
+        public override string ClickedSound => "drumkit6";
 
-            if (hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed && Callback != null)
+        public override void Update(bool hidden = false)
+        {
+            base.Update(hidden);
+
+            if (Clicked && Callback != null)
             {
                 Checked = !Checked;
                 Callback.Invoke(this);

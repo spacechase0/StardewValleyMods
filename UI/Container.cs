@@ -31,14 +31,6 @@ namespace GenericModConfigMenu.UI
             element.Parent = null;
         }
 
-        public override void Update()
-        {
-            foreach (var child in children)
-            {
-                child.Update();
-            }
-        }
-
         public override void Draw(SpriteBatch b)
         {
             foreach (var child in children)

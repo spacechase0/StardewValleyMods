@@ -19,6 +19,7 @@ namespace GenericModConfigMenu
     {
         public static Mod instance;
 
+        private RootElement ui;
         private Button configButton;
         internal Dictionary<IManifest, ModConfig> configs = new Dictionary<IManifest, ModConfig>();
 
@@ -27,10 +28,18 @@ namespace GenericModConfigMenu
             instance = this;
             Log.Monitor = Monitor;
 
+            ui = new RootElement();
+
             Texture2D tex = Helper.Content.Load<Texture2D>("assets/config-button.png");
             configButton = new Button(tex);
             configButton.LocalPosition = new Vector2(36, Game1.viewport.Height - 100);
-            configButton.Callback = (Element e) => TitleMenu.subMenu = new ModConfigMenu();
+            configButton.Callback = (Element e) =>
+            {
+                Game1.playSound("newArtifact");
+                TitleMenu.subMenu = new ModConfigMenu();
+            };
+
+            ui.AddChild(configButton);
 
             helper.Events.GameLoop.GameLaunched += onLaunched;
             helper.Events.GameLoop.UpdateTicking += onUpdate;
@@ -95,6 +104,7 @@ namespace GenericModConfigMenu
                 bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
                 if ( hover && Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
                 {
+                    Game1.playSound("drumkit6");
                     Random r = new Random();
                     state.color.R = (byte) r.Next(256);
                     state.color.G = (byte) r.Next(256);
@@ -117,13 +127,24 @@ namespace GenericModConfigMenu
             api.RegisterComplexOption(ModManifest, "Dummy Color", "Testing a complex widget (random color on click)", randomColorUpdate, randomColorDraw, randomColorSave);
         }
 
+        private bool isTitleMenuInteractable()
+        {
+            if ( !(Game1.activeClickableMenu is TitleMenu tm) )
+                return false;
+            if ( TitleMenu.subMenu != null )
+                return false;
+
+            var method = Helper.Reflection.GetMethod(tm, "ShouldAllowInteraction", false);
+            if ( method != null )
+                return method.Invoke<bool>();
+            else // method isn't available on Android
+                return Helper.Reflection.GetField<bool>(tm, "titleInPosition").GetValue();
+        }
+
         private void onUpdate(object sender, UpdateTickingEventArgs e)
         {
-            if (Game1.activeClickableMenu is TitleMenu tm)
-            {
-                if (TitleMenu.subMenu == null && Helper.Reflection.GetField<bool>(tm, "titleInPosition").GetValue())
-                    configButton.Update();
-            }
+            if ( isTitleMenuInteractable() )
+                ui.Update();
         }
 
         private void onWindowResized(object sender, WindowResizedEventArgs e)
@@ -133,11 +154,8 @@ namespace GenericModConfigMenu
 
         private void onRendered(object sender, RenderedEventArgs e)
         {
-            if ( Game1.activeClickableMenu is TitleMenu tm )
-            {
-                if (TitleMenu.subMenu == null && Helper.Reflection.GetField<bool>(tm, "titleInPosition").GetValue())
-                    configButton.Draw(e.SpriteBatch);
-            }
+            if ( isTitleMenuInteractable() )
+                ui.Draw(e.SpriteBatch);
         }
 
         private void onMouseWheelScrolled(object sender, MouseWheelScrolledEventArgs e)
