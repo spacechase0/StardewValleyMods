@@ -282,17 +282,21 @@ namespace JsonAssets
                 }
             }
 
-            objects.Add(crop.seed);
-
             // Duplicate check
             if (dupCrops.ContainsKey(crop.Name))
                 Log.error($"Duplicate crop: {crop.Name} just added by {source.Name}, already added by {dupCrops[crop.Name].Name}!");
             else
                 dupCrops[crop.Name] = source;
 
+            objects.Add(crop.seed);
+
             if (!cropsByContentPack.ContainsKey(source))
                 cropsByContentPack.Add(source, new List<string>());
             cropsByContentPack[source].Add(crop.Name);
+
+            if (!objectsByContentPack.ContainsKey(source))
+                objectsByContentPack.Add(source, new List<string>());
+            objectsByContentPack[source].Add(crop.seed.Name);
         }
 
         public void RegisterFruitTree(IManifest source, FruitTreeData tree, Texture2D saplingTex)
@@ -1121,11 +1125,13 @@ namespace JsonAssets
             }
         }
 
-        private Dictionary<string, int> AssignIds(string type, int starting, IList<DataNeedsId> data)
+        private Dictionary<string, int> AssignIds(string type, int starting, List<DataNeedsId> data)
         {
+            data.Sort((dni1, dni2) => dni1.Name.CompareTo(dni2.Name));
+
             Dictionary<string, int> ids = new Dictionary<string, int>();
 
-            int[] bigSkip = new int[] { 309, 310, 311, 326, 434, 599, 621, 628, 629, 630, 631, 632, 633, 645 };
+            int[] bigSkip = new int[] { 309, 310, 311, 326, 340, 434, 599, 621, 628, 629, 630, 631, 632, 633, 645 };
 
             int currId = starting;
             foreach (var d in data)
@@ -1211,7 +1217,7 @@ namespace JsonAssets
                 Game1.player.shirtItem.Value = null;
             if (Game1.player.pantsItem.Value != null && fixId(oldClothingIds, clothingIds, Game1.player.pantsItem.Value.parentSheetIndex, origClothing))
                 Game1.player.pantsItem.Value = null;
-            if (Game1.player.boots.Value != null && fixId(oldObjectIds, objectIds, Game1.player.boots.Value.parentSheetIndex, origObjects))
+            if (Game1.player.boots.Value != null && fixId(oldObjectIds, objectIds, Game1.player.boots.Value.indexInTileSheet, origObjects))
                 Game1.player.boots.Value = null;
             /*else if (Game1.player.boots.Value != null)
                 Game1.player.boots.Value.reloadData();*/
