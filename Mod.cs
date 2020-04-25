@@ -80,7 +80,7 @@ namespace ProfitCalculator
                         if (Game1.player != null)
                             farmLevel = Game1.player.FarmingLevel;
 
-                        int newMax = Math.Min(min + 1, max + 1 + farmLevel / bonus);
+                        int newMax = Math.Min(min + 1, max + 1 + farmLevel / (bonus == 0 ? 1 : bonus));
                         // TODO: Integrate chance?
                         /*
                     while (random.NextDouble() < Math.Min(0.9, (double)((NetFieldBase<double, NetDouble>)this.chanceForExtraCrops)))
