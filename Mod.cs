@@ -46,6 +46,7 @@ namespace ContentPatcherAnimations
         private Dictionary<Patch, PatchData> animatedPatches = new Dictionary<Patch, PatchData>();
 
         public static uint frameCounter = 0;
+        public static int findTargetsCounter = 0;
 
         public override void Entry(IModHelper helper)
         {
@@ -53,9 +54,9 @@ namespace ContentPatcherAnimations
             Log.Monitor = Monitor;
 
             Helper.Events.GameLoop.UpdateTicked += UpdateAnimations;
-            Helper.Events.GameLoop.SaveCreated += UpdateTargetTextures;
-            Helper.Events.GameLoop.SaveLoaded += UpdateTargetTextures;
-            Helper.Events.GameLoop.DayStarted += UpdateTargetTextures;
+            Helper.Events.GameLoop.SaveCreated += (s, e) => findTargetsCounter = 1;
+            Helper.Events.GameLoop.SaveLoaded += (s, e) => findTargetsCounter = 1;
+            Helper.Events.GameLoop.DayStarted += (s, e) => findTargetsCounter = 1;
         }
 
         private void UpdateAnimations(object sender, UpdateTickedEventArgs e)
@@ -70,13 +71,16 @@ namespace ContentPatcherAnimations
                 CollectPatches();
             }
 
+            if (findTargetsCounter > 0 && --findTargetsCounter == 0)
+                UpdateTargetTextures();
+
             ++frameCounter;
             Game1.graphics.GraphicsDevice.Textures[0] = null;
             foreach ( var patch in animatedPatches )
             {
                 if (!patch.Value.IsActive.Invoke() || patch.Value.Source == null || patch.Value.Target == null)
                     continue;
-                
+
                 if ( frameCounter % patch.Key.AnimationFrameTime == 0 )
                 {
                     if (++patch.Value.CurrentFrame >= patch.Key.AnimationFrameCount)
@@ -94,7 +98,7 @@ namespace ContentPatcherAnimations
             }
         }
 
-        private void UpdateTargetTextures(object sender, EventArgs args)
+        private void UpdateTargetTextures()
         {
             foreach ( var patch in animatedPatches )
             {
@@ -151,7 +155,7 @@ namespace ContentPatcherAnimations
                         data.SourceFunc = () => pack.LoadAsset<Texture2D>((string)sourceProp.GetValue(targetPatch));
                         data.TargetFunc = () => FindTargetTexture((string)targetProp.GetValue(targetPatch));
                         data.FromAreaFunc = () => GetRectangleFromPatch(targetPatch, "FromArea");
-                        data.ToAreaFunc = () => GetRectangleFromPatch(targetPatch, "ToArea");
+                        data.ToAreaFunc = () => GetRectangleFromPatch(targetPatch, "ToArea", new Rectangle(0, 0, data.FromAreaFunc().Width, data.FromAreaFunc().Height));
 
                         animatedPatches.Add(patch, data);
                     }
@@ -161,6 +165,10 @@ namespace ContentPatcherAnimations
 
         private Texture2D FindTargetTexture(string target)
         {
+            if ( Helper.Content.NormalizeAssetName(target) == Helper.Content.NormalizeAssetName("TileSheets\\tools" ) )
+            {
+                return Helper.Reflection.GetField<Texture2D>(typeof(Game1), "_toolSpriteSheet").GetValue();
+            }
             var tex = Game1.content.Load<Texture2D>(target);
             if ( tex.GetType().Name == "ScaledTexture2D" )
             {
@@ -170,9 +178,13 @@ namespace ContentPatcherAnimations
             return tex;
         }
 
-        private Rectangle GetRectangleFromPatch(object targetPatch, string rectName)
+        private Rectangle GetRectangleFromPatch(object targetPatch, string rectName, Rectangle defaultTo = default(Rectangle))
         {
             var rect = targetPatch.GetType().GetField(rectName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(targetPatch);
+            if ( rect == null )
+            {
+                return defaultTo;
+            }
             var tryGetRectValue = rect.GetType().GetMethod("TryGetRectangle");
 
             object[] args = new object[] { null, null };
