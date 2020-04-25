@@ -112,8 +112,8 @@ namespace Magic.Game.Interface
 
             if ( sel != null )
             {
-                var title = Mod.instance.Helper.Translation.Get( "spell." + sel.FullId + ".name" );
-                var desc = WrapText( Mod.instance.Helper.Translation.Get( "spell." + sel.FullId + ".desc" ), (int)((WINDOW_WIDTH / 2) / 0.75f) );
+                var title = sel.getTranslatedName();
+                var desc = WrapText(sel.getTranslatedDescription(), (int)((WINDOW_WIDTH / 2) / 0.75f));
 
                 b.DrawString(Game1.dialogueFont, title, new Vector2(xPositionOnScreen + WINDOW_WIDTH / 2 + (WINDOW_WIDTH / 2 - Game1.dialogueFont.MeasureString(title).X) / 2, yPositionOnScreen + 30), Color.Black);
 
