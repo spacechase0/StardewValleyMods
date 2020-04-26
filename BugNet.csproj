@@ -14,6 +14,10 @@
     <PackageReference Include="Platonymous.PyTK" Version="1.9.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SpaceCore_SDV\SpaceCore.csproj" />
+  </ItemGroup>
+
   <Import Project="$(SolutionDir)\common.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
