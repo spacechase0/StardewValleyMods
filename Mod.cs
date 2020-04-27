@@ -40,11 +40,11 @@ namespace MoreBuildings
             helper.Events.Specialized.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
             SaveHandler.FinishedRebuilding += fixWarps;
 
-            shed2Exterior = Helper.Content.Load<Texture2D>("BigShed/building.png");
-            spookyExterior = Helper.Content.Load<Texture2D>("SpookyShed/building.png");
-            fishingExterior = Helper.Content.Load<Texture2D>("FishingShack/building.png");
-            spaExterior = Helper.Content.Load<Texture2D>("MiniSpa/building.png");
-            spookyGemTex = Helper.Content.Load<Texture2D>("SpookyShed\\Shrine_Gem.png");
+            shed2Exterior = Helper.Content.Load<Texture2D>("assets/BigShed/building.png");
+            spookyExterior = Helper.Content.Load<Texture2D>("assets/SpookyShed/building.png");
+            fishingExterior = Helper.Content.Load<Texture2D>("assets/FishingShack/building.png");
+            spaExterior = Helper.Content.Load<Texture2D>("assets/MiniSpa/building.png");
+            spookyGemTex = Helper.Content.Load<Texture2D>("assets/SpookyShed/Shrine_Gem.png");
 
             var harmony = HarmonyInstance.Create("spacechase0.MoreBuildings");
             harmony.Patch(typeof(Shed).GetMethod(nameof(Shed.updateLayout)), prefix: new HarmonyMethod(typeof(ShedUpdateLayoutWorkaround).GetMethod("Prefix")));
@@ -242,19 +242,19 @@ namespace MoreBuildings
             if (asset.AssetNameEquals("Buildings\\Shed2"))
                 return (T)(object)shed2Exterior;
             else if (asset.AssetNameEquals("Maps\\Shed2_"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("BigShed/map.tbin");
+                return (T)(object)Helper.Content.Load<xTile.Map>("assets/BigShed/map.tbin");
             if (asset.AssetNameEquals("Buildings\\SpookyShed"))
                 return (T)(object)spookyExterior;
             else if (asset.AssetNameEquals("Maps\\SpookyShed"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("SpookyShed/map.tbin");
+                return (T)(object)Helper.Content.Load<xTile.Map>("assets/SpookyShed/map.tbin");
             if (asset.AssetNameEquals("Buildings\\FishShack"))
                 return (T)(object)fishingExterior;
             else if (asset.AssetNameEquals("Maps\\FishShack"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("FishingShack/map.tbin");
+                return (T)(object)Helper.Content.Load<xTile.Map>("assets/FishingShack/map.tbin");
             if (asset.AssetNameEquals("Buildings\\MiniSpa"))
                 return (T)(object)spaExterior;
             else if (asset.AssetNameEquals("Maps\\MiniSpa"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("MiniSpa/map.tbin");
+                return (T)(object)Helper.Content.Load<xTile.Map>("assets/MiniSpa/map.tbin");
 
             return (T)(object)null;
         }
