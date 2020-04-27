@@ -40,8 +40,8 @@ namespace CookingSkill
         public Skill()
         :   base( "spacechase0.Cooking" )
         {
-            Icon = Mod.instance.Helper.Content.Load<Texture2D>("iconA.png");
-            SkillsPageIcon = Mod.instance.Helper.Content.Load<Texture2D>("iconB.png");
+            Icon = Mod.instance.Helper.Content.Load<Texture2D>("assets/iconA.png");
+            SkillsPageIcon = Mod.instance.Helper.Content.Load<Texture2D>("assets/iconB.png");
 
             ExperienceCurve = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 }; ;
 
