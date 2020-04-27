@@ -30,7 +30,7 @@ namespace AnotherHungerMod
             Log.Monitor = Monitor;
 
             Config = helper.ReadConfig<Configuration>();
-            hungerBar = helper.Content.Load<Texture2D>("res/hungerbar.png");
+            hungerBar = helper.Content.Load<Texture2D>("assets/hungerbar.png");
 
             helper.ConsoleCommands.Add("player_addfullness", "Add to your fullness", commands);
 
