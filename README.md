@@ -484,7 +484,7 @@ If it can be gifted to an NPC it has gift taste support built in. This means `ha
         "Like": [],
         "Neutral": [],
         "Dislike": [],
-        "Hat": [],
+        "Hate": [],
     },
 ```
 An example of a filled out gift taste can be found [here](https://pastebin.com/9K3t2SLL). You can delete unused fields within `GiftTastes`.
