@@ -70,6 +70,7 @@
     <Compile Include="Overrides\RingPatches.cs" />
     <Compile Include="Overrides\ObjectPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShopDataEntry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="manifest.json" />
