@@ -207,7 +207,7 @@ namespace GenericModConfigMenu
             else
                 ActiveConfigMenu = null;
         }
-        
+
         public override bool readyToClose()
         {
             return false;
@@ -250,8 +250,15 @@ namespace GenericModConfigMenu
             {
                 foreach ( var label in optHovers )
                 {
-                    if (label.Hover)
-                        drawToolTip(b, (string) label.UserData, label.String, null);
+                    if (!label.Hover)
+                        continue;
+                    string text = (string) label.UserData;
+                    if (text != null && !text.Contains("\n"))
+                        text = Game1.parseText(text, Game1.smallFont, 800);
+                    string title = label.String;
+                    if (title != null && !title.Contains("\n"))
+                        title = Game1.parseText(title, Game1.dialogueFont, 800);
+                    drawToolTip(b, text, title, null);
                 }
             }
         }
@@ -263,7 +270,7 @@ namespace GenericModConfigMenu
             foreach (var opt in modConfig.Options)
                 opt.SyncToMod();
             modConfig.SaveToFile.Invoke();
-           
+
             if (TitleMenu.subMenu == this)
                 TitleMenu.subMenu = new SpecificModConfigMenu(mod);
             else if (Game1.activeClickableMenu == this)
