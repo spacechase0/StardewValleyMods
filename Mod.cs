@@ -17,6 +17,7 @@ namespace Magic
         public static Configuration Config { get; private set; }
         
         internal static JsonAssetsApi ja;
+        internal static ManaBarAPI mana;
 
         internal Api api;
 
@@ -61,6 +62,14 @@ namespace Magic
                 capi.RegisterSimpleOption(ModManifest, "Key: Spell 4", "The key for spell 4.", () => Config.Key_Spell4, (SButton val) => Config.Key_Spell4 = val);
                 capi.RegisterSimpleOption(ModManifest, "Key: Spell 5", "The key for spell 5.", () => Config.Key_Spell5, (SButton val) => Config.Key_Spell5 = val);
             }
+            
+            var api2 = Helper.ModRegistry.GetApi<ManaBarAPI>("spacechase0.ManaBar" );
+            if ( api2 == null )
+            {
+                Log.error( "No mana bar API???" );
+                return;
+            }
+            mana = api2;
 
             var api = Helper.ModRegistry.GetApi<JsonAssetsApi>("spacechase0.JsonAssets");
             if (api == null)

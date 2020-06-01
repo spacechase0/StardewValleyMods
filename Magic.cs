@@ -39,7 +39,6 @@ namespace Magic
         private static readonly IList<IActiveEffect> activeEffects = new List<IActiveEffect>();
 
         public const string MSG_DATA = "spacechase0.Magic.Data";
-        public const string MSG_MINIDATA = "spacechase0.Magic.MiniData";
         public const string MSG_CAST = "spacechase0.Magic.Cast";
 
         internal static void init(IModEvents events, IInputHelper inputHelper, Func<long> getNewId)
@@ -57,7 +56,6 @@ namespace Magic
             events.Input.ButtonPressed += onButtonPressed;
             events.Input.ButtonReleased += onButtonReleased;
             
-            events.GameLoop.DayStarted += onDayStarted;
             events.GameLoop.TimeChanged += onTimeChanged;
             events.Player.Warped += onWarped;
             
@@ -65,7 +63,6 @@ namespace Magic
             SpaceEvents.OnItemEaten += onItemEaten;
             SpaceEvents.ActionActivated += actionTriggered;
             SpaceCore.Networking.RegisterMessageHandler(MSG_DATA, onNetworkData);
-            SpaceCore.Networking.RegisterMessageHandler(MSG_MINIDATA, onNetworkMiniData);
             SpaceCore.Networking.RegisterMessageHandler(MSG_CAST, onNetworkCast);
             SpaceEvents.ServerGotClient += onClientConnected;
 
@@ -80,8 +77,6 @@ namespace Magic
 
             SpaceCore.Skills.RegisterSkill(Skill = new Skill());
 
-            Command.register("player_addmana", addManaCommand);
-            Command.register("player_setmaxmana", setMaxManaCommand);
             Command.register("player_learnspell", learnSpellCommand);
             Command.register("magicmenu", magicMenuCommand);
 
@@ -229,12 +224,6 @@ namespace Magic
             }
         }
 
-        private static void onNetworkMiniData(IncomingMessage msg)
-        {
-            Mod.Data.players[msg.FarmerID].mana = msg.Reader.ReadInt32();
-            Mod.Data.players[msg.FarmerID].manaCap = msg.Reader.ReadInt32();
-        }
-
         private static void onNetworkCast( IncomingMessage msg )
         {
             IActiveEffect effect = Game1.getFarmer(msg.FarmerID).castSpell(msg.Reader.ReadString(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32());
@@ -312,28 +301,8 @@ namespace Magic
                 return;
 
             SpriteBatch b = e.SpriteBatch;
-            
-            Vector2 manaPos = new Vector2(20, Game1.viewport.Height - manaBg.Height * 4 - 20);
-            b.Draw(manaBg, manaPos, new Rectangle(0, 0, manaBg.Width, manaBg.Height), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1);
-            if (Game1.player.getCurrentMana() > 0)
-            {
-                Rectangle targetArea = new Rectangle(3, 13, 6, 41);
-                float perc = Game1.player.getCurrentMana() / (float)Game1.player.getMaxMana();
-                int h = (int)(targetArea.Height * perc);
-                targetArea.Y += targetArea.Height - h;
-                targetArea.Height = h;
 
-                targetArea.X *= 4;
-                targetArea.Y *= 4;
-                targetArea.Width *= 4;
-                targetArea.Height *= 4;
-                targetArea.X += (int)manaPos.X;
-                targetArea.Y += (int)manaPos.Y;
-                b.Draw(manaFg, targetArea, new Rectangle(0, 0, 1, 1), Color.White);
-
-                if ((double)Game1.getOldMouseX() >= (double)targetArea.X && (double)Game1.getOldMouseY() >= (double)targetArea.Y && (double)Game1.getOldMouseX() < (double)targetArea.X + targetArea.Width && Game1.getOldMouseY() < targetArea.Y + targetArea.Height)
-                    Game1.drawWithBorder(Math.Max(0, (int)Game1.player.getCurrentMana()).ToString() + "/" + Game1.player.getMaxMana(), Color.Black * 0.0f, Color.White, new Vector2(Game1.getOldMouseX(), Game1.getOldMouseY() - 32));
-            }
+            Vector2 manaPos = new Vector2(20, Game1.viewport.Height - 56 * 4 - 20);
 
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
@@ -465,14 +434,6 @@ namespace Magic
             {
                 castPressed = false;
             }
-        }
-
-        /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private static void onDayStarted(object sender, DayStartedEventArgs e)
-        {
-            Game1.player.addMana(Game1.player.getMaxMana());
         }
 
         private static float carryoverManaRegen = 0;
@@ -609,14 +570,6 @@ namespace Magic
             loc.setTileProperty(x + 2, y + 1, "Buildings", "Action", "MagicAltar");
         }
 
-        private static void addManaCommand(string[] args)
-        {
-            Game1.player.addMana(int.Parse(args[0]));
-        }
-        private static void setMaxManaCommand(string[] args)
-        {
-            Game1.player.setMaxMana(int.Parse(args[0]));
-        }
         private static void learnSpellCommand(string[] args)
         {
             if (args.Length == 1 && args[0] == "all")

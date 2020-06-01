@@ -12,9 +12,6 @@ namespace Magic
 
         public class PlayerData
         {
-            public int mana = 0;
-            public int manaCap = 0;
-            
             public int freePoints = 0;
 
             public SpellBook spellBook = new SpellBook();
@@ -36,16 +33,6 @@ namespace Magic
                 writer.Write(Game1.player.UniqueMultiplayerID);
                 writer.Write(JsonConvert.SerializeObject(players[Game1.player.UniqueMultiplayerID], networkSerializerSettings));
                 SpaceCore.Networking.BroadcastMessage(Magic.MSG_DATA, stream.ToArray());
-            }
-        }
-        internal void syncMineMini()
-        {
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
-            {
-                writer.Write(players[Game1.player.UniqueMultiplayerID].mana);
-                writer.Write(players[Game1.player.UniqueMultiplayerID].manaCap);
-                SpaceCore.Networking.BroadcastMessage(Magic.MSG_MINIDATA, stream.ToArray());
             }
         }
     }

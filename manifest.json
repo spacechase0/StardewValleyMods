@@ -10,7 +10,8 @@
   "Dependencies": [
     { "UniqueID": "spacechase0.SpaceCore" },
     { "UniqueID": "spacechase0.JsonAssets" },
-    { "UniqueID": "Platonymous.Toolkit" }
+    { "UniqueID": "Platonymous.Toolkit" },
+    { "UniqueID": "spacechase0.ManaBar" }
   ],
   "spacechase0": "magic"
 }
