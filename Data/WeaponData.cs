@@ -37,6 +37,7 @@ namespace JsonAssets.Data
         public int PurchasePrice { get; set; }
         public string PurchaseFrom { get; set; } = "Pierre";
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
+        public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
         public bool CanTrash { get; set; } = true;
 

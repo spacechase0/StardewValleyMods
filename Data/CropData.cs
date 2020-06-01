@@ -41,7 +41,8 @@ namespace JsonAssets.Data
         public int SeedPurchasePrice { get; set; }
         public int SeedSellPrice { get; set; } = -1;
         public string SeedPurchaseFrom { get; set; } = "Pierre";
-        
+        public IList<PurchaseData> SeedAdditionalPurchaseData { get; set; } = new List<PurchaseData>();
+
         public Dictionary<string, string> SeedNameLocalization = new Dictionary<string, string>();
         public Dictionary<string, string> SeedDescriptionLocalization = new Dictionary<string, string>();
 

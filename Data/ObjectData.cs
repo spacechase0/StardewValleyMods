@@ -58,6 +58,7 @@ namespace JsonAssets.Data
             public int PurchasePrice { get; set; }
             public string PurchaseFrom { get; set; } = "Gus";
             public IList<string> PurchaseRequirements { get; set; } = new List<string>();
+            public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
             internal string GetRecipeString( ObjectData parent )
             {
@@ -125,6 +126,7 @@ namespace JsonAssets.Data
         public int PurchasePrice { get; set; }
         public string PurchaseFrom { get; set; } = "Pierre";
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
+        public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
         public class GiftTastes_
         {

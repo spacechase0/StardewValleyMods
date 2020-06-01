@@ -220,6 +220,19 @@ namespace JsonAssets
                     PurchaseRequirements = obj.Recipe.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( obj.id, 1, true, obj.Recipe.PurchasePrice, 0 ),
                 } );
+                if ( obj.Recipe.AdditionalPurchaseData != null )
+                {
+                    foreach ( var entry in obj.Recipe.AdditionalPurchaseData )
+                    {
+                        shopData.Add( new ShopDataEntry()
+                        {
+                            PurchaseFrom = entry.PurchaseFrom,
+                            Price = entry.PurchasePrice,
+                            PurchaseRequirements = obj.GetPurchaseRequirementString(),
+                            Object = () => new StardewValley.Object( obj.id, 1, true, obj.Recipe.PurchasePrice, 0 ),
+                        } );
+                    }
+                }
             }
             if ( obj.CanPurchase )
             {
@@ -230,6 +243,19 @@ namespace JsonAssets
                     PurchaseRequirements = obj.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( obj.id, int.MaxValue, false, obj.PurchasePrice, 0 ),
                 } );
+                if ( obj.AdditionalPurchaseData != null )
+                {
+                    foreach ( var entry in obj.AdditionalPurchaseData )
+                    {
+                        shopData.Add( new ShopDataEntry()
+                        {
+                            PurchaseFrom = entry.PurchaseFrom,
+                            Price = entry.PurchasePrice,
+                            PurchaseRequirements = obj.GetPurchaseRequirementString(),
+                            Object = () => new StardewValley.Object( obj.id, int.MaxValue, false, entry.PurchasePrice, 0 ),
+                        } );
+                    }
+                }
             }
 
             // save ring
@@ -263,6 +289,7 @@ namespace JsonAssets
                 PurchaseFrom = crop.SeedPurchaseFrom,
                 PurchasePrice = crop.SeedPurchasePrice,
                 PurchaseRequirements = crop.SeedPurchaseRequirements ?? new List<string>(),
+                AdditionalPurchaseData = crop.SeedAdditionalPurchaseData ?? new List<PurchaseData>(),
                 NameLocalization = crop.SeedNameLocalization,
                 DescriptionLocalization = crop.SeedDescriptionLocalization
             };
@@ -312,6 +339,19 @@ namespace JsonAssets
                     PurchaseRequirements = crop.seed.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( Vector2.Zero, crop.seed.id, int.MaxValue ),
                 } );
+                if ( crop.seed.AdditionalPurchaseData != null )
+                {
+                    foreach ( var entry in crop.seed.AdditionalPurchaseData )
+                    {
+                        shopData.Add( new ShopDataEntry()
+                        {
+                            PurchaseFrom = entry.PurchaseFrom,
+                            Price = entry.PurchasePrice,
+                            PurchaseRequirements = crop.seed.GetPurchaseRequirementString(),
+                            Object = () => new StardewValley.Object( crop.seed.id, 1, true, crop.seed.PurchasePrice, 0 ),
+                        } );
+                    }
+                }
             }
 
             // Duplicate check
@@ -347,6 +387,7 @@ namespace JsonAssets
                 PurchaseRequirements = tree.SaplingPurchaseRequirements,
                 PurchaseFrom = tree.SaplingPurchaseFrom,
                 PurchasePrice = tree.SaplingPurchasePrice,
+                AdditionalPurchaseData = tree.SaplingAdditionalPurchaseData,
                 NameLocalization = tree.SaplingNameLocalization,
                 DescriptionLocalization = tree.SaplingDescriptionLocalization
             };
@@ -361,6 +402,19 @@ namespace JsonAssets
                     PurchaseRequirements = tree.sapling.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( Vector2.Zero, tree.sapling.id, int.MaxValue ),
                 } );
+                if ( tree.sapling.AdditionalPurchaseData != null )
+                {
+                    foreach ( var entry in tree.sapling.AdditionalPurchaseData )
+                    {
+                        shopData.Add( new ShopDataEntry()
+                        {
+                            PurchaseFrom = entry.PurchaseFrom,
+                            Price = entry.PurchasePrice,
+                            PurchaseRequirements = tree.sapling.GetPurchaseRequirementString(),
+                            Object = () => new StardewValley.Object( tree.sapling.id, 1, true, tree.sapling.PurchasePrice, 0 ),
+                        } );
+                    }
+                }
             }
 
             // Duplicate check
@@ -387,6 +441,19 @@ namespace JsonAssets
                     PurchaseRequirements = craftable.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, true ),
                 } );
+                if ( craftable.Recipe.AdditionalPurchaseData != null )
+                {
+                    foreach ( var entry in craftable.Recipe.AdditionalPurchaseData )
+                    {
+                        shopData.Add( new ShopDataEntry()
+                        {
+                            PurchaseFrom = entry.PurchaseFrom,
+                            Price = entry.PurchasePrice,
+                            PurchaseRequirements = craftable.Recipe.GetPurchaseRequirementString(),
+                            Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, true ),
+                        } );
+                    }
+                }
             }
             if ( craftable.CanPurchase )
             {
@@ -397,6 +464,19 @@ namespace JsonAssets
                     PurchaseRequirements = craftable.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, false ),
                 } );
+                if ( craftable.AdditionalPurchaseData != null )
+                {
+                    foreach ( var entry in craftable.AdditionalPurchaseData )
+                    {
+                        shopData.Add( new ShopDataEntry()
+                        {
+                            PurchaseFrom = entry.PurchaseFrom,
+                            Price = entry.PurchasePrice,
+                            PurchaseRequirements = craftable.GetPurchaseRequirementString(),
+                            Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, false ),
+                        } );
+                    }
+                }
             }
 
             // Duplicate check
@@ -413,14 +493,17 @@ namespace JsonAssets
         public void RegisterHat(IManifest source, HatData hat)
         {
             hats.Add(hat);
-            
-            shopData.Add( new ShopDataEntry()
+
+            if ( hat.CanPurchase )
             {
-                PurchaseFrom = "HatMouse",
-                Price = hat.PurchasePrice,
-                PurchaseRequirements = "",
-                Object = () => new Hat(hat.id),
-            } );
+                shopData.Add( new ShopDataEntry()
+                {
+                    PurchaseFrom = "HatMouse",
+                    Price = hat.PurchasePrice,
+                    PurchaseRequirements = "",
+                    Object = () => new Hat( hat.id ),
+                } );
+            }
 
             // Duplicate check
             if (dupHats.ContainsKey(hat.Name))
@@ -446,6 +529,19 @@ namespace JsonAssets
                     PurchaseRequirements = weapon.GetPurchaseRequirementString(),
                     Object = () => new MeleeWeapon(weapon.id)
                 } );
+                if ( weapon.AdditionalPurchaseData != null )
+                {
+                    foreach ( var entry in weapon.AdditionalPurchaseData )
+                    {
+                        shopData.Add( new ShopDataEntry()
+                        {
+                            PurchaseFrom = entry.PurchaseFrom,
+                            Price = entry.PurchasePrice,
+                            PurchaseRequirements = weapon.GetPurchaseRequirementString(),
+                            Object = () => new MeleeWeapon( weapon.id )
+                        } );
+                    }
+                }
             }
 
             // Duplicate check
@@ -507,6 +603,20 @@ namespace JsonAssets
                     PurchaseRequirements = boots.GetPurchaseRequirementString(),
                     Object = () => new Boots( boots.id )
                 } );
+
+                if ( boots.AdditionalPurchaseData != null )
+                {
+                    foreach ( var entry in boots.AdditionalPurchaseData )
+                    {
+                        shopData.Add( new ShopDataEntry()
+                        {
+                            PurchaseFrom = entry.PurchaseFrom,
+                            Price = entry.PurchasePrice,
+                            PurchaseRequirements = boots.GetPurchaseRequirementString(),
+                            Object = () => new Boots( boots.id )
+                        } );
+                    }
+                }
             }
 
             // Duplicate check

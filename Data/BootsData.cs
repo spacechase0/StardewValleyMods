@@ -25,6 +25,7 @@ namespace JsonAssets.Data
         public int PurchasePrice { get; set; }
         public string PurchaseFrom { get; set; } = "Marlon";
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
+        public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
         public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
         public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();

@@ -12,6 +12,8 @@ namespace JsonAssets.Data
         public bool ShowHair { get; set; }
         public bool IgnoreHairstyleOffset { get; set; }
 
+        public bool CanPurchase { get; set; } = true;
+
         public string Metadata { get; set; } = "";
 
         public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
