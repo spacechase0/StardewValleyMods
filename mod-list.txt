@@ -21,6 +21,7 @@ CustomNPCFixes
 ExperienceBars
 ExtendedReach
 FlowerColorPicker
+FlowerRain
 GenericModConfigMenu
 JsonAssets
 JumpOver
@@ -28,6 +29,7 @@ LuckSkill
 Magic
 MapImageExporter
 MoreBuildings
+MoreGiantCrops
 MoreGrassStarters
 MoreRings
 ObjectTimeLeft
