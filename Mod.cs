@@ -211,13 +211,13 @@ namespace JsonAssets
         {
             objects.Add(obj);
 
-            if ( obj.Recipe.CanPurchase )
+            if ( obj.Recipe != null && obj.Recipe.CanPurchase )
             {
                 shopData.Add( new ShopDataEntry()
                 {
                     PurchaseFrom = obj.Recipe.PurchaseFrom,
                     Price = obj.Recipe.PurchasePrice,
-                    PurchseRequirements = obj.Recipe.GetPurchaseRequirementString(),
+                    PurchaseRequirements = obj.Recipe.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( obj.id, 1, true, obj.Recipe.PurchasePrice, 0 ),
                 } );
             }
@@ -227,7 +227,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = obj.PurchaseFrom,
                     Price = obj.PurchasePrice,
-                    PurchseRequirements = obj.GetPurchaseRequirementString(),
+                    PurchaseRequirements = obj.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( obj.id, int.MaxValue, false, obj.PurchasePrice, 0 ),
                 } );
             }
@@ -309,7 +309,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = crop.seed.PurchaseFrom,
                     Price = crop.seed.PurchasePrice,
-                    PurchseRequirements = crop.seed.GetPurchaseRequirementString(),
+                    PurchaseRequirements = crop.seed.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( Vector2.Zero, crop.seed.id, int.MaxValue ),
                 } );
             }
@@ -358,7 +358,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = tree.sapling.PurchaseFrom,
                     Price = tree.sapling.PurchasePrice,
-                    PurchseRequirements = tree.sapling.GetPurchaseRequirementString(),
+                    PurchaseRequirements = tree.sapling.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( Vector2.Zero, tree.sapling.id, int.MaxValue ),
                 } );
             }
@@ -378,13 +378,13 @@ namespace JsonAssets
         {
             bigCraftables.Add(craftable);
 
-            if ( craftable.Recipe.CanPurchase )
+            if ( craftable.Recipe != null && craftable.Recipe.CanPurchase )
             {
                 shopData.Add( new ShopDataEntry()
                 {
                     PurchaseFrom = craftable.PurchaseFrom,
                     Price = craftable.PurchasePrice,
-                    PurchseRequirements = craftable.GetPurchaseRequirementString(),
+                    PurchaseRequirements = craftable.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, true ),
                 } );
             }
@@ -394,7 +394,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = craftable.PurchaseFrom,
                     Price = craftable.PurchasePrice,
-                    PurchseRequirements = craftable.GetPurchaseRequirementString(),
+                    PurchaseRequirements = craftable.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, false ),
                 } );
             }
@@ -418,7 +418,7 @@ namespace JsonAssets
             {
                 PurchaseFrom = "HatMouse",
                 Price = hat.PurchasePrice,
-                PurchseRequirements = "",
+                PurchaseRequirements = "",
                 Object = () => new Hat(hat.id),
             } );
 
@@ -443,7 +443,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = weapon.PurchaseFrom,
                     Price = weapon.PurchasePrice,
-                    PurchseRequirements = weapon.GetPurchaseRequirementString(),
+                    PurchaseRequirements = weapon.GetPurchaseRequirementString(),
                     Object = () => new MeleeWeapon(weapon.id)
                 } );
             }
@@ -504,7 +504,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = boots.PurchaseFrom,
                     Price = boots.PurchasePrice,
-                    PurchseRequirements = boots.GetPurchaseRequirementString(),
+                    PurchaseRequirements = boots.GetPurchaseRequirementString(),
                     Object = () => new Boots( boots.id )
                 } );
             }
@@ -899,8 +899,9 @@ namespace JsonAssets
             {
                 if ( entry.PurchaseFrom != portraitPerson || ( entry.PurchaseFrom == "HatMouse" && !hatMouse ) )
                     continue;
-                if ( string.IsNullOrEmpty( entry.PurchseRequirements ) &&
-                     precondMeth.Invoke<int>( new object[] { entry.PurchseRequirements } ) == -1 )
+
+                if ( !string.IsNullOrEmpty( entry.PurchaseRequirements ) &&
+                     precondMeth.Invoke<int>( new object[] { entry.PurchaseRequirements } ) == -1 )
                     continue;
 
                 var item = entry.Object();

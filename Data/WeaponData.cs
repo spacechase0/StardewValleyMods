@@ -72,6 +72,8 @@ namespace JsonAssets.Data
 
         internal string GetPurchaseRequirementString()
         {
+            if ( PurchaseRequirements == null )
+                return "";
             var str = $"1234567890";
             foreach (var cond in PurchaseRequirements)
                 str += $"/{cond}";
