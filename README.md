@@ -105,7 +105,7 @@ field                    | purpose
 `Description`            | Description for what this does. Note if it does anything special like provide light.
 `ProvidesLight`          | On/Off switch for if it provides light or not. Set to `true` or `false`.
 `Recipe`                 | Begins the recipe block.
-`ResultCount`            | How many of the product does the recipe produce.
+`ResultCount`            | How many of the product does the recipe produce. The game does not handle this correctly for BigCraftables, so it should generally be limited to `1`.
 `Ingredients`            | If using a vanilla object, you will have to use the objects ID number. If using a custom object added by Json Assets, you will have to use the name. Ex. "Honeysuckle".
 `Object` & `Count`       | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used.
 `IsDefault`              | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe:
@@ -114,7 +114,7 @@ field                    | purpose
 `PurchasePrice`          | How much you can purchase the recipe for.
 `PurchaseRequirements`   | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 `SkillUnlockName`        | The name of the [skill](https://stardewvalleywiki.com/Skills) required for unlock.
-`SkillUnlockLevel`       | The level, 1 - 10, required to unlock.
+`SkillUnlockLevel`       | The level, 1 - 9, required to unlock. Level 10 does not currently work for BigCraftables.
 `ReserveNextIndex`       | _(optional)_ Used for animations with PFM. Set to `true` or `false`. Reserves 1 index. Useful for machines that work like the Charcoal Kiln. Cannot be used with `ReserveExtraIndexCount`.
 `ReserveExtraIndexCount` | _(optional)_ Used for animations with PFM. Set to the number of additional frames needed. See [Machine Animations](#machine-animations) for more information. Cannot be used with `ReserveNextIndex`.
 `EnableWithMod`          | _(optional)_ Enables the craftable when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
@@ -203,7 +203,7 @@ field                      | purpose
 `SeedDescription`          | Describe what season you plant these in. Also note if it continues to grow after first harvest and how many days it takes to regrow.
 `Type`                     | Vanilla types are `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, `AnimalGoods`, `Greens`, and `Seeds`. 
 `CropType`                 | Available types are `Normal`, `IndoorsOnly`, and `Paddy`. If no `CropType` is specified (largely affecting pre-SDV1.4 crops) `Normal` is the default. `IndoorsOnly` means it can only grow when inside (greenhouse or garden pot). `Paddy` means it follows the same rules as rice (SDV1.4) and does not need watered if planted around a water source.
-`Season`                   | Seasons must be in lowercase and in quotation marks, so if you want to make your crop last all year, you'd put in "spring", "summer", "fall", "winter". If you want to make winter plants, you will have to require [SpaceCore](http://www.nexusmods.com/stardewvalley/mods/1348) for your content pack.
+`Seasons`                  | Seasons must be in lowercase and in quotation marks, so if you want to make your crop last all year, you'd put in "spring", "summer", "fall", "winter".
 `Phases`                   | Determines how long each phase lasts. Crops can have 2-5 phases, and the numbers in phases refer to how many days a plant spends in that phase. Seeds **do not** count as a phase. If your crop has regrowth, the last number in this set corresponds to how many days it takes for the crop to regrow. Ex. [1, 2, 3, 4, 3] This crop takes 10 days to grow and 3 days to regrow.
 `RegrowthPhase`            | If your plant is a one time harvest set this to `-1`. If it does, this determines which sprite the regrowth starts at. I typically recommend the sprite right before the harvest. *Requires additional sprite at the end of the crop.png*
 `HarvestWithScythe`        | Set to `true` or `false`.
@@ -248,7 +248,7 @@ field                         | purpose
 `Product`                     | Determines what the fruit tree produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the objects ID number and not include a corresponding `Objects` folder.
 `SaplingName`                 | The name of the sapling, typically product + sapling.
 `SaplingDescription`          | The description of the sapling, often sticks to vanilla format: Takes 28 days to produce a mature `product` tree. Bears `type` in the summer. Only grows if the 8 surrounding \"tiles\" are empty.
-`Season`                      | Season must be in lowercase and in quotation marks. Fruit trees can support only one season. If you want to make winter fruit trees, you will have to require [SpaceCore]
+`Season`                      | Season must be in lowercase and in quotation marks. Fruit trees can support only one season.
 `SaplingPurchasePrice`        | Determines how much the sapling can be purchased for.
 `SaplingPurchaseFrom`         | Who you can purchase saplings from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor.`Pierre` is the default vendor.
 `SaplingPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SaplingPurchaseRequirements` set this to `null`.
@@ -484,7 +484,7 @@ If it can be gifted to an NPC it has gift taste support built in. This means `ha
         "Like": [],
         "Neutral": [],
         "Dislike": [],
-        "Hat": [],
+        "Hate": [],
     },
 ```
 An example of a filled out gift taste can be found [here](https://pastebin.com/9K3t2SLL). You can delete unused fields within `GiftTastes`.
