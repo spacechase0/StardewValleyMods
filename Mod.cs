@@ -229,7 +229,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = obj.GetPurchaseRequirementString(),
-                            Object = () => new StardewValley.Object( obj.id, 1, true, obj.Recipe.PurchasePrice, 0 ),
+                            Object = () => new StardewValley.Object( obj.id, 1, true, entry.PurchasePrice, 0 ),
                         } );
                     }
                 }
@@ -337,7 +337,7 @@ namespace JsonAssets
                     PurchaseFrom = crop.seed.PurchaseFrom,
                     Price = crop.seed.PurchasePrice,
                     PurchaseRequirements = crop.seed.GetPurchaseRequirementString(),
-                    Object = () => new StardewValley.Object( Vector2.Zero, crop.seed.id, int.MaxValue ),
+                    Object = () => new StardewValley.Object( crop.seed.id, int.MaxValue, false, crop.seed.PurchasePrice ),
                 } );
                 if ( crop.seed.AdditionalPurchaseData != null )
                 {
@@ -348,7 +348,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = crop.seed.GetPurchaseRequirementString(),
-                            Object = () => new StardewValley.Object( crop.seed.id, 1, true, crop.seed.PurchasePrice, 0 ),
+                            Object = () => new StardewValley.Object( crop.seed.id, int.MaxValue, false, entry.PurchasePrice, 0 ),
                         } );
                     }
                 }
