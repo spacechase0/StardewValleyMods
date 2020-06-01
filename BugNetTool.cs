@@ -110,7 +110,8 @@ namespace BugNet
 
                         string critterId = Mod.GetCritterIdFrom(critter);
                         Log.trace("Spawning a " + critterId);
-                        who.currentLocation.debris.Add(new Debris(new CritterItem(critterId), critter.position));
+                        int objId = Mod.ja.GetObjectId( $"Critter Cage: {Mod.GetCritterName(critterId)}" );
+                        who.currentLocation.debris.Add(new Debris(new StardewValley.Object(objId, 1), critter.position));
                     }
                 }
             }

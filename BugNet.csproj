@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SpaceCore_SDV\SpaceCore.csproj" />
+    <ProjectReference Include="..\JsonAssets\JsonAssets.csproj" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)\common.targets" />
