@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheftOfTheWinterSTar
+namespace TheftOfTheWinterStar
 {
     public class Beam
     {

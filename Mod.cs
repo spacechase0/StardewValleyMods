@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TheftOfTheWinterSTar.Overrides;
+using TheftOfTheWinterStar.Overrides;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,7 +22,7 @@ using StardewValley.Tools;
 using xTile.Tiles;
 using StardewValley.Menus;
 
-namespace TheftOfTheWinterSTar
+namespace TheftOfTheWinterStar
 {
     public enum ArenaStage
     {
