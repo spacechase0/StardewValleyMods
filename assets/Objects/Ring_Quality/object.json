@@ -1,0 +1,23 @@
+{
+  "Name": "Quality+ Ring",
+  "Description": "A chance for higher quality crop harvests.",
+  "Category": "Ring",
+  "Edibility": -300,
+  "Price": 1000,
+  "Recipe": {
+    "ResultCount": 1,
+    "Ingredients": [
+      {
+        "Object": 577,
+        "Count": 1
+      },
+      {
+        "Object": 336,
+        "Count": 3,
+      }
+    ],
+    "CanPurchase": true,
+    "PurchaseFrom": "Dwarf",
+    "PurchasePrice": 1000
+  },
+}

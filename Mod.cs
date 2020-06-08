@@ -7,6 +7,10 @@ using SpaceCore.Events;
 using StardewModdingAPI.Events;
 using SpaceShared.APIs;
 using SpaceShared;
+using Harmony;
+using System.Reflection.Emit;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace MoreRings
 {
@@ -19,6 +23,7 @@ namespace MoreRings
         public int Ring_Combat_Regen { get { return ja.GetObjectId("Ring of Regeneration"); } }
         public int Ring_DiamondBooze { get { return ja.GetObjectId("Ring of Diamond Booze"); } }
         public int Ring_Refresh { get { return ja.GetObjectId("Refreshing Ring"); } }
+        public int Ring_Quality { get { return ja.GetObjectId("Quality+ Ring"); } }
 
         private MoreRingsApi moreRings;
 
@@ -34,6 +39,10 @@ namespace MoreRings
             helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
 
             SpaceEvents.OnItemEaten += onItemEaten;
+
+            var harmony = HarmonyInstance.Create( ModManifest.UniqueID );
+            Log.trace( "HARMONY" );
+            harmony.Patch( AccessTools.Method( typeof( Crop ), nameof( Crop.harvest ) ), transpiler: new HarmonyMethod( this.GetType().GetMethod( nameof( CropHarvestTranspiler ) ) ) );
         }
 
         /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
@@ -145,6 +154,58 @@ namespace MoreRings
             if (Game1.player.rightRing.Value != null && Game1.player.rightRing.Value.ParentSheetIndex == id)
                 ++num;
             return num;
+        }
+        
+        public static void ModifyCropQuality(Random rand, ref int quality)
+        {
+            if ( rand.NextDouble() < Mod.instance.hasRingEquipped( Mod.instance.Ring_Quality ) * 0.125 )
+            {
+                if ( ++quality == 3 )
+                    ++quality;
+            }
+            if ( quality > 4 )
+                quality = 4;
+        }
+        
+        public static IEnumerable<CodeInstruction> CropHarvestTranspiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        {
+            // TODO: Learn how to use ILGenerator
+            
+            var newInsns = new List<CodeInstruction>();
+            LocalBuilder randVar = null;
+            Label pendingLabel = default(Label);
+            foreach ( var insn in insns )
+            {
+                if ( insn.operand is LocalBuilder lb && lb.LocalIndex == 9 )
+                {
+                    randVar = lb;
+                }
+                if ( insn.opcode == OpCodes.Stloc_S && ( ( LocalBuilder ) insn.operand ).LocalIndex == 7 /* cropQuality, TODO: Check somehow */ )
+                {
+                    var prevInsn = newInsns[ newInsns.Count - 1 ];
+                    var prev2Insn = newInsns[ newInsns.Count - 2 ];
+                    if ( prevInsn.opcode == OpCodes.Ldc_I4_1 && prev2Insn.opcode == OpCodes.Bge_Un )
+                    {
+                        pendingLabel = (Label) prev2Insn.operand;
+                        newInsns.Add( insn );
+
+                        newInsns.Add( new CodeInstruction( OpCodes.Ldloc_S, randVar )
+                                      { labels = new List<Label>( new Label[] { pendingLabel } ) } );
+                        newInsns.Add( new CodeInstruction( OpCodes.Ldloca_S, insn.operand ) );
+                        newInsns.Add( new CodeInstruction( OpCodes.Call, typeof( Mod ).GetMethod( nameof( ModifyCropQuality ) ) ) );
+                        continue;
+                    }
+                }
+                if ( insn.labels.Contains( pendingLabel ) )
+                {
+                    Log.trace( "taking label" );
+                    insn.labels.Remove( pendingLabel );
+                    pendingLabel = default( Label );
+                }
+                newInsns.Add( insn );
+            }
+
+            return newInsns;
         }
     }
 }
