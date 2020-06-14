@@ -158,6 +158,8 @@ namespace ContentPatcherAnimations
                         data.ToAreaFunc = () => GetRectangleFromPatch(targetPatch, "ToArea", new Rectangle(0, 0, data.FromAreaFunc().Width, data.FromAreaFunc().Height));
 
                         animatedPatches.Add(patch, data);
+
+                        Helper.Content.AssetEditors.Add( new WatchForUpdatesAssetEditor( patch, data, (string) targetProp.GetValue( targetPatch ) ) );
                     }
                 }
             }
