@@ -353,8 +353,8 @@ field                  | purpose
 `MaximumDamage`        | The maximum number of damage points an enemy hit with this weapon will receive.
 `Knockback`            | How far the enemy will be pushed back from the player after being hit with this weapon.
 `Speed`                | How fast the swing of the weapon is.
-`Accurary`             | How accurate the weapon is.
-`Defense`              | When blocking, how much protection it provides.
+`Accuracy`             | How accurate the weapon is.
+`Defense`              | This has no effect, although it is displayed as one of the weapon's stats.
 `MineDropVar`          | 
 `MineDropMinimumLevel` | The first level the weapon can drop when in the mines.
 `ExtraSwingArea`       |
