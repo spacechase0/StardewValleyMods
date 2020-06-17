@@ -267,6 +267,9 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private void onSaved(object sender, SavedEventArgs e)
         {
+            if (!Context.IsMainPlayer)
+                return;
+
             var legacyDataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
             if (File.Exists(legacyDataPath))
             {
