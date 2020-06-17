@@ -68,7 +68,7 @@ namespace Magic
         public Skill()
         : base("spacechase0.Magic")
         {
-            Icon = Mod.instance.Helper.Content.Load<Texture2D>("res/interface/magicexpicon.png");
+            Icon = Mod.instance.Helper.Content.Load<Texture2D>("assets/interface/magicexpicon.png");
             SkillsPageIcon = null; // TODO: Make an icon for this
 
             ExperienceCurve = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };

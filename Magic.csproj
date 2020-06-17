@@ -8,16 +8,12 @@
     <Platforms>x86</Platforms>
     <PlatformTarget>x86</PlatformTarget>
 
-    <EnableHarmony>true</EnableHarmony>
+    <IgnoreModFilePatterns>\.psd$</IgnoreModFilePatterns>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SpaceCore_SDV\SpaceCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,9 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="res\*.png" CopyToOutputDirectory="Always" />
-    <Content Include="res\**\*.png" CopyToOutputDirectory="Always" />
-    <Content Include="res\altarsobjects.tsx" CopyToOutputDirectory="Always" />
+    <ProjectReference Include="..\SpaceCore_SDV\SpaceCore.csproj" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)\common.targets" />
