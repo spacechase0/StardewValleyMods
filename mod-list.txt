@@ -23,10 +23,13 @@ ExtendedReach
 FlowerColorPicker
 FlowerRain
 GenericModConfigMenu
+HybridCropEngine
 JsonAssets
 JumpOver
+JunimosAcceptCash
 LuckSkill
 Magic
+ManaBar
 MapImageExporter
 MoreBuildings
 MoreGiantCrops
@@ -40,6 +43,7 @@ SpaceCore_SDV
 SpaceShared
 Spenny
 StardewProfitCalculator
+StatueOfGenerosity
 Terraforming
 TheftOfTheWinterStar
 ThreeHeartDancePartner
