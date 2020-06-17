@@ -1,0 +1,12 @@
+{
+  "Name": "Statue of Generosity",
+  "Author": "spacechase0, ParadigmNomad (sprites)",
+  "Version": "1.0.0",
+  "Description": "...",
+  "UniqueID": "spacechase0.StatueOfGenerosity",
+  "EntryDll": "StatueOfGenerosity.dll",
+  "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+  "Dependencies": [
+    { "UniqueID": "spacechase0.JsonAssets" },
+  ],
+}
