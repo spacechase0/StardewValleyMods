@@ -94,10 +94,15 @@ namespace CookingSkill
             instance = this;
             Log.Monitor = Monitor;
 
-            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.Display.MenuChanged += onMenuChanged;
             SpaceEvents.OnItemEaten += onItemEaten;
 
             Skills.RegisterSkill(skill = new Skill());
+        }
+
+        public override object GetApi()
+        {
+            return new Api();
         }
 
         private bool wasEating = false;
@@ -233,23 +238,17 @@ namespace CookingSkill
             }
         }
 
-        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
+        private void onMenuChanged( object sender, MenuChangedEventArgs e )
         {
-            if (Game1.activeClickableMenu != null)
+            if ( e.NewMenu is CraftingPage )
             {
-                if ( Game1.activeClickableMenu is CraftingPage )
-                {
-                    CraftingPage menu = Game1.activeClickableMenu as CraftingPage;
-                    bool cooking = ( bool ) Util.GetInstanceField( typeof( CraftingPage), Game1.activeClickableMenu, "cooking" );
-                    bool standaloneMenu = ( bool ) Util.GetInstanceField( typeof( CraftingPage), Game1.activeClickableMenu, "_standaloneMenu");
-                    List<Chest> containers = ( List<Chest> ) Util.GetInstanceField( typeof( CraftingPage), Game1.activeClickableMenu, "_materialContainers");
-                    NewCraftingPage myCraftingPage = new NewCraftingPage(menu.xPositionOnScreen, menu.yPositionOnScreen, menu.width, menu.height, cooking, standaloneMenu, containers);
-                    myCraftingPage.exitFunction = Game1.activeClickableMenu.exitFunction;
-                    Game1.activeClickableMenu = myCraftingPage;
-                }
+                CraftingPage menu = e.NewMenu as CraftingPage;
+                bool cooking = ( bool ) Util.GetInstanceField( typeof( CraftingPage), e.NewMenu, "cooking" );
+                bool standaloneMenu = ( bool ) Util.GetInstanceField( typeof( CraftingPage), e.NewMenu, "_standaloneMenu");
+                List<Chest> containers = ( List<Chest> ) Util.GetInstanceField( typeof( CraftingPage), e.NewMenu, "_materialContainers");
+                NewCraftingPage myCraftingPage = new NewCraftingPage(menu.xPositionOnScreen, menu.yPositionOnScreen, menu.width, menu.height, cooking, standaloneMenu, containers);
+                myCraftingPage.exitFunction = Game1.activeClickableMenu.exitFunction;
+                Game1.activeClickableMenu = myCraftingPage;
             }
         }
     }
