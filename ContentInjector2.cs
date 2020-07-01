@@ -65,8 +65,23 @@ namespace JsonAssets
                 var newData = new Dictionary<string, string>(data);
                 foreach (var npc in data)
                 {
-                    if (npc.Key.StartsWith("Universal_"))
+                    if ( npc.Key.StartsWith( "Universal_" ) )
+                    {
+                        foreach ( var obj in Mod.instance.objects )
+                        {
+                            if ( npc.Key == "Universal_Love" && ( obj.GiftTastes?.Love?.Contains( "Universal" ) ?? false ) )
+                                newData[ npc.Key ] = npc.Value + " " + obj.GetObjectId();
+                            if ( npc.Key == "Universal_Like" && ( obj.GiftTastes?.Like?.Contains( "Universal" ) ?? false ) )
+                                newData[ npc.Key ] = npc.Value + " " + obj.GetObjectId();
+                            if ( npc.Key == "Universal_Neutral" && ( obj.GiftTastes?.Neutral?.Contains( "Universal" ) ?? false ) )
+                                newData[ npc.Key ] = npc.Value + " " + obj.GetObjectId();
+                            if ( npc.Key == "Universal_Dislike" && ( obj.GiftTastes?.Dislike?.Contains( "Universal" ) ?? false ) )
+                                newData[ npc.Key ] = npc.Value + " " + obj.GetObjectId();
+                            if ( npc.Key == "Universal_Hate" && ( obj.GiftTastes?.Hate?.Contains( "Universal" ) ?? false ) )
+                                newData[ npc.Key ] = npc.Value + " " + obj.GetObjectId();
+                        }
                         continue;
+                    }
 
                     string[] sections = npc.Value.Split('/');
                     if ( sections.Length != 11 )
