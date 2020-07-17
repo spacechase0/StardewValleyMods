@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -50,6 +51,7 @@ namespace BetterShopMenu
         bool hasRecipes;
         private Dictionary<int, string> categoryNames;
         private int sorting = 0;
+        private TextBox search;
         private void initShop( ShopMenu shopMenu )
         {
             shop = shopMenu;
@@ -114,6 +116,8 @@ namespace BetterShopMenu
             categoryNames.Add(SObject.toolCategory, "Tools");
             categoryNames.Add(categories.Count == 0 ? 1 : categories.Count, "Recipes");
 
+            search = new TextBox( Game1.content.Load<Texture2D>( "LooseSprites\\textBox" ), null, Game1.smallFont, Game1.textColor ); ;
+
             syncStock();
         }
         private void changeCategory(int amt)
@@ -143,14 +147,14 @@ namespace BetterShopMenu
             var stock = new Dictionary<ISalable, int[]>();
             foreach (var item in initialItems)
             {
-                if (itemMatchesCategory(item, currCategory))
+                if (itemMatchesCategory(item, currCategory) && (search.Text == null || item.DisplayName.ToLower().Contains( search.Text.ToLower() ) ))
                 {
                     items.Add(item);
                 }
             }
             foreach (var item in initialStock)
             {
-                if (itemMatchesCategory(item.Key, currCategory))
+                if (itemMatchesCategory(item.Key, currCategory ) && ( search.Text == null || item.Key.DisplayName.ToLower().Contains( search.Text.ToLower() ) ) )
                 {
                     stock.Add(item.Key, item.Value);
                 }
@@ -179,8 +183,12 @@ namespace BetterShopMenu
         /// <param name="e">The event arguments.</param>
         private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if ( shop != null && firstTick )
-                initShop2();
+            if ( shop != null )
+            {
+                if ( firstTick )
+                    initShop2();
+                search.Update();
+            }
         }
 
         /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
@@ -191,7 +199,7 @@ namespace BetterShopMenu
             if (shop == null)
                 return;
 
-            Vector2 pos = new Vector2( shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 550 );
+            Vector2 pos = new Vector2( shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 525 );
             IClickableMenu.drawTextureBox(Game1.spriteBatch, (int)pos.X, (int)pos.Y, 200, 72, Color.White);
             pos.X += 16;
             pos.Y += 16;
@@ -199,7 +207,7 @@ namespace BetterShopMenu
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1,  1), new Color( 224, 150, 80 ), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color( 86, 22, 12 ), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
 
-            pos = new Vector2(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 630);
+            pos = new Vector2(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 600);
             IClickableMenu.drawTextureBox(Game1.spriteBatch, (int)pos.X, (int)pos.Y, 200, 48, Color.White);
             pos.X += 16;
             pos.Y += 16;
@@ -211,6 +219,13 @@ namespace BetterShopMenu
             {
                 drawGridLayout();
             }
+            
+            pos.X = shop.xPositionOnScreen + 25;
+            pos.Y = shop.yPositionOnScreen + 650;
+            //Game1.spriteBatch.DrawString( Game1.dialogueFont, "Search: ", pos, Game1.textColor, 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0 );
+            search.X = ( int ) ( pos.X );// + Game1.dialogueFont.MeasureString( "Search: " ).X);
+            search.Y = ( int ) pos.Y;
+            search.Draw( Game1.spriteBatch );
 
             shop.drawMouse(Game1.spriteBatch);
         }
@@ -251,8 +266,8 @@ namespace BetterShopMenu
                 SpriteText.drawString(Game1.spriteBatch, Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583"), shop.xPositionOnScreen + shop.width / 2 - SpriteText.getWidthOfString(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583"), 999999) / 2, shop.yPositionOnScreen + shop.height / 2 - 128, 999999, -1, 999999, 1f, 0.88f, false, -1, "", -1);
             //shop.inventory.draw(Game1.spriteBatch);
             // Moved currency here so above doesn't draw over it
-            if (currency == 0)
-                Game1.dayTimeMoneyBox.drawMoneyBox(Game1.spriteBatch, shop.xPositionOnScreen - 36, shop.yPositionOnScreen + shop.height - shop.inventory.height + 48);
+            //if (currency == 0)
+            //    Game1.dayTimeMoneyBox.drawMoneyBox(Game1.spriteBatch, shop.xPositionOnScreen - 36, shop.yPositionOnScreen + shop.height - shop.inventory.height + 48);
             for (int index = animations.Count - 1; index >= 0; --index)
             {
                 if (animations[index].update(Game1.currentGameTime))
@@ -292,25 +307,31 @@ namespace BetterShopMenu
             if (shop == null)
                 return;
 
-            if (e.Button == SButton.MouseLeft || e.Button == SButton.MouseRight)
+            if ( e.Button == SButton.MouseLeft || e.Button == SButton.MouseRight )
             {
                 int x = (int) e.Cursor.ScreenPixels.X;
                 int y = (int) e.Cursor.ScreenPixels.Y;
                 int direction = e.Button == SButton.MouseLeft ? 1 : -1;
 
-                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 550, 200, 72).Contains(x, y))
-                    changeCategory(direction);
-                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 630, 200, 48).Contains(x, y))
-                    changeSorting(direction);
-
-                if (Config.GridLayout)
+                if ( new Rectangle( shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 525, 200, 72 ).Contains( x, y ) )
+                    changeCategory( direction );
+                if ( new Rectangle( shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 600, 200, 48 ).Contains( x, y ) )
+                    changeSorting( direction );
+                
+                if ( Config.GridLayout )
                 {
-                    Helper.Input.Suppress(e.Button);
-                    if (e.Button == SButton.MouseRight)
-                        doGridLayoutRightClick(e);
+                    Helper.Input.Suppress( e.Button );
+                    if ( e.Button == SButton.MouseRight )
+                        doGridLayoutRightClick( e );
                     else
-                        doGridLayoutLeftClick(e);
+                        doGridLayoutLeftClick( e );
                 }
+            }
+            else if ( (e.Button >= SButton.A && e.Button <= SButton.Z || e.Button == SButton.Space || e.Button == SButton.Back) &&
+                      search.Selected )
+            {
+                Helper.Input.Suppress( e.Button );
+                syncStock();
             }
         }
 
@@ -577,6 +598,11 @@ namespace BetterShopMenu
             else
             {
                 shop = null;
+                if (search != null )
+                {
+                    search.Selected = false;
+                    search = null;
+                }
             }
         }
 
