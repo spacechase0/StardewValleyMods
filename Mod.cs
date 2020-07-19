@@ -54,10 +54,12 @@ namespace JsonAssets
 
             helper.Content.AssetEditors.Add(content1 = new ContentInjector1());
 
+            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet( "Maps\\springobjects", 16 );
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\crops", 32);
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\fruitTrees", 80);
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\shirts", 32);
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\pants", 688);
+            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\hats", 80);
 
             try
             {
