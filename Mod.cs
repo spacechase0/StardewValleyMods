@@ -73,7 +73,7 @@ namespace TheftOfTheWinterStar
             Helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.GameLoop.SaveCreated += onCreated;
             helper.Events.GameLoop.SaveLoaded += onLoaded;
-            helper.Events.GameLoop.Saved += onSaved;
+            helper.Events.GameLoop.Saving += onSaving;
             Helper.Events.GameLoop.UpdateTicked += onUpdated;
             helper.Events.GameLoop.DayStarted += onDayStarted;
             helper.Events.GameLoop.DayEnding += onDayEnding;
@@ -146,7 +146,7 @@ namespace TheftOfTheWinterStar
             saveData = Helper.Data.ReadSaveData<SaveData>("FrostDungeon.SaveData") ?? new SaveData();
         }
 
-        private void onSaved(object sender, SavedEventArgs e)
+        private void onSaving(object sender, SavingEventArgs e)
         {
             if ( Game1.IsMasterGame )
                 Helper.Data.WriteSaveData("FrostDungeon.SaveData", saveData);
