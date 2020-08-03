@@ -1,28 +1,38 @@
 ﻿using StardewModdingAPI;
+using System;
 
 namespace ContentPatcherAnimations
 {
+    // TODO: Optimize this
     internal class WatchForUpdatesAssetEditor : IAssetEditor
     {
-        private readonly Patch patch;
-        private readonly PatchData data;
-        private readonly string assetPath;
-
-        public WatchForUpdatesAssetEditor( Patch patch, PatchData data, string asset )
+        public WatchForUpdatesAssetEditor()
         {
-            this.patch = patch;
-            this.data = data;
-            this.assetPath = asset;
         }
 
         public bool CanEdit<T>( IAssetInfo asset )
         {
-            return asset.AssetNameEquals( assetPath );
+            foreach ( var patchEntry in Mod.instance.animatedPatches )
+            {
+                var patch = patchEntry.Value.patchObj;
+                var target = Mod.instance.Helper.Reflection.GetProperty<string>( patch, "TargetAsset" ).GetValue();
+                if ( !string.IsNullOrWhiteSpace( target ) && asset.AssetNameEquals( target ) )
+                    return true;
+            }
+            return false;
         }
 
         public void Edit<T>( IAssetData asset )
         {
-            data.Target = data.TargetFunc();
+            foreach ( var patchEntry in Mod.instance.animatedPatches )
+            {
+                var patch = patchEntry.Value.patchObj;
+                var target = Mod.instance.Helper.Reflection.GetProperty<string>( patch, "TargetAsset" ).GetValue();
+                if ( !string.IsNullOrWhiteSpace( target ) && asset.AssetNameEquals( target ) )
+                {
+                    Mod.instance.findTargetsQueue.Enqueue( patchEntry.Key );
+                }
+            }
         }
     }
 }

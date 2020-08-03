@@ -21,6 +21,7 @@ namespace ContentPatcherAnimations
 {
     public class PatchData
     {
+        public object patchObj;
         public Func<bool> IsActive;
         public Func<Texture2D> TargetFunc;
         public Texture2D Target;
@@ -43,10 +44,13 @@ namespace ContentPatcherAnimations
         private StardewModdingAPI.Mod contentPatcher;
         private IEnumerable cpPatches;
 
-        private Dictionary<Patch, PatchData> animatedPatches = new Dictionary<Patch, PatchData>();
+        internal Dictionary<Patch, PatchData> animatedPatches = new Dictionary<Patch, PatchData>();
 
         public static uint frameCounter = 0;
         public static int findTargetsCounter = 0;
+        public Queue<Patch> findTargetsQueue = new Queue<Patch>();
+
+        private WatchForUpdatesAssetEditor watcher;
 
         public override void Entry(IModHelper helper)
         {
@@ -57,6 +61,8 @@ namespace ContentPatcherAnimations
             Helper.Events.GameLoop.SaveCreated += (s, e) => findTargetsCounter = 1;
             Helper.Events.GameLoop.SaveLoaded += (s, e) => findTargetsCounter = 1;
             Helper.Events.GameLoop.DayStarted += (s, e) => findTargetsCounter = 1;
+
+            helper.Content.AssetEditors.Add( watcher = new WatchForUpdatesAssetEditor() );
         }
 
         private void UpdateAnimations(object sender, UpdateTickedEventArgs e)
@@ -73,6 +79,11 @@ namespace ContentPatcherAnimations
 
             if (findTargetsCounter > 0 && --findTargetsCounter == 0)
                 UpdateTargetTextures();
+            while ( findTargetsQueue.Count > 0 )
+            {
+                var patch = findTargetsQueue.Dequeue();
+                UpdateTargetTextures( patch );
+            }
 
             ++frameCounter;
             Game1.graphics.GraphicsDevice.Textures[0] = null;
@@ -104,13 +115,31 @@ namespace ContentPatcherAnimations
             {
                 try
                 {
+                    if ( !patch.Value.IsActive.Invoke() )
+                        continue;
+
                     patch.Value.Source = patch.Value.SourceFunc();
                     patch.Value.Target = patch.Value.TargetFunc();
                 }
                 catch ( Exception e )
                 {
-                    Log.error("Exception loading " + patch.Key.LogName + " textures: " + e);
+                    Log.trace("Exception loading " + patch.Key.LogName + " textures, delaying to try again next frame: " + e);
+                    findTargetsQueue.Enqueue( patch.Key );
                 }
+            }
+        }
+
+        private void UpdateTargetTextures( Patch key )
+        {
+            try
+            {
+                var patch = animatedPatches[ key ];
+                patch.Source = patch.SourceFunc();
+                patch.Target = patch.TargetFunc();
+            }
+            catch ( Exception e )
+            {
+                Log.error( "Exception loading " + key.LogName + " textures: " + e );
             }
         }
 
@@ -135,8 +164,8 @@ namespace ContentPatcherAnimations
                         object targetPatch = null;
                         foreach (var cpPatch in cpPatches)
                         {
-                            var name = (string)cpPatch.GetType().GetProperty("LogName", PublicI).GetValue(cpPatch);
-                            if (name == pack.Manifest.Name + " > " + patch.LogName)
+                            var path = cpPatch.GetType().GetProperty("Path", PublicI).GetValue(cpPatch);
+                            if (path.ToString() == pack.Manifest.Name + " > " + patch.LogName)
                             {
                                 targetPatch = cpPatch;
                                 break;
@@ -150,7 +179,8 @@ namespace ContentPatcherAnimations
                         var appliedProp = targetPatch.GetType().GetProperty("IsApplied", PublicI);
                         var sourceProp = targetPatch.GetType().GetProperty("FromAsset", PublicI);
                         var targetProp = targetPatch.GetType().GetProperty("TargetAsset", PublicI);
-                        
+
+                        data.patchObj = targetPatch;
                         data.IsActive = () => (bool)appliedProp.GetValue(targetPatch);
                         data.SourceFunc = () => pack.LoadAsset<Texture2D>((string)sourceProp.GetValue(targetPatch));
                         data.TargetFunc = () => FindTargetTexture((string)targetProp.GetValue(targetPatch));
@@ -158,8 +188,6 @@ namespace ContentPatcherAnimations
                         data.ToAreaFunc = () => GetRectangleFromPatch(targetPatch, "ToArea", new Rectangle(0, 0, data.FromAreaFunc().Width, data.FromAreaFunc().Height));
 
                         animatedPatches.Add(patch, data);
-
-                        Helper.Content.AssetEditors.Add( new WatchForUpdatesAssetEditor( patch, data, (string) targetProp.GetValue( targetPatch ) ) );
                     }
                 }
             }
