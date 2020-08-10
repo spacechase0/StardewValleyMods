@@ -1244,7 +1244,7 @@ namespace JsonAssets
 
             Dictionary<string, int> ids = new Dictionary<string, int>();
 
-            int[] bigSkip = new int[] { 309, 310, 311, 326, 340, 434, 599, 621, 628, 629, 630, 631, 632, 633, 645 };
+            int[] bigSkip = new int[] { 309, 310, 311, 326, 340, 434, 447, 459, 599, 621, 628, 629, 630, 631, 632, 633, 645, 812 };
 
             int currId = starting;
             foreach (var d in data)
@@ -1273,8 +1273,10 @@ namespace JsonAssets
             return ids;
         }
 
-        private void AssignTextureIndices(string type, int starting, IList<DataSeparateTextureIndex> data)
+        private void AssignTextureIndices(string type, int starting, List<DataSeparateTextureIndex> data)
         {
+            data.Sort((dni1, dni2) => dni1.Name.CompareTo(dni2.Name));
+
             Dictionary<string, int> idxs = new Dictionary<string, int>();
 
             int currIdx = starting;
@@ -1774,6 +1776,10 @@ namespace JsonAssets
         // Only remove something if old has it but not new
         private bool fixId(IDictionary<string, int> oldIds, IDictionary<string, int> newIds, NetInt id, IDictionary<int, string> origData)
         {
+            if ( origData == null )
+                Log.error( "Wat1" + new System.Diagnostics.StackTrace() );
+            if ( id == null )
+                Log.error( "Wat2" + new System.Diagnostics.StackTrace() );
             if (origData.ContainsKey(id.Value))
                 return false;
 

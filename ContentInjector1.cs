@@ -335,13 +335,14 @@ namespace JsonAssets
                 try
                 {
                     Log.verbose($"Injecting {boots.Name} sprites @ {objectRect(boots.GetObjectId())}");
-                    asset.AsImage().PatchImage(boots.texture, null, objectRect(boots.GetObjectId()));
+                    asset.AsImage().PatchExtendedTileSheet(boots.texture, null, objectRect(boots.GetObjectId()));
 
                     var rect = objectRect(boots.GetObjectId());
-                    int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
+                    var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
+                    int ts = target.TileSheet;
                     boots.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                     boots.tilesheetX = rect.X;
-                    boots.tilesheetY = rect.Y;
+                    boots.tilesheetY = target.Y;
                 }
                 catch (Exception e)
                 {
