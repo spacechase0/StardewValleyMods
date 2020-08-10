@@ -1103,6 +1103,18 @@ namespace JsonAssets
 
             content1.InvalidateUsed();
             Helper.Content.AssetEditors.Add(content2 = new ContentInjector2());
+
+            // This happens here instead of with ID fixing because TMXL apparently
+            // uses the ID fixing API before ID fixing happens everywhere.
+            // Doing this here prevents some NREs (that don't show up unless you're
+            // debugging for some reason????)
+            origObjects = cloneIdDictAndRemoveOurs( Game1.objectInformation, objectIds );
+            origCrops = cloneIdDictAndRemoveOurs( Game1.content.Load<Dictionary<int, string>>( "Data\\Crops" ), cropIds );
+            origFruitTrees = cloneIdDictAndRemoveOurs( Game1.content.Load<Dictionary<int, string>>( "Data\\fruitTrees" ), fruitTreeIds );
+            origBigCraftables = cloneIdDictAndRemoveOurs( Game1.bigCraftablesInformation, bigCraftableIds );
+            origHats = cloneIdDictAndRemoveOurs( Game1.content.Load<Dictionary<int, string>>( "Data\\hats" ), hatIds );
+            origWeapons = cloneIdDictAndRemoveOurs( Game1.content.Load<Dictionary<int, string>>( "Data\\weapons" ), weaponIds );
+            origClothing = cloneIdDictAndRemoveOurs( Game1.content.Load<Dictionary<int, string>>( "Data\\ClothingInformation" ), clothingIds );
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
@@ -1312,14 +1324,6 @@ namespace JsonAssets
 
         private void fixIdsEverywhere()
         {
-            origObjects = cloneIdDictAndRemoveOurs(Game1.objectInformation, objectIds);
-            origCrops = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\Crops"), cropIds);
-            origFruitTrees = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\fruitTrees"), fruitTreeIds);
-            origBigCraftables = cloneIdDictAndRemoveOurs(Game1.bigCraftablesInformation, bigCraftableIds);
-            origHats = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\hats"), hatIds);
-            origWeapons = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\weapons"), weaponIds);
-            origClothing = cloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\ClothingInformation"), clothingIds);
-
             fixItemList(Game1.player.Items);
 #pragma warning disable AvoidNetField
             if (Game1.player.leftRing.Value != null && fixId(oldObjectIds, objectIds, Game1.player.leftRing.Value.parentSheetIndex, origObjects))
@@ -1776,10 +1780,6 @@ namespace JsonAssets
         // Only remove something if old has it but not new
         private bool fixId(IDictionary<string, int> oldIds, IDictionary<string, int> newIds, NetInt id, IDictionary<int, string> origData)
         {
-            if ( origData == null )
-                Log.error( "Wat1" + new System.Diagnostics.StackTrace() );
-            if ( id == null )
-                Log.error( "Wat2" + new System.Diagnostics.StackTrace() );
             if (origData.ContainsKey(id.Value))
                 return false;
 
