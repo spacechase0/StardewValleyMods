@@ -45,6 +45,8 @@ namespace SpaceCore.Overrides
     {
         public static void Postfix(Farmer __instance)
         {
+            if ( __instance.itemToEat == null )
+                return;
             SpaceEvents.InvokeOnItemEaten( __instance);
         }
     }

@@ -133,7 +133,7 @@ namespace SpaceCore
             extendedTextures.Add(extendedTextureAssets[assetName].BaseTileSheet, extendedTextureAssets[assetName]);
 
             var adjustedTarget = GetAdjustedTileSheetTarget(asset.Data, targetArea.Value);
-            Log.trace("Tilesheet target:" + adjustedTarget.TileSheet + " " + adjustedTarget.Y);
+            //Log.trace("Tilesheet target:" + adjustedTarget.TileSheet + " " + adjustedTarget.Y);
             if ( adjustedTarget.TileSheet == 0 )
             {
                 asset.PatchImage(source, sourceArea, targetArea, patchMode);
@@ -149,7 +149,7 @@ namespace SpaceCore
 
                 Rectangle r = targetArea.Value;
                 r.Y = adjustedTarget.Y;
-                Log.trace($"Ext-patching on {assetName}={extendedTextureAssets[assetName].AssetPath}: {r}/{asset.Data.Width}x{asset.Data.Height}");
+                //Log.trace($"Ext-patching on {assetName}={extendedTextureAssets[assetName].AssetPath}: {r}/{asset.Data.Width}x{asset.Data.Height}");
                 asset.PatchImage(source, sourceArea, r, patchMode);
             }
             finally

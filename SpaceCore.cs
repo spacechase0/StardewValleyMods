@@ -92,6 +92,7 @@ namespace SpaceCore
             doPrefix(typeof(GameLocation), nameof(GameLocation.performTouchAction), typeof(TouchActionHook));
             doPostfix(typeof(GameLocation), nameof(GameLocation.explode), typeof(ExplodeHook));
             doPostfix(typeof(GameServer), nameof(GameServer.sendServerIntroduction), typeof(ServerGotClickHook));
+            doPrefix(typeof(NPC), nameof(NPC.tryToReceiveActiveObject), typeof(BeforeReceiveObjectHook));
             doPostfix(typeof(NPC), nameof(NPC.receiveGift), typeof(AfterGiftGivenHook));
             doPostfix(typeof(Game1), nameof(Game1.loadForNewGame), typeof(BlankSaveHook));
             if(Constants.TargetPlatform != GamePlatform.Android)
@@ -108,6 +109,7 @@ namespace SpaceCore
             doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix3)));
             doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( float   ), typeof( SpriteEffects ), typeof( float ) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix4)));
             doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color )                                                                                                  }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix5)));
+            doPrefix( typeof( Event ), nameof( Event.tryEventCommand ), typeof( EventTryCommandPatch ) );
         }
 
         public override object GetApi()

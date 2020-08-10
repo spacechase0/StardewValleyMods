@@ -33,6 +33,9 @@ namespace SpaceCore.Events
         // Server side, when a client joins
         public static event EventHandler<EventArgsServerGotClient> ServerGotClient;
 
+        // Right before a gift is given to someone. Sender is farmer.
+        public static event EventHandler<EventArgsBeforeReceiveObject> BeforeGiftGiven;
+
         // When a gift is given to someone. Sender is farmer.
         public static event EventHandler<EventArgsGiftGiven> AfterGiftGiven;
 
@@ -105,6 +108,15 @@ namespace SpaceCore.Events
             if (ServerGotClient == null)
                 return;
             Util.invokeEvent("SpaceEvents.ServerGotClient", ServerGotClient.GetInvocationList(), server, args);
+        }
+
+        internal static bool InvokeBeforeReceiveObject( NPC npc, StardewValley.Object obj, Farmer farmer )
+        {
+            Log.trace( "Event: BeforeReceiveObject" );
+            if ( BeforeGiftGiven == null )
+                return false;
+            var arg = new EventArgsBeforeReceiveObject(npc, obj);
+            return Util.invokeEventCancelable( "SpaceEvents.BeforeReceiveObject", BeforeGiftGiven.GetInvocationList(), farmer, arg );
         }
 
         internal static void InvokeAfterGiftGiven(NPC npc, StardewValley.Object obj, Farmer farmer)
