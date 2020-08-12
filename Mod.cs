@@ -53,6 +53,7 @@ namespace JsonAssets
             helper.Events.Multiplayer.PeerContextReceived += clientConnected;
 
             helper.Content.AssetEditors.Add(content1 = new ContentInjector1());
+            helper.Content.AssetLoaders.Add( content1 );
 
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet( "Maps\\springobjects", 16 );
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\crops", 32);
@@ -64,6 +65,8 @@ namespace JsonAssets
             try
             {
                 harmony = HarmonyInstance.Create("spacechase0.JsonAssets");
+
+                harmony.PatchAll();
 
                 // object patches
                 harmony.Patch(
@@ -632,6 +635,54 @@ namespace JsonAssets
             bootsByContentPack[source].Add(boots.Name);
         }
 
+        public void RegisterFence(IManifest source, FenceData fence)
+        {
+            fences.Add( fence );
+
+            Func<IList<FenceData.Recipe_.Ingredient>, IList<ObjectData.Recipe_.Ingredient>> convertIngredients = (ingredients) =>
+            {
+                var ret = new List<ObjectData.Recipe_.Ingredient>();
+                foreach ( var ingred in ingredients )
+                {
+                    ret.Add( new ObjectData.Recipe_.Ingredient()
+                    {
+                        Object = ingred.Object,
+                        Count = ingred.Count,
+                    } );
+                }
+                return ret;
+            };
+
+            RegisterObject( source, fence.correspondingObject = new ObjectData()
+            {
+                texture = fence.objectTexture,
+                Name = fence.Name,
+                Description = fence.Description,
+                Category = ObjectData.Category_.Crafting,
+                Price = fence.Price,
+                Recipe = fence.Recipe == null ? null : new ObjectData.Recipe_()
+                {
+                    SkillUnlockName = fence.Recipe.SkillUnlockName,
+                    SkillUnlockLevel = fence.Recipe.SkillUnlockLevel,
+                    ResultCount = fence.Recipe.ResultCount,
+                    Ingredients = convertIngredients( fence.Recipe.Ingredients ),
+                    IsDefault = fence.Recipe.IsDefault,
+                    CanPurchase = fence.Recipe.CanPurchase,
+                    PurchasePrice = fence.Recipe.PurchasePrice,
+                    PurchaseFrom = fence.Recipe.PurchaseFrom,
+                    PurchaseRequirements = fence.Recipe.PurchaseRequirements,
+                    AdditionalPurchaseData = fence.Recipe.AdditionalPurchaseData,
+                },
+                CanPurchase = fence.CanPurchase,
+                PurchasePrice = fence.PurchasePrice,
+                PurchaseFrom = fence.PurchaseFrom,
+                PurchaseRequirements = fence.PurchaseRequirements,
+                AdditionalPurchaseData = fence.AdditionalPurchaseData,
+                NameLocalization = fence.NameLocalization,
+                DescriptionLocalization = fence.DescriptionLocalization,
+            } );
+        }
+
         private Dictionary<string, IManifest> dupObjects = new Dictionary<string, IManifest>();
         private Dictionary<string, IManifest> dupCrops = new Dictionary<string, IManifest>();
         private Dictionary<string, IManifest> dupFruitTrees = new Dictionary<string, IManifest>();
@@ -854,6 +905,25 @@ namespace JsonAssets
                     boots.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/boots.png");
                     boots.textureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
                     RegisterBoots(contentPack.Manifest, boots);
+                }
+            }
+
+            // Load boots
+            DirectoryInfo fencesDir = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Fences"));
+            if (fencesDir.Exists)
+            {
+                foreach (DirectoryInfo dir in fencesDir.EnumerateDirectories())
+                {
+                    string relativePath = $"Fences/{dir.Name}";
+
+                    // load data
+                    FenceData fence = contentPack.ReadJsonFile<FenceData>($"{relativePath}/fence.json");
+                    if (fence == null || (fence.DisableWithMod != null && Helper.ModRegistry.IsLoaded(fence.DisableWithMod)) || (fence.EnableWithMod != null && !Helper.ModRegistry.IsLoaded(fence.EnableWithMod)))
+                        continue;
+
+                    fence.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/fence.png" );
+                    fence.objectTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png" );
+                    RegisterFence( contentPack.Manifest, fence );
                 }
             }
         }
@@ -1183,6 +1253,7 @@ namespace JsonAssets
         internal IList<PantsData> pantss = new List<PantsData>();
         internal IList<TailoringRecipeData> tailoring = new List<TailoringRecipeData>();
         internal IList<BootsData> bootss = new List<BootsData>();
+        internal IList<FenceData> fences = new List<FenceData>();
 
         internal IDictionary<string, int> objectIds;
         internal IDictionary<string, int> cropIds;
@@ -1415,6 +1486,13 @@ namespace JsonAssets
                         fixId(oldObjectIds, objectIds, hd.crop.netSeedIndex, origObjects);
                     }
                 }
+            }
+            else if ( obj is Fence fence )
+            {
+                if ( fixId( oldObjectIds, objectIds, fence.whichType, origObjects ) )
+                    return true;
+                else
+                    fence.ParentSheetIndex = -fence.whichType.Value;
             }
             else
             {

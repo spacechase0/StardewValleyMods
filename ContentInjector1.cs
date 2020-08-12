@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace JsonAssets
 {
-    public class ContentInjector1 : IAssetEditor
+    public class ContentInjector1 : IAssetEditor, IAssetLoader
     {
         private delegate void injector(IAssetData asset);
         private Dictionary<string, injector> files;
@@ -616,6 +616,26 @@ namespace JsonAssets
         internal static Rectangle bootsRect(int index)
         {
             return new Rectangle(0, index, 4, 1);
+        }
+
+        public bool CanLoad<T>( IAssetInfo asset )
+        {
+            foreach ( var fence in Mod.instance.fences )
+            {
+                if ( asset.AssetNameEquals( "LooseSprites\\Fence" + fence.correspondingObject?.GetObjectId() ) )
+                    return true;
+            }
+            return false;
+        }
+
+        public T Load<T>( IAssetInfo asset )
+        {
+            foreach ( var fence in Mod.instance.fences )
+            {
+                if ( asset.AssetNameEquals( "LooseSprites\\Fence" + fence.correspondingObject?.GetObjectId() ) )
+                    return ( T ) ( object ) fence.texture;
+            }
+            return default( T );
         }
     }
 }
