@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using SpaceCore.Events;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using xTile.Dimensions;
 
 namespace SpaceCore.Overrides
 {
@@ -31,6 +33,17 @@ namespace SpaceCore.Overrides
                 SpaceShared.Log.warn( "ERROR: Invalid command: " + split[ 0 ] );
 
             return false;
+        }
+    }
+
+    public static class EventActionPatch
+    {
+        public static bool Prefix( Event __instance, Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who  )
+        {
+            var actionStr = Game1.currentLocation.doesTileHaveProperty( tileLocation.X, tileLocation.Y, "Action", "Buildings" );
+            if ( actionStr != null )
+                return !SpaceEvents.InvokeActionActivated( who, actionStr, tileLocation );
+            return true;
         }
     }
 }

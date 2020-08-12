@@ -110,6 +110,7 @@ namespace SpaceCore
             doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( float   ), typeof( SpriteEffects ), typeof( float ) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix4)));
             doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color )                                                                                                  }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix5)));
             doPrefix( typeof( Event ), nameof( Event.tryEventCommand ), typeof( EventTryCommandPatch ) );
+            doPrefix( typeof( Event ), nameof( Event.checkAction ), typeof( EventActionPatch ) );
         }
 
         public override object GetApi()
