@@ -1,4 +1,5 @@
-﻿using StardewModdingAPI;
+﻿using SpaceShared;
+using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
