@@ -19,7 +19,6 @@ namespace JsonAssets.Overrides
         {
             try
             {
-                Log.trace( "meow!?!!?!" );
                 if (!__instance.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
                 {
                     if (__instance.Category == SObject.SeedsCategory)
@@ -208,6 +207,24 @@ namespace JsonAssets.Overrides
             {
                 Log.error($"Failed in {nameof(CanBeGivenAsGift_Postfix)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.isPlaceable))]
+    public static class ObjectIsPlaceablePatch
+    {
+        public static bool Prefix( StardewValley.Object __instance, ref bool __result )
+        {
+            if ( __instance.bigCraftable.Value )
+                return true;
+
+            if ( __instance.Category == StardewValley.Object.CraftingCategory && Mod.instance.objectIds.Values.Contains( __instance.ParentSheetIndex ) )
+            {
+                __result = false;
+                return false;
+            }
+
+            return true;
         }
     }
 
