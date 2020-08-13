@@ -91,36 +91,6 @@ namespace JsonAssets.Data
         public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
         public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
 
-        public string LocalizedName()
-        {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            if ( currLang == LocalizedContentManager.LanguageCode.en )
-                return Name;
-            if ( NameLocalization == null || !NameLocalization.ContainsKey( currLang.ToString() ) )
-                return Name;
-            return NameLocalization[ currLang.ToString() ];
-        }
-
-        public string LocalizedDescription()
-        {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            if ( currLang == LocalizedContentManager.LanguageCode.en )
-                return Description;
-            if ( DescriptionLocalization == null || !DescriptionLocalization.ContainsKey( currLang.ToString() ) )
-                return Description;
-            return DescriptionLocalization[ currLang.ToString() ];
-        }
-
         public int GetObjectId() { return id; }
-
-        internal string GetPurchaseRequirementString()
-        {
-            if ( PurchaseRequirements == null )
-                return "";
-            var str = $"1234567890";
-            foreach ( var cond in PurchaseRequirements )
-                str += $"/{cond}";
-            return str;
-        }
     }
 }
