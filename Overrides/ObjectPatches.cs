@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Harmony;
 using JsonAssets.Data;
 using Microsoft.Xna.Framework;
@@ -220,8 +221,11 @@ namespace JsonAssets.Overrides
 
             if ( __instance.Category == StardewValley.Object.CraftingCategory && Mod.instance.objectIds.Values.Contains( __instance.ParentSheetIndex ) )
             {
-                __result = false;
-                return false;
+                if ( !Mod.instance.fences.Any( f => f.correspondingObject.id == __instance.ParentSheetIndex ) )
+                {
+                    __result = false;
+                    return false;
+                }
             }
 
             return true;

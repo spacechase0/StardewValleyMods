@@ -1253,7 +1253,7 @@ namespace JsonAssets
         internal IList<PantsData> pantss = new List<PantsData>();
         internal IList<TailoringRecipeData> tailoring = new List<TailoringRecipeData>();
         internal IList<BootsData> bootss = new List<BootsData>();
-        internal IList<FenceData> fences = new List<FenceData>();
+        internal List<FenceData> fences = new List<FenceData>();
 
         internal IDictionary<string, int> objectIds;
         internal IDictionary<string, int> cropIds;
