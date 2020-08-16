@@ -43,32 +43,6 @@ namespace JsonAssets.Data
             public string PurchaseFrom { get; set; } = "Robin";
             public IList<string> PurchaseRequirements { get; set; } = new List<string>();
             public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
-
-            internal string GetRecipeString( FenceData parent )
-            {
-                var str = "";
-                foreach ( var ingredient in Ingredients )
-                    str += Mod.instance.ResolveObjectId( ingredient.Object ) + " " + ingredient.Count + " ";
-                str = str.Substring( 0, str.Length - 1 );
-                str += $"/what is this for?/{parent.id} {ResultCount}/false/";
-                if ( SkillUnlockName?.Length > 0 && SkillUnlockLevel > 0 )
-                    str += "/" + SkillUnlockName + " " + SkillUnlockLevel;
-                else
-                    str += "/null";
-                if ( LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en )
-                    str += "/" + parent.LocalizedName();
-                return str;
-            }
-
-            internal string GetPurchaseRequirementString()
-            {
-                if ( PurchaseRequirements == null )
-                    return "";
-                var str = $"1234567890";
-                foreach ( var cond in PurchaseRequirements )
-                    str += $"/{cond}";
-                return str;
-            }
         }
 
         public string Description { get; set; }

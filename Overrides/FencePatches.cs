@@ -89,6 +89,12 @@ namespace JsonAssets.Overrides
                 {
                     __result = false;
 
+                    if ( fence.BreakTool == Data.FenceData.ToolType.Pickaxe && t is Pickaxe ||
+                         fence.BreakTool == Data.FenceData.ToolType.Axe && t is Axe )
+                    {
+                    }
+                    else return false;
+
                     location.playSound( t is Axe ? "axchop" : "hammer", NetAudio.SoundContext.Default );
                     location.objects.Remove( __instance.tileLocation.Value );
                     for ( int i = 0; i < 4; ++i )
