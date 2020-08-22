@@ -1,0 +1,38 @@
+﻿{
+    "Name": "Cheap Amulet?",
+    "Description": "Something seems off about this amulet. Wonder why it's so cheap.",
+    "Category": "ArtisanGoods",
+    "Edibility": -300,
+    "EdibleIsDrink": false,
+    "Price": 50,
+    "IsColored": false,
+    "Recipe": null,    
+    "NameLocalization":
+    {
+        // "es": "",
+        // "ko": "",
+        // "de": "",
+        // "fr": "",
+        //"hu": "",
+        //"it": "",
+        // "ja": "",
+        // "pt": "",
+        // "ru": "",
+        //"tr": "",
+        // "zh": ""
+    },
+    "DescriptionLocalization":
+    {
+        // "es": "",
+        // "ko": "",
+        // "de": "",
+        // "fr": "",
+        //"hu": "",
+        //"it": "",
+        // "ja": "",
+        // "pt": "",
+        // "ru": "",
+        //"tr": "",
+        // "zh": ""
+    },
+}

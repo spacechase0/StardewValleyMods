@@ -1,0 +1,17 @@
+﻿{
+  "ui.laps": "Laps: {{laps}}/2",
+  "ui.ranking": "Ranking",
+  "ui.wood": "Add some wood to the bonfire",
+  "dialog.wood": "You placed 50 wood on the bonfire.",
+  "dialog.shorts": "...That's odd. Why did the fire turn purple?",
+  "dialog.prizemoney": "You received 1500g.",
+  "item.boost": "Stardrop Boost",
+  "item.homingprojectile": "Pufferfish Projectile",
+  "item.firstplaceprojectile": "Seeking Cloud",
+  "item.invincibility": "Junimo Power",
+  "secret.text": "A sign reads: Want to get ahead, now and in the future? Make an offer.",
+  "secret.yes": "Throw 100,000g into the box?",
+  "secret.no": "Leave",
+  "secret.broke": "You can't afford that.",
+  "secret.purchased": "You feel different somehow."
+}
