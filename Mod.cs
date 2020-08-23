@@ -1438,7 +1438,7 @@ namespace JsonAssets
                     return true;
                 else if (fixId(oldWeaponIds, weaponIds, weapon.currentParentTileIndex, origWeapons))
                     return true;
-                else if (fixId(oldWeaponIds, weaponIds, weapon.currentParentTileIndex, origWeapons))
+                else if (fixId(oldWeaponIds, weaponIds, weapon.indexOfMenuItemView, origWeapons))
                     return true;
             }
             else if (item is Ring ring)

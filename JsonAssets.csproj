@@ -17,7 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpaceCore_SDV\SpaceCore.csproj" />
+    <ProjectReference Include="..\SpaceCore_SDV\SpaceCore.csproj">
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <Import Project="$(SolutionDir)\common.targets" />
