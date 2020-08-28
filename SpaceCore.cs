@@ -187,6 +187,10 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
+            // todo - MP support
+            if ( !Context.IsMainPlayer )
+                return;
+            
             // Sleep position stuff
             var data = Helper.Data.ReadSaveData<Sleep.Data>("sleepy-eye");
             if (data == null)
