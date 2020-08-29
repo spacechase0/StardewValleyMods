@@ -17,6 +17,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Buildings;
+using StardewValley.Characters;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Network;
@@ -65,8 +66,6 @@ namespace JsonAssets
             try
             {
                 harmony = HarmonyInstance.Create("spacechase0.JsonAssets");
-
-                harmony.PatchAll();
 
                 // object patches
                 harmony.Patch(
@@ -130,6 +129,8 @@ namespace JsonAssets
                     original: AccessTools.Method(typeof(Item), nameof(Item.canBeTrashed)),
                     postfix: new HarmonyMethod(typeof(ItemPatches), nameof(ItemPatches.CanBeTrashed_Postfix))
                 );
+                
+                harmony.PatchAll();
             }
             catch (Exception e)
             {
@@ -1556,6 +1557,20 @@ namespace JsonAssets
 #pragma warning restore AvoidNetField
             }
 
+            foreach ( var npc in loc.characters )
+            {
+                if ( npc is Horse horse )
+                {
+                    if ( horse.hat.Value != null && fixId( oldHatIds, hatIds, horse.hat.Value.which, origHats ) )
+                        horse.hat.Value = null;
+                }
+                else if ( npc is Child child )
+                {
+                    if ( child.hat.Value != null && fixId( oldHatIds, hatIds, child.hat.Value.which, origHats ) )
+                        child.hat.Value = null;
+                }
+            }
+
             IList<Vector2> toRemove = new List<Vector2>();
             foreach (var tfk in loc.terrainFeatures.Keys)
             {
@@ -1636,6 +1651,13 @@ namespace JsonAssets
                     {
                         if (fixId(oldBigCraftableIds, bigCraftableIds, obj.parentSheetIndex, origBigCraftables))
                             toRemove.Add(objk);
+                        else if ( obj.ParentSheetIndex == 126 && obj.Quality != 0 ) // Alien rarecrow stores what ID is it is wearing here
+                        {
+                            obj.Quality--;
+                            if ( fixId( oldHatIds, hatIds, obj.quality, origHats ) )
+                                obj.Quality = 0;
+                            else obj.Quality++;
+                        }
                     }
                 }
 
@@ -1874,7 +1896,7 @@ namespace JsonAssets
                 }
                 else
                 {
-                    Log.verbose("Deleting missing item " + key + " with old ID " + id_);
+                    Log.trace( "Deleting missing item " + key + " with old ID " + id_);
                     return true;
                 }
             }
