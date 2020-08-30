@@ -134,6 +134,9 @@ namespace ContentPatcherAnimations
             try
             {
                 var patch = animatedPatches[ key ];
+                if ( !patch.IsActive() )
+                    return;
+
                 patch.Source = patch.SourceFunc();
                 patch.Target = patch.TargetFunc();
             }
