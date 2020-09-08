@@ -57,6 +57,7 @@ namespace JsonAssets
             helper.Content.AssetLoaders.Add( content1 );
 
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet( "Maps\\springobjects", 16 );
+            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\Craftables", 32);
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\crops", 32);
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\fruitTrees", 80);
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\shirts", 32);
@@ -234,7 +235,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = obj.GetPurchaseRequirementString(),
+                            PurchaseRequirements = entry.GetPurchaseRequirementString(),
                             Object = () => new StardewValley.Object( obj.id, 1, true, entry.PurchasePrice, 0 ),
                         } );
                     }
@@ -257,7 +258,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = obj.GetPurchaseRequirementString(),
+                            PurchaseRequirements = entry.GetPurchaseRequirementString(),
                             Object = () => new StardewValley.Object( obj.id, int.MaxValue, false, entry.PurchasePrice, 0 ),
                         } );
                     }
@@ -442,9 +443,9 @@ namespace JsonAssets
             {
                 shopData.Add( new ShopDataEntry()
                 {
-                    PurchaseFrom = craftable.PurchaseFrom,
-                    Price = craftable.PurchasePrice,
-                    PurchaseRequirements = craftable.GetPurchaseRequirementString(),
+                    PurchaseFrom = craftable.Recipe.PurchaseFrom,
+                    Price = craftable.Recipe.PurchasePrice,
+                    PurchaseRequirements = craftable.Recipe.GetPurchaseRequirementString(),
                     Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, true ),
                 } );
                 if ( craftable.Recipe.AdditionalPurchaseData != null )
@@ -455,7 +456,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = craftable.Recipe.GetPurchaseRequirementString(),
+                            PurchaseRequirements = entry.GetPurchaseRequirementString(),
                             Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, true ),
                         } );
                     }
@@ -478,7 +479,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = craftable.GetPurchaseRequirementString(),
+                            PurchaseRequirements = entry.GetPurchaseRequirementString(),
                             Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, false ),
                         } );
                     }
@@ -1094,6 +1095,8 @@ namespace JsonAssets
                 {
                     price = ( int ) ( price * Game1.MasterPlayer.difficultyModifier );
                 }
+                if ( item is StardewValley.Object obj2 && obj2.IsRecipe && ( Game1.player.craftingRecipes.ContainsKey( obj2.Name ) || Game1.player.cookingRecipes.ContainsKey( obj2.Name ) ) )
+                    continue;
                 itemPriceAndStock.Add( item, new int[] { price, int.MaxValue } );
             }
 

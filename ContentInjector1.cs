@@ -301,9 +301,10 @@ namespace JsonAssets
         private void injectMapsSpringobjects(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
-            Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
-            asset.ReplaceWith(newTex);
-            asset.AsImage().PatchImage(oldTex);
+            asset.AsImage().ExtendImage( oldTex.Width, 4096 );
+            //Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
+            //asset.ReplaceWith(newTex);
+            //asset.AsImage().PatchImage(oldTex);
 
             foreach (var obj in Mod.instance.objects)
             {
@@ -417,18 +418,18 @@ namespace JsonAssets
                 try
                 {
                     Log.verbose($"Injecting {big.Name} sprites @ {bigCraftableRect(big.GetCraftableId())}");
-                    asset.AsImage().PatchImage(big.texture, null, bigCraftableRect(big.GetCraftableId()));
+                    asset.AsImage().PatchExtendedTileSheet(big.texture, null, bigCraftableRect(big.GetCraftableId()));
                     if (big.ReserveExtraIndexCount > 0)
                     {
                         for (int i = 0; i < big.ReserveExtraIndexCount; ++i)
                         {
                             Log.verbose($"Injecting {big.Name} reserved extra sprite {i + 1} @ {bigCraftableRect(big.GetCraftableId() + i + 1)}");
-                            asset.AsImage().PatchImage(big.extraTextures[i], null, bigCraftableRect(big.GetCraftableId() + i + 1));
+                            asset.AsImage().PatchExtendedTileSheet( big.extraTextures[i], null, bigCraftableRect(big.GetCraftableId() + i + 1));
                         }
                     }
 
                     var rect = bigCraftableRect(big.GetCraftableId());
-                    int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
+                    int ts = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
                     big.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                     big.tilesheetX = rect.X;
                     big.tilesheetY = rect.Y;
