@@ -60,7 +60,7 @@ namespace SpaceCore.Overrides
 
         public static void FixTilesheetReference(ref Texture2D tex, ref Rectangle sourceRect)
         {
-            if (sourceRect.Y + sourceRect.Height < 4096)
+            if (sourceRect.Y + sourceRect.Height < 4096 && tex != StardewValley.FarmerRenderer.pantsTexture)
                 return;
 
             var target = TileSheetExtensions.GetAdjustedTileSheetTarget(tex, sourceRect);
