@@ -1541,6 +1541,9 @@ namespace JsonAssets
             if ( loc is Cabin cabin )
             {
                 var player = cabin.farmhand.Value;
+                if ( player == null )
+                    return;
+
                 fixItemList(player.Items);
 #pragma warning disable AvoidNetField
                 if (player.leftRing.Value != null && fixId(oldObjectIds, objectIds, player.leftRing.Value.parentSheetIndex, origObjects))
