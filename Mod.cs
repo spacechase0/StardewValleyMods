@@ -1541,26 +1541,26 @@ namespace JsonAssets
             if ( loc is Cabin cabin )
             {
                 var player = cabin.farmhand.Value;
-                if ( player == null )
-                    continue;
-
-                fixItemList(player.Items);
+                if ( player != null )
+                {
+                    fixItemList(player.Items);
 #pragma warning disable AvoidNetField
-                if (player.leftRing.Value != null && fixId(oldObjectIds, objectIds, player.leftRing.Value.parentSheetIndex, origObjects))
-                    player.leftRing.Value = null;
-                if (player.rightRing.Value != null && fixId(oldObjectIds, objectIds, player.rightRing.Value.parentSheetIndex, origObjects))
-                    player.rightRing.Value = null;
-                if (player.hat.Value != null && fixId(oldHatIds, hatIds, player.hat.Value.which, origHats))
-                    player.hat.Value = null;
-                if (player.shirtItem.Value != null && fixId(oldClothingIds, clothingIds, player.shirtItem.Value.parentSheetIndex, origClothing))
-                    player.shirtItem.Value = null;
-                if (player.pantsItem.Value != null && fixId(oldClothingIds, clothingIds, player.pantsItem.Value.parentSheetIndex, origClothing))
-                    player.pantsItem.Value = null;
-                if (player.boots.Value != null && fixId(oldObjectIds, objectIds, player.boots.Value.parentSheetIndex, origObjects))
-                    player.boots.Value = null;
-                /*else if (player.boots.Value != null)
-                    player.boots.Value.reloadData();*/
+                    if (player.leftRing.Value != null && fixId(oldObjectIds, objectIds, player.leftRing.Value.parentSheetIndex, origObjects))
+                        player.leftRing.Value = null;
+                    if (player.rightRing.Value != null && fixId(oldObjectIds, objectIds, player.rightRing.Value.parentSheetIndex, origObjects))
+                        player.rightRing.Value = null;
+                    if (player.hat.Value != null && fixId(oldHatIds, hatIds, player.hat.Value.which, origHats))
+                        player.hat.Value = null;
+                    if (player.shirtItem.Value != null && fixId(oldClothingIds, clothingIds, player.shirtItem.Value.parentSheetIndex, origClothing))
+                        player.shirtItem.Value = null;
+                    if (player.pantsItem.Value != null && fixId(oldClothingIds, clothingIds, player.pantsItem.Value.parentSheetIndex, origClothing))
+                        player.pantsItem.Value = null;
+                    if (player.boots.Value != null && fixId(oldObjectIds, objectIds, player.boots.Value.parentSheetIndex, origObjects))
+                        player.boots.Value = null;
+                    /*else if (player.boots.Value != null)
+                        player.boots.Value.reloadData();*/
 #pragma warning restore AvoidNetField
+                }
             }
 
             foreach ( var npc in loc.characters )
