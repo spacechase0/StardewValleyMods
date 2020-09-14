@@ -1542,7 +1542,7 @@ namespace JsonAssets
             {
                 var player = cabin.farmhand.Value;
                 if ( player == null )
-                    return;
+                    continue;
 
                 fixItemList(player.Items);
 #pragma warning disable AvoidNetField
