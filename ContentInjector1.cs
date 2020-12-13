@@ -498,16 +498,7 @@ namespace JsonAssets
         private void injectCharactersFarmerShirts(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
-            Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
-            Color[] test = new Color[ newTex.Width * newTex.Height ];
-            Color col = new Color( 0, 0, 0, 0 );
-            for ( int i = 0; i < test.Length; ++i )
-            {
-                test[ i ] = col;
-            }
-            newTex.SetData( test );
-            asset.ReplaceWith( newTex );
-            asset.AsImage().PatchImage(oldTex);
+            asset.AsImage().ExtendImage( oldTex.Width, 4096 );
             Log.trace($"Shirts are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
             foreach (var shirt in Mod.instance.shirts)

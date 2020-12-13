@@ -15,6 +15,9 @@
     },
     {
       "UniqueID": "spacechase0.SpaceCore"
-    }
+    },
+    {
+      "UniqueID": "Cherry.ExpandedPreconditionsUtility"
+    },
   ]
 }

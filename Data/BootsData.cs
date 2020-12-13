@@ -55,16 +55,6 @@ namespace JsonAssets.Data
 
         public int GetObjectId() { return id; }
         public int GetTextureIndex() { return textureIndex; }
-        
-        internal string GetPurchaseRequirementString()
-        {
-            if ( PurchaseRequirements == null )
-                return "";
-            var str = $"1234567890";
-            foreach (var cond in PurchaseRequirements)
-                str += $"/{cond}";
-            return str;
-        }
 
         internal string GetBootsInformation()
         {

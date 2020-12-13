@@ -12,7 +12,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using Newtonsoft.Json;
 using SpaceCore;
+using SpaceCore.Events;
 using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -36,6 +38,7 @@ namespace JsonAssets
         private HarmonyInstance harmony;
         private ContentInjector1 content1;
         private ContentInjector2 content2;
+        internal ExpandedPreconditionsUtilityAPI epu;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -43,6 +46,8 @@ namespace JsonAssets
         {
             instance = this;
             Log.Monitor = Monitor;
+
+            helper.ConsoleCommands.Add( "ja_summary", "Summary of JA ids", doCommands );
 
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.GameLoop.Saved += onSaved;
@@ -52,6 +57,8 @@ namespace JsonAssets
             helper.Events.GameLoop.UpdateTicked += onTick;
             helper.Events.Specialized.LoadStageChanged += onLoadStageChanged;
             helper.Events.Multiplayer.PeerContextReceived += clientConnected;
+
+            SpaceEvents.OnBlankSave += onBlankSave;
 
             helper.Content.AssetEditors.Add(content1 = new ContentInjector1());
             helper.Content.AssetLoaders.Add( content1 );
@@ -145,8 +152,75 @@ namespace JsonAssets
             return api ?? (api = new Api(this.loadData));
         }
 
+        private Dictionary<string, KeyValuePair<int, int>> MakeIdMapping(IDictionary<string, int> oldIds, IDictionary<string, int> newIds )
+        {
+            var ret = new Dictionary<string, KeyValuePair< int, int > >();
+            foreach ( var oldId in oldIds )
+            {
+                ret.Add( oldId.Key, new KeyValuePair<int, int>( oldId.Value, -1 ) );
+            }
+            foreach ( var newId in newIds )
+            {
+                if ( ret.ContainsKey( newId.Key ) )
+                    ret[ newId.Key ] = new KeyValuePair<int, int>( ret[ newId.Key ].Key, newId.Value );
+                else
+                    ret.Add( newId.Key, new KeyValuePair<int, int>( -1, newId.Value ) );
+            }
+            return ret;
+        }
+
+        private void PrintIdMapping( string header, Dictionary<string, KeyValuePair<int, int>> mapping )
+        {
+            Log.info( header );
+            Log.info( "-------------------------" );
+
+            int len = 0;
+            foreach ( var entry in mapping )
+                len = Math.Max( len, entry.Key.Length );
+
+            foreach ( var entry in mapping )
+            {
+                Log.info( string.Format( "{0,-" + len + "} | {1,5} -> {2,-5}",
+                                          entry.Key,
+                                          entry.Value.Key == -1 ? "" : entry.Value.Key.ToString(),
+                                          entry.Value.Value == -1 ? "" : entry.Value.Value.ToString() ) );
+            }
+            Log.info( "" );
+        }
+
+        private void doCommands( string cmd, string[] args )
+        {
+            if ( !didInit )
+            {
+                Log.info( "A save must be loaded first." );
+                return;
+            }
+
+            if ( cmd == "ja_summary" )
+            {
+                var objs = MakeIdMapping( oldObjectIds, objectIds );
+                var crops = MakeIdMapping( oldCropIds, cropIds );
+                var ftrees = MakeIdMapping( oldFruitTreeIds, fruitTreeIds );
+                var bigs = MakeIdMapping( oldBigCraftableIds, bigCraftableIds);
+                var hats = MakeIdMapping( oldHatIds, hatIds );
+                var weapons = MakeIdMapping( oldWeaponIds, weaponIds );
+                var clothings = MakeIdMapping( oldClothingIds, clothingIds );
+
+                PrintIdMapping( "Object IDs", objs );
+                PrintIdMapping( "Crop IDs", crops );
+                PrintIdMapping( "Fruit Tree IDs", ftrees );
+                PrintIdMapping( "Big Craftable IDs", bigs );
+                PrintIdMapping( "Hat IDs", hats );
+                PrintIdMapping( "Weapon IDs", weapons );
+                PrintIdMapping( "Clothing IDs", clothings );
+            }
+        }
+
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
+            epu = Helper.ModRegistry.GetApi<ExpandedPreconditionsUtilityAPI>( "Cherry.ExpandedPreconditionsUtility" );
+            epu.Initialize( false, ModManifest.UniqueID );
+
             ContentPatcherIntegration.Initialize();
         }
 
@@ -224,7 +298,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = obj.Recipe.PurchaseFrom,
                     Price = obj.Recipe.PurchasePrice,
-                    PurchaseRequirements = obj.Recipe.GetPurchaseRequirementString(),
+                    PurchaseRequirements = obj.Recipe.PurchaseRequirements?.ToArray(),
                     Object = () => new StardewValley.Object( obj.id, 1, true, obj.Recipe.PurchasePrice, 0 ),
                 } );
                 if ( obj.Recipe.AdditionalPurchaseData != null )
@@ -235,7 +309,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.GetPurchaseRequirementString(),
+                            PurchaseRequirements = entry.PurchaseRequirements?.ToArray(),
                             Object = () => new StardewValley.Object( obj.id, 1, true, entry.PurchasePrice, 0 ),
                         } );
                     }
@@ -247,7 +321,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = obj.PurchaseFrom,
                     Price = obj.PurchasePrice,
-                    PurchaseRequirements = obj.GetPurchaseRequirementString(),
+                    PurchaseRequirements = obj.PurchaseRequirements?.ToArray(),
                     Object = () => new StardewValley.Object( obj.id, int.MaxValue, false, obj.PurchasePrice, 0 ),
                 } );
                 if ( obj.AdditionalPurchaseData != null )
@@ -258,7 +332,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.GetPurchaseRequirementString(),
+                            PurchaseRequirements = entry.PurchaseRequirements?.ToArray(),
                             Object = () => new StardewValley.Object( obj.id, int.MaxValue, false, entry.PurchasePrice, 0 ),
                         } );
                     }
@@ -292,7 +366,7 @@ namespace JsonAssets
                 Description = crop.SeedDescription,
                 Category = ObjectData.Category_.Seeds,
                 Price = crop.SeedSellPrice == -1 ? crop.SeedPurchasePrice : crop.SeedSellPrice,
-                CanPurchase = true,
+                CanPurchase = crop.SeedPurchasePrice > 0,
                 PurchaseFrom = crop.SeedPurchaseFrom,
                 PurchasePrice = crop.SeedPurchasePrice,
                 PurchaseRequirements = crop.SeedPurchaseRequirements ?? new List<string>(),
@@ -343,8 +417,9 @@ namespace JsonAssets
                 {
                     PurchaseFrom = crop.seed.PurchaseFrom,
                     Price = crop.seed.PurchasePrice,
-                    PurchaseRequirements = crop.seed.GetPurchaseRequirementString(),
+                    PurchaseRequirements = crop.seed.PurchaseRequirements?.ToArray(),
                     Object = () => new StardewValley.Object( crop.seed.id, int.MaxValue, false, crop.seed.PurchasePrice ),
+                    ShowWithStocklist = true,
                 } );
                 if ( crop.seed.AdditionalPurchaseData != null )
                 {
@@ -354,7 +429,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = crop.seed.GetPurchaseRequirementString(),
+                            PurchaseRequirements = crop.seed.PurchaseRequirements?.ToArray(),
                             Object = () => new StardewValley.Object( crop.seed.id, int.MaxValue, false, entry.PurchasePrice, 0 ),
                         } );
                     }
@@ -406,7 +481,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = tree.sapling.PurchaseFrom,
                     Price = tree.sapling.PurchasePrice,
-                    PurchaseRequirements = tree.sapling.GetPurchaseRequirementString(),
+                    PurchaseRequirements = tree.sapling.PurchaseRequirements?.ToArray(),
                     Object = () => new StardewValley.Object( Vector2.Zero, tree.sapling.id, int.MaxValue ),
                 } );
                 if ( tree.sapling.AdditionalPurchaseData != null )
@@ -417,7 +492,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = tree.sapling.GetPurchaseRequirementString(),
+                            PurchaseRequirements = tree.sapling.PurchaseRequirements?.ToArray(),
                             Object = () => new StardewValley.Object( tree.sapling.id, 1, true, tree.sapling.PurchasePrice, 0 ),
                         } );
                     }
@@ -445,7 +520,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = craftable.Recipe.PurchaseFrom,
                     Price = craftable.Recipe.PurchasePrice,
-                    PurchaseRequirements = craftable.Recipe.GetPurchaseRequirementString(),
+                    PurchaseRequirements = craftable.Recipe.PurchaseRequirements?.ToArray(),
                     Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, true ),
                 } );
                 if ( craftable.Recipe.AdditionalPurchaseData != null )
@@ -456,7 +531,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.GetPurchaseRequirementString(),
+                            PurchaseRequirements = entry.PurchaseRequirements?.ToArray(),
                             Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, true ),
                         } );
                     }
@@ -468,7 +543,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = craftable.PurchaseFrom,
                     Price = craftable.PurchasePrice,
-                    PurchaseRequirements = craftable.GetPurchaseRequirementString(),
+                    PurchaseRequirements = craftable.PurchaseRequirements?.ToArray(),
                     Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, false ),
                 } );
                 if ( craftable.AdditionalPurchaseData != null )
@@ -479,7 +554,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.GetPurchaseRequirementString(),
+                            PurchaseRequirements = entry.PurchaseRequirements?.ToArray(),
                             Object = () => new StardewValley.Object( Vector2.Zero, craftable.id, false ),
                         } );
                     }
@@ -507,7 +582,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = "HatMouse",
                     Price = hat.PurchasePrice,
-                    PurchaseRequirements = "",
+                    PurchaseRequirements = new string[ 0 ],
                     Object = () => new Hat( hat.id ),
                 } );
             }
@@ -533,7 +608,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = weapon.PurchaseFrom,
                     Price = weapon.PurchasePrice,
-                    PurchaseRequirements = weapon.GetPurchaseRequirementString(),
+                    PurchaseRequirements = weapon.PurchaseRequirements?.ToArray(),
                     Object = () => new MeleeWeapon(weapon.id)
                 } );
                 if ( weapon.AdditionalPurchaseData != null )
@@ -544,7 +619,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = weapon.GetPurchaseRequirementString(),
+                            PurchaseRequirements = weapon.PurchaseRequirements?.ToArray(),
                             Object = () => new MeleeWeapon( weapon.id )
                         } );
                     }
@@ -607,7 +682,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = boots.PurchaseFrom,
                     Price = boots.PurchasePrice,
-                    PurchaseRequirements = boots.GetPurchaseRequirementString(),
+                    PurchaseRequirements = boots.PurchaseRequirements?.ToArray(),
                     Object = () => new Boots( boots.id )
                 } );
 
@@ -619,7 +694,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = boots.GetPurchaseRequirementString(),
+                            PurchaseRequirements = boots.PurchaseRequirements?.ToArray(),
                             Object = () => new Boots( boots.id )
                         } );
                     }
@@ -635,6 +710,11 @@ namespace JsonAssets
             if (!bootsByContentPack.ContainsKey(source))
                 bootsByContentPack.Add(source, new List<string>());
             bootsByContentPack[source].Add(boots.Name);
+        }
+
+        public void RegisterForgeRecipe( IManifest source, ForgeRecipeData recipe )
+        {
+            forge.Add( recipe );
         }
 
         public void RegisterFence(IManifest source, FenceData fence)
@@ -928,6 +1008,23 @@ namespace JsonAssets
                     RegisterFence( contentPack.Manifest, fence );
                 }
             }
+
+            // Load tailoring
+            DirectoryInfo forgeDir = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Forge"));
+            if ( forgeDir.Exists )
+            {
+                foreach ( DirectoryInfo dir in forgeDir.EnumerateDirectories() )
+                {
+                    string relativePath = $"Forge/{dir.Name}";
+
+                    // load data
+                    ForgeRecipeData recipe = contentPack.ReadJsonFile<ForgeRecipeData>($"{relativePath}/recipe.json");
+                    if ( recipe == null || ( recipe.DisableWithMod != null && Helper.ModRegistry.IsLoaded( recipe.DisableWithMod ) ) || ( recipe.EnableWithMod != null && !Helper.ModRegistry.IsLoaded( recipe.EnableWithMod ) ) )
+                        continue;
+
+                    RegisterForgeRecipe( contentPack.Manifest, recipe );
+                }
+            }
         }
 
         private void resetAtTitle()
@@ -950,19 +1047,26 @@ namespace JsonAssets
             Helper.Content.AssetEditors.Remove(content2);
         }
 
+        private void onBlankSave( object sender, EventArgs e )
+        {
+            Log.debug( "Loading stuff early (super early)" );
+            if ( string.IsNullOrEmpty( Constants.CurrentSavePath ) )
+            {
+                initStuff( loadIdFiles: false );
+            }
+        }
+
         private void onCreated(object sender, SaveCreatedEventArgs e)
         {
             Log.debug("Loading stuff early (creation)");
-            initStuff(loadIdFiles: false);
-
-            api.InvokeIdsFixed();
+            //initStuff(loadIdFiles: false);
         }
 
         private void onLoadStageChanged(object sender, LoadStageChangedEventArgs e)
         {
             if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveParsed)
             {
-                Log.debug("Loading stuff early (loading)");
+                //Log.debug("Loading stuff early (loading)");
                 initStuff(loadIdFiles: true);
             }
             else if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveLoadedLocations)
@@ -1040,6 +1144,7 @@ namespace JsonAssets
                 }
             }
         }
+        
 
         private void clientConnected(object sender, PeerContextReceivedEventArgs e)
         {
@@ -1073,6 +1178,7 @@ namespace JsonAssets
                 portraitPerson = "Harvey";
             if (menu == null || (portraitPerson == null || portraitPerson == "") && !hatMouse)
                 return;
+            bool doAllSeeds = Game1.player.hasOrWillReceiveMail( "PierreStocklist" );
 
             Log.trace( $"Adding objects to {portraitPerson}'s shop" );
             var precondMeth = Helper.Reflection.GetMethod(Game1.currentLocation, "checkEventPrecondition");
@@ -1084,13 +1190,17 @@ namespace JsonAssets
                 if ( entry.PurchaseFrom != portraitPerson || ( entry.PurchaseFrom == "HatMouse" && !hatMouse ) )
                     continue;
 
-                if ( !string.IsNullOrEmpty( entry.PurchaseRequirements ) &&
-                     precondMeth.Invoke<int>( new object[] { entry.PurchaseRequirements } ) == -1 )
+                bool normalCond = true;
+                if ( entry.PurchaseRequirements != null && entry.PurchaseRequirements.Length > 0 )
+                    normalCond = epu.CheckConditions( entry.PurchaseRequirements );
+                if ( entry.Price == 0 || !normalCond && !(doAllSeeds && entry.ShowWithStocklist && portraitPerson == "Pierre") )
                     continue;
 
                 var item = entry.Object();
                 forSale.Add( item );
                 int price = entry.Price;
+                if ( !normalCond )
+                    price = (int)( price * 1.5 );
                 if ( item is StardewValley.Object obj && obj.Category == StardewValley.Object.SeedsCategory )
                 {
                     price = ( int ) ( price * Game1.MasterPlayer.difficultyModifier );
@@ -1111,6 +1221,7 @@ namespace JsonAssets
             didInit = true;
 
             // load object ID mappings from save folder
+            // If loadIdFiles is "maybe" (null), check the current save path
             if (loadIdFiles)
             {
                 IDictionary<TKey, TValue> LoadDictionary<TKey, TValue>(string filename)
@@ -1176,7 +1287,7 @@ namespace JsonAssets
             api.InvokeIdsAssigned();
 
             content1.InvalidateUsed();
-            Helper.Content.AssetEditors.Add(content2 = new ContentInjector2());
+            Helper.Content.AssetEditors.Add( content2 = new ContentInjector2() );
 
             // This happens here instead of with ID fixing because TMXL apparently
             // uses the ID fixing API before ID fixing happens everywhere.
@@ -1240,8 +1351,8 @@ namespace JsonAssets
         internal const int StartingCropId = 100;
         internal const int StartingFruitTreeId = 10;
         internal const int StartingBigCraftableId = 300;
-        internal const int StartingHatId = 80;
-        internal const int StartingWeaponId = 64;
+        internal const int StartingHatId = 160;
+        internal const int StartingWeaponId = 128;
         internal const int StartingClothingId = 3000;
         internal const int StartingShirtTextureIndex = 750;
         internal const int StartingPantsTextureIndex = 20;
@@ -1258,6 +1369,7 @@ namespace JsonAssets
         internal IList<TailoringRecipeData> tailoring = new List<TailoringRecipeData>();
         internal IList<BootsData> bootss = new List<BootsData>();
         internal List<FenceData> fences = new List<FenceData>();
+        internal IList<ForgeRecipeData> forge = new List<ForgeRecipeData>();
 
         internal IDictionary<string, int> objectIds;
         internal IDictionary<string, int> cropIds;
@@ -1400,11 +1512,34 @@ namespace JsonAssets
         private void fixIdsEverywhere()
         {
             fixItemList(Game1.player.Items);
+            fixItemList( Game1.player.team.junimoChest );
 #pragma warning disable AvoidNetField
             if (Game1.player.leftRing.Value != null && fixId(oldObjectIds, objectIds, Game1.player.leftRing.Value.parentSheetIndex, origObjects))
                 Game1.player.leftRing.Value = null;
+            if ( Game1.player.leftRing.Value is CombinedRing cring )
+            {
+                var toRemoveRing = new List<Ring>();
+                foreach ( var ring2 in cring.combinedRings )
+                {
+                    if ( fixId( oldObjectIds, objectIds, ring2.indexInTileSheet, origObjects ) )
+                        toRemoveRing.Add( ring2 );
+                }
+                foreach ( var removeRing in toRemoveRing )
+                    cring.combinedRings.Remove( removeRing );
+            }
             if (Game1.player.rightRing.Value != null && fixId(oldObjectIds, objectIds, Game1.player.rightRing.Value.parentSheetIndex, origObjects))
                 Game1.player.rightRing.Value = null;
+            if ( Game1.player.rightRing.Value is CombinedRing cring2 )
+            {
+                var toRemoveRing = new List<Ring>();
+                foreach ( var ring2 in cring2.combinedRings )
+                {
+                    if ( fixId( oldObjectIds, objectIds, ring2.indexInTileSheet, origObjects ) )
+                        toRemoveRing.Add( ring2 );
+                }
+                foreach ( var removeRing in toRemoveRing )
+                    cring2.combinedRings.Remove( removeRing );
+            }
             if (Game1.player.hat.Value != null && fixId(oldHatIds, hatIds, Game1.player.hat.Value.which, origHats))
                 Game1.player.hat.Value = null;
             if (Game1.player.shirtItem.Value != null && fixId(oldClothingIds, clothingIds, Game1.player.shirtItem.Value.parentSheetIndex, origClothing))
@@ -1538,17 +1673,47 @@ namespace JsonAssets
 #pragma warning restore AvoidImplicitNetFieldCast
                     fixItemList(fh.fridge.Value.items);
             }
+            if (loc is IslandFarmHouse ifh)
+            {
+#pragma warning disable AvoidImplicitNetFieldCast
+                if ( ifh.fridge.Value?.items != null )
+#pragma warning restore AvoidImplicitNetFieldCast
+                    fixItemList( ifh.fridge.Value.items );
+            }
             if ( loc is Cabin cabin )
             {
                 var player = cabin.farmhand.Value;
                 if ( player != null )
                 {
                     fixItemList(player.Items);
+                    //fixItemList( player.team.junimoChest );
 #pragma warning disable AvoidNetField
-                    if (player.leftRing.Value != null && fixId(oldObjectIds, objectIds, player.leftRing.Value.parentSheetIndex, origObjects))
+                    if ( player.leftRing.Value != null && fixId( oldObjectIds, objectIds, player.leftRing.Value.parentSheetIndex, origObjects ) )
                         player.leftRing.Value = null;
+                    if ( player.leftRing.Value is CombinedRing cring )
+                    {
+                        var toRemoveRing = new List<Ring>();
+                        foreach ( var ring2 in cring.combinedRings )
+                        {
+                            if ( fixId( oldObjectIds, objectIds, ring2.indexInTileSheet, origObjects ) )
+                                toRemoveRing.Add( ring2 );
+                        }
+                        foreach ( var removeRing in toRemoveRing )
+                            cring.combinedRings.Remove( removeRing );
+                    }
                     if (player.rightRing.Value != null && fixId(oldObjectIds, objectIds, player.rightRing.Value.parentSheetIndex, origObjects))
                         player.rightRing.Value = null;
+                    if ( player.rightRing.Value is CombinedRing cring2 )
+                    {
+                        var toRemoveRing = new List<Ring>();
+                        foreach ( var ring2 in cring2.combinedRings )
+                        {
+                            if ( fixId( oldObjectIds, objectIds, ring2.indexInTileSheet, origObjects ) )
+                                toRemoveRing.Add( ring2 );
+                        }
+                        foreach ( var removeRing in toRemoveRing )
+                            cring2.combinedRings.Remove( removeRing );
+                    }
                     if (player.hat.Value != null && fixId(oldHatIds, hatIds, player.hat.Value.which, origHats))
                         player.hat.Value = null;
                     if (player.shirtItem.Value != null && fixId(oldClothingIds, clothingIds, player.shirtItem.Value.parentSheetIndex, origClothing))
@@ -1800,6 +1965,17 @@ namespace JsonAssets
                 {
                     if (fixId(oldObjectIds, objectIds, ring.indexInTileSheet, origObjects))
                         items[i] = null;
+                    if ( ring is CombinedRing cring )
+                    {
+                        var toRemove = new List<Ring>();
+                        foreach ( var ring2 in cring.combinedRings )
+                        {
+                            if ( fixId( oldObjectIds, objectIds, ring2.indexInTileSheet, origObjects ) )
+                                toRemove.Add( ring2 );
+                        }
+                        foreach ( var removeRing in toRemove )
+                            cring.combinedRings.Remove( removeRing );
+                    }
                 }
                 else if (item is Clothing clothing)
                 {
@@ -1829,11 +2005,12 @@ namespace JsonAssets
                     var key = oldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
                     bool isRing = myRings.FirstOrDefault(r => r.id == entry) != null;
                     bool canShip = objects.FirstOrDefault(o => o.id == entry)?.CanSell ?? true;
+                    bool hideShippable = objects.FirstOrDefault(o => o.id == entry)?.HideFromShippingCollection ?? true;
 
                     toRemove.Add(entry);
                     if (objectIds.ContainsKey(key))
                     {
-                        if (removeUnshippable && (!canShip || isRing))
+                        if (removeUnshippable && (!canShip || hideShippable || isRing))
                             ;// Log.warn("Found unshippable");
                         else
                             toAdd.Add(objectIds[key], dict[entry]);

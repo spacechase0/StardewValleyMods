@@ -154,7 +154,7 @@ namespace JsonAssets.Overrides
                 if ( Mod.instance.objectIds.Values.Contains(index) )
                 {
                     var obj = new List<ObjectData>(Mod.instance.objects).Find(od => od.GetObjectId() == index);
-                    if ( obj != null && !obj.CanSell )
+                    if ( obj != null && ( !obj.CanSell || obj.HideFromShippingCollection ) )
                         __result = false;
                 }
             }

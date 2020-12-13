@@ -70,15 +70,5 @@ namespace JsonAssets.Data
         {
             return $"{Name}/{LocalizedDescription()}/{MinimumDamage}/{MaximumDamage}/{Knockback}/{Speed}/{Accuracy}/{Defense}/{(int)Type}/{MineDropVar}/{MineDropMinimumLevel}/{ExtraSwingArea}/{CritChance}/{CritMultiplier}/{LocalizedName()}";
         }
-
-        internal string GetPurchaseRequirementString()
-        {
-            if ( PurchaseRequirements == null )
-                return "";
-            var str = $"1234567890";
-            foreach (var cond in PurchaseRequirements)
-                str += $"/{cond}";
-            return str;
-        }
     }
 }

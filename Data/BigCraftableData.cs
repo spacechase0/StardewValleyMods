@@ -49,16 +49,6 @@ namespace JsonAssets.Data
                     str += "/" + parent.LocalizedName();
                 return str;
             }
-
-            internal string GetPurchaseRequirementString()
-            {
-                if ( PurchaseRequirements == null )
-                    return "";
-                var str = $"1234567890";
-                foreach (var cond in PurchaseRequirements)
-                    str += $"/{cond}";
-                return str;
-            }
         }
 
         public string Description { get; set; }
@@ -106,16 +96,6 @@ namespace JsonAssets.Data
             if (ProvidesLight)
                 str += "/true";
             str += $"/{LocalizedName()}";
-            return str;
-        }
-
-        internal string GetPurchaseRequirementString()
-        {
-            if ( PurchaseRequirements == null )
-                return "";
-            var str = $"1234567890";
-            foreach (var cond in PurchaseRequirements)
-                str += $"/{cond}";
             return str;
         }
     }
