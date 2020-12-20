@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "JsonAssets": {
+      "commandName": "Executable",
+      "executablePath": "G:\\StardewValley\\WORKSPACE_1.5\\StardewModdingAPI.exe",
+      "workingDirectory": "G:\\StardewValley\\WORKSPACE_1.5"
+    }
+  }
+}

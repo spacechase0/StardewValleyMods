@@ -4,9 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Harmony;
-using JsonAssets.Data;
-using JsonAssets.Other.ContentPatcher;
-using JsonAssets.Overrides;
+using JsonAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
@@ -28,8 +26,6 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using SObject = StardewValley.Object;
 
-// TODO: Refactor recipes
-
 namespace JsonAssets
 {
     public class Mod : StardewModdingAPI.Mod
@@ -38,8 +34,16 @@ namespace JsonAssets
         private ExpandedPreconditionsUtilityAPI epu;
         private HarmonyInstance harmony;
 
-        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
-        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        private static Dictionary<string, ContentPack> contentPacks = new Dictionary<string, ContentPack>();
+
+        public static CommonPackData Find( string fullId )
+        {
+            int slash = fullId.IndexOf( '/' );
+            string pack = fullId.Substring( 0, slash );
+            string item = fullId.Substring( slash + 1 );
+            return contentPacks.ContainsKey( pack ) ? contentPacks[ pack ].Find( item ) : null;
+        }
+        
         public override void Entry(IModHelper helper)
         {
             instance = this;
@@ -49,12 +53,31 @@ namespace JsonAssets
 
             harmony = HarmonyInstance.Create( "spacechase0.JsonAssets" );
             harmony.PatchAll();
+
+            LoadContentPacks();
         }
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             epu = Helper.ModRegistry.GetApi<ExpandedPreconditionsUtilityAPI>( "Cherry.ExpandedPreconditionsUtility" );
             epu.Initialize( false, ModManifest.UniqueID );
+        }
+
+        private void LoadContentPacks()
+        {
+            foreach ( var cp in Helper.ContentPacks.GetOwned() )
+            {
+                Log.debug( $"Loading content pack \"{cp.Manifest.Name}\"..." );
+                if ( !cp.Manifest.ExtraFields.ContainsKey( "JAFormatVersion" ) ||
+                     !int.TryParse( cp.Manifest.ExtraFields[ "JAFormatVersion" ].ToString(), out int ver ) ||
+                     ver < 2 )
+                {
+                    Log.error( "Old-style JA packs not supported! Please use the converter." );
+                    continue;
+                }
+                var pack = new ContentPack( cp );
+                contentPacks.Add( cp.Manifest.UniqueID, pack );
+            }
         }
     }
 }
