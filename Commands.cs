@@ -2,9 +2,23 @@
 using SpaceShared;
 using StardewValley;
 using System.IO;
+using System.Xml.Serialization;
 
 namespace SpaceCore
 {
+    /*
+    [XmlType( "Mods_Test" )]
+    public class TestObject : StardewValley.Object
+    {
+        public TestObject()
+        : base( 74, 1 )
+        {
+            this.Quality = 4;
+        }
+        public override string DisplayName { get => "Test Custom Object"; }
+    }
+    */
+
     public static class Commands
     {
         internal static void register()
@@ -12,6 +26,8 @@ namespace SpaceCore
             Command.register("player_giveexp", expCommand);
             Command.register("asset_invalidate", invalidateCommand);
             Command.register("exttilesheets_dump", dumpTilesheetsCommand);
+            //Command.register( "test", ( args ) => Game1.player.addItemByMenuIfNecessary( new TestObject() ) );
+            //SpaceCore.modTypes.Add( typeof( TestObject ) );
         }
 
         private static void expCommand( string[] args )

@@ -26,6 +26,8 @@ namespace SpaceCore
         public Configuration Config { get; set; }
         internal static SpaceCore instance;
         private HarmonyInstance harmony;
+        
+        internal static List<Type> modTypes = new List<Type>();
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -111,6 +113,7 @@ namespace SpaceCore
             doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color )                                                                                                  }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix5)));
             doPrefix( typeof( Event ), nameof( Event.tryEventCommand ), typeof( EventTryCommandPatch ) );
             doPrefix( typeof( Event ), nameof( Event.checkAction ), typeof( EventActionPatch ) );
+            harmony.PatchAll();
         }
 
         public override object GetApi()

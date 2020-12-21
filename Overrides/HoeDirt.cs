@@ -1,34 +1,40 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Harmony;
+using Microsoft.Xna.Framework;
 using Netcode;
 using StardewValley;
 using StardewValley.TerrainFeatures;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace SpaceCore.Overrides
 {
     public class HoeDirtWinterFix
     {
-        public static void dayUpdate(HoeDirt hoeDirt, GameLocation environment, Vector2 tileLocation)
+        public static void DestroyCropReplacement( Vector2 tileLocation, bool showAnimation, GameLocation location )
         {
-            if (hoeDirt.crop != null)
-            {
-                hoeDirt.crop.newDay((int)((NetFieldBase<int, NetInt>)hoeDirt.state), (int)((NetFieldBase<int, NetInt>)hoeDirt.fertilizer), (int)tileLocation.X, (int)tileLocation.Y, environment);
-                /*if ((bool)((NetFieldBase<bool, NetBool>)environment.isOutdoors) && Game1.currentSeason.Equals("winter") && (this.crop != null && !this.crop.isWildSeedCrop()) && !environment.IsGreenhouse)
-                    this.destroyCrop(tileLocation, false, environment);
-                */
-            }
-            if ((!hoeDirt.hasPaddyCrop() || !hoeDirt.paddyWaterCheck(environment, tileLocation)) && ((int)((NetFieldBase<int, NetInt>)hoeDirt.fertilizer) != 370 || Game1.random.NextDouble() >= 0.33) && ((int)((NetFieldBase<int, NetInt>)hoeDirt.fertilizer) != 371 || Game1.random.NextDouble() >= 0.66))
-                hoeDirt.state.Value = 0;
-            if (!environment.IsGreenhouse)
-                return;
-            hoeDirt.isGreenhouseDirt.Value = true;
-            SpaceCore.instance.Helper.Reflection.GetField<NetColor>(hoeDirt, "c").GetValue().Value = Color.White;
+            // We don't want it to ever do anything.
+            // Crops wither out of season anyways.
         }
 
-        // TODO: Make this do IL hooking instead of pre + no execute original
-        public static bool Prefix(HoeDirt __instance, GameLocation environment, Vector2 tileLocation)
+        public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
         {
-            dayUpdate(__instance, environment, tileLocation);
-            return false;
+            // TODO: Learn how to use ILGenerator
+            
+            var newInsns = new List<CodeInstruction>();
+            foreach ( var insn in insns )
+            {
+                if ( insn.opcode == OpCodes.Call && ( insn.operand as MethodInfo ).Name == "destroyCrop" )
+                {
+                    // Replace with our call. We do this instead of nop to clear the stack entries
+                    // Because I'm too lazy to figure out the rest properly.
+                    insn.operand = AccessTools.Method( typeof( HoeDirtWinterFix ), nameof( HoeDirtWinterFix.DestroyCropReplacement ) );
+                }
+
+                newInsns.Add( insn );
+            }
+
+            return newInsns;
         }
     }
 }
