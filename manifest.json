@@ -1,7 +1,7 @@
 {
   "Name": "Bug Net",
   "Author": "spacechase0, ParadigmNomad, Keychain",
-  "Version": "1.1.0",
+  "Version": "1.2.0",
   "Description": "Catch bugs and stuff.",
   "UniqueID": "spacechase0.BugNet",
   "EntryDll": "BugNet.dll",

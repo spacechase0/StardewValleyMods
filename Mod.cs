@@ -59,8 +59,8 @@ namespace BugNet
             register("SpringButterflyYellow", 9, (x, y) => Critters.MakeButterfly(x, y, 183));
             register("SpringButterflyPurple", 10, (x, y) => Critters.MakeButterfly(x, y, 166));
             register("SpringButterflyPink", 11, (x, y) => Critters.MakeButterfly(x, y, 186));
-            register("BrownBird", 12, (x, y) => Critters.MakeBird(x, y, false));
-            register("BlueBird", 13, (x, y) => Critters.MakeBird(x, y, true));
+            register("BrownBird", 12, (x, y) => Critters.MakeBird(x, y, Birdie.brownBird));
+            register("BlueBird", 13, (x, y) => Critters.MakeBird(x, y, Birdie.blueBird));
             register("GreenFrog", 14, (x, y) => Critters.MakeFrog(x, y, false));
             register("OliveFrog", 15, (x, y) => Critters.MakeFrog(x, y, false));
             register("Firefly", 16, (x, y) => Critters.MakeFirefly(x, y));
@@ -72,6 +72,16 @@ namespace BugNet
             register("Owl", 22, (x, y) => Critters.MakeOwl(x, y));
             register("Crow", 23, (x, y) => Critters.MakeCrow(x, y));
             register("Cloud", 24, (x, y) => Critters.MakeCloud(x, y));
+            register("BlueParrot", 25, (x, y) => Critters.MakeParrot(x, y, false));
+            register("GreenParrot", 26, (x, y) => Critters.MakeParrot( x, y, true));
+            register("Monkey", 27, (x, y) => Critters.MakeMonkey(x, y));
+            register("OrangeIslandButterfly", 28, (x, y) => Critters.MakeButterfly(x, y, 364, true));
+            register("PinkIslandButterfly", 29, (x, y) => Critters.MakeButterfly(x, y, 368, true));
+            register("PurpleBird", 30, (x, y) => Critters.MakeBird(x, y, 115/*Birdie.greenBird*/));
+            register("RedBird", 31, (x, y) => Critters.MakeBird(x, y, 120/*Birdie.redBird*/));
+            register("SunsetTropicalButterfly", 32, (x, y) => Critters.MakeButterfly(x, y, 372, true));
+            register("TropicalButterfly", 33, (x, y) => Critters.MakeButterfly(x, y, 376, true));
+            //register("Marsupial", 34, (x, y) => Critters.MakeMarsupial(x, y));
         }
 
         private void onGameLaunched( object sender, GameLaunchedEventArgs e )
@@ -101,7 +111,8 @@ namespace BugNet
                 Category = JsonAssets.Data.ObjectData.Category_.MonsterLoot,
                 CategoryTextOverride = "Critter",
                 Price = critterId.Contains( "Butterfly" ) ? 50 : 100,
-                ContextTags = new List<string>( new[] { "critter" } )
+                ContextTags = new List<string>( new[] { "critter" } ),
+                HideFromShippingCollection = true,
             } );
         }
 
@@ -175,9 +186,20 @@ namespace BugNet
                 bframe = -2;
             if (critter is Frog frog)
                 bframe = Mod.instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4;
+            if ( critter is OverheadParrot parrot )
+                bframe = -10 - parrot.sourceRect.Y;
+            if ( critter is CalderaMonkey monkey )
+                bframe = -100;
 
             switch (bframe)
             {
+                case -10:
+                case -34:
+                    return "GreenParrot";
+                case -58:
+                case -82:
+                    return "BlueParrot";
+                case -100: return "Monkey";
                 case  -3: return "GreenFrog";
                 case  -4: return "OliveFrog";
                 case  -2: return "Cloud";
@@ -190,6 +212,8 @@ namespace BugNet
                 case  74: return "WhiteRabbit";
                 case  60: return "Squirrel";
                 case  83: return "Owl";
+                case 115: return "PurpleBird";
+                case 125: return "RedBird";
                 case 160: return "SpringButterflyPalePink";
                 case 163: return "SpringButterflyWhite";
                 case 166: return "SpringButterflyPurple";
@@ -203,6 +227,10 @@ namespace BugNet
                 case 152: return "SummerButterflyPink";
                 case 156: return "SummerButterflyOrange";
                 case 320: return "WoodPecker";
+                case 364: return "OrangeIslandButterfly";
+                case 368: return "PinkIslandButterfly";
+                case 372: return "SunsetTropicalButterfly";
+                case 376: return "TropicalButterfly";
             }
 
             return "???";

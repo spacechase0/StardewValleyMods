@@ -11,17 +11,21 @@ namespace BugNet
 {
     public class Critters
     {
-        public static Critter MakeButterfly(int x, int y, int baseFrame)
+        public static Critter MakeButterfly(int x, int y, int baseFrame, bool island = false)
         {
             var bfly = new Butterfly(new Vector2(x, y));
             bfly.baseFrame = baseFrame;
             bfly.sprite.CurrentFrame = baseFrame;
+            if ( island )
+            {
+                Mod.instance.Helper.Reflection.GetField<bool>( bfly, "islandButterfly" ).SetValue( true );
+            }
             return bfly;
         }
 
-        public static Critter MakeBird(int x, int y, bool blue)
+        public static Critter MakeBird(int x, int y, int frame)
         {
-            return new Birdie(x, y, blue ? 45 : 25);
+            return new Birdie(x, y, frame);
         }
 
         public static Critter MakeCloud(int x, int y)
@@ -69,6 +73,19 @@ namespace BugNet
         public static Critter MakeWoodpecker(int x, int y)
         {
             return new Woodpecker(new StardewValley.TerrainFeatures.Tree(), new Vector2(x, y));
+        }
+
+        public static Critter MakeMonkey( int x, int y )
+        {
+            return new CalderaMonkey( new Vector2( x, y ) );
+        }
+
+        public static Critter MakeParrot( int x, int y, bool blue )
+        {
+            return new OverheadParrot( new Vector2( x, y ) )
+            {
+                sourceRect = new Rectangle( 0, ( Game1.random.Next( 2 ) + ( blue ? 2 : 0 ) ) * 24, 24, 24 ),
+            };
         }
     }
 }

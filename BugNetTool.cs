@@ -109,8 +109,8 @@ namespace BugNet
                             bframe = Mod.instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4;
 
                         string critterId = Mod.GetCritterIdFrom(critter);
-                        Log.trace("Spawning a " + critterId);
                         int objId = Mod.ja.GetObjectId( $"Critter Cage: {Mod.GetCritterName(critterId)}" );
+                        Log.trace("Spawning a " + critterId + " with ID " + objId );
                         who.currentLocation.debris.Add(new Debris(new StardewValley.Object(objId, 1), critter.position));
                     }
                 }
