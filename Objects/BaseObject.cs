@@ -1,0 +1,53 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using StardewValley;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FireArcadeGame.Objects
+{
+    public abstract class BaseObject
+    {
+        protected internal static BasicEffect effect = GetBasicEffect();
+
+        public World World { get; }
+
+        public Vector3 Position;
+
+        public BaseObject( World world )
+        {
+            World = world;
+        }
+
+        public virtual void Update() { }
+
+        public virtual void Render( GraphicsDevice device, Matrix projection, Camera cam )
+        {
+            effect.Projection = projection;
+            effect.View = cam.CreateViewMatrix();
+            effect.World = MakeWorldMatrix();
+        }
+
+        protected virtual Matrix MakeWorldMatrix()
+        {
+            return Matrix.CreateWorld( Position, Vector3.Forward, Vector3.Up );
+        }
+
+        private static BasicEffect GetBasicEffect()
+        {
+            var ret = new BasicEffect( Game1.game1.GraphicsDevice )
+            {
+                Alpha = 1,
+                VertexColorEnabled = true,
+                LightingEnabled = false,
+            };
+
+            //ret.EnableDefaultLighting();
+            ret.AmbientLightColor = new Vector3( 0.2f, 0.2f, 0.2f );
+            return ret;
+        }
+    }
+}
