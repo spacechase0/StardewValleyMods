@@ -58,18 +58,20 @@ namespace HybridCropEngine
             var hybridIndexByCrop = makeHybridIndex( hybrids );
             var cropsByIndex = makeCropIndex();
 
+            /*
             foreach ( var hybrid in hybrids )
             {
-                Log.verbose( "Hybrids: " + hybrid.Key + " " + hybrid.Value.BaseCropA + " " + hybrid.Value.BaseCropB + " " + hybrid.Value.Chance );
+                Log.trace( "Hybrids: " + hybrid.Key + " " + hybrid.Value.BaseCropA + " " + hybrid.Value.BaseCropB + " " + hybrid.Value.Chance );
             }
             foreach ( var index in hybridIndexByCrop )
             {
-                Log.verbose( "Hybrid Index: " + index.Key + " " + index.Value );
+                Log.trace( "Hybrid Index: " + index.Key + " " + index.Value );
             }
             foreach ( var index in cropsByIndex )
             {
-                Log.verbose( "Crop Index: " + index.Key + " " + index.Value );
+                Log.trace( "Crop Index: " + index.Key + " " + index.Value );
             }
+            */
 
             if ( config.ScanEverywhere )
             {
@@ -95,6 +97,7 @@ namespace HybridCropEngine
             {
                 growHybrids( Game1.getFarm(), hybrids, hybridIndexByCrop, cropsByIndex );
                 growHybrids( Game1.getLocationFromName( "Greenhouse" ), hybrids, hybridIndexByCrop, cropsByIndex );
+                growHybrids( Game1.getLocationFromName( "IslandWest" ), hybrids, hybridIndexByCrop, cropsByIndex );
             }
         }
 
@@ -161,8 +164,10 @@ namespace HybridCropEngine
                             dirts[ h ] = null;
                         else if ( hd != null )
                         {
-                            if ( hd.crop.currentPhase.Value == hd.crop.phaseDays.Count - 1 && hd.crop.dayOfCurrentPhase.Value == 0 )
+                            //Log.trace( "crop:" + hd.crop.currentPhase.Value + " " + (hd.crop.phaseDays.Count - 1) + " " + hd.crop.dayOfCurrentPhase );
+                            if ( hd.crop.currentPhase.Value == hd.crop.phaseDays.Count - 1 /*&& hd.crop.dayOfCurrentPhase.Value == 0*/ )
                             {
+                                //Log.trace( "Crop is ready @ " +ix + " " + iy + " " + h );
                             }
                             else
                             {
@@ -170,6 +175,13 @@ namespace HybridCropEngine
                             }
                         }
                     }
+
+                    /*
+                    string d = "";
+                    foreach ( var dirt in dirts )
+                        d += ( dirt == null ) ? "null" : dirt.ToString();
+                    Log.trace( "dirts:" + d );
+                    //*/
 
                     var combos = new List<HoeDirt[]>();
                     Action< int, int > addIfCombo = (a, b) =>
@@ -189,6 +201,7 @@ namespace HybridCropEngine
                     addIfCombo( 1, 5 );
                     addIfCombo( 3, 7 );
                     addIfCombo( 5, 7 );
+                    //Log.trace( "Combo size: " + combos.Count );
 
                     Random r = new Random( baseSeed + ix * loc.Map.Layers[ 0 ].LayerSize.Height + iy );
                     foreach ( var combo in combos )
@@ -198,11 +211,15 @@ namespace HybridCropEngine
                         ulong code = ( ca << 32 ) | cb;
 
                         if ( !hybridIndex.ContainsKey( code ) )
+                        {
+                            //Log.trace( "No hybrid for " + ca + "/" + cb );
                             continue;
+                        }
 
                         var hybridData = hybrids[ hybridIndex[ code ] ];
                         if ( r.NextDouble() < hybridData.Chance )
                         {
+                            //Log.trace( "Making hybrid @ " + ix + " " + iy );
                             dirts[ 4 ].crop = new Crop( cropSeedIndex[ hybridIndex[ code ] ], ix, iy );
                             break;
                         }
