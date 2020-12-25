@@ -11,12 +11,15 @@ using Harmony;
 using System.Reflection.Emit;
 using System.Reflection;
 using System.Collections.Generic;
+using StardewValley.Objects;
+using StardewValley.Tools;
 
 namespace MoreRings
 {
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
+        private HarmonyInstance harmony;
 
         private JsonAssetsAPI ja;
         public int Ring_Fishing_LargeBar { get { return ja.GetObjectId("Ring of Wide Nets"); } }
@@ -24,6 +27,8 @@ namespace MoreRings
         public int Ring_DiamondBooze { get { return ja.GetObjectId("Ring of Diamond Booze"); } }
         public int Ring_Refresh { get { return ja.GetObjectId("Refreshing Ring"); } }
         public int Ring_Quality { get { return ja.GetObjectId("Quality+ Ring"); } }
+        public int Ring_MageHand { get { return ja.GetObjectId("Ring of Far Reaching"); } }
+        public int Ring_TrueSight { get { return ja.GetObjectId("Ring of True Sight"); } }
 
         private MoreRingsApi moreRings;
 
@@ -37,12 +42,70 @@ namespace MoreRings
             helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.Display.RenderedWorld += TrueSight.onDrawWorld;
 
             SpaceEvents.OnItemEaten += onItemEaten;
 
-            var harmony = HarmonyInstance.Create( ModManifest.UniqueID );
+            harmony = HarmonyInstance.Create( ModManifest.UniqueID );
             Log.trace( "HARMONY" );
             harmony.Patch( AccessTools.Method( typeof( Crop ), nameof( Crop.harvest ) ), transpiler: new HarmonyMethod( this.GetType().GetMethod( nameof( CropHarvestTranspiler ) ) ) );
+            doTranspiler( typeof( Game1 ), nameof( Game1.pressUseToolButton ), typeof( Game1ToolRangeHook ) );
+            doPrefix( typeof( Pickaxe ), nameof( Pickaxe.DoFunction ), typeof( PickaxeRemoteUseHook ) );
+            doPrefix( typeof( Axe ), nameof( Axe.DoFunction ), typeof( AxeRemoteUseHook ) );
+            doPrefix( typeof( WateringCan ), nameof( WateringCan.DoFunction ), typeof( WateringCanRemoteUseHook ) );
+            doPrefix( typeof( Hoe ), nameof( Hoe.DoFunction ), typeof( HoeRemoteUseHook ) );
+        }
+        
+        private void doPrefix( Type origType, string origMethod, Type newType )
+        {
+            doPrefix( origType.GetMethod( origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static ), newType.GetMethod( "Prefix" ) );
+        }
+        private void doPrefix( MethodInfo orig, MethodInfo prefix )
+        {
+            try
+            {
+                Log.trace( $"Doing prefix patch {orig}:{prefix}..." );
+                var pmeth = new HarmonyMethod(prefix);
+                pmeth.prioritiy = Priority.First;
+                //pmeth.before.Add("stokastic.PrismaticTools");
+                harmony.Patch( orig, pmeth, null );
+            }
+            catch ( Exception e )
+            {
+                Log.error( $"Exception doing prefix patch {orig}:{prefix}: {e}" );
+            }
+        }
+        private void doPostfix( Type origType, string origMethod, Type newType )
+        {
+            doPostfix( origType.GetMethod( origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static ), newType.GetMethod( "Postfix" ) );
+        }
+        private void doPostfix( MethodInfo orig, MethodInfo postfix )
+        {
+            try
+            {
+                Log.trace( $"Doing postfix patch {orig}:{postfix}..." );
+                harmony.Patch( orig, null, new HarmonyMethod( postfix ) );
+            }
+            catch ( Exception e )
+            {
+                Log.error( $"Exception doing postfix patch {orig}:{postfix}: {e}" );
+            }
+        }
+        private void doTranspiler( Type origType, string origMethod, Type newType )
+        {
+            doTranspiler( origType.GetMethod( origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static ), newType.GetMethod( "Transpiler" ) );
+        }
+        private void doTranspiler( MethodInfo orig, MethodInfo transpiler )
+        {
+            try
+            {
+                Log.trace( $"Doing transpiler patch {orig}:{transpiler}..." );
+                harmony.Patch( orig, null, null, new HarmonyMethod( transpiler ) );
+            }
+            catch ( Exception e )
+            {
+                Log.error( $"Exception doing transpiler patch {orig}:{transpiler}: {e}" );
+            }
         }
 
         /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
@@ -143,7 +206,7 @@ namespace MoreRings
             }
         }
 
-        private int hasRingEquipped( int id )
+        public int hasRingEquipped( int id )
         {
             if (moreRings != null)
                 return moreRings.CountEquippedRings(Game1.player, id);
@@ -151,8 +214,24 @@ namespace MoreRings
             int num = 0;
             if (Game1.player.leftRing.Value != null && Game1.player.leftRing.Value.ParentSheetIndex == id)
                 ++num;
+            if ( Game1.player.leftRing.Value is CombinedRing lcring )
+            {
+                foreach ( var ring in lcring.combinedRings )
+                {
+                    if ( ring.ParentSheetIndex == id )
+                        ++num;
+                }
+            }
             if (Game1.player.rightRing.Value != null && Game1.player.rightRing.Value.ParentSheetIndex == id)
                 ++num;
+            if ( Game1.player.rightRing.Value is CombinedRing rcring )
+            {
+                foreach ( var ring in rcring.combinedRings )
+                {
+                    if ( ring.ParentSheetIndex == id )
+                        ++num;
+                }
+            }
             return num;
         }
         
