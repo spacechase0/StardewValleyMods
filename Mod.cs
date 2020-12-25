@@ -80,7 +80,7 @@ namespace ExperienceBars
         {
             // renderExpBars
 
-            if (!show || Game1.activeClickableMenu != null)
+            if (!show || Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree)
                 return;
             
             int[] skills = new int[]
@@ -204,6 +204,7 @@ namespace ExperienceBars
         public static void renderSkillBar( int x, int y, Texture2D iconTex, Rectangle icon, int level, float progress, Color skillCol )
         {
             if (!show) return;
+            if ( Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree ) return;
 
             var b = Game1.spriteBatch;
 
