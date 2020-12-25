@@ -87,6 +87,8 @@ namespace BugNet
         private void onGameLaunched( object sender, GameLaunchedEventArgs e )
         {
             ja = Helper.ModRegistry.GetApi<JsonAssetsAPI>( "spacechase0.JsonAssets" );
+            var spaceCore = Helper.ModRegistry.GetApi<SpaceCoreAPI>( "spacechase0.SpaceCore" );
+            spaceCore.RegisterSerializerType( typeof( BugNetTool ) );
         }
 
         private void RegisterCritter(string critterId, Texture2D tex, Rectangle texRect, Func<string> getLocalizedName, Func<int, int, Critter> makeFunc)

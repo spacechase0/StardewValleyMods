@@ -1,7 +1,7 @@
 {
   "Name": "Bug Net",
   "Author": "spacechase0, ParadigmNomad, Keychain",
-  "Version": "1.2.0",
+  "Version": "1.2.1",
   "Description": "Catch bugs and stuff.",
   "UniqueID": "spacechase0.BugNet",
   "EntryDll": "BugNet.dll",
@@ -12,11 +12,8 @@
   ],
   "Dependencies": [
     {
-      "UniqueID": "Platonymous.Toolkit",
-      "MinimumVersion": "1.10.0"
-    },
-    {
-      "UniqueID": "spacechase0.JsonAssets"
+      "UniqueID": "spacechase0.JsonAssets",
+      "MinimumVersion": "1.7.0",
     }
   ],
   "spacechase0": "bug-net"
