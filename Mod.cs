@@ -105,7 +105,7 @@ namespace ManaBar
 
             SpriteBatch b = e.SpriteBatch;
 
-            Vector2 manaPos = new Vector2(20, Game1.viewport.Height - manaBg.Height * 4 - 20);
+            Vector2 manaPos = new Vector2(20, Game1.uiViewport.Height - manaBg.Height * 4 - 20);
             b.Draw( manaBg, manaPos, new Rectangle( 0, 0, manaBg.Width, manaBg.Height ), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1 );
             if ( Game1.player.getCurrentMana() > 0 )
             {
