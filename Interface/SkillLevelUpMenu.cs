@@ -412,7 +412,7 @@ namespace SpaceCore.Interface
 
         public override void update(GameTime time)
         {
-            var Game1input = (InputState) typeof(Game1).GetField("input", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null);
+            var Game1input = Game1.input;
 
             if (!this.isActive)
             {

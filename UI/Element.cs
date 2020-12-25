@@ -58,7 +58,8 @@ namespace SpaceCore.UI
                 Game1.playSound(HoveredSound);
             Hover = newHover;
 
-            ClickGestured = Game1.oldMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed;
+            var input = SpaceCore.instance.Helper.Reflection.GetField< InputState >( typeof( Game1 ), "input" ).GetValue();
+            ClickGestured = Game1.oldMouseState.LeftButton == ButtonState.Released && input.GetMouseState().LeftButton == ButtonState.Pressed;
             if (Clicked && ClickedSound != null)
                 Game1.playSound(ClickedSound);
         }

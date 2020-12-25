@@ -17,7 +17,7 @@ namespace SpaceCore
         }
         public override string DisplayName { get => "Test Custom Object"; }
     }
-    */
+    //*/
 
     public static class Commands
     {
