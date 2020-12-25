@@ -24,6 +24,8 @@ namespace Magic.Game
 
         private Monster seekTarget;
 
+        public SpellProjectile() { }
+
         public SpellProjectile(Farmer theSource, ProjectileSpell theSpell, int dmg, float theDir, float theVel, bool theSeeking)
         {
             source = theSource;

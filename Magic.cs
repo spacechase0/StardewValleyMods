@@ -302,7 +302,7 @@ namespace Magic
 
             SpriteBatch b = e.SpriteBatch;
 
-            Vector2 manaPos = new Vector2(20, Game1.viewport.Height - 56 * 4 - 20);
+            Vector2 manaPos = new Vector2(20, Game1.uiViewport.Height - 56 * 4 - 20);
 
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
@@ -318,11 +318,11 @@ namespace Magic
                 new Point((int)manaPos.X + manaBg.Width * 4 + 20, Game1.viewport.Height - 20 - 50 - 40 - 25 ),
             };*/
             {
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * ( 4 + spotYAffector ) ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * ( 3 + spotYAffector ) ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * ( 2 + spotYAffector ) ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * ( 1 + spotYAffector ) ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.viewport.Height - 20 - 50 - 60 * ( 0 + spotYAffector ) ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 4 + spotYAffector ) ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 3 + spotYAffector ) ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 2 + spotYAffector ) ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 1 + spotYAffector ) ),
+                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 0 + spotYAffector ) ),
             };
 
             SpellBook book = Game1.player.getSpellBook();
