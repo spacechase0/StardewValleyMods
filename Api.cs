@@ -35,6 +35,7 @@ namespace JsonAssets
         List<string> GetAllHatsFromContentPack(string cp);
         List<string> GetAllWeaponsFromContentPack(string cp);
         List<string> GetAllClothingFromContentPack(string cp);
+        List<string> GetAllBootsFromContentPack(string cp);
 
         event EventHandler ItemsRegistered;
         event EventHandler IdsAssigned;
@@ -212,6 +213,14 @@ namespace JsonAssets
         public List<string> GetAllClothingFromContentPack(string cp)
         {
             foreach (var entry in Mod.instance.clothingByContentPack)
+                if (entry.Key.UniqueID == cp)
+                    return new List<string>(entry.Value);
+            return null;
+        }
+
+        public List<string> GetAllBootsFromContentPack(string cp)
+        {
+            foreach (var entry in Mod.instance.bootsByContentPack)
                 if (entry.Key.UniqueID == cp)
                     return new List<string>(entry.Value);
             return null;
