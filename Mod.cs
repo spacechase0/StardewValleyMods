@@ -68,6 +68,7 @@ namespace ConsoleCode
             }
 
             var eval = new Evaluator(new CompilerContext(settings, new ConsoleReportPrinter()));
+            eval.ReferenceAssembly( typeof( StardewValley.Game1 ).Assembly );
             var code = @"using System;
 using System.Collections.Generic;
 using System.Linq;
