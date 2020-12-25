@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace JsonAssets.Overrides
 {
-    [HarmonyPatch( typeof( Fence ), MethodType.Constructor, new Type[] { typeof( Vector2 ), typeof( int ), typeof( bool ) } )]
+    //[HarmonyPatch( typeof( Fence ), MethodType.Constructor, new Type[] { typeof( Vector2 ), typeof( int ), typeof( bool ) } )]
     public static class FenceConstructorPatch
     {
         public static void Postfix( Fence __instance, Vector2 tileLocation, int whichType, bool isGate )
