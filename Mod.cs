@@ -246,19 +246,91 @@ namespace BetterShopMenu
             int unitsWide = (shop.width - 32) / UNIT_WIDTH;
             ISalable hover = null;
 
+            Texture2D purchase_texture = Game1.mouseCursors;
+            Rectangle purchase_window_border = new Rectangle(384, 373, 18, 18);
+            Rectangle purchase_item_rect = new Rectangle(384, 396, 15, 15);
+            int purchase_item_text_color = -1;
+            bool purchase_draw_item_background = true;
+            Rectangle purchase_item_background = new Rectangle(296, 363, 18, 18);
+            Color purchase_selected_color = Color.Wheat;
+            if ( shop.storeContext == "QiGemShop" )
+            {
+                purchase_texture = Game1.mouseCursors2;
+                purchase_window_border = new Rectangle( 0, 256, 18, 18 );
+                purchase_item_rect = new Rectangle( 18, 256, 15, 15 );
+                purchase_item_text_color = 4;
+                purchase_selected_color = Color.Blue;
+                purchase_draw_item_background = true;
+                purchase_item_background = new Rectangle( 33, 256, 18, 18 );
+            }
+
+
             //IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), shop.xPositionOnScreen + shop.width - shop.inventory.width - 32 - 24, shop.yPositionOnScreen + shop.height - 256 + 40, shop.inventory.width + 56, shop.height - 448 + 20, Color.White, 4f, true);
-            IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f, true);
+            //IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f, true);
+            IClickableMenu.drawTextureBox( Game1.spriteBatch, purchase_texture, purchase_window_border, shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f );
             for ( int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i )
             {
+                bool failedCanPurchaseCheck = false;
+                if ( shop.canPurchaseCheck != null && !shop.canPurchaseCheck( i ) )
+                {
+                    failedCanPurchaseCheck = true;
+                }
                 int ix = i % unitsWide;
                 int iy = i / unitsWide;
                 Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UNIT_WIDTH, shop.yPositionOnScreen + 16 + iy * UNIT_HEIGHT - currentItemIndex * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
-                IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), rect.X, rect.Y, rect.Width, rect.Height, rect.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) ? Color.Wheat : Color.White, 4f, false);
-                forSale[i].drawInMenu(Game1.spriteBatch, new Vector2(rect.X + 48, rect.Y + 16), 1f, 1, 1, StackDrawType.Draw, Color.White, true);
+                IClickableMenu.drawTextureBox(Game1.spriteBatch, purchase_texture, purchase_item_rect, rect.X, rect.Y, rect.Width, rect.Height, rect.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) ? purchase_selected_color : Color.White, 4f, false);
+                ISalable item = forSale[i];
+                bool buyInStacks = item.Stack > 1 && item.Stack != int.MaxValue && itemPriceAndStock[item][1] == int.MaxValue;
+                StackDrawType stackDrawType;
+                if ( shop.storeContext == "QiGemShop" )
+                {
+                    stackDrawType = StackDrawType.HideButShowQuality;
+                    buyInStacks = ( item.Stack > 1 );
+                }
+                else if ( shop.itemPriceAndStock[ item ][ 1 ] == int.MaxValue )
+                {
+                    stackDrawType = StackDrawType.HideButShowQuality;
+                }
+                else
+                {
+                    stackDrawType = StackDrawType.Draw_OneInclusive;
+                    if ( Helper.Reflection.GetField<bool>(shop, "_isStorageShop").GetValue() )
+                    {
+                        stackDrawType = StackDrawType.Draw;
+                    }
+                }
+                if ( forSale[ i ].ShouldDrawIcon() )
+                {
+                    if ( purchase_draw_item_background )
+                    {
+                        //Game1.spriteBatch.Draw( purchase_texture, new Vector2( rect.X + 48 + 4, rect.Y + 16 ), purchase_item_background, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f );
+                    }
+                    item.drawInMenu( Game1.spriteBatch, new Vector2( rect.X + 48, rect.Y + 16 ), 1f, 1, 1, stackDrawType, Color.White, true );
+                }
                 int price = itemPriceAndStock[forSale[i]][0];
                 var priceStr = price.ToString();
-                SpriteText.drawString(Game1.spriteBatch, priceStr, rect.Right - SpriteText.getWidthOfString(priceStr) - 16, rect.Y + 80, alpha: ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) >= price ? 1f : 0.5f);
-                //Utility.drawWithShadow(Game1.spriteBatch, Game1.mouseCursors, new Vector2(rect.Right - 16, rect.Y + 80), new Rectangle(193 + currency * 9, 373, 9, 10), Color.White, 0, Vector2.Zero, 1, layerDepth: 1);
+                if ( price > 0 )
+                {
+                    SpriteText.drawString(Game1.spriteBatch, priceStr, rect.Right - SpriteText.getWidthOfString(priceStr) - 16, rect.Y + 80, alpha: ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) >= price && !failedCanPurchaseCheck ? 1f : 0.5f, color: purchase_item_text_color);
+                    //Utility.drawWithShadow(Game1.spriteBatch, Game1.mouseCursors, new Vector2(rect.Right - 16, rect.Y + 80), new Rectangle(193 + currency * 9, 373, 9, 10), Color.White, 0, Vector2.Zero, 1, layerDepth: 1);
+                }
+                else if ( itemPriceAndStock[ forSale[ i ] ].Length > 2 )
+                {
+                    int required_item_count = 5;
+                    int requiredItem = itemPriceAndStock[forSale[i]][2];
+                    if ( itemPriceAndStock[ forSale[ i ] ].Length > 3 )
+                    {
+                        required_item_count = itemPriceAndStock[ forSale[ i ] ][ 3 ];
+                    }
+                    bool hasEnoughToTrade = Game1.player.hasItemInInventory(requiredItem, required_item_count);
+                    if ( shop.canPurchaseCheck != null && !shop.canPurchaseCheck( i ) )
+                    {
+                        hasEnoughToTrade = false;
+                    }
+                    float textWidth = SpriteText.getWidthOfString("x" + required_item_count);
+                    Utility.drawWithShadow( Game1.spriteBatch, Game1.objectSpriteSheet, new Vector2( ( float ) ( rect.Right - 64 ) - textWidth, rect.Y + 80 - 4 ), Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, requiredItem, 16, 16 ), Color.White * ( hasEnoughToTrade ? 1f : 0.25f ), 0f, Vector2.Zero, 3, flipped: false, -1f, -1, -1, hasEnoughToTrade ? 0.35f : 0f );
+                    SpriteText.drawString( Game1.spriteBatch, "x" + required_item_count, rect.Right - ( int ) textWidth - 16, rect.Y + 80, 999999, -1, 999999, hasEnoughToTrade ? 1f : 0.5f, 0.88f, junimoText: false, -1, "", purchase_item_text_color );
+                }
                 if (rect.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                     hover = forSale[i];
             }
@@ -292,7 +364,9 @@ namespace BetterShopMenu
                 if (itemPriceAndStock != null && hover != null && (itemPriceAndStock.ContainsKey(hover) && itemPriceAndStock[hover].Length > 2))
                     getHoveredItemExtraItemIndex = itemPriceAndStock[hover][2];
                 int getHoveredItemExtraItemAmount = 5;
-                IClickableMenu.drawToolTip(Game1.spriteBatch, hoverText, boldTitleText,(Item) hover, heldItem != null, -1, currency, getHoveredItemExtraItemIndex, getHoveredItemExtraItemAmount, (CraftingRecipe)null, hoverPrice);
+                if ( itemPriceAndStock != null && hover != null && itemPriceAndStock.ContainsKey( hover ) && itemPriceAndStock[ hover ].Length > 3 )
+                    getHoveredItemExtraItemAmount = itemPriceAndStock[ hover ][ 3 ];
+                IClickableMenu.drawToolTip(Game1.spriteBatch, hoverText, boldTitleText,hover as Item, heldItem != null, -1, currency, getHoveredItemExtraItemIndex, getHoveredItemExtraItemAmount, (CraftingRecipe)null, hoverPrice);
             }
             if (heldItem != null)
                 heldItem.drawInMenu(Game1.spriteBatch, new Vector2((float)(Game1.getOldMouseX() + 8), (float)(Game1.getOldMouseY() + 8)), 1f);
