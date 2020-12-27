@@ -84,7 +84,6 @@ namespace SpaceCore
             }
             Log.trace("showEndOfNightStuff: " + showNightEndMethod);
 
-            doPrefix(typeof(HoeDirt), nameof(HoeDirt.dayUpdate), typeof(HoeDirtWinterFix));
             doPostfix(typeof(Utility), nameof(Utility.pickFarmEvent), typeof(NightlyFarmEventHook));
             doTranspiler(showNightEndMethod, typeof(ShowEndOfNightStuffHook).GetMethod(nameof(ShowEndOfNightStuffHook.Transpiler)));
             doPostfix(typeof(Farmer), nameof(Farmer.doneEating), typeof(DoneEatingHook));
