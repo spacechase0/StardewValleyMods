@@ -104,7 +104,7 @@ namespace Magic.Spells
                     {
                         try
                         {
-                            ICollection<ResourceClump> clumps = (NetCollection<ResourceClump>)loc.GetType().GetField("resourceClumps", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(loc);
+                            ICollection<ResourceClump> clumps = loc.resourceClumps; //(NetCollection<ResourceClump>)loc.GetType().GetField("resourceClumps", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(loc);
 
                             if (loc is Woods)
                                 clumps = (loc as Woods).stumps;
