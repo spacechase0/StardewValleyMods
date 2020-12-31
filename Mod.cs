@@ -58,7 +58,7 @@ namespace HybridCropEngine
             var hybridIndexByCrop = makeHybridIndex( hybrids );
             var cropsByIndex = makeCropIndex();
 
-            /*
+            //*
             foreach ( var hybrid in hybrids )
             {
                 Log.trace( "Hybrids: " + hybrid.Key + " " + hybrid.Value.BaseCropA + " " + hybrid.Value.BaseCropB + " " + hybrid.Value.Chance );
@@ -71,7 +71,7 @@ namespace HybridCropEngine
             {
                 Log.trace( "Crop Index: " + index.Key + " " + index.Value );
             }
-            */
+            //*/
 
             if ( config.ScanEverywhere )
             {
@@ -106,13 +106,12 @@ namespace HybridCropEngine
             var ret = new Dictionary< ulong, int >();
             foreach ( var entry in data )
             {
-                if ( entry.Value.BaseCropA == entry.Value.BaseCropB )
-                    continue;
-
                 ulong la = (ulong) entry.Value.BaseCropA;
                 ulong lb = (ulong) entry.Value.BaseCropB;
+
                 ret.Add( ( la << 32 ) | lb, entry.Key );
-                ret.Add( ( lb << 32 ) | la, entry.Key );
+                if ( entry.Value.BaseCropA != entry.Value.BaseCropB )
+                    ret.Add( ( lb << 32 ) | la, entry.Key );
             }
             return ret;
         }
@@ -176,7 +175,7 @@ namespace HybridCropEngine
                         }
                     }
 
-                    /*
+                    //*
                     string d = "";
                     foreach ( var dirt in dirts )
                         d += ( dirt == null ) ? "null" : dirt.ToString();
