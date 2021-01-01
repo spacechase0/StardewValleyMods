@@ -76,17 +76,140 @@ namespace MultiFertilizer
             return true;
         }
     }
+    
+    [HarmonyPatch(typeof(HoeDirt),nameof(HoeDirt.draw))]
+    public static class HoeDirtDrawPatchTranspiler
+    {
+        public static void DrawMultiFertilizer(SpriteBatch spriteBatch, Texture2D tex, Vector2 pos, Rectangle? sourceRect, Color col, float rot, Vector2 origin, float scale, SpriteEffects fx, float depth, HoeDirt __instance )
+        {
+            List<int> fertilizers = new List<int>();
+            if ( __instance.modData.ContainsKey( Mod.KEY_FERT ) )
+            {
+                int level = int.Parse( __instance.modData[ Mod.KEY_FERT ] );
+                int index = 0;
+                switch ( level )
+                {
+                    case 1: index = 368; break;
+                    case 2: index = 369; break;
+                    case 3: index = 919; break;
+                }
+                if ( index != 0 )
+                    fertilizers.Add( index );
+            }
+            if ( __instance.modData.ContainsKey( Mod.KEY_RETAIN ) )
+            {
+                int level = int.Parse( __instance.modData[ Mod.KEY_RETAIN ] );
+                int index = 0;
+                switch ( level )
+                {
+                    case 1: index = 370; break;
+                    case 2: index = 371; break;
+                    case 3: index = 920; break;
+                }
+                if ( index != 0 )
+                    fertilizers.Add( index );
+            }
+            if ( __instance.modData.ContainsKey( Mod.KEY_SPEED ) )
+            {
+                int level = int.Parse( __instance.modData[ Mod.KEY_SPEED ] );
+                int index = 0;
+                switch ( level )
+                {
+                    case 1: index = 465; break;
+                    case 2: index = 466; break;
+                    case 3: index = 918; break;
+                }
+                if ( index != 0 )
+                    fertilizers.Add( index );
+            }
+            foreach ( int fertilizer in fertilizers )
+            {
+                if ( fertilizer != 0 )
+                {
+                    int fertilizerIndex = 0;
+                    switch ( fertilizer )
+                    {
+                        case 369:
+                            fertilizerIndex = 1;
+                            break;
+                        case 370:
+                            fertilizerIndex = 3;
+                            break;
+                        case 371:
+                            fertilizerIndex = 4;
+                            break;
+                        case 920:
+                            fertilizerIndex = 5;
+                            break;
+                        case 465:
+                            fertilizerIndex = 6;
+                            break;
+                        case 466:
+                            fertilizerIndex = 7;
+                            break;
+                        case 918:
+                            fertilizerIndex = 8;
+                            break;
+                        case 919:
+                            fertilizerIndex = 2;
+                            break;
+                    }
+                    spriteBatch.Draw( Game1.mouseCursors, pos, new Rectangle( 173 + fertilizerIndex / 3 * 16, 462 + fertilizerIndex % 3 * 16, 16, 16 ), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1.9E-08f );
+                }
+            }
+        }
 
+        public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        {
+            bool foundFert = false;
+            bool stopCaring = false;
+
+            // When we find the the fertilizer reference, replace the next draw with our call
+            // Add the HoeDirt instance at the end of the argument list
+
+            var newInsns = new List<CodeInstruction>();
+            foreach ( var insn in insns )
+            {
+                if ( stopCaring )
+                {
+                    newInsns.Add( insn );
+                    continue;
+                }
+
+                if ( insn.opcode == OpCodes.Ldfld && ( insn.operand as FieldInfo ).Name == "fertilizer" )
+                {
+                    foundFert = true;
+                }
+                else if ( foundFert &&
+                          insn.opcode == OpCodes.Callvirt && ( insn.operand as MethodInfo ).Name == "Draw" )
+                {
+                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_0 ) );
+
+                    insn.opcode = OpCodes.Call;
+                    insn.operand = typeof( HoeDirtDrawPatchTranspiler ).GetMethod( "DrawMultiFertilizer" );
+                    newInsns.Add( insn );
+
+                    stopCaring = true;
+                }
+                else
+                    newInsns.Add( insn );
+            }
+
+            return newInsns;
+        }
+    }
+
+    /*
     [HarmonyPatch(typeof(HoeDirt), nameof(HoeDirt.draw))]
+    [HarmonyBefore( "Platonymous.TMXLoader" )]
     public static class HoeDirtDrawPatch
     {
         public static bool Prefix(HoeDirt __instance, SpriteBatch spriteBatch, Vector2 tileLocation )
         {
             int state = __instance.state.Value;
-            if ( state != 2 )
+            if ( state != HoeDirt.invisible )
             {
                 var texField = Mod.instance.Helper.Reflection.GetField<Texture2D>(__instance, "texture" );
-
                 if ( texField.GetValue() == null )
                 {
                     texField.SetValue( ( ( Game1.currentLocation.Name.Equals( "Mountain" ) || Game1.currentLocation.Name.Equals( "Mine" ) || ( Game1.currentLocation is MineShaft && ( Game1.currentLocation as MineShaft ).shouldShowDarkHoeDirt() ) || Game1.currentLocation is VolcanoDungeon ) ? HoeDirt.darkTexture : HoeDirt.lightTexture ) );
@@ -102,7 +225,8 @@ namespace MultiFertilizer
                 Vector2 drawPos = Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocation.X * 64f, tileLocation.Y * 64f));
                 var c = Mod.instance.Helper.Reflection.GetField<NetColor>( __instance, "c" ).GetValue();
                 spriteBatch.Draw( texField.GetValue(), drawPos, new Rectangle( sourceRectPosition % 4 * 16, sourceRectPosition / 4 * 16, 16, 16 ), c, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1E-08f );
-                if ( state == 1 )
+
+                if ( state == HoeDirt.watered )
                 {
                     spriteBatch.Draw( texField.GetValue(), drawPos, new Rectangle( wateredRectPosition % 4 * 16 + ( __instance.paddyWaterCheck( Game1.currentLocation, tileLocation ) ? 128 : 64 ), wateredRectPosition / 4 * 16, 16, 16 ), c, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1.2E-08f );
                 }
@@ -184,11 +308,11 @@ namespace MultiFertilizer
             }
             if ( __instance.crop != null )
             {
-                __instance.crop.draw( spriteBatch, tileLocation, ( state == 1 && ( int ) __instance.crop.currentPhase == 0 && __instance.crop.shouldDrawDarkWhenWatered() ) ? ( new Color( 180, 100, 200 ) * 1f ) : Color.White, Mod.instance.Helper.Reflection.GetField< float >( __instance, "shakeRotation" ).GetValue() );
+                __instance.crop.draw( spriteBatch, tileLocation, ( state == HoeDirt.watered && ( int ) __instance.crop.currentPhase == 0 && __instance.crop.shouldDrawDarkWhenWatered() ) ? ( new Color( 180, 100, 200 ) * 1f ) : Color.White, Mod.instance.Helper.Reflection.GetField< float >( __instance, "shakeRotation" ).GetValue() );
             }
             return false;
         }
-    }
+    }*/
 
     [HarmonyPatch( typeof( HoeDirt ), "applySpeedIncreases" )]
     public static class HoeDirtSpeedIncreasePatch
