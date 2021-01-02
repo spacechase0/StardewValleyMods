@@ -12,18 +12,22 @@ namespace FireArcadeGame.Objects
 {
     public class Floor : BaseObject
     {
-        private Texture2D tex;
+        private Texture2D texInside;
+        private Texture2D texOutside;
         private VertexBuffer buffer;
         private VertexBuffer bufferGlow;
         private int triCount;
         private int triCountGlow;
+        private bool outside;
 
-        public Floor( World world )
+        public Floor( World world, bool theOutside )
         :   base( world )
         {
-            tex = Game1.content.Load<Texture2D>( "Maps\\Mines\\volcano_dungeon" );
-            float tx = 16f / tex.Width;
-            float ty = 16f / tex.Height;
+            outside = theOutside;
+            texInside = Game1.content.Load<Texture2D>( "Maps\\Mines\\volcano_dungeon" );
+            texOutside = Game1.content.Load<Texture2D>( "Maps\\Mines\\volcano_caldera" );
+            float tx = 16f / texInside.Width;
+            float ty = 16f / texInside.Height;
             Vector2 t = new Vector2( tx, ty );
 
             var vertices = new List<VertexEverything>();
@@ -49,6 +53,19 @@ namespace FireArcadeGame.Objects
                             new Vector2( 0, 21 ) * t
                         }
                     };
+                    if ( outside )
+                    {
+                        float tx2 = 16f / texOutside.Width;
+                        float ty2 = 16f / texOutside.Height;
+                        Vector2 t2 = new Vector2( tx2, ty2 );
+                        texCoordMap[ 0 ] = new Vector2[]
+                        {
+                            new Vector2( 1, 3 ) * t2,
+                            new Vector2( 2, 3 ) * t2,
+                            new Vector2( 2, 4 ) * t2,
+                            new Vector2( 1, 4 ) * t2
+                        };
+                    }
                     int tile = ( int ) world.map.Floor[ ix, iy ];
 
 
@@ -132,7 +149,7 @@ namespace FireArcadeGame.Objects
             base.Render( device, projection, cam );
             //effect.LightingEnabled = true;
             effect.TextureEnabled = true;
-            effect.Texture = tex;
+            effect.Texture = outside ? texOutside : texInside;
             for ( int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e )
             {
                 var pass = effect.CurrentTechnique.Passes[ e ];
@@ -140,8 +157,9 @@ namespace FireArcadeGame.Objects
                 device.SetVertexBuffer( buffer );
                 device.DrawPrimitives( PrimitiveType.TriangleList, 0, triCount );
             }
-
+            
             effect.LightingEnabled = false;
+            effect.Texture = texInside;
             for ( int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e )
             {
                 var pass = effect.CurrentTechnique.Passes[ e ];

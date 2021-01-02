@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FireArcadeGame.Objects;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using System;
@@ -7,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FireArcadeGame.Objects
+namespace FireArcadeGame.Projectiles
 {
-    public abstract class BaseObject
+    public abstract class BaseProjectile
     {
         protected internal static BasicEffect effect = GetBasicEffect();
 
@@ -19,10 +20,17 @@ namespace FireArcadeGame.Objects
 
         public bool Dead = false;
 
-        public BaseObject( World world )
+        public virtual RectangleF BoundingBox { get; } = new RectangleF( 0, 0, 0.5f, 0.5f );
+
+        public virtual bool HurtsPlayer => true;
+        public virtual int Damage => 1;
+
+        public BaseProjectile( World world )
         {
             World = world;
         }
+
+        public virtual void Trigger( BaseObject target ) { }
 
         public virtual void Update() { }
 
@@ -31,17 +39,6 @@ namespace FireArcadeGame.Objects
             effect.Projection = projection;
             effect.View = cam.CreateViewMatrix();
             effect.World = MakeWorldMatrix();
-        }
-
-        public virtual void RenderOver( GraphicsDevice device, Matrix projection, Camera cam )
-        {
-            effect.Projection = projection;
-            effect.View = cam.CreateViewMatrix();
-            effect.World = MakeWorldMatrix();
-        }
-
-        public virtual void RenderUi( SpriteBatch b )
-        {
         }
 
         protected virtual Matrix MakeWorldMatrix()

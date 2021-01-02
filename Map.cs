@@ -21,6 +21,8 @@ namespace FireArcadeGame
 
     public class Map
     {
+        public Color Sky = Color.Black;
+
         public Vector2 Size { get; }
 
         public FloorTile[,] Floor { get; }
@@ -36,7 +38,19 @@ namespace FireArcadeGame
         public bool IsSolid( float x, float y )
         {
             int ix = ( int ) x, iy = ( int ) y;
+            if ( ix < 0 || iy < 0 || ix >= Size.X || iy >= Size.Y )
+                return true;
+
             return Floor[ ix, iy ] == FloorTile.Lava || Walls[ ix, iy ] != WallTile.Empty;
+        }
+
+        public bool IsAirSolid( float x, float y )
+        {
+            int ix = ( int ) x, iy = ( int ) y;
+            if ( ix < 0 || iy < 0 || ix >= Size.X || iy >= Size.Y )
+                return true;
+
+            return Walls[ ix, iy ] != WallTile.Empty;
         }
     }
 }

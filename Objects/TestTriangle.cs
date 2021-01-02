@@ -34,7 +34,7 @@ namespace FireArcadeGame.Objects
                 var pass = effect.CurrentTechnique.Passes[ e ];
                 pass.Apply();
                 device.SetVertexBuffer( buffer );
-                device.DrawPrimitives( PrimitiveType.TriangleList, 0, 3 );
+                device.DrawPrimitives( PrimitiveType.TriangleList, 0, 1 );
             }
         }
     }
