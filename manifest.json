@@ -1,7 +1,7 @@
 {
   "Name": "Theft of the Winter Star",
   "Author": "spacechase0, ParadigmNomad",
-  "Version": "1.0.0",
+  "Version": "1.0.1",
   "Description": "Someone stole the deocrations for the Feast of the Winter Star!",
   "UniqueID": "spacechase0.TheftOfTheWinterStar",
   "EntryDll": "TheftOfTheWinterStar.dll",
