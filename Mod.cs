@@ -1180,7 +1180,7 @@ namespace JsonAssets
             }
 
             var menu = e.NewMenu as ShopMenu;
-            bool hatMouse = menu != null && menu.potraitPersonDialogue == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4);
+            bool hatMouse = menu != null && menu.potraitPersonDialogue.Replace( "\n", "" ) == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, 304).Replace( "\n", "" );
             string portraitPerson = menu?.portraitPerson?.Name;
             if (portraitPerson == null && Game1.currentLocation?.Name == "Hospital")
                 portraitPerson = "Harvey";
@@ -1195,14 +1195,12 @@ namespace JsonAssets
 
             foreach ( var entry in shopData )
             {
-                if ( entry.PurchaseFrom != portraitPerson || ( entry.PurchaseFrom == "HatMouse" && !hatMouse ) )
+                if ( !( entry.PurchaseFrom == portraitPerson || ( entry.PurchaseFrom == "HatMouse" && hatMouse ) ) )
                     continue;
 
                 bool normalCond = true;
                 if ( entry.PurchaseRequirements != null && entry.PurchaseRequirements.Length > 0 && entry.PurchaseRequirements[ 0 ] != "" )
                 {
-                    foreach (var str in entry.PurchaseRequirements)
-                        Log.trace( "meow:" + str );
                     normalCond = epu.CheckConditions( entry.PurchaseRequirements );
                 }
                 if ( entry.Price == 0 || !normalCond && !(doAllSeeds && entry.ShowWithStocklist && portraitPerson == "Pierre") )
