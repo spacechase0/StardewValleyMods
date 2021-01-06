@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace BiggerCraftables.Patches
 {
     [HarmonyPatch( typeof( Utility ), nameof( Utility.playerCanPlaceItemHere ) )]
-    public static class UtilityPlacementPatche
+    public static class UtilityPlacementPatch
     {
         public static bool Prefix( GameLocation location,
             Item item,
@@ -37,19 +37,38 @@ namespace BiggerCraftables.Patches
                 __result = false;
                 return false;
             }
-            if ( Utility.isWithinTileWithLeeway( x, y, item, f ) || ( item is Wallpaper && location is DecoratableLocation ) || ( item is Furniture && location.CanPlaceThisFurnitureHere( item as Furniture ) ) )
+            bool withinRadius = false;
+            Vector2 tileLocation = new Vector2(x / 64, y / 64);
+            Vector2 playerTile = f.getTileLocation();
+            for ( int ix = (int) tileLocation.X; ix < (int) tileLocation.X + entry.Width; ++ix )
             {
-                Vector2 tileLocation = new Vector2(x / 64, y / 64);
+                for ( int iy = ( int ) tileLocation.Y; iy < ( int ) tileLocation.Y + entry.Length; ++iy )
+                {
+                    if ( Math.Abs( ( float ) ix - playerTile.X ) <= ( float ) 1 && Math.Abs( ( float ) iy - playerTile.Y ) <= ( float ) 1 )
+                    {
+                        withinRadius = true;
+                    }
+                }
+            }
+
+            if ( withinRadius || ( item is Wallpaper && location is DecoratableLocation ) || ( item is Furniture && location.CanPlaceThisFurnitureHere( item as Furniture ) ) )
+            {
                 if ( item.canBePlacedHere( location, tileLocation ) )
                 {
                     if ( !( ( StardewValley.Object ) item ).isPassable() )
                     {
                         foreach ( Farmer farmer in location.farmers )
                         {
-                            if ( farmer.GetBoundingBox().Intersects( new Microsoft.Xna.Framework.Rectangle( ( int ) tileLocation.X * 64, ( int ) tileLocation.Y * 64, 64, 64 ) ) )
+                            for ( int ix = ( int ) tileLocation.X; ix < ( int ) tileLocation.X + entry.Width; ++ix )
                             {
-                                __result = false;
-                                return false;
+                                for ( int iy = ( int ) tileLocation.Y; iy < ( int ) tileLocation.Y + entry.Length; ++iy )
+                                {
+                                    if ( farmer.GetBoundingBox().Intersects( new Microsoft.Xna.Framework.Rectangle( ix * 64, iy * 64, 64, 64 ) ) )
+                                    {
+                                        __result = false;
+                                        return false;
+                                    }
+                                }
                             }
                         }
                     }
