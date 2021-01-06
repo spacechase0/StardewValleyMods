@@ -1215,9 +1215,9 @@ namespace JsonAssets
                 {
                     price = ( int ) ( price * Game1.MasterPlayer.difficultyModifier );
                 }
-                if ( item is StardewValley.Object obj2 && obj2.IsRecipe && ( Game1.player.craftingRecipes.ContainsKey( obj2.Name ) || Game1.player.cookingRecipes.ContainsKey( obj2.Name ) ) )
+                if ( item is StardewValley.Object obj2 && obj2.IsRecipe && Game1.player.knowsRecipe( obj2.Name ) )
                     continue;
-                itemPriceAndStock.Add( item, new int[] { price, int.MaxValue } );
+                itemPriceAndStock.Add( item, new int[] { price, ( item is StardewValley.Object obj3 && obj3.IsRecipe ) ? 1 : int.MaxValue } );
             }
 
             ((Api)api).InvokeAddedItemsToShop();
