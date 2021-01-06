@@ -1207,7 +1207,6 @@ namespace JsonAssets
                     continue;
 
                 var item = entry.Object();
-                forSale.Add( item );
                 int price = entry.Price;
                 if ( !normalCond )
                     price = (int)( price * 1.5 );
@@ -1217,6 +1216,7 @@ namespace JsonAssets
                 }
                 if ( item is StardewValley.Object obj2 && obj2.IsRecipe && Game1.player.knowsRecipe( obj2.Name ) )
                     continue;
+                forSale.Add( item );
                 itemPriceAndStock.Add( item, new int[] { price, ( item is StardewValley.Object obj3 && obj3.IsRecipe ) ? 1 : int.MaxValue } );
             }
 
@@ -1570,11 +1570,27 @@ namespace JsonAssets
             fixIdDict2(Game1.player.archaeologyFound);
             fixIdDict2(Game1.player.fishCaught);
 
-            var bundleData = Game1.netWorldState.Value.BundleData;
-            var bundleData_ = new Dictionary< string, string >( Game1.netWorldState.Value.BundleData );
+            var bundleData = Game1.netWorldState.Value.GetUnlocalizedBundleData();
+            var bundleData_ = new Dictionary< string, string >( Game1.netWorldState.Value.GetUnlocalizedBundleData() );
+            
             foreach ( var entry in bundleData_ )
             {
-                string[] toks = entry.Value.Split('/');
+                List<string> toks = new List<string>(entry.Value.Split('/'));
+
+                // First, fix some stuff we broke in an earlier build by using .BundleData instead of the unlocalized version
+                // Copied from Game1.applySaveFix (case FixBotchedBundleData)
+                int temp = 0;
+                while ( toks.Count > 4 && !int.TryParse( toks[ toks.Count - 1 ], out temp ) )
+                {
+                    string last_value = toks[toks.Count - 1];
+                    if ( char.IsDigit( last_value[ last_value.Length - 1 ] ) && last_value.Contains( ":" ) && last_value.Contains( "\\" ) )
+                    {
+                        break;
+                    }
+                    toks.RemoveAt( toks.Count - 1 );
+                }
+
+                // Then actually fix IDs
                 string[] toks1 = toks[1].Split(' ');
                 if ( toks1[ 0 ] == "O" )
                 {
@@ -1629,6 +1645,8 @@ namespace JsonAssets
                 toks[ 2 ] = string.Join( " ", toks2 );
                 bundleData[ entry.Key ] = string.Join( "/", toks );
             }
+            // Fix bad bundle data
+
             Game1.netWorldState.Value.SetBundleData( bundleData );
 
             api.InvokeIdsFixed();
