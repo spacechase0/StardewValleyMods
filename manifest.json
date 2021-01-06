@@ -1,7 +1,7 @@
 {
   "Name": "Generic Mod Config Menu",
   "Author": "spacechase0",
-  "Version": "1.2.0",
+  "Version": "1.2.1",
   "Description": "...",
   "UniqueID": "spacechase0.GenericModConfigMenu",
   "EntryDll": "GenericModConfigMenu.dll",
