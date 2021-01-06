@@ -1692,6 +1692,12 @@ namespace JsonAssets
 
             if (obj is Chest chest)
             {
+                if ( fixId( oldBigCraftableIds, bigCraftableIds, chest.parentSheetIndex, origBigCraftables ) )
+                    chest.ParentSheetIndex = 130;
+                else
+                {
+                    chest.startingLidFrame.Value = chest.ParentSheetIndex + 1;
+                }
                 fixItemList(chest.items);
             }
             else if (obj is IndoorPot pot)
