@@ -107,8 +107,15 @@ namespace SpaceCore.Overrides
             if ( SpaceCore.instance.Helper.ModRegistry.IsLoaded( "Platonymous.Toolkit" ) )
             {
                 Log.debug( "Letting PyTK know we changed the serializers..." );
-                var pytk = Type.GetType( "PyTK.PyTKMod, PyTK" );
-                pytk.GetMethod( "SerializersReinitialized" ).Invoke( null, new object[] { null } );
+                try
+                {
+                    var pytk = Type.GetType( "PyTK.PyTKMod, PyTK" );
+                    pytk.GetMethod( "SerializersReinitialized" ).Invoke( null, new object[] { null } );
+                }
+                catch ( Exception e )
+                {
+                    Log.trace( "Exception, probably because PyTK hasn't released yet: " + e );
+                }
             }
         }
 
@@ -123,8 +130,15 @@ namespace SpaceCore.Overrides
             if ( SpaceCore.instance.Helper.ModRegistry.IsLoaded( "Platonymous.Toolkit" ) )
             {
                 Log.debug( "Letting PyTK know we changed the serializers..." );
-                var pytk = Type.GetType( "PyTK.PyTKMod, PyTK" );
-                pytk.GetMethod( "SerializersReinitialized" ).Invoke( null, new object[] { s } );
+                try
+                {
+                    var pytk = Type.GetType( "PyTK.PyTKMod, PyTK" );
+                    pytk.GetMethod( "SerializersReinitialized" ).Invoke( null, new object[] { null } );
+                }
+                catch ( Exception e )
+                {
+                    Log.trace( "Exception, probably because PyTK hasn't released yet: " + e );
+                }
             }
 
             return s;

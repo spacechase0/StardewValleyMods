@@ -164,7 +164,18 @@ namespace SpaceCore
             {
                 extendedTextures.Remove(asset.Value.BaseTileSheet);
                 asset.Value.BaseTileSheet = Game1.content.Load<Texture2D>(asset.Key);
-                extendedTextures.Add(asset.Value.BaseTileSheet, asset.Value);
+                if ( asset.Value.BaseTileSheet == null )
+                {
+                    Log.error( "WHAT? null " + asset.Key );
+                }
+                else if ( !extendedTextures.ContainsKey( asset.Value.BaseTileSheet ) )
+                {
+                    extendedTextures.Add( asset.Value.BaseTileSheet, asset.Value );
+                }
+                else
+                {
+                    extendedTextures[ asset.Value.BaseTileSheet ] = asset.Value;
+                }
             }
         }
 
