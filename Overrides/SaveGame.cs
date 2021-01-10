@@ -106,7 +106,7 @@ namespace SpaceCore.Overrides
 
             if ( SpaceCore.instance.Helper.ModRegistry.IsLoaded( "Platonymous.Toolkit" ) )
             {
-                Log.debug( "Letting PyTK know we changed the serializers..." );
+                //Log.trace( "Letting PyTK know we changed the serializers..." );
                 try
                 {
                     var pytk = Type.GetType( "PyTK.PyTKMod, PyTK" );
