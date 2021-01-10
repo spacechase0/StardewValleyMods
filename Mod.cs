@@ -1357,7 +1357,7 @@ namespace JsonAssets
             }
         }
 
-        internal const int StartingObjectId = 2000;
+        internal const int StartingObjectId = 3000;
         internal const int StartingCropId = 100;
         internal const int StartingFruitTreeId = 10;
         internal const int StartingBigCraftableId = 300;
