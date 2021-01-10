@@ -1180,7 +1180,7 @@ namespace JsonAssets
             }
 
             var menu = e.NewMenu as ShopMenu;
-            bool hatMouse = menu != null && menu.potraitPersonDialogue.Replace( "\n", "" ) == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, 304).Replace( "\n", "" );
+            bool hatMouse = menu != null && menu?.potraitPersonDialogue?.Replace( "\n", "" ) == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, 304).Replace( "\n", "" );
             string portraitPerson = menu?.portraitPerson?.Name;
             if (portraitPerson == null && Game1.currentLocation?.Name == "Hospital")
                 portraitPerson = "Harvey";
