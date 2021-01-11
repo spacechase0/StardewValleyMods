@@ -49,7 +49,10 @@ namespace JsonAssets
             instance = this;
             Log.Monitor = Monitor;
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
+            helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+
+            helper.ConsoleCommands.Add( "list_ja", "...", OnListCommand );
+            helper.ConsoleCommands.Add( "player_addja", "...", OnAddCommand );
 
             harmony = HarmonyInstance.Create( "spacechase0.JsonAssets" );
             harmony.PatchAll();
@@ -57,10 +60,55 @@ namespace JsonAssets
             LoadContentPacks();
         }
 
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             epu = Helper.ModRegistry.GetApi<ExpandedPreconditionsUtilityAPI>( "Cherry.ExpandedPreconditionsUtility" );
             epu.Initialize( false, ModManifest.UniqueID );
+        }
+
+        private void OnListCommand( string cmd, string[] args )
+        {
+            string output = "";
+            foreach ( var cp in contentPacks )
+            {
+                output += cp.Key + ":\n";
+                foreach ( var entry in cp.Value.items )
+                {
+                    output += "\t" + entry.Key + "\n";
+                }
+                output += "\n";
+            }
+
+            Log.info( output );
+        }
+
+        private void OnAddCommand( string cmd, string[] args )
+        {
+            if ( args.Length < 1 )
+            {
+                Log.info( "Usage: player_addja <mod.id/ItemId> [amount]" );
+                return;
+            }
+
+            var data = Find( args[ 0 ] );
+            if ( data == null )
+            {
+                Log.error( $"Item '{args[ 0 ]}' not found." );
+                return;
+            }
+
+            var item = data.ToItem();
+            if ( item == null )
+            {
+                Log.error( $"The item '{args[ 0 ]}' has no inventory form." );
+                return;
+            }
+            if ( args.Length >= 2 )
+            {
+                item.Stack = int.Parse( args[ 1 ] );
+            }
+
+            Game1.player.addItemByMenuIfNecessary( item );
         }
 
         private void LoadContentPacks()
@@ -68,7 +116,8 @@ namespace JsonAssets
             foreach ( var cp in Helper.ContentPacks.GetOwned() )
             {
                 Log.debug( $"Loading content pack \"{cp.Manifest.Name}\"..." );
-                if ( !cp.Manifest.ExtraFields.ContainsKey( "JAFormatVersion" ) ||
+                if ( cp.Manifest.ExtraFields == null ||
+                     !cp.Manifest.ExtraFields.ContainsKey( "JAFormatVersion" ) ||
                      !int.TryParse( cp.Manifest.ExtraFields[ "JAFormatVersion" ].ToString(), out int ver ) ||
                      ver < 2 )
                 {

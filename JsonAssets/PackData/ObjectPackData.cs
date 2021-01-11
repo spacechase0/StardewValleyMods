@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using JsonAssets.Game;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using StardewModdingAPI;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +50,8 @@ namespace JsonAssets.PackData
             Greens = StardewValley.Object.GreensCategory,
         }
         public VanillaCategory Category { get; set; }
-        public string CategoryTextOverride => parent.smapiPack.Translation.Get( $"object.{ID}.category" )?.ToString();
+        public string CategoryTextOverride => parent.smapiPack.Translation.Get( $"object.{ID}.category" ).UsePlaceholder( false ).ToString();
+
         public Color? CategoryColorOverride { get; set; } = null;
 
         public int Edibility { get; set; } = StardewValley.Object.inedible;
@@ -74,15 +77,27 @@ namespace JsonAssets.PackData
         public int? SellPrice { get; set; } = 0;
         public bool CanTrash { get; set; } = true;
 
+        public class GiftTasteOverrideEntry
+        {
+            public int Amount;
+            public string NormalTextTranslationKey;
+            public string BirthdayTextTranslationKey;
+            public int? EmoteId;
+        }
         public bool IsGiftable { get; set; } = true;
         public int UniversalGiftTaste { get; set; } = 0;
-        public Dictionary<string, int> GiftTasteOverride = new Dictionary<string, int>();
+        public Dictionary<string, GiftTasteOverrideEntry> GiftTasteOverride = new Dictionary<string, GiftTasteOverrideEntry>();
 
         public List<string> ContextTags { get; set; } = new List<string>();
 
         public override void OnDisabled()
         {
             throw new NotImplementedException();
+        }
+
+        public override Item ToItem()
+        {
+            return new CustomObject( this );
         }
     }
 }

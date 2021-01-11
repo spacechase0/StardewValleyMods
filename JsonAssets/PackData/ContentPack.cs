@@ -14,7 +14,7 @@ namespace JsonAssets.PackData
 
         internal Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
-        private Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
+        internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
 
         public ContentPack( IContentPack pack )
         {

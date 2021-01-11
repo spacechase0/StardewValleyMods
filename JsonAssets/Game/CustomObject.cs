@@ -252,5 +252,12 @@ namespace JsonAssets.Game
         {
             return Data.SellPrice ?? 0;
         }
+
+        protected override void _PopulateContextTags( HashSet<string> tags )
+        {
+            base._PopulateContextTags( tags );
+            foreach ( var tag in Data.ContextTags )
+                tags.Add( tag );
+        }
     }
 }

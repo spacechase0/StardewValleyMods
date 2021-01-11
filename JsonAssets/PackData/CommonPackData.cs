@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StardewValley;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace JsonAssets.PackData
         /// Conditions for if an item is enabled.
         /// If not met, they will be removed from the game.
         /// This is checked at the beginning of each day.
+        /// These are ExpandedPreconditionsUtility conditions.
         /// </summary>
         public string[] EnableConditions { get; set; }
 
@@ -32,5 +34,11 @@ namespace JsonAssets.PackData
         /// A sub-class should remove itself from the game when this is run, taking into account RemoveAllTraceswhenDisabled.
         /// </summary>
         public abstract void OnDisabled();
+
+        /// <summary>
+        /// Returns the SDV-Item form of this item, if it exists.
+        /// </summary>
+        /// <returns>The item as a Stardew Valley Item.</returns>
+        public abstract Item ToItem();
     }
 }
