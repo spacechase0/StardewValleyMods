@@ -49,7 +49,7 @@ namespace JsonAssets.PackData
             AnimalGoods = StardewValley.Object.sellAtPierresAndMarnies,
             Greens = StardewValley.Object.GreensCategory,
         }
-        public VanillaCategory Category { get; set; }
+        public VanillaCategory Category { get; set; } = VanillaCategory.Junk;
         public string CategoryTextOverride => parent.smapiPack.Translation.Get( $"object.{ID}.category" ).UsePlaceholder( false ).ToString();
 
         public Color? CategoryColorOverride { get; set; } = null;

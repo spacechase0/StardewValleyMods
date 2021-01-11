@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Harmony;
+using JsonAssets.Game;
 using JsonAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -28,7 +29,7 @@ using SObject = StardewValley.Object;
 
 namespace JsonAssets
 {
-    public class Mod : StardewModdingAPI.Mod
+    public class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
         public static Mod instance;
         private ExpandedPreconditionsUtilityAPI epu;
@@ -64,6 +65,9 @@ namespace JsonAssets
         {
             epu = Helper.ModRegistry.GetApi<ExpandedPreconditionsUtilityAPI>( "Cherry.ExpandedPreconditionsUtility" );
             epu.Initialize( false, ModManifest.UniqueID );
+
+            var spacecore = Helper.ModRegistry.GetApi<SpaceCoreAPI>( "spacechase0.SpaceCore" );
+            spacecore.RegisterSerializerType( typeof( CustomObject ) );
         }
 
         private void OnListCommand( string cmd, string[] args )
@@ -127,6 +131,16 @@ namespace JsonAssets
                 var pack = new ContentPack( cp );
                 contentPacks.Add( cp.Manifest.UniqueID, pack );
             }
+        }
+
+        public bool CanEdit<T>( IAssetInfo asset )
+        {
+            return asset.AssetNameEquals( "Data\\ObjectInformation" );
+        }
+
+        public void Edit<T>( IAssetData asset )
+        {
+            asset.AsDictionary<int, string>().Data.Add( 1720, "JA Dummy Object/0/0/Basic -20/JA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0" );
         }
     }
 }

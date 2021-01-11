@@ -27,6 +27,8 @@ namespace JsonAssets.Game
         [XmlIgnore]
         public ObjectPackData Data => Mod.Find( FullId ) as ObjectPackData;
 
+        public override string DisplayName { get => loadDisplayName(); set { } }
+
         public CustomObject() { }
         public CustomObject( ObjectPackData obj )
         {
@@ -126,6 +128,22 @@ namespace JsonAssets.Game
             return base.staminaRecoveredOnConsumption();
         }
 
+        public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
+        {
+            base.drawTooltip( spriteBatch, ref x, ref y, font, alpha, overrideText );
+            string str = "Mod: " + Data.parent.smapiPack.Manifest.Name;
+            Utility.drawTextWithShadow( spriteBatch, Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ), font, new Vector2( x + 16, y + 16 + 4 ), new Color( 100, 100, 100 ) );
+            y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
+        }
+
+        public override Point getExtraSpaceNeededForTooltipSpecialIcons( SpriteFont font, int minWidth, int horizontalBuffer, int startingHeight, StringBuilder descriptionText, string boldTitleText, int moneyAmountToDisplayAtBottom )
+        {
+            var ret = base.getExtraSpaceNeededForTooltipSpecialIcons(font, minWidth, horizontalBuffer, startingHeight, descriptionText, boldTitleText, moneyAmountToDisplayAtBottom );
+            ret.Y = startingHeight;
+            ret.Y += 48;
+            return ret;
+        }
+
         public override void drawWhenHeld( SpriteBatch spriteBatch, Vector2 objectPosition, Farmer f )
         {
             var tex = Data.parent.GetTexture( Data.Texture, 16, 16 );
@@ -223,9 +241,17 @@ namespace JsonAssets.Game
             var ret = new CustomObject( Data );
             // TODO: All the other fields objects does??
             ret.Quality = Quality;
-            ret.Stack = Stack;
+            ret.Stack = 1;
             ret._GetOneFrom( this );
             return ret;
+        }
+
+        public override bool canStackWith( ISalable other )
+        {
+            if ( !( other is CustomObject obj ) )
+                return false;
+
+            return obj.FullId == FullId && base.canStackWith( other );
         }
 
         public override bool canBePlacedHere( GameLocation l, Vector2 tile )
