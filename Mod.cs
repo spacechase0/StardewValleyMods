@@ -63,6 +63,16 @@ namespace ContentPatcherAnimations
             Helper.Events.GameLoop.DayStarted += (s, e) => findTargetsCounter = 1;
 
             helper.Content.AssetEditors.Add( watcher = new WatchForUpdatesAssetEditor() );
+
+            helper.ConsoleCommands.Add( "cpa", "...", OnCommand );
+        }
+
+        private void OnCommand( string cmd, string[] args )
+        {
+            if ( args[0] == "reload" )
+            {
+                CollectPatches();
+            }
         }
 
         private void UpdateAnimations(object sender, UpdateTickedEventArgs e)
@@ -148,6 +158,8 @@ namespace ContentPatcherAnimations
 
         private void CollectPatches()
         {
+            animatedPatches.Clear();
+            findTargetsQueue.Clear();
             foreach (var pack in contentPatcher.Helper.ContentPacks.GetOwned())
             {
                 var patches = pack.ReadJsonFile<PatchList>("content.json");
