@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Displays</AssemblyName>
+    <RootNamespace>Displays</RootNamespace>
+    <Version>1.0.0</Version>
+    <TargetFramework>net452</TargetFramework>
+    <Platforms>x86</Platforms>
+    <PlatformTarget>x86</PlatformTarget>
+
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="assets\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SpaceCore_SDV\SpaceCore.csproj">
+      <Private>false</Private>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+    </ProjectReference>
+  </ItemGroup>
+
+  <Import Project="$(SolutionDir)\common.targets" />
+  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
+
+</Project>
