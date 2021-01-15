@@ -54,60 +54,51 @@ namespace CustomNPCFixes
 
         private void spawnNpcs()
         {
-            List<NPC> pooledList = Utility.getPooledList();
+            List<NPC> allCharacters = Utility.getPooledList();
             try
             {
-                Utility.getAllCharacters(pooledList);
-                Dictionary<string, string> dictionary = Game1.content.Load<Dictionary<string, string>>("Data\\NPCDispositions");
-                foreach (string key in dictionary.Keys)
+                Utility.getAllCharacters( allCharacters );
+                Dictionary<string, string> NPCDispositions = Game1.content.Load<Dictionary<string, string>>("Data\\NPCDispositions");
+                foreach ( string s in NPCDispositions.Keys )
                 {
-                    bool flag = false;
-                    if (!(key == "Kent") || Game1.player.friendshipData.ContainsKey(key))
+                    bool found = false;
+                    if ( ( s == "Kent" && Game1.year <= 1 ) || ( s == "Leo" && !Game1.MasterPlayer.hasOrWillReceiveMail( "addedParrotBoy" ) ) )
                     {
-                        foreach (NPC npc in pooledList)
+                        continue;
+                    }
+                    foreach ( NPC n2 in allCharacters )
+                    {
+                        if ( !n2.isVillager() || !n2.Name.Equals( s ) )
                         {
-                            if (npc.isVillager() && npc.Name.Equals(key))
+                            continue;
+                        }
+                        found = true;
+                        if ( ( bool ) n2.datable && n2.getSpouse() == null )
+                        {
+                            string defaultMap = NPCDispositions[s].Split('/')[10].Split(' ')[0];
+                            if ( n2.DefaultMap != defaultMap && ( n2.DefaultMap.ToLower().Contains( "cabin" ) || n2.DefaultMap.Equals( "FarmHouse" ) ) )
                             {
-                                flag = true;
-                                if ((bool)((NetFieldBase<bool, NetBool>)npc.datable))
-                                {
-                                    if (npc.getSpouse() == null)
-                                    {
-                                        string str = dictionary[key].Split('/')[10].Split(' ')[0];
-                                        if (npc.DefaultMap != str)
-                                        {
-                                            if (!npc.DefaultMap.ToLower().Contains("cabin"))
-                                            {
-                                                if (!npc.DefaultMap.Equals("FarmHouse"))
-                                                    break;
-                                            }
-                                            Console.WriteLine("Fixing " + npc.Name + " who was improperly divorced and left stranded");
-                                            npc.PerformDivorce();
-                                            break;
-                                        }
-                                        break;
-                                    }
-                                    break;
-                                }
-                                break;
+                                Console.WriteLine( "Fixing " + n2.Name + " who was improperly divorced and left stranded" );
+                                n2.PerformDivorce();
                             }
                         }
-                        if (!flag)
+                        break;
+                    }
+                    if ( !found )
+                    {
+                        try
                         {
-                            try
-                            {
-                                Game1.getLocationFromName(dictionary[key].Split('/')[10].Split(' ')[0]).addCharacter(new NPC(new AnimatedSprite("Characters\\" + key, 0, 16, 32), new Vector2((float)(Convert.ToInt32(dictionary[key].Split('/')[10].Split(' ')[1]) * 64), (float)(Convert.ToInt32(dictionary[key].Split('/')[10].Split(' ')[2]) * 64)), dictionary[key].Split('/')[10].Split(' ')[0], 0, key, (Dictionary<int, int[]>)null, Game1.content.Load<Texture2D>("Portraits\\" + key), false, (string)null));
-                            }
-                            catch (Exception ex)
-                            {
-                            }
+                            Game1.getLocationFromName( NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 0 ] ).addCharacter( new NPC( new AnimatedSprite( "Characters\\" + NPC.getTextureNameForCharacter( s ), 0, 16, 32 ), new Vector2( Convert.ToInt32( NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 1 ] ) * 64, Convert.ToInt32( NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 2 ] ) * 64 ), NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 0 ], 0, s, null, Game1.content.Load<Texture2D>( "Portraits\\" + NPC.getTextureNameForCharacter( s ) ), eventActor: false ) );
+                        }
+                        catch ( Exception )
+                        {
                         }
                     }
                 }
             }
             finally
             {
-                Utility.returnPooledList(pooledList);
+                Utility.returnPooledList( allCharacters );
             }
         }
 
