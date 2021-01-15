@@ -1,7 +1,7 @@
 {
   "Name": "Custom NPC Fixes",
   "Author": "spacechase0",
-  "Version": "1.2.1",
+  "Version": "1.2.2",
   "Description": "Fixes for Custom NPCs.",
   "UniqueID": "spacechase0.CustomNPCFixes",
   "EntryDll": "CustomNPCFixes.dll",
