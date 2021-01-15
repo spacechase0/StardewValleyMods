@@ -1053,6 +1053,8 @@ namespace JsonAssets
 
             content1.InvalidateUsed();
             Helper.Content.AssetEditors.Remove(content2);
+
+            locationsFixedAlready.Clear();
         }
 
         private void onBlankSave( object sender, EventArgs e )
@@ -1519,6 +1521,7 @@ namespace JsonAssets
             return ret;
         }
 
+        private HashSet< string > locationsFixedAlready = new HashSet<string>();
         private void fixIdsEverywhere()
         {
             fixItemList(Game1.player.Items);
@@ -1686,7 +1689,7 @@ namespace JsonAssets
                 /*else
                     boots.reloadData();*/
             }
-            else if (!(item is StardewValley.Object))
+            else if (!(item is SObject))
                 return false;
             var obj = item as StardewValley.Object;
 
@@ -1728,7 +1731,7 @@ namespace JsonAssets
                 else
                     fence.ParentSheetIndex = -fence.whichType.Value;
             }
-            else
+            else if ( obj.GetType() == typeof( SObject ) )
             {
                 if (!obj.bigCraftable.Value)
                 {
@@ -1761,6 +1764,12 @@ namespace JsonAssets
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
         internal void fixLocation(GameLocation loc)
         {
+            // TMXL fixes things before the main ID fixing, then adds them to the main location list
+            // So things would get double fixed without this.
+            if ( locationsFixedAlready.Contains( loc.NameOrUniqueName ) )
+                return;
+            locationsFixedAlready.Add( loc.NameOrUniqueName );
+
             if (loc is FarmHouse fh)
             {
 #pragma warning disable AvoidImplicitNetFieldCast
@@ -1906,7 +1915,7 @@ namespace JsonAssets
                     if (!fixItem(sign.displayItem.Value))
                         sign.displayItem.Value = null;
                 }
-                else
+                else if ( obj.GetType() == typeof( SObject ) )
                 {
                     if (!obj.bigCraftable.Value)
                     {
@@ -2029,8 +2038,11 @@ namespace JsonAssets
             for (int i = 0; i < items.Count; ++i)
             {
                 var item = items[i];
-                if (item is SObject obj)
+                if ( item == null )
+                    continue;
+                if (item.GetType() == typeof( SObject ) )
                 {
+                    var obj = item as SObject;
                     if (!obj.bigCraftable.Value)
                     {
                         if (fixId(oldObjectIds, objectIds, obj.parentSheetIndex, origObjects))
