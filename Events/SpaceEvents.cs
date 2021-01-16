@@ -76,7 +76,7 @@ namespace SpaceCore.Events
         internal static void InvokeOnItemEaten(Farmer farmer)
         {
             Log.trace("Event: OnItemEaten");
-            if (OnItemEaten == null)
+            if (OnItemEaten == null || !farmer.IsLocalPlayer)
                 return;
             Util.invokeEvent("SpaceEvents.OnItemEaten", OnItemEaten.GetInvocationList(), farmer);
         }
@@ -84,7 +84,7 @@ namespace SpaceCore.Events
         internal static bool InvokeActionActivated(Farmer who, string action, xTile.Dimensions.Location pos)
         {
             Log.trace("Event: ActionActivated");
-            if (ActionActivated == null)
+            if (ActionActivated == null || !who.IsLocalPlayer )
                 return false;
             var arg = new EventArgsAction(false, action, pos);
             return Util.invokeEventCancelable("SpaceEvents.ActionActivated", ActionActivated.GetInvocationList(), who, arg);
@@ -93,7 +93,7 @@ namespace SpaceCore.Events
         internal static bool InvokeTouchActionActivated(Farmer who, string action, xTile.Dimensions.Location pos)
         {
             Log.trace("Event: TouchActionActivated");
-            if (TouchActionActivated == null)
+            if (TouchActionActivated == null || !farmer.IsLocalPlayer )
                 return false;
             var arg = new EventArgsAction(true, action, pos);
             return Util.invokeEventCancelable("SpaceEvents.TouchActionActivated", TouchActionActivated.GetInvocationList(), who, arg);
