@@ -1987,8 +1987,8 @@ namespace JsonAssets
                     }
                 }
 
-            if (loc is DecoratableLocation decoLoc)
-                foreach (var furniture in decoLoc.furniture)
+            //if (loc is DecoratableLocation decoLoc)
+                foreach (var furniture in loc.furniture)
                 {
                     if (furniture.heldObject.Value != null)
                     {
