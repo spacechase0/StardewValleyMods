@@ -48,9 +48,10 @@ namespace JsonAssets
             Log.Monitor = Monitor;
 
             helper.ConsoleCommands.Add( "ja_summary", "Summary of JA ids", doCommands );
+            helper.ConsoleCommands.Add( "ja_unfix", "Unfix IDs once, in case IDs were double fixed.", doCommands );
 
             helper.Events.Display.MenuChanged += onMenuChanged;
-            helper.Events.GameLoop.Saved += onSaved;
+            helper.Events.GameLoop.Saving += onSaving;
             helper.Events.Player.InventoryChanged += onInventoryChanged;
             helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.GameLoop.SaveCreated += onCreated;
@@ -224,6 +225,11 @@ namespace JsonAssets
                 PrintIdMapping( "Hat IDs", hats );
                 PrintIdMapping( "Weapon IDs", weapons );
                 PrintIdMapping( "Clothing IDs", clothings );
+            }
+            else if ( cmd == "ja_unfix" )
+            {
+                locationsFixedAlready.Clear();
+                fixIdsEverywhere( reverse: true );
             }
         }
 
@@ -1320,7 +1326,7 @@ namespace JsonAssets
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaved(object sender, SavedEventArgs e)
+        private void onSaving(object sender, SavingEventArgs e)
         {
             if (!Game1.IsMasterGame)
                 return;
@@ -1524,9 +1530,16 @@ namespace JsonAssets
             return ret;
         }
 
+        private bool reverseFixing = false;
         private HashSet< string > locationsFixedAlready = new HashSet<string>();
-        private void fixIdsEverywhere()
+        private void fixIdsEverywhere( bool reverse = false )
         {
+            reverseFixing = reverse;
+            if ( reverseFixing )
+            {
+                Log.info( "Reversing!" );
+            }
+
             fixItemList(Game1.player.Items);
             fixItemList( Game1.player.team.junimoChest );
 #pragma warning disable AvoidNetField
@@ -1655,7 +1668,9 @@ namespace JsonAssets
 
             Game1.netWorldState.Value.SetBundleData( bundleData );
 
-            api.InvokeIdsFixed();
+            if ( !reverseFixing )
+                api.InvokeIdsFixed();
+            reverseFixing = false;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
@@ -1687,7 +1702,7 @@ namespace JsonAssets
             }
             else if (item is Boots boots)
             {
-                if (fixId(oldObjectIds, objectIds, boots.parentSheetIndex, origObjects))
+                if (fixId(oldObjectIds, objectIds, boots.indexInTileSheet, origObjects))
                     return true;
                 /*else
                     boots.reloadData();*/
@@ -2115,7 +2130,7 @@ namespace JsonAssets
                 }
                 else if (item is Boots boots)
                 {
-                    if (fixId(oldObjectIds, objectIds, boots.parentSheetIndex, origObjects))
+                    if (fixId(oldObjectIds, objectIds, boots.indexInTileSheet, origObjects))
                         items[i] = null;
                     /*else
                         boots.reloadData();*/
@@ -2197,24 +2212,48 @@ namespace JsonAssets
             if (origData.ContainsKey(id.Value))
                 return false;
 
-            if (oldIds.Values.Contains(id.Value))
+            if ( reverseFixing )
             {
-                int id_ = id.Value;
-                var key = oldIds.FirstOrDefault(x => x.Value == id_).Key;
+                if ( newIds.Values.Contains( id.Value ) )
+                {
+                    int id_ = id.Value;
+                    var key = newIds.FirstOrDefault( x => x.Value == id_ ).Key;
 
-                if (newIds.ContainsKey(key))
-                {
-                    id.Value = newIds[key];
-                    Log.verbose("Changing ID: " + key + " from ID " + id_ + " to " + id.Value);
-                    return false;
+                    if ( oldIds.ContainsKey( key ) )
+                    {
+                        id.Value = oldIds[ key ];
+                        Log.verbose( "Changing ID: " + key + " from ID " + id_ + " to " + id.Value );
+                        return false;
+                    }
+                    else
+                    {
+                        Log.warn( "New item " + key + " with ID " + id_ + "!" );
+                        return false;
+                    }
                 }
-                else
-                {
-                    Log.trace( "Deleting missing item " + key + " with old ID " + id_);
-                    return true;
-                }
+                else return false;
             }
-            else return false;
+            else
+            {
+                if (oldIds.Values.Contains(id.Value))
+                {
+                    int id_ = id.Value;
+                    var key = oldIds.FirstOrDefault(x => x.Value == id_).Key;
+
+                    if (newIds.ContainsKey(key))
+                    {
+                        id.Value = newIds[key];
+                        Log.verbose("Changing ID: " + key + " from ID " + id_ + " to " + id.Value);
+                        return false;
+                    }
+                    else
+                    {
+                        Log.trace( "Deleting missing item " + key + " with old ID " + id_);
+                        return true;
+                    }
+                }
+                else return false;
+            }
         }
 
         // Return true if the item should be deleted, false otherwise.
@@ -2224,24 +2263,48 @@ namespace JsonAssets
             if ( origData.ContainsKey( id ) )
                 return false;
 
-            if ( oldIds.Values.Contains( id ) )
+            if ( reverseFixing )
             {
-                int id_ = id;
-                var key = oldIds.FirstOrDefault(x => x.Value == id_).Key;
+                if ( newIds.Values.Contains( id ) )
+                {
+                    int id_ = id;
+                    var key = newIds.FirstOrDefault( xTile => xTile.Value == id_ ).Key;
 
-                if ( newIds.ContainsKey( key ) )
-                {
-                    id = newIds[ key ];
-                    Log.verbose( "Changing ID: " + key + " from ID " + id_ + " to " + id );
-                    return false;
+                    if ( oldIds.ContainsKey( key ) )
+                    {
+                        id = oldIds[ key ];
+                        Log.trace( "Changing ID: " + key + " from ID " + id_ + " to " + id );
+                        return false;
+                    }
+                    else
+                    {
+                        Log.warn( "New item " + key + " with ID " + id_ + "!" );
+                        return false;
+                    }
                 }
-                else
-                {
-                    Log.trace( "Deleting missing item " + key + " with old ID " + id_ );
-                    return true;
-                }
+                else return false;
             }
-            else return false;
+            else
+            {
+                if ( oldIds.Values.Contains( id ) )
+                {
+                    int id_ = id;
+                    var key = oldIds.FirstOrDefault(x => x.Value == id_).Key;
+
+                    if ( newIds.ContainsKey( key ) )
+                    {
+                        id = newIds[ key ];
+                        Log.verbose( "Changing ID: " + key + " from ID " + id_ + " to " + id );
+                        return false;
+                    }
+                    else
+                    {
+                        Log.trace( "Deleting missing item " + key + " with old ID " + id_ );
+                        return true;
+                    }
+                }
+                else return false;
+            }
         }
     }
 }
