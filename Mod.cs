@@ -163,9 +163,12 @@ namespace JsonAssets
         private Dictionary<string, KeyValuePair<int, int>> MakeIdMapping(IDictionary<string, int> oldIds, IDictionary<string, int> newIds )
         {
             var ret = new Dictionary<string, KeyValuePair< int, int > >();
-            foreach ( var oldId in oldIds )
+            if ( oldIds != null )
             {
-                ret.Add( oldId.Key, new KeyValuePair<int, int>( oldId.Value, -1 ) );
+                foreach ( var oldId in oldIds )
+                {
+                    ret.Add( oldId.Key, new KeyValuePair<int, int>( oldId.Value, -1 ) );
+                }
             }
             foreach ( var newId in newIds )
             {
