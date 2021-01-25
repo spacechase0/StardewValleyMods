@@ -1,0 +1,14 @@
+{
+  "Name": "PreexistingRelationship",
+  "Author": "spacechase0",
+  "Version": "1.0.0",
+  "Description": "...",
+  "UniqueID": "spacechase0.PreexistingRelationship",
+  "EntryDll": "PreexistingRelationship.dll",
+  "MinimumApiVersion": "2.9.0",
+  "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+  "Dependencies": [
+    { "UniqueID": "spacechase0.SpaceCore" }
+  ],
+  "spacechase0": "preexisting-relationship"
+}
