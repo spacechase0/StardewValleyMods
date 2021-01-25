@@ -1543,7 +1543,7 @@ namespace JsonAssets
             fixItemList(Game1.player.Items);
             fixItemList( Game1.player.team.junimoChest );
 #pragma warning disable AvoidNetField
-            if (Game1.player.leftRing.Value != null && fixId(oldObjectIds, objectIds, Game1.player.leftRing.Value.parentSheetIndex, origObjects))
+            if (Game1.player.leftRing.Value != null && fixId(oldObjectIds, objectIds, Game1.player.leftRing.Value.indexInTileSheet, origObjects))
                 Game1.player.leftRing.Value = null;
             if ( Game1.player.leftRing.Value is CombinedRing cring )
             {
@@ -1556,7 +1556,7 @@ namespace JsonAssets
                 foreach ( var removeRing in toRemoveRing )
                     cring.combinedRings.Remove( removeRing );
             }
-            if (Game1.player.rightRing.Value != null && fixId(oldObjectIds, objectIds, Game1.player.rightRing.Value.parentSheetIndex, origObjects))
+            if (Game1.player.rightRing.Value != null && fixId(oldObjectIds, objectIds, Game1.player.rightRing.Value.indexInTileSheet, origObjects))
                 Game1.player.rightRing.Value = null;
             if ( Game1.player.rightRing.Value is CombinedRing cring2 )
             {
@@ -2243,7 +2243,7 @@ namespace JsonAssets
                     if (newIds.ContainsKey(key))
                     {
                         id.Value = newIds[key];
-                        Log.verbose("Changing ID: " + key + " from ID " + id_ + " to " + id.Value);
+                        Log.trace("Changing ID: " + key + " from ID " + id_ + " to " + id.Value);
                         return false;
                     }
                     else
