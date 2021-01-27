@@ -30,7 +30,7 @@ namespace Magic
 
             helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
-            helper.Events.GameLoop.Saved += onSaved;
+            helper.Events.GameLoop.Saving += onSaving;
 
             Magic.init(helper.Events, helper.Input, helper.Multiplayer.GetNewID);
         }
@@ -128,7 +128,7 @@ namespace Magic
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaved(object sender, SavedEventArgs e)
+        private void onSaving(object sender, SavingEventArgs e)
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
