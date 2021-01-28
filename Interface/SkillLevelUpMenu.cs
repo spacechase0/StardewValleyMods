@@ -176,6 +176,19 @@ namespace SpaceCore.Interface
                 };
             }
             this.populateClickableComponentList();
+            RepositionOkButton();
+        }
+        public virtual void RepositionOkButton()
+        {
+            this.okButton.bounds = new Rectangle( base.xPositionOnScreen + base.width + 4, base.yPositionOnScreen + base.height - 64 - IClickableMenu.borderWidth, 64, 64 );
+            if ( this.okButton.bounds.Right > Game1.uiViewport.Width )
+            {
+                this.okButton.bounds.X = Game1.uiViewport.Width - 64;
+            }
+            if ( this.okButton.bounds.Bottom > Game1.uiViewport.Height )
+            {
+                this.okButton.bounds.Y = Game1.uiViewport.Height - 64;
+            }
         }
 
         public bool CanReceiveInput()
@@ -212,6 +225,7 @@ namespace SpaceCore.Interface
             this.xPositionOnScreen = Game1.viewport.Width / 2 - this.width / 2;
             this.yPositionOnScreen = Game1.viewport.Height / 2 - this.height / 2;
             this.okButton.bounds = new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - 64 - IClickableMenu.borderWidth, 64, 64);
+            RepositionOkButton();
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)

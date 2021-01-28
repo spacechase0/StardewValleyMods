@@ -70,7 +70,7 @@ namespace SpaceCore.UI
 
         public override void Update(bool hidden = false)
         {
-            base.Update(hidden);
+            //base.Update(hidden);
             if (hidden) return;
 
             int ir = 0;

@@ -40,6 +40,13 @@ namespace SpaceCore.UI
 
         public virtual void Update(bool hidden = false)
         {
+            if ( hidden )
+            {
+                Hover = false;
+                ClickGestured = false;
+                return;
+            }
+
             int mouseX;
             int mouseY;
             if (Constants.TargetPlatform == GamePlatform.Android)

@@ -93,7 +93,7 @@ namespace SpaceCore.Events
         internal static bool InvokeTouchActionActivated(Farmer who, string action, xTile.Dimensions.Location pos)
         {
             Log.trace("Event: TouchActionActivated");
-            if (TouchActionActivated == null || !farmer.IsLocalPlayer )
+            if (TouchActionActivated == null || !who.IsLocalPlayer )
                 return false;
             var arg = new EventArgsAction(true, action, pos);
             return Util.invokeEventCancelable("SpaceEvents.TouchActionActivated", TouchActionActivated.GetInvocationList(), who, arg);

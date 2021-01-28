@@ -31,6 +31,15 @@ namespace SpaceCore.UI
             element.Parent = null;
         }
 
+        public override void Update( bool hidden = false )
+        {
+            base.Update( hidden );
+            foreach ( var element in children )
+            {
+                element.Update( hidden );
+            }
+        }
+
         public override void Draw(SpriteBatch b)
         {
             foreach (var child in children)

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Harmony;
+using Microsoft.Xna.Framework;
 using SpaceCore.Events;
 using StardewValley;
 using xTile.Dimensions;
@@ -26,6 +27,17 @@ namespace SpaceCore.Overrides
         public static void Postfix(GameLocation __instance, Vector2 tileLocation, int radius, Farmer who)
         {
             SpaceEvents.InvokeBombExploded(who, tileLocation, radius);
+        }
+    }
+
+    [HarmonyPatch(typeof(GameLocation), nameof( GameLocation.updateEvenIfFarmerIsntHere ) ) ]
+    public static class UpdateEvenWithoutFarmerHook
+    {
+        public static void Postfix( GameLocation __instance, GameTime time )
+        {
+            // TODO: Optimize, maybe config file too?
+            __instance.terrainFeatures.Values.DoIf( ( tf ) => tf is IUpdateEvenWithoutFarmer, ( tf ) => ( tf as IUpdateEvenWithoutFarmer ).UpdateEvenWithoutFarmer( __instance, time ) );
+            __instance.Objects.Values.DoIf( ( o ) => o is IUpdateEvenWithoutFarmer, ( o ) => ( o as IUpdateEvenWithoutFarmer ).UpdateEvenWithoutFarmer( __instance, time ) );
         }
     }
 }
