@@ -23,7 +23,6 @@ The commands assume Bash, which you can run in a terminal in Linux/Mac or using
    ```
 
 4. Open the solution in Visual Studio.
-5. Unload the projects in the 'archived' solution folder.
 
 ### Update all mod repos
 To update all repos to match the server (assuming you have no local changes):

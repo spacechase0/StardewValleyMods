@@ -38,7 +38,9 @@ LocationLayerTool
 LuckSkill
 Magic
 ManaBar
+MansBestFriend
 MoreBuildings
+MoreEnchantments
 MoreGiantCrops
 MoreGrassStarters
 MoreRings
