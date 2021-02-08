@@ -224,7 +224,7 @@ field                      | purpose
 `Name`                     | The name you would like your object to have. This does not need to be identical to the folder but it is recommend to keep names consistant.
 `Price`                    | How much your item sells for.
 `Product`                  | Determines what the crop produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the objects ID number and not include a corresponding `Objects` folder.
-`SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter.
+`SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter. *Do not put `Sapling` at the end of the seed name, or it will not function properly.*
 `SeedDescription`          | Describe what season you plant these in. Also note if it continues to grow after first harvest and how many days it takes to regrow.
 `Type`                     | Vanilla types are `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, `AnimalGoods`, `Greens`, and `Seeds`. 
 `SeedSellPrice`            | How much the seeds sell for. *Not to be confused with SeedPurchasePrice, recommended not to exceed the sell price of the crop product*
