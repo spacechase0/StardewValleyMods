@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Harmony;
 using JsonAssets.Game;
 using JsonAssets.PackData;
+using JsonAssets.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
@@ -37,6 +38,8 @@ namespace JsonAssets
 
         private static Dictionary<string, ContentPack> contentPacks = new Dictionary<string, ContentPack>();
 
+        internal static Dictionary<string, List<ShopEntry>> todaysShopEntries = new Dictionary<string, List<ShopEntry>>();
+
         public static CommonPackData Find( string fullId )
         {
             int slash = fullId.IndexOf( '/' );
@@ -51,6 +54,8 @@ namespace JsonAssets
             Log.Monitor = Monitor;
 
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+            helper.Events.GameLoop.DayStarted += OnDayStarted;
+            helper.Events.Display.MenuChanged += OnMenuChanged;
 
             helper.ConsoleCommands.Add( "list_ja", "...", OnListCommand );
             helper.ConsoleCommands.Add( "player_addja", "...", OnAddCommand );
@@ -68,6 +73,22 @@ namespace JsonAssets
 
             var spacecore = Helper.ModRegistry.GetApi<SpaceCoreAPI>( "spacechase0.SpaceCore" );
             spacecore.RegisterSerializerType( typeof( CustomObject ) );
+        }
+
+        private void OnDayStarted( object sender, DayStartedEventArgs e )
+        {
+            RefreshShopEntries();
+        }
+
+        private void OnMenuChanged( object sender, MenuChangedEventArgs e )
+        {
+            if ( e.NewMenu is ShopMenu shop )
+            {
+                if ( shop.storeContext == "ResortBar" || shop.storeContext == "VolcanoShop" )
+                {
+                    ShopCommon.DoShop( shop.storeContext, shop );
+                }
+            }
         }
 
         private void OnListCommand( string cmd, string[] args )
@@ -141,6 +162,69 @@ namespace JsonAssets
         public void Edit<T>( IAssetData asset )
         {
             asset.AsDictionary<int, string>().Data.Add( 1720, "JA Dummy Object/0/0/Basic -20/JA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0" );
+        }
+
+        private Item MakeItemFrom( string name, ContentPack context = null )
+        {
+            if ( context != null )
+            {
+                foreach ( var item in context.items )
+                {
+                    if ( name == item.Key )
+                    {
+                        var retCtx = item.Value.ToItem();
+                        if ( retCtx != null )
+                            return retCtx;
+                    }
+                }
+            }
+
+            int slash = name.IndexOf( '/' );
+            if ( slash != -1 )
+            {
+                string pack = name.Substring( 0, slash );
+                string item = name.Substring( slash + 1 );
+                if ( contentPacks.ContainsKey( pack ) && contentPacks[ pack ].items.ContainsKey( item ) )
+                {
+                    var retCp = contentPacks[ pack ].items[ item ].ToItem();
+                    if ( retCp != null )
+                        return retCp;
+                }
+
+                Log.error( $"Failed to find item \"{name}\" from context {context?.smapiPack?.Manifest?.UniqueID}" );
+                return null;
+            }
+
+            var ret = Utility.getItemFromStandardTextDescription( name, Game1.player );
+            if ( ret == null )
+            {
+                Log.error( $"Failed to find item \"{name}\" from context {context?.smapiPack?.Manifest?.UniqueID}" );
+
+            }
+            return ret;
+        }
+
+        private void RefreshShopEntries()
+        {
+            todaysShopEntries.Clear();
+            foreach ( var cp in contentPacks )
+            {
+                foreach ( var shopEntry in cp.Value.others.OfType< ShopPackData >() )
+                {
+                    if ( epu.CheckConditions( shopEntry.EnableConditions ) )
+                    {
+                        if ( !todaysShopEntries.ContainsKey( shopEntry.ShopId ) )
+                            todaysShopEntries.Add( shopEntry.ShopId, new List<ShopEntry>() );
+                        todaysShopEntries[ shopEntry.ShopId ].Add( new ShopEntry()
+                        {
+                            Item = MakeItemFrom( shopEntry.Item, cp.Value ),
+                            Quantity = shopEntry.MaxSold,
+                            Price = shopEntry.Cost,
+                            Currency = shopEntry.Currency
+                        } );
+                    }
+                }
+            }
         }
     }
 }

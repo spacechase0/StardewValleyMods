@@ -109,7 +109,7 @@ namespace JsonAssets.Patches
                 }
             }
 
-            // Special NPc cases
+            // Special NPC cases
             if ( npc.Name.Contains( "Dwarf" ) && !giver.canUnderstandDwarves )
                 response = Dialogue.convertToDwarvish( response );
             if ( npc.Name == "Krobus" && Game1.shortDayNameFromDayOfSeason( Game1.dayOfMonth ) == "Fri" )

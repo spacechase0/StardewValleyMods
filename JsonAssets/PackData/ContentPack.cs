@@ -16,10 +16,13 @@ namespace JsonAssets.PackData
 
         internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
 
+        internal List<BasePackData> others = new List<BasePackData>();
+
         public ContentPack( IContentPack pack )
         {
             smapiPack = pack;
-            LoadAndValidate<ObjectPackData>( "objects.json" );
+            LoadAndValidateItems<ObjectPackData>( "objects.json" );
+            LoadOthers<ShopPackData>( "shop-entries.json" );
         }
 
         public CommonPackData Find( string item )
@@ -27,7 +30,7 @@ namespace JsonAssets.PackData
             return items.ContainsKey( item ) ? items[ item ] : null;
         }
 
-        private void LoadAndValidate< T >( string json ) where T : CommonPackData
+        private void LoadAndValidateItems< T >( string json ) where T : CommonPackData
         {
             var data = smapiPack.LoadAsset<List<T>>( json ) ?? new List<T>();
             foreach ( var d in data )
@@ -35,6 +38,16 @@ namespace JsonAssets.PackData
                 if ( items.ContainsKey( d.ID ) )
                     throw new ArgumentException( "Duplicate found! " + d.ID );
                 items.Add( d.ID, d );
+                d.parent = this;
+            }
+        }
+
+        private void LoadOthers<T>( string json ) where T : BasePackData
+        {
+            var data = smapiPack.LoadAsset<List<T>>( json ) ?? new List<T>();
+            foreach ( var d in data )
+            {
+                others.Add( d );
                 d.parent = this;
             }
         }
