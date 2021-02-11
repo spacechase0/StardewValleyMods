@@ -10,39 +10,15 @@ using System.Threading.Tasks;
 
 namespace JsonAssets.Patches
 {
-    public static class ShopCommon
-    {
-        public static void DoShop( string key, ShopMenu shop )
-        {
-            if ( !Mod.todaysShopEntries.ContainsKey( key ) )
-                return;
-
-            foreach ( var entry in Mod.todaysShopEntries[ key ] )
-            {
-                entry.AddToShop( shop );
-            }
-        }
-        public static void DoShopStock( string key, Dictionary<ISalable, int[]> data )
-        {
-            if ( !Mod.todaysShopEntries.ContainsKey( key ) )
-                return;
-
-            foreach ( var entry in Mod.todaysShopEntries[ key ] )
-            {
-                entry.AddToShopStock( data );
-            }
-        }
-    }
-
     // The following are for shop stock - all cases but ResortBar and VolcanoShop
     // Those two are in the menu changed event handler
 
-    [ HarmonyPatch(typeof(BeachNightMarket), nameof(BeachNightMarket.getBlueBoatStock))]
+    [HarmonyPatch(typeof(BeachNightMarket), nameof(BeachNightMarket.getBlueBoatStock))]
     public static class BlueBoatStockPatch
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "BlueBoat", __result );
+            Common.DoShopStock( "BlueBoat", __result );
         }
     }
 
@@ -51,7 +27,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "TravelingMerchant", __result );
+            Common.DoShopStock( "TravelingMerchant", __result );
         }
     }
 
@@ -60,7 +36,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "GeMagic", __result );
+            Common.DoShopStock( "GeMagic", __result );
         }
     }
 
@@ -69,7 +45,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "DesertMerchant", __result );
+            Common.DoShopStock( "DesertMerchant", __result );
         }
     }
 
@@ -78,7 +54,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "HatMouse", __result );
+            Common.DoShopStock( "HatMouse", __result );
         }
     }
 
@@ -87,7 +63,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "IslandMerchant", __result );
+            Common.DoShopStock( "IslandMerchant", __result );
         }
     }
 
@@ -96,7 +72,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "IslandMerchant", __result );
+            Common.DoShopStock( "IslandMerchant", __result );
         }
     }
 
@@ -105,7 +81,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "QiGemShop", __result );
+            Common.DoShopStock( "QiGemShop", __result );
         }
     }
 
@@ -114,7 +90,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "Joja", __result );
+            Common.DoShopStock( "Joja", __result );
         }
     }
 
@@ -123,7 +99,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "Hospital", __result );
+            Common.DoShopStock( "Hospital", __result );
         }
     }
 
@@ -132,7 +108,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "Club", __result );
+            Common.DoShopStock( "Club", __result );
         }
     }
 
@@ -141,7 +117,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "FishShop", __result );
+            Common.DoShopStock( "FishShop", __result );
         }
     }
 
@@ -150,7 +126,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "SeedShop", __result );
+            Common.DoShopStock( "SeedShop", __result );
         }
     }
 
@@ -159,7 +135,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "Sandy", __result );
+            Common.DoShopStock( "Sandy", __result );
         }
     }
 
@@ -168,7 +144,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "Saloon", __result );
+            Common.DoShopStock( "Saloon", __result );
         }
     }
 
@@ -177,7 +153,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "AdventurerGuild", __result );
+            Common.DoShopStock( "AdventurerGuild", __result );
         }
     }
 
@@ -186,7 +162,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "Carpenter", __result );
+            Common.DoShopStock( "Carpenter", __result );
         }
     }
 
@@ -195,7 +171,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "AnimalSupplies", __result );
+            Common.DoShopStock( "AnimalSupplies", __result );
         }
     }
 
@@ -204,7 +180,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "Blacksmith", __result );
+            Common.DoShopStock( "Blacksmith", __result );
         }
     }
 
@@ -213,7 +189,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            ShopCommon.DoShopStock( "Dwarf", __result );
+            Common.DoShopStock( "Dwarf", __result );
         }
     }
 
@@ -224,7 +200,7 @@ namespace JsonAssets.Patches
         {
             if ( ( action == "IceCreamStand" || action == "Theater_BoxOffice" ) &&Game1.activeClickableMenu is ShopMenu shop )
             {
-                ShopCommon.DoShop( action, shop );
+                Common.DoShop( action, shop );
             }
         }
     }
@@ -236,7 +212,7 @@ namespace JsonAssets.Patches
         {
             if ( Game1.activeClickableMenu is ShopMenu shop )
             {
-                ShopCommon.DoShop( $"Festival.{Game1.currentSeason}{Game1.dayOfMonth}", shop );
+                Common.DoShop( $"Festival.{Game1.currentSeason}{Game1.dayOfMonth}", shop );
             }
         }
     }

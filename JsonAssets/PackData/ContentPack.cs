@@ -38,6 +38,7 @@ namespace JsonAssets.PackData
                 if ( items.ContainsKey( d.ID ) )
                     throw new ArgumentException( "Duplicate found! " + d.ID );
                 items.Add( d.ID, d );
+                Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetHashCode(), $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
                 d.parent = this;
             }
         }

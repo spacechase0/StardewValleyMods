@@ -99,5 +99,24 @@ namespace JsonAssets.PackData
         {
             return new CustomObject( this );
         }
+
+        internal string GetFakeData()
+        {
+            if ( Edibility != StardewValley.Object.inedible )
+            {
+                int itype = ( int ) Category;
+                var str = $"{ID}/{SellPrice}/{Edibility}/Basic {itype}/{Name}/{Description}/";
+                str += ( EdibleIsDrink ? "drink" : "food" ) + "/";
+                if ( EdibleBuffs == null )
+                    EdibleBuffs = new FoodBuffsData();
+                str += $"{EdibleBuffs.Farming} {EdibleBuffs.Fishing} {EdibleBuffs.Mining} 0 {EdibleBuffs.Luck} {EdibleBuffs.Foraging} 0 {EdibleBuffs.MaxStamina} {EdibleBuffs.MagnetRadius} {EdibleBuffs.Speed} {EdibleBuffs.Defense} {EdibleBuffs.Attack}/{EdibleBuffs.Duration}";
+                return str;
+            }
+            else
+            {
+                int itype = ( int ) Category;
+                return $"{ID}/{SellPrice}/{Edibility}/Basic {itype}/{Name}/{Description}";
+            }
+        }
     }
 }

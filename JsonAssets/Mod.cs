@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Harmony;
 using JsonAssets.Game;
@@ -40,6 +41,8 @@ namespace JsonAssets
 
         internal static Dictionary<string, List<ShopEntry>> todaysShopEntries = new Dictionary<string, List<ShopEntry>>();
 
+        internal static Dictionary<int, string> itemLookup = new Dictionary<int, string>();
+
         public static CommonPackData Find( string fullId )
         {
             int slash = fullId.IndexOf( '/' );
@@ -62,8 +65,16 @@ namespace JsonAssets
 
             harmony = HarmonyInstance.Create( "spacechase0.JsonAssets" );
             harmony.PatchAll();
+            harmony.Patch( typeof( IClickableMenu ).GetMethod( "drawHoverText", new[] { typeof( SpriteBatch ), typeof( StringBuilder ), typeof( SpriteFont ), typeof( int ), typeof( int ), typeof( int ), typeof( string ), typeof( int ), typeof( string[] ), typeof( Item ), typeof( int ), typeof( int ), typeof( int ), typeof( int ), typeof( int ), typeof( int ),typeof( CraftingRecipe ), typeof( IList<Item> ) } ), transpiler: new HarmonyMethod( typeof( DrawHoverTextPatch ).GetMethod( "Transpiler" ) ) );
+            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix1 ) ) ) );
+            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix2 ) ) ) );
+            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix3 ) ) ) );
+            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( float ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix4 ) ) ) );
+            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix5 ) ) ) );
 
             LoadContentPacks();
+
+            RefreshSpritebatchCache();
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -77,7 +88,9 @@ namespace JsonAssets
 
         private void OnDayStarted( object sender, DayStartedEventArgs e )
         {
+            // todo - dynamic-fields.json
             RefreshShopEntries();
+            RefreshSpritebatchCache();
         }
 
         private void OnMenuChanged( object sender, MenuChangedEventArgs e )
@@ -86,7 +99,7 @@ namespace JsonAssets
             {
                 if ( shop.storeContext == "ResortBar" || shop.storeContext == "VolcanoShop" )
                 {
-                    ShopCommon.DoShop( shop.storeContext, shop );
+                    Common.DoShop( shop.storeContext, shop );
                 }
             }
         }
@@ -220,9 +233,26 @@ namespace JsonAssets
                             Item = MakeItemFrom( shopEntry.Item, cp.Value ),
                             Quantity = shopEntry.MaxSold,
                             Price = shopEntry.Cost,
-                            Currency = shopEntry.Currency
+                            Currency = shopEntry.Currency == null ? null : (shopEntry.Currency.Contains( '/' ) ? shopEntry.Currency : $"{cp.Key}/{shopEntry.Currency}")
                         } );
                     }
+                }
+            }
+        }
+
+        internal void RefreshSpritebatchCache()
+        {
+            if ( Game1.objectSpriteSheet == null )
+                Game1.objectSpriteSheet = Game1.content.Load< Texture2D >( "Maps\\springobjects" );
+
+            SpriteBatchTileSheetAdjustments.overrides.Clear();
+            foreach ( var cp in contentPacks )
+            {
+                foreach ( var obj in cp.Value.items.Values.OfType<ObjectPackData>() )
+                {
+                    var tex = cp.Value.GetTexture( obj.Texture, 16, 16 );
+                    string fullId = $"{cp.Key}/{obj.ID}";
+                    SpriteBatchTileSheetAdjustments.overrides.Add( Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, fullId.GetHashCode(), 16, 16 ), tex );
                 }
             }
         }
