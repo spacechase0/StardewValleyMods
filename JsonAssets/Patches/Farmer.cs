@@ -4,6 +4,8 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -67,6 +69,25 @@ namespace JsonAssets.Patches
                 }
             }
             return false;
+        }
+    }
+
+
+    [HarmonyPatch( typeof( Farmer ), nameof( Farmer.eatObject ) )]
+    public static class FarmerEatObjectgPatch
+    {
+        public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        {
+            return Common.RedirectForFakeObjectInformationTranspiler( gen, original, insns );
+        }
+    }
+
+    [HarmonyPatch( typeof(Farmer), nameof( Farmer.doneEating ) )]
+    public static class FarmerDoneEatingPatch
+    {
+        public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        {
+            return Common.RedirectForFakeObjectInformationTranspiler( gen, original, insns );
         }
     }
 }

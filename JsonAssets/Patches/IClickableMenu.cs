@@ -1,5 +1,6 @@
 ﻿using Harmony;
 using JsonAssets.PackData;
+using SpaceShared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +24,10 @@ namespace JsonAssets.Patches
                 {
                     nextGetItem = true;
                 }
-                else if ( insn.opcode == OpCodes.Callvirt && ( insn.operand as MethodInfo ).Name == "get_Item" )
+                else if ( nextGetItem && insn.opcode == OpCodes.Callvirt && ( insn.operand as MethodInfo ).Name == "get_Item" )
                 {
+                    nextGetItem = false;
+                    Log.trace( "Found the object information get call, redirecting..." );
                     insn.opcode = OpCodes.Call;
                     insn.operand = typeof( Common ).GetMethod( nameof( Common.GetFakeObjectInformation ) );
                 }

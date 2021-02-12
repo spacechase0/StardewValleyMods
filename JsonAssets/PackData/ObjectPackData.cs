@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// TODO: Buff duration implementation (harmony)
 // TODO: Light?
 // TODO: Deconstructor output patch?
 // TODO: Sprinkler stuff?
