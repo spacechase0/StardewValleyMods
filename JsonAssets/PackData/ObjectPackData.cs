@@ -75,6 +75,7 @@ namespace JsonAssets.PackData
 
         public int? SellPrice { get; set; } = 0;
         public bool CanTrash { get; set; } = true;
+        public bool HideFromShippingCollection { get; set; } = false;
 
         public class GiftTasteOverrideEntry
         {

@@ -18,10 +18,10 @@ namespace JsonAssets.Patches
     {
         public static void DoShop( string key, ShopMenu shop )
         {
-            if ( !Mod.todaysShopEntries.ContainsKey( key ) )
+            if ( !Mod.State.TodaysShopEntries.ContainsKey( key ) )
                 return;
 
-            foreach ( var entry in Mod.todaysShopEntries[ key ] )
+            foreach ( var entry in Mod.State.TodaysShopEntries[ key ] )
             {
                 entry.AddToShop( shop );
             }
@@ -29,10 +29,10 @@ namespace JsonAssets.Patches
 
         public static void DoShopStock( string key, Dictionary<ISalable, int[]> data )
         {
-            if ( !Mod.todaysShopEntries.ContainsKey( key ) )
+            if ( !Mod.State.TodaysShopEntries.ContainsKey( key ) )
                 return;
 
-            foreach ( var entry in Mod.todaysShopEntries[ key ] )
+            foreach ( var entry in Mod.State.TodaysShopEntries[ key ] )
             {
                 entry.AddToShopStock( data );
             }
@@ -58,7 +58,58 @@ namespace JsonAssets.Patches
                 return objInfo[ obj.ParentSheetIndex ];
             }
         }
+
+        public static int GetFakeObjectId( StardewValley.Object obj )
+        {
+            if ( obj is CustomObject cobj )
+            {
+                return cobj.FullId.GetHashCode();
+            }
+            return obj.ParentSheetIndex;
+        }
+
+        public static IDictionary< int,string> GetFakeObjectInformationCollection()
+        {
+            var ret = new Dictionary<int , string >( Game1.objectInformation );
+            foreach ( var cp in Mod.contentPacks )
+            {
+                foreach ( var data in cp.Value.items )
+                {
+                    if ( data.Value is ObjectPackData objData )
+                    {
+                        ret.Add( $"{cp.Key}/{data.Key}".GetHashCode(), objData.GetFakeData() );
+                    }
+                }
+            }
+
+            return ret;
+        }
         public static IEnumerable<CodeInstruction> RedirectForFakeObjectInformationTranspiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        {
+            var ret = new List< CodeInstruction >();
+
+            bool nextGetItem = true;
+            foreach ( var insn in insns )
+            {
+                if ( insn.opcode == OpCodes.Ldsfld && ( insn.operand as FieldInfo ).Name == "objectInformation" )
+                {
+                    nextGetItem = true;
+                }
+                else if ( nextGetItem && insn.opcode == OpCodes.Callvirt && ( insn.operand as MethodInfo ).Name == "get_Item" )
+                {
+                    nextGetItem = false;
+                    Log.trace( "Found the object information get call, redirecting..." );
+                    insn.opcode = OpCodes.Call;
+                    insn.operand = typeof( Common ).GetMethod( nameof( Common.GetFakeObjectInformation ) );
+                }
+
+                ret.Add( insn );
+            }
+
+            return ret;
+        }
+
+        public static IEnumerable<CodeInstruction> RedirectForFakeObjectInformationTranspiler2( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
         {
             var ret = new List< CodeInstruction >();
 
@@ -86,8 +137,58 @@ namespace JsonAssets.Patches
                 ret.Add( insn );
             }
 
+            return ret;
+        }
+
+        public static IEnumerable<CodeInstruction> RedirectForFakeObjectInformationCollectionTranspiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        {
+            var ret = new List< CodeInstruction >();
+
+            foreach ( var insn in insns )
+            {
+                if ( insn.opcode == OpCodes.Ldsfld && ( insn.operand as FieldInfo ).Name == "objectInformation" )
+                {
+                    Log.trace( "Found object information reference in " + original + ", editing IL now" );
+
+                    insn.opcode = OpCodes.Call;
+                    insn.operand = typeof( Common ).GetMethod( nameof( Common.GetFakeObjectInformationCollection ) );
+                }
+
+                ret.Add( insn );
+            }
+
+            return ret;
+        }
+
+        public static IEnumerable<CodeInstruction> RedirectForFakeObjectIdTranspiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        {
+            var ret = new List< CodeInstruction >();
+
+            int actIn = -1;
+            foreach ( var insn in insns )
+            {
+                if ( insn.opcode == OpCodes.Ldfld && ( insn.operand as FieldInfo ).Name == "parentSheetIndex" )
+                {
+                    actIn = 1;
+                }
+                if ( actIn >= 0 )
+                {
+                    if ( actIn-- == 0 )
+                    {
+                        Log.trace( "Found parentSheetIndex reference in " + original + ", editing IL now" );
+
+                        insn.labels.AddRange( ret.Last().labels );
+                        ret.Remove( ret.Last() );
+
+                        insn.opcode = OpCodes.Call;
+                        insn.operand = typeof( Common ).GetMethod( nameof( Common.GetFakeObjectId ) );
+                    }
+                }
+
+                ret.Add( insn );
+            }
             foreach ( var insn in ret )
-                Log.trace( "I:"+insn );
+            Log.trace( "I:" + insn );
 
             return ret;
         }

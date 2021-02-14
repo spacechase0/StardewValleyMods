@@ -1,6 +1,5 @@
 ﻿using Harmony;
-using JsonAssets.PackData;
-using SpaceShared;
+using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +10,12 @@ using System.Threading.Tasks;
 
 namespace JsonAssets.Patches
 {
-    public static class DrawHoverTextPatch
+    [HarmonyPatch( typeof( ShippingMenu ), nameof( ShippingMenu.parseItems ) )]
+    public static class ShippingMenuParsePatch
     {
         public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
         {
-            return Common.RedirectForFakeObjectInformationTranspiler( gen, original, insns );
+            return Common.RedirectForFakeObjectIdTranspiler( gen, original, insns );
         }
     }
 }

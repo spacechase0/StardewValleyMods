@@ -18,6 +18,7 @@ using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Characters;
@@ -37,11 +38,14 @@ namespace JsonAssets
         private ExpandedPreconditionsUtilityAPI epu;
         private HarmonyInstance harmony;
 
-        private static Dictionary<string, ContentPack> contentPacks = new Dictionary<string, ContentPack>();
+        public static readonly int BaseFakeObjectId = 1720;
 
-        internal static Dictionary<string, List<ShopEntry>> todaysShopEntries = new Dictionary<string, List<ShopEntry>>();
+        internal static Dictionary<string, ContentPack> contentPacks = new Dictionary<string, ContentPack>();
 
         internal static Dictionary<int, string> itemLookup = new Dictionary<int, string>();
+
+        private static readonly PerScreen<StateData> _state = new PerScreen<StateData>( () => new StateData() );
+        internal static StateData State => _state.Value;
 
         public static CommonPackData Find( string fullId )
         {
@@ -90,7 +94,11 @@ namespace JsonAssets
         {
             // todo - dynamic-fields.json
             RefreshShopEntries();
-            RefreshSpritebatchCache();
+
+            if ( Context.ScreenId == 0 )
+            {
+                RefreshSpritebatchCache();
+            }
         }
 
         private void OnMenuChanged( object sender, MenuChangedEventArgs e )
@@ -174,7 +182,7 @@ namespace JsonAssets
 
         public void Edit<T>( IAssetData asset )
         {
-            asset.AsDictionary<int, string>().Data.Add( 1720, "JA Dummy Object/0/0/Basic -20/JA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0" );
+            asset.AsDictionary<int, string>().Data.Add( BaseFakeObjectId, "JA Dummy Object/0/0/Basic -20/JA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0" );
         }
 
         private Item MakeItemFrom( string name, ContentPack context = null )
@@ -219,16 +227,16 @@ namespace JsonAssets
 
         private void RefreshShopEntries()
         {
-            todaysShopEntries.Clear();
+            State.TodaysShopEntries.Clear();
             foreach ( var cp in contentPacks )
             {
                 foreach ( var shopEntry in cp.Value.others.OfType< ShopPackData >() )
                 {
                     if ( epu.CheckConditions( shopEntry.EnableConditions ) )
                     {
-                        if ( !todaysShopEntries.ContainsKey( shopEntry.ShopId ) )
-                            todaysShopEntries.Add( shopEntry.ShopId, new List<ShopEntry>() );
-                        todaysShopEntries[ shopEntry.ShopId ].Add( new ShopEntry()
+                        if ( !State.TodaysShopEntries.ContainsKey( shopEntry.ShopId ) )
+                            State.TodaysShopEntries.Add( shopEntry.ShopId, new List<ShopEntry>() );
+                        State.TodaysShopEntries[ shopEntry.ShopId ].Add( new ShopEntry()
                         {
                             Item = MakeItemFrom( shopEntry.Item, cp.Value ),
                             Quantity = shopEntry.MaxSold,
