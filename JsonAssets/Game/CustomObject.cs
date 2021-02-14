@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewValley;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,13 +36,15 @@ namespace JsonAssets.Game
             _sourcePack.Value = obj.parent.smapiPack.Manifest.UniqueID;
             _id.Value = obj.ID;
 
-            ParentSheetIndex = 1720;
+            ParentSheetIndex = Mod.BaseFakeObjectId;
             name = obj.ID;
             if ( obj.SellPrice.HasValue )
                 price.Value = obj.SellPrice.Value;
             edibility.Value = obj.Edibility;
             type.Value = "Basic";
             category.Value = (int) obj.Category;
+            price.Value = obj.SellPrice ?? 0;
+            fragility.Value = fragility_Removable;
 
             canBeSetDown.Value = true;
             canBeGrabbed.Value = true;
@@ -242,6 +245,7 @@ namespace JsonAssets.Game
             // TODO: All the other fields objects does??
             ret.Quality = Quality;
             ret.Stack = 1;
+            ret.Price = Price;
             ret._GetOneFrom( this );
             return ret;
         }
@@ -256,11 +260,26 @@ namespace JsonAssets.Game
 
         public override bool canBePlacedHere( GameLocation l, Vector2 tile )
         {
-            return false;
+            return isPlaceable() && !l.isTileOccupiedForPlacement( tile, this );
         }
 
         public override bool isPlaceable()
         {
+            return Data.Placeable;
+        }
+
+        public override bool performToolAction( Tool t, GameLocation location )
+        {
+            if ( t == null )
+                return false;
+
+            if ( !( t is MeleeWeapon ) && t.isHeavyHitter() )
+            {
+                location.playSound( "hammer" );
+                location.debris.Add( new Debris( this, this.TileLocation * Game1.tileSize + new Vector2( Game1.tileSize / 2, Game1.tileSize / 2 ) ) );
+                return true;
+            }
+
             return false;
         }
 
@@ -276,7 +295,7 @@ namespace JsonAssets.Game
 
         public override int salePrice()
         {
-            return Data.SellPrice ?? 0;
+            return Data.ForcePriceOnAllInstances ? (Data.SellPrice ?? 0) : Price;
         }
 
         protected override void _PopulateContextTags( HashSet<string> tags )

@@ -187,8 +187,6 @@ namespace JsonAssets.Patches
 
                 ret.Add( insn );
             }
-            foreach ( var insn in ret )
-            Log.trace( "I:" + insn );
 
             return ret;
         }

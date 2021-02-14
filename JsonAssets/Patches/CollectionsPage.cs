@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using SpaceShared;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,7 @@ namespace JsonAssets.Patches
                 }
                 else if ( foundRedirect && insn.opcode == OpCodes.Callvirt && ( insn.operand as MethodInfo ).Name == "Sort" )
                 {
+                    Log.trace( "Found object sorting, replacing with ours" );
                     foundRedirect = false;
                     insn.opcode = OpCodes.Call;
                     insn.operand = typeof( CollectionsPageConstructorPatch ).GetMethod( nameof( CollectionsPageConstructorPatch.RealSort ) );

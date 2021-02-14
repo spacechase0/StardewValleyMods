@@ -74,6 +74,7 @@ namespace JsonAssets.PackData
         public FoodBuffsData EdibleBuffs { get; set; } = new FoodBuffsData();
 
         public int? SellPrice { get; set; } = 0;
+        public bool ForcePriceOnAllInstances = false;
         public bool CanTrash { get; set; } = true;
         public bool HideFromShippingCollection { get; set; } = false;
 
@@ -87,6 +88,8 @@ namespace JsonAssets.PackData
         public bool IsGiftable { get; set; } = true;
         public int UniversalGiftTaste { get; set; } = 0;
         public Dictionary<string, GiftTasteOverrideEntry> GiftTasteOverride = new Dictionary<string, GiftTasteOverrideEntry>();
+
+        public bool Placeable { get; set; } = false;
 
         public List<string> ContextTags { get; set; } = new List<string>();
 
