@@ -40,6 +40,11 @@ namespace BiggerCraftables
             harmony.PatchAll();
         }
 
+        public override object GetApi()
+        {
+            return new Api();
+        }
+
         private bool doingStuff = false;
         private void OnObjectListChanged( object sender, ObjectListChangedEventArgs e )
         {

@@ -102,7 +102,7 @@ namespace BiggerCraftables.Patches
             var entry = Mod.entries.SingleOrDefault( cle => cle.Name == __instance.Name );
             if ( entry == null )
                 return true;
-            int hdiff = entry.Texture.Height - entry.Length * 16;
+            int hdiff = entry.Texture.Height;
 
             if ( __instance.GetBiggerIndex() == 0 )
             {
@@ -113,7 +113,7 @@ namespace BiggerCraftables.Patches
                 scaleFactor *= 4f;
                 Vector2 pos = Game1.GlobalToLocal( Game1.viewport, new Vector2( x * 64, y * 64) );
                 float drawLayer = Math.Max(0f, (float)((y + 1) * 64 - 24) / 10000f) + (float)x * 1E-05f;
-                spriteBatch.Draw( entry.Texture, pos - new Vector2( 0, hdiff * 4 * 2 ) + scaleFactor / 2f + ( __instance.shakeTimer > 0 ? new Vector2( Game1.random.Next( -1, 2 ), Game1.random.Next( -1, 2 ) ) : Vector2.Zero ), null, Color.White * alpha, 0, Vector2.Zero, 4, SpriteEffects.None, drawLayer );
+                spriteBatch.Draw( entry.Texture, pos - new Vector2( 0, hdiff * 4 - 64 ) + scaleFactor / 2f + ( __instance.shakeTimer > 0 ? new Vector2( Game1.random.Next( -1, 2 ), Game1.random.Next( -1, 2 ) ) : Vector2.Zero ), null, Color.White * alpha, 0, Vector2.Zero, 4, SpriteEffects.None, drawLayer );
             }
             return false;
         }
