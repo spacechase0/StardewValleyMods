@@ -90,6 +90,8 @@ namespace JsonAssets.PackData
         public Dictionary<string, GiftTasteOverrideEntry> GiftTasteOverride = new Dictionary<string, GiftTasteOverrideEntry>();
 
         public bool Placeable { get; set; } = false;
+        public List<Vector2> SprinklerTiles { get; set; } = null;
+        public List<Vector2> UpgradedSprinklerTiles { get; set; } = null;
 
         public List<string> ContextTags { get; set; } = new List<string>();
 

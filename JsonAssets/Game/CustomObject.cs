@@ -283,6 +283,26 @@ namespace JsonAssets.Game
             return false;
         }
 
+        public override int GetBaseRadiusForSprinkler()
+        {
+            if ( Data.SprinklerTiles != null )
+                return 1;
+            else return -1;
+        }
+
+        public override List<Vector2> GetSprinklerTiles()
+        {
+            var tiles = Data.SprinklerTiles;
+            if ( Data.UpgradedSprinklerTiles != null && heldObject.Value != null && Utility.IsNormalObjectAtParentSheetIndex( heldObject.Value, 915 ) )
+                tiles = Data.UpgradedSprinklerTiles;
+
+            var ret = new List<Vector2>();
+            foreach ( var tile in tiles )
+                ret.Add( tileLocation.Value + tile );
+
+            return ret;
+        }
+
         public override bool needsToBeDonated()
         {
             return false; // TODO: Implement as future feature?
