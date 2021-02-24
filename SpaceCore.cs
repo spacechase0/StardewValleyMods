@@ -179,9 +179,18 @@ namespace SpaceCore
             }
         }
 
+        private int tickCount = 0;
         private void onUpdate(object sender, UpdateTickedEventArgs e)
         {
             TileSheetExtensions.UpdateReferences();
+            if ( tickCount++ == 0 && modTypes.Count == 0 )
+            {
+                Log.info( "Disabling serializer patches (no mods using serializer API)" );
+                foreach ( var meth in SaveGameSaveEnumeratorPatch.TargetMethods() )
+                    harmony.Unpatch( meth, AccessTools.Method( typeof( SaveGameSaveEnumeratorPatch ), nameof( SaveGameSaveEnumeratorPatch.Transpiler ) ) );
+                foreach ( var meth in SaveGameLoadEnumeratorPatch.TargetMethods() )
+                    harmony.Unpatch( meth, AccessTools.Method( typeof( SaveGameLoadEnumeratorPatch ), nameof( SaveGameLoadEnumeratorPatch.Transpiler ) ) );
+            }
         }
 
         /// <summary>Raised after the player loads a save slot.</summary>

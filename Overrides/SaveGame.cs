@@ -357,7 +357,7 @@ namespace SpaceCore.Overrides
         {
             using ( var ms = new MemoryStream() )
             {
-                var writer = XmlWriter.Create( ms, new XmlWriterSettings() { CloseOutput = false } );
+                using var writer = XmlWriter.Create( ms, new XmlWriterSettings() { CloseOutput = false } );
 
                 serializer.Serialize( writer, obj );
                 XmlDocument doc = new XmlDocument();
