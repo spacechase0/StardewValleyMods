@@ -17,5 +17,10 @@ namespace JsonAssets.PackData
         /// These are ExpandedPreconditionsUtility conditions.
         /// </summary>
         public string[] EnableConditions { get; set; }
+
+        /// <summary>
+        /// If the current pack data is currently enabled or not.
+        /// </summary>
+        public bool Enabled { get; set; }
     }
 }

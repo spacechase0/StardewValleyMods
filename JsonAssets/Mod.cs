@@ -92,7 +92,26 @@ namespace JsonAssets
 
         private void OnDayStarted( object sender, DayStartedEventArgs e )
         {
+            foreach ( var cp in contentPacks )
+            {
+                foreach ( var data in cp.Value.items )
+                {
+                    bool wasEnabled = data.Value.Enabled;
+                    data.Value.Enabled = epu.CheckConditions( data.Value.EnableConditions );
+
+                    if ( !data.Value.Enabled && wasEnabled )
+                    {
+                        data.Value.OnDisabled();
+                    }
+                }
+                foreach ( var data in cp.Value.others )
+                {
+                    data.Enabled = epu.CheckConditions( data.EnableConditions );
+                }
+            }
+
             // todo - dynamic-fields.json
+
             RefreshShopEntries();
 
             if ( Context.ScreenId == 0 )
@@ -232,7 +251,7 @@ namespace JsonAssets
             {
                 foreach ( var shopEntry in cp.Value.others.OfType< ShopPackData >() )
                 {
-                    if ( epu.CheckConditions( shopEntry.EnableConditions ) )
+                    if ( shopEntry.Enabled )
                     {
                         if ( !State.TodaysShopEntries.ContainsKey( shopEntry.ShopId ) )
                             State.TodaysShopEntries.Add( shopEntry.ShopId, new List<ShopEntry>() );
