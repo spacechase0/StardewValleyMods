@@ -293,7 +293,8 @@ namespace GenericModConfigMenu
 
         private void addDefaultLabels(IManifest modManifest)
         {
-            var titleLabel = new Label() { String = modManifest.Name + ( currPage == "" ? "" : " > " + currPage ), Bold = true };
+            string page = modConfig.Options[ currPage ].DisplayName;
+            var titleLabel = new Label() { String = modManifest.Name + ( page == "" ? "" : " > " + page ), Bold = true };
             titleLabel.LocalPosition = new Vector2((Game1.viewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
             titleLabel.HoverTextColor = titleLabel.IdleTextColor;
             ui.AddChild(titleLabel);

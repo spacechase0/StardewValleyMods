@@ -15,12 +15,14 @@ namespace GenericModConfigMenu
         public class ModPage
         {
             public string Name { get; }
+            public string DisplayName { get; set; }
             public List<Action<string, object>> ChangeHandler { get; } = new List<Action<string, object>>();
             public List<BaseModOption> Options{ get; set; } = new List<BaseModOption>();
 
             public ModPage(string name)
             {
                 Name = name;
+                DisplayName = Name;
             }
         }
 

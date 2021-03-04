@@ -18,6 +18,7 @@ namespace GenericModConfigMenu
         void UnregisterModConfig(IManifest mod);
 
         void StartNewPage(IManifest mod, string pageName);
+        void OverridePageDisplayName(IManifest mod, string pageName, string displayName);
 
         void RegisterLabel(IManifest mod, string labelName, string labelDesc);
         void RegisterPageLabel( IManifest mod, string labelName, string labelDesc, string newPage );
@@ -75,6 +76,15 @@ namespace GenericModConfigMenu
                 modConfig.ActiveRegisteringPage = modConfig.Options[ pageName ];
             else
                 modConfig.Options.Add( pageName, modConfig.ActiveRegisteringPage = new ModConfig.ModPage( pageName ) );
+        }
+        public void OverridePageDisplayName( IManifest mod, string pageName, string displayName )
+        {
+            if ( !Mod.instance.configs.ContainsKey( mod ) )
+                throw new ArgumentException( "Mod not registered" );
+            if ( !Mod.instance.configs[ mod ].Options.ContainsKey( pageName ) )
+                throw new ArgumentException( "Page not registered" );
+
+            Mod.instance.configs[ mod ].Options[ pageName ].DisplayName = displayName;
         }
 
         public void RegisterLabel(IManifest mod, string labelName, string labelDesc)
