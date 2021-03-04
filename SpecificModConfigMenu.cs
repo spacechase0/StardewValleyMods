@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace GenericModConfigMenu
 {
-    internal class SpecificModConfigMenu : IClickableMenu
+    internal class SpecificModConfigMenu : IClickableMenu, IAssetEditor
     {
         private IManifest mod;
 
@@ -24,6 +24,30 @@ namespace GenericModConfigMenu
         private Table table;
         private List<Label> optHovers = new List<Label>();
         public static IClickableMenu ActiveConfigMenu;
+
+        private Dictionary<string, List<Image>> textures = new Dictionary<string, List<Image>>();
+        private Queue<string> pendingTexChanges = new Queue<string>();
+
+        public bool CanEdit<T>( IAssetInfo asset )
+        {
+            foreach ( var key in textures.Keys )
+            {
+                if ( asset.AssetNameEquals( key ) )
+                    return true;
+            }
+            return false;
+        }
+
+        public void Edit<T>( IAssetData asset )
+        {
+            foreach ( var key in textures.Keys )
+            {
+                if ( asset.AssetNameEquals( key ) )
+                {
+                    pendingTexChanges.Enqueue( key );
+                }
+            }
+        }
 
         public SpecificModConfigMenu(IManifest modManifest, string page = "", string prevPage = null)
         {
@@ -205,6 +229,46 @@ namespace GenericModConfigMenu
                     }
                     continue;
                 }
+                else if ( opt is ImageModOption t )
+                {
+                    var tex = Game1.content.Load<Texture2D>( t.TexturePath );
+                    var imgSize = new Vector2( tex.Width, tex.Height );
+                    if ( t.TextureRect.HasValue )
+                        imgSize = new Vector2( t.TextureRect.Value.Width, t.TextureRect.Value.Height );
+                    imgSize *= t.Scale;
+                    
+                    
+                    var localPos = new Vector2( table.Size.X / 2 - imgSize.X / 2, 0 );
+                    var baseRectPos = new Vector2( t.TextureRect.HasValue ? t.TextureRect.Value.X : 0,
+                                                   t.TextureRect.HasValue ? t.TextureRect.Value.Y : 0 );
+
+                    var texs = new List<Image>();
+                    if ( textures.ContainsKey( t.TexturePath ) )
+                        texs = textures[ t.TexturePath ];
+                    else
+                        textures.Add( t.TexturePath, texs );
+                    
+                    for ( int ir = 0; ir < imgSize.Y / table.RowHeight; ++ir )
+                    {
+                        int section = Math.Min( (int)( imgSize.Y / t.Scale ), table.RowHeight );
+                        int baseY = ( int )( baseRectPos.Y + section * ir );
+                        if ( baseY + section > baseRectPos.Y + imgSize.Y / t.Scale )
+                        {
+                            section = ( int ) ( baseRectPos.Y + imgSize.Y / t.Scale ) - baseY;
+                        }
+                        var img = new Image()
+                        {
+                            Texture = tex,
+                            TextureRect = new Rectangle( (int)baseRectPos.X, baseY, (int)imgSize.X / t.Scale, section ),
+                            Scale = t.Scale,
+                        };
+                        img.LocalPosition = localPos;
+                        texs.Add( img );
+                        table.AddRow( new Element[] { img } );
+                    }
+
+                    continue;
+                }
 
                 if (label == null)
                     table.AddRow(new Element[] { });
@@ -223,6 +287,8 @@ namespace GenericModConfigMenu
             table.ForceUpdateEvenHidden();
 
             ActiveConfigMenu = this;
+
+            Mod.instance.Helper.Content.AssetEditors.Add( this );
         }
 
         private void addDefaultLabels(IManifest modManifest)
@@ -233,19 +299,24 @@ namespace GenericModConfigMenu
             ui.AddChild(titleLabel);
 
             var cancelLabel = new Label() { String = "Cancel", Bold = true };
-            cancelLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 300, Game1.viewport.Height - 50 - 36);
+            cancelLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 400, Game1.viewport.Height - 50 - 36);
             cancelLabel.Callback = (Element e) => cancel();
             ui.AddChild(cancelLabel);
 
             var defaultLabel = new Label() { String = "Default", Bold = true };
-            defaultLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 50, Game1.viewport.Height - 50 - 36);
+            defaultLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 200, Game1.viewport.Height - 50 - 36);
             defaultLabel.Callback = (Element e) => revertToDefault();
             ui.AddChild(defaultLabel);
 
             var saveLabel = new Label() { String = "Save", Bold = true };
-            saveLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 + 200, Game1.viewport.Height - 50 - 36);
+            saveLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 + 50, Game1.viewport.Height - 50 - 36);
             saveLabel.Callback = (Element e) => save();
             ui.AddChild(saveLabel);
+
+            var saveCloseLabel = new Label() { String = "Save&Close", Bold = true };
+            saveCloseLabel.LocalPosition = new Vector2( Game1.viewport.Width / 2 + 200, Game1.viewport.Height - 50 - 36 );
+            saveCloseLabel.Callback = ( Element e ) => { save(); close(); };
+            ui.AddChild( saveCloseLabel );
         }
 
         public void receiveScrollWheelActionSmapi(int direction)
@@ -268,6 +339,17 @@ namespace GenericModConfigMenu
         {
             base.update(time);
             ui.Update();
+
+            while ( pendingTexChanges.Count > 0 )
+            {
+                var texPath = pendingTexChanges.Dequeue();
+                var tex = Game1.content.Load<Texture2D>( texPath );
+
+                foreach ( var images in textures[ texPath ] )
+                {
+                    images.Texture = tex;
+                }
+            }
         }
 
         public override void draw(SpriteBatch b)
@@ -336,19 +418,22 @@ namespace GenericModConfigMenu
                 foreach ( var opt in page.Value.Options )
                     opt.Save();
             modConfig.SaveToFile.Invoke();
-            if (TitleMenu.subMenu == this)
+        }
+
+        private void close()
+        {
+            if ( TitleMenu.subMenu == this )
                 TitleMenu.subMenu = new ModConfigMenu();
-            else if (Game1.activeClickableMenu == this)
+            else if ( Game1.activeClickableMenu == this )
                 Game1.activeClickableMenu = null;
+            
+            Mod.instance.Helper.Content.AssetEditors.Remove( this );
         }
 
         private void cancel()
         {
             Game1.playSound("bigDeSelect");
-            if (TitleMenu.subMenu == this)
-                TitleMenu.subMenu = new ModConfigMenu();
-            else if (Game1.activeClickableMenu == this)
-                Game1.activeClickableMenu = null;
+            close();
         }
 
         private SimpleModOption<SButton> keybindingOpt;

@@ -21,6 +21,8 @@ namespace GenericModConfigMenu
         void RegisterLabel(IManifest mod, string labelName, string labelDesc);
         void RegisterPageLabel( IManifest mod, string labelName, string labelDesc, string newPage );
         void RegisterParagraph(IManifest mod, string paragraph);
+        void RegisterImage( IManifest mod, string texPath, Rectangle? texRect = null, int scale = 4 );
+
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<bool> optionGet, Action<bool> optionSet);
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet);
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet);
@@ -86,6 +88,13 @@ namespace GenericModConfigMenu
             if ( !Mod.instance.configs.ContainsKey( mod ) )
                 throw new ArgumentException( "Mod not registered" );
             Mod.instance.configs[ mod ].ActiveRegisteringPage.Options.Add( new ParagraphModOption( paragraph, mod ) );
+        }
+
+        public void RegisterImage( IManifest mod, string texPath, Rectangle? texRect = null, int scale = 4 )
+        {
+            if ( !Mod.instance.configs.ContainsKey( mod ) )
+                throw new ArgumentException( "Mod not registered" );
+            Mod.instance.configs[ mod ].ActiveRegisteringPage.Options.Add( new ImageModOption( texPath, texRect, scale, mod ) );
         }
 
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<bool> optionGet, Action<bool> optionSet) => RegisterSimpleOption<bool>(mod, optionName, optionDesc, optionGet, optionSet);

@@ -82,6 +82,8 @@ namespace GenericModConfigMenu
             api.RegisterModConfig(ModManifest, () => config = new DummyConfig(), () => Helper.WriteConfig(config));
             api.RegisterLabel(ModManifest, "Dummy Label", "Testing labels");
             api.RegisterParagraph( ModManifest, "Testing paragraph text. These are smaller than labels and should wrap based on length. In theory. They should also (in theory) support multiple rows. Whether that will look good or not is another question. But hey, it looks like it worked! Imagine that. Should I support images in documentation, too?" );
+            api.RegisterImage( ModManifest, "Maps\\springobjects", new Rectangle( 32, 48, 16, 16 ) );
+            api.RegisterImage( ModManifest, "Portraits\\Penny", null, 1 );
             api.RegisterPageLabel( ModManifest, "Go to page: Simple Options", "", "Simple Options" );
             api.RegisterPageLabel( ModManifest, "Go to page: Complex Options", "", "Complex Options" );
             api.StartNewPage( ModManifest, "Simple Options" );
@@ -130,7 +132,12 @@ namespace GenericModConfigMenu
                 return state;
             };
             Action<object> randomColorSave =
-            (object state) => config.dummyColor = (state as RandomColorWidgetState).color;
+            (object state) =>
+            {
+                if ( state == null )
+                    return;
+                config.dummyColor = (state as RandomColorWidgetState).color;
+            };
             api.RegisterComplexOption(ModManifest, "Dummy Color", "Testing a complex widget (random color on click)", randomColorUpdate, randomColorDraw, randomColorSave);
         }
 

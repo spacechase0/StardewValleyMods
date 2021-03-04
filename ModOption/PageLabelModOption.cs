@@ -9,7 +9,7 @@ namespace GenericModConfigMenu.ModOption
 {
     internal class PageLabelModOption : BaseModOption
     {
-        public string NewPage { get; set; }
+        public string NewPage { get; }
 
         public override void SyncToMod()
         {
