@@ -19,7 +19,7 @@ namespace GenericModConfigMenu.ModOption
             get { return state; }
             set {
                 if (!state.Equals(value))
-                    Mod.instance.configs[Owner].ChangeHandler.ForEach(c => c.Invoke(Id, value));
+                    Mod.instance.configs[Owner].Options[Mod.instance.configs[Owner].ActiveDisplayPage.Name].ChangeHandler.ForEach(c => c.Invoke(Id, value));
 
                 state = value; 
             }
@@ -32,6 +32,7 @@ namespace GenericModConfigMenu.ModOption
 
         public override void Save()
         {
+            SpaceShared.Log.trace( "saving " + Name + " " + Description );
             setter.Invoke(state);
         }
 

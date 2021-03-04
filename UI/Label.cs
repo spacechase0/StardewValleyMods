@@ -14,6 +14,8 @@ namespace GenericModConfigMenu.UI
     class Label : Element
     {
         public bool Bold { get; set; } = false;
+        public float NonBoldScale { get; set; } = 1f; // Only applies when Bold = false
+        public bool NonBoldShadow { get; set; } = true; // Only applies when Bold = false
         public Color IdleTextColor { get; set; } = Game1.textColor;
         public Color HoverTextColor { get; set; } = Game1.unselectedOptionColor;
         public string String { get; set; }
@@ -37,7 +39,7 @@ namespace GenericModConfigMenu.UI
             if (Bold)
                 return new Vector2(SpriteText.getWidthOfString(String), SpriteText.getHeightOfString(String));
             else
-                return Game1.dialogueFont.MeasureString(String);
+                return Game1.dialogueFont.MeasureString(String) * NonBoldScale;
         }
 
         public override void Draw(SpriteBatch b)
@@ -45,8 +47,10 @@ namespace GenericModConfigMenu.UI
             bool altColor = Hover && Callback != null;
             if (Bold)
                 SpriteText.drawString(b, String, (int)Position.X, (int)Position.Y, layerDepth: 1, color: altColor ? SpriteText.color_Gray : -1);
+            else if ( NonBoldShadow )
+                Utility.drawTextWithShadow( b, String, Game1.dialogueFont, Position, altColor ? HoverTextColor : IdleTextColor, NonBoldScale );
             else
-                Utility.drawTextWithShadow(b, String, Game1.dialogueFont, Position, altColor ? HoverTextColor : IdleTextColor, 1);
+                b.DrawString( Game1.dialogueFont, String, Position, altColor ? HoverTextColor : IdleTextColor, 0f, Vector2.Zero, NonBoldScale, SpriteEffects.None, 1 );
         }
     }
 }

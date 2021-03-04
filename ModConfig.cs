@@ -12,18 +12,33 @@ namespace GenericModConfigMenu
 {
     internal class ModConfig
     {
+        public class ModPage
+        {
+            public string Name { get; }
+            public List<Action<string, object>> ChangeHandler { get; } = new List<Action<string, object>>();
+            public List<BaseModOption> Options{ get; set; } = new List<BaseModOption>();
+
+            public ModPage(string name)
+            {
+                Name = name;
+            }
+        }
+
         public IManifest ModManifest { get; }
         public Action RevertToDefault { get; }
         public Action SaveToFile { get; }
-        public List<Action<string, object>> ChangeHandler { get; }
-        public List<BaseModOption> Options { get; } = new List<BaseModOption>();
+        public Dictionary<string, ModPage> Options { get; } = new Dictionary<string, ModPage>();
+
+        public ModPage ActiveRegisteringPage = null;
+
+        public ModPage ActiveDisplayPage = null;
 
         public ModConfig(IManifest manifest, Action revertToDefault, Action saveToFile )
         {
             ModManifest = manifest;
             RevertToDefault = revertToDefault;
             SaveToFile = saveToFile;
-            ChangeHandler = new List<Action<string, object>>();
+            Options.Add( "", ActiveRegisteringPage = new ModPage( "" ) );
         }
     }
 }

@@ -81,11 +81,18 @@ namespace GenericModConfigMenu
             var api = Helper.ModRegistry.GetApi<IApi>(ModManifest.UniqueID);
             api.RegisterModConfig(ModManifest, () => config = new DummyConfig(), () => Helper.WriteConfig(config));
             api.RegisterLabel(ModManifest, "Dummy Label", "Testing labels");
+            api.RegisterParagraph( ModManifest, "Testing paragraph text. These are smaller than labels and should wrap based on length. In theory. They should also (in theory) support multiple rows. Whether that will look good or not is another question. But hey, it looks like it worked! Imagine that. Should I support images in documentation, too?" );
+            api.RegisterPageLabel( ModManifest, "Go to page: Simple Options", "", "Simple Options" );
+            api.RegisterPageLabel( ModManifest, "Go to page: Complex Options", "", "Complex Options" );
+            api.StartNewPage( ModManifest, "Simple Options" );
+            api.RegisterPageLabel( ModManifest, "Back to main page", "", "" );
             api.RegisterSimpleOption(ModManifest, "Dummy Bool", "Testing a checkbox", () => config.dummyBool, (bool val) => config.dummyBool = val);
             api.RegisterSimpleOption(ModManifest, "Dummy Int (1)", "Testing an int (simple)", () => config.dummyInt1, (int val) => config.dummyInt1 = val);
             api.RegisterClampedOption(ModManifest, "Dummy Int (2)", "Testing an int (range)", () => config.dummyInt2, (int val) => config.dummyInt2 = val, 0, 100);
             api.RegisterSimpleOption(ModManifest, "Dummy Float (1)", "Testing a float (simple)", () => config.dummyFloat1, (float val) => config.dummyFloat1 = val);
             api.RegisterClampedOption(ModManifest, "Dummy Float (2)", "Testing a float (range)", () => config.dummyFloat2, (float val) => config.dummyFloat2 = val, 0, 1);
+            api.StartNewPage( ModManifest, "Complex Options" );
+            api.RegisterPageLabel( ModManifest, "Back to main page", "", "" );
             api.RegisterSimpleOption(ModManifest, "Dummy String (1)", "Testing a string", () => config.dummyString1, (string val) => config.dummyString1 = val);
             api.RegisterChoiceOption(ModManifest, "Dummy String (2)", "Testing a dropdown box", () => config.dummyString2, (string val) => config.dummyString2 = val, DummyConfig.dummyString2Choices);
             api.RegisterSimpleOption(ModManifest, "Dummy Keybinding", "Testing a keybinding", () => config.dummyKeybinding, (SButton val) => config.dummyKeybinding = val);

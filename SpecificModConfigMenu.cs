@@ -17,23 +17,28 @@ namespace GenericModConfigMenu
         private IManifest mod;
 
         private ModConfig modConfig;
+        private string currPage;
+        private string prevPage;
 
         private RootElement ui = new RootElement();
         private Table table;
         private List<Label> optHovers = new List<Label>();
         public static IClickableMenu ActiveConfigMenu;
 
-        public SpecificModConfigMenu(IManifest modManifest)
+        public SpecificModConfigMenu(IManifest modManifest, string page = "", string prevPage = null)
         {
             mod = modManifest;
 
             modConfig = Mod.instance.configs[mod];
+            currPage = page;
+
+            Mod.instance.configs[ mod ].ActiveDisplayPage = modConfig.Options[ currPage ];
 
             table = new Table();
             table.RowHeight = 50;
             table.Size = new Vector2(Math.Min(1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
             table.LocalPosition = new Vector2((Game1.viewport.Width - table.Size.X) / 2, (Game1.viewport.Height - table.Size.Y) / 2);
-            foreach (var opt in modConfig.Options)
+            foreach (var opt in modConfig.Options[ page ].Options)
             {
                 opt.SyncToMod();
 
@@ -154,6 +159,52 @@ namespace GenericModConfigMenu
                         label = null;
                     other = null;
                 }
+                else if ( opt is PageLabelModOption pl )
+                {
+                    label.Bold = true;
+                    label.Callback = ( Element e ) =>
+                    {
+                        if ( TitleMenu.subMenu == this )
+                            TitleMenu.subMenu = new SpecificModConfigMenu( mod, pl.NewPage, currPage );
+                        else if ( Game1.activeClickableMenu == this )
+                            Game1.activeClickableMenu = new SpecificModConfigMenu( mod, pl.NewPage, currPage );
+                    };
+                    other = null;
+                }
+                else if ( opt is ParagraphModOption p )
+                {
+                    label.NonBoldScale = 0.75f;
+                    label.NonBoldShadow = false;
+                    other = null;
+
+                    string[] text = p.Name.Split( ' ' );
+                    label.String = text[ 0 ] + " ";
+                    for ( int it = 1; it < text.Length; ++it )
+                    {
+                        string oldStr = label.String;
+                        label.String += text[ it ];
+                        if ( label.Measure().X >= table.Size.X )
+                        {
+                            label.String = oldStr + "\n" + text[ it ];
+                        }
+                        if ( it < text.Length - 1 )
+                            label.String += " ";
+                    }
+
+                    string[] lines = label.String.Split( '\n' );
+                    for ( int il = 0; il < lines.Length; il += 2 )
+                    {
+                        table.AddRow( new Element[] { new Label()
+                        {
+                            UserData = opt.Description,
+                            NonBoldScale = 0.75f,
+                            NonBoldShadow = false,
+                            String = lines[ il + 0 ] + "\n" + (il + 1 >= lines.Length ? "" : lines[ il + 1 ])
+                        } } );
+                        continue;
+                    }
+                    continue;
+                }
 
                 if (label == null)
                     table.AddRow(new Element[] { });
@@ -176,7 +227,7 @@ namespace GenericModConfigMenu
 
         private void addDefaultLabels(IManifest modManifest)
         {
-            var titleLabel = new Label() { String = modManifest.Name, Bold = true };
+            var titleLabel = new Label() { String = modManifest.Name + ( currPage == "" ? "" : " > " + currPage ), Bold = true };
             titleLabel.LocalPosition = new Vector2((Game1.viewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
             titleLabel.HoverTextColor = titleLabel.IdleTextColor;
             ui.AddChild(titleLabel);
@@ -267,21 +318,23 @@ namespace GenericModConfigMenu
         {
             Game1.playSound("backpackIN");
             modConfig.RevertToDefault.Invoke();
-            foreach (var opt in modConfig.Options)
-                opt.SyncToMod();
+            foreach (var page in modConfig.Options)
+                foreach ( var opt in page.Value.Options )
+                    opt.SyncToMod();
             modConfig.SaveToFile.Invoke();
 
             if (TitleMenu.subMenu == this)
-                TitleMenu.subMenu = new SpecificModConfigMenu(mod);
+                TitleMenu.subMenu = new SpecificModConfigMenu(mod, currPage, prevPage);
             else if (Game1.activeClickableMenu == this)
-                Game1.activeClickableMenu = new SpecificModConfigMenu(mod);
+                Game1.activeClickableMenu = new SpecificModConfigMenu(mod, currPage, prevPage);
         }
 
         private void save()
         {
             Game1.playSound("money");
-            foreach (var opt in modConfig.Options)
-                opt.Save();
+            foreach ( var page in modConfig.Options )
+                foreach ( var opt in page.Value.Options )
+                    opt.Save();
             modConfig.SaveToFile.Invoke();
             if (TitleMenu.subMenu == this)
                 TitleMenu.subMenu = new ModConfigMenu();
