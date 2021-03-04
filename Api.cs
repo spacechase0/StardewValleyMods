@@ -15,6 +15,7 @@ namespace GenericModConfigMenu
     public interface IApi
     {
         void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile);
+        void UnregisterModConfig(IManifest mod);
 
         void StartNewPage(IManifest mod, string pageName);
 
@@ -56,6 +57,12 @@ namespace GenericModConfigMenu
             if (Mod.instance.configs.ContainsKey(mod))
                 throw new ArgumentException("Mod already registered");
             Mod.instance.configs.Add(mod, new ModConfig(mod, revertToDefault, saveToFile));
+        }
+        
+        public void UnregisterModConfig(IManifest mod)
+        {
+            if (Mod.instance.configs.ContainsKey(mod))                
+                Mod.instance.configs.Remove(mod);
         }
 
         public void StartNewPage( IManifest mod, string pageName )
