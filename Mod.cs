@@ -59,8 +59,6 @@ namespace JsonAssets
             helper.Events.Specialized.LoadStageChanged += onLoadStageChanged;
             helper.Events.Multiplayer.PeerContextReceived += clientConnected;
 
-            SpaceEvents.OnBlankSave += onBlankSave;
-
             helper.Content.AssetEditors.Add(content1 = new ContentInjector1());
             helper.Content.AssetLoaders.Add( content1 );
 
@@ -1066,9 +1064,9 @@ namespace JsonAssets
             locationsFixedAlready.Clear();
         }
 
-        private void onBlankSave( object sender, EventArgs e )
+        internal void onBlankSave()
         {
-            Log.debug( "Loading stuff early (super early)" );
+            Log.debug( "Loading stuff early (really super early)" );
             if ( string.IsNullOrEmpty( Constants.CurrentSavePath ) )
             {
                 initStuff( loadIdFiles: false );
