@@ -320,8 +320,13 @@ namespace JsonAssets.Game
 
         public override int sellToStorePrice( long specificPlayerID = -1 )
         {
-            // TODO: Quality, getPriceAfterMultipliers
-            return salePrice();
+            float price = salePrice() * ( 1 + Quality * 0.25f );
+            price = Mod.instance.Helper.Reflection.GetMethod( this, "getPriceAfterMultipliers" ).Invoke< float >( price, specificPlayerID );
+            
+            if ( price > 0 )
+                price = Math.Max( 1, price * Game1.MasterPlayer.difficultyModifier );
+
+            return ( int ) price;
         }
 
         protected override void _PopulateContextTags( HashSet<string> tags )
