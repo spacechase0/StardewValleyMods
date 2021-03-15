@@ -97,7 +97,25 @@ namespace JsonAssets.PackData
 
         public override void OnDisabled()
         {
-            throw new NotImplementedException();
+            MyUtility.iterateAllItems( ( item ) =>
+            {
+                if ( item is CustomObject jobj )
+                {
+                    if ( jobj.SourcePack == parent.smapiPack.Manifest.UniqueID && jobj.Id == ID )
+                        return null;
+                }
+                return item;
+            } );
+
+            if ( RemoveAllTracesWhenDisabled )
+            {
+                foreach ( var farmer in Game1.getAllFarmers() )
+                {
+                    var fakeId = $"{parent.smapiPack.Manifest.UniqueID}/{ID}".GetHashCode();
+                    if ( farmer.basicShipped.ContainsKey( fakeId ) )
+                        farmer.basicShipped.Remove( fakeId );
+                }
+            }
         }
 
         public override Item ToItem()
