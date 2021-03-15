@@ -40,6 +40,8 @@ namespace JsonAssets.PackData
                 items.Add( d.ID, d );
                 Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetHashCode(), $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
                 d.parent = this;
+                d.original = ( T ) d.Clone();
+                d.original.original = d.original;
             }
         }
 
@@ -50,6 +52,8 @@ namespace JsonAssets.PackData
             {
                 others.Add( d );
                 d.parent = this;
+                d.original = ( T ) d.Clone();
+                d.original.original = d.original;
             }
         }
 

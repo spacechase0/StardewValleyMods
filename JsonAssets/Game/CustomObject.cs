@@ -318,6 +318,12 @@ namespace JsonAssets.Game
             return Data.ForcePriceOnAllInstances ? (Data.SellPrice ?? 0) : Price;
         }
 
+        public override int sellToStorePrice( long specificPlayerID = -1 )
+        {
+            // TODO: Quality, getPriceAfterMultipliers
+            return salePrice();
+        }
+
         protected override void _PopulateContextTags( HashSet<string> tags )
         {
             base._PopulateContextTags( tags );

@@ -12,8 +12,6 @@ using System.Threading.Tasks;
 
 // TODO: Light?
 // TODO: Deconstructor output patch?
-// TODO: Sprinkler stuff?
-// TODO: Placeable data?
 
 namespace JsonAssets.PackData
 {
@@ -57,7 +55,7 @@ namespace JsonAssets.PackData
         public int? EatenHealthRestoredOverride { get; set; } = null;
         public int? EatenStaminaRestoredOverride { get; set; } = null;
         public bool EdibleIsDrink { get; set; } = false;
-        public class FoodBuffsData
+        public class FoodBuffsData : ICloneable
         {
             public int Farming { get; set; } = 0;
             public int Fishing { get; set; } = 0;
@@ -70,6 +68,8 @@ namespace JsonAssets.PackData
             public int Defense { get; set; } = 0;
             public int Attack { get; set; } = 0;
             public int Duration { get; set; } = 0;
+
+            public object Clone() => this.MemberwiseClone();
         }
         public FoodBuffsData EdibleBuffs { get; set; } = new FoodBuffsData();
 
@@ -78,16 +78,18 @@ namespace JsonAssets.PackData
         public bool CanTrash { get; set; } = true;
         public bool HideFromShippingCollection { get; set; } = false;
 
-        public class GiftTasteOverrideEntry
+        public class GiftTasteOverrideEntry : ICloneable
         {
-            public int Amount;
-            public string NormalTextTranslationKey;
-            public string BirthdayTextTranslationKey;
-            public int? EmoteId;
+            public int Amount { get; set; }
+            public string NormalTextTranslationKey { get; set; }
+            public string BirthdayTextTranslationKey { get; set; }
+            public int? EmoteId { get; set; }
+
+            public object Clone() => this.MemberwiseClone();
         }
         public bool IsGiftable { get; set; } = true;
         public int UniversalGiftTaste { get; set; } = 0;
-        public Dictionary<string, GiftTasteOverrideEntry> GiftTasteOverride = new Dictionary<string, GiftTasteOverrideEntry>();
+        public Dictionary<string, GiftTasteOverrideEntry> GiftTasteOverride { get; set; } = new Dictionary<string, GiftTasteOverrideEntry>();
 
         public bool Placeable { get; set; } = false;
         public List<Vector2> SprinklerTiles { get; set; } = null;
@@ -140,6 +142,27 @@ namespace JsonAssets.PackData
                 int itype = ( int ) Category;
                 return $"{ID}/{SellPrice}/{Edibility}/Basic {itype}/{Name}/{Description}";
             }
+        }
+
+        public override object Clone()
+        {
+            var ret = ( ObjectPackData ) base.Clone();
+            ret.EdibleBuffs = ( FoodBuffsData ) EdibleBuffs.Clone();
+            if ( GiftTasteOverride != null )
+            {
+                ret.GiftTasteOverride = new Dictionary<string, GiftTasteOverrideEntry>();
+                foreach ( var entry in GiftTasteOverride )
+                {
+                    ret.GiftTasteOverride.Add( entry.Key, ( GiftTasteOverrideEntry ) entry.Value.Clone() );
+                }
+            }
+            if ( ret.SprinklerTiles != null )
+                ret.SprinklerTiles = new List<Vector2>( SprinklerTiles );
+            if ( ret.UpgradedSprinklerTiles != null )
+                ret.UpgradedSprinklerTiles = new List<Vector2>( UpgradedSprinklerTiles );
+            if ( ret.ContextTags != null )
+                ret.ContextTags = new List<string>( ContextTags );
+            return ret;
         }
     }
 }

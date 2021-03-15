@@ -35,7 +35,7 @@ namespace JsonAssets
     public class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
         public static Mod instance;
-        private ExpandedPreconditionsUtilityAPI epu;
+        internal ExpandedPreconditionsUtilityAPI epu;
         private HarmonyInstance harmony;
 
         public static readonly int BaseFakeObjectId = 1720;
@@ -92,13 +92,14 @@ namespace JsonAssets
 
         private void OnDayStarted( object sender, DayStartedEventArgs e )
         {
+            // Enabled/disabled
             foreach ( var cp in contentPacks )
             {
                 foreach ( var data in cp.Value.items )
                 {
                     bool wasEnabled = data.Value.Enabled;
                     data.Value.Enabled = epu.CheckConditions( data.Value.EnableConditions );
-
+                    
                     if ( !data.Value.Enabled && wasEnabled )
                     {
                         data.Value.OnDisabled();
@@ -110,7 +111,27 @@ namespace JsonAssets
                 }
             }
 
-            // todo - dynamic-fields.json
+            // Dynamic fields
+            foreach ( var cp in contentPacks )
+            {
+                var newItems = new Dictionary<string, CommonPackData>();
+                foreach ( var data in cp.Value.items )
+                {
+                    var newItem = ( CommonPackData ) data.Value.original.Clone();
+                    newItem.ApplyDynamicFields();
+                    newItems.Add( data.Key, newItem );
+                }
+                cp.Value.items = newItems;
+
+                var newOthers = new List<BasePackData>();
+                foreach ( var data in cp.Value.others )
+                {
+                    var newOther = ( BasePackData ) data.original.Clone();
+                    newOther.ApplyDynamicFields();
+                    newOthers.Add( newOther );
+                }
+                cp.Value.others = newOthers;
+            }
 
             RefreshShopEntries();
 
