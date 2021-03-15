@@ -12,7 +12,10 @@ namespace ContentPatcherAnimations
 
         public bool CanEdit<T>( IAssetInfo asset )
         {
-            foreach ( var patchEntry in Mod.instance.animatedPatches )
+            if ( Mod.instance.ScreenState == null )
+                return false;
+
+            foreach ( var patchEntry in Mod.instance.ScreenState.animatedPatches )
             {
                 var patch = patchEntry.Value.patchObj;
                 var target = Mod.instance.Helper.Reflection.GetProperty<string>( patch, "TargetAsset" ).GetValue();
@@ -24,13 +27,16 @@ namespace ContentPatcherAnimations
 
         public void Edit<T>( IAssetData asset )
         {
-            foreach ( var patchEntry in Mod.instance.animatedPatches )
+            if ( Mod.instance.ScreenState == null )
+                return;
+
+            foreach ( var patchEntry in Mod.instance.ScreenState.animatedPatches )
             {
                 var patch = patchEntry.Value.patchObj;
                 var target = Mod.instance.Helper.Reflection.GetProperty<string>( patch, "TargetAsset" ).GetValue();
                 if ( !string.IsNullOrWhiteSpace( target ) && asset.AssetNameEquals( target ) )
                 {
-                    Mod.instance.findTargetsQueue.Enqueue( patchEntry.Key );
+                    Mod.instance.ScreenState.findTargetsQueue.Enqueue( patchEntry.Key );
                 }
             }
         }
