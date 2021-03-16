@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -90,10 +91,10 @@ namespace JsonAssets.PackData
             {
                 if ( lastProp.PropertyType == typeof( int ) )
                     lastProp.SetValue( lastObj, ( int ) ( long ) Data );
-                else if ( lastProp.PropertyType == typeof( bool ) )
-                    lastProp.SetValue( lastObj, ( bool ) Data );
                 else if ( lastProp.PropertyType == typeof( float ) )
                     lastProp.SetValue( lastObj, ( float ) ( double ) Data );
+                else if ( lastProp.PropertyType == typeof( bool ) )
+                    lastProp.SetValue( lastObj, ( bool ) Data );
                 else if ( lastProp.PropertyType == typeof( string ) )
                     lastProp.SetValue( lastObj, ( string ) Data );
                 else if ( Nullable.GetUnderlyingType( lastProp.PropertyType ) != null )
@@ -107,14 +108,55 @@ namespace JsonAssets.PackData
                 }
                 else if ( !lastProp.PropertyType.IsPrimitive && Data == null )
                     lastProp.SetValue( lastObj, null );
+                else if ( !lastProp.PropertyType.IsPrimitive )
+                    lastProp.SetValue( lastObj, ( Data as JObject ).ToObject( lastProp.PropertyType ) );
                 else
                     throw new ArgumentException( $"Unsupported type {lastProp.PropertyType} {Data.GetType()}" );
-                // TODO: JObject
             }
             else
             {
-                // TODO
-                throw new NotImplementedException( $"Not implemented: Setting index {lastProp} {lastInd} {lastObj} {obj} {Data} {Data.GetType()}" );
+                object setVal = null;
+                if ( Data is long )
+                    setVal = ( int ) ( long ) Data;
+                else if ( Data is double )
+                    setVal = ( float ) ( double ) Data;
+                else if ( Data is bool || Data is string )
+                    setVal = Data;
+                else
+                {
+                    Type t = null;
+                    if ( obj is Array arr2 )
+                        t = arr2.GetType().GetElementType();
+                    else if ( obj is System.Collections.IList list2 )
+                        t = list2.GetType().GenericTypeArguments[ 0 ];
+                    else if ( obj is System.Collections.IDictionary dict2 )
+                        t = dict2.GetType().GenericTypeArguments[ 1 ];
+                    else
+                        throw new ArgumentException( $"Unsupported type {obj} for data object w/ index" );
+                    setVal = ( Data as JObject ).ToObject( t );
+                }
+
+                if ( lastInd is int indI && obj is Array arr )
+                {
+                    if ( arr.Length <= indI )
+                        throw new ArgumentException( $"No such index '{indI}' in array {arr}" );
+                    arr.SetValue( setVal, indI );
+                }
+                else if ( lastInd is int indI2 && obj is System.Collections.IList list )
+                {
+                    if ( list.Count <= indI2 )
+                        throw new ArgumentException( $"No such index '{indI2}' in list '{list}'" );
+                    list[ indI2 ] = setVal;
+                }
+                else if ( lastInd != null && obj is System.Collections.IDictionary dict )
+                {
+                    if ( setVal == null )
+                        dict.Remove( lastInd );
+                    else
+                        dict[ lastInd ] = setVal;
+                }
+                else 
+                    throw new NotImplementedException( $"Not implemented: Setting index {lastProp} {lastInd} {lastObj} {obj} {Data} {Data.GetType()}" );
             }
         }
     }
