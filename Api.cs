@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 using System;
@@ -30,6 +31,7 @@ namespace GenericModConfigMenu
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet);
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet);
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<SButton> optionGet, Action<SButton> optionSet);
+        void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<KeybindList> optionGet, Action<KeybindList> optionSet);
 
         void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max);
         void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max);
@@ -119,6 +121,7 @@ namespace GenericModConfigMenu
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet) => RegisterSimpleOption<float>(mod, optionName, optionDesc, optionGet, optionSet);
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet) => RegisterSimpleOption<string>(mod, optionName, optionDesc, optionGet, optionSet);
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<SButton> optionGet, Action<SButton> optionSet) => RegisterSimpleOption<SButton>(mod, optionName, optionDesc, optionGet, optionSet);
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<KeybindList> optionGet, Action<KeybindList> optionSet) => RegisterSimpleOption<KeybindList>(mod, optionName, optionDesc, optionGet, optionSet);
         public void RegisterSimpleOption<T>(IManifest mod, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet) => RegisterSimpleOption(mod, optionName, optionName, optionDesc, optionGet, optionSet);
 
 
@@ -127,7 +130,7 @@ namespace GenericModConfigMenu
             if (!Mod.instance.configs.ContainsKey(mod))
                 throw new ArgumentException("Mod not registered");
 
-            Type[] valid = new Type[] { typeof(bool), typeof(int), typeof(float), typeof(string), typeof(SButton) };
+            Type[] valid = new Type[] { typeof(bool), typeof(int), typeof(float), typeof(string), typeof(SButton), typeof(KeybindList) };
             if (!valid.Contains(typeof(T)))
             {
                 throw new ArgumentException("Invalid config option type.");

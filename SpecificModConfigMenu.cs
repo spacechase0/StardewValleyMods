@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 using System;
@@ -94,6 +95,15 @@ namespace GenericModConfigMenu
                     var label2 = new Label() { String = k.Value.ToString() };
                     label2.LocalPosition = new Vector2(table.Size.X / 2, 0);
                     label2.Callback = (Element e) => doKeybindingFor(k, e as Label);
+                    other = label2;
+                }
+                else if ( opt is SimpleModOption<KeybindList> k2 )
+                {
+                    if ( Constants.TargetPlatform == GamePlatform.Android )
+                        continue; // TODO: Support virtual keyboard input.
+                    var label2 = new Label() { String = k2.Value.Keybinds[0].ToString() };
+                    label2.LocalPosition = new Vector2( table.Size.X / 2, 0 );
+                    label2.Callback = ( Element e ) => doKeybinding2For( k2, e as Label );
                     other = label2;
                 }
                 else if ( opt is ClampedModOption<int> ci )
@@ -378,6 +388,22 @@ namespace GenericModConfigMenu
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.viewport.Width - sw) / 2, boxY + 100), Game1.textColor);
             }
 
+            if ( keybinding2Opt != null )
+            {
+                b.Draw( Game1.staminaRect, new Rectangle( 0, 0, Game1.viewport.Width, Game1.viewport.Height ), new Color( 0, 0, 0, 192 ) );
+
+                int boxX = (Game1.viewport.Width - 650) / 2, boxY = (Game1.viewport.Height - 200) / 2;
+                IClickableMenu.drawTextureBox( b, boxX, boxY, 650, 200, Color.White );
+
+                string s = "Rebinding key: " + keybinding2Opt.Name;
+                int sw = (int)Game1.dialogueFont.MeasureString(s).X;
+                b.DrawString( Game1.dialogueFont, s, new Vector2( ( Game1.viewport.Width - sw ) / 2, boxY + 20 ), Game1.textColor );
+
+                s = "Press a key combination to rebind";
+                sw = ( int ) Game1.dialogueFont.MeasureString( s ).X;
+                b.DrawString( Game1.dialogueFont, s, new Vector2( ( Game1.viewport.Width - sw ) / 2, boxY + 100 ), Game1.textColor );
+            }
+
             drawMouse(b);
 
             if (Constants.TargetPlatform != GamePlatform.Android)
@@ -438,6 +464,7 @@ namespace GenericModConfigMenu
         }
 
         private SimpleModOption<SButton> keybindingOpt;
+        private SimpleModOption<KeybindList> keybinding2Opt;
         private Label keybindingLabel;
         private void doKeybindingFor( SimpleModOption<SButton> opt, Label label )
         {
@@ -446,6 +473,14 @@ namespace GenericModConfigMenu
             keybindingLabel = label;
             ui.Obscured = true;
             Mod.instance.Helper.Events.Input.ButtonPressed += assignKeybinding;
+        }
+        private void doKeybinding2For( SimpleModOption<KeybindList> opt, Label label )
+        {
+            Game1.playSound( "breathin" );
+            keybinding2Opt = opt;
+            keybindingLabel = label;
+            ui.Obscured = true;
+            Mod.instance.Helper.Events.Input.ButtonsChanged += assignKeybinding2;
         }
 
         private void assignKeybinding(object sender, ButtonPressedEventArgs e)
@@ -468,6 +503,50 @@ namespace GenericModConfigMenu
             keybindingOpt = null;
             keybindingLabel = null;
             ui.Obscured = false;
+        }
+        private void assignKeybinding2( object sender, ButtonsChangedEventArgs e )
+        {
+            if ( keybinding2Opt == null )
+                return;
+
+            List<SButton> all = new List<SButton>();
+            foreach ( var button in e.Held )
+            {
+                if ( button.TryGetKeyboard( out Keys keys ) || button.TryGetController( out _ ) )
+                {
+                    all.Add( button );
+                }
+            }
+
+            foreach ( var button in e.Released )
+            {
+                bool stop = false;
+                if ( button.ToString() == "Escape" )
+                {
+                    stop = true;
+                    Game1.playSound( "bigDeSelect" );
+                }
+                if ( button.TryGetKeyboard( out Keys keys ) || button.TryGetController( out _ ) )
+                {
+                    stop = true;
+                    all.Add( button );
+
+                    Game1.playSound( "coin" );
+                    keybinding2Opt.Value.Keybinds[ 0 ] = new Keybind( all.ToArray() );
+                    keybindingLabel.String = keybinding2Opt.Value.Keybinds[ 0 ].ToString();
+                }
+
+                if ( stop )
+                {
+                    Mod.instance.Helper.Events.Input.ButtonsChanged -= assignKeybinding2;
+                    keybinding2Opt = null;
+                    keybindingLabel = null;
+                    ui.Obscured = false;
+                }
+
+                return;
+            }
+
         }
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)

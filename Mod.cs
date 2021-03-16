@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 
@@ -66,6 +67,7 @@ namespace GenericModConfigMenu
             public string dummyString2 = "Default";
             internal static string[] dummyString2Choices = new string[] { "Default", "Kitties", "Cats", "Meow" };
             public SButton dummyKeybinding = SButton.K;
+            public KeybindList dummyKeybinding2 = new KeybindList( new Keybind( SButton.LeftShift, SButton.S ) );
             public Color dummyColor = Color.White;
         }
         public DummyConfig config;
@@ -98,6 +100,7 @@ namespace GenericModConfigMenu
             api.RegisterSimpleOption(ModManifest, "Dummy String (1)", "Testing a string", () => config.dummyString1, (string val) => config.dummyString1 = val);
             api.RegisterChoiceOption(ModManifest, "Dummy String (2)", "Testing a dropdown box", () => config.dummyString2, (string val) => config.dummyString2 = val, DummyConfig.dummyString2Choices);
             api.RegisterSimpleOption(ModManifest, "Dummy Keybinding", "Testing a keybinding", () => config.dummyKeybinding, (SButton val) => config.dummyKeybinding = val);
+            api.RegisterSimpleOption(ModManifest, "Dummy Keybinding 2", "Testing a keybinding list", () => config.dummyKeybinding2, (KeybindList val) => config.dummyKeybinding2 = val);
 
             api.RegisterLabel(ModManifest, "", "");
 
