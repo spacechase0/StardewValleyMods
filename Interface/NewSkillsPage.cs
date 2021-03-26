@@ -1,19 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
+using Microsoft.Xna.Framework.Input;
 using StardewValley;
 using StardewValley.Menus;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
 
 namespace SpaceCore.Interface
 {
     public class NewSkillsPage : IClickableMenu
     {
+        public Texture2D texture;
         public List<ClickableTextureComponent> skillBars = new List<ClickableTextureComponent>();
         public List<ClickableTextureComponent> skillAreas = new List<ClickableTextureComponent>();
         public List<ClickableTextureComponent> specialItems = new List<ClickableTextureComponent>();
+        public List<ClickableTextureComponent> specialItemComponents = new List<ClickableTextureComponent>();
+        public ClickableTextureComponent walletUpArrow;
+        public ClickableTextureComponent walletDownArrow;
+        public ClickableComponent playerPanel;
+        private Rectangle walletArea;
+        private Rectangle walletIconArea;
+        private Rectangle walletIconAreaSource = new Rectangle(293, 360, 24, 24);
+        private Rectangle walletIconSource = new Rectangle(0, 0, 12, 12);
+        private Rectangle skillsTabSource = new Rectangle(16, 368, 16, 16);
+        private int SkillTabRegionId => Game1.activeClickableMenu is GameMenu ? GameMenu.region_skillsTab : -1;
+        private bool IsWalletRightSide => SpaceCore.instance.Config.WalletOnRightOfSkillPage
+            && !SpaceCore.instance.Helper.ModRegistry.IsLoaded("alphablackwolf.skillPrestige"); // Skill prestige places icons in right-side wallet area
+        private bool IsLegacyWallet => SpaceCore.instance.Config.WalletLegacyStyle;
+        private int walletSelectionOffset;
+        private int WalletSelectionOffset
+        {
+            get => walletSelectionOffset;
+            set => walletSelectionOffset = value < 0 ? ((specialItemComponents.Count - 1) * 2) - 1 : value % ((specialItemComponents.Count - 1) * 2);
+        }
+        private bool CanScrollWalletItems
+        {
+            get => !this.IsLegacyWallet && this.specialItems.Count > this.specialItemComponents.Count;
+        }
+        private bool CanNavigateToWallet
+        {
+            get => this.specialItems.Any() && (!this.IsLegacyWallet || this.specialItemComponents.First().bounds.Y > 0);
+        }
         private string hoverText = "";
         private string hoverTitle = "";
         private int professionImage = -1;
@@ -24,328 +53,382 @@ namespace SpaceCore.Interface
             0,
             2
         };
-        public const int region_special1 = 10201;
-        public const int region_special2 = 10202;
-        public const int region_special3 = 10203;
-        public const int region_special4 = 10204;
-        public const int region_special5 = 10205;
-        public const int region_special6 = 10206;
-        public const int region_special7 = 10207;
-        public const int region_special8 = 10208;
-        public const int region_special9 = 10209;
-        public const int region_skillArea1 = 0;
-        public const int region_skillArea2 = 1;
-        public const int region_skillArea3 = 2;
-        public const int region_skillArea4 = 3;
-        public const int region_skillArea5 = 4;
+        public const string CustomSkillPrefix = "C";
+        public const int SkillRegionStartId = 0;
+        public const int SkillIdIncrement = 1;
+        public const int SkillProfessionIncrement = 100;
+        public const int WalletRegionStartId = 10250;
+        public const int WalletIdIncrement = 1;
+        public const int WalletUpArrowRegionId = 10201;
+        public const int WalletDownArrowRegionId = 10202;
+        public const int PlayerPanelRegionId = 10275;
         private int playerPanelIndex;
         private int playerPanelTimer;
-        private Rectangle playerPanel;
-
-        private int WALLET_MOVE_X = 0;
-        private int WALLET_MOVE_Y = -600;
-        private int WALLET_MOVE_W = 0;
-        private int WALLET_MOVE_H = 0;
 
         public NewSkillsPage(int x, int y, int width, int height)
             : base(x, y, width, height, false)
         {
-            int x1 = this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 80;
-            int y1 = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + (int)((double)height / 2.0) + 80;
-            this.playerPanel = new Rectangle(this.xPositionOnScreen + 64, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder, 128, 192);
-            if (Game1.player.canUnderstandDwarves)
+            this.texture = SpaceCore.instance.Helper.Content.Load<Texture2D>(Path.Combine("assets/sprites.png"));
+
+            // Player panel
+            this.playerPanel = new ClickableComponent(
+                bounds: new Rectangle(this.xPositionOnScreen + 64, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder, 128, 192),
+                name: null);
+            this.playerPanel.myID = NewSkillsPage.PlayerPanelRegionId;
+            // navigation is handled in receiveKeyPress to avoid confusing the navigation logic
+
+            // Wallet area
             {
-                List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11587"), Game1.mouseCursors, new Rectangle(129, 320, 16, 16), 4f, true);
-                textureComponent.myID = 10201;
-                textureComponent.rightNeighborID = 10202;
-                textureComponent.upNeighborID = 4;
-                specialItems.Add(textureComponent);
+                int padInner = this.IsWalletRightSide ? -8 : -64;
+                int iconAreaWidth = this.walletIconAreaSource.Width * Game1.pixelZoom;
+                int iconAreaHeight = this.walletIconAreaSource.Height * Game1.pixelZoom;
+                int walletX = this.IsWalletRightSide ? this.xPositionOnScreen + this.width + padInner : this.xPositionOnScreen - iconAreaWidth + padInner;
+                this.walletArea = this.IsLegacyWallet
+                    ? new Rectangle(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + (int)(this.height / 2.0) - 48 - 600, this.width - 64 - (IClickableMenu.spaceToClearSideBorder * 2), (this.height / 4) + 64)
+                    : new Rectangle(walletX, this.yPositionOnScreen, 72 + iconAreaHeight, this.height);
+                this.walletIconArea = new Rectangle(this.walletArea.X + ((this.walletArea.Width - iconAreaWidth) / 2), this.walletArea.Y + (iconAreaHeight / 2) - 8, iconAreaWidth, iconAreaHeight);
             }
-            if (Game1.player.hasRustyKey)
+
+            int iconWidth = 16;
+
+            // Wallet contents
             {
-                List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 68 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11588"), Game1.mouseCursors, new Rectangle(145, 320, 16, 16), 4f, true);
-                textureComponent.myID = 10202;
-                textureComponent.rightNeighborID = 10203;
-                textureComponent.leftNeighborID = 10201;
-                textureComponent.upNeighborID = 4;
-                specialItems.Add(textureComponent);
-            }
-            if (Game1.player.hasClubCard)
-            {
-                List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 136 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11589"), Game1.mouseCursors, new Rectangle(161, 320, 16, 16), 4f, true);
-                textureComponent.myID = 10203;
-                textureComponent.rightNeighborID = 10204;
-                textureComponent.leftNeighborID = 10202;
-                textureComponent.upNeighborID = 4;
-                specialItems.Add(textureComponent);
-            }
-            if (Game1.player.hasSpecialCharm)
-            {
-                List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 204 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11590"), Game1.mouseCursors, new Rectangle(176, 320, 16, 16), 4f, true);
-                textureComponent.myID = 10204;
-                textureComponent.rightNeighborID = 10205;
-                textureComponent.leftNeighborID = 10203;
-                textureComponent.upNeighborID = 4;
-                specialItems.Add(textureComponent);
-            }
-            if (Game1.player.hasSkullKey)
-            {
-                List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 272 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11591"), Game1.mouseCursors, new Rectangle(192, 320, 16, 16), 4f, true);
-                textureComponent.myID = 10205;
-                textureComponent.rightNeighborID = 10206;
-                textureComponent.leftNeighborID = 10204;
-                textureComponent.upNeighborID = 4;
-                specialItems.Add(textureComponent);
-            }
-            if (Game1.player.hasMagnifyingGlass)
-            {
-                List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 340 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.magnifyingglass"), Game1.mouseCursors, new Rectangle(208, 320, 16, 16), 4f, true);
-                textureComponent.myID = 10205;
-                textureComponent.rightNeighborID = 10206;
-                textureComponent.leftNeighborID = 10204;
-                textureComponent.upNeighborID = 4;
-                specialItems.Add(textureComponent);
-            }
-            if (Game1.player.hasDarkTalisman)
-            {
-                List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 408 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:DarkTalisman"), Game1.mouseCursors, new Rectangle(225, 320, 16, 16), 4f, true);
-                textureComponent.myID = 10206;
-                textureComponent.rightNeighborID = 10207;
-                textureComponent.leftNeighborID = 10205;
-                textureComponent.upNeighborID = 4;
-                specialItems.Add(textureComponent);
-            }
-            if (Game1.player.hasMagicInk)
-            {
-                List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 476 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:MagicInk"), Game1.mouseCursors, new Rectangle(241, 320, 16, 16), 4f, true);
-                textureComponent.myID = 10207;
-                textureComponent.leftNeighborID = 10206;
-                textureComponent.upNeighborID = 4;
-                specialItems.Add(textureComponent);
-            }
-            if (Game1.player.eventsSeen.Contains(2120303))
-            {
-                List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 544 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:BearPaw"), Game1.mouseCursors, new Rectangle(192, 336, 16, 16), 4f, true);
-                textureComponent.myID = 10208;
-                textureComponent.leftNeighborID = 10207;
-                textureComponent.upNeighborID = 4;
-                specialItems.Add(textureComponent);
-            }
-            if (Game1.player.eventsSeen.Contains(3910979))
-            {
-                List<ClickableTextureComponent> specialItems = this.specialItems;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(x1 + 612 + WALLET_MOVE_X, y1 + WALLET_MOVE_Y, 64, 64), (string)null, Game1.content.LoadString("Strings\\Objects:SpringOnionBugs"), Game1.mouseCursors, new Rectangle(208, 336, 16, 16), 4f, true);
-                textureComponent.myID = 10209;
-                textureComponent.leftNeighborID = 10208;
-                textureComponent.upNeighborID = 4;
-                specialItems.Add(textureComponent);
-            }
-            int num1 = 0;
-            int num2 = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + width - 448 - 48 + 4 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 4;
-            int num3 = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 12;
-            int num4 = 4;
-            while (num4 < 10)
-            {
-                for (int index = 0; index < (SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5); ++index)
+                // Special item names and whether they've been unlocked
+                List<KeyValuePair<string, bool>> specialFlags = new List<KeyValuePair<string, bool>>
                 {
+                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11587", Game1.player.canUnderstandDwarves),
+                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11588", Game1.player.hasRustyKey),
+                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11589", Game1.player.hasClubCard),
+                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11590", Game1.player.hasSpecialCharm),
+                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11591", Game1.player.hasSkullKey),
+                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.magnifyingglass", Game1.player.hasMagnifyingGlass),
+                    new KeyValuePair<string, bool>("Objects:DarkTalisman", Game1.player.hasDarkTalisman),
+                    new KeyValuePair<string, bool>("Objects:MagicInk", Game1.player.hasMagicInk),
+                    new KeyValuePair<string, bool>("Objects:BearPaw", Game1.player.eventsSeen.Contains(2120303)),
+                    new KeyValuePair<string, bool>("Objects:SpringOnionBugs", Game1.player.eventsSeen.Contains(3910979)),
+                };
+
+                const int padTop = 16;
+
+                // Actual wallet special items
+                {
+                    int iconDestWidth = iconWidth * Game1.pixelZoom;
+                    int offsetIndex = specialFlags.FindIndex(pair => pair.Key.EndsWith("MagicInk"));
+                    for (int i = 0; i < specialFlags.Count; ++i)
+                    {
+                        if (!specialFlags[i].Value)
+                            continue;
+
+                        ClickableTextureComponent textureComponent = new ClickableTextureComponent(
+                            name: "", bounds: new Rectangle(-1, -1, iconDestWidth, iconDestWidth),
+                            label: null, hoverText: Game1.content.LoadString($"Strings\\{specialFlags[i].Key}"),
+                            texture: Game1.mouseCursors, sourceRect: new Rectangle(128 + (i <= offsetIndex ? i * iconWidth : (iconWidth * 4) + (iconWidth * (i - offsetIndex - 1))), i <= offsetIndex ? 320 : 320 + iconWidth, iconWidth, iconWidth), scale: 4f, drawShadow: true);
+
+                        this.specialItems.Add(textureComponent);
+                    }
+                    if (Game1.player.HasTownKey)
+                    {
+                        this.specialItems.Add(new ClickableTextureComponent(
+                            name: "", bounds: new Rectangle(-1, -1, iconDestWidth, iconDestWidth),
+                            label: null, hoverText: Game1.content.LoadString("Strings\\StringsFromCSFiles:KeyToTheTown"),
+                            texture: Game1.objectSpriteSheet, sourceRect: Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 912, iconWidth, iconWidth), scale: 4f, drawShadow: true));
+                    }
+                }
+
+                // Wallet navigation arrows
+                iconWidth = 32;
+                this.walletUpArrow = new ClickableTextureComponent(
+                    name: "", bounds: new Rectangle(this.walletArea.X + ((this.walletArea.Width - iconWidth) / 2), this.walletArea.Y + 148, iconWidth, iconWidth),
+                    label: null, hoverText: null,
+                    texture: Game1.mouseCursors, sourceRect: new Rectangle(442, 96, iconWidth, iconWidth), scale: 1f, drawShadow: false);
+                this.walletDownArrow = new ClickableTextureComponent(
+                    name: "", bounds: new Rectangle(this.walletUpArrow.bounds.X, this.walletUpArrow.bounds.Y + this.walletArea.Height - 224, this.walletUpArrow.bounds.Width, this.walletUpArrow.bounds.Height),
+                    label: null, hoverText: null,
+                    texture: this.walletUpArrow.texture, sourceRect: this.walletUpArrow.sourceRect, scale: this.walletUpArrow.scale, drawShadow: this.walletUpArrow.drawShadow);
+
+                // Wallet item icons for navigation
+                const int padRight = 4;
+                iconWidth = 16;
+                int iconCount = this.IsLegacyWallet ? 10 : (this.walletDownArrow.bounds.Y - this.walletUpArrow.bounds.Y - (padTop * 2)) / iconWidth / Game1.pixelZoom;
+                bool shouldNavButtonsBeShown = !this.IsLegacyWallet && specialItems.Count > iconCount;
+                for (int index = 0; index < iconCount; ++index)
+                {
+                    int iconDestWidth = iconWidth * Game1.pixelZoom;
+                    int x2 = this.IsLegacyWallet ? this.walletArea.X + 48 + ((iconDestWidth + padRight) * index) : this.walletUpArrow.bounds.X + (this.walletUpArrow.bounds.Width / 2) - (iconDestWidth / 2);
+                    int y2 = this.IsLegacyWallet ? this.walletArea.Y + 120 : this.walletUpArrow.bounds.Y + (this.specialItems.Count > iconCount ? this.walletUpArrow.bounds.Height : 0) + padTop + (index * iconDestWidth);
+                    ClickableTextureComponent textureComponent = new ClickableTextureComponent(
+                        name: "", bounds: new Rectangle(x2, y2, iconDestWidth, iconDestWidth),
+                        label: "", hoverText: "",
+                        texture: Game1.mouseCursors, sourceRect: new Rectangle(-1, -1, iconWidth, iconWidth), scale: Game1.pixelZoom, drawShadow: true);
+                    textureComponent.myID = NewSkillsPage.WalletRegionStartId + this.specialItemComponents.Count;
+                    if (this.IsLegacyWallet)
+                    {
+                        textureComponent.leftNeighborID = index == 0 ? -1 : textureComponent.myID - NewSkillsPage.WalletIdIncrement;
+                        textureComponent.rightNeighborID = index < this.specialItems.Count - 1 ? index == iconCount - 1 ? -1 : textureComponent.myID + NewSkillsPage.WalletIdIncrement : -1;
+                    }
+                    else
+                    {
+                        // left/right neighbour IDs are omitted here, navigating to SkillRegionStartId confuses the snapping logic
+                        textureComponent.upNeighborID = index == 0 ? shouldNavButtonsBeShown ? NewSkillsPage.WalletUpArrowRegionId : -1 : textureComponent.myID - NewSkillsPage.WalletIdIncrement;
+                        textureComponent.downNeighborID = index < this.specialItems.Count - 1 ? index == iconCount - 1 ? shouldNavButtonsBeShown ? NewSkillsPage.WalletDownArrowRegionId : -1 : textureComponent.myID + NewSkillsPage.WalletIdIncrement : -1;
+                    }
+                    this.specialItemComponents.Add(textureComponent);
+                }
+            }
+
+            // Wallet nav arrow navigation
+            this.walletUpArrow.myID = NewSkillsPage.WalletUpArrowRegionId;
+            this.walletDownArrow.myID = NewSkillsPage.WalletDownArrowRegionId;
+            this.walletUpArrow.downNeighborID = this.specialItemComponents.First().myID;
+            this.walletDownArrow.upNeighborID = this.specialItemComponents.Last().myID;
+
+            // Professions
+            string[] skills = Skills.GetSkillList();
+            int drawX = 0;
+            int addedX = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + width - 448 - 48 + 4 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 4;
+            int drawY = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 12;
+            int gameSkillCount = SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
+            int walletSnapId = this.specialItems.Any() ? NewSkillsPage.WalletRegionStartId : -1;
+            int leftSnapId = this.playerPanel.myID;
+            int rightSnapId = this.IsLegacyWallet || !this.IsWalletRightSide ? -1 : walletSnapId;
+
+            // Professions for game skills
+            for (int professionIndex = 1; professionIndex < 3; ++professionIndex)
+            {
+                for (int skillIndex = 0; skillIndex < gameSkillCount; ++skillIndex)
+                {
+                    bool drawRed = false;
+                    int professionCheckLevel = professionIndex - 1 + (professionIndex * 4);
+                    int whichProfession = -1;
                     string professionBlurb = "";
                     string professionTitle = "";
-                    bool flag = false;
-                    int whichProfession = -1;
-                    switch (index)
+
+                    // case/index pairs for 1 and 3 are swapped to match internal skill order
+                    switch (skillIndex)
                     {
                         case 0:
-                            flag = Game1.player.FarmingLevel > num4;
-                            whichProfession = Game1.player.getProfessionForSkill(0, num4 + 1);
+                            drawRed = Game1.player.FarmingLevel > professionCheckLevel;
+                            whichProfession = Game1.player.getProfessionForSkill(0, professionCheckLevel + 1);
                             this.parseProfessionDescription(ref professionBlurb, ref professionTitle, LevelUpMenu.getProfessionDescription(whichProfession));
                             break;
                         case 1:
-                            flag = Game1.player.MiningLevel > num4;
-                            whichProfession = Game1.player.getProfessionForSkill(3, num4 + 1);
+                            drawRed = Game1.player.MiningLevel > professionCheckLevel;
+                            whichProfession = Game1.player.getProfessionForSkill(3, professionCheckLevel + 1);
                             this.parseProfessionDescription(ref professionBlurb, ref professionTitle, LevelUpMenu.getProfessionDescription(whichProfession));
                             break;
                         case 2:
-                            flag = Game1.player.ForagingLevel > num4;
-                            whichProfession = Game1.player.getProfessionForSkill(2, num4 + 1);
+                            drawRed = Game1.player.ForagingLevel > professionCheckLevel;
+                            whichProfession = Game1.player.getProfessionForSkill(2, professionCheckLevel + 1);
                             this.parseProfessionDescription(ref professionBlurb, ref professionTitle, LevelUpMenu.getProfessionDescription(whichProfession));
                             break;
                         case 3:
-                            flag = Game1.player.FishingLevel > num4;
-                            whichProfession = Game1.player.getProfessionForSkill(1, num4 + 1);
+                            drawRed = Game1.player.FishingLevel > professionCheckLevel;
+                            whichProfession = Game1.player.getProfessionForSkill(1, professionCheckLevel + 1);
                             this.parseProfessionDescription(ref professionBlurb, ref professionTitle, LevelUpMenu.getProfessionDescription(whichProfession));
                             break;
                         case 4:
-                            flag = Game1.player.CombatLevel > num4;
-                            whichProfession = Game1.player.getProfessionForSkill(4, num4 + 1);
+                            drawRed = Game1.player.CombatLevel > professionCheckLevel;
+                            whichProfession = Game1.player.getProfessionForSkill(4, professionCheckLevel + 1);
                             this.parseProfessionDescription(ref professionBlurb, ref professionTitle, LevelUpMenu.getProfessionDescription(whichProfession));
                             break;
                         case 5:
-                            flag = Game1.player.LuckLevel > num4;
-                            whichProfession = Game1.player.getProfessionForSkill(5, num4 + 1);
+                            drawRed = Game1.player.LuckLevel > professionCheckLevel;
+                            whichProfession = Game1.player.getProfessionForSkill(5, professionCheckLevel + 1);
                             this.parseProfessionDescription(ref professionBlurb, ref professionTitle, LevelUpMenu.getProfessionDescription(whichProfession));
                             break;
                     }
-                    if (flag && (num4 + 1) % 5 == 0)
+                    if (drawRed)
                     {
-                        List<ClickableTextureComponent> skillBars = this.skillBars;
-                        ClickableTextureComponent textureComponent = new ClickableTextureComponent(string.Concat((object)whichProfession), new Rectangle(num1 + num2 - 4 + num4 * 36, num3 + index * 56, 56, 36), (string)null, professionBlurb, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), 4f, true);
-                        textureComponent.myID = num4 + 1 == 5 ? 100 + index : 200 + index;
-                        textureComponent.leftNeighborID = num4 + 1 == 5 ? index : 100 + index;
-                        textureComponent.rightNeighborID = num4 + 1 == 5 ? 200 + index : -1;
-                        textureComponent.downNeighborID = 10201;
-                        skillBars.Add(textureComponent);
+                        ClickableTextureComponent textureComponent = new ClickableTextureComponent(
+                            name: string.Concat(whichProfession), bounds: new Rectangle(drawX + addedX - 4 + professionCheckLevel * 36, drawY + skillIndex * 56, 56, 36),
+                            label: null, hoverText: professionBlurb,
+                            texture: Game1.mouseCursors, sourceRect: new Rectangle(159, 338, 14, 9), scale: 4f, drawShadow: true);
+                        textureComponent.myID = NewSkillsPage.SkillRegionStartId + (skillIndex * NewSkillsPage.SkillIdIncrement) + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                        textureComponent.leftNeighborID = textureComponent.myID - NewSkillsPage.SkillProfessionIncrement;
+                        textureComponent.rightNeighborID = professionIndex == 2 ? rightSnapId : textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
+                        textureComponent.downNeighborID = skillIndex == gameSkillCount - 1 && skills.Length == 0 ? walletSnapId : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
+                        this.skillBars.Add(textureComponent);
                     }
                 }
-                num1 += 24;
-                num4 += 5;
+                drawX += 24;
             }
 
-            //////////////////////////////////
-            num1 = 0;
-            num4 = 4;
-            while (num4 < 10)
+            // Professions for custom skills
+            drawX = 0;
+            for (int professionIndex = 1; professionIndex < 3; ++professionIndex)
             {
-                int index_ = SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
-                foreach ( var skillName in Skills.GetSkillList() )
+                for (int skillIndex = 0; skillIndex < skills.Length; ++skillIndex)
                 {
-                    var skill = Skills.GetSkill(skillName);
+                    int totalSkillIndex = gameSkillCount + skillIndex;
+                    int professionLevel = professionIndex - 1 + (professionIndex * 4);
+                    Skills.Skill skill = Skills.GetSkill(skills[skillIndex]);
+                    Skills.Skill.Profession profession = Skills.getProfessionFor(skill, professionLevel + 1);// Game1.player.getProfessionForSkill(0, num4 + 1);
+                    bool drawRed = Game1.player.GetCustomSkillLevel(skill) > professionLevel;
+                    List<string> professionLines = new List<string>();
                     string professionBlurb = "";
                     string professionTitle = "";
-                    bool flag = false;
-                    Skills.Skill.Profession whichProfession = null;
-                    flag = Game1.player.GetCustomSkillLevel(skill) > num4;
-                    whichProfession = Skills.getProfessionFor(skill, num4 + 1);// Game1.player.getProfessionForSkill(0, num4 + 1);
-                    var profLines = new List<string>();
-                    if (whichProfession != null)
+
+                    if (profession != null)
                     {
-                        profLines.Add(whichProfession.GetName());
-                        profLines.AddRange(whichProfession.GetDescription().Split('\n'));
+                        professionLines.Add(profession.GetName());
+                        professionLines.AddRange(profession.GetDescription().Split('\n'));
                     }
-                    this.parseProfessionDescription(ref professionBlurb, ref professionTitle, profLines);
-                    if (flag && (num4 + 1) % 5 == 0 && whichProfession != null)
+                    this.parseProfessionDescription(ref professionBlurb, ref professionTitle, professionLines);
+                    if (drawRed && (professionLevel + 1) % 5 == 0 && profession != null)
                     {
                         List<ClickableTextureComponent> skillBars = this.skillBars;
-                        ClickableTextureComponent textureComponent = new ClickableTextureComponent("C"+whichProfession.Id, new Rectangle(num1 + num2 - 4 + num4 * 36, num3 + index_ * 56, 56, 36), (string)null, professionBlurb, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), 4f, true);
-                        textureComponent.myID = num4 + 1 == 5 ? 100 + index_ : 200 + index_;
-                        textureComponent.leftNeighborID = num4 + 1 == 5 ? index_ : 100 + index_;
-                        textureComponent.rightNeighborID = num4 + 1 == 5 ? 200 + index_ : -1;
-                        textureComponent.downNeighborID = 10201;
+                        ClickableTextureComponent textureComponent = new ClickableTextureComponent(
+                            name: NewSkillsPage.CustomSkillPrefix + profession.Id, bounds: new Rectangle(drawX + addedX - 4 + (professionLevel * 36), drawY + (gameSkillCount * 56), 56, 36),
+                            label: null, hoverText: professionBlurb,
+                            texture: Game1.mouseCursors, sourceRect: new Rectangle(159, 338, 14, 9), scale: 4f, drawShadow: true);
+                        textureComponent.myID = (totalSkillIndex * NewSkillsPage.SkillIdIncrement) + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                        textureComponent.leftNeighborID = textureComponent.myID - NewSkillsPage.SkillProfessionIncrement;
+                        textureComponent.rightNeighborID = professionIndex == 2 ? rightSnapId : textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
+                        textureComponent.downNeighborID = skillIndex == skills.Length - 1 ? walletSnapId : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
                         skillBars.Add(textureComponent);
                     }
-
-                    ++index_;
                 }
-                num1 += 24;
-                num4 += 5;
+                drawX += 24;
             }
-            //////////////////////////////////
+
+            // For both vanilla and custom skills, allow skill bar navigation to skip missing professions when navigating up-and-down between skills
+            // also permit navigation between columns of professions when reaching the ends of a column
             for (int index = 0; index < this.skillBars.Count; ++index)
             {
-                if (index < this.skillBars.Count - 1 && Math.Abs(this.skillBars[index + 1].myID - this.skillBars[index].myID) < 50)
+                if (index < this.skillBars.Count - 1 && Math.Abs(this.skillBars[index + 1].myID - this.skillBars[index].myID) < NewSkillsPage.SkillProfessionIncrement)
                 {
                     this.skillBars[index].downNeighborID = this.skillBars[index + 1].myID;
                     this.skillBars[index + 1].upNeighborID = this.skillBars[index].myID;
                 }
             }
-            if (this.skillBars.Count > 1 && this.skillBars.Last<ClickableTextureComponent>().myID >= 200 && this.skillBars[this.skillBars.Count - 2].myID >= 200)
-                this.skillBars.Last<ClickableTextureComponent>().upNeighborID = this.skillBars[this.skillBars.Count - 2].myID;
-            for (int index = 0; index < (SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5); ++index)
+            if (this.skillBars.Count > 1 && this.skillBars.Last().myID >= 2 * NewSkillsPage.SkillProfessionIncrement && this.skillBars[this.skillBars.Count - 2].myID >= 2 * NewSkillsPage.SkillProfessionIncrement)
+                this.skillBars[this.skillBars.Count - 1].upNeighborID = this.skillBars[this.skillBars.Count - 2].myID;
+
+            // Icons for vanilla skills
+            for (int skillIndex = 0; skillIndex < gameSkillCount; ++skillIndex)
             {
-                int num5 = index;
-                switch (num5)
+                // actualIndex fetches skill data from the internal (actual skill index) sequence rather than the display sequence (skill index)
+                int actualSkillIndex = skillIndex;
+                switch (actualSkillIndex)
                 {
                     case 1:
-                        num5 = 3;
+                        actualSkillIndex = 3;
                         break;
                     case 3:
-                        num5 = 1;
+                        actualSkillIndex = 1;
                         break;
                 }
                 string hoverText = "";
-                switch (num5)
+                switch (actualSkillIndex)
                 {
                     case 0:
                         if (Game1.player.FarmingLevel > 0)
                         {
-                            hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11592", (object)Game1.player.FarmingLevel) + Environment.NewLine + Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11594", (object)Game1.player.FarmingLevel);
+                            hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11592", Game1.player.FarmingLevel) + Environment.NewLine + Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11594", Game1.player.FarmingLevel);
                             break;
                         }
                         break;
                     case 1:
                         if (Game1.player.FishingLevel > 0)
                         {
-                            hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11598", (object)Game1.player.FishingLevel);
+                            hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11598", Game1.player.FishingLevel);
                             break;
                         }
                         break;
                     case 2:
                         if (Game1.player.ForagingLevel > 0)
                         {
-                            hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11596", (object)Game1.player.ForagingLevel);
+                            hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11596", Game1.player.ForagingLevel);
                             break;
                         }
                         break;
                     case 3:
                         if (Game1.player.MiningLevel > 0)
                         {
-                            hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11600", (object)Game1.player.MiningLevel);
+                            hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11600", Game1.player.MiningLevel);
                             break;
                         }
                         break;
                     case 4:
                         if (Game1.player.CombatLevel > 0)
                         {
-                            hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11602", (object)(Game1.player.CombatLevel * 5));
+                            hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11602", Game1.player.CombatLevel * 5);
                             break;
                         }
                         break;
                 }
-                List<ClickableTextureComponent> skillAreas = this.skillAreas;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent(string.Concat((object)num5), new Rectangle(num2 - 128 - 48, num3 + index * 56, 148, 36), string.Concat((object)num5), hoverText, (Texture2D)null, Rectangle.Empty, 1f, false);
-                textureComponent.myID = index;
-                textureComponent.downNeighborID = index < 4 ? index + 1 : 10201;
-                textureComponent.upNeighborID = index > 0 ? index - 1 : 12341;
-                textureComponent.rightNeighborID = 100 + index;
-                skillAreas.Add(textureComponent);
-            }
-            //////////////////////////////////
-            int index__ = (SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5);
-            foreach (var skillName in Skills.GetSkillList())
-            {
-                var skill = Skills.GetSkill(skillName);
-                int num5 = index__;
-                switch (num5)
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent(
+                    name: string.Concat(actualSkillIndex), bounds: new Rectangle(addedX - 128 - 48, drawY + (skillIndex * 56), 148, 36),
+                    label: string.Concat(actualSkillIndex), hoverText,
+                    texture: null, sourceRect: Rectangle.Empty, scale: 1f, drawShadow: false);
+                textureComponent.myID = NewSkillsPage.SkillRegionStartId + (skillIndex * NewSkillsPage.SkillIdIncrement);
+                textureComponent.rightNeighborID = textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
+                textureComponent.leftNeighborID = leftSnapId;
+                textureComponent.downNeighborID = skillIndex == gameSkillCount - 1 && skills.Length == 0 ? walletSnapId : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
+                textureComponent.upNeighborID = skillIndex > 0 ? textureComponent.myID - NewSkillsPage.SkillProfessionIncrement : this.SkillTabRegionId;
+
+                if (this.IsWalletRightSide)
                 {
-                    case 1:
-                        num5 = 3;
-                        break;
-                    case 3:
-                        num5 = 1;
-                        break;
+                    int level = Game1.player.GetSkillLevel(actualSkillIndex);
+                    if (level < 10)
+                    {
+                        // allow the player to navigate to the wallet without having profession 2 unlocked for a skill
+                        for (int professionIndex = 2; professionIndex >= 0; --professionIndex)
+                        {
+                            var snapTo = textureComponent.myID + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                            var clickable = (ClickableComponent)this.skillBars.FirstOrDefault(c => c.myID == snapTo);
+                            if (clickable != null)
+                                clickable.rightNeighborID = rightSnapId;
+                            else
+                                textureComponent.rightNeighborID = rightSnapId;
+                        }
+                    }
                 }
+
+                this.skillAreas.Add(textureComponent);
+            }
+
+            // Icons for custom skills
+            for (int skillIndex = 0; skillIndex < skills.Length; ++skillIndex)
+            {
+                Skills.Skill skill = Skills.GetSkill(skills[skillIndex]);
+                int actualSkillIndex = gameSkillCount + skillIndex;
                 string hoverText = "";
                 if (Game1.player.GetCustomSkillLevel(skill) > 0)
                     hoverText = skill.GetSkillPageHoverText(Game1.player.GetCustomSkillLevel(skill));
-                List<ClickableTextureComponent> skillAreas = this.skillAreas;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("C" + skill.GetName(), new Rectangle(num2 - 128 - 48, num3 + index__ * 56, 148, 36), string.Concat((object)num5), hoverText, (Texture2D)null, Rectangle.Empty, 1f, false);
-                textureComponent.myID = index__;
-                textureComponent.downNeighborID = index__ < 4 ? index__ + 1 : 10201;
-                textureComponent.upNeighborID = index__ > 0 ? index__ - 1 : 12341;
-                textureComponent.rightNeighborID = 100 + index__;
-                skillAreas.Add(textureComponent);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent(
+                    name: NewSkillsPage.CustomSkillPrefix + skill.GetName(), bounds: new Rectangle(addedX - 128 - 48, drawY + (actualSkillIndex * 56), 148, 36),
+                    label: string.Concat(actualSkillIndex), hoverText,
+                    texture: null, sourceRect: Rectangle.Empty, scale: 1f, drawShadow: false);
+                textureComponent.myID = NewSkillsPage.SkillRegionStartId + (actualSkillIndex * NewSkillsPage.SkillIdIncrement);
+                textureComponent.rightNeighborID = textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
+                textureComponent.leftNeighborID = leftSnapId;
+                textureComponent.downNeighborID = skillIndex == skills.Length - 1 ? -1 : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
+                textureComponent.upNeighborID = textureComponent.myID - NewSkillsPage.SkillIdIncrement;
 
-                ++index__;
+                if (this.IsWalletRightSide && !this.IsLegacyWallet)
+                {
+                    int level = Game1.player.GetSkillLevel(actualSkillIndex);
+                    if (level < 10)
+                    {
+                        // allow the player to navigate to the wallet without having profession 2 unlocked for a skill
+                        for (int professionIndex = 2; professionIndex >= 0; --professionIndex)
+                        {
+                            var snapTo = textureComponent.myID + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                            var clickable = (ClickableComponent)this.skillBars.FirstOrDefault(c => c.myID == snapTo);
+                            if (clickable != null)
+                                clickable.rightNeighborID = rightSnapId;
+                            else
+                                textureComponent.rightNeighborID = rightSnapId;
+                        }
+                    }
+                }
+
+                this.skillAreas.Add(textureComponent);
             }
-            //////////////////////////////////
+
+            // Add/update navigation
+            this.populateClickableComponentList();
         }
 
         private void parseProfessionDescription(ref string professionBlurb, ref string professionTitle, List<string> professionDescription)
@@ -363,18 +446,146 @@ namespace SpaceCore.Interface
 
         public override void snapToDefaultClickableComponent()
         {
-            this.currentlySnappedComponent = this.skillAreas.Count > 0 ? this.getComponentWithID(0) : (ClickableComponent)null;
+            this.currentlySnappedComponent = this.skillAreas.Count > 0 ? this.getComponentWithID(0) : null;
             if (this.currentlySnappedComponent == null || !Game1.options.snappyMenus || !Game1.options.gamepadControls)
                 return;
-            this.currentlySnappedComponent.snapMouseCursorToCenter();
+            this.snapCursorToCurrentSnappedComponent();
+        }
+
+        public override void setCurrentlySnappedComponentTo(int id)
+        {
+            if (id == -1)
+                return;
+            this.currentlySnappedComponent = getComponentWithID(id);
+            this.snapCursorToCurrentSnappedComponent();
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
+            // Wallet up-down arrows scroll list of items if there are more than can be shown in walletArea
+            if (this.CanScrollWalletItems)
+            {
+                if (this.walletUpArrow.containsPoint(x, y))
+                {
+                    --this.WalletSelectionOffset;
+                    if (playSound)
+                        Game1.playSound("Cowboy_gunshot");
+                }
+                else if (this.walletDownArrow.containsPoint(x, y))
+                {
+                    ++this.WalletSelectionOffset;
+                    if (playSound)
+                        Game1.playSound("Cowboy_gunshot");
+                }
+            }
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)
         {
+        }
+
+        public override void receiveKeyPress(Keys key)
+        {
+            // Left-right navigation from wallet items redirects to the skills page/player panel
+            // Page navigation is corrupted when skills page is used as a neighbour for these components, so we handle it here
+            if (Game1.options.SnappyMenus && this.currentlySnappedComponent != null)
+            {
+                // wallet navigation
+                if (this.currentlySnappedComponent.myID == NewSkillsPage.WalletUpArrowRegionId || this.currentlySnappedComponent.myID == NewSkillsPage.WalletDownArrowRegionId
+                    || (this.currentlySnappedComponent.myID >= NewSkillsPage.WalletRegionStartId && this.currentlySnappedComponent.myID < NewSkillsPage.WalletRegionStartId + (this.IsLegacyWallet ? this.specialItemComponents.Count : this.specialItems.Count)))
+                {
+                    // navigating left with a right-side non-legacy wallet will move to the skills page
+                    if (Game1.options.doesInputListContain(Game1.options.moveLeftButton, key) && this.IsWalletRightSide && !this.IsLegacyWallet)
+                    {
+                        this.setCurrentlySnappedComponentTo(NewSkillsPage.SkillRegionStartId);
+                        return;
+                    }
+                    // navigating right with a left-side non-legacy wallet will move to the player panel
+                    else if (Game1.options.doesInputListContain(Game1.options.moveRightButton, key) && !this.IsWalletRightSide && !this.IsLegacyWallet)
+                    {
+                        this.setCurrentlySnappedComponentTo(NewSkillsPage.PlayerPanelRegionId);
+                        return;
+                    }
+                    // navigating down with a legacy wallet will move to the skill tab
+                    else if (Game1.options.doesInputListContain(Game1.options.moveDownButton, key) && this.IsLegacyWallet)
+                    {
+                        this.setCurrentlySnappedComponentTo(this.SkillTabRegionId);
+                        return;
+                    }
+                }
+                // player panel navigation
+                else if (this.currentlySnappedComponent.myID == NewSkillsPage.PlayerPanelRegionId)
+                {
+                    // moving left with a left-side non-legacy wallet will move to the wallet
+                    if (Game1.options.doesInputListContain(Game1.options.moveLeftButton, key) && !this.IsWalletRightSide && !this.IsLegacyWallet)
+                    {
+                        this.setCurrentlySnappedComponentTo(NewSkillsPage.WalletRegionStartId);
+                        return;
+                    }
+                    // moving right will move to the skills page
+                    else if (Game1.options.doesInputListContain(Game1.options.moveRightButton, key))
+                    {
+                        this.setCurrentlySnappedComponentTo(NewSkillsPage.SkillRegionStartId);
+                        return;
+                    }
+                    // moving up will move to the skill tab
+                    else if (Game1.options.doesInputListContain(Game1.options.moveUpButton, key))
+                    {
+                        this.setCurrentlySnappedComponentTo(this.SkillTabRegionId);
+                        return;
+                    }
+                }
+                // skill tab navigation
+                else if (this.currentlySnappedComponent.myID == this.SkillTabRegionId)
+                {
+                    // navigating up with a legacy wallet will move to the wallet if on-screen
+                    if (Game1.options.doesInputListContain(Game1.options.moveUpButton, key) && this.CanNavigateToWallet)
+                    {
+                        this.setCurrentlySnappedComponentTo(NewSkillsPage.WalletRegionStartId);
+                        return;
+                    }
+                }
+            }
+            base.receiveKeyPress(key);
+        }
+
+        public override void receiveGamePadButton(Buttons b)
+        {
+            // Shoulder buttons navigate between skills and wallet
+            if (b == Buttons.LeftShoulder || b == Buttons.RightShoulder)
+            {
+                if (this.currentlySnappedComponent != null && this.currentlySnappedComponent.myID < NewSkillsPage.WalletRegionStartId && this.CanNavigateToWallet)
+                {
+                    this.setCurrentlySnappedComponentTo(NewSkillsPage.WalletRegionStartId);
+                }
+                else
+                {
+                    this.setCurrentlySnappedComponentTo(0);
+                }
+                Game1.playSound("smallSelect");
+            }
+
+            base.receiveGamePadButton(b);
+        }
+
+        public override void receiveScrollWheelAction(int direction)
+        {
+            // Skill page scrolls between skill components
+            if (Game1.options.SnappyMenus && this.currentlySnappedComponent != null && new Rectangle(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
+            {
+                int snapTo = this.currentlySnappedComponent.myID + ((direction < 0 ? 1 : -1) * NewSkillsPage.SkillIdIncrement);
+                if (this.getComponentWithID(snapTo) == null)
+                    return;
+                this.setCurrentlySnappedComponentTo(snapTo);
+            }
+            // Wallet area scrolls list of items without moving cursor
+            else if (this.CanScrollWalletItems && this.walletArea.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
+            {
+                if (direction < 0)
+                    ++this.WalletSelectionOffset;
+                else
+                    --this.WalletSelectionOffset;
+            }
         }
 
         public override void performHoverAction(int x, int y)
@@ -382,12 +593,15 @@ namespace SpaceCore.Interface
             this.hoverText = "";
             this.hoverTitle = "";
             this.professionImage = -1;
-            foreach (ClickableTextureComponent specialItem in this.specialItems)
+
+            if (this.walletIconArea.Contains(x, y))
+                this.hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11610");
+
+            for (int index = 0; index < this.specialItemComponents.Count && this.hoverText.Length == 0; ++index)
             {
-                if (specialItem.containsPoint(x, y))
+                if (this.specialItemComponents[index].containsPoint(x, y))
                 {
-                    this.hoverText = specialItem.hoverText;
-                    break;
+                    this.hoverText = (index < this.specialItems.Count || this.CanScrollWalletItems) ? this.specialItems[(index + this.walletSelectionOffset) % this.specialItems.Count].hoverText : "";
                 }
             }
             foreach (ClickableTextureComponent skillBar in this.skillBars)
@@ -396,8 +610,8 @@ namespace SpaceCore.Interface
                 if (skillBar.containsPoint(x, y) && skillBar.hoverText.Length > 0 && !skillBar.name.Equals("-1"))
                 {
                     this.hoverText = skillBar.hoverText;
-                    this.hoverTitle = skillBar.name.StartsWith("C") ? skillBar.name.Substring(1) : LevelUpMenu.getProfessionTitleFromNumber(Convert.ToInt32(skillBar.name));
-                    this.professionImage = skillBar.name.StartsWith("C") ? 0 : Convert.ToInt32(skillBar.name);
+                    this.hoverTitle = skillBar.name.StartsWith(NewSkillsPage.CustomSkillPrefix) ? skillBar.name.Substring(1) : LevelUpMenu.getProfessionTitleFromNumber(Convert.ToInt32(skillBar.name));
+                    this.professionImage = skillBar.name.StartsWith(NewSkillsPage.CustomSkillPrefix) ? 0 : Convert.ToInt32(skillBar.name);
                     skillBar.scale = 0.0f;
                 }
             }
@@ -406,11 +620,11 @@ namespace SpaceCore.Interface
                 if (skillArea.containsPoint(x, y) && skillArea.hoverText.Length > 0)
                 {
                     this.hoverText = skillArea.hoverText;
-                    this.hoverTitle = skillArea.name.StartsWith("C") ? skillArea.name.Substring(1) : Farmer.getSkillDisplayNameFromIndex(Convert.ToInt32(skillArea.name));
+                    this.hoverTitle = skillArea.name.StartsWith(NewSkillsPage.CustomSkillPrefix) ? skillArea.name.Substring(1) : Farmer.getSkillDisplayNameFromIndex(Convert.ToInt32(skillArea.name));
                     break;
                 }
             }
-            if (this.playerPanel.Contains(x, y))
+            if (this.playerPanel.bounds.Contains(x, y))
             {
                 this.playerPanelTimer -= Game1.currentGameTime.ElapsedGameTime.Milliseconds;
                 if (this.playerPanelTimer > 0)
@@ -419,193 +633,337 @@ namespace SpaceCore.Interface
                 this.playerPanelTimer = 150;
             }
             else
+            {
                 this.playerPanelIndex = 0;
+            }
         }
 
         public override void draw(SpriteBatch b)
         {
-            Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true, (string)null, false);
-            int num1 = this.xPositionOnScreen + 64 - 12;
-            int num2 = this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder;
-            b.Draw(Game1.timeOfDay >= 1900 ? Game1.nightbg : Game1.daybg, new Vector2((float)num1, (float)num2), Color.White);
-            Game1.player.FarmerRenderer.draw(b, new FarmerSprite.AnimationFrame((bool)((NetFieldBase<bool, NetBool>)Game1.player.bathingClothes) ? 108 : this.playerPanelFrames[this.playerPanelIndex], 0, false, false, (AnimatedSprite.endOfAnimationBehavior)null, false), (bool)((NetFieldBase<bool, NetBool>)Game1.player.bathingClothes) ? 108 : this.playerPanelFrames[this.playerPanelIndex], new Rectangle(this.playerPanelFrames[this.playerPanelIndex] * 16, (bool)((NetFieldBase<bool, NetBool>)Game1.player.bathingClothes) ? 576 : 0, 16, 32), new Vector2((float)(num1 + 32), (float)(num2 + 32)), Vector2.Zero, 0.8f, 2, Color.White, 0.0f, 1f, Game1.player);
-            if (Game1.timeOfDay >= 1900)
-                Game1.player.FarmerRenderer.draw(b, new FarmerSprite.AnimationFrame(this.playerPanelFrames[this.playerPanelIndex], 0, false, false, (AnimatedSprite.endOfAnimationBehavior)null, false), this.playerPanelFrames[this.playerPanelIndex], new Rectangle(this.playerPanelFrames[this.playerPanelIndex] * 16, 0, 16, 32), new Vector2((float)(num1 + 32), (float)(num2 + 32)), Vector2.Zero, 0.8f, 2, Color.DarkBlue * 0.3f, 0.0f, 1f, Game1.player);
-            b.DrawString(Game1.smallFont, Game1.player.Name, new Vector2((float)(num1 + 64) - Game1.smallFont.MeasureString(Game1.player.Name).X / 2f, (float)(num2 + 192 + 4)), Game1.textColor);
-            b.DrawString(Game1.smallFont, Game1.player.getTitle(), new Vector2((float)(num1 + 64) - Game1.smallFont.MeasureString(Game1.player.getTitle()).X / 2f, (float)(num2 + 256 - 32)), Game1.textColor);
-            int num3 = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + this.width - 448 - 48 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 8;
-            int num4 = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 8;
-            int num5 = 0;
-            for (int index1 = 0; index1 < 10; ++index1)
+            int x = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + this.width - 448 - 48 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 8;
+            int y = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 8;
+            int indexWithLuckSkill = SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
+            int xOffset = 0;
+
+            // Menu container
+            Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height,
+                speaker: false, drawOnlyBox: true, message: null, objectDialogueWithPortrait: false);
+
+            // Skills tab icon
+            if (Game1.activeClickableMenu is GameMenu gm)
             {
-                for (int index2 = 0; index2 < (SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5); ++index2)
+                const int selectedTabOffset = 8;
+                ClickableComponent c = gm.tabs[GameMenu.skillsTab];
+                b.Draw(texture: Game1.mouseCursors,
+                    position: new Vector2(c.bounds.X, c.bounds.Y + selectedTabOffset),
+                    sourceRectangle: this.skillsTabSource,
+                    Color.White, rotation: 0f, origin: Vector2.Zero, scale: Game1.pixelZoom, SpriteEffects.None, layerDepth: 0.0001f);
+                Game1.player.FarmerRenderer.drawMiniPortrat(b,
+                    position: new Vector2(c.bounds.X + selectedTabOffset, c.bounds.Y + selectedTabOffset + 12),
+                    layerDepth: 0.00011f, scale: 3f, facingDirection: 2, who: Game1.player);
+            }
+
+            // Farmer portrait area
+            {
+                int x1 = this.playerPanel.bounds.X - 12;
+                int y1 = this.playerPanel.bounds.Y;
+
+                // portrait background
+                b.Draw(texture: Game1.timeOfDay >= 1900 ? Game1.nightbg : Game1.daybg, position: new Vector2(x1, y1), Color.White);
+
+                // farmer portrait
+                Game1.player.FarmerRenderer.draw(b,
+                    new FarmerSprite.AnimationFrame(Game1.player.bathingClothes.Value ? 108 : this.playerPanelFrames[this.playerPanelIndex], 0, false, false, null, false),
+                    currentFrame: Game1.player.bathingClothes.Value ? 108 : this.playerPanelFrames[this.playerPanelIndex],
+                    sourceRect: new Rectangle(this.playerPanelFrames[this.playerPanelIndex] * 16, Game1.player.bathingClothes.Value ? 576 : 0, 16, 32),
+                    position: new Vector2(x1 + 32, y1 + 32),
+                    origin: Vector2.Zero, layerDepth: 0.8f, facingDirection: 2, Color.White, rotation: 0.0f, scale: 1f, who: Game1.player);
+
+                // dark overlay on farmer
+                if (Game1.timeOfDay >= 1900)
                 {
-                    bool flag1 = false;
-                    bool flag2 = false;
-                    string text = "";
-                    int number = 0;
-                    Rectangle rectangle = Rectangle.Empty;
-                    switch (index2)
+                    Game1.player.FarmerRenderer.draw(b,
+                        new FarmerSprite.AnimationFrame(this.playerPanelFrames[this.playerPanelIndex], 0, false, false, null, false),
+                        currentFrame: this.playerPanelFrames[this.playerPanelIndex],
+                        sourceRect: new Rectangle(this.playerPanelFrames[this.playerPanelIndex] * 16, 0, 16, 32),
+                        position: new Vector2(x1 + 32, y1 + 32),
+                        origin: Vector2.Zero, layerDepth: 0.8f, facingDirection: 2, Color.DarkBlue * 0.3f, rotation: 0.0f, scale: 1f, who: Game1.player);
+                }
+
+                // subtitles
+                b.DrawString(Game1.smallFont, text: Game1.player.Name, position: new Vector2(x1 + 64 - (Game1.smallFont.MeasureString(Game1.player.Name).X / 2f), y1 + 192 + 4), Game1.textColor);
+                b.DrawString(Game1.smallFont, text: Game1.player.getTitle(), position: new Vector2(x1 + 64 - (Game1.smallFont.MeasureString(Game1.player.getTitle()).X / 2f), y1 + 256 - 32), Game1.textColor);
+            }
+
+            // Vanilla skills
+            for (int levelIndex = 0; levelIndex < 10; ++levelIndex)
+            {
+                for (int skillIndex = 0; skillIndex < indexWithLuckSkill; ++skillIndex)
+                {
+                    bool drawRed = false;
+                    bool addedSkill = false;
+                    string skillTitle = "";
+                    int skillLevel = 0;
+                    Rectangle iconSource = Rectangle.Empty;
+
+                    switch (skillIndex)
                     {
                         case 0:
-                            flag1 = Game1.player.FarmingLevel > index1;
-                            if (index1 == 0)
-                                text = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11604");
-                            number = Game1.player.FarmingLevel;
-                            flag2 = (int)((NetFieldBase<int, NetInt>)Game1.player.addedFarmingLevel) > 0;
-                            rectangle = new Rectangle(10, 428, 10, 10);
+                            drawRed = Game1.player.FarmingLevel > levelIndex;
+                            if (levelIndex == 0)
+                                skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11604");
+                            skillLevel = Game1.player.FarmingLevel;
+                            addedSkill = Game1.player.addedFarmingLevel.Value > 0;
+                            iconSource = new Rectangle(10, 428, 10, 10);
                             break;
                         case 1:
-                            flag1 = Game1.player.MiningLevel > index1;
-                            if (index1 == 0)
-                                text = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11605");
-                            number = Game1.player.MiningLevel;
-                            flag2 = (int)((NetFieldBase<int, NetInt>)Game1.player.addedMiningLevel) > 0;
-                            rectangle = new Rectangle(30, 428, 10, 10);
+                            drawRed = Game1.player.MiningLevel > levelIndex;
+                            if (levelIndex == 0)
+                                skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11605");
+                            skillLevel = Game1.player.MiningLevel;
+                            addedSkill = Game1.player.addedMiningLevel.Value > 0;
+                            iconSource = new Rectangle(30, 428, 10, 10);
                             break;
                         case 2:
-                            flag1 = Game1.player.ForagingLevel > index1;
-                            if (index1 == 0)
-                                text = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11606");
-                            number = Game1.player.ForagingLevel;
-                            flag2 = (int)((NetFieldBase<int, NetInt>)Game1.player.addedForagingLevel) > 0;
-                            rectangle = new Rectangle(60, 428, 10, 10);
+                            drawRed = Game1.player.ForagingLevel > levelIndex;
+                            if (levelIndex == 0)
+                                skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11606");
+                            skillLevel = Game1.player.ForagingLevel;
+                            addedSkill = Game1.player.addedForagingLevel.Value > 0;
+                            iconSource = new Rectangle(60, 428, 10, 10);
                             break;
                         case 3:
-                            flag1 = Game1.player.FishingLevel > index1;
-                            if (index1 == 0)
-                                text = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11607");
-                            number = Game1.player.FishingLevel;
-                            flag2 = (int)((NetFieldBase<int, NetInt>)Game1.player.addedFishingLevel) > 0;
-                            rectangle = new Rectangle(20, 428, 10, 10);
+                            drawRed = Game1.player.FishingLevel > levelIndex;
+                            if (levelIndex == 0)
+                                skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11607");
+                            skillLevel = Game1.player.FishingLevel;
+                            addedSkill = Game1.player.addedFishingLevel.Value > 0;
+                            iconSource = new Rectangle(20, 428, 10, 10);
                             break;
                         case 4:
-                            flag1 = Game1.player.CombatLevel > index1;
-                            if (index1 == 0)
-                                text = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11608");
-                            number = Game1.player.CombatLevel;
-                            flag2 = (int)((NetFieldBase<int, NetInt>)Game1.player.addedCombatLevel) > 0;
-                            rectangle = new Rectangle(120, 428, 10, 10);
+                            drawRed = Game1.player.CombatLevel > levelIndex;
+                            if (levelIndex == 0)
+                                skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11608");
+                            skillLevel = Game1.player.CombatLevel;
+                            addedSkill = Game1.player.addedCombatLevel.Value > 0;
+                            iconSource = new Rectangle(120, 428, 10, 10);
                             break;
                         case 5:
-                            flag1 = Game1.player.LuckLevel > index1;
-                            if (index1 == 0)
-                                text = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11609");
-                            number = Game1.player.LuckLevel;
-                            flag2 = (int)((NetFieldBase<int, NetInt>)Game1.player.addedLuckLevel) > 0;
-                            rectangle = new Rectangle(50, 428, 10, 10);
+                            drawRed = Game1.player.LuckLevel > levelIndex;
+                            if (levelIndex == 0)
+                                skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11609");
+                            skillLevel = Game1.player.LuckLevel;
+                            addedSkill = Game1.player.addedLuckLevel.Value > 0;
+                            iconSource = new Rectangle(50, 428, 10, 10);
                             break;
                     }
-                    if (!text.Equals(""))
+                    if (skillTitle.Length > 0)
                     {
-                        b.DrawString(Game1.smallFont, text, new Vector2((float)((double)num3 - (double)Game1.smallFont.MeasureString(text).X + 4.0 - 64.0), (float)(num4 + 4 + index2 * 56)), Game1.textColor);
-                        b.Draw(Game1.mouseCursors, new Vector2((float)(num3 - 56), (float)(num4 + index2 * 56)), new Rectangle?(rectangle), Color.Black * 0.3f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
-                        b.Draw(Game1.mouseCursors, new Vector2((float)(num3 - 52), (float)(num4 - 4 + index2 * 56)), new Rectangle?(rectangle), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.DrawString(Game1.smallFont, skillTitle, new Vector2((float)(x - Game1.smallFont.MeasureString(skillTitle).X + 4.0 - 64.0), y + 4 + skillIndex * 56), Game1.textColor);
+                        b.Draw(Game1.mouseCursors, new Vector2(x - 56, y + skillIndex * 56), new Rectangle?(iconSource), Color.Black * 0.3f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
+                        b.Draw(Game1.mouseCursors, new Vector2(x - 52, y - 4 + skillIndex * 56), new Rectangle?(iconSource), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
                     }
-                    if (!flag1 && (index1 + 1) % 5 == 0)
+                    if (!drawRed && (levelIndex + 1) % 5 == 0)
                     {
-                        b.Draw(Game1.mouseCursors, new Vector2((float)(num5 + num3 - 4 + index1 * 36), (float)(num4 + index2 * 56)), new Rectangle?(new Rectangle(145, 338, 14, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
-                        b.Draw(Game1.mouseCursors, new Vector2((float)(num5 + num3 + index1 * 36), (float)(num4 - 4 + index2 * 56)), new Rectangle?(new Rectangle(145 + (flag1 ? 14 : 0), 338, 14, 9)), Color.White * (flag1 ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + skillIndex * 56), new Rectangle?(new Rectangle(145, 338, 14, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + skillIndex * 56), new Rectangle?(new Rectangle(145 + (drawRed ? 14 : 0), 338, 14, 9)), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
                     }
-                    else if ((index1 + 1) % 5 != 0)
+                    else if ((levelIndex + 1) % 5 != 0)
                     {
-                        b.Draw(Game1.mouseCursors, new Vector2((float)(num5 + num3 - 4 + index1 * 36), (float)(num4 + index2 * 56)), new Rectangle?(new Rectangle(129, 338, 8, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
-                        b.Draw(Game1.mouseCursors, new Vector2((float)(num5 + num3 + index1 * 36), (float)(num4 - 4 + index2 * 56)), new Rectangle?(new Rectangle(129 + (flag1 ? 8 : 0), 338, 8, 9)), Color.White * (flag1 ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + skillIndex * 56), new Rectangle?(new Rectangle(129, 338, 8, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + skillIndex * 56), new Rectangle?(new Rectangle(129 + (drawRed ? 8 : 0), 338, 8, 9)), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
                     }
-                    if (index1 == 9)
+                    if (levelIndex == 9)
                     {
-                        NumberSprite.draw(number, b, new Vector2((float)(num5 + num3 + (index1 + 2) * 36 + 12 + (number >= 10 ? 12 : 0)), (float)(num4 + 16 + index2 * 56)), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
-                        NumberSprite.draw(number, b, new Vector2((float)(num5 + num3 + (index1 + 2) * 36 + 16 + (number >= 10 ? 12 : 0)), (float)(num4 + 12 + index2 * 56)), (flag2 ? Color.LightGreen : Color.SandyBrown) * (number == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 12 + (skillLevel >= 10 ? 12 : 0), y + 16 + skillIndex * 56), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 16 + (skillLevel >= 10 ? 12 : 0), y + 12 + skillIndex * 56), (addedSkill ? Color.LightGreen : Color.SandyBrown) * (skillLevel == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
                     }
                 }
-                if ((index1 + 1) % 5 == 0)
-                    num5 += 24;
+                if ((levelIndex + 1) % 5 == 0)
+                    xOffset += 24;
             }
-            //////////////////////////////////
-            int index2_ = SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
+
+            // Custom skills
             foreach (var skillName in Skills.GetSkillList())
             {
-                num5 = 0;
-                var skill = Skills.GetSkill(skillName);
-                for (int index1 = 0; index1 < skill.ExperienceCurve.Length; ++index1)
+                xOffset = 0;
+                Skills.Skill skill = Skills.GetSkill(skillName);
+                for (int levelIndex = 0; levelIndex < skill.ExperienceCurve.Length; ++levelIndex)
                 {
-                    bool flag1 = false;
-                    bool flag2 = false;
-                    string text = "";
-                    int number = 0;
-                    
-                    flag1 = Game1.player.GetCustomSkillLevel(skill) > index1;
-                    if (index1 == 0)
-                        text = skill.GetName();
-                    number = Game1.player.GetCustomSkillLevel(skill);
+                    int skillLevel = 0;
+                    bool drawRed = false;
+                    bool addedSkill = false;
+                    string skillTitle = "";
+
+                    drawRed = Game1.player.GetCustomSkillLevel(skill) > levelIndex;
+                    if (levelIndex == 0)
+                        skillTitle = skill.GetName();
+                    skillLevel = Game1.player.GetCustomSkillLevel(skill);
                     // TODO: Detect skill buffs? Is that even possible?
-                    flag2 = false;// (int)((NetFieldBase<int, NetInt>)Game1.player.addedFarmingLevel) > 0;
-                    if (!text.Equals(""))
+                    addedSkill = false; // (int)((NetFieldBase<int, NetInt>)Game1.player.addedFarmingLevel) > 0;
+                    if (skillTitle.Length > 0)
                     {
-                        b.DrawString(Game1.smallFont, text, new Vector2((float)((double)num3 - (double)Game1.smallFont.MeasureString(text).X + 4.0 - 64.0), (float)(num4 + 4 + index2_ * 56)), Game1.textColor);
+                        b.DrawString(Game1.smallFont, skillTitle, position: new Vector2((float)(x - Game1.smallFont.MeasureString(skillTitle).X + 4.0 - 64.0), (y + 4 + (indexWithLuckSkill * 56))), Game1.textColor);
                         if (skill.SkillsPageIcon != null)
                         {
-                            b.Draw(skill.SkillsPageIcon, new Vector2((float)(num3 - 56), (float)(num4 + index2_ * 56)), null, Color.Black * 0.3f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
-                            b.Draw(skill.SkillsPageIcon, new Vector2((float)(num3 - 52), (float)(num4 - 4 + index2_ * 56)), null, Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                            b.Draw(texture: skill.SkillsPageIcon,
+                                position: new Vector2(x - 56, y + (indexWithLuckSkill * 56)),
+                                sourceRectangle: null,
+                                Color.Black * 0.3f, rotation: 0.0f, origin: Vector2.Zero, scale: 4f, SpriteEffects.None, layerDepth: 0.85f);
+                            b.Draw(texture: skill.SkillsPageIcon,
+                                position: new Vector2(x - 52, y - 4 + (indexWithLuckSkill * 56)),
+                                sourceRectangle: null,
+                                Color.White, rotation: 0.0f, origin: Vector2.Zero, scale: 4f, SpriteEffects.None, layerDepth: 0.87f);
                         }
                     }
-                    if (!flag1 && (index1 + 1) % 5 == 0)
+                    if (!drawRed && (levelIndex + 1) % 5 == 0)
                     {
-                        b.Draw(Game1.mouseCursors, new Vector2((float)(num5 + num3 - 4 + index1 * 36), (float)(num4 + index2_ * 56)), new Rectangle?(new Rectangle(145, 338, 14, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
-                        b.Draw(Game1.mouseCursors, new Vector2((float)(num5 + num3 + index1 * 36), (float)(num4 - 4 + index2_ * 56)), new Rectangle?(new Rectangle(145 + (flag1 ? 14 : 0), 338, 14, 9)), Color.White * (flag1 ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + indexWithLuckSkill * 56), new Rectangle?(new Rectangle(145, 338, 14, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + indexWithLuckSkill * 56), new Rectangle?(new Rectangle(145 + (drawRed ? 14 : 0), 338, 14, 9)), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
                     }
-                    else if ((index1 + 1) % 5 != 0)
+                    else if ((levelIndex + 1) % 5 != 0)
                     {
-                        b.Draw(Game1.mouseCursors, new Vector2((float)(num5 + num3 - 4 + index1 * 36), (float)(num4 + index2_ * 56)), new Rectangle?(new Rectangle(129, 338, 8, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
-                        b.Draw(Game1.mouseCursors, new Vector2((float)(num5 + num3 + index1 * 36), (float)(num4 - 4 + index2_ * 56)), new Rectangle?(new Rectangle(129 + (flag1 ? 8 : 0), 338, 8, 9)), Color.White * (flag1 ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + indexWithLuckSkill * 56), new Rectangle?(new Rectangle(129, 338, 8, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + indexWithLuckSkill * 56), new Rectangle?(new Rectangle(129 + (drawRed ? 8 : 0), 338, 8, 9)), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
                     }
-                    if (index1 == 9)
+                    if (levelIndex == 9)
                     {
-                        NumberSprite.draw(number, b, new Vector2((float)(num5 + num3 + (index1 + 2) * 36 + 12 + (number >= 10 ? 12 : 0)), (float)(num4 + 16 + index2_ * 56)), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
-                        NumberSprite.draw(number, b, new Vector2((float)(num5 + num3 + (index1 + 2) * 36 + 16 + (number >= 10 ? 12 : 0)), (float)(num4 + 12 + index2_ * 56)), (flag2 ? Color.LightGreen : Color.SandyBrown) * (number == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 12 + (skillLevel >= 10 ? 12 : 0), y + 16 + indexWithLuckSkill * 56), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 16 + (skillLevel >= 10 ? 12 : 0), y + 12 + indexWithLuckSkill * 56), (addedSkill ? Color.LightGreen : Color.SandyBrown) * (skillLevel == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
                     }
 
-                    if ((index1 + 1) % 5 == 0)
-                        num5 += 24;
+                    if ((levelIndex + 1) % 5 == 0)
+                        xOffset += 24;
                 }
 
-                ++index2_;
+                ++indexWithLuckSkill;
             }
-            //////////////////////////////////
+
+            // Vanilla and custom skill bars
             foreach (ClickableTextureComponent skillBar in this.skillBars)
                 skillBar.draw(b);
             foreach (ClickableTextureComponent skillBar in this.skillBars)
             {
-                if ((double)skillBar.scale == 0.0)
+                if (skillBar.scale == 0.0)
                 {
                     IClickableMenu.drawTextureBox(b, skillBar.bounds.X - 16 - 8, skillBar.bounds.Y - 16 - 16, 96, 96, Color.White);
-                    if (skillBar.name.StartsWith("C"))
+                    if (skillBar.name.StartsWith(NewSkillsPage.CustomSkillPrefix))
                     {
-                        skillBar.scale = (float)Game1.pixelZoom;
+                        skillBar.scale = Game1.pixelZoom;
                         if (skillBar.containsPoint(Game1.getMouseX(), Game1.getMouseY()) && !skillBar.name.Equals("-1") && skillBar.hoverText.Length > 0)
                         {
-                            var professions = Skills.skills.SelectMany(x => x.Value.Professions).ToList();
-                            var profession = professions.Where(x => $"C{x.Id}" == skillBar.name).FirstOrDefault();
+                            List<Skills.Skill.Profession> professions = Skills.skills.SelectMany(s => s.Value.Professions).ToList();
+                            Skills.Skill.Profession profession = professions.Where(p => NewSkillsPage.CustomSkillPrefix + p.Id == skillBar.name).FirstOrDefault();
                             this.hoverText = profession.GetDescription();
                             this.hoverTitle = profession.GetName();
-                            var actuallyAProfessionImage = profession.Icon ?? Game1.staminaRect;
+                            Texture2D actuallyAProfessionImage = profession.Icon ?? Game1.staminaRect;
                             skillBar.scale = 0.0f;
-                            b.Draw(actuallyAProfessionImage, new Vector2((float)(skillBar.bounds.X - Game1.pixelZoom * 2), (float)(skillBar.bounds.Y - Game1.tileSize / 2 + Game1.tileSize / 4)), new Rectangle(0, 0, 16, 16), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+                            b.Draw(texture: actuallyAProfessionImage,
+                                position: new Vector2(skillBar.bounds.X - (Game1.pixelZoom * 2), skillBar.bounds.Y - (Game1.tileSize / 2) + (Game1.tileSize / 4)),
+                                sourceRectangle: new Rectangle(0, 0, 16, 16),
+                                Color.White, rotation: 0.0f, origin: Vector2.Zero, scale: 4f, SpriteEffects.None, layerDepth: 1f);
                         }
                     }
                     else
                     {
-                        b.Draw(Game1.mouseCursors, new Vector2((float)(skillBar.bounds.X - 8), (float)(skillBar.bounds.Y - 32 + 16)), new Rectangle?(new Rectangle(this.professionImage % 6 * 16, 624 + this.professionImage / 6 * 16, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+                        b.Draw(texture: Game1.mouseCursors,
+                            position: new Vector2(skillBar.bounds.X - 8, skillBar.bounds.Y - 32 + 16),
+                            sourceRectangle: new Rectangle(this.professionImage % 6 * 16, 624 + (this.professionImage / 6 * 16), 16, 16),
+                            Color.White, rotation: 0.0f, origin: Vector2.Zero, scale: 4f, SpriteEffects.None, layerDepth: 1f);
                     }
                 }
             }
-            Game1.drawDialogueBox(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32 + WALLET_MOVE_X, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + (int)((double)this.height / 2.0) - 32 + WALLET_MOVE_Y, this.width - 64 - IClickableMenu.spaceToClearSideBorder * 2 + WALLET_MOVE_W, this.height / 4 + 64 + WALLET_MOVE_H, false, true, (string)null, false);
-            this.drawBorderLabel(b, Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11610"), Game1.smallFont, this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 96 + WALLET_MOVE_X, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + (int)((double)this.height / 2.0) - 32 + WALLET_MOVE_Y);
-            foreach (ClickableTextureComponent specialItem in this.specialItems)
-                specialItem.draw(b);
-            if (this.hoverText.Length <= 0)
-                return;
-            IClickableMenu.drawHoverText(b, this.hoverText, Game1.smallFont, 0, 0, -1, this.hoverTitle.Length > 0 ? this.hoverTitle : (string)null, -1, (string[])null, (Item)null, 0, -1, -1, -1, -1, 1f, (CraftingRecipe)null);
+
+            // Stardew Valley 1.5 unique items
+            x = this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32 + 16;
+            y = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 320 - 8;
+            {
+                int addedX = 48;
+                int addedY = 48;
+                if (Game1.netWorldState.Value.GoldenWalnuts.Value > 0)
+                {
+                    b.Draw(texture: Game1.objectSpriteSheet,
+                        position: new Vector2(x, y),
+                        sourceRectangle: Game1.getSourceRectForStandardTileSheet(tileSheet: Game1.objectSpriteSheet, tilePosition: 73, 16, 16),
+                        Color.White, rotation: 0f, origin: Vector2.Zero, scale: 2f, SpriteEffects.None, layerDepth: 0f);
+                    x += addedX;
+                    b.DrawString(Game1.smallFont, text: string.Concat(Game1.netWorldState.Value.GoldenWalnuts.Value), position: new Vector2(x, y), Game1.textColor);
+                    x -= addedX;
+                }
+                if (Game1.player.QiGems > 0)
+                {
+                    y += addedY;
+                    b.Draw(texture: Game1.objectSpriteSheet,
+                        position: new Vector2(x, y),
+                        sourceRectangle: Game1.getSourceRectForStandardTileSheet(tileSheet: Game1.objectSpriteSheet, tilePosition: 858, 16, 16),
+                        Color.White, rotation: 0f, origin: Vector2.Zero, scale: 2f, SpriteEffects.None, layerDepth: 0f);
+                    x += addedX;
+                    b.DrawString(Game1.smallFont, text: string.Concat(Game1.player.QiGems), position: new Vector2(x, y), Game1.textColor);
+                    x -= addedX;
+                }
+            }
+
+            // Wallet
+            if (this.IsLegacyWallet)
+            {
+                Game1.drawDialogueBox(this.walletArea.X, this.walletArea.Y, this.walletArea.Width, this.walletArea.Height, speaker: false, drawOnlyBox: true);
+                this.drawBorderLabel(b, text: Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11610"), Game1.smallFont, this.walletArea.X + 64, this.walletArea.Y);
+                for (int index = 0; index < this.specialItems.Count; ++index)
+                {
+                    b.Draw(texture: Game1.mouseCursors,
+                        destinationRectangle: this.specialItemComponents[index].bounds,
+                        sourceRectangle: this.specialItems[index].sourceRect,
+                        Color.White, rotation: 0f, origin: Vector2.Zero, SpriteEffects.None, layerDepth: 1f);
+                }
+            }
+            else if (this.specialItems.Count > 0)
+            {
+                // container
+                Game1.drawDialogueBox(this.walletArea.X, this.walletArea.Y, this.walletArea.Width, this.walletArea.Height, speaker: false, drawOnlyBox: true);
+                // wallet label container
+                b.Draw(texture: Game1.mouseCursors,
+                    destinationRectangle: this.walletIconArea,
+                    sourceRectangle: this.walletIconAreaSource,
+                    Color.White, rotation: 0f, origin: Vector2.Zero, SpriteEffects.None, 1f);
+                // wallet label icon
+                b.Draw(this.texture,
+                    destinationRectangle: new Rectangle(this.walletIconArea.X + ((24 - this.walletIconSource.Width) * Game1.pixelZoom / 2), this.walletIconArea.Y + ((24 - this.walletIconSource.Height) * Game1.pixelZoom / 2), this.walletIconSource.Width * Game1.pixelZoom, this.walletIconSource.Height * Game1.pixelZoom),
+                    sourceRectangle: this.walletIconSource,
+                    Color.White, rotation: 0f, origin: Vector2.Zero, SpriteEffects.None, 1f);
+                // wallet label item count
+                Utility.drawTinyDigits(toDraw: this.specialItems.Count, b,
+                    position: new Vector2(this.walletIconArea.X + (28 * Game1.pixelZoom / 2), this.walletIconArea.Y + (15 * Game1.pixelZoom)),
+                    scale: 3f, layerDepth: 0.87f, Color.AntiqueWhite);
+                // wallet item scroll arrows
+                if (this.CanScrollWalletItems)
+                {
+                    // rotate arrows 270 and 90 degrees around their centre, and correct the draw position from doing this
+                    b.Draw(texture: Game1.mouseCursors,
+                        destinationRectangle: new Rectangle(this.walletUpArrow.bounds.X + (this.walletUpArrow.bounds.Width / 2), this.walletUpArrow.bounds.Y + (this.walletUpArrow.bounds.Height / 2), this.walletUpArrow.bounds.Width, this.walletUpArrow.bounds.Height),
+                        sourceRectangle: this.walletUpArrow.sourceRect,
+                        Color.White, rotation: (float)(Math.PI / 180 * 270), origin: new Vector2(this.walletUpArrow.bounds.Width / 2), SpriteEffects.None, layerDepth: 1f);
+                    b.Draw(texture: Game1.mouseCursors,
+                        destinationRectangle: new Rectangle(this.walletDownArrow.bounds.X + (this.walletDownArrow.bounds.Width / 2), this.walletDownArrow.bounds.Y + (this.walletDownArrow.bounds.Height / 2), this.walletDownArrow.bounds.Width, this.walletDownArrow.bounds.Height),
+                        sourceRectangle: this.walletDownArrow.sourceRect,
+                        Color.White, rotation: (float)(Math.PI / 180 * 90), origin: new Vector2(this.walletDownArrow.bounds.Width / 2), SpriteEffects.None, layerDepth: 1f);
+                }
+                // wallet items
+                for (int iconIndex = 0; iconIndex < this.specialItemComponents.Count; ++iconIndex)
+                {
+                    int itemIndex = (iconIndex + this.WalletSelectionOffset) % this.specialItems.Count;
+                    if (iconIndex < this.specialItems.Count)
+                    {
+                        b.Draw(texture: this.specialItems[itemIndex].texture,
+                            destinationRectangle: this.specialItemComponents[iconIndex % this.specialItemComponents.Count].bounds,
+                            sourceRectangle: this.specialItems[itemIndex].sourceRect,
+                            Color.White, rotation: 0f, origin: Vector2.Zero, SpriteEffects.None, layerDepth: 1f);
+                    }
+                }
+            }
+
+            // Hover text
+            if (this.hoverText.Length > 0)
+                IClickableMenu.drawHoverText(b, text: this.hoverText, Game1.smallFont, xOffset: 0, yOffset: 0, boldTitleText: this.hoverTitle.Length > 0 ? this.hoverTitle : null);
         }
     }
 }
