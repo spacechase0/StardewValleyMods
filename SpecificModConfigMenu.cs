@@ -101,7 +101,7 @@ namespace GenericModConfigMenu
                 {
                     if ( Constants.TargetPlatform == GamePlatform.Android )
                         continue; // TODO: Support virtual keyboard input.
-                    var label2 = new Label() { String = k2.Value.Keybinds[0].ToString() };
+                    var label2 = new Label() { String = k2.Value.IsBound ? k2.Value.Keybinds[0].ToString() : "(None)" };
                     label2.LocalPosition = new Vector2( table.Size.X / 2, 0 );
                     label2.Callback = ( Element e ) => doKeybinding2For( k2, e as Label );
                     other = label2;
@@ -526,7 +526,7 @@ namespace GenericModConfigMenu
                     stop = true;
                     Game1.playSound( "bigDeSelect" );
                 }
-                if ( button.TryGetKeyboard( out Keys keys ) || button.TryGetController( out _ ) )
+                if ( !stop && ( button.TryGetKeyboard( out Keys keys ) || button.TryGetController( out _ ) ) )
                 {
                     stop = true;
                     all.Add( button );
