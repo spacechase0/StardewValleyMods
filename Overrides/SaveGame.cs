@@ -355,6 +355,7 @@ namespace SpaceCore.Overrides
 
         public static void SerializeProxy( XmlSerializer serializer, XmlWriter origWriter, object obj )
         {
+            //Log.trace( "Start serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
             using ( var ms = new MemoryStream() )
             {
                 using var writer = XmlWriter.Create( ms, new XmlWriterSettings() { CloseOutput = false } );
@@ -372,7 +373,9 @@ namespace SpaceCore.Overrides
                     File.WriteAllText( Path.Combine( Constants.CurrentSavePath, SaveGameHooks.FarmerFilename ), JsonConvert.SerializeObject( modNodes ) );
                 else
                     File.WriteAllText( Path.Combine( Constants.CurrentSavePath, SaveGameHooks.Filename ), JsonConvert.SerializeObject( modNodes ) );
+                //Log.trace( "Mid serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
             }
+            //Log.trace( "End serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
         }
 
         public static IEnumerable<MethodBase> TargetMethods()
