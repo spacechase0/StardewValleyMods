@@ -14,6 +14,8 @@ namespace GenericModConfigMenu.ModOption
 
         public string Id { get; }
 
+        public bool AvailableInGame { get; set; } = false;
+
         public IManifest Owner { get; }
         
         public abstract void SyncToMod();

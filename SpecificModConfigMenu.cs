@@ -16,6 +16,7 @@ namespace GenericModConfigMenu
     internal class SpecificModConfigMenu : IClickableMenu, IAssetEditor
     {
         private IManifest mod;
+        private bool ingame;
 
         private ModConfig modConfig;
         private string currPage;
@@ -50,9 +51,10 @@ namespace GenericModConfigMenu
             }
         }
 
-        public SpecificModConfigMenu(IManifest modManifest, string page = "", string prevPage = null)
+        public SpecificModConfigMenu(IManifest modManifest, bool inGame, string page = "", string prevPage = null)
         {
             mod = modManifest;
+            ingame = inGame;
 
             modConfig = Mod.instance.configs[mod];
             currPage = page;
@@ -66,6 +68,8 @@ namespace GenericModConfigMenu
             foreach (var opt in modConfig.Options[ page ].Options)
             {
                 opt.SyncToMod();
+                if ( ingame && !opt.AvailableInGame )
+                    continue;
 
                 var label = new Label() { String = opt.Name };
                 label.UserData = opt.Description;
@@ -199,9 +203,9 @@ namespace GenericModConfigMenu
                     label.Callback = ( Element e ) =>
                     {
                         if ( TitleMenu.subMenu == this )
-                            TitleMenu.subMenu = new SpecificModConfigMenu( mod, pl.NewPage, currPage );
+                            TitleMenu.subMenu = new SpecificModConfigMenu( mod, ingame, pl.NewPage, currPage );
                         else if ( Game1.activeClickableMenu == this )
-                            Game1.activeClickableMenu = new SpecificModConfigMenu( mod, pl.NewPage, currPage );
+                            Game1.activeClickableMenu = new SpecificModConfigMenu( mod, ingame, pl.NewPage, currPage );
                     };
                     other = null;
                 }
@@ -433,9 +437,9 @@ namespace GenericModConfigMenu
             modConfig.SaveToFile.Invoke();
 
             if (TitleMenu.subMenu == this)
-                TitleMenu.subMenu = new SpecificModConfigMenu(mod, currPage, prevPage);
+                TitleMenu.subMenu = new SpecificModConfigMenu(mod, ingame, currPage, prevPage);
             else if (Game1.activeClickableMenu == this)
-                Game1.activeClickableMenu = new SpecificModConfigMenu(mod, currPage, prevPage);
+                Game1.activeClickableMenu = new SpecificModConfigMenu(mod, ingame, currPage, prevPage);
         }
 
         private void save()
@@ -450,9 +454,11 @@ namespace GenericModConfigMenu
         private void close()
         {
             if ( TitleMenu.subMenu == this )
-                TitleMenu.subMenu = new ModConfigMenu();
-            else if ( Game1.activeClickableMenu == this )
+                TitleMenu.subMenu = new ModConfigMenu( ingame );
+            else if ( !ingame && Game1.activeClickableMenu == this )
                 Game1.activeClickableMenu = null;
+            else
+                Game1.activeClickableMenu = new ModConfigMenu( ingame );
             
             Mod.instance.Helper.Content.AssetEditors.Remove( this );
         }

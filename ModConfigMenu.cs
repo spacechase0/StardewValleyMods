@@ -18,9 +18,12 @@ namespace GenericModConfigMenu
         private RootElement ui;
         public Table table;
         public static IClickableMenu ActiveConfigMenu;
+        private bool ingame;
 
-        public ModConfigMenu()
+        public ModConfigMenu( bool inGame )
         {
+            ingame = inGame;
+
             ui = new RootElement();
 
             table = new Table();
@@ -34,6 +37,8 @@ namespace GenericModConfigMenu
 
             foreach (var modConfigEntry in Mod.instance.configs.OrderBy(pair => pair.Key.Name))
             {
+                if ( ingame && !modConfigEntry.Value.HasAnyInGame )
+                    continue;
                 var label = new Label() { String = modConfigEntry.Key.Name };
                 label.Callback = (Element e) => changeToModPage(modConfigEntry.Key);
                 table.AddRow( new Element[] { label } );
@@ -41,7 +46,7 @@ namespace GenericModConfigMenu
 
             ui.AddChild(table);
 
-            if (Constants.TargetPlatform == GamePlatform.Android)
+            if (ingame || Constants.TargetPlatform == GamePlatform.Android)
                 initializeUpperRightCloseButton();
 
             ActiveConfigMenu = this;
@@ -53,14 +58,14 @@ namespace GenericModConfigMenu
             {
                 if (playSound)
                     Game1.playSound("bigDeSelect");
-                if (TitleMenu.subMenu != null && Game1.activeClickableMenu != null)
+                if (!ingame && TitleMenu.subMenu != null && Game1.activeClickableMenu != null)
                     TitleMenu.subMenu = null;
             }
         }
 
         public void receiveScrollWheelActionSmapi(int direction)
         {
-            if (TitleMenu.subMenu == this)
+            if (TitleMenu.subMenu == this || ingame)
                 table.Scrollbar.ScrollBy(direction / -120);
             else
                 ActiveConfigMenu = null;
@@ -76,16 +81,21 @@ namespace GenericModConfigMenu
         {
             base.draw(b);
             b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.viewport.Width, Game1.viewport.Height), new Color(0, 0, 0, 192));
+            ui.Draw(b);
             if ( upperRightCloseButton != null )
                 upperRightCloseButton.draw(b); // bring it above the backdrop
-            ui.Draw(b);
+            if ( ingame )
+                drawMouse( b );
         }
 
         private void changeToModPage( IManifest modManifest )
         {
             Log.trace("Changing to mod config page for mod " + modManifest.UniqueID);
             Game1.playSound("bigSelect");
-            TitleMenu.subMenu = new SpecificModConfigMenu(modManifest);
+            if ( !ingame )
+                TitleMenu.subMenu = new SpecificModConfigMenu( modManifest, ingame );
+            else
+                Game1.activeClickableMenu = new SpecificModConfigMenu( modManifest, ingame );
         }
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)

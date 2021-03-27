@@ -18,6 +18,8 @@ namespace GenericModConfigMenu
         void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile);
         void UnregisterModConfig(IManifest mod);
 
+        void SetDefaultIngameOptinValue( IManifest mod, bool optedIn );
+
         void StartNewPage(IManifest mod, string pageName);
         void OverridePageDisplayName(IManifest mod, string pageName, string displayName);
 
@@ -68,6 +70,14 @@ namespace GenericModConfigMenu
                 Mod.instance.configs.Remove(mod);
         }
 
+        public void SetDefaultIngameOptinValue( IManifest mod, bool optedIn )
+        {
+            if ( !Mod.instance.configs.ContainsKey( mod ) )
+                throw new ArgumentException( "Mod not registered" );
+            var modConfig = Mod.instance.configs[ mod ];
+            modConfig.DefaultOptedIngame = optedIn;
+        }
+
         public void StartNewPage( IManifest mod, string pageName )
         {
             if ( !Mod.instance.configs.ContainsKey( mod ) )
@@ -93,27 +103,35 @@ namespace GenericModConfigMenu
         {
             if (!Mod.instance.configs.ContainsKey(mod))
                 throw new ArgumentException("Mod not registered");
-            Mod.instance.configs[mod].ActiveRegisteringPage.Options.Add(new LabelModOption(labelName, labelDesc, mod));
+            Mod.instance.configs[mod].ActiveRegisteringPage.Options.Add(new LabelModOption( labelName, labelDesc, mod ) { AvailableInGame = Mod.instance.configs[ mod ].DefaultOptedIngame } );
+            if ( Mod.instance.configs[ mod ].DefaultOptedIngame )
+                Mod.instance.configs[ mod ].HasAnyInGame = true;
         }
         public void RegisterPageLabel( IManifest mod, string labelName, string labelDesc, string newPage )
         {
             if ( !Mod.instance.configs.ContainsKey( mod ) )
                 throw new ArgumentException( "Mod not registered" );
-            Mod.instance.configs[ mod ].ActiveRegisteringPage.Options.Add( new PageLabelModOption( labelName, labelDesc, newPage, mod ) );
+            Mod.instance.configs[ mod ].ActiveRegisteringPage.Options.Add( new PageLabelModOption( labelName, labelDesc, newPage, mod ) { AvailableInGame = Mod.instance.configs[ mod ].DefaultOptedIngame } );
+            if ( Mod.instance.configs[ mod ].DefaultOptedIngame )
+                Mod.instance.configs[ mod ].HasAnyInGame = true;
         }
 
         public void RegisterParagraph( IManifest mod, string paragraph )
         {
             if ( !Mod.instance.configs.ContainsKey( mod ) )
                 throw new ArgumentException( "Mod not registered" );
-            Mod.instance.configs[ mod ].ActiveRegisteringPage.Options.Add( new ParagraphModOption( paragraph, mod ) );
+            Mod.instance.configs[ mod ].ActiveRegisteringPage.Options.Add( new ParagraphModOption( paragraph, mod ) { AvailableInGame = Mod.instance.configs[ mod ].DefaultOptedIngame } );
+            if ( Mod.instance.configs[ mod ].DefaultOptedIngame )
+                Mod.instance.configs[ mod ].HasAnyInGame = true;
         }
 
         public void RegisterImage( IManifest mod, string texPath, Rectangle? texRect = null, int scale = 4 )
         {
             if ( !Mod.instance.configs.ContainsKey( mod ) )
                 throw new ArgumentException( "Mod not registered" );
-            Mod.instance.configs[ mod ].ActiveRegisteringPage.Options.Add( new ImageModOption( texPath, texRect, scale, mod ) );
+            Mod.instance.configs[ mod ].ActiveRegisteringPage.Options.Add( new ImageModOption( texPath, texRect, scale, mod ) { AvailableInGame = Mod.instance.configs[ mod ].DefaultOptedIngame } );
+            if ( Mod.instance.configs[ mod ].DefaultOptedIngame )
+                Mod.instance.configs[ mod ].HasAnyInGame = true;
         }
 
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<bool> optionGet, Action<bool> optionSet) => RegisterSimpleOption<bool>(mod, optionName, optionDesc, optionGet, optionSet);
@@ -135,7 +153,9 @@ namespace GenericModConfigMenu
             {
                 throw new ArgumentException("Invalid config option type.");
             }
-            Mod.instance.configs[mod].ActiveRegisteringPage.Options.Add(new SimpleModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, id, mod));
+            Mod.instance.configs[mod].ActiveRegisteringPage.Options.Add(new SimpleModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, id, mod ) { AvailableInGame = Mod.instance.configs[ mod ].DefaultOptedIngame } );
+            if ( Mod.instance.configs[ mod ].DefaultOptedIngame )
+                Mod.instance.configs[ mod ].HasAnyInGame = true;
         }
 
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max) => RegisterClampedOption<int>(mod, optionName, optionDesc, optionGet, optionSet, min, max, 1);
@@ -157,7 +177,9 @@ namespace GenericModConfigMenu
             {
                 throw new ArgumentException("Invalid config option type.");
             }
-            Mod.instance.configs[mod].ActiveRegisteringPage.Options.Add(new ClampedModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, min, max, interval, id, mod));
+            Mod.instance.configs[mod].ActiveRegisteringPage.Options.Add(new ClampedModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, min, max, interval, id, mod ) { AvailableInGame = Mod.instance.configs[ mod ].DefaultOptedIngame } );
+            if ( Mod.instance.configs[ mod ].DefaultOptedIngame )
+                Mod.instance.configs[ mod ].HasAnyInGame = true;
         }
 
         public void RegisterChoiceOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet, string[] choices) => RegisterChoiceOption(mod, optionName, optionName, optionDesc, optionGet, optionSet, choices);
@@ -167,7 +189,9 @@ namespace GenericModConfigMenu
             if (!Mod.instance.configs.ContainsKey(mod))
                 throw new ArgumentException("Mod not registered");
 
-            Mod.instance.configs[mod].ActiveRegisteringPage.Options.Add(new ChoiceModOption<string>(optionName, optionDesc, typeof(string), optionGet, optionSet, choices, id, mod));
+            Mod.instance.configs[mod].ActiveRegisteringPage.Options.Add(new ChoiceModOption<string>(optionName, optionDesc, typeof(string), optionGet, optionSet, choices, id, mod ) { AvailableInGame = Mod.instance.configs[ mod ].DefaultOptedIngame } );
+            if ( Mod.instance.configs[ mod ].DefaultOptedIngame )
+                Mod.instance.configs[ mod ].HasAnyInGame = true;
         }
 
         public void RegisterComplexOption(IManifest mod, string optionName, string optionDesc,
@@ -188,7 +212,9 @@ namespace GenericModConfigMenu
             Func<SpriteBatch, Vector2, object, object> draw = (SpriteBatch b, Vector2 v2, object o) => widgetDraw.Invoke(b, v2, (T)o);
             Action<object> save = (object o) => onSave.Invoke((T)o);
 
-            Mod.instance.configs[mod].ActiveRegisteringPage.Options.Add(new ComplexModOption(optionName, optionDesc, update, draw, save, mod));
+            Mod.instance.configs[mod].ActiveRegisteringPage.Options.Add(new ComplexModOption(optionName, optionDesc, update, draw, save, mod ) { AvailableInGame = Mod.instance.configs[ mod ].DefaultOptedIngame } );
+            if ( Mod.instance.configs[ mod ].DefaultOptedIngame )
+                Mod.instance.configs[ mod ].HasAnyInGame = true;
         }
 
         public void SubscribeToChange(IManifest mod, Action<string, bool> changeHandler) => SubscribeToChange<bool>(mod, changeHandler);
@@ -219,9 +245,9 @@ namespace GenericModConfigMenu
                 throw new ArgumentException("Mod not registered");
 
             if (Game1.activeClickableMenu is TitleMenu)
-                TitleMenu.subMenu = new SpecificModConfigMenu(mod);
+                TitleMenu.subMenu = new SpecificModConfigMenu(mod, false);
             else
-                Game1.activeClickableMenu = new SpecificModConfigMenu(mod);
+                Game1.activeClickableMenu = new SpecificModConfigMenu(mod, false);
         }
         
     }

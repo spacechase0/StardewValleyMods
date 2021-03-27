@@ -31,9 +31,13 @@ namespace GenericModConfigMenu
         public Action SaveToFile { get; }
         public Dictionary<string, ModPage> Options { get; } = new Dictionary<string, ModPage>();
 
+        public bool DefaultOptedIngame { get; set; } = false;
+
         public ModPage ActiveRegisteringPage = null;
 
         public ModPage ActiveDisplayPage = null;
+
+        public bool HasAnyInGame = false;
 
         public ModConfig(IManifest manifest, Action revertToDefault, Action saveToFile )
         {
