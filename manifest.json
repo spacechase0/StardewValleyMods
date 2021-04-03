@@ -1,7 +1,7 @@
 {
   "Name": "Json Assets",
   "Author": "spacechase0",
-  "Version": "1.7.5",
+  "Version": "1.7.6",
   "Description": "Allow custom stuff.",
   "UniqueID": "spacechase0.JsonAssets",
   "EntryDll": "JsonAssets.dll",
