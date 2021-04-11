@@ -40,13 +40,13 @@ namespace JsonAssets.Patches
 
         public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
         {
-            insns = Common.RedirectForFakeObjectInformationCollectionTranspiler( gen, original, insns );
+            insns = PatchCommon.RedirectForFakeObjectInformationCollectionTranspiler( gen, original, insns );
 
             bool foundRedirect = false;
             var ret = new List<CodeInstruction>();
             foreach ( var insn in insns )
             {
-                if ( insn.opcode == OpCodes.Call && ( insn.operand as MethodBase ).Name == nameof( Common.GetFakeObjectInformationCollection ) )
+                if ( insn.opcode == OpCodes.Call && ( insn.operand as MethodBase ).Name == nameof( PatchCommon.GetFakeObjectInformationCollection ) )
                 {
                     foundRedirect = true;
                 }
@@ -70,7 +70,7 @@ namespace JsonAssets.Patches
     {
         public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
         {
-            return Common.RedirectForFakeObjectInformationTranspiler( gen, original, insns );
+            return PatchCommon.RedirectForFakeObjectInformationTranspiler( gen, original, insns );
         }
     }
 }

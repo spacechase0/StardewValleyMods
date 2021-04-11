@@ -19,7 +19,9 @@ namespace JsonAssets.PackData
         /// This is checked at the beginning of each day.
         /// These are ExpandedPreconditionsUtility conditions.
         /// </summary>
-        public string[] EnableConditions { get; set; }
+        public Dictionary<string, string> EnableConditions { get; set; }
+
+        internal ContentPatcher.IManagedConditions EnableConditionsObject;
 
         /// <summary>
         /// If the current pack data is currently enabled or not.
@@ -40,7 +42,7 @@ namespace JsonAssets.PackData
             {
                 try
                 {
-                    if ( dynField.Check() )
+                    if ( dynField.Check( this ) )
                         dynField.Apply( this );
                 }
                 catch ( Exception e )

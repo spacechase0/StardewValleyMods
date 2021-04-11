@@ -10,15 +10,22 @@ namespace JsonAssets.PackData
 {
     public class DynamicFieldData
     {
-        public string[] Conditions;
+        public Dictionary<string, string> Conditions;
+
+        internal ContentPatcher.IManagedConditions ConditionsObject;
 
         public string Field;
 
         public object Data;
 
-        public bool Check()
+        public bool Check( BasePackData parent )
         {
-            if ( Mod.instance.epu.CheckConditions( Conditions ) )
+            if ( ConditionsObject == null )
+                ConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
+                                                                    Conditions,
+                                                                    parent.parent.conditionVersion,
+                                                                    parent.parent.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[0] );
+            if ( ConditionsObject.IsMatch )
                 return true;
             return false;
         }

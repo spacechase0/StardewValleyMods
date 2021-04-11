@@ -27,6 +27,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="ContentPatcher">
+      <HintPath>$(GamePath)\Mods\ContentPatcher\ContentPatcher.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SpaceCore\SpaceCore.csproj">
       <Private>false</Private>
     </ProjectReference>

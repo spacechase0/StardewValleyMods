@@ -12,6 +12,8 @@ namespace JsonAssets.PackData
     {
         internal IContentPack smapiPack;
 
+        internal SemanticVersion conditionVersion;
+
         internal Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
         internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
@@ -21,6 +23,7 @@ namespace JsonAssets.PackData
         public ContentPack( IContentPack pack )
         {
             smapiPack = pack;
+            conditionVersion = new SemanticVersion( pack.Manifest.ExtraFields[ "JAConditionsFormatVersion" ].ToString() );
             LoadAndValidateItems<ObjectPackData>( "objects.json" );
             LoadOthers<ShopPackData>( "shop-entries.json" );
         }

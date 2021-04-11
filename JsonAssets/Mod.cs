@@ -35,7 +35,7 @@ namespace JsonAssets
     public class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
         public static Mod instance;
-        internal ExpandedPreconditionsUtilityAPI epu;
+        internal ContentPatcher.IContentPatcherAPI cp;
         private HarmonyInstance harmony;
 
         public static readonly int BaseFakeObjectId = 1720;
@@ -83,8 +83,7 @@ namespace JsonAssets
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            epu = Helper.ModRegistry.GetApi<ExpandedPreconditionsUtilityAPI>( "Cherry.ExpandedPreconditionsUtility" );
-            epu.Initialize( false, ModManifest.UniqueID );
+            cp = Helper.ModRegistry.GetApi<ContentPatcher.IContentPatcherAPI>( "Pathoschild.ContentPatcher" );
 
             var spacecore = Helper.ModRegistry.GetApi<SpaceCoreAPI>( "spacechase0.SpaceCore" );
             spacecore.RegisterSerializerType( typeof( CustomObject ) );
@@ -97,8 +96,14 @@ namespace JsonAssets
             {
                 foreach ( var data in cp.Value.items )
                 {
+                    if ( data.Value.EnableConditionsObject == null )
+                        data.Value.EnableConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
+                                                                                             data.Value.EnableConditions,
+                                                                                             cp.Value.conditionVersion,
+                                                                                             cp.Value.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[0] );
+
                     bool wasEnabled = data.Value.Enabled;
-                    data.Value.Enabled = epu.CheckConditions( data.Value.EnableConditions );
+                    data.Value.Enabled = data.Value.EnableConditionsObject.IsMatch;
                     
                     if ( !data.Value.Enabled && wasEnabled )
                     {
@@ -107,7 +112,13 @@ namespace JsonAssets
                 }
                 foreach ( var data in cp.Value.others )
                 {
-                    data.Enabled = epu.CheckConditions( data.EnableConditions );
+                    if ( data.EnableConditionsObject == null )
+                        data.EnableConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
+                                                                                       data.EnableConditions,
+                                                                                       cp.Value.conditionVersion,
+                                                                                       cp.Value.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[ 0 ] );
+
+                    data.Enabled = data.EnableConditionsObject.IsMatch;
                 }
             }
 
@@ -147,7 +158,7 @@ namespace JsonAssets
             {
                 if ( shop.storeContext == "ResortBar" || shop.storeContext == "VolcanoShop" )
                 {
-                    Common.DoShop( shop.storeContext, shop );
+                    PatchCommon.DoShop( shop.storeContext, shop );
                 }
             }
         }
@@ -208,6 +219,12 @@ namespace JsonAssets
                      ver < 2 )
                 {
                     Log.error( "Old-style JA packs not supported! Please use the converter." );
+                    continue;
+                }
+                if ( !cp.Manifest.ExtraFields.ContainsKey( "JAConditionsFormatVersion" ) ||
+                    !SemanticVersion.TryParse( cp.Manifest.ExtraFields[ "JAConditionsFormatVersion" ].ToString(), out ISemanticVersion condVer ) )
+                {
+                    Log.error( "Must specify a JAConditionsFormatVersion as a semantic version! (See documentation.)" );
                     continue;
                 }
                 var pack = new ContentPack( cp );

@@ -18,7 +18,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "BlueBoat", __result );
+            PatchCommon.DoShopStock( "BlueBoat", __result );
         }
     }
 
@@ -27,7 +27,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "TravelingMerchant", __result );
+            PatchCommon.DoShopStock( "TravelingMerchant", __result );
         }
     }
 
@@ -36,7 +36,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "GeMagic", __result );
+            PatchCommon.DoShopStock( "GeMagic", __result );
         }
     }
 
@@ -45,7 +45,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "DesertMerchant", __result );
+            PatchCommon.DoShopStock( "DesertMerchant", __result );
         }
     }
 
@@ -54,7 +54,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "HatMouse", __result );
+            PatchCommon.DoShopStock( "HatMouse", __result );
         }
     }
 
@@ -63,7 +63,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "IslandMerchant", __result );
+            PatchCommon.DoShopStock( "IslandMerchant", __result );
         }
     }
 
@@ -72,7 +72,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "IslandMerchant", __result );
+            PatchCommon.DoShopStock( "IslandMerchant", __result );
         }
     }
 
@@ -81,7 +81,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "QiGemShop", __result );
+            PatchCommon.DoShopStock( "QiGemShop", __result );
         }
     }
 
@@ -90,7 +90,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "Joja", __result );
+            PatchCommon.DoShopStock( "Joja", __result );
         }
     }
 
@@ -99,7 +99,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "Hospital", __result );
+            PatchCommon.DoShopStock( "Hospital", __result );
         }
     }
 
@@ -108,7 +108,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "Club", __result );
+            PatchCommon.DoShopStock( "Club", __result );
         }
     }
 
@@ -117,7 +117,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "FishShop", __result );
+            PatchCommon.DoShopStock( "FishShop", __result );
         }
     }
 
@@ -126,7 +126,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "SeedShop", __result );
+            PatchCommon.DoShopStock( "SeedShop", __result );
         }
     }
 
@@ -135,7 +135,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "Sandy", __result );
+            PatchCommon.DoShopStock( "Sandy", __result );
         }
     }
 
@@ -144,7 +144,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "Saloon", __result );
+            PatchCommon.DoShopStock( "Saloon", __result );
         }
     }
 
@@ -153,7 +153,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "AdventurerGuild", __result );
+            PatchCommon.DoShopStock( "AdventurerGuild", __result );
         }
     }
 
@@ -162,7 +162,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "Carpenter", __result );
+            PatchCommon.DoShopStock( "Carpenter", __result );
         }
     }
 
@@ -171,7 +171,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "AnimalSupplies", __result );
+            PatchCommon.DoShopStock( "AnimalSupplies", __result );
         }
     }
 
@@ -180,7 +180,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "Blacksmith", __result );
+            PatchCommon.DoShopStock( "Blacksmith", __result );
         }
     }
 
@@ -189,7 +189,7 @@ namespace JsonAssets.Patches
     {
         public static void Postfix( Dictionary<ISalable, int[]> __result )
         {
-            Common.DoShopStock( "Dwarf", __result );
+            PatchCommon.DoShopStock( "Dwarf", __result );
         }
     }
 
@@ -200,7 +200,7 @@ namespace JsonAssets.Patches
         {
             if ( ( action == "IceCreamStand" || action == "Theater_BoxOffice" ) &&Game1.activeClickableMenu is ShopMenu shop )
             {
-                Common.DoShop( action, shop );
+                PatchCommon.DoShop( action, shop );
             }
         }
     }
@@ -212,7 +212,7 @@ namespace JsonAssets.Patches
         {
             if ( Game1.activeClickableMenu is ShopMenu shop )
             {
-                Common.DoShop( $"Festival.{Game1.currentSeason}{Game1.dayOfMonth}", shop );
+                PatchCommon.DoShop( $"Festival.{Game1.currentSeason}{Game1.dayOfMonth}", shop );
             }
         }
     }

@@ -15,7 +15,7 @@ namespace JsonAssets.Patches
     {
         public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
         {
-            return Common.RedirectForFakeObjectIdTranspiler( gen, original, insns );
+            return PatchCommon.RedirectForFakeObjectIdTranspiler( gen, original, insns );
         }
     }
 }

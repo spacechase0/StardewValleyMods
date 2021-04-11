@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace JsonAssets.Patches
 {
-    public static class Common
+    public static class PatchCommon
     {
         public static void DoShop( string key, ShopMenu shop )
         {
@@ -100,7 +100,7 @@ namespace JsonAssets.Patches
                     nextGetItem = false;
                     Log.trace( "Found the object information get call, redirecting..." );
                     insn.opcode = OpCodes.Call;
-                    insn.operand = typeof( Common ).GetMethod( nameof( Common.GetFakeObjectInformation ) );
+                    insn.operand = typeof( PatchCommon ).GetMethod( nameof( PatchCommon.GetFakeObjectInformation ) );
                 }
 
                 ret.Add( insn );
@@ -131,7 +131,7 @@ namespace JsonAssets.Patches
                     ret.Remove( ret.Last() );
 
                     insn.opcode = OpCodes.Call;
-                    insn.operand = typeof( Common ).GetMethod( nameof( Common.GetFakeObjectInformation2 ) );
+                    insn.operand = typeof( PatchCommon ).GetMethod( nameof( PatchCommon.GetFakeObjectInformation2 ) );
                 }
 
                 ret.Add( insn );
@@ -151,7 +151,7 @@ namespace JsonAssets.Patches
                     Log.trace( "Found object information reference in " + original + ", editing IL now" );
 
                     insn.opcode = OpCodes.Call;
-                    insn.operand = typeof( Common ).GetMethod( nameof( Common.GetFakeObjectInformationCollection ) );
+                    insn.operand = typeof( PatchCommon ).GetMethod( nameof( PatchCommon.GetFakeObjectInformationCollection ) );
                 }
 
                 ret.Add( insn );
@@ -181,7 +181,7 @@ namespace JsonAssets.Patches
                         ret.Remove( ret.Last() );
 
                         insn.opcode = OpCodes.Call;
-                        insn.operand = typeof( Common ).GetMethod( nameof( Common.GetFakeObjectId ) );
+                        insn.operand = typeof( PatchCommon ).GetMethod( nameof( PatchCommon.GetFakeObjectId ) );
                     }
                 }
 

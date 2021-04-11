@@ -11,13 +11,10 @@
   "Dependencies": [
     {
       "UniqueID": "Pathoschild.ContentPatcher",
-      "IsRequired": false
+      "MinimumVersion":  "1.22.0-alpha.20210411"
     },
     {
       "UniqueID": "spacechase0.SpaceCore"
-    },
-    {
-      "UniqueID": "Cherry.ExpandedPreconditionsUtility"
     },
   ]
 }
