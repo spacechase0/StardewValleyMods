@@ -1755,7 +1755,7 @@ namespace JsonAssets
                 else
                     fence.ParentSheetIndex = -fence.whichType.Value;
             }
-            else if ( obj.GetType() == typeof( SObject ) )
+            else if ( obj.GetType() == typeof( SObject ) || obj.GetType() == typeof( Cask ) )
             {
                 if (!obj.bigCraftable.Value)
                 {
