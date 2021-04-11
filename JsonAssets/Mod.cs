@@ -66,6 +66,7 @@ namespace JsonAssets
 
             helper.ConsoleCommands.Add( "list_ja", "...", OnListCommand );
             helper.ConsoleCommands.Add( "player_addja", "...", OnAddCommand );
+            helper.ConsoleCommands.Add( "ja_force", "Do not use", OnForceCommand );
 
             harmony = HarmonyInstance.Create( "spacechase0.JsonAssets" );
             harmony.PatchAll();
@@ -206,6 +207,11 @@ namespace JsonAssets
             }
 
             Game1.player.addItemByMenuIfNecessary( item );
+        }
+
+        private void OnForceCommand( string cmd, string[] args )
+        {
+            OnDayStarted( this, null );
         }
 
         private void LoadContentPacks()
