@@ -53,9 +53,9 @@ namespace SpaceCore.Overrides
 
     public class WarpFarmerHook
     {
-        public static bool Prefix(ref LocationRequest locationRequest, int tileX, int tileY, int facingDirectionAfterWarp)
+        public static bool Prefix(ref LocationRequest locationRequest, ref int tileX, ref int tileY, ref int facingDirectionAfterWarp)
         {
-            return !SpaceEvents.InvokeBeforeWarp(ref locationRequest, tileX, tileY, facingDirectionAfterWarp);
+            return !SpaceEvents.InvokeBeforeWarp(ref locationRequest, ref tileX, ref tileY, ref facingDirectionAfterWarp);
         }
 }
 }
