@@ -8,8 +8,10 @@ namespace SpaceShared.APIs
     public interface GenericModConfigMenuAPI
     {
         void RegisterModConfig( IManifest mod, Action revertToDefault, Action saveToFile );
+        void UnregisterModConfig( IManifest mod );
 
         void StartNewPage( IManifest mod, string pageName );
+        void OverridePageDisplayName( IManifest mod, string pageName, string displayName );
 
         void RegisterLabel( IManifest mod, string labelName, string labelDesc );
         void RegisterPageLabel( IManifest mod, string labelName, string labelDesc, string newPage );

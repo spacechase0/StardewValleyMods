@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)APIs\CookingSkillAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ExpandedPreconditionsUtilityAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\EntoaroxFrameworkAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ManaBarAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\RushOrdersAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ContentPatcherAPI.cs" />
