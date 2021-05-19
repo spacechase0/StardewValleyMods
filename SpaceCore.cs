@@ -37,6 +37,7 @@ namespace SpaceCore
             Log.Monitor = Monitor;
             Config = helper.ReadConfig<Configuration>();
 
+            helper.Events.GameLoop.GameLaunched += onGameLaunched;
             helper.Events.GameLoop.UpdateTicked += onUpdate;
             helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
             helper.Events.GameLoop.Saving += onSaving;
@@ -176,6 +177,13 @@ namespace SpaceCore
             {
                 capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
                 capi.RegisterSimpleOption(ModManifest, "Custom Skill Page", "Whether or not to show the custom skill page.\nThis will move the wallet so that there is room for more skills.", () => Config.CustomSkillPage, (bool val) => Config.CustomSkillPage = val);
+            }
+
+            var efapi = Helper.ModRegistry.GetApi<EntoaroxFrameworkAPI>("Entoarox.EntoaroxFramework");
+            if ( efapi != null )
+            {
+                Log.info( "Telling EntoaroxFramework to let us handle the serializer" );
+                efapi.HoistSerializerOwnership();
             }
         }
 
