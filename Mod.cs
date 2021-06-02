@@ -1103,10 +1103,10 @@ namespace SurfingFestival
 
                 // NPCs get a buff since they're dumb
                 if ( !racerName.StartsWith( "farmer" ) )
-                    racerState[ racerName ].AddedSpeed += 2;
+                    racerState[ racerName ].AddedSpeed += 1;
                 // Farmer's do if they paid the secret offering
                 else if ( Utility.getFarmerFromFarmerNumberString( racerName, Game1.player )?.hasOrWillReceiveMail( "SurfingFestivalOffering" ) ?? false )
-                    racerState[ racerName ].AddedSpeed += 3;
+                    racerState[ racerName ].AddedSpeed += 2;
             }
 
             // Move them to their start
