@@ -7,6 +7,7 @@ using StardewValley.Projectiles;
 using StardewValley.TerrainFeatures;
 using System;
 using SpaceCore;
+using Netcode;
 
 namespace Magic.Game
 {
@@ -14,26 +15,31 @@ namespace Magic.Game
     {
         private readonly Farmer source;
         private readonly ProjectileSpell spell;
-        private readonly int damage;
-        private readonly float dir;
-        private readonly float vel;
-        private readonly bool seeking;
+        private readonly NetInt damage = new NetInt();
+        private readonly NetFloat dir = new NetFloat();
+        private readonly NetFloat vel = new NetFloat();
+        private readonly NetBool seeking = new NetBool();
 
         private Texture2D tex;
-        private string texId;
+        private readonly NetString texId = new NetString();
 
         private Monster seekTarget;
 
-        public SpellProjectile() { }
+        public SpellProjectile()
+        {
+            NetFields.AddFields( damage, dir, vel, seeking, texId );
+        }
 
         public SpellProjectile(Farmer theSource, ProjectileSpell theSpell, int dmg, float theDir, float theVel, bool theSeeking)
+            : this()
         {
+
             source = theSource;
             spell = theSpell;
-            damage = dmg;
-            dir = theDir;
-            vel = theVel;
-            seeking = theSeeking;
+            damage.Value = dmg;
+            dir.Value = theDir;
+            vel.Value = theVel;
+            seeking.Value = theSeeking;
 
             theOneWhoFiredMe.Set(theSource.currentLocation, source );
             position.Value = source.getStandingPosition();
@@ -45,7 +51,7 @@ namespace Magic.Game
             damagesMonsters.Value = true;
 
             tex = Content.loadTexture("magic/" + spell.ParentSchoolId + "/" + spell.Id + "/projectile.png");
-            texId = Content.loadTextureKey("magic/" + spell.ParentSchoolId + "/" + spell.Id + "/projectile.png");
+            texId.Value = Content.loadTextureKey("magic/" + spell.ParentSchoolId + "/" + spell.Id + "/projectile.png");
 
             if (seeking)
             {
@@ -156,6 +162,8 @@ namespace Magic.Game
 
         public override void draw(SpriteBatch b)
         {
+            if ( tex == null )
+                tex = Game1.content.Load<Texture2D>( texId.Value );
             Vector2 drawPos = Game1.GlobalToLocal(new Vector2(getBoundingBox().X + getBoundingBox().Width / 2, getBoundingBox().Y + getBoundingBox().Height / 2));
             b.Draw(tex, drawPos, new Rectangle( 0, 0, tex.Width, tex.Height ), Color.White, dir, new Vector2( tex.Width / 2, tex.Height / 2 ), 2, SpriteEffects.None, (float)(((double)this.position.Y + (double)(Game1.tileSize * 3 / 2)) / 10000.0));
             //Vector2 bdp = Game1.GlobalToLocal(new Vector2(getBoundingBox().X, getBoundingBox().Y));

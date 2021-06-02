@@ -84,6 +84,7 @@ namespace Magic.Spells
                         float rad = 8 * 64;
                         if (Vector2.Distance(mob.position, new Vector2(position.X, position.Y)) <= rad)
                         {
+                            // TODO: Use location damage method for xp and quest progress
                             mob.takeDamage(300, 0, 0, false, 0, source);
                             source.AddCustomSkillExperience(Magic.Skill, 5);
                         }
