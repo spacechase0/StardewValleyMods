@@ -77,7 +77,7 @@ namespace MultiFertilizer
         }
     }
     
-    [HarmonyPatch(typeof(HoeDirt),nameof(HoeDirt.draw))]
+    [HarmonyPatch(typeof(HoeDirt),nameof(HoeDirt.DrawOptimized))]
     public static class HoeDirtDrawPatchTranspiler
     {
         public static void DrawMultiFertilizer(SpriteBatch spriteBatch, Texture2D tex, Vector2 pos, Rectangle? sourceRect, Color col, float rot, Vector2 origin, float scale, SpriteEffects fx, float depth, HoeDirt __instance )
