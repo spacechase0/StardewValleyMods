@@ -157,9 +157,9 @@ namespace BuildableLocationsFramework
             if ( SaveGameLoadDataToLocationsPatch.locs != null )
             {
                 var oldLocs = Game1.locations;
-                Game1.locations = SaveGameLoadDataToLocationsPatch.locs;
+                Game1.game1._locations = SaveGameLoadDataToLocationsPatch.locs;
                 var locs = GetAllLocations();
-                Game1.locations = oldLocs;
+                Game1.game1._locations = oldLocs;
 
                 foreach ( var loc in locs )
                 {
