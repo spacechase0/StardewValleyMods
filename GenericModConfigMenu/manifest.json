@@ -1,0 +1,11 @@
+{
+  "Name": "Generic Mod Config Menu",
+  "Author": "spacechase0",
+  "Version": "1.3.3",
+  "Description": "...",
+  "UniqueID": "spacechase0.GenericModConfigMenu",
+  "EntryDll": "GenericModConfigMenu.dll",
+  "MinimumApiVersion": "2.10.2",
+  "UpdateKeys": [ "Nexus:5098", "Chucklefish:5898" ],
+  "spacechase0": "generic-mod-config-menu"
+}
