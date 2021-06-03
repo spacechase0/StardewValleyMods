@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>061610a4-7d02-4f52-a921-f59ed123c2a9</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SpaceShared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\CookingSkillAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\ExpandedPreconditionsUtilityAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\EntoaroxFrameworkAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\ManaBarAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\RushOrdersAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\ContentPatcherAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\ExperienceBarsAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\GenericModConfigMenuAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\JsonAssetsApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\MoreRingsApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\SpaceCoreAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CancelableEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util.cs" />
+  </ItemGroup>
+</Project>
