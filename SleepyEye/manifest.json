@@ -1,0 +1,15 @@
+{
+  "Name": "Sleepy Eye",
+  "Author": "spacechase0",
+  "Version": "1.0.4",
+  "Description": "Sleep here. Sleep there. Sleep anywhere!",
+  "UniqueID": "spacechase0.SleepyEye",
+  "EntryDll": "SleepyEye.dll",
+  "MinimumApiVersion": "2.9.0",
+  "UpdateKeys": [ "Nexus:1152", "Chucklefish:4709" ],
+  "Dependencies": [
+    { "UniqueID": "spacechase0.SpaceCore" },
+    { "UniqueID": "Platonymous.Toolkit" }
+  ],
+  "spacechase0": "sleepy-eye"
+}
