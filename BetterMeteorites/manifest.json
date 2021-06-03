@@ -1,0 +1,11 @@
+{
+  "Name": "Better Meteorites",
+  "Author": "spacechase0",
+  "Version": "1.0.0",
+  "Description": "....",
+  "UniqueID": "spacechase0.BetterMeteorites",
+  "EntryDll": "BetterMeteorites.dll",
+  "MinimumApiVersion": "2.9.0",
+  "UpdateKeys": [ "Nexus:5096", "Chucklefish:5920" ],
+  "spacechase0": "better-meteorites"
+}
