@@ -1,0 +1,14 @@
+﻿13 13 sky
+#############
+#LLL     LLL#
+#LLL  P  LLL#
+#LLL     LLL#
+#LLL     LLL#
+#LLL     LLL#
+#LLL     LLL#
+#LLL  W  LLL#
+#LLL  F  LLL#
+#LLLLLLLLLLL#
+#LLLLLLLLLLL#
+#LLLLLLLLLLL#
+######M######
