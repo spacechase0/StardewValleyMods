@@ -12,5 +12,6 @@
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.1.0" />
   </ItemGroup>
 
+  <Import Project="$(SolutionDir)\common.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 </Project>
