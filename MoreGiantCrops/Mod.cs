@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Harmony;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
@@ -19,6 +20,8 @@ namespace MoreGiantCrops
             instance = this;
             SpaceShared.Log.Monitor = Monitor;
 
+            Directory.CreateDirectory(Path.Combine(Helper.DirectoryPath, "assets"));
+
             Log.trace("Finding giant crop images");
             foreach ( var path in Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets"), "*.png") )
             {
@@ -31,6 +34,12 @@ namespace MoreGiantCrops
                 Log.trace("Found PNG: " + filename);
                 var tex = helper.Content.Load<Texture2D>($"assets/{filename}");
                 sprites.Add(id, tex);
+            }
+
+            if (!sprites.Any())
+            {
+                Log.error("You must install an asset pack to use this mod.");
+                return;
             }
 
             var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
