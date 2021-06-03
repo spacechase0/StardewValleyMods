@@ -8,7 +8,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{622B2762
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		common.targets = common.targets
-		mod-list.txt = mod-list.txt
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -65,13 +64,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoreRings", "MoreRings\More
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectTimeLeft", "ObjectTimeLeft\ObjectTimeLeft.csproj", "{273B7946-725E-4DCF-8A8C-0D9E5B2D2EEC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProfitCalculator", "StardewProfitCalculator\ProfitCalculator.csproj", "{F516D462-4A51-4414-BFA5-E82761AF15E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProfitCalculator", "ProfitCalculator\ProfitCalculator.csproj", "{F516D462-4A51-4414-BFA5-E82761AF15E5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RushOrders", "RushOrders\RushOrders.csproj", "{A534CA13-4195-468F-93A6-C579CCA46058}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SleepyEye", "SleepyEye\SleepyEye.csproj", "{6E9BA154-07EB-43C8-8E5A-94247FF28556}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceCore", "SpaceCore_SDV\SpaceCore.csproj", "{BA657CB4-93ED-4C3A-A66E-86954BEB4CE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceCore", "SpaceCore\SpaceCore.csproj", "{BA657CB4-93ED-4C3A-A66E-86954BEB4CE6}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SpaceShared", "SpaceShared\SpaceShared.shproj", "{061610A4-7D02-4F52-A921-F59ED123C2A9}"
 EndProject

@@ -1,45 +1,42 @@
-This repository contains a unified solution with my SMAPI mods for Stardew Valley for convenience.
-The actual mod projects are in separate Git repos; this readme explains how to fetch them into the
-solution folder.
+This repository contains my SMAPI mods for Stardew Valley. See the individual mods in the
+subfolders for documentation and release notes.
 
-## Using this repo
-The commands assume Bash, which you can run in a terminal in Linux/Mac or using
-[Git Bash](https://gitforwindows.org/) on Windows.
+## Translating the mods
+The mods can be translated into any language supported by the game, and SMAPI will automatically
+use the right translations.
 
-### First-time setup
-1. Clone this repo.
-2. Run this from the solution folder to clone the mod repos:
+(â‘ = untranslated, â†» = partly translated, âœ“ = fully translated)
 
-   ```bash
-   cat mod-list.txt | grep -e '^\w' | sed -e 's/^[[:space:]]*(.*)[[:space:]]*$/$1/' | while read -r repo; do
-      git clone https://github.com/spacechase0/$repo.git
-   done
-   ```
+**TODO**
 
-3. Clone Tiled.Net:
+Contributions are welcome! See [Modding:Translations](https://stardewvalleywiki.com/Modding:Translations)
+on the wiki for help contributing translations.
+
+## Compiling the mods
+Installing stable releases from Nexus Mods is recommended for most users. If you really want to
+compile the mod yourself, read on.
+
+These mods use the [crossplatform build config](https://www.nuget.org/packages/Pathoschild.Stardew.ModBuildConfig)
+so they can be built on Linux, macOS, and Windows without changes. See [the build config documentation](https://www.nuget.org/packages/Pathoschild.Stardew.ModBuildConfig)
+for troubleshooting.
+
+### Compiling a mod for testing
+To compile a mod and add it to your game's `Mods` directory:
+
+1. Clone Tiled.Net:
 
    ```bash
    git clone https://github.com/napen123/Tiled.Net.git
    ```
 
-4. Open the solution in Visual Studio.
+2. Rebuild the solution in [Visual Studio](https://www.visualstudio.com/vs/community/) or [MonoDevelop](http://www.monodevelop.com/).  
+   <small>This will compile the code and package it into the `Mods` directory.</small>
+3. Launch any project with debugging.  
+   <small>This will start the game through SMAPI and attach the Visual Studio debugger.</small>
 
-### Update all mod repos
-To update all repos to match the server (assuming you have no local changes):
+### Compiling a mod for release
+To package a mod for release:
 
-```bash
-cat mod-list.txt | grep -e '^\w' | sed -e 's/^[[:space:]]*(.*)[[:space:]]*$/$1/' | while read -r repo; do
-   (
-      cd $repo;
-      git pull;
-   )
-done
-```
-
-### Commit changes
-Although you can make changes across all repos, each mod still has its own separate repo. To commit
-changes, you'll need to open each individual repo folder and commit the changes there.
-
-### Add a mod
-The mod list is in `mod-list.txt`; just add new repo names to that file, and it'll be handled by
-the commands in this file.
+1. Switch to `Release` build configuration.
+2. Recompile the mods per the previous section.
+3. Upload the generated `bin/Release/<mod name>-<version>.zip` file from the project folder.
