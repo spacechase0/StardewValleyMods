@@ -1,0 +1,11 @@
+{
+  "Name": "Bigger Craftables",
+  "Author": "spacechase0",
+  "Version": "1.0.1",
+  "Description": "...",
+  "UniqueID": "spacechase0.BiggerCraftables",
+  "EntryDll": "BiggerCraftables.dll",
+  "MinimumApiVersion": "2.9.0",
+  "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+  "spacechase0": "bigger-craftables"
+}
