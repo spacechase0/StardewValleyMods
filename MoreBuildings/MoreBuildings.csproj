@@ -2,8 +2,6 @@
   <PropertyGroup>
     <Version>1.0.5</Version>
     <TargetFramework>net452</TargetFramework>
-    <Platforms>x86</Platforms>
-    <PlatformTarget>x86</PlatformTarget>
 
     <EnableHarmony>true</EnableHarmony>
     <IgnoreModFilePatterns>bathhouse_tiles.png, mine_lava.png, spring_outdoorsTileSheet.png, townInterior.png, walls_and_floors.png, assets[/\\]FishingShack[/\\]map-.tbin</IgnoreModFilePatterns>

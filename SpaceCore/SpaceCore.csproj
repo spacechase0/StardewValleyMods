@@ -2,8 +2,6 @@
   <PropertyGroup>
     <Version>1.3.5</Version>
     <TargetFramework>net452</TargetFramework>
-    <Platforms>x86</Platforms>
-    <PlatformTarget>x86</PlatformTarget>
 
     <EnableHarmony>true</EnableHarmony>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
