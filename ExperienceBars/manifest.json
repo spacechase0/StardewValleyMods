@@ -1,0 +1,11 @@
+{
+  "Name": "Experience Bars",
+  "Author": "spacechase0",
+  "Version": "1.2.1",
+  "Description": "Shows experience bars in the top-left corner.",
+  "UniqueID": "spacechase0.ExperienceBars",
+  "EntryDll": "ExperienceBars.dll",
+  "MinimumApiVersion": "2.9.0",
+  "UpdateKeys": [ "Nexus:509", "Chucklefish:3905" ],
+  "spacechase0": "experience-bars"
+}
