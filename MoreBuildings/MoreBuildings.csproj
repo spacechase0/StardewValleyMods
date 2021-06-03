@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>MoreBuildings</AssemblyName>
+    <RootNamespace>MoreBuildings</RootNamespace>
+    <Version>1.0.5</Version>
+    <TargetFramework>net452</TargetFramework>
+    <Platforms>x86</Platforms>
+    <PlatformTarget>x86</PlatformTarget>
+
+    <EnableHarmony>true</EnableHarmony>
+    <IgnoreModFilePatterns>bathhouse_tiles.png, mine_lava.png, spring_outdoorsTileSheet.png, townInterior.png, walls_and_floors.png, assets[/\\]FishingShack[/\\]map-.tbin</IgnoreModFilePatterns>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PyTK">
+      <HintPath>$(GamePath)\Mods\PyTK\PyTK.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Import Project="$(SolutionDir)\common.targets" />
+  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
+
+</Project>
