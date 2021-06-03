@@ -59,7 +59,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SpaceCore_SDV\SpaceCore.csproj">
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj">
       <Project>{ba657cb4-93ed-4c3a-a66e-86954beb4ce6}</Project>
       <Name>SpaceCore</Name>
     </ProjectReference>

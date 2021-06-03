@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpaceCore_SDV\SpaceCore.csproj" />
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
