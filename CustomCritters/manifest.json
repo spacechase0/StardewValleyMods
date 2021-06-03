@@ -1,0 +1,11 @@
+{
+  "Name": "Custom Critters",
+  "Author": "spacechase0",
+  "Version": "1.2.7",
+  "Description": "Lets you add custom critters to the world.",
+  "UniqueID": "spacechase0.CustomCritters",
+  "EntryDll": "CustomCritters.dll",
+  "MinimumApiVersion": "2.9.0",
+  "UpdateKeys": [ "Nexus:1255", "Chucklefish:4791" ],
+  "spacechase0": "custom-critters"
+}
