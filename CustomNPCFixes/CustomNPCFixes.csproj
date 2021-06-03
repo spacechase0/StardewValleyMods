@@ -1,8 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <AssemblyName>CustomNPCFixes</AssemblyName>
-    <RootNamespace>CustomNPCFixes</RootNamespace>
     <Version>1.2.1</Version>
     <TargetFramework>net452</TargetFramework>
     <Platforms>x86</Platforms>
@@ -17,5 +14,4 @@
 
   <Import Project="$(SolutionDir)\common.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
-
 </Project>

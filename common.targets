@@ -1,5 +1,4 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
   <PropertyGroup>
     <Authors>Spacechase0</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -8,5 +7,4 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <IgnoreModFilePatterns Condition="'$(MSBuildProjectName)' != 'SpaceCore'">TiledNet\.dll, TiledNet\.pdb</IgnoreModFilePatterns>
   </PropertyGroup>
-
 </Project>

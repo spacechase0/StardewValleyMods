@@ -1,8 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <AssemblyName>AnotherHungerMod</AssemblyName>
-    <RootNamespace>AnotherHungerMod</RootNamespace>
     <Version>1.1.0</Version>
     <TargetFramework>net452</TargetFramework>
     <Platforms>x86</Platforms>
@@ -19,5 +16,4 @@
 
   <Import Project="$(SolutionDir)\common.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
-
 </Project>

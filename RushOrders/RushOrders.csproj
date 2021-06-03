@@ -1,8 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <AssemblyName>RushOrders</AssemblyName>
-    <RootNamespace>RushOrders</RootNamespace>
     <Version>1.1.5</Version>
     <TargetFramework>net452</TargetFramework>
     <Platforms>x86</Platforms>
@@ -15,5 +12,4 @@
 
   <Import Project="$(SolutionDir)\common.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
-
 </Project>

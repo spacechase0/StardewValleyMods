@@ -1,8 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <AssemblyName>MoreGrassStarters</AssemblyName>
-    <RootNamespace>MoreGrassStarters</RootNamespace>
     <Version>1.0.4</Version>
     <TargetFramework>net452</TargetFramework>
     <Platforms>x86</Platforms>
@@ -14,13 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="PyTK">
-      <HintPath>$(GamePath)\Mods\PyTK\PyTK.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="PyTK" HintPath="$(GamePath)\Mods\PyTK\PyTK.dll" Private="False" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)\common.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
-
 </Project>
