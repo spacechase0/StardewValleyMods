@@ -1,23 +1,21 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using SpaceCore.Events;
-using StardewModdingAPI.Events;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Magic.Game.Interface;
 using Magic.Schools;
 using Magic.Spells;
-using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using static Magic.Mod;
-using Magic.Other;
-using StardewValley.Network;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using System.IO;
-using StardewModdingAPI;
 using SpaceCore;
-using StardewValley.Objects;
+using SpaceCore.Events;
 using SpaceShared;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
+using StardewValley.Network;
+using StardewValley.Objects;
+using static Magic.Mod;
 
 namespace Magic
 {

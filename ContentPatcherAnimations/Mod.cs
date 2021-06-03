@@ -1,22 +1,14 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StardewModdingAPI;
-using ContentPatcher;
-using System.Reflection;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
-using StardewValley;
-using StardewValley.BellsAndWhistles;
-using StardewValley.Projectiles;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using StardewModdingAPI.Events;
+using System.Reflection;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
+using StardewValley;
 
 namespace ContentPatcherAnimations
 {

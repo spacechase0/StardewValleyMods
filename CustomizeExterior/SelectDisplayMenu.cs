@@ -1,10 +1,10 @@
-﻿using StardewValley.Menus;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
+using StardewValley.Menus;
 
 namespace CustomizeExterior
 {

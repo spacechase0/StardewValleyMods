@@ -1,8 +1,6 @@
-﻿using StardewValley;
+﻿using System.Collections.Generic;
+using StardewValley;
 using StardewValley.Objects;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SpaceShared.APIs
 {

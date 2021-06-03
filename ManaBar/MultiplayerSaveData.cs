@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
 using StardewModdingAPI;
 using StardewValley;
-using System.Collections.Generic;
-using System.IO;
 
 namespace ManaBar
 {

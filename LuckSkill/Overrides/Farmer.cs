@@ -1,14 +1,10 @@
-﻿using Harmony;
-using StardewValley;
-using StardewValley.Locations;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
+using Harmony;
+using StardewValley;
+using StardewValley.Locations;
 
 namespace LuckSkill.Overrides
 {

@@ -1,9 +1,7 @@
-﻿using StardewModdingAPI;
-using StardewValley;
-using StardewValley.Menus;
-using System.Collections.Generic;
+﻿using SpaceShared;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using SpaceShared;
+using StardewValley.Menus;
 
 namespace SleepyEye
 {

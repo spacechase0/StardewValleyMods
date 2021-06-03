@@ -1,5 +1,4 @@
-﻿using System;
-using SpaceShared;
+﻿using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;

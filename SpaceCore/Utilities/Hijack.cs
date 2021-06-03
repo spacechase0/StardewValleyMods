@@ -1,8 +1,8 @@
-﻿using SpaceShared;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SpaceShared;
 
 namespace SpaceCore.Utilities
 {

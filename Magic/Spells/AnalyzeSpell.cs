@@ -1,5 +1,4 @@
 ﻿using Magic.Schools;
-using SpaceCore;
 using SpaceShared;
 using StardewValley;
 

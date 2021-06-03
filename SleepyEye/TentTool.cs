@@ -1,12 +1,12 @@
-﻿using StardewValley;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewModdingAPI;
-using SFarmer = StardewValley.Farmer;
-using SpaceCore;
 using PyTK.CustomElementHandler;
+using SpaceCore;
+using StardewModdingAPI;
+using StardewValley;
+using SFarmer = StardewValley.Farmer;
 
 namespace SleepyEye
 {

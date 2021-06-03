@@ -1,14 +1,11 @@
-﻿using Harmony;
+﻿using System;
+using System.Collections.Generic;
+using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using xTile.Dimensions;
 using xTile.Display;
 using xTile.Layers;

@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using StardewValley.Locations;
-using System.Collections.Generic;
 
 namespace SpaceCore.Locations
 {

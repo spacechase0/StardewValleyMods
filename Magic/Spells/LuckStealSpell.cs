@@ -1,8 +1,8 @@
-﻿using Magic.Schools;
-using StardewValley;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using Magic.Schools;
 using SpaceCore;
+using StardewValley;
 
 namespace Magic.Spells
 {

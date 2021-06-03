@@ -1,10 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Magic.Schools;
+﻿using Magic.Schools;
 using Magic.Spells;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using SpaceCore;
 using StardewValley;
 using StardewValley.Menus;
-using SpaceCore;
 
 namespace Magic.Game.Interface
 {

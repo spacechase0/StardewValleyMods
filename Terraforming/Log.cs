@@ -1,5 +1,5 @@
-﻿using StardewModdingAPI;
-using System;
+﻿using System;
+using StardewModdingAPI;
 
 namespace Terraforming
 {

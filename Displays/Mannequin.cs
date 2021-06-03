@@ -1,17 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Xml.Serialization;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
-using SpaceCore;
 using StardewValley;
-using StardewValley.Network;
 using StardewValley.Objects;
 using StardewValley.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace Displays
 {

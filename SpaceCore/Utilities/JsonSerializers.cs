@@ -1,13 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Xml.Serialization;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using SpaceShared;
 using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Xml.Serialization;
 
 namespace SpaceCore.Utilities
 {

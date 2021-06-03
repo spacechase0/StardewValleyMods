@@ -1,13 +1,10 @@
-﻿using Harmony;
+﻿using System;
+using System.Linq;
+using Harmony;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BiggerCraftables.Patches
 {

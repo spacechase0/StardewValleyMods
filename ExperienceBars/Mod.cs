@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using StardewModdingAPI;
-using StardewModdingAPI.Events;
-using StardewValley;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewValley.Locations;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using SpaceShared.APIs;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
+using StardewValley.Locations;
 
 // TODO: Render on skills page?
 

@@ -1,12 +1,12 @@
-﻿using StardewModdingAPI;
-using StardewModdingAPI.Events;
-using StardewValley;
-using System;
+﻿using System;
 using System.IO;
 using Magic.Other;
 using Newtonsoft.Json;
 using SpaceShared;
 using SpaceShared.APIs;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
 
 namespace Magic
 {

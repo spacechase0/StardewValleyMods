@@ -1,8 +1,8 @@
-﻿using Magic.Schools;
+﻿using System;
+using System.Collections.Generic;
+using Magic.Schools;
 using StardewValley;
 using StardewValley.TerrainFeatures;
-using System;
-using System.Collections.Generic;
 using SObject = StardewValley.Object;
 
 namespace Magic.Spells

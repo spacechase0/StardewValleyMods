@@ -1,23 +1,21 @@
-﻿using Harmony;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using SpaceCore.Overrides;
+using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
-using StardewValley.Network;
-using StardewValley.TerrainFeatures;
-using StardewValley.Tools;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using Newtonsoft.Json;
 using StardewValley.Menus;
-using System.Linq;
-using SpaceShared;
-using SpaceShared.APIs;
+using StardewValley.Network;
+using StardewValley.Tools;
 
 namespace SpaceCore
 {

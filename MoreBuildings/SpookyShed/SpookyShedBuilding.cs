@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using StardewValley;
-using StardewValley.Buildings;
 using Microsoft.Xna.Framework;
 using PyTK.CustomElementHandler;
-using System.Reflection;
+using StardewValley;
+using StardewValley.Buildings;
 
 namespace MoreBuildings.SpookyShed
 {

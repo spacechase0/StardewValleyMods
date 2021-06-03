@@ -1,10 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using SpaceCore.Utilities;
+﻿using System;
+using Microsoft.Xna.Framework;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Events;
 using StardewValley.Network;
-using System;
 
 namespace SpaceCore.Events
 {

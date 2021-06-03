@@ -1,6 +1,6 @@
-﻿using Magic.Game;
+﻿using System;
+using Magic.Game;
 using StardewValley;
-using System;
 
 namespace Magic.Spells
 {

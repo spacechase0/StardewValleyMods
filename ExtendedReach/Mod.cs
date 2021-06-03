@@ -1,14 +1,14 @@
 ﻿using System;
-using StardewModdingAPI;
+using System.Collections.Generic;
 using System.Reflection;
 using Harmony;
-using StardewValley;
-using SpaceShared;
-using StardewModdingAPI.Events;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using SpaceShared.APIs;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
 
 namespace ExtendedReach
 {

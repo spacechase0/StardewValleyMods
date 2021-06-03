@@ -1,10 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.IO;
 using Magic.Spells;
-using StardewValley;
-using System;
-using static Magic.Mod;
-using System.IO;
+using Microsoft.Xna.Framework;
 using SpaceShared;
+using StardewValley;
+using static Magic.Mod;
 
 namespace Magic
 {

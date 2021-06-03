@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using Magic.Schools;
+﻿using Magic.Schools;
+using Microsoft.Xna.Framework;
+using SpaceCore;
 using StardewValley;
 using StardewValley.TerrainFeatures;
-using SpaceCore;
 
 namespace Magic.Spells
 {

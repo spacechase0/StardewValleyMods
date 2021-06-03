@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using PyTK.CustomElementHandler;
 using StardewValley;
 using SObject = StardewValley.Object;
-using PyTK.CustomElementHandler;
 
 namespace MoreBuildings.FishingShack
 {

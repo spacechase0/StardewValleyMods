@@ -1,11 +1,11 @@
 ﻿using System;
-using Newtonsoft.Json;
-using Magic.Schools;
-using Magic.Spells;
 using System.Collections.Generic;
 using System.Linq;
-using StardewValley;
+using Magic.Schools;
+using Magic.Spells;
+using Newtonsoft.Json;
 using SpaceShared;
+using StardewValley;
 
 namespace Magic
 {

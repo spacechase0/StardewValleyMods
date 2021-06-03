@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Netcode;
+using SpaceCore;
 using StardewValley;
 using StardewValley.Menus;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
-using Netcode;
-using SObject = StardewValley.Object;
-using SpaceCore;
 using StardewValley.Objects;
+using SObject = StardewValley.Object;
 
 namespace CookingSkill
 {

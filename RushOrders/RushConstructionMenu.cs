@@ -1,9 +1,9 @@
-﻿using StardewValley.Menus;
-using StardewValley;
-using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
+﻿using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using StardewValley;
 using StardewValley.BellsAndWhistles;
+using StardewValley.Menus;
 
 namespace RushOrders
 {

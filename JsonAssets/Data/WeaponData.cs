@@ -1,9 +1,8 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using StardewValley;
 using StardewValley.Tools;
-using System.Collections.Generic;
 using SObject = StardewValley.Object;
 
 namespace JsonAssets.Data

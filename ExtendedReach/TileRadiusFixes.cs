@@ -1,8 +1,8 @@
-﻿using Harmony;
-using SpaceShared;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using Harmony;
+using SpaceShared;
 
 namespace ExtendedReach
 {

@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
-using SpaceCore.Utilities;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Monsters;

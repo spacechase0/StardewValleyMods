@@ -1,5 +1,5 @@
-﻿using Magic.Spells;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Magic.Spells;
 
 namespace Magic.Schools
 {

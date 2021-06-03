@@ -1,15 +1,11 @@
-﻿using GenericModConfigMenu.UI;
+﻿using System.Linq;
+using GenericModConfigMenu.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenericModConfigMenu
 {

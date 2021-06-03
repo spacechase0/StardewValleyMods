@@ -1,4 +1,7 @@
-﻿using Harmony;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using Harmony;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore.Events;
 using SpaceShared;
@@ -6,13 +9,6 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CapstoneProfessions
 {

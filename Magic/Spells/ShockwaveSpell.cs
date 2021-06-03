@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using StardewModdingAPI.Events;
+﻿using System;
 using Magic.Schools;
-using StardewValley;
-using StardewValley.Monsters;
-using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
+using StardewModdingAPI.Events;
+using StardewValley;
+using StardewValley.Monsters;
 
 namespace Magic.Spells
 {

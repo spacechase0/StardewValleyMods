@@ -1,4 +1,6 @@
-﻿using GenericModConfigMenu.ModOption;
+﻿using System;
+using System.Collections.Generic;
+using GenericModConfigMenu.ModOption;
 using GenericModConfigMenu.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,8 +10,6 @@ using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
 
 namespace GenericModConfigMenu
 {

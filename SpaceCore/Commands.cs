@@ -1,8 +1,7 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System.IO;
+using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewValley;
-using System.IO;
-using System.Xml.Serialization;
 
 namespace SpaceCore
 {

@@ -1,5 +1,4 @@
 ﻿using StardewModdingAPI;
-using System;
 
 namespace ContentPatcherAnimations
 {

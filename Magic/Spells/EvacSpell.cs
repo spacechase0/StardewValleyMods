@@ -1,7 +1,6 @@
-﻿using StardewModdingAPI.Events;
-using Magic.Schools;
-using StardewValley;
+﻿using Magic.Schools;
 using SpaceCore;
+using StardewValley;
 
 namespace Magic.Spells
 {

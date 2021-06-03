@@ -1,6 +1,6 @@
-﻿using StardewModdingAPI;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using StardewModdingAPI;
 
 namespace SpaceShared.APIs
 {

@@ -1,14 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
 using Magic.Schools;
-using SpaceShared;
+using Microsoft.Xna.Framework;
+using SpaceCore;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
-using System.Collections.Generic;
-using System.Reflection;
-using Netcode;
-using SpaceCore;
 
 namespace Magic.Spells
 {

@@ -1,6 +1,6 @@
-﻿using SpaceShared;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using SpaceShared;
 
 namespace Magic
 {

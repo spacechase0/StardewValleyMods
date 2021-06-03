@@ -1,4 +1,12 @@
-﻿using Harmony;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Xml;
+using System.Xml.Serialization;
+using Harmony;
 using Newtonsoft.Json;
 using SpaceShared;
 using StardewModdingAPI;
@@ -9,16 +17,6 @@ using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.Quests;
 using StardewValley.TerrainFeatures;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace SpaceCore.Overrides
 {

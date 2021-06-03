@@ -12,7 +12,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using Newtonsoft.Json;
 using SpaceCore;
-using SpaceCore.Events;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;

@@ -1,16 +1,10 @@
-﻿using Harmony;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using SpaceShared;
-using StardewValley;
-using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
+using Harmony;
+using Microsoft.Xna.Framework;
+using StardewValley;
+using StardewValley.Menus;
 
 namespace JsonAssets.Overrides
 {

@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
-using System.Collections.Generic;
 using xTile;
 using xTile.Tiles;
 using static SpaceCore.Content;

@@ -1,6 +1,6 @@
-﻿using StardewValley;
-using System;
+﻿using System;
 using System.Reflection;
+using StardewValley;
 
 namespace SpaceShared.APIs
 {

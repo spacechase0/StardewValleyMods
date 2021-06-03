@@ -1,12 +1,11 @@
-﻿using Harmony;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using Harmony;
 using Microsoft.Xna.Framework;
-using Netcode;
 using SpaceShared;
 using StardewValley;
 using StardewValley.TerrainFeatures;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 
 namespace SpaceCore.Overrides
 {

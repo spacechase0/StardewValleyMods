@@ -1,14 +1,10 @@
-﻿using Harmony;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley.Objects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BiggerJunimoChest
 {

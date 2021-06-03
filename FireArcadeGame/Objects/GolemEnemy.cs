@@ -1,12 +1,9 @@
-﻿using FireArcadeGame.Projectiles;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FireArcadeGame.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FireArcadeGame.Objects
 {

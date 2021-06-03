@@ -1,9 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
 using StardewValley;
-using System;
 using static ManaBar.Mod;
-using System.IO;
-using SpaceShared;
 
 namespace ManaBar
 {

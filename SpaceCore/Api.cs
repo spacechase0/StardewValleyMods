@@ -1,16 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using System.Xml.Serialization;
+using Microsoft.Xna.Framework;
 using SpaceCore.Overrides;
 using SpaceShared;
 using StardewValley;
-using StardewValley.TerrainFeatures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace SpaceCore
 {

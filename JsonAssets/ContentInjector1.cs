@@ -1,4 +1,6 @@
-﻿using JsonAssets.Data;
+﻿using System;
+using System.Collections.Generic;
+using JsonAssets.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
@@ -6,9 +8,6 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Crafting;
-using StardewValley.TerrainFeatures;
-using System;
-using System.Collections.Generic;
 
 namespace JsonAssets
 {

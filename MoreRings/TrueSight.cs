@@ -1,13 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Tools;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using SObject = StardewValley.Object;
 
 namespace MoreRings
