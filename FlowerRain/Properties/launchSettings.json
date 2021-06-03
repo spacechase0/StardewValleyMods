@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "FlowerRain": {
-      "commandName": "Executable",
-      "executablePath": "G:\\StardewValley\\WORKSPACE_1.4\\StardewModdingAPI.exe",
-      "workingDirectory": "G:\\StardewValley\\WORKSPACE_1.4\\"
-    }
-  }
-}
