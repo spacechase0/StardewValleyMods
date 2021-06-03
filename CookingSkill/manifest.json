@@ -1,0 +1,14 @@
+{
+  "Name": "Cooking Skill",
+  "Author": "spacechase0",
+  "Version": "1.1.6",
+  "Description": "Adds a cooking skill.",
+  "UniqueID": "spacechase0.CookingSkill",
+  "EntryDll": "CookingSkill.dll",
+  "MinimumApiVersion": "2.9.0",
+  "UpdateKeys": [ "Nexus:522", "Chucklefish:4054" ],
+  "Dependencies": [
+    { "UniqueID": "spacechase0.SpaceCore" }
+  ],
+  "spacechase0": "cooking-skill"
+}
