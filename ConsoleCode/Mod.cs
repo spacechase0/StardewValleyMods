@@ -47,26 +47,24 @@ namespace ConsoleCode
         
         private CompiledMethod makeFunc(string userCode)
         {
-            var settings = new CompilerSettings()
+            var settings = new CompilerSettings
             {
-                Unsafe = true,
+                Unsafe = true
             };
 
-            var libs = new List<string>();
             foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
                     settings.AssemblyReferences.Add(asm.CodeBase);
                 }
-                catch (Exception e)
+                catch
                 {
                     //Log.trace("Couldn't add assembly " + asm + ": " + e);
                 }
             }
 
             var eval = new Evaluator(new CompilerContext(settings, new ConsoleReportPrinter()));
-            eval.ReferenceAssembly( typeof( StardewValley.Game1 ).Assembly );
             var code = @"using System;
 using System.Collections.Generic;
 using System.Linq;
