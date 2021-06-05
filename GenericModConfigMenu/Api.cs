@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using GenericModConfigMenu.ModOption;
 using Microsoft.Xna.Framework;

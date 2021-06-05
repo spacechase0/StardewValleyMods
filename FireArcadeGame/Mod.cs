@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using SpaceCore.Events;
 using SpaceShared;
 using StardewModdingAPI;

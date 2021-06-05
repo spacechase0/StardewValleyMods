@@ -1,4 +1,4 @@
-﻿namespace PreexistingRelationship
+namespace PreexistingRelationship
 {
     public class DoMarriageMessage
     {

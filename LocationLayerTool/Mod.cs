@@ -1,4 +1,4 @@
-﻿using Harmony;
+using Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;

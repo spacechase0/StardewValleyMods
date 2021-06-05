@@ -1,4 +1,4 @@
-﻿using SpaceCore.Events;
+using SpaceCore.Events;
 using StardewValley.Network;
 
 namespace SpaceCore.Overrides

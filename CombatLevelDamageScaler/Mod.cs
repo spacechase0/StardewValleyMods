@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using CombatLevelDamageScaler.Overrides;
 using Harmony;
 using Microsoft.Xna.Framework;

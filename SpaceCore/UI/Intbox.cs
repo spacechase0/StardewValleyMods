@@ -1,4 +1,4 @@
-﻿namespace SpaceCore.UI
+namespace SpaceCore.UI
 {
     public class Intbox : Textbox
     {

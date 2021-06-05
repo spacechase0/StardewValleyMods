@@ -1,4 +1,4 @@
-﻿namespace Magic.Schools
+namespace Magic.Schools
 {
     public static class SchoolId
     {

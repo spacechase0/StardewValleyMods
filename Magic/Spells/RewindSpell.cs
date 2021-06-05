@@ -1,4 +1,4 @@
-﻿using Magic.Schools;
+using Magic.Schools;
 using Magic.Spells;
 using SpaceCore;
 using StardewValley;

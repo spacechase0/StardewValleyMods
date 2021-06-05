@@ -1,4 +1,4 @@
-﻿using GenericModConfigMenu.ModOption;
+using GenericModConfigMenu.ModOption;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace GenericModConfigMenu.UI

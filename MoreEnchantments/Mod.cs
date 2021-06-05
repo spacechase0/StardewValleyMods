@@ -1,4 +1,4 @@
-﻿using Harmony;
+using Harmony;
 using MoreEnchantments.Enchantments;
 using SpaceShared;
 using StardewModdingAPI;

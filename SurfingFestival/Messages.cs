@@ -1,4 +1,4 @@
-﻿namespace SurfingFestival
+namespace SurfingFestival
 {
     public class UseItemMessage
     {

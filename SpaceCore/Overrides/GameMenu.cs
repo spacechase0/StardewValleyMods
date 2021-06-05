@@ -1,4 +1,4 @@
-﻿namespace SpaceCore.Overrides
+namespace SpaceCore.Overrides
 {
     public class GameMenuTabNameHook
     {

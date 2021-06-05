@@ -1,4 +1,4 @@
-﻿using StardewValley;
+using StardewValley;
 using SObject = StardewValley.Object;
 
 namespace SpaceCore.Events

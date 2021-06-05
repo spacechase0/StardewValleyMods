@@ -1,4 +1,4 @@
-﻿using StardewValley;
+using StardewValley;
 using StardewValley.Objects;
 
 namespace CarryChest.Overrides

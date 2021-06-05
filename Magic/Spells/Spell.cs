@@ -1,4 +1,4 @@
-﻿using Magic.Schools;
+using Magic.Schools;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;

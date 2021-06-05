@@ -1,4 +1,4 @@
-﻿namespace JsonAssets.Data
+namespace JsonAssets.Data
 {
     public abstract class DataNeedsId
     {

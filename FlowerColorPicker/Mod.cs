@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;

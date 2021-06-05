@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Magic.Other;
 using Newtonsoft.Json;

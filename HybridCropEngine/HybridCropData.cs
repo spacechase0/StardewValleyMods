@@ -1,4 +1,4 @@
-﻿namespace HybridCropEngine
+namespace HybridCropEngine
 {
     public class HybridCropData
     {

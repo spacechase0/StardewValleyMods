@@ -1,4 +1,4 @@
-﻿namespace BetterShopMenu
+namespace BetterShopMenu
 {
     public class Configuration
     {

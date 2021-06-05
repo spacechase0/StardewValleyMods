@@ -1,4 +1,4 @@
-﻿namespace RushOrders
+namespace RushOrders
 {
     public class RushOrdersConfig
     {

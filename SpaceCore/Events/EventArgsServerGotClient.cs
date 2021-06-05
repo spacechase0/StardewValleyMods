@@ -1,4 +1,4 @@
-﻿namespace SpaceCore.Events
+namespace SpaceCore.Events
 {
     public class EventArgsServerGotClient
     {

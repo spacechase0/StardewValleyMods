@@ -1,4 +1,4 @@
-﻿namespace CombatLevelDamageScaler
+namespace CombatLevelDamageScaler
 {
     public class Configuration
     {

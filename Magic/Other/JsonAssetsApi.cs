@@ -1,4 +1,4 @@
-﻿namespace Magic.Other
+namespace Magic.Other
 {
     public interface JsonAssetsApi
     {

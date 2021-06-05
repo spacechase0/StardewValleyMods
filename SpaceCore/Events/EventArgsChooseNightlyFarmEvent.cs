@@ -1,4 +1,4 @@
-﻿using StardewValley.Events;
+using StardewValley.Events;
 
 namespace SpaceCore.Events
 {

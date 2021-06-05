@@ -1,4 +1,4 @@
-﻿13 13 sky
+13 13 sky
 #############
 #LLL     LLL#
 #LLL  P  LLL#

@@ -1,4 +1,4 @@
-﻿namespace TheftOfTheWinterStar
+namespace TheftOfTheWinterStar
 {
     public class SaveData
     {

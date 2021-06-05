@@ -1,4 +1,4 @@
-﻿namespace SpaceCore.Locations
+namespace SpaceCore.Locations
 {
     public interface ISeasonalLocation
     {

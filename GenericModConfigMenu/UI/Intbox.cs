@@ -1,4 +1,4 @@
-﻿namespace GenericModConfigMenu.UI
+namespace GenericModConfigMenu.UI
 {
     class Intbox : Textbox
     {

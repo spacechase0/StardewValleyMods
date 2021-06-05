@@ -1,4 +1,4 @@
-﻿namespace ExtendedReach
+namespace ExtendedReach
 {
     public class Configuration
     {

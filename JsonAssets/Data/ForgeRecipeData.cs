@@ -1,4 +1,4 @@
-﻿namespace JsonAssets.Data
+namespace JsonAssets.Data
 {
     public class ForgeRecipeData
     {

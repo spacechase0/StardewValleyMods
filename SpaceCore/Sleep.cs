@@ -1,4 +1,4 @@
-﻿namespace SpaceCore
+namespace SpaceCore
 {
     public class Sleep
     {

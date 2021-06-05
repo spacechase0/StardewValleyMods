@@ -1,4 +1,4 @@
-﻿namespace Terraforming
+namespace Terraforming
 {
     public enum TileType
     {

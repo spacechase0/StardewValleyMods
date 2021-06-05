@@ -1,4 +1,4 @@
-﻿using FireArcadeGame.Objects;
+using FireArcadeGame.Objects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;

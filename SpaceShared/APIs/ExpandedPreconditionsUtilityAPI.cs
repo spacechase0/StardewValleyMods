@@ -1,4 +1,4 @@
-﻿namespace SpaceShared.APIs
+namespace SpaceShared.APIs
 {
     public interface ExpandedPreconditionsUtilityAPI
     {

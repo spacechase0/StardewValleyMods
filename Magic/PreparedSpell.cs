@@ -1,4 +1,4 @@
-﻿using Magic.Spells;
+using Magic.Spells;
 
 namespace Magic
 {

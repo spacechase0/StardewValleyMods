@@ -1,4 +1,4 @@
-﻿namespace JunimosAcceptCash
+namespace JunimosAcceptCash
 {
     public class Configuration
     {

@@ -1,4 +1,4 @@
-﻿using SpaceShared;
+using SpaceShared;
 using StardewValley;
 using SObject = StardewValley.Object;
 

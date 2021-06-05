@@ -1,4 +1,4 @@
-﻿using Magic.Schools;
+using Magic.Schools;
 using Magic.Spells;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

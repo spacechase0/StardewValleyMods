@@ -1,4 +1,4 @@
-﻿using Harmony;
+using Harmony;
 using StardewValley;
 using StardewValley.Buildings;
 

@@ -1,11 +1,11 @@
-This repository contains my SMAPI mods for Stardew Valley. See the individual mods in the
+﻿This repository contains my SMAPI mods for Stardew Valley. See the individual mods in the
 subfolders for documentation and release notes.
 
 ## Translating the mods
 The mods can be translated into any language supported by the game, and SMAPI will automatically
 use the right translations.
 
-(â‘ = untranslated, â†» = partly translated, âœ“ = fully translated)
+(❑ = untranslated, ↻ = partly translated, ✓ = fully translated)
 
 **TODO**
 

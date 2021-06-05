@@ -1,4 +1,4 @@
-﻿namespace BiggerCraftables
+namespace BiggerCraftables
 {
     public static class Extensions
     {

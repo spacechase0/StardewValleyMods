@@ -1,4 +1,4 @@
-﻿namespace FlowerRain
+namespace FlowerRain
 {
     public class Config
     {

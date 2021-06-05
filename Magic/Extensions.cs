@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using Magic.Spells;
 using Microsoft.Xna.Framework;
 using SpaceShared;

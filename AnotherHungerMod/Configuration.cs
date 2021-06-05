@@ -1,4 +1,4 @@
-﻿namespace AnotherHungerMod
+namespace AnotherHungerMod
 {
     public class Configuration
     {

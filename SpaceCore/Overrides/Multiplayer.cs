@@ -1,4 +1,4 @@
-﻿using StardewValley;
+using StardewValley;
 using StardewValley.Network;
 
 namespace SpaceCore.Overrides

@@ -1,4 +1,4 @@
-﻿using SpaceShared;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley.Menus;

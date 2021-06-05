@@ -1,4 +1,4 @@
-# Custom Critters
+﻿# Custom Critters
 This is the source code. Releases can be found at:
 * [My site](http://spacechase0.com/mods/stardew-valley/custom-critters/)
 * [Nexus](http://www.nexusmods.com/stardewvalley/mods/1140/)

@@ -1,4 +1,4 @@
-﻿using Harmony;
+using Harmony;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.TerrainFeatures;

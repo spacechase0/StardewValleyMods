@@ -1,4 +1,4 @@
-﻿namespace Magic
+namespace Magic
 {
     public class AnalyzeEventArgs
     {
