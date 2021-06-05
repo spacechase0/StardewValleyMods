@@ -4,9 +4,9 @@ This is the source code. Releases can be found at:
 * [Nexus](http://www.nexusmods.com/stardewvalley/mods/509/)
 * [Chucklefish forums](http://community.playstarbound.com/resources/experience-bars.3905/)
 
-Adds experience bars.
+Adds experience bars. You can see how far away you are from leveling.
 
-Press X to toggle the display. Shift+X to move the display to your cursor.
+Press X to toggle the display. Move the display with Shift+X.
 
 ![](screenshot.png)
 

@@ -31,6 +31,7 @@ Sat, 18 Aug 2018 13:42:07 -0400
 Updated for 1.3.28.
 Downloads:
     1.3.28
+    1.3.32 (on Nexus)
 ```
 
 ## 1.0.0

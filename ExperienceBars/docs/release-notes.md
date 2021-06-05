@@ -52,7 +52,7 @@ Downloads:
     1.2
 ```
 
-## 1.1
+## 1.1.0
 ```
 Mon, 12 Jun 2017 20:41:30 -0400
 Added config file for toggle key.
