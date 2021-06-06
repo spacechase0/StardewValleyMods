@@ -15,12 +15,12 @@ Released 26 November 2019 for Stardew Valley 1.4.
 ## 1.1.4
 Released 17 January 2019 for Stardew Valley 1.3.33.
 
-* Updated for SMAPI 3.0.
+* Updated for SMAPI 3.0 (thanks to Pathoschild!).
 
 ## 1.1.3
 Released 15 January 2019 for Stardew Valley 1.3.32.
 
-* Added API.
+* Added API to change list of available cooking items (thanks to ArjanSeijs!).
 
 ## 1.1.2
 Released 21 August 2018 for Stardew Valley 1.3.28.
@@ -30,7 +30,7 @@ Released 21 August 2018 for Stardew Valley 1.3.28.
 ## 1.1.1
 Released 18 August 2018 for Stardew Valley 1.3.28.
 
-* Updated for Stardew Valley 1.3.28 and multiplayer.
+* Updated for Stardew Valley 1.3.28 (thanks to hawkfalcon!) and multiplayer.
 
 ## 1.0.9
 Released 15 April 2018 for Stardew Valley 1.2.

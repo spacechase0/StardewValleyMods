@@ -4,7 +4,7 @@
 ## 1.5.6
 Released 18 May 2021 for Stardew Valley 1.5.
 
-* Added new skills page.
+* Overhauled custom skills page and improved gamepad support (thanks to b-b-blueberry!).
 * Fixed game launched event not triggering, causing GMCM entry to not show up.
 * Fixed serializer conflict with Entoarox Framework.
 
@@ -53,7 +53,8 @@ Released 16 August 2020 for Stardew Valley 1.4.
 ## 1.3.5
 Released 14 March 2020 for Stardew Valley 1.4.
 
-* Fixed Android and API issues.
+* Fixed Android issues (thanks to ZaneYork!).
+* Fixed API issues.
 
 ## 1.3.4
 Released 17 January 2020 for Stardew Valley 1.4.
@@ -106,7 +107,8 @@ Released 18 January 2019 for Stardew Valley 1.3.33 and 1.3.36.
 ## 1.2.4
 Released 18 January 2019 for Stardew Valley 1.3.33.
 
-* Updated for SMAPI 3.0.
+* Updated for SMAPI 3.0 (thanks to Pathoschild!).
+* Save data is now stored in the save instead of the mod folder, and existing data will be migrated automatically (thanks to Pathoschild!).
 
 ## 1.2.3
 Released 03 December 2018 for Stardew Valley 1.3.32.
@@ -131,7 +133,8 @@ Released 18 August 2018 for Stardew Valley 1.3.28.
 * Updated for Stardew Valley 1.3.28.
 * Added some new events.
 * Added networking API.
-* Added skill API.
+* Added skill API.  
+  _(Thanks to MercuriusXeno for some prerelease bug fixes!)_
 
 ## 1.1.1
 Released 15 April 2018 for Stardew Valley 1.2.

@@ -15,7 +15,12 @@ Released 26 November 2019 for Stardew Valley 1.4.
 ## 1.2.3
 Released 17 January 2019 for Stardew Valley 1.3.33.
 
-* Updated for SMAPI 3.0.
+* Rewrote how the mod works (thanks to Pathoschild!). In particular:
+  * Updated for SMAPI 3.0.
+  * Fixed some non-player chests being carryable.
+  * Fixed chest name lost when chest is placed.
+  * Fixed chest contents sometimes disappearing.
+  * Fixed potential bugs due to non-guaranteed event order.
 
 ## 1.2.2
 Released 18 August 2018 for Stardew Valley 1.3.28.

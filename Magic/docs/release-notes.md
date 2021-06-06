@@ -6,12 +6,16 @@ Released 26 January 2021 for Stardew Valley 1.5.
 
 * Updated for Stardew Valley 1.5.
 * The mod now requires [Mana Bar](https://www.nexusmods.com/stardewvalley/mods/7831).
+* Fixed heal spell letting you 'overheal' past your max HP (thanks to Elec0!).
+* Fixed clear debris level 3 not working outside the farm (thanks to Elec0!).
+* Updated translations. Thanks to asqwedcxz741 (added Chinese), Caco-o-sapo (added Portuguese), and yura496 (updated Korean)!
 
 ## 0.3.1
 Released 26 November 2019 for Stardew Valley 1.4.
 
 * Updated for Stardew Valley 1.4.
 * Added support for [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098).
+* Updated translations. Thanks to S2SKY (added Korean)!
 
 ## 0.3.0
 Released 18 May 2019 for Stardew Valley 1.3.36.
@@ -46,7 +50,8 @@ Released 29 January 2019 for Stardew Valley 1.3.33.
 ## 0.1.5
 Released 17 January 2019 for Stardew Valley 1.3.33.
 
-* Updated for SMAPI 3.0.
+* Added 'active effects' system to support non-instant spells like meteor, shockwave, and tendrils (thanks to Pathoschild!).
+* Updated for Stardew Valley 1.3.33 and SMAPI 3.0 (thanks to Pathoschild!).
 
 ## 0.1.4
 Released 15 January 2019 for Stardew Valley 1.3.32.

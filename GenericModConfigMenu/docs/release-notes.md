@@ -17,7 +17,7 @@ Released 16 March 2021 for Stardew Valley 1.5.
 Released 04 March 2021 for Stardew Valley 1.5.
 
 * Added ability to override page display name.
-* Added ability to unregister mod menus.
+* Added ability to unregister mod menus (thanks to Digus!).
 
 ## 1.3.0
 Released 03 March 2021 for Stardew Valley 1.5.
@@ -32,7 +32,10 @@ Released 05 January 2021 for Stardew Valley 1.5.
 ## 1.2.0
 Released 03 August 2020 for Stardew Valley 1.4.
 
-* Mod dev improvements; see GitHub for details (thanks to Platonymous!).
+* Improved API (thanks to Platonymous!):
+  * Added interval option for float/int sliders.
+  * Added methods to react to arbitrary option changes by ID.
+  * Dropdowns can now be scrolled if needed.
 * Added Android improvements (thanks to kdau!).
 * Polished UI (thanks to kdau!).
 

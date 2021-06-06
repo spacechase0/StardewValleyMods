@@ -15,7 +15,7 @@ Released 11 May 2019 for Stardew Valley 1.1.4.
 ## 1.1.3
 Released 18 January 2019 for Stardew Valley 1.3.33.
 
-* Updated for SMAPI 3.0.
+* Updated for SMAPI 3.0 (thanks to Pathoschild!).
 
 ## 1.1.2
 Released 18 Aug 2018 for Stardew Valley 1.3.28.

@@ -5,7 +5,7 @@
 Released 02 April 2021 for Stardew Valley 1.5.
 
 * Json Assets now loads stuff earlier (for bundles) and saves earlier.
-* Added QiGemShop support.
+* Added QiGemShop support (thanks to Digus!).
 * Added `ja_unfix` console command.
 * Fixed `ja_summary` console command for farmhands.
 * Fixed furniture contents not ID-fixed outside decoratable locations.
@@ -32,6 +32,7 @@ Released 06 January 2021 for Stardew Valley 1.5.
 ## 1.7.2
 Released 05 January 2021 for Stardew Valley 1.5.
 
+* Added `GetAllBootsFromContentPack` to API (thanks to CMAlbrecht!).
 * Fixed purchase requirement stuff and recipe purchasing.
 
 ## 1.7.1
@@ -53,6 +54,7 @@ Released 21 December 2020 for Stardew Valley 1.5.
   * `CanPurchase` for hats;
   * `AdditionalPurchaseData` field for everything.
 * Removed limits on the number of objects, hats, and big craftables.
+* Improved performance in asset patching (thanks to aaron-cooper!).
 * Fixed bugs.
 
 ## 1.6.2
@@ -111,8 +113,9 @@ Released 23 December 2019 for Stardew Valley 1.4.
 * Added greens category.
 * Added `ReserveNextIndex` for a second texture for big craftables.
 * Added coordinate tokens for CP (not yet usable).
-* Block actions only for "Chair" big craftables.
 * Added skill unlock support for recipes.
+* Block actions only for "Chair" big craftables.
+* Improved error handling in Harmony patches (thanks to Pathoschild!).
 * Fixed recipe result count not being used.
 * Fixed an issue with removed items in collections.
 * Fixed non-localized recipes.
@@ -205,7 +208,8 @@ Released 25 January 2019 for Stardew Valley 1.3.33.
 ## 1.1.3
 Released 17 January 2019 for Stardew Valley 1.3.33.
 
-* Updated for SMAPI 3.0.
+* Updated for SMAPI 3.0 (thanks to Pathoschild!).
+* Dropped support for legacy ID mapping files in the mod folder (thanks to Pathoschild!).
 
 ## 1.1.2
 Released 15 January 2019 for Stardew Valley 1.3.32.
@@ -217,7 +221,7 @@ Released 15 January 2019 for Stardew Valley 1.3.32.
 ## 1.1.0
 Released 24 February 2018 for Stardew Valley 1.2.
 
-* Added support for the new standardized content packs in SMAPI 2.5.
+* Added support for [standard content packs](https://stardewvalleywiki.com/Modding:Content_packs) (thanks to Pathoschild!).
 * Added API.
 * Added ring category.
 * Fixed some problems with default recipes. 
@@ -227,3 +231,4 @@ Released 24 February 2018 for Stardew Valley 1.2.
 Released 28 December 2017 for Stardew Valley 1.2.
 
 * Initial release.
+* Updated for SMAPI 2.0 before release (thanks to Pathoschild!).

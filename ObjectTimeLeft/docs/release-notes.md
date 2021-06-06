@@ -10,7 +10,8 @@ Released 26 November 2019 for Stardew Valley 1.4.
 ## 1.0.3
 Released 18 January 2019 for Stardew Valley 1.3.33.
 
-* Updated for SMAPI 3.0.
+* Updated for SMAPI 3.0 (thanks to Pathoschild!).
+* Migrated to SMAPI's input API to allow configuring non-keyboard buttons (thanks to Pathoschild!).
 
 ## 1.0.2
 Released 03 December 2018 for Stardew Valley 1.3.32.

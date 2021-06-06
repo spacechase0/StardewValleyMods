@@ -14,7 +14,9 @@ Released 25 January 2019 for Stardew Valley 1.3.33 and 1.3.36.
 ## 1.0.5
 Released 17 January 2019 for Stardew Valley 1.3.33.
 
-* Updated for SMAPI 3.0.
+* Updated for SMAPI 3.0 (thanks to Pathoschild!).
+* Texture selections are now stored in the save instead of the mod folder, and existing data will be migrated automatically (thanks to Pathoschild!).
+* Fixed SpaceCore not listed as a dependency (which caused 'not compatible' errors if SpaceCore wasn't loaded first).
 
 ## 1.0.4
 Released 18 August 2018 for Stardew Valley 1.3.28.
