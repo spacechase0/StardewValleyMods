@@ -2,9 +2,6 @@
 
 # Release notes
 ## 1.0.0
-```
-Fri, 03 Jan 2020 18:41:54 -0500
-Initial release.
-Downloads:
-    1.4
-```
+Released 03 January 2020 for Stardew Valley 1.4.
+
+* Initial release.

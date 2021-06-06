@@ -2,41 +2,26 @@
 
 # Release notes
 ## 1.0.4
-```
-Tue, 26 Nov 2019 18:19:30 -0500
-SDV 1.4
-Downloads:
-    1.4
-```
+Released 26 November 2019 for Stardew Valley 1.4.
+
+* Updated for Stardew Valley 1.4.
 
 ## 1.0.3
-```
-Fri, 25 Jan 2019 08:26:41 -0500
-Wear More Rings support.
-Downloads:
-    1.3.33
-```
+Released 25 January 2019 for Stardew Valley 1.3.33.
+
+* Added [Wear More Rings](https://www.nexusmods.com/stardewvalley/mods/3214) support.
 
 ## 1.0.2
-```
-Fri, 18 Jan 2019 10:44:55 -0500
-SMAPI 3.0 update.
-Downloads:
-    1.3.33
-```
+Released 18 January 2019 for Stardew Valley 1.3.33.
+
+* Updated for SMAPI 3.0.
 
 ## 1.0.1
-```
-Sat, 18 Aug 2018 19:40:37 -0400
-Update for 1.3.28.
-Downloads:
-    1.3.28.
-```
+Released 18 August 2018 for Stardew Valley 1.3.28.
+
+* Updated for Stardew Valley 1.3.28.
 
 ## 1.0.0
-```
-Sun, 15 Apr 2018 14:15:31 -0400
-Initial release.
-Downloads:
-    1.2
-```
+Released 15 April 2018 for Stardew Valley 1.2.
+
+* Initial release.

@@ -2,66 +2,42 @@
 
 # Release notes
 ## 1.3.1
-```
-Sat, 16 Jan 2021 22:05:52 -0500
-Fixed modData not being copied.
-Downloads:
-    1.5
-```
+Released 16 January 2021 for Stardew Valley 1.5.
+
+* Fixed `modData` not being copied.
 
 ## 1.3.0
-```
-Tue, 26 Nov 2019 17:49:23 -0500
-SDV 1.4, chest tooltips show item count
-Downloads:
-    1.4
-```
+Released 26 November 2019 for Stardew Valley 1.4.
+
+* Updated for Stardew Valley 1.4.
+* Chest tooltips now show item count.
 
 ## 1.2.3
-```
-Thu, 17 Jan 2019 13:32:51 -0500
-SMAPI 3.0 update.
-Downloads:
-    1.3.33
-```
+Released 17 January 2019 for Stardew Valley 1.3.33.
+
+* Updated for SMAPI 3.0.
 
 ## 1.2.2
-```
-Sat, 18 Aug 2018 13:25:02 -0400
-Updated for 1.3.28.
-Downloads:
-    1.3.28
-```
+Released 18 August 2018 for Stardew Valley 1.3.28.
+
+* Updated for Stardew Valley 1.3.28.
 
 ## 1.2.1
-```
-Sat, 23 Sep 2017 18:13:57 -0400
-Disallow carrying slime incubators.
-Downloads:
-    1.2
-```
+Released 23 September 2017 for Stardew Valley 1.2.
+
+* Disabled carrying slime incubators.
 
 ## 1.2.0
-```
-Thu, 03 Aug 2017 12:55:20 -0400
-Enable picking up machines processing something.
-Downloads:
-    1.2
-```
+Released 03 August 2017 for Stardew Valley 1.2.
+
+* Enabled picking up machines processing something.
 
 ## 1.1.2
-```
-Thu, 03 Aug 2017 07:55:19 -0400
-Don't allow picking up a chest when the player can't interact with the world.
-Downloads:
-    1.2
-```
+Released 03 August 2017 for Stardew Valley 1.2.
 
+* Disabled picking up a chest when the player can't interact with the world.
 
 ## 1.0.0
-```
-Wed, 12 Jul 2017 17:47:36 -0400
-Initial release.
-Downloads:
-    1.2
-```
+Released 12 July 2017 for Stardew Valley 1.2.
+
+* Initial release.

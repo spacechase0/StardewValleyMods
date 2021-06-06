@@ -1,26 +1,18 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## 1.0.2
-```
-Tue, 26 Nov 2019 17:55:09 -0500
-SDV 1.4, Mac/Linux support
-Downloads:
-    1.4
-```
+# 1.0.2
+Released 26 November 2019 for Stardew Valley 1.4.
+
+* Updated for Stardew Valley 1.4.
+* Fixed Linux/macOS support.
 
 ## 1.0.1
-```
-Thu, 17 Jan 2019 13:40:07 -0500
-SMAPI 3.0 update.
-Downloads:
-    1.3.33
-```
+Released 17 January 2019 for Stardew Valley 1.3.33.
+
+* Updated for SMAPI 3.0.
 
 ## 1.0.0
-```
-Sun, 25 Nov 2018 15:13:37 -0500
-Initial release.
-Downloads:
-    1.3.32
-```
+Released 25 November 2018 for Stardew Valley 1.3.32.
+
+* Initial release.

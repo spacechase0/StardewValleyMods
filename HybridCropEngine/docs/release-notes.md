@@ -2,15 +2,12 @@
 
 # Release notes
 ## 1.0.1
-```
-31 Dec 2020, 1:45PM
-1.5 and allow base crop twice for hybrids.
-```
+Released 31 December 2020 for Stardew Valley 1.5.
+
+* Updated for Stardew Valley 1.5.
+* You can now create hybrids for two of the same parent crop.
 
 ## 1.0.0
-```
-Tue, 04 Aug 2020 18:37:40 -0400
-Initial release.
-Downloads:
-    1.4
-```
+Released 04 August 2020 for Stardew Valley 1.4.
+
+* Initial release.

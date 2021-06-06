@@ -2,24 +2,19 @@
 
 # Release notes
 ## 1.1.0
-```
-Tue, 26 Nov 2019 17:43:31 -0500
-SDV 1.4, GMCM support, removed defense buff
-Downloads:
-    1.4
-```
+Released 26 November 2019 for Stardew Valley 1.4.
+
+* Updated for Stardew Valley 1.4.
+* Added support for [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098).
+* Removed defense buff.
 
 ## 1.0.1
-```
-Fri, 14 Jun 2019 13:36:44 -0400
-Nerfed fullness buff and added config for moving UI.
-Downloads:
-```
+Released 14 June 2019 for Stardew Valley 1.3.36.
+
+* Nerfed fullness buff.
+* Added config for moving UI.
 
 ## 1.0.0
-```
-Tue, 29 Jan 2019 11:19:09 -0500
-Initial release.
-Downloads:
-    1.3.33
-```
+Released 29 January 2019 for Stardew Valley 1.3.33.
+
+* Initial release.

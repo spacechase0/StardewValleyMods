@@ -2,33 +2,21 @@
 
 # Release notes
 ## 1.0.3
-```
-Tue, 26 Nov 2019 18:08:23 -0500
-SDV 1.4
-Downloads:
-    1.4
-```
+Released 26 November 2019 for Stardew Valley 1.4.
+
+* Updated for Stardew Valley 1.4.
 
 ## 1.0.2
-```
-Thu, 17 Jan 2019 13:58:44 -0500
-SMAPI 3.0 update.
-Downloads:
-    1.3.33
-```
+Released 17 January 2019 for Stardew Valley 1.3.33.
+
+* Updated for SMAPI 3.0.
 
 ## 1.0.1
-```
-Sat, 18 Aug 2018 13:32:28 -0400
-Updated for 1.3.28.
-Downloads:
-    1.3.28
-```
+Released 18 August 2018 for Stardew Valley 1.3.28.
+
+* Updated for Stardew Valley 1.3.28.
 
 ## 1.0.0
-```
-Sat, 23 Sep 2017 18:29:27 -0400
-Initial release.
-Downloads:
-    1.2
-```
+Released 23 September 2017 for Stardew Valley 1.2.
+
+* Initial release.

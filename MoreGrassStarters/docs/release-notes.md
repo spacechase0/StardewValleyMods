@@ -2,41 +2,26 @@
 
 # Release notes
 ## 1.0.4
-```
-Tue, 26 Nov 2019 18:18:37 -0500
-SDV 1.4
-Downloads:
-    1.4
-```
+Released 26 November 2019 for Stardew Valley 1.4.
+
+* Updated for Stardew Valley 1.4.
 
 ## 1.0.3
-```
-Fri, 18 Jan 2019 10:42:35 -0500
-SMAPI 3.0 update.
-Downloads:
-    1.3.33
-```
+Released 18 January 2019 for Stardew Valley 1.3.33.
+
+* Updated for SMAPI 3.0.
 
 ## 1.0.2
-```
-Sat, 18 Aug 2018 13:43:41 -0400
-Updated for 1.3.28.
-Downloads:
-    1.3.28
-```
+Released 18 August 2018 for Stardew Valley 1.3.28.
+
+* Updated for Stardew Valley 1.3.28.
 
 ## 1.0.1
-```
-Sat, 03 Feb 2018 16:03:50 -0500
-Change from CEH to PyTK.
-Downloads:
-    1.2
-```
+Released 03 February 2018 for Stardew Valley 1.2.
+
+* Migrated from Custom Element Handler to PyTK.
 
 ## 1.0.0
-```
-Sat, 16 Dec 2017 12:37:19 -0500
-Initial release.
-Downloads:
-    1.2
-```
+Released 16 December 2017 for Stardew Valley 1.2.
+
+* Initial release.
