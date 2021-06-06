@@ -1,20 +1,29 @@
-﻿# Three Heart Flower Festival Dance Partners
-This is the source code. Releases can be found at:
-* [My site](http://spacechase0.com/mods/stardew-valley/three-heart-dance-partner/)
-* [Nexus](http://www.nexusmods.com/stardewvalley/mods/500/)
-* [Chucklefish forums](http://community.playstarbound.com/resources/three-heart-flower-festival-dance-partners.3767/)
-
-This makes it so that you only need 3 hearts instead of 4 to get a dance partner at the Flower
-Festival.
+﻿**Three-Heart Flower Dance Partner** is a [Stardew Valley](http://stardewvalley.net/) mod which lets
+you dance with a villager at the Flower Dance with three years instead of four, so it's achieveable
+in the first year.
 
 ![](screenshot.png)
 
-## First year dance partner
-This makes it possible to get a partner for the first year festival.  
-Talking = +20, Liked gift = +50  
-Talking * 23 + Gift * (4 weeks * 2)  
-20 * 23 + 50 * 8  
-860, > 750 (3 hearts)
+## Install
+1. Install the latest version of [SMAPI](https://smapi.io).
+2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/500).
+3. Run the game using SMAPI.
+
+## Use
+The mod works automatically once installed. If you have at least three hearts with an NPC, they'll
+accept at the Flower Festival if you ask them to dance.
+
+### Formula
+The Flower Dance happens on spring 24, which gives you 23 days to get three hearts (750 points)
+with the NPC of your choice.
+
+To achieve that in year one, you can talk to them every day (+20 points/day) and give them two
+liked gifts per week (+45 points/gift). That gives you `(23 days × 20 points) + (4 weeks × 2 gifts
+× 45 points)` or 820 points. You can use [Lookup Anything](https://www.nexusmods.com/stardewvalley/mods/541)
+to see your exact friendship points with an NPC.
+
+## Compatibility
+Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

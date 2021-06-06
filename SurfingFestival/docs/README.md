@@ -1,46 +1,37 @@
 ﻿![](doc-banner.png)
 
-Come to a new festival on Summer 5 at the Beach, where you can race some of your friends in the
-town!
+**Surfing Festival** is a [Stardew Valley](http://stardewvalley.net/) mod which adds a new summer
+festival where you can race some of your friends in the town!
+
+## Install
+1. Install the latest version of...
+   * [SMAPI](https://smapi.io);
+   * [Json Assets](https://www.nexusmods.com/stardewvalley/mods/1720);
+   * [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915);
+   * [Content Patcher Animations](https://www.nexusmods.com/stardewvalley/mods/3853);
+   * [Mail Framework Mod](https://www.nexusmods.com/stardewvalley/mods/1536);
+   * and [Shop Tile Framework](https://www.nexusmods.com/stardewvalley/mods/5005).
+2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/6688).
+3. Run the game using SMAPI.
+
+Before uninstalling, make sure to delete every existing item added by this mod.
+
+## Use
+Visit the beach on summer 5 to start [the festival](screenshot-festival.png). When you're ready,
+talk to Lewis to start the [surf race](screenshot-surfing.png).
 
 Don't put anything weird in the bonfire.
 
-## Things to note
-* Made for the SDV Discord Server 2020 Summer Event, theme: wavy
-* Before the race the text explaining the powerups extends past the textbox. It still functions as
-  intended just a bit harder to read the bottom word.
-* When using the Stardrop powerup your character may jump forward and backwards, this is because of
-  how fast you're going.
+**Known issues:**
+* Before the race, the text explaining the powerups extends past the textbox. It still works as
+  intended, it's just a bit harder to read the bottom word.
+* When using the Stardrop powerup, your character may jump forward and backwards. That's a bug due
+  to how fast you're going.
 
-## You will need
-﻿* Latest version of [Json Assets](https://www.nexusmods.com/stardewvalley/mods/1720)
-* Latest version of [SMAPI](https://stardewvalleywiki.com/Modding:Installing_SMAPI)
-* Latest version of [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348)
-* Latest version of [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915)
-* Latest version of [Content Patcher Animations](https://www.nexusmods.com/stardewvalley/mods/3853)
-* Latest version of [Mail Framework Mod](https://www.nexusmods.com/stardewvalley/mods/1536)
-* Latest version of [Shop Tile Framework](https://www.nexusmods.com/stardewvalley/mods/5005) + Dependencies
-
-## Installation
-Step 1. Install SMAPI, Json Assets, SpaceCore, Content Patcher, Content Patcher Animations, Mail
-Framework Mod, and Shop Tile Framework + Dependencies.
-
-Step 2. Download this mod and extract the zip file anywhere you would like. There are 4 files
-included in the download:
-
-SurfingFestival
-SurfingFestival.CP-A
-SurfingFestival.STF
-SurfingFestival.MFM
-
-Step 3. Drag & Drop the extracted folder(s) directly into the /Mods folder.
-
-## Uninstallation
-- Delete every existing item made from this mod
-- Remove the corresponding folder(s) inside /Mods
-
-![](screenshot-festival.png)  
-![](screenshot-surfing.png)
+## Compatibility
+Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)
+* Made for the [Stardew Valley Discord](https://stardewvalleywiki.com/Modding:Community)'s 2020
+  summer event (for the 'wavy' theme).

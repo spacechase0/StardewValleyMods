@@ -1,74 +1,84 @@
-﻿# Customize Exterior
-This is the source code. Releases can be found at:
-* [My site](http://spacechase0.com/mods/stardew-valley/customize-exterior/)
-* [Nexus](http://www.nexusmods.com/stardewvalley/mods/1099/)
-* [Chucklefish forums](http://community.playstarbound.com/threads/customize-exterior.132253/)
+﻿**Customize Exterior** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you
+customize the exterior of your buildings individually. This lets you have a different texture for
+each instance of a building ([see example](screenshot-buildings.png)).
 
-This mod lets you customize the exterior of your buildings individually.
+![](screenshot-menu.png)
 
-This mod is compatible with Map Image Exporter. It also supports textures made for Seasonal
-Immersion, even without Seasonal Immersion installed.
+## Install
+1. Install the latest version of...
+   * [SMAPI](https://smapi.io);
+   * and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
+2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/1099).
+3. Run the game using SMAPI.
 
-To select a texture for a building, double right-click it. (You must click the portion where it is
-solid.)
+## Use
+### Adding textures
+This mod has no built-in custom textures; you need to download the textures you want to use.
 
-This mod comes with no extra building textures on its own. For information on adding textures, look
-below.
+Customize Exterior will create a `Buildings` subfolder the first time you run it. You can install
+any number of texture sets by putting each one in its own subfolder of `Buildings`. The name of
+each file should match the building in your game's `Content/Buildings` folder. Each texture can be
+a `.png` or `.xnb` file.
 
-![](screenshot-menu.png)  
-![](screenshot-buildings.png)
+For example:
 
+```
+📁 Mods/
+   📁 CustomizeExterior/
+      📁 Buildings/
+         📁 TextureSetA
+            🗎 Shed.xnb
+            🗎 houses.xnb
+              ...
+         📁 TextureSetB
+            🗎 Shed.png
+            🗎 houses.png
+              ...
+```
 
-## Examples in screenshot
+You can make textures seasonal by adding season folders within the texture set:
+
+```
+📁 Mods/
+   📁 CustomizeExterior/
+      📁 Buildings/
+         📁 TextureSetA
+            📁 spring/
+               🗎 Shed.xnb
+               🗎 houses.xnb
+                 ...
+            📁 summer/
+               🗎 Shed.xnb
+               🗎 houses.xnb
+                 ...
+            📁 fall/
+               🗎 Shed.xnb
+               🗎 houses.xnb
+                 ...
+            📁 winter/
+               🗎 Shed.xnb
+               🗎 houses.xnb
+                 ...
+```
+
+### Applying textures in-game
+Double right-click a building in-game to show the texture selection UI, and choose the texture to
+apply.
+
+### Textures in screenshot
 For the texture sets shown in the screenshot, see:
-* [Birch Building Mods](http://www.nexusmods.com/stardewvalley/mods/583)
-* [Medieval modern buildings](http://www.nexusmods.com/stardewvalley/mods/419)
-* [Seasonal Vanilla](http://www.nexusmods.com/stardewvalley/mods/928)
-* [Victorian era Buildings](http://www.nexusmods.com/stardewvalley/mods/682)
-* [Seasonal Victorian Buildings](http://www.nexusmods.com/stardewvalley/mods/891)
+* [Birch Building Mods](https://www.nexusmods.com/stardewvalley/mods/583)
+* [Medieval Modern Buildings](https://www.nexusmods.com/stardewvalley/mods/419)
+* [Seasonal Vanilla](https://www.nexusmods.com/stardewvalley/mods/928)
+* [Victorian Era Buildings](https://www.nexusmods.com/stardewvalley/mods/682)
+* [Seasonal Victorian Buildings](https://www.nexusmods.com/stardewvalley/mods/891)
 
-## Adding texture choices
-Download a bundle that you would normally put in your content folder, and instead place it in the
-'Buildings' folder in the CustomizeExterior mod folder.
+## Compatibility
+Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
-This would result with:
-```
-Mods/CustomizeExterior
-+ manifest.json
-+ CustomizeExterior.dll
-+ CustomizeExterior.pdb
-+-+ Buildings
-  +-+ TextureSetA
-  | + Shed.xnb
-  | + houses.xnb
-  | + ...
-  |
-  +-+ TextureSetB
-  | + Shed.xnb
-  | + houses.xnb
-  | + ...
-  |
-  +-+ TextureSetC_SeasonalImmersion
-    +-+ spring
-    | + Shed.xnb
-    | + houses.xnb
-    | + ...
-    |
-    +-+ summer
-    | + Shed.xnb
-    | + houses.xnb
-    | + ...
-    |
-    +-+ fall
-    | + Shed.xnb
-    | + houses.xnb
-    | + ...
-    |
-    +-+ winter
-    | + Shed.xnb
-    | + houses.xnb
-    | + ...
-```
+Compatible with [Map Image Exporter](https://www.nexusmods.com/stardewvalley/mods/1073). It also
+supports textures made for [Seasonal Immersion](https://www.nexusmods.com/stardewvalley/mods/2273),
+even without that mod installed.
 
 ## See also
 * [Release notes](release-notes.md)

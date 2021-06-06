@@ -1,18 +1,25 @@
-﻿# Rush Orders
-This is the source code. Releases can be found at:
-* [My site](http://spacechase0.com/mods/stardew-valley/rush-orders/)
-* [Nexus](http://www.nexusmods.com/stardewvalley/mods/605/)
-* [Chucklefish forums](http://community.playstarbound.com/threads/rush-orders.125785/)
+﻿**Rush Orders** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you spend more gold
+to have Clint upgrade tools faster or Robin construct buildings faster.
 
-For extra gold, you can rush your tool upgrade and get it in one day instead of two. For even more
-gold, you can get it instantly.
+![](screenshot.png)
 
-By talking to Robin after queuing a construction, you can speed construction up by a day or two.
+## Install
+1. Install the latest version of [SMAPI](https://smapi.io).
+2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/605).
+3. Run the game using SMAPI.
 
-Price factors are configurable.
+## Use
+The mod affects two shops:
 
-![](screenshot-shop.png)  
-![](screenshot-dialog.png)
+* In Clint's shop, you can choose from three tool upgrade option: normal (three days), one
+  day (1.5× cost), and immediate (2× cost).
+* In Robin's shop, you can start a building construction normally and then talk to her again for
+  the option to speed up construction for an extra 50% of the base price.
+
+The prices can be configured by editing the `config.json` file.
+
+## Compatibility
+Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

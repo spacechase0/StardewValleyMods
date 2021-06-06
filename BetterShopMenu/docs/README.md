@@ -1,14 +1,19 @@
-﻿# Better Shop Menu
-This is the source code. Releases can be found at:
-* [My site](http://spacechase0.com/mods/stardew-valley/better-shop-menu/)
-* [Nexus](http://www.nexusmods.com/stardewvalley/mods/2012/?)
-* [Chucklefish forums](https://community.playstarbound.com/resources/better-shop-menu.5245/)
-
-Changes the shop menu to be a grid. (Can be disabled in the config file.)
-
-Adds a couple of buttons allowing you to filter by category, and sort by price or item name.
+﻿**Better Shop Menu** is a [Stardew Valley](http://stardewvalley.net/) mod which changes the shop
+menu into a grid (can be disabled in the config file), and adds buttons to filter by category and
+sort by price/name.
 
 ![](screenshot.png)
+
+## Install
+1. Install the latest version of [SMAPI](https://smapi.io).
+2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/2012).
+3. Run the game using SMAPI.
+
+## Use
+Just open any shop menu to see the new UI. Click the buttons in the bottom-left to sort/filter.
+
+## Compatibility
+Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

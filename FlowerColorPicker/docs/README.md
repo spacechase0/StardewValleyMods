@@ -1,15 +1,19 @@
-﻿# Flower Color Picker
-This is the source code. Releases can be found at:
-* [My site](http://spacechase0.com/mods/stardew-valley/flower-color-picker/)
-* [Nexus](http://www.nexusmods.com/stardewvalley/mods/1229/)
-* [Chucklefish forums](http://community.playstarbound.com/resources/flower-color-picker.4765/)
-
-Choose the color of your flowers.
-
-Left click a flower while holding a flower of the same type that is the color you want. Don't stand
-too close, or you might harvest it.
+﻿**Flower Color Picker** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you change
+the color of planted flowers.
 
 ![](screenshot.png)
+
+## Install
+1. Install the latest version of [SMAPI](https://smapi.io).
+2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/1229).
+3. Run the game using SMAPI.
+
+## Use
+Left-click a flower while holding a flower of the same type that's the color you want. Don't stand
+too close, or you might harvest it instead.
+
+## Compatibility
+Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

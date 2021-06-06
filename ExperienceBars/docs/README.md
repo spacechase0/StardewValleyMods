@@ -1,14 +1,18 @@
-﻿# Experience Bars
-This is the source code. Releases can be found at:
-* [My site](http://spacechase0.com/mods/stardew-valley/experience-bars/)
-* [Nexus](http://www.nexusmods.com/stardewvalley/mods/509/)
-* [Chucklefish forums](http://community.playstarbound.com/resources/experience-bars.3905/)
-
-Adds experience bars. You can see how far away you are from leveling.
-
-Press X to toggle the display. Move the display with Shift+X.
+﻿**Experience Bars** is a [Stardew Valley](http://stardewvalley.net/) mod which adds experience bars
+for your skill levels, so you can see how far you are from leveling.
 
 ![](screenshot.png)
+
+## Install
+1. Install the latest version of [SMAPI](https://smapi.io).
+2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/509).
+3. Run the game using SMAPI.
+
+## Use
+Press `X` to toggle the display. Move the display with `Shift` + `X`.
+
+## Compatibility
+Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

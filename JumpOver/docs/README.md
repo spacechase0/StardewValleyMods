@@ -1,14 +1,18 @@
-﻿# Jump Over
-This is the source code. Releases can be found at:
-* [My site](http://spacechase0.com/mods/stardew-valley/jump-over/)
-* [Nexus](http://www.nexusmods.com/stardewvalley/mods/1844/?)
-* [Chucklefish forums](http://community.playstarbound.com/resources/jump-over/5190/)
-
-Jump over things!
-
-You might get caught on things if you jump into tight spaces.
+﻿**Jump Over** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you jump over things!
 
 ![](screenshot.png)
+
+## Install
+1. Install the latest version of [SMAPI](https://smapi.io).
+2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/1844).
+3. Run the game using SMAPI.
+
+## Use
+Press `Space` (configurable) to jump; do it while walking towards something (like a fence) to jump
+over it.
+
+## Compatibility
+Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

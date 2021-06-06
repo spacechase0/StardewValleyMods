@@ -1,9 +1,10 @@
-[Json Assets](https://github.com/spacechase0/JsonAssets) is a [Stardew Valley](http://stardewvalley.net/) mod which allows custom objects to be added to the game.
+﻿[← back to readme](README.md)
 
-**This documentation is for modders. If you're a player, see the [Nexus page](https://www.nexusmods.com/stardewvalley/mods/1720) instead.**
+This document helps mod authors create a content pack for Json Assets.
+
+**See [main README](README.md) for other info.**
 
 ## Contents
-* [Install](#install)
 * [Introduction](#introduction)
   * [Things to Note](#things-to-note-before-you-start)
 * [Basic Features](#basic-features)
@@ -29,7 +30,7 @@
 * [Context Tags](#context-tags)
 * [Localization](#localization)
 * [Content Patcher API](#content-patcher-api)
-* [Tokens in Fields](tokens-in-fields)
+* [Tokens in Fields](#tokens-in-fields)
 * [Converting From Legacy Format](#converting-from-legacy-format)
 * [Releasing A Content Pack](#releasing-a-content-pack)
   * [Manifest](#manifest)
@@ -40,14 +41,6 @@
   * [Invalid JSON](#invalid-json)
   * [Previous Clothing Items Gone](#previous-clothing-items-gone)
 * [See Also](#see-also)
-
-## Install
-1. Install the latest version of [SMAPI](https://smapi.io/).
-2. Install the latest version of [JsonAssets](https://www.nexusmods.com/stardewvalley/mods/1720).
-3. Install the latest version of [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
-4. Install the latest version of [Expanded Preconditions Utility](https://www.nexusmods.com/stardewvalley/mods/6529).
-5. Unzip any Json Assets content packs into `Mods` to install them.
-6. Run the game using SMAPI.
 
 ## Introduction
 ### What is Json Assets?

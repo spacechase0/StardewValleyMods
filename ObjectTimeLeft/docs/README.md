@@ -1,14 +1,18 @@
-﻿# Object Time Left
-This is the source code. Releases can be found at:
-* [My site](http://spacechase0.com/mods/stardew-valley/object-time-left/)
-* [Nexus](http://www.nexusmods.com/stardewvalley/mods/1315/)
-* [Chucklefish forums](http://community.playstarbound.com/resources/object-time-left.4842/)
-
-Show how much time is left for an object that is processing an item.
-
-Toggle the display with L (configurable).
+﻿**Object Time Left** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you see how
+much time is left until a machine finishes processing.
 
 ![](screenshot.png)
+
+## Install
+1. Install the latest version of [SMAPI](https://smapi.io).
+2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/1315).
+3. Run the game using SMAPI.
+
+## Use
+Press `L` (configurable) to toggle the overlay.
+
+## Compatibility
+Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

@@ -1,18 +1,32 @@
-﻿# More Rings
-This is the source code. Releases can be found at:
-* [My site](http://spacechase0.com/mods/stardew-valley/more-rings)
-* [Nexus](https://www.nexusmods.com/stardewvalley/mods/2054/)
-* [Chucklefish forums](https://community.playstarbound.com/resources/more-rings.5271/)
-
-Currently
-* Ring of Regeneration - Regenerates health passively - Recipe from Marlon
-* Ring of Wide Nets - 50% larger fishing bar - Recipe from Willy when raining
-* Ring of Diamond Booze - Negates "Tipsy" effect from alcohol - Recipe from Dwarf
-* Refreshing Ring - Restores stamina passively - Recipe from Krobus
-
-A few ring sprites by ParadigmNomad.
+﻿**More Rings** is a [Stardew Valley](http://stardewvalley.net/) mod which adds some new rings to
+the game.
 
 ![](screenshot.png)
 
+## Install
+1. Install the latest version of...
+   * [SMAPI](https://smapi.io);
+   * [Json Assets](https://www.nexusmods.com/stardewvalley/mods/1720);
+   * and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
+2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/2054).
+3. Run the game using SMAPI.
+
+## Use
+This mod adds seven new rings:
+
+ring                  | effect                                | purchase recipe from
+--------------------- | ------------------------------------- | -----------------------
+Quality+ Ring         | Improve chance of higher-quality crop harvests. | Dwarf
+Refreshing Ring       | Restore stamina passively.            | Krobus
+Ring of Diamond Booze | Negate the tipsy effect from alcohol. | Dwarf
+Ring of Far Reaching  | Use tools at a distance.              | Dwarf
+Ring of Regeneration  | Regenerate health passively.          | Marlon
+Ring of True Sight    | See what's in mining nodes and artifact spots. | Dwarf
+Ring of Wide Nets     | 50% larger fishing bar.               | Willy when it's raining
+
+## Compatibility
+Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+
 ## See also
 * [Release notes](release-notes.md)
+* Credit to Paradigm for some of the ring sprites.
