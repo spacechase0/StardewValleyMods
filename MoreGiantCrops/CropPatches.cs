@@ -6,19 +6,39 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Netcode;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace MoreGiantCrops
 {
-    // Copied/modified from JA
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming convention is set by Harmony.")]
-    public static class CropPatches
+    /// <summary>Applies Harmony patches to <see cref="Crop"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class CropPatcher : BasePatcher
     {
-        public static IEnumerable<CodeInstruction> NewDay_Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> instructions)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Crop>(nameof(Crop.newDay)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_NewDay))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method which transpiles <see cref="Crop.newDay"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_NewDay(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> instructions)
         {
             instructions = instructions.ToArray();
 
+            // Copied/modified from Json Assets
             // TODO: Learn how to use ILGenerator
             try
             {
@@ -33,7 +53,7 @@ namespace MoreGiantCrops
                     {
                         newInstructions.Add(new CodeInstruction(OpCodes.Ldarg_0));
                         newInstructions.Add(new CodeInstruction(OpCodes.Ldfld, typeof(Crop).GetField(nameof(Crop.indexOfHarvest))));
-                        newInstructions.Add(new CodeInstruction(OpCodes.Call, typeof(CropPatches).GetMethod(nameof(CheckCanBeGiant))));
+                        newInstructions.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CropPatcher>(nameof(CheckCanBeGiant))));
                         newInstructions.Add(new CodeInstruction(OpCodes.Brtrue_S, label));
                     }
 
@@ -57,7 +77,7 @@ namespace MoreGiantCrops
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(NewDay_Transpiler)}:\n{ex}");
+                Log.error($"Failed in {nameof(Transpile_NewDay)}:\n{ex}");
                 return instructions;
             }
         }

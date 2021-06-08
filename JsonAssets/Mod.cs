@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Harmony;
 using JsonAssets.Data;
 using JsonAssets.Other.ContentPatcher;
 using JsonAssets.Overrides;
@@ -11,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using Newtonsoft.Json;
+using Spacechase.Shared.Harmony;
 using SpaceCore;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -34,7 +34,6 @@ namespace JsonAssets
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        private HarmonyInstance harmony;
         private ContentInjector1 content1;
         private ContentInjector2 content2;
         internal ExpandedPreconditionsUtilityAPI epu;
@@ -69,87 +68,16 @@ namespace JsonAssets
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\pants", 688);
             SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\hats", 80);
 
-            try
-            {
-                harmony = HarmonyInstance.Create("spacechase0.JsonAssets");
-
-                // object patches
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(SObject), nameof(SObject.canBePlacedHere)),
-                    prefix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.CanBePlacedHere_Prefix))
-                );
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(SObject), nameof(SObject.checkForAction)),
-                    prefix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.CheckForAction_Prefix))
-                );
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(SObject), "loadDisplayName"),
-                    prefix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.LoadDisplayName_Prefix))
-                );
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(SObject), nameof(SObject.getCategoryName)),
-                    prefix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.GetCategoryName_Prefix))
-                );
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(SObject), nameof(SObject.isIndexOkForBasicShippedCategory)),
-                    postfix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.IsIndexOkForBasicShippedCategory_Postfix))
-                );
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(SObject), nameof(SObject.getCategoryColor)),
-                    prefix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.GetCategoryColor_Prefix))
-                );
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(SObject), nameof(SObject.canBeGivenAsGift)),
-                    postfix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.CanBeGivenAsGift_Postfix))
-                );
-
-                // ring patches
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(Ring), "loadDisplayFields"),
-                    prefix: new HarmonyMethod(typeof(RingPatches), nameof(RingPatches.LoadDisplayFields_Prefix))
-                );
-
-                // crop patches
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(Crop), nameof(Crop.isPaddyCrop)),
-                    prefix: new HarmonyMethod(typeof(CropPatches), nameof(CropPatches.IsPaddyCrop_Prefix))
-                );
-
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(Crop), nameof(Crop.newDay)),
-                    transpiler: new HarmonyMethod(typeof(CropPatches), nameof(CropPatches.NewDay_Transpiler))
-                );
-
-                // GiantCrop patches
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(GiantCrop), nameof(GiantCrop.draw)),
-                    prefix: new HarmonyMethod(typeof(GiantCropPatches), nameof(GiantCropPatches.Draw_Prefix))
-                );
-
-                // item patches
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(Item), nameof(Item.canBeDropped)),
-                    postfix: new HarmonyMethod(typeof(ItemPatches), nameof(ItemPatches.CanBeDropped_Postfix))
-                );
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(Item), nameof(Item.canBeTrashed)),
-                    postfix: new HarmonyMethod(typeof(ItemPatches), nameof(ItemPatches.CanBeTrashed_Postfix))
-                );
-
-                harmony.Patch(original: AccessTools.Constructor(typeof(Fence), new Type[] { typeof(Vector2), typeof(int), typeof(bool) }),
-                    postfix: new HarmonyMethod(typeof(FenceConstructorPatch), nameof(FenceConstructorPatch.Postfix)));
-
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(ForgeMenu), nameof(ForgeMenu.draw), new Type[] { typeof(SpriteBatch) }),
-                    transpiler: new HarmonyMethod(typeof(ForgeDrawCostPatch), nameof(ForgeDrawCostPatch.Transpiler))
-                );
-
-                harmony.PatchAll();
-            }
-            catch (Exception e)
-            {
-                Log.error($"Exception doing harmony stuff: {e}");
-            }
+            HarmonyPatcher.Apply(this,
+                new CropPatcher(),
+                new FencePatcher(),
+                new ForgeMenuPatcher(),
+                new Game1Patcher(),
+                new GiantCropPatcher(),
+                new ItemPatcher(),
+                new ObjectPatcher(),
+                new RingPatcher()
+            );
         }
 
         private Api api;
@@ -1198,7 +1126,6 @@ namespace JsonAssets
             bool doAllSeeds = Game1.player.hasOrWillReceiveMail("PierreStocklist");
 
             Log.trace($"Adding objects to {portraitPerson}'s shop");
-            var precondMeth = Helper.Reflection.GetMethod(Game1.currentLocation, "checkEventPrecondition");
             var forSale = menu.forSale;
             var itemPriceAndStock = menu.itemPriceAndStock;
 

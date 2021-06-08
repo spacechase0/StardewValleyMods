@@ -1,14 +1,37 @@
+using System.Diagnostics.CodeAnalysis;
+using Harmony;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace MoreBuildings.Overrides
 {
-    // Not sure why I need this in the first place, but it prevents an error from showing up during save loading
-    // If the error shows up, update transition functions won't apply (and probably other things)
-    public class ShedUpdateLayoutWorkaround
+    /// <summary>Applies Harmony patches to <see cref="Shed"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class ShedPatcher : BasePatcher
     {
-        public static bool Prefix(Shed __instance)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
         {
-            // Why does this happen? Who knows
+            harmony.Patch(
+                original: this.RequireMethod<Shed>(nameof(Shed.updateLayout)),
+                prefix: this.GetHarmonyMethod(nameof(Before_UpdateLayout))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Shed.updateLayout"/>.</summary>
+        private static bool Before_UpdateLayout(Shed __instance)
+        {
+            // Why does this happen? Who knows.
+            // Not sure why I need this in the first place, but it prevents an error from showing up during save loading
+            // If the error shows up, update transition functions won't apply (and probably other things)
             if (__instance.map == null)
                 return false;
 

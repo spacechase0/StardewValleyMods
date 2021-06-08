@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
 using SpaceCore.Events;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -84,16 +84,9 @@ namespace TheftOfTheWinterStar
             SpaceEvents.ActionActivated += onActionActivated;
             SpaceEvents.BombExploded += bombExploded;
 
-            try
-            {
-                HarmonyInstance harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-                harmony.Patch(AccessTools.Method(typeof(HoeDirt), nameof(HoeDirt.canPlantThisSeedHere)), prefix: new HarmonyMethod(AccessTools.Method(typeof(SeasonalDelimiterAllowPlantingHook1), nameof(SeasonalDelimiterAllowPlantingHook1.Prefix))));
-                harmony.Patch(AccessTools.Method(typeof(HoeDirt), nameof(HoeDirt.plant)), prefix: new HarmonyMethod(AccessTools.Method(typeof(SeasonalDelimiterAllowPlantingHook2), nameof(SeasonalDelimiterAllowPlantingHook2.Prefix))));
-            }
-            catch (Exception e)
-            {
-                Log.error("Exception doing harmony patch: " + e);
-            }
+            HarmonyPatcher.Apply(this,
+                new HoeDirtPatcher()
+            );
         }
 
         public bool CanEdit<T>(IAssetInfo asset)

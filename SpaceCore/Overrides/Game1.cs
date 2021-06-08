@@ -1,29 +1,59 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
+using Spacechase.Shared.Harmony;
 using SpaceCore.Events;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace SpaceCore.Overrides
 {
-    public class BlankSaveHook
+    /// <summary>Applies Harmony patches to <see cref="Game1"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class Game1Patcher : BasePatcher
     {
-        public static void Postfix(bool loadedGame)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Game1>(nameof(Game1.loadForNewGame)),
+                postfix: this.GetHarmonyMethod(nameof(After_LoadForNewGame))
+            );
+
+            if (this.TryGetEndOfNightMethod(monitor, out MethodInfo endOfNightMethod))
+            {
+                harmony.Patch(
+                    original: endOfNightMethod,
+                    transpiler: this.GetHarmonyMethod(nameof(Transpile_ShowEndOfNightStuff))
+                );
+            }
+
+            harmony.Patch(
+                original: Constants.TargetPlatform != GamePlatform.Android
+                    ? this.RequireMethod<Game1>(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int) })
+                    : this.RequireMethod<Game1>(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool) }),
+                prefix: this.GetHarmonyMethod(nameof(Before_WarpFarmer))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call after <see cref="Game1.loadForNewGame"/>.</summary>
+        private static void After_LoadForNewGame(bool loadedGame)
         {
             SpaceEvents.InvokeOnBlankSave();
         }
-    }
 
-    public class ShowEndOfNightStuffHook
-    {
-        public static void showEndOfNightStuff_mid()
-        {
-            var ev = new EventArgsShowNightEndMenus();
-            SpaceEvents.InvokeShowNightEndMenus(ev);
-        }
-
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /// <summary>The method which transpiles <see cref="Game1.showEndOfNightStuff"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_ShowEndOfNightStuff(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
 
@@ -32,30 +62,86 @@ namespace SpaceCore.Overrides
             {
                 if (insn.opcode == OpCodes.Ldstr && (string)insn.operand == "newRecord")
                 {
-                    newInsns.Insert(newInsns.Count - 2, new CodeInstruction(OpCodes.Call, typeof(ShowEndOfNightStuffHook).GetMethod("showEndOfNightStuff_mid")));
+                    newInsns.Insert(newInsns.Count - 2, new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<Game1Patcher>(nameof(ShowEndOfNightStuffLogic))));
                 }
                 newInsns.Add(insn);
             }
 
             return newInsns;
         }
-    }
 
-    public static class DoneEatingHook
-    {
-        public static void Postfix(Farmer __instance)
-        {
-            if (__instance.itemToEat == null)
-                return;
-            SpaceEvents.InvokeOnItemEaten(__instance);
-        }
-    }
-
-    public class WarpFarmerHook
-    {
-        public static bool Prefix(ref LocationRequest locationRequest, ref int tileX, ref int tileY, ref int facingDirectionAfterWarp)
+        /// <summary>The method to call before <see cref="Game1.warpFarmer(LocationRequest,int,int,int)"/>.</summary>
+        private static bool Before_WarpFarmer(ref LocationRequest locationRequest, ref int tileX, ref int tileY, ref int facingDirectionAfterWarp)
         {
             return !SpaceEvents.InvokeBeforeWarp(ref locationRequest, ref tileX, ref tileY, ref facingDirectionAfterWarp);
+        }
+
+        private static void ShowEndOfNightStuffLogic()
+        {
+            var ev = new EventArgsShowNightEndMenus();
+            SpaceEvents.InvokeShowNightEndMenus(ev);
+        }
+
+        /// <summary>Get the <see cref="Game1.showEndOfNightStuff"/> method with support for both Linux/macOS and Windows.</summary>
+        /// <param name="monitor">The monitor with which to log any errors.</param>
+        /// <param name="method">The method reference, if found.</param>
+        /// <returns>Returns whether the method was successfully found.</returns>
+        private bool TryGetEndOfNightMethod(IMonitor monitor, out MethodInfo method)
+        {
+            try
+            {
+                Type game1CompilerType = null;
+                foreach (var t in typeof(Game1).Assembly.GetTypes())
+                {
+                    if (t.FullName == "StardewValley.Game1+<>c")
+                        game1CompilerType = t;
+                }
+
+                foreach (var m in game1CompilerType.GetRuntimeMethods())
+                {
+                    if (m.FullDescription().Contains(nameof(Game1.showEndOfNightStuff)))
+                    {
+                        method = m;
+                        return true;
+                    }
+                }
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                monitor.Log($"Weird exception doing finding Windows {nameof(Game1.showEndOfNightStuff)}: {ex}", LogLevel.Error);
+                foreach (var le in ex.LoaderExceptions)
+                    monitor.Log($"LE: {le}", LogLevel.Error);
+
+                method = null;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                monitor.Log($"Failed to find Windows {nameof(Game1.showEndOfNightStuff)} lambda: {ex}");
+                try
+                {
+                    Type game1CompilerType = typeof(Game1);
+                    foreach (var m in game1CompilerType.GetRuntimeMethods())
+                    {
+                        if (m.FullDescription().Contains($"<{nameof(Game1.showEndOfNightStuff)}>m__"))
+                        {
+                            method = m;
+                            return true;
+                        }
+                    }
+                }
+                catch (Exception e2)
+                {
+                    monitor.Log($"Failed to find Mac/Linux {nameof(Game1.showEndOfNightStuff)} lambda: {e2}", LogLevel.Error);
+
+                    method = null;
+                    return false;
+                }
+            }
+
+            monitor.Log($"Failed to locate {nameof(Game1.showEndOfNightStuff)} method for patching.", LogLevel.Error);
+            method = null;
+            return false;
         }
     }
 }

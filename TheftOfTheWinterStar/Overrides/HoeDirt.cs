@@ -1,13 +1,41 @@
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 
 namespace TheftOfTheWinterStar.Overrides
 {
-    public static class SeasonalDelimiterAllowPlantingHook1
+    /// <summary>Applies Harmony patches to <see cref="HoeDirt"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class HoeDirtPatcher : BasePatcher
     {
-        public static bool Prefix(HoeDirt __instance, int objectIndex, int tileX, int tileY, bool isFertilizer, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<HoeDirt>(nameof(HoeDirt.canPlantThisSeedHere)),
+                prefix: this.GetHarmonyMethod(nameof(Before_CanPlantThisSeedHere))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<HoeDirt>(nameof(HoeDirt.plant)),
+                prefix: this.GetHarmonyMethod(nameof(Before_Plant))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="HoeDirt.canPlantThisSeedHere"/>.</summary>
+        /// <remarks>This patch allows planting crops out of season when near a Tempus Globe.</remarks>
+        private static bool Before_CanPlantThisSeedHere(HoeDirt __instance, int objectIndex, int tileX, int tileY, bool isFertilizer, ref bool __result)
         {
             if (isFertilizer)
                 return true;
@@ -40,11 +68,10 @@ namespace TheftOfTheWinterStar.Overrides
 
             return true;
         }
-    }
 
-    public static class SeasonalDelimiterAllowPlantingHook2
-    {
-        public static bool Prefix(HoeDirt __instance, int index, int tileX, int tileY, Farmer who, bool isFertilizer, GameLocation location, ref bool __result)
+        /// <summary>The method to call before <see cref="HoeDirt.plant"/>.</summary>
+        /// <remarks>This patch allows planting crops out of season when near a Tempus Globe.</remarks>
+        private static bool Before_Plant(HoeDirt __instance, int index, int tileX, int tileY, Farmer who, bool isFertilizer, GameLocation location, ref bool __result)
         {
             if (isFertilizer)
                 return true;
@@ -88,7 +115,7 @@ namespace TheftOfTheWinterStar.Overrides
                 }
                 location.playSound("dirtyHit");
                 Game1.stats.SeedsSown++;
-                AccessTools.Method(__instance.GetType(), "applySpeedIncreases").Invoke(__instance, new object[] { who });
+                PatchHelper.RequireMethod<HoeDirt>("applySpeedIncreases").Invoke(__instance, new object[] { who });
                 __instance.nearWaterForPaddy.Value = -1;
                 if (__instance.hasPaddyCrop() && __instance.paddyWaterCheck(location, new Vector2(tileX, tileY)))
                 {

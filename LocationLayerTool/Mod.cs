@@ -1,4 +1,5 @@
-using Harmony;
+using LocationLayerTool.Patches;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
@@ -14,8 +15,9 @@ namespace LocationLayerTool
             instance = this;
             Log.Monitor = Monitor;
 
-            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-            harmony.PatchAll();
+            HarmonyPatcher.Apply(this,
+                new xTileLayerPatcher()
+            );
 
             Helper.ConsoleCommands.Add("llt_adddummy", "", doCommand);
         }

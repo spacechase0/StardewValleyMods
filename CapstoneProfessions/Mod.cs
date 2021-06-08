@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
-using Harmony;
+using CapstoneProfessions.Patches;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
 using SpaceCore.Events;
 using SpaceShared;
 using StardewModdingAPI;
@@ -31,6 +29,11 @@ namespace CapstoneProfessions
             SpaceEvents.ShowNightEndMenus += OnNightMenus;
 
             clockTex = Helper.Content.Load<Texture2D>("assets/clock.png");
+
+            HarmonyPatcher.Apply(this,
+                new Game1Patcher(),
+                new ObjectPatcher()
+            );
         }
 
         private void OnWarped(object sender, WarpedEventArgs e)
@@ -60,56 +63,6 @@ namespace CapstoneProfessions
 
                 Game1.endOfNightMenus.Push(new CapstoneProfessionMenu());
             }
-        }
-    }
-
-    [HarmonyPatch(typeof(StardewValley.Object), "getPriceAfterMultipliers")]
-    public static class ObjectPriceTranspiler
-    {
-        public static void Postfix(ref float __result)
-        {
-            float mult = 1;
-            foreach (var player in Game1.getAllFarmers())
-            {
-                if (player.professions.Contains(Mod.PROFESSION_PROFIT))
-                {
-                    mult += 0.05f;
-                }
-            }
-            __result *= mult;
-        }
-    }
-
-    [HarmonyPatch(typeof(Game1), nameof(Game1.UpdateGameClock))]
-    public static class GameClockTranspiler
-    {
-        public static int GetTimeInterval()
-        {
-            float mult = 1;
-            foreach (var player in Game1.getAllFarmers())
-            {
-                if (player.professions.Contains(Mod.PROFESSION_TIME))
-                {
-                    mult += 0.2f;
-                }
-            }
-
-            return (int)(7000 * mult);
-        }
-
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
-        {
-            List<CodeInstruction> ret = new List<CodeInstruction>();
-            foreach (var insn in insns)
-            {
-                if (insn.opcode == OpCodes.Ldc_I4 && (int)insn.operand == 7000)
-                {
-                    ret.Add(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(GameClockTranspiler), nameof(GetTimeInterval))));
-                    continue;
-                }
-                ret.Add(insn);
-            }
-            return ret;
         }
     }
 }

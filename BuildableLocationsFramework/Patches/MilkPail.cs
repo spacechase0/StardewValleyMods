@@ -1,16 +1,37 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Netcode;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
 
 namespace BuildableLocationsFramework.Patches
 {
-    [HarmonyPatch(typeof(MilkPail), nameof(MilkPail.beginUsing))]
-    public static class MilkPailBeginUsingFix
+    /// <summary>Applies Harmony patches to <see cref="MilkPail"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class MilkPailPatcher : BasePatcher
     {
-        public static bool Prefix(Shears __instance, GameLocation location, int x, int y, Farmer who, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<MilkPail>(nameof(MilkPail.beginUsing)),
+                prefix: this.GetHarmonyMethod(nameof(Before_BeginUsing))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="MilkPail.beginUsing"/>.</summary>
+        private static bool Before_BeginUsing(Shears __instance, GameLocation location, int x, int y, Farmer who, ref bool __result)
         {
             x = (int)who.GetToolLocation(false).X;
             y = (int)who.GetToolLocation(false).Y;

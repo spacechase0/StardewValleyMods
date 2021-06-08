@@ -1,20 +1,41 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Harmony;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Objects;
 
 namespace JsonAssets.Overrides
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming convention is set by Harmony.")]
-    [SuppressMessage("SMAPI.CommonErrors", "AvoidImplicitNetFieldCast")]
-    public static class RingPatches
+    /// <summary>Applies Harmony patches to <see cref="Ring"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class RingPatcher : BasePatcher
     {
-        // So I just realized this is exactly the same as the vanilla method.
-        // The key here though is we try/catch around it when something fails, but don't let the vanilla method run still
-        // This way if it fails (like for some reason equipped custom rings do for farmhands when first connecting),
-        //  the game will still run.
-        public static bool LoadDisplayFields_Prefix(StardewValley.Objects.Ring __instance, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
         {
+            harmony.Patch(
+                original: this.RequireMethod<Ring>("loadDisplayFields"),
+                prefix: this.GetHarmonyMethod(nameof(Before_LoadDisplayFields))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Ring.loadDisplayFields"/>.</summary>
+        public static bool Before_LoadDisplayFields(Ring __instance, ref bool __result)
+        {
+            // So I just realized this is exactly the same as the vanilla method.
+            // The key here though is we try/catch around it when something fails, but don't let the vanilla method run still
+            // This way if it fails (like for some reason equipped custom rings do for farmhands when first connecting),
+            //  the game will still run.
             try
             {
                 if (Game1.objectInformation == null || __instance.indexInTileSheet == null)
@@ -30,7 +51,7 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(LoadDisplayFields_Prefix)} for #{__instance?.indexInTileSheet}:\n{ex}");
+                Log.error($"Failed in {nameof(Before_LoadDisplayFields)} for #{__instance?.indexInTileSheet}:\n{ex}");
                 return false;
             }
         }

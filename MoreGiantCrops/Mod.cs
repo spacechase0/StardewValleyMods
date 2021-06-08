@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Harmony;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
-using StardewValley;
-using StardewValley.TerrainFeatures;
 
 namespace MoreGiantCrops
 {
@@ -42,16 +40,9 @@ namespace MoreGiantCrops
                 return;
             }
 
-            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-
-            harmony.Patch(
-                original: AccessTools.Method(typeof(Crop), nameof(Crop.newDay)),
-                transpiler: new HarmonyMethod(typeof(CropPatches), nameof(CropPatches.NewDay_Transpiler))
-            );
-
-            harmony.Patch(
-                original: AccessTools.Method(typeof(GiantCrop), nameof(GiantCrop.draw)),
-                prefix: new HarmonyMethod(typeof(GiantCropPatches), nameof(GiantCropPatches.Draw_Prefix))
+            HarmonyPatcher.Apply(this,
+                new CropPatcher(),
+                new GiantCropPatcher()
             );
         }
     }

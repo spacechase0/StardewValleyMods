@@ -1,12 +1,9 @@
-using System;
 using CombatLevelDamageScaler.Overrides;
-using Harmony;
-using Microsoft.Xna.Framework;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley;
 
 namespace CombatLevelDamageScaler
 {
@@ -19,12 +16,9 @@ namespace CombatLevelDamageScaler
             Log.Monitor = Monitor;
             Config = helper.ReadConfig<Configuration>();
 
-            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-            var target = AccessTools.Method(typeof(GameLocation), nameof(GameLocation.damageMonster),
-                                            new Type[] { typeof(Rectangle), typeof(int), typeof(int), typeof(bool), typeof(float), typeof(int), typeof(float), typeof(float), typeof(bool), typeof(Farmer) });
-            var patch = AccessTools.Method(typeof(DamageMonsterHook), nameof(DamageMonsterHook.Prefix));
-            Log.trace($"Patching {target} with {patch}");
-            harmony.Patch(target, prefix: new HarmonyMethod(patch));
+            HarmonyPatcher.Apply(this,
+                new GameLocationPatcher()
+            );
 
             helper.Events.GameLoop.GameLaunched += onGameLaunched;
         }

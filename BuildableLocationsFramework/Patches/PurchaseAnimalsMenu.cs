@@ -1,19 +1,57 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Menus;
 
 namespace BuildableLocationsFramework.Patches
 {
-    public static class PurchaseAnimalsMenuTranspileCommon
+    /// <summary>Applies Harmony patches to <see cref="PurchaseAnimalsMenu"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class PurchaseAnimalsMenuPatcher : BasePatcher
     {
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
         {
-            var stage1 = CarpenterMenuTranspileCommon.Transpiler(gen, original, insns);
+            harmony.Patch(
+                original: this.RequireMethod<PurchaseAnimalsMenu>(nameof(PurchaseAnimalsMenu.performHoverAction)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_PerformHoverAction))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<PurchaseAnimalsMenu>(nameof(PurchaseAnimalsMenu.receiveLeftClick)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_ReceiveLeftClick))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method which transpiles <see cref="PurchaseAnimalsMenu.performHoverAction"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_PerformHoverAction(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            return PurchaseAnimalsMenuPatcher.Transpile(gen, original, insns);
+        }
+
+        /// <summary>The method which transpiles <see cref="PurchaseAnimalsMenu.receiveLeftClick"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_ReceiveLeftClick(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            return PurchaseAnimalsMenuPatcher.Transpile(gen, original, insns);
+        }
+
+        private static IEnumerable<CodeInstruction> Transpile(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            var stage1 = CarpenterMenuPatcher.Transpile(gen, original, insns);
 
             var ret = new List<CodeInstruction>();
 
@@ -27,24 +65,6 @@ namespace BuildableLocationsFramework.Patches
             }
 
             return ret;
-        }
-    }
-
-    [HarmonyPatch(typeof(PurchaseAnimalsMenu), "performHoverAction")]
-    public static class PurchaseAnimalsMenuHoverPatch
-    {
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
-        {
-            return PurchaseAnimalsMenuTranspileCommon.Transpiler(gen, original, insns);
-        }
-    }
-
-    [HarmonyPatch(typeof(PurchaseAnimalsMenu), "receiveLeftClick")]
-    public static class PurchaseAnimalsMenuLeftClickPatch
-    {
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
-        {
-            return PurchaseAnimalsMenuTranspileCommon.Transpiler(gen, original, insns);
         }
     }
 }

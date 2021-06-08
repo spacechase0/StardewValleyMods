@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using Harmony;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using Spacechase.Shared.Harmony;
+using SpaceCore.Framework;
 using SpaceCore.Overrides;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -13,9 +13,6 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
-using StardewValley.Menus;
-using StardewValley.Network;
-using StardewValley.Tools;
 
 namespace SpaceCore
 {
@@ -45,127 +42,29 @@ namespace SpaceCore
             Skills.init(helper.Events);
             TileSheetExtensions.init();
 
-            harmony = HarmonyInstance.Create("spacechase0.SpaceCore");
+            var serializerManager = new SerializerManager();
 
-            MethodInfo showNightEndMethod = null;
-            try
-            {
-                Type game1CompilerType = null;
-                foreach (var t in typeof(Game1).Assembly.GetTypes())
-                    if (t.FullName == "StardewValley.Game1+<>c")
-                        game1CompilerType = t;
-                foreach (var m in game1CompilerType.GetRuntimeMethods())
-                    if (m.FullDescription().Contains("showEndOfNightStuff"))
-                        showNightEndMethod = m;
-            }
-            catch (ReflectionTypeLoadException e)
-            {
-                Log.error($"Weird exception doing finding Windows showEndOfNightStuff: {e}");
-                foreach (var le in e.LoaderExceptions)
-                {
-                    Log.error("LE: " + le);
-                }
-            }
-            catch (Exception e1)
-            {
-                Log.trace("Failed to find Windows showEndOfNightStuff lambda: " + e1);
-                try
-                {
-                    Type game1CompilerType = typeof(Game1);
-                    foreach (var m in game1CompilerType.GetRuntimeMethods())
-                        if (m.FullDescription().Contains("<showEndOfNightStuff>m__"))
-                            showNightEndMethod = m;
-                }
-                catch (Exception e2)
-                {
-                    Log.error("Failed to find Mac/Linux showEndOfNightStuff lambda: " + e2);
-                }
-            }
-            Log.trace("showEndOfNightStuff: " + showNightEndMethod);
-
-            doPostfix(typeof(Utility), nameof(Utility.pickFarmEvent), typeof(NightlyFarmEventHook));
-            doTranspiler(showNightEndMethod, typeof(ShowEndOfNightStuffHook).GetMethod(nameof(ShowEndOfNightStuffHook.Transpiler)));
-            doPostfix(typeof(Farmer), nameof(Farmer.doneEating), typeof(DoneEatingHook));
-            doPrefix(typeof(MeleeWeapon).GetMethod(nameof(MeleeWeapon.drawDuringUse), new[] { typeof(int), typeof(int), typeof(SpriteBatch), typeof(Vector2), typeof(Farmer), typeof(Rectangle), typeof(int), typeof(bool) }), typeof(CustomWeaponDrawPatch).GetMethod(nameof(CustomWeaponDrawPatch.Prefix)));
-            doPrefix(typeof(Multiplayer), nameof(Multiplayer.processIncomingMessage), typeof(MultiplayerPackets));
-            doPrefix(typeof(GameLocation), nameof(GameLocation.performAction), typeof(ActionHook));
-            doPrefix(typeof(GameLocation), nameof(GameLocation.performTouchAction), typeof(TouchActionHook));
-            doPostfix(typeof(GameLocation), nameof(GameLocation.explode), typeof(ExplodeHook));
-            doPostfix(typeof(GameServer), nameof(GameServer.sendServerIntroduction), typeof(ServerGotClickHook));
-            doPrefix(typeof(NPC), nameof(NPC.tryToReceiveActiveObject), typeof(BeforeReceiveObjectHook));
-            doPostfix(typeof(NPC), nameof(NPC.receiveGift), typeof(AfterGiftGivenHook));
-            doPostfix(typeof(Game1), nameof(Game1.loadForNewGame), typeof(BlankSaveHook));
-            if (Constants.TargetPlatform != GamePlatform.Android)
-            {
-                doPrefix(typeof(Game1).GetMethod(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int) }), typeof(WarpFarmerHook).GetMethod(nameof(WarpFarmerHook.Prefix)));
-            }
-            else
-            {
-                doPrefix(typeof(Game1).GetMethod(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool) }), typeof(WarpFarmerHook).GetMethod(nameof(WarpFarmerHook.Prefix)));
-            }
-            doPostfix(typeof(GameMenu), nameof(GameMenu.getTabNumberFromName), typeof(GameMenuTabNameHook));
-            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Rectangle), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(SpriteEffects), typeof(float) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix1)));
-            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Rectangle), typeof(Rectangle?), typeof(Color), }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix2)));
-            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(Vector2), typeof(SpriteEffects), typeof(float) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix3)));
-            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(float), typeof(SpriteEffects), typeof(float) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix4)));
-            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix5)));
-            doPrefix(typeof(Event), nameof(Event.tryEventCommand), typeof(EventTryCommandPatch));
-            doPrefix(typeof(Event), nameof(Event.checkAction), typeof(EventActionPatch));
-            harmony.PatchAll();
+            this.harmony = HarmonyPatcher.Apply(this,
+                new EventPatcher(),
+                new FarmerPatcher(),
+                new Game1Patcher(),
+                new GameLocationPatcher(),
+                new GameMenuPatcher(),
+                new GameServerPatcher(),
+                new HoeDirtPatcher(),
+                new LoadGameMenuPatcher(serializerManager),
+                new MeleeWeaponPatcher(),
+                new MultiplayerPatcher(),
+                new NpcPatcher(),
+                new SaveGamePatcher(serializerManager),
+                new SpriteBatchPatcher(),
+                new UtilityPatcher()
+            );
         }
 
         public override object GetApi()
         {
             return new Api();
-        }
-
-        private void doPrefix(Type origType, string origMethod, Type newType)
-        {
-            doPrefix(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Prefix"));
-        }
-        private void doPrefix(MethodInfo orig, MethodInfo prefix)
-        {
-            try
-            {
-                Log.trace($"Doing prefix patch {orig}:{prefix}...");
-                harmony.Patch(orig, new HarmonyMethod(prefix), null);
-            }
-            catch (Exception e)
-            {
-                Log.error($"Exception doing prefix patch {orig}:{prefix}: {e}");
-            }
-        }
-        private void doPostfix(Type origType, string origMethod, Type newType)
-        {
-            doPostfix(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Postfix"));
-        }
-        private void doPostfix(MethodInfo orig, MethodInfo postfix)
-        {
-            try
-            {
-                Log.trace($"Doing postfix patch {orig}:{postfix}...");
-                harmony.Patch(orig, null, new HarmonyMethod(postfix));
-            }
-            catch (Exception e)
-            {
-                Log.error($"Exception doing postfix patch {orig}:{postfix}: {e}");
-            }
-        }
-        private void doTranspiler(Type origType, string origMethod, Type newType)
-        {
-            doTranspiler(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Transpiler"));
-        }
-        private void doTranspiler(MethodInfo orig, MethodInfo transpiler)
-        {
-            try
-            {
-                Log.trace($"Doing transpiler patch {orig}:{transpiler}...");
-                harmony.Patch(orig, null, null, new HarmonyMethod(transpiler));
-            }
-            catch (Exception e)
-            {
-                Log.error($"Exception doing transpiler patch {orig}:{transpiler}: {e}");
-            }
         }
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -192,10 +91,10 @@ namespace SpaceCore
             if (tickCount++ == 0 && modTypes.Count == 0)
             {
                 Log.info("Disabling serializer patches (no mods using serializer API)");
-                foreach (var meth in SaveGameSaveEnumeratorPatch.TargetMethods())
-                    harmony.Unpatch(meth, AccessTools.Method(typeof(SaveGameSaveEnumeratorPatch), nameof(SaveGameSaveEnumeratorPatch.Transpiler)));
-                foreach (var meth in SaveGameLoadEnumeratorPatch.TargetMethods())
-                    harmony.Unpatch(meth, AccessTools.Method(typeof(SaveGameLoadEnumeratorPatch), nameof(SaveGameLoadEnumeratorPatch.Transpiler)));
+                foreach (var meth in SaveGamePatcher.GetSaveEnumeratorMethods())
+                    harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
+                foreach (var meth in SaveGamePatcher.GetLoadEnumeratorMethods())
+                    harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
             }
         }
 

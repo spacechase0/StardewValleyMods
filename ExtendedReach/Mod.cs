@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
@@ -16,7 +15,6 @@ namespace ExtendedReach
     {
         public static Mod instance;
         private static Configuration config;
-        private HarmonyInstance harmony;
 
         public override void Entry(IModHelper helper)
         {
@@ -27,21 +25,9 @@ namespace ExtendedReach
             helper.Events.Display.RenderedWorld += onRenderWorld;
             helper.Events.GameLoop.GameLaunched += onGameLaunched;
 
-            try
-            {
-                harmony = HarmonyInstance.Create("spacechase0.ExtendedReach");
-                doTranspiler(typeof(Utility), nameof(Utility.canGrabSomethingFromHere));
-                doTranspiler(typeof(Utility), nameof(Utility.checkForCharacterInteractionAtTile));
-                doTranspiler(typeof(Game1), nameof(Game1.pressActionButton));
-                doTranspiler(typeof(Game1), nameof(Game1.pressUseToolButton));
-                doTranspiler(typeof(Game1), nameof(Game1.tryToCheckAt));
-                doTranspiler(typeof(GameLocation), nameof(GameLocation.isActionableTile));
-            }
-            catch (Exception e)
-            {
-                Log.error("Exception patching: ");
-                Log.error(e.ToString());
-            }
+            HarmonyPatcher.Apply(this,
+                new TileRadiusPatcher()
+            );
         }
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -117,23 +103,6 @@ namespace ExtendedReach
             e.SpriteBatch.Draw(tex, mousePos, new Rectangle(153, 237, 4, 4), Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 1);
 
             prevMousePos = mousePos;
-        }
-
-        private void doTranspiler(Type origType, string origMethod)
-        {
-            doTranspiler(origType.GetMethod(origMethod), typeof(TileRadiusFix).GetMethod(nameof(TileRadiusFix.IncreaseRadiusChecks)));
-        }
-        private void doTranspiler(MethodInfo orig, MethodInfo transpiler)
-        {
-            try
-            {
-                Log.trace($"Doing transpiler pacomputch {orig}:{transpiler}...");
-                harmony.Patch(orig, null, null, new HarmonyMethod(transpiler));
-            }
-            catch (Exception e)
-            {
-                Log.error($"Exception doing transpiler patch {orig}:{transpiler}: {e}");
-            }
         }
 
         // The below comes from here: https://stackoverflow.com/questions/33977226/drawing-bezier-curves-in-monogame-xna-produces-scratchy-lines

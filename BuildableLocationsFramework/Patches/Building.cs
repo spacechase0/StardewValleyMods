@@ -1,15 +1,36 @@
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
 
 namespace BuildableLocationsFramework.Patches
 {
-    [HarmonyPatch(typeof(Building), nameof(Building.updateInteriorWarps))]
-    public static class BuildingUpdateInteriorWarpsPatch
+    /// <summary>Applies Harmony patches to <see cref="Building"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class BuildingPatcher : BasePatcher
     {
-        public static void Postfix(Building __instance, GameLocation interior)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
         {
-            var targetName = Mod.findOutdoorsOf(__instance)?.Name;
+            harmony.Patch(
+                original: this.RequireMethod<Building>(nameof(Building.updateInteriorWarps)),
+                postfix: this.GetHarmonyMethod(nameof(After_UpdateInteriorWarps))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Building.updateInteriorWarps"/>.</summary>
+        private static void After_UpdateInteriorWarps(Building __instance, GameLocation interior)
+        {
+            string targetName = Mod.findOutdoorsOf(__instance)?.Name;
             if (targetName == null)
                 return;
 

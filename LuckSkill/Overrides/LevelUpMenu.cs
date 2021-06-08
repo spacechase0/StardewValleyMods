@@ -1,14 +1,52 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
 
 namespace LuckSkill.Overrides
 {
-    public static class LevelUpMenuLuckProfessionConstructorFix
+    /// <summary>Applies Harmony patches to <see cref="LevelUpMenu"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class LevelUpMenuPatcher : BasePatcher
     {
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireConstructor<LevelUpMenu>(typeof(int), typeof(int)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_Constructor))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<LevelUpMenu>("getProfessionName"),
+                postfix: this.GetHarmonyMethod(nameof(After_GetProfessionName))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<LevelUpMenu>(nameof(LevelUpMenu.AddMissedProfessionChoices)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_AddMissedProfessionChoices_And_AddMissedLevelRecipes))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<LevelUpMenu>(nameof(LevelUpMenu.AddMissedLevelRecipes)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_AddMissedProfessionChoices_And_AddMissedLevelRecipes))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method which transpiles the <see cref="LevelUpMenu"/> constructor.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_Constructor(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
 
@@ -46,11 +84,9 @@ namespace LuckSkill.Overrides
 
             return newInsns;
         }
-    }
 
-    public static class LevelUpMenuProfessionNameHook
-    {
-        public static void Postfix(int whichProfession, ref string __result)
+        /// <summary>The method to call after <see cref="LevelUpMenu.getProfessionName"/>.</summary>
+        private static void After_GetProfessionName(int whichProfession, ref string __result)
         {
             switch (whichProfession)
             {
@@ -74,19 +110,9 @@ namespace LuckSkill.Overrides
                     break;
             }
         }
-    }
 
-    // For AddMissedProfessionChoices and AddMissedLevelRecipes
-    public static class LevelUpMenuMissedStuffPatch
-    {
-        public static int[] GetFixedArray(int[] oldArray)
-        {
-            var list = new List<int>(oldArray);
-            list.Add(Farmer.luckSkill);
-            return list.ToArray();
-        }
-
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /// <summary>The method which transpiles <see cref="LevelUpMenu.AddMissedProfessionChoices"/> and <see cref="LevelUpMenu.AddMissedLevelRecipes"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_AddMissedProfessionChoices_And_AddMissedLevelRecipes(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
 
@@ -96,11 +122,18 @@ namespace LuckSkill.Overrides
                 newInsns.Add(insn);
                 if (insn.opcode == OpCodes.Call && ((MethodInfo)insn.operand).Name.Contains("InitializeArray"))
                 {
-                    newInsns.Add(new CodeInstruction(OpCodes.Call, typeof(LevelUpMenuMissedStuffPatch).GetMethod(nameof(GetFixedArray))));
+                    newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<LevelUpMenuPatcher>(nameof(LevelUpMenuPatcher.GetFixedArray))));
                 }
             }
 
             return newInsns;
+        }
+
+        private static int[] GetFixedArray(int[] oldArray)
+        {
+            var list = new List<int>(oldArray);
+            list.Add(Farmer.luckSkill);
+            return list.ToArray();
         }
     }
 }

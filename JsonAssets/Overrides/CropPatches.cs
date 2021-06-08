@@ -7,15 +7,40 @@ using System.Reflection.Emit;
 using Harmony;
 using JsonAssets.Data;
 using Netcode;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace JsonAssets.Overrides
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming convention is set by Harmony.")]
-    public static class CropPatches
+    /// <summary>Applies Harmony patches to <see cref="Crop"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class CropPatcher : BasePatcher
     {
-        public static bool IsPaddyCrop_Prefix(Crop __instance, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Crop>(nameof(Crop.isPaddyCrop)),
+                prefix: this.GetHarmonyMethod(nameof(Before_IsPaddyCrop))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Crop>(nameof(Crop.newDay)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_NewDay))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Crop.isPaddyCrop"/>.</summary>
+        private static bool Before_IsPaddyCrop(Crop __instance, ref bool __result)
         {
             try
             {
@@ -33,12 +58,13 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(IsPaddyCrop_Prefix)}:\n{ex}");
+                Log.error($"Failed in {nameof(Before_IsPaddyCrop)}:\n{ex}");
                 return true;
             }
         }
 
-        public static IEnumerable<CodeInstruction> NewDay_Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> instructions)
+        /// <summary>The method which transpiles <see cref="Crop.newDay"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_NewDay(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> instructions)
         {
             instructions = instructions.ToArray();
 
@@ -58,7 +84,7 @@ namespace JsonAssets.Overrides
                         newInstructions[newInstructions.Count - 2].operand = typeof(Crop).GetField(nameof(Crop.rowInSpriteSheet));
 
                         // Call our method
-                        newInstructions.Add(new CodeInstruction(OpCodes.Call, typeof(CropPatches).GetMethod(nameof(IsIndoorOnlyCrop))));
+                        newInstructions.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CropPatcher>(nameof(IsIndoorOnlyCrop))));
                         justHooked = true; // We need to change the next insn, whihc is a bna.un.s, to a different type of branch.
                     }
                     else if (justHooked)
@@ -86,7 +112,7 @@ namespace JsonAssets.Overrides
                     {
                         newInstructions.Add(new CodeInstruction(OpCodes.Ldarg_0));
                         newInstructions.Add(new CodeInstruction(OpCodes.Ldfld, typeof(Crop).GetField(nameof(Crop.rowInSpriteSheet)))); // We use the rowInSpriteSheet. See comments on previous pass
-                        newInstructions.Add(new CodeInstruction(OpCodes.Call, typeof(CropPatches).GetMethod(nameof(CheckCanBeGiant))));
+                        newInstructions.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CropPatcher>(nameof(CheckCanBeGiant))));
                         newInstructions.Add(new CodeInstruction(OpCodes.Brtrue_S, label));
                     }
 
@@ -110,12 +136,12 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(NewDay_Transpiler)}:\n{ex}");
+                Log.error($"Failed in {nameof(Transpile_NewDay)}:\n{ex}");
                 return instructions;
             }
         }
 
-        public static bool IsIndoorOnlyCrop(int cropRow)
+        private static bool IsIndoorOnlyCrop(int cropRow)
         {
             if (cropRow == 41) // Vanilla cactus fruit
                 return true;
@@ -126,7 +152,7 @@ namespace JsonAssets.Overrides
             return cropData.CropType == CropData.CropType_.IndoorsOnly;
         }
 
-        public static bool CheckCanBeGiant(NetInt cropRow_)
+        private static bool CheckCanBeGiant(NetInt cropRow_)
         {
             int cropRow = cropRow_.Value;
             var cropData = Mod.instance.crops.FirstOrDefault(c => c.GetCropSpriteIndex() == cropRow);

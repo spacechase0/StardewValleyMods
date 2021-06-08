@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Harmony;
 using LuckSkill.Overrides;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using Spacechase.Shared.Harmony;
 using SpaceCore.Events;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -47,22 +47,10 @@ namespace LuckSkill
 
             SpaceEvents.ChooseNightlyFarmEvent += changeFarmEvent;
 
-            try
-            {
-                var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-                Log.trace("Doing harmony patches...");
-                harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.getProfessionForSkill)), postfix: new HarmonyMethod(AccessTools.Method(typeof(FarmerGetProfessionHook), nameof(LevelUpMenuProfessionNameHook.Postfix))));
-                harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.gainExperience)), prefix: new HarmonyMethod(AccessTools.Method(typeof(OverpoweredGeodeFix), nameof(OverpoweredGeodeFix.Prefix))));
-                harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.gainExperience)), transpiler: new HarmonyMethod(AccessTools.Method(typeof(ExperienceGainFix), nameof(ExperienceGainFix.Transpiler))));
-                harmony.Patch(AccessTools.Constructor(typeof(LevelUpMenu), new Type[] { typeof(int), typeof(int) }), transpiler: new HarmonyMethod(AccessTools.Method(typeof(LevelUpMenuLuckProfessionConstructorFix), nameof(LevelUpMenuLuckProfessionConstructorFix.Transpiler))));
-                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), "getProfessionName"), postfix: new HarmonyMethod(AccessTools.Method(typeof(LevelUpMenuProfessionNameHook), nameof(LevelUpMenuProfessionNameHook.Postfix))));
-                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), nameof(LevelUpMenu.AddMissedProfessionChoices)), transpiler: new HarmonyMethod(AccessTools.Method(typeof(LevelUpMenuMissedStuffPatch), nameof(LevelUpMenuMissedStuffPatch.Transpiler))));
-                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), nameof(LevelUpMenu.AddMissedLevelRecipes)), transpiler: new HarmonyMethod(AccessTools.Method(typeof(LevelUpMenuMissedStuffPatch), nameof(LevelUpMenuMissedStuffPatch.Transpiler))));
-            }
-            catch (Exception e)
-            {
-                Log.trace("Exception doing harmony: " + e);
-            }
+            HarmonyPatcher.Apply(this,
+                new FarmerPatcher(),
+                new LevelUpMenuPatcher()
+            );
 
             checkForAllProfessions();
         }

@@ -1,17 +1,54 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 
 namespace JsonAssets.Overrides
 {
-    [HarmonyPatch(typeof(ForgeMenu), nameof(ForgeMenu.IsValidCraft))]
-    public static class ForgeCanCraftPatch
+    /// <summary>Applies Harmony patches to <see cref="ForgeMenu"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class ForgeMenuPatcher : BasePatcher
     {
-        public static bool Prefix(ForgeMenu __instance, Item left_item, Item right_item, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<ForgeMenu>(nameof(ForgeMenu.IsValidCraft)),
+                prefix: this.GetHarmonyMethod(nameof(Before_IsValidCraft))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<ForgeMenu>(nameof(ForgeMenu.CraftItem)),
+                prefix: this.GetHarmonyMethod(nameof(Before_CraftItem))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<ForgeMenu>(nameof(ForgeMenu.GetForgeCost)),
+                prefix: this.GetHarmonyMethod(nameof(Before_GetForgeCost))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<ForgeMenu>(nameof(ForgeMenu.draw), new[] { typeof(SpriteBatch) }),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_Draw))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="ForgeMenu.IsValidCraft"/>.</summary>
+        private static bool Before_IsValidCraft(ForgeMenu __instance, Item left_item, Item right_item, ref bool __result)
         {
             if (left_item == null || right_item == null)
                 return true;
@@ -19,8 +56,8 @@ namespace JsonAssets.Overrides
             foreach (var recipe in Mod.instance.forge)
             {
                 if (left_item.Name == recipe.BaseItemName &&
-                     right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
-                     Mod.instance.epu.CheckConditions(recipe.AbleToForgeConditions))
+                    right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
+                    Mod.instance.epu.CheckConditions(recipe.AbleToForgeConditions))
                 {
                     __result = true;
                     return false;
@@ -29,12 +66,9 @@ namespace JsonAssets.Overrides
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(ForgeMenu), nameof(ForgeMenu.CraftItem))]
-    public static class ForgeCraftPatch
-    {
-        public static bool Prefix(ForgeMenu __instance, Item left_item, Item right_item, bool forReal, ref Item __result)
+        /// <summary>The method to call before <see cref="ForgeMenu.CraftItem"/>.</summary>
+        private static bool Before_CraftItem(ForgeMenu __instance, Item left_item, Item right_item, bool forReal, ref Item __result)
         {
             if (left_item == null || right_item == null)
                 return true;
@@ -42,8 +76,8 @@ namespace JsonAssets.Overrides
             foreach (var recipe in Mod.instance.forge)
             {
                 if (left_item.Name == recipe.BaseItemName &&
-                     right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
-                     Mod.instance.epu.CheckConditions(recipe.AbleToForgeConditions))
+                    right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
+                    Mod.instance.epu.CheckConditions(recipe.AbleToForgeConditions))
                 {
                     __result = Utility.fuzzyItemSearch(recipe.ResultItemName);
                     return false;
@@ -52,12 +86,9 @@ namespace JsonAssets.Overrides
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(ForgeMenu), nameof(ForgeMenu.GetForgeCost))]
-    public static class ForgeCostPatch
-    {
-        public static bool Prefix(ForgeMenu __instance, Item left_item, Item right_item, ref int __result)
+        /// <summary>The method to call before <see cref="ForgeMenu.GetForgeCost"/>.</summary>
+        private static bool Before_GetForgeCost(ForgeMenu __instance, Item left_item, Item right_item, ref int __result)
         {
             if (left_item == null || right_item == null)
                 return true;
@@ -65,8 +96,8 @@ namespace JsonAssets.Overrides
             foreach (var recipe in Mod.instance.forge)
             {
                 if (left_item.Name == recipe.BaseItemName &&
-                     right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
-                     Mod.instance.epu.CheckConditions(recipe.AbleToForgeConditions))
+                    right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
+                    Mod.instance.epu.CheckConditions(recipe.AbleToForgeConditions))
                 {
                     __result = recipe.CinderShardCost;
                     return false;
@@ -75,23 +106,9 @@ namespace JsonAssets.Overrides
 
             return true;
         }
-    }
 
-    //[HarmonyPatch( typeof( ForgeMenu ), nameof( ForgeMenu.draw ), typeof( SpriteBatch ) )]
-    public static class ForgeDrawCostPatch
-    {
-        public static void DrawCost()
-        {
-            var forgeMenu = Game1.activeClickableMenu as ForgeMenu;
-            int cost = forgeMenu.GetForgeCost(forgeMenu.leftIngredientSpot.item, forgeMenu.rightIngredientSpot.item);
-
-            if (cost != 10 && cost != 15 && cost != 20)
-            {
-                Game1.spriteBatch.DrawString(Game1.dialogueFont, "x" + cost, new Vector2(forgeMenu.xPositionOnScreen + 345, forgeMenu.yPositionOnScreen + 320), new Color(226, 124, 65));
-            }
-        }
-
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /// <summary>The method which transpiles <see cref="ForgeMenu.draw(SpriteBatch)"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_Draw(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             var newInsns = new List<CodeInstruction>();
             foreach (var insn in insns)
@@ -101,7 +118,7 @@ namespace JsonAssets.Overrides
                     if (meth.Name == "GetForgeCost")
                     {
                         newInsns.Add(insn);
-                        newInsns.Add(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ForgeDrawCostPatch), nameof(ForgeDrawCostPatch.DrawCost))));
+                        newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<ForgeMenuPatcher>(nameof(DrawCost))));
                         continue;
                     }
                 }
@@ -109,6 +126,17 @@ namespace JsonAssets.Overrides
             }
 
             return newInsns;
+        }
+
+        private static void DrawCost()
+        {
+            var forgeMenu = Game1.activeClickableMenu as ForgeMenu;
+            int cost = forgeMenu.GetForgeCost(forgeMenu.leftIngredientSpot.item, forgeMenu.rightIngredientSpot.item);
+
+            if (cost != 10 && cost != 15 && cost != 20)
+            {
+                Game1.spriteBatch.DrawString(Game1.dialogueFont, "x" + cost, new Vector2(forgeMenu.xPositionOnScreen + 345, forgeMenu.yPositionOnScreen + 320), new Color(226, 124, 65));
+            }
         }
     }
 }

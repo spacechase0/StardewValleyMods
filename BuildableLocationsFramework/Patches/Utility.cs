@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Netcode;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
@@ -10,10 +13,43 @@ using StardewValley.Network;
 
 namespace BuildableLocationsFramework.Patches
 {
-    [HarmonyPatch(typeof(Utility), nameof(Utility.areThereAnyOtherAnimalsWithThisName))]
-    public static class UtilityAnimalsWithNamePatch
+    /// <summary>Applies Harmony patches to <see cref="Utility"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class UtilityPatcher : BasePatcher
     {
-        public static bool Prefix(string name, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Utility>(nameof(Utility.areThereAnyOtherAnimalsWithThisName)),
+                prefix: this.GetHarmonyMethod(nameof(Before_AreThereAnyOtherAnimalsWithThisName))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Utility>(nameof(Utility.getAnimal)),
+                prefix: this.GetHarmonyMethod(nameof(Before_GetAnimal))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Utility>(nameof(Utility.fixAllAnimals)),
+                prefix: this.GetHarmonyMethod(nameof(Before_FixAllAnimals))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Utility>(nameof(Utility.numSilos)),
+                postfix: this.GetHarmonyMethod(nameof(After_NumSilos))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Utility.areThereAnyOtherAnimalsWithThisName"/>.</summary>
+        private static bool Before_AreThereAnyOtherAnimalsWithThisName(string name, ref bool __result)
         {
             var locs = Mod.GetAllLocations();
             foreach (var loc in locs)
@@ -33,12 +69,9 @@ namespace BuildableLocationsFramework.Patches
             __result = false;
             return false;
         }
-    }
 
-    [HarmonyPatch(typeof(Utility), nameof(Utility.getAnimal))]
-    public static class UtilityGetAnimalPatch
-    {
-        public static bool Prefix(long id, ref FarmAnimal __result)
+        /// <summary>The method to call before <see cref="Utility.getAnimal"/>.</summary>
+        private static bool Before_GetAnimal(long id, ref FarmAnimal __result)
         {
             var locs = Mod.GetAllLocations();
             foreach (var loc in locs)
@@ -55,11 +88,9 @@ namespace BuildableLocationsFramework.Patches
             __result = null;
             return false;
         }
-    }
-    [HarmonyPatch(typeof(Utility), nameof(Utility.fixAllAnimals))]
-    public static class UtilityFixAnimalsPatch
-    {
-        public static bool Prefix()
+
+        /// <summary>The method to call before <see cref="Utility.fixAllAnimals"/>.</summary>
+        private static bool Before_FixAllAnimals()
         {
             if (!Game1.IsMasterGame)
                 return false;
@@ -169,24 +200,8 @@ namespace BuildableLocationsFramework.Patches
             return false;
         }
 
-        private static List<FarmAnimal> getAllFarmAnimals(BuildableGameLocation loc)
-        {
-            List<FarmAnimal> list = new List<FarmAnimal>();
-            if (loc is IAnimalLocation loca)
-                list = loca.Animals.Values.ToList<FarmAnimal>();
-            foreach (Building building in loc.buildings)
-            {
-                if (building.indoors.Value != null && building.indoors.Value is AnimalHouse)
-                    list.AddRange((IEnumerable<FarmAnimal>)((AnimalHouse)(GameLocation)(NetFieldBase<GameLocation, NetRef<GameLocation>>)building.indoors).animals.Values.ToList<FarmAnimal>());
-            }
-            return list;
-        }
-    }
-
-    [HarmonyPatch(typeof(Utility), nameof(Utility.numSilos))]
-    public static class UtilityNumSilosPatch
-    {
-        public static void Postfix(ref int __result)
+        /// <summary>The method to call after <see cref="Utility.numSilos"/>.</summary>
+        private static void After_NumSilos(ref int __result)
         {
             foreach (var loc in Mod.GetAllLocations())
             {
@@ -199,6 +214,19 @@ namespace BuildableLocationsFramework.Patches
                     }
                 }
             }
+        }
+
+        private static List<FarmAnimal> getAllFarmAnimals(BuildableGameLocation loc)
+        {
+            List<FarmAnimal> list = new List<FarmAnimal>();
+            if (loc is IAnimalLocation loca)
+                list = loca.Animals.Values.ToList<FarmAnimal>();
+            foreach (Building building in loc.buildings)
+            {
+                if (building.indoors.Value != null && building.indoors.Value is AnimalHouse)
+                    list.AddRange((IEnumerable<FarmAnimal>)((AnimalHouse)(GameLocation)(NetFieldBase<GameLocation, NetRef<GameLocation>>)building.indoors).animals.Values.ToList<FarmAnimal>());
+            }
+            return list;
         }
     }
 }

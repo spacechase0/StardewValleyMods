@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using CustomBuildings.Overrides;
-using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -45,14 +45,9 @@ namespace CustomBuildings
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.Player.Warped += onWarped;
 
-            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-            harmony.Patch(AccessTools.Method(typeof(Coop), "getIndoors"), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.getIndoors_Prefix))));
-            harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.performActionOnConstruction)), postfix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.performActionOnConstruction_Postfix))));
-            harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.performActionOnUpgrade)), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.performActionOnUpgrade_Prefix))));
-            harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.dayUpdate)), postfix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.dayUpdate_Postfix))));
-            harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.upgrade)), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.upgrade_Prefix))));
-            //harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.getUpgradeSignLocation)), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.getUpgradeSignLocation_Postfix))));
-            harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.draw)), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.draw_Prefix))));
+            HarmonyPatcher.Apply(this,
+                new CoopPatcher()
+            );
 
             Log.debug("Loading content packs...");
             foreach (var cp in helper.ContentPacks.GetOwned())

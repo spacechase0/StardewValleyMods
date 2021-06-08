@@ -1,8 +1,11 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MoreEnchantments.Enchantments;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
@@ -10,20 +13,50 @@ using StardewValley.Tools;
 
 namespace MoreEnchantments.Harmony
 {
-    [HarmonyPatch(typeof(FishingRod), nameof(FishingRod.attachmentSlots))]
-    public static class FishingRodAttachmentSlotsPatch
+    /// <summary>Applies Harmony patches to <see cref="FishingRod"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class FishingRodPatcher : BasePatcher
     {
-        public static void Postfix(FishingRod __instance, ref int __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<FishingRod>(nameof(FishingRod.attachmentSlots)),
+                postfix: this.GetHarmonyMethod(nameof(After_AttachmentSlots))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<FishingRod>("calculateTimeUntilFishingBite"),
+                prefix: this.GetHarmonyMethod(nameof(Before_CalculateTimeUntilFishingBite))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<FishingRod>(nameof(FishingRod.attach)),
+                prefix: this.GetHarmonyMethod(nameof(Before_Attach))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<FishingRod>(nameof(FishingRod.drawAttachments)),
+                postfix: this.GetHarmonyMethod(nameof(After_DrawAttachments))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call after <see cref="FishingRod.attachmentSlots"/>.</summary>
+        private static void After_AttachmentSlots(FishingRod __instance, ref int __result)
         {
             if (__instance.hasEnchantmentOfType<MoreLuresEnchantment>())
                 ++__result;
         }
-    }
 
-    [HarmonyPatch(typeof(FishingRod), "calculateTimeUntilFishingBite")]
-    public static class FishingRodCalculateBiteTimePatch
-    {
-        public static bool Prefix(FishingRod __instance, Vector2 bobberTile, bool isFirstCast, Farmer who, ref float __result)
+        /// <summary>The method to call before <see cref="FishingRod.calculateTimeUntilFishingBite"/>.</summary>
+        private static bool Before_CalculateTimeUntilFishingBite(FishingRod __instance, Vector2 bobberTile, bool isFirstCast, Farmer who, ref float __result)
         {
             if (Game1.currentLocation.isTileBuildingFishable((int)bobberTile.X, (int)bobberTile.Y) && Game1.currentLocation is BuildableGameLocation)
             {
@@ -66,12 +99,9 @@ namespace MoreEnchantments.Harmony
             __result = Math.Max(500f, time);
             return false;
         }
-    }
 
-    [HarmonyPatch(typeof(FishingRod), "attach")]
-    public static class FishingRodAttachPatch
-    {
-        public static bool Prefix(FishingRod __instance, StardewValley.Object o, ref StardewValley.Object __result)
+        /// <summary>The method to call before <see cref="FishingRod.attach"/>.</summary>
+        private static bool Before_Attach(FishingRod __instance, StardewValley.Object o, ref StardewValley.Object __result)
         {
             if (o != null && o.Category == -21 && (int)__instance.upgradeLevel > 1)
             {
@@ -144,12 +174,9 @@ namespace MoreEnchantments.Harmony
             __result = null;
             return false;
         }
-    }
 
-    [HarmonyPatch(typeof(FishingRod), nameof(FishingRod.drawAttachments))]
-    public static class FishingRodDrawAttachmentsPatch
-    {
-        public static void Postfix(FishingRod __instance, SpriteBatch b, int x, int y)
+        /// <summary>The method to call before <see cref="FishingRod.drawAttachments"/>.</summary>
+        private static void After_DrawAttachments(FishingRod __instance, SpriteBatch b, int x, int y)
         {
             if ((int)__instance.upgradeLevel > 2 && __instance.hasEnchantmentOfType<MoreLuresEnchantment>())
             {

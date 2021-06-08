@@ -1,14 +1,35 @@
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
 
 namespace BuildableLocationsFramework.Patches
 {
-    [HarmonyPatch(typeof(Shears), nameof(Shears.beginUsing))]
-    public static class ShearsBeginUsingFix
+    /// <summary>Applies Harmony patches to <see cref="Shears"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class ShearsPatcher : BasePatcher
     {
-        public static bool Prefix(Shears __instance, GameLocation location, int x, int y, Farmer who, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Shears>(nameof(Shears.beginUsing)),
+                prefix: this.GetHarmonyMethod(nameof(Before_BeginUsing))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Shears.beginUsing"/>.</summary>
+        private static bool Before_BeginUsing(Shears __instance, GameLocation location, int x, int y, Farmer who, ref bool __result)
         {
             x = (int)who.GetToolLocation(false).X;
             y = (int)who.GetToolLocation(false).Y;

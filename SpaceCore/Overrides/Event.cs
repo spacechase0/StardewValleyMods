@@ -1,17 +1,49 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Harmony;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Harmony;
 using SpaceCore.Events;
+using StardewModdingAPI;
 using StardewValley;
 using xTile.Dimensions;
 
 namespace SpaceCore.Overrides
 {
-    public static class EventTryCommandPatch
+    /// <summary>Applies Harmony patches to <see cref="Event"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class EventPatcher : BasePatcher
     {
-        internal static Dictionary<string, MethodInfo> customCommands = new Dictionary<string, MethodInfo>();
+        /*********
+        ** Accessors
+        *********/
+        internal static Dictionary<string, MethodInfo> customCommands = new();
 
-        public static bool Prefix(Event __instance, GameLocation location, GameTime time, string[] split)
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Event>(nameof(Event.tryEventCommand)),
+                prefix: this.GetHarmonyMethod(nameof(Before_TryEventCommand))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Event>(nameof(Event.checkAction)),
+                prefix: this.GetHarmonyMethod(nameof(Before_CheckAction))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Event.tryEventCommand"/>.</summary>
+        private static bool Before_TryEventCommand(Event __instance, GameLocation location, GameTime time, string[] split)
         {
             var _eventCommandArgs = SpaceCore.instance.Helper.Reflection.GetField<object[]>(typeof(Event), "_eventCommandArgs").GetValue();
             var _commandLookup = SpaceCore.instance.Helper.Reflection.GetField<Dictionary<string, MethodInfo>>(typeof(Event), "_commandLookup").GetValue();
@@ -30,11 +62,9 @@ namespace SpaceCore.Overrides
 
             return false;
         }
-    }
 
-    public static class EventActionPatch
-    {
-        public static bool Prefix(Event __instance, Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who)
+        /// <summary>The method to call before <see cref="Event.checkAction"/>.</summary>
+        private static bool Before_CheckAction(Event __instance, Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who)
         {
             var actionStr = Game1.currentLocation.doesTileHaveProperty(tileLocation.X, tileLocation.Y, "Action", "Buildings");
             if (actionStr != null)

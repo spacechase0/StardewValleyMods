@@ -1,17 +1,38 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 
 namespace BuildableLocationsFramework.Patches
 {
-    [HarmonyPatch(typeof(GameLocation), "carpenters")]
-    public static class GameLocationCarpentersPatch
+    /// <summary>Applies Harmony patches to <see cref="GameLocation"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class GameLocationPatcher : BasePatcher
     {
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<GameLocation>(nameof(GameLocation.carpenters)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_Carpenters))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="GameLocation.carpenters"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_Carpenters(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             Log.info("Transpiling " + original);
             List<CodeInstruction> ret = new List<CodeInstruction>();
@@ -23,7 +44,7 @@ namespace BuildableLocationsFramework.Patches
                     if (info.DeclaringType == typeof(BuildableGameLocation) && info.Name == "isThereABuildingUnderConstruction")
                     {
                         Log.debug("Found isThereABuildingUnderConstruction, replacing...");
-                        var newInsn = new CodeInstruction(OpCodes.Call, typeof(GameLocationCarpentersPatch).GetMethod(nameof(IsAnyBuildingUnderConstruction)));
+                        var newInsn = new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<GameLocationPatcher>(nameof(IsAnyBuildingUnderConstruction)));
                         ret.Add(newInsn);
                         continue;
                     }
@@ -34,7 +55,7 @@ namespace BuildableLocationsFramework.Patches
             return ret;
         }
 
-        public static bool IsAnyBuildingUnderConstruction(Farm originalParam)
+        private static bool IsAnyBuildingUnderConstruction(Farm originalParam)
         {
             foreach (var loc in Mod.GetAllLocations())
             {

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
 using SpaceCore.Events;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -12,6 +12,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Menus;
+using SurfingFestival.Patches;
 using xTile;
 using xTile.Layers;
 using xTile.Tiles;
@@ -126,8 +127,11 @@ namespace SurfingFestival
 
             SpaceEvents.ActionActivated += onActionActivated;
 
-            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-            harmony.PatchAll();
+            HarmonyPatcher.Apply(this,
+                new CharacterPatcher(),
+                new EventPatcher(),
+                new FarmerPatcher()
+            );
         }
 
         public bool CanLoad<T>(IAssetInfo asset)
@@ -173,9 +177,9 @@ namespace SurfingFestival
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var spacecore = Helper.ModRegistry.GetApi<SpaceCoreAPI>("spacechase0.SpaceCore");
-            spacecore.AddEventCommand("warpSurfingRacers", AccessTools.Method(typeof(Mod), nameof(Mod.EventCommand_WarpSurfingRacers)));
-            spacecore.AddEventCommand("warpSurfingRacersFinish", AccessTools.Method(typeof(Mod), nameof(Mod.EventCommand_WarpSurfingRacersFinish)));
-            spacecore.AddEventCommand("awardSurfingPrize", AccessTools.Method(typeof(Mod), nameof(Mod.EventCommand_AwardSurfingPrize)));
+            spacecore.AddEventCommand("warpSurfingRacers", PatchHelper.RequireMethod<Mod>(nameof(Mod.EventCommand_WarpSurfingRacers)));
+            spacecore.AddEventCommand("warpSurfingRacersFinish", PatchHelper.RequireMethod<Mod>(nameof(Mod.EventCommand_WarpSurfingRacersFinish)));
+            spacecore.AddEventCommand("awardSurfingPrize", PatchHelper.RequireMethod<Mod>(nameof(Mod.EventCommand_AwardSurfingPrize)));
 
             ja = Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
             ja.LoadAssets(Path.Combine(Helper.DirectoryPath, "assets", "ja"));

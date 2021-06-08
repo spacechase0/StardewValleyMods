@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Netcode;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
@@ -15,73 +18,55 @@ using StardewValley.Objects;
 
 namespace BuildableLocationsFramework.Patches
 {
-    public static class CarpenterMenuTranspileCommon
+    /// <summary>Applies Harmony patches to <see cref="CarpenterMenu"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class CarpenterMenuPatcher : BasePatcher
     {
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
         {
-            Log.info("Transpiling " + original);
-            List<CodeInstruction> ret = new List<CodeInstruction>();
+            harmony.Patch(
+                original: this.RequireMethod<CarpenterMenu>(nameof(CarpenterMenu.performHoverAction)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_PerformHoverAction))
+            );
 
-            foreach (var insn in insns)
-            {
-                if (insn.operand is MethodInfo info)
-                {
-                    if (info.DeclaringType == typeof(Game1) && info.Name == "getLocationFromName")
-                    {
-                        Log.debug("Found a getLocationFromName, replacing...");
-                        insn.operand = AccessTools.Method(typeof(CarpenterMenuTranspileCommon), nameof(ReturnCurrentLocationAnyways));
-                    }
-                }
-                else if (insn.operand is TypeInfo tinfo)
-                {
-                    if (tinfo == typeof(Farm))
-                    {
-                        insn.operand = typeof(BuildableGameLocation);
-                    }
-                }
-                ret.Add(insn);
-            }
+            harmony.Patch(
+                original: this.RequireMethod<CarpenterMenu>(nameof(CarpenterMenu.tryToBuild)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_TryToBuild))
+            );
 
-            return ret;
+            harmony.Patch(
+                original: this.RequireMethod<CarpenterMenu>(nameof(CarpenterMenu.receiveLeftClick)),
+                prefix: this.GetHarmonyMethod(nameof(Before_ReceiveLeftClick))
+            );
         }
 
-        public static GameLocation ReturnCurrentLocationAnyways(string requested)
-        {
-            // Where this method is referenced, it always casts to BuildableGameLocation
-            // Check, just to be sure. (In case the menu is transitioning or something.)
-            // Otherwise, return the farm.
-            if (Game1.currentLocation is BuildableGameLocation)
-            {
-                return Game1.currentLocation;
-            }
-            return Game1.getFarm();
-        }
-    }
 
-    [HarmonyPatch(typeof(CarpenterMenu), "performHoverAction")]
-    public static class CarpenterMenuHoverPatch
-    {
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method which transpiles <see cref="CarpenterMenu.performHoverAction"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_PerformHoverAction(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
-            return CarpenterMenuTranspileCommon.Transpiler(gen, original, insns);
+            return CarpenterMenuPatcher.Transpile(gen, original, insns);
         }
-    }
 
-    [HarmonyPatch(typeof(CarpenterMenu), "tryToBuild")]
-    public static class CarpenterMenuTryBuildPatch
-    {
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /// <summary>The method which transpiles <see cref="CarpenterMenu.tryToBuild"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_TryToBuild(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
-            return CarpenterMenuTranspileCommon.Transpiler(gen, original, insns);
+            return CarpenterMenuPatcher.Transpile(gen, original, insns);
         }
-    }
 
-    [HarmonyPatch(typeof(CarpenterMenu), "receiveLeftClick")]
-    public static class CarpenterMenuReceiveClickPatch
-    {
-        // Transpiling is difficult because of the lambda and some internal compiler nonsense
-        public static bool Prefix(CarpenterMenu __instance, int x, int y, bool playSound)
+        /// <summary>The method to call before <see cref="CarpenterMenu.receiveLeftClick"/>.</summary>
+        public static bool Before_ReceiveLeftClick(CarpenterMenu __instance, int x, int y, bool playSound)
         {
+            //
+            // Transpiling is difficult because of the lambda and some internal compiler nonsense
+            //
+
             try
             {
                 var __instance_freeze = Mod.instance.Helper.Reflection.GetField<bool>(__instance, "freeze");
@@ -159,7 +144,7 @@ namespace BuildableLocationsFramework.Patches
                 if (__instance_demolishing.GetValue())
                 {
                     // MINE - Farm -> BuildableGameLocation
-                    BuildableGameLocation farm = CarpenterMenuTranspileCommon.ReturnCurrentLocationAnyways("Farm") as BuildableGameLocation;
+                    BuildableGameLocation farm = CarpenterMenuPatcher.ReturnCurrentLocationAnyways("Farm") as BuildableGameLocation;
                     Building destroyed = farm.getBuildingAt(new Vector2((float)((Game1.viewport.X + Game1.getOldMouseX()) / 64), (float)((Game1.viewport.Y + Game1.getOldMouseY()) / 64)));
                     Action buildingLockFailed = (Action)(() =>
                     {
@@ -246,15 +231,15 @@ namespace BuildableLocationsFramework.Patches
                         if (cabin.farmhand.Value != null && (bool)(NetFieldBase<bool, NetBool>)cabin.farmhand.Value.isCustomized)
                         {
                             Game1.currentLocation.createQuestionDialogue(Game1.content.LoadString("Strings\\UI:Carpenter_DemolishCabinConfirm", (object)cabin.farmhand.Value.Name), Game1.currentLocation.createYesNoResponses(), (GameLocation.afterQuestionBehavior)((f, answer) =>
-                  {
-                      if (answer == "Yes")
-                      {
-                          Game1.activeClickableMenu = (IClickableMenu)__instance;
-                          Game1.player.team.demolishLock.RequestLock(continueDemolish, buildingLockFailed);
-                      }
-                      else
-                          DelayedAction.functionAfterDelay(new DelayedAction.delayedBehavior(__instance.returnToCarpentryMenu), 500);
-                  }), (NPC)null);
+                            {
+                                if (answer == "Yes")
+                                {
+                                    Game1.activeClickableMenu = (IClickableMenu)__instance;
+                                    Game1.player.team.demolishLock.RequestLock(continueDemolish, buildingLockFailed);
+                                }
+                                else
+                                    DelayedAction.functionAfterDelay(new DelayedAction.delayedBehavior(__instance.returnToCarpentryMenu), 500);
+                            }), (NPC)null);
                             goto ret;
                         }
                     }
@@ -264,7 +249,7 @@ namespace BuildableLocationsFramework.Patches
                 }
                 else if (__instance_upgrading.GetValue())
                 {
-                    Building buildingAt = ((BuildableGameLocation)CarpenterMenuTranspileCommon.ReturnCurrentLocationAnyways("Farm")).getBuildingAt(new Vector2((float)((Game1.viewport.X + Game1.getOldMouseX()) / 64), (float)((Game1.viewport.Y + Game1.getOldMouseY()) / 64)));
+                    Building buildingAt = ((BuildableGameLocation)CarpenterMenuPatcher.ReturnCurrentLocationAnyways("Farm")).getBuildingAt(new Vector2((float)((Game1.viewport.X + Game1.getOldMouseX()) / 64), (float)((Game1.viewport.Y + Game1.getOldMouseY()) / 64)));
                     if (buildingAt != null && __instance.CurrentBlueprint.name != null && buildingAt.buildingType.Equals((object)__instance.CurrentBlueprint.nameOfBuildingToUpgrade))
                     {
                         __instance.CurrentBlueprint.consumeResources();
@@ -285,7 +270,7 @@ namespace BuildableLocationsFramework.Patches
                 {
                     if (__instance_buildingToMove.GetValue() == null)
                     {
-                        __instance_buildingToMove.SetValue(((BuildableGameLocation)CarpenterMenuTranspileCommon.ReturnCurrentLocationAnyways("Farm")).getBuildingAt(new Vector2((float)((Game1.viewport.X + Game1.getMouseX()) / 64), (float)((Game1.viewport.Y + Game1.getMouseY()) / 64))));
+                        __instance_buildingToMove.SetValue(((BuildableGameLocation)CarpenterMenuPatcher.ReturnCurrentLocationAnyways("Farm")).getBuildingAt(new Vector2((float)((Game1.viewport.X + Game1.getMouseX()) / 64), (float)((Game1.viewport.Y + Game1.getMouseY()) / 64))));
                         if (__instance_buildingToMove.GetValue() == null)
                             goto ret;
                         if ((int)(NetFieldBase<int, NetInt>)__instance_buildingToMove.GetValue().daysOfConstructionLeft > 0)
@@ -300,7 +285,7 @@ namespace BuildableLocationsFramework.Patches
                             Game1.playSound("axchop");
                         }
                     }
-                    else if (((BuildableGameLocation)CarpenterMenuTranspileCommon.ReturnCurrentLocationAnyways("Farm")).buildStructure(__instance_buildingToMove.GetValue(), new Vector2((float)((Game1.viewport.X + Game1.getMouseX()) / 64), (float)((Game1.viewport.Y + Game1.getMouseY()) / 64)), Game1.player, false))
+                    else if (((BuildableGameLocation)CarpenterMenuPatcher.ReturnCurrentLocationAnyways("Farm")).buildStructure(__instance_buildingToMove.GetValue(), new Vector2((float)((Game1.viewport.X + Game1.getMouseX()) / 64), (float)((Game1.viewport.Y + Game1.getMouseY()) / 64)), Game1.player, false))
                     {
                         __instance_buildingToMove.GetValue().isMoving = false;
                         if (__instance_buildingToMove.GetValue() is ShippingBin)
@@ -316,20 +301,20 @@ namespace BuildableLocationsFramework.Patches
                 }
                 else
                     Game1.player.team.buildLock.RequestLock((Action)(() =>
-               {
-                   if (__instance_onFarm.GetValue() && Game1.locationRequest == null)
-                   {
-                       if (__instance.tryToBuild())
-                       {
-                           __instance.CurrentBlueprint.consumeResources();
-                           DelayedAction.functionAfterDelay(new DelayedAction.delayedBehavior(__instance.returnToCarpentryMenuAfterSuccessfulBuild), 2000);
-                           __instance_freeze.SetValue(true);
-                       }
-                       else
-                           Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantBuild"), Color.Red, 3500f));
-                   }
-                   Game1.player.team.buildLock.ReleaseLock();
-               }), (Action)null);
+                    {
+                        if (__instance_onFarm.GetValue() && Game1.locationRequest == null)
+                        {
+                            if (__instance.tryToBuild())
+                            {
+                                __instance.CurrentBlueprint.consumeResources();
+                                DelayedAction.functionAfterDelay(new DelayedAction.delayedBehavior(__instance.returnToCarpentryMenuAfterSuccessfulBuild), 2000);
+                                __instance_freeze.SetValue(true);
+                            }
+                            else
+                                Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantBuild"), Color.Red, 3500f));
+                        }
+                        Game1.player.team.buildLock.ReleaseLock();
+                    }), (Action)null);
                 ret:
                 return false;
             }
@@ -346,6 +331,46 @@ namespace BuildableLocationsFramework.Patches
             if (playSound)
                 Game1.playSound("bigDeSelect");
             __instance.exitThisMenu(true);
+        }
+
+        internal static IEnumerable<CodeInstruction> Transpile(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            Log.info("Transpiling " + original);
+            List<CodeInstruction> ret = new List<CodeInstruction>();
+
+            foreach (var insn in insns)
+            {
+                if (insn.operand is MethodInfo info)
+                {
+                    if (info.DeclaringType == typeof(Game1) && info.Name == "getLocationFromName")
+                    {
+                        Log.debug("Found a getLocationFromName, replacing...");
+                        insn.operand = PatchHelper.RequireMethod<CarpenterMenuPatcher>(nameof(ReturnCurrentLocationAnyways));
+                    }
+                }
+                else if (insn.operand is TypeInfo tinfo)
+                {
+                    if (tinfo == typeof(Farm))
+                    {
+                        insn.operand = typeof(BuildableGameLocation);
+                    }
+                }
+                ret.Add(insn);
+            }
+
+            return ret;
+        }
+
+        private static GameLocation ReturnCurrentLocationAnyways(string requested)
+        {
+            // Where this method is referenced, it always casts to BuildableGameLocation
+            // Check, just to be sure. (In case the menu is transitioning or something.)
+            // Otherwise, return the farm.
+            if (Game1.currentLocation is BuildableGameLocation)
+            {
+                return Game1.currentLocation;
+            }
+            return Game1.getFarm();
         }
     }
 }

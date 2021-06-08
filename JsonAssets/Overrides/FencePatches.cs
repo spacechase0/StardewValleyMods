@@ -1,15 +1,61 @@
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Network;
 using StardewValley.Tools;
 
 namespace JsonAssets.Overrides
 {
-    //[HarmonyPatch( typeof( Fence ), MethodType.Constructor, new Type[] { typeof( Vector2 ), typeof( int ), typeof( bool ) } )]
-    public static class FenceConstructorPatch
+    /// <summary>Applies Harmony patches to <see cref="Fence"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class FencePatcher : BasePatcher
     {
-        public static void Postfix(Fence __instance, Vector2 tileLocation, int whichType, bool isGate)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireConstructor<Fence>(typeof(Vector2), typeof(int), typeof(bool)),
+                postfix: this.GetHarmonyMethod(nameof(After_Constructor))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Fence>(nameof(Fence.repair)),
+                prefix: this.GetHarmonyMethod(nameof(Before_Repair))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Fence>(nameof(Fence.dropItem)),
+                prefix: this.GetHarmonyMethod(nameof(Before_DropItem))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Fence>(nameof(Fence.performToolAction)),
+                prefix: this.GetHarmonyMethod(nameof(Before_PerformToolAction))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Fence>(nameof(Fence.performObjectDropInAction)),
+                prefix: this.GetHarmonyMethod(nameof(Before_PerformObjectDropInAction))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Fence>(nameof(Fence.CanRepairWithThisItem)),
+                prefix: this.GetHarmonyMethod(nameof(Before_CanRepairWithThisItem))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call after the <see cref="Fence"/> constructor.</summary>
+        private static void After_Constructor(Fence __instance, Vector2 tileLocation, int whichType, bool isGate)
         {
             foreach (var fence in Mod.instance.fences)
             {
@@ -25,12 +71,9 @@ namespace JsonAssets.Overrides
                 }
             }
         }
-    }
 
-    [HarmonyPatch(typeof(Fence), nameof(Fence.repair))]
-    public static class FenceRepairPatch
-    {
-        public static bool Prefix(Fence __instance)
+        /// <summary>The method to call before <see cref="Fence.repair"/>.</summary>
+        private static bool Before_Repair(Fence __instance)
         {
             foreach (var fence in Mod.instance.fences)
             {
@@ -45,12 +88,9 @@ namespace JsonAssets.Overrides
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Fence), nameof(Fence.dropItem))]
-    public static class FenceDropItemPatch
-    {
-        public static bool Prefix(Fence __instance, GameLocation location, Vector2 origin, Vector2 destination)
+        /// <summary>The method to call before <see cref="Fence.dropItem"/>.</summary>
+        private static bool Before_DropItem(Fence __instance, GameLocation location, Vector2 origin, Vector2 destination)
         {
             if (__instance.isGate.Value)
                 return true;
@@ -66,12 +106,9 @@ namespace JsonAssets.Overrides
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Fence), nameof(Fence.performToolAction))]
-    public static class FencePerformToolActionPatch
-    {
-        public static bool Prefix(Fence __instance, Tool t, GameLocation location, ref bool __result)
+        /// <summary>The method to call before <see cref="Fence.performToolAction"/>.</summary>
+        private static bool Before_PerformToolAction(Fence __instance, Tool t, GameLocation location, ref bool __result)
         {
             if (__instance.heldObject.Value != null && t != null && (!(t is MeleeWeapon) && t.isHeavyHitter()))
                 return true;
@@ -124,12 +161,9 @@ namespace JsonAssets.Overrides
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Fence), nameof(Fence.performObjectDropInAction))]
-    public static class FencePerformObjectDropInPatch
-    {
-        public static bool Prefix(Fence __instance, Item dropIn, bool probe, Farmer who, ref bool __result)
+        /// <summary>The method to call before <see cref="Fence.performObjectDropInAction"/>.</summary>
+        private static bool Before_PerformObjectDropInAction(Fence __instance, Item dropIn, bool probe, Farmer who, ref bool __result)
         {
             if (__instance.health.Value > 1 || !__instance.CanRepairWithThisItem(dropIn))
                 return true;
@@ -156,12 +190,9 @@ namespace JsonAssets.Overrides
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Fence), nameof(Fence.CanRepairWithThisItem))]
-    public static class FenceCanRepairWithThisPatch
-    {
-        public static bool Prefix(Fence __instance, Item item, ref bool __result)
+        /// <summary>The method to call before <see cref="Fence.CanRepairWithThisItem"/>.</summary>
+        private static bool Before_CanRepairWithThisItem(Fence __instance, Item item, ref bool __result)
         {
             if (__instance.health.Value > 1 || !(item is StardewValley.Object))
                 return true;

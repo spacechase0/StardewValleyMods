@@ -1,18 +1,38 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 
 namespace MoreGiantCrops
 {
-    // Copied/modified from JA
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming convention is set by Harmony.")]
-    public static class GiantCropPatches
+    /// <summary>Applies Harmony patches to <see cref="GiantCrop"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class GiantCropPatcher : BasePatcher
     {
-        public static bool Draw_Prefix(GiantCrop __instance, SpriteBatch spriteBatch, Vector2 tileLocation)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<GiantCrop>(nameof(GiantCrop.draw)),
+                prefix: this.GetHarmonyMethod(nameof(Before_Draw))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method which transpiles <see cref="GiantCrop.draw"/>.</summary>
+        private static bool Before_Draw(GiantCrop __instance, SpriteBatch spriteBatch, Vector2 tileLocation)
         {
             try
             {
@@ -27,7 +47,7 @@ namespace MoreGiantCrops
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(GiantCropPatches)}.{nameof(Draw_Prefix)}:\n{ex}");
+                Log.error($"Failed in {nameof(GiantCropPatcher)}.{nameof(Before_Draw)}:\n{ex}");
                 return true;
             }
         }

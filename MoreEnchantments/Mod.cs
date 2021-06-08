@@ -1,5 +1,6 @@
-using Harmony;
 using MoreEnchantments.Enchantments;
+using MoreEnchantments.Harmony;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
@@ -27,8 +28,9 @@ namespace MoreEnchantments
 
             BaseEnchantment.GetAvailableEnchantments().Add(new MoreLuresEnchantment());
 
-            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-            harmony.PatchAll();
+            HarmonyPatcher.Apply(this,
+                new FishingRodPatcher()
+            );
         }
     }
 }

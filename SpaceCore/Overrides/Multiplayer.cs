@@ -1,11 +1,34 @@
+using System.Diagnostics.CodeAnalysis;
+using Harmony;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Network;
 
 namespace SpaceCore.Overrides
 {
-    public class MultiplayerPackets
+    /// <summary>Applies Harmony patches to <see cref="Multiplayer"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class MultiplayerPatcher : BasePatcher
     {
-        public static bool Prefix(Multiplayer __instance, IncomingMessage msg)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Multiplayer>(nameof(Multiplayer.processIncomingMessage)),
+                prefix: this.GetHarmonyMethod(nameof(Before_ProcessIncomingMessage))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Multiplayer.processIncomingMessage"/>.</summary>
+        private static bool Before_ProcessIncomingMessage(Multiplayer __instance, IncomingMessage msg)
         {
             // MTN uses packets 30, 31, and 50, PyTK uses 99
 

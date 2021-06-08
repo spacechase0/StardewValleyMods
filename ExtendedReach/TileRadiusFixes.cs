@@ -1,14 +1,50 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
+using StardewModdingAPI;
+using StardewValley;
 
 namespace ExtendedReach
 {
-    public class TileRadiusFix
+    /// <summary>Applies player radius checks throughout the game code to increase the tile radius.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class TileRadiusPatcher : BasePatcher
     {
-        public static IEnumerable<CodeInstruction> IncreaseRadiusChecks(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            var methods = new[]
+            {
+                this.RequireMethod<Game1>(nameof(Game1.pressActionButton)),
+                this.RequireMethod<Game1>(nameof(Game1.pressUseToolButton)),
+                this.RequireMethod<Game1>(nameof(Game1.tryToCheckAt)),
+                this.RequireMethod<GameLocation>(nameof(GameLocation.isActionableTile)),
+                this.RequireMethod<Utility>(nameof(Utility.canGrabSomethingFromHere)),
+                this.RequireMethod<Utility>(nameof(Utility.checkForCharacterInteractionAtTile))
+            };
+
+            foreach (var method in methods)
+            {
+                harmony.Patch(
+                    original: method,
+                    transpiler: this.GetHarmonyMethod(nameof(TranspileRadiusChecks))
+                );
+            }
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method which transpiles methods to increase the player's reach radius.</summary>
+        private static IEnumerable<CodeInstruction> TranspileRadiusChecks(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
 

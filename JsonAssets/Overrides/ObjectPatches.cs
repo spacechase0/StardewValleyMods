@@ -5,7 +5,9 @@ using System.Linq;
 using Harmony;
 using JsonAssets.Data;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Network;
 using StardewValley.Objects;
@@ -13,10 +15,69 @@ using SObject = StardewValley.Object;
 
 namespace JsonAssets.Overrides
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming convention is set by Harmony.")]
-    public class ObjectPatches
+    /// <summary>Applies Harmony patches to <see cref="SObject"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class ObjectPatcher : BasePatcher
     {
-        public static bool CanBePlacedHere_Prefix(SObject __instance, GameLocation l, Vector2 tile, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.canBePlacedHere)),
+                prefix: this.GetHarmonyMethod(nameof(Before_CanBePlacedHere))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.checkForAction)),
+                prefix: this.GetHarmonyMethod(nameof(Before_CheckForAction))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<SObject>("loadDisplayName"),
+                prefix: this.GetHarmonyMethod(nameof(Before_LoadDisplayName))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.getCategoryName)),
+                prefix: this.GetHarmonyMethod(nameof(Before_GetCategoryName))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.isIndexOkForBasicShippedCategory)),
+                postfix: this.GetHarmonyMethod(nameof(After_IsIndexOkForBasicShippedCategory))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.getCategoryColor)),
+                prefix: this.GetHarmonyMethod(nameof(Before_GetCategoryColor))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.canBeGivenAsGift)),
+                postfix: this.GetHarmonyMethod(nameof(After_CanBeGivenAsGift))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.isPlaceable)),
+                prefix: this.GetHarmonyMethod(nameof(Before_IsPlaceable))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.placementAction)),
+                prefix: this.GetHarmonyMethod(nameof(Before_PlacementAction))
+            );
+
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="SObject.canBePlacedHere"/>.</summary>
+        public static bool Before_CanBePlacedHere(SObject __instance, GameLocation l, Vector2 tile, ref bool __result)
         {
             try
             {
@@ -56,12 +117,13 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(CanBePlacedHere_Prefix)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.error($"Failed in {nameof(Before_CanBePlacedHere)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
                 return true;
             }
         }
 
-        public static bool CheckForAction_Prefix(SObject __instance)
+        /// <summary>The method to call before <see cref="SObject.checkForAction"/>.</summary>
+        public static bool Before_CheckForAction(SObject __instance)
         {
             try
             {
@@ -71,12 +133,13 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(CheckForAction_Prefix)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.error($"Failed in {nameof(Before_CheckForAction)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
                 return true;
             }
         }
 
-        public static bool LoadDisplayName_Prefix(SObject __instance, ref string __result)
+        /// <summary>The method to call before <see cref="SObject.loadDisplayName"/>.</summary>
+        public static bool Before_LoadDisplayName(SObject __instance, ref string __result)
         {
             try
             {
@@ -105,12 +168,13 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(LoadDisplayName_Prefix)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.error($"Failed in {nameof(Before_LoadDisplayName)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
                 return true;
             }
         }
 
-        public static bool GetCategoryName_Prefix(SObject __instance, ref string __result)
+        /// <summary>The method to call before <see cref="SObject.getCategoryName"/>.</summary>
+        public static bool Before_GetCategoryName(SObject __instance, ref string __result)
         {
             try
             {
@@ -134,12 +198,13 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(GetCategoryName_Prefix)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.error($"Failed in {nameof(Before_GetCategoryName)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
                 return true;
             }
         }
 
-        public static void IsIndexOkForBasicShippedCategory_Postfix(int index, ref bool __result)
+        /// <summary>The method to call after <see cref="SObject.isIndexOkForBasicShippedCategory"/>.</summary>
+        public static void After_IsIndexOkForBasicShippedCategory(int index, ref bool __result)
         {
             try
             {
@@ -160,11 +225,12 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(IsIndexOkForBasicShippedCategory_Postfix)} for #{index}:\n{ex}");
+                Log.error($"Failed in {nameof(After_IsIndexOkForBasicShippedCategory)} for #{index}:\n{ex}");
             }
         }
 
-        public static bool GetCategoryColor_Prefix(SObject __instance, ref Color __result)
+        /// <summary>The method to call before <see cref="SObject.getCategoryColor"/>.</summary>
+        public static bool Before_GetCategoryColor(SObject __instance, ref Color __result)
         {
             try
             {
@@ -188,12 +254,13 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(GetCategoryColor_Prefix)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.error($"Failed in {nameof(Before_GetCategoryColor)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
                 return true;
             }
         }
 
-        public static void CanBeGivenAsGift_Postfix(StardewValley.Object __instance, ref bool __result)
+        /// <summary>The method to call after <see cref="SObject.canBeGivenAsGift"/>.</summary>
+        public static void After_CanBeGivenAsGift(SObject __instance, ref bool __result)
         {
             try
             {
@@ -206,20 +273,17 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(CanBeGivenAsGift_Postfix)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.error($"Failed in {nameof(After_CanBeGivenAsGift)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
             }
         }
-    }
 
-    [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.isPlaceable))]
-    public static class ObjectIsPlaceablePatch
-    {
-        public static bool Prefix(StardewValley.Object __instance, ref bool __result)
+        /// <summary>The method to call before <see cref="SObject.isPlaceable"/>.</summary>
+        public static bool Before_IsPlaceable(SObject __instance, ref bool __result)
         {
             if (__instance.bigCraftable.Value)
                 return true;
 
-            if (__instance.Category == StardewValley.Object.CraftingCategory && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
+            if (__instance.Category == SObject.CraftingCategory && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
             {
                 if (!Mod.instance.fences.Any(f => f.correspondingObject.id == __instance.ParentSheetIndex))
                 {
@@ -230,12 +294,9 @@ namespace JsonAssets.Overrides
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.placementAction))]
-    public static class ObjectPlacementActionPatch
-    {
-        public static bool Prefix(StardewValley.Object __instance, GameLocation location, int x, int y, Farmer who, ref bool __result)
+        /// <summary>The method to call before <see cref="SObject.placementAction"/>.</summary>
+        public static bool Before_PlacementAction(SObject __instance, GameLocation location, int x, int y, Farmer who, ref bool __result)
         {
             Vector2 pos = new Vector2(x / 64, y / 64);
             if (!__instance.bigCraftable.Value && !(__instance is Furniture))

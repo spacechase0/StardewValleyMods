@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using xTile.Dimensions;
 using xTile.Display;
@@ -13,11 +16,38 @@ using xTile.ObjectModel;
 
 namespace LocationLayerTool.Patches
 {
-    [HarmonyPatch(typeof(Layer), "Draw")]
-    public static class DrawPrefix
+    /// <summary>Applies Harmony patches to <see cref="Layer"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class xTileLayerPatcher : BasePatcher
     {
+        /*********
+        ** Fields
+        *********/
         private static int rendering = 0;
-        public static void Prefix(Layer __instance, IDisplayDevice displayDevice, xTile.Dimensions.Rectangle mapViewport, Location displayOffset, bool wrapAround, int pixelZoom)
+        private static IDisplayDevice displayDevice;
+        private static SpriteBatch spriteBatch;
+        private static RenderTarget2D renderTarget;
+        private static RenderTarget2D lightmap;
+
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Layer>(nameof(Layer.Draw)),
+                prefix: this.GetHarmonyMethod(nameof(Before_Draw))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Layer.Draw"/>.</summary>
+        private static void Before_Draw(Layer __instance, IDisplayDevice displayDevice, xTile.Dimensions.Rectangle mapViewport, Location displayOffset, bool wrapAround, int pixelZoom)
         {
             if (__instance.Id == "Back" && rendering == 0 && Game1.currentLocation.Map.Properties.ContainsKey("RenderBehind"))
             {
@@ -48,11 +78,6 @@ namespace LocationLayerTool.Patches
             }
         }
 
-
-        private static IDisplayDevice displayDevice;
-        private static SpriteBatch spriteBatch;
-        public static RenderTarget2D renderTarget;
-        public static RenderTarget2D lightmap;
         private static void DoRendering(string locName, int offsetX, int offsetY, float scale)
         {
             if (displayDevice == null)

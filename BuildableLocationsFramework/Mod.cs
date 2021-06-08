@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BuildableLocationsFramework.Patches;
-using Harmony;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -25,8 +25,17 @@ namespace BuildableLocationsFramework
 
             Helper.ConsoleCommands.Add("blf_adddummy", "", doCommand);
 
-            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-            harmony.PatchAll();
+            HarmonyPatcher.Apply(this,
+                new BuildingPatcher(),
+                new CarpenterMenuPatcher(),
+                new FarmAnimalPatcher(),
+                new GameLocationPatcher(),
+                new MilkPailPatcher(),
+                new PurchaseAnimalsMenuPatcher(),
+                new SaveGamePatcher(),
+                new ShearsPatcher(),
+                new UtilityPatcher()
+            );
         }
 
         private void doCommand(string cmd, string[] args)
@@ -154,10 +163,10 @@ namespace BuildableLocationsFramework
                         return loc;
                 }
             }
-            if (SaveGameLoadDataToLocationsPatch.locs != null)
+            if (SaveGamePatcher.locs != null)
             {
                 var oldLocs = Game1.locations;
-                Game1.game1._locations = SaveGameLoadDataToLocationsPatch.locs;
+                Game1.game1._locations = SaveGamePatcher.locs;
                 var locs = GetAllLocations();
                 Game1.game1._locations = oldLocs;
 

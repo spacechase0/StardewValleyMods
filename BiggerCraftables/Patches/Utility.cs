@@ -1,22 +1,38 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Harmony;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
 
 namespace BiggerCraftables.Patches
 {
-    [HarmonyPatch(typeof(Utility), nameof(Utility.playerCanPlaceItemHere))]
-    public static class UtilityPlacementPatch
+    /// <summary>Applies Harmony patches to <see cref="Utility"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class UtilityPatcher : BasePatcher
     {
-        public static bool Prefix(GameLocation location,
-            Item item,
-            int x,
-            int y,
-            Farmer f,
-            ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Utility>(nameof(Utility.playerCanPlaceItemHere)),
+                prefix: this.GetHarmonyMethod(nameof(Before_PlayersCanPlaceItemHere))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Utility.playerCanPlaceItemHere"/>.</summary>
+        private static bool Before_PlayersCanPlaceItemHere(GameLocation location, Item item, int x, int y, Farmer f, ref bool __result)
         {
             if (!(item is StardewValley.Object obj && obj.bigCraftable.Value))
                 return true;

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using Harmony;
 using Microsoft.Xna.Framework.Graphics;
 using MoreBuildings.BigShed;
 using MoreBuildings.FishingShack;
@@ -10,6 +9,7 @@ using MoreBuildings.MiniSpa;
 using MoreBuildings.Overrides;
 using MoreBuildings.SpookyShed;
 using PyTK.CustomElementHandler;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -46,8 +46,10 @@ namespace MoreBuildings
             spaExterior = Helper.Content.Load<Texture2D>("assets/MiniSpa/building.png");
             spookyGemTex = Helper.Content.Load<Texture2D>("assets/SpookyShed/Shrine_Gem.png");
 
-            var harmony = HarmonyInstance.Create("spacechase0.MoreBuildings");
-            harmony.Patch(typeof(Shed).GetMethod(nameof(Shed.updateLayout)), prefix: new HarmonyMethod(typeof(ShedUpdateLayoutWorkaround).GetMethod("Prefix")));
+            HarmonyPatcher.Apply(this,
+                new ShedPatcher()
+            );
+
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>

@@ -1,18 +1,49 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Netcode;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
 
 namespace BuildableLocationsFramework.Patches
 {
-    [HarmonyPatch(typeof(FarmAnimal), nameof(FarmAnimal.updateWhenNotCurrentLocation))]
-    public static class FarmAnimalUpdateWhenNotCurrentLocationPatch
+    /// <summary>Applies Harmony patches to <see cref="FarmAnimal"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class FarmAnimalPatcher : BasePatcher
     {
-        public static bool Prefix(FarmAnimal __instance, Building currentBuilding, GameTime time, GameLocation environment)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<FarmAnimal>(nameof(FarmAnimal.updateWhenNotCurrentLocation)),
+                prefix: this.GetHarmonyMethod(nameof(Before_UpdateWhenNotCurrentLocation))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<FarmAnimal>(nameof(FarmAnimal.updateWhenCurrentLocation)),
+                prefix: this.GetHarmonyMethod(nameof(Before_UpdateWhenCurrentLocation))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<FarmAnimal>("behaviors"),
+                prefix: this.GetHarmonyMethod(nameof(Before_Behaviors))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="FarmAnimal.updateWhenNotCurrentLocation"/>.</summary>
+        private static bool Before_UpdateWhenNotCurrentLocation(FarmAnimal __instance, Building currentBuilding, GameTime time, GameLocation environment)
         {
             Mod.instance.Helper.Reflection.GetField<NetEvent1Field<int, NetInt>>(__instance, "doFarmerPushEvent").GetValue().Poll();
             Mod.instance.Helper.Reflection.GetField<NetEvent0>(__instance, "doBuildingPokeEvent").GetValue().Poll();
@@ -70,12 +101,9 @@ namespace BuildableLocationsFramework.Patches
             Mod.instance.Helper.Reflection.GetMethod(__instance, "behaviors").Invoke(time, environment);
             return false;
         }
-    }
 
-    [HarmonyPatch(typeof(FarmAnimal), nameof(FarmAnimal.updateWhenCurrentLocation))]
-    public static class FarmAnimalUpdateWhenCurrentLocationPatch
-    {
-        public static bool Prefix(FarmAnimal __instance, GameTime time, GameLocation location, ref bool __result)
+        /// <summary>The method to call before <see cref="FarmAnimal.updateWhenCurrentLocation"/>.</summary>
+        private static bool Before_UpdateWhenCurrentLocation(FarmAnimal __instance, GameTime time, GameLocation location, ref bool __result)
         {
             if (!Game1.shouldTimePass())
                 return false;
@@ -254,12 +282,9 @@ namespace BuildableLocationsFramework.Patches
             }
             return false;
         }
-    }
 
-    [HarmonyPatch(typeof(FarmAnimal), "behaviors")]
-    public static class FarmAnimalBehaviorsPrefix
-    {
-        public static bool Prefix(FarmAnimal __instance, GameTime time, GameLocation location, ref bool __result)
+        /// <summary>The method to call before <see cref="FarmAnimal.behaviors"/>.</summary>
+        public static bool Before_Behaviors(FarmAnimal __instance, GameTime time, GameLocation location, ref bool __result)
         {
             NetBool isEating = Mod.instance.Helper.Reflection.GetField<NetBool>(__instance, "isEating").GetValue();
             if (__instance.home == null)

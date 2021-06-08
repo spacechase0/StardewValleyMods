@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,184 +9,255 @@ using System.Xml;
 using System.Xml.Serialization;
 using Harmony;
 using Newtonsoft.Json;
+using Spacechase.Shared.Harmony;
+using SpaceCore.Framework;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Characters;
 using StardewValley.Menus;
-using StardewValley.Monsters;
-using StardewValley.Objects;
-using StardewValley.Quests;
-using StardewValley.TerrainFeatures;
 
 namespace SpaceCore.Overrides
 {
-    public static class SaveGameHooks
+    /// <summary>Applies Harmony patches to <see cref="SaveGame"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class SaveGamePatcher : BasePatcher
     {
-        public const string Filename = "spacecore-serialization.json";
-        public const string FarmerFilename = "spacecore-serialization-farmer.json";
+        /*********
+        ** Fields
+        *********/
+        /// <summary>Manages the custom save serialization.</summary>
+        private static SerializerManager SerializerManager;
 
-        private static bool initializedSerializers = false;
 
-        internal static string loadFileContext = null;
-
-        // Update these each game update
-        private static Type[] vanillaMainTypes = new Type[25]
+        /*********
+        ** Public methods
+        *********/
+        /// <summary>Construct an instance.</summary>
+        /// <param name="serializerManager">Manages the custom save serialization.</param>
+        public SaveGamePatcher(SerializerManager serializerManager)
         {
-            typeof(Tool),
-            typeof(GameLocation),
-            typeof(Duggy),
-            typeof(Bug),
-            typeof(BigSlime),
-            typeof(Ghost),
-            typeof(Child),
-            typeof(Pet),
-            typeof(Dog),
-            typeof(Cat),
-            typeof(Horse),
-            typeof(GreenSlime),
-            typeof(LavaCrab),
-            typeof(RockCrab),
-            typeof(ShadowGuy),
-            typeof(SquidKid),
-            typeof(Grub),
-            typeof(Fly),
-            typeof(DustSpirit),
-            typeof(Quest),
-            typeof(MetalHead),
-            typeof(ShadowGirl),
-            typeof(Monster),
-            typeof(JunimoHarvester),
-            typeof(TerrainFeature)
-        };
-        private static Type[] vanillaFarmerTypes = new Type[1]
+            SaveGamePatcher.SerializerManager = serializerManager;
+        }
+
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
         {
-            typeof(Tool)
-        };
-        private static Type[] vanillaGameLocationTypes = new Type[24]
-        {
-            typeof(Tool),
-            typeof(Duggy),
-            typeof(Ghost),
-            typeof(GreenSlime),
-            typeof(LavaCrab),
-            typeof(RockCrab),
-            typeof(ShadowGuy),
-            typeof(Child),
-            typeof(Pet),
-            typeof(Dog),
-            typeof(Cat),
-            typeof(Horse),
-            typeof(SquidKid),
-            typeof(Grub),
-            typeof(Fly),
-            typeof(DustSpirit),
-            typeof(Bug),
-            typeof(BigSlime),
-            typeof(BreakableContainer),
-            typeof(MetalHead),
-            typeof(ShadowGirl),
-            typeof(Monster),
-            typeof(JunimoHarvester),
-            typeof(TerrainFeature)
-        };
+            harmony.Patch(
+                original: this.RequireMethod<SaveGame>(nameof(SaveGame.GetSerializer)),
+                prefix: this.GetHarmonyMethod(nameof(Before_GetSerializer))
+            );
 
-        public static void InitializeSerializers()
-        {
-            if (initializedSerializers)
-                return;
-            initializedSerializers = true;
+            harmony.Patch(
+                original: this.RequireMethod<SaveGame>(nameof(SaveGame.Load)),
+                prefix: this.GetHarmonyMethod(nameof(Before_Load), priority: Priority.First)
+            );
 
-            Log.trace("Reinitializing serializers...");
+            harmony.Patch(
+                original: this.RequireMethod<SaveGame>(nameof(SaveGame.Save)),
+                prefix: this.GetHarmonyMethod(nameof(Before_Save))
+            );
 
-            SaveGame.serializer = InitializeSerializer(typeof(SaveGame), vanillaMainTypes);
-            SaveGame.farmerSerializer = InitializeSerializer(typeof(Farmer), vanillaFarmerTypes);
-            SaveGame.locationSerializer = InitializeSerializer(typeof(GameLocation), vanillaGameLocationTypes);
+            harmony.Patch(
+                original: this.RequireMethod<SaveGame>(nameof(SaveGame.loadDataToLocations)),
+                prefix: this.GetHarmonyMethod(nameof(Before_LoadDataToLocations))
+            );
 
-            if (SpaceCore.instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
+            foreach (var method in SaveGamePatcher.GetLoadEnumeratorMethods())
             {
-                //Log.trace( "Letting PyTK know we changed the serializers..." );
-                try
-                {
-                    var pytk = Type.GetType("PyTK.PyTKMod, PyTK");
-                    pytk.GetMethod("SerializersReinitialized").Invoke(null, new object[] { null });
-                }
-                catch (Exception e)
-                {
-                    Log.trace("Exception, probably because PyTK hasn't released yet: " + e);
-                }
+                harmony.Patch(
+                    original: method,
+                    transpiler: this.GetHarmonyMethod(nameof(Transpile_GetLoadEnumerator))
+                );
+            }
+
+            foreach (var method in SaveGamePatcher.GetSaveEnumeratorMethods())
+            {
+                harmony.Patch(
+                    original: method,
+                    transpiler: this.GetHarmonyMethod(nameof(Transpile_GetSaveEnumerator))
+                );
             }
         }
 
-        public static XmlSerializer InitializeSerializer(Type baseType, Type[] extra = null)
+        /// <summary>Get the <see cref="SaveGame.getLoadEnumerator"/> methods that should be patched.</summary>
+        public static IEnumerable<MethodBase> GetLoadEnumeratorMethods()
         {
-            List<Type> types = new List<Type>();
-            if (extra != null)
-                types.AddRange(extra);
-            types.AddRange(SpaceCore.modTypes);
-            var s = new XmlSerializer(baseType, types.ToArray());
-
-            if (SpaceCore.instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
+            List<MethodBase> ret = new List<MethodBase>();
+            foreach (var type in typeof(SaveGame).GetNestedTypes(BindingFlags.NonPublic))
             {
-                //Log.trace( "Letting PyTK know we changed the serializers..." );
-                try
+                if (type.Name.Contains("getLoadEnumerator"))
                 {
-                    var pytk = Type.GetType("PyTK.PyTKMod, PyTK");
-                    pytk.GetMethod("SerializersReinitialized").Invoke(null, new object[] { null });
+                    // Primary enumerator method
+                    ret.Add(type.GetMethod("MoveNext", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance));
                 }
-                catch (Exception e)
+                else if (type.Name.Contains("<>") && type.Name != "<>c")
                 {
-                    Log.trace("Exception, probably because PyTK hasn't released yet: " + e);
+                    foreach (var meth in type.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+                    {
+                        if (meth.Name.Contains("getLoadEnumerator"))
+                        {
+                            // A lambda inside the enumerator
+                            ret.Add(meth);
+                            break;
+                        }
+                    }
                 }
             }
-
-            return s;
+            if (ret.Count != 2)
+            {
+                Log.warn($"Found {ret.Count} transpiler targets, expected 2");
+                foreach (var meth in ret)
+                {
+                    Log.trace("\t" + meth.Name + " " + meth);
+                }
+            }
+            ret.Add(PatchHelper.RequireMethod<LoadGameMenu>("FindSaveGames"));
+            return ret;
         }
-    }
 
-    [HarmonyPatch(typeof(SaveGame), nameof(SaveGame.GetSerializer))]
-    public static class SaveGameGetSerializerPatch
-    {
-        public static bool Prefix(Type type, ref XmlSerializer __result)
+        /// <summary>Get the <see cref="SaveGame.getSaveEnumerator"/> methods that should be patched.</summary>
+        public static IEnumerable<MethodBase> GetSaveEnumeratorMethods()
         {
-            __result = SaveGameHooks.InitializeSerializer(type);
+            List<MethodBase> ret = new List<MethodBase>();
+            foreach (var type in typeof(SaveGame).GetNestedTypes(BindingFlags.NonPublic))
+            {
+                if (type.Name.Contains("getSaveEnumerator"))
+                {
+                    // Primary enumerator method
+                    ret.Add(type.GetMethod("MoveNext", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance));
+                }
+            }
+            if (ret.Count != 1)
+            {
+                Log.warn($"Found {ret.Count} transpiler targets, expected 1");
+                foreach (var meth in ret)
+                {
+                    Log.trace("\t" + meth.Name + " " + meth);
+                }
+            }
+            return ret;
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /****
+        ** Patches
+        ****/
+        /// <summary>The method to call before <see cref="SaveGame.GetSerializer"/>.</summary>
+        private static bool Before_GetSerializer(Type type, ref XmlSerializer __result)
+        {
+            __result = SaveGamePatcher.SerializerManager.InitializeSerializer(type);
             return false;
         }
-    }
 
-    [HarmonyPatch(typeof(LoadGameMenu), "FindSaveGames")]
-    public static class LoadGameMenuFindSavesPatch
-    {
-        public static void Prefix()
+        /// <summary>The method to call before <see cref="SaveGame.Load"/>.</summary>
+        private static void Before_Load(string filename)
         {
-            SaveGameHooks.InitializeSerializers();
+            SaveGamePatcher.SerializerManager.InitializeSerializers();
+            SaveGamePatcher.SerializerManager.loadFileContext = filename;
         }
-    }
 
-    [HarmonyPatch(typeof(SaveGame), nameof(SaveGame.Load))]
-    [HarmonyPriority(Priority.First)]
-    public static class SaveGameLoadPatch
-    {
-        public static void Prefix(string filename)
+        /// <summary>The method to call before <see cref="SaveGame.Save"/>.</summary>
+        private static void Before_Save()
         {
-            SaveGameHooks.InitializeSerializers();
-            SaveGameHooks.loadFileContext = filename;
-        }
-    }
+            // Save is done as well for the case of creating a new save without loading one
 
-    // Save is done as well for the case of creating a new save without loading one
-    [HarmonyPatch(typeof(SaveGame), nameof(SaveGame.Save))]
-    public static class SaveGameSavePatch
-    {
-        public static void Prefix()
+            SaveGamePatcher.SerializerManager.InitializeSerializers();
+        }
+
+        /// <summary>The method to call before <see cref="SaveGame.loadDataToLocations"/>.</summary>
+        private static void Before_LoadDataToLocations(List<GameLocation> gamelocations)
         {
-            SaveGameHooks.InitializeSerializers();
+            foreach (var loc in gamelocations)
+            {
+                var objs = loc.netObjects.Pairs.ToArray();
+                foreach (var pair in objs)
+                {
+                    if (pair.Value == null)
+                        loc.netObjects.Remove(pair.Key);
+                }
+                var tfs = loc.terrainFeatures.Pairs.ToArray();
+                foreach (var pair in tfs)
+                {
+                    if (pair.Value == null)
+                        loc.terrainFeatures.Remove(pair.Key);
+                }
+            }
         }
-    }
 
-    [HarmonyPatch]
-    public static class SaveGameLoadEnumeratorPatch
-    {
+        /// <summary>The method which transpiles <see cref="SaveGame.getLoadEnumerator"/>.</summary>
+        internal static IEnumerable<CodeInstruction> Transpile_GetLoadEnumerator(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            var newInsns = new List<CodeInstruction>();
+            foreach (var insn in insns)
+            {
+                if (insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo).Name == "Deserialize")
+                {
+                    insn.opcode = OpCodes.Call;
+                    insn.operand = PatchHelper.RequireMethod<SaveGamePatcher>(nameof(DeserializeProxy));
+
+                    // We'll need the file path too since we can't use the current save constant.
+                    if (original.DeclaringType == typeof(LoadGameMenu))
+                    {
+                        newInsns.Add(new CodeInstruction(OpCodes.Ldloc_S, 5));
+                        newInsns.Add(new CodeInstruction(OpCodes.Ldc_I4_0));
+                    }
+                    else
+                    {
+                        newInsns.Add(new CodeInstruction(OpCodes.Ldnull));
+                        newInsns.Add(new CodeInstruction(OpCodes.Ldc_I4_1));
+                    }
+                }
+                newInsns.Add(insn);
+            }
+
+            return newInsns;
+        }
+
+        /// <summary>The method which transpiles <see cref="SaveGame.getSaveEnumerator"/>.</summary>
+        internal static IEnumerable<CodeInstruction> Transpile_GetSaveEnumerator(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            int skip = 0;
+
+            var newInsns = new List<CodeInstruction>();
+            foreach (var insn in insns)
+            {
+                if (skip > 0)
+                {
+                    --skip;
+                    continue;
+                }
+
+                if (insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo).Name == "Serialize")
+                {
+                    insn.opcode = OpCodes.Call;
+                    insn.operand = PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SerializeProxy));
+
+                    // So, I couldn't figure out how to get SerializeProxy to not write the start/end tags of SaveGame
+                    // So instead, remove when SaveGame does it.
+                    // Search a few instructions before since one occurs at a different distance than the other.
+                    for (int i = 1; i < 6; ++i)
+                    {
+                        if (newInsns[newInsns.Count - i].opcode == OpCodes.Callvirt && (newInsns[newInsns.Count - i].operand as MethodInfo).Name == "WriteStartDocument")
+                        {
+                            newInsns.RemoveAt(newInsns.Count - i);
+                            newInsns.RemoveAt(newInsns.Count - i);
+                            skip = 2;
+                            break;
+                        }
+                    }
+                }
+                newInsns.Add(insn);
+            }
+
+            return newInsns;
+        }
+
+        /****
+        ** GetLoadEnumerator helpers
+        ****/
         private static Type FindModType(string xmlType)
         {
             return SpaceCore.modTypes.SingleOrDefault(t => t.GetCustomAttribute<XmlTypeAttribute>().TypeName == xmlType);
@@ -230,7 +302,7 @@ namespace SpaceCore.Overrides
             }
         }
 
-        public static object DeserializeProxy(XmlSerializer serializer, Stream stream, string farmerPath, bool fromSaveGame)
+        private static object DeserializeProxy(XmlSerializer serializer, Stream stream, string farmerPath, bool fromSaveGame)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(stream);
@@ -238,14 +310,14 @@ namespace SpaceCore.Overrides
             string filePath = null;
             if (fromSaveGame)
             {
-                farmerPath = Path.Combine(Constants.SavesPath, SaveGameHooks.loadFileContext);
+                farmerPath = Path.Combine(Constants.SavesPath, SaveGamePatcher.SerializerManager.loadFileContext);
                 if (serializer == SaveGame.farmerSerializer)
-                    filePath = Path.Combine(farmerPath, SaveGameHooks.FarmerFilename);
+                    filePath = Path.Combine(farmerPath, SaveGamePatcher.SerializerManager.FarmerFilename);
                 else
-                    filePath = Path.Combine(farmerPath, SaveGameHooks.Filename);
+                    filePath = Path.Combine(farmerPath, SaveGamePatcher.SerializerManager.Filename);
             }
             else
-                filePath = Path.Combine(Path.GetDirectoryName(farmerPath), SaveGameHooks.FarmerFilename);
+                filePath = Path.Combine(Path.GetDirectoryName(farmerPath), SaveGamePatcher.SerializerManager.FarmerFilename);
 
             if (File.Exists(filePath))
             {
@@ -258,72 +330,9 @@ namespace SpaceCore.Overrides
             return serializer.Deserialize(new XmlTextReader(new StringReader(doc.OuterXml)));
         }
 
-        public static IEnumerable<MethodBase> TargetMethods()
-        {
-            List<MethodBase> ret = new List<MethodBase>();
-            foreach (var type in typeof(SaveGame).GetNestedTypes(BindingFlags.NonPublic))
-            {
-                if (type.Name.Contains("getLoadEnumerator"))
-                {
-                    // Primary enumerator method
-                    ret.Add(type.GetMethod("MoveNext", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance));
-                }
-                else if (type.Name.Contains("<>") && type.Name != "<>c")
-                {
-                    foreach (var meth in type.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
-                    {
-                        if (meth.Name.Contains("getLoadEnumerator"))
-                        {
-                            // A lambda inside the enumerator
-                            ret.Add(meth);
-                            break;
-                        }
-                    }
-                }
-            }
-            if (ret.Count != 2)
-            {
-                Log.warn($"Found {ret.Count} transpiler targets, expected 2");
-                foreach (var meth in ret)
-                {
-                    Log.trace("\t" + meth.Name + " " + meth);
-                }
-            }
-            ret.Add(AccessTools.Method(typeof(LoadGameMenu), "FindSaveGames"));
-            return ret;
-        }
-
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
-        {
-            var newInsns = new List<CodeInstruction>();
-            foreach (var insn in insns)
-            {
-                if (insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo).Name == "Deserialize")
-                {
-                    insn.opcode = OpCodes.Call;
-                    insn.operand = typeof(SaveGameLoadEnumeratorPatch).GetMethod(nameof(DeserializeProxy));
-
-                    // We'll need the file path too since we can't use the current save constant.
-                    if (original.DeclaringType == typeof(LoadGameMenu))
-                    {
-                        newInsns.Add(new CodeInstruction(OpCodes.Ldloc_S, 5));
-                        newInsns.Add(new CodeInstruction(OpCodes.Ldc_I4_0));
-                    }
-                    else
-                    {
-                        newInsns.Add(new CodeInstruction(OpCodes.Ldnull));
-                        newInsns.Add(new CodeInstruction(OpCodes.Ldc_I4_1));
-                    }
-                }
-                newInsns.Add(insn);
-            }
-
-            return newInsns;
-        }
-    }
-    [HarmonyPatch]
-    public static class SaveGameSaveEnumeratorPatch
-    {
+        /****
+        ** GetSaveEnumerator helpers
+        ****/
         private static bool FindAndRemoveModNodes(XmlNode node, List<KeyValuePair<string, string>> modNodes, string currPath = "")
         {
             if (node.HasChildNodes)
@@ -351,7 +360,7 @@ namespace SpaceCore.Overrides
             return false;
         }
 
-        public static void SerializeProxy(XmlSerializer serializer, XmlWriter origWriter, object obj)
+        private static void SerializeProxy(XmlSerializer serializer, XmlWriter origWriter, object obj)
         {
             //Log.trace( "Start serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
             using (var ms = new MemoryStream())
@@ -368,95 +377,12 @@ namespace SpaceCore.Overrides
 
                 doc.WriteContentTo(origWriter);
                 if (serializer == SaveGame.farmerSerializer)
-                    File.WriteAllText(Path.Combine(Constants.CurrentSavePath, SaveGameHooks.FarmerFilename), JsonConvert.SerializeObject(modNodes));
+                    File.WriteAllText(Path.Combine(Constants.CurrentSavePath, SaveGamePatcher.SerializerManager.FarmerFilename), JsonConvert.SerializeObject(modNodes));
                 else
-                    File.WriteAllText(Path.Combine(Constants.CurrentSavePath, SaveGameHooks.Filename), JsonConvert.SerializeObject(modNodes));
+                    File.WriteAllText(Path.Combine(Constants.CurrentSavePath, SaveGamePatcher.SerializerManager.Filename), JsonConvert.SerializeObject(modNodes));
                 //Log.trace( "Mid serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
             }
             //Log.trace( "End serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
-        }
-
-        public static IEnumerable<MethodBase> TargetMethods()
-        {
-            List<MethodBase> ret = new List<MethodBase>();
-            foreach (var type in typeof(SaveGame).GetNestedTypes(BindingFlags.NonPublic))
-            {
-                if (type.Name.Contains("getSaveEnumerator"))
-                {
-                    // Primary enumerator method
-                    ret.Add(type.GetMethod("MoveNext", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance));
-                }
-            }
-            if (ret.Count != 1)
-            {
-                Log.warn($"Found {ret.Count} transpiler targets, expected 1");
-                foreach (var meth in ret)
-                {
-                    Log.trace("\t" + meth.Name + " " + meth);
-                }
-            }
-            return ret;
-        }
-
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
-        {
-            int skip = 0;
-
-            var newInsns = new List<CodeInstruction>();
-            foreach (var insn in insns)
-            {
-                if (skip > 0)
-                {
-                    --skip;
-                    continue;
-                }
-
-                if (insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo).Name == "Serialize")
-                {
-                    insn.opcode = OpCodes.Call;
-                    insn.operand = typeof(SaveGameSaveEnumeratorPatch).GetMethod(nameof(SerializeProxy));
-
-                    // So, I couldn't figure out how to get SerializeProxy to not write the start/end tags of SaveGame
-                    // So instead, remove when SaveGame does it.
-                    // Search a few instructions before since one occurs at a different distance than the other.
-                    for (int i = 1; i < 6; ++i)
-                    {
-                        if (newInsns[newInsns.Count - i].opcode == OpCodes.Callvirt && (newInsns[newInsns.Count - i].operand as MethodInfo).Name == "WriteStartDocument")
-                        {
-                            newInsns.RemoveAt(newInsns.Count - i);
-                            newInsns.RemoveAt(newInsns.Count - i);
-                            skip = 2;
-                            break;
-                        }
-                    }
-                }
-                newInsns.Add(insn);
-            }
-
-            return newInsns;
-        }
-    }
-
-    [HarmonyPatch(typeof(SaveGame), nameof(SaveGame.loadDataToLocations))]
-    public static class SaveGameCleanLocationsPatch
-    {
-        public static void Prefix(List<GameLocation> gamelocations)
-        {
-            foreach (var loc in gamelocations)
-            {
-                var objs = loc.netObjects.Pairs.ToArray();
-                foreach (var pair in objs)
-                {
-                    if (pair.Value == null)
-                        loc.netObjects.Remove(pair.Key);
-                }
-                var tfs = loc.terrainFeatures.Pairs.ToArray();
-                foreach (var pair in tfs)
-                {
-                    if (pair.Value == null)
-                        loc.terrainFeatures.Remove(pair.Key);
-                }
-            }
         }
     }
 }

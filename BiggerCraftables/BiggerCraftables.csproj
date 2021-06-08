@@ -13,4 +13,5 @@
 
   <Import Project="$(SolutionDir)\common.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
+  <Import Project="..\SpaceSharedHarmony\SpaceSharedHarmony.projitems" Label="Shared" />
 </Project>

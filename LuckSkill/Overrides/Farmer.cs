@@ -1,17 +1,46 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 
 namespace LuckSkill.Overrides
 {
-    public static class ExperienceGainFix
+    /// <summary>Applies Harmony patches to <see cref="Farmer"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class FarmerPatcher : BasePatcher
     {
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
         {
+            harmony.Patch(
+                original: this.RequireMethod<Farmer>(nameof(Farmer.gainExperience)),
+                prefix: this.GetHarmonyMethod(nameof(Before_GainExperience)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_GainExperience))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Farmer>(nameof(Farmer.getProfessionForSkill)),
+                postfix: this.GetHarmonyMethod(nameof(After_GetProfessionForSkill))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method which transpiles <see cref="Farmer.gainExperience"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_GainExperience(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            // This fixes experience gain.
             // TODO: Learn how to use ILGenerator
 
             int skipCounter = 3; // Skip the first three instructions, which just skip things if it is the luck skill
@@ -29,19 +58,19 @@ namespace LuckSkill.Overrides
 
             return newInsns;
         }
-    }
 
-    public static class OverpoweredGeodeFix
-    {
-        public static void Prefix(Farmer __instance, int which, ref int howMuch)
+        /// <summary>The method to call before <see cref="Farmer.gainExperience"/>.</summary>
+        private static void Before_GainExperience(Farmer __instance, int which, ref int howMuch)
         {
+            // This fixes overpowered geodes.
+
             if (which == Farmer.luckSkill && Game1.currentLocation is MineShaft ms)
             {
                 bool foundGeode = false;
                 var st = new StackTrace();
                 foreach (var frame in st.GetFrames())
                 {
-                    if (frame.GetMethod().Name.Contains("checkStoneForItems"))
+                    if (frame.GetMethod().Name.Contains(nameof(MineShaft.checkStoneForItems)))
                     {
                         foundGeode = true;
                         break;
@@ -58,12 +87,12 @@ namespace LuckSkill.Overrides
                 }
             }
         }
-    }
 
-    public static class FarmerGetProfessionHook
-    {
-        public static void Postfix(Farmer __instance, int skillType, int skillLevel, ref int __result)
+        /// <summary>The method to call after <see cref="Farmer.getProfessionForSkill"/>.</summary>
+        public static void After_GetProfessionForSkill(Farmer __instance, int skillType, int skillLevel, ref int __result)
         {
+            // Get profession hook
+
             if (skillType != Farmer.luckSkill)
                 return;
 

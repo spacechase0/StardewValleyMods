@@ -1,13 +1,35 @@
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace SurfingFestival.Patches
 {
-    [HarmonyPatch(typeof(Farmer), nameof(Farmer.draw), typeof(SpriteBatch))]
-    public static class FarmerDrawPatch
+    /// <summary>Applies Harmony patches to <see cref="Farmer"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class FarmerPatcher : BasePatcher
     {
-        public static void Prefix(Character __instance, SpriteBatch b)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Farmer>(nameof(Farmer.draw), new[] { typeof(SpriteBatch) }),
+                prefix: this.GetHarmonyMethod(nameof(Before_Draw)),
+                postfix: this.GetHarmonyMethod(nameof(After_Draw))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Farmer.draw(SpriteBatch)"/>.</summary>
+        public static void Before_Draw(Character __instance, SpriteBatch b)
         {
             if (Game1.CurrentEvent?.FestivalName != Mod.festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
                 return;
@@ -15,7 +37,8 @@ namespace SurfingFestival.Patches
             Mod.DrawSurfboard(__instance, b);
         }
 
-        public static void Postfix(Character __instance, SpriteBatch b)
+        /// <summary>The method to call after <see cref="Farmer.draw(SpriteBatch)"/>.</summary>
+        public static void After_Draw(Character __instance, SpriteBatch b)
         {
             if (Game1.CurrentEvent?.FestivalName != Mod.festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
                 return;

@@ -1,39 +1,69 @@
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Harmony;
 using SpaceCore.Events;
+using StardewModdingAPI;
 using StardewValley;
 using xTile.Dimensions;
 
 namespace SpaceCore.Overrides
 {
-    public class ActionHook
+    /// <summary>Applies Harmony patches to <see cref="GameLocation"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class GameLocationPatcher : BasePatcher
     {
-        public static bool Prefix(GameLocation __instance, string action, Farmer who, Location tileLocation)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<GameLocation>(nameof(GameLocation.performAction)),
+                prefix: this.GetHarmonyMethod(nameof(Before_PerformAction))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<GameLocation>(nameof(GameLocation.performTouchAction)),
+                prefix: this.GetHarmonyMethod(nameof(Before_PerformTouchAction))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<GameLocation>(nameof(GameLocation.explode)),
+                postfix: this.GetHarmonyMethod(nameof(After_Explode))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<GameLocation>(nameof(GameLocation.updateEvenIfFarmerIsntHere)),
+                postfix: this.GetHarmonyMethod(nameof(After_UpdateEvenIfFarmerIsntHere))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="GameLocation.performAction"/>.</summary>
+        private static bool Before_PerformAction(GameLocation __instance, string action, Farmer who, Location tileLocation)
         {
             return !SpaceEvents.InvokeActionActivated(who, action, tileLocation);
         }
-    }
 
-    public class TouchActionHook
-    {
-        public static bool Prefix(GameLocation __instance, string fullActionString, Vector2 playerStandingPosition)
+        /// <summary>The method to call before <see cref="GameLocation.performTouchAction"/>.</summary>
+        private static bool Before_PerformTouchAction(GameLocation __instance, string fullActionString, Vector2 playerStandingPosition)
         {
             return !SpaceEvents.InvokeTouchActionActivated(Game1.player, fullActionString, new Location(0, 0));
         }
-    }
 
-    public static class ExplodeHook
-    {
-        public static void Postfix(GameLocation __instance, Vector2 tileLocation, int radius, Farmer who)
+        /// <summary>The method to call after <see cref="GameLocation.explode"/>.</summary>
+        private static void After_Explode(GameLocation __instance, Vector2 tileLocation, int radius, Farmer who)
         {
             SpaceEvents.InvokeBombExploded(who, tileLocation, radius);
         }
-    }
 
-    [HarmonyPatch(typeof(GameLocation), nameof(GameLocation.updateEvenIfFarmerIsntHere))]
-    public static class UpdateEvenWithoutFarmerHook
-    {
-        public static void Postfix(GameLocation __instance, GameTime time)
+        /// <summary>The method to call after <see cref="GameLocation.updateEvenIfFarmerIsntHere"/>.</summary>
+        private static void After_UpdateEvenIfFarmerIsntHere(GameLocation __instance, GameTime time)
         {
             // TODO: Optimize, maybe config file too?
             __instance.terrainFeatures.Values.DoIf((tf) => tf is IUpdateEvenWithoutFarmer, (tf) => (tf as IUpdateEvenWithoutFarmer).UpdateEvenWithoutFarmer(__instance, time));

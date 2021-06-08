@@ -1,15 +1,43 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using Harmony;
 using JsonAssets.Data;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
 
 namespace JsonAssets.Overrides
 {
-    public static class ItemPatches
+    /// <summary>Applies Harmony patches to <see cref="Item"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class ItemPatcher : BasePatcher
     {
-        public static void CanBeDropped_Postfix(Item __instance, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Item>(nameof(Item.canBeDropped)),
+                postfix: this.GetHarmonyMethod(nameof(After_CanBeDropped))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Item>(nameof(Item.canBeTrashed)),
+                postfix: this.GetHarmonyMethod(nameof(After_CanBeTrashed))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call after <see cref="Item.canBeDropped"/>.</summary>
+        private static void After_CanBeDropped(Item __instance, ref bool __result)
         {
             try
             {
@@ -25,11 +53,12 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(CanBeDropped_Postfix)} for {__instance} #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.error($"Failed in {nameof(After_CanBeDropped)} for {__instance} #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
             }
         }
 
-        public static void CanBeTrashed_Postfix(Item __instance, ref bool __result)
+        /// <summary>The method to call after <see cref="Item.canBeTrashed"/>.</summary>
+        private static void After_CanBeTrashed(Item __instance, ref bool __result)
         {
             try
             {
@@ -54,7 +83,7 @@ namespace JsonAssets.Overrides
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(CanBeTrashed_Postfix)} for {__instance} #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.error($"Failed in {nameof(After_CanBeTrashed)} for {__instance} #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
             }
         }
     }

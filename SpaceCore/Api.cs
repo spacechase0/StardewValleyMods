@@ -56,7 +56,7 @@ namespace SpaceCore
                 throw new ArgumentException("Custom event method must take Must take (Event, GameLocation, GameTime, string[])");
 
             Log.debug("Adding event command: " + command + " = " + info);
-            EventTryCommandPatch.customCommands.Add(command, info);
+            EventPatcher.customCommands.Add(command, info);
         }
 
         public void RegisterSerializerType(Type type)

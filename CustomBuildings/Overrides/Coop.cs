@@ -1,15 +1,68 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using Spacechase.Shared.Harmony;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
 
 namespace CustomBuildings.Overrides
 {
-    public static class CoopPatches
+    /// <summary>Applies Harmony patches to <see cref="Coop"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    internal class CoopPatcher : BasePatcher
     {
-        public static bool getIndoors_Prefix(Coop __instance, string nameOfIndoorsWithoutUnique, ref GameLocation __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Coop>("getIndoors"),
+                prefix: this.GetHarmonyMethod(nameof(CoopPatcher.Before_GetIndoors))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Coop>(nameof(Coop.performActionOnConstruction)),
+                postfix: this.GetHarmonyMethod(nameof(CoopPatcher.After_PerformActionOnConstruction))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Coop>(nameof(Coop.performActionOnUpgrade)),
+                prefix: this.GetHarmonyMethod(nameof(CoopPatcher.Before_PerformActionOnUpgrade))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Coop>(nameof(Coop.dayUpdate)),
+                postfix: this.GetHarmonyMethod(nameof(CoopPatcher.After_DayUpdate))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Coop>(nameof(Coop.upgrade)),
+                prefix: this.GetHarmonyMethod(nameof(CoopPatcher.Before_Upgrade))
+            );
+
+            //harmony.Patch(
+            //    original: this.RequireMethod<Coop>(nameof(Coop.getUpgradeSignLocation)),
+            //    postfix: this.GetHarmonyMethod(nameof(CoopPatcher.After_GetUpgradeSignLocation))
+            //);
+
+            harmony.Patch(
+                original: this.RequireMethod<Coop>(nameof(Coop.draw)),
+                prefix: this.GetHarmonyMethod(nameof(CoopPatcher.Before_Draw))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Coop.getIndoors"/>.</summary>
+        private static bool Before_GetIndoors(Coop __instance, string nameOfIndoorsWithoutUnique, ref GameLocation __result)
         {
             if (!Mod.instance.buildings.ContainsKey(nameOfIndoorsWithoutUnique))
             {
@@ -32,7 +85,8 @@ namespace CustomBuildings.Overrides
             return false;
         }
 
-        public static void performActionOnConstruction_Postfix(Coop __instance, GameLocation location)
+        /// <summary>The method to call after <see cref="Coop.performActionOnConstruction"/>.</summary>
+        private static void After_PerformActionOnConstruction(Coop __instance, GameLocation location)
         {
             if (!Mod.instance.buildings.ContainsKey(__instance.buildingType))
             {
@@ -47,7 +101,8 @@ namespace CustomBuildings.Overrides
             __instance.daysOfConstructionLeft.Value = bdata.DaysToConstruct;
         }
 
-        public static bool performActionOnUpgrade_Prefix(Coop __instance, GameLocation location)
+        /// <summary>The method to call before <see cref="Coop.performActionOnUpgrade"/>.</summary>
+        private static bool Before_PerformActionOnUpgrade(Coop __instance, GameLocation location)
         {
             if (!Mod.instance.buildings.ContainsKey(__instance.buildingType))
             {
@@ -59,7 +114,8 @@ namespace CustomBuildings.Overrides
             return false;
         }
 
-        public static void dayUpdate_Postfix(Coop __instance, int dayOfMonth)
+        /// <summary>The method to call after <see cref="Coop.dayUpdate"/>.</summary>
+        private static void After_DayUpdate(Coop __instance, int dayOfMonth)
         {
             if (!Mod.instance.buildings.ContainsKey(__instance.buildingType))
             {
@@ -86,7 +142,8 @@ namespace CustomBuildings.Overrides
             }
         }
 
-        public static bool upgrade_Prefix(Coop __instance)
+        /// <summary>The method to call before <see cref="Coop.upgrade"/>.</summary>
+        private static bool Before_Upgrade(Coop __instance)
         {
             if (!Mod.instance.buildings.ContainsKey(__instance.buildingType))
             {
@@ -130,7 +187,8 @@ namespace CustomBuildings.Overrides
 
         // this patch doesn't work - crashes the game from __instance being null (your guess is as good as mine)
         /*
-        public static bool getUpgradeSignLocation_Postfix(Coop __instance, ref Vector2 __result)
+        /// <summary>The method to call after <see cref="Coop.getUpgradeSignLocation"/>.</summary>
+        private static bool After_GetUpgradeSignLocation(Coop __instance, ref Vector2 __result)
         {
             if (!Mod.instance.buildings.ContainsKey(__instance.buildingType))
             {
@@ -145,7 +203,8 @@ namespace CustomBuildings.Overrides
         }
         //*/
 
-        public static bool draw_Prefix(Coop __instance, SpriteBatch b)
+        /// <summary>The method to call before <see cref="Coop.draw"/>.</summary>
+        private static bool Before_Draw(Coop __instance, SpriteBatch b)
         {
             if (!Mod.instance.buildings.ContainsKey(__instance.buildingType))
             {

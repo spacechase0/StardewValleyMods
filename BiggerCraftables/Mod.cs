@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using Harmony;
+using BiggerCraftables.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -32,8 +33,10 @@ namespace BiggerCraftables
 
             helper.Events.World.ObjectListChanged += OnObjectListChanged;
 
-            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-            harmony.PatchAll();
+            HarmonyPatcher.Apply(this,
+                new ObjectPatcher(),
+                new UtilityPatcher()
+            );
         }
 
         public override object GetApi()
