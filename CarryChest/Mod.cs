@@ -1,5 +1,5 @@
 using System.Linq;
-using CarryChest.Overrides;
+using CarryChest.Patches;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
 using SpaceShared;

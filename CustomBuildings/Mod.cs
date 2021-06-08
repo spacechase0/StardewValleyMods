@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
-using CustomBuildings.Overrides;
+using CustomBuildings.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;

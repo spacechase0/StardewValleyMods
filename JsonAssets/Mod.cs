@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using JsonAssets.Data;
 using JsonAssets.Other.ContentPatcher;
-using JsonAssets.Overrides;
+using JsonAssets.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;

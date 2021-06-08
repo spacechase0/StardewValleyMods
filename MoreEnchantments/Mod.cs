@@ -1,5 +1,5 @@
 using MoreEnchantments.Enchantments;
-using MoreEnchantments.Harmony;
+using MoreEnchantments.Patches;
 using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;

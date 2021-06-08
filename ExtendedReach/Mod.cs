@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ExtendedReach.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;

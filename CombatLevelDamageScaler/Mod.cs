@@ -1,4 +1,4 @@
-using CombatLevelDamageScaler.Overrides;
+using CombatLevelDamageScaler.Patches;
 using Spacechase.Shared.Harmony;
 using SpaceShared;
 using SpaceShared.APIs;

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using SpaceCore.Overrides;
+using SpaceCore.Patches;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Characters;

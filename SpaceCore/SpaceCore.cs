@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Spacechase.Shared.Harmony;
 using SpaceCore.Framework;
-using SpaceCore.Overrides;
+using SpaceCore.Patches;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;

@@ -17,7 +17,7 @@ using StardewValley.Objects;
 using StardewValley.Projectiles;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
-using TheftOfTheWinterStar.Overrides;
+using TheftOfTheWinterStar.Patches;
 using xTile.Tiles;
 
 namespace TheftOfTheWinterStar
