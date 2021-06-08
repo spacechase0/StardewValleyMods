@@ -22,7 +22,7 @@ namespace CustomNPCFixes
         private bool firstTick = true;
         private void onUpdate(object sender, UpdateTickedEventArgs e)
         {
-            if ( firstTick )
+            if (firstTick)
             {
                 firstTick = false;
 
@@ -51,40 +51,40 @@ namespace CustomNPCFixes
             List<NPC> allCharacters = Utility.getPooledList();
             try
             {
-                Utility.getAllCharacters( allCharacters );
+                Utility.getAllCharacters(allCharacters);
                 Dictionary<string, string> NPCDispositions = Game1.content.Load<Dictionary<string, string>>("Data\\NPCDispositions");
-                foreach ( string s in NPCDispositions.Keys )
+                foreach (string s in NPCDispositions.Keys)
                 {
                     bool found = false;
-                    if ( ( s == "Kent" && Game1.year <= 1 ) || ( s == "Leo" && !Game1.MasterPlayer.hasOrWillReceiveMail( "addedParrotBoy" ) ) )
+                    if ((s == "Kent" && Game1.year <= 1) || (s == "Leo" && !Game1.MasterPlayer.hasOrWillReceiveMail("addedParrotBoy")))
                     {
                         continue;
                     }
-                    foreach ( NPC n2 in allCharacters )
+                    foreach (NPC n2 in allCharacters)
                     {
-                        if ( !n2.isVillager() || !n2.Name.Equals( s ) )
+                        if (!n2.isVillager() || !n2.Name.Equals(s))
                         {
                             continue;
                         }
                         found = true;
-                        if ( ( bool ) n2.datable && n2.getSpouse() == null )
+                        if ((bool)n2.datable && n2.getSpouse() == null)
                         {
                             string defaultMap = NPCDispositions[s].Split('/')[10].Split(' ')[0];
-                            if ( n2.DefaultMap != defaultMap && ( n2.DefaultMap.ToLower().Contains( "cabin" ) || n2.DefaultMap.Equals( "FarmHouse" ) ) )
+                            if (n2.DefaultMap != defaultMap && (n2.DefaultMap.ToLower().Contains("cabin") || n2.DefaultMap.Equals("FarmHouse")))
                             {
-                                Console.WriteLine( "Fixing " + n2.Name + " who was improperly divorced and left stranded" );
+                                Console.WriteLine("Fixing " + n2.Name + " who was improperly divorced and left stranded");
                                 n2.PerformDivorce();
                             }
                         }
                         break;
                     }
-                    if ( !found )
+                    if (!found)
                     {
                         try
                         {
-                            Game1.getLocationFromName( NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 0 ] ).addCharacter( new NPC( new AnimatedSprite( "Characters\\" + NPC.getTextureNameForCharacter( s ), 0, 16, 32 ), new Vector2( Convert.ToInt32( NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 1 ] ) * 64, Convert.ToInt32( NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 2 ] ) * 64 ), NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 0 ], 0, s, null, Game1.content.Load<Texture2D>( "Portraits\\" + NPC.getTextureNameForCharacter( s ) ), eventActor: false ) );
+                            Game1.getLocationFromName(NPCDispositions[s].Split('/')[10].Split(' ')[0]).addCharacter(new NPC(new AnimatedSprite("Characters\\" + NPC.getTextureNameForCharacter(s), 0, 16, 32), new Vector2(Convert.ToInt32(NPCDispositions[s].Split('/')[10].Split(' ')[1]) * 64, Convert.ToInt32(NPCDispositions[s].Split('/')[10].Split(' ')[2]) * 64), NPCDispositions[s].Split('/')[10].Split(' ')[0], 0, s, null, Game1.content.Load<Texture2D>("Portraits\\" + NPC.getTextureNameForCharacter(s)), eventActor: false));
                         }
-                        catch ( Exception )
+                        catch (Exception)
                         {
                         }
                     }
@@ -92,7 +92,7 @@ namespace CustomNPCFixes
             }
             finally
             {
-                Utility.returnPooledList( allCharacters );
+                Utility.returnPooledList(allCharacters);
             }
         }
 

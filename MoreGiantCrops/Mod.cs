@@ -23,7 +23,7 @@ namespace MoreGiantCrops
             Directory.CreateDirectory(Path.Combine(Helper.DirectoryPath, "assets"));
 
             Log.trace("Finding giant crop images");
-            foreach ( var path in Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets"), "*.png") )
+            foreach (var path in Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets"), "*.png"))
             {
                 string filename = Path.GetFileName(path);
                 if (!int.TryParse(filename.Split('.')[0], out int id))
@@ -43,12 +43,12 @@ namespace MoreGiantCrops
             }
 
             var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-            
+
             harmony.Patch(
                 original: AccessTools.Method(typeof(Crop), nameof(Crop.newDay)),
                 transpiler: new HarmonyMethod(typeof(CropPatches), nameof(CropPatches.NewDay_Transpiler))
             );
-            
+
             harmony.Patch(
                 original: AccessTools.Method(typeof(GiantCrop), nameof(GiantCrop.draw)),
                 prefix: new HarmonyMethod(typeof(GiantCropPatches), nameof(GiantCropPatches.Draw_Prefix))

@@ -80,7 +80,7 @@ namespace SpaceCore
             }
         }
 
-        public static AdjustedTarget GetAdjustedTileSheetTarget(Texture2D tex, Rectangle sourceRect )
+        public static AdjustedTarget GetAdjustedTileSheetTarget(Texture2D tex, Rectangle sourceRect)
         {
             int unit = GetTileSheetUnitSize(tex);
             return GetAdjustedTileSheetTargetImpl(unit, sourceRect);
@@ -101,7 +101,7 @@ namespace SpaceCore
                 Log.warn("Unsupported use case for automatic tilesheet expansion");
                 return new AdjustedTarget(0, sourceRect.Y);
             }*/
-            
+
             int index = (int)sourceRect.Y / unit;
             int extra = (int)sourceRect.Y % unit;
 
@@ -116,10 +116,10 @@ namespace SpaceCore
             return new AdjustedTarget(tileSheet, index * unit + extra);
         }
 
-        public static void PatchExtendedTileSheet(this IAssetDataForImage asset, Texture2D source, Rectangle? sourceArea = null, Rectangle? targetArea = null, PatchMode patchMode = PatchMode.Replace )
+        public static void PatchExtendedTileSheet(this IAssetDataForImage asset, Texture2D source, Rectangle? sourceArea = null, Rectangle? targetArea = null, PatchMode patchMode = PatchMode.Replace)
         {
             string assetName = asset.AssetName.Replace('/', '\\');
-            if (!extendedTextureAssets.ContainsKey(assetName) || !targetArea.HasValue )
+            if (!extendedTextureAssets.ContainsKey(assetName) || !targetArea.HasValue)
             {
                 asset.PatchImage(source, sourceArea, targetArea, patchMode);
                 return;
@@ -130,7 +130,7 @@ namespace SpaceCore
 
             var adjustedTarget = GetAdjustedTileSheetTarget(asset.Data, targetArea.Value);
             //Log.trace("Tilesheet target:" + adjustedTarget.TileSheet + " " + adjustedTarget.Y);
-            if ( adjustedTarget.TileSheet == 0 )
+            if (adjustedTarget.TileSheet == 0)
             {
                 asset.PatchImage(source, sourceArea, targetArea, patchMode);
                 return;
@@ -156,21 +156,21 @@ namespace SpaceCore
 
         internal static void UpdateReferences()
         {
-            foreach ( var asset in extendedTextureAssets )
+            foreach (var asset in extendedTextureAssets)
             {
                 extendedTextures.Remove(asset.Value.BaseTileSheet);
                 asset.Value.BaseTileSheet = Game1.content.Load<Texture2D>(asset.Key);
-                if ( asset.Value.BaseTileSheet == null )
+                if (asset.Value.BaseTileSheet == null)
                 {
-                    Log.error( "WHAT? null " + asset.Key );
+                    Log.error("WHAT? null " + asset.Key);
                 }
-                else if ( !extendedTextures.ContainsKey( asset.Value.BaseTileSheet ) )
+                else if (!extendedTextures.ContainsKey(asset.Value.BaseTileSheet))
                 {
-                    extendedTextures.Add( asset.Value.BaseTileSheet, asset.Value );
+                    extendedTextures.Add(asset.Value.BaseTileSheet, asset.Value);
                 }
                 else
                 {
-                    extendedTextures[ asset.Value.BaseTileSheet ] = asset.Value;
+                    extendedTextures[asset.Value.BaseTileSheet] = asset.Value;
                 }
             }
         }
@@ -195,7 +195,7 @@ namespace SpaceCore
     {
         public bool CanLoad<T>(IAssetInfo asset)
         {
-            foreach ( var extAsset in TileSheetExtensions.extendedTextureAssets )
+            foreach (var extAsset in TileSheetExtensions.extendedTextureAssets)
             {
                 for (int i = 0; i < extAsset.Value.Extensions.Count; ++i)
                     if (asset.AssetNameEquals(extAsset.Key + (i + 2).ToString()))
@@ -211,7 +211,7 @@ namespace SpaceCore
             {
                 for (int i = 0; i < extAsset.Value.Extensions.Count; ++i)
                     if (asset.AssetNameEquals(extAsset.Key + (i + 2).ToString()))
-                        return (T) (object) extAsset.Value.Extensions[i];
+                        return (T)(object)extAsset.Value.Extensions[i];
             }
 
             return default(T);

@@ -4,40 +4,40 @@ using StardewValley;
 
 namespace SurfingFestival.Patches
 {
-    [HarmonyPatch( typeof( Event ), nameof( Event.setUpPlayerControlSequence ) )]
+    [HarmonyPatch(typeof(Event), nameof(Event.setUpPlayerControlSequence))]
     public static class EventPlayerControlSequencePatch
     {
-        public static void Postfix( Event __instance, string id )
+        public static void Postfix(Event __instance, string id)
         {
-            if ( id == "surfing" )
+            if (id == "surfing")
             {
-                Mod.instance.Helper.Reflection.GetField<NPC>( __instance, "festivalHost" ).SetValue( __instance.getActorByName( "Lewis" ) );
-                Mod.instance.Helper.Reflection.GetField<string>( __instance, "hostMessage" ).SetValue( "$q -1 null#Ready for the race?#$r -1 0 yes#Yes, let's start.#$r -1 0 no#Not yet." );
+                Mod.instance.Helper.Reflection.GetField<NPC>(__instance, "festivalHost").SetValue(__instance.getActorByName("Lewis"));
+                Mod.instance.Helper.Reflection.GetField<string>(__instance, "hostMessage").SetValue("$q -1 null#Ready for the race?#$r -1 0 yes#Yes, let's start.#$r -1 0 no#Not yet.");
             }
         }
     }
 
-    [HarmonyPatch( typeof( Event ), nameof( Event.setUpFestivalMainEvent ) )]
+    [HarmonyPatch(typeof(Event), nameof(Event.setUpFestivalMainEvent))]
     public static class EventMainEventPatch
     {
-        public static void Postfix( Event __instance )
+        public static void Postfix(Event __instance)
         {
-            if ( !__instance.isSpecificFestival( "summer5" ) )
+            if (!__instance.isSpecificFestival("summer5"))
                 return;
 
             // ...
         }
     }
 
-    [HarmonyPatch( typeof( Event ), nameof( Event.draw ) )]
+    [HarmonyPatch(typeof(Event), nameof(Event.draw))]
     public static class EventDrawPatch
     {
-        public static void Postfix( Event __instance, SpriteBatch b )
+        public static void Postfix(Event __instance, SpriteBatch b)
         {
-            if ( !__instance.isSpecificFestival( "summer5" ) )
+            if (!__instance.isSpecificFestival("summer5"))
                 return;
-            
-            Mod.instance.DrawObstacles( b );
+
+            Mod.instance.DrawObstacles(b);
         }
     }
 }

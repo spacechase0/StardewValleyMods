@@ -7,7 +7,8 @@ namespace Magic.Spells
     {
         public bool DoesDisenchant { get; }
 
-        public EnchantSpell(bool dis) : base(SchoolId.Arcane, dis ? "disenchant" : "enchant")
+        public EnchantSpell(bool dis)
+            : base(SchoolId.Arcane, dis ? "disenchant" : "enchant")
         {
             DoesDisenchant = dis;
         }
@@ -30,13 +31,13 @@ namespace Magic.Spells
             var obj = Game1.player.ActiveObject;
             if (obj == null || obj.bigCraftable.Value)
                 return null;
-            if ( !DoesDisenchant && obj.Quality == 4 ||
-                  DoesDisenchant && obj.Quality == 0 )
+            if (!DoesDisenchant && obj.Quality == 4 ||
+                  DoesDisenchant && obj.Quality == 0)
                 return null;
 
-            var one = (Object) obj.getOne();
+            var one = (Object)obj.getOne();
             int oldPrice = one.sellToStorePrice();
-            if ( !DoesDisenchant )
+            if (!DoesDisenchant)
             {
                 if (++one.Quality == 3)
                     ++one.Quality;
@@ -48,7 +49,7 @@ namespace Magic.Spells
             }
             int newPrice = one.sellToStorePrice();
             int diff = newPrice - oldPrice;
-            
+
             if (!DoesDisenchant && diff * obj.Stack > Game1.player.Money)
                 return null;
 

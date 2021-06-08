@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using StardewValley;
-using SObject = StardewValley.Object;
 
 namespace JsonAssets.Data
 {
@@ -13,11 +12,11 @@ namespace JsonAssets.Data
 
         [JsonIgnore]
         public Texture2D textureColor;
-        
+
         public string Description { get; set; }
 
         public int Price { get; set; }
-        
+
         public bool CanPurchase { get; set; } = false;
         public int PurchasePrice { get; set; }
         public string PurchaseFrom { get; set; } = "Marlon";
@@ -26,7 +25,7 @@ namespace JsonAssets.Data
 
         public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
         public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
-        
+
         public int Defense { get; set; }
         public int Immunity { get; set; }
 

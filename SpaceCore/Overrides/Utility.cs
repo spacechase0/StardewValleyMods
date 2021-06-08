@@ -5,9 +5,9 @@ namespace SpaceCore.Overrides
 {
     public class NightlyFarmEventHook
     {
-        public static void Postfix( ref FarmEvent __result )
+        public static void Postfix(ref FarmEvent __result)
         {
-            __result = SpaceEvents.InvokeChooseNightlyFarmEvent( __result );
+            __result = SpaceEvents.InvokeChooseNightlyFarmEvent(__result);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace SpaceCore.Events
 {
     public class EventArgsAction : CancelableEventArgs
     {
-        internal EventArgsAction( bool touch, string action, Location pos )
+        internal EventArgsAction(bool touch, string action, Location pos)
         {
             TouchAction = touch;
             Action = action.Split(' ')[0];

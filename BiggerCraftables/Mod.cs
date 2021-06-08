@@ -14,19 +14,19 @@ namespace BiggerCraftables
         public static Mod instance;
         public static List<ContentList.Entry> entries = new List<ContentList.Entry>();
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
             instance = this;
             Log.Monitor = Monitor;
 
-            foreach ( var cp in helper.ContentPacks.GetOwned() )
+            foreach (var cp in helper.ContentPacks.GetOwned())
             {
                 var list = cp.ReadJsonFile<ContentList>("content.json");
-                foreach ( var entry in list.BiggerCraftables )
+                foreach (var entry in list.BiggerCraftables)
                 {
-                    entry.Texture = cp.LoadAsset<Texture2D>( entry.Image );
-                    Log.debug( $"Bigger craftable - {entry.Name} from {cp.Manifest.Name} - {entry.Width}x{entry.Length}" );
-                    entries.Add( entry );
+                    entry.Texture = cp.LoadAsset<Texture2D>(entry.Image);
+                    Log.debug($"Bigger craftable - {entry.Name} from {cp.Manifest.Name} - {entry.Width}x{entry.Length}");
+                    entries.Add(entry);
                 }
             }
 
@@ -42,37 +42,37 @@ namespace BiggerCraftables
         }
 
         private bool doingStuff = false;
-        private void OnObjectListChanged( object sender, ObjectListChangedEventArgs e )
+        private void OnObjectListChanged(object sender, ObjectListChangedEventArgs e)
         {
-            if ( doingStuff )
+            if (doingStuff)
                 return;
             doingStuff = true;
 
             var loc = e.Location;
 
-            foreach ( var pair in e.Removed )
+            foreach (var pair in e.Removed)
             {
                 var pos = pair.Key;
                 var obj = pair.Value;
 
-                if ( !obj.bigCraftable.Value )
+                if (!obj.bigCraftable.Value)
                     continue;
-                var entry = entries.SingleOrDefault( cle => cle.Name == obj.Name );
-                if ( entry == null )
+                var entry = entries.SingleOrDefault(cle => cle.Name == obj.Name);
+                if (entry == null)
                     continue;
 
                 int ind = obj.GetBiggerIndex();
 
                 int relPosX = ind % entry.Width, relPosY = entry.Length - 1 - ind / entry.Width;
-                Vector2 basePos = new Vector2( pos.X - relPosX, pos.Y - relPosY );
-                for ( int ix = 0; ix < entry.Width; ++ix )
+                Vector2 basePos = new Vector2(pos.X - relPosX, pos.Y - relPosY);
+                for (int ix = 0; ix < entry.Width; ++ix)
                 {
-                    for ( int iy = 0; iy < entry.Length; ++iy )
+                    for (int iy = 0; iy < entry.Length; ++iy)
                     {
-                        Vector2 localPos = basePos + new Vector2( ix, iy );
-                        if ( localPos == pos || !loc.Objects.ContainsKey( localPos ) )
+                        Vector2 localPos = basePos + new Vector2(ix, iy);
+                        if (localPos == pos || !loc.Objects.ContainsKey(localPos))
                             continue;
-                        loc.Objects.Remove( localPos );
+                        loc.Objects.Remove(localPos);
                     }
                 }
             }

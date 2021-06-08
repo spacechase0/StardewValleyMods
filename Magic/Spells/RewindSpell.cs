@@ -8,9 +8,7 @@ namespace Magic
     public class RewindSpell : Spell
     {
         public RewindSpell()
-        :   base( SchoolId.Arcane, "rewind" )
-        {
-        }
+            : base(SchoolId.Arcane, "rewind") { }
 
         public override int getMaxCastingLevel()
         {

@@ -15,7 +15,7 @@ namespace Magic
             Level = level;
         }
 
-        public PreparedSpell( Spell spell, int level )
+        public PreparedSpell(Spell spell, int level)
         {
             SpellId = spell.ParentSchoolId + ":" + spell.Id;
             Level = level;

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Mono.CSharp;
 using SpaceShared;
@@ -19,10 +18,10 @@ namespace ConsoleCode
             helper.ConsoleCommands.Add("cs", "Execute C# code.", onCommandReceived);
         }
 
-        private void onCommandReceived( string cmd, string[] args )
+        private void onCommandReceived(string cmd, string[] args)
         {
             string line = string.Join(" ", args).Replace('`', '"');
-            if ( args[0] == "--script" )
+            if (args[0] == "--script")
             {
                 line = File.ReadAllText(Path.Combine(Helper.DirectoryPath, args[1]));
             }
@@ -44,7 +43,7 @@ namespace ConsoleCode
                 Log.error("Exception: " + e);
             }
         }
-        
+
         private CompiledMethod makeFunc(string userCode)
         {
             var settings = new CompilerSettings

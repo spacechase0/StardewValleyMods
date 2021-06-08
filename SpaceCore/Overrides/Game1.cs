@@ -45,9 +45,9 @@ namespace SpaceCore.Overrides
     {
         public static void Postfix(Farmer __instance)
         {
-            if ( __instance.itemToEat == null )
+            if (__instance.itemToEat == null)
                 return;
-            SpaceEvents.InvokeOnItemEaten( __instance);
+            SpaceEvents.InvokeOnItemEaten(__instance);
         }
     }
 
@@ -57,5 +57,5 @@ namespace SpaceCore.Overrides
         {
             return !SpaceEvents.InvokeBeforeWarp(ref locationRequest, ref tileX, ref tileY, ref facingDirectionAfterWarp);
         }
-}
+    }
 }

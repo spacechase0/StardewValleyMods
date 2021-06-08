@@ -16,7 +16,7 @@ namespace GenericModConfigMenu
         public static IClickableMenu ActiveConfigMenu;
         private bool ingame;
 
-        public ModConfigMenu( bool inGame )
+        public ModConfigMenu(bool inGame)
         {
             ingame = inGame;
 
@@ -29,15 +29,15 @@ namespace GenericModConfigMenu
 
             var heading = new Label() { String = "Configure Mods", Bold = true };
             heading.LocalPosition = new Vector2((800 - heading.Measure().X) / 2, heading.LocalPosition.Y);
-            table.AddRow( new Element[] { heading } );
+            table.AddRow(new Element[] { heading });
 
             foreach (var modConfigEntry in Mod.instance.configs.OrderBy(pair => pair.Key.Name))
             {
-                if ( ingame && !modConfigEntry.Value.HasAnyInGame )
+                if (ingame && !modConfigEntry.Value.HasAnyInGame)
                     continue;
                 var label = new Label() { String = modConfigEntry.Key.Name };
                 label.Callback = (Element e) => changeToModPage(modConfigEntry.Key);
-                table.AddRow( new Element[] { label } );
+                table.AddRow(new Element[] { label });
             }
 
             ui.AddChild(table);
@@ -78,20 +78,20 @@ namespace GenericModConfigMenu
             base.draw(b);
             b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.viewport.Width, Game1.viewport.Height), new Color(0, 0, 0, 192));
             ui.Draw(b);
-            if ( upperRightCloseButton != null )
+            if (upperRightCloseButton != null)
                 upperRightCloseButton.draw(b); // bring it above the backdrop
-            if ( ingame )
-                drawMouse( b );
+            if (ingame)
+                drawMouse(b);
         }
 
-        private void changeToModPage( IManifest modManifest )
+        private void changeToModPage(IManifest modManifest)
         {
             Log.trace("Changing to mod config page for mod " + modManifest.UniqueID);
             Game1.playSound("bigSelect");
-            if ( !ingame )
-                TitleMenu.subMenu = new SpecificModConfigMenu( modManifest, ingame );
+            if (!ingame)
+                TitleMenu.subMenu = new SpecificModConfigMenu(modManifest, ingame);
             else
-                Game1.activeClickableMenu = new SpecificModConfigMenu( modManifest, ingame );
+                Game1.activeClickableMenu = new SpecificModConfigMenu(modManifest, ingame);
         }
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)

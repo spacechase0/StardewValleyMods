@@ -12,7 +12,7 @@ namespace GenericModConfigMenu
             public string Name { get; }
             public string DisplayName { get; set; }
             public List<Action<string, object>> ChangeHandler { get; } = new List<Action<string, object>>();
-            public List<BaseModOption> Options{ get; set; } = new List<BaseModOption>();
+            public List<BaseModOption> Options { get; set; } = new List<BaseModOption>();
 
             public ModPage(string name)
             {
@@ -34,12 +34,12 @@ namespace GenericModConfigMenu
 
         public bool HasAnyInGame = false;
 
-        public ModConfig(IManifest manifest, Action revertToDefault, Action saveToFile )
+        public ModConfig(IManifest manifest, Action revertToDefault, Action saveToFile)
         {
             ModManifest = manifest;
             RevertToDefault = revertToDefault;
             SaveToFile = saveToFile;
-            Options.Add( "", ActiveRegisteringPage = new ModPage( "" ) );
+            Options.Add("", ActiveRegisteringPage = new ModPage(""));
         }
     }
 }

@@ -10,9 +10,8 @@ namespace Magic.Spells
 {
     public class SpiritSpell : Spell
     {
-        public SpiritSpell() : base(SchoolId.Eldritch, "spirit")
-        {
-        }
+        public SpiritSpell()
+            : base(SchoolId.Eldritch, "spirit") { }
 
         public override int getManaCost(Farmer player, int level)
         {
@@ -46,8 +45,8 @@ namespace Magic.Spells
         public SpiritEffect(Farmer theSummoner)
         {
             summoner = theSummoner;
-            tex = Game1.content.Load< Texture2D >("Characters\\Junimo");
-            
+            tex = Game1.content.Load<Texture2D>("Characters\\Junimo");
+
             pos = summoner.Position;
             prevSummonerLoc = summoner.currentLocation;
         }
@@ -61,12 +60,12 @@ namespace Magic.Spells
 
             float nearestDist = float.MaxValue;
             Monster nearestMob = null;
-            foreach ( var character in summoner.currentLocation.characters )
+            foreach (var character in summoner.currentLocation.characters)
             {
-                if ( character is Monster mob )
+                if (character is Monster mob)
                 {
                     float dist = Utility.distance(mob.GetBoundingBox().Center.X, summoner.Position.X, mob.GetBoundingBox().Center.Y, summoner.Position.Y);
-                    if ( dist < nearestDist )
+                    if (dist < nearestDist)
                     {
                         nearestDist = dist;
                         nearestMob = mob;
@@ -76,16 +75,16 @@ namespace Magic.Spells
 
             if (attackTimer > 0)
                 --attackTimer;
-            if ( nearestMob != null )
+            if (nearestMob != null)
             {
                 Vector2 unit = nearestMob.Position - pos;
                 unit.Normalize();
 
                 pos += unit * 7;
-                
-                if ( Utility.distance(nearestMob.Position.X, pos.X, nearestMob.Position.Y, pos.Y) < Game1.tileSize )
+
+                if (Utility.distance(nearestMob.Position.X, pos.X, nearestMob.Position.Y, pos.Y) < Game1.tileSize)
                 {
-                    if ( attackTimer <= 0 )
+                    if (attackTimer <= 0)
                     {
                         attackTimer = 45;
                         int baseDmg = 20 * (summoner.CombatLevel + 1);
@@ -97,14 +96,14 @@ namespace Magic.Spells
                 }
             }
 
-            if ( --timeLeft <= 0 )
+            if (--timeLeft <= 0)
                 return false;
             return true;
         }
 
         public void Draw(SpriteBatch b)
         {
-            if ( ++animTimer >= 6 )
+            if (++animTimer >= 6)
             {
                 animTimer = 0;
                 if (++animFrame >= 12)

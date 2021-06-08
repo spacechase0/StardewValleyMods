@@ -33,7 +33,7 @@ namespace CustomCritters
                     Log.warn($"   {contentPack.Manifest.Name}: ignored (no critter.png file).");
                     continue;
                 }
-                Log.info( contentPack.Manifest.Name == data.Id ? contentPack.Manifest.Name : $"   {contentPack.Manifest.Name} (id: {data.Id})");
+                Log.info(contentPack.Manifest.Name == data.Id ? contentPack.Manifest.Name : $"   {contentPack.Manifest.Name} (id: {data.Id})");
                 CritterEntry.Register(data);
             }
         }
@@ -41,12 +41,12 @@ namespace CustomCritters
         /// <summary>Raised after a player warps to a new location.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onWarped( object sender, WarpedEventArgs e )
+        private void onWarped(object sender, WarpedEventArgs e)
         {
             if (!e.IsLocalPlayer || Game1.CurrentEvent != null)
                 return;
 
-            foreach ( var entry in CritterEntry.critters )
+            foreach (var entry in CritterEntry.critters)
             {
                 for (int i = 0; i < entry.Value.SpawnAttempts; ++i)
                 {
@@ -75,11 +75,11 @@ namespace CustomCritters
             foreach (string folderPath in Directory.EnumerateDirectories(legacyRoot))
             {
                 yield return this.Helper.ContentPacks.CreateTemporary(
-                    directoryPath: folderPath, 
+                    directoryPath: folderPath,
                     id: Guid.NewGuid().ToString("N"),
                     name: new DirectoryInfo(folderPath).Name,
-                    description: null, 
-                    author: null, 
+                    description: null,
+                    author: null,
                     version: new SemanticVersion(1, 0, 0)
                 );
             }

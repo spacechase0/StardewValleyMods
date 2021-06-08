@@ -16,29 +16,29 @@ namespace BiggerJunimoChest
             instance = this;
             Log.Monitor = Monitor;
 
-            var harmony = HarmonyInstance.Create( ModManifest.UniqueID );
+            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
             harmony.PatchAll();
         }
     }
 
-    [HarmonyPatch(typeof(Chest), nameof( Chest.GetActualCapacity ))]
+    [HarmonyPatch(typeof(Chest), nameof(Chest.GetActualCapacity))]
     public static class LargerJunimoChestCapacityPatch
     {
-        public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
 
             int counter = 0;
 
             var newInsns = new List<CodeInstruction>();
-            foreach ( var insn in insns )
+            foreach (var insn in insns)
             {
-                if ( insn.opcode == OpCodes.Ldc_I4_S && (sbyte) insn.operand == (sbyte) 9 )
+                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == (sbyte)9)
                 {
-                    if ( ++counter == 2 )
-                        insn.operand = (sbyte) 36;
+                    if (++counter == 2)
+                        insn.operand = (sbyte)36;
                 }
-                newInsns.Add( insn );
+                newInsns.Add(insn);
             }
 
             return newInsns;

@@ -26,12 +26,13 @@ namespace Magic.Game
                     checkAction(prevRider, currentLocation);
                     dismountedOnce = true;
                 }
-                else*/ if ( !dismounting )
+                else*/
+                if (!dismounting)
                     currentLocation.characters.Remove(this);
                 return;
             }
 
-            if ( !location.IsOutdoors )
+            if (!location.IsOutdoors)
             {
                 checkAction(rider, location);
             }
@@ -43,7 +44,7 @@ namespace Magic.Game
         public override void draw(SpriteBatch b)
         {
             //Game1.player.draw(b);
-            b.Draw(tex, getLocalPosition(Game1.viewport) + new Vector2( -Game1.tileSize * 0.90f, -Game1.tileSize * 0.75f ), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
+            b.Draw(tex, getLocalPosition(Game1.viewport) + new Vector2(-Game1.tileSize * 0.90f, -Game1.tileSize * 0.75f), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
         }
 
         public override bool checkAction(Farmer who, GameLocation l)
@@ -54,7 +55,7 @@ namespace Magic.Game
             this.dismounting.Value = true;
             this.farmerPassesThrough = false;
             this.rider.TemporaryPassableTiles.Clear();
-            Vector2 tileForCharacter = Utility.recursiveFindOpenTileForCharacter((Character)this.rider, this.rider.currentLocation, this.rider.getTileLocation(), 9*9);
+            Vector2 tileForCharacter = Utility.recursiveFindOpenTileForCharacter((Character)this.rider, this.rider.currentLocation, this.rider.getTileLocation(), 9 * 9);
             this.dismounting.Value = false;
             this.Halt();
             if (!tileForCharacter.Equals(Vector2.Zero) /*&& (double)Vector2.Distance(tileForCharacter, this.rider.getTileLocation()) < 2.0*/)

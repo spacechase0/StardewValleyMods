@@ -34,7 +34,7 @@ namespace MoreBuildings
         {
             instance = this;
             Log.Monitor = Monitor;
-            
+
             helper.Events.Display.MenuChanged += onMenuChanged;
             helper.Events.Player.Warped += onWarped;
             helper.Events.Specialized.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
@@ -55,7 +55,7 @@ namespace MoreBuildings
         /// <param name="e">The event arguments.</param>
         private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( e.NewMenu is CarpenterMenu carp )
+            if (e.NewMenu is CarpenterMenu carp)
             {
                 var blueprints = Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
                 //if ( Game1.getFarm().isBuildingConstructed("Shed"))
@@ -74,7 +74,7 @@ namespace MoreBuildings
             if (!e.IsLocalPlayer)
                 return;
 
-            if ( e.OldLocation is MiniSpaLocation )
+            if (e.OldLocation is MiniSpaLocation)
             {
                 Game1.player.changeOutOfSwimSuit();
                 Game1.player.swimming.Value = false;
@@ -83,17 +83,17 @@ namespace MoreBuildings
             BuildableGameLocation farm = e.NewLocation as BuildableGameLocation;
             if (farm == null)
                 farm = e.OldLocation as BuildableGameLocation;
-            if ( farm != null )
+            if (farm != null)
             {
-                for ( int i = 0; i < farm.buildings.Count; ++i )
+                for (int i = 0; i < farm.buildings.Count; ++i)
                 {
                     var b = farm.buildings[i];
 
                     // This is probably a new building if it hasn't been converted yet.
-                    if ( b.buildingType.Value == "Shed2" && !(b is BigShedBuilding))
+                    if (b.buildingType.Value == "Shed2" && !(b is BigShedBuilding))
                     {
                         Log.debug($"Converting big shed at ({b.tileX}, {b.tileY}) to actual big shed.");
-                        
+
                         farm.buildings[i] = new BigShedBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
                         farm.buildings[i].daysOfConstructionLeft.Value = b.daysOfConstructionLeft.Value;
@@ -133,7 +133,7 @@ namespace MoreBuildings
                         farm.buildings[i].tilesHigh.Value = b.tilesHigh.Value;
                         farm.buildings[i].load();
                     }
-                    else if (b.buildingType.Value  == "MiniSpa" && !(b is MiniSpaBuilding))
+                    else if (b.buildingType.Value == "MiniSpa" && !(b is MiniSpaBuilding))
                     {
                         Log.debug($"Converting mini spa at ({b.tileX}, {b.tileY}) to actual mini spa.");
 
@@ -158,14 +158,14 @@ namespace MoreBuildings
         /// <param name="e">The event arguments.</param>
         private void onUnvalidatedUpdateTicked(object sender, EventArgs e)
         {
-            var task = (Task) typeof(Game1).GetField("_newDayTask", BindingFlags.Static | BindingFlags.NonPublic).GetValue( null );
-            if ( task != null && !taskWasThere )
+            var task = (Task)typeof(Game1).GetField("_newDayTask", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+            if (task != null && !taskWasThere)
             {
-                foreach ( var loc in Game1.locations )
+                foreach (var loc in Game1.locations)
                 {
-                    if ( loc is BuildableGameLocation buildable )
+                    if (loc is BuildableGameLocation buildable)
                     {
-                        for ( int i = 0; i < buildable.buildings.Count; ++i )
+                        for (int i = 0; i < buildable.buildings.Count; ++i)
                         {/*
                             if ( buildable.buildings[ i ].buildingType.Value == "Shed" && buildable.buildings[i].daysUntilUpgrade.Value == 1 )
                             {

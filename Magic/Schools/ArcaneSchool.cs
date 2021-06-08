@@ -4,9 +4,8 @@ namespace Magic.Schools
 {
     internal class ArcaneSchool : School
     {
-        public ArcaneSchool() : base( SchoolId.Arcane )
-        {
-        }
+        public ArcaneSchool()
+            : base(SchoolId.Arcane) { }
 
         public override Spell[] GetSpellsTier1()
         {

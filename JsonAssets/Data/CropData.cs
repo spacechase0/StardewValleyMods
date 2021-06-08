@@ -53,7 +53,7 @@ namespace JsonAssets.Data
         {
             string str = "";
             //str += GetProductId() + "/";
-            foreach ( var phase in Phases )
+            foreach (var phase in Phases)
             {
                 str += phase + " ";
             }

@@ -14,8 +14,8 @@ namespace GenericModConfigMenu.ModOption
         {
         }
 
-        public PageLabelModOption( string name, string desc, string newPage, IManifest mod )
-        :   base( name, desc, name, mod )
+        public PageLabelModOption(string name, string desc, string newPage, IManifest mod)
+            : base(name, desc, name, mod)
         {
             NewPage = newPage;
         }

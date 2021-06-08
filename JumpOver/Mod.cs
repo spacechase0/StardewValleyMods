@@ -40,8 +40,8 @@ namespace JumpOver
         {
             if (!Context.IsWorldReady || !Context.IsPlayerFree || Game1.activeClickableMenu != null)
                 return;
-            
-            if ( e.Button == Config.keyJump && Game1.player.yJumpVelocity == 0 )
+
+            if (e.Button == Config.keyJump && Game1.player.yJumpVelocity == 0)
             {
                 // This is terrible for this case, redo it
                 new Jump(Game1.player, Helper.Events);
@@ -85,10 +85,10 @@ namespace JumpOver
                     int ox = 0, oy = 0; // Offset x, y
                     switch (player.facingDirection.Value)
                     {
-                        case Game1.up:    oy = -1; break;
-                        case Game1.down:  oy =  1; break;
-                        case Game1.left:  ox = -1; break;
-                        case Game1.right: ox =  1; break;
+                        case Game1.up: oy = -1; break;
+                        case Game1.down: oy = 1; break;
+                        case Game1.left: ox = -1; break;
+                        case Game1.right: ox = 1; break;
                     }
 
                     var bb = player.GetBoundingBox();
@@ -104,7 +104,7 @@ namespace JumpOver
                     bool n2 = player.currentLocation.isCollidingPosition(bb2, Game1.viewport, true, 0, false, player);
 
                     //Log.trace($"{n0} {n1} {n2}");
-                    if ( n0 || ( !n0 && n1 && !n2 ) /*|| wasGoingOver*/ )
+                    if (n0 || (!n0 && n1 && !n2) /*|| wasGoingOver*/ )
                     {
                         //wasGoingOver = true;
                         Game1.player.canMove = false;

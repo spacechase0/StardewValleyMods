@@ -25,7 +25,7 @@ namespace SpaceCore.UI
         public void ScrollBy(int amount)
         {
             int row = Util.Clamp(0, TopRow + amount, MaxTopRow);
-            if ( row != TopRow )
+            if (row != TopRow)
             {
                 Game1.playSound("shwip");
                 TopRow = row;
@@ -34,7 +34,7 @@ namespace SpaceCore.UI
 
         public void ScrollTo(int row)
         {
-            if ( TopRow != row )
+            if (TopRow != row)
             {
                 Game1.playSound("shiny4");
                 TopRow = Util.Clamp(0, row, MaxTopRow);

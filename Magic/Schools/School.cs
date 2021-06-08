@@ -11,13 +11,13 @@ namespace Magic.Schools
         public virtual Spell[] GetSpellsTier2() { return new Spell[0]; }
         public virtual Spell[] GetSpellsTier3() { return new Spell[0]; }
 
-        protected School( string id )
+        protected School(string id)
         {
             Id = id;
         }
 
         private static Dictionary<string, School> schools;
-        public static void registerSchool( School school )
+        public static void registerSchool(School school)
         {
             if (schools == null)
                 init();
@@ -25,7 +25,7 @@ namespace Magic.Schools
             schools.Add(school.Id, school);
         }
 
-        public static School getSchool( string id )
+        public static School getSchool(string id)
         {
             if (schools == null)
                 init();
@@ -33,7 +33,7 @@ namespace Magic.Schools
             return schools[id];
         }
 
-        public static ICollection< string > getSchoolList()
+        public static ICollection<string> getSchoolList()
         {
             if (schools == null)
                 init();

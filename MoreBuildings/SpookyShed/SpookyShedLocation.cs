@@ -18,9 +18,7 @@ namespace MoreBuildings.SpookyShed
         public const int BUG_MEAT = 684;
 
         public SpookyShedLocation()
-        :   base( "Maps\\SpookyShed", "SpookyShed" )
-        {
-        }
+            : base("Maps\\SpookyShed", "SpookyShed") { }
 
         protected override void initNetFields()
         {
@@ -31,7 +29,7 @@ namespace MoreBuildings.SpookyShed
         public override void drawAboveFrontLayer(SpriteBatch b)
         {
             base.drawAboveFrontLayer(b);
-            
+
             Color col = Color.White;
             if (currSpawnerItem == BAT_WING)
                 col = Color.Gray;
@@ -42,7 +40,7 @@ namespace MoreBuildings.SpookyShed
             else if (currSpawnerItem == BUG_MEAT)
                 col = Color.Pink;
 
-            
+
             var tileLocation = new Vector2(10, 9);
             b.Draw(Mod.instance.spookyGemTex, Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocation.X * (float)Game1.tileSize, tileLocation.Y * (float)Game1.tileSize)), null, col, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
         }
@@ -60,9 +58,9 @@ namespace MoreBuildings.SpookyShed
 
         public override bool checkAction(xTile.Dimensions.Location tileLocation, xTile.Dimensions.Rectangle viewport, StardewValley.Farmer who)
         {
-            if ( tileLocation.X == 10 && tileLocation.Y == 10 )
+            if (tileLocation.X == 10 && tileLocation.Y == 10)
             {
-                if ( who.CurrentItem != null && who.CurrentItem is StardewValley.Object obj )
+                if (who.CurrentItem != null && who.CurrentItem is StardewValley.Object obj)
                 {
                     if (!obj.bigCraftable.Value)
                     {
@@ -91,14 +89,14 @@ namespace MoreBuildings.SpookyShed
                     this.characters.Add(new Bat(pos, 100));
                 }
             }
-            else if ( currSpawnerItem == SOLAR_ESSENCE )
+            else if (currSpawnerItem == SOLAR_ESSENCE)
             {
                 var total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
                 {
                     var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
                     pos = pos * Game1.tileSize;
-                    this.characters.Add(new SquidKid(pos) { currentLocation = this } );
+                    this.characters.Add(new SquidKid(pos) { currentLocation = this });
                 }
             }
             else if (currSpawnerItem == VOID_ESSENCE)

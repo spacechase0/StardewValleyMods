@@ -10,7 +10,7 @@ namespace SpaceCore.Events
         public int WarpTargetY;
         public int WarpTargetFacing;
 
-        public EventArgsBeforeWarp( LocationRequest req, int targetX, int targetY, int targetFacing )
+        public EventArgsBeforeWarp(LocationRequest req, int targetX, int targetY, int targetFacing)
         {
             WarpTargetLocation = req;
             WarpTargetX = targetX;

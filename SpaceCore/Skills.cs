@@ -24,7 +24,7 @@ namespace SpaceCore
         {
             public abstract class Profession
             {
-                public Profession( Skill skill, string id )
+                public Profession(Skill skill, string id)
                 {
                     Skill = skill;
                     Id = id;
@@ -49,7 +49,7 @@ namespace SpaceCore
 
             public class ProfessionPair
             {
-                public ProfessionPair( int level, Profession first, Profession second, Profession req = null )
+                public ProfessionPair(int level, Profession first, Profession second, Profession req = null)
                 {
                     Level = level;
                     First = first;
@@ -63,7 +63,7 @@ namespace SpaceCore
                 public Profession Second { get; }
             }
 
-            public Skill( string id )
+            public Skill(string id)
             {
                 Id = id;
             }
@@ -77,10 +77,10 @@ namespace SpaceCore
 
             public int[] ExperienceCurve { get; set; }
             public IList<ProfessionPair> ProfessionsForLevels { get; } = new List<ProfessionPair>();
-            
+
             public Color ExperienceBarColor { get; set; }
 
-            public virtual List<string> GetExtraLevelUpInfo( int level )
+            public virtual List<string> GetExtraLevelUpInfo(int level)
             {
                 return new List<string>();
             }
@@ -90,7 +90,7 @@ namespace SpaceCore
                 return "";
             }
 
-            public virtual void DoLevelPerk( int level )
+            public virtual void DoLevelPerk(int level)
             {
             }
         }
@@ -118,17 +118,17 @@ namespace SpaceCore
             Networking.RegisterMessageHandler(MSG_EXPERIENCE, onExpMessage);
         }
 
-        public static void RegisterSkill( Skill skill )
+        public static void RegisterSkill(Skill skill)
         {
             skills.Add(skill.Id, skill);
         }
 
-        public static Skill GetSkill( string name )
+        public static Skill GetSkill(string name)
         {
-            if ( skills.ContainsKey( name ) )
+            if (skills.ContainsKey(name))
                 return skills[name];
 
-            foreach (var skill in skills )
+            foreach (var skill in skills)
             {
                 if (skill.Key.ToLower() == name.ToLower() || skill.Value.GetName().ToLower() == name.ToLower())
                     return skill.Value;
@@ -142,7 +142,7 @@ namespace SpaceCore
             return skills.Keys.ToArray();
         }
 
-        public static int GetExperienceFor( Farmer farmer, string skillName)
+        public static int GetExperienceFor(Farmer farmer, string skillName)
         {
             if (!skills.ContainsKey(skillName))
                 return 0;
@@ -151,7 +151,7 @@ namespace SpaceCore
             return exp[farmer.UniqueMultiplayerID][skillName];
         }
 
-        public static int GetSkillLevel( Farmer farmer, string skillName )
+        public static int GetSkillLevel(Farmer farmer, string skillName)
         {
             if (!skills.ContainsKey(skillName))
                 return 0;
@@ -169,7 +169,7 @@ namespace SpaceCore
             return 0;
         }
 
-        public static void AddExperience( Farmer farmer, string skillName, int amt )
+        public static void AddExperience(Farmer farmer, string skillName, int amt)
         {
             if (!skills.ContainsKey(skillName))
                 return;
@@ -178,7 +178,7 @@ namespace SpaceCore
             int prevLevel = GetSkillLevel(farmer, skillName);
             exp[farmer.UniqueMultiplayerID][skillName] += amt;
             if (farmer == Game1.player && prevLevel != GetSkillLevel(farmer, skillName))
-                for ( int i = prevLevel + 1; i <= GetSkillLevel( farmer, skillName ); ++i )
+                for (int i = prevLevel + 1; i <= GetSkillLevel(farmer, skillName); ++i)
                     myNewLevels.Add(new KeyValuePair<string, int>(skillName, i));
 
             using (var stream = new MemoryStream())
@@ -190,7 +190,7 @@ namespace SpaceCore
             }
         }
 
-        private static void validateSkill( Farmer farmer, string skillName )
+        private static void validateSkill(Farmer farmer, string skillName)
         {
             if (!exp.ContainsKey(farmer.UniqueMultiplayerID))
                 exp.Add(farmer.UniqueMultiplayerID, new Dictionary<string, int>());
@@ -241,7 +241,7 @@ namespace SpaceCore
                 long id = msg.Reader.ReadInt64();
                 Log.trace("\t" + id + ":");
                 int count2 = msg.Reader.ReadInt32();
-                for ( int isk = 0; isk < count2; ++isk )
+                for (int isk = 0; isk < count2; ++isk)
                 {
                     string skill = msg.Reader.ReadString();
                     int amt = msg.Reader.ReadInt32();
@@ -300,7 +300,7 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private static void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( e.NewMenu is GameMenu gm )
+            if (e.NewMenu is GameMenu gm)
             {
                 if (SpaceCore.instance.Config.CustomSkillPage && Skills.skills.Count > 0)
                 {
@@ -336,12 +336,12 @@ namespace SpaceCore
         {
             if (e.IsLocalPlayer && SpaceCore.instance.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
-                foreach ( var skill in skills )
+                foreach (var skill in skills)
                 {
                     int level = Game1.player.GetCustomSkillLevel(skill.Key);
                     foreach (var profPair in skill.Value.ProfessionsForLevels)
                     {
-                        if ( level >= profPair.Level )
+                        if (level >= profPair.Level)
                         {
                             if (!Game1.player.professions.Contains(profPair.First.GetVanillaId()))
                                 Game1.player.professions.Add(profPair.First.GetVanillaId());
@@ -362,7 +362,7 @@ namespace SpaceCore
                 return;
 
             // draw exp bars
-            foreach ( var skillPair in skills )
+            foreach (var skillPair in skills)
             {
                 var skill = skillPair.Value;
                 int level = Game1.player.GetCustomSkillLevel(skillPair.Key);
@@ -398,11 +398,11 @@ namespace SpaceCore
             }
         }
 
-        internal static Skill.Profession getProfessionFor( Skill skill, int level )
+        internal static Skill.Profession getProfessionFor(Skill skill, int level)
         {
-            foreach ( var profPair in skill.ProfessionsForLevels )
+            foreach (var profPair in skill.ProfessionsForLevels)
             {
-                if ( level == profPair.Level )
+                if (level == profPair.Level)
                 {
                     if (Game1.player.HasCustomProfession(profPair.First))
                         return profPair.First;
@@ -422,12 +422,12 @@ namespace SpaceCore
             return Skills.GetExperienceFor(farmer, skill.Id);
         }
 
-        public static int GetCustomSkillExperience( this Farmer farmer, string skill )
+        public static int GetCustomSkillExperience(this Farmer farmer, string skill)
         {
             return Skills.GetExperienceFor(farmer, skill);
         }
 
-        public static int GetCustomSkillLevel( this Farmer farmer, Skills.Skill skill )
+        public static int GetCustomSkillLevel(this Farmer farmer, Skills.Skill skill)
         {
             return Skills.GetSkillLevel(farmer, skill.Id);
         }

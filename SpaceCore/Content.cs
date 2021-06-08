@@ -22,7 +22,7 @@ namespace SpaceCore
             public int tileId = 0;
 
             public TileMapping() { }
-            public TileMapping( TileSheet ts, int id )
+            public TileMapping(TileSheet ts, int id)
             {
                 tileSheet = ts;
                 tileId = id;
@@ -31,7 +31,7 @@ namespace SpaceCore
 
         public class TileAnimation
         {
-            public int[] tileIds = new int[ 0 ];
+            public int[] tileIds = new int[0];
             public int duration;
 
             public TileAnimation() { }
@@ -41,13 +41,13 @@ namespace SpaceCore
                 duration = frameLen;
             }
 
-            public AnimatedTile makeTile( TileSheet ts, Layer xlayer )
+            public AnimatedTile makeTile(TileSheet ts, Layer xlayer)
             {
                 var tanim = this;
 
                 var xanimTiles = new StaticTile[tanim.tileIds.Length];
                 for (int ia = 0; ia < xanimTiles.Length; ++ia)
-                    xanimTiles[ia] = new StaticTile(xlayer, ts, BlendMode.Alpha, tileIds[ ia ]);
+                    xanimTiles[ia] = new StaticTile(xlayer, ts, BlendMode.Alpha, tileIds[ia]);
                 return new AnimatedTile(xlayer, xanimTiles, tanim.duration);
             }
         }
@@ -57,10 +57,10 @@ namespace SpaceCore
             var tmap = new TiledMap(Path.Combine(modHelper.DirectoryPath, path));
             var xmap = new Map(mapName);
             addTiledPropertiesToXTile(tmap.Properties, xmap.Properties);
-            
+
             var tileMapping = new Dictionary<int, TileMapping>();
             var animMapping = new Dictionary<int, TileAnimation>();
-            foreach ( var ttileSheet in tmap.Tilesets )
+            foreach (var ttileSheet in tmap.Tilesets)
             {
                 // xTile wants things like "Mines/mine", not "Mines/mine.png"
                 string image = ttileSheet.Image.Source;
@@ -78,7 +78,7 @@ namespace SpaceCore
                 var xtileSheet = new TileSheet(xmap, image, new Size(ttileSheet.Columns, ttileSheet.TileCount / ttileSheet.Columns), new Size(tmap.TileWidth, tmap.TileHeight));
                 addTiledPropertiesToXTile(ttileSheet.Properties, xtileSheet.Properties);
                 xtileSheet.Id = ttileSheet.Name;
-                xtileSheet.Spacing = new Size( ttileSheet.Spacing, ttileSheet.Spacing);
+                xtileSheet.Spacing = new Size(ttileSheet.Spacing, ttileSheet.Spacing);
                 xtileSheet.Margin = new Size(ttileSheet.Margin, ttileSheet.Margin);
                 for (int i = 0; i < ttileSheet.TileCount; ++i)
                 {
@@ -87,7 +87,7 @@ namespace SpaceCore
                 foreach (var ttile in ttileSheet.Tiles)
                 {
                     addTiledPropertiesToXTile(ttile.Properties, xtileSheet.TileIndexProperties[ttile.Id]);
-                    
+
                     if (ttile.Animation != null && ttile.Animation.Count > 0)
                     {
                         List<int> tanimFrames = new List<int>();
@@ -123,7 +123,7 @@ namespace SpaceCore
                             var ttile = tlayer.Data.Tiles[i];
                             int ix = i % tmap.Width;
                             int iy = i / tmap.Width;
-                            
+
                             var xtile = new StaticTile(xlayer, tileMapping[ttile.GlobalId].tileSheet, BlendMode.Alpha, tileMapping[ttile.GlobalId].tileId);
                             xlayer.Tiles[ix, iy] = xtile;
                         }
@@ -161,8 +161,8 @@ namespace SpaceCore
                     tobjectGroups.Add(tlayer_ as TiledObjectGroup);
                 }
             }
-            
-            foreach ( var tobjectGroup in tobjectGroups )
+
+            foreach (var tobjectGroup in tobjectGroups)
             {
                 var xlayer = xmap.GetLayer(tobjectGroup.Name);
                 if (xlayer == null)
@@ -174,7 +174,7 @@ namespace SpaceCore
                         continue;
                     int x = (int)tobj.X / tmap.TileWidth;
                     int y = (int)tobj.Y / tmap.TileWidth;
-                    
+
                     if (xlayer.Tiles[new Location(x, y)] == null)
                     {
                         Log.warn("Tile property for non-existant tile; skipping");
@@ -188,14 +188,14 @@ namespace SpaceCore
         }
 
         private static XmlSerializer tilesheetSerializer = new XmlSerializer(typeof(TiledTileset), new XmlRootAttribute("tileset"));
-        public static TileSheet loadTsx(IModHelper modHelper, string path, string ts, Map xmap, out Dictionary< int, TileAnimation > animMapping )
+        public static TileSheet loadTsx(IModHelper modHelper, string path, string ts, Map xmap, out Dictionary<int, TileAnimation> animMapping)
         {
             TiledTileset ttileSheet = null;
             Stream stream = null;
             try
             {
                 stream = new FileStream(Path.Combine(modHelper.DirectoryPath, path), FileMode.Open);
-                ttileSheet = ( TiledTileset ) tilesheetSerializer.Deserialize(stream);
+                ttileSheet = (TiledTileset)tilesheetSerializer.Deserialize(stream);
             }
             finally
             {
@@ -235,7 +235,7 @@ namespace SpaceCore
             return xtileSheet;
         }
 
-        private static void addTiledPropertiesToXTile( List< TiledProperty > tprops, IPropertyCollection xprops )
+        private static void addTiledPropertiesToXTile(List<TiledProperty> tprops, IPropertyCollection xprops)
         {
             foreach (var tprop in tprops)
             {

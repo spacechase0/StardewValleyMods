@@ -19,10 +19,10 @@ namespace ThrowableAxe
         private float axeRot = 0;
         public bool dead = false;
         public List<NPC> npcsHit = new List<NPC>();
-        
+
         public ThrownAxe()
         {
-            this.NetFields.AddFields( this.tier, this.damage, this.target, this.speed );
+            this.NetFields.AddFields(this.tier, this.damage, this.target, this.speed);
         }
 
         public ThrownAxe(Farmer thrower, int tier, int damage, Vector2 target, float speed)

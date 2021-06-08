@@ -77,7 +77,7 @@ namespace BugNet
             num2 = Mod.instance.Helper.Reflection.GetField<float>(typeof(MeleeWeapon), "addedSwordScale").GetValue();
             if (!drawShadow)
                 num2 = 0;
-            spriteBatch.Draw(Texture, location + (this.type == 1 ? new Vector2((float)(Game1.tileSize * 2 / 3), (float)(Game1.tileSize / 3)) : new Vector2((float)(Game1.tileSize / 2), (float)(Game1.tileSize / 2))), new Rectangle(0,0,16,16), Color.White * transparency, 0.0f, new Vector2(8f, 8f), (float)Game1.pixelZoom * (scaleSize + num2), SpriteEffects.None, layerDepth);
+            spriteBatch.Draw(Texture, location + (this.type == 1 ? new Vector2((float)(Game1.tileSize * 2 / 3), (float)(Game1.tileSize / 3)) : new Vector2((float)(Game1.tileSize / 2), (float)(Game1.tileSize / 2))), new Rectangle(0, 0, 16, 16), Color.White * transparency, 0.0f, new Vector2(8f, 8f), (float)Game1.pixelZoom * (scaleSize + num2), SpriteEffects.None, layerDepth);
             if ((double)num1 <= 0.0 || drawShadow)
                 return;
             spriteBatch.Draw(Game1.staminaRect, new Rectangle((int)location.X, (int)location.Y + (Game1.tileSize - (int)(num1 * (double)Game1.tileSize)), Game1.tileSize, (int)((double)num1 * (double)Game1.tileSize)), Color.Red * 0.66f);
@@ -86,16 +86,16 @@ namespace BugNet
         public override void tickUpdate(GameTime time, Farmer who)
         {
             base.tickUpdate(time, who);
-            if ( who.FarmerSprite.isUsingWeapon() )
+            if (who.FarmerSprite.isUsingWeapon())
             {
                 Vector2 toolLoc = who.GetToolLocation(true);
                 Vector2 a = Vector2.Zero, b = Vector2.Zero;
-                Rectangle area = getAreaOfEffect( (int)toolLoc.X, (int)toolLoc.Y, who.facingDirection, ref a, ref b, who.GetBoundingBox(), who.FarmerSprite.currentAnimationIndex);
+                Rectangle area = getAreaOfEffect((int)toolLoc.X, (int)toolLoc.Y, who.facingDirection, ref a, ref b, who.GetBoundingBox(), who.FarmerSprite.currentAnimationIndex);
 
                 var critters = Mod.instance.Helper.Reflection.GetField<List<Critter>>(who.currentLocation, "critters", false)?.GetValue();
                 if (critters == null)
                     return;
-                
+
                 foreach (var critter in critters.ToList())
                 {
                     if (critter.getBoundingBox(0, 0).Intersects(area))
@@ -108,8 +108,8 @@ namespace BugNet
                             bframe = Mod.instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4;
 
                         string critterId = Mod.GetCritterIdFrom(critter);
-                        int objId = Mod.ja.GetObjectId( $"Critter Cage: {Mod.GetCritterName(critterId)}" );
-                        Log.trace("Spawning a " + critterId + " with ID " + objId );
+                        int objId = Mod.ja.GetObjectId($"Critter Cage: {Mod.GetCritterName(critterId)}");
+                        Log.trace("Spawning a " + critterId + " with ID " + objId);
                         who.currentLocation.debris.Add(new Debris(new StardewValley.Object(objId, 1), critter.position));
                     }
                 }

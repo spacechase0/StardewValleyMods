@@ -21,12 +21,12 @@ namespace MultiFertilizer
 
         public static Mod instance;
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
             instance = this;
             Log.Monitor = Monitor;
 
-            var harmony = HarmonyInstance.Create( ModManifest.UniqueID );
+            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
             harmony.PatchAll();
         }
     }
@@ -34,16 +34,16 @@ namespace MultiFertilizer
     [HarmonyPatch(typeof(HoeDirt), nameof(HoeDirt.plant))]
     public static class HoeDirtPlantPatch
     {
-        public static bool Prefix( HoeDirt __instance, int index, int tileX, int tileY, Farmer who, bool isFertilizer, GameLocation location )
+        public static bool Prefix(HoeDirt __instance, int index, int tileX, int tileY, Farmer who, bool isFertilizer, GameLocation location)
         {
-            if ( isFertilizer )
+            if (isFertilizer)
             {
-                if ( __instance.crop != null && __instance.crop.currentPhase != 0 )
+                if (__instance.crop != null && __instance.crop.currentPhase != 0)
                     return false;
 
                 int level = 0;
                 string key = "";
-                switch ( index )
+                switch (index)
                 {
                     case 368: level = 1; key = Mod.KEY_FERT; break;
                     case 369: level = 2; key = Mod.KEY_FERT; break;
@@ -56,72 +56,72 @@ namespace MultiFertilizer
                     case 918: level = 3; key = Mod.KEY_SPEED; break;
                 }
 
-                if ( __instance.modData.ContainsKey( key ) )
+                if (__instance.modData.ContainsKey(key))
                     return false;
                 else
                 {
-                    __instance.modData[ key ] = level.ToString();
-                    if ( key == Mod.KEY_SPEED )
-                        Mod.instance.Helper.Reflection.GetMethod( __instance, "applySpeedIncreases" ).Invoke( who );
-                    location.playSound( "dirtyHit" );
+                    __instance.modData[key] = level.ToString();
+                    if (key == Mod.KEY_SPEED)
+                        Mod.instance.Helper.Reflection.GetMethod(__instance, "applySpeedIncreases").Invoke(who);
+                    location.playSound("dirtyHit");
                     return true;
                 }
             }
             return true;
         }
     }
-    
-    [HarmonyPatch(typeof(HoeDirt),nameof(HoeDirt.DrawOptimized))]
+
+    [HarmonyPatch(typeof(HoeDirt), nameof(HoeDirt.DrawOptimized))]
     public static class HoeDirtDrawPatchTranspiler
     {
-        public static void DrawMultiFertilizer(SpriteBatch spriteBatch, Texture2D tex, Vector2 pos, Rectangle? sourceRect, Color col, float rot, Vector2 origin, float scale, SpriteEffects fx, float depth, HoeDirt __instance )
+        public static void DrawMultiFertilizer(SpriteBatch spriteBatch, Texture2D tex, Vector2 pos, Rectangle? sourceRect, Color col, float rot, Vector2 origin, float scale, SpriteEffects fx, float depth, HoeDirt __instance)
         {
             List<int> fertilizers = new List<int>();
-            if ( __instance.modData.ContainsKey( Mod.KEY_FERT ) )
+            if (__instance.modData.ContainsKey(Mod.KEY_FERT))
             {
-                int level = int.Parse( __instance.modData[ Mod.KEY_FERT ] );
+                int level = int.Parse(__instance.modData[Mod.KEY_FERT]);
                 int index = 0;
-                switch ( level )
+                switch (level)
                 {
                     case 1: index = 368; break;
                     case 2: index = 369; break;
                     case 3: index = 919; break;
                 }
-                if ( index != 0 )
-                    fertilizers.Add( index );
+                if (index != 0)
+                    fertilizers.Add(index);
             }
-            if ( __instance.modData.ContainsKey( Mod.KEY_RETAIN ) )
+            if (__instance.modData.ContainsKey(Mod.KEY_RETAIN))
             {
-                int level = int.Parse( __instance.modData[ Mod.KEY_RETAIN ] );
+                int level = int.Parse(__instance.modData[Mod.KEY_RETAIN]);
                 int index = 0;
-                switch ( level )
+                switch (level)
                 {
                     case 1: index = 370; break;
                     case 2: index = 371; break;
                     case 3: index = 920; break;
                 }
-                if ( index != 0 )
-                    fertilizers.Add( index );
+                if (index != 0)
+                    fertilizers.Add(index);
             }
-            if ( __instance.modData.ContainsKey( Mod.KEY_SPEED ) )
+            if (__instance.modData.ContainsKey(Mod.KEY_SPEED))
             {
-                int level = int.Parse( __instance.modData[ Mod.KEY_SPEED ] );
+                int level = int.Parse(__instance.modData[Mod.KEY_SPEED]);
                 int index = 0;
-                switch ( level )
+                switch (level)
                 {
                     case 1: index = 465; break;
                     case 2: index = 466; break;
                     case 3: index = 918; break;
                 }
-                if ( index != 0 )
-                    fertilizers.Add( index );
+                if (index != 0)
+                    fertilizers.Add(index);
             }
-            foreach ( int fertilizer in fertilizers )
+            foreach (int fertilizer in fertilizers)
             {
-                if ( fertilizer != 0 )
+                if (fertilizer != 0)
                 {
                     int fertilizerIndex = 0;
-                    switch ( fertilizer )
+                    switch (fertilizer)
                     {
                         case 369:
                             fertilizerIndex = 1;
@@ -148,12 +148,12 @@ namespace MultiFertilizer
                             fertilizerIndex = 2;
                             break;
                     }
-                    spriteBatch.Draw( Game1.mouseCursors, pos, new Rectangle( 173 + fertilizerIndex / 3 * 16, 462 + fertilizerIndex % 3 * 16, 16, 16 ), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1.9E-08f );
+                    spriteBatch.Draw(Game1.mouseCursors, pos, new Rectangle(173 + fertilizerIndex / 3 * 16, 462 + fertilizerIndex % 3 * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1.9E-08f);
                 }
             }
         }
 
-        public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             bool foundFert = false;
             bool stopCaring = false;
@@ -162,31 +162,31 @@ namespace MultiFertilizer
             // Add the HoeDirt instance at the end of the argument list
 
             var newInsns = new List<CodeInstruction>();
-            foreach ( var insn in insns )
+            foreach (var insn in insns)
             {
-                if ( stopCaring )
+                if (stopCaring)
                 {
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
                     continue;
                 }
 
-                if ( insn.opcode == OpCodes.Ldfld && ( insn.operand as FieldInfo ).Name == "fertilizer" )
+                if (insn.opcode == OpCodes.Ldfld && (insn.operand as FieldInfo).Name == "fertilizer")
                 {
                     foundFert = true;
                 }
-                else if ( foundFert &&
-                          insn.opcode == OpCodes.Callvirt && ( insn.operand as MethodInfo ).Name == "Draw" )
+                else if (foundFert &&
+                          insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo).Name == "Draw")
                 {
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_0 ) );
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_0));
 
                     insn.opcode = OpCodes.Call;
-                    insn.operand = typeof( HoeDirtDrawPatchTranspiler ).GetMethod( "DrawMultiFertilizer" );
-                    newInsns.Add( insn );
+                    insn.operand = typeof(HoeDirtDrawPatchTranspiler).GetMethod("DrawMultiFertilizer");
+                    newInsns.Add(insn);
 
                     stopCaring = true;
                 }
                 else
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
             }
 
             return newInsns;
@@ -308,16 +308,16 @@ namespace MultiFertilizer
         }
     }*/
 
-    [HarmonyPatch( typeof( HoeDirt ), "applySpeedIncreases" )]
+    [HarmonyPatch(typeof(HoeDirt), "applySpeedIncreases")]
     public static class HoeDirtSpeedIncreasePatch
     {
-        public static void Prefix( HoeDirt __instance, Farmer who )
+        public static void Prefix(HoeDirt __instance, Farmer who)
         {
-            if ( !__instance.modData.ContainsKey( Mod.KEY_SPEED ) )
+            if (!__instance.modData.ContainsKey(Mod.KEY_SPEED))
                 return;
 
             int index = 0;
-            switch ( int.Parse( __instance.modData[ Mod.KEY_SPEED ] ) )
+            switch (int.Parse(__instance.modData[Mod.KEY_SPEED]))
             {
                 case 1: index = 465; break;
                 case 2: index = 466; break;
@@ -327,7 +327,7 @@ namespace MultiFertilizer
             __instance.fertilizer.Value = index;
         }
 
-        public static void Postfix( HoeDirt __instance, Farmer who )
+        public static void Postfix(HoeDirt __instance, Farmer who)
         {
             __instance.fertilizer.Value = 0;
         }
@@ -336,13 +336,13 @@ namespace MultiFertilizer
     [HarmonyPatch(typeof(HoeDirt), nameof(HoeDirt.canPlantThisSeedHere))]
     public static class HoeDirtCanPlantSeedHerePatch
     {
-        public static bool Prefix( HoeDirt __instance, int objectIndex, int tileX, int tileY, bool isFertilizer, ref bool __result )
+        public static bool Prefix(HoeDirt __instance, int objectIndex, int tileX, int tileY, bool isFertilizer, ref bool __result)
         {
-            if ( isFertilizer )
+            if (isFertilizer)
             {
                 int level = 0;
                 string key = "";
-                switch ( objectIndex )
+                switch (objectIndex)
                 {
                     case 368: level = 1; key = Mod.KEY_FERT; break;
                     case 369: level = 2; key = Mod.KEY_FERT; break;
@@ -355,23 +355,23 @@ namespace MultiFertilizer
                     case 918: level = 3; key = Mod.KEY_SPEED; break;
                 }
 
-                __result = !__instance.modData.ContainsKey( key );
+                __result = !__instance.modData.ContainsKey(key);
                 return false;
             }
             return true;
         }
     }
 
-    [HarmonyPatch( typeof( HoeDirt ), nameof(HoeDirt.dayUpdate) )]
+    [HarmonyPatch(typeof(HoeDirt), nameof(HoeDirt.dayUpdate))]
     public static class HoeDirtDayUpdatePatch
     {
-        public static void Prefix( HoeDirt __instance, GameLocation environment, Vector2 tileLocation )
+        public static void Prefix(HoeDirt __instance, GameLocation environment, Vector2 tileLocation)
         {
-            if ( !__instance.modData.ContainsKey( Mod.KEY_RETAIN ) )
+            if (!__instance.modData.ContainsKey(Mod.KEY_RETAIN))
                 return;
 
             int index = 0;
-            switch ( int.Parse( __instance.modData[ Mod.KEY_RETAIN ] ) )
+            switch (int.Parse(__instance.modData[Mod.KEY_RETAIN]))
             {
                 case 1: index = 370; break;
                 case 2: index = 371; break;
@@ -381,36 +381,36 @@ namespace MultiFertilizer
             __instance.fertilizer.Value = index;
         }
 
-        public static void Postfix( HoeDirt __instance, GameLocation environment, Vector2 tileLocation )
+        public static void Postfix(HoeDirt __instance, GameLocation environment, Vector2 tileLocation)
         {
             __instance.fertilizer.Value = 0;
         }
     }
 
-    [HarmonyPatch( typeof( HoeDirt ), nameof(HoeDirt.seasonUpdate) )]
+    [HarmonyPatch(typeof(HoeDirt), nameof(HoeDirt.seasonUpdate))]
     public static class HoeDirtSeasonUpdatePatch
     {
-        public static void Prefix( HoeDirt __instance, bool onLoad )
+        public static void Prefix(HoeDirt __instance, bool onLoad)
         {
-            if ( !onLoad && ( __instance.crop == null || ( bool ) __instance.crop.dead || !__instance.crop.seasonsToGrowIn.Contains( Game1.currentLocation.GetSeasonForLocation() ) ) )
+            if (!onLoad && (__instance.crop == null || (bool)__instance.crop.dead || !__instance.crop.seasonsToGrowIn.Contains(Game1.currentLocation.GetSeasonForLocation())))
             {
-                __instance.modData.Remove( Mod.KEY_FERT );
-                __instance.modData.Remove( Mod.KEY_RETAIN );
-                __instance.modData.Remove( Mod.KEY_SPEED );
+                __instance.modData.Remove(Mod.KEY_FERT);
+                __instance.modData.Remove(Mod.KEY_RETAIN);
+                __instance.modData.Remove(Mod.KEY_SPEED);
             }
         }
     }
 
-    [HarmonyPatch( typeof( Crop ), nameof(Crop.harvest) )]
+    [HarmonyPatch(typeof(Crop), nameof(Crop.harvest))]
     public static class CropHarvestPatch
     {
-        public static void Prefix( Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester )
+        public static void Prefix(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester)
         {
-            if ( !soil.modData.ContainsKey( Mod.KEY_FERT ) )
+            if (!soil.modData.ContainsKey(Mod.KEY_FERT))
                 return;
 
             int index = 0;
-            switch ( int.Parse( soil.modData[ Mod.KEY_FERT ] ) )
+            switch (int.Parse(soil.modData[Mod.KEY_FERT]))
             {
                 case 1: index = 368; break;
                 case 2: index = 369; break;
@@ -420,7 +420,7 @@ namespace MultiFertilizer
             soil.fertilizer.Value = index;
         }
 
-        public static void Postfix( Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester )
+        public static void Postfix(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester)
         {
             soil.fertilizer.Value = 0;
         }
@@ -429,15 +429,15 @@ namespace MultiFertilizer
     [HarmonyPatch(typeof(GameLocation), nameof(GameLocation.isTileOccupiedForPlacement))]
     public static class GameLocationTileOccupiedPlacementPatch
     {
-        public static bool PatchedSection( GameLocation __instance, Vector2 tileLocation, StardewValley.Object toPlace )
+        public static bool PatchedSection(GameLocation __instance, Vector2 tileLocation, StardewValley.Object toPlace)
         {
-            if ( toPlace.Category == -19 && __instance.terrainFeatures.ContainsKey( tileLocation ) && __instance.terrainFeatures[ tileLocation ] is HoeDirt )
+            if (toPlace.Category == -19 && __instance.terrainFeatures.ContainsKey(tileLocation) && __instance.terrainFeatures[tileLocation] is HoeDirt)
             {
                 HoeDirt hoe_dirt = __instance.terrainFeatures[tileLocation] as HoeDirt;
 
                 int level = 0;
                 string key = "";
-                switch ( toPlace.ParentSheetIndex )
+                switch (toPlace.ParentSheetIndex)
                 {
                     case 368: level = 1; key = Mod.KEY_FERT; break;
                     case 369: level = 2; key = Mod.KEY_FERT; break;
@@ -450,7 +450,7 @@ namespace MultiFertilizer
                     case 918: level = 3; key = Mod.KEY_SPEED; break;
                 }
 
-                if ( hoe_dirt.modData.ContainsKey( key ) )
+                if (hoe_dirt.modData.ContainsKey(key))
                 {
                     return true;
                 }
@@ -459,7 +459,7 @@ namespace MultiFertilizer
             return false;
         }
 
-        public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
 
@@ -470,59 +470,59 @@ namespace MultiFertilizer
             // Place our patched section function call. If it returns true, return from the function true.
 
             var newInsns = new List<CodeInstruction>();
-            foreach ( var insn in insns )
+            foreach (var insn in insns)
             {
-                if ( stopCaring )
+                if (stopCaring)
                 {
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
                     continue;
                 }
 
-                if ( insn.opcode == OpCodes.Ldc_I4_S && ( sbyte ) insn.operand == ( sbyte ) -19 )
+                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == (sbyte)-19)
                 {
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
                     foundFertCategory = true;
                 }
-                else if ( foundFertCategory )
+                else if (foundFertCategory)
                 {
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
 
-                    var branchPastOld = new CodeInstruction( OpCodes.Br, insn.operand );
-                    branchPastOld.labels.Add( gen.DefineLabel() );
+                    var branchPastOld = new CodeInstruction(OpCodes.Br, insn.operand);
+                    branchPastOld.labels.Add(gen.DefineLabel());
 
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_0 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_1 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_2 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Call, AccessTools.Method( typeof( GameLocationTileOccupiedPlacementPatch ), nameof( GameLocationTileOccupiedPlacementPatch.PatchedSection ) ) ) );
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_0));
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_1));
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_2));
+                    newInsns.Add(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(GameLocationTileOccupiedPlacementPatch), nameof(GameLocationTileOccupiedPlacementPatch.PatchedSection))));
 
-                    newInsns.Add( new CodeInstruction( OpCodes.Brfalse, branchPastOld.labels[ 0 ] ) );
+                    newInsns.Add(new CodeInstruction(OpCodes.Brfalse, branchPastOld.labels[0]));
 
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldc_I4_1 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Ret ) );
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldc_I4_1));
+                    newInsns.Add(new CodeInstruction(OpCodes.Ret));
 
-                    newInsns.Add( branchPastOld );
+                    newInsns.Add(branchPastOld);
 
                     foundFertCategory = false;
                     stopCaring = true;
                 }
                 else
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
             }
 
             return newInsns;
         }
     }
 
-    [HarmonyPatch( typeof( StardewValley.Object ), nameof( StardewValley.Object.canBePlacedHere ) )]
+    [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.canBePlacedHere))]
     public static class ObjectCanPlaceHerePatch
     {
-        public static bool PatchedSection( StardewValley.Object __instance, GameLocation l, Vector2 tile )
+        public static bool PatchedSection(StardewValley.Object __instance, GameLocation l, Vector2 tile)
         {
-            if ( l.isTileHoeDirt( tile ) )
+            if (l.isTileHoeDirt(tile))
             {
                 int level = 0;
                 string key = "";
-                switch ( __instance.ParentSheetIndex )
+                switch (__instance.ParentSheetIndex)
                 {
                     case 368: level = 1; key = Mod.KEY_FERT; break;
                     case 369: level = 2; key = Mod.KEY_FERT; break;
@@ -535,15 +535,15 @@ namespace MultiFertilizer
                     case 918: level = 3; key = Mod.KEY_SPEED; break;
                 }
 
-                if ( __instance.ParentSheetIndex == 805 )
+                if (__instance.ParentSheetIndex == 805)
                 {
                     return true;
                 }
-                if ( l.terrainFeatures.ContainsKey( tile ) && l.terrainFeatures[ tile ] is HoeDirt && ( l.terrainFeatures[ tile ] as HoeDirt ).modData.ContainsKey( key ) )
+                if (l.terrainFeatures.ContainsKey(tile) && l.terrainFeatures[tile] is HoeDirt && (l.terrainFeatures[tile] as HoeDirt).modData.ContainsKey(key))
                 {
                     return true;
                 }
-                if ( l.objects.ContainsKey( tile ) && l.objects[ tile ] is IndoorPot && ( l.objects[ tile ] as IndoorPot ).hoeDirt.Value.modData.ContainsKey( key ) )
+                if (l.objects.ContainsKey(tile) && l.objects[tile] is IndoorPot && (l.objects[tile] as IndoorPot).hoeDirt.Value.modData.ContainsKey(key))
                 {
                     return true;
                 }
@@ -551,7 +551,7 @@ namespace MultiFertilizer
             return false;
         }
 
-        public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
 
@@ -562,57 +562,57 @@ namespace MultiFertilizer
             // Place our patched section function call. If it returns true, return from the function false.
 
             var newInsns = new List<CodeInstruction>();
-            foreach ( var insn in insns )
+            foreach (var insn in insns)
             {
-                if ( stopCaring )
+                if (stopCaring)
                 {
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
                     continue;
                 }
 
-                if ( insn.opcode == OpCodes.Ldc_I4_S && ( sbyte ) insn.operand == ( sbyte ) -19 )
+                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == (sbyte)-19)
                 {
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
                     fertCategoryCounter++;
                 }
-                else if ( fertCategoryCounter == 2 )
+                else if (fertCategoryCounter == 2)
                 {
-                    newInsns.Add( insn );
-                    
-                    var branchPastOld = new CodeInstruction( OpCodes.Br, insn.operand );
-                    branchPastOld.labels.Add( gen.DefineLabel() );
+                    newInsns.Add(insn);
 
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_0 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_1 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_2 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Call, AccessTools.Method( typeof( ObjectCanPlaceHerePatch ), nameof( ObjectCanPlaceHerePatch.PatchedSection ) ) ) );
+                    var branchPastOld = new CodeInstruction(OpCodes.Br, insn.operand);
+                    branchPastOld.labels.Add(gen.DefineLabel());
 
-                    newInsns.Add( new CodeInstruction( OpCodes.Brfalse, branchPastOld.labels[ 0 ] ) );
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_0));
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_1));
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_2));
+                    newInsns.Add(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ObjectCanPlaceHerePatch), nameof(ObjectCanPlaceHerePatch.PatchedSection))));
 
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldc_I4_0 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Ret ) );
+                    newInsns.Add(new CodeInstruction(OpCodes.Brfalse, branchPastOld.labels[0]));
 
-                    newInsns.Add( branchPastOld );
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldc_I4_0));
+                    newInsns.Add(new CodeInstruction(OpCodes.Ret));
+
+                    newInsns.Add(branchPastOld);
 
                     ++fertCategoryCounter;
                     stopCaring = true;
                 }
                 else
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
             }
 
             return newInsns;
         }
     }
 
-    [HarmonyPatch( typeof( StardewValley.Utility ), nameof( StardewValley.Utility.tryToPlaceItem ) )]
+    [HarmonyPatch(typeof(StardewValley.Utility), nameof(StardewValley.Utility.tryToPlaceItem))]
     public static class UtilityTryToPlacePatch
     {
-        public static bool PatchedSection( GameLocation location, Item item, int x, int y )
+        public static bool PatchedSection(GameLocation location, Item item, int x, int y)
         {
             int level = 0;
             string key = "";
-            switch ( item.ParentSheetIndex )
+            switch (item.ParentSheetIndex)
             {
                 case 368: level = 1; key = Mod.KEY_FERT; break;
                 case 369: level = 2; key = Mod.KEY_FERT; break;
@@ -627,21 +627,21 @@ namespace MultiFertilizer
 
 
             Vector2 tileLocation = new Vector2(x / 64, y / 64);
-            if ( !location.terrainFeatures.ContainsKey( tileLocation ) )
+            if (!location.terrainFeatures.ContainsKey(tileLocation))
                 return true;
             HoeDirt hoe_dirt = location.terrainFeatures[tileLocation] as HoeDirt;
-            if ( ( int ) ( location.terrainFeatures[ tileLocation ] as HoeDirt ).fertilizer != 0 )
+            if ((int)(location.terrainFeatures[tileLocation] as HoeDirt).fertilizer != 0)
             {
-                if ( ( location.terrainFeatures[ tileLocation ] as HoeDirt ).modData.ContainsKey( key ) )
+                if ((location.terrainFeatures[tileLocation] as HoeDirt).modData.ContainsKey(key))
                 {
-                    Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:HoeDirt.cs.13916-2" ) );
+                    Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HoeDirt.cs.13916-2"));
                 }
                 return true;
             }
             return false;
         }
 
-        public static IEnumerable<CodeInstruction> Transpiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
 
@@ -653,44 +653,44 @@ namespace MultiFertilizer
             // Then skip the old section
 
             var newInsns = new List<CodeInstruction>();
-            foreach ( var insn in insns )
+            foreach (var insn in insns)
             {
-                if ( stopCaring )
+                if (stopCaring)
                 {
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
                     continue;
                 }
 
-                if ( insn.opcode == OpCodes.Ldc_I4_S && ( sbyte ) insn.operand == ( sbyte ) -19 )
+                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == (sbyte)-19)
                 {
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
                     fertCategoryCounter++;
                 }
-                else if ( fertCategoryCounter == 1 )
+                else if (fertCategoryCounter == 1)
                 {
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
 
-                    var branchPastOld = new CodeInstruction( OpCodes.Br, insn.operand );
-                    branchPastOld.labels.Add( gen.DefineLabel() );
+                    var branchPastOld = new CodeInstruction(OpCodes.Br, insn.operand);
+                    branchPastOld.labels.Add(gen.DefineLabel());
 
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_0 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_1 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_2 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldarg_3 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Call, AccessTools.Method( typeof( UtilityTryToPlacePatch ), nameof( UtilityTryToPlacePatch.PatchedSection ) ) ) );
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_0));
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_1));
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_2));
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_3));
+                    newInsns.Add(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UtilityTryToPlacePatch), nameof(UtilityTryToPlacePatch.PatchedSection))));
 
-                    newInsns.Add( new CodeInstruction( OpCodes.Brfalse, branchPastOld.labels[ 0 ] ) );
+                    newInsns.Add(new CodeInstruction(OpCodes.Brfalse, branchPastOld.labels[0]));
 
-                    newInsns.Add( new CodeInstruction( OpCodes.Ldc_I4_0 ) );
-                    newInsns.Add( new CodeInstruction( OpCodes.Ret ) );
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldc_I4_0));
+                    newInsns.Add(new CodeInstruction(OpCodes.Ret));
 
-                    newInsns.Add( branchPastOld );
+                    newInsns.Add(branchPastOld);
 
                     ++fertCategoryCounter;
                     stopCaring = true;
                 }
                 else
-                    newInsns.Add( insn );
+                    newInsns.Add(insn);
             }
 
             return newInsns;

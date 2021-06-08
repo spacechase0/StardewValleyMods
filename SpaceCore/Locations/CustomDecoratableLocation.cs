@@ -9,7 +9,8 @@ namespace SpaceCore.Locations
         public new abstract List<Rectangle> getWalls();
         public new abstract List<Rectangle> getFloors();
 
-        public CustomDecoratableLocation() : base()
+        public CustomDecoratableLocation()
+            : base()
         {
             List<Rectangle> list = getWalls();
             while (this.wallPaper.Count < list.Count)
@@ -23,7 +24,8 @@ namespace SpaceCore.Locations
             }
         }
 
-        public CustomDecoratableLocation(string mapPath, string name) : base(mapPath, name)
+        public CustomDecoratableLocation(string mapPath, string name)
+            : base(mapPath, name)
         {
             List<Rectangle> list = getWalls();
             while (this.wallPaper.Count < list.Count)

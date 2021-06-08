@@ -8,10 +8,8 @@ namespace CookingSkill
         public class GenericProfession : SpaceCore.Skills.Skill.Profession
         {
             public GenericProfession(Skill skill, string theId)
-            :   base( skill, theId )
-            {
-            }
-            
+                : base(skill, theId) { }
+
             internal string Name { get; set; }
             internal string Description { get; set; }
 
@@ -34,7 +32,7 @@ namespace CookingSkill
         public static GenericProfession ProfessionBuffPlain = null;
 
         public Skill()
-        :   base( "spacechase0.Cooking" )
+            : base("spacechase0.Cooking")
         {
             Icon = Mod.instance.Helper.Content.Load<Texture2D>("assets/iconA.png");
             SkillsPageIcon = Mod.instance.Helper.Content.Load<Texture2D>("assets/iconB.png");
@@ -57,7 +55,7 @@ namespace CookingSkill
             Professions.Add(ProfessionBuffTime);
 
             ProfessionsForLevels.Add(new ProfessionPair(5, ProfessionSellPrice, ProfessionBuffTime));
-            
+
             // Level 10 - track A
             ProfessionConservation = new GenericProfession(this, "Conservation");
             ProfessionConservation.Icon = null; // TODO
@@ -94,7 +92,7 @@ namespace CookingSkill
             return "Cooking";
         }
 
-        public override List<string> GetExtraLevelUpInfo( int level )
+        public override List<string> GetExtraLevelUpInfo(int level)
         {
             List<string> list = new List<string>();
             list.Add("+3% edibility in home-cooked foods");

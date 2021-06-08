@@ -18,7 +18,7 @@ namespace FireArcadeGame
             return false;
         }
 
-        public void draw( SpriteBatch b )
+        public void draw(SpriteBatch b)
         {
             world.Render();
         }
@@ -28,7 +28,7 @@ namespace FireArcadeGame
             return true;
         }
 
-        public void leftClickHeld( int x, int y )
+        public void leftClickHeld(int x, int y)
         {
         }
 
@@ -42,35 +42,35 @@ namespace FireArcadeGame
             return false;
         }
 
-        public void receiveEventPoke( int data )
+        public void receiveEventPoke(int data)
         {
         }
 
-        public void receiveKeyPress( Keys k )
+        public void receiveKeyPress(Keys k)
         {
         }
 
-        public void receiveKeyRelease( Keys k )
+        public void receiveKeyRelease(Keys k)
         {
         }
 
-        public void receiveLeftClick( int x, int y, bool playSound = true )
+        public void receiveLeftClick(int x, int y, bool playSound = true)
         {
         }
 
-        public void receiveRightClick( int x, int y, bool playSound = true )
+        public void receiveRightClick(int x, int y, bool playSound = true)
         {
         }
 
-        public void releaseLeftClick( int x, int y )
+        public void releaseLeftClick(int x, int y)
         {
         }
 
-        public void releaseRightClick( int x, int y )
+        public void releaseRightClick(int x, int y)
         {
         }
 
-        public bool tick( GameTime time )
+        public bool tick(GameTime time)
         {
             world.Update();
             return world.HasQuit;

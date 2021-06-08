@@ -18,7 +18,7 @@ namespace CustomizeExterior
 
         private string type;
         private string active;
-        private Dictionary<string, Texture2D> choices = new Dictionary< string, Texture2D >();
+        private Dictionary<string, Texture2D> choices = new Dictionary<string, Texture2D>();
 
         private int x;
         private int size;
@@ -26,20 +26,20 @@ namespace CustomizeExterior
 
         int scroll = 0;
 
-        public SelectDisplayMenu( string theType, string theActive )
+        public SelectDisplayMenu(string theType, string theActive)
         {
             type = theType;
             active = theActive;
 
             choices.Add("/", null);
-            foreach ( var choice in Mod.choices[ type ] )
+            foreach (var choice in Mod.choices[type])
             {
-                choices.Add(choice, Mod.getTextureForChoice( type, choice ));
+                choices.Add(choice, Mod.getTextureForChoice(type, choice));
             }
 
             size = Game1.viewport.Size.Height - PADDING_OUTER * 2;
-            x = ( Game1.viewport.Size.Width - size ) / 2;
-            entrySize = ( size - PADDING_INNER * 4 ) / 3;
+            x = (Game1.viewport.Size.Width - size) / 2;
+            entrySize = (size - PADDING_INNER * 4) / 3;
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
@@ -50,7 +50,7 @@ namespace CustomizeExterior
                 int ix = this.x + PADDING_INNER + (entrySize + PADDING_INNER) * (i % 3);
                 int iy = PADDING_OUTER + PADDING_INNER + (entrySize + PADDING_INNER) * (i / 3);
                 iy += scroll;
-                
+
                 if (new Rectangle(ix, iy, entrySize, entrySize).Contains(x, y))
                 {
                     active = entry.Key;
@@ -84,7 +84,7 @@ namespace CustomizeExterior
             b.End();
             RasterizerState state = new RasterizerState();
             state.ScissorTestEnable = true;
-            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, state );
+            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, state);
             b.GraphicsDevice.ScissorRectangle = new Rectangle(x + edge, PADDING_OUTER + edge, size - edge * 2, size - edge * 2);
             {
                 int i = 0;

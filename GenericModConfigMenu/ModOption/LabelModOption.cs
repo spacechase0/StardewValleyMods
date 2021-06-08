@@ -13,9 +13,7 @@ namespace GenericModConfigMenu.ModOption
         {
         }
 
-        public LabelModOption( string name, string desc, IManifest mod )
-        :   base( name, desc, name, mod )
-        {
-        }
+        public LabelModOption(string name, string desc, IManifest mod)
+            : base(name, desc, name, mod) { }
     }
 }

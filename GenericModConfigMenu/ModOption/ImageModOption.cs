@@ -17,8 +17,8 @@ namespace GenericModConfigMenu.ModOption
         {
         }
 
-        public ImageModOption( string texPath, Rectangle? texRect, int scale, IManifest mod )
-        :   base( texPath, "", texPath, mod )
+        public ImageModOption(string texPath, Rectangle? texRect, int scale, IManifest mod)
+            : base(texPath, "", texPath, mod)
         {
             TexturePath = texPath;
             TextureRect = texRect;

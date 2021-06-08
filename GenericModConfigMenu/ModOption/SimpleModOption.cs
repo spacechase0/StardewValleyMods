@@ -13,11 +13,12 @@ namespace GenericModConfigMenu.ModOption
         public virtual T Value
         {
             get { return state; }
-            set {
+            set
+            {
                 if (!state.Equals(value))
                     Mod.instance.configs[Owner].Options[Mod.instance.configs[Owner].ActiveDisplayPage.Name].ChangeHandler.ForEach(c => c.Invoke(Id, value));
 
-                state = value; 
+                state = value;
             }
         }
 
@@ -28,12 +29,12 @@ namespace GenericModConfigMenu.ModOption
 
         public override void Save()
         {
-            SpaceShared.Log.trace( "saving " + Name + " " + Description );
+            SpaceShared.Log.trace("saving " + Name + " " + Description);
             setter.Invoke(state);
         }
 
-        public SimpleModOption( string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, string id, IManifest mod )
-        :   base( name, desc, id, mod )
+        public SimpleModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, string id, IManifest mod)
+            : base(name, desc, id, mod)
         {
             Type = type;
             getter = theGetter;

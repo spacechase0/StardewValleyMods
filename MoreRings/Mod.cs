@@ -46,65 +46,65 @@ namespace MoreRings
 
             SpaceEvents.OnItemEaten += onItemEaten;
 
-            harmony = HarmonyInstance.Create( ModManifest.UniqueID );
-            Log.trace( "HARMONY" );
-            harmony.Patch( AccessTools.Method( typeof( Crop ), nameof( Crop.harvest ) ), transpiler: new HarmonyMethod( this.GetType().GetMethod( nameof( CropHarvestTranspiler ) ) ) );
-            doTranspiler( typeof( Game1 ), nameof( Game1.pressUseToolButton ), typeof( Game1ToolRangeHook ) );
-            doPrefix( typeof( Pickaxe ), nameof( Pickaxe.DoFunction ), typeof( PickaxeRemoteUseHook ) );
-            doPrefix( typeof( Axe ), nameof( Axe.DoFunction ), typeof( AxeRemoteUseHook ) );
-            doPrefix( typeof( WateringCan ), nameof( WateringCan.DoFunction ), typeof( WateringCanRemoteUseHook ) );
-            doPrefix( typeof( Hoe ), nameof( Hoe.DoFunction ), typeof( HoeRemoteUseHook ) );
+            harmony = HarmonyInstance.Create(ModManifest.UniqueID);
+            Log.trace("HARMONY");
+            harmony.Patch(AccessTools.Method(typeof(Crop), nameof(Crop.harvest)), transpiler: new HarmonyMethod(this.GetType().GetMethod(nameof(CropHarvestTranspiler))));
+            doTranspiler(typeof(Game1), nameof(Game1.pressUseToolButton), typeof(Game1ToolRangeHook));
+            doPrefix(typeof(Pickaxe), nameof(Pickaxe.DoFunction), typeof(PickaxeRemoteUseHook));
+            doPrefix(typeof(Axe), nameof(Axe.DoFunction), typeof(AxeRemoteUseHook));
+            doPrefix(typeof(WateringCan), nameof(WateringCan.DoFunction), typeof(WateringCanRemoteUseHook));
+            doPrefix(typeof(Hoe), nameof(Hoe.DoFunction), typeof(HoeRemoteUseHook));
         }
-        
-        private void doPrefix( Type origType, string origMethod, Type newType )
+
+        private void doPrefix(Type origType, string origMethod, Type newType)
         {
-            doPrefix( origType.GetMethod( origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static ), newType.GetMethod( "Prefix" ) );
+            doPrefix(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Prefix"));
         }
-        private void doPrefix( MethodInfo orig, MethodInfo prefix )
+        private void doPrefix(MethodInfo orig, MethodInfo prefix)
         {
             try
             {
-                Log.trace( $"Doing prefix patch {orig}:{prefix}..." );
+                Log.trace($"Doing prefix patch {orig}:{prefix}...");
                 var pmeth = new HarmonyMethod(prefix);
                 pmeth.prioritiy = Priority.First;
                 //pmeth.before.Add("stokastic.PrismaticTools");
-                harmony.Patch( orig, pmeth, null );
+                harmony.Patch(orig, pmeth, null);
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
-                Log.error( $"Exception doing prefix patch {orig}:{prefix}: {e}" );
+                Log.error($"Exception doing prefix patch {orig}:{prefix}: {e}");
             }
         }
-        private void doPostfix( Type origType, string origMethod, Type newType )
+        private void doPostfix(Type origType, string origMethod, Type newType)
         {
-            doPostfix( origType.GetMethod( origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static ), newType.GetMethod( "Postfix" ) );
+            doPostfix(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Postfix"));
         }
-        private void doPostfix( MethodInfo orig, MethodInfo postfix )
-        {
-            try
-            {
-                Log.trace( $"Doing postfix patch {orig}:{postfix}..." );
-                harmony.Patch( orig, null, new HarmonyMethod( postfix ) );
-            }
-            catch ( Exception e )
-            {
-                Log.error( $"Exception doing postfix patch {orig}:{postfix}: {e}" );
-            }
-        }
-        private void doTranspiler( Type origType, string origMethod, Type newType )
-        {
-            doTranspiler( origType.GetMethod( origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static ), newType.GetMethod( "Transpiler" ) );
-        }
-        private void doTranspiler( MethodInfo orig, MethodInfo transpiler )
+        private void doPostfix(MethodInfo orig, MethodInfo postfix)
         {
             try
             {
-                Log.trace( $"Doing transpiler patch {orig}:{transpiler}..." );
-                harmony.Patch( orig, null, null, new HarmonyMethod( transpiler ) );
+                Log.trace($"Doing postfix patch {orig}:{postfix}...");
+                harmony.Patch(orig, null, new HarmonyMethod(postfix));
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
-                Log.error( $"Exception doing transpiler patch {orig}:{transpiler}: {e}" );
+                Log.error($"Exception doing postfix patch {orig}:{postfix}: {e}");
+            }
+        }
+        private void doTranspiler(Type origType, string origMethod, Type newType)
+        {
+            doTranspiler(origType.GetMethod(origMethod, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static), newType.GetMethod("Transpiler"));
+        }
+        private void doTranspiler(MethodInfo orig, MethodInfo transpiler)
+        {
+            try
+            {
+                Log.trace($"Doing transpiler patch {orig}:{transpiler}...");
+                harmony.Patch(orig, null, null, new HarmonyMethod(transpiler));
+            }
+            catch (Exception e)
+            {
+                Log.error($"Exception doing transpiler patch {orig}:{transpiler}: {e}");
             }
         }
 
@@ -114,7 +114,7 @@ namespace MoreRings
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var api = Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
-            if ( api == null )
+            if (api == null)
             {
                 Log.error("No Json Assets API???");
                 return;
@@ -131,7 +131,7 @@ namespace MoreRings
         /// <param name="e">The event arguments.</param>
         private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( e.NewMenu is BobberBar bobber && hasRingEquipped( Ring_Fishing_LargeBar ) > 0 )
+            if (e.NewMenu is BobberBar bobber && hasRingEquipped(Ring_Fishing_LargeBar) > 0)
             {
                 var field = Helper.Reflection.GetField<int>(bobber, "bobberBarHeight");
                 field.SetValue((int)(field.GetValue() * 1.50));
@@ -149,7 +149,7 @@ namespace MoreRings
             if (!Context.IsPlayerFree || !e.IsOneSecond)
                 return;
 
-            if ( hasRingEquipped( Ring_Combat_Regen ) > 0 && regenCounter++ >= 4 / hasRingEquipped( Ring_Combat_Regen ) )
+            if (hasRingEquipped(Ring_Combat_Regen) > 0 && regenCounter++ >= 4 / hasRingEquipped(Ring_Combat_Regen))
             {
                 regenCounter = 0;
                 Game1.player.health = Math.Min(Game1.player.health + 1, Game1.player.maxHealth);
@@ -162,7 +162,7 @@ namespace MoreRings
             }
         }
 
-        private void onItemEaten( object sender, EventArgs args )
+        private void onItemEaten(object sender, EventArgs args)
         {
             if (hasRingEquipped(Ring_DiamondBooze) > 0)
             {
@@ -194,7 +194,7 @@ namespace MoreRings
                             Game1.buffsDisplay.drink.removeBuff();
                             Game1.buffsDisplay.drink = null;
                         }
-                        else if ( attrs[Buff.speed] < 0 )
+                        else if (attrs[Buff.speed] < 0)
                         {
                             Game1.buffsDisplay.drink.removeBuff();
                             attrs[Buff.speed]++;
@@ -206,7 +206,7 @@ namespace MoreRings
             }
         }
 
-        public int hasRingEquipped( int id )
+        public int hasRingEquipped(int id)
         {
             if (moreRings != null)
                 return moreRings.CountEquippedRings(Game1.player, id);
@@ -214,74 +214,74 @@ namespace MoreRings
             int num = 0;
             if (Game1.player.leftRing.Value != null && Game1.player.leftRing.Value.ParentSheetIndex == id)
                 ++num;
-            if ( Game1.player.leftRing.Value is CombinedRing lcring )
+            if (Game1.player.leftRing.Value is CombinedRing lcring)
             {
-                foreach ( var ring in lcring.combinedRings )
+                foreach (var ring in lcring.combinedRings)
                 {
-                    if ( ring.ParentSheetIndex == id )
+                    if (ring.ParentSheetIndex == id)
                         ++num;
                 }
             }
             if (Game1.player.rightRing.Value != null && Game1.player.rightRing.Value.ParentSheetIndex == id)
                 ++num;
-            if ( Game1.player.rightRing.Value is CombinedRing rcring )
+            if (Game1.player.rightRing.Value is CombinedRing rcring)
             {
-                foreach ( var ring in rcring.combinedRings )
+                foreach (var ring in rcring.combinedRings)
                 {
-                    if ( ring.ParentSheetIndex == id )
+                    if (ring.ParentSheetIndex == id)
                         ++num;
                 }
             }
             return num;
         }
-        
+
         public static void ModifyCropQuality(Random rand, ref int quality)
         {
-            if ( rand.NextDouble() < Mod.instance.hasRingEquipped( Mod.instance.Ring_Quality ) * 0.125 )
+            if (rand.NextDouble() < Mod.instance.hasRingEquipped(Mod.instance.Ring_Quality) * 0.125)
             {
-                if ( ++quality == 3 )
+                if (++quality == 3)
                     ++quality;
             }
-            if ( quality > 4 )
+            if (quality > 4)
                 quality = 4;
         }
-        
-        public static IEnumerable<CodeInstruction> CropHarvestTranspiler( ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns )
+
+        public static IEnumerable<CodeInstruction> CropHarvestTranspiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
-            
+
             var newInsns = new List<CodeInstruction>();
             LocalBuilder randVar = null;
             Label pendingLabel = default(Label);
-            foreach ( var insn in insns )
+            foreach (var insn in insns)
             {
-                if ( insn.operand is LocalBuilder lb && lb.LocalIndex == 9 )
+                if (insn.operand is LocalBuilder lb && lb.LocalIndex == 9)
                 {
                     randVar = lb;
                 }
-                if ( insn.opcode == OpCodes.Stloc_S && ( ( LocalBuilder ) insn.operand ).LocalIndex == 7 /* cropQuality, TODO: Check somehow */ )
+                if (insn.opcode == OpCodes.Stloc_S && ((LocalBuilder)insn.operand).LocalIndex == 7 /* cropQuality, TODO: Check somehow */ )
                 {
-                    var prevInsn = newInsns[ newInsns.Count - 1 ];
-                    var prev2Insn = newInsns[ newInsns.Count - 2 ];
-                    if ( prevInsn.opcode == OpCodes.Ldc_I4_1 && prev2Insn.opcode == OpCodes.Bge_Un )
+                    var prevInsn = newInsns[newInsns.Count - 1];
+                    var prev2Insn = newInsns[newInsns.Count - 2];
+                    if (prevInsn.opcode == OpCodes.Ldc_I4_1 && prev2Insn.opcode == OpCodes.Bge_Un)
                     {
-                        pendingLabel = (Label) prev2Insn.operand;
-                        newInsns.Add( insn );
+                        pendingLabel = (Label)prev2Insn.operand;
+                        newInsns.Add(insn);
 
-                        newInsns.Add( new CodeInstruction( OpCodes.Ldloc_S, randVar )
-                                      { labels = new List<Label>( new Label[] { pendingLabel } ) } );
-                        newInsns.Add( new CodeInstruction( OpCodes.Ldloca_S, insn.operand ) );
-                        newInsns.Add( new CodeInstruction( OpCodes.Call, typeof( Mod ).GetMethod( nameof( ModifyCropQuality ) ) ) );
+                        newInsns.Add(new CodeInstruction(OpCodes.Ldloc_S, randVar)
+                        { labels = new List<Label>(new Label[] { pendingLabel }) });
+                        newInsns.Add(new CodeInstruction(OpCodes.Ldloca_S, insn.operand));
+                        newInsns.Add(new CodeInstruction(OpCodes.Call, typeof(Mod).GetMethod(nameof(ModifyCropQuality))));
                         continue;
                     }
                 }
-                if ( insn.labels.Contains( pendingLabel ) )
+                if (insn.labels.Contains(pendingLabel))
                 {
-                    Log.trace( "taking label" );
-                    insn.labels.Remove( pendingLabel );
-                    pendingLabel = default( Label );
+                    Log.trace("taking label");
+                    insn.labels.Remove(pendingLabel);
+                    pendingLabel = default(Label);
                 }
-                newInsns.Add( insn );
+                newInsns.Add(insn);
             }
 
             return newInsns;

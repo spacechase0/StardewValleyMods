@@ -8,7 +8,7 @@ namespace SpaceCore.Utilities
 {
     public class Hijack
     {
-        public static void hijack( MethodInfo target, MethodInfo replaceWith )
+        public static void hijack(MethodInfo target, MethodInfo replaceWith)
         {
             //*
             bool withThis = !target.IsStatic && replaceWith.IsStatic; // target.CallingConvention.HasFlag(CallingConventions.HasThis);
@@ -16,14 +16,14 @@ namespace SpaceCore.Utilities
                 throw new ArgumentException("Target and replacement methods must match; return type");
             if (target.GetParameters().Length != replaceWith.GetParameters().Length - (withThis ? 1 : 0))
                 throw new ArgumentException("Target and replacement methods must match; parameter count");
-            if ( withThis && target.DeclaringType != replaceWith.GetParameters()[ 0 ].ParameterType)
+            if (withThis && target.DeclaringType != replaceWith.GetParameters()[0].ParameterType)
                 throw new ArgumentException("Target and replacement methods must match; parameter 0 (this)");
             for (int i = 0; i < target.GetParameters().Length; ++i)
             {
                 var tparam = target.GetParameters()[i];
                 var rparam = replaceWith.GetParameters()[i + (withThis ? 1 : 0)];
                 if (tparam.ParameterType != rparam.ParameterType)
-                    throw new ArgumentException("Target and replacement methods must match; parameter " + (i + + (withThis ? 1 : 0)));
+                    throw new ArgumentException("Target and replacement methods must match; parameter " + (i + +(withThis ? 1 : 0)));
             }
             //*/
             Log.debug("Hijacking method \"" + target.DeclaringType + ": " + target + "\", replacing with \"" + replaceWith.DeclaringType + ": " + replaceWith + "\".");
@@ -92,7 +92,7 @@ namespace SpaceCore.Utilities
                     int* rtar = (int*)replaceWith.MethodHandle.Value.ToPointer() + insOffset;
 
                     // Debugger.IsAttached section not needed with VS2017? Or whatever caused the change
-                    if (false&&Debugger.IsAttached)
+                    if (false && Debugger.IsAttached)
                     {
                         Log.trace("Debugger is attached.");
 

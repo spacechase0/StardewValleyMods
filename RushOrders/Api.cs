@@ -29,5 +29,5 @@ namespace RushOrders
                 return;
             Util.invokeEvent("RushOrders.Api.BuildingRushed", BuildingRushed.GetInvocationList(), null);
         }
-}
+    }
 }

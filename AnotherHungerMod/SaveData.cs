@@ -14,7 +14,7 @@ namespace AnotherHungerMod
                 Mod.instance.Helper.Data.WriteSaveData($"spacechase0.AnotherHungerMod.{Game1.player.UniqueMultiplayerID}", Mod.Data);
             else
             {
-                Mod.instance.Helper.Multiplayer.SendMessage(Mod.Data, Mod.MSG_HUNGERDATA, null, new long[] { Game1.MasterPlayer.UniqueMultiplayerID } );
+                Mod.instance.Helper.Multiplayer.SendMessage(Mod.Data, Mod.MSG_HUNGERDATA, null, new long[] { Game1.MasterPlayer.UniqueMultiplayerID });
             }
         }
     }

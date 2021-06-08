@@ -13,12 +13,12 @@ namespace LuckSkill.Overrides
         public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             // TODO: Learn how to use ILGenerator
-            
+
             int skipCounter = 3; // Skip the first three instructions, which just skip things if it is the luck skill
             var newInsns = new List<CodeInstruction>();
             foreach (var insn in insns)
             {
-                if ( skipCounter > 0 )
+                if (skipCounter > 0)
                 {
                     --skipCounter;
                     continue;
@@ -35,13 +35,13 @@ namespace LuckSkill.Overrides
     {
         public static void Prefix(Farmer __instance, int which, ref int howMuch)
         {
-            if ( which == Farmer.luckSkill && Game1.currentLocation is MineShaft ms)
+            if (which == Farmer.luckSkill && Game1.currentLocation is MineShaft ms)
             {
                 bool foundGeode = false;
                 var st = new StackTrace();
                 foreach (var frame in st.GetFrames())
                 {
-                    if ( frame.GetMethod().Name.Contains("checkStoneForItems") )
+                    if (frame.GetMethod().Name.Contains("checkStoneForItems"))
                     {
                         foundGeode = true;
                         break;

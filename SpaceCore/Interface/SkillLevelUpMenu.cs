@@ -112,13 +112,13 @@ namespace SpaceCore.Interface
             */
             var skill = Skills.skills[skillName];
             profPair = null;
-            foreach ( var pair in skill.ProfessionsForLevels )
-                if ( pair.Level == currentLevel && ( pair.Requires == null || Game1.player.professions.Contains( pair.Requires.GetVanillaId() ) ) )
+            foreach (var pair in skill.ProfessionsForLevels)
+                if (pair.Level == currentLevel && (pair.Requires == null || Game1.player.professions.Contains(pair.Requires.GetVanillaId())))
                 {
                     profPair = pair;
                     break;
                 }
-            if ( profPair != null )
+            if (profPair != null)
             {
                 this.professionsToChoose.Clear();
                 this.isProfessionChooser = true;
@@ -180,12 +180,12 @@ namespace SpaceCore.Interface
         }
         public virtual void RepositionOkButton()
         {
-            this.okButton.bounds = new Rectangle( base.xPositionOnScreen + base.width + 4, base.yPositionOnScreen + base.height - 64 - IClickableMenu.borderWidth, 64, 64 );
-            if ( this.okButton.bounds.Right > Game1.uiViewport.Width )
+            this.okButton.bounds = new Rectangle(base.xPositionOnScreen + base.width + 4, base.yPositionOnScreen + base.height - 64 - IClickableMenu.borderWidth, 64, 64);
+            if (this.okButton.bounds.Right > Game1.uiViewport.Width)
             {
                 this.okButton.bounds.X = Game1.uiViewport.Width - 64;
             }
-            if ( this.okButton.bounds.Bottom > Game1.uiViewport.Height )
+            if (this.okButton.bounds.Bottom > Game1.uiViewport.Height)
             {
                 this.okButton.bounds.Y = Game1.uiViewport.Height - 64;
             }
@@ -272,11 +272,11 @@ namespace SpaceCore.Interface
 
         private static void addProfessionDescriptions(List<string> descriptions, string professionName)
         {
-            foreach ( var skill in Skills.skills )
+            foreach (var skill in Skills.skills)
             {
-                foreach ( var prof in skill.Value.Professions )
+                foreach (var prof in skill.Value.Professions)
                 {
-                    if ( prof.Id == professionName )
+                    if (prof.Id == professionName)
                     {
                         descriptions.AddRange(prof.GetDescription().Split('\n'));
                         break;
@@ -444,7 +444,7 @@ namespace SpaceCore.Interface
                             profPair = pair;
                             break;
                         }
-                    if ( profPair != null )
+                    if (profPair != null)
                     {
                         this.isProfessionChooser = true;
                         this.professionsToChoose.Add(profPair.First.GetVanillaId());

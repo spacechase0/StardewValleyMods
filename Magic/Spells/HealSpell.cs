@@ -7,9 +7,8 @@ namespace Magic.Spells
 {
     public class HealSpell : Spell
     {
-        public HealSpell() : base(SchoolId.Life, "heal")
-        {
-        }
+        public HealSpell()
+            : base(SchoolId.Life, "heal") { }
 
         public override int getManaCost(Farmer player, int level)
         {

@@ -47,14 +47,7 @@ namespace CookingSkill
         /// Copied from CraftingPage. Changed denoted by /////
         /////
 
-        public NewCraftingPage(
-            int x,
-            int y,
-            int width,
-            int height,
-            bool cooking = false,
-            bool standalone_menu = false,
-            List<Chest> material_containers = null)
+        public NewCraftingPage(int x, int y, int width, int height, bool cooking = false, bool standalone_menu = false, List<Chest> material_containers = null)
             : base(x, y, width, height, false)
         {
             this._standaloneMenu = standalone_menu;

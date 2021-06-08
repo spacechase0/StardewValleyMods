@@ -57,7 +57,7 @@ namespace SpaceCore.Events
             Log.trace("Event: ShowNightEndMenus");
             if (ShowNightEndMenus == null)
                 return;
-            Util.invokeEvent( "SpaceEvents.ShowNightEndMenus", ShowNightEndMenus.GetInvocationList(), null, args);
+            Util.invokeEvent("SpaceEvents.ShowNightEndMenus", ShowNightEndMenus.GetInvocationList(), null, args);
         }
 
         internal static FarmEvent InvokeChooseNightlyFarmEvent(FarmEvent vanilla)
@@ -83,7 +83,7 @@ namespace SpaceCore.Events
         internal static bool InvokeActionActivated(Farmer who, string action, xTile.Dimensions.Location pos)
         {
             Log.trace("Event: ActionActivated");
-            if (ActionActivated == null || !who.IsLocalPlayer )
+            if (ActionActivated == null || !who.IsLocalPlayer)
                 return false;
             var arg = new EventArgsAction(false, action, pos);
             return Util.invokeEventCancelable("SpaceEvents.ActionActivated", ActionActivated.GetInvocationList(), who, arg);
@@ -92,7 +92,7 @@ namespace SpaceCore.Events
         internal static bool InvokeTouchActionActivated(Farmer who, string action, xTile.Dimensions.Location pos)
         {
             Log.trace("Event: TouchActionActivated");
-            if (TouchActionActivated == null || !who.IsLocalPlayer )
+            if (TouchActionActivated == null || !who.IsLocalPlayer)
                 return false;
             var arg = new EventArgsAction(true, action, pos);
             return Util.invokeEventCancelable("SpaceEvents.TouchActionActivated", TouchActionActivated.GetInvocationList(), who, arg);
@@ -109,13 +109,13 @@ namespace SpaceCore.Events
             Util.invokeEvent("SpaceEvents.ServerGotClient", ServerGotClient.GetInvocationList(), server, args);
         }
 
-        internal static bool InvokeBeforeReceiveObject( NPC npc, StardewValley.Object obj, Farmer farmer )
+        internal static bool InvokeBeforeReceiveObject(NPC npc, StardewValley.Object obj, Farmer farmer)
         {
-            Log.trace( "Event: BeforeReceiveObject" );
-            if ( BeforeGiftGiven == null )
+            Log.trace("Event: BeforeReceiveObject");
+            if (BeforeGiftGiven == null)
                 return false;
             var arg = new EventArgsBeforeReceiveObject(npc, obj);
-            return Util.invokeEventCancelable( "SpaceEvents.BeforeReceiveObject", BeforeGiftGiven.GetInvocationList(), farmer, arg );
+            return Util.invokeEventCancelable("SpaceEvents.BeforeReceiveObject", BeforeGiftGiven.GetInvocationList(), farmer, arg);
         }
 
         internal static void InvokeAfterGiftGiven(NPC npc, StardewValley.Object obj, Farmer farmer)

@@ -4,7 +4,7 @@ namespace SpaceCore.Overrides
     {
         public static void Postfix(GameMenuTabNameHook __instance, string name, ref int __result)
         {
-            foreach ( var tab in Menus.extraGameMenuTabs )
+            foreach (var tab in Menus.extraGameMenuTabs)
             {
                 if (name == tab.Value)
                     __result = tab.Key;

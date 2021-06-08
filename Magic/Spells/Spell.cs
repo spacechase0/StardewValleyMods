@@ -18,7 +18,7 @@ namespace Magic.Spells
             protected set;
         }
 
-        protected Spell(string school, string id )
+        protected Spell(string school, string id)
         {
             ParentSchoolId = school;
             Id = id;
@@ -33,7 +33,7 @@ namespace Magic.Spells
 
         public virtual bool canCast(Farmer player, int level)
         {
-            return player.knowsSpell(FullId, level) && player.getCurrentMana() >= getManaCost( player, level );
+            return player.knowsSpell(FullId, level) && player.getCurrentMana() >= getManaCost(player, level);
         }
 
         public virtual string getTranslatedName()
@@ -44,7 +44,7 @@ namespace Magic.Spells
         {
             return Mod.instance.Helper.Translation.Get("spell." + FullId + ".desc");
         }
-        
+
         public abstract IActiveEffect onCast(Farmer player, int level, int targetX, int targetY);
 
         public virtual void loadIcon()
@@ -54,10 +54,10 @@ namespace Magic.Spells
                 Icons = new Texture2D[getMaxCastingLevel()];
                 for (int i = 1; i <= getMaxCastingLevel(); ++i)
                 {
-                    Icons[ i - 1 ] = Content.loadTexture("magic/" + ParentSchool.Id + "/" + Id + "/" + i + ".png");
+                    Icons[i - 1] = Content.loadTexture("magic/" + ParentSchool.Id + "/" + Id + "/" + i + ".png");
                 }
             }
-            catch ( ContentLoadException e )
+            catch (ContentLoadException e)
             {
                 Log.warn("Failed to load icon for spell " + FullId + ": " + e);
             }

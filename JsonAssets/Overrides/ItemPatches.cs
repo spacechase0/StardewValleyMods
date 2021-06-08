@@ -33,7 +33,7 @@ namespace JsonAssets.Overrides
         {
             try
             {
-                if ( __instance is StardewValley.Object obj )
+                if (__instance is StardewValley.Object obj)
                 {
                     if (!obj.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(obj.ParentSheetIndex))
                     {
@@ -42,7 +42,7 @@ namespace JsonAssets.Overrides
                             __result = false;
                     }
                 }
-                else if ( __instance is MeleeWeapon weapon )
+                else if (__instance is MeleeWeapon weapon)
                 {
                     if (Mod.instance.weaponIds.Values.Contains(weapon.ParentSheetIndex))
                     {

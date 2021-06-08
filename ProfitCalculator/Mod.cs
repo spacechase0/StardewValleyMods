@@ -47,7 +47,7 @@ namespace ProfitCalculator
                 var value = int.Parse(productObjData[1]);
 
                 //Monitor.Log("Doing for " + name);
-                
+
                 if (season != "" && !cropData[1].Split(' ').Contains(season))
                     continue;
 
@@ -56,7 +56,7 @@ namespace ProfitCalculator
                 int regrowth = int.Parse(cropData[4]);
 
                 int profit = (value - cost) * (28 / total);
-                if ( regrowth != -1 )
+                if (regrowth != -1)
                 {
                     int days = 28;
                     int harvests = 0;
@@ -66,7 +66,7 @@ namespace ProfitCalculator
                     //Monitor.Log("harvests for " + name + " " + harvests + " w/ " + total + " " + regrowth);
 
                     int avgPerHarvest = 1;
-                    if ( cropData[6].StartsWith("true ") )
+                    if (cropData[6].StartsWith("true "))
                     {
                         var multiStrs = cropData[6].Split(' ');
                         int min = int.Parse(multiStrs[1]);
@@ -99,12 +99,12 @@ namespace ProfitCalculator
                 };
                 profits.Add(data);
             }
-            
+
             profits.Sort(Comparer<ProfitData>.Create((p1, p2) => p2.profit - p1.profit));
-            for ( int i = 0; i < profits.Count; ++i )
+            for (int i = 0; i < profits.Count; ++i)
             {
                 var p = profits[i];
-                Log.info($"{i+1}. " + string.Format("{0,-20}", p.crop) + string.Format("{0,10}", p.profit) + "g");
+                Log.info($"{i + 1}. " + string.Format("{0,-20}", p.crop) + string.Format("{0,10}", p.profit) + "g");
             }
         }
     }

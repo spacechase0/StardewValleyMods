@@ -14,7 +14,7 @@ namespace SpaceCore.Overrides
                 sourceRectangle = rect;
             }
         }
-        
+
         public static void Prefix2(SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, ref Rectangle? sourceRectangle, Color color)
         {
             if (sourceRectangle.HasValue)

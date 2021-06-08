@@ -20,7 +20,7 @@ namespace TheftOfTheWinterStar.Overrides
                 for (int iy = -2; iy <= 2; ++iy)
                 {
                     var key = new Vector2(tileX + ix, tileY + iy);
-                    if ( loc.objects.ContainsKey(key) )
+                    if (loc.objects.ContainsKey(key))
                     {
                         var obj = loc.objects[key];
                         if (obj.bigCraftable.Value && obj.ParentSheetIndex == seasonalDelimiter)
@@ -70,41 +70,41 @@ namespace TheftOfTheWinterStar.Overrides
 
             // Now for the original method
             Crop c = new Crop(index, tileX, tileY);
-            if ( c.seasonsToGrowIn.Count == 0 )
+            if (c.seasonsToGrowIn.Count == 0)
             {
                 return false;
             }
-            if ( !who.currentLocation.isFarm && !who.currentLocation.IsGreenhouse && !who.currentLocation.CanPlantSeedsHere( index, tileX, tileY ) && who.currentLocation.IsOutdoors )
+            if (!who.currentLocation.isFarm && !who.currentLocation.IsGreenhouse && !who.currentLocation.CanPlantSeedsHere(index, tileX, tileY) && who.currentLocation.IsOutdoors)
             {
-                Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:HoeDirt.cs.13919" ) );
+                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HoeDirt.cs.13919"));
                 return false;
             }
-            if ( foundDelimiter || !who.currentLocation.isOutdoors || who.currentLocation.IsGreenhouse || c.seasonsToGrowIn.Contains( location.GetSeasonForLocation() ) || who.currentLocation.SeedsIgnoreSeasonsHere() )
+            if (foundDelimiter || !who.currentLocation.isOutdoors || who.currentLocation.IsGreenhouse || c.seasonsToGrowIn.Contains(location.GetSeasonForLocation()) || who.currentLocation.SeedsIgnoreSeasonsHere())
             {
                 __instance.crop = c;
-                if ( ( bool ) c.raisedSeeds )
+                if ((bool)c.raisedSeeds)
                 {
-                    location.playSound( "stoneStep" );
+                    location.playSound("stoneStep");
                 }
-                location.playSound( "dirtyHit" );
+                location.playSound("dirtyHit");
                 Game1.stats.SeedsSown++;
-                AccessTools.Method( __instance.GetType(), "applySpeedIncreases" ).Invoke( __instance, new object[] { who } );
+                AccessTools.Method(__instance.GetType(), "applySpeedIncreases").Invoke(__instance, new object[] { who });
                 __instance.nearWaterForPaddy.Value = -1;
-                if ( __instance.hasPaddyCrop() && __instance.paddyWaterCheck( location, new Vector2( tileX, tileY ) ) )
+                if (__instance.hasPaddyCrop() && __instance.paddyWaterCheck(location, new Vector2(tileX, tileY)))
                 {
                     __instance.state.Value = 1;
-                    __instance.updateNeighbors( location, new Vector2( tileX, tileY ) );
+                    __instance.updateNeighbors(location, new Vector2(tileX, tileY));
                 }
                 __result = true;
                 return false;
             }
-            if ( c.seasonsToGrowIn.Count > 0 && !c.seasonsToGrowIn.Contains( location.GetSeasonForLocation() ) )
+            if (c.seasonsToGrowIn.Count > 0 && !c.seasonsToGrowIn.Contains(location.GetSeasonForLocation()))
             {
-                Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:HoeDirt.cs.13924" ) );
+                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HoeDirt.cs.13924"));
             }
             else
             {
-                Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:HoeDirt.cs.13925" ) );
+                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HoeDirt.cs.13925"));
             }
             return false;
         }

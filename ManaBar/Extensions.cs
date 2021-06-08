@@ -6,7 +6,7 @@ namespace ManaBar
 {
     public static class Extensions
     {
-        private static void dataCheck( Farmer player )
+        private static void dataCheck(Farmer player)
         {
             if (!Data.players.ContainsKey(player.UniqueMultiplayerID))
                 Data.players.Add(player.UniqueMultiplayerID, new MultiplayerSaveData.PlayerData());
@@ -15,7 +15,7 @@ namespace ManaBar
         public static int getCurrentMana(this Farmer player)
         {
             dataCheck(player);
-            return Data.players[ player.UniqueMultiplayerID ].mana;
+            return Data.players[player.UniqueMultiplayerID].mana;
         }
 
         public static void addMana(this Farmer player, int amt)
@@ -32,7 +32,7 @@ namespace ManaBar
             return Data.players[player.UniqueMultiplayerID].manaCap;
         }
 
-        public static void setMaxMana(this Farmer player, int newCap )
+        public static void setMaxMana(this Farmer player, int newCap)
         {
             dataCheck(player);
             Data.players[player.UniqueMultiplayerID].manaCap = newCap;

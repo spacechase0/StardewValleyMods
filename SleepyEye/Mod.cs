@@ -20,7 +20,7 @@ namespace SleepyEye
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onMenuChanged( object sender, MenuChangedEventArgs e )
+        private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson.Name != "Pierre")
                 return;

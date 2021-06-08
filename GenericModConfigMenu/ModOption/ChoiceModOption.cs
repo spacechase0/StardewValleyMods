@@ -14,8 +14,8 @@ namespace GenericModConfigMenu.ModOption
             set { if (Choices.Contains(value)) base.Value = value; }
         }
 
-        public ChoiceModOption( string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, T[] choices, string id, IManifest mod )
-        :   base( name, desc, type, theGetter, theSetter, id, mod )
+        public ChoiceModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, T[] choices, string id, IManifest mod)
+            : base(name, desc, type, theGetter, theSetter, id, mod)
         {
             Choices = choices;
         }

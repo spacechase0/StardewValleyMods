@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using CustomBuildings.Overrides;
 using Harmony;
@@ -19,7 +19,7 @@ namespace CustomBuildings
         public static Mod instance;
 
         internal Dictionary<string, BuildingData> buildings = new Dictionary<string, BuildingData>();
-        
+
         internal static int ResolveObjectId(object data)
         {
             if (data.GetType() == typeof(long))
@@ -53,12 +53,12 @@ namespace CustomBuildings
             harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.upgrade)), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.upgrade_Prefix))));
             //harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.getUpgradeSignLocation)), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.getUpgradeSignLocation_Postfix))));
             harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.draw)), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.draw_Prefix))));
-            
+
             Log.debug("Loading content packs...");
-            foreach ( var cp in helper.ContentPacks.GetOwned() )
+            foreach (var cp in helper.ContentPacks.GetOwned())
             {
                 DirectoryInfo buildingsDir = new DirectoryInfo(Path.Combine(cp.DirectoryPath, "Buildings"));
-                foreach ( var dir in buildingsDir.EnumerateDirectories() )
+                foreach (var dir in buildingsDir.EnumerateDirectories())
                 {
                     string relDir = $"Buildings/{dir.Name}";
                     BuildingData binfo = cp.ReadJsonFile<BuildingData>(Path.Combine(relDir, "building.json"));
@@ -76,7 +76,7 @@ namespace CustomBuildings
             if (e.NewMenu is CarpenterMenu carp)
             {
                 var blueprints = Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
-                foreach ( var building in buildings )
+                foreach (var building in buildings)
                 {
                     if (building.Value.PreviousTier == null || Game1.getFarm().isBuildingConstructed(building.Value.PreviousTier))
                         blueprints.Add(new BluePrint(building.Value.Id));
@@ -88,7 +88,7 @@ namespace CustomBuildings
         {
             if (!e.IsLocalPlayer)
                 return;
-            
+
             BuildableGameLocation farm = e.NewLocation as BuildableGameLocation;
             if (farm == null)
                 farm = e.OldLocation as BuildableGameLocation;
@@ -112,7 +112,7 @@ namespace CustomBuildings
 
         public bool CanLoad<T>(IAssetInfo asset)
         {
-            foreach ( var building in buildings )
+            foreach (var building in buildings)
             {
                 if (asset.AssetNameEquals("Buildings\\" + building.Key) || asset.AssetNameEquals("Maps\\" + building.Key))
                     return true;
@@ -125,7 +125,7 @@ namespace CustomBuildings
             foreach (var building in buildings)
             {
                 if (asset.AssetNameEquals("Buildings\\" + building.Key))
-                    return (T) (object) building.Value.texture;
+                    return (T)(object)building.Value.texture;
                 else if (asset.AssetNameEquals("Maps\\" + building.Key))
                     return (T)(object)building.Value.mapLoader();
             }
@@ -140,7 +140,7 @@ namespace CustomBuildings
         public void Edit<T>(IAssetData asset)
         {
             var dict = asset.AsDictionary<string, string>();
-            foreach ( var building in buildings)
+            foreach (var building in buildings)
             {
                 dict.Data.Add(building.Value.Id, building.Value.BlueprintString());
             }

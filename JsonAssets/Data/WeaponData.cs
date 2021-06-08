@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using StardewValley;
 using StardewValley.Tools;
-using SObject = StardewValley.Object;
 
 namespace JsonAssets.Data
 {
@@ -16,7 +15,7 @@ namespace JsonAssets.Data
             Club = MeleeWeapon.club,
             Sword = MeleeWeapon.defenseSword,
         }
-        
+
         public string Description { get; set; }
         public Type_ Type { get; set; }
 

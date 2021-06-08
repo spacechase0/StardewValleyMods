@@ -8,7 +8,7 @@ namespace SpaceCore.Interface
         public abstract string Name { get; }
         public readonly TabbedMenu Parent;
 
-        public TabMenu( TabbedMenu parent )
+        public TabMenu(TabbedMenu parent)
         {
             Parent = parent;
         }

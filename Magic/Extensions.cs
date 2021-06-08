@@ -9,30 +9,30 @@ namespace Magic
 {
     public static class Extensions
     {
-        private static void dataCheck( Farmer player )
+        private static void dataCheck(Farmer player)
         {
             if (!Data.players.ContainsKey(player.UniqueMultiplayerID))
                 Data.players.Add(player.UniqueMultiplayerID, new MultiplayerSaveData.PlayerData());
         }
-        
+
         public static int getCurrentMana(this Farmer player)
         {
-            return mana.GetMana( player );
+            return mana.GetMana(player);
         }
 
         public static void addMana(this Farmer player, int amt)
         {
-            mana.AddMana( player, amt );
+            mana.AddMana(player, amt);
         }
 
         public static int getMaxMana(this Farmer player)
         {
-            return mana.GetMaxMana( player );
+            return mana.GetMaxMana(player);
         }
 
-        public static void setMaxMana(this Farmer player, int newCap )
+        public static void setMaxMana(this Farmer player, int newCap)
         {
-            mana.SetMaxMana( player, newCap );
+            mana.SetMaxMana(player, newCap);
         }
 
         public static int getFreeSpellPoints(this Farmer player)
@@ -86,12 +86,12 @@ namespace Magic
         {
             int known = knowsSpellLevel(player, spellId);
             int diff = level - known;
-            
+
             if (diff <= 0 || getFreeSpellPoints(player) < diff && !free)
                 return;
 
             Log.debug($"Learning spell {spellId}, level {level + 1}");
-            if ( !free )
+            if (!free)
                 useSpellPoints(player, diff, false);
             player.getSpellBook().knownSpells[spellId] = level;
 
@@ -129,7 +129,7 @@ namespace Magic
         {
             return SpellBook.get(spellId).canCast(player, level);
         }
-        
+
         public static bool canCastSpell(this Farmer player, Spell spell, int level)
         {
             return spell.canCast(player, level);

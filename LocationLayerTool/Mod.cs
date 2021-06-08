@@ -9,21 +9,21 @@ namespace LocationLayerTool
     {
         public static Mod instance;
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
             instance = this;
             Log.Monitor = Monitor;
 
-            var harmony = HarmonyInstance.Create( ModManifest.UniqueID );
+            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
             harmony.PatchAll();
 
-            Helper.ConsoleCommands.Add( "llt_adddummy", "", doCommand );
+            Helper.ConsoleCommands.Add("llt_adddummy", "", doCommand);
         }
 
-        private void doCommand( string cmd, string[] args )
+        private void doCommand(string cmd, string[] args)
         {
-            Game1.locations.Add( new GameLocation( Helper.Content.GetActualAssetKey( "assets/Farm_overlay.tbin" ), "Farm_overlay" ) );
-            Game1.game1.parseDebugInput( "warp Farm_overlay 39 31" );
+            Game1.locations.Add(new GameLocation(Helper.Content.GetActualAssetKey("assets/Farm_overlay.tbin"), "Farm_overlay"));
+            Game1.game1.parseDebugInput("warp Farm_overlay 39 31");
         }
     }
 }

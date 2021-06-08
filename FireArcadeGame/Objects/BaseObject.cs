@@ -14,39 +14,39 @@ namespace FireArcadeGame.Objects
 
         public bool Dead = false;
 
-        public BaseObject( World world )
+        public BaseObject(World world)
         {
             World = world;
         }
 
         public virtual void Update() { }
 
-        public virtual void Render( GraphicsDevice device, Matrix projection, Camera cam )
+        public virtual void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
             effect.Projection = projection;
             effect.View = cam.CreateViewMatrix();
             effect.World = MakeWorldMatrix();
         }
 
-        public virtual void RenderOver( GraphicsDevice device, Matrix projection, Camera cam )
+        public virtual void RenderOver(GraphicsDevice device, Matrix projection, Camera cam)
         {
             effect.Projection = projection;
             effect.View = cam.CreateViewMatrix();
             effect.World = MakeWorldMatrix();
         }
 
-        public virtual void RenderUi( SpriteBatch b )
+        public virtual void RenderUi(SpriteBatch b)
         {
         }
 
         protected virtual Matrix MakeWorldMatrix()
         {
-            return Matrix.CreateWorld( Position, Vector3.Forward, Vector3.Up );
+            return Matrix.CreateWorld(Position, Vector3.Forward, Vector3.Up);
         }
 
         private static BasicEffect GetBasicEffect()
         {
-            var ret = new BasicEffect( Game1.game1.GraphicsDevice )
+            var ret = new BasicEffect(Game1.game1.GraphicsDevice)
             {
                 Alpha = 1,
                 VertexColorEnabled = true,
@@ -54,7 +54,7 @@ namespace FireArcadeGame.Objects
             };
 
             //ret.EnableDefaultLighting();
-            ret.AmbientLightColor = new Vector3( 0.2f, 0.2f, 0.2f );
+            ret.AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f);
             return ret;
         }
     }

@@ -18,7 +18,7 @@ namespace RushOrders
         private int selectedResponse = -1;
         bool showingBroke = false;
 
-        public RushConstructionMenu( IClickableMenu oldMenu )
+        public RushConstructionMenu(IClickableMenu oldMenu)
         {
             old = oldMenu;
             width = 800;
@@ -30,7 +30,7 @@ namespace RushOrders
             r[0] += $" ({Mod.getBuildingRushPrice()}g)";
 
             heightForQuestions = SpriteText.getHeightOfString(q, width - Game1.pixelZoom * 4);
-            foreach ( string rs in r )
+            foreach (string rs in r)
                 heightForQuestions += SpriteText.getHeightOfString(rs, width - Game1.pixelZoom * 4) + Game1.pixelZoom * 4;
             heightForQuestions += Game1.pixelZoom * 10;
         }
@@ -39,7 +39,7 @@ namespace RushOrders
         {
             base.receiveLeftClick(x, y, playSound);
 
-            if ( showingBroke )
+            if (showingBroke)
             {
                 Game1.activeClickableMenu = old;
                 return;
@@ -49,9 +49,9 @@ namespace RushOrders
             for (int i = 0; i < this.r.Length; i++)
             {
                 Rectangle rect = new Rectangle(this.x + Game1.pixelZoom * 2, num, width, SpriteText.getHeightOfString(r[i]));
-                if ( rect.Contains( x, y ) )
+                if (rect.Contains(x, y))
                 {
-                    if ( i == 0 )
+                    if (i == 0)
                     {
                         int cost = Mod.getBuildingRushPrice();
                         if (Game1.player.Money < cost)
@@ -90,10 +90,10 @@ namespace RushOrders
 
             this.drawBox(b, this.x, this.y - (this.heightForQuestions - this.height), this.width, this.heightForQuestions);
             SpriteText.drawString(b, q, this.x + Game1.pixelZoom * 2, this.y + Game1.pixelZoom * 3 - (this.heightForQuestions - this.height), 999999999, this.width - Game1.pixelZoom * 4);
-            
+
             if (showingBroke)
                 return;
-            
+
             int num = this.y - (this.heightForQuestions - this.height) + SpriteText.getHeightOfString(q, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 12;
             for (int i = 0; i < this.r.Count(); i++)
             {
@@ -108,7 +108,7 @@ namespace RushOrders
                 num += SpriteText.getHeightOfString(this.r[i], this.width) + Game1.pixelZoom * 4;
             }
 
-            drawMouse( b );
+            drawMouse(b);
         }
 
         private void drawBox(SpriteBatch b, int xPos, int yPos, int boxWidth, int boxHeight)

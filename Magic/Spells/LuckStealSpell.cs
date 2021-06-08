@@ -8,9 +8,8 @@ namespace Magic.Spells
 {
     public class LuckStealSpell : Spell
     {
-        public LuckStealSpell() : base(SchoolId.Eldritch, "lucksteal")
-        {
-        }
+        public LuckStealSpell()
+            : base(SchoolId.Eldritch, "lucksteal") { }
 
         public override int getManaCost(Farmer player, int level)
         {

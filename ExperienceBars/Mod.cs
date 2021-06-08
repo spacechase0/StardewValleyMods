@@ -26,7 +26,7 @@ namespace ExperienceBars
         public static bool show = true;
         private static bool stopLevelExtenderCompat = false;
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
             Log.Monitor = Monitor;
             Config = helper.ReadConfig<Configuration>();
@@ -58,7 +58,7 @@ namespace ExperienceBars
         /// <param name="e">The event arguments.</param>
         public void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if ( e.Button == Config.ToggleBars )
+            if (e.Button == Config.ToggleBars)
             {
                 if (show && (Game1.GetKeyboardState().IsKeyDown(Keys.LeftShift) || Game1.GetKeyboardState().IsKeyDown(Keys.RightShift)))
                 {
@@ -82,7 +82,7 @@ namespace ExperienceBars
 
             if (!show || Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree)
                 return;
-            
+
             int[] skills = new int[]
             {
                 Game1.player.farmingLevel.Value,
@@ -102,7 +102,7 @@ namespace ExperienceBars
                     var instance = Type.GetType("LevelExtender.ModEntry, LevelExtender").GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
                     var extLevels = Helper.Reflection.GetField<int[]>(instance, "sLevs").GetValue();
                     var extExp = Helper.Reflection.GetField<int[]>(instance, "addedXP").GetValue();
-                    exp = (int[]) exp.Clone();
+                    exp = (int[])exp.Clone();
                     for (int i = 0; i < 5; ++i)
                     {
                         if (skills[i] < extLevels[i])
@@ -124,34 +124,34 @@ namespace ExperienceBars
             if (Game1.player.currentLocation != null && Game1.player.currentLocation is MineShaft &&
                 x <= 25 && y <= 75)
                 y += 75;
-            for ( int i = 0; i < (renderLuck ? 6 : 5); ++i )
+            for (int i = 0; i < (renderLuck ? 6 : 5); ++i)
             {
                 int prevReq = 0, nextReq = 1;
-                if ( skills[ i ] == 0 )
+                if (skills[i] == 0)
                 {
-                    nextReq = expNeededForLevel[ 0 ];
+                    nextReq = expNeededForLevel[0];
                 }
-                else if ( skills[ i ] < 10 )
+                else if (skills[i] < 10)
                 {
-                    prevReq = expNeededForLevel[ skills[ i ] - 1 ];
-                    nextReq = expNeededForLevel[ skills[ i ] ];
+                    prevReq = expNeededForLevel[skills[i] - 1];
+                    nextReq = expNeededForLevel[skills[i]];
                 }
-                else if ( foundLevelExtender )
+                else if (foundLevelExtender)
                 {
                     prevReq = 0;
                     nextReq = (int)(skills[i] * 1000 + (skills[i] * skills[i] * skills[i] * 0.3));
                 }
 
-                int haveExp = exp[ i ] - prevReq;
+                int haveExp = exp[i] - prevReq;
                 int needExp = nextReq - prevReq;
-                float progress = ( float ) haveExp / needExp;
-                if ( skills[ i ] == 10 && !foundLevelExtender || skills[ i ] == 100 )
+                float progress = (float)haveExp / needExp;
+                if (skills[i] == 10 && !foundLevelExtender || skills[i] == 100)
                 {
                     progress = -1;
                 }
-                
-                renderSkillBar( x, y, Game1.buffsIcons, getSkillRect( i ), skills[ i ], progress, getSkillColor( i ) );
-                
+
+                renderSkillBar(x, y, Game1.buffsIcons, getSkillRect(i), skills[i], progress, getSkillColor(i));
+
                 y += 40;
             }
             expBottom = y;
@@ -173,7 +173,7 @@ namespace ExperienceBars
         }
 
         private Color[] skillColors;
-        private Color getSkillColor( int skill )
+        private Color getSkillColor(int skill)
         {
             if (skillColors != null)
                 return skillColors[skill];
@@ -201,27 +201,27 @@ namespace ExperienceBars
         private static readonly Color BAR_FG_TICK = new Color(120, 120, 120);
         private static Texture2D skillBg, skillFg;
 
-        public static void renderSkillBar( int x, int y, Texture2D iconTex, Rectangle icon, int level, float progress, Color skillCol )
+        public static void renderSkillBar(int x, int y, Texture2D iconTex, Rectangle icon, int level, float progress, Color skillCol)
         {
             if (!show) return;
-            if ( Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree ) return;
+            if (Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree) return;
 
             var b = Game1.spriteBatch;
 
-            if ( skillBg == null || skillFg == null )
+            if (skillBg == null || skillFg == null)
                 setupExpBars();
 
-            b.Draw( iconTex, new Rectangle( x, y, 32, 32 ), icon, Color.White );
+            b.Draw(iconTex, new Rectangle(x, y, 32, 32), icon, Color.White);
 
             int extra = 0;
-            if ( level > 9  ) extra += 16;
-            if ( level > 99 ) extra += 20;
+            if (level > 9) extra += 16;
+            if (level > 99) extra += 20;
             NumberSprite.draw(level, b, new Vector2(x + 32 + 4 + 16 + extra, y + 16), Color.White, 0.75f, 0, 1, 0);
 
             if (progress < 0 || progress > 100)
                 return;
 
-            Rectangle barRect = new Rectangle( x + 32 + 4 + 32 + extra + 4, y + ( 32 - BAR_HEIGHT ) / 2 - 1, BAR_WIDTH * 2, BAR_HEIGHT * 2 );
+            Rectangle barRect = new Rectangle(x + 32 + 4 + 32 + extra + 4, y + (32 - BAR_HEIGHT) / 2 - 1, BAR_WIDTH * 2, BAR_HEIGHT * 2);
             b.Draw(skillBg, barRect, new Rectangle(0, 0, BAR_WIDTH, BAR_HEIGHT), Color.White);
             barRect.Width = (int)(barRect.Width * progress);
             b.Draw(skillFg, barRect, new Rectangle(0, 0, barRect.Width / 2, BAR_HEIGHT), skillCol);

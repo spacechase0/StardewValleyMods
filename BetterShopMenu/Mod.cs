@@ -52,7 +52,7 @@ namespace BetterShopMenu
         private Dictionary<int, string> categoryNames;
         private int sorting = 0;
         private TextBox search;
-        private void initShop( ShopMenu shopMenu )
+        private void initShop(ShopMenu shopMenu)
         {
             shop = shopMenu;
             firstTick = true;
@@ -66,7 +66,7 @@ namespace BetterShopMenu
 
             categories = new List<int>();
             hasRecipes = false;
-            foreach ( var salable in initialItems )
+            foreach (var salable in initialItems)
             {
                 var item = salable as Item;
                 var obj = item as SObject;
@@ -116,7 +116,7 @@ namespace BetterShopMenu
             categoryNames.Add(SObject.toolCategory, "Tools");
             categoryNames.Add(categories.Count == 0 ? 1 : categories.Count, "Recipes");
 
-            search = new TextBox( Game1.content.Load<Texture2D>( "LooseSprites\\textBox" ), null, Game1.smallFont, Game1.textColor ); ;
+            search = new TextBox(Game1.content.Load<Texture2D>("LooseSprites\\textBox"), null, Game1.smallFont, Game1.textColor); ;
 
             syncStock();
         }
@@ -124,8 +124,8 @@ namespace BetterShopMenu
         {
             currCategory += amt;
 
-            if ( currCategory == -2 )
-                currCategory = hasRecipes ? categories.Count : ( categories.Count - 1 );
+            if (currCategory == -2)
+                currCategory = hasRecipes ? categories.Count : (categories.Count - 1);
             if (currCategory == categories.Count && !hasRecipes || currCategory > categories.Count)
                 currCategory = -1;
 
@@ -147,14 +147,14 @@ namespace BetterShopMenu
             var stock = new Dictionary<ISalable, int[]>();
             foreach (var item in initialItems)
             {
-                if (itemMatchesCategory(item, currCategory) && (search.Text == null || item.DisplayName.ToLower().Contains( search.Text.ToLower() ) ))
+                if (itemMatchesCategory(item, currCategory) && (search.Text == null || item.DisplayName.ToLower().Contains(search.Text.ToLower())))
                 {
                     items.Add(item);
                 }
             }
             foreach (var item in initialStock)
             {
-                if (itemMatchesCategory(item.Key, currCategory ) && ( search.Text == null || item.Key.DisplayName.ToLower().Contains( search.Text.ToLower() ) ) )
+                if (itemMatchesCategory(item.Key, currCategory) && (search.Text == null || item.Key.DisplayName.ToLower().Contains(search.Text.ToLower())))
                 {
                     stock.Add(item.Key, item.Value);
                 }
@@ -169,7 +169,7 @@ namespace BetterShopMenu
         {
             var items = Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").GetValue();
             var stock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").GetValue();
-            if ( sorting != 0 )
+            if (sorting != 0)
             {
                 if (sorting == 1)
                     items.Sort((a, b) => stock[a][0] - stock[b][0]);
@@ -183,9 +183,9 @@ namespace BetterShopMenu
         /// <param name="e">The event arguments.</param>
         private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if ( shop != null )
+            if (shop != null)
             {
-                if ( firstTick )
+                if (firstTick)
                     initShop2();
                 search.Update();
             }
@@ -199,13 +199,13 @@ namespace BetterShopMenu
             if (shop == null)
                 return;
 
-            Vector2 pos = new Vector2( shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 525 );
+            Vector2 pos = new Vector2(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 525);
             IClickableMenu.drawTextureBox(Game1.spriteBatch, (int)pos.X, (int)pos.Y, 200, 72, Color.White);
             pos.X += 16;
             pos.Y += 16;
             string str = "Category: \n" + categoryNames[((currCategory == -1 || currCategory == categories.Count) ? currCategory : categories[currCategory])];
-            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1,  1), new Color( 224, 150, 80 ), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
-            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color( 86, 22, 12 ), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1, 1), new Color(224, 150, 80), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color(86, 22, 12), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
 
             pos = new Vector2(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 600);
             IClickableMenu.drawTextureBox(Game1.spriteBatch, (int)pos.X, (int)pos.Y, 200, 48, Color.White);
@@ -214,18 +214,18 @@ namespace BetterShopMenu
             str = "Sorting: " + (sorting == 0 ? "None" : (sorting == 1 ? "Price" : "Name"));
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1, 1), new Color(224, 150, 80), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color(86, 22, 12), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
-            
-            if ( Config.GridLayout )
+
+            if (Config.GridLayout)
             {
                 drawGridLayout();
             }
-            
+
             pos.X = shop.xPositionOnScreen + 25;
             pos.Y = shop.yPositionOnScreen + 650;
             //Game1.spriteBatch.DrawString( Game1.dialogueFont, "Search: ", pos, Game1.textColor, 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0 );
-            search.X = ( int ) ( pos.X );// + Game1.dialogueFont.MeasureString( "Search: " ).X);
-            search.Y = ( int ) pos.Y;
-            search.Draw( Game1.spriteBatch );
+            search.X = (int)(pos.X);// + Game1.dialogueFont.MeasureString( "Search: " ).X);
+            search.Y = (int)pos.Y;
+            search.Draw(Game1.spriteBatch);
 
             shop.drawMouse(Game1.spriteBatch);
         }
@@ -253,25 +253,25 @@ namespace BetterShopMenu
             bool purchase_draw_item_background = true;
             Rectangle purchase_item_background = new Rectangle(296, 363, 18, 18);
             Color purchase_selected_color = Color.Wheat;
-            if ( shop.storeContext == "QiGemShop" )
+            if (shop.storeContext == "QiGemShop")
             {
                 purchase_texture = Game1.mouseCursors2;
-                purchase_window_border = new Rectangle( 0, 256, 18, 18 );
-                purchase_item_rect = new Rectangle( 18, 256, 15, 15 );
+                purchase_window_border = new Rectangle(0, 256, 18, 18);
+                purchase_item_rect = new Rectangle(18, 256, 15, 15);
                 purchase_item_text_color = 4;
                 purchase_selected_color = Color.Blue;
                 purchase_draw_item_background = true;
-                purchase_item_background = new Rectangle( 33, 256, 18, 18 );
+                purchase_item_background = new Rectangle(33, 256, 18, 18);
             }
 
 
             //IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), shop.xPositionOnScreen + shop.width - shop.inventory.width - 32 - 24, shop.yPositionOnScreen + shop.height - 256 + 40, shop.inventory.width + 56, shop.height - 448 + 20, Color.White, 4f, true);
             //IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f, true);
-            IClickableMenu.drawTextureBox( Game1.spriteBatch, purchase_texture, purchase_window_border, shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f );
-            for ( int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i )
+            IClickableMenu.drawTextureBox(Game1.spriteBatch, purchase_texture, purchase_window_border, shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f);
+            for (int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i)
             {
                 bool failedCanPurchaseCheck = false;
-                if ( shop.canPurchaseCheck != null && !shop.canPurchaseCheck( i ) )
+                if (shop.canPurchaseCheck != null && !shop.canPurchaseCheck(i))
                 {
                     failedCanPurchaseCheck = true;
                 }
@@ -282,54 +282,54 @@ namespace BetterShopMenu
                 ISalable item = forSale[i];
                 bool buyInStacks = item.Stack > 1 && item.Stack != int.MaxValue && itemPriceAndStock[item][1] == int.MaxValue;
                 StackDrawType stackDrawType;
-                if ( shop.storeContext == "QiGemShop" )
+                if (shop.storeContext == "QiGemShop")
                 {
                     stackDrawType = StackDrawType.HideButShowQuality;
-                    buyInStacks = ( item.Stack > 1 );
+                    buyInStacks = (item.Stack > 1);
                 }
-                else if ( shop.itemPriceAndStock[ item ][ 1 ] == int.MaxValue )
+                else if (shop.itemPriceAndStock[item][1] == int.MaxValue)
                 {
                     stackDrawType = StackDrawType.HideButShowQuality;
                 }
                 else
                 {
                     stackDrawType = StackDrawType.Draw_OneInclusive;
-                    if ( Helper.Reflection.GetField<bool>(shop, "_isStorageShop").GetValue() )
+                    if (Helper.Reflection.GetField<bool>(shop, "_isStorageShop").GetValue())
                     {
                         stackDrawType = StackDrawType.Draw;
                     }
                 }
-                if ( forSale[ i ].ShouldDrawIcon() )
+                if (forSale[i].ShouldDrawIcon())
                 {
-                    if ( purchase_draw_item_background )
+                    if (purchase_draw_item_background)
                     {
                         //Game1.spriteBatch.Draw( purchase_texture, new Vector2( rect.X + 48 + 4, rect.Y + 16 ), purchase_item_background, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f );
                     }
-                    item.drawInMenu( Game1.spriteBatch, new Vector2( rect.X + 48, rect.Y + 16 ), 1f, 1, 1, stackDrawType, Color.White, true );
+                    item.drawInMenu(Game1.spriteBatch, new Vector2(rect.X + 48, rect.Y + 16), 1f, 1, 1, stackDrawType, Color.White, true);
                 }
                 int price = itemPriceAndStock[forSale[i]][0];
                 var priceStr = price.ToString();
-                if ( price > 0 )
+                if (price > 0)
                 {
                     SpriteText.drawString(Game1.spriteBatch, priceStr, rect.Right - SpriteText.getWidthOfString(priceStr) - 16, rect.Y + 80, alpha: ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) >= price && !failedCanPurchaseCheck ? 1f : 0.5f, color: purchase_item_text_color);
                     //Utility.drawWithShadow(Game1.spriteBatch, Game1.mouseCursors, new Vector2(rect.Right - 16, rect.Y + 80), new Rectangle(193 + currency * 9, 373, 9, 10), Color.White, 0, Vector2.Zero, 1, layerDepth: 1);
                 }
-                else if ( itemPriceAndStock[ forSale[ i ] ].Length > 2 )
+                else if (itemPriceAndStock[forSale[i]].Length > 2)
                 {
                     int required_item_count = 5;
                     int requiredItem = itemPriceAndStock[forSale[i]][2];
-                    if ( itemPriceAndStock[ forSale[ i ] ].Length > 3 )
+                    if (itemPriceAndStock[forSale[i]].Length > 3)
                     {
-                        required_item_count = itemPriceAndStock[ forSale[ i ] ][ 3 ];
+                        required_item_count = itemPriceAndStock[forSale[i]][3];
                     }
                     bool hasEnoughToTrade = Game1.player.hasItemInInventory(requiredItem, required_item_count);
-                    if ( shop.canPurchaseCheck != null && !shop.canPurchaseCheck( i ) )
+                    if (shop.canPurchaseCheck != null && !shop.canPurchaseCheck(i))
                     {
                         hasEnoughToTrade = false;
                     }
                     float textWidth = SpriteText.getWidthOfString("x" + required_item_count);
-                    Utility.drawWithShadow( Game1.spriteBatch, Game1.objectSpriteSheet, new Vector2( ( float ) ( rect.Right - 64 ) - textWidth, rect.Y + 80 - 4 ), Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, requiredItem, 16, 16 ), Color.White * ( hasEnoughToTrade ? 1f : 0.25f ), 0f, Vector2.Zero, 3, flipped: false, -1f, -1, -1, hasEnoughToTrade ? 0.35f : 0f );
-                    SpriteText.drawString( Game1.spriteBatch, "x" + required_item_count, rect.Right - ( int ) textWidth - 16, rect.Y + 80, 999999, -1, 999999, hasEnoughToTrade ? 1f : 0.5f, 0.88f, junimoText: false, -1, "", purchase_item_text_color );
+                    Utility.drawWithShadow(Game1.spriteBatch, Game1.objectSpriteSheet, new Vector2((float)(rect.Right - 64) - textWidth, rect.Y + 80 - 4), Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, requiredItem, 16, 16), Color.White * (hasEnoughToTrade ? 1f : 0.25f), 0f, Vector2.Zero, 3, flipped: false, -1f, -1, -1, hasEnoughToTrade ? 0.35f : 0f);
+                    SpriteText.drawString(Game1.spriteBatch, "x" + required_item_count, rect.Right - (int)textWidth - 16, rect.Y + 80, 999999, -1, 999999, hasEnoughToTrade ? 1f : 0.5f, 0.88f, junimoText: false, -1, "", purchase_item_text_color);
                 }
                 if (rect.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                     hover = forSale[i];
@@ -355,7 +355,7 @@ namespace BetterShopMenu
                 IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), scrollBarRunner.X, scrollBarRunner.Y, scrollBarRunner.Width, scrollBarRunner.Height, Color.White, 4f, true);
                 scrollBar.draw(Game1.spriteBatch);
             }
-            if ( hover != null )
+            if (hover != null)
             {
                 string hoverText = hover.getDescription();
                 string boldTitleText = hover.DisplayName;
@@ -364,9 +364,9 @@ namespace BetterShopMenu
                 if (itemPriceAndStock != null && hover != null && (itemPriceAndStock.ContainsKey(hover) && itemPriceAndStock[hover].Length > 2))
                     getHoveredItemExtraItemIndex = itemPriceAndStock[hover][2];
                 int getHoveredItemExtraItemAmount = 5;
-                if ( itemPriceAndStock != null && hover != null && itemPriceAndStock.ContainsKey( hover ) && itemPriceAndStock[ hover ].Length > 3 )
-                    getHoveredItemExtraItemAmount = itemPriceAndStock[ hover ][ 3 ];
-                IClickableMenu.drawToolTip(Game1.spriteBatch, hoverText, boldTitleText,hover as Item, heldItem != null, -1, currency, getHoveredItemExtraItemIndex, getHoveredItemExtraItemAmount, (CraftingRecipe)null, hoverPrice);
+                if (itemPriceAndStock != null && hover != null && itemPriceAndStock.ContainsKey(hover) && itemPriceAndStock[hover].Length > 3)
+                    getHoveredItemExtraItemAmount = itemPriceAndStock[hover][3];
+                IClickableMenu.drawToolTip(Game1.spriteBatch, hoverText, boldTitleText, hover as Item, heldItem != null, -1, currency, getHoveredItemExtraItemIndex, getHoveredItemExtraItemAmount, (CraftingRecipe)null, hoverPrice);
             }
             if (heldItem != null)
                 heldItem.drawInMenu(Game1.spriteBatch, new Vector2((float)(Game1.getOldMouseX() + 8), (float)(Game1.getOldMouseY() + 8)), 1f);
@@ -376,35 +376,35 @@ namespace BetterShopMenu
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onButtonPressed(object sender, ButtonPressedEventArgs e )
+        private void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             if (shop == null)
                 return;
 
-            if ( e.Button == SButton.MouseLeft || e.Button == SButton.MouseRight )
+            if (e.Button == SButton.MouseLeft || e.Button == SButton.MouseRight)
             {
-                int x = (int) e.Cursor.ScreenPixels.X;
-                int y = (int) e.Cursor.ScreenPixels.Y;
+                int x = (int)e.Cursor.ScreenPixels.X;
+                int y = (int)e.Cursor.ScreenPixels.Y;
                 int direction = e.Button == SButton.MouseLeft ? 1 : -1;
 
-                if ( new Rectangle( shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 525, 200, 72 ).Contains( x, y ) )
-                    changeCategory( direction );
-                if ( new Rectangle( shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 600, 200, 48 ).Contains( x, y ) )
-                    changeSorting( direction );
-                
-                if ( Config.GridLayout )
+                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 525, 200, 72).Contains(x, y))
+                    changeCategory(direction);
+                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 600, 200, 48).Contains(x, y))
+                    changeSorting(direction);
+
+                if (Config.GridLayout)
                 {
-                    Helper.Input.Suppress( e.Button );
-                    if ( e.Button == SButton.MouseRight )
-                        doGridLayoutRightClick( e );
+                    Helper.Input.Suppress(e.Button);
+                    if (e.Button == SButton.MouseRight)
+                        doGridLayoutRightClick(e);
                     else
-                        doGridLayoutLeftClick( e );
+                        doGridLayoutLeftClick(e);
                 }
             }
-            else if ( (e.Button >= SButton.A && e.Button <= SButton.Z || e.Button == SButton.Space || e.Button == SButton.Back) &&
-                      search.Selected )
+            else if ((e.Button >= SButton.A && e.Button <= SButton.Z || e.Button == SButton.Space || e.Button == SButton.Back) &&
+                      search.Selected)
             {
-                Helper.Input.Suppress( e.Button );
+                Helper.Input.Suppress(e.Button);
                 syncStock();
             }
         }
@@ -437,14 +437,14 @@ namespace BetterShopMenu
             }
 
             // Copying a lot from left click code
-            if ( downArrow.containsPoint(x, y) && currentItemIndex < Math.Max(0, forSale.Count - 18))
+            if (downArrow.containsPoint(x, y) && currentItemIndex < Math.Max(0, forSale.Count - 18))
             {
                 downArrow.scale = downArrow.baseScale;
                 Helper.Reflection.GetField<int>(shop, "currentItemIndex").SetValue(currentItemIndex += 1);
-                if ( forSale.Count > 0 )
+                if (forSale.Count > 0)
                 {
                     scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, (forSale.Count / 6) - 1 + 1) * currentItemIndex + upArrow.bounds.Bottom + 4;
-                    if ( currentItemIndex == forSale.Count / 6 - 1)
+                    if (currentItemIndex == forSale.Count / 6 - 1)
                     {
                         scrollBar.bounds.Y = downArrow.bounds.Y - scrollBar.bounds.Height - 4;
                     }
@@ -469,7 +469,7 @@ namespace BetterShopMenu
             {
                 int y1 = scrollBar.bounds.Y;
                 scrollBar.bounds.Y = Math.Min(shop.yPositionOnScreen + shop.height - 64 - 12 - scrollBar.bounds.Height, Math.Max(y, shop.yPositionOnScreen + upArrow.bounds.Height + 20));
-                currentItemIndex = Math.Min(forSale.Count / 6 - 1, Math.Max(0, (int)((double)forSale.Count / 6 * (double) ( (float)(y - scrollBarRunner.Y) / (float)scrollBarRunner.Height))));
+                currentItemIndex = Math.Min(forSale.Count / 6 - 1, Math.Max(0, (int)((double)forSale.Count / 6 * (double)((float)(y - scrollBarRunner.Y) / (float)scrollBarRunner.Height))));
                 Helper.Reflection.GetField<int>(shop, "currentItemIndex").SetValue(currentItemIndex);
                 if (forSale.Count > 0)
                 {
@@ -538,7 +538,7 @@ namespace BetterShopMenu
                 int ix = i % unitsWide;
                 int iy = i / unitsWide;
                 Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UNIT_WIDTH, shop.yPositionOnScreen + 16 + iy * UNIT_HEIGHT - currentItemIndex * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
-                if (rect.Contains(x, y) && forSale[i] != null )
+                if (rect.Contains(x, y) && forSale[i] != null)
                 {
                     int numberToBuy = Math.Min(Game1.oldKBState.IsKeyDown(Keys.LeftShift) ? Math.Min(Math.Min(5, ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) / Math.Max(1, itemPriceAndStock[forSale[i]][0])), Math.Max(1, itemPriceAndStock[forSale[i]][1])) : 1, forSale[i].maximumStackSize());
                     if (numberToBuy == -1)
@@ -664,7 +664,7 @@ namespace BetterShopMenu
         /// <param name="e">The event arguments.</param>
         private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( e.NewMenu is ShopMenu shopMenu )
+            if (e.NewMenu is ShopMenu shopMenu)
             {
                 Log.trace("Found shop menu!");
                 initShop(shopMenu);
@@ -672,7 +672,7 @@ namespace BetterShopMenu
             else
             {
                 shop = null;
-                if (search != null )
+                if (search != null)
                 {
                     search.Selected = false;
                     search = null;
@@ -680,14 +680,14 @@ namespace BetterShopMenu
             }
         }
 
-        private bool itemMatchesCategory(ISalable item, int cat )
+        private bool itemMatchesCategory(ISalable item, int cat)
         {
             var obj = item as SObject;
             if (cat == -1)
                 return true;
             if (cat == categories.Count)
                 return obj != null && obj.IsRecipe;
-            if (categories[ cat ] == ((item as Item)?.Category ?? 0))
+            if (categories[cat] == ((item as Item)?.Category ?? 0))
                 return (obj == null || !obj.IsRecipe);
             return false;
         }

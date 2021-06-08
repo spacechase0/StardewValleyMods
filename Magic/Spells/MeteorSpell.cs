@@ -12,10 +12,8 @@ namespace Magic.Spells
 {
     class MeteorSpell : Spell
     {
-        public MeteorSpell() 
-            : base( SchoolId.Eldritch, "meteor" )
-        {
-        }
+        public MeteorSpell()
+            : base(SchoolId.Eldritch, "meteor") { }
 
         public override int getManaCost(Farmer player, int level)
         {
@@ -38,7 +36,7 @@ namespace Magic.Spells
             return new Meteor(player, targetX, targetY);
         }
     }
-    
+
     internal class Meteor : IActiveEffect
     {
         private readonly GameLocation loc;
@@ -74,8 +72,8 @@ namespace Magic.Spells
                 for (int i = 0; i < 10; ++i)
                 {
                     for (int ix = -i; ix <= i; ++ix)
-                    for (int iy = -i; iy <= i; ++iy)
-                        Game1.createRadialDebris(loc, Game1.objectSpriteSheetName, new Rectangle(352, 400, 32, 32), 4, (int)this.position.X + ix * 20, (int)this.position.Y + iy * 20, 15 - 14 + rand.Next(15 - 14), (int)((double)this.position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 255), 4.0f);
+                        for (int iy = -i; iy <= i; ++iy)
+                            Game1.createRadialDebris(loc, Game1.objectSpriteSheetName, new Rectangle(352, 400, 32, 32), 4, (int)this.position.X + ix * 20, (int)this.position.Y + iy * 20, 15 - 14 + rand.Next(15 - 14), (int)((double)this.position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 255), 4.0f);
                 }
                 foreach (var npc in source.currentLocation.characters)
                 {

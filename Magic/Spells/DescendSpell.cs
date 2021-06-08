@@ -7,9 +7,8 @@ namespace Magic.Spells
 {
     public class DescendSpell : Spell
     {
-        public DescendSpell() : base(SchoolId.Elemental, "descend")
-        {
-        }
+        public DescendSpell()
+            : base(SchoolId.Elemental, "descend") { }
 
         public override bool canCast(Farmer player, int level)
         {
@@ -31,7 +30,7 @@ namespace Magic.Spells
                 return null;
 
             int target = ms.mineLevel + 1 + 2 * level;
-            if ( ms.mineLevel <= 120 && target >= 120 )
+            if (ms.mineLevel <= 120 && target >= 120)
             {
                 // We don't want the player to go through the bottom of the
                 // original mine and into the skull cavern.
@@ -40,7 +39,7 @@ namespace Magic.Spells
 
             Game1.enterMine(target);
 
-            player.AddCustomSkillExperience(Magic.Skill,5);
+            player.AddCustomSkillExperience(Magic.Skill, 5);
             return null;
         }
     }

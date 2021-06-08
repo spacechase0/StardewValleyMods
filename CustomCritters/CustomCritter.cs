@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,7 +18,7 @@ namespace CustomCritters
         private LightSource light;
         private Random rand;
 
-        public CustomCritter( Vector2 pos, CritterEntry data )
+        public CustomCritter(Vector2 pos, CritterEntry data)
         {
             this.position = this.startingPosition = pos;
             this.data = data;
@@ -28,25 +28,25 @@ namespace CustomCritters
             var texStr = Mod.instance.Helper.Content.GetActualAssetKey($"Critters/{data.Id}/critter.png");
 
             this.baseFrame = Game1.random.Next(data.SpriteData.Variations) * (tex.Width / data.SpriteData.FrameWidth);
-            
-            List <FarmerSprite.AnimationFrame> frames = new List<FarmerSprite.AnimationFrame>();
-            foreach ( var frame in data.Animations[ "default" ].Frames )
+
+            List<FarmerSprite.AnimationFrame> frames = new List<FarmerSprite.AnimationFrame>();
+            foreach (var frame in data.Animations["default"].Frames)
             {
                 frames.Add(new FarmerSprite.AnimationFrame(baseFrame + frame.Frame, frame.Duration));
             }
             this.sprite = new AnimatedSprite(texStr, baseFrame, data.SpriteData.FrameWidth, data.SpriteData.FrameHeight);
             sprite.setCurrentAnimation(frames);
-            
-            if ( data.Light != null )
+
+            if (data.Light != null)
             {
                 var col = new Color(255 - data.Light.Color.R, 255 - data.Light.Color.G, 255 - data.Light.Color.B);
-                light = this.validLightIds.Contains(data.Light.VanillaLightId) 
-                    ? new LightSource(data.Light.VanillaLightId, position, data.Light.Radius, col) 
+                light = this.validLightIds.Contains(data.Light.VanillaLightId)
+                    ? new LightSource(data.Light.VanillaLightId, position, data.Light.Radius, col)
                     : new LightSource(LightSource.sconceLight, position, data.Light.Radius, col);
                 Game1.currentLightSources.Add(light);
             }
         }
-        
+
         private int patrolIndex = 0;
         private int patrolWait = 0;
         private bool needTarget = true;
@@ -57,13 +57,13 @@ namespace CustomCritters
             if (data == null)
                 return false;
 
-            if ( data.Behavior != null )
+            if (data.Behavior != null)
             {
-                switch ( data.Behavior.Type )
+                switch (data.Behavior.Type)
                 {
                     case "idle":
                         break;
-                    
+
                     case "patrol":
                     case "random":
                         {
@@ -143,7 +143,7 @@ namespace CustomCritters
             float z = (float)((double)this.position.Y / 10000.0 + (double)this.position.X / 100000.0);
             if (!data.SpriteData.Flying)
                 z = (float)((this.position.Y - 1.0) / 10000.0);
-            this.sprite.draw(b, Game1.GlobalToLocal(Game1.viewport, this.position - new Vector2( 8, 8 )), z, 0, 0, Color.White, this.flip, data.SpriteData.Scale, 0.0f, false);
+            this.sprite.draw(b, Game1.GlobalToLocal(Game1.viewport, this.position - new Vector2(8, 8)), z, 0, 0, Color.White, this.flip, data.SpriteData.Scale, 0.0f, false);
         }
     }
 }

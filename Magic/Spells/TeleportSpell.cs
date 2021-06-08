@@ -8,9 +8,7 @@ namespace Magic
     public class TeleportSpell : Spell
     {
         public TeleportSpell()
-        :   base( SchoolId.Elemental, "teleport" )
-        {
-        }
+            : base(SchoolId.Elemental, "teleport") { }
 
         public override int getMaxCastingLevel()
         {

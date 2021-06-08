@@ -10,7 +10,7 @@ namespace GenericModConfigMenu.UI
     {
         private Texture2D tex;
         private SpriteFont font;
-        
+
         public virtual string String { get; set; }
 
         private bool selected = false;
@@ -23,7 +23,7 @@ namespace GenericModConfigMenu.UI
                     return;
 
                 selected = value;
-                if ( selected )
+                if (selected)
                     Game1.keyboardDispatcher.Subscriber = this;
                 else
                 {
@@ -60,7 +60,7 @@ namespace GenericModConfigMenu.UI
         public override void Draw(SpriteBatch b)
         {
             b.Draw(tex, Position, Color.White);
-            
+
             // Copied from game code - caret
             string text = String;
             Vector2 vector2;
@@ -116,7 +116,7 @@ namespace GenericModConfigMenu.UI
 
         public void RecieveCommandInput(char command)
         {
-            if ( command == '\b' && String.Length > 0 )
+            if (command == '\b' && String.Length > 0)
             {
                 Game1.playSound("tinyWhip");
                 String = String.Substring(0, String.Length - 1);

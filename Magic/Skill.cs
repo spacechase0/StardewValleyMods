@@ -9,9 +9,7 @@ namespace Magic
         public class GenericProfession : SpaceCore.Skills.Skill.Profession
         {
             public GenericProfession(Skill skill, string theId)
-            : base(skill, theId)
-            {
-            }
+                : base(skill, theId) { }
 
             internal string Name { get; set; }
             internal string Description { get; set; }
@@ -30,9 +28,7 @@ namespace Magic
         public class UpgradePointProfession : GenericProfession
         {
             public UpgradePointProfession(Skill skill, string theId)
-            : base(skill, theId)
-            {
-            }
+                : base(skill, theId) { }
 
             public override void DoImmediateProfessionPerk()
             {
@@ -43,9 +39,7 @@ namespace Magic
         public class ManaCapProfession : GenericProfession
         {
             public ManaCapProfession(Skill skill, string theId)
-            : base(skill, theId)
-            {
-            }
+                : base(skill, theId) { }
 
             public override void DoImmediateProfessionPerk()
             {
@@ -61,7 +55,7 @@ namespace Magic
         public static GenericProfession ProfessionManaCap = null;
 
         public Skill()
-        : base("spacechase0.Magic")
+            : base("spacechase0.Magic")
         {
             Icon = Mod.instance.Helper.Content.Load<Texture2D>("assets/interface/magicexpicon.png");
             SkillsPageIcon = null; // TODO: Make an icon for this

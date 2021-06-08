@@ -48,7 +48,7 @@ namespace JsonAssets.Data
 
         public int GetClothingId() { return id; }
         public int GetMaleIndex() { return textureIndex; }
-        public int GetFemaleIndex() { return HasFemaleVariant ? (textureIndex + 1): -1; }
+        public int GetFemaleIndex() { return HasFemaleVariant ? (textureIndex + 1) : -1; }
 
         internal string GetClothingInformation()
         {

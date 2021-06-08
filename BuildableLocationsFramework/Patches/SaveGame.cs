@@ -12,25 +12,25 @@ namespace BuildableLocationsFramework.Patches
     {
         internal static List<GameLocation> locs;
 
-        public static void Prefix( List<GameLocation> gamelocations )
+        public static void Prefix(List<GameLocation> gamelocations)
         {
             locs = gamelocations;
 
-            foreach ( GameLocation gamelocation in gamelocations )
+            foreach (GameLocation gamelocation in gamelocations)
             {
-                if ( gamelocation.Name == "Farm" )
+                if (gamelocation.Name == "Farm")
                     continue;
-                if ( gamelocation is BuildableGameLocation bgl )
+                if (gamelocation is BuildableGameLocation bgl)
                 {
                     GameLocation locationFromName = Game1.getLocationFromName((string)(NetFieldBase<string, NetString>)gamelocation.name);
-                    foreach ( Building building in ( ( BuildableGameLocation ) gamelocation ).buildings )
+                    foreach (Building building in ((BuildableGameLocation)gamelocation).buildings)
                         building.load();
-                    ( ( BuildableGameLocation ) locationFromName ).buildings.Set( ( ICollection<Building> ) ( ( BuildableGameLocation ) gamelocation ).buildings );
+                    ((BuildableGameLocation)locationFromName).buildings.Set((ICollection<Building>)((BuildableGameLocation)gamelocation).buildings);
                 }
-                else if ( gamelocation is IAnimalLocation al )
+                else if (gamelocation is IAnimalLocation al)
                 {
-                    foreach ( FarmAnimal farmAnimal in al.Animals.Values )
-                        farmAnimal.reload( ( Building ) null );
+                    foreach (FarmAnimal farmAnimal in al.Animals.Values)
+                        farmAnimal.reload((Building)null);
                 }
             }
 

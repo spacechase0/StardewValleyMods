@@ -11,9 +11,7 @@ namespace MoreBuildings.SpookyShed
         private static readonly BluePrint blueprint = new BluePrint("SpookyShed");
 
         public SpookyShedBuilding()
-            : base(blueprint, Vector2.Zero)
-        {
-        }
+            : base(blueprint, Vector2.Zero) { }
 
         protected override GameLocation getIndoors(string nameOfIndoorsWithoutUnique)
         {

@@ -14,15 +14,13 @@ namespace MoreGrassStarters
         public CustomGrass() { }
 
         public CustomGrass(int which, int numberOfWeeds)
-        :   base( which, numberOfWeeds )
-        {
-        }
+            : base(which, numberOfWeeds) { }
 
         public Dictionary<string, string> getAdditionalSaveData()
         {
             var data = new Dictionary<string, string>();
-            data[ "Type" ] = ((int)grassType.Value).ToString();
-            data[ "WeedCount"] = ((int)numberOfWeeds.Value).ToString();
+            data["Type"] = ((int)grassType.Value).ToString();
+            data["WeedCount"] = ((int)numberOfWeeds.Value).ToString();
             return data;
         }
 
@@ -41,7 +39,7 @@ namespace MoreGrassStarters
         public override void loadSprite()
         {
             base.loadSprite();
-            if ( grassType >= 5 )
+            if (grassType >= 5)
             {
                 texture = new Lazy<Texture2D>(() => GrassStarterItem.tex2);
                 grassSourceOffset.Value = 20 * (grassType - 5);

@@ -31,7 +31,7 @@ namespace BetterMeteorites
 
         private void onClumpRemoved(ResourceClump value)
         {
-            if ( value.parentSheetIndex == ResourceClump.meteoriteIndex )
+            if (value.parentSheetIndex == ResourceClump.meteoriteIndex)
             {
                 Random r = new Random((int)value.tile.X * 1000 + (int)value.tile.Y);
                 Game1.createMultipleObjectDebris(StardewValley.Object.stone, (int)value.tile.X, (int)value.tile.Y, 75 + r.Next(175));

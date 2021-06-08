@@ -8,9 +8,8 @@ namespace Magic.Spells
 {
     public class TillSpell : Spell
     {
-        public TillSpell() : base( SchoolId.Toil, "till" )
-        {
-        }
+        public TillSpell()
+            : base(SchoolId.Toil, "till") { }
 
         public override int getManaCost(Farmer player, int level)
         {
@@ -38,19 +37,19 @@ namespace Magic.Spells
                     Vector2 pos = new Vector2(ix, iy);
                     if (loc.terrainFeatures.ContainsKey(pos))
                         continue; // ?
-                    
-                    if ( loc.objects.ContainsKey( pos ) )
+
+                    if (loc.objects.ContainsKey(pos))
                     {
                         var obj = loc.objects[pos];
-                        if ( obj.ParentSheetIndex == 590 )
+                        if (obj.ParentSheetIndex == 590)
                         {
-                            loc.digUpArtifactSpot( ix, iy, player);
+                            loc.digUpArtifactSpot(ix, iy, player);
                             loc.objects.Remove(pos);
                             player.addMana(-1);
                         }
-                        else if ( obj.performToolAction(dummyHoe, loc) )
+                        else if (obj.performToolAction(dummyHoe, loc))
                         {
-                            if ( obj.Type == "Crafting" && obj.Fragility != 2 )
+                            if (obj.Type == "Crafting" && obj.Fragility != 2)
                             {
                                 loc.debris.Add(new Debris(obj.bigCraftable.Value ? -obj.ParentSheetIndex : obj.ParentSheetIndex, pos, pos));
                             }
@@ -60,7 +59,7 @@ namespace Magic.Spells
                         }
                     }
 
-                    if ( loc.terrainFeatures.ContainsKey( pos ) )
+                    if (loc.terrainFeatures.ContainsKey(pos))
                     {
                         if (loc.terrainFeatures[pos].performToolAction(dummyHoe, 0, pos, loc))
                         {

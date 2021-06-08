@@ -17,7 +17,7 @@ namespace LuckSkill.Overrides
             var newInsns = new List<CodeInstruction>();
             foreach (var insn in insns)
             {
-                if ( skip > 0 )
+                if (skip > 0)
                 {
                     skip--;
                     insn.opcode = OpCodes.Nop;
@@ -29,10 +29,10 @@ namespace LuckSkill.Overrides
                 {
                     foundCurrentSkill = true;
                 }
-                else if ( foundCurrentSkill )
+                else if (foundCurrentSkill)
                 {
                     foundCurrentSkill = false;
-                    if ( insn.opcode == OpCodes.Ldc_I4_5 )
+                    if (insn.opcode == OpCodes.Ldc_I4_5)
                     {
                         skip = 1;
                         newInsns[newInsns.Count - 2].opcode = OpCodes.Nop;
@@ -52,7 +52,7 @@ namespace LuckSkill.Overrides
     {
         public static void Postfix(int whichProfession, ref string __result)
         {
-            switch ( whichProfession )
+            switch (whichProfession)
             {
                 case Mod.PROFESSION_DAILY_LUCK:
                     __result = "LUCK_A";

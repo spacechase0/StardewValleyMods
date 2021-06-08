@@ -9,7 +9,7 @@ namespace SpaceCore.Events
             Position = tileLocation;
             Radius = radius;
         }
-        
+
         public Vector2 Position { get; }
         public int Radius { get; }
     }

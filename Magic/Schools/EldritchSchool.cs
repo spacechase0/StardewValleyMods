@@ -4,9 +4,8 @@ namespace Magic.Schools
 {
     internal class EldritchSchool : School
     {
-        public EldritchSchool() : base( SchoolId.Eldritch )
-        {
-        }
+        public EldritchSchool()
+            : base(SchoolId.Eldritch) { }
 
         public override Spell[] GetSpellsTier1()
         {

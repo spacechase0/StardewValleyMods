@@ -6,9 +6,8 @@ namespace Magic.Spells
 {
     public class BlinkSpell : Spell
     {
-        public BlinkSpell() : base(SchoolId.Toil, "blink")
-        {
-        }
+        public BlinkSpell()
+            : base(SchoolId.Toil, "blink") { }
 
         public override int getManaCost(Farmer player, int level)
         {

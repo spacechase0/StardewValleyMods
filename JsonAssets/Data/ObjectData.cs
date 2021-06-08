@@ -60,7 +60,7 @@ namespace JsonAssets.Data
             public IList<string> PurchaseRequirements { get; set; } = new List<string>();
             public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-            internal string GetRecipeString( ObjectData parent )
+            internal string GetRecipeString(ObjectData parent)
             {
                 var str = "";
                 foreach (var ingredient in Ingredients)

@@ -26,7 +26,7 @@ namespace MoreGiantCrops
                 int hookCountdown = 0;
                 bool justHooked = false;
                 object label = null;
-                foreach ( var instr in instructions )
+                foreach (var instr in instructions)
                 {
                     // If this is the spot for our hook, inject it
                     if (hookCountdown > 0 && --hookCountdown == 0)
@@ -45,7 +45,7 @@ namespace MoreGiantCrops
                         justHooked = true;
                     }
                     // If this is the instruction after the previous check, we want to borrow the label for our own use
-                    else if ( justHooked )
+                    else if (justHooked)
                     {
                         label = instr.operand;
                         justHooked = false;

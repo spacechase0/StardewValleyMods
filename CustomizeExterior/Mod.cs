@@ -38,7 +38,7 @@ namespace CustomizeExterior
 
             content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(Helper.DirectoryPath, "Buildings"));
             compileChoices();
-            
+
             helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
             helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
             helper.Events.GameLoop.Saving += onSaving;
@@ -152,9 +152,9 @@ namespace CustomizeExterior
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onUpdateTicked( object sender, UpdateTickedEventArgs e)
+        private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if ( Context.IsWorldReady && Game1.currentSeason != prevSeason )
+            if (Context.IsWorldReady && Game1.currentSeason != prevSeason)
             {
                 onSeasonChange();
                 prevSeason = Game1.currentSeason;
@@ -168,7 +168,7 @@ namespace CustomizeExterior
         {
             if (Context.IsPlayerFree && e.Button == SButton.MouseRight)
             {
-                Point pos = new Point((int)e.Cursor.AbsolutePixels.X,  (int)e.Cursor.AbsolutePixels.Y);
+                Point pos = new Point((int)e.Cursor.AbsolutePixels.X, (int)e.Cursor.AbsolutePixels.Y);
                 if (Game1.currentLocation is BuildableGameLocation)
                 {
                     var loc = Game1.currentLocation as BuildableGameLocation;
@@ -187,7 +187,7 @@ namespace CustomizeExterior
                 {
                     Rectangle house = new Rectangle(59 * Game1.tileSize, 11 * Game1.tileSize, 9 * Game1.tileSize, 6 * Game1.tileSize);
                     Rectangle greenhouse = new Rectangle(25 * Game1.tileSize, 10 * Game1.tileSize, 7 * Game1.tileSize, 6 * Game1.tileSize);
-                    if ( Game1.whichFarm == Farm.fourCorners_layout )
+                    if (Game1.whichFarm == Farm.fourCorners_layout)
                     {
                         greenhouse.X = 36 * Game1.tileSize;
                         greenhouse.Y = 25 * Game1.tileSize;
@@ -215,7 +215,7 @@ namespace CustomizeExterior
                 Directory.CreateDirectory(buildingsPath);
 
             var choices = Directory.GetDirectories(buildingsPath);
-            foreach ( var choice in choices )
+            foreach (var choice in choices)
             {
                 if (choice == "spring" || choice == "summer" || choice == "fall" || choice == "winter")
                 {
@@ -225,7 +225,7 @@ namespace CustomizeExterior
 
                 Log.info("Choice type: " + Path.GetFileName(choice));
                 var types = Directory.GetFiles(choice);
-                foreach ( var type in types )
+                foreach (var type in types)
                 {
                     if (Path.GetExtension(type) != ".xnb" && Path.GetExtension(type) != ".png")
                         continue;
@@ -233,7 +233,7 @@ namespace CustomizeExterior
                     string choiceStr = Path.GetFileName(choice);
                     string typeStr = Path.GetFileNameWithoutExtension(type);
                     List<string> forType = Mod.choices.ContainsKey(typeStr) ? Mod.choices[typeStr] : new List<string>();
-                    if ( !forType.Contains( choiceStr ) )
+                    if (!forType.Contains(choiceStr))
                         forType.Add(choiceStr);
                     if (!Mod.choices.ContainsKey(typeStr))
                         Mod.choices.Add(typeStr, forType);
@@ -243,7 +243,7 @@ namespace CustomizeExterior
 
                 var seasons = Directory.GetDirectories(choice);
                 bool foundSpring = false, foundSummer = false, foundFall = false, foundWinter = false;
-                foreach ( var season in seasons )
+                foreach (var season in seasons)
                 {
                     var filename = Path.GetFileName(season);
                     if (filename == "spring") foundSpring = true;
@@ -251,8 +251,8 @@ namespace CustomizeExterior
                     else if (filename == "fall") foundFall = true;
                     else if (filename == "winter") foundWinter = true;
                 }
-                
-                if ( foundSpring && foundSummer && foundFall && foundWinter )
+
+                if (foundSpring && foundSummer && foundFall && foundWinter)
                 {
                     Log.trace("Found a seasonal set: " + Path.GetFileName(choice));
 
@@ -264,13 +264,13 @@ namespace CustomizeExterior
                     summer = summer.Select(Path.GetFileName).ToList();
                     fall = fall.Select(Path.GetFileName).ToList();
                     winter = winter.Select(Path.GetFileName).ToList();
-                    
+
                     var common = new List<string>();
-                    foreach ( var building in spring )
+                    foreach (var building in spring)
                     {
                         string choiceStr = Path.GetFileName(choice);
                         string typeStr = Path.GetFileNameWithoutExtension(building);
-                        if ( summer.Contains( building ) && fall.Contains( building ) && winter.Contains( building ) )
+                        if (summer.Contains(building) && fall.Contains(building) && winter.Contains(building))
                         {
                             List<string> forType = Mod.choices.ContainsKey(typeStr) ? Mod.choices[typeStr] : new List<string>();
                             if (!forType.Contains(SEASONAL_INDICATOR + choiceStr))
@@ -284,10 +284,10 @@ namespace CustomizeExterior
                 }
             }
         }
-        
+
         private DateTime recentClickTime;
         private string recentClickTarget = null;
-        private void checkBuildingClick( string target, string type )
+        private void checkBuildingClick(string target, string type)
         {
             if (Game1.activeClickableMenu != null) return;
 
@@ -299,19 +299,19 @@ namespace CustomizeExterior
             else
             {
                 if (DateTime.Now - recentClickTime < clickWindow)
-                    todoRenameFunction( target, type );
+                    todoRenameFunction(target, type);
                 else recentClickTime = DateTime.Now;
             }
         }
 
-        private void todoRenameFunction( string target, string type )
+        private void todoRenameFunction(string target, string type)
         {
             Log.trace("Target: " + target + " " + type);
 
             if (!choices.ContainsKey(type))
                 return;
 
-            foreach ( var choice in choices[ type ] )
+            foreach (var choice in choices[type])
             {
                 Log.trace("Choice: " + choice);
             }
@@ -323,13 +323,13 @@ namespace CustomizeExterior
             };
             Game1.activeClickableMenu = menu;
         }
-        
+
         private string recentTarget = null;
         private void onExteriorSelected(string type, string choice) { onExteriorSelected(type, choice, true); }
-        private void onExteriorSelected( string type, string choice, bool updateChosen )
+        private void onExteriorSelected(string type, string choice, bool updateChosen)
         {
             Log.trace("onExteriorSelected: " + recentTarget + " " + type + " " + choice);
-            
+
             Texture2D tex = getTextureForChoice(type, choice);
             if (tex == null)
             {
@@ -340,7 +340,7 @@ namespace CustomizeExterior
             {
                 savedExteriors.chosen[recentTarget] = choice;
 
-                if ( Game1.IsMultiplayer )
+                if (Game1.IsMultiplayer)
                 {
                     using (var stream = new MemoryStream())
                     using (var writer = new BinaryWriter(stream))
@@ -355,14 +355,14 @@ namespace CustomizeExterior
                 }
             }
 
-            if ( recentTarget == "FarmHouse" || recentTarget == "Greenhouse" )
+            if (recentTarget == "FarmHouse" || recentTarget == "Greenhouse")
             {
                 housesHybrid = null;
                 typeof(Farm).GetField("houseTextures").SetValue(null, getHousesTexture());
             }
             else
             {
-                foreach ( Building building in Game1.getFarm().buildings )
+                foreach (Building building in Game1.getFarm().buildings)
                 {
                     if (building.buildingType.Value == type && building.nameOfIndoors == recentTarget)
                     {
@@ -401,7 +401,7 @@ namespace CustomizeExterior
             }
         }
 
-        public static string getChosenTexture( string target )
+        public static string getChosenTexture(string target)
         {
             return savedExteriors.chosen.ContainsKey(target) ? savedExteriors.chosen[target] : "/";
         }
@@ -426,9 +426,9 @@ namespace CustomizeExterior
             }
         }
 
-        private static Texture2D loadPng( string path )
+        private static Texture2D loadPng(string path)
         {
-            FileStream fs = File.Open(Path.Combine(instance.Helper.DirectoryPath, "Buildings", path + ".png" ), FileMode.Open);
+            FileStream fs = File.Open(Path.Combine(instance.Helper.DirectoryPath, "Buildings", path + ".png"), FileMode.Open);
             Texture2D tex = Texture2D.FromStream(Game1.graphics.GraphicsDevice, fs);
             fs.Dispose();
             return tex;
@@ -443,7 +443,7 @@ namespace CustomizeExterior
             Log.trace("Creating hybrid farmhouse/greenhouse texture");
 
             Texture2D baseTex = Farm.houseTextures;
-            Rectangle houseRect = new Rectangle( 0, 0, 160, baseTex.Height );// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "houseSource");
+            Rectangle houseRect = new Rectangle(0, 0, 160, baseTex.Height);// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "houseSource");
             Rectangle greenhouseRect = new Rectangle(160, 0, 112, baseTex.Height);// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "greenhouseSource");
 
             GraphicsDevice dev = Game1.graphics.GraphicsDevice;

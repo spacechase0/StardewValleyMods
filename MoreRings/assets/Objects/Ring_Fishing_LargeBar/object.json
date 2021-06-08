@@ -1,36 +1,34 @@
 ﻿{
-  "Name": "Ring of Wide Nets",
-  "Description": "Increases fishing bar size by 50%.",
-  "Category": "Ring",
-  "Edibility": -300,
-  "Price": 5000,
-  "Recipe": {
-    "ResultCount": 1,
-    "Ingredients": [
-      {
-        "Object": 734,
-        "Count": 3,
-      },
-      {
-        "Object": 336,
-        "Count": 5,
-      }
-    ],
-    "CanPurchase": true,
-    "PurchaseFrom": "Willy",
-    "PurchasePrice": 5000,
-    "PurchaseRequirements": [
-      "w rainy"
-    ]
-  },
-      "NameLocalization":
-    {
-
-        "zh": "猎网指环", //Chinese (Simplified)
+    "Name": "Ring of Wide Nets",
+    "Description": "Increases fishing bar size by 50%.",
+    "Category": "Ring",
+    "Edibility": -300,
+    "Price": 5000,
+    "Recipe": {
+        "ResultCount": 1,
+        "Ingredients": [
+            {
+                "Object": 734,
+                "Count": 3
+            },
+            {
+                "Object": 336,
+                "Count": 5
+            }
+        ],
+        "CanPurchase": true,
+        "PurchaseFrom": "Willy",
+        "PurchasePrice": 5000,
+        "PurchaseRequirements": [
+            "w rainy"
+        ]
     },
-    "DescriptionLocalization":
-    {
+    "NameLocalization": {
 
-        "zh": "增加钓竿50%捕获区域。", //Chinese (Simplified)
+        "zh": "猎网指环" //Chinese (Simplified)
+    },
+    "DescriptionLocalization": {
+
+        "zh": "增加钓竿50%捕获区域。" //Chinese (Simplified)
     }
 }

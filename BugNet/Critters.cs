@@ -11,9 +11,9 @@ namespace BugNet
             var bfly = new Butterfly(new Vector2(x, y));
             bfly.baseFrame = baseFrame;
             bfly.sprite.CurrentFrame = baseFrame;
-            if ( island )
+            if (island)
             {
-                Mod.instance.Helper.Reflection.GetField<bool>( bfly, "islandButterfly" ).SetValue( true );
+                Mod.instance.Helper.Reflection.GetField<bool>(bfly, "islandButterfly").SetValue(true);
             }
             return bfly;
         }
@@ -70,16 +70,16 @@ namespace BugNet
             return new Woodpecker(new StardewValley.TerrainFeatures.Tree(), new Vector2(x, y));
         }
 
-        public static Critter MakeMonkey( int x, int y )
+        public static Critter MakeMonkey(int x, int y)
         {
-            return new CalderaMonkey( new Vector2( x, y ) );
+            return new CalderaMonkey(new Vector2(x, y));
         }
 
-        public static Critter MakeParrot( int x, int y, bool blue )
+        public static Critter MakeParrot(int x, int y, bool blue)
         {
-            return new OverheadParrot( new Vector2( x, y ) )
+            return new OverheadParrot(new Vector2(x, y))
             {
-                sourceRect = new Rectangle( 0, ( Game1.random.Next( 2 ) + ( blue ? 2 : 0 ) ) * 24, 24, 24 ),
+                sourceRect = new Rectangle(0, (Game1.random.Next(2) + (blue ? 2 : 0)) * 24, 24, 24),
             };
         }
     }

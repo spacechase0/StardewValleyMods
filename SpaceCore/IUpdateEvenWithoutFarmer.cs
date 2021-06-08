@@ -5,6 +5,6 @@ namespace SpaceCore
 {
     public interface IUpdateEvenWithoutFarmer
     {
-        void UpdateEvenWithoutFarmer( GameLocation loc, GameTime time );
+        void UpdateEvenWithoutFarmer(GameLocation loc, GameTime time);
     }
 }

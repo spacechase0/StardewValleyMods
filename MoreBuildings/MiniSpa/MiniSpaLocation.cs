@@ -8,9 +8,7 @@ namespace MoreBuildings.MiniSpa
     public class MiniSpaLocation : GameLocation, ISaveElement
     {
         public MiniSpaLocation()
-        :   base( "Maps\\MiniSpa", "MiniSpa")
-        {
-        }
+            : base("Maps\\MiniSpa", "MiniSpa") { }
 
         protected override void resetLocalState()
         {

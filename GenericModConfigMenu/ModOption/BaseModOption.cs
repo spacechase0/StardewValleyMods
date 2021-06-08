@@ -12,11 +12,11 @@ namespace GenericModConfigMenu.ModOption
         public bool AvailableInGame { get; set; } = false;
 
         public IManifest Owner { get; }
-        
+
         public abstract void SyncToMod();
         public abstract void Save();
 
-        public BaseModOption( string name, string desc, string id, IManifest mod)
+        public BaseModOption(string name, string desc, string id, IManifest mod)
         {
             Name = name;
             Description = desc;

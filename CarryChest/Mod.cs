@@ -118,7 +118,7 @@ namespace CarryChest
                 if (placed != null)
                 {
                     Chest original = this.previousHeldChest;
-                    
+
                     placed.Name = original.Name;
                     placed.playerChoiceColor.Value = original.playerChoiceColor.Value;
                     placed.heldObject.Value = original.heldObject.Value;

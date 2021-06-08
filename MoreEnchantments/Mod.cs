@@ -10,24 +10,24 @@ namespace MoreEnchantments
     {
         public static Mod instance;
 
-        public bool CanEdit<T>( IAssetInfo asset )
+        public bool CanEdit<T>(IAssetInfo asset)
         {
-            return asset.AssetNameEquals( "Strings\\EnchantmentNames" );
+            return asset.AssetNameEquals("Strings\\EnchantmentNames");
         }
 
-        public void Edit<T>( IAssetData asset )
+        public void Edit<T>(IAssetData asset)
         {
-            asset.AsDictionary<string, string>().Data.Add( "MoreLures", "A-lure-ing" );
+            asset.AsDictionary<string, string>().Data.Add("MoreLures", "A-lure-ing");
         }
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
             instance = this;
             Log.Monitor = Monitor;
 
-            BaseEnchantment.GetAvailableEnchantments().Add( new MoreLuresEnchantment() );
+            BaseEnchantment.GetAvailableEnchantments().Add(new MoreLuresEnchantment());
 
-            var harmony = HarmonyInstance.Create( ModManifest.UniqueID );
+            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
             harmony.PatchAll();
         }
     }

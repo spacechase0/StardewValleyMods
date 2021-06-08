@@ -20,13 +20,13 @@ namespace AnimalSocialMenu
             Log.Monitor = Monitor;
 
             Helper.Events.Display.MenuChanged += onMenuChanged;
-            myTabId = SpaceCore.Menus.ReserveGameMenuTab( "animals" );
+            myTabId = SpaceCore.Menus.ReserveGameMenuTab("animals");
         }
 
         private int myTabIndex = -1;
         private void onMenuChanged(object sender, MenuChangedEventArgs args)
         {
-            if ( args.NewMenu is GameMenu gm )
+            if (args.NewMenu is GameMenu gm)
             {
                 var pages = Helper.Reflection.GetField<List<IClickableMenu>>(gm, "pages").GetValue();
                 var tabs = Helper.Reflection.GetField<List<ClickableComponent>>(gm, "tabs").GetValue();
@@ -46,7 +46,7 @@ namespace AnimalSocialMenu
 
                 Helper.Events.Display.RenderedActiveMenu += drawSocialIcon;
             }
-            else if ( args.OldMenu is GameMenu ogm )
+            else if (args.OldMenu is GameMenu ogm)
             {
                 Helper.Events.Display.RenderedActiveMenu -= drawSocialIcon;
             }

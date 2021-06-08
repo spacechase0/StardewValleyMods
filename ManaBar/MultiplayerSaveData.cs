@@ -21,7 +21,7 @@ namespace ManaBar
         }
         public Dictionary<long, PlayerData> players = new Dictionary<long, PlayerData>();
 
-        internal static JsonSerializerSettings networkSerializerSettings { get; }  = new JsonSerializerSettings()
+        internal static JsonSerializerSettings networkSerializerSettings { get; } = new JsonSerializerSettings()
         {
             Formatting = Formatting.None,
             ObjectCreationHandling = ObjectCreationHandling.Replace,

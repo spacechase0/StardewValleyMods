@@ -151,10 +151,10 @@ namespace JsonAssets.Overrides
                         break;
                     }
                 }
-                if ( Mod.instance.objectIds.Values.Contains(index) )
+                if (Mod.instance.objectIds.Values.Contains(index))
                 {
                     var obj = new List<ObjectData>(Mod.instance.objects).Find(od => od.GetObjectId() == index);
-                    if ( obj != null && ( !obj.CanSell || obj.HideFromShippingCollection ) )
+                    if (obj != null && (!obj.CanSell || obj.HideFromShippingCollection))
                         __result = false;
                 }
             }
@@ -192,7 +192,7 @@ namespace JsonAssets.Overrides
                 return true;
             }
         }
-        
+
         public static void CanBeGivenAsGift_Postfix(StardewValley.Object __instance, ref bool __result)
         {
             try
@@ -214,14 +214,14 @@ namespace JsonAssets.Overrides
     [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.isPlaceable))]
     public static class ObjectIsPlaceablePatch
     {
-        public static bool Prefix( StardewValley.Object __instance, ref bool __result )
+        public static bool Prefix(StardewValley.Object __instance, ref bool __result)
         {
-            if ( __instance.bigCraftable.Value )
+            if (__instance.bigCraftable.Value)
                 return true;
 
-            if ( __instance.Category == StardewValley.Object.CraftingCategory && Mod.instance.objectIds.Values.Contains( __instance.ParentSheetIndex ) )
+            if (__instance.Category == StardewValley.Object.CraftingCategory && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
             {
-                if ( !Mod.instance.fences.Any( f => f.correspondingObject.id == __instance.ParentSheetIndex ) )
+                if (!Mod.instance.fences.Any(f => f.correspondingObject.id == __instance.ParentSheetIndex))
                 {
                     __result = false;
                     return false;
@@ -235,22 +235,22 @@ namespace JsonAssets.Overrides
     [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.placementAction))]
     public static class ObjectPlacementActionPatch
     {
-        public static bool Prefix(StardewValley.Object __instance, GameLocation location, int x, int y, Farmer who, ref bool __result )
+        public static bool Prefix(StardewValley.Object __instance, GameLocation location, int x, int y, Farmer who, ref bool __result)
         {
-            Vector2 pos = new Vector2( x / 64, y / 64 );
-            if ( !__instance.bigCraftable.Value && !(__instance is Furniture) )
+            Vector2 pos = new Vector2(x / 64, y / 64);
+            if (!__instance.bigCraftable.Value && !(__instance is Furniture))
             {
-                foreach ( var fence in Mod.instance.fences )
+                foreach (var fence in Mod.instance.fences)
                 {
-                    if ( __instance.ParentSheetIndex == fence.correspondingObject.GetObjectId() )
+                    if (__instance.ParentSheetIndex == fence.correspondingObject.GetObjectId())
                     {
-                        if ( location.objects.ContainsKey( pos ) )
+                        if (location.objects.ContainsKey(pos))
                         {
                             __result = false;
                             return false;
                         }
-                        location.objects.Add( pos, new Fence( pos, fence.correspondingObject.GetObjectId(), false ) );
-                        location.playSound( fence.PlacementSound, NetAudio.SoundContext.Default );
+                        location.objects.Add(pos, new Fence(pos, fence.correspondingObject.GetObjectId(), false));
+                        location.playSound(fence.PlacementSound, NetAudio.SoundContext.Default);
                         __result = true;
                         return false;
                     }

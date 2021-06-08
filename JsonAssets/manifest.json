@@ -1,23 +1,23 @@
 ﻿{
-  "Name": "Json Assets",
-  "Author": "spacechase0",
-  "Version": "1.7.6",
-  "Description": "Allow custom stuff.",
-  "UniqueID": "spacechase0.JsonAssets",
-  "EntryDll": "JsonAssets.dll",
-  "MinimumApiVersion": "2.10.2",
-  "UpdateKeys": [ "Nexus:1720", "Chucklefish:5138" ],
-  "spacechase0": "json-assets",
-  "Dependencies": [
-    {
-      "UniqueID": "Pathoschild.ContentPatcher",
-      "IsRequired": false
-    },
-    {
-      "UniqueID": "spacechase0.SpaceCore"
-    },
-    {
-      "UniqueID": "Cherry.ExpandedPreconditionsUtility"
-    },
-  ]
+    "Name": "Json Assets",
+    "Author": "spacechase0",
+    "Version": "1.7.6",
+    "Description": "Allow custom stuff.",
+    "UniqueID": "spacechase0.JsonAssets",
+    "EntryDll": "JsonAssets.dll",
+    "MinimumApiVersion": "2.10.2",
+    "UpdateKeys": [ "Nexus:1720", "Chucklefish:5138" ],
+    "spacechase0": "json-assets",
+    "Dependencies": [
+        {
+            "UniqueID": "Pathoschild.ContentPatcher",
+            "IsRequired": false
+        },
+        {
+            "UniqueID": "spacechase0.SpaceCore"
+        },
+        {
+            "UniqueID": "Cherry.ExpandedPreconditionsUtility"
+        }
+    ]
 }

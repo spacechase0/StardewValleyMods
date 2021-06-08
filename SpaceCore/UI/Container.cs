@@ -28,12 +28,12 @@ namespace SpaceCore.UI
             element.Parent = null;
         }
 
-        public override void Update( bool hidden = false )
+        public override void Update(bool hidden = false)
         {
-            base.Update( hidden );
-            foreach ( var element in children )
+            base.Update(hidden);
+            foreach (var element in children)
             {
-                element.Update( hidden );
+                element.Update(hidden);
             }
         }
 

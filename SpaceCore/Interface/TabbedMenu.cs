@@ -11,9 +11,8 @@ namespace SpaceCore.Interface
         protected int currentTab = 0;
         protected TabMenu[] tabs;
 
-        public TabbedMenu( int w, int h ) : base((Game1.viewport.Width - w) / 2, (Game1.viewport.Height - h) / 2, w, h, true)
-        {
-        }
+        public TabbedMenu(int w, int h)
+            : base((Game1.viewport.Width - w) / 2, (Game1.viewport.Height - h) / 2, w, h, true) { }
 
         public override void draw(SpriteBatch b)
         {
@@ -23,11 +22,11 @@ namespace SpaceCore.Interface
             b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, (DepthStencilState)null, (RasterizerState)null, null, Matrix.CreateTranslation(xPositionOnScreen, yPositionOnScreen, 0));
             {
                 int tabArea = width / tabs.Length;
-                
-                for ( int i = 0; i < tabs.Length; ++i )
+
+                for (int i = 0; i < tabs.Length; ++i)
                 {
                     TabMenu tab = tabs[i];
-                    
+
                     int ix = i * tabArea;
                     ix += (tabArea - SpriteText.getWidthOfString(tab.Name)) / 2;
                     int iy = IClickableMenu.borderWidth;
@@ -38,7 +37,7 @@ namespace SpaceCore.Interface
             }
             b.End();
             b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, (DepthStencilState)null, (RasterizerState)null);
-            
+
             base.draw(b);
             drawMouse(b);
         }
@@ -61,7 +60,7 @@ namespace SpaceCore.Interface
                 ix += (tabArea - SpriteText.getWidthOfString(tab.Name)) / 2;
                 int iy = yPositionOnScreen + IClickableMenu.borderWidth;
 
-                if ( x >= ix && y >= iy && x < ix + SpriteText.getWidthOfString(tab.Name) && y < iy + SpriteText.getHeightOfString( tab.Name ) )
+                if (x >= ix && y >= iy && x < ix + SpriteText.getWidthOfString(tab.Name) && y < iy + SpriteText.getHeightOfString(tab.Name))
                 {
                     currentTab = i;
                     return;

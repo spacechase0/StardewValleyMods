@@ -30,7 +30,7 @@ namespace BugNet
         public static Mod instance;
         internal static JsonAssetsAPI ja;
         private static Dictionary<string, CritterData> CrittersData = new Dictionary<string, CritterData>();
-        
+
         public override void Entry(IModHelper helper)
         {
             instance = this;
@@ -70,7 +70,7 @@ namespace BugNet
             register("Crow", 23, (x, y) => Critters.MakeCrow(x, y));
             register("Cloud", 24, (x, y) => Critters.MakeCloud(x, y));
             register("BlueParrot", 25, (x, y) => Critters.MakeParrot(x, y, false));
-            register("GreenParrot", 26, (x, y) => Critters.MakeParrot( x, y, true));
+            register("GreenParrot", 26, (x, y) => Critters.MakeParrot(x, y, true));
             register("Monkey", 27, (x, y) => Critters.MakeMonkey(x, y));
             register("OrangeIslandButterfly", 28, (x, y) => Critters.MakeButterfly(x, y, 364, true));
             register("PinkIslandButterfly", 29, (x, y) => Critters.MakeButterfly(x, y, 368, true));
@@ -81,11 +81,11 @@ namespace BugNet
             //register("Marsupial", 34, (x, y) => Critters.MakeMarsupial(x, y));
         }
 
-        private void onGameLaunched( object sender, GameLaunchedEventArgs e )
+        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            ja = Helper.ModRegistry.GetApi<JsonAssetsAPI>( "spacechase0.JsonAssets" );
-            var spaceCore = Helper.ModRegistry.GetApi<SpaceCoreAPI>( "spacechase0.SpaceCore" );
-            spaceCore.RegisterSerializerType( typeof( BugNetTool ) );
+            ja = Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            var spaceCore = Helper.ModRegistry.GetApi<SpaceCoreAPI>("spacechase0.SpaceCore");
+            spaceCore.RegisterSerializerType(typeof(BugNetTool));
         }
 
         private void RegisterCritter(string critterId, Texture2D tex, Rectangle texRect, Func<string> getLocalizedName, Func<int, int, Critter> makeFunc)
@@ -97,22 +97,22 @@ namespace BugNet
                 MakeFunction = makeFunc,
             });
 
-            var texData = new Color[ 16 * 16 ];
-            tex.GetData( 0, texRect, texData, 0, texData.Length );
-            var jaTex = new Texture2D( Game1.graphics.GraphicsDevice, 16, 16 );
-            jaTex.SetData( texData );
+            var texData = new Color[16 * 16];
+            tex.GetData(0, texRect, texData, 0, texData.Length);
+            var jaTex = new Texture2D(Game1.graphics.GraphicsDevice, 16, 16);
+            jaTex.SetData(texData);
 
-            JsonAssets.Mod.instance.RegisterObject( ModManifest, new JsonAssets.Data.ObjectData()
+            JsonAssets.Mod.instance.RegisterObject(ModManifest, new JsonAssets.Data.ObjectData()
             {
                 Name = $"Critter Cage: {getLocalizedName()}",
                 Description = "It's a critter! In a cage!",
                 texture = jaTex,
                 Category = JsonAssets.Data.ObjectData.Category_.MonsterLoot,
                 CategoryTextOverride = "Critter",
-                Price = critterId.Contains( "Butterfly" ) ? 50 : 100,
-                ContextTags = new List<string>( new[] { "critter" } ),
+                Price = critterId.Contains("Butterfly") ? 50 : 100,
+                ContextTags = new List<string>(new[] { "critter" }),
                 HideFromShippingCollection = true,
-            } );
+            });
         }
 
         private void onMenuChanged(object sender, MenuChangedEventArgs e)
@@ -130,17 +130,17 @@ namespace BugNet
             itemPriceAndStock.Add(tool, new int[] { 500, 1 });
         }
 
-        private void onButtonPressed( object sender, ButtonPressedEventArgs e )
+        private void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if ( e.Button.IsActionButton() && Game1.player.ActiveObject != null && 
-                 Game1.player.ActiveObject.Name.StartsWith( "Critter Cage: " ) )
+            if (e.Button.IsActionButton() && Game1.player.ActiveObject != null &&
+                 Game1.player.ActiveObject.Name.StartsWith("Critter Cage: "))
             {
                 // Get the critter ID
                 CritterData activeCritter = null;
-                foreach ( var critterData in CrittersData )
+                foreach (var critterData in CrittersData)
                 {
-                    int check = ja.GetObjectId( "Critter Cage: " + critterData.Value.Name() );
-                    if ( check == Game1.player.ActiveObject.ParentSheetIndex )
+                    int check = ja.GetObjectId("Critter Cage: " + critterData.Value.Name());
+                    if (check == Game1.player.ActiveObject.ParentSheetIndex)
                     {
                         activeCritter = critterData.Value;
                         break;
@@ -148,13 +148,13 @@ namespace BugNet
                 }
 
                 // Spawn the critter
-                int x = (int) e.Cursor.GrabTile.X + 1, y = (int) e.Cursor.GrabTile.Y + 1;
-                var critter = activeCritter.MakeFunction( x, y );
-                Game1.player.currentLocation.addCritter( critter );
+                int x = (int)e.Cursor.GrabTile.X + 1, y = (int)e.Cursor.GrabTile.Y + 1;
+                var critter = activeCritter.MakeFunction(x, y);
+                Game1.player.currentLocation.addCritter(critter);
 
                 Game1.player.reduceActiveItemByOne();
 
-                Helper.Input.Suppress( e.Button );
+                Helper.Input.Suppress(e.Button);
             }
         }
 
@@ -185,9 +185,9 @@ namespace BugNet
                 bframe = -2;
             if (critter is Frog frog)
                 bframe = Mod.instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4;
-            if ( critter is OverheadParrot parrot )
+            if (critter is OverheadParrot parrot)
                 bframe = -10 - parrot.sourceRect.Y;
-            if ( critter is CalderaMonkey monkey )
+            if (critter is CalderaMonkey monkey)
                 bframe = -100;
 
             switch (bframe)
@@ -199,18 +199,18 @@ namespace BugNet
                 case -82:
                     return "BlueParrot";
                 case -100: return "Monkey";
-                case  -3: return "GreenFrog";
-                case  -4: return "OliveFrog";
-                case  -2: return "Cloud";
-                case  -1: return "Firefly";
-                case   0: return "Seagull";
-                case  14: return "Crow";
-                case  25: return "BrownBird";
-                case  45: return "BlueBird";
-                case  54: return "GrayRabbit";
-                case  74: return "WhiteRabbit";
-                case  60: return "Squirrel";
-                case  83: return "Owl";
+                case -3: return "GreenFrog";
+                case -4: return "OliveFrog";
+                case -2: return "Cloud";
+                case -1: return "Firefly";
+                case 0: return "Seagull";
+                case 14: return "Crow";
+                case 25: return "BrownBird";
+                case 45: return "BlueBird";
+                case 54: return "GrayRabbit";
+                case 74: return "WhiteRabbit";
+                case 60: return "Squirrel";
+                case 83: return "Owl";
                 case 115: return "PurpleBird";
                 case 125: return "RedBird";
                 case 160: return "SpringButterflyPalePink";

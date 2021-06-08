@@ -15,21 +15,21 @@ namespace FireArcadeGame.Projectiles
 
         public bool Dead = false;
 
-        public virtual RectangleF BoundingBox { get; } = new RectangleF( 0, 0, 0.5f, 0.5f );
+        public virtual RectangleF BoundingBox { get; } = new RectangleF(0, 0, 0.5f, 0.5f);
 
         public virtual bool HurtsPlayer => true;
         public virtual int Damage => 1;
 
-        public BaseProjectile( World world )
+        public BaseProjectile(World world)
         {
             World = world;
         }
 
-        public virtual void Trigger( BaseObject target ) { }
+        public virtual void Trigger(BaseObject target) { }
 
         public virtual void Update() { }
 
-        public virtual void Render( GraphicsDevice device, Matrix projection, Camera cam )
+        public virtual void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
             effect.Projection = projection;
             effect.View = cam.CreateViewMatrix();
@@ -38,12 +38,12 @@ namespace FireArcadeGame.Projectiles
 
         protected virtual Matrix MakeWorldMatrix()
         {
-            return Matrix.CreateWorld( Position, Vector3.Forward, Vector3.Up );
+            return Matrix.CreateWorld(Position, Vector3.Forward, Vector3.Up);
         }
 
         private static BasicEffect GetBasicEffect()
         {
-            var ret = new BasicEffect( Game1.game1.GraphicsDevice )
+            var ret = new BasicEffect(Game1.game1.GraphicsDevice)
             {
                 Alpha = 1,
                 VertexColorEnabled = true,
@@ -51,7 +51,7 @@ namespace FireArcadeGame.Projectiles
             };
 
             //ret.EnableDefaultLighting();
-            ret.AmbientLightColor = new Vector3( 0.2f, 0.2f, 0.2f );
+            ret.AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f);
             return ret;
         }
     }

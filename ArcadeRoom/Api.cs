@@ -8,7 +8,7 @@ namespace ArcadeRoom
     {
         Vector2 ReserveMachineSpot();
 
-        event EventHandler OnRoomSetup; 
+        event EventHandler OnRoomSetup;
     }
 
     public class Api : IApi
@@ -17,14 +17,14 @@ namespace ArcadeRoom
         {
             return Mod.instance.ReserveNextMachineSpot();
         }
-        
+
         public event EventHandler OnRoomSetup;
         internal void InvokeOnRoomSetup()
         {
-            Log.trace( "Event: OnRoomSetup" );
-            if ( OnRoomSetup == null )
+            Log.trace("Event: OnRoomSetup");
+            if (OnRoomSetup == null)
                 return;
-            Util.invokeEvent( "ArcadeRoom.Api.OnRoomSetup", OnRoomSetup.GetInvocationList(), null );
+            Util.invokeEvent("ArcadeRoom.Api.OnRoomSetup", OnRoomSetup.GetInvocationList(), null);
         }
     }
 }

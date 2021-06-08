@@ -17,7 +17,7 @@ namespace MoreRings
         private static readonly Dictionary<int, SObject> drawObjs = new Dictionary<int, SObject>();
         internal static void onDrawWorld(object sender, RenderedWorldEventArgs args)
         {
-            if (!Context.IsWorldReady || Mod.instance.hasRingEquipped( Mod.instance.Ring_TrueSight ) <= 0)
+            if (!Context.IsWorldReady || Mod.instance.hasRingEquipped(Mod.instance.Ring_TrueSight) <= 0)
                 return;
 
             var b = args.SpriteBatch;
@@ -28,7 +28,7 @@ namespace MoreRings
                 var obj = pair.Value;
 
                 int doDraw = -1;
-                if (Mod.instance.hasRingEquipped( Mod.instance.Ring_TrueSight ) > 0)
+                if (Mod.instance.hasRingEquipped(Mod.instance.Ring_TrueSight) > 0)
                 {
                     if (!(Game1.currentLocation.Name.StartsWith("UndergroundMine")))
                     {
@@ -53,9 +53,9 @@ namespace MoreRings
                         doDraw = mineDrops(obj.ParentSheetIndex, (int)pos.X, (int)pos.Y, Game1.player, (Game1.currentLocation as MineShaft));
                     }
                 }
-                if ( Mod.instance.hasRingEquipped( Mod.instance.Ring_TrueSight ) > 0 )
+                if (Mod.instance.hasRingEquipped(Mod.instance.Ring_TrueSight) > 0)
                 {
-                    if ( obj.ParentSheetIndex == 590 )
+                    if (obj.ParentSheetIndex == 590)
                     {
                         doDraw = digUpArtifactSpot((int)pos.X, (int)pos.Y, Game1.player, obj.name);
                     }
@@ -80,19 +80,19 @@ namespace MoreRings
                 }
             }
 
-            if ( Game1.currentLocation is IslandLocation il )
+            if (Game1.currentLocation is IslandLocation il)
             {
-                for ( int ix = 0; ix < Game1.currentLocation.Map.Layers[ 0 ].LayerWidth; ++ix )
+                for (int ix = 0; ix < Game1.currentLocation.Map.Layers[0].LayerWidth; ++ix)
                 {
-                    for ( int iy = 0; iy < Game1.currentLocation.Map.Layers[ 0 ].LayerWidth; ++iy )
+                    for (int iy = 0; iy < Game1.currentLocation.Map.Layers[0].LayerWidth; ++iy)
                     {
-                        if ( il.IsBuriedNutLocation( new Point( ix, iy ) ) && !Game1.netWorldState.Value.FoundBuriedNuts.ContainsKey( $"{il.NameOrUniqueName}_{ix}_{iy}" ) )
+                        if (il.IsBuriedNutLocation(new Point(ix, iy)) && !Game1.netWorldState.Value.FoundBuriedNuts.ContainsKey($"{il.NameOrUniqueName}_{ix}_{iy}"))
                         {
-                            if ( !drawObjs.ContainsKey( 73 ) )
-                                drawObjs.Add( 73, new SObject( new Vector2( 0, 0 ), 73, 1 ) );
-                            var dobj = drawObjs[ 73 ];
-                            var pos = new Vector2( ix, iy );
-                            dobj.drawInMenu( b, Game1.GlobalToLocal( Game1.viewport, new Vector2( pos.X * 64, pos.Y * 64 ) ), 0.8f, 0.5f, 1, StackDrawType.Hide, Color.White, false );
+                            if (!drawObjs.ContainsKey(73))
+                                drawObjs.Add(73, new SObject(new Vector2(0, 0), 73, 1));
+                            var dobj = drawObjs[73];
+                            var pos = new Vector2(ix, iy);
+                            dobj.drawInMenu(b, Game1.GlobalToLocal(Game1.viewport, new Vector2(pos.X * 64, pos.Y * 64)), 0.8f, 0.5f, 1, StackDrawType.Hide, Color.White, false);
                         }
                     }
                 }
@@ -109,7 +109,7 @@ namespace MoreRings
 
             if (who == null)
                 who = Game1.player;
-            double num1 = who.DailyLuck/ 2.0 + who.MiningLevel * 0.005 + who.LuckLevel * 0.001;
+            double num1 = who.DailyLuck / 2.0 + who.MiningLevel * 0.005 + who.LuckLevel * 0.001;
             Random r = new Random(x * 1000 + y + mineLevel + (int)Game1.uniqueIDForThisGame / 2);
             r.NextDouble();
             double num2 = tileIndexOfStone == 40 || tileIndexOfStone == 42 ? 1.2 : 0.8;
@@ -184,8 +184,8 @@ namespace MoreRings
         {
             int ret = -1;
             int num1 = who.professions.Contains(18) ? 1 : 0;
-            if ( indexOfStone == 44 )
-                indexOfStone = Game1.random.Next( 1, 8 ) * 2;
+            if (indexOfStone == 44)
+                indexOfStone = Game1.random.Next(1, 8) * 2;
             switch (indexOfStone)
             {
                 case 2:
@@ -211,9 +211,9 @@ namespace MoreRings
                     break;
                 case 25:
                     ret = 719;
-                    r.Next( 2, 5 );
-                    if ( r.NextDouble() < 0.1 )
-                        if ( Game1.player.team.limitedNutDrops[ "MusselStone" ] < 5 )
+                    r.Next(2, 5);
+                    if (r.NextDouble() < 0.1)
+                        if (Game1.player.team.limitedNutDrops["MusselStone"] < 5)
                             ret = 73;
                     break;
                 case 75:
@@ -227,13 +227,13 @@ namespace MoreRings
                     break;
                 case 95:
                     ret = 909;
-                    r.Next( 1, 3 );
+                    r.Next(1, 3);
                     r.NextDouble(); r.NextDouble();
                     break;
                 case 290:
                 case 850:
                     ret = 380;
-                    r.Next( 1, 4 );
+                    r.Next(1, 4);
                     r.NextDouble(); r.NextDouble();
                     break;
                 case 668:
@@ -252,17 +252,17 @@ namespace MoreRings
                 case 751:
                 case 849:
                     ret = 378;
-                    r.Next( 1, 4 );
+                    r.Next(1, 4);
                     r.NextDouble(); r.NextDouble();
                     break;
                 case 764:
                     ret = 384;
-                    r.Next( 1, 4 );
+                    r.Next(1, 4);
                     r.NextDouble(); r.NextDouble();
                     break;
                 case 765:
                     ret = 386; ;
-                    r.Next( 1, 4 );
+                    r.Next(1, 4);
                     r.NextDouble(); r.NextDouble();
                     if (r.NextDouble() < 0.04)
                         ret = 74;
@@ -270,24 +270,24 @@ namespace MoreRings
                 case 816:
                 case 817:
                     ret = 881;
-                    r.Next( 1, 3 );
+                    r.Next(1, 3);
                     r.NextDouble(); r.NextDouble();
-                    if ( r.NextDouble() < 0.1 )
+                    if (r.NextDouble() < 0.1)
                         ret = 823;
-                    else if ( r.NextDouble() < 0.015 )
+                    else if (r.NextDouble() < 0.015)
                         ret = 824;
-                    else if ( r.NextDouble() < 0.1 )
-                        ret = 579 + r.Next( 11 );
+                    else if (r.NextDouble() < 0.1)
+                        ret = 579 + r.Next(11);
                     break;
                 case 818:
                     ret = 330;
-                    r.Next( 1, 3 );
+                    r.Next(1, 3);
                     r.NextDouble(); r.NextDouble();
                     break;
                 case 843:
                 case 844:
                     ret = 848;
-                    r.Next( 1, 3 );
+                    r.Next(1, 3);
                     r.NextDouble(); r.NextDouble();
                     break;
 
@@ -388,7 +388,7 @@ namespace MoreRings
             }
             else if (Game1.currentSeason.Equals("winter") && random.NextDouble() < 0.5 && !(Game1.currentLocation is Desert))
             {
-                if ( random.NextDouble() < 0.4 )
+                if (random.NextDouble() < 0.4)
                 {
                     random.NextDouble();
                     return 416;
@@ -402,15 +402,15 @@ namespace MoreRings
             else
             {
                 //*
-                if ( random.NextDouble() <= 0.2 && Game1.player.team.SpecialOrderRuleActive( "DROP_QI_BEANS" ) )
+                if (random.NextDouble() <= 0.2 && Game1.player.team.SpecialOrderRuleActive("DROP_QI_BEANS"))
                 {
                     return 890;
                 }
-                if ( Game1.GetSeasonForLocation( Game1.currentLocation ).Equals( "spring" ) && random.NextDouble() < 0.0625 && !( Game1.currentLocation is Desert ) && !( Game1.currentLocation is Beach ) )
+                if (Game1.GetSeasonForLocation(Game1.currentLocation).Equals("spring") && random.NextDouble() < 0.0625 && !(Game1.currentLocation is Desert) && !(Game1.currentLocation is Beach))
                 {
                     return 273;
                 }
-                if ( Game1.random.NextDouble() <= 0.2 && ( Game1.MasterPlayer.mailReceived.Contains( "guntherBones" ) || ( Game1.player.team.specialOrders.Where( ( SpecialOrder x ) => ( string ) x.questKey == "Gunther" ) != null && Game1.player.team.specialOrders.Where( ( SpecialOrder x ) => ( string ) x.questKey == "Gunther" ).Count() > 0 ) ) )
+                if (Game1.random.NextDouble() <= 0.2 && (Game1.MasterPlayer.mailReceived.Contains("guntherBones") || (Game1.player.team.specialOrders.Where((SpecialOrder x) => (string)x.questKey == "Gunther") != null && Game1.player.team.specialOrders.Where((SpecialOrder x) => (string)x.questKey == "Gunther").Count() > 0)))
                 {
                     return 881;
                 }
@@ -445,9 +445,9 @@ namespace MoreRings
                                 return 79;
                             }
                         }
-                        else if ( index2 == 330 && Game1.stats.DaysPlayed > 28 && random.NextDouble() < 0.1 )
+                        else if (index2 == 330 && Game1.stats.DaysPlayed > 28 && random.NextDouble() < 0.1)
                         {
-                            return 688 + random.Next( 3 );
+                            return 688 + random.Next(3);
                         }
                         return index2;
                     }

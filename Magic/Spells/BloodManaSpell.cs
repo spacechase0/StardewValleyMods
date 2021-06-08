@@ -9,9 +9,8 @@ namespace Magic.Spells
         public const float MANA_RATIO_BASE = 0.30f;
         public const float MANA_RATIO_INCR = 0.05f;
 
-        public BloodManaSpell() : base(SchoolId.Eldritch, "bloodmana")
-        {
-        }
+        public BloodManaSpell()
+            : base(SchoolId.Eldritch, "bloodmana") { }
 
         public override int getManaCost(Farmer player, int level)
         {

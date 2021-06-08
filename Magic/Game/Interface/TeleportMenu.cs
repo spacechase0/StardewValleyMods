@@ -26,11 +26,11 @@ namespace Magic.Game.Interface
         private bool dragScroll = false;
 
         public TeleportMenu()
-        :   base( ( Game1.viewport.Width - WINDOW_WIDTH ) / 2, ( Game1.viewport.Height - WINDOW_HEIGHT ) / 2, WINDOW_WIDTH, WINDOW_HEIGHT )
+            : base((Game1.viewport.Width - WINDOW_WIDTH) / 2, (Game1.viewport.Height - WINDOW_HEIGHT) / 2, WINDOW_WIDTH, WINDOW_HEIGHT)
         {
-            foreach ( var loc in Game1.locations )
+            foreach (var loc in Game1.locations)
             {
-                if (loc.IsOutdoors && !( loc.Name.StartsWith( "SDM" ) && loc.Name.EndsWith( "Farm" ) ) )
+                if (loc.IsOutdoors && !(loc.Name.StartsWith("SDM") && loc.Name.EndsWith("Farm")))
                     locs.Add(loc.Name);
             }
 
@@ -43,7 +43,7 @@ namespace Magic.Game.Interface
         {
             base.update(time);
 
-            if ( warpTo != null )
+            if (warpTo != null)
             {
                 var locObj = Game1.getLocationFromName(warpTo);
                 int mapW = locObj.Map.Layers[0].LayerWidth;
@@ -63,7 +63,7 @@ namespace Magic.Game.Interface
                 Game1.playSound("wand");
                 Game1.warpFarmer(warpTo, (int)cloud.getTileLocation().X, (int)cloud.getTileLocation().Y, false);
                 Game1.player.consumeObject(Mod.ja.GetObjectId("Travel Core"), 1);
-                Game1.player.AddCustomSkillExperience(Magic.Skill,25);
+                Game1.player.AddCustomSkillExperience(Magic.Skill, 25);
             }
 
             if (dragScroll)
@@ -92,7 +92,7 @@ namespace Magic.Game.Interface
             {
                 int iy = y + EDGE_PAD;
                 iy += scroll;
-                foreach ( var loc in locs )
+                foreach (var loc in locs)
                 {
                     Rectangle area = new Rectangle(x, iy - 4, w - scrollbarBack.Width, ELEM_HEIGHT);
                     if (area.Contains(Game1.getMouseX(), Game1.getMouseY()))

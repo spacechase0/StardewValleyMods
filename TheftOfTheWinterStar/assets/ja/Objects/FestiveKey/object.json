@@ -1,10 +1,10 @@
 ﻿{
-  "Name": "Festive Key",
-  "Description": "A key used in the frost dungeon.",
-  "Category": "Gem",
-  "Edibility": -300,
-  "CategoryTextOverride": "Treasure",
-  "CanTrash": false,
-  "CanSell": false,
-  "CanBeGifted": false,
+    "Name": "Festive Key",
+    "Description": "A key used in the frost dungeon.",
+    "Category": "Gem",
+    "Edibility": -300,
+    "CategoryTextOverride": "Treasure",
+    "CanTrash": false,
+    "CanSell": false,
+    "CanBeGifted": false
 }

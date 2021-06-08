@@ -60,7 +60,7 @@ namespace ContentPatcherAnimations
 
             Action updateTargets = () =>
             {
-                foreach ( var screen in screenState.GetActiveValues() )
+                foreach (var screen in screenState.GetActiveValues())
                     screen.Value.findTargetsCounter = 1;
             };
 
@@ -68,14 +68,14 @@ namespace ContentPatcherAnimations
             Helper.Events.GameLoop.SaveLoaded += (s, e) => updateTargets();
             Helper.Events.GameLoop.DayStarted += (s, e) => updateTargets();
 
-            helper.Content.AssetEditors.Add( watcher = new WatchForUpdatesAssetEditor() );
+            helper.Content.AssetEditors.Add(watcher = new WatchForUpdatesAssetEditor());
 
-            helper.ConsoleCommands.Add( "cpa", "...", OnCommand );
+            helper.ConsoleCommands.Add("cpa", "...", OnCommand);
         }
 
-        private void OnCommand( string cmd, string[] args )
+        private void OnCommand(string cmd, string[] args)
         {
-            if ( args[0] == "reload" )
+            if (args[0] == "reload")
             {
                 CollectPatches();
             }
@@ -83,103 +83,103 @@ namespace ContentPatcherAnimations
 
         private void UpdateAnimations(object sender, UpdateTickedEventArgs e)
         {
-            if ( contentPatcher == null )
+            if (contentPatcher == null)
             {
                 var modData = Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
                 contentPatcher = (StardewModdingAPI.Mod)modData.GetType().GetProperty("Mod", PrivateI | PublicI).GetValue(modData);
             }
 
-            if ( screenState.Value == null )
+            if (screenState.Value == null)
             {
                 screenState.Value = new ScreenState();
             }
 
-            if ( ScreenState.cpPatches == null )
+            if (ScreenState.cpPatches == null)
             {
                 var screenManagerPerScreen = contentPatcher.GetType().GetField("ScreenManager", PrivateI).GetValue(contentPatcher);
-                var screenManager = screenManagerPerScreen.GetType().GetProperty( "Value" ).GetValue( screenManagerPerScreen );
-                var patchManager = screenManager.GetType().GetProperty( "PatchManager" ).GetValue( screenManager );
-                screenState.Value.cpPatches = ( IEnumerable ) patchManager.GetType().GetField( "Patches", PrivateI ).GetValue( patchManager );
+                var screenManager = screenManagerPerScreen.GetType().GetProperty("Value").GetValue(screenManagerPerScreen);
+                var patchManager = screenManager.GetType().GetProperty("PatchManager").GetValue(screenManager);
+                screenState.Value.cpPatches = (IEnumerable)patchManager.GetType().GetField("Patches", PrivateI).GetValue(patchManager);
 
                 CollectPatches();
             }
 
 
-            if ( ScreenState.findTargetsCounter > 0 && --ScreenState.findTargetsCounter == 0)
+            if (ScreenState.findTargetsCounter > 0 && --ScreenState.findTargetsCounter == 0)
                 UpdateTargetTextures();
-            while ( ScreenState.findTargetsQueue.Count > 0 )
+            while (ScreenState.findTargetsQueue.Count > 0)
             {
                 var patch = ScreenState.findTargetsQueue.Dequeue();
-                UpdateTargetTextures( patch );
+                UpdateTargetTextures(patch);
             }
 
             ++ScreenState.frameCounter;
             Game1.graphics.GraphicsDevice.Textures[0] = null;
-            foreach ( var patch in ScreenState.animatedPatches )
+            foreach (var patch in ScreenState.animatedPatches)
             {
                 if (!patch.Value.IsActive.Invoke() || patch.Value.Source == null || patch.Value.Target == null)
                     continue;
 
                 try
                 {
-                    if ( ScreenState.frameCounter % patch.Key.AnimationFrameTime == 0 )
+                    if (ScreenState.frameCounter % patch.Key.AnimationFrameTime == 0)
                     {
-                        if ( ++patch.Value.CurrentFrame >= patch.Key.AnimationFrameCount )
+                        if (++patch.Value.CurrentFrame >= patch.Key.AnimationFrameCount)
                             patch.Value.CurrentFrame = 0;
 
                         var sourceRect = patch.Value.FromAreaFunc.Invoke();
                         sourceRect.X += patch.Value.CurrentFrame * sourceRect.Width;
                         var targetRect = patch.Value.ToAreaFunc.Invoke();
-                        if ( targetRect == Rectangle.Empty )
-                            targetRect = new Rectangle( 0, 0, sourceRect.Width, sourceRect.Height );
+                        if (targetRect == Rectangle.Empty)
+                            targetRect = new Rectangle(0, 0, sourceRect.Width, sourceRect.Height);
                         var cols = new Color[sourceRect.Width * sourceRect.Height];
-                        patch.Value.Source.GetData( 0, sourceRect, cols, 0, cols.Length );
-                        patch.Value.Target.SetData( 0, targetRect, cols, 0, cols.Length );
+                        patch.Value.Source.GetData(0, sourceRect, cols, 0, cols.Length);
+                        patch.Value.Target.SetData(0, targetRect, cols, 0, cols.Length);
                     }
                 }
-                catch ( ObjectDisposedException e_ )
+                catch (ObjectDisposedException e_)
                 {
                     // No idea why this happens, hack fix
                     patch.Value.Target = null;
-                    ScreenState.findTargetsQueue.Enqueue( patch.Key );
+                    ScreenState.findTargetsQueue.Enqueue(patch.Key);
                 }
             }
         }
 
         private void UpdateTargetTextures()
         {
-            foreach ( var patch in ScreenState.animatedPatches )
+            foreach (var patch in ScreenState.animatedPatches)
             {
                 try
                 {
-                    if ( !patch.Value.IsActive.Invoke() )
+                    if (!patch.Value.IsActive.Invoke())
                         continue;
 
                     patch.Value.Source = patch.Value.SourceFunc();
                     patch.Value.Target = patch.Value.TargetFunc();
                 }
-                catch ( Exception e )
+                catch (Exception e)
                 {
                     Log.trace("Exception loading " + patch.Key.LogName + " textures, delaying to try again next frame: " + e);
-                    ScreenState.findTargetsQueue.Enqueue( patch.Key );
+                    ScreenState.findTargetsQueue.Enqueue(patch.Key);
                 }
             }
         }
 
-        private void UpdateTargetTextures( Patch key )
+        private void UpdateTargetTextures(Patch key)
         {
             try
             {
-                var patch = ScreenState.animatedPatches[ key ];
-                if ( !patch.IsActive() )
+                var patch = ScreenState.animatedPatches[key];
+                if (!patch.IsActive())
                     return;
 
                 patch.Source = patch.SourceFunc();
                 patch.Target = patch.TargetFunc();
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
-                Log.error( "Exception loading " + key.LogName + " textures: " + e );
+                Log.error("Exception loading " + key.LogName + " textures: " + e);
             }
         }
 
@@ -204,7 +204,7 @@ namespace ContentPatcherAnimations
                         PatchData data = new PatchData();
 
                         object targetPatch = null;
-                        foreach (var cpPatch in ScreenState.cpPatches )
+                        foreach (var cpPatch in ScreenState.cpPatches)
                         {
                             var path = cpPatch.GetType().GetProperty("Path", PublicI).GetValue(cpPatch);
                             if (path.ToString() == pack.Manifest.Name + " > " + patch.LogName)
@@ -237,12 +237,12 @@ namespace ContentPatcherAnimations
 
         private Texture2D FindTargetTexture(string target)
         {
-            if ( Helper.Content.NormalizeAssetName(target) == Helper.Content.NormalizeAssetName("TileSheets\\tools" ) )
+            if (Helper.Content.NormalizeAssetName(target) == Helper.Content.NormalizeAssetName("TileSheets\\tools"))
             {
                 return Helper.Reflection.GetField<Texture2D>(typeof(Game1), "_toolSpriteSheet").GetValue();
             }
             var tex = Game1.content.Load<Texture2D>(target);
-            if ( tex.GetType().Name == "ScaledTexture2D" )
+            if (tex.GetType().Name == "ScaledTexture2D")
             {
                 Log.trace("Found ScaledTexture2D from PyTK: " + target);
                 tex = Helper.Reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
@@ -253,14 +253,14 @@ namespace ContentPatcherAnimations
         private Rectangle GetRectangleFromPatch(object targetPatch, string rectName, Rectangle defaultTo = default(Rectangle))
         {
             var rect = targetPatch.GetType().GetField(rectName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(targetPatch);
-            if ( rect == null )
+            if (rect == null)
             {
                 return defaultTo;
             }
             var tryGetRectValue = rect.GetType().GetMethod("TryGetRectangle");
 
             object[] args = new object[] { null, null };
-            if ( !((bool) tryGetRectValue.Invoke(rect, args)) )
+            if (!((bool)tryGetRectValue.Invoke(rect, args)))
             {
                 return Rectangle.Empty;
             }

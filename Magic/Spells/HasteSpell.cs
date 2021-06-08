@@ -6,9 +6,8 @@ namespace Magic.Spells
 {
     public class HasteSpell : Spell
     {
-        public HasteSpell() : base(SchoolId.Life, "haste")
-        {
-        }
+        public HasteSpell()
+            : base(SchoolId.Life, "haste") { }
 
         public override bool canCast(Farmer player, int level)
         {
@@ -34,7 +33,7 @@ namespace Magic.Spells
             if (player != Game1.player)
                 return null;
 
-            foreach ( var buff in Game1.buffsDisplay.otherBuffs )
+            foreach (var buff in Game1.buffsDisplay.otherBuffs)
             {
                 if (buff.source == "spell:life:haste")
                     return null;

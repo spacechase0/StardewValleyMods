@@ -1,11 +1,11 @@
 ﻿{
-  "Name": "Throwable Axe",
-  "Author": "spacechase0",
-  "Version": "1.0.0",
-  "Description": "Lets you throw your axe.",
-  "UniqueID": "spacechase0.ThrowableAxe",
-  "EntryDll": "ThrowableAxe.dll",
-  "MinimumApiVersion": "2.9.0",
-  "UpdateKeys": [ "Nexus:5097", "Chucklefish:5899" ],
-  "spacechase0": "throwable-axe"
+    "Name": "Throwable Axe",
+    "Author": "spacechase0",
+    "Version": "1.0.0",
+    "Description": "Lets you throw your axe.",
+    "UniqueID": "spacechase0.ThrowableAxe",
+    "EntryDll": "ThrowableAxe.dll",
+    "MinimumApiVersion": "2.9.0",
+    "UpdateKeys": [ "Nexus:5097", "Chucklefish:5899" ],
+    "spacechase0": "throwable-axe"
 }

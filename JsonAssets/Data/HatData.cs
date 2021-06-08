@@ -41,7 +41,7 @@ namespace JsonAssets.Data
 
         internal string GetHatInformation()
         {
-            return $"{Name}/{LocalizedDescription()}/" + ( ShowHair ? "true" : "false" ) + "/" + (IgnoreHairstyleOffset ? "true" : "false") + $"/{Metadata}/{LocalizedName()}";
+            return $"{Name}/{LocalizedDescription()}/" + (ShowHair ? "true" : "false") + "/" + (IgnoreHairstyleOffset ? "true" : "false") + $"/{Metadata}/{LocalizedName()}";
         }
     }
 }

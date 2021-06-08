@@ -26,7 +26,7 @@ namespace Magic.Game.Interface
         private bool justRightClicked = false;
 
         public MagicMenu(School theSchool = null)
-        :   base( ( Game1.viewport.Size.Width - WINDOW_WIDTH ) / 2, (Game1.viewport.Size.Height - WINDOW_HEIGHT) / 2, WINDOW_WIDTH, WINDOW_HEIGHT, true )
+            : base((Game1.viewport.Size.Width - WINDOW_WIDTH) / 2, (Game1.viewport.Size.Height - WINDOW_HEIGHT) / 2, WINDOW_WIDTH, WINDOW_HEIGHT, true)
         {
             school = theSchool;
             if (school != null)
@@ -39,7 +39,7 @@ namespace Magic.Game.Interface
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
             var hotbarH = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
-            var gap = ( WINDOW_HEIGHT - hotbarH * 2 ) / 3 + (hasFifthSpellSlot ? 25 : 0);
+            var gap = (WINDOW_HEIGHT - hotbarH * 2) / 3 + (hasFifthSpellSlot ? 25 : 0);
             //drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + gap, 48 + 24, hotbarH, Color.White);
             //drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + WINDOW_HEIGHT - hotbarH - gap, 48 + 24, hotbarH, Color.White);
             drawTextureBox(b, xPositionOnScreen, yPositionOnScreen, WINDOW_WIDTH, WINDOW_HEIGHT, Color.White);
@@ -56,9 +56,9 @@ namespace Magic.Game.Interface
                     //drawTextureBox(b, ix, iy, 64 + 24, 64 + 24, Color.White);
                     b.Draw(Game1.staminaRect, new Rectangle(ix + 12, iy + 12, SCHOOL_ICON_SIZE, SCHOOL_ICON_SIZE), Color.Aqua);
 
-                    if ( justLeftClicked && new Rectangle( ix + 12, iy + 12, SCHOOL_ICON_SIZE, SCHOOL_ICON_SIZE ).Contains( Game1.getOldMouseX(), Game1.getOldMouseY() ) )
+                    if (justLeftClicked && new Rectangle(ix + 12, iy + 12, SCHOOL_ICON_SIZE, SCHOOL_ICON_SIZE).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                     {
-                        if ( this.school == null )
+                        if (this.school == null)
                             active = School.getSchool(schoolId);
                         justLeftClicked = false;
                     }
@@ -66,8 +66,8 @@ namespace Magic.Game.Interface
                     iy += SCHOOL_ICON_SIZE + 12;
                 }
             }
-            
-            if ( active != null )
+
+            if (active != null)
             {
                 Spell[] t1 = active.GetSpellsTier1();
                 Spell[] t2 = active.GetSpellsTier2();
@@ -76,18 +76,18 @@ namespace Magic.Game.Interface
                 Spell[][] spells = new Spell[][] { t1, t2, t3 };
 
                 int sy = spells.Length + 1;
-                for ( int t = 0; t < spells.Length; ++t )
+                for (int t = 0; t < spells.Length; ++t)
                 {
                     int y = yPositionOnScreen + (WINDOW_HEIGHT - 24) / sy * (t + 1);
                     int sx = spells[t].Length + 1;
-                    for ( int s = 0; s < spells[ t ].Length; ++s )
+                    for (int s = 0; s < spells[t].Length; ++s)
                     {
                         int x = xPositionOnScreen + (WINDOW_WIDTH / 2 - 24) / sx * (s + 1);
 
                         var spell = spells[t][s];
                         if (!Game1.player.knowsSpell(spell, 0))
                             continue;
-                        if ( justLeftClicked && new Rectangle( x - SPELL_ICON_SIZE / 2, y - SPELL_ICON_SIZE / 2, SPELL_ICON_SIZE, SPELL_ICON_SIZE ).Contains( Game1.getOldMouseX(), Game1.getOldMouseY() ) )
+                        if (justLeftClicked && new Rectangle(x - SPELL_ICON_SIZE / 2, y - SPELL_ICON_SIZE / 2, SPELL_ICON_SIZE, SPELL_ICON_SIZE).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                         {
                             sel = spell;
                             justLeftClicked = false;
@@ -97,11 +97,11 @@ namespace Magic.Game.Interface
 
                         if (spell == null)
                             continue;
-                        var icon = spell.Icons != null ? spell.Icons[ spell.Icons.Length - 1 ] : Game1.staminaRect;
+                        var icon = spell.Icons != null ? spell.Icons[spell.Icons.Length - 1] : Game1.staminaRect;
                         if (icon == null)
                         {
                             icon = spell.Icons[0];
-                            if ( icon == null )
+                            if (icon == null)
                                 continue;
                         }
 
@@ -110,7 +110,7 @@ namespace Magic.Game.Interface
                 }
             }
 
-            if ( sel != null )
+            if (sel != null)
             {
                 var title = sel.getTranslatedName();
                 var desc = WrapText(sel.getTranslatedDescription(), (int)((WINDOW_WIDTH / 2) / 0.75f));
@@ -122,14 +122,14 @@ namespace Magic.Game.Interface
                 {
                     icon = sel.Icons[0];
                 }
-                if ( icon != null )
+                if (icon != null)
                 {
                     b.Draw(icon, new Rectangle(xPositionOnScreen + WINDOW_WIDTH / 2 + (WINDOW_WIDTH / 2 - SEL_ICON_SIZE) / 2, yPositionOnScreen + 85, SEL_ICON_SIZE, SEL_ICON_SIZE), Color.White);
                 }
                 b.DrawString(Game1.dialogueFont, desc, new Vector2(xPositionOnScreen + WINDOW_WIDTH / 2 + 12, yPositionOnScreen + 280), Color.Black, 0, Vector2.Zero, 0.75f, SpriteEffects.None, 0);
 
                 int sx = sel.Icons.Length + 1;
-                for ( int i = 0; i < sel.Icons.Length; ++i )
+                for (int i = 0; i < sel.Icons.Length; ++i)
                 {
                     int x = xPositionOnScreen + WINDOW_WIDTH / 2 + (WINDOW_WIDTH / 2) / sx * (i + 1);
                     int y = yPositionOnScreen + WINDOW_HEIGHT - 12 - SPELL_ICON_SIZE - 32 - 40;
@@ -144,18 +144,18 @@ namespace Magic.Game.Interface
                     drawTextureBox(b, r.Left - 12, r.Top - 12, r.Width + 24, r.Height + 24, stateCol);
                     if (sel.Icons[i] != null)
                         b.Draw(sel.Icons[i], r, Color.White);
-                    if ( r.Contains( Game1.getOldMouseX(), Game1.getOldMouseY() ) )
+                    if (r.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                     {
-                        if ( justLeftClicked && Game1.player.knowsSpell( sel, i ) )
+                        if (justLeftClicked && Game1.player.knowsSpell(sel, i))
                         {
                             dragging = new PreparedSpell(sel.FullId, i);
                             justLeftClicked = false;
                         }
                         else if (i == 0 || Game1.player.knowsSpell(sel, i - 1))
                         {
-                            if ( justLeftClicked )
+                            if (justLeftClicked)
                                 Game1.player.learnSpell(sel, i);
-                            else if ( justRightClicked && i != 0 )
+                            else if (justRightClicked && i != 0)
                                 Game1.player.forgetSpell(sel, i);
                         }
                     }
@@ -168,7 +168,7 @@ namespace Magic.Game.Interface
                 int y = yPositionOnScreen + gap + 12 + (hasFifthSpellSlot ? -32 : 0);
                 foreach (var preps in spellbook.prepared)
                 {
-                    for ( int i = 0; i < (hasFifthSpellSlot ? 5 : 4); ++i )
+                    for (int i = 0; i < (hasFifthSpellSlot ? 5 : 4); ++i)
                     {
                         var prep = preps[i];
 
@@ -207,7 +207,7 @@ namespace Magic.Game.Interface
             }
             //*/
 
-            if ( justLeftClicked )
+            if (justLeftClicked)
             {
                 dragging = null;
                 justLeftClicked = false;
@@ -215,7 +215,7 @@ namespace Magic.Game.Interface
             justRightClicked = false;
 
             base.draw(b);
-            if ( dragging != null )
+            if (dragging != null)
             {
                 Spell spell = SpellBook.get(dragging.SpellId);
                 if (spell != null)

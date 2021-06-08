@@ -11,9 +11,8 @@ namespace Magic.Spells
 {
     public class ClearDebrisSpell : Spell
     {
-        public ClearDebrisSpell() : base( SchoolId.Toil, "cleardebris" )
-        {
-        }
+        public ClearDebrisSpell()
+            : base(SchoolId.Toil, "cleardebris") { }
 
         public override int getManaCost(Farmer player, int level)
         {
@@ -78,8 +77,8 @@ namespace Magic.Spells
                             }
                             if (tf.performToolAction(dummyAxe, 0, pos, loc) || tf is Grass || (tf is Tree && tf.performToolAction(dummyAxe, 0, pos, loc)))
                             {
-                                if ( tf is Tree )
-                                    player.AddCustomSkillExperience(Magic.Skill,5);
+                                if (tf is Tree)
+                                    player.AddCustomSkillExperience(Magic.Skill, 5);
                                 loc.terrainFeatures.Remove(pos);
                             }
                             if (tf is Grass && loc is Farm)

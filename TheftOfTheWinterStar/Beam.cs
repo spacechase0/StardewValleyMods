@@ -14,7 +14,7 @@ namespace TheftOfTheWinterStar
         private Vector2 basePos;
         private float angle;
         private ICue sound;
-        
+
         private int timer = 30;
 
         public Beam(Farmer who, Vector2 aim)
@@ -26,10 +26,10 @@ namespace TheftOfTheWinterStar
 
             switch (who.FacingDirection)
             {
-                case 2: basePos.X +=  44; basePos.Y +=   12; break;
+                case 2: basePos.X += 44; basePos.Y += 12; break;
                 case 0: basePos.X += -26; basePos.Y += -100; break;
-                case 3: basePos.X += -40; basePos.Y +=  -90; break;
-                case 1: basePos.X +=  40; basePos.Y +=  -90; break;
+                case 3: basePos.X += -40; basePos.Y += -90; break;
+                case 1: basePos.X += 40; basePos.Y += -90; break;
             }
 
             angle = (float)Math.Atan2(basePos.Y - aim.Y, basePos.X - aim.X);
@@ -38,10 +38,10 @@ namespace TheftOfTheWinterStar
             Mod.instance.Helper.Events.Display.RenderedWorld += render;
 
         }
-        
+
         private void update(object sender, UpdateTickedEventArgs e)
         {
-            if ( timer-- <= 0 )
+            if (timer-- <= 0)
             {
                 Mod.instance.Helper.Events.GameLoop.UpdateTicked -= update;
                 Mod.instance.Helper.Events.Display.RenderedWorld -= render;
@@ -54,9 +54,9 @@ namespace TheftOfTheWinterStar
             Vector2 lower = lineEnd.Y < basePos.Y ? basePos : lineEnd;
             Vector2 lefter = lineEnd.X < basePos.X ? lineEnd : basePos;
             Vector2 righter = lineEnd.X < basePos.X ? basePos : lineEnd;
-            foreach ( var character in shooter.currentLocation.characters.ToList() )
+            foreach (var character in shooter.currentLocation.characters.ToList())
             {
-                if ( character is Monster mob )
+                if (character is Monster mob)
                 {
                     var bb = mob.GetBoundingBox();
                     var tl = new Vector2(bb.Left, bb.Top);
@@ -74,9 +74,9 @@ namespace TheftOfTheWinterStar
                     if (i2.HasValue && bb.Contains((int)i2.Value.X, (int)i2.Value.Y)) cont = i2.Value;
                     if (i3.HasValue && bb.Contains((int)i3.Value.X, (int)i3.Value.Y)) cont = i3.Value;
                     if (i4.HasValue && bb.Contains((int)i4.Value.X, (int)i4.Value.Y)) cont = i4.Value;
-                    if ( cont.X >= lefter.X && cont.X <= righter.X &&
+                    if (cont.X >= lefter.X && cont.X <= righter.X &&
                          cont.Y >= higher.Y && cont.Y <= lower.Y &&
-                         bb.Contains((int) cont.X, (int) cont.Y) )
+                         bb.Contains((int)cont.X, (int)cont.Y))
                     {
                         shooter.currentLocation.damageMonster(bb, 6, 8, false, shooter);
                         //mob.takeDamage(3, 0, 0, false, 0, shooter);
@@ -100,7 +100,7 @@ namespace TheftOfTheWinterStar
 
             int minW = 2, maxW = 12;
             int unitW = (maxW - minW) / (colors.Length - 1);
-            for ( int i = 0; i < colors.Length; ++i )
+            for (int i = 0; i < colors.Length; ++i)
             {
                 Color col = colors[i];
                 int currW = minW + unitW * (colors.Length - i - 1);

@@ -13,8 +13,8 @@ namespace GenericModConfigMenu.ModOption
         {
         }
 
-        public ParagraphModOption( string paragraph, IManifest mod )
-        :   base( paragraph, "", paragraph, mod )
+        public ParagraphModOption(string paragraph, IManifest mod)
+            : base(paragraph, "", paragraph, mod)
         {
         }
     }

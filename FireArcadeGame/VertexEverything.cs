@@ -18,7 +18,7 @@ namespace FireArcadeGame
             new VertexElement(sizeof(float) * 3 + 4 + sizeof(float) * 3, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0)
         );
 
-        public VertexEverything( Vector3 pos, Vector3 n, Vector2 tex )
+        public VertexEverything(Vector3 pos, Vector3 n, Vector2 tex)
         {
             Position = pos;
             Color = Color.White;

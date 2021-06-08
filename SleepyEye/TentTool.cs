@@ -44,12 +44,12 @@ namespace SleepyEye
                 return true;
 
             TimeSpan useTime = DateTime.Now - (DateTime)startedUsing;
-            if ( useTime > TimeSpan.FromSeconds( 7 ) )
+            if (useTime > TimeSpan.FromSeconds(7))
             {
                 Sleep.SaveLocation = true;
                 Game1.NewDay(0);
             }
-            
+
             startedUsing = null;
             who.canMove = true;
 
@@ -58,7 +58,7 @@ namespace SleepyEye
 
         public override void tickUpdate(GameTime time, SFarmer who)
         {
-            if ( startedUsing == null )
+            if (startedUsing == null)
                 return;
             TimeSpan useTime = DateTime.Now - (DateTime)startedUsing;
 
@@ -74,7 +74,7 @@ namespace SleepyEye
 
         public override void drawInMenu(SpriteBatch b, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
-            b.Draw(Mod.instance.Helper.Content.Load<Texture2D>("Maps/" + Game1.currentSeason + "_outdoorsTileSheet", ContentSource.GameContent), new Vector2( location.X + Game1.tileSize / 2, location.Y + Game1.tileSize / 2 ), new Rectangle(224, 96, 48, 80), Color.White, 0, new Vector2( 24, 40 ), scaleSize * 0.8f, SpriteEffects.None, 0);
+            b.Draw(Mod.instance.Helper.Content.Load<Texture2D>("Maps/" + Game1.currentSeason + "_outdoorsTileSheet", ContentSource.GameContent), new Vector2(location.X + Game1.tileSize / 2, location.Y + Game1.tileSize / 2), new Rectangle(224, 96, 48, 80), Color.White, 0, new Vector2(24, 40), scaleSize * 0.8f, SpriteEffects.None, 0);
         }
 
         public override void draw(SpriteBatch b)
@@ -82,7 +82,7 @@ namespace SleepyEye
             CurrentParentTileIndex = IndexOfMenuItemView = -999;
             if (startedUsing == null)
                 return;
-            
+
             TimeSpan useTime = DateTime.Now - (DateTime)startedUsing;
 
             //if ( useTime > TimeSpan.FromSeconds( 7 ) )

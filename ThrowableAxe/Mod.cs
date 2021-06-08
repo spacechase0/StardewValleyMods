@@ -34,7 +34,7 @@ namespace ThrowableAxe
                 float[] speed_ = new float[] { 10, 12, 14, 16, 18, 20 }; // 6 for support for prismatic tools
                 int dmg = dmg_[axe.UpgradeLevel];
                 float speed = speed_[axe.UpgradeLevel];
-                
+
                 thrown = new ThrownAxe(Game1.player, axe.UpgradeLevel, dmg, e.Cursor.AbsolutePixels, speed);
                 Game1.currentLocation.projectiles.Add(thrown);
 
@@ -67,7 +67,7 @@ namespace ThrowableAxe
                     playerPos.X -= 16;
                     playerPos.Y -= 64;
                     thrown.target.Value = playerPos;
-                    if ( (thrown.GetPosition() - playerPos).Length() < 16 )
+                    if ((thrown.GetPosition() - playerPos).Length() < 16)
                     {
                         thrown.dead = true;
                     }

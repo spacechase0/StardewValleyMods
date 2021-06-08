@@ -9,19 +9,17 @@ namespace MoreBuildings.BigShed
     public class BigShedLocation : DecoratableLocation, ISaveElement
     {
         public BigShedLocation()
-        :   base("Maps\\Shed2_", "Shed2" )
-        {
-        }
+            : base("Maps\\Shed2_", "Shed2") { }
 
         public override List<Rectangle> getFloors()
         {
             return new List<Rectangle> { new Rectangle(1, 3, 21, 20) };
         }
 
-        
+
         public override List<Rectangle> getWalls()
         {
-            return new List<Rectangle>{ new Rectangle(1, 1, 21, 3) };
+            return new List<Rectangle> { new Rectangle(1, 1, 21, 3) };
         }
 
         public Dictionary<string, string> getAdditionalSaveData()

@@ -17,7 +17,7 @@ namespace Terraforming
         private TileType sel = TileType.Dirt;
 
         public TerraformingMenu()
-        :   base(0, 0, Game1.viewport.Width, Game1.viewport.Height, false)
+        : base(0, 0, Game1.viewport.Width, Game1.viewport.Height, false)
         {
             terrainWidth = Game1.currentLocation.Map.Layers[0].LayerWidth;
             terrainHeight = Game1.currentLocation.Map.Layers[0].LayerHeight;
@@ -92,7 +92,7 @@ namespace Terraforming
 
             // Draw UI
             drawTextureBox(b, 64, 64, 64 + IClickableMenu.borderWidth * 2 + 32, IClickableMenu.borderWidth * 2 + (64 + 32) * (int)TileType.Count, Color.White);
-            for ( int i = 0; i < (int)TileType.Count; ++i )
+            for (int i = 0; i < (int)TileType.Count; ++i)
             {
                 TileType type = (TileType)i;
                 Color col = typeColors[type];
@@ -100,15 +100,15 @@ namespace Terraforming
                 int y = 64 + IClickableMenu.borderWidth + 16 + (64 + 32) * i;
 
                 Rectangle rect = new Rectangle(x, y, 64, 64);
-                if ( justClicked && rect.Contains( Game1.getMouseX(), Game1.getMouseY() ) )
+                if (justClicked && rect.Contains(Game1.getMouseX(), Game1.getMouseY()))
                     sel = type;
 
                 if (type == sel)
                     drawTextureBox(b, x - 16, y - 16, 64 + 32, 64 + 32, Color.Green);
-                
+
                 b.Draw(Game1.staminaRect, rect, col);
             }
-            
+
             drawMouse(b);
         }
 
@@ -129,7 +129,7 @@ namespace Terraforming
         {
             // Remove old layers
             var layersToRemove = new List<xTile.Layers.Layer>();
-            foreach ( var check in Game1.currentLocation.Map.Layers )
+            foreach (var check in Game1.currentLocation.Map.Layers)
             {
                 if (check.Id.Contains("Terraform"))
                     layersToRemove.Add(check);
@@ -175,7 +175,7 @@ namespace Terraforming
             {
                 var layer = new xTile.Layers.Layer("BackTerraform_" + type, Game1.currentLocation.Map, Game1.currentLocation.Map.Layers[0].LayerSize, new xTile.Dimensions.Size(Game1.tileSize, Game1.tileSize));
                 var ts = typesTs[type];
-                for (int ix = 0; ix < terrainWidth; ++ix )
+                for (int ix = 0; ix < terrainWidth; ++ix)
                 {
                     for (int iy = 0; iy < terrainHeight; ++iy)
                     {
@@ -207,7 +207,7 @@ namespace Terraforming
             }
 
             // Water tile effects
-            if ( Game1.currentLocation.waterTiles == null )
+            if (Game1.currentLocation.waterTiles == null)
             {
                 Game1.currentLocation.waterTiles = new bool[terrainWidth, terrainHeight];
             }

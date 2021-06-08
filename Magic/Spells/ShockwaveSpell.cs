@@ -11,9 +11,8 @@ namespace Magic.Spells
 {
     class ShockwaveSpell : Spell
     {
-        public ShockwaveSpell() : base( SchoolId.Nature, "shockwave" )
-        {
-        }
+        public ShockwaveSpell()
+            : base(SchoolId.Nature, "shockwave") { }
 
         public override bool canCast(Farmer player, int level)
         {
@@ -36,7 +35,7 @@ namespace Magic.Spells
             private readonly Farmer player;
             private readonly int level;
 
-            public Shockwave( Farmer player, int level )
+            public Shockwave(Farmer player, int level)
             {
                 this.player = player;
                 this.level = level;

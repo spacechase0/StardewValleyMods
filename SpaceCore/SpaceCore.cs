@@ -24,7 +24,7 @@ namespace SpaceCore
         public Configuration Config { get; set; }
         internal static SpaceCore instance;
         private HarmonyInstance harmony;
-        
+
         internal static List<Type> modTypes = new List<Type>();
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
@@ -66,7 +66,7 @@ namespace SpaceCore
                     Log.error("LE: " + le);
                 }
             }
-            catch ( Exception e1 )
+            catch (Exception e1)
             {
                 Log.trace("Failed to find Windows showEndOfNightStuff lambda: " + e1);
                 try
@@ -76,7 +76,7 @@ namespace SpaceCore
                         if (m.FullDescription().Contains("<showEndOfNightStuff>m__"))
                             showNightEndMethod = m;
                 }
-                catch ( Exception e2 )
+                catch (Exception e2)
                 {
                     Log.error("Failed to find Mac/Linux showEndOfNightStuff lambda: " + e2);
                 }
@@ -95,7 +95,7 @@ namespace SpaceCore
             doPrefix(typeof(NPC), nameof(NPC.tryToReceiveActiveObject), typeof(BeforeReceiveObjectHook));
             doPostfix(typeof(NPC), nameof(NPC.receiveGift), typeof(AfterGiftGivenHook));
             doPostfix(typeof(Game1), nameof(Game1.loadForNewGame), typeof(BlankSaveHook));
-            if(Constants.TargetPlatform != GamePlatform.Android)
+            if (Constants.TargetPlatform != GamePlatform.Android)
             {
                 doPrefix(typeof(Game1).GetMethod(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int) }), typeof(WarpFarmerHook).GetMethod(nameof(WarpFarmerHook.Prefix)));
             }
@@ -104,13 +104,13 @@ namespace SpaceCore
                 doPrefix(typeof(Game1).GetMethod(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool) }), typeof(WarpFarmerHook).GetMethod(nameof(WarpFarmerHook.Prefix)));
             }
             doPostfix(typeof(GameMenu), nameof(GameMenu.getTabNumberFromName), typeof(GameMenuTabNameHook));
-            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ),                    typeof( SpriteEffects ), typeof( float ) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix1)));
-            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ),                                                                                                 }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix2)));
-            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix3)));
-            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( float   ), typeof( SpriteEffects ), typeof( float ) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix4)));
-            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof( Texture2D ), typeof( Vector2   ), typeof( Rectangle? ), typeof( Color )                                                                                                  }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix5)));
-            doPrefix( typeof( Event ), nameof( Event.tryEventCommand ), typeof( EventTryCommandPatch ) );
-            doPrefix( typeof( Event ), nameof( Event.checkAction ), typeof( EventActionPatch ) );
+            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Rectangle), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(SpriteEffects), typeof(float) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix1)));
+            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Rectangle), typeof(Rectangle?), typeof(Color), }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix2)));
+            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(Vector2), typeof(SpriteEffects), typeof(float) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix3)));
+            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(float), typeof(SpriteEffects), typeof(float) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix4)));
+            doPrefix(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color) }), typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix5)));
+            doPrefix(typeof(Event), nameof(Event.tryEventCommand), typeof(EventTryCommandPatch));
+            doPrefix(typeof(Event), nameof(Event.checkAction), typeof(EventActionPatch));
             harmony.PatchAll();
         }
 
@@ -178,9 +178,9 @@ namespace SpaceCore
             }
 
             var efapi = Helper.ModRegistry.GetApi<EntoaroxFrameworkAPI>("Entoarox.EntoaroxFramework");
-            if ( efapi != null )
+            if (efapi != null)
             {
-                Log.info( "Telling EntoaroxFramework to let us handle the serializer" );
+                Log.info("Telling EntoaroxFramework to let us handle the serializer");
                 efapi.HoistSerializerOwnership();
             }
         }
@@ -189,13 +189,13 @@ namespace SpaceCore
         private void onUpdate(object sender, UpdateTickedEventArgs e)
         {
             TileSheetExtensions.UpdateReferences();
-            if ( tickCount++ == 0 && modTypes.Count == 0 )
+            if (tickCount++ == 0 && modTypes.Count == 0)
             {
-                Log.info( "Disabling serializer patches (no mods using serializer API)" );
-                foreach ( var meth in SaveGameSaveEnumeratorPatch.TargetMethods() )
-                    harmony.Unpatch( meth, AccessTools.Method( typeof( SaveGameSaveEnumeratorPatch ), nameof( SaveGameSaveEnumeratorPatch.Transpiler ) ) );
-                foreach ( var meth in SaveGameLoadEnumeratorPatch.TargetMethods() )
-                    harmony.Unpatch( meth, AccessTools.Method( typeof( SaveGameLoadEnumeratorPatch ), nameof( SaveGameLoadEnumeratorPatch.Transpiler ) ) );
+                Log.info("Disabling serializer patches (no mods using serializer API)");
+                foreach (var meth in SaveGameSaveEnumeratorPatch.TargetMethods())
+                    harmony.Unpatch(meth, AccessTools.Method(typeof(SaveGameSaveEnumeratorPatch), nameof(SaveGameSaveEnumeratorPatch.Transpiler)));
+                foreach (var meth in SaveGameLoadEnumeratorPatch.TargetMethods())
+                    harmony.Unpatch(meth, AccessTools.Method(typeof(SaveGameLoadEnumeratorPatch), nameof(SaveGameLoadEnumeratorPatch.Transpiler)));
             }
         }
 
@@ -205,9 +205,9 @@ namespace SpaceCore
         private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             // todo - MP support
-            if ( !Context.IsMainPlayer )
+            if (!Context.IsMainPlayer)
                 return;
-            
+
             // Sleep position stuff
             var data = Helper.Data.ReadSaveData<Sleep.Data>("sleepy-eye");
             if (data == null)

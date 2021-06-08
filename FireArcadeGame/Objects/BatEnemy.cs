@@ -8,55 +8,55 @@ namespace FireArcadeGame.Objects
 {
     public class BatEnemy : Enemy
     {
-        public static Texture2D tex = Game1.content.Load< Texture2D >( "Characters\\Monsters\\Lava Bat" );
+        public static Texture2D tex = Game1.content.Load<Texture2D>("Characters\\Monsters\\Lava Bat");
 
         public override bool Floats => true;
 
-        private int frame = Game1.random.Next( 4 );
+        private int frame = Game1.random.Next(4);
         private float frameAccum = 0;
 
         private static VertexBuffer mainBuffer;
 
-        public BatEnemy( World world )
-        :   base( world )
+        public BatEnemy(World world)
+            : base(world)
         {
             Health = 2;
 
-            if ( mainBuffer == null )
+            if (mainBuffer == null)
             {
                 float s = 0.75f;
 
                 var vertices = new List<VertexPositionColorTexture>();
-                for ( int i = 0; i < 4; ++i )
+                for (int i = 0; i < 4; ++i)
                 {
-                    float xa = ( 16f / tex.Width ) * i;
-                    float xb = ( 16f / tex.Width ) * ( i + 1 );
-                    float ya = ( 24f / tex.Height ) * ( 0 + 1 );
-                    float yb = ( 24f / tex.Height ) * 0;
-                    vertices.Add( new VertexPositionColorTexture( new Vector3( 0, 0, 0 ), Color.White, new Vector2( xa, ya ) ) );
-                    vertices.Add( new VertexPositionColorTexture( new Vector3( s, 0, 0 ), Color.White, new Vector2( xb, ya ) ) );
-                    vertices.Add( new VertexPositionColorTexture( new Vector3( s, s, 0 ), Color.White, new Vector2( xb, yb ) ) );
+                    float xa = (16f / tex.Width) * i;
+                    float xb = (16f / tex.Width) * (i + 1);
+                    float ya = (24f / tex.Height) * (0 + 1);
+                    float yb = (24f / tex.Height) * 0;
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(0, 0, 0), Color.White, new Vector2(xa, ya)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(s, 0, 0), Color.White, new Vector2(xb, ya)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(s, s, 0), Color.White, new Vector2(xb, yb)));
 
-                    vertices.Add( new VertexPositionColorTexture( new Vector3( 0, 0, 0 ), Color.White, new Vector2( xa, ya ) ) );
-                    vertices.Add( new VertexPositionColorTexture( new Vector3( 0, s, 0 ), Color.White, new Vector2( xa, yb ) ) );
-                    vertices.Add( new VertexPositionColorTexture( new Vector3( s, s, 0 ), Color.White, new Vector2( xb, yb ) ) );
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(0, 0, 0), Color.White, new Vector2(xa, ya)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(0, s, 0), Color.White, new Vector2(xa, yb)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(s, s, 0), Color.White, new Vector2(xb, yb)));
                 }
 
-                mainBuffer = new VertexBuffer( Game1.game1.GraphicsDevice, typeof( VertexPositionColorTexture ), vertices.Count(), BufferUsage.WriteOnly );
-                mainBuffer.SetData( vertices.ToArray() );
+                mainBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                mainBuffer.SetData(vertices.ToArray());
             }
         }
 
-        public override void Hurt( int amt )
+        public override void Hurt(int amt)
         {
-            base.Hurt( amt );
-            if ( Dead )
+            base.Hurt(amt);
+            if (Dead)
             {
-                Game1.playSound( "batScreech" );
+                Game1.playSound("batScreech");
             }
             else
             {
-                Game1.playSound( "hitEnemy" );
+                Game1.playSound("hitEnemy");
             }
         }
 
@@ -74,18 +74,18 @@ namespace FireArcadeGame.Objects
         {
             base.Update();
 
-            frameAccum += (float) Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
-            if ( frameAccum >= 0.15f )
+            frameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+            if (frameAccum >= 0.15f)
             {
                 frameAccum = 0;
-                if ( ++frame >= 4 )
+                if (++frame >= 4)
                     frame = 0;
             }
         }
 
-        public override void Render( GraphicsDevice device, Matrix projection, Camera cam )
+        public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
-            base.Render( device, projection, cam );
+            base.Render(device, projection, cam);
 
             int frame = this.frame;
 
@@ -94,18 +94,18 @@ namespace FireArcadeGame.Objects
             newStencil.DepthBufferWriteEnable = false;
             device.DepthStencilState = newStencil;
 
-            var camForward = ( cam.pos - cam.target );
+            var camForward = (cam.pos - cam.target);
             camForward.Normalize();
-            effect.World = Matrix.CreateConstrainedBillboard( Position, cam.pos, cam.up, null, null );
+            effect.World = Matrix.CreateConstrainedBillboard(Position, cam.pos, cam.up, null, null);
             effect.TextureEnabled = true;
             effect.Texture = tex;
-            for ( int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e )
+            for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = effect.CurrentTechnique.Passes[ e ];
+                var pass = effect.CurrentTechnique.Passes[e];
                 pass.Apply();
 
-                device.SetVertexBuffer( mainBuffer );
-                device.DrawPrimitives( PrimitiveType.TriangleList, frame * 6, 2 );
+                device.SetVertexBuffer(mainBuffer);
+                device.DrawPrimitives(PrimitiveType.TriangleList, frame * 6, 2);
             }
 
             device.DepthStencilState = oldStencil;

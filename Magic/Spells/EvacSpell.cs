@@ -6,9 +6,8 @@ namespace Magic.Spells
 {
     public class EvacSpell : Spell
     {
-        public EvacSpell() : base(SchoolId.Life, "evac")
-        {
-        }
+        public EvacSpell()
+            : base(SchoolId.Life, "evac") { }
 
         public override int getMaxCastingLevel()
         {

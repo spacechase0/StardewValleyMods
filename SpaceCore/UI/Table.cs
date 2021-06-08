@@ -15,7 +15,7 @@ namespace SpaceCore.UI
             get { return size; }
             set
             {
-                size = new Vector2(value.X, ((int) value.Y) / RowHeight * RowHeight);
+                size = new Vector2(value.X, ((int)value.Y) / RowHeight * RowHeight);
                 UpdateScrollbar();
             }
         }
@@ -35,7 +35,7 @@ namespace SpaceCore.UI
         public int RowCount { get { return rows.Count; } }
 
         public Scrollbar Scrollbar { get; }
-        
+
         public Table()
         {
             Scrollbar = new Scrollbar();
@@ -43,10 +43,10 @@ namespace SpaceCore.UI
             AddChild(Scrollbar);
         }
 
-        public void AddRow( Element[] elements )
+        public void AddRow(Element[] elements)
         {
             rows.Add(elements);
-            foreach ( var child in elements )
+            foreach (var child in elements)
             {
                 AddChild(child);
             }
@@ -102,8 +102,8 @@ namespace SpaceCore.UI
 
         public override void Draw(SpriteBatch b)
         {
-            IClickableMenu.drawTextureBox(b, (int) Position.X - 32, (int) Position.Y - 32, (int) Size.X + 64, (int) Size.Y + 64, Color.White);
-            
+            IClickableMenu.drawTextureBox(b, (int)Position.X - 32, (int)Position.Y - 32, (int)Size.X + 64, (int)Size.Y + 64, Color.White);
+
             foreach (var row in rows)
             {
                 foreach (var element in row)
@@ -115,7 +115,7 @@ namespace SpaceCore.UI
                     element.Draw(b);
                 }
             }
-            
+
             if (RenderLast != null)
                 RenderLast.Draw(b);
 

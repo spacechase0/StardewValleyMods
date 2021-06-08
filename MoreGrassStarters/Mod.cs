@@ -23,7 +23,7 @@ namespace MoreGrassStarters
 
             helper.Events.Display.MenuChanged += onMenuChanged;
 
-            if ( File.Exists(Path.Combine(Helper.DirectoryPath, "assets", "grass.png")) )
+            if (File.Exists(Path.Combine(Helper.DirectoryPath, "assets", "grass.png")))
             {
                 GrassStarterItem.tex2 = Mod.instance.Helper.Content.Load<Texture2D>("assets/grass.png");
             }

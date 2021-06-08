@@ -55,16 +55,16 @@ namespace ObjectTimeLeft
                 return;
 
             var sb = e.SpriteBatch;
-            foreach ( var entryKey in Game1.currentLocation.netObjects.Keys )
+            foreach (var entryKey in Game1.currentLocation.netObjects.Keys)
             {
-                var obj = Game1.currentLocation.netObjects[ entryKey ];
+                var obj = Game1.currentLocation.netObjects[entryKey];
                 if (obj.MinutesUntilReady <= 0 || obj.MinutesUntilReady == 999999 || obj.Name == "Stone")
                     continue;
 
                 //float num = (float)(4.0 * Math.Round(Math.Sin(DateTime.Now.TimeOfDay.TotalMilliseconds / 250.0), 2));
                 float x = entryKey.X;
                 float y = entryKey.Y;
-                Vector2 pos = Game1.GlobalToLocal(Game1.viewport, new Vector2( x * Game1.tileSize, y * Game1.tileSize ));
+                Vector2 pos = Game1.GlobalToLocal(Game1.viewport, new Vector2(x * Game1.tileSize, y * Game1.tileSize));
                 x = pos.X;
                 y = pos.Y;
                 string str = "" + obj.MinutesUntilReady / 10;

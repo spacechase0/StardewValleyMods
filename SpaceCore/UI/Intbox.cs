@@ -11,10 +11,10 @@ namespace SpaceCore.UI
         protected override void receiveInput(string str)
         {
             bool valid = true;
-            for ( int i = 0; i < str.Length; ++i )
+            for (int i = 0; i < str.Length; ++i)
             {
                 char c = str[i];
-                if ( !char.IsDigit(c) && !(c == '-' && String == "" && i == 0) )
+                if (!char.IsDigit(c) && !(c == '-' && String == "" && i == 0))
                 {
                     valid = false;
                     break;

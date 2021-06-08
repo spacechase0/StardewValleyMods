@@ -37,7 +37,7 @@ namespace JsonAssets.Other.ContentPatcher
         public abstract IEnumerable<string> GetValidInputs();
 
         public abstract bool TryValidateInput(string input, out string error);
-        
+
         public virtual bool IsReady()
         {
             return ContentPatcherIntegration.idsAssigned;
@@ -66,7 +66,7 @@ namespace JsonAssets.Other.ContentPatcher
         private IDictionary<string, int> ids = new Dictionary<string, int>();
 
         public IdToken(string type, int startingId, Func<IDictionary<string, int>> theIdsFunc)
-        :   base(type, "Id")
+            : base(type, "Id")
         {
             StartingId = startingId;
             idsFunc = theIdsFunc;
@@ -112,14 +112,14 @@ namespace JsonAssets.Other.ContentPatcher
             ids = idsFunc();
         }
     }
-    
+
     public class SpriteTilesheetToken : BaseToken
     {
         private Func<List<DataNeedsIdWithTexture>> objsFunc;
         private IDictionary<string, string> tilesheets = new Dictionary<string, string>();
 
         public SpriteTilesheetToken(string type, Func<List<DataNeedsIdWithTexture>> func)
-        : base(type, "SpriteTilesheet")
+            : base(type, "SpriteTilesheet")
         {
             this.objsFunc = func;
         }
@@ -167,7 +167,7 @@ namespace JsonAssets.Other.ContentPatcher
                 return false;
 
             var obj = objs[0];
-            if ( !string.IsNullOrEmpty(obj.tilesheet) && tilesheets.Count > 0 && string.IsNullOrEmpty(tilesheets.First().Value) )
+            if (!string.IsNullOrEmpty(obj.tilesheet) && tilesheets.Count > 0 && string.IsNullOrEmpty(tilesheets.First().Value))
             {
                 UpdateContextImpl();
                 return true;
@@ -193,9 +193,9 @@ namespace JsonAssets.Other.ContentPatcher
         public readonly bool coordinateIsX;
         private Func<List<DataNeedsIdWithTexture>> objsFunc;
         private IDictionary<string, int> coordinates = new Dictionary<string, int>();
-        
-        public SpriteCoordinateToken(string type, bool coordinateIsX, Func<List<DataNeedsIdWithTexture>> func )
-        : base(type, "Sprite" + (coordinateIsX ? "X" : "Y"))
+
+        public SpriteCoordinateToken(string type, bool coordinateIsX, Func<List<DataNeedsIdWithTexture>> func)
+            : base(type, "Sprite" + (coordinateIsX ? "X" : "Y"))
         {
             this.coordinateIsX = coordinateIsX;
             this.objsFunc = func;

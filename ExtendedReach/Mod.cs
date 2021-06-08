@@ -37,7 +37,7 @@ namespace ExtendedReach
                 doTranspiler(typeof(Game1), nameof(Game1.tryToCheckAt));
                 doTranspiler(typeof(GameLocation), nameof(GameLocation.isActionableTile));
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
                 Log.error("Exception patching: ");
                 Log.error(e.ToString());
@@ -64,7 +64,7 @@ namespace ExtendedReach
 
             var mousePos = Helper.Input.GetCursorPosition().ScreenPixels;
             var farmerPos = Game1.GlobalToLocal(Game1.player.Position);
-            
+
             if (Game1.player.FacingDirection == 1)
             {
                 farmerPos += new Vector2(18, -10);
@@ -109,7 +109,7 @@ namespace ExtendedReach
             points[3] = farmerPos + (mousePos - farmerPos) / 4 * 3 + angle * -64 * amp;
 
             var curvePoints = computeCurvePoints((int)((farmerPos - mousePos).Length() / 32), points);
-            
+
             for (int x = 0; x < curvePoints.Count - 1; x++)
             {
                 DrawLine(b, tex, curvePoints[x], curvePoints[x + 1], Color.White, 12);
@@ -181,7 +181,7 @@ namespace ExtendedReach
             Vector2 v = Vector2.Normalize(begin - end);
             float angle = (float)Math.Acos(Vector2.Dot(v, -Vector2.UnitX));
             if (begin.Y > end.Y) angle = MathHelper.TwoPi - angle;
-            spriteBatch.Draw(pixel, r, new Rectangle( 150, 237, 3, 3 ), color, angle, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(pixel, r, new Rectangle(150, 237, 3, 3), color, angle, Vector2.Zero, SpriteEffects.None, 0);
         }
     }
 }

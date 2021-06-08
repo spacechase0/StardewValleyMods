@@ -53,10 +53,10 @@ namespace Magic
 
             events.Input.ButtonPressed += onButtonPressed;
             events.Input.ButtonReleased += onButtonReleased;
-            
+
             events.GameLoop.TimeChanged += onTimeChanged;
             events.Player.Warped += onWarped;
-            
+
             SpaceEvents.OnBlankSave += onBlankSave;
             SpaceEvents.OnItemEaten += onItemEaten;
             SpaceEvents.ActionActivated += actionTriggered;
@@ -88,9 +88,9 @@ namespace Magic
                 return;
 
             List<string> spellsLearnt = new List<string>();
-            if ( farmer.CurrentItem != null )
+            if (farmer.CurrentItem != null)
             {
-                if ( farmer.CurrentTool != null )
+                if (farmer.CurrentTool != null)
                 {
                     if (farmer.CurrentTool is StardewValley.Tools.Axe || farmer.CurrentTool is StardewValley.Tools.Pickaxe)
                         spellsLearnt.Add("toil:cleardebris");
@@ -99,13 +99,13 @@ namespace Magic
                     else if (farmer.CurrentTool is StardewValley.Tools.WateringCan)
                         spellsLearnt.Add("toil:water");
                 }
-                else if ( farmer.CurrentItem is StardewValley.Objects.Boots )
+                else if (farmer.CurrentItem is StardewValley.Objects.Boots)
                 {
                     spellsLearnt.Add("life:evac");
                 }
-                else if ( farmer.ActiveObject != null )
+                else if (farmer.ActiveObject != null)
                 {
-                    if ( !farmer.ActiveObject.bigCraftable.Value )
+                    if (!farmer.ActiveObject.bigCraftable.Value)
                     {
                         int index = farmer.ActiveObject.ParentSheetIndex;
                         if (index == 395) // Coffee
@@ -121,16 +121,16 @@ namespace Magic
                     }
                 }
             }
-            foreach ( var lightSource in farmer.currentLocation.sharedLights.Values )
+            foreach (var lightSource in farmer.currentLocation.sharedLights.Values)
             {
-                if ( Utility.distance(e.TargetX, lightSource.position.X, e.TargetY, lightSource.position.Y) < lightSource.radius.Value * Game1.tileSize )
+                if (Utility.distance(e.TargetX, lightSource.position.X, e.TargetY, lightSource.position.Y) < lightSource.radius.Value * Game1.tileSize)
                 {
                     spellsLearnt.Add("nature:lantern");
                     break;
                 }
             }
             var tilePos = new Vector2(e.TargetX / Game1.tileSize, e.TargetY / Game1.tileSize);
-            if ( farmer.currentLocation.terrainFeatures.ContainsKey(tilePos) && farmer.currentLocation.terrainFeatures[ tilePos ] is StardewValley.TerrainFeatures.HoeDirt hd )
+            if (farmer.currentLocation.terrainFeatures.ContainsKey(tilePos) && farmer.currentLocation.terrainFeatures[tilePos] is StardewValley.TerrainFeatures.HoeDirt hd)
             {
                 if (hd.crop != null)
                     spellsLearnt.Add("nature:tendrils");
@@ -139,9 +139,9 @@ namespace Magic
             var tile = farmer.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y];
             if (tile != null && tile.TileIndex == 173)
                 spellsLearnt.Add("elemental:descend");
-            if ( farmer.currentLocation is Farm farm )
+            if (farmer.currentLocation is Farm farm)
             {
-                foreach ( var clump in farm.resourceClumps )
+                foreach (var clump in farm.resourceClumps)
                 {
                     if (clump.parentSheetIndex.Value == 622 && new Rectangle((int)clump.tile.Value.X, (int)clump.tile.Value.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
                         spellsLearnt.Add("eldritch:meteor");
@@ -169,12 +169,12 @@ namespace Magic
 
             // Temporary - 0.3.0 will add dungeons to get these
             bool knowsAll = true;
-            foreach ( var schoolId in School.getSchoolList() )
+            foreach (var schoolId in School.getSchoolList())
             {
                 var school = School.getSchool(schoolId);
 
                 bool knowsAllSchool = true;
-                foreach ( var spell in school.GetSpellsTier1() )
+                foreach (var spell in school.GetSpellsTier1())
                 {
                     if (!farmer.knowsSpell(spell, 0))
                     {
@@ -196,7 +196,7 @@ namespace Magic
                     continue;
 
                 var ancientSpell = school.GetSpellsTier3()[0];
-                if ( knowsAllSchool && !farmer.knowsSpell(ancientSpell, 0 ) )
+                if (knowsAllSchool && !farmer.knowsSpell(ancientSpell, 0))
                 {
                     Log.debug("Player learnt ancient spell: " + ancientSpell);
                     farmer.learnSpell(ancientSpell, 0, true);
@@ -204,7 +204,7 @@ namespace Magic
                 }
             }
 
-            var rewindSpell = School.getSchool( SchoolId.Arcane ).GetSpellsTier3()[0];
+            var rewindSpell = School.getSchool(SchoolId.Arcane).GetSpellsTier3()[0];
             if (knowsAll && !farmer.knowsSpell(rewindSpell, 0))
             {
                 Log.debug("Player learnt ancient spell: " + rewindSpell);
@@ -216,13 +216,13 @@ namespace Magic
         private static void onNetworkData(IncomingMessage msg)
         {
             int count = msg.Reader.ReadInt32();
-            for ( int i = 0; i < count; ++i )
+            for (int i = 0; i < count; ++i)
             {
                 Mod.Data.players[msg.Reader.ReadInt64()] = JsonConvert.DeserializeObject<MultiplayerSaveData.PlayerData>(msg.Reader.ReadString());
             }
         }
 
-        private static void onNetworkCast( IncomingMessage msg )
+        private static void onNetworkCast(IncomingMessage msg)
         {
             IActiveEffect effect = Game1.getFarmer(msg.FarmerID).castSpell(msg.Reader.ReadString(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32());
             if (effect != null)
@@ -231,7 +231,7 @@ namespace Magic
 
         private static void onClientConnected(object sender, EventArgsServerGotClient args)
         {
-            if ( !Data.players.ContainsKey( args.FarmerID ) )
+            if (!Data.players.ContainsKey(args.FarmerID))
                 Data.players[args.FarmerID] = new MultiplayerSaveData.PlayerData();
 
             using (var stream = new MemoryStream())
@@ -247,7 +247,7 @@ namespace Magic
             }
         }
 
-        private static void onBlankSave( object sender, EventArgs args )
+        private static void onBlankSave(object sender, EventArgs args)
         {
             placeAltar(Mod.Config.AltarLocation, Mod.Config.AltarX, Mod.Config.AltarY, 54 * 4);
         }
@@ -255,10 +255,10 @@ namespace Magic
         /// <summary>Raised after the player loads a save slot.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        public static void onSaveLoaded( object sender, SaveLoadedEventArgs e )
+        public static void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            Data.players[ Game1.player.UniqueMultiplayerID ].spellBook.Owner = Game1.player;
-            foreach ( var farmer in Game1.otherFarmers )
+            Data.players[Game1.player.UniqueMultiplayerID].spellBook.Owner = Game1.player;
+            foreach (var farmer in Game1.otherFarmers)
             {
                 if (!Data.players.ContainsKey(farmer.Key))
                     continue;
@@ -283,7 +283,7 @@ namespace Magic
         /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open). Content drawn to the sprite batch at this point will appear under the HUD.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void onRenderingHud( object sender, RenderingHudEventArgs e )
+        private static void onRenderingHud(object sender, RenderingHudEventArgs e)
         {
             // draw active effects
             foreach (IActiveEffect effect in activeEffects)
@@ -293,7 +293,7 @@ namespace Magic
         /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        public static void onRenderedHud( object sender, RenderedHudEventArgs e )
+        public static void onRenderedHud(object sender, RenderedHudEventArgs e)
         {
             if (Game1.activeClickableMenu != null || Game1.eventUp || Game1.player.getMaxMana() == 0)
                 return;
@@ -352,7 +352,7 @@ namespace Magic
                 Spell spell = SpellBook.get(prep.SpellId);
                 if (spell == null || spell.Icons.Length <= prep.Level || spell.Icons[prep.Level] == null)
                     continue;
-                
+
                 b.Draw(spell.Icons[prep.Level], new Rectangle(spots[i].X, spots[i].Y, 50, 50), Game1.player.canCastSpell(spell, prep.Level) ? Color.White : new Color(128, 128, 128));
             }
         }
@@ -450,7 +450,7 @@ namespace Magic
         /// <summary>Raised after a player warps to a new location.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void onWarped( object sender, WarpedEventArgs e )
+        private static void onWarped(object sender, WarpedEventArgs e)
         {
             if (!e.IsLocalPlayer)
                 return;
@@ -459,8 +459,8 @@ namespace Magic
             EvacSpell.onLocationChanged();
 
             // check events
-            if ( e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains( 90001 ) &&
-                 Game1.player.friendshipData.ContainsKey( "Wizard" ) && Game1.player.friendshipData[ "Wizard" ].Points > 750 )
+            if (e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains(90001) &&
+                 Game1.player.friendshipData.ContainsKey("Wizard") && Game1.player.friendshipData["Wizard"].Points > 750)
             {
                 string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{9}\"/pause 750/fade 750/end";
                 eventStr = string.Format(eventStr, Mod.instance.Helper.Translation.Get("event.wizard.1"),
@@ -494,7 +494,7 @@ namespace Magic
             string[] actionArgs = args.ActionString.Split(' ');
             if (args.Action == "MagicAltar")
             {
-                if ( !Game1.player.eventsSeen.Contains(90001) )
+                if (!Game1.player.eventsSeen.Contains(90001))
                 {
                     Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("altar.glow"));
                 }
@@ -516,7 +516,7 @@ namespace Magic
             if (Game1.player.itemToEat.ParentSheetIndex == ja.GetObjectId("Magic Elixir"))
                 Game1.player.addMana(Game1.player.getMaxMana());
         }
-        
+
         private static void onTvChannelSelected(TV tv, TemporaryAnimatedSprite sprite, Farmer farmer, string answer)
         {
             TemporaryAnimatedSprite tas = new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(540, 305, 42, 28), 150f, 2, 999999, tv.getScreenPosition(), false, false, (float)((double)(tv.boundingBox.Bottom - 1) / 10000.0 + 9.99999974737875E-06), 0.0f, Color.White, tv.getScreenSizeModifier(), 0.0f, 0.0f, 0.0f, false);

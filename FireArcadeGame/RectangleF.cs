@@ -10,7 +10,7 @@ namespace FireArcadeGame
         public float Height { get; set; } = 0;
 
         public RectangleF() { }
-        public RectangleF( float x, float y, float w, float h )
+        public RectangleF(float x, float y, float w, float h)
         {
             X = x;
             Y = y;
@@ -18,19 +18,19 @@ namespace FireArcadeGame
             Height = h;
         }
 
-        public bool Intersects( RectangleF other )
+        public bool Intersects(RectangleF other)
         {
-            if ( X + Width < other.X || X > other.X + other.Width ||
-                 Y + Height < other.Y || Y > other.Y + other.Height )
+            if (X + Width < other.X || X > other.X + other.Width ||
+                 Y + Height < other.Y || Y > other.Y + other.Height)
             {
                 return false;
             }
             return true;
         }
 
-        public static RectangleF operator + ( RectangleF rect, Vector2 vec )
+        public static RectangleF operator +(RectangleF rect, Vector2 vec)
         {
-            return new RectangleF( rect.X + vec.X, rect.Y + vec.Y, rect.Width, rect.Height );
+            return new RectangleF(rect.X + vec.X, rect.Y + vec.Y, rect.Width, rect.Height);
         }
     }
 }

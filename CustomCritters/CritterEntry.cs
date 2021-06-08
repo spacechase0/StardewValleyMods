@@ -46,23 +46,23 @@ namespace CustomCritters
             public string ChildrenCombine { get; set; } = "and";
             public List<SpawnCondition_> Children { get; set; } = new List<SpawnCondition_>();
 
-            public bool check( GameLocation loc )
+            public bool check(GameLocation loc)
             {
                 bool ret = true;
 
-                if ( Children.Count > 0 )
+                if (Children.Count > 0)
                 {
                     if (ChildrenCombine != "and")
                         ret = false;
 
                     int totalMet = 0;
-                    foreach ( var child in Children )
+                    foreach (var child in Children)
                     {
                         bool childCheck = child.check(loc);
                         if (childCheck)
                             ++totalMet;
 
-                        switch ( ChildrenCombine )
+                        switch (ChildrenCombine)
                         {
                             case "and": ret = ret && childCheck; break;
                             case "or": ret = ret || childCheck; break;
@@ -70,15 +70,15 @@ namespace CustomCritters
                         }
                     }
 
-                    if ( ChildrenCombine.StartsWith( "atleast" ) )
+                    if (ChildrenCombine.StartsWith("atleast"))
                     {
                         ret = totalMet >= int.Parse(ChildrenCombine.Substring(7));
                     }
-                    else if ( ChildrenCombine.StartsWith( "exactly" ) )
+                    else if (ChildrenCombine.StartsWith("exactly"))
                     {
                         ret = totalMet == int.Parse(ChildrenCombine.Substring(7));
                     }
-                    else if ( ChildrenCombine != "and" && ChildrenCombine != "or" && ChildrenCombine != "xor" )
+                    else if (ChildrenCombine != "and" && ChildrenCombine != "or" && ChildrenCombine != "xor")
                     {
                         throw new ArgumentException("Bad ChildrenCombine: " + ChildrenCombine);
                     }
@@ -109,7 +109,7 @@ namespace CustomCritters
         {
             public string Type { get; set; }
             public float Speed { get; set; }
-            
+
             public class PatrolPoint_
             {
                 public string Type { get; set; } = "start";
@@ -140,7 +140,7 @@ namespace CustomCritters
                 public string ChildrenCombine { get; set; } = "and";
                 public List<ConditionEntry_> Children { get; set; } = new List<ConditionEntry_>();
 
-                public bool check( object obj )
+                public bool check(object obj)
                 {
                     bool ret = true;
 
@@ -219,7 +219,7 @@ namespace CustomCritters
                 }
             }
             public List<ConditionEntry_> Conditions { get; set; } = new List<ConditionEntry_>();
-            
+
             public bool check(object obj)
             {
                 foreach (var cond in Conditions)
@@ -231,11 +231,11 @@ namespace CustomCritters
                 return true;
             }
 
-            public Vector2? pickSpot( GameLocation loc )
+            public Vector2? pickSpot(GameLocation loc)
             {
                 if (LocationType == "random")
                 {
-                    if ( check( null ) )
+                    if (check(null))
                         return loc.getRandomTile() * Game1.tileSize;
                     return null;
                 }
@@ -243,7 +243,7 @@ namespace CustomCritters
                 {
                     var keys = loc.terrainFeatures.Keys.ToList();
                     keys.Shuffle();
-                    foreach ( var key in keys )
+                    foreach (var key in keys)
                     {
                         if (check(loc.terrainFeatures[key]))
                             return key * Game1.tileSize;
@@ -284,9 +284,9 @@ namespace CustomCritters
         }
         public Light_ Light { get; set; } = null;
 
-        public virtual bool check( GameLocation loc )
+        public virtual bool check(GameLocation loc)
         {
-            foreach ( var cond in SpawnConditions )
+            foreach (var cond in SpawnConditions)
             {
                 if (!cond.check(loc))
                     return false;
@@ -295,9 +295,9 @@ namespace CustomCritters
             return true;
         }
 
-        public virtual Vector2? pickSpot( GameLocation loc )
+        public virtual Vector2? pickSpot(GameLocation loc)
         {
-            foreach ( var sl in SpawnLocations )
+            foreach (var sl in SpawnLocations)
             {
                 var ret = sl.pickSpot(loc);
                 if (ret.HasValue)
@@ -308,11 +308,11 @@ namespace CustomCritters
 
         public virtual Critter makeCritter(Vector2 pos)
         {
-            return new CustomCritter(pos + new Vector2( 1, 1 ) *  (Game1.tileSize / 2), this);
+            return new CustomCritter(pos + new Vector2(1, 1) * (Game1.tileSize / 2), this);
         }
 
         internal static Dictionary<string, CritterEntry> critters = new Dictionary<string, CritterEntry>();
-        public static void Register( CritterEntry entry )
+        public static void Register(CritterEntry entry)
         {
             critters.Add(entry.Id, entry);
         }

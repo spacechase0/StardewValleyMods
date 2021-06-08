@@ -21,7 +21,7 @@ namespace CookingSkill
 
         public static double getEdibilityMultiplier()
         {
-            return 1 + Game1.player.GetCustomSkillLevel( skill ) * 0.03;
+            return 1 + Game1.player.GetCustomSkillLevel(skill) * 0.03;
         }
 
         public static double getNoConsumeChance()
@@ -35,7 +35,7 @@ namespace CookingSkill
 
         // Modifies the item based on professions and stuff
         // Returns for whether or not we should consume the ingredients
-        public static bool onCook( CraftingRecipe recipe, Item item, List<Chest> additionalItems )
+        public static bool onCook(CraftingRecipe recipe, Item item, List<Chest> additionalItems)
         {
             if (recipe.isCookingRecipe && item is SObject obj)
             {
@@ -62,7 +62,7 @@ namespace CookingSkill
                 NewCraftingPage.myConsumeIngredients(recipe, additionalItems, false, used);
 
                 int total = 0;
-                foreach (NewCraftingPage.ConsumedItem ingr in used )
+                foreach (NewCraftingPage.ConsumedItem ingr in used)
                     total += ingr.amt;
 
                 for (int iq = 1; iq <= SObject.bestQuality; ++iq)
@@ -70,7 +70,7 @@ namespace CookingSkill
                     if (iq == 3) continue; // Not a real quality
 
                     double chance = 0;
-                    foreach (NewCraftingPage.ConsumedItem ingr in used )
+                    foreach (NewCraftingPage.ConsumedItem ingr in used)
                     {
                         if (ingr.item.Quality >= iq)
                             chance += (1.0 / total) * ingr.amt;
@@ -88,7 +88,7 @@ namespace CookingSkill
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
             instance = this;
             Log.Monitor = Monitor;
@@ -107,7 +107,7 @@ namespace CookingSkill
         private bool wasEating = false;
         private int prevToEatStack = -1;
         private Buff lastDrink = null;
-        
+
         private void onItemEaten(object sender, EventArgs e)
         {
             SObject obj = Game1.player.itemToEat as SObject;
@@ -237,14 +237,14 @@ namespace CookingSkill
             }
         }
 
-        private void onMenuChanged( object sender, MenuChangedEventArgs e )
+        private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( e.NewMenu is CraftingPage )
+            if (e.NewMenu is CraftingPage)
             {
                 CraftingPage menu = e.NewMenu as CraftingPage;
-                bool cooking = ( bool ) Util.GetInstanceField( typeof( CraftingPage), e.NewMenu, "cooking" );
-                bool standaloneMenu = ( bool ) Util.GetInstanceField( typeof( CraftingPage), e.NewMenu, "_standaloneMenu");
-                List<Chest> containers = ( List<Chest> ) Util.GetInstanceField( typeof( CraftingPage), e.NewMenu, "_materialContainers");
+                bool cooking = (bool)Util.GetInstanceField(typeof(CraftingPage), e.NewMenu, "cooking");
+                bool standaloneMenu = (bool)Util.GetInstanceField(typeof(CraftingPage), e.NewMenu, "_standaloneMenu");
+                List<Chest> containers = (List<Chest>)Util.GetInstanceField(typeof(CraftingPage), e.NewMenu, "_materialContainers");
                 NewCraftingPage myCraftingPage = new NewCraftingPage(menu.xPositionOnScreen, menu.yPositionOnScreen, menu.width, menu.height, cooking, standaloneMenu, containers);
                 myCraftingPage.exitFunction = Game1.activeClickableMenu.exitFunction;
                 Game1.activeClickableMenu = myCraftingPage;

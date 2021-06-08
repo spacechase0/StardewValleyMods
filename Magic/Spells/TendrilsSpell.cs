@@ -14,9 +14,8 @@ namespace Magic.Spells
     // TODO: Change into trap?
     class TendrilsSpell : Spell
     {
-        public TendrilsSpell() : base( SchoolId.Nature, "tendrils" )
-        {
-        }
+        public TendrilsSpell()
+            : base(SchoolId.Nature, "tendrils") { }
 
         public override int getManaCost(Farmer player, int level)
         {
@@ -31,15 +30,15 @@ namespace Magic.Spells
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             TendrilGroup tendrils = new TendrilGroup();
-            foreach ( var npc in player.currentLocation.characters )
+            foreach (var npc in player.currentLocation.characters)
             {
-                if ( npc is Monster mob )
+                if (npc is Monster mob)
                 {
                     float rad = Game1.tileSize;
                     int dur = 11 * 60;
-                    if ( Vector2.Distance(mob.position, new Vector2( targetX, targetY ) ) <= rad )
+                    if (Vector2.Distance(mob.position, new Vector2(targetX, targetY)) <= rad)
                     {
-                        tendrils.Add(new Tendril(mob, new Vector2(targetX, targetY), rad, dur ));
+                        tendrils.Add(new Tendril(mob, new Vector2(targetX, targetY), rad, dur));
                         player.AddCustomSkillExperience(Magic.Skill, 3);
                     }
                 }
@@ -84,7 +83,7 @@ namespace Magic.Spells
             private readonly Texture2D tex;
             private int duration;
 
-            public Tendril( Monster theMob, Vector2 pos, float rad, int dur )
+            public Tendril(Monster theMob, Vector2 pos, float rad, int dur)
             {
                 mob = theMob;
                 this.pos = pos;

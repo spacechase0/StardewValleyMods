@@ -10,7 +10,7 @@ namespace Magic.Spells
         private readonly Func<long> getNewId;
 
         public LanternSpell(Func<long> getNewId)
-            : base( SchoolId.Nature, "lantern" )
+            : base(SchoolId.Nature, "lantern")
         {
             this.getNewId = getNewId;
         }

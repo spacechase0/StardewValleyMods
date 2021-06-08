@@ -300,7 +300,7 @@ namespace JsonAssets
         private void injectMapsSpringobjects(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
-            asset.AsImage().ExtendImage( oldTex.Width, 4096 );
+            asset.AsImage().ExtendImage(oldTex.Width, 4096);
             //Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             //asset.ReplaceWith(newTex);
             //asset.AsImage().PatchImage(oldTex);
@@ -314,7 +314,7 @@ namespace JsonAssets
                     if (obj.IsColored)
                     {
                         Log.verbose($"Injecting {obj.Name} color sprites @ {objectRect(obj.GetObjectId() + 1)}");
-                        asset.AsImage().PatchExtendedTileSheet( obj.textureColor, null, objectRect(obj.GetObjectId() + 1));
+                        asset.AsImage().PatchExtendedTileSheet(obj.textureColor, null, objectRect(obj.GetObjectId() + 1));
                     }
 
                     var rect = objectRect(obj.GetObjectId());
@@ -423,7 +423,7 @@ namespace JsonAssets
                         for (int i = 0; i < big.ReserveExtraIndexCount; ++i)
                         {
                             Log.verbose($"Injecting {big.Name} reserved extra sprite {i + 1} @ {bigCraftableRect(big.GetCraftableId() + i + 1)}");
-                            asset.AsImage().PatchExtendedTileSheet( big.extraTextures[i], null, bigCraftableRect(big.GetCraftableId() + i + 1));
+                            asset.AsImage().PatchExtendedTileSheet(big.extraTextures[i], null, bigCraftableRect(big.GetCraftableId() + i + 1));
                         }
                     }
 
@@ -452,7 +452,7 @@ namespace JsonAssets
                 try
                 {
                     Log.verbose($"Injecting {hat.Name} sprites @ {hatRect(hat.GetHatId())}");
-                    asset.AsImage().PatchExtendedTileSheet( hat.texture, null, hatRect(hat.GetHatId()));
+                    asset.AsImage().PatchExtendedTileSheet(hat.texture, null, hatRect(hat.GetHatId()));
 
                     var rect = hatRect(hat.GetHatId());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
@@ -497,7 +497,7 @@ namespace JsonAssets
         private void injectCharactersFarmerShirts(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
-            asset.AsImage().ExtendImage( oldTex.Width, 4096 );
+            asset.AsImage().ExtendImage(oldTex.Width, 4096);
             Log.trace($"Shirts are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
             foreach (var shirt in Mod.instance.shirts)
@@ -616,24 +616,24 @@ namespace JsonAssets
             return new Rectangle(0, index, 4, 1);
         }
 
-        public bool CanLoad<T>( IAssetInfo asset )
+        public bool CanLoad<T>(IAssetInfo asset)
         {
-            foreach ( var fence in Mod.instance.fences )
+            foreach (var fence in Mod.instance.fences)
             {
-                if ( asset.AssetNameEquals( "LooseSprites\\Fence" + fence.correspondingObject?.GetObjectId() ) )
+                if (asset.AssetNameEquals("LooseSprites\\Fence" + fence.correspondingObject?.GetObjectId()))
                     return true;
             }
             return false;
         }
 
-        public T Load<T>( IAssetInfo asset )
+        public T Load<T>(IAssetInfo asset)
         {
-            foreach ( var fence in Mod.instance.fences )
+            foreach (var fence in Mod.instance.fences)
             {
-                if ( asset.AssetNameEquals( "LooseSprites\\Fence" + fence.correspondingObject?.GetObjectId() ) )
-                    return ( T ) ( object ) fence.texture;
+                if (asset.AssetNameEquals("LooseSprites\\Fence" + fence.correspondingObject?.GetObjectId()))
+                    return (T)(object)fence.texture;
             }
-            return default( T );
+            return default(T);
         }
     }
 }

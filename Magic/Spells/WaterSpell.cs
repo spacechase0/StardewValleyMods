@@ -8,9 +8,8 @@ namespace Magic.Spells
 {
     public class WaterSpell : Spell
     {
-        public WaterSpell() : base( SchoolId.Toil, "water" )
-        {
-        }
+        public WaterSpell()
+            : base(SchoolId.Toil, "water") { }
 
         public override int getManaCost(Farmer player, int level)
         {

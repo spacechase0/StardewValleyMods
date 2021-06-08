@@ -14,7 +14,7 @@ namespace SpaceCore.Utilities
     // https://stackoverflow.com/a/21923200
     public class ItemListResolver : DefaultContractResolver
     {
-        protected override JsonContract CreateContract( Type type )
+        protected override JsonContract CreateContract(Type type)
         {
             if (type.IsSubclassOf(typeof(Item)))
             {
@@ -22,14 +22,14 @@ namespace SpaceCore.Utilities
                 contract.Converter = new ItemConverter();
                 return contract;
             }
-            else if ( type == typeof( Rectangle ) )
+            else if (type == typeof(Rectangle))
             {
                 JsonContract contract = base.CreateObjectContract(type);
                 contract.Converter = new MyRectangleConverter();
                 return contract;
             }
 
-            return base.CreateContract( type );
+            return base.CreateContract(type);
         }
     }
 
@@ -48,17 +48,17 @@ namespace SpaceCore.Utilities
             {
                 JArray obj = JArray.Load(reader);
                 List<Item> ret = new List<Item>();
-                foreach ( var elem in obj )
+                foreach (var elem in obj)
                 {
-                    string id = (string) elem["$type"];
+                    string id = (string)elem["$type"];
 
                     // Cross-platform fix, since for some reason Windows has a space but Mono doesn't.
                     if (Util.UsingMono)
                         id = id.Replace(", Stardew Valley", ", StardewValley");
                     else
                         id = id.Replace(", StardewValley", ", Stardew Valley");
-                    
-                    ret.Add(( Item ) elem.ToObject(Type.GetType(id), serializer));
+
+                    ret.Add((Item)elem.ToObject(Type.GetType(id), serializer));
                 }
                 return ret;
             }
@@ -91,7 +91,7 @@ namespace SpaceCore.Utilities
 
         private JsonConverter itemConverter = new ItemConverter();
     }
-    
+
     public class ItemConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -144,7 +144,7 @@ namespace SpaceCore.Utilities
                 return null;
             var o = JObject.Load(reader);
 
-            
+
             string id = (string)o["$type"];
 
             // Cross-platform fix, since for some reason Windows has a space but Mono doesn't.

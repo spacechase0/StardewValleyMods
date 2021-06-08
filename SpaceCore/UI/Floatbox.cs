@@ -17,7 +17,7 @@ namespace SpaceCore.UI
             for (int i = 0; i < str.Length; ++i)
             {
                 char c = str[i];
-                if ( !char.IsDigit(c) && !(c == '.' && !hasDot) && !(c == '-' && String == "" && i == 0))
+                if (!char.IsDigit(c) && !(c == '.' && !hasDot) && !(c == '-' && String == "" && i == 0))
                 {
                     valid = false;
                     break;

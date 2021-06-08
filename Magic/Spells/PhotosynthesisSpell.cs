@@ -9,9 +9,8 @@ namespace Magic.Spells
 {
     class PhotosynthesisSpell : Spell
     {
-        public PhotosynthesisSpell() : base( SchoolId.Nature, "photosynthesis" )
-        {
-        }
+        public PhotosynthesisSpell()
+            : base(SchoolId.Nature, "photosynthesis") { }
 
         public override int getMaxCastingLevel()
         {
@@ -66,7 +65,7 @@ namespace Magic.Spells
                             ftree.fruitsOnTree.Value = 3;
                         }
                     }
-                    else if ( tf is Tree tree )
+                    else if (tf is Tree tree)
                     {
                         if (tree.growthStage.Value < 5)
                             tree.growthStage.Value++;
@@ -74,7 +73,7 @@ namespace Magic.Spells
                 }
             }
 
-            player.consumeObject( SObject.prismaticShardIndex, 1 );
+            player.consumeObject(SObject.prismaticShardIndex, 1);
             return null;
         }
     }

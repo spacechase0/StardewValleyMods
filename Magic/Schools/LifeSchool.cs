@@ -4,9 +4,8 @@ namespace Magic.Schools
 {
     internal class LifeSchool : School
     {
-        public LifeSchool() : base( SchoolId.Life )
-        {
-        }
+        public LifeSchool()
+            : base(SchoolId.Life) { }
 
         public override Spell[] GetSpellsTier1()
         {

@@ -284,11 +284,11 @@ namespace JsonAssets
             if (entity is FruitTree fruitTree)
             {
                 tex = FruitTree.texture;
-                if ( fruitTree.stump.Value )
+                if (fruitTree.stump.Value)
                 {
                     rect = new Rectangle(384, fruitTree.treeType.Value * 5 * 16 + 48, 48, 32);
                 }
-                else if ( fruitTree.growthStage.Value <= 3 )
+                else if (fruitTree.growthStage.Value <= 3)
                 {
                     rect = new Rectangle(fruitTree.growthStage.Value * 48, fruitTree.treeType.Value * 5 * 16, 48, 80);
                 }

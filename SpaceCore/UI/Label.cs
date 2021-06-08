@@ -23,7 +23,7 @@ namespace SpaceCore.UI
 
         public override void Update(bool hidden = false)
         {
-            base.Update(hidden);            
+            base.Update(hidden);
 
             if (Clicked && Callback != null)
                 Callback.Invoke(this);
@@ -42,10 +42,10 @@ namespace SpaceCore.UI
             bool altColor = Hover && Callback != null;
             if (Bold)
                 SpriteText.drawString(b, String, (int)Position.X, (int)Position.Y, layerDepth: 1, color: altColor ? SpriteText.color_Gray : -1);
-            else if ( NonBoldShadow )
+            else if (NonBoldShadow)
                 Utility.drawTextWithShadow(b, String, Game1.dialogueFont, Position, altColor ? HoverTextColor : IdleTextColor, NonBoldScale);
             else
-                b.DrawString( Game1.dialogueFont, String, Position, altColor ? HoverTextColor : IdleTextColor, 0f, Vector2.Zero, NonBoldScale, SpriteEffects.None, 1 );
+                b.DrawString(Game1.dialogueFont, String, Position, altColor ? HoverTextColor : IdleTextColor, 0f, Vector2.Zero, NonBoldScale, SpriteEffects.None, 1);
         }
     }
 }

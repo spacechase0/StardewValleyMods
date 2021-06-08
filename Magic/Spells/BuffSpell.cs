@@ -7,9 +7,8 @@ namespace Magic.Spells
 {
     public class BuffSpell : Spell
     {
-        public BuffSpell() : base(SchoolId.Life, "buff")
-        {
-        }
+        public BuffSpell()
+            : base(SchoolId.Life, "buff") { }
 
         public override bool canCast(Farmer player, int level)
         {
@@ -35,7 +34,7 @@ namespace Magic.Spells
             if (player != Game1.player)
                 return null;
 
-            foreach ( var buff in Game1.buffsDisplay.otherBuffs )
+            foreach (var buff in Game1.buffsDisplay.otherBuffs)
             {
                 if (buff.source == "spell:life:buff")
                     return null;
@@ -59,7 +58,7 @@ namespace Magic.Spells
             }
 
             Game1.buffsDisplay.addOtherBuff(new Buff(farm, fish, mine, 0, luck, forage, 0, 0, 0, 0, def, atk, 60 + level * 120, "spell:life:buff", "Buff (spell)"));
-            player.AddCustomSkillExperience(Magic.Skill,10);
+            player.AddCustomSkillExperience(Magic.Skill, 10);
             return null;
         }
     }

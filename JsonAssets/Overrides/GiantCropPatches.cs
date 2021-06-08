@@ -16,7 +16,7 @@ namespace JsonAssets.Overrides
         {
             try
             {
-                if ( __instance.parentSheetIndex.Value >= Mod.StartingObjectId )
+                if (__instance.parentSheetIndex.Value >= Mod.StartingObjectId)
                 {
                     Texture2D tex = Mod.instance.crops.Single(cd => Mod.instance.ResolveObjectId(cd.Product) == __instance.parentSheetIndex.Value).giantTex;
                     double shakeTimer = Mod.instance.Helper.Reflection.GetField<float>(__instance, "shakeTimer").GetValue();

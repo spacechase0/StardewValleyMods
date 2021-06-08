@@ -8,8 +8,8 @@ namespace SpaceCore.Overrides
         public static bool Prefix(Multiplayer __instance, IncomingMessage msg)
         {
             // MTN uses packets 30, 31, and 50, PyTK uses 99
-            
-            if ( msg.MessageType == 234 )
+
+            if (msg.MessageType == 234)
             {
                 string msgType = msg.Reader.ReadString();
                 if (Networking.messageHandlers.ContainsKey(msgType))

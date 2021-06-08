@@ -16,7 +16,7 @@ namespace MoreGiantCrops
         {
             try
             {
-                if ( Mod.sprites.ContainsKey( __instance.parentSheetIndex.Value ) )
+                if (Mod.sprites.ContainsKey(__instance.parentSheetIndex.Value))
                 {
                     Texture2D tex = Mod.sprites[__instance.parentSheetIndex.Value];
                     double shakeTimer = Mod.instance.Helper.Reflection.GetField<float>(__instance, "shakeTimer").GetValue();

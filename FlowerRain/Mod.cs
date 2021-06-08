@@ -25,10 +25,10 @@ namespace FlowerRain
         {
             return asset.AssetNameEquals("TileSheets\\rain");
         }
-        
+
         public T Load<T>(IAssetInfo asset)
         {
-            return (T) (object) invisibleRain;
+            return (T)(object)invisibleRain;
         }
 
         public override void Entry(IModHelper helper)
@@ -46,7 +46,7 @@ namespace FlowerRain
             invisibleRain.SetData(transparent);
 
             BuildFlowerData(useWhitelist: true);
-            
+
             var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
             harmony.Patch(typeof(Game1).GetMethod("updateWeather", BindingFlags.Public | BindingFlags.Static), transpiler: new HarmonyMethod(this.GetType().GetMethod("UpdateWeatherTranspiler", BindingFlags.Public | BindingFlags.Static)));
             harmony.Patch(typeof(Game1).GetMethod("drawWeather", BindingFlags.Public | BindingFlags.Instance), postfix: new HarmonyMethod(this.GetType().GetMethod("DrawWeatherPostfix", BindingFlags.Public | BindingFlags.Static)));
@@ -55,21 +55,24 @@ namespace FlowerRain
         private void gameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var gmcm = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
-            if ( gmcm != null )
+            if (gmcm != null)
             {
                 gmcm.RegisterModConfig(ModManifest, () => config = new Config(), () => Helper.WriteConfig(config));
-                gmcm.RegisterSimpleOption(ModManifest, "Use Vanilla Flowers Only", "Only use vanilla flowers in the flower rain",
-                                          () => config.VanillaFlowersOnly,
-                                          (b) =>
-                                          {
-                                              config.VanillaFlowersOnly = b;
-                                              if (config.VanillaFlowersOnly)
-                                                  BuildFlowerData(useWhitelist: true);
-                                          });
+                gmcm.RegisterSimpleOption(
+                    ModManifest,
+                    "Use Vanilla Flowers Only",
+                    "Only use vanilla flowers in the flower rain",
+                    () => config.VanillaFlowersOnly,
+                    b =>
+                    {
+                        config.VanillaFlowersOnly = b;
+                        if (config.VanillaFlowersOnly)
+                            BuildFlowerData(useWhitelist: true);
+                    });
             }
 
             var ja = Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
-            if ( ja != null )
+            if (ja != null)
             {
                 ja.IdsAssigned += jaIdsAssigned;
             }
@@ -77,7 +80,7 @@ namespace FlowerRain
 
         private void jaIdsAssigned(object sender, EventArgs e)
         {
-            if ( !config.VanillaFlowersOnly )
+            if (!config.VanillaFlowersOnly)
             {
                 BuildFlowerData(useWhitelist: false);
             }
@@ -102,7 +105,7 @@ namespace FlowerRain
 
             var whitelist = new List<int>(new int[] { 591, 593, 595, 597, 376, 402, 418 });
 
-            foreach ( var crop in cropData )
+            foreach (var crop in cropData)
             {
                 string[] toks = crop.Value.Split('/');
                 string[] seasons = toks[1].Split(' ');
@@ -114,7 +117,7 @@ namespace FlowerRain
                     continue;
 
                 List<Color> cols = new List<Color>(new Color[] { Color.White });
-                if ( toks[8].StartsWith( "true " ) )
+                if (toks[8].StartsWith("true "))
                 {
                     cols.Clear();
                     var colToks = toks[8].Split(' ');
@@ -128,7 +131,7 @@ namespace FlowerRain
                     }
                 }
 
-                foreach ( var col in cols )
+                foreach (var col in cols)
                 {
                     FlowerData fd = new FlowerData()
                     {
@@ -142,7 +145,7 @@ namespace FlowerRain
                         {
                             case "spring": spring.Add(fd); break;
                             case "summer": summer.Add(fd); break;
-                            case "fall":   fall.Add(fd); break;
+                            case "fall": fall.Add(fd); break;
                             case "winter": winter.Add(fd); break;
                         }
                     }
@@ -164,11 +167,11 @@ namespace FlowerRain
             {
                 if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == -16)
                 {
-                    insn.operand = (sbyte) -8;
+                    insn.operand = (sbyte)-8;
                 }
                 else if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == 32)
                 {
-                    insn.operand = (sbyte) 16;
+                    insn.operand = (sbyte)16;
                 }
                 newInsns.Add(insn);
             }
@@ -181,7 +184,7 @@ namespace FlowerRain
         {
             if (!Game1.isRaining || !Game1.currentLocation.IsOutdoors || (Game1.currentLocation.Name.Equals("Desert") || Game1.currentLocation is Summit))
                 return;
-            
+
             var currFlowers = fd[Game1.currentSeason];
             if (currFlowers.Count == 0)
                 return;

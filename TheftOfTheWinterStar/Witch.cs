@@ -31,7 +31,7 @@ namespace TheftOfTheWinterStar
         private int animTimer = 0;
 
         public Witch()
-        :   base("Serpent", new Vector2(-1000, -1000))
+            : base("Serpent", new Vector2(-1000, -1000))
         {
             this.HideShadow = true;
             this.isGlider.Value = true;
@@ -71,7 +71,7 @@ namespace TheftOfTheWinterStar
                 position.X = -Game1.tileSize;
                 position.Y = Game1.random.Next(4, 15) * Game1.tileSize;
             }
-            else if ( GetBoundingBox().Left > currentLocation.Map.DisplayWidth + Game1.tileSize )
+            else if (GetBoundingBox().Left > currentLocation.Map.DisplayWidth + Game1.tileSize)
             {
                 facingRight.Value = false;
                 position.X = currentLocation.Map.DisplayWidth + Game1.tileSize - TEX_WIDTH;
@@ -86,12 +86,12 @@ namespace TheftOfTheWinterStar
                 moveRight = true;
             }
 
-            if ( stunTimer.Value >= STUN_TIME / 2 )
+            if (stunTimer.Value >= STUN_TIME / 2)
             {
                 moveLeft = false;
                 moveRight = false;
             }
-            if ( stunTimer.Value > 0 )
+            if (stunTimer.Value > 0)
             {
                 stunTimer.Value -= time.ElapsedGameTime.Milliseconds;
             }
@@ -101,7 +101,7 @@ namespace TheftOfTheWinterStar
             base.behaviorAtGameTick(time);
 
             shootPlayerTimer.Value -= time.ElapsedGameTime.Milliseconds;
-            if ( shootPlayerTimer.Value-- <= 0 )
+            if (shootPlayerTimer.Value-- <= 0)
             {
                 Vector2 velocityTowardPlayer = Utility.getVelocityTowardPlayer(this.GetBoundingBox().Center, 15f, this.Player);
                 Projectile proj = new DebuffingProjectile(14, 7, 4, 4, 0.1963495f, velocityTowardPlayer.X, velocityTowardPlayer.Y, new Vector2((float)this.GetBoundingBox().X, (float)this.GetBoundingBox().Y), currentLocation, this);
@@ -110,10 +110,10 @@ namespace TheftOfTheWinterStar
             }
 
             spawnRocksTimer.Value -= time.ElapsedGameTime.Milliseconds;
-            if ( spawnRocksTimer.Value-- <= 0 )
+            if (spawnRocksTimer.Value-- <= 0)
             {
                 Rectangle region = new Rectangle(4, 7, 15 - 4, 15 - 7);
-                for ( int i = 3 + Game1.random.Next( 5 ); i >= 0; --i )
+                for (int i = 3 + Game1.random.Next(5); i >= 0; --i)
                 {
                     Vector2 spot = new Vector2(region.X + Game1.random.Next(region.Width), region.Y + Game1.random.Next(region.Height));
                     if (currentLocation.Objects.ContainsKey(spot))
@@ -132,10 +132,10 @@ namespace TheftOfTheWinterStar
             }
 
             spawnEnemyTimer.Value -= time.ElapsedGameTime.Milliseconds;
-            if ( spawnEnemyTimer.Value-- <= 0 )
+            if (spawnEnemyTimer.Value-- <= 0)
             {
                 Rectangle region = new Rectangle(4, 7, 15 - 4, 15 - 7);
-                for ( int i = 1 + Game1.random.Next(3); i >= 0; --i )
+                for (int i = 1 + Game1.random.Next(3); i >= 0; --i)
                 {
                     int x = region.X + Game1.random.Next(region.Width);
                     int y = region.Y + Game1.random.Next(region.Height);

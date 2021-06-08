@@ -38,7 +38,7 @@ namespace LuckSkill
         {
             instance = this;
             Log.Monitor = Monitor;
-            
+
             helper.Events.Player.Warped += onWarped;
             helper.Events.Display.RenderedActiveMenu += onRenderedActiveMenu;
             helper.Events.GameLoop.DayStarted += onDayStarted;
@@ -54,12 +54,12 @@ namespace LuckSkill
                 harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.getProfessionForSkill)), postfix: new HarmonyMethod(AccessTools.Method(typeof(FarmerGetProfessionHook), nameof(LevelUpMenuProfessionNameHook.Postfix))));
                 harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.gainExperience)), prefix: new HarmonyMethod(AccessTools.Method(typeof(OverpoweredGeodeFix), nameof(OverpoweredGeodeFix.Prefix))));
                 harmony.Patch(AccessTools.Method(typeof(Farmer), nameof(Farmer.gainExperience)), transpiler: new HarmonyMethod(AccessTools.Method(typeof(ExperienceGainFix), nameof(ExperienceGainFix.Transpiler))));
-                harmony.Patch(AccessTools.Constructor(typeof(LevelUpMenu), new Type[] { typeof(int), typeof(int) }), transpiler: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuLuckProfessionConstructorFix), nameof(LevelUpMenuLuckProfessionConstructorFix.Transpiler))) );
-                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), "getProfessionName"), postfix: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuProfessionNameHook), nameof(LevelUpMenuProfessionNameHook.Postfix))) );
-                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), nameof(LevelUpMenu.AddMissedProfessionChoices)), transpiler: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuMissedStuffPatch), nameof(LevelUpMenuMissedStuffPatch.Transpiler))) );
-                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), nameof(LevelUpMenu.AddMissedLevelRecipes)), transpiler: new HarmonyMethod( AccessTools.Method(typeof(LevelUpMenuMissedStuffPatch), nameof(LevelUpMenuMissedStuffPatch.Transpiler))) );
+                harmony.Patch(AccessTools.Constructor(typeof(LevelUpMenu), new Type[] { typeof(int), typeof(int) }), transpiler: new HarmonyMethod(AccessTools.Method(typeof(LevelUpMenuLuckProfessionConstructorFix), nameof(LevelUpMenuLuckProfessionConstructorFix.Transpiler))));
+                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), "getProfessionName"), postfix: new HarmonyMethod(AccessTools.Method(typeof(LevelUpMenuProfessionNameHook), nameof(LevelUpMenuProfessionNameHook.Postfix))));
+                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), nameof(LevelUpMenu.AddMissedProfessionChoices)), transpiler: new HarmonyMethod(AccessTools.Method(typeof(LevelUpMenuMissedStuffPatch), nameof(LevelUpMenuMissedStuffPatch.Transpiler))));
+                harmony.Patch(AccessTools.Method(typeof(LevelUpMenu), nameof(LevelUpMenu.AddMissedLevelRecipes)), transpiler: new HarmonyMethod(AccessTools.Method(typeof(LevelUpMenuMissedStuffPatch), nameof(LevelUpMenuMissedStuffPatch.Transpiler))));
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
                 Log.trace("Exception doing harmony: " + e);
             }
@@ -93,7 +93,7 @@ namespace LuckSkill
         /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onDayStarted( object sender, DayStartedEventArgs args )
+        private void onDayStarted(object sender, DayStartedEventArgs args)
         {
             Game1.player.gainExperience(Farmer.luckSkill, (int)(Game1.player.team.sharedDailyLuck.Value * 750));
 
@@ -103,7 +103,7 @@ namespace LuckSkill
             }
             if (Game1.player.professions.Contains(PROFESSION_CHANCE_MAX_LUCK))
             {
-                Random r = new Random((int)(Game1.uniqueIDForThisGame+Game1.stats.DaysPlayed * 3));
+                Random r = new Random((int)(Game1.uniqueIDForThisGame + Game1.stats.DaysPlayed * 3));
                 if (r.NextDouble() <= 0.20)
                 {
                     Game1.player.team.sharedDailyLuck.Value = 0.12;
@@ -147,10 +147,10 @@ namespace LuckSkill
 
         private void onDayEnding(object sender, DayEndingEventArgs args)
         {
-            if ( Game1.player.professions.Contains(PROFESSION_JUNIMO_HELP))
+            if (Game1.player.professions.Contains(PROFESSION_JUNIMO_HELP))
             {
                 int rolls = 0;
-                foreach ( var friendKey in Game1.player.friendshipData.Keys )
+                foreach (var friendKey in Game1.player.friendshipData.Keys)
                 {
                     var data = Game1.player.friendshipData[friendKey];
                     if (data.GiftsToday > 0)
@@ -158,7 +158,7 @@ namespace LuckSkill
                 }
 
                 Random r = new Random((int)(Game1.uniqueIDForThisGame + Game1.stats.DaysPlayed));
-                while ( rolls-- > 0 )
+                while (rolls-- > 0)
                 {
                     if (r.NextDouble() > 0.15)
                         continue;
@@ -179,7 +179,7 @@ namespace LuckSkill
                             foreach (var entry in loc.objects.Pairs.ToList())
                             {
                                 var obj = entry.Value;
-                                if ( obj is IndoorPot pot )
+                                if (obj is IndoorPot pot)
                                 {
                                     var dirt = pot.hoeDirt.Value;
                                     if (dirt.crop == null || dirt.crop.fullyGrown.Value)
@@ -215,23 +215,23 @@ namespace LuckSkill
                     {
                         foreach (var animal in house.Animals.Values)
                         {
-                            animal.friendshipTowardFarmer.Value = Math.Min( 1000, animal.friendshipTowardFarmer.Value + 100 );
+                            animal.friendshipTowardFarmer.Value = Math.Min(1000, animal.friendshipTowardFarmer.Value + 100);
                         }
                         Game1.showGlobalMessage("The junimos made some of your animals more fond of you!");
                     };
                     Action grassAndFences = () =>
                     {
                         var farm = Game1.getFarm();
-                        foreach ( var entry in farm.terrainFeatures.Values )
+                        foreach (var entry in farm.terrainFeatures.Values)
                         {
-                            if ( entry is Grass grass )
+                            if (entry is Grass grass)
                             {
                                 grass.numberOfWeeds.Value = 4;
                             }
                         }
                         foreach (var entry in farm.Objects.Values)
                         {
-                            if ( entry is Fence fence )
+                            if (entry is Fence fence)
                             {
                                 fence.repair();
                             }
@@ -239,25 +239,25 @@ namespace LuckSkill
                         Game1.showGlobalMessage("The junimos grew your grass and repaired your fences!");
                     };
 
-                    if ( r.Next() <= 0.05 && Game1.player.addItemToInventoryBool(new StardewValley.Object(StardewValley.Object.prismaticShardIndex, 1)) )
+                    if (r.Next() <= 0.05 && Game1.player.addItemToInventoryBool(new StardewValley.Object(StardewValley.Object.prismaticShardIndex, 1)))
                     {
                         Game1.showGlobalMessage("The junimos gave you a prismatic shard!");
                         continue;
                     }
 
                     var animalHouses = new List<AnimalHouse>();
-                    foreach ( var loc in Game1.locations )
+                    foreach (var loc in Game1.locations)
                     {
-                        if ( loc is BuildableGameLocation bgl )
+                        if (loc is BuildableGameLocation bgl)
                         {
-                            foreach ( var building in bgl.buildings )
+                            foreach (var building in bgl.buildings)
                             {
-                                if ( building.indoors.Value is AnimalHouse ah )
+                                if (building.indoors.Value is AnimalHouse ah)
                                 {
                                     bool foundAnimalWithRoomForGrowth = false;
-                                    foreach ( var animal in ah.Animals.Values )
+                                    foreach (var animal in ah.Animals.Values)
                                     {
-                                        if ( animal.friendshipTowardFarmer.Value < 1000 )
+                                        if (animal.friendshipTowardFarmer.Value < 1000)
                                         {
                                             foundAnimalWithRoomForGrowth = true;
                                             break;
@@ -274,7 +274,7 @@ namespace LuckSkill
                     choices.Add(advanceCrops);
                     choices.Add(advanceCrops);
                     choices.Add(advanceCrops);
-                    foreach ( var ah in animalHouses )
+                    foreach (var ah in animalHouses)
                     {
                         choices.Add(() => advanceBarn(ah));
                     }
@@ -290,31 +290,31 @@ namespace LuckSkill
         /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onRenderedActiveMenu( object sender, RenderedActiveMenuEventArgs e )
+        private void onRenderedActiveMenu(object sender, RenderedActiveMenuEventArgs e)
         {
-            if ( Game1.activeClickableMenu is GameMenu )
+            if (Game1.activeClickableMenu is GameMenu)
             {
                 GameMenu menu = Game1.activeClickableMenu as GameMenu;
-                if ( menu.currentTab == GameMenu.skillsTab )
+                if (menu.currentTab == GameMenu.skillsTab)
                 {
-                    var tabs = Helper.Reflection.GetField< List < IClickableMenu > >(menu, "pages" ).GetValue();
+                    var tabs = Helper.Reflection.GetField<List<IClickableMenu>>(menu, "pages").GetValue();
                     var skills = tabs[GameMenu.skillsTab] as SkillsPage;
 
                     if (skills == null)
                         return;
 
-                    if ( !didInitSkills )
+                    if (!didInitSkills)
                     {
                         initLuckSkill(skills);
                         didInitSkills = true;
                     }
-                    drawLuckSkill( skills );
+                    drawLuckSkill(skills);
                 }
             }
             else didInitSkills = false;
         }
 
-        private void initLuckSkill( SkillsPage skills )
+        private void initLuckSkill(SkillsPage skills)
         {
             // Bunch of stuff from the constructor
             int num2 = 0;
@@ -330,7 +330,7 @@ namespace LuckSkill
                 int num5 = -1;
 
                 flag = (Game1.player.LuckLevel > i);
-                num5 = getLuckProfessionForSkill( i + 1 );//Game1.player.getProfessionForSkill(5, i + 1);
+                num5 = getLuckProfessionForSkill(i + 1);//Game1.player.getProfessionForSkill(5, i + 1);
                 object[] args = new object[] { text, text2, LevelUpMenu.getProfessionDescription(num5) };
                 Helper.Reflection.GetMethod(skills, "parseProfessionDescription").Invoke(args);
                 text = (string)args[0];
@@ -338,7 +338,7 @@ namespace LuckSkill
 
                 if (flag && (i + 1) % 5 == 0)
                 {
-                    var skillBars = Helper.Reflection.GetField< List < ClickableTextureComponent > >(skills, "skillBars" ).GetValue();
+                    var skillBars = Helper.Reflection.GetField<List<ClickableTextureComponent>>(skills, "skillBars").GetValue();
                     skillBars.Add(new ClickableTextureComponent(string.Concat(num5), new Rectangle(num2 + num3 - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6), 14 * Game1.pixelZoom, 9 * Game1.pixelZoom), null, text, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), (float)Game1.pixelZoom, true));
                 }
                 num2 += Game1.pixelZoom * 6;
@@ -362,7 +362,7 @@ namespace LuckSkill
             skillAreas.Add(new ClickableTextureComponent(string.Concat(num6), new Rectangle(num3 - Game1.tileSize * 2 - Game1.tileSize * 3 / 4, num4 + k * (Game1.tileSize / 2 + Game1.pixelZoom * 6), Game1.tileSize * 2 + Game1.pixelZoom * 5, 9 * Game1.pixelZoom), string.Concat(num6), text3, null, Rectangle.Empty, 1f, false));
         }
 
-        private void drawLuckSkill( SkillsPage skills )
+        private void drawLuckSkill(SkillsPage skills)
         {
             SpriteBatch b = Game1.spriteBatch;
             int j = 5;
@@ -372,9 +372,9 @@ namespace LuckSkill
 
             num = skills.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 4 * Game1.tileSize - 8;
             num2 = skills.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - Game1.pixelZoom * 2;
-			
-			int num3 = 0;
-			for (int i = 0; i < 10; i++)
+
+            int num3 = 0;
+            for (int i = 0; i < 10; i++)
             {
                 bool flag = false;
                 bool flag2 = false;
@@ -420,12 +420,12 @@ namespace LuckSkill
 
             skills.drawMouse(b);
         }
-        
+
         private void changeFarmEvent(object sender, EventArgsChooseNightlyFarmEvent args)
         {
-            if ( Game1.player.professions.Contains( PROFESSION_NIGHTLY_EVENTS ) && !Game1.weddingToday &&
-                    ( args.NightEvent == null || (args.NightEvent is SoundInTheNightEvent &&
-                    Helper.Reflection.GetField<NetInt>(args.NightEvent, "behavior").GetValue().Value == 2 ) ) )
+            if (Game1.player.professions.Contains(PROFESSION_NIGHTLY_EVENTS) && !Game1.weddingToday &&
+                    (args.NightEvent == null || (args.NightEvent is SoundInTheNightEvent &&
+                    Helper.Reflection.GetField<NetInt>(args.NightEvent, "behavior").GetValue().Value == 2)))
             {
                 //Log.Async("Doing event check");
                 FarmEvent ev = null;
@@ -445,7 +445,7 @@ namespace LuckSkill
                     }
                 }
 
-                if ( ev != null )
+                if (ev != null)
                 {
                     Log.info($"Applying {ev} as tonight's nightly event, due to having PROFESSION_NIGHTLY_EVENTS");
                     args.NightEvent = ev;
@@ -513,7 +513,7 @@ namespace LuckSkill
             if (!e.IsLocalPlayer)
                 return;
 
-            if ( HAS_ALL_PROFESSIONS )
+            if (HAS_ALL_PROFESSIONS)
             {
                 // This is where AllProfessions does it.
                 // This is that mod's code, too (from ILSpy, anyways). Just trying to give credit where credit is due. :P
@@ -568,7 +568,7 @@ namespace LuckSkill
             }*/
         }
 
-        private int getLuckProfessionForSkill( int level )
+        private int getLuckProfessionForSkill(int level)
         {
             if (level != 5 && level != 10)
                 return -1;

@@ -9,9 +9,9 @@ namespace FireArcadeGame.Objects
 {
     public class GolemEnemy : Enemy
     {
-        public static Texture2D tex = Mod.instance.Helper.Content.Load< Texture2D >( "assets/golem.png" );
+        public static Texture2D tex = Mod.instance.Helper.Content.Load<Texture2D>("assets/golem.png");
 
-        public override RectangleF BoundingBox { get; } = new RectangleF( -0.5f, -0.5f, 1, 1 );
+        public override RectangleF BoundingBox { get; } = new RectangleF(-0.5f, -0.5f, 1, 1);
 
         private enum AnimState
         {
@@ -26,50 +26,50 @@ namespace FireArcadeGame.Objects
 
         private VertexBuffer buffer;
 
-        public GolemEnemy( World world )
-        :   base( world )
+        public GolemEnemy(World world)
+            : base(world)
         {
             Health = 50;
 
             var vertices = new List<VertexPositionColorTexture>();
-            for ( int f = 0; f < 12 * 9; ++f )
+            for (int f = 0; f < 12 * 9; ++f)
             {
                 int fx = f % 12;
                 int fy = f / 12;
 
-                float xa = ( 80f / tex.Width ) * fx;
-                float xb = ( 80f / tex.Width ) * ( fx + 1 );
-                float ya = ( 80f / tex.Height ) * ( fy + 1 );
-                float yb = ( 80f / tex.Height ) * fy;
-                vertices.Add( new VertexPositionColorTexture( new Vector3( -1.5f, 0, 0 ), Color.White, new Vector2( xa, ya ) ) );
-                vertices.Add( new VertexPositionColorTexture( new Vector3( 1.5f, 0, 0 ), Color.White, new Vector2( xb, ya ) ) );
-                vertices.Add( new VertexPositionColorTexture( new Vector3( 1.5f, 3, 0 ), Color.White, new Vector2( xb, yb ) ) );
+                float xa = (80f / tex.Width) * fx;
+                float xb = (80f / tex.Width) * (fx + 1);
+                float ya = (80f / tex.Height) * (fy + 1);
+                float yb = (80f / tex.Height) * fy;
+                vertices.Add(new VertexPositionColorTexture(new Vector3(-1.5f, 0, 0), Color.White, new Vector2(xa, ya)));
+                vertices.Add(new VertexPositionColorTexture(new Vector3(1.5f, 0, 0), Color.White, new Vector2(xb, ya)));
+                vertices.Add(new VertexPositionColorTexture(new Vector3(1.5f, 3, 0), Color.White, new Vector2(xb, yb)));
 
-                vertices.Add( new VertexPositionColorTexture( new Vector3( -1.5f, 0, 0 ), Color.White, new Vector2( xa, ya ) ) );
-                vertices.Add( new VertexPositionColorTexture( new Vector3( -1.5f, 3, 0 ), Color.White, new Vector2( xa, yb ) ) );
-                vertices.Add( new VertexPositionColorTexture( new Vector3( 1.5f, 3, 0 ), Color.White, new Vector2( xb, yb ) ) );
+                vertices.Add(new VertexPositionColorTexture(new Vector3(-1.5f, 0, 0), Color.White, new Vector2(xa, ya)));
+                vertices.Add(new VertexPositionColorTexture(new Vector3(-1.5f, 3, 0), Color.White, new Vector2(xa, yb)));
+                vertices.Add(new VertexPositionColorTexture(new Vector3(1.5f, 3, 0), Color.White, new Vector2(xb, yb)));
             }
 
-            buffer = new VertexBuffer( Game1.game1.GraphicsDevice, typeof( VertexPositionColorTexture ), vertices.Count(), BufferUsage.WriteOnly );
-            buffer.SetData( vertices.ToArray() );
+            buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+            buffer.SetData(vertices.ToArray());
         }
 
-        public override void Hurt( int amt )
+        public override void Hurt(int amt)
         {
-            if ( state == AnimState.Immune && frame > 3 && frame < 11 )
+            if (state == AnimState.Immune && frame > 3 && frame < 11)
             {
-                Game1.playSound( "crit" );
+                Game1.playSound("crit");
                 return;
             }
 
-            base.Hurt( amt );
-            if ( Dead )
+            base.Hurt(amt);
+            if (Dead)
             {
-                Game1.playSound( "explosion" );
+                Game1.playSound("explosion");
             }
             else
             {
-                Game1.playSound( "stoneCrack" );
+                Game1.playSound("stoneCrack");
             }
         }
 
@@ -81,21 +81,21 @@ namespace FireArcadeGame.Objects
         {
             base.Update();
 
-            frameAccum += (float) Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
-            if ( frameAccum >= 0.2f )
+            frameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+            if (frameAccum >= 0.2f)
             {
                 frameAccum = 0;
 
-                switch ( state )
+                switch (state)
                 {
                     case AnimState.Glow:
-                        if ( ++frame > 7 )
+                        if (++frame > 7)
                         {
                             GoToNextState();
                         }
                         break;
                     case AnimState.Shoot:
-                        if ( ++frame == 8 )
+                        if (++frame == 8)
                         {
                             var player = World.player;
                             var speed = player.Position - Position;
@@ -103,30 +103,30 @@ namespace FireArcadeGame.Objects
                             speed.Normalize();
                             speed /= 10;
 
-                            World.projectiles.Add( new GolemArm( World )
+                            World.projectiles.Add(new GolemArm(World)
                             {
-                                Position = Position + new Vector3( 0, 0.5f, 0 ),
-                                Speed = new Vector2( speed.X, speed.Z )
-                            } );
+                                Position = Position + new Vector3(0, 0.5f, 0),
+                                Speed = new Vector2(speed.X, speed.Z)
+                            });
                         }
-                        else if ( frame > 16 )
+                        else if (frame > 16)
                         {
                             GoToNextState();
                         }
                         break;
                     case AnimState.Immune:
-                        if ( frame < 7 )
+                        if (frame < 7)
                             ++frame;
-                        if ( World.objects.OfType< Enemy >().Count() <= 1 )
+                        if (World.objects.OfType<Enemy>().Count() <= 1)
                         {
-                            if ( ++frame > 14 )
+                            if (++frame > 14)
                             {
                                 GoToNextState();
                             }
                         }
                         break;
                     case AnimState.Summon:
-                        if ( ++frame > 6 )
+                        if (++frame > 6)
                         {
                             GoToNextState();
                         }
@@ -138,33 +138,33 @@ namespace FireArcadeGame.Objects
         private void GoToNextState()
         {
             frame = 0;
-            if ( state == AnimState.Summon )
+            if (state == AnimState.Summon)
             {
                 int amt = 2;
-                for ( int i = 0; i < amt; ++i )
+                for (int i = 0; i < amt; ++i)
                 {
-                    for ( int t = 0; t < 10; ++t )
+                    for (int t = 0; t < 10; ++t)
                     {
-                        Vector2 pos = new Vector2( 1 + Game1.random.Next( (int)World.map.Size.X - 2 ), 1 + Game1.random.Next( (int)World.map.Size.Y - 2 ) );
-                        if ( World.map.IsAirSolid( pos.X, pos.Y ) )
+                        Vector2 pos = new Vector2(1 + Game1.random.Next((int)World.map.Size.X - 2), 1 + Game1.random.Next((int)World.map.Size.Y - 2));
+                        if (World.map.IsAirSolid(pos.X, pos.Y))
                         {
                             continue;
                         }
 
-                        World.QueueObject( new BatEnemy( World ) { Position = new Vector3( pos.X + 0.5f, 0.5f, pos.Y + 0.5f ) } );
+                        World.QueueObject(new BatEnemy(World) { Position = new Vector3(pos.X + 0.5f, 0.5f, pos.Y + 0.5f) });
                         break;
                     }
                 }
-                Game1.playSound( "debuffHit" );
+                Game1.playSound("debuffHit");
                 state = AnimState.Immune;
             }
-            else if ( state != AnimState.Glow )
+            else if (state != AnimState.Glow)
             {
                 state = AnimState.Glow;
             }
             else
             {
-                switch ( Game1.random.Next( 4 ) )
+                switch (Game1.random.Next(4))
                 {
                     case 0:
                     case 1:
@@ -180,31 +180,31 @@ namespace FireArcadeGame.Objects
             }
         }
 
-        public override void Render( GraphicsDevice device, Matrix projection, Camera cam )
+        public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
-            base.Render( device, projection, cam );
+            base.Render(device, projection, cam);
 
             int fx = this.frame;
             int fy = 0;
-            switch ( state )
+            switch (state)
             {
                 case AnimState.Glow:
                     fy = 1;
                     break;
                 case AnimState.Shoot:
                     fy = 2;
-                    if ( fx > 8 )
-                        fx = 8 - ( fx - 8 );
+                    if (fx > 8)
+                        fx = 8 - (fx - 8);
                     break;
                 case AnimState.Immune:
                     fy = 3;
-                    if ( fx > 7 )
-                        fx = 7 - ( fx - 7 );
+                    if (fx > 7)
+                        fx = 7 - (fx - 7);
                     break;
                 case AnimState.Summon:
                     fy = 5;
-                    if ( fx > 6 )
-                        fx = 6 - ( fx - 6 );
+                    if (fx > 6)
+                        fx = 6 - (fx - 6);
                     break;
             }
             int frame = fy * 12 + fx;
@@ -214,16 +214,16 @@ namespace FireArcadeGame.Objects
             newStencil.DepthBufferWriteEnable = false;
             device.DepthStencilState = newStencil;
 
-            effect.World = Matrix.CreateConstrainedBillboard( Position, cam.pos, Vector3.Up, null, null );
+            effect.World = Matrix.CreateConstrainedBillboard(Position, cam.pos, Vector3.Up, null, null);
             effect.TextureEnabled = true;
             effect.Texture = tex;
-            for ( int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e )
+            for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = effect.CurrentTechnique.Passes[ e ];
+                var pass = effect.CurrentTechnique.Passes[e];
                 pass.Apply();
 
-                device.SetVertexBuffer( buffer );
-                device.DrawPrimitives( PrimitiveType.TriangleList, frame * 6, 2 );
+                device.SetVertexBuffer(buffer);
+                device.DrawPrimitives(PrimitiveType.TriangleList, frame * 6, 2);
             }
 
             device.DepthStencilState = oldStencil;

@@ -54,19 +54,19 @@ namespace GenericModConfigMenu.UI
                 Game1.playSound(HoveredSound);
             Hover = newHover;
 
-            var input = Mod.instance.Helper.Reflection.GetField< InputState >( typeof( Game1 ), "input" ).GetValue();
+            var input = Mod.instance.Helper.Reflection.GetField<InputState>(typeof(Game1), "input").GetValue();
             ClickGestured = Game1.oldMouseState.LeftButton == ButtonState.Released && input.GetMouseState().LeftButton == ButtonState.Pressed;
             if (Clicked && ClickedSound != null)
                 Game1.playSound(ClickedSound);
         }
 
         public abstract void Draw(SpriteBatch b);
-        
+
         public RootElement GetRoot()
         {
             return GetRootImpl();
         }
-        
+
         internal virtual RootElement GetRootImpl()
         {
             if (Parent == null)
