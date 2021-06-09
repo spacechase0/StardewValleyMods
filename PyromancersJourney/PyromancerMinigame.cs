@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewValley.Minigames;
 
-namespace FireArcadeGame
+namespace PyromancersJourney
 {
     public class PyromancerMinigame : IMinigame
     {

@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using FireArcadeGame.Objects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PyromancersJourney.Objects;
 using StardewValley;
 
-namespace FireArcadeGame.Projectiles
+namespace PyromancersJourney.Projectiles
 {
     public class PlayerFireball : BaseProjectile
     {

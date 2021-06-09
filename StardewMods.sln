@@ -119,7 +119,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BiggerJunimoChest", "Bigger
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoreEnchantments", "MoreEnchantments\MoreEnchantments.csproj", "{41BBD68D-B674-4DDC-B0A4-7E189F13873A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FireArcadeGame", "FireArcadeGame\FireArcadeGame.csproj", "{8D7529F1-D6A7-4267-93A5-74115B598EC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PyromancersJourney", "PyromancersJourney\PyromancersJourney.csproj", "{8D7529F1-D6A7-4267-93A5-74115B598EC7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFertilizer", "MultiFertilizer\MultiFertilizer.csproj", "{04BD21DB-896A-4811-AE3D-DE5B56E3EF44}"
 EndProject

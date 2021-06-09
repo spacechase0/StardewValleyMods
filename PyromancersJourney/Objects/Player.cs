@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using FireArcadeGame.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using PyromancersJourney.Projectiles;
 using StardewValley;
 
-namespace FireArcadeGame.Objects
+namespace PyromancersJourney.Objects
 {
     public class Player : Character
     {

@@ -1,11 +1,10 @@
-using FireArcadeGame.Objects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 
-namespace FireArcadeGame.Projectiles
+namespace PyromancersJourney.Objects
 {
-    public abstract class BaseProjectile
+    public abstract class BaseObject
     {
         protected internal static BasicEffect effect = GetBasicEffect();
 
@@ -15,17 +14,10 @@ namespace FireArcadeGame.Projectiles
 
         public bool Dead = false;
 
-        public virtual RectangleF BoundingBox { get; } = new RectangleF(0, 0, 0.5f, 0.5f);
-
-        public virtual bool HurtsPlayer => true;
-        public virtual int Damage => 1;
-
-        public BaseProjectile(World world)
+        public BaseObject(World world)
         {
             World = world;
         }
-
-        public virtual void Trigger(BaseObject target) { }
 
         public virtual void Update() { }
 
@@ -34,6 +26,17 @@ namespace FireArcadeGame.Projectiles
             effect.Projection = projection;
             effect.View = cam.CreateViewMatrix();
             effect.World = MakeWorldMatrix();
+        }
+
+        public virtual void RenderOver(GraphicsDevice device, Matrix projection, Camera cam)
+        {
+            effect.Projection = projection;
+            effect.View = cam.CreateViewMatrix();
+            effect.World = MakeWorldMatrix();
+        }
+
+        public virtual void RenderUi(SpriteBatch b)
+        {
         }
 
         protected virtual Matrix MakeWorldMatrix()

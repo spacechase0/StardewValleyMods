@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FireArcadeGame.Objects;
-using FireArcadeGame.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PyromancersJourney.Objects;
+using PyromancersJourney.Projectiles;
 using SpaceShared;
 using StardewValley;
 
-namespace FireArcadeGame
+namespace PyromancersJourney
 {
     public class World
     {

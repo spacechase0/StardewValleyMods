@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace FireArcadeGame.Objects
+namespace PyromancersJourney.Objects
 {
     public class Enemy : Character
     {

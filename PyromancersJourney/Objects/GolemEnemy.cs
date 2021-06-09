@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using FireArcadeGame.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PyromancersJourney.Projectiles;
 using StardewValley;
 
-namespace FireArcadeGame.Objects
+namespace PyromancersJourney.Objects
 {
     public class GolemEnemy : Enemy
     {

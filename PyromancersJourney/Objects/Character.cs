@@ -1,6 +1,6 @@
 using System;
 
-namespace FireArcadeGame.Objects
+namespace PyromancersJourney.Objects
 {
     public class Character : BaseObject
     {

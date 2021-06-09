@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace FireArcadeGame
+namespace PyromancersJourney
 {
     public class Camera
     {

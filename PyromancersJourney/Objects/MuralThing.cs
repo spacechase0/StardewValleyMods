@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 
-namespace FireArcadeGame.Objects
+namespace PyromancersJourney.Objects
 {
     public class MuralThing : BaseObject
     {

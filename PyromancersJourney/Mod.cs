@@ -7,7 +7,7 @@ using StardewValley;
 using StardewValley.Locations;
 using xTile.Dimensions;
 
-namespace FireArcadeGame
+namespace PyromancersJourney
 {
     public class Mod : StardewModdingAPI.Mod
     {
