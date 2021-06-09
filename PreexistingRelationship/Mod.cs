@@ -10,25 +10,25 @@ namespace PreexistingRelationship
     {
         public static Mod instance;
 
-        public override void Entry(StardewModdingAPI.IModHelper helper)
+        public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
-            helper.Events.Multiplayer.ModMessageReceived += OnMessageReceived;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
+            helper.Events.Multiplayer.ModMessageReceived += this.OnMessageReceived;
 
-            helper.ConsoleCommands.Add("marry", "...", OnCommand);
+            helper.ConsoleCommands.Add("marry", "...", this.OnCommand);
         }
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             if (Context.IsPlayerFree && Game1.activeClickableMenu == null &&
-                 !Game1.player.hasOrWillReceiveMail($"{ModManifest.UniqueID}/FreeMarriage") &&
+                 !Game1.player.hasOrWillReceiveMail($"{this.ModManifest.UniqueID}/FreeMarriage") &&
                  Game1.player.getSpouse() == null && Game1.player.isCustomized.Value)
             {
                 Game1.activeClickableMenu = new MarryMenu();
-                Game1.player.mailReceived.Add($"{ModManifest.UniqueID}/FreeMarriage");
+                Game1.player.mailReceived.Add($"{this.ModManifest.UniqueID}/FreeMarriage");
             }
         }
 

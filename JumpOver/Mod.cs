@@ -16,20 +16,20 @@ namespace JumpOver
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
             Config = helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.Input.ButtonPressed += onButtonPressed;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.Input.ButtonPressed += this.onButtonPressed;
         }
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(ModManifest, "Jump Key", "The key to jump", () => Config.keyJump, (SButton val) => Config.keyJump = val);
+                capi.RegisterModConfig(this.ModManifest, () => Config = new Configuration(), () => this.Helper.WriteConfig(Config));
+                capi.RegisterSimpleOption(this.ModManifest, "Jump Key", "The key to jump", () => Config.keyJump, (SButton val) => Config.keyJump = val);
             }
         }
 
@@ -44,7 +44,7 @@ namespace JumpOver
             if (e.Button == Config.keyJump && Game1.player.yJumpVelocity == 0)
             {
                 // This is terrible for this case, redo it
-                new Jump(Game1.player, Helper.Events);
+                new Jump(Game1.player, this.Helper.Events);
             }
         }
 
@@ -58,13 +58,13 @@ namespace JumpOver
 
             public Jump(StardewValley.Farmer thePlayer, IModEvents events)
             {
-                player = thePlayer;
+                this.player = thePlayer;
                 this.events = events;
-                prevJumpVel = player.yJumpVelocity;
+                this.prevJumpVel = this.player.yJumpVelocity;
 
-                player.synchronizedJump(8);
+                this.player.synchronizedJump(8);
 
-                events.GameLoop.UpdateTicked += onUpdateTicked;
+                events.GameLoop.UpdateTicked += this.onUpdateTicked;
             }
 
             /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
@@ -72,18 +72,18 @@ namespace JumpOver
             /// <param name="e">The event arguments.</param>
             private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
             {
-                if (player.yJumpVelocity == 0 && prevJumpVel < 0)
+                if (this.player.yJumpVelocity == 0 && this.prevJumpVel < 0)
                 {
-                    player.canMove = true;
+                    this.player.canMove = true;
 
-                    events.GameLoop.UpdateTicked -= onUpdateTicked;
+                    this.events.GameLoop.UpdateTicked -= this.onUpdateTicked;
                 }
                 else
                 {
-                    int tx = (int)player.position.X / Game1.tileSize;
-                    int ty = (int)player.position.Y / Game1.tileSize;
+                    int tx = (int)this.player.position.X / Game1.tileSize;
+                    int ty = (int)this.player.position.Y / Game1.tileSize;
                     int ox = 0, oy = 0; // Offset x, y
-                    switch (player.facingDirection.Value)
+                    switch (this.player.facingDirection.Value)
                     {
                         case Game1.up: oy = -1; break;
                         case Game1.down: oy = 1; break;
@@ -91,29 +91,29 @@ namespace JumpOver
                         case Game1.right: ox = 1; break;
                     }
 
-                    var bb = player.GetBoundingBox();
-                    var bb1 = player.GetBoundingBox();
+                    var bb = this.player.GetBoundingBox();
+                    var bb1 = this.player.GetBoundingBox();
                     bb1.X += ox * Game1.tileSize;
                     bb1.Y += oy * Game1.tileSize;
-                    var bb2 = player.GetBoundingBox();
+                    var bb2 = this.player.GetBoundingBox();
                     bb2.X += ox * Game1.tileSize * 2;
                     bb2.Y += oy * Game1.tileSize * 2;
 
-                    bool n0 = player.currentLocation.isCollidingPosition(bb, Game1.viewport, true, 0, false, player);
-                    bool n1 = player.currentLocation.isCollidingPosition(bb1, Game1.viewport, true, 0, false, player);
-                    bool n2 = player.currentLocation.isCollidingPosition(bb2, Game1.viewport, true, 0, false, player);
+                    bool n0 = this.player.currentLocation.isCollidingPosition(bb, Game1.viewport, true, 0, false, this.player);
+                    bool n1 = this.player.currentLocation.isCollidingPosition(bb1, Game1.viewport, true, 0, false, this.player);
+                    bool n2 = this.player.currentLocation.isCollidingPosition(bb2, Game1.viewport, true, 0, false, this.player);
 
                     //Log.trace($"{n0} {n1} {n2}");
                     if (n0 || (!n0 && n1 && !n2) /*|| wasGoingOver*/ )
                     {
                         //wasGoingOver = true;
                         Game1.player.canMove = false;
-                        player.position.X += ox * 5;
-                        player.position.Y += oy * 5;
+                        this.player.position.X += ox * 5;
+                        this.player.position.Y += oy * 5;
                     }
                 }
 
-                prevJumpVel = player.yJumpVelocity;
+                this.prevJumpVel = this.player.yJumpVelocity;
             }
         }
     }

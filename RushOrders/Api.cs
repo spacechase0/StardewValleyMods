@@ -16,18 +16,18 @@ namespace RushOrders
         internal void InvokeToolRushed(Tool tool)
         {
             Log.trace("Event: ToolRushed");
-            if (ToolRushed == null)
+            if (this.ToolRushed == null)
                 return;
-            Util.invokeEvent("RushOrders.Api.ToolRushed", ToolRushed.GetInvocationList(), null, tool);
+            Util.invokeEvent("RushOrders.Api.ToolRushed", this.ToolRushed.GetInvocationList(), null, tool);
         }
 
         public event EventHandler BuildingRushed;
         internal void InvokeBuildingRushed()
         {
             Log.trace("Event: BuildingRushed");
-            if (BuildingRushed == null)
+            if (this.BuildingRushed == null)
                 return;
-            Util.invokeEvent("RushOrders.Api.BuildingRushed", BuildingRushed.GetInvocationList(), null);
+            Util.invokeEvent("RushOrders.Api.BuildingRushed", this.BuildingRushed.GetInvocationList(), null);
         }
     }
 }

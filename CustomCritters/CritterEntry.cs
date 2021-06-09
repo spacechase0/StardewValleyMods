@@ -50,19 +50,19 @@ namespace CustomCritters
             {
                 bool ret = true;
 
-                if (Children.Count > 0)
+                if (this.Children.Count > 0)
                 {
-                    if (ChildrenCombine != "and")
+                    if (this.ChildrenCombine != "and")
                         ret = false;
 
                     int totalMet = 0;
-                    foreach (var child in Children)
+                    foreach (var child in this.Children)
                     {
                         bool childCheck = child.check(loc);
                         if (childCheck)
                             ++totalMet;
 
-                        switch (ChildrenCombine)
+                        switch (this.ChildrenCombine)
                         {
                             case "and": ret = ret && childCheck; break;
                             case "or": ret = ret || childCheck; break;
@@ -70,35 +70,35 @@ namespace CustomCritters
                         }
                     }
 
-                    if (ChildrenCombine.StartsWith("atleast"))
+                    if (this.ChildrenCombine.StartsWith("atleast"))
                     {
-                        ret = totalMet >= int.Parse(ChildrenCombine.Substring(7));
+                        ret = totalMet >= int.Parse(this.ChildrenCombine.Substring(7));
                     }
-                    else if (ChildrenCombine.StartsWith("exactly"))
+                    else if (this.ChildrenCombine.StartsWith("exactly"))
                     {
-                        ret = totalMet == int.Parse(ChildrenCombine.Substring(7));
+                        ret = totalMet == int.Parse(this.ChildrenCombine.Substring(7));
                     }
-                    else if (ChildrenCombine != "and" && ChildrenCombine != "or" && ChildrenCombine != "xor")
+                    else if (this.ChildrenCombine != "and" && this.ChildrenCombine != "or" && this.ChildrenCombine != "xor")
                     {
-                        throw new ArgumentException("Bad ChildrenCombine: " + ChildrenCombine);
+                        throw new ArgumentException("Bad ChildrenCombine: " + this.ChildrenCombine);
                     }
                 }
-                else if (MinTimeOfDay != -1 && Game1.timeOfDay < MinTimeOfDay)
+                else if (this.MinTimeOfDay != -1 && Game1.timeOfDay < this.MinTimeOfDay)
                     ret = false;
-                else if (MaxTimeOfDay != -1 && Game1.timeOfDay > MaxTimeOfDay)
+                else if (this.MaxTimeOfDay != -1 && Game1.timeOfDay > this.MaxTimeOfDay)
                     ret = false;
-                else if (Seasons != null && Seasons.Count() > 0 && !Seasons.Contains(Game1.currentSeason))
+                else if (this.Seasons != null && this.Seasons.Count() > 0 && !this.Seasons.Contains(Game1.currentSeason))
                     ret = false;
-                else if (Locations != null && Locations.Count() > 0 && !Locations.Contains(loc.Name))
+                else if (this.Locations != null && this.Locations.Count() > 0 && !this.Locations.Contains(loc.Name))
                     ret = false;
-                else if (Game1.random.NextDouble() >= Math.Max(0.15, (Math.Min(0.5, loc.map.Layers[0].LayerWidth * loc.map.Layers[0].LayerHeight / ChancePerTile))))
+                else if (Game1.random.NextDouble() >= Math.Max(0.15, (Math.Min(0.5, loc.map.Layers[0].LayerWidth * loc.map.Layers[0].LayerHeight / this.ChancePerTile))))
                     ret = false;
-                else if (RequireDarkOut && !Game1.isDarkOut())
+                else if (this.RequireDarkOut && !Game1.isDarkOut())
                     ret = false;
-                else if (!AllowRain && Game1.isRaining)
+                else if (!this.AllowRain && Game1.isRaining)
                     ret = false;
 
-                if (Not)
+                if (this.Not)
                     ret = !ret;
                 return ret;
             }
@@ -144,19 +144,19 @@ namespace CustomCritters
                 {
                     bool ret = true;
 
-                    if (Children.Count > 0)
+                    if (this.Children.Count > 0)
                     {
-                        if (ChildrenCombine != "and")
+                        if (this.ChildrenCombine != "and")
                             ret = false;
 
                         int totalMet = 0;
-                        foreach (var child in Children)
+                        foreach (var child in this.Children)
                         {
                             bool childCheck = child.check(obj);
                             if (childCheck)
                                 ++totalMet;
 
-                            switch (ChildrenCombine)
+                            switch (this.ChildrenCombine)
                             {
                                 case "and": ret = ret && childCheck; break;
                                 case "or": ret = ret || childCheck; break;
@@ -164,26 +164,26 @@ namespace CustomCritters
                             }
                         }
 
-                        if (ChildrenCombine.StartsWith("atleast"))
+                        if (this.ChildrenCombine.StartsWith("atleast"))
                         {
-                            ret = totalMet >= int.Parse(ChildrenCombine.Substring(7));
+                            ret = totalMet >= int.Parse(this.ChildrenCombine.Substring(7));
                         }
-                        else if (ChildrenCombine.StartsWith("exactly"))
+                        else if (this.ChildrenCombine.StartsWith("exactly"))
                         {
-                            ret = totalMet == int.Parse(ChildrenCombine.Substring(7));
+                            ret = totalMet == int.Parse(this.ChildrenCombine.Substring(7));
                         }
-                        else if (ChildrenCombine != "and" && ChildrenCombine != "or" && ChildrenCombine != "xor")
+                        else if (this.ChildrenCombine != "and" && this.ChildrenCombine != "or" && this.ChildrenCombine != "xor")
                         {
-                            throw new ArgumentException("Bad ChildrenCombine: " + ChildrenCombine);
+                            throw new ArgumentException("Bad ChildrenCombine: " + this.ChildrenCombine);
                         }
                     }
                     else
                     {
-                        if (Chance != 1.0 && Game1.random.NextDouble() > Chance)
+                        if (this.Chance != 1.0 && Game1.random.NextDouble() > this.Chance)
                             ret = false;
-                        if (Variable != null && Variable != "")
+                        if (this.Variable != null && this.Variable != "")
                         {
-                            string[] toks = Variable.Split('.');
+                            string[] toks = this.Variable.Split('.');
 
                             var o = obj;
                             for (int i = 0; i < toks.Length; ++i)
@@ -202,17 +202,17 @@ namespace CustomCritters
 
                             if (o != null)
                             {
-                                if (Is != null && Is != "" && !o.GetType().IsInstanceOfType(Type.GetType(Is)))
+                                if (this.Is != null && this.Is != "" && !o.GetType().IsInstanceOfType(Type.GetType(this.Is)))
                                     ret = false;
-                                else if (ValueEquals != null && ValueEquals != "" && !o.ToString().Equals(ValueEquals))
+                                else if (this.ValueEquals != null && this.ValueEquals != "" && !o.ToString().Equals(this.ValueEquals))
                                     ret = false;
                             }
-                            else if (RequireNotNull)
+                            else if (this.RequireNotNull)
                                 ret = false;
                         }
                     }
 
-                    if (Not)
+                    if (this.Not)
                         ret = !ret;
 
                     return ret;
@@ -222,7 +222,7 @@ namespace CustomCritters
 
             public bool check(object obj)
             {
-                foreach (var cond in Conditions)
+                foreach (var cond in this.Conditions)
                 {
                     if (!cond.check(obj))
                         return false;
@@ -233,31 +233,31 @@ namespace CustomCritters
 
             public Vector2? pickSpot(GameLocation loc)
             {
-                if (LocationType == "random")
+                if (this.LocationType == "random")
                 {
-                    if (check(null))
+                    if (this.check(null))
                         return loc.getRandomTile() * Game1.tileSize;
                     return null;
                 }
-                else if (LocationType == "terrainfeature")
+                else if (this.LocationType == "terrainfeature")
                 {
                     var keys = loc.terrainFeatures.Keys.ToList();
                     keys.Shuffle();
                     foreach (var key in keys)
                     {
-                        if (check(loc.terrainFeatures[key]))
+                        if (this.check(loc.terrainFeatures[key]))
                             return key * Game1.tileSize;
                     }
 
                     return null;
                 }
-                else if (LocationType == "object")
+                else if (this.LocationType == "object")
                 {
                     var keys = loc.objects.Keys.ToList();
                     keys.Shuffle();
                     foreach (var key in keys)
                     {
-                        if (check(loc.objects[key]))
+                        if (this.check(loc.objects[key]))
                             return key * Game1.tileSize;
                     }
 
@@ -286,7 +286,7 @@ namespace CustomCritters
 
         public virtual bool check(GameLocation loc)
         {
-            foreach (var cond in SpawnConditions)
+            foreach (var cond in this.SpawnConditions)
             {
                 if (!cond.check(loc))
                     return false;
@@ -297,7 +297,7 @@ namespace CustomCritters
 
         public virtual Vector2? pickSpot(GameLocation loc)
         {
-            foreach (var sl in SpawnLocations)
+            foreach (var sl in this.SpawnLocations)
             {
                 var ret = sl.pickSpot(loc);
                 if (ret.HasValue)

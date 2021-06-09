@@ -17,9 +17,9 @@ namespace AnimalSocialMenu
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            Helper.Events.Display.MenuChanged += onMenuChanged;
+            this.Helper.Events.Display.MenuChanged += this.onMenuChanged;
             myTabId = SpaceCore.Menus.ReserveGameMenuTab("animals");
         }
 
@@ -28,10 +28,10 @@ namespace AnimalSocialMenu
         {
             if (args.NewMenu is GameMenu gm)
             {
-                var pages = Helper.Reflection.GetField<List<IClickableMenu>>(gm, "pages").GetValue();
-                var tabs = Helper.Reflection.GetField<List<ClickableComponent>>(gm, "tabs").GetValue();
+                var pages = this.Helper.Reflection.GetField<List<IClickableMenu>>(gm, "pages").GetValue();
+                var tabs = this.Helper.Reflection.GetField<List<ClickableComponent>>(gm, "tabs").GetValue();
 
-                myTabIndex = tabs.Count;
+                this.myTabIndex = tabs.Count;
                 tabs.Add(new ClickableComponent(new Rectangle(gm.xPositionOnScreen + 192, gm.yPositionOnScreen + IClickableMenu.tabYPositionRelativeToMenuY + 64 - 64, 64, 64), "animals", "Animals")
                 {
                     myID = 912342,
@@ -44,11 +44,11 @@ namespace AnimalSocialMenu
                 tabs[1].upNeighborID = 912342;
                 pages.Add((IClickableMenu)new AnimalSocialPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width, gm.height));
 
-                Helper.Events.Display.RenderedActiveMenu += drawSocialIcon;
+                this.Helper.Events.Display.RenderedActiveMenu += this.drawSocialIcon;
             }
             else if (args.OldMenu is GameMenu ogm)
             {
-                Helper.Events.Display.RenderedActiveMenu -= drawSocialIcon;
+                this.Helper.Events.Display.RenderedActiveMenu -= this.drawSocialIcon;
             }
         }
 
@@ -59,18 +59,18 @@ namespace AnimalSocialMenu
             // For some reason this check is necessary despite removing it in the onMenuChanged event.
             if (!(Game1.activeClickableMenu is GameMenu menu))
             {
-                Helper.Events.Display.RenderedActiveMenu -= drawSocialIcon;
+                this.Helper.Events.Display.RenderedActiveMenu -= this.drawSocialIcon;
                 return;
             }
-            if (menu.invisible || myTabIndex == -1)
+            if (menu.invisible || this.myTabIndex == -1)
                 return;
 
-            var tabs = Helper.Reflection.GetField<List<ClickableComponent>>(menu, "tabs").GetValue();
-            if (tabs.Count <= myTabIndex)
+            var tabs = this.Helper.Reflection.GetField<List<ClickableComponent>>(menu, "tabs").GetValue();
+            if (tabs.Count <= this.myTabIndex)
             {
                 return;
             }
-            var tab = tabs[myTabIndex];
+            var tab = tabs[this.myTabIndex];
             e.SpriteBatch.Draw(Game1.mouseCursors, new Vector2((float)tab.bounds.X, (float)(tab.bounds.Y + (menu.currentTab == menu.getTabNumberFromName(tab.name) ? 8 : 0))), new Rectangle?(new Rectangle(2 * 16, 368, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.0001f);
 
             if (!Game1.options.hardwareCursor)

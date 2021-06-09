@@ -13,7 +13,7 @@ namespace Magic.Schools
 
         protected School(string id)
         {
-            Id = id;
+            this.Id = id;
         }
 
         private static Dictionary<string, School> schools;

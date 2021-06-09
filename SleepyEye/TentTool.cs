@@ -17,12 +17,12 @@ namespace SleepyEye
 
         public TentTool()
         {
-            Name = "Tent";
-            description = loadDescription();
+            this.Name = "Tent";
+            this.description = this.loadDescription();
 
-            numAttachmentSlots.Value = 0;
-            IndexOfMenuItemView = 0;
-            Stack = 1;
+            this.numAttachmentSlots.Value = 0;
+            this.IndexOfMenuItemView = 0;
+            this.Stack = 1;
         }
 
         public override int salePrice()
@@ -32,25 +32,25 @@ namespace SleepyEye
 
         public override bool beginUsing(GameLocation location, int x, int y, SFarmer who)
         {
-            user = who;
-            startedUsing = DateTime.Now;
+            this.user = who;
+            this.startedUsing = DateTime.Now;
             who.canMove = false;
             return true;
         }
 
         public override bool onRelease(GameLocation location, int x, int y, SFarmer who)
         {
-            if (startedUsing == null)
+            if (this.startedUsing == null)
                 return true;
 
-            TimeSpan useTime = DateTime.Now - (DateTime)startedUsing;
+            TimeSpan useTime = DateTime.Now - (DateTime)this.startedUsing;
             if (useTime > TimeSpan.FromSeconds(7))
             {
                 Sleep.SaveLocation = true;
                 Game1.NewDay(0);
             }
 
-            startedUsing = null;
+            this.startedUsing = null;
             who.canMove = true;
 
             return true;
@@ -58,9 +58,9 @@ namespace SleepyEye
 
         public override void tickUpdate(GameTime time, SFarmer who)
         {
-            if (startedUsing == null)
+            if (this.startedUsing == null)
                 return;
-            TimeSpan useTime = DateTime.Now - (DateTime)startedUsing;
+            TimeSpan useTime = DateTime.Now - (DateTime)this.startedUsing;
 
             if (who.facingDirection == Game1.up)
                 ((FarmerSprite)who.Sprite).animate(112, time);
@@ -79,11 +79,11 @@ namespace SleepyEye
 
         public override void draw(SpriteBatch b)
         {
-            CurrentParentTileIndex = IndexOfMenuItemView = -999;
-            if (startedUsing == null)
+            this.CurrentParentTileIndex = this.IndexOfMenuItemView = -999;
+            if (this.startedUsing == null)
                 return;
 
-            TimeSpan useTime = DateTime.Now - (DateTime)startedUsing;
+            TimeSpan useTime = DateTime.Now - (DateTime)this.startedUsing;
 
             //if ( useTime > TimeSpan.FromSeconds( 7 ) )
             {
@@ -135,11 +135,11 @@ namespace SleepyEye
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
         {
-            Name = "Tent";
-            description = loadDescription();
+            this.Name = "Tent";
+            this.description = this.loadDescription();
 
-            numAttachmentSlots.Value = 0;
-            IndexOfMenuItemView = 0;
+            this.numAttachmentSlots.Value = 0;
+            this.IndexOfMenuItemView = 0;
         }
     }
 }

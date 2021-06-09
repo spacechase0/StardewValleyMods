@@ -13,9 +13,9 @@ namespace ConsoleCode
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.ConsoleCommands.Add("cs", "Execute C# code.", onCommandReceived);
+            helper.ConsoleCommands.Add("cs", "Execute C# code.", this.onCommandReceived);
         }
 
         private void onCommandReceived(string cmd, string[] args)
@@ -23,12 +23,12 @@ namespace ConsoleCode
             string line = string.Join(" ", args).Replace('`', '"');
             if (args[0] == "--script")
             {
-                line = File.ReadAllText(Path.Combine(Helper.DirectoryPath, args[1]));
+                line = File.ReadAllText(Path.Combine(this.Helper.DirectoryPath, args[1]));
             }
             Log.trace($"Input: {line}");
             try
             {
-                var func = makeFunc(line);
+                var func = this.makeFunc(line);
                 object result = null;
                 func.Invoke(ref result);
                 if (result == null)

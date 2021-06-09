@@ -13,18 +13,18 @@ namespace LocationLayerTool
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
             HarmonyPatcher.Apply(this,
                 new xTileLayerPatcher()
             );
 
-            Helper.ConsoleCommands.Add("llt_adddummy", "", doCommand);
+            this.Helper.ConsoleCommands.Add("llt_adddummy", "", this.doCommand);
         }
 
         private void doCommand(string cmd, string[] args)
         {
-            Game1.locations.Add(new GameLocation(Helper.Content.GetActualAssetKey("assets/Farm_overlay.tbin"), "Farm_overlay"));
+            Game1.locations.Add(new GameLocation(this.Helper.Content.GetActualAssetKey("assets/Farm_overlay.tbin"), "Farm_overlay"));
             Game1.game1.parseDebugInput("warp Farm_overlay 39 31");
         }
     }

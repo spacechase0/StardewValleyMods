@@ -27,24 +27,24 @@ namespace FlowerRain
 
         public T Load<T>(IAssetInfo asset)
         {
-            return (T)(object)invisibleRain;
+            return (T)(object)this.invisibleRain;
         }
 
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
             config = helper.ReadConfig<Config>();
 
-            helper.Events.GameLoop.GameLaunched += gameLaunched;
+            helper.Events.GameLoop.GameLaunched += this.gameLaunched;
 
             // https://stackoverflow.com/a/9664937/1687492
             Color[] transparent = Enumerable.Range(0, 256 * 64).Select(p => Color.Transparent).ToArray();
-            invisibleRain = new Texture2D(Game1.graphics.GraphicsDevice, 256, 64);
-            invisibleRain.SetData(transparent);
+            this.invisibleRain = new Texture2D(Game1.graphics.GraphicsDevice, 256, 64);
+            this.invisibleRain.SetData(transparent);
 
-            BuildFlowerData(useWhitelist: true);
+            this.BuildFlowerData(useWhitelist: true);
 
             HarmonyPatcher.Apply(this,
                 new Game1Patcher(this.fd)
@@ -53,12 +53,12 @@ namespace FlowerRain
 
         private void gameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var gmcm = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (gmcm != null)
             {
-                gmcm.RegisterModConfig(ModManifest, () => config = new Config(), () => Helper.WriteConfig(config));
+                gmcm.RegisterModConfig(this.ModManifest, () => config = new Config(), () => this.Helper.WriteConfig(config));
                 gmcm.RegisterSimpleOption(
-                    ModManifest,
+                    this.ModManifest,
                     "Use Vanilla Flowers Only",
                     "Only use vanilla flowers in the flower rain",
                     () => config.VanillaFlowersOnly,
@@ -66,14 +66,14 @@ namespace FlowerRain
                     {
                         config.VanillaFlowersOnly = b;
                         if (config.VanillaFlowersOnly)
-                            BuildFlowerData(useWhitelist: true);
+                            this.BuildFlowerData(useWhitelist: true);
                     });
             }
 
-            var ja = Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            var ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
             if (ja != null)
             {
-                ja.IdsAssigned += jaIdsAssigned;
+                ja.IdsAssigned += this.jaIdsAssigned;
             }
         }
 
@@ -81,7 +81,7 @@ namespace FlowerRain
         {
             if (!config.VanillaFlowersOnly)
             {
-                BuildFlowerData(useWhitelist: false);
+                this.BuildFlowerData(useWhitelist: false);
             }
         }
 
@@ -149,11 +149,11 @@ namespace FlowerRain
                 }
             }
 
-            fd.Clear();
-            fd.Add("spring", spring);
-            fd.Add("summer", summer);
-            fd.Add("fall", fall);
-            fd.Add("winter", winter);
+            this.fd.Clear();
+            this.fd.Add("spring", spring);
+            this.fd.Add("summer", summer);
+            this.fd.Add("fall", fall);
+            this.fd.Add("winter", winter);
         }
     }
 }

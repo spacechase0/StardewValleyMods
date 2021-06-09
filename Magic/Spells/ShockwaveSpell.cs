@@ -52,49 +52,49 @@ namespace Magic.Spells
             /// <returns>Returns true if the effect is still active, or false if it can be discarded.</returns>
             public bool Update(UpdateTickedEventArgs e)
             {
-                if (jumping)
+                if (this.jumping)
                 {
-                    if (player.yJumpVelocity == 0 && prevJumpVel < 0)
+                    if (this.player.yJumpVelocity == 0 && this.prevJumpVel < 0)
                     {
-                        landX = player.position.X;
-                        landY = player.position.Y;
-                        jumping = false;
+                        this.landX = this.player.position.X;
+                        this.landY = this.player.position.Y;
+                        this.jumping = false;
                     }
-                    prevJumpVel = player.yJumpVelocity;
+                    this.prevJumpVel = this.player.yJumpVelocity;
                 }
-                if (!jumping)
+                if (!this.jumping)
                 {
-                    if (--timer > 0)
+                    if (--this.timer > 0)
                     {
                         return true;
                     }
-                    timer = 10;
+                    this.timer = 10;
 
-                    int spotsForCurrRadius = 1 + currRad * 7;
+                    int spotsForCurrRadius = 1 + this.currRad * 7;
                     for (int i = 0; i < spotsForCurrRadius; ++i)
                     {
                         Game1.playSound("hoeHit");
-                        float ix = landX + (float)Math.Cos(Math.PI * 2 / spotsForCurrRadius * i) * currRad * Game1.tileSize;
-                        float iy = landY + (float)Math.Sin(Math.PI * 2 / spotsForCurrRadius * i) * currRad * Game1.tileSize;
-                        player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(ix, iy), Color.White, 8, Game1.random.NextDouble() < 0.5, 30, 0, -1, -1f, -1, 0));
-                        player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(ix, iy), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f, 0, -1, -1f, -1, 0));
+                        float ix = this.landX + (float)Math.Cos(Math.PI * 2 / spotsForCurrRadius * i) * this.currRad * Game1.tileSize;
+                        float iy = this.landY + (float)Math.Sin(Math.PI * 2 / spotsForCurrRadius * i) * this.currRad * Game1.tileSize;
+                        this.player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(ix, iy), Color.White, 8, Game1.random.NextDouble() < 0.5, 30, 0, -1, -1f, -1, 0));
+                        this.player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(ix, iy), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f, 0, -1, -1f, -1, 0));
                     }
-                    ++currRad;
+                    ++this.currRad;
 
-                    foreach (var character in player.currentLocation.characters)
+                    foreach (var character in this.player.currentLocation.characters)
                     {
                         if (character is Monster mob)
                         {
-                            if (Vector2.Distance(new Vector2(landX, landY), mob.position) < currRad * Game1.tileSize)
+                            if (Vector2.Distance(new Vector2(this.landX, this.landY), mob.position) < this.currRad * Game1.tileSize)
                             {
                                 // TODO: Use location damage method for xp and quest progress
-                                mob.takeDamage((level + 1) * 5 * (player.CombatLevel + 1), 0, 0, false, 0, player);
-                                player.AddCustomSkillExperience(Magic.Skill, 3);
+                                mob.takeDamage((this.level + 1) * 5 * (this.player.CombatLevel + 1), 0, 0, false, 0, this.player);
+                                this.player.AddCustomSkillExperience(Magic.Skill, 3);
                             }
                         }
                     }
 
-                    if (currRad >= 1 + (level + 1) * 2)
+                    if (this.currRad >= 1 + (this.level + 1) * 2)
                         return false;
                 }
 

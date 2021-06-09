@@ -18,13 +18,13 @@ namespace MoreRings
         public static Mod instance;
 
         private JsonAssetsAPI ja;
-        public int Ring_Fishing_LargeBar { get { return ja.GetObjectId("Ring of Wide Nets"); } }
-        public int Ring_Combat_Regen { get { return ja.GetObjectId("Ring of Regeneration"); } }
-        public int Ring_DiamondBooze { get { return ja.GetObjectId("Ring of Diamond Booze"); } }
-        public int Ring_Refresh { get { return ja.GetObjectId("Refreshing Ring"); } }
-        public int Ring_Quality { get { return ja.GetObjectId("Quality+ Ring"); } }
-        public int Ring_MageHand { get { return ja.GetObjectId("Ring of Far Reaching"); } }
-        public int Ring_TrueSight { get { return ja.GetObjectId("Ring of True Sight"); } }
+        public int Ring_Fishing_LargeBar { get { return this.ja.GetObjectId("Ring of Wide Nets"); } }
+        public int Ring_Combat_Regen { get { return this.ja.GetObjectId("Ring of Regeneration"); } }
+        public int Ring_DiamondBooze { get { return this.ja.GetObjectId("Ring of Diamond Booze"); } }
+        public int Ring_Refresh { get { return this.ja.GetObjectId("Refreshing Ring"); } }
+        public int Ring_Quality { get { return this.ja.GetObjectId("Quality+ Ring"); } }
+        public int Ring_MageHand { get { return this.ja.GetObjectId("Ring of Far Reaching"); } }
+        public int Ring_TrueSight { get { return this.ja.GetObjectId("Ring of True Sight"); } }
 
         private MoreRingsApi moreRings;
 
@@ -33,14 +33,14 @@ namespace MoreRings
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.Display.MenuChanged += onMenuChanged;
-            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.GameLoop.UpdateTicked += this.onUpdateTicked;
             helper.Events.Display.RenderedWorld += TrueSight.onDrawWorld;
 
-            SpaceEvents.OnItemEaten += onItemEaten;
+            SpaceEvents.OnItemEaten += this.onItemEaten;
 
             HarmonyPatcher.Apply(
                 this,
@@ -58,17 +58,17 @@ namespace MoreRings
         /// <param name="e">The event arguments.</param>
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var api = Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            var api = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
             if (api == null)
             {
                 Log.error("No Json Assets API???");
                 return;
             }
-            ja = api;
+            this.ja = api;
 
-            api.LoadAssets(Path.Combine(Helper.DirectoryPath, "assets"));
+            api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
 
-            moreRings = Helper.ModRegistry.GetApi<MoreRingsApi>("bcmpinc.WearMoreRings");
+            this.moreRings = this.Helper.ModRegistry.GetApi<MoreRingsApi>("bcmpinc.WearMoreRings");
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
@@ -76,9 +76,9 @@ namespace MoreRings
         /// <param name="e">The event arguments.</param>
         private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (e.NewMenu is BobberBar bobber && hasRingEquipped(Ring_Fishing_LargeBar) > 0)
+            if (e.NewMenu is BobberBar bobber && this.hasRingEquipped(this.Ring_Fishing_LargeBar) > 0)
             {
-                var field = Helper.Reflection.GetField<int>(bobber, "bobberBarHeight");
+                var field = this.Helper.Reflection.GetField<int>(bobber, "bobberBarHeight");
                 field.SetValue((int)(field.GetValue() * 1.50));
             }
         }
@@ -94,22 +94,22 @@ namespace MoreRings
             if (!Context.IsPlayerFree || !e.IsOneSecond)
                 return;
 
-            if (hasRingEquipped(Ring_Combat_Regen) > 0 && regenCounter++ >= 4 / hasRingEquipped(Ring_Combat_Regen))
+            if (this.hasRingEquipped(this.Ring_Combat_Regen) > 0 && this.regenCounter++ >= 4 / this.hasRingEquipped(this.Ring_Combat_Regen))
             {
-                regenCounter = 0;
+                this.regenCounter = 0;
                 Game1.player.health = Math.Min(Game1.player.health + 1, Game1.player.maxHealth);
             }
 
-            if (hasRingEquipped(Ring_Refresh) > 0 && refreshCounter++ >= 4 / hasRingEquipped(Ring_Refresh))
+            if (this.hasRingEquipped(this.Ring_Refresh) > 0 && this.refreshCounter++ >= 4 / this.hasRingEquipped(this.Ring_Refresh))
             {
-                refreshCounter = 0;
+                this.refreshCounter = 0;
                 Game1.player.Stamina = Math.Min(Game1.player.Stamina + 1, Game1.player.MaxStamina);
             }
         }
 
         private void onItemEaten(object sender, EventArgs args)
         {
-            if (hasRingEquipped(Ring_DiamondBooze) > 0)
+            if (this.hasRingEquipped(this.Ring_DiamondBooze) > 0)
             {
                 Buff tipsyBuff = null;
                 foreach (var buff in Game1.buffsDisplay.otherBuffs)
@@ -133,7 +133,7 @@ namespace MoreRings
                     }
                     else
                     {
-                        var attrs = Helper.Reflection.GetField<int[]>(Game1.buffsDisplay.drink, "buffAttributes").GetValue();
+                        var attrs = this.Helper.Reflection.GetField<int[]>(Game1.buffsDisplay.drink, "buffAttributes").GetValue();
                         if (attrs[Buff.speed] == -1)
                         {
                             Game1.buffsDisplay.drink.removeBuff();
@@ -153,8 +153,8 @@ namespace MoreRings
 
         public int hasRingEquipped(int id)
         {
-            if (moreRings != null)
-                return moreRings.CountEquippedRings(Game1.player, id);
+            if (this.moreRings != null)
+                return this.moreRings.CountEquippedRings(Game1.player, id);
 
             int num = 0;
             if (Game1.player.leftRing.Value != null && Game1.player.leftRing.Value.ParentSheetIndex == id)

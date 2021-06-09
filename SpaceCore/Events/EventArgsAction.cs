@@ -7,10 +7,10 @@ namespace SpaceCore.Events
     {
         internal EventArgsAction(bool touch, string action, Location pos)
         {
-            TouchAction = touch;
-            Action = action.Split(' ')[0];
-            ActionString = action;
-            Position = pos;
+            this.TouchAction = touch;
+            this.Action = action.Split(' ')[0];
+            this.ActionString = action;
+            this.Position = pos;
         }
 
         public bool TouchAction { get; }

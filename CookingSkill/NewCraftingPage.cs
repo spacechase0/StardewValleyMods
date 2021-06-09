@@ -347,7 +347,7 @@ namespace CookingSkill
         {
             Item obj = this.pagesOfCraftingRecipes[this.currentCraftingPage][c].createItem();
             /////
-            bool consume = Mod.onCook(this.pagesOfCraftingRecipes[this.currentCraftingPage][c], obj, _materialContainers);
+            bool consume = Mod.onCook(this.pagesOfCraftingRecipes[this.currentCraftingPage][c], obj, this._materialContainers);
             SObject heldObj = this.heldItem as SObject;
             SObject itemObj = obj as SObject;
             bool didCraft = false;
@@ -575,8 +575,8 @@ namespace CookingSkill
 
             public ConsumedItem(StardewValley.Object theItem)
             {
-                item = theItem;
-                amt = item.Stack;
+                this.item = theItem;
+                this.amt = this.item.Stack;
             }
         }
 

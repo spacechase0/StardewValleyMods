@@ -19,26 +19,26 @@ namespace Magic.Spells
         public ProjectileSpell(string school, string id, int manaBase, int dmgBase, int dmgIncr, string snd, string sndHit, bool seeking = false)
             : base(school, id)
         {
-            ManaBase = manaBase;
-            DamageBase = dmgBase;
-            DamageIncr = dmgIncr;
-            Sound = snd;
-            SoundHit = sndHit;
-            Seeking = seeking;
+            this.ManaBase = manaBase;
+            this.DamageBase = dmgBase;
+            this.DamageIncr = dmgIncr;
+            this.Sound = snd;
+            this.SoundHit = sndHit;
+            this.Seeking = seeking;
         }
 
         public override int getManaCost(Farmer player, int level)
         {
-            return ManaBase;
+            return this.ManaBase;
         }
 
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            int dmg = (DamageBase + DamageIncr * level) * (player.CombatLevel + 1);
+            int dmg = (this.DamageBase + this.DamageIncr * level) * (player.CombatLevel + 1);
             float dir = (float)-Math.Atan2(player.getStandingY() - targetY, targetX - player.getStandingX());
-            player.currentLocation.projectiles.Add(new SpellProjectile(player, this, dmg, dir, 4f + 3 * level, Seeking));
-            if (Sound != null)
-                Game1.playSound(Sound);
+            player.currentLocation.projectiles.Add(new SpellProjectile(player, this, dmg, dir, 4f + 3 * level, this.Seeking));
+            if (this.Sound != null)
+                Game1.playSound(this.Sound);
 
             return null;
         }

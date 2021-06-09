@@ -17,29 +17,29 @@ namespace SpaceCore.UI
         {
             get
             {
-                if (Parent != null)
-                    return Parent.Position + LocalPosition;
-                return LocalPosition;
+                if (this.Parent != null)
+                    return this.Parent.Position + this.LocalPosition;
+                return this.LocalPosition;
             }
         }
 
         public abstract int Width { get; }
         public abstract int Height { get; }
-        public Rectangle Bounds => new Rectangle((int)Position.X, (int)Position.Y, Width, Height);
+        public Rectangle Bounds => new Rectangle((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);
 
         public bool Hover { get; private set; } = false;
         public virtual string HoveredSound => null;
 
         public bool ClickGestured { get; private set; } = false;
-        public bool Clicked => Hover && ClickGestured;
+        public bool Clicked => this.Hover && this.ClickGestured;
         public virtual string ClickedSound => null;
 
         public virtual void Update(bool hidden = false)
         {
             if (hidden)
             {
-                Hover = false;
-                ClickGestured = false;
+                this.Hover = false;
+                this.ClickGestured = false;
                 return;
             }
 
@@ -56,29 +56,29 @@ namespace SpaceCore.UI
                 mouseY = Game1.getOldMouseY();
             }
 
-            bool newHover = !hidden && !GetRoot().Obscured && Bounds.Contains(mouseX, mouseY);
-            if (newHover && !Hover && HoveredSound != null)
-                Game1.playSound(HoveredSound);
-            Hover = newHover;
+            bool newHover = !hidden && !this.GetRoot().Obscured && this.Bounds.Contains(mouseX, mouseY);
+            if (newHover && !this.Hover && this.HoveredSound != null)
+                Game1.playSound(this.HoveredSound);
+            this.Hover = newHover;
 
             var input = SpaceCore.instance.Helper.Reflection.GetField<InputState>(typeof(Game1), "input").GetValue();
-            ClickGestured = Game1.oldMouseState.LeftButton == ButtonState.Released && input.GetMouseState().LeftButton == ButtonState.Pressed;
-            if (Clicked && ClickedSound != null)
-                Game1.playSound(ClickedSound);
+            this.ClickGestured = Game1.oldMouseState.LeftButton == ButtonState.Released && input.GetMouseState().LeftButton == ButtonState.Pressed;
+            if (this.Clicked && this.ClickedSound != null)
+                Game1.playSound(this.ClickedSound);
         }
 
         public abstract void Draw(SpriteBatch b);
 
         public RootElement GetRoot()
         {
-            return GetRootImpl();
+            return this.GetRootImpl();
         }
 
         internal virtual RootElement GetRootImpl()
         {
-            if (Parent == null)
+            if (this.Parent == null)
                 throw new Exception("Element must have a parent.");
-            return Parent.GetRoot();
+            return this.Parent.GetRoot();
         }
     }
 }

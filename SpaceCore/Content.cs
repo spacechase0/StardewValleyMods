@@ -24,8 +24,8 @@ namespace SpaceCore
             public TileMapping() { }
             public TileMapping(TileSheet ts, int id)
             {
-                tileSheet = ts;
-                tileId = id;
+                this.tileSheet = ts;
+                this.tileId = id;
             }
         }
 
@@ -37,8 +37,8 @@ namespace SpaceCore
             public TileAnimation() { }
             public TileAnimation(int[] ids, int frameLen)
             {
-                tileIds = ids;
-                duration = frameLen;
+                this.tileIds = ids;
+                this.duration = frameLen;
             }
 
             public AnimatedTile makeTile(TileSheet ts, Layer xlayer)
@@ -47,7 +47,7 @@ namespace SpaceCore
 
                 var xanimTiles = new StaticTile[tanim.tileIds.Length];
                 for (int ia = 0; ia < xanimTiles.Length; ++ia)
-                    xanimTiles[ia] = new StaticTile(xlayer, ts, BlendMode.Alpha, tileIds[ia]);
+                    xanimTiles[ia] = new StaticTile(xlayer, ts, BlendMode.Alpha, this.tileIds[ia]);
                 return new AnimatedTile(xlayer, xanimTiles, tanim.duration);
             }
         }

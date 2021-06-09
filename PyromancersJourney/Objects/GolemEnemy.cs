@@ -29,7 +29,7 @@ namespace PyromancersJourney.Objects
         public GolemEnemy(World world)
             : base(world)
         {
-            Health = 50;
+            this.Health = 50;
 
             var vertices = new List<VertexPositionColorTexture>();
             for (int f = 0; f < 12 * 9; ++f)
@@ -50,20 +50,20 @@ namespace PyromancersJourney.Objects
                 vertices.Add(new VertexPositionColorTexture(new Vector3(1.5f, 3, 0), Color.White, new Vector2(xb, yb)));
             }
 
-            buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
-            buffer.SetData(vertices.ToArray());
+            this.buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+            this.buffer.SetData(vertices.ToArray());
         }
 
         public override void Hurt(int amt)
         {
-            if (state == AnimState.Immune && frame > 3 && frame < 11)
+            if (this.state == AnimState.Immune && this.frame > 3 && this.frame < 11)
             {
                 Game1.playSound("crit");
                 return;
             }
 
             base.Hurt(amt);
-            if (Dead)
+            if (this.Dead)
             {
                 Game1.playSound("explosion");
             }
@@ -81,54 +81,54 @@ namespace PyromancersJourney.Objects
         {
             base.Update();
 
-            frameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
-            if (frameAccum >= 0.2f)
+            this.frameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+            if (this.frameAccum >= 0.2f)
             {
-                frameAccum = 0;
+                this.frameAccum = 0;
 
-                switch (state)
+                switch (this.state)
                 {
                     case AnimState.Glow:
-                        if (++frame > 7)
+                        if (++this.frame > 7)
                         {
-                            GoToNextState();
+                            this.GoToNextState();
                         }
                         break;
                     case AnimState.Shoot:
-                        if (++frame == 8)
+                        if (++this.frame == 8)
                         {
-                            var player = World.player;
-                            var speed = player.Position - Position;
+                            var player = this.World.player;
+                            var speed = player.Position - this.Position;
                             speed.Y = 0;
                             speed.Normalize();
                             speed /= 10;
 
-                            World.projectiles.Add(new GolemArm(World)
+                            this.World.projectiles.Add(new GolemArm(this.World)
                             {
-                                Position = Position + new Vector3(0, 0.5f, 0),
+                                Position = this.Position + new Vector3(0, 0.5f, 0),
                                 Speed = new Vector2(speed.X, speed.Z)
                             });
                         }
-                        else if (frame > 16)
+                        else if (this.frame > 16)
                         {
-                            GoToNextState();
+                            this.GoToNextState();
                         }
                         break;
                     case AnimState.Immune:
-                        if (frame < 7)
-                            ++frame;
-                        if (World.objects.OfType<Enemy>().Count() <= 1)
+                        if (this.frame < 7)
+                            ++this.frame;
+                        if (this.World.objects.OfType<Enemy>().Count() <= 1)
                         {
-                            if (++frame > 14)
+                            if (++this.frame > 14)
                             {
-                                GoToNextState();
+                                this.GoToNextState();
                             }
                         }
                         break;
                     case AnimState.Summon:
-                        if (++frame > 6)
+                        if (++this.frame > 6)
                         {
-                            GoToNextState();
+                            this.GoToNextState();
                         }
                         break;
                 }
@@ -137,30 +137,30 @@ namespace PyromancersJourney.Objects
 
         private void GoToNextState()
         {
-            frame = 0;
-            if (state == AnimState.Summon)
+            this.frame = 0;
+            if (this.state == AnimState.Summon)
             {
                 int amt = 2;
                 for (int i = 0; i < amt; ++i)
                 {
                     for (int t = 0; t < 10; ++t)
                     {
-                        Vector2 pos = new Vector2(1 + Game1.random.Next((int)World.map.Size.X - 2), 1 + Game1.random.Next((int)World.map.Size.Y - 2));
-                        if (World.map.IsAirSolid(pos.X, pos.Y))
+                        Vector2 pos = new Vector2(1 + Game1.random.Next((int)this.World.map.Size.X - 2), 1 + Game1.random.Next((int)this.World.map.Size.Y - 2));
+                        if (this.World.map.IsAirSolid(pos.X, pos.Y))
                         {
                             continue;
                         }
 
-                        World.QueueObject(new BatEnemy(World) { Position = new Vector3(pos.X + 0.5f, 0.5f, pos.Y + 0.5f) });
+                        this.World.QueueObject(new BatEnemy(this.World) { Position = new Vector3(pos.X + 0.5f, 0.5f, pos.Y + 0.5f) });
                         break;
                     }
                 }
                 Game1.playSound("debuffHit");
-                state = AnimState.Immune;
+                this.state = AnimState.Immune;
             }
-            else if (state != AnimState.Glow)
+            else if (this.state != AnimState.Glow)
             {
-                state = AnimState.Glow;
+                this.state = AnimState.Glow;
             }
             else
             {
@@ -168,13 +168,13 @@ namespace PyromancersJourney.Objects
                 {
                     case 0:
                     case 1:
-                        state = AnimState.Glow;
+                        this.state = AnimState.Glow;
                         break;
                     case 2:
-                        state = AnimState.Shoot;
+                        this.state = AnimState.Shoot;
                         break;
                     case 3:
-                        state = AnimState.Summon;
+                        this.state = AnimState.Summon;
                         break;
                 }
             }
@@ -186,7 +186,7 @@ namespace PyromancersJourney.Objects
 
             int fx = this.frame;
             int fy = 0;
-            switch (state)
+            switch (this.state)
             {
                 case AnimState.Glow:
                     fy = 1;
@@ -214,7 +214,7 @@ namespace PyromancersJourney.Objects
             newStencil.DepthBufferWriteEnable = false;
             device.DepthStencilState = newStencil;
 
-            effect.World = Matrix.CreateConstrainedBillboard(Position, cam.pos, Vector3.Up, null, null);
+            effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, Vector3.Up, null, null);
             effect.TextureEnabled = true;
             effect.Texture = tex;
             for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
@@ -222,7 +222,7 @@ namespace PyromancersJourney.Objects
                 var pass = effect.CurrentTechnique.Passes[e];
                 pass.Apply();
 
-                device.SetVertexBuffer(buffer);
+                device.SetVertexBuffer(this.buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, frame * 6, 2);
             }
 

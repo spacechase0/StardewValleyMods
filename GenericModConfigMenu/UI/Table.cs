@@ -12,11 +12,11 @@ namespace GenericModConfigMenu.UI
         private Vector2 size;
         public Vector2 Size
         {
-            get { return size; }
+            get { return this.size; }
             set
             {
-                size = new Vector2(value.X, ((int)value.Y) / RowHeight * RowHeight);
-                UpdateScrollbar();
+                this.size = new Vector2(value.X, ((int)value.Y) / this.RowHeight * this.RowHeight);
+                this.UpdateScrollbar();
             }
         }
 
@@ -24,45 +24,45 @@ namespace GenericModConfigMenu.UI
         private int rowHeight;
         public int RowHeight
         {
-            get { return rowHeight; }
+            get { return this.rowHeight; }
             set
             {
-                rowHeight = value + RowPadding;
-                UpdateScrollbar();
+                this.rowHeight = value + RowPadding;
+                this.UpdateScrollbar();
             }
         }
 
-        public int RowCount { get { return rows.Count; } }
+        public int RowCount { get { return this.rows.Count; } }
 
         public Scrollbar Scrollbar { get; }
 
         public Table()
         {
-            Scrollbar = new Scrollbar();
-            Scrollbar.LocalPosition = new Vector2(0, 0);
-            AddChild(Scrollbar);
+            this.Scrollbar = new Scrollbar();
+            this.Scrollbar.LocalPosition = new Vector2(0, 0);
+            this.AddChild(this.Scrollbar);
         }
 
         public void AddRow(Element[] elements)
         {
-            rows.Add(elements);
+            this.rows.Add(elements);
             foreach (var child in elements)
             {
-                AddChild(child);
+                this.AddChild(child);
             }
-            UpdateScrollbar();
+            this.UpdateScrollbar();
         }
 
         private void UpdateScrollbar()
         {
-            Scrollbar.LocalPosition = new Vector2(Size.X + 48, Scrollbar.LocalPosition.Y);
-            Scrollbar.RequestHeight = (int)Size.Y;
-            Scrollbar.Rows = rows.Count;
-            Scrollbar.FrameSize = (int)(Size.Y / RowHeight);
+            this.Scrollbar.LocalPosition = new Vector2(this.Size.X + 48, this.Scrollbar.LocalPosition.Y);
+            this.Scrollbar.RequestHeight = (int)this.Size.Y;
+            this.Scrollbar.Rows = this.rows.Count;
+            this.Scrollbar.FrameSize = (int)(this.Size.Y / this.RowHeight);
         }
 
-        public override int Width => (int)Size.X;
-        public override int Height => (int)Size.Y;
+        public override int Width => (int)this.Size.X;
+        public override int Height => (int)this.Size.Y;
 
         public override void Update(bool hidden = false)
         {
@@ -70,56 +70,56 @@ namespace GenericModConfigMenu.UI
             if (hidden) return;
 
             int ir = 0;
-            foreach (var row in rows)
+            foreach (var row in this.rows)
             {
                 foreach (var element in row)
                 {
-                    element.LocalPosition = new Vector2(element.LocalPosition.X, ir * RowHeight - Scrollbar.TopRow * RowHeight);
+                    element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.TopRow * this.RowHeight);
                     if (!(element is Label) && // Labels must update anyway to get rid of hovertext on scrollwheel
-                            (element.Position.Y < Position.Y || element.Position.Y + RowHeight - RowPadding > Position.Y + Size.Y))
+                            (element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - RowPadding > this.Position.Y + this.Size.Y))
                         continue;
                     element.Update();
                 }
                 ++ir;
             }
-            Scrollbar.Update();
+            this.Scrollbar.Update();
         }
 
         public void ForceUpdateEvenHidden(bool hidden = false)
         {
             int ir = 0;
-            foreach (var row in rows)
+            foreach (var row in this.rows)
             {
                 foreach (var element in row)
                 {
-                    element.LocalPosition = new Vector2(element.LocalPosition.X, ir * RowHeight - Scrollbar.ScrollPercent * rows.Count * RowHeight);
-                    element.Update(hidden || element.Position.Y < Position.Y || element.Position.Y + RowHeight - RowPadding > Position.Y + Size.Y);
+                    element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.ScrollPercent * this.rows.Count * this.RowHeight);
+                    element.Update(hidden || element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - RowPadding > this.Position.Y + this.Size.Y);
                 }
                 ++ir;
             }
-            Scrollbar.Update(hidden);
+            this.Scrollbar.Update(hidden);
         }
 
         public override void Draw(SpriteBatch b)
         {
-            IClickableMenu.drawTextureBox(b, (int)Position.X - 32, (int)Position.Y - 32, (int)Size.X + 64, (int)Size.Y + 64, Color.White);
+            IClickableMenu.drawTextureBox(b, (int)this.Position.X - 32, (int)this.Position.Y - 32, (int)this.Size.X + 64, (int)this.Size.Y + 64, Color.White);
 
-            foreach (var row in rows)
+            foreach (var row in this.rows)
             {
                 foreach (var element in row)
                 {
-                    if (element.Position.Y < Position.Y || element.Position.Y + RowHeight - RowPadding > Position.Y + Size.Y)
+                    if (element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - RowPadding > this.Position.Y + this.Size.Y)
                         continue;
-                    if (element == RenderLast)
+                    if (element == this.RenderLast)
                         continue;
                     element.Draw(b);
                 }
             }
 
-            if (RenderLast != null)
-                RenderLast.Draw(b);
+            if (this.RenderLast != null)
+                this.RenderLast.Draw(b);
 
-            Scrollbar.Draw(b);
+            this.Scrollbar.Draw(b);
         }
     }
 }

@@ -8,8 +8,8 @@ namespace SpaceCore.Events
     {
         internal EventArgsBeforeReceiveObject(NPC npc, SObject o)
         {
-            Npc = npc;
-            Gift = o;
+            this.Npc = npc;
+            this.Gift = o;
         }
 
         public NPC Npc { get; }

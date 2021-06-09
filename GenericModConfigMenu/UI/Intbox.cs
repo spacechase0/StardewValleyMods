@@ -4,8 +4,8 @@ namespace GenericModConfigMenu.UI
     {
         public int Value
         {
-            get { return (String == "" || String == "-") ? 0 : int.Parse(String); }
-            set { String = value.ToString(); }
+            get { return (this.String == "" || this.String == "-") ? 0 : int.Parse(this.String); }
+            set { this.String = value.ToString(); }
         }
 
         protected override void receiveInput(string str)
@@ -14,7 +14,7 @@ namespace GenericModConfigMenu.UI
             for (int i = 0; i < str.Length; ++i)
             {
                 char c = str[i];
-                if (!char.IsDigit(c) && !(c == '-' && String == "" && i == 0))
+                if (!char.IsDigit(c) && !(c == '-' && this.String == "" && i == 0))
                 {
                     valid = false;
                     break;
@@ -23,9 +23,9 @@ namespace GenericModConfigMenu.UI
             if (!valid)
                 return;
 
-            String += str;
-            if (Callback != null)
-                Callback.Invoke(this);
+            this.String += str;
+            if (this.Callback != null)
+                this.Callback.Invoke(this);
         }
     }
 }

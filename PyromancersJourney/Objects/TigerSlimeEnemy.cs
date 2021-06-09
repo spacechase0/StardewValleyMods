@@ -20,7 +20,7 @@ namespace PyromancersJourney.Objects
         public TigerSlimeEnemy(World world)
             : base(world)
         {
-            Health = eyeType + 1;
+            this.Health = this.eyeType + 1;
 
             if (mainBuffer == null)
             {
@@ -75,7 +75,7 @@ namespace PyromancersJourney.Objects
         public override void Hurt(int amt)
         {
             base.Hurt(amt);
-            if (Dead)
+            if (this.Dead)
             {
                 Game1.playSound("slimedead");
             }
@@ -87,24 +87,24 @@ namespace PyromancersJourney.Objects
 
         public override void DoMovement()
         {
-            var player = World.player;
-            var diff = player.Position - Position;
+            var player = this.World.player;
+            var diff = player.Position - this.Position;
             diff.Y = 0;
             diff.Normalize();
 
-            Position += diff / 50;
+            this.Position += diff / 50;
         }
 
         public override void Update()
         {
             base.Update();
 
-            frameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
-            if (frameAccum >= 0.2f)
+            this.frameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+            if (this.frameAccum >= 0.2f)
             {
-                frameAccum = 0;
-                if (++frame >= 4)
-                    frame = 0;
+                this.frameAccum = 0;
+                if (++this.frame >= 4)
+                    this.frame = 0;
             }
         }
 
@@ -124,7 +124,7 @@ namespace PyromancersJourney.Objects
 
             var camForward = (cam.pos - cam.target);
             camForward.Normalize();
-            effect.World = Matrix.CreateConstrainedBillboard(Position, cam.pos, cam.up, null, null);
+            effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
             effect.TextureEnabled = true;
             effect.Texture = tex;
             for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
@@ -150,14 +150,14 @@ namespace PyromancersJourney.Objects
                 }
                 eyePos.Y *= 0.75f;
 
-                effect.World = Matrix.CreateConstrainedBillboard(Position + eyePos, cam.pos, cam.up, null, null);
+                effect.World = Matrix.CreateConstrainedBillboard(this.Position + eyePos, cam.pos, cam.up, null, null);
                 for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
                 {
                     var pass = effect.CurrentTechnique.Passes[e];
                     pass.Apply();
 
                     device.SetVertexBuffer(eyesBuffer);
-                    device.DrawPrimitives(PrimitiveType.TriangleList, eyeType * 6, 2);
+                    device.DrawPrimitives(PrimitiveType.TriangleList, this.eyeType * 6, 2);
                 }
             }
 

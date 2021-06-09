@@ -63,26 +63,26 @@ namespace TheftOfTheWinterStar
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            bossBarBg = Helper.Content.Load<Texture2D>("assets/bossbar-bg.png");
-            bossBarFg = Helper.Content.Load<Texture2D>("assets/bossbar-fg.png");
+            this.bossBarBg = this.Helper.Content.Load<Texture2D>("assets/bossbar-bg.png");
+            this.bossBarFg = this.Helper.Content.Load<Texture2D>("assets/bossbar-fg.png");
 
-            Helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.GameLoop.SaveCreated += onCreated;
-            helper.Events.GameLoop.SaveLoaded += onLoaded;
-            helper.Events.GameLoop.Saving += onSaving;
-            Helper.Events.GameLoop.UpdateTicked += onUpdated;
-            helper.Events.GameLoop.DayStarted += onDayStarted;
-            helper.Events.GameLoop.DayEnding += onDayEnding;
-            Helper.Events.Player.Warped += onWarped;
-            Helper.Events.Player.InventoryChanged += onInventoryChanged;
-            Helper.Events.Input.ButtonPressed += onButtonPressed;
-            Helper.Events.Display.RenderedHud += onRenderedHud;
+            this.Helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.GameLoop.SaveCreated += this.onCreated;
+            helper.Events.GameLoop.SaveLoaded += this.onLoaded;
+            helper.Events.GameLoop.Saving += this.onSaving;
+            this.Helper.Events.GameLoop.UpdateTicked += this.onUpdated;
+            helper.Events.GameLoop.DayStarted += this.onDayStarted;
+            helper.Events.GameLoop.DayEnding += this.onDayEnding;
+            this.Helper.Events.Player.Warped += this.onWarped;
+            this.Helper.Events.Player.InventoryChanged += this.onInventoryChanged;
+            this.Helper.Events.Input.ButtonPressed += this.onButtonPressed;
+            this.Helper.Events.Display.RenderedHud += this.onRenderedHud;
 
-            SpaceEvents.OnBlankSave += onBlankSave;
-            SpaceEvents.ActionActivated += onActionActivated;
-            SpaceEvents.BombExploded += bombExploded;
+            SpaceEvents.OnBlankSave += this.onBlankSave;
+            SpaceEvents.ActionActivated += this.onActionActivated;
+            SpaceEvents.BombExploded += this.bombExploded;
 
             HarmonyPatcher.Apply(this,
                 new HoeDirtPatcher()
@@ -122,25 +122,25 @@ namespace TheftOfTheWinterStar
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            ja = Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
-            ja.LoadAssets(Path.Combine(Helper.DirectoryPath, "assets", "ja"));
-            ja.IdsFixed += onIdsFixed;
+            ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "ja"));
+            ja.IdsFixed += this.onIdsFixed;
         }
 
         private void onCreated(object sender, SaveCreatedEventArgs e)
         {
-            saveData = new SaveData();
+            this.saveData = new SaveData();
         }
 
         private void onLoaded(object sender, SaveLoadedEventArgs e)
         {
-            saveData = Helper.Data.ReadSaveData<SaveData>("FrostDungeon.SaveData") ?? new SaveData();
+            this.saveData = this.Helper.Data.ReadSaveData<SaveData>("FrostDungeon.SaveData") ?? new SaveData();
         }
 
         private void onSaving(object sender, SavingEventArgs e)
         {
             if (Game1.IsMasterGame)
-                Helper.Data.WriteSaveData("FrostDungeon.SaveData", saveData);
+                this.Helper.Data.WriteSaveData("FrostDungeon.SaveData", this.saveData);
         }
 
         public bool startedBoss = false;
@@ -152,22 +152,22 @@ namespace TheftOfTheWinterStar
 
             if (Game1.currentLocation.Name == "FrostDungeon.Arena")
             {
-                if ((saveData.ArenaStage == ArenaStage.Stage1 || saveData.ArenaStage == ArenaStage.Stage2) &&
+                if ((this.saveData.ArenaStage == ArenaStage.Stage1 || this.saveData.ArenaStage == ArenaStage.Stage2) &&
                     Game1.currentLocation.characters.Count(npc => npc is Monster) <= 0)
                 {
                     Game1.playSound("questcomplete");
-                    if (saveData.ArenaStage == ArenaStage.Stage1)
+                    if (this.saveData.ArenaStage == ArenaStage.Stage1)
                     {
-                        saveData.ArenaStage = ArenaStage.Finished1;
+                        this.saveData.ArenaStage = ArenaStage.Finished1;
                         int key = ja.GetObjectId("Festive Key");
                         var pos = new Vector2(6, 13);
                         var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(key, 1) }), pos);
                         Game1.currentLocation.overlayObjects[pos] = chest;
                         Game1.playSound("questcomplete");
                     }
-                    else if (saveData.ArenaStage == ArenaStage.Stage2)
+                    else if (this.saveData.ArenaStage == ArenaStage.Stage2)
                     {
-                        saveData.ArenaStage = ArenaStage.Finished2;
+                        this.saveData.ArenaStage = ArenaStage.Finished2;
                         int stardropPiece = ja.GetObjectId("Frosty Stardrop Piece");
                         var pos = new Vector2(13, 13);
                         var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(stardropPiece, 1) }), pos);
@@ -178,18 +178,18 @@ namespace TheftOfTheWinterStar
             }
             else if (Game1.currentLocation.Name == "FrostDungeon.Bonus4")
             {
-                if (!saveData.DidProjectilePuzzle)
+                if (!this.saveData.DidProjectilePuzzle)
                 {
                     var projectiles = Game1.currentLocation.projectiles.ToList();
-                    if (prevProjectiles != null)
+                    if (this.prevProjectiles != null)
                     {
                         foreach (var projectile in projectiles)
                         {
-                            if (prevProjectiles.Contains(projectile))
-                                prevProjectiles.Remove(projectile);
+                            if (this.prevProjectiles.Contains(projectile))
+                                this.prevProjectiles.Remove(projectile);
                         }
 
-                        foreach (var projectile in prevProjectiles)
+                        foreach (var projectile in this.prevProjectiles)
                         {
                             if (projectile.getBoundingBox().Intersects(new Rectangle((int)(8.5 * Game1.tileSize), (int)(8.5 * Game1.tileSize), Game1.tileSize * 2, Game1.tileSize * 2)))
                             {
@@ -197,22 +197,22 @@ namespace TheftOfTheWinterStar
                                 var pos = new Vector2(9, 13);
                                 var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(stardropPiece, 1) }), pos);
                                 Game1.currentLocation.overlayObjects[pos] = chest;
-                                saveData.DidProjectilePuzzle = true;
+                                this.saveData.DidProjectilePuzzle = true;
                                 break;
                             }
                         }
                     }
-                    prevProjectiles = projectiles;
+                    this.prevProjectiles = projectiles;
                 }
             }
             else if (Game1.currentLocation.Name == "FrostDungeon.Boss")
             {
-                if (startedBoss & !saveData.BeatBoss)
+                if (this.startedBoss & !this.saveData.BeatBoss)
                 {
                     if (Game1.currentLocation.characters.Count(npc => npc is Monster) <= 0)
                     {
-                        startedBoss = false;
-                        saveData.BeatBoss = true;
+                        this.startedBoss = false;
+                        this.saveData.BeatBoss = true;
                         Game1.playSound("achievement");
 
                         foreach (var player in Game1.getAllFarmers())
@@ -272,22 +272,22 @@ namespace TheftOfTheWinterStar
 
         private void onDayEnding(object sender, DayEndingEventArgs e)
         {
-            if (saveData != null)
+            if (this.saveData != null)
             {
-                if (saveData.ArenaStage == ArenaStage.Stage1)
-                    saveData.ArenaStage = ArenaStage.NotTriggered;
-                else if (saveData.ArenaStage == ArenaStage.Stage2)
-                    saveData.ArenaStage = ArenaStage.Finished1;
+                if (this.saveData.ArenaStage == ArenaStage.Stage1)
+                    this.saveData.ArenaStage = ArenaStage.NotTriggered;
+                else if (this.saveData.ArenaStage == ArenaStage.Stage2)
+                    this.saveData.ArenaStage = ArenaStage.Finished1;
             }
 
             var arena = Game1.getLocationFromName("FrostDungeon.Arena");
             arena.characters.Clear();
             var bossArea = Game1.getLocationFromName("FrostDungeon.Boss");
-            if (!saveData.BeatBoss)
+            if (!this.saveData.BeatBoss)
             {
                 bossArea.characters.Clear();
                 bossArea.netObjects.Clear();
-                startedBoss = false;
+                this.startedBoss = false;
             }
 
             int seasonalDelimiter = ja.GetBigCraftableId("Tempus Globe");
@@ -438,7 +438,7 @@ namespace TheftOfTheWinterStar
             if (decoSpots.ContainsKey(e.NewLocation.Name))
             {
                 var spots = decoSpots[e.NewLocation.Name];
-                if (Game1.currentSeason == "winter" && Game1.dayOfMonth < 25 && !saveData.BeatBoss)
+                if (Game1.currentSeason == "winter" && Game1.dayOfMonth < 25 && !this.saveData.BeatBoss)
                 {
                     TileSheet ts = null;
                     for (int i = 0; i < e.NewLocation.Map.TileSheets.Count; ++i)
@@ -457,7 +457,7 @@ namespace TheftOfTheWinterStar
                         // which preserves the normal indices of the tilesheets.
                         char comeLast = '\u03a9'; // Omega
 
-                        ts = new TileSheet(e.NewLocation.Map, Helper.Content.GetActualAssetKey("assets/trail-decorations.png"), new xTile.Dimensions.Size(2, 2), new xTile.Dimensions.Size(16, 16));
+                        ts = new TileSheet(e.NewLocation.Map, this.Helper.Content.GetActualAssetKey("assets/trail-decorations.png"), new xTile.Dimensions.Size(2, 2), new xTile.Dimensions.Size(16, 16));
                         ts.Id = comeLast + ts.Id;
                         e.NewLocation.map.AddTileSheet(ts);
                         e.NewLocation.map.LoadTileSheets(Game1.mapDisplayDevice);
@@ -511,7 +511,7 @@ namespace TheftOfTheWinterStar
             }
             else if (e.NewLocation.Name == "FrostDungeon.Boss")
             {
-                if (!startedBoss && !saveData.BeatBoss)
+                if (!this.startedBoss && !this.saveData.BeatBoss)
                 {
                     var witch = new Witch();
                     e.NewLocation.characters.Add(witch);
@@ -526,7 +526,7 @@ namespace TheftOfTheWinterStar
                     Game1.player.CanMove = false;
                     Game1.currentSpeaker = dummySpeaker;
 
-                    startedBoss = true;
+                    this.startedBoss = true;
                 }
             }
         }
@@ -548,7 +548,7 @@ namespace TheftOfTheWinterStar
 
             foreach (var locName in locs)
             {
-                var loc = new GameLocation(Helper.Content.GetActualAssetKey("assets/" + locName + ".tbin"), "FrostDungeon." + locName);
+                var loc = new GameLocation(this.Helper.Content.GetActualAssetKey("assets/" + locName + ".tbin"), "FrostDungeon." + locName);
                 Game1.locations.Add(loc);
             }
 
@@ -559,7 +559,7 @@ namespace TheftOfTheWinterStar
             char comeLast = '\u03a9'; // Omega
 
             var tunnel = Game1.getLocationFromName("Tunnel");
-            var animDoorTilesheet = SpaceCore.Content.loadTsx(Helper, "assets/magic-doorway.tsx", "magic-doorway", tunnel.Map, out var animMapping);
+            var animDoorTilesheet = SpaceCore.Content.loadTsx(this.Helper, "assets/magic-doorway.tsx", "magic-doorway", tunnel.Map, out var animMapping);
             animDoorTilesheet.Id = comeLast + animDoorTilesheet.Id;
             tunnel.map.AddTileSheet(animDoorTilesheet);
 
@@ -601,12 +601,12 @@ namespace TheftOfTheWinterStar
             {
                 if (farmer.currentLocation.Name == "FrostDungeon.Arena")
                 {
-                    Log.trace("Activate arena: Stage " + saveData.ArenaStage);
+                    Log.trace("Activate arena: Stage " + this.saveData.ArenaStage);
                     Game1.playSound("batScreech");
                     Game1.playSound("rockGolemSpawn");
-                    if (saveData.ArenaStage == ArenaStage.NotTriggered)
+                    if (this.saveData.ArenaStage == ArenaStage.NotTriggered)
                     {
-                        saveData.ArenaStage = ArenaStage.Stage1;
+                        this.saveData.ArenaStage = ArenaStage.Stage1;
                         for (int i = 0; i < 9; ++i)
                         {
                             int cx = (int)e.Position.X, cy = (int)e.Position.Y;
@@ -624,9 +624,9 @@ namespace TheftOfTheWinterStar
                                 farmer.currentLocation.addCharacter(new DustSpirit(new Vector2(x, y)));
                         }
                     }
-                    else if (saveData.ArenaStage == ArenaStage.Finished1)
+                    else if (this.saveData.ArenaStage == ArenaStage.Finished1)
                     {
-                        saveData.ArenaStage = ArenaStage.Stage2;
+                        this.saveData.ArenaStage = ArenaStage.Stage2;
                         for (int i = 0; i < 3; ++i)
                         {
                             int cx = (int)e.Position.X, cy = (int)e.Position.Y;
@@ -782,14 +782,14 @@ namespace TheftOfTheWinterStar
             var witch = Game1.currentLocation.characters.SingleOrDefault(npc => npc is Witch) as Witch;
             if (witch != null)
             {
-                int posX = (Game1.viewport.Width - bossBarBg.Width * 4) / 2;
-                b.Draw(bossBarBg, new Vector2(posX, 5), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
+                int posX = (Game1.viewport.Width - this.bossBarBg.Width * 4) / 2;
+                b.Draw(this.bossBarBg, new Vector2(posX, 5), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
 
                 float perc = (float)witch.Health / Witch.WITCH_HEALTH;
-                Rectangle r = new Rectangle(0, 0, (int)(bossBarFg.Width * perc), bossBarFg.Height);
+                Rectangle r = new Rectangle(0, 0, (int)(this.bossBarFg.Width * perc), this.bossBarFg.Height);
                 if (r.Width > 0)
                 {
-                    b.Draw(bossBarFg, new Vector2(posX, 5), r, Color.Green, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
+                    b.Draw(this.bossBarFg, new Vector2(posX, 5), r, Color.Green, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
                 }
             }
         }
@@ -816,12 +816,12 @@ namespace TheftOfTheWinterStar
                         flag = !flag;
                         if (!flag)
                         {
-                            doBombableCheck(who.currentLocation, index1);
+                            this.doBombableCheck(who.currentLocation, index1);
                         }
                     }
                     if (flag)
                     {
-                        doBombableCheck(who.currentLocation, index1);
+                        this.doBombableCheck(who.currentLocation, index1);
                     }
                     ++index1.Y;
                     index1.Y = Math.Min((float)(who.currentLocation.map.Layers[0].LayerHeight - 1), Math.Max(0.0f, index1.Y));
@@ -862,10 +862,10 @@ namespace TheftOfTheWinterStar
             }
 
             loc.removeTileProperty((int)pos.X, (int)pos.Y, "Buildings", "Bombable");
-            doBombableCheck(loc, new Vector2(pos.X + 1, pos.Y));
-            doBombableCheck(loc, new Vector2(pos.X - 1, pos.Y));
-            doBombableCheck(loc, new Vector2(pos.X, pos.Y + 1));
-            doBombableCheck(loc, new Vector2(pos.X, pos.Y - 1));
+            this.doBombableCheck(loc, new Vector2(pos.X + 1, pos.Y));
+            this.doBombableCheck(loc, new Vector2(pos.X - 1, pos.Y));
+            this.doBombableCheck(loc, new Vector2(pos.X, pos.Y + 1));
+            this.doBombableCheck(loc, new Vector2(pos.X, pos.Y - 1));
         }
     }
 }

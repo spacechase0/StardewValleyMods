@@ -34,9 +34,9 @@ namespace JsonAssets.Data
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             /*if (currLang == LocalizedContentManager.LanguageCode.en)
                 return Name;*/
-            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
-                return Name;
-            return NameLocalization[currLang.ToString()];
+            if (this.NameLocalization == null || !this.NameLocalization.ContainsKey(currLang.ToString()))
+                return this.Name;
+            return this.NameLocalization[currLang.ToString()];
         }
 
         public string LocalizedDescription()
@@ -44,17 +44,17 @@ namespace JsonAssets.Data
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             /*if (currLang == LocalizedContentManager.LanguageCode.en)
                 return Description;*/
-            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return Description;
-            return DescriptionLocalization[currLang.ToString()];
+            if (this.DescriptionLocalization == null || !this.DescriptionLocalization.ContainsKey(currLang.ToString()))
+                return this.Description;
+            return this.DescriptionLocalization[currLang.ToString()];
         }
 
-        public int GetObjectId() { return id; }
-        public int GetTextureIndex() { return textureIndex; }
+        public int GetObjectId() { return this.id; }
+        public int GetTextureIndex() { return this.textureIndex; }
 
         internal string GetBootsInformation()
         {
-            return $"{Name}/{LocalizedDescription()}/{Price}/{Defense}/{Immunity}/{textureIndex}/{LocalizedName()}";
+            return $"{this.Name}/{this.LocalizedDescription()}/{this.Price}/{this.Defense}/{this.Immunity}/{this.textureIndex}/{this.LocalizedName()}";
         }
     }
 }

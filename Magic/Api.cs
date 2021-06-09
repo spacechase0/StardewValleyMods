@@ -15,9 +15,9 @@ namespace Magic
         internal void InvokeOnAnalyzeCast(Farmer farmer)
         {
             Log.trace("Event: OnAnalyzeCast");
-            if (OnAnalyzeCast == null)
+            if (this.OnAnalyzeCast == null)
                 return;
-            Util.invokeEvent("Magic.Api.OnAnalyzeCast", OnAnalyzeCast.GetInvocationList(), farmer);
+            Util.invokeEvent("Magic.Api.OnAnalyzeCast", this.OnAnalyzeCast.GetInvocationList(), farmer);
         }
     }
 }

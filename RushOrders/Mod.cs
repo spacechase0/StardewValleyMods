@@ -26,14 +26,14 @@ namespace RushOrders
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
             Log.info("Loading Config");
-            ModConfig = Helper.ReadConfig<RushOrdersConfig>();
+            ModConfig = this.Helper.ReadConfig<RushOrdersConfig>();
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.Display.MenuChanged += onMenuChanged;
-            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.GameLoop.UpdateTicked += this.onUpdateTicked;
         }
 
         public override object GetApi()
@@ -43,13 +43,13 @@ namespace RushOrders
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(ModManifest, () => ModConfig = new RushOrdersConfig(), () => Helper.WriteConfig(ModConfig));
-                capi.RegisterSimpleOption(ModManifest, "Price: Tool - One day", "The price multiplier for a one-day tool upgrade.", () => (float)ModConfig.PriceFactor.Tool.Rush, (float val) => ModConfig.PriceFactor.Tool.Rush = val);
-                capi.RegisterSimpleOption(ModManifest, "Price: Tool - Instant", "The price multiplier for an instant upgrade.", () => (float)ModConfig.PriceFactor.Tool.Rush, (float val) => ModConfig.PriceFactor.Tool.Now = val);
-                capi.RegisterSimpleOption(ModManifest, "Price: Building - Accelerate", "The price multiplier to accelerate building construction by one day.", () => (float)ModConfig.PriceFactor.Building.RushOneDay, (float val) => ModConfig.PriceFactor.Building.RushOneDay = val);
+                capi.RegisterModConfig(this.ModManifest, () => ModConfig = new RushOrdersConfig(), () => this.Helper.WriteConfig(ModConfig));
+                capi.RegisterSimpleOption(this.ModManifest, "Price: Tool - One day", "The price multiplier for a one-day tool upgrade.", () => (float)ModConfig.PriceFactor.Tool.Rush, (float val) => ModConfig.PriceFactor.Tool.Rush = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Price: Tool - Instant", "The price multiplier for an instant upgrade.", () => (float)ModConfig.PriceFactor.Tool.Rush, (float val) => ModConfig.PriceFactor.Tool.Now = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Price: Building - Accelerate", "The price multiplier to accelerate building construction by one day.", () => (float)ModConfig.PriceFactor.Building.RushOneDay, (float val) => ModConfig.PriceFactor.Building.RushOneDay = val);
             }
         }
 
@@ -177,7 +177,7 @@ namespace RushOrders
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void onUpdateTicked(object sender, EventArgs e)
+        private void onUpdateTicked(object sender, EventArgs e)
         {
             if (!Context.IsWorldReady)
                 return;

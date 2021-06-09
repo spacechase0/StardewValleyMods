@@ -55,16 +55,16 @@ namespace SurfingFestival
         {
             int w = 48, h = 16;
             int ox = 0, oy = 0;
-            if (Type == ObstacleType.Item || Type == ObstacleType.HomingProjectile || Type == ObstacleType.FirstPlaceProjectile)
+            if (this.Type == ObstacleType.Item || this.Type == ObstacleType.HomingProjectile || this.Type == ObstacleType.FirstPlaceProjectile)
                 w = 16;
-            else if (Type == ObstacleType.Rock)
+            else if (this.Type == ObstacleType.Rock)
             {
                 oy = -16 * Game1.pixelZoom;
                 h += 16;
             }
             w *= Game1.pixelZoom;
             h *= Game1.pixelZoom;
-            return new Rectangle((int)Position.X + ox /*- w / 2*/, (int)Position.Y + oy /*- h / 2*/, w, h);
+            return new Rectangle((int)this.Position.X + ox /*- w / 2*/, (int)this.Position.Y + oy /*- h / 2*/, w, h);
         }
     }
 
@@ -111,21 +111,21 @@ namespace SurfingFestival
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
             surfboardTex = helper.Content.Load<Texture2D>("assets/surfboards.png");
             surfboardWaterTex = helper.Content.Load<Texture2D>("assets/surfboard-water.png");
             stunTex = helper.Content.Load<Texture2D>("assets/net-stun.png");
             obstaclesTex = helper.Content.Load<Texture2D>("assets/obstacles.png");
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
-            helper.Events.Input.ButtonPressed += onButtonPressed;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.GameLoop.UpdateTicked += this.onUpdateTicked;
+            helper.Events.Input.ButtonPressed += this.onButtonPressed;
             //helper.Events.Display.RenderedWorld += onRenderedWorld;
-            helper.Events.Display.RenderedHud += onRenderedHud;
-            helper.Events.Multiplayer.ModMessageReceived += onMessageReceived;
+            helper.Events.Display.RenderedHud += this.onRenderedHud;
+            helper.Events.Multiplayer.ModMessageReceived += this.onMessageReceived;
 
-            SpaceEvents.ActionActivated += onActionActivated;
+            SpaceEvents.ActionActivated += this.onActionActivated;
 
             HarmonyPatcher.Apply(this,
                 new CharacterPatcher(),
@@ -145,17 +145,17 @@ namespace SurfingFestival
         {
             if (asset.AssetNameEquals("Data\\Festivals\\summer5"))
             {
-                var data = Helper.Content.Load<Dictionary<string, string>>("assets/festival." + LocalizedContentManager.CurrentLanguageCode + ".json");
+                var data = this.Helper.Content.Load<Dictionary<string, string>>("assets/festival." + LocalizedContentManager.CurrentLanguageCode + ".json");
                 festivalName = data["name"];
                 return (T)(object)data;
             }
             else if (asset.AssetNameEquals("Maps\\Beach-Surfing"))
             {
-                return (T)(object)Helper.Content.Load<xTile.Map>("assets/Beach.tbin");
+                return (T)(object)this.Helper.Content.Load<Map>("assets/Beach.tbin");
             }
             else if (asset.AssetNameEquals("Maps\\surfing"))
             {
-                return (T)(object)Helper.Content.Load<Texture2D>("assets/surfing.png");
+                return (T)(object)this.Helper.Content.Load<Texture2D>("assets/surfing.png");
             }
 
             return default(T);
@@ -176,13 +176,13 @@ namespace SurfingFestival
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var spacecore = Helper.ModRegistry.GetApi<SpaceCoreAPI>("spacechase0.SpaceCore");
+            var spacecore = this.Helper.ModRegistry.GetApi<SpaceCoreAPI>("spacechase0.SpaceCore");
             spacecore.AddEventCommand("warpSurfingRacers", PatchHelper.RequireMethod<Mod>(nameof(Mod.EventCommand_WarpSurfingRacers)));
             spacecore.AddEventCommand("warpSurfingRacersFinish", PatchHelper.RequireMethod<Mod>(nameof(Mod.EventCommand_WarpSurfingRacersFinish)));
             spacecore.AddEventCommand("awardSurfingPrize", PatchHelper.RequireMethod<Mod>(nameof(Mod.EventCommand_AwardSurfingPrize)));
 
-            ja = Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
-            ja.LoadAssets(Path.Combine(Helper.DirectoryPath, "assets", "ja"));
+            ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "ja"));
         }
 
         private Event prevEvent = null;
@@ -194,23 +194,23 @@ namespace SurfingFestival
                 if (++surfboardWaterAnim >= 3)
                     surfboardWaterAnim = 0;
             }
-            if (++itemBobbleTimer >= 25)
+            if (++this.itemBobbleTimer >= 25)
             {
-                itemBobbleTimer = 0;
-                if (++itemBobbleFrame >= 4)
-                    itemBobbleFrame = 0;
+                this.itemBobbleTimer = 0;
+                if (++this.itemBobbleFrame >= 4)
+                    this.itemBobbleFrame = 0;
             }
-            ++netBobTimer;
+            ++this.netBobTimer;
 
             if (Game1.CurrentEvent?.FestivalName != festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
             {
-                prevEvent = Game1.CurrentEvent;
+                this.prevEvent = Game1.CurrentEvent;
                 return;
             }
 
-            if (prevEvent == null)
+            if (this.prevEvent == null)
                 playerDidBonfire = BonfireState.NotDone;
-            prevEvent = Game1.CurrentEvent;
+            this.prevEvent = Game1.CurrentEvent;
 
             var rand = new Random();
             foreach (var actor in Game1.CurrentEvent.actors)
@@ -527,7 +527,7 @@ namespace SurfingFestival
                     if (racer == Game1.player)
                     {
                         var msg = new UseItemMessage() { ItemUsed = state.CurrentItem.Value };
-                        Helper.Multiplayer.SendMessage(msg, UseItemMessage.TYPE, new string[] { ModManifest.UniqueID }, null);
+                        this.Helper.Multiplayer.SendMessage(msg, UseItemMessage.TYPE, new string[] { this.ModManifest.UniqueID }, null);
                     }
                     switch (state.CurrentItem.Value)
                     {
@@ -698,13 +698,13 @@ namespace SurfingFestival
                 {
                     case ObstacleType.Item:
                         srcTex = obstaclesTex;
-                        srcRect = new Rectangle(48 + 16 * itemBobbleFrame, 0, 16, 16);
+                        srcRect = new Rectangle(48 + 16 * this.itemBobbleFrame, 0, 16, 16);
                         break;
                     case ObstacleType.Net:
                         srcTex = obstaclesTex;
                         srcRect = new Rectangle(0, 48, 48, 32);
                         origin = new Vector2(0, 16);
-                        offset = new Vector2(0, (float)Math.Sin(netBobTimer / 10) * 3);
+                        offset = new Vector2(0, (float)Math.Sin(this.netBobTimer / 10) * 3);
                         break;
                     case ObstacleType.Rock:
                         srcTex = obstaclesTex;
@@ -769,26 +769,26 @@ namespace SurfingFestival
                     case (int)Item.Boost:
                         displayTex = Game1.objectSpriteSheet;
                         displayRect = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 434, 16, 16);
-                        displayName = Helper.Translation.Get("item.boost");
+                        displayName = this.Helper.Translation.Get("item.boost");
                         break;
 
                     case (int)Item.HomingProjectile:
                         displayTex = Game1.objectSpriteSheet;
                         displayRect = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 128, 16, 16);
-                        displayName = Helper.Translation.Get("item.homingprojectile");
+                        displayName = this.Helper.Translation.Get("item.homingprojectile");
                         break;
 
                     case (int)Item.FirstPlaceProjectile:
                         displayTex = Game1.mouseCursors;
                         displayRect = new Rectangle(643, 1043, 61, 61);
-                        displayName = Helper.Translation.Get("item.firstplaceprojectile");
+                        displayName = this.Helper.Translation.Get("item.firstplaceprojectile");
                         break;
 
                     case (int)Item.Invincibility:
                         displayTex = Game1.content.Load<Texture2D>("Characters\\Junimo"); // TODO: Cache this
                         displayRect = new Rectangle(80, 80, 16, 16);
                         displayColor = MyGetPrismaticColor();
-                        displayName = Helper.Translation.Get("item.invincibility");
+                        displayName = this.Helper.Translation.Get("item.invincibility");
                         break;
                 }
 
@@ -796,10 +796,10 @@ namespace SurfingFestival
                 b.DrawString(Game1.smallFont, displayName, new Vector2((int)pos.X + 74, (int)pos.Y + 74 * 2 + 6), Game1.textColor, 0, new Vector2(Game1.smallFont.MeasureString(displayName).X / 2, 0), 0.85f, SpriteEffects.None, 0.88f);
             }
 
-            string lapsStr = Helper.Translation.Get("ui.laps", new { laps = state.LapsDone });
+            string lapsStr = this.Helper.Translation.Get("ui.laps", new { laps = state.LapsDone });
             SpriteText.drawStringHorizontallyCenteredAt(b, lapsStr, (int)pos.X + 74, (int)pos.Y + 74 * 2 + 18 * 2 + 8);
 
-            string str = Helper.Translation.Get("ui.ranking");
+            string str = this.Helper.Translation.Get("ui.ranking");
             SpriteText.drawStringHorizontallyCenteredAt(b, str, (int)pos.X + 74, (int)Game1.viewport.Height - 128 - (racers.Count - 1) / 5 * 40);
 
             int i = 0;
@@ -826,7 +826,7 @@ namespace SurfingFestival
 
         private void onMessageReceived(object sender, ModMessageReceivedEventArgs e)
         {
-            if (e.FromModID != ModManifest.UniqueID)
+            if (e.FromModID != this.ModManifest.UniqueID)
                 return;
             switch (e.Type)
             {
@@ -895,7 +895,7 @@ namespace SurfingFestival
                                 farmer.changeFriendship(50, npc);
                         }
                         playerDidBonfire = BonfireState.Normal;
-                        Game1.drawObjectDialogue(Helper.Translation.Get("dialog.wood"));
+                        Game1.drawObjectDialogue(this.Helper.Translation.Get("dialog.wood"));
                         Game1.playSound("fireball");
                         placeBonfire(Game1.currentLocation.Map, 30, 5, false);
                     }
@@ -904,13 +904,13 @@ namespace SurfingFestival
                         farmer.removeItemFromInventory(item);
                         playerDidBonfire = BonfireState.Shorts;
 
-                        Game1.drawDialogue(Game1.getCharacterFromName("Lewis"), Helper.Translation.Get("dialog.shorts"));
+                        Game1.drawDialogue(Game1.getCharacterFromName("Lewis"), this.Helper.Translation.Get("dialog.shorts"));
                         Game1.playSound("fireball");
                         placeBonfire(Game1.currentLocation.Map, 30, 5, true);
                     }
                 };
 
-                var menu = new ItemGrabMenu(null, true, false, highlight, behaviorOnSelect, Helper.Translation.Get("ui.wood"), behaviorOnSelect);
+                var menu = new ItemGrabMenu(null, true, false, highlight, behaviorOnSelect, this.Helper.Translation.Get("ui.wood"), behaviorOnSelect);
                 Game1.activeClickableMenu = menu;
 
                 e.Cancel = true;
@@ -919,8 +919,8 @@ namespace SurfingFestival
             {
                 var answers = new Response[]
                 {
-                    new Response( "MakeOffering", Helper.Translation.Get( "secret.yes" ) ),
-                    new Response( "Leave", Helper.Translation.Get( "secret.no" ) ),
+                    new Response( "MakeOffering", this.Helper.Translation.Get( "secret.yes" ) ),
+                    new Response( "Leave", this.Helper.Translation.Get( "secret.no" ) ),
                 };
                 GameLocation.afterQuestionBehavior afterQuestion = (who, choice) =>
                 {
@@ -929,15 +929,15 @@ namespace SurfingFestival
                         if (Game1.player.Money >= 100000)
                         {
                             Game1.player.mailReceived.Add("SurfingFestivalOffering");
-                            Game1.drawObjectDialogue(Helper.Translation.Get("secret.purchased"));
+                            Game1.drawObjectDialogue(this.Helper.Translation.Get("secret.purchased"));
                         }
                         else
                         {
-                            Game1.drawObjectDialogue(Helper.Translation.Get("secret.broke"));
+                            Game1.drawObjectDialogue(this.Helper.Translation.Get("secret.broke"));
                         }
                     }
                 };
-                Game1.currentLocation.createQuestionDialogue(Game1.parseText(Helper.Translation.Get("secret.text")), answers, afterQuestion);
+                Game1.currentLocation.createQuestionDialogue(Game1.parseText(this.Helper.Translation.Get("secret.text")), answers, afterQuestion);
 
                 e.Cancel = true;
             }
@@ -1197,13 +1197,13 @@ namespace SurfingFestival
                 if (xLaps != yLaps)
                     return xLaps - yLaps;
 
-                int xPlace = DirectionToProgress(Mod.racerState[x].Facing);
-                int yPlace = DirectionToProgress(Mod.racerState[y].Facing);
+                int xPlace = this.DirectionToProgress(Mod.racerState[x].Facing);
+                int yPlace = this.DirectionToProgress(Mod.racerState[y].Facing);
                 if (xPlace != yPlace)
                     return xPlace - yPlace;
 
-                int xCoord = (int)GetProgressCoordinate(x);
-                int yCoord = (int)GetProgressCoordinate(y);
+                int xCoord = (int)this.GetProgressCoordinate(x);
+                int yCoord = (int)this.GetProgressCoordinate(y);
 
                 // x @ 5, y @ 10
                 // right: 5 - 10 = -5, y is greater (same for down)

@@ -11,12 +11,12 @@ namespace SpaceCore.UI
 
         public Element RenderLast { get; set; }
 
-        public Element[] Children { get { return children.ToArray(); } }
+        public Element[] Children { get { return this.children.ToArray(); } }
 
         public void AddChild(Element element)
         {
             element.Parent?.RemoveChild(element);
-            children.Add(element);
+            this.children.Add(element);
             element.Parent = this;
         }
 
@@ -24,14 +24,14 @@ namespace SpaceCore.UI
         {
             if (element.Parent != this)
                 throw new ArgumentException("Element must be a child of this container.");
-            children.Remove(element);
+            this.children.Remove(element);
             element.Parent = null;
         }
 
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
-            foreach (var element in children)
+            foreach (var element in this.children)
             {
                 element.Update(hidden);
             }
@@ -39,14 +39,14 @@ namespace SpaceCore.UI
 
         public override void Draw(SpriteBatch b)
         {
-            foreach (var child in children)
+            foreach (var child in this.children)
             {
-                if (child == RenderLast)
+                if (child == this.RenderLast)
                     continue;
                 child.Draw(b);
             }
-            if (RenderLast != null)
-                RenderLast.Draw(b);
+            if (this.RenderLast != null)
+                this.RenderLast.Draw(b);
         }
     }
 }

@@ -19,11 +19,11 @@ namespace BuildableLocationsFramework
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            Helper.Events.Display.MenuChanged += menuChanged;
+            this.Helper.Events.Display.MenuChanged += this.menuChanged;
 
-            Helper.ConsoleCommands.Add("blf_adddummy", "", doCommand);
+            this.Helper.ConsoleCommands.Add("blf_adddummy", "", this.doCommand);
 
             HarmonyPatcher.Apply(this,
                 new BuildingPatcher(),
@@ -61,13 +61,13 @@ namespace BuildableLocationsFramework
                     return;
             }
 
-            int newLocIndex = buildableLocIndex;
+            int newLocIndex = this.buildableLocIndex;
             if (e.Button == SButton.Z || e.Button == SButton.LeftShoulder)
                 newLocIndex--;
             else if (e.Button == SButton.X || e.Button == SButton.RightShoulder)
                 newLocIndex++;
 
-            if (buildableLocIndex != newLocIndex)
+            if (this.buildableLocIndex != newLocIndex)
             {
                 var buildableLocs = GetAllLocations().FindAll(loc => loc is BuildableGameLocation);
                 while (newLocIndex < 0)
@@ -78,7 +78,7 @@ namespace BuildableLocationsFramework
                 Game1.currentLocation = buildableLocs[newLocIndex];
                 Game1.viewport.X = 0;
                 Game1.viewport.Y = 0;
-                buildableLocIndex = newLocIndex;
+                this.buildableLocIndex = newLocIndex;
             }
         }
 
@@ -91,7 +91,7 @@ namespace BuildableLocationsFramework
             {
                 if (menu1 != null)
                 {
-                    var blueprints = Helper.Reflection.GetField<List<BluePrint>>(menu1, "blueprints").GetValue();
+                    var blueprints = this.Helper.Reflection.GetField<List<BluePrint>>(menu1, "blueprints").GetValue();
 
                     var locs = GetAllLocations();
                     foreach (var loc in locs)
@@ -112,15 +112,15 @@ namespace BuildableLocationsFramework
                     }
                 }
 
-                Helper.Events.GameLoop.UpdateTicked += doMenuUpdate;
-                Helper.Events.Display.RenderedActiveMenu += doMenuRender;
-                Helper.Events.Input.ButtonPressed += doMenuButtons;
+                this.Helper.Events.GameLoop.UpdateTicked += this.doMenuUpdate;
+                this.Helper.Events.Display.RenderedActiveMenu += this.doMenuRender;
+                this.Helper.Events.Input.ButtonPressed += this.doMenuButtons;
             }
             if (e.OldMenu is CarpenterMenu || e.OldMenu is PurchaseAnimalsMenu)
             {
-                Helper.Events.GameLoop.UpdateTicked -= doMenuUpdate;
-                Helper.Events.Display.RenderedActiveMenu -= doMenuRender;
-                Helper.Events.Input.ButtonPressed -= doMenuButtons;
+                this.Helper.Events.GameLoop.UpdateTicked -= this.doMenuUpdate;
+                this.Helper.Events.Display.RenderedActiveMenu -= this.doMenuRender;
+                this.Helper.Events.Input.ButtonPressed -= this.doMenuButtons;
             }
         }
 

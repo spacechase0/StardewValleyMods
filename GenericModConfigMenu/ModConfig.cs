@@ -16,8 +16,8 @@ namespace GenericModConfigMenu
 
             public ModPage(string name)
             {
-                Name = name;
-                DisplayName = Name;
+                this.Name = name;
+                this.DisplayName = this.Name;
             }
         }
 
@@ -36,10 +36,10 @@ namespace GenericModConfigMenu
 
         public ModConfig(IManifest manifest, Action revertToDefault, Action saveToFile)
         {
-            ModManifest = manifest;
-            RevertToDefault = revertToDefault;
-            SaveToFile = saveToFile;
-            Options.Add("", ActiveRegisteringPage = new ModPage(""));
+            this.ModManifest = manifest;
+            this.RevertToDefault = revertToDefault;
+            this.SaveToFile = saveToFile;
+            this.Options.Add("", this.ActiveRegisteringPage = new ModPage(""));
         }
     }
 }

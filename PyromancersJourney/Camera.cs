@@ -10,7 +10,7 @@ namespace PyromancersJourney
 
         public Matrix CreateViewMatrix()
         {
-            return Matrix.CreateLookAt(pos, target, up);
+            return Matrix.CreateLookAt(this.pos, this.target, this.up);
         }
     }
 }

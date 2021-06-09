@@ -9,9 +9,9 @@ namespace Magic.Spells
     public abstract class Spell
     {
         public string ParentSchoolId { get; }
-        public School ParentSchool { get { return School.getSchool(ParentSchoolId); } }
+        public School ParentSchool { get { return School.getSchool(this.ParentSchoolId); } }
         public string Id { get; }
-        public string FullId { get { return ParentSchoolId + ":" + Id; } }
+        public string FullId { get { return this.ParentSchoolId + ":" + this.Id; } }
         public Texture2D[] Icons
         {
             get;
@@ -20,8 +20,8 @@ namespace Magic.Spells
 
         protected Spell(string school, string id)
         {
-            ParentSchoolId = school;
-            Id = id;
+            this.ParentSchoolId = school;
+            this.Id = id;
         }
 
         public virtual int getMaxCastingLevel()
@@ -33,16 +33,16 @@ namespace Magic.Spells
 
         public virtual bool canCast(Farmer player, int level)
         {
-            return player.knowsSpell(FullId, level) && player.getCurrentMana() >= getManaCost(player, level);
+            return player.knowsSpell(this.FullId, level) && player.getCurrentMana() >= this.getManaCost(player, level);
         }
 
         public virtual string getTranslatedName()
         {
-            return Mod.instance.Helper.Translation.Get("spell." + FullId + ".name");
+            return Mod.instance.Helper.Translation.Get("spell." + this.FullId + ".name");
         }
         public virtual string getTranslatedDescription()
         {
-            return Mod.instance.Helper.Translation.Get("spell." + FullId + ".desc");
+            return Mod.instance.Helper.Translation.Get("spell." + this.FullId + ".desc");
         }
 
         public abstract IActiveEffect onCast(Farmer player, int level, int targetX, int targetY);
@@ -51,15 +51,15 @@ namespace Magic.Spells
         {
             try
             {
-                Icons = new Texture2D[getMaxCastingLevel()];
-                for (int i = 1; i <= getMaxCastingLevel(); ++i)
+                this.Icons = new Texture2D[this.getMaxCastingLevel()];
+                for (int i = 1; i <= this.getMaxCastingLevel(); ++i)
                 {
-                    Icons[i - 1] = Content.loadTexture("magic/" + ParentSchool.Id + "/" + Id + "/" + i + ".png");
+                    this.Icons[i - 1] = Content.loadTexture("magic/" + this.ParentSchool.Id + "/" + this.Id + "/" + i + ".png");
                 }
             }
             catch (ContentLoadException e)
             {
-                Log.warn("Failed to load icon for spell " + FullId + ": " + e);
+                Log.warn("Failed to load icon for spell " + this.FullId + ": " + e);
             }
         }
     }

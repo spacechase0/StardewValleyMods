@@ -91,10 +91,10 @@ namespace CookingSkill
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += onMenuChanged;
-            SpaceEvents.OnItemEaten += onItemEaten;
+            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            SpaceEvents.OnItemEaten += this.onItemEaten;
 
             Skills.RegisterSkill(skill = new Skill());
         }
@@ -138,7 +138,7 @@ namespace CookingSkill
                 int[] thisAttr = (thisBuff == null ? null : ((int[])Util.GetInstanceField(typeof(Buff), thisBuff, "buffAttributes")));
                 Log.trace("Ate something: " + obj + " " + Game1.objectInformation[obj.ParentSheetIndex] + " " + buffData + " " + oldBuff + " " + thisBuff + " " + oldAttr + " " + thisAttr);
                 if (oldBuff != null && thisBuff != null && Enumerable.SequenceEqual(oldAttr, thisAttr) &&
-                     ((info[6] == "drink" && oldBuff != lastDrink) || (info[6] != "drink" && oldBuff != lastDrink)))
+                     ((info[6] == "drink" && oldBuff != this.lastDrink) || (info[6] != "drink" && oldBuff != this.lastDrink)))
                 {
                     // Now that we know that this is the original buff, we can buff the buff.
                     Log.trace("Buffing buff");
@@ -175,7 +175,7 @@ namespace CookingSkill
                         Game1.buffsDisplay.drink.removeBuff();
                         Game1.buffsDisplay.drink = newBuff;
                         Game1.buffsDisplay.drink.addBuff();
-                        lastDrink = newBuff;
+                        this.lastDrink = newBuff;
                     }
                     else
                     {
@@ -223,7 +223,7 @@ namespace CookingSkill
                             Game1.buffsDisplay.drink.removeBuff();
                         Game1.buffsDisplay.drink = newBuff;
                         Game1.buffsDisplay.drink.addBuff();
-                        lastDrink = newBuff;
+                        this.lastDrink = newBuff;
                     }
                     else
                     {

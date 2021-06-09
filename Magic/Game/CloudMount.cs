@@ -11,14 +11,14 @@ namespace Magic.Game
 
         public CloudMount()
         {
-            Name = displayName = "";
+            this.Name = this.displayName = "";
         }
 
         //private bool dismountedOnce = false;
         public override void update(GameTime time, GameLocation location)
         {
             base.update(time, location);
-            if (rider == null || rider.mount != this)
+            if (this.rider == null || this.rider.mount != this)
             {
                 /*if (!dismountedOnce)
                 {
@@ -27,29 +27,29 @@ namespace Magic.Game
                     dismountedOnce = true;
                 }
                 else*/
-                if (!dismounting)
-                    currentLocation.characters.Remove(this);
+                if (!this.dismounting)
+                    this.currentLocation.characters.Remove(this);
                 return;
             }
 
             if (!location.IsOutdoors)
             {
-                checkAction(rider, location);
+                this.checkAction(this.rider, location);
             }
 
-            rider.speed = 10;
-            rider.TemporaryPassableTiles.Add(new Rectangle((int)rider.position.X - Game1.tileSize, (int)rider.position.Y - Game1.tileSize, Game1.tileSize * 3, Game1.tileSize * 3));
+            this.rider.speed = 10;
+            this.rider.TemporaryPassableTiles.Add(new Rectangle((int)this.rider.position.X - Game1.tileSize, (int)this.rider.position.Y - Game1.tileSize, Game1.tileSize * 3, Game1.tileSize * 3));
         }
 
         public override void draw(SpriteBatch b)
         {
             //Game1.player.draw(b);
-            b.Draw(tex, getLocalPosition(Game1.viewport) + new Vector2(-Game1.tileSize * 0.90f, -Game1.tileSize * 0.75f), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
+            b.Draw(this.tex, this.getLocalPosition(Game1.viewport) + new Vector2(-Game1.tileSize * 0.90f, -Game1.tileSize * 0.75f), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
         }
 
         public override bool checkAction(Farmer who, GameLocation l)
         {
-            if (rider == null)
+            if (this.rider == null)
                 return false;
 
             this.dismounting.Value = true;
@@ -77,7 +77,7 @@ namespace Magic.Game
 
         public override Rectangle GetBoundingBox()
         {
-            return new Rectangle((int)position.X, (int)position.Y, 0, 0);
+            return new Rectangle((int)this.position.X, (int)this.position.Y, 0, 0);
         }
     }
 }

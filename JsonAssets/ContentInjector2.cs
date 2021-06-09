@@ -13,7 +13,7 @@ namespace JsonAssets
         private List<string> files;
         public ContentInjector2()
         {
-            files = new List<string>(new string[]
+            this.files = new List<string>(new string[]
             {
                 "Data\\NPCGiftTastes",
             });
@@ -23,7 +23,7 @@ namespace JsonAssets
         {
             Mod.instance.Helper.Content.InvalidateCache((a) =>
             {
-                foreach (var file in files)
+                foreach (var file in this.files)
                 {
                     if (a.AssetNameEquals(file))
                         return true;
@@ -34,7 +34,7 @@ namespace JsonAssets
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
-            foreach (var file in files)
+            foreach (var file in this.files)
             {
                 if (asset.AssetNameEquals(file))
                     return true;

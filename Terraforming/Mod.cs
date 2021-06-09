@@ -14,7 +14,7 @@ namespace Terraforming
         {
             instance = this;
 
-            helper.ConsoleCommands.Add("terraform", "TODO", terraformCommand);
+            helper.ConsoleCommands.Add("terraform", "TODO", this.terraformCommand);
         }
 
         private void terraformCommand(string cmd, string[] args)

@@ -16,58 +16,58 @@ namespace SpaceCore.Interface
 
         public override void draw(SpriteBatch b)
         {
-            drawTextureBox(b, xPositionOnScreen, yPositionOnScreen, width, height, Color.White);
+            drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, Color.White);
 
             b.End();
-            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, (DepthStencilState)null, (RasterizerState)null, null, Matrix.CreateTranslation(xPositionOnScreen, yPositionOnScreen, 0));
+            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, (DepthStencilState)null, (RasterizerState)null, null, Matrix.CreateTranslation(this.xPositionOnScreen, this.yPositionOnScreen, 0));
             {
-                int tabArea = width / tabs.Length;
+                int tabArea = this.width / this.tabs.Length;
 
-                for (int i = 0; i < tabs.Length; ++i)
+                for (int i = 0; i < this.tabs.Length; ++i)
                 {
-                    TabMenu tab = tabs[i];
+                    TabMenu tab = this.tabs[i];
 
                     int ix = i * tabArea;
                     ix += (tabArea - SpriteText.getWidthOfString(tab.Name)) / 2;
                     int iy = IClickableMenu.borderWidth;
-                    SpriteText.drawString(b, tabs[i].Name, ix, iy, color: i == currentTab ? SpriteText.color_Orange : -1);
+                    SpriteText.drawString(b, this.tabs[i].Name, ix, iy, color: i == this.currentTab ? SpriteText.color_Orange : -1);
                 }
 
-                tabs[currentTab].draw(b);
+                this.tabs[this.currentTab].draw(b);
             }
             b.End();
             b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, (DepthStencilState)null, (RasterizerState)null);
 
             base.draw(b);
-            drawMouse(b);
+            this.drawMouse(b);
         }
 
         public override void performHoverAction(int x, int y)
         {
             base.performHoverAction(x, y);
-            tabs[currentTab].mouseMove(x - xPositionOnScreen, y - yPositionOnScreen);
+            this.tabs[this.currentTab].mouseMove(x - this.xPositionOnScreen, y - this.yPositionOnScreen);
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
             base.receiveLeftClick(x, y, playSound);
-            int tabArea = width / tabs.Length;
-            for (int i = 0; i < tabs.Length; ++i)
+            int tabArea = this.width / this.tabs.Length;
+            for (int i = 0; i < this.tabs.Length; ++i)
             {
-                TabMenu tab = tabs[i];
+                TabMenu tab = this.tabs[i];
 
-                int ix = xPositionOnScreen + i * tabArea;
+                int ix = this.xPositionOnScreen + i * tabArea;
                 ix += (tabArea - SpriteText.getWidthOfString(tab.Name)) / 2;
-                int iy = yPositionOnScreen + IClickableMenu.borderWidth;
+                int iy = this.yPositionOnScreen + IClickableMenu.borderWidth;
 
                 if (x >= ix && y >= iy && x < ix + SpriteText.getWidthOfString(tab.Name) && y < iy + SpriteText.getHeightOfString(tab.Name))
                 {
-                    currentTab = i;
+                    this.currentTab = i;
                     return;
                 }
             }
 
-            tabs[currentTab].leftClick(x - xPositionOnScreen, y - yPositionOnScreen);
+            this.tabs[this.currentTab].leftClick(x - this.xPositionOnScreen, y - this.yPositionOnScreen);
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)

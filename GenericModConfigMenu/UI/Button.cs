@@ -17,29 +17,29 @@ namespace GenericModConfigMenu.UI
 
         public Button(Texture2D tex)
         {
-            Texture = tex;
-            IdleTextureRect = new Rectangle(0, 0, tex.Width / 2, tex.Height);
-            HoverTextureRect = new Rectangle(tex.Width / 2, 0, tex.Width / 2, tex.Height);
+            this.Texture = tex;
+            this.IdleTextureRect = new Rectangle(0, 0, tex.Width / 2, tex.Height);
+            this.HoverTextureRect = new Rectangle(tex.Width / 2, 0, tex.Width / 2, tex.Height);
         }
 
-        public override int Width => IdleTextureRect.Width;
-        public override int Height => IdleTextureRect.Height;
+        public override int Width => this.IdleTextureRect.Width;
+        public override int Height => this.IdleTextureRect.Height;
         public override string HoveredSound => "Cowboy_Footstep";
 
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
 
-            scale = Hover ? Math.Min(scale + 0.013f, 1.083f) : Math.Max(scale - 0.013f, 1f);
+            this.scale = this.Hover ? Math.Min(this.scale + 0.013f, 1.083f) : Math.Max(this.scale - 0.013f, 1f);
 
-            if (Clicked && Callback != null)
-                Callback.Invoke(this);
+            if (this.Clicked && this.Callback != null)
+                this.Callback.Invoke(this);
         }
 
         public override void Draw(SpriteBatch b)
         {
-            Vector2 origin = new Vector2(Texture.Width / 4f, Texture.Height / 2f);
-            b.Draw(Texture, Position + origin, Hover ? HoverTextureRect : IdleTextureRect, Color.White, 0f, origin, scale, SpriteEffects.None, 0f);
+            Vector2 origin = new Vector2(this.Texture.Width / 4f, this.Texture.Height / 2f);
+            b.Draw(this.Texture, this.Position + origin, this.Hover ? this.HoverTextureRect : this.IdleTextureRect, Color.White, 0f, origin, this.scale, SpriteEffects.None, 0f);
             Game1.activeClickableMenu?.drawMouse(b);
         }
     }

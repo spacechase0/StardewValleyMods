@@ -17,12 +17,12 @@ namespace MoreGiantCrops
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            SpaceShared.Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            Directory.CreateDirectory(Path.Combine(Helper.DirectoryPath, "assets"));
+            Directory.CreateDirectory(Path.Combine(this.Helper.DirectoryPath, "assets"));
 
             Log.trace("Finding giant crop images");
-            foreach (var path in Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets"), "*.png"))
+            foreach (var path in Directory.EnumerateFiles(Path.Combine(this.Helper.DirectoryPath, "assets"), "*.png"))
             {
                 string filename = Path.GetFileName(path);
                 if (!int.TryParse(filename.Split('.')[0], out int id))

@@ -15,8 +15,8 @@ namespace JsonAssets.Other.ContentPatcher
 
         public BaseToken(string type, string name)
         {
-            Type = type;
-            TokenName = Type + name;
+            this.Type = type;
+            this.TokenName = this.Type + name;
         }
 
         public bool AllowsInput()
@@ -47,10 +47,10 @@ namespace JsonAssets.Other.ContentPatcher
 
         public virtual bool UpdateContext()
         {
-            if (oldGen != ContentPatcherIntegration.idsAssignedGen)
+            if (this.oldGen != ContentPatcherIntegration.idsAssignedGen)
             {
-                oldGen = ContentPatcherIntegration.idsAssignedGen;
-                UpdateContextImpl();
+                this.oldGen = ContentPatcherIntegration.idsAssignedGen;
+                this.UpdateContextImpl();
                 return true;
             }
             return false;
@@ -68,18 +68,18 @@ namespace JsonAssets.Other.ContentPatcher
         public IdToken(string type, int startingId, Func<IDictionary<string, int>> theIdsFunc)
             : base(type, "Id")
         {
-            StartingId = startingId;
-            idsFunc = theIdsFunc;
+            this.StartingId = startingId;
+            this.idsFunc = theIdsFunc;
         }
 
         public override IEnumerable<string> GetValidInputs()
         {
-            return ids.Keys;
+            return this.ids.Keys;
         }
 
         public bool HasBoundedRangeValues(string input, out int min, out int max)
         {
-            min = StartingId;
+            min = this.StartingId;
             max = int.MaxValue;
             return true;
         }
@@ -87,9 +87,9 @@ namespace JsonAssets.Other.ContentPatcher
         public override bool TryValidateInput(string input, out string error)
         {
             error = "";
-            if (!ids.ContainsKey(input))
+            if (!this.ids.ContainsKey(input))
             {
-                error = $"Invalid name for {Type}: {input}";
+                error = $"Invalid name for {this.Type}: {input}";
                 return false;
             }
             return true;
@@ -97,19 +97,19 @@ namespace JsonAssets.Other.ContentPatcher
 
         public override IEnumerable<string> GetValues(string input)
         {
-            if (!IsReady())
+            if (!this.IsReady())
                 return new string[0];
 
             if (input == "")
-                return ids.Values.Select((i) => i.ToString()).ToArray<string>();
-            if (!ids.ContainsKey(input))
+                return this.ids.Values.Select((i) => i.ToString()).ToArray<string>();
+            if (!this.ids.ContainsKey(input))
                 return new string[0];
-            return new string[] { ids[input].ToString() };
+            return new string[] {this.ids[input].ToString() };
         }
 
         protected override void UpdateContextImpl()
         {
-            ids = idsFunc();
+            this.ids = this.idsFunc();
         }
     }
 
@@ -126,15 +126,15 @@ namespace JsonAssets.Other.ContentPatcher
 
         public override IEnumerable<string> GetValidInputs()
         {
-            return tilesheets.Keys;
+            return this.tilesheets.Keys;
         }
 
         public override bool TryValidateInput(string input, out string error)
         {
             error = "";
-            if (!tilesheets.ContainsKey(input))
+            if (!this.tilesheets.ContainsKey(input))
             {
-                error = $"Invalid name for {Type}: {input}";
+                error = $"Invalid name for {this.Type}: {input}";
                 return false;
             }
             return true;
@@ -142,19 +142,19 @@ namespace JsonAssets.Other.ContentPatcher
 
         public override bool IsReady()
         {
-            return base.IsReady() && tilesheets != null && tilesheets.Count > 0 && !string.IsNullOrEmpty(tilesheets.First().Value);
+            return base.IsReady() && this.tilesheets != null && this.tilesheets.Count > 0 && !string.IsNullOrEmpty(this.tilesheets.First().Value);
         }
 
         public override IEnumerable<string> GetValues(string input)
         {
-            if (!IsReady())
+            if (!this.IsReady())
                 return new string[0];
 
             if (input == "")
-                return tilesheets.Values.Select((i) => i.ToString()).ToArray<string>();
-            if (!tilesheets.ContainsKey(input) || string.IsNullOrEmpty(tilesheets[input]))
+                return this.tilesheets.Values.Select((i) => i.ToString()).ToArray<string>();
+            if (!this.tilesheets.ContainsKey(input) || string.IsNullOrEmpty(this.tilesheets[input]))
                 return new string[0];
-            return new string[] { tilesheets[input].ToString() };
+            return new string[] { this.tilesheets[input].ToString() };
         }
 
         public override bool UpdateContext()
@@ -162,14 +162,14 @@ namespace JsonAssets.Other.ContentPatcher
             if (base.UpdateContext())
                 return true;
 
-            var objs = objsFunc();
+            var objs = this.objsFunc();
             if (objs.Count == 0)
                 return false;
 
             var obj = objs[0];
-            if (!string.IsNullOrEmpty(obj.tilesheet) && tilesheets.Count > 0 && string.IsNullOrEmpty(tilesheets.First().Value))
+            if (!string.IsNullOrEmpty(obj.tilesheet) && this.tilesheets.Count > 0 && string.IsNullOrEmpty(this.tilesheets.First().Value))
             {
-                UpdateContextImpl();
+                this.UpdateContextImpl();
                 return true;
             }
 
@@ -179,12 +179,12 @@ namespace JsonAssets.Other.ContentPatcher
         protected override void UpdateContextImpl()
         {
             var dict = new Dictionary<string, string>();
-            var objs = objsFunc();
+            var objs = this.objsFunc();
             foreach (var obj in objs)
             {
                 dict.Add(obj.Name, obj.tilesheet);
             }
-            tilesheets = dict;
+            this.tilesheets = dict;
         }
     }
 
@@ -203,7 +203,7 @@ namespace JsonAssets.Other.ContentPatcher
 
         public override IEnumerable<string> GetValidInputs()
         {
-            return coordinates.Keys;
+            return this.coordinates.Keys;
         }
 
         public bool HasBoundedRangeValues(string input, out int min, out int max)
@@ -216,9 +216,9 @@ namespace JsonAssets.Other.ContentPatcher
         public override bool TryValidateInput(string input, out string error)
         {
             error = "";
-            if (!coordinates.ContainsKey(input))
+            if (!this.coordinates.ContainsKey(input))
             {
-                error = $"Invalid name for {Type}: {input}";
+                error = $"Invalid name for {this.Type}: {input}";
                 return false;
             }
             return true;
@@ -226,14 +226,14 @@ namespace JsonAssets.Other.ContentPatcher
 
         public override IEnumerable<string> GetValues(string input)
         {
-            if (!IsReady())
+            if (!this.IsReady())
                 return new string[0];
 
             if (input == "")
-                return coordinates.Values.Select((i) => i.ToString()).ToArray<string>();
-            if (!coordinates.ContainsKey(input))
+                return this.coordinates.Values.Select((i) => i.ToString()).ToArray<string>();
+            if (!this.coordinates.ContainsKey(input))
                 return new string[0];
-            return new string[] { (coordinates[input]/*-(coordinateIsX?0:16)*/).ToString() };
+            return new string[] { (this.coordinates[input]/*-(coordinateIsX?0:16)*/).ToString() };
         }
 
         public override bool UpdateContext()
@@ -241,14 +241,14 @@ namespace JsonAssets.Other.ContentPatcher
             if (base.UpdateContext())
                 return true;
 
-            var objs = objsFunc();
+            var objs = this.objsFunc();
             if (objs.Count == 0)
                 return false;
 
             var obj = objs[0];
-            if (!string.IsNullOrEmpty(obj.tilesheet) && coordinates.Count > 0 && coordinates.First().Value == 0)
+            if (!string.IsNullOrEmpty(obj.tilesheet) && this.coordinates.Count > 0 && this.coordinates.First().Value == 0)
             {
-                UpdateContextImpl();
+                this.UpdateContextImpl();
                 return true;
             }
 
@@ -258,12 +258,12 @@ namespace JsonAssets.Other.ContentPatcher
         protected override void UpdateContextImpl()
         {
             var dict = new Dictionary<string, int>();
-            var objs = objsFunc();
+            var objs = this.objsFunc();
             foreach (var obj in objs)
             {
-                dict.Add(obj.Name, coordinateIsX ? obj.tilesheetX : obj.tilesheetY);
+                dict.Add(obj.Name, this.coordinateIsX ? obj.tilesheetX : obj.tilesheetY);
             }
-            coordinates = dict;
+            this.coordinates = dict;
         }
     }
 

@@ -12,16 +12,15 @@ namespace PyromancersJourney
         public RectangleF() { }
         public RectangleF(float x, float y, float w, float h)
         {
-            X = x;
-            Y = y;
-            Width = w;
-            Height = h;
+            this.X = x;
+            this.Y = y;
+            this.Width = w;
+            this.Height = h;
         }
 
         public bool Intersects(RectangleF other)
         {
-            if (X + Width < other.X || X > other.X + other.Width ||
-                 Y + Height < other.Y || Y > other.Y + other.Height)
+            if (this.X + this.Width < other.X || this.X > other.X + other.Width || this.Y + this.Height < other.Y || this.Y > other.Y + other.Height)
             {
                 return false;
             }

@@ -19,42 +19,42 @@ namespace TheftOfTheWinterStar
 
         public Beam(Farmer who, Vector2 aim)
         {
-            shooter = who;
-            basePos = shooter.getStandingPosition();
-            sound = Game1.soundBank.GetCue("throwDownITem");
-            sound.Play();
+            this.shooter = who;
+            this.basePos = this.shooter.getStandingPosition();
+            this.sound = Game1.soundBank.GetCue("throwDownITem");
+            this.sound.Play();
 
             switch (who.FacingDirection)
             {
-                case 2: basePos.X += 44; basePos.Y += 12; break;
-                case 0: basePos.X += -26; basePos.Y += -100; break;
-                case 3: basePos.X += -40; basePos.Y += -90; break;
-                case 1: basePos.X += 40; basePos.Y += -90; break;
+                case 2: this.basePos.X += 44; this.basePos.Y += 12; break;
+                case 0: this.basePos.X += -26; this.basePos.Y += -100; break;
+                case 3: this.basePos.X += -40; this.basePos.Y += -90; break;
+                case 1: this.basePos.X += 40; this.basePos.Y += -90; break;
             }
 
-            angle = (float)Math.Atan2(basePos.Y - aim.Y, basePos.X - aim.X);
+            this.angle = (float)Math.Atan2(this.basePos.Y - aim.Y, this.basePos.X - aim.X);
 
-            Mod.instance.Helper.Events.GameLoop.UpdateTicked += update;
-            Mod.instance.Helper.Events.Display.RenderedWorld += render;
+            Mod.instance.Helper.Events.GameLoop.UpdateTicked += this.update;
+            Mod.instance.Helper.Events.Display.RenderedWorld += this.render;
 
         }
 
         private void update(object sender, UpdateTickedEventArgs e)
         {
-            if (timer-- <= 0)
+            if (this.timer-- <= 0)
             {
-                Mod.instance.Helper.Events.GameLoop.UpdateTicked -= update;
-                Mod.instance.Helper.Events.Display.RenderedWorld -= render;
-                sound.Stop(Microsoft.Xna.Framework.Audio.AudioStopOptions.Immediate);
+                Mod.instance.Helper.Events.GameLoop.UpdateTicked -= this.update;
+                Mod.instance.Helper.Events.Display.RenderedWorld -= this.render;
+                this.sound.Stop(Microsoft.Xna.Framework.Audio.AudioStopOptions.Immediate);
             }
 
-            Vector2 lineEnd = new Vector2(basePos.X + (float)Math.Cos(angle + Math.PI) * 10000, basePos.Y + (float)Math.Sin(angle + Math.PI) * 10000);
+            Vector2 lineEnd = new Vector2(this.basePos.X + (float)Math.Cos(this.angle + Math.PI) * 10000, this.basePos.Y + (float)Math.Sin(this.angle + Math.PI) * 10000);
 
-            Vector2 higher = lineEnd.Y < basePos.Y ? lineEnd : basePos;
-            Vector2 lower = lineEnd.Y < basePos.Y ? basePos : lineEnd;
-            Vector2 lefter = lineEnd.X < basePos.X ? lineEnd : basePos;
-            Vector2 righter = lineEnd.X < basePos.X ? basePos : lineEnd;
-            foreach (var character in shooter.currentLocation.characters.ToList())
+            Vector2 higher = lineEnd.Y < this.basePos.Y ? lineEnd : this.basePos;
+            Vector2 lower = lineEnd.Y < this.basePos.Y ? this.basePos : lineEnd;
+            Vector2 lefter = lineEnd.X < this.basePos.X ? lineEnd : this.basePos;
+            Vector2 righter = lineEnd.X < this.basePos.X ? this.basePos : lineEnd;
+            foreach (var character in this.shooter.currentLocation.characters.ToList())
             {
                 if (character is Monster mob)
                 {
@@ -64,10 +64,10 @@ namespace TheftOfTheWinterStar
                     var bl = new Vector2(bb.Left, bb.Bottom);
                     var br = new Vector2(bb.Right, bb.Bottom);
 
-                    var i1 = LSegsIntersectionPoint(basePos, lineEnd, tl, tr);
-                    var i2 = LSegsIntersectionPoint(basePos, lineEnd, tr, br);
-                    var i3 = LSegsIntersectionPoint(basePos, lineEnd, bl, br);
-                    var i4 = LSegsIntersectionPoint(basePos, lineEnd, tl, bl);
+                    var i1 = LSegsIntersectionPoint(this.basePos, lineEnd, tl, tr);
+                    var i2 = LSegsIntersectionPoint(this.basePos, lineEnd, tr, br);
+                    var i3 = LSegsIntersectionPoint(this.basePos, lineEnd, bl, br);
+                    var i4 = LSegsIntersectionPoint(this.basePos, lineEnd, tl, bl);
 
                     Vector2 cont = Vector2.Zero;
                     if (i1.HasValue && bb.Contains((int)i1.Value.X, (int)i1.Value.Y)) cont = i1.Value;
@@ -78,7 +78,7 @@ namespace TheftOfTheWinterStar
                          cont.Y >= higher.Y && cont.Y <= lower.Y &&
                          bb.Contains((int)cont.X, (int)cont.Y))
                     {
-                        shooter.currentLocation.damageMonster(bb, 6, 8, false, shooter);
+                        this.shooter.currentLocation.damageMonster(bb, 6, 8, false, this.shooter);
                         //mob.takeDamage(3, 0, 0, false, 0, shooter);
                     }
                 }
@@ -88,7 +88,7 @@ namespace TheftOfTheWinterStar
         private void render(object sender, RenderedWorldEventArgs e)
         {
             var b = e.SpriteBatch;
-            Vector2 pos = Game1.GlobalToLocal(basePos);
+            Vector2 pos = Game1.GlobalToLocal(this.basePos);
 
             Color[] colors = new Color[]
             {
@@ -107,7 +107,7 @@ namespace TheftOfTheWinterStar
                 var drawPos = new Vector2(pos.X - currW / 2, pos.Y);
                 var origin = new Vector2(Game1.staminaRect.Width / 2f, 0f);
                 var scale = new Vector2(currW, 10000);
-                b.Draw(Game1.staminaRect, drawPos, null, col, angle + (float)Math.PI / 2, origin, scale, SpriteEffects.None, 1);
+                b.Draw(Game1.staminaRect, drawPos, null, col, this.angle + (float)Math.PI / 2, origin, scale, SpriteEffects.None, 1);
             }
 
             /*

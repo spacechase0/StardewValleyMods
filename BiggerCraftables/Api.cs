@@ -26,7 +26,7 @@ namespace BiggerCraftables
                 return new Vector2(-1, -1);
 
             var obj = loc.Objects[pos];
-            if (!IsBiggerCraftable(obj))
+            if (!this.IsBiggerCraftable(obj))
                 return new Vector2(-1, -1);
 
             var entry = Mod.entries.First(e => e.Name == obj.Name);

@@ -10,15 +10,15 @@ namespace SpaceCore.UI
 
         public Color? OutlineColor { get; set; } = null;
 
-        public override int Width => (int)Size.X;
+        public override int Width => (int)this.Size.X;
 
-        public override int Height => (int)Size.Y;
+        public override int Height => (int)this.Size.Y;
 
         public override void Draw(SpriteBatch b)
         {
-            if (OutlineColor.HasValue)
+            if (this.OutlineColor.HasValue)
             {
-                IClickableMenu.drawTextureBox(b, (int)Position.X - 12, (int)Position.Y - 12, Width + 24, Height + 24, OutlineColor.Value);
+                IClickableMenu.drawTextureBox(b, (int)this.Position.X - 12, (int)this.Position.Y - 12, this.Width + 24, this.Height + 24, this.OutlineColor.Value);
             }
             base.Draw(b);
         }

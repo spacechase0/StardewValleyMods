@@ -15,7 +15,7 @@ namespace CaveFarm
             : base(false)
         {
             this.health.Value = 3;
-            NetFields.AddField(health);
+            this.NetFields.AddField(this.health);
         }
 
         public override Rectangle getBoundingBox(Vector2 tileLocation)
@@ -28,14 +28,14 @@ namespace CaveFarm
             if (t is Pickaxe pickaxe)
             {
                 location.playSound("hammer");
-                health.Value -= ((pickaxe.UpgradeLevel + 1) / 2) + 1;
+                this.health.Value -= ((pickaxe.UpgradeLevel + 1) / 2) + 1;
             }
             else if (damage > 0)
             {
-                health.Value -= damage;
+                this.health.Value -= damage;
             }
 
-            if (health > 0)
+            if (this.health > 0)
                 return true;
             return false;
         }

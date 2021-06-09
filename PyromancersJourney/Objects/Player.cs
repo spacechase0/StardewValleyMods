@@ -27,9 +27,9 @@ namespace PyromancersJourney.Objects
         public Player(World world)
             : base(world)
         {
-            Health = healthMax;
+            this.Health = this.healthMax;
 
-            staffTex = Mod.instance.Helper.Content.Load<Texture2D>("assets/staff.png");
+            this.staffTex = Mod.instance.Helper.Content.Load<Texture2D>("assets/staff.png");
 
             List<VertexPositionColorTexture> staffVerts = new List<VertexPositionColorTexture>();
             staffVerts.Add(new VertexPositionColorTexture(new Vector3(0, 0, 0), Color.White, new Vector2(0, 0)));
@@ -40,22 +40,22 @@ namespace PyromancersJourney.Objects
             staffVerts.Add(new VertexPositionColorTexture(new Vector3(0, 1, 0), Color.White, new Vector2(0, 1)));
             staffVerts.Add(new VertexPositionColorTexture(new Vector3(1, 1, 0), Color.White, new Vector2(1, 1)));
 
-            staffBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), 6, BufferUsage.WriteOnly);
-            staffBuffer.SetData(staffVerts.ToArray());
+            this.staffBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), 6, BufferUsage.WriteOnly);
+            this.staffBuffer.SetData(staffVerts.ToArray());
         }
 
         public override void Hurt(int amt)
         {
-            if (immunTimer > 0)
+            if (this.immunTimer > 0)
                 return;
 
             base.Hurt(amt);
-            immunTimer = 1;
+            this.immunTimer = 1;
             Game1.playSound("ow");
 
-            if (Health <= 0)
+            if (this.Health <= 0)
             {
-                World.Quit();
+                this.World.Quit();
                 Game1.drawObjectDialogue("You lost.");
             }
         }
@@ -64,102 +64,102 @@ namespace PyromancersJourney.Objects
         {
             if (Game1.input.GetKeyboardState().IsKeyDown(Keys.A))
             {
-                look -= turnSpeed;
+                this.look -= this.turnSpeed;
             }
             if (Game1.input.GetKeyboardState().IsKeyDown(Keys.D))
             {
-                look += turnSpeed;
+                this.look += this.turnSpeed;
             }
             if (Game1.input.GetKeyboardState().IsKeyDown(Keys.Q))
             {
-                Position.X += (float)Math.Cos(look - Math.PI / 2) * speed;
-                Position.Z += (float)Math.Sin(look - Math.PI / 2) * speed;
+                this.Position.X += (float)Math.Cos(this.look - Math.PI / 2) * this.speed;
+                this.Position.Z += (float)Math.Sin(this.look - Math.PI / 2) * this.speed;
             }
             if (Game1.input.GetKeyboardState().IsKeyDown(Keys.E))
             {
-                Position.X += (float)Math.Cos(look + Math.PI / 2) * speed;
-                Position.Z += (float)Math.Sin(look + Math.PI / 2) * speed;
+                this.Position.X += (float)Math.Cos(this.look + Math.PI / 2) * this.speed;
+                this.Position.Z += (float)Math.Sin(this.look + Math.PI / 2) * this.speed;
             }
             if (Game1.input.GetKeyboardState().IsKeyDown(Keys.W))
             {
-                Position.X += (float)Math.Cos(look) * speed;
-                Position.Z += (float)Math.Sin(look) * speed;
+                this.Position.X += (float)Math.Cos(this.look) * this.speed;
+                this.Position.Z += (float)Math.Sin(this.look) * this.speed;
             }
             if (Game1.input.GetKeyboardState().IsKeyDown(Keys.S))
             {
-                Position.X -= (float)Math.Cos(look) * speed;
-                Position.Z -= (float)Math.Sin(look) * speed;
+                this.Position.X -= (float)Math.Cos(this.look) * this.speed;
+                this.Position.Z -= (float)Math.Sin(this.look) * this.speed;
             }
 
-            World.cam.pos = Position;
-            World.cam.target = Position + new Vector3((float)Math.Cos(look), 0, (float)Math.Sin(look));
-            World.cam.up = Vector3.Up;
+            this.World.cam.pos = this.Position;
+            this.World.cam.target = this.Position + new Vector3((float)Math.Cos(this.look), 0, (float)Math.Sin(this.look));
+            this.World.cam.up = Vector3.Up;
         }
 
         public override void Update()
         {
             base.Update();
 
-            manaRegenTimer += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
-            while (manaRegenTimer >= 1)
+            this.manaRegenTimer += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+            while (this.manaRegenTimer >= 1)
             {
-                manaRegenTimer -= 1;
-                if (++mana > manaMax)
-                    mana = manaMax;
+                this.manaRegenTimer -= 1;
+                if (++this.mana > this.manaMax)
+                    this.mana = this.manaMax;
             }
 
-            if (immunTimer > 0)
+            if (this.immunTimer > 0)
             {
-                immunTimer = Math.Max(0, immunTimer - (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds);
+                this.immunTimer = Math.Max(0, this.immunTimer - (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds);
             }
 
             if (Game1.input.GetKeyboardState().IsKeyDown(Keys.Space))
             {
-                chargeTime += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
-                if (chargeTime >= 1)
-                    chargeTime = 1;
+                this.chargeTime += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+                if (this.chargeTime >= 1)
+                    this.chargeTime = 1;
             }
             else
             {
-                if (chargeTime > 0)
+                if (this.chargeTime > 0)
                 {
-                    int tier = (int)(chargeTime / 0.25f);
-                    if (tier >= 1 && mana > tier)
+                    int tier = (int)(this.chargeTime / 0.25f);
+                    if (tier >= 1 && this.mana > tier)
                     {
-                        mana -= tier;
-                        var speed = (World.cam.target - World.cam.pos) / 4;// * ( -4 + tier );
-                        var proj = new PlayerFireball(World)
+                        this.mana -= tier;
+                        var speed = (this.World.cam.target - this.World.cam.pos) / 4;// * ( -4 + tier );
+                        var proj = new PlayerFireball(this.World)
                         {
-                            Position = new Vector3(Position.X, 0, Position.Z),
+                            Position = new Vector3(this.Position.X, 0, this.Position.Z),
                             Speed = new Vector2(speed.X, speed.Z),
                             Level = tier - 1,
                         };
-                        World.projectiles.Add(proj);
+                        this.World.projectiles.Add(proj);
                         Game1.playSound("fireball");
                     }
                     else
                     {
                         Game1.playSound("steam");
                     }
-                    chargeTime = 0;
+                    this.chargeTime = 0;
                 }
             }
 
-            foreach (var proj in World.projectiles)
+            foreach (var proj in this.World.projectiles)
             {
                 if (proj.Dead)
                     continue;
 
-                if ((proj.BoundingBox + new Vector2(proj.Position.X, proj.Position.Z)).Intersects(BoundingBox + new Vector2(Position.X, Position.Z)) && proj.HurtsPlayer)
+                if ((proj.BoundingBox + new Vector2(proj.Position.X, proj.Position.Z)).Intersects(this.BoundingBox + new Vector2(this.Position.X, this.Position.Z)) && proj.HurtsPlayer)
                 {
                     proj.Trigger(this);
                 }
             }
 
-            if (World.warp != null && (BoundingBox + new Vector2(Position.X, Position.Z)).Intersects(new RectangleF(World.warp.Position.X, World.warp.Position.Z, 1, 1)))
+            if (this.World.warp != null && (this.BoundingBox + new Vector2(this.Position.X, this.Position.Z)).Intersects(new RectangleF(this.World.warp.Position.X, this.World.warp.Position.Z, 1, 1)))
             {
                 Game1.playSound("wand");
-                World.QueueNextLevel();
+                this.World.QueueNextLevel();
             }
 
         }
@@ -169,24 +169,24 @@ namespace PyromancersJourney.Objects
             base.RenderOver(device, projection, cam);
 
             effect.TextureEnabled = true;
-            effect.Texture = staffTex;
-            var lookVec = World.cam.target - Position;
-            var lookSide = new Vector3((float)Math.Cos(look + (float)(Math.PI / 2)), 0, (float)Math.Sin(look + (float)(Math.PI / 2)));
+            effect.Texture = this.staffTex;
+            var lookVec = this.World.cam.target - this.Position;
+            var lookSide = new Vector3((float)Math.Cos(this.look + (float)(Math.PI / 2)), 0, (float)Math.Sin(this.look + (float)(Math.PI / 2)));
             var staffOffset = new Vector2(0.45f, -1.15f);
-            staffOffset += new Vector2(chargeTime * -0.25f, chargeTime * 0.25f);
-            if (chargeTime >= 1)
+            staffOffset += new Vector2(this.chargeTime * -0.25f, this.chargeTime * 0.25f);
+            if (this.chargeTime >= 1)
             {
-                staffOffset.X += (float)shakeRand.NextDouble() * 0.1f - 0.05f;
-                staffOffset.Y += (float)shakeRand.NextDouble() * 0.1f - 0.05f;
+                staffOffset.X += (float)this.shakeRand.NextDouble() * 0.1f - 0.05f;
+                staffOffset.Y += (float)this.shakeRand.NextDouble() * 0.1f - 0.05f;
             }
             effect.World = Matrix.CreateRotationZ((float)(Math.PI / 2)) *
-                           Matrix.CreateRotationY(-look + (float)(Math.PI / 2)) *
-                           Matrix.CreateTranslation(Position + lookVec + new Vector3(lookSide.X * staffOffset.X, staffOffset.Y, lookSide.Z * staffOffset.X));
+                           Matrix.CreateRotationY(-this.look + (float)(Math.PI / 2)) *
+                           Matrix.CreateTranslation(this.Position + lookVec + new Vector3(lookSide.X * staffOffset.X, staffOffset.Y, lookSide.Z * staffOffset.X));
             for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
             {
                 var pass = effect.CurrentTechnique.Passes[e];
                 pass.Apply();
-                device.SetVertexBuffer(staffBuffer);
+                device.SetVertexBuffer(this.staffBuffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
             }
         }
@@ -195,33 +195,33 @@ namespace PyromancersJourney.Objects
         {
             b.Begin();
 
-            for (int i = 0; i < healthMax; ++i)
+            for (int i = 0; i < this.healthMax; ++i)
             {
-                b.Draw(Game1.objectSpriteSheet, new Vector2(2 + i * 12, 2), new Rectangle(288, 608, 16, 16), (i + 1) <= Health ? Color.White : Color.Gray, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+                b.Draw(Game1.objectSpriteSheet, new Vector2(2 + i * 12, 2), new Rectangle(288, 608, 16, 16), (i + 1) <= this.Health ? Color.White : Color.Gray, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
             }
 
-            b.Draw(Game1.staminaRect, new Rectangle(4, 18, manaMax + 2, 6), Color.MidnightBlue);
-            if (mana > 0)
-                b.Draw(Game1.staminaRect, new Rectangle(5, 19, mana, 4), Color.MediumBlue);
+            b.Draw(Game1.staminaRect, new Rectangle(4, 18, this.manaMax + 2, 6), Color.MidnightBlue);
+            if (this.mana > 0)
+                b.Draw(Game1.staminaRect, new Rectangle(5, 19, this.mana, 4), Color.MediumBlue);
 
-            b.Draw(Game1.staminaRect, new Rectangle(4, World.ScreenSize - 10, World.ScreenSize - 8, 6), Color.White);
-            b.Draw(Game1.staminaRect, new Rectangle(5, World.ScreenSize - 9, World.ScreenSize - 10, 4), Color.Black);
-            if (chargeTime > 0)
+            b.Draw(Game1.staminaRect, new Rectangle(4, this.World.ScreenSize - 10, this.World.ScreenSize - 8, 6), Color.White);
+            b.Draw(Game1.staminaRect, new Rectangle(5, this.World.ScreenSize - 9, this.World.ScreenSize - 10, 4), Color.Black);
+            if (this.chargeTime > 0)
             {
                 var col = Color.Khaki;
-                if (chargeTime >= 1)
+                if (this.chargeTime >= 1)
                     col = Color.Red;
-                else if (chargeTime >= 0.75)
+                else if (this.chargeTime >= 0.75)
                     col = Color.OrangeRed;
-                else if (chargeTime >= 0.5)
+                else if (this.chargeTime >= 0.5)
                     col = Color.Orange;
-                else if (chargeTime >= 0.25)
+                else if (this.chargeTime >= 0.25)
                     col = Color.Yellow;
-                b.Draw(Game1.staminaRect, new Rectangle(5, World.ScreenSize - 9, (int)((World.ScreenSize - 10) * chargeTime), 4), col);
+                b.Draw(Game1.staminaRect, new Rectangle(5, this.World.ScreenSize - 9, (int)((this.World.ScreenSize - 10) * this.chargeTime), 4), col);
             }
-            b.Draw(Game1.staminaRect, new Rectangle((int)(5 + (World.ScreenSize - 10) * 0.25f), World.ScreenSize - 9, 1, 4), Color.Gray);
-            b.Draw(Game1.staminaRect, new Rectangle((int)(5 + (World.ScreenSize - 10) * 0.5f), World.ScreenSize - 9, 1, 4), Color.Gray);
-            b.Draw(Game1.staminaRect, new Rectangle((int)(5 + (World.ScreenSize - 10) * 0.75f), World.ScreenSize - 9, 1, 4), Color.Gray);
+            b.Draw(Game1.staminaRect, new Rectangle((int)(5 + (this.World.ScreenSize - 10) * 0.25f), this.World.ScreenSize - 9, 1, 4), Color.Gray);
+            b.Draw(Game1.staminaRect, new Rectangle((int)(5 + (this.World.ScreenSize - 10) * 0.5f), this.World.ScreenSize - 9, 1, 4), Color.Gray);
+            b.Draw(Game1.staminaRect, new Rectangle((int)(5 + (this.World.ScreenSize - 10) * 0.75f), this.World.ScreenSize - 9, 1, 4), Color.Gray);
 
             b.End();
         }

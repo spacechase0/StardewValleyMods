@@ -62,31 +62,31 @@ namespace CustomBuildings
         {
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             if (currLang == LocalizedContentManager.LanguageCode.en)
-                return Name;
-            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
-                return Name;
-            return NameLocalization[currLang.ToString()];
+                return this.Name;
+            if (this.NameLocalization == null || !this.NameLocalization.ContainsKey(currLang.ToString()))
+                return this.Name;
+            return this.NameLocalization[currLang.ToString()];
         }
 
         public string LocalizedDescription()
         {
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             if (currLang == LocalizedContentManager.LanguageCode.en)
-                return Description;
-            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return Description;
-            return DescriptionLocalization[currLang.ToString()];
+                return this.Description;
+            if (this.DescriptionLocalization == null || !this.DescriptionLocalization.ContainsKey(currLang.ToString()))
+                return this.Description;
+            return this.DescriptionLocalization[currLang.ToString()];
         }
 
         public string BlueprintString()
         {
             var str = "";
-            foreach (var ingredient in Ingredients)
+            foreach (var ingredient in this.Ingredients)
                 str += Mod.ResolveObjectId(ingredient.Object) + " " + ingredient.Count + " ";
             str = str.Substring(0, str.Length - 1);
-            str += $"/{TileWidth}/{TileHeight}/{HumanDoorX}/{HumanDoorY}/{AnimalDoorX}/{AnimalDoorY}/{Id}/{LocalizedName()}/{LocalizedDescription()}/";
-            str += PreviousTier != null ? "Upgrades" : "Buildings";
-            str += "/" + PreviousTier + $"/{MenuWidth}/{MenuHeight}/{MaxOccupants}/none/Farm/{Price}/{Magical}/{DaysToConstruct}";
+            str += $"/{this.TileWidth}/{this.TileHeight}/{this.HumanDoorX}/{this.HumanDoorY}/{this.AnimalDoorX}/{this.AnimalDoorY}/{this.Id}/{this.LocalizedName()}/{this.LocalizedDescription()}/";
+            str += this.PreviousTier != null ? "Upgrades" : "Buildings";
+            str += "/" + this.PreviousTier + $"/{this.MenuWidth}/{this.MenuHeight}/{this.MaxOccupants}/none/Farm/{this.Price}/{this.Magical}/{this.DaysToConstruct}";
             return str;
         }
     }

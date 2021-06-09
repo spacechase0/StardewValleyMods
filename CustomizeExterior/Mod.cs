@@ -34,20 +34,20 @@ namespace CustomizeExterior
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(Helper.DirectoryPath, "Buildings"));
-            compileChoices();
+            content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(this.Helper.DirectoryPath, "Buildings"));
+            this.compileChoices();
 
-            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
-            helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
-            helper.Events.GameLoop.Saving += onSaving;
-            helper.Events.GameLoop.Saved += onSaved;
-            helper.Events.Input.ButtonPressed += onButtonPressed;
-            helper.Events.Player.Warped += onWarped;
+            helper.Events.GameLoop.UpdateTicked += this.onUpdateTicked;
+            helper.Events.GameLoop.SaveLoaded += this.onSaveLoaded;
+            helper.Events.GameLoop.Saving += this.onSaving;
+            helper.Events.GameLoop.Saved += this.onSaved;
+            helper.Events.Input.ButtonPressed += this.onButtonPressed;
+            helper.Events.Player.Warped += this.onWarped;
 
-            SpaceEvents.ServerGotClient += onClientConnected;
-            SpaceCore.Networking.RegisterMessageHandler(MSG_CHOICES, onChoicesReceived);
+            SpaceEvents.ServerGotClient += this.onClientConnected;
+            SpaceCore.Networking.RegisterMessageHandler(MSG_CHOICES, this.onChoicesReceived);
         }
 
         private void onClientConnected(object sender, EventArgsServerGotClient args)
@@ -80,7 +80,7 @@ namespace CustomizeExterior
 
                 savedExteriors.chosen[building] = texId;
             }
-            syncTexturesWithChoices();
+            this.syncTexturesWithChoices();
         }
 
         /// <summary>Raised after the player loads a save slot.</summary>
@@ -103,7 +103,7 @@ namespace CustomizeExterior
                 if (savedExteriors == null)
                     savedExteriors = new SavedExteriors();
 
-                syncTexturesWithChoices();
+                this.syncTexturesWithChoices();
             }
         }
 
@@ -138,13 +138,13 @@ namespace CustomizeExterior
         private void onWarped(object sender, WarpedEventArgs e)
         {
             if (e.IsLocalPlayer && e.NewLocation is BuildableGameLocation)
-                syncTexturesWithChoices();
+                this.syncTexturesWithChoices();
         }
 
         private void onSeasonChange()
         {
             Log.debug("Season change, syncing textures...");
-            syncTexturesWithChoices();
+            this.syncTexturesWithChoices();
         }
 
         public string prevSeason = "";
@@ -154,10 +154,10 @@ namespace CustomizeExterior
         /// <param name="e">The event arguments.</param>
         private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (Context.IsWorldReady && Game1.currentSeason != prevSeason)
+            if (Context.IsWorldReady && Game1.currentSeason != this.prevSeason)
             {
-                onSeasonChange();
-                prevSeason = Game1.currentSeason;
+                this.onSeasonChange();
+                this.prevSeason = Game1.currentSeason;
             }
         }
 
@@ -179,7 +179,7 @@ namespace CustomizeExterior
                         if (tileBounds.Contains(pos.X, pos.Y))
                         {
                             Log.trace($"Right clicked a building: {building.nameOfIndoors}");
-                            checkBuildingClick(building.nameOfIndoors, building.buildingType.Value);
+                            this.checkBuildingClick(building.nameOfIndoors, building.buildingType.Value);
                         }
                     }
                 }
@@ -196,12 +196,12 @@ namespace CustomizeExterior
                     if (house.Contains(pos.X, pos.Y))
                     {
                         Log.trace("Right clicked the house.");
-                        checkBuildingClick("FarmHouse", "houses");
+                        this.checkBuildingClick("FarmHouse", "houses");
                     }
                     else if (greenhouse.Contains(pos.X, pos.Y))
                     {
                         Log.trace("Right clicked the greenhouse.");
-                        checkBuildingClick("Greenhouse", "houses");
+                        this.checkBuildingClick("Greenhouse", "houses");
                     }
                 }
             }
@@ -210,7 +210,7 @@ namespace CustomizeExterior
         private void compileChoices()
         {
             Log.trace("Creating list of building choices...");
-            var buildingsPath = Path.Combine(Helper.DirectoryPath, "Buildings");
+            var buildingsPath = Path.Combine(this.Helper.DirectoryPath, "Buildings");
             if (!Directory.Exists(buildingsPath))
                 Directory.CreateDirectory(buildingsPath);
 
@@ -291,16 +291,17 @@ namespace CustomizeExterior
         {
             if (Game1.activeClickableMenu != null) return;
 
-            if (recentClickTarget != target)
+            if (this.recentClickTarget != target)
             {
-                recentClickTarget = target;
-                recentClickTime = DateTime.Now;
+                this.recentClickTarget = target;
+                this.recentClickTime = DateTime.Now;
             }
             else
             {
-                if (DateTime.Now - recentClickTime < clickWindow)
-                    todoRenameFunction(target, type);
-                else recentClickTime = DateTime.Now;
+                if (DateTime.Now - this.recentClickTime < clickWindow)
+                    this.todoRenameFunction(target, type);
+                else
+                    this.recentClickTime = DateTime.Now;
             }
         }
 
@@ -316,19 +317,19 @@ namespace CustomizeExterior
                 Log.trace("Choice: " + choice);
             }
 
-            recentTarget = target;
+            this.recentTarget = target;
             var menu = new SelectDisplayMenu(type, getChosenTexture(target))
             {
-                onSelected = onExteriorSelected
+                onSelected = this.onExteriorSelected
             };
             Game1.activeClickableMenu = menu;
         }
 
         private string recentTarget = null;
-        private void onExteriorSelected(string type, string choice) { onExteriorSelected(type, choice, true); }
+        private void onExteriorSelected(string type, string choice) { this.onExteriorSelected(type, choice, true); }
         private void onExteriorSelected(string type, string choice, bool updateChosen)
         {
-            Log.trace("onExteriorSelected: " + recentTarget + " " + type + " " + choice);
+            Log.trace("onExteriorSelected: " + this.recentTarget + " " + type + " " + choice);
 
             Texture2D tex = getTextureForChoice(type, choice);
             if (tex == null)
@@ -338,7 +339,7 @@ namespace CustomizeExterior
             }
             if (updateChosen)
             {
-                savedExteriors.chosen[recentTarget] = choice;
+                savedExteriors.chosen[this.recentTarget] = choice;
 
                 if (Game1.IsMultiplayer)
                 {
@@ -346,7 +347,7 @@ namespace CustomizeExterior
                     using (var writer = new BinaryWriter(stream))
                     {
                         writer.Write(1);
-                        writer.Write(recentTarget);
+                        writer.Write(this.recentTarget);
                         writer.Write(choice);
 
                         Log.trace("Broadcasting choice");
@@ -355,7 +356,7 @@ namespace CustomizeExterior
                 }
             }
 
-            if (recentTarget == "FarmHouse" || recentTarget == "Greenhouse")
+            if (this.recentTarget == "FarmHouse" || this.recentTarget == "Greenhouse")
             {
                 housesHybrid = null;
                 typeof(Farm).GetField("houseTextures").SetValue(null, getHousesTexture());
@@ -364,7 +365,7 @@ namespace CustomizeExterior
             {
                 foreach (Building building in Game1.getFarm().buildings)
                 {
-                    if (building.buildingType.Value == type && building.nameOfIndoors == recentTarget)
+                    if (building.buildingType.Value == type && building.nameOfIndoors == this.recentTarget)
                     {
                         building.texture = new Lazy<Texture2D>(() => tex);
                         break;
@@ -377,11 +378,11 @@ namespace CustomizeExterior
         {
             foreach (var choice in savedExteriors.chosen)
             {
-                recentTarget = choice.Key;
+                this.recentTarget = choice.Key;
                 Log.trace("Saved choice: " + choice.Key + " " + choice.Value);
 
                 string type = null;
-                if (recentTarget == "FarmHouse" || recentTarget == "Greenhouse")
+                if (this.recentTarget == "FarmHouse" || this.recentTarget == "Greenhouse")
                 {
                     type = "houses";
                 }
@@ -397,7 +398,7 @@ namespace CustomizeExterior
                 }
 
                 if (type != null)
-                    onExteriorSelected(type, choice.Value, false);
+                    this.onExteriorSelected(type, choice.Value, false);
             }
         }
 

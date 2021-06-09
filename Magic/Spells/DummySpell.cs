@@ -15,7 +15,7 @@ namespace Magic.Spells
 
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            Log.debug($"{player.Name} cast {Id}.");
+            Log.debug($"{player.Name} cast {this.Id}.");
             return null;
         }
     }

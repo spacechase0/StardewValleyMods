@@ -19,22 +19,22 @@ namespace BugNet
 
         public BugNetTool()
         {
-            category.Value = StardewValley.Object.toolCategory;
-            Name = "Bug Net";
-            ParentSheetIndex = MeleeWeapon.scythe; // Gets us out of annoying stuff
+            this.category.Value = StardewValley.Object.toolCategory;
+            this.Name = "Bug Net";
+            this.ParentSheetIndex = MeleeWeapon.scythe; // Gets us out of annoying stuff
 
-            minDamage.Value = 1;
-            maxDamage.Value = 1;
-            knockback.Value = 1;
-            speed.Value = 0;
-            addedPrecision.Value = 0;
-            addedDefense.Value = 0;
-            type.Value = 3; // ?
-            addedAreaOfEffect.Value = 0;
-            critChance.Value = 0.02f;
-            critMultiplier.Value = 1;
+            this.minDamage.Value = 1;
+            this.maxDamage.Value = 1;
+            this.knockback.Value = 1;
+            this.speed.Value = 0;
+            this.addedPrecision.Value = 0;
+            this.addedDefense.Value = 0;
+            this.type.Value = 3; // ?
+            this.addedAreaOfEffect.Value = 0;
+            this.critChance.Value = 0.02f;
+            this.critMultiplier.Value = 1;
 
-            Stack = 1;
+            this.Stack = 1;
         }
 
         public override Item getOne()
@@ -90,7 +90,7 @@ namespace BugNet
             {
                 Vector2 toolLoc = who.GetToolLocation(true);
                 Vector2 a = Vector2.Zero, b = Vector2.Zero;
-                Rectangle area = getAreaOfEffect((int)toolLoc.X, (int)toolLoc.Y, who.facingDirection, ref a, ref b, who.GetBoundingBox(), who.FarmerSprite.currentAnimationIndex);
+                Rectangle area = this.getAreaOfEffect((int)toolLoc.X, (int)toolLoc.Y, who.facingDirection, ref a, ref b, who.GetBoundingBox(), who.FarmerSprite.currentAnimationIndex);
 
                 var critters = Mod.instance.Helper.Reflection.GetField<List<Critter>>(who.currentLocation, "critters", false)?.GetValue();
                 if (critters == null)
@@ -123,7 +123,7 @@ namespace BugNet
 
         public override string getDescription()
         {
-            return loadDescription();
+            return this.loadDescription();
         }
 
         public void draw(int frameOfFarmerAnimation, int facingDirection, SpriteBatch spriteBatch, Vector2 playerPosition, Farmer f, Rectangle sourceRect, int type, bool isOnSpecial)

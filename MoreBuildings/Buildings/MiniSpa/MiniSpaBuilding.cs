@@ -20,11 +20,11 @@ namespace MoreBuildings.Buildings.MiniSpa
 
         public object getReplacement()
         {
-            Mill building = new Mill(new BluePrint("Mill"), new Vector2(tileX, tileY));
-            building.indoors.Value = indoors.Value;
-            building.daysOfConstructionLeft.Value = daysOfConstructionLeft.Value;
-            building.tileX.Value = tileX.Value;
-            building.tileY.Value = tileY.Value;
+            Mill building = new Mill(new BluePrint("Mill"), new Vector2(this.tileX, this.tileY));
+            building.indoors.Value = this.indoors.Value;
+            building.daysOfConstructionLeft.Value = this.daysOfConstructionLeft.Value;
+            building.tileX.Value = this.tileX.Value;
+            building.tileY.Value = this.tileY.Value;
             return building;
         }
 
@@ -36,14 +36,14 @@ namespace MoreBuildings.Buildings.MiniSpa
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
         {
             Mill building = (Mill)replacement;
-            indoors.Value = building.indoors.Value;
-            daysOfConstructionLeft.Value = building.daysOfConstructionLeft.Value;
-            tileX.Value = building.tileX.Value;
-            tileY.Value = building.tileY.Value;
+            this.indoors.Value = building.indoors.Value;
+            this.daysOfConstructionLeft.Value = building.daysOfConstructionLeft.Value;
+            this.tileX.Value = building.tileX.Value;
+            this.tileY.Value = building.tileY.Value;
 
-            indoors.Value.map = Game1.content.Load<xTile.Map>("Maps\\MiniSpa");
-            indoors.Value.updateWarps();
-            updateInteriorWarps();
+            this.indoors.Value.map = Game1.content.Load<xTile.Map>("Maps\\MiniSpa");
+            this.indoors.Value.updateWarps();
+            this.updateInteriorWarps();
         }
     }
 }

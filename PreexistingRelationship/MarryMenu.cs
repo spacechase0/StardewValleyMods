@@ -41,9 +41,9 @@ namespace PreexistingRelationship
             }
             */
 
-            ui = new RootElement()
+            this.ui = new RootElement()
             {
-                LocalPosition = new Vector2(xPositionOnScreen, yPositionOnScreen),
+                LocalPosition = new Vector2(this.xPositionOnScreen, this.yPositionOnScreen),
             };
 
             var title = new Label()
@@ -52,9 +52,9 @@ namespace PreexistingRelationship
                 Bold = true,
             };
             title.LocalPosition = new Vector2((800 - title.Measure().X) / 2, 10);
-            ui.AddChild(title);
+            this.ui.AddChild(title);
 
-            ui.AddChild(new Label()
+            this.ui.AddChild(new Label()
             {
                 String = Mod.instance.Helper.Translation.Get("menu.text").ToString().Replace("\\n", "\n"),
                 LocalPosition = new Vector2(50, 75),
@@ -62,7 +62,7 @@ namespace PreexistingRelationship
                 NonBoldShadow = false,
             });
 
-            table = new Table()
+            this.table = new Table()
             {
                 RowHeight = 200,
                 Size = new Vector2(700, 500),
@@ -85,14 +85,14 @@ namespace PreexistingRelationship
                     // Note: This is being called 4 times for some reason
                     // Probably a UI framework bug.
                     Action<Element> selCallback = (e) =>
-                  {
-                      if (selectedContainer != null)
-                          selectedContainer.OutlineColor = null;
-                      selectedContainer = cont;
-                      selectedContainer.OutlineColor = Color.Green;
-                      selectedNPC = valid[n].Name;
-                      Log.trace("Selected " + selectedNPC);
-                  };
+                    {
+                        if (this.selectedContainer != null)
+                            this.selectedContainer.OutlineColor = null;
+                        this.selectedContainer = cont;
+                        this.selectedContainer.OutlineColor = Color.Green;
+                        this.selectedNPC = valid[n].Name;
+                        Log.trace("Selected " + this.selectedNPC);
+                    };
                     cont.AddChild(new Image()
                     {
                         Texture = Game1.mouseCursors,
@@ -119,73 +119,73 @@ namespace PreexistingRelationship
 
                     row.AddChild(cont);
                 }
-                table.AddRow(new Element[] { row });
+                this.table.AddRow(new Element[] { row });
             }
-            ui.AddChild(table);
+            this.ui.AddChild(this.table);
 
-            ui.AddChild(new Label()
+            this.ui.AddChild(new Label()
             {
                 String = Mod.instance.Helper.Translation.Get("menu.button.cancel"),
                 LocalPosition = new Vector2(175, 650),
                 Callback = (e) => Game1.exitActiveMenu(),
             });
-            ui.AddChild(new Label()
+            this.ui.AddChild(new Label()
             {
                 String = Mod.instance.Helper.Translation.Get("menu.button.accept"),
                 LocalPosition = new Vector2(500, 650),
-                Callback = (e) => { DoMarriage(); }
+                Callback = (e) => { this.DoMarriage(); }
             });
         }
 
         public override void receiveScrollWheelAction(int direction)
         {
-            table.Scrollbar.ScrollBy(direction / -120);
+            this.table.Scrollbar.ScrollBy(direction / -120);
         }
 
         public override void update(GameTime time)
         {
-            ui.Update();
+            this.ui.Update();
         }
 
         public override void draw(SpriteBatch b)
         {
             base.draw(b);
-            IClickableMenu.drawTextureBox(b, xPositionOnScreen, yPositionOnScreen, width, height, Color.White);
+            IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, Color.White);
 
-            ui.Draw(b);
+            this.ui.Draw(b);
 
-            drawMouse(b);
+            this.drawMouse(b);
         }
 
         private void DoMarriage()
         {
-            Log.debug("Marrying " + selectedNPC);
-            if (selectedNPC == null)
+            Log.debug("Marrying " + this.selectedNPC);
+            if (this.selectedNPC == null)
                 return;
 
             foreach (var player in Game1.getAllFarmers())
             {
-                if (player.spouse == selectedNPC)
+                if (player.spouse == this.selectedNPC)
                 {
                     Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spouse-taken")));
-                    selectedContainer.OutlineColor = null;
-                    selectedContainer = null;
-                    selectedNPC = null;
+                    this.selectedContainer.OutlineColor = null;
+                    this.selectedContainer = null;
+                    this.selectedNPC = null;
                     return;
                 }
             }
 
             if (!Game1.IsMasterGame)
             {
-                Mod.instance.Helper.Multiplayer.SendMessage(new DoMarriageMessage() { NpcName = selectedNPC }, nameof(DoMarriageMessage), new string[] { Mod.instance.ModManifest.UniqueID }/*, new long[] { Game1.MasterPlayer.UniqueMultiplayerID }*/ );
+                Mod.instance.Helper.Multiplayer.SendMessage(new DoMarriageMessage() { NpcName = this.selectedNPC }, nameof(DoMarriageMessage), new string[] { Mod.instance.ModManifest.UniqueID }/*, new long[] { Game1.MasterPlayer.UniqueMultiplayerID }*/ );
             }
 
-            Mod.DoMarriage(Game1.player, selectedNPC, true);
+            Mod.DoMarriage(Game1.player, this.selectedNPC, true);
             //Game1.addHUDMessage( new HUDMessage( Mod.instance.Helper.Translation.Get( "married" ) ) );
 
-            selectedContainer.OutlineColor = null;
-            selectedContainer = null;
-            selectedNPC = null;
+            this.selectedContainer.OutlineColor = null;
+            this.selectedContainer = null;
+            this.selectedNPC = null;
             Game1.exitActiveMenu();
         }
     }

@@ -69,9 +69,9 @@ namespace CapstoneProfessions
             Game1.player.team.endOfNightStatus.UpdateState("level");
             this.timerBeforeStart = 250;
             this.isActive = true;
-            base.width = 960;
-            base.height = 512;
-            this.okButton = new ClickableTextureComponent(new Rectangle(base.xPositionOnScreen + base.width + 4, base.yPositionOnScreen + base.height - 64 - IClickableMenu.borderWidth, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f)
+            this.width = 960;
+            this.height = 512;
+            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - 64 - IClickableMenu.borderWidth, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f)
             {
                 myID = 101
             };
@@ -105,23 +105,23 @@ namespace CapstoneProfessions
                     break;
             }
             int newHeight = 0;
-            base.height = newHeight + 256 + this.extraInfoForLevel.Count * 64 * 3 / 4;
+            this.height = newHeight + 256 + this.extraInfoForLevel.Count * 64 * 3 / 4;
             Game1.player.freezePause = 100;
             this.gameWindowSizeChanged(Rectangle.Empty, Rectangle.Empty);
             //if ( this.isProfessionChooser )
             {
-                this.leftProfession = new ClickableComponent(new Rectangle(base.xPositionOnScreen, base.yPositionOnScreen + 128, base.width / 2, base.height), "")
+                this.leftProfession = new ClickableComponent(new Rectangle(this.xPositionOnScreen, this.yPositionOnScreen + 128, this.width / 2, this.height), "")
                 {
                     myID = 102,
                     rightNeighborID = 103
                 };
-                this.rightProfession = new ClickableComponent(new Rectangle(base.width / 2 + base.xPositionOnScreen, base.yPositionOnScreen + 128, base.width / 2, base.height), "")
+                this.rightProfession = new ClickableComponent(new Rectangle(this.width / 2 + this.xPositionOnScreen, this.yPositionOnScreen + 128, this.width / 2, this.height), "")
                 {
                     myID = 103,
                     leftNeighborID = 102
                 };
             }
-            base.populateClickableComponentList();
+            this.populateClickableComponentList();
         }
 
         public bool CanReceiveInput()
@@ -139,8 +139,8 @@ namespace CapstoneProfessions
 
         public override void snapToDefaultClickableComponent()
         {
-            base.currentlySnappedComponent = base.getComponentWithID(103);
-            Game1.setMousePosition(base.xPositionOnScreen + base.width + 64, base.yPositionOnScreen + base.height + 64);
+            this.currentlySnappedComponent = this.getComponentWithID(103);
+            Game1.setMousePosition(this.xPositionOnScreen + this.width + 64, this.yPositionOnScreen + this.height + 64);
         }
 
         public override void applyMovementKey(int direction)
@@ -157,9 +157,9 @@ namespace CapstoneProfessions
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
         {
-            base.xPositionOnScreen = Game1.uiViewport.Width / 2 - base.width / 2;
-            base.yPositionOnScreen = Game1.uiViewport.Height / 2 - base.height / 2;
-            this.okButton.bounds = new Rectangle(base.xPositionOnScreen + base.width + 4, base.yPositionOnScreen + base.height - 64 - IClickableMenu.borderWidth, 64, 64);
+            this.xPositionOnScreen = Game1.uiViewport.Width / 2 - this.width / 2;
+            this.yPositionOnScreen = Game1.uiViewport.Height / 2 - this.height / 2;
+            this.okButton.bounds = new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - 64 - IClickableMenu.borderWidth, 64, 64);
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
@@ -185,13 +185,13 @@ namespace CapstoneProfessions
         {
             if (!this.isActive)
             {
-                base.exitThisMenu();
+                this.exitThisMenu();
                 return;
             }
             if (!this.hasUpdatedProfessions)
             {
-                professionsToChoose.Add(Mod.PROFESSION_TIME);
-                professionsToChoose.Add(Mod.PROFESSION_PROFIT);
+                this.professionsToChoose.Add(Mod.PROFESSION_TIME);
+                this.professionsToChoose.Add(Mod.PROFESSION_PROFIT);
                 this.leftProfessionDescription = new List<string>(new string[] { Mod.instance.Helper.Translation.Get("profession.time.name"), Mod.instance.Helper.Translation.Get("profession.time.description") });
                 this.rightProfessionDescription = new List<string>(new string[] { Mod.instance.Helper.Translation.Get("profession.profit.name"), Mod.instance.Helper.Translation.Get("profession.profit.description") });
                 this.hasUpdatedProfessions = true;
@@ -205,18 +205,18 @@ namespace CapstoneProfessions
             }
             if (Game1.random.NextDouble() < 0.03)
             {
-                Vector2 position = new Vector2(0f, Game1.random.Next(base.yPositionOnScreen - 128, base.yPositionOnScreen - 4) / 20 * 4 * 5 + 32);
+                Vector2 position = new Vector2(0f, Game1.random.Next(this.yPositionOnScreen - 128, this.yPositionOnScreen - 4) / 20 * 4 * 5 + 32);
                 if (Game1.random.NextDouble() < 0.5)
                 {
-                    position.X = Game1.random.Next(base.xPositionOnScreen + base.width / 2 - 228, base.xPositionOnScreen + base.width / 2 - 132);
+                    position.X = Game1.random.Next(this.xPositionOnScreen + this.width / 2 - 228, this.xPositionOnScreen + this.width / 2 - 132);
                 }
                 else
                 {
-                    position.X = Game1.random.Next(base.xPositionOnScreen + base.width / 2 + 116, base.xPositionOnScreen + base.width - 160);
+                    position.X = Game1.random.Next(this.xPositionOnScreen + this.width / 2 + 116, this.xPositionOnScreen + this.width - 160);
                 }
-                if (position.Y < (float)(base.yPositionOnScreen - 64 - 8))
+                if (position.Y < (float)(this.yPositionOnScreen - 64 - 8))
                 {
-                    position.X = Game1.random.Next(base.xPositionOnScreen + base.width / 2 - 116, base.xPositionOnScreen + base.width / 2 + 116);
+                    position.X = Game1.random.Next(this.xPositionOnScreen + this.width / 2 - 116, this.xPositionOnScreen + this.width / 2 + 116);
                 }
                 position.X = position.X / 20f * 4f * 5f;
                 this.littleStars.Add(new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(364, 79, 5, 5), 80f, 7, 1, position, flicker: false, flipped: false, 1f, 0f, Color.White, 4f, 0f, 0f, 0f)
@@ -229,7 +229,7 @@ namespace CapstoneProfessions
                 this.timerBeforeStart -= time.ElapsedGameTime.Milliseconds;
                 if (this.timerBeforeStart <= 0 && Game1.options.SnappyMenus)
                 {
-                    base.populateClickableComponentList();
+                    this.populateClickableComponentList();
                     this.snapToDefaultClickableComponent();
                 }
                 return;
@@ -240,9 +240,9 @@ namespace CapstoneProfessions
                 this.rightProfessionColor = Game1.textColor;
                 Game1.player.completelyStopAnimatingOrDoingAction();
                 Game1.player.freezePause = 100;
-                if (Game1.getMouseY() > base.yPositionOnScreen + 192 && Game1.getMouseY() < base.yPositionOnScreen + base.height)
+                if (Game1.getMouseY() > this.yPositionOnScreen + 192 && Game1.getMouseY() < this.yPositionOnScreen + this.height)
                 {
-                    if (Game1.getMouseX() > base.xPositionOnScreen && Game1.getMouseX() < base.xPositionOnScreen + base.width / 2)
+                    if (Game1.getMouseX() > this.xPositionOnScreen && Game1.getMouseX() < this.xPositionOnScreen + this.width / 2)
                     {
                         this.leftProfessionColor = Color.Green;
                         if (((Game1.input.GetMouseState().LeftButton == ButtonState.Pressed && this.oldMouseState.LeftButton == ButtonState.Released) || (Game1.options.gamepadControls && Game1.input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A))) && this.readyToClose())
@@ -252,7 +252,7 @@ namespace CapstoneProfessions
                             this.informationUp = false;
                         }
                     }
-                    else if (Game1.getMouseX() > base.xPositionOnScreen + base.width / 2 && Game1.getMouseX() < base.xPositionOnScreen + base.width)
+                    else if (Game1.getMouseX() > this.xPositionOnScreen + this.width / 2 && Game1.getMouseX() < this.xPositionOnScreen + this.width)
                     {
                         this.rightProfessionColor = Color.Green;
                         if (((Game1.input.GetMouseState().LeftButton == ButtonState.Pressed && this.oldMouseState.LeftButton == ButtonState.Released) || (Game1.options.gamepadControls && Game1.input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A))) && this.readyToClose())
@@ -263,7 +263,7 @@ namespace CapstoneProfessions
                         }
                     }
                 }
-                base.height = 512;
+                this.height = 512;
             }
             this.oldMouseState = Game1.input.GetMouseState();
             if (this.isActive && !this.informationUp && this.starIcon != null)
@@ -311,7 +311,7 @@ namespace CapstoneProfessions
             {
                 littleStar.draw(b);
             }
-            b.Draw(Game1.mouseCursors, new Vector2(base.xPositionOnScreen + base.width / 2 - 116, base.yPositionOnScreen - 32 + 12), new Rectangle(363, 87, 58, 22), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+            b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + this.width / 2 - 116, this.yPositionOnScreen - 32 + 12), new Rectangle(363, 87, 58, 22), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
             if (!this.informationUp && this.isActive && this.starIcon != null)
             {
                 this.starIcon.draw(b);
@@ -328,31 +328,31 @@ namespace CapstoneProfessions
                     {
                         return;
                     }
-                    Game1.drawDialogueBox(base.xPositionOnScreen, base.yPositionOnScreen, base.width, base.height, speaker: false, drawOnlyBox: true);
-                    base.drawHorizontalPartition(b, base.yPositionOnScreen + 192);
-                    base.drawVerticalIntersectingPartition(b, base.xPositionOnScreen + base.width / 2 - 32, base.yPositionOnScreen + 192);
-                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(base.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, 4f, flipped: false, 0.88f);
-                    b.DrawString(Game1.dialogueFont, this.title, new Vector2((float)(base.xPositionOnScreen + base.width / 2) - Game1.dialogueFont.MeasureString(this.title).X / 2f, base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Game1.textColor);
-                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(base.xPositionOnScreen + base.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, 4f, flipped: false, 0.88f);
+                    Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, speaker: false, drawOnlyBox: true);
+                    this.drawHorizontalPartition(b, this.yPositionOnScreen + 192);
+                    this.drawVerticalIntersectingPartition(b, this.xPositionOnScreen + this.width / 2 - 32, this.yPositionOnScreen + 192);
+                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, 4f, flipped: false, 0.88f);
+                    b.DrawString(Game1.dialogueFont, this.title, new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.dialogueFont.MeasureString(this.title).X / 2f, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Game1.textColor);
+                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, 4f, flipped: false, 0.88f);
                     string chooseProfession = Mod.instance.Helper.Translation.Get("menu.extra");
-                    b.DrawString(Game1.smallFont, chooseProfession, new Vector2((float)(base.xPositionOnScreen + base.width / 2) - Game1.smallFont.MeasureString(chooseProfession).X / 2f, base.yPositionOnScreen + 64 + IClickableMenu.spaceToClearTopBorder), Game1.textColor);
-                    b.DrawString(Game1.dialogueFont, this.leftProfessionDescription[0], new Vector2(base.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32, base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160), this.leftProfessionColor);
-                    b.Draw(Mod.clockTex, new Vector2(base.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + base.width / 2 - 112, base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160 - 16), null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 1f);
+                    b.DrawString(Game1.smallFont, chooseProfession, new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.smallFont.MeasureString(chooseProfession).X / 2f, this.yPositionOnScreen + 64 + IClickableMenu.spaceToClearTopBorder), Game1.textColor);
+                    b.DrawString(Game1.dialogueFont, this.leftProfessionDescription[0], new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160), this.leftProfessionColor);
+                    b.Draw(Mod.clockTex, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width / 2 - 112, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160 - 16), null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 1f);
                     for (int j = 1; j < this.leftProfessionDescription.Count; j++)
                     {
-                        b.DrawString(Game1.smallFont, Game1.parseText(this.leftProfessionDescription[j], Game1.smallFont, base.width / 2 - 64), new Vector2(-4 + base.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32, base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 128 + 8 + 64 * (j + 1)), this.leftProfessionColor);
+                        b.DrawString(Game1.smallFont, Game1.parseText(this.leftProfessionDescription[j], Game1.smallFont, this.width / 2 - 64), new Vector2(-4 + this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 128 + 8 + 64 * (j + 1)), this.leftProfessionColor);
                     }
-                    b.DrawString(Game1.dialogueFont, this.rightProfessionDescription[0], new Vector2(base.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + base.width / 2, base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160), this.rightProfessionColor);
-                    b.Draw(Game1.mouseCursors, new Vector2(base.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + base.width - 128, base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160 - 16), cursorsGoldIcon, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
+                    b.DrawString(Game1.dialogueFont, this.rightProfessionDescription[0], new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width / 2, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160), this.rightProfessionColor);
+                    b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width - 128, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160 - 16), this.cursorsGoldIcon, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
                     for (int i = 1; i < this.rightProfessionDescription.Count; i++)
                     {
-                        b.DrawString(Game1.smallFont, Game1.parseText(this.rightProfessionDescription[i], Game1.smallFont, base.width / 2 - 48), new Vector2(-4 + base.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + base.width / 2, base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 128 + 8 + 64 * (i + 1)), this.rightProfessionColor);
+                        b.DrawString(Game1.smallFont, Game1.parseText(this.rightProfessionDescription[i], Game1.smallFont, this.width / 2 - 48), new Vector2(-4 + this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width / 2, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 128 + 8 + 64 * (i + 1)), this.rightProfessionColor);
                     }
                 }
                 if (!Game1.options.SnappyMenus || this.hasMovedSelection)
                 {
                     Game1.mouseCursorTransparency = 1f;
-                    base.drawMouse(b);
+                    this.drawMouse(b);
                 }
             }
         }

@@ -19,11 +19,11 @@ namespace MoreGrassStarters
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += onMenuChanged;
+            helper.Events.Display.MenuChanged += this.onMenuChanged;
 
-            if (File.Exists(Path.Combine(Helper.DirectoryPath, "assets", "grass.png")))
+            if (File.Exists(Path.Combine(this.Helper.DirectoryPath, "assets", "grass.png")))
             {
                 GrassStarterItem.tex2 = Mod.instance.Helper.Content.Load<Texture2D>("assets/grass.png");
             }
@@ -39,8 +39,8 @@ namespace MoreGrassStarters
 
             if (menu.portraitPerson.Name == "Pierre")
             {
-                var forSale = Helper.Reflection.GetField<List<ISalable>>(menu, "forSale").GetValue();
-                var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(menu, "itemPriceAndStock").GetValue();
+                var forSale = this.Helper.Reflection.GetField<List<ISalable>>(menu, "forSale").GetValue();
+                var itemPriceAndStock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(menu, "itemPriceAndStock").GetValue();
 
                 for (int i = Grass.caveGrass; i < 5 + GrassStarterItem.ExtraGrassTypes; ++i)
                 {

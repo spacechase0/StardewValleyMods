@@ -18,13 +18,13 @@ namespace PyromancersJourney
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Player.Warped += onWarped;
+            helper.Events.Player.Warped += this.onWarped;
 
-            SpaceEvents.ActionActivated += onActionActivated;
+            SpaceEvents.ActionActivated += this.onActionActivated;
 
-            helper.ConsoleCommands.Add("pyrojourney", "Start the minigame!", DoCommands);
+            helper.ConsoleCommands.Add("pyrojourney", "Start the minigame!", this.DoCommands);
         }
 
         private void onActionActivated(object sender, EventArgsAction e)
@@ -42,7 +42,7 @@ namespace PyromancersJourney
                 var ts = vd.Map.TileSheets.FirstOrDefault(t => t.ImageSource.Contains("arcade-machine"));
                 if (ts == null)
                 {
-                    ts = new xTile.Tiles.TileSheet(vd.Map, Helper.Content.GetActualAssetKey("assets/arcade-machine.png"), new Size(2, 2), new Size(16, 16));
+                    ts = new xTile.Tiles.TileSheet(vd.Map, this.Helper.Content.GetActualAssetKey("assets/arcade-machine.png"), new Size(2, 2), new Size(16, 16));
                     ts.Id = "z" + ts.Id;
                     vd.Map.AddTileSheet(ts);
                     vd.setMapTile(31, 28, 3, "Buildings", "FireArcadeGame", vd.Map.TileSheets.IndexOf(ts));

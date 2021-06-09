@@ -33,18 +33,18 @@ namespace MoreBuildings
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += onMenuChanged;
-            helper.Events.Player.Warped += onWarped;
-            helper.Events.Specialized.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
-            SaveHandler.FinishedRebuilding += fixWarps;
+            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.Player.Warped += this.onWarped;
+            helper.Events.Specialized.UnvalidatedUpdateTicked += this.onUnvalidatedUpdateTicked;
+            SaveHandler.FinishedRebuilding += this.fixWarps;
 
-            shed2Exterior = Helper.Content.Load<Texture2D>("assets/BigShed/building.png");
-            spookyExterior = Helper.Content.Load<Texture2D>("assets/SpookyShed/building.png");
-            fishingExterior = Helper.Content.Load<Texture2D>("assets/FishingShack/building.png");
-            spaExterior = Helper.Content.Load<Texture2D>("assets/MiniSpa/building.png");
-            spookyGemTex = Helper.Content.Load<Texture2D>("assets/SpookyShed/Shrine_Gem.png");
+            this.shed2Exterior = this.Helper.Content.Load<Texture2D>("assets/BigShed/building.png");
+            this.spookyExterior = this.Helper.Content.Load<Texture2D>("assets/SpookyShed/building.png");
+            this.fishingExterior = this.Helper.Content.Load<Texture2D>("assets/FishingShack/building.png");
+            this.spaExterior = this.Helper.Content.Load<Texture2D>("assets/MiniSpa/building.png");
+            this.spookyGemTex = this.Helper.Content.Load<Texture2D>("assets/SpookyShed/Shrine_Gem.png");
 
             HarmonyPatcher.Apply(this,
                 new ShedPatcher()
@@ -59,7 +59,7 @@ namespace MoreBuildings
         {
             if (e.NewMenu is CarpenterMenu carp)
             {
-                var blueprints = Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
+                var blueprints = this.Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
                 //if ( Game1.getFarm().isBuildingConstructed("Shed"))
                 //    blueprints.Add(new BluePrint("Shed2"));
                 blueprints.Add(new BluePrint("SpookyShed"));
@@ -161,7 +161,7 @@ namespace MoreBuildings
         private void onUnvalidatedUpdateTicked(object sender, EventArgs e)
         {
             var task = (Task)typeof(Game1).GetField("_newDayTask", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
-            if (task != null && !taskWasThere)
+            if (task != null && !this.taskWasThere)
             {
                 foreach (var loc in Game1.locations)
                 {
@@ -187,7 +187,7 @@ namespace MoreBuildings
                     }
                 }
             }
-            taskWasThere = task != null;
+            this.taskWasThere = task != null;
         }
 
         public void fixWarps(object sender, EventArgs args)
@@ -242,21 +242,21 @@ namespace MoreBuildings
         public T Load<T>(IAssetInfo asset)
         {
             if (asset.AssetNameEquals("Buildings\\Shed2"))
-                return (T)(object)shed2Exterior;
+                return (T)(object)this.shed2Exterior;
             else if (asset.AssetNameEquals("Maps\\Shed2_"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("assets/BigShed/map.tbin");
+                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/BigShed/map.tbin");
             if (asset.AssetNameEquals("Buildings\\SpookyShed"))
-                return (T)(object)spookyExterior;
+                return (T)(object)this.spookyExterior;
             else if (asset.AssetNameEquals("Maps\\SpookyShed"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("assets/SpookyShed/map.tbin");
+                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/SpookyShed/map.tbin");
             if (asset.AssetNameEquals("Buildings\\FishShack"))
-                return (T)(object)fishingExterior;
+                return (T)(object)this.fishingExterior;
             else if (asset.AssetNameEquals("Maps\\FishShack"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("assets/FishingShack/map.tbin");
+                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/FishingShack/map.tbin");
             if (asset.AssetNameEquals("Buildings\\MiniSpa"))
-                return (T)(object)spaExterior;
+                return (T)(object)this.spaExterior;
             else if (asset.AssetNameEquals("Maps\\MiniSpa"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("assets/MiniSpa/map.tbin");
+                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/MiniSpa/map.tbin");
 
             return (T)(object)null;
         }

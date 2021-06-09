@@ -23,14 +23,14 @@ namespace ManaBar
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
             Command.register("player_addmana", addManaCommand);
             Command.register("player_setmaxmana", setMaxManaCommand);
 
             helper.Events.GameLoop.DayStarted += onDayStarted;
-            helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
-            helper.Events.GameLoop.Saved += onSaved;
+            helper.Events.GameLoop.SaveLoaded += this.onSaveLoaded;
+            helper.Events.GameLoop.Saved += this.onSaved;
             helper.Events.Display.RenderedHud += onRenderedHud;
 
             SpaceCore.Networking.RegisterMessageHandler(MultiplayerSaveData.MSG_DATA, onNetworkData);
@@ -56,9 +56,9 @@ namespace ManaBar
         private IApi api;
         public override object GetApi()
         {
-            if (api == null)
-                api = new Api();
-            return api;
+            if (this.api == null)
+                this.api = new Api();
+            return this.api;
         }
 
         private static void onNetworkData(IncomingMessage msg)
@@ -142,7 +142,7 @@ namespace ManaBar
                 if (!Game1.IsMultiplayer || Game1.IsMasterGame)
                 {
                     Log.info($"Loading save data");
-                    Data = Helper.Data.ReadSaveData<MultiplayerSaveData>(MultiplayerSaveData.SaveKey);
+                    Data = this.Helper.Data.ReadSaveData<MultiplayerSaveData>(MultiplayerSaveData.SaveKey);
                     if (Data == null)
                     {
                         if (File.Exists(MultiplayerSaveData.OldFilePath))
@@ -171,7 +171,7 @@ namespace ManaBar
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
                 Log.info($"Saving save data...");
-                Helper.Data.WriteSaveData(MultiplayerSaveData.SaveKey, Data);
+                this.Helper.Data.WriteSaveData(MultiplayerSaveData.SaveKey, Data);
             }
         }
     }

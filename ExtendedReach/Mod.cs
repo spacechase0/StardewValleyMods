@@ -20,11 +20,11 @@ namespace ExtendedReach
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
             config = helper.ReadConfig<Configuration>();
 
-            helper.Events.Display.RenderedWorld += onRenderWorld;
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
+            helper.Events.Display.RenderedWorld += this.onRenderWorld;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
 
             HarmonyPatcher.Apply(this,
                 new TileRadiusPatcher()
@@ -33,12 +33,12 @@ namespace ExtendedReach
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var gmcm = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (gmcm == null)
                 return;
 
-            gmcm.RegisterModConfig(ModManifest, () => config = new Configuration(), () => Helper.WriteConfig(config));
-            gmcm.RegisterSimpleOption(ModManifest, "Wiggly Arms", "Show wiggly arms reaching out to your cursor.", () => config.WigglyArms, (bool b) => config.WigglyArms = b);
+            gmcm.RegisterModConfig(this.ModManifest, () => config = new Configuration(), () => this.Helper.WriteConfig(config));
+            gmcm.RegisterSimpleOption(this.ModManifest, "Wiggly Arms", "Show wiggly arms reaching out to your cursor.", () => config.WigglyArms, (bool b) => config.WigglyArms = b);
         }
 
         private float ampDir = 1;
@@ -49,7 +49,7 @@ namespace ExtendedReach
             if (!Context.IsPlayerFree || !config.WigglyArms)
                 return;
 
-            var mousePos = Helper.Input.GetCursorPosition().ScreenPixels;
+            var mousePos = this.Helper.Input.GetCursorPosition().ScreenPixels;
             var farmerPos = Game1.GlobalToLocal(Game1.player.Position);
 
             if (Game1.player.FacingDirection == 1)
@@ -69,15 +69,17 @@ namespace ExtendedReach
                 return;
 
             var b = e.SpriteBatch;
-            var tex = Helper.Reflection.GetField<Texture2D>(Game1.player.FarmerRenderer, "baseTexture").GetValue();
+            var tex = this.Helper.Reflection.GetField<Texture2D>(Game1.player.FarmerRenderer, "baseTexture").GetValue();
 
-            amp += (mousePos - prevMousePos).Length() / 64 * ampDir;
-            if (amp >= 1 && ampDir == 1)
-                ampDir = -1;
-            else if (amp <= -1 && ampDir == -1)
-                ampDir = 1;
-            if (amp < -1) amp = -1;
-            if (amp > 1) amp = 1;
+            this.amp += (mousePos - this.prevMousePos).Length() / 64 * this.ampDir;
+            if (this.amp >= 1 && this.ampDir == 1)
+                this.ampDir = -1;
+            else if (this.amp <= -1 && this.ampDir == -1)
+                this.ampDir = 1;
+            if (this.amp < -1)
+                this.amp = -1;
+            if (this.amp > 1)
+                this.amp = 1;
 
             var diff = (mousePos - farmerPos);
             diff.Normalize();
@@ -91,9 +93,9 @@ namespace ExtendedReach
                 new Vector2(),
                 mousePos
             };
-            points[1] = farmerPos + (mousePos - farmerPos) / 4 * 1 + angle * 64 * amp;
+            points[1] = farmerPos + (mousePos - farmerPos) / 4 * 1 + angle * 64 * this.amp;
             points[2] = farmerPos + (mousePos - farmerPos) / 4 * 2;
-            points[3] = farmerPos + (mousePos - farmerPos) / 4 * 3 + angle * -64 * amp;
+            points[3] = farmerPos + (mousePos - farmerPos) / 4 * 3 + angle * -64 * this.amp;
 
             var curvePoints = computeCurvePoints((int)((farmerPos - mousePos).Length() / 32), points);
 
@@ -103,7 +105,7 @@ namespace ExtendedReach
             }
             e.SpriteBatch.Draw(tex, mousePos, new Rectangle(153, 237, 4, 4), Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 1);
 
-            prevMousePos = mousePos;
+            this.prevMousePos = mousePos;
         }
 
         // The below comes from here: https://stackoverflow.com/questions/33977226/drawing-bezier-curves-in-monogame-xna-produces-scratchy-lines

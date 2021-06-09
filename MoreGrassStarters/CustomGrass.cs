@@ -19,8 +19,8 @@ namespace MoreGrassStarters
         public Dictionary<string, string> getAdditionalSaveData()
         {
             var data = new Dictionary<string, string>();
-            data["Type"] = ((int)grassType.Value).ToString();
-            data["WeedCount"] = ((int)numberOfWeeds.Value).ToString();
+            data["Type"] = ((int)this.grassType.Value).ToString();
+            data["WeedCount"] = ((int)this.numberOfWeeds.Value).ToString();
             return data;
         }
 
@@ -31,18 +31,18 @@ namespace MoreGrassStarters
 
         public void rebuild(Dictionary<string, string> data, object replacement)
         {
-            grassType.Value = (byte)int.Parse(data["Type"]);
-            numberOfWeeds.Value = int.Parse(data["WeedCount"]);
-            loadSprite();
+            this.grassType.Value = (byte)int.Parse(data["Type"]);
+            this.numberOfWeeds.Value = int.Parse(data["WeedCount"]);
+            this.loadSprite();
         }
 
         public override void loadSprite()
         {
             base.loadSprite();
-            if (grassType >= 5)
+            if (this.grassType >= 5)
             {
-                texture = new Lazy<Texture2D>(() => GrassStarterItem.tex2);
-                grassSourceOffset.Value = 20 * (grassType - 5);
+                this.texture = new Lazy<Texture2D>(() => GrassStarterItem.tex2);
+                this.grassSourceOffset.Value = 20 * (this.grassType - 5);
             }
         }
 

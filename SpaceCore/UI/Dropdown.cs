@@ -18,8 +18,8 @@ namespace SpaceCore.UI
 
         public string Value
         {
-            get { return Choices[ActiveChoice]; }
-            set { if (Choices.Contains(value)) ActiveChoice = Array.IndexOf(Choices, value); }
+            get { return this.Choices[this.ActiveChoice]; }
+            set { if (this.Choices.Contains(value)) this.ActiveChoice = Array.IndexOf(this.Choices, value); }
         }
         public int ActiveChoice { get; set; } = 0;
 
@@ -32,7 +32,7 @@ namespace SpaceCore.UI
 
         public static Dropdown ActiveDropdown;
 
-        public override int Width => Math.Max(300, Math.Min(500, RequestWidth));
+        public override int Width => Math.Max(300, Math.Min(500, this.RequestWidth));
         public override int Height => 44;
         public override string ClickedSound => "shwip";
 
@@ -40,84 +40,84 @@ namespace SpaceCore.UI
         {
             base.Update(hidden);
 
-            if (Clicked)
+            if (this.Clicked)
             {
-                dropped = true;
-                Parent.RenderLast = this;
+                this.dropped = true;
+                this.Parent.RenderLast = this;
             }
 
-            if (dropped)
+            if (this.dropped)
             {
                 if (Mouse.GetState().LeftButton == ButtonState.Released)
                 {
                     Game1.playSound("drumkit6");
-                    dropped = false;
-                    if (Parent.RenderLast == this)
-                        Parent.RenderLast = null;
+                    this.dropped = false;
+                    if (this.Parent.RenderLast == this)
+                        this.Parent.RenderLast = null;
                 }
 
-                var bounds2 = new Rectangle((int)Position.X, (int)Position.Y, Width, Height * MaxValuesAtOnce);
+                var bounds2 = new Rectangle((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height * this.MaxValuesAtOnce);
                 if (bounds2.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                 {
-                    int choice = (Game1.getOldMouseY() - (int)Position.Y) / Height;
-                    ActiveChoice = choice + ActivePosition;
+                    int choice = (Game1.getOldMouseY() - (int)this.Position.Y) / this.Height;
+                    this.ActiveChoice = choice + this.ActivePosition;
 
-                    if (Callback != null)
-                        Callback.Invoke(this);
+                    if (this.Callback != null)
+                        this.Callback.Invoke(this);
                 }
             }
 
-            if (dropped)
+            if (this.dropped)
                 ActiveDropdown = this;
             else
-                ActivePosition = Math.Min(ActiveChoice, Choices.Length - MaxValuesAtOnce);
+                this.ActivePosition = Math.Min(this.ActiveChoice, this.Choices.Length - this.MaxValuesAtOnce);
         }
 
         public void receiveScrollWheelAction(int direction)
         {
-            if (dropped)
-                ActivePosition = Math.Min(Math.Max(ActivePosition - (direction / 120), 0), Choices.Length - MaxValuesAtOnce);
+            if (this.dropped)
+                this.ActivePosition = Math.Min(Math.Max(this.ActivePosition - (direction / 120), 0), this.Choices.Length - this.MaxValuesAtOnce);
             else
                 ActiveDropdown = null;
         }
 
         public void DrawOld(SpriteBatch b)
         {
-            IClickableMenu.drawTextureBox(b, Texture, BackgroundTextureRect, (int)Position.X, (int)Position.Y, Width - 48, Height, Color.White, 4, false);
-            b.DrawString(Game1.smallFont, Value, new Vector2(Position.X + 4, Position.Y + 8), Game1.textColor);
-            b.Draw(Texture, new Vector2(Position.X + Width - 48, Position.Y), ButtonTextureRect, Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
+            IClickableMenu.drawTextureBox(b, this.Texture, this.BackgroundTextureRect, (int)this.Position.X, (int)this.Position.Y, this.Width - 48, this.Height, Color.White, 4, false);
+            b.DrawString(Game1.smallFont, this.Value, new Vector2(this.Position.X + 4, this.Position.Y + 8), Game1.textColor);
+            b.Draw(this.Texture, new Vector2(this.Position.X + this.Width - 48, this.Position.Y), this.ButtonTextureRect, Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
 
-            if (dropped)
+            if (this.dropped)
             {
-                int tall = Choices.Length * Height;
-                IClickableMenu.drawTextureBox(b, Texture, BackgroundTextureRect, (int)Position.X, (int)Position.Y, Width - 48, tall, Color.White, 4, false);
-                for (int i = 0; i < Choices.Length; ++i)
+                int tall = this.Choices.Length * this.Height;
+                IClickableMenu.drawTextureBox(b, this.Texture, this.BackgroundTextureRect, (int)this.Position.X, (int)this.Position.Y, this.Width - 48, tall, Color.White, 4, false);
+                for (int i = 0; i < this.Choices.Length; ++i)
                 {
-                    if (i == ActiveChoice)
-                        b.Draw(Game1.staminaRect, new Rectangle((int)Position.X + 4, (int)Position.Y + i * Height, Width - 48 - 8, Height), null, Color.Wheat, 0, Vector2.Zero, SpriteEffects.None, 0.98f);
-                    b.DrawString(Game1.smallFont, Choices[i], new Vector2(Position.X + 4, Position.Y + i * Height + 8), Game1.textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+                    if (i == this.ActiveChoice)
+                        b.Draw(Game1.staminaRect, new Rectangle((int)this.Position.X + 4, (int)this.Position.Y + i * this.Height, this.Width - 48 - 8, this.Height), null, Color.Wheat, 0, Vector2.Zero, SpriteEffects.None, 0.98f);
+                    b.DrawString(Game1.smallFont, this.Choices[i], new Vector2(this.Position.X + 4, this.Position.Y + i * this.Height + 8), Game1.textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
                 }
             }
         }
 
         public override void Draw(SpriteBatch b)
         {
-            IClickableMenu.drawTextureBox(b, Texture, BackgroundTextureRect, (int)Position.X, (int)Position.Y, Width - 48, Height, Color.White, 4, false);
-            b.DrawString(Game1.smallFont, Value, new Vector2(Position.X + 4, Position.Y + 8), Game1.textColor);
-            b.Draw(Texture, new Vector2(Position.X + Width - 48, Position.Y), ButtonTextureRect, Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
+            IClickableMenu.drawTextureBox(b, this.Texture, this.BackgroundTextureRect, (int)this.Position.X, (int)this.Position.Y, this.Width - 48, this.Height, Color.White, 4, false);
+            b.DrawString(Game1.smallFont, this.Value, new Vector2(this.Position.X + 4, this.Position.Y + 8), Game1.textColor);
+            b.Draw(this.Texture, new Vector2(this.Position.X + this.Width - 48, this.Position.Y), this.ButtonTextureRect, Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
 
-            if (dropped)
+            if (this.dropped)
             {
-                int maxValues = MaxValuesAtOnce;
-                int start = ActivePosition;
-                int end = Math.Min(Choices.Length, start + maxValues);
-                int tall = Math.Min(maxValues, Choices.Length - ActivePosition) * Height;
-                IClickableMenu.drawTextureBox(b, Texture, BackgroundTextureRect, (int)Position.X, (int)Position.Y, Width - 48, tall, Color.White, 4, false);
+                int maxValues = this.MaxValuesAtOnce;
+                int start = this.ActivePosition;
+                int end = Math.Min(this.Choices.Length, start + maxValues);
+                int tall = Math.Min(maxValues, this.Choices.Length - this.ActivePosition) * this.Height;
+                IClickableMenu.drawTextureBox(b, this.Texture, this.BackgroundTextureRect, (int)this.Position.X, (int)this.Position.Y, this.Width - 48, tall, Color.White, 4, false);
                 for (int i = start; i < end; ++i)
                 {
-                    if (i == ActiveChoice)
-                        b.Draw(Game1.staminaRect, new Rectangle((int)Position.X + 4, (int)Position.Y + (i - ActivePosition) * Height, Width - 48 - 8, Height), null, Color.Wheat, 0, Vector2.Zero, SpriteEffects.None, 0.98f);
-                    b.DrawString(Game1.smallFont, Choices[i], new Vector2(Position.X + 4, Position.Y + (i - ActivePosition) * Height + 8), Game1.textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+                    if (i == this.ActiveChoice)
+                        b.Draw(Game1.staminaRect, new Rectangle((int)this.Position.X + 4, (int)this.Position.Y + (i - this.ActivePosition) * this.Height, this.Width - 48 - 8, this.Height), null, Color.Wheat, 0, Vector2.Zero, SpriteEffects.None, 0.98f);
+                    b.DrawString(Game1.smallFont, this.Choices[i], new Vector2(this.Position.X + 4, this.Position.Y + (i - this.ActivePosition) * this.Height + 8), Game1.textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
                 }
             }
         }

@@ -14,9 +14,9 @@ namespace Spenny
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.GameLoop.UpdateTicked += this.onUpdateTicked;
         }
 
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>

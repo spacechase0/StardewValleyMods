@@ -12,35 +12,35 @@ namespace GenericModConfigMenu.ModOption
         private T state;
         public virtual T Value
         {
-            get { return state; }
+            get { return this.state; }
             set
             {
-                if (!state.Equals(value))
-                    Mod.instance.configs[Owner].Options[Mod.instance.configs[Owner].ActiveDisplayPage.Name].ChangeHandler.ForEach(c => c.Invoke(Id, value));
+                if (!this.state.Equals(value))
+                    Mod.instance.configs[this.Owner].Options[Mod.instance.configs[this.Owner].ActiveDisplayPage.Name].ChangeHandler.ForEach(c => c.Invoke(this.Id, value));
 
-                state = value;
+                this.state = value;
             }
         }
 
         public override void SyncToMod()
         {
-            state = getter.Invoke();
+            this.state = this.getter.Invoke();
         }
 
         public override void Save()
         {
-            SpaceShared.Log.trace("saving " + Name + " " + Description);
-            setter.Invoke(state);
+            SpaceShared.Log.trace("saving " + this.Name + " " + this.Description);
+            this.setter.Invoke(this.state);
         }
 
         public SimpleModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, string id, IManifest mod)
             : base(name, desc, id, mod)
         {
-            Type = type;
-            getter = theGetter;
-            setter = theSetter;
+            this.Type = type;
+            this.getter = theGetter;
+            this.setter = theSetter;
 
-            state = getter.Invoke();
+            this.state = this.getter.Invoke();
         }
     }
 }

@@ -230,36 +230,36 @@ namespace JsonAssets
         internal void InvokeItemsRegistered()
         {
             Log.trace("Event: ItemsRegistered");
-            if (ItemsRegistered == null)
+            if (this.ItemsRegistered == null)
                 return;
-            Util.invokeEvent("JsonAssets.Api.ItemsRegistered", ItemsRegistered.GetInvocationList(), null);
+            Util.invokeEvent("JsonAssets.Api.ItemsRegistered", this.ItemsRegistered.GetInvocationList(), null);
         }
 
         public event EventHandler IdsAssigned;
         internal void InvokeIdsAssigned()
         {
             Log.trace("Event: IdsAssigned");
-            if (IdsAssigned == null)
+            if (this.IdsAssigned == null)
                 return;
-            Util.invokeEvent("JsonAssets.Api.IdsAssigned", IdsAssigned.GetInvocationList(), null);
+            Util.invokeEvent("JsonAssets.Api.IdsAssigned", this.IdsAssigned.GetInvocationList(), null);
         }
 
         public event EventHandler AddedItemsToShop;
         internal void InvokeAddedItemsToShop()
         {
             Log.trace("Event: AddedItemsToShop");
-            if (AddedItemsToShop == null)
+            if (this.AddedItemsToShop == null)
                 return;
-            Util.invokeEvent("JsonAssets.Api.AddedItemsToShop", AddedItemsToShop.GetInvocationList(), null);
+            Util.invokeEvent("JsonAssets.Api.AddedItemsToShop", this.AddedItemsToShop.GetInvocationList(), null);
         }
 
         public event EventHandler IdsFixed;
         internal void InvokeIdsFixed()
         {
             Log.trace("Event: IdsFixed");
-            if (IdsFixed == null)
+            if (this.IdsFixed == null)
                 return;
-            Util.invokeEvent("JsonAssets.Api.IdsFixed", IdsFixed.GetInvocationList(), null);
+            Util.invokeEvent("JsonAssets.Api.IdsFixed", this.IdsFixed.GetInvocationList(), null);
         }
 
         public bool FixIdsInItem(Item item)

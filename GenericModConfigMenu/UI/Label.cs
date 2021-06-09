@@ -17,35 +17,35 @@ namespace GenericModConfigMenu.UI
 
         public Action<Element> Callback { get; set; }
 
-        public override int Width => (int)Measure().X;
-        public override int Height => (int)Measure().Y;
-        public override string HoveredSound => (Callback != null) ? "shiny4" : null;
+        public override int Width => (int)this.Measure().X;
+        public override int Height => (int)this.Measure().Y;
+        public override string HoveredSound => (this.Callback != null) ? "shiny4" : null;
 
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
 
-            if (Clicked && Callback != null)
-                Callback.Invoke(this);
+            if (this.Clicked && this.Callback != null)
+                this.Callback.Invoke(this);
         }
 
         public Vector2 Measure()
         {
-            if (Bold)
-                return new Vector2(SpriteText.getWidthOfString(String), SpriteText.getHeightOfString(String));
+            if (this.Bold)
+                return new Vector2(SpriteText.getWidthOfString(this.String), SpriteText.getHeightOfString(this.String));
             else
-                return Game1.dialogueFont.MeasureString(String) * NonBoldScale;
+                return Game1.dialogueFont.MeasureString(this.String) * this.NonBoldScale;
         }
 
         public override void Draw(SpriteBatch b)
         {
-            bool altColor = Hover && Callback != null;
-            if (Bold)
-                SpriteText.drawString(b, String, (int)Position.X, (int)Position.Y, layerDepth: 1, color: altColor ? SpriteText.color_Gray : -1);
-            else if (NonBoldShadow)
-                Utility.drawTextWithShadow(b, String, Game1.dialogueFont, Position, altColor ? HoverTextColor : IdleTextColor, NonBoldScale);
+            bool altColor = this.Hover && this.Callback != null;
+            if (this.Bold)
+                SpriteText.drawString(b, this.String, (int)this.Position.X, (int)this.Position.Y, layerDepth: 1, color: altColor ? SpriteText.color_Gray : -1);
+            else if (this.NonBoldShadow)
+                Utility.drawTextWithShadow(b, this.String, Game1.dialogueFont, this.Position, altColor ? this.HoverTextColor : this.IdleTextColor, this.NonBoldScale);
             else
-                b.DrawString(Game1.dialogueFont, String, Position, altColor ? HoverTextColor : IdleTextColor, 0f, Vector2.Zero, NonBoldScale, SpriteEffects.None, 1);
+                b.DrawString(Game1.dialogueFont, this.String, this.Position, altColor ? this.HoverTextColor : this.IdleTextColor, 0f, Vector2.Zero, this.NonBoldScale, SpriteEffects.None, 1);
         }
     }
 }

@@ -21,15 +21,15 @@ namespace MoreGrassStarters
 
         public GrassStarterItem(int which)
         {
-            whichGrass = which;
-            name = $"Grass ({which})";
-            Price = 100;
-            ParentSheetIndex = 297;
+            this.whichGrass = which;
+            this.name = $"Grass ({which})";
+            this.Price = 100;
+            this.ParentSheetIndex = 297;
         }
 
         public override Item getOne()
         {
-            return new GrassStarterItem(whichGrass);
+            return new GrassStarterItem(this.whichGrass);
         }
 
         public override bool canBePlacedHere(GameLocation l, Vector2 tile)
@@ -42,7 +42,7 @@ namespace MoreGrassStarters
             return true;
         }
 
-        public override bool placementAction(GameLocation location, int x, int y, StardewValley.Farmer who = null)
+        public override bool placementAction(GameLocation location, int x, int y, Farmer who = null)
         {
             Vector2 index1 = new Vector2((float)(x / Game1.tileSize), (float)(y / Game1.tileSize));
             this.health = 10;
@@ -50,7 +50,7 @@ namespace MoreGrassStarters
 
             if (location.objects.ContainsKey(index1) || location.terrainFeatures.ContainsKey(index1))
                 return false;
-            location.terrainFeatures.Add(index1, (TerrainFeature)new CustomGrass(whichGrass, 4));
+            location.terrainFeatures.Add(index1, (TerrainFeature)new CustomGrass(this.whichGrass, 4));
             Game1.playSound("dirtyHit");
 
             return true;
@@ -59,23 +59,23 @@ namespace MoreGrassStarters
         public override void draw(SpriteBatch b, int x, int y, float alpha = 1)
         {
             Texture2D tex = GrassStarterItem.tex;
-            int texOffset = 20 + whichGrass * 20;
-            if (whichGrass >= 5)
+            int texOffset = 20 + this.whichGrass * 20;
+            if (this.whichGrass >= 5)
             {
                 tex = tex2;
-                texOffset = 20 * (whichGrass - 5);
+                texOffset = 20 * (this.whichGrass - 5);
             }
             b.Draw(tex, new Rectangle(x, y, 16, 20), new Rectangle(0, texOffset, 16, 20), Color.White);
         }
 
-        public override void drawWhenHeld(SpriteBatch b, Vector2 pos, StardewValley.Farmer f)
+        public override void drawWhenHeld(SpriteBatch b, Vector2 pos, Farmer f)
         {
             Texture2D tex = GrassStarterItem.tex;
-            int texOffset = 20 + whichGrass * 20;
-            if (whichGrass >= 5)
+            int texOffset = 20 + this.whichGrass * 20;
+            if (this.whichGrass >= 5)
             {
                 tex = tex2;
-                texOffset = 20 * (whichGrass - 5);
+                texOffset = 20 * (this.whichGrass - 5);
             }
             b.Draw(tex, pos - new Vector2(-4, 24), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, (f.getStandingY() + 3) / 10000f);
         }
@@ -83,11 +83,11 @@ namespace MoreGrassStarters
         public override void drawInMenu(SpriteBatch b, Vector2 pos, float scale, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
             Texture2D tex = GrassStarterItem.tex;
-            int texOffset = 20 + whichGrass * 20;
-            if (whichGrass >= 5)
+            int texOffset = 20 + this.whichGrass * 20;
+            if (this.whichGrass >= 5)
             {
                 tex = tex2;
-                texOffset = 20 * (whichGrass - 5);
+                texOffset = 20 * (this.whichGrass - 5);
             }
             b.Draw(tex, pos + new Vector2(4, 0), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4 * scale, SpriteEffects.None, layerDepth);
 
@@ -98,23 +98,23 @@ namespace MoreGrassStarters
         // Custom Element Handler
         public object getReplacement()
         {
-            return new SObject(297, stack);
+            return new SObject(297, this.stack);
         }
 
         public Dictionary<string, string> getAdditionalSaveData()
         {
             return new Dictionary<string, string>
             {
-                ["whichGrass"] = whichGrass.ToString()
+                ["whichGrass"] = this.whichGrass.ToString()
             };
         }
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
         {
-            whichGrass = int.Parse(additionalSaveData["whichGrass"]);
-            name = $"Grass ({whichGrass})";
-            Price = 100;
-            ParentSheetIndex = 297;
+            this.whichGrass = int.Parse(additionalSaveData["whichGrass"]);
+            this.name = $"Grass ({this.whichGrass})";
+            this.Price = 100;
+            this.ParentSheetIndex = 297;
         }
     }
 }

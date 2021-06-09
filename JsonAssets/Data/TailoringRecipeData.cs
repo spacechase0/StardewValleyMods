@@ -20,20 +20,20 @@ namespace JsonAssets.Data
         public TailorItemRecipe ToGameData()
         {
             var tir = new TailorItemRecipe();
-            tir.FirstItemTags = new List<string>(FirstItemTags);
-            tir.SecondItemTags = new List<string>(SecondItemTags);
+            tir.FirstItemTags = new List<string>(this.FirstItemTags);
+            tir.SecondItemTags = new List<string>(this.SecondItemTags);
 
-            tir.SpendRightItem = ConsumeSecondItem;
+            tir.SpendRightItem = this.ConsumeSecondItem;
 
-            if (CraftedItems.Count > 1)
+            if (this.CraftedItems.Count > 1)
             {
                 tir.CraftedItemIDs = new List<string>();
-                foreach (var entry in CraftedItems)
-                    tir.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(CraftedItems[0]).ToString());
+                foreach (var entry in this.CraftedItems)
+                    tir.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(this.CraftedItems[0]).ToString());
             }
             else
-                tir.CraftedItemID = Mod.instance.ResolveClothingId(CraftedItems[0]);
-            tir.CraftedItemColor = $"{CraftedItemColor.R} {CraftedItemColor.G} {CraftedItemColor.B}";
+                tir.CraftedItemID = Mod.instance.ResolveClothingId(this.CraftedItems[0]);
+            tir.CraftedItemColor = $"{this.CraftedItemColor.R} {this.CraftedItemColor.G} {this.CraftedItemColor.B}";
 
             return tir;
         }

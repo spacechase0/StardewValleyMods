@@ -14,8 +14,8 @@ namespace ThreeHeartDancePartner
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            Log.Monitor = Monitor;
-            helper.Events.Display.MenuChanged += onMenuChanged;
+            Log.Monitor = this.Monitor;
+            helper.Events.Display.MenuChanged += this.onMenuChanged;
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>

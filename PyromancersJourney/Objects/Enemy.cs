@@ -10,9 +10,9 @@ namespace PyromancersJourney.Objects
         public override void Hurt(int amt)
         {
             base.Hurt(amt);
-            if (Health <= 0)
+            if (this.Health <= 0)
             {
-                Dead = true;
+                this.Dead = true;
             }
         }
 
@@ -20,20 +20,20 @@ namespace PyromancersJourney.Objects
         {
             base.Update();
 
-            foreach (var proj in World.projectiles)
+            foreach (var proj in this.World.projectiles)
             {
                 if (proj.Dead)
                     continue;
 
-                if ((proj.BoundingBox + new Vector2(proj.Position.X, proj.Position.Z)).Intersects(BoundingBox + new Vector2(Position.X, Position.Z)) && !proj.HurtsPlayer)
+                if ((proj.BoundingBox + new Vector2(proj.Position.X, proj.Position.Z)).Intersects(this.BoundingBox + new Vector2(this.Position.X, this.Position.Z)) && !proj.HurtsPlayer)
                 {
                     proj.Trigger(this);
                 }
             }
 
-            if ((World.player.BoundingBox + new Vector2(World.player.Position.X, World.player.Position.Z)).Intersects(BoundingBox + new Vector2(Position.X, Position.Z)))
+            if ((this.World.player.BoundingBox + new Vector2(this.World.player.Position.X, this.World.player.Position.Z)).Intersects(this.BoundingBox + new Vector2(this.Position.X, this.Position.Z)))
             {
-                World.player.Hurt(1);
+                this.World.player.Hurt(1);
             }
         }
     }

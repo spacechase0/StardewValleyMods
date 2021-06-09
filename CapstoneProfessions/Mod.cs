@@ -22,13 +22,13 @@ namespace CapstoneProfessions
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            Helper.Events.Player.Warped += OnWarped;
+            this.Helper.Events.Player.Warped += this.OnWarped;
 
-            SpaceEvents.ShowNightEndMenus += OnNightMenus;
+            SpaceEvents.ShowNightEndMenus += this.OnNightMenus;
 
-            clockTex = Helper.Content.Load<Texture2D>("assets/clock.png");
+            clockTex = this.Helper.Content.Load<Texture2D>("assets/clock.png");
 
             HarmonyPatcher.Apply(this,
                 new Game1Patcher(),
@@ -38,7 +38,7 @@ namespace CapstoneProfessions
 
         private void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (e.IsLocalPlayer && Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
+            if (e.IsLocalPlayer && this.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
                 if (e.Player.professions.Contains(PROFESSION_TIME) && !e.Player.professions.Contains(PROFESSION_PROFIT))
                     e.Player.professions.Add(PROFESSION_PROFIT);

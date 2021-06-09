@@ -16,7 +16,7 @@ namespace SpaceCore.UI
 
         protected bool dragging = false;
 
-        public override int Width => RequestWidth;
+        public override int Width => this.RequestWidth;
         public override int Height => 24;
 
         public override void Draw(SpriteBatch b)
@@ -41,44 +41,44 @@ namespace SpaceCore.UI
         {
             base.Update(hidden);
 
-            if (Clicked)
-                dragging = true;
+            if (this.Clicked)
+                this.dragging = true;
             if (Mouse.GetState().LeftButton == ButtonState.Released)
-                dragging = false;
+                this.dragging = false;
 
-            if (dragging)
+            if (this.dragging)
             {
-                float perc = (Game1.getOldMouseX() - Position.X) / (float)Width;
-                if (Value is int)
+                float perc = (Game1.getOldMouseX() - this.Position.X) / (float)this.Width;
+                if (this.Value is int)
                 {
-                    Value = Util.Clamp<T>(Minimum, (T)(object)(int)(perc * ((int)(object)Maximum - (int)(object)Minimum) + (int)(object)Minimum), Maximum);
+                    this.Value = Util.Clamp<T>(this.Minimum, (T)(object)(int)(perc * ((int)(object)this.Maximum - (int)(object)this.Minimum) + (int)(object)this.Minimum), this.Maximum);
                 }
-                else if (Value is float)
+                else if (this.Value is float)
                 {
-                    Value = Util.Clamp<T>(Minimum, (T)(object)(float)(perc * ((float)(object)Maximum - (float)(object)Minimum) + (float)(object)Minimum), Maximum);
+                    this.Value = Util.Clamp<T>(this.Minimum, (T)(object)(float)(perc * ((float)(object)this.Maximum - (float)(object)this.Minimum) + (float)(object)this.Minimum), this.Maximum);
                 }
 
-                Value = Util.Adjust(Value, Interval);
+                this.Value = Util.Adjust(this.Value, this.Interval);
 
-                if (Callback != null)
-                    Callback.Invoke(this);
+                if (this.Callback != null)
+                    this.Callback.Invoke(this);
             }
         }
 
         public override void Draw(SpriteBatch b)
         {
             float perc = 0;
-            if (Value is int)
+            if (this.Value is int)
             {
-                perc = ((int)(object)Value - (int)(object)Minimum) / (float)((int)(object)Maximum - (int)(object)Minimum);
+                perc = ((int)(object)this.Value - (int)(object)this.Minimum) / (float)((int)(object)this.Maximum - (int)(object)this.Minimum);
             }
-            else if (Value is float)
+            else if (this.Value is float)
             {
-                perc = ((float)(object)Value - (float)(object)Minimum) / (float)((float)(object)Maximum - (float)(object)Minimum);
+                perc = ((float)(object)this.Value - (float)(object)this.Minimum) / (float)((float)(object)this.Maximum - (float)(object)this.Minimum);
             }
 
-            Rectangle back = new Rectangle((int)Position.X, (int)Position.Y, Width, Height);
-            Rectangle front = new Rectangle((int)(Position.X + perc * (Width - 40)), (int)Position.Y, 40, Height);
+            Rectangle back = new Rectangle((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);
+            Rectangle front = new Rectangle((int)(this.Position.X + perc * (this.Width - 40)), (int)this.Position.Y, 40, this.Height);
 
             IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), back.X, back.Y, back.Width, back.Height, Color.White, Game1.pixelZoom, false);
             b.Draw(Game1.mouseCursors, new Vector2(front.X, front.Y), new Rectangle(420, 441, 10, 6), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.9f);

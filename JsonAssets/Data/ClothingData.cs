@@ -31,9 +31,9 @@ namespace JsonAssets.Data
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             /*if (currLang == LocalizedContentManager.LanguageCode.en)
                 return Name;*/
-            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
-                return Name;
-            return NameLocalization[currLang.ToString()];
+            if (this.NameLocalization == null || !this.NameLocalization.ContainsKey(currLang.ToString()))
+                return this.Name;
+            return this.NameLocalization[currLang.ToString()];
         }
 
         public string LocalizedDescription()
@@ -41,18 +41,18 @@ namespace JsonAssets.Data
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             /*if (currLang == LocalizedContentManager.LanguageCode.en)
                 return Description;*/
-            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return Description;
-            return DescriptionLocalization[currLang.ToString()];
+            if (this.DescriptionLocalization == null || !this.DescriptionLocalization.ContainsKey(currLang.ToString()))
+                return this.Description;
+            return this.DescriptionLocalization[currLang.ToString()];
         }
 
-        public int GetClothingId() { return id; }
-        public int GetMaleIndex() { return textureIndex; }
-        public int GetFemaleIndex() { return HasFemaleVariant ? (textureIndex + 1) : -1; }
+        public int GetClothingId() { return this.id; }
+        public int GetMaleIndex() { return this.textureIndex; }
+        public int GetFemaleIndex() { return this.HasFemaleVariant ? (this.textureIndex + 1) : -1; }
 
         internal string GetClothingInformation()
         {
-            return $"{Name}/{LocalizedName()}/{LocalizedDescription()}/{GetMaleIndex()}/{GetFemaleIndex()}/{Price}/{DefaultColor.R} {DefaultColor.G} {DefaultColor.B}/{Dyeable}/Shirt/{Metadata}";
+            return $"{this.Name}/{this.LocalizedName()}/{this.LocalizedDescription()}/{this.GetMaleIndex()}/{this.GetFemaleIndex()}/{this.Price}/{this.DefaultColor.R} {this.DefaultColor.G} {this.DefaultColor.B}/{this.Dyeable}/Shirt/{this.Metadata}";
         }
     }
 }

@@ -24,27 +24,27 @@ namespace GenericModConfigMenu
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            ui = new RootElement();
+            this.ui = new RootElement();
 
-            Texture2D tex = Helper.Content.Load<Texture2D>("assets/config-button.png");
-            configButton = new Button(tex);
-            configButton.LocalPosition = new Vector2(36, Game1.viewport.Height - 100);
-            configButton.Callback = (Element e) =>
+            Texture2D tex = this.Helper.Content.Load<Texture2D>("assets/config-button.png");
+            this.configButton = new Button(tex);
+            this.configButton.LocalPosition = new Vector2(36, Game1.viewport.Height - 100);
+            this.configButton.Callback = (Element e) =>
             {
                 Game1.playSound("newArtifact");
                 TitleMenu.subMenu = new ModConfigMenu(false);
             };
 
-            ui.AddChild(configButton);
+            this.ui.AddChild(this.configButton);
 
-            helper.Events.GameLoop.GameLaunched += onLaunched;
-            helper.Events.GameLoop.UpdateTicking += onUpdate;
-            helper.Events.Display.WindowResized += onWindowResized;
-            helper.Events.Display.Rendered += onRendered;
-            helper.Events.Display.MenuChanged += onMenuChanged;
-            helper.Events.Input.MouseWheelScrolled += onMouseWheelScrolled;
+            helper.Events.GameLoop.GameLaunched += this.onLaunched;
+            helper.Events.GameLoop.UpdateTicking += this.onUpdate;
+            helper.Events.Display.WindowResized += this.onWindowResized;
+            helper.Events.Display.Rendered += this.onRendered;
+            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.Input.MouseWheelScrolled += this.onMouseWheelScrolled;
         }
 
 
@@ -77,35 +77,35 @@ namespace GenericModConfigMenu
 
         private void onLaunched(object sender, GameLaunchedEventArgs e)
         {
-            config = Helper.ReadConfig<DummyConfig>();
-            var api = Helper.ModRegistry.GetApi<IApi>(ModManifest.UniqueID);
-            api.RegisterModConfig(ModManifest, () => config = new DummyConfig(), () => Helper.WriteConfig(config));
-            api.SetDefaultIngameOptinValue(ModManifest, true);
-            api.RegisterLabel(ModManifest, "Dummy Label", "Testing labels");
-            api.RegisterParagraph(ModManifest, "Testing paragraph text. These are smaller than labels and should wrap based on length. In theory. They should also (in theory) support multiple rows. Whether that will look good or not is another question. But hey, it looks like it worked! Imagine that. Should I support images in documentation, too?");
-            api.RegisterImage(ModManifest, "Maps\\springobjects", new Rectangle(32, 48, 16, 16));
-            api.RegisterImage(ModManifest, "Portraits\\Penny", null, 1);
-            api.SetDefaultIngameOptinValue(ModManifest, false);
-            api.RegisterPageLabel(ModManifest, "Go to page: Simple Options", "", "Simple Options");
-            api.SetDefaultIngameOptinValue(ModManifest, true);
-            api.RegisterPageLabel(ModManifest, "Go to page: Complex Options", "", "Complex Options");
-            api.SetDefaultIngameOptinValue(ModManifest, false);
-            api.StartNewPage(ModManifest, "Simple Options");
-            api.RegisterPageLabel(ModManifest, "Back to main page", "", "");
-            api.RegisterSimpleOption(ModManifest, "Dummy Bool", "Testing a checkbox", () => config.dummyBool, (bool val) => config.dummyBool = val);
-            api.RegisterSimpleOption(ModManifest, "Dummy Int (1)", "Testing an int (simple)", () => config.dummyInt1, (int val) => config.dummyInt1 = val);
-            api.RegisterClampedOption(ModManifest, "Dummy Int (2)", "Testing an int (range)", () => config.dummyInt2, (int val) => config.dummyInt2 = val, 0, 100);
-            api.RegisterSimpleOption(ModManifest, "Dummy Float (1)", "Testing a float (simple)", () => config.dummyFloat1, (float val) => config.dummyFloat1 = val);
-            api.RegisterClampedOption(ModManifest, "Dummy Float (2)", "Testing a float (range)", () => config.dummyFloat2, (float val) => config.dummyFloat2 = val, 0, 1);
-            api.SetDefaultIngameOptinValue(ModManifest, true);
-            api.StartNewPage(ModManifest, "Complex Options");
-            api.RegisterPageLabel(ModManifest, "Back to main page", "", "");
-            api.RegisterSimpleOption(ModManifest, "Dummy String (1)", "Testing a string", () => config.dummyString1, (string val) => config.dummyString1 = val);
-            api.RegisterChoiceOption(ModManifest, "Dummy String (2)", "Testing a dropdown box", () => config.dummyString2, (string val) => config.dummyString2 = val, DummyConfig.dummyString2Choices);
-            api.RegisterSimpleOption(ModManifest, "Dummy Keybinding", "Testing a keybinding", () => config.dummyKeybinding, (SButton val) => config.dummyKeybinding = val);
-            api.RegisterSimpleOption(ModManifest, "Dummy Keybinding 2", "Testing a keybinding list", () => config.dummyKeybinding2, (KeybindList val) => config.dummyKeybinding2 = val);
+            this.config = this.Helper.ReadConfig<DummyConfig>();
+            var api = this.Helper.ModRegistry.GetApi<IApi>(this.ModManifest.UniqueID);
+            api.RegisterModConfig(this.ModManifest, () => this.config = new DummyConfig(), () => this.Helper.WriteConfig(this.config));
+            api.SetDefaultIngameOptinValue(this.ModManifest, true);
+            api.RegisterLabel(this.ModManifest, "Dummy Label", "Testing labels");
+            api.RegisterParagraph(this.ModManifest, "Testing paragraph text. These are smaller than labels and should wrap based on length. In theory. They should also (in theory) support multiple rows. Whether that will look good or not is another question. But hey, it looks like it worked! Imagine that. Should I support images in documentation, too?");
+            api.RegisterImage(this.ModManifest, "Maps\\springobjects", new Rectangle(32, 48, 16, 16));
+            api.RegisterImage(this.ModManifest, "Portraits\\Penny", null, 1);
+            api.SetDefaultIngameOptinValue(this.ModManifest, false);
+            api.RegisterPageLabel(this.ModManifest, "Go to page: Simple Options", "", "Simple Options");
+            api.SetDefaultIngameOptinValue(this.ModManifest, true);
+            api.RegisterPageLabel(this.ModManifest, "Go to page: Complex Options", "", "Complex Options");
+            api.SetDefaultIngameOptinValue(this.ModManifest, false);
+            api.StartNewPage(this.ModManifest, "Simple Options");
+            api.RegisterPageLabel(this.ModManifest, "Back to main page", "", "");
+            api.RegisterSimpleOption(this.ModManifest, "Dummy Bool", "Testing a checkbox", () => this.config.dummyBool, (bool val) => this.config.dummyBool = val);
+            api.RegisterSimpleOption(this.ModManifest, "Dummy Int (1)", "Testing an int (simple)", () => this.config.dummyInt1, (int val) => this.config.dummyInt1 = val);
+            api.RegisterClampedOption(this.ModManifest, "Dummy Int (2)", "Testing an int (range)", () => this.config.dummyInt2, (int val) => this.config.dummyInt2 = val, 0, 100);
+            api.RegisterSimpleOption(this.ModManifest, "Dummy Float (1)", "Testing a float (simple)", () => this.config.dummyFloat1, (float val) => this.config.dummyFloat1 = val);
+            api.RegisterClampedOption(this.ModManifest, "Dummy Float (2)", "Testing a float (range)", () => this.config.dummyFloat2, (float val) => this.config.dummyFloat2 = val, 0, 1);
+            api.SetDefaultIngameOptinValue(this.ModManifest, true);
+            api.StartNewPage(this.ModManifest, "Complex Options");
+            api.RegisterPageLabel(this.ModManifest, "Back to main page", "", "");
+            api.RegisterSimpleOption(this.ModManifest, "Dummy String (1)", "Testing a string", () => this.config.dummyString1, (string val) => this.config.dummyString1 = val);
+            api.RegisterChoiceOption(this.ModManifest, "Dummy String (2)", "Testing a dropdown box", () => this.config.dummyString2, (string val) => this.config.dummyString2 = val, DummyConfig.dummyString2Choices);
+            api.RegisterSimpleOption(this.ModManifest, "Dummy Keybinding", "Testing a keybinding", () => this.config.dummyKeybinding, (SButton val) => this.config.dummyKeybinding = val);
+            api.RegisterSimpleOption(this.ModManifest, "Dummy Keybinding 2", "Testing a keybinding list", () => this.config.dummyKeybinding2, (KeybindList val) => this.config.dummyKeybinding2 = val);
 
-            api.RegisterLabel(ModManifest, "", "");
+            api.RegisterLabel(this.ModManifest, "", "");
 
             // Complex widget - this just generates a random  color on click.
             Func<Vector2, object, object> randomColorUpdate =
@@ -113,7 +113,7 @@ namespace GenericModConfigMenu
             {
                 var state = state_ as RandomColorWidgetState;
                 if (state == null)
-                    state = new RandomColorWidgetState() { color = config.dummyColor };
+                    state = new RandomColorWidgetState() { color = this.config.dummyColor };
 
                 var bounds = new Rectangle((int)pos.X + 12, (int)pos.Y + 12, 50 - 12 * 2, 50 - 12 * 2);
                 bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
@@ -142,9 +142,9 @@ namespace GenericModConfigMenu
             {
                 if (state == null)
                     return;
-                config.dummyColor = (state as RandomColorWidgetState).color;
+                this.config.dummyColor = (state as RandomColorWidgetState).color;
             };
-            api.RegisterComplexOption(ModManifest, "Dummy Color", "Testing a complex widget (random color on click)", randomColorUpdate, randomColorDraw, randomColorSave);
+            api.RegisterComplexOption(this.ModManifest, "Dummy Color", "Testing a complex widget (random color on click)", randomColorUpdate, randomColorDraw, randomColorSave);
         }
 
         private bool isTitleMenuInteractable()
@@ -154,28 +154,28 @@ namespace GenericModConfigMenu
             if (TitleMenu.subMenu != null)
                 return false;
 
-            var method = Helper.Reflection.GetMethod(tm, "ShouldAllowInteraction", false);
+            var method = this.Helper.Reflection.GetMethod(tm, "ShouldAllowInteraction", false);
             if (method != null)
                 return method.Invoke<bool>();
             else // method isn't available on Android
-                return Helper.Reflection.GetField<bool>(tm, "titleInPosition").GetValue();
+                return this.Helper.Reflection.GetField<bool>(tm, "titleInPosition").GetValue();
         }
 
         private void onUpdate(object sender, UpdateTickingEventArgs e)
         {
-            if (isTitleMenuInteractable())
-                ui.Update();
+            if (this.isTitleMenuInteractable())
+                this.ui.Update();
         }
 
         private void onWindowResized(object sender, WindowResizedEventArgs e)
         {
-            configButton.LocalPosition = new Vector2(configButton.Position.X, Game1.viewport.Height - 100);
+            this.configButton.LocalPosition = new Vector2(this.configButton.Position.X, Game1.viewport.Height - 100);
         }
 
         private void onRendered(object sender, RenderedEventArgs e)
         {
-            if (isTitleMenuInteractable())
-                ui.Draw(e.SpriteBatch);
+            if (this.isTitleMenuInteractable())
+                this.ui.Draw(e.SpriteBatch);
         }
 
         private void onMenuChanged(object sender, MenuChangedEventArgs e)

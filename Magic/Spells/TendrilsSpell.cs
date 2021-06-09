@@ -85,11 +85,11 @@ namespace Magic.Spells
 
             public Tendril(Monster theMob, Vector2 pos, float rad, int dur)
             {
-                mob = theMob;
+                this.mob = theMob;
                 this.pos = pos;
-                radius = rad;
-                duration = dur;
-                tex = Content.loadTexture("magic/nature/tendrils/tendril.png");
+                this.radius = rad;
+                this.duration = dur;
+                this.tex = Content.loadTexture("magic/nature/tendrils/tendril.png");
             }
 
             /// <summary>Update the effect state if needed.</summary>
@@ -97,28 +97,28 @@ namespace Magic.Spells
             /// <returns>Returns true if the effect is still active, or false if it can be discarded.</returns>
             public bool Update(UpdateTickedEventArgs e)
             {
-                Vector2 mobPos = new Vector2(mob.GetBoundingBox().Center.X, mob.GetBoundingBox().Center.Y);
-                if (Vector2.Distance(mobPos, pos) >= radius)
+                Vector2 mobPos = new Vector2(this.mob.GetBoundingBox().Center.X, this.mob.GetBoundingBox().Center.Y);
+                if (Vector2.Distance(mobPos, this.pos) >= this.radius)
                 {
-                    Vector2 offset = mob.position - pos;
+                    Vector2 offset = this.mob.position - this.pos;
                     offset.Normalize();
-                    offset *= radius;
-                    mob.position.Value = pos + offset;
+                    offset *= this.radius;
+                    this.mob.position.Value = this.pos + offset;
                 }
 
-                return --duration > 0;
+                return --this.duration > 0;
             }
 
             /// <summary>Draw the effect to the screen if needed.</summary>
             /// <param name="spriteBatch">The sprite batch being drawn.</param>
             public void Draw(SpriteBatch spriteBatch)
             {
-                Vector2 mobPos = new Vector2(mob.GetBoundingBox().Center.X, mob.GetBoundingBox().Center.Y);
-                var dist = Vector2.Distance(mobPos, pos);
-                Rectangle r = new Rectangle((int)pos.X, (int)pos.Y, 10, (int)dist);
+                Vector2 mobPos = new Vector2(this.mob.GetBoundingBox().Center.X, this.mob.GetBoundingBox().Center.Y);
+                var dist = Vector2.Distance(mobPos, this.pos);
+                Rectangle r = new Rectangle((int)this.pos.X, (int)this.pos.Y, 10, (int)dist);
                 r = Game1.GlobalToLocal(Game1.viewport, r);
-                float rot = (float)-Math.Atan2(pos.Y - mobPos.Y, mobPos.X - pos.X);
-                spriteBatch.Draw(tex, r, new Rectangle(0, 0, 10, 12), Color.White, rot - 3.14f / 2, new Vector2(5, 0), SpriteEffects.None, 1);
+                float rot = (float)-Math.Atan2(this.pos.Y - mobPos.Y, mobPos.X - this.pos.X);
+                spriteBatch.Draw(this.tex, r, new Rectangle(0, 0, 10, 12), Color.White, rot - 3.14f / 2, new Vector2(5, 0), SpriteEffects.None, 1);
             }
         }
     }

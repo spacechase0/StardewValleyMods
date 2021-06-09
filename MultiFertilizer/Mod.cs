@@ -16,7 +16,7 @@ namespace MultiFertilizer
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
             HarmonyPatcher.Apply(this,
                 new CropPatcher(),

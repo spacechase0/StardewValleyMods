@@ -20,7 +20,7 @@ namespace PyromancersJourney
 
         public void draw(SpriteBatch b)
         {
-            world.Render();
+            this.world.Render();
         }
 
         public bool forceQuit()
@@ -72,8 +72,8 @@ namespace PyromancersJourney
 
         public bool tick(GameTime time)
         {
-            world.Update();
-            return world.HasQuit;
+            this.world.Update();
+            return this.world.HasQuit;
         }
 
         public void unload()

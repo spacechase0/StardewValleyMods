@@ -26,8 +26,8 @@ namespace SpaceCore
             {
                 public Profession(Skill skill, string id)
                 {
-                    Skill = skill;
-                    Id = id;
+                    this.Skill = skill;
+                    this.Id = id;
                 }
 
                 public Skill Skill { get; }
@@ -39,7 +39,7 @@ namespace SpaceCore
 
                 public int GetVanillaId()
                 {
-                    return Skill.Id.GetHashCode() ^ Id.GetHashCode(); // TODO: Something better
+                    return this.Skill.Id.GetHashCode() ^ this.Id.GetHashCode(); // TODO: Something better
                 }
 
                 public virtual void DoImmediateProfessionPerk()
@@ -51,10 +51,10 @@ namespace SpaceCore
             {
                 public ProfessionPair(int level, Profession first, Profession second, Profession req = null)
                 {
-                    Level = level;
-                    First = first;
-                    Second = second;
-                    Requires = req;
+                    this.Level = level;
+                    this.First = first;
+                    this.Second = second;
+                    this.Requires = req;
                 }
 
                 public int Level { get; }
@@ -65,7 +65,7 @@ namespace SpaceCore
 
             public Skill(string id)
             {
-                Id = id;
+                this.Id = id;
             }
 
             public string Id { get; }

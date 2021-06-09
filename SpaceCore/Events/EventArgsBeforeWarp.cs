@@ -12,10 +12,10 @@ namespace SpaceCore.Events
 
         public EventArgsBeforeWarp(LocationRequest req, int targetX, int targetY, int targetFacing)
         {
-            WarpTargetLocation = req;
-            WarpTargetX = targetX;
-            WarpTargetY = targetY;
-            WarpTargetFacing = targetFacing;
+            this.WarpTargetLocation = req;
+            this.WarpTargetX = targetX;
+            this.WarpTargetY = targetY;
+            this.WarpTargetFacing = targetFacing;
         }
     }
 }

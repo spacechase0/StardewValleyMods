@@ -43,19 +43,19 @@ namespace PyromancersJourney.Projectiles
         {
             if (target is Player player)
             {
-                player.Hurt(Damage);
-                Dead = true;
+                player.Hurt(this.Damage);
+                this.Dead = true;
             }
         }
 
         public override void Update()
         {
             base.Update();
-            Position += new Vector3(Speed.X, 0, Speed.Y);
+            this.Position += new Vector3(this.Speed.X, 0, this.Speed.Y);
 
-            if (World.map.IsAirSolid(Position.X, Position.Z))
+            if (this.World.map.IsAirSolid(this.Position.X, this.Position.Z))
             {
-                Dead = true;
+                this.Dead = true;
             }
         }
 
@@ -64,7 +64,7 @@ namespace PyromancersJourney.Projectiles
             base.Render(device, projection, cam);
             var camForward = (cam.pos - cam.target);
             camForward.Normalize();
-            effect.World = Matrix.CreateConstrainedBillboard(Position, cam.pos, cam.up, null, null);
+            effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
             effect.TextureEnabled = true;
             effect.Texture = tex;
             for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)

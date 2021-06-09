@@ -32,8 +32,8 @@ namespace SpaceCore.Interface
         private int walletSelectionOffset;
         private int WalletSelectionOffset
         {
-            get => walletSelectionOffset;
-            set => walletSelectionOffset = value < 0 ? ((specialItemComponents.Count - 1) * 2) - 1 : value % ((specialItemComponents.Count - 1) * 2);
+            get => this.walletSelectionOffset;
+            set => this.walletSelectionOffset = value < 0 ? ((this.specialItemComponents.Count - 1) * 2) - 1 : value % ((this.specialItemComponents.Count - 1) * 2);
         }
         private bool CanScrollWalletItems
         {
@@ -150,7 +150,7 @@ namespace SpaceCore.Interface
                 const int padRight = 4;
                 iconWidth = 16;
                 int iconCount = this.IsLegacyWallet ? 10 : (this.walletDownArrow.bounds.Y - this.walletUpArrow.bounds.Y - (padTop * 2)) / iconWidth / Game1.pixelZoom;
-                bool shouldNavButtonsBeShown = !this.IsLegacyWallet && specialItems.Count > iconCount;
+                bool shouldNavButtonsBeShown = !this.IsLegacyWallet && this.specialItems.Count > iconCount;
                 for (int index = 0; index < iconCount; ++index)
                 {
                     int iconDestWidth = iconWidth * Game1.pixelZoom;
@@ -456,7 +456,7 @@ namespace SpaceCore.Interface
         {
             if (id == -1)
                 return;
-            this.currentlySnappedComponent = getComponentWithID(id);
+            this.currentlySnappedComponent = this.getComponentWithID(id);
             this.snapCursorToCurrentSnappedComponent();
         }
 

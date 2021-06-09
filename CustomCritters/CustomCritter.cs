@@ -22,7 +22,7 @@ namespace CustomCritters
         {
             this.position = this.startingPosition = pos;
             this.data = data;
-            this.rand = new Random(((int)startingPosition.X) << 32 | ((int)startingPosition.Y));
+            this.rand = new Random(((int)this.startingPosition.X) << 32 | ((int)this.startingPosition.Y));
 
             var tex = Mod.instance.Helper.Content.Load<Texture2D>("Critters/" + data.Id + "/critter.png");
             var texStr = Mod.instance.Helper.Content.GetActualAssetKey($"Critters/{data.Id}/critter.png");
@@ -32,18 +32,18 @@ namespace CustomCritters
             List<FarmerSprite.AnimationFrame> frames = new List<FarmerSprite.AnimationFrame>();
             foreach (var frame in data.Animations["default"].Frames)
             {
-                frames.Add(new FarmerSprite.AnimationFrame(baseFrame + frame.Frame, frame.Duration));
+                frames.Add(new FarmerSprite.AnimationFrame(this.baseFrame + frame.Frame, frame.Duration));
             }
-            this.sprite = new AnimatedSprite(texStr, baseFrame, data.SpriteData.FrameWidth, data.SpriteData.FrameHeight);
-            sprite.setCurrentAnimation(frames);
+            this.sprite = new AnimatedSprite(texStr, this.baseFrame, data.SpriteData.FrameWidth, data.SpriteData.FrameHeight);
+            this.sprite.setCurrentAnimation(frames);
 
             if (data.Light != null)
             {
                 var col = new Color(255 - data.Light.Color.R, 255 - data.Light.Color.G, 255 - data.Light.Color.B);
-                light = this.validLightIds.Contains(data.Light.VanillaLightId)
-                    ? new LightSource(data.Light.VanillaLightId, position, data.Light.Radius, col)
-                    : new LightSource(LightSource.sconceLight, position, data.Light.Radius, col);
-                Game1.currentLightSources.Add(light);
+                this.light = this.validLightIds.Contains(data.Light.VanillaLightId)
+                    ? new LightSource(data.Light.VanillaLightId, this.position, data.Light.Radius, col)
+                    : new LightSource(LightSource.sconceLight, this.position, data.Light.Radius, col);
+                Game1.currentLightSources.Add(this.light);
             }
         }
 
@@ -54,12 +54,12 @@ namespace CustomCritters
         private Vector2 target;
         public override bool update(GameTime time, GameLocation environment)
         {
-            if (data == null)
+            if (this.data == null)
                 return false;
 
-            if (data.Behavior != null)
+            if (this.data.Behavior != null)
             {
-                switch (data.Behavior.Type)
+                switch (this.data.Behavior.Type)
                 {
                     case "idle":
                         break;
@@ -67,83 +67,83 @@ namespace CustomCritters
                     case "patrol":
                     case "random":
                         {
-                            if (waiting)
+                            if (this.waiting)
                             {
-                                if (patrolWait <= 0)
+                                if (this.patrolWait <= 0)
                                 {
-                                    needTarget = true;
-                                    waiting = false;
+                                    this.needTarget = true;
+                                    this.waiting = false;
                                 }
                                 else
-                                    patrolWait -= time.ElapsedGameTime.Milliseconds;
+                                    this.patrolWait -= time.ElapsedGameTime.Milliseconds;
                             }
                             else
                             {
-                                if (needTarget)
+                                if (this.needTarget)
                                 {
-                                    var pt = data.Behavior.PatrolPoints[data.Behavior.Type == "patrol" ? patrolIndex : Game1.random.Next(data.Behavior.PatrolPoints.Count)];
+                                    var pt = this.data.Behavior.PatrolPoints[this.data.Behavior.Type == "patrol" ? this.patrolIndex : Game1.random.Next(this.data.Behavior.PatrolPoints.Count)];
 
-                                    target = startingPosition;
+                                    this.target = this.startingPosition;
                                     if (pt.Type == "start") ; // We just did this
                                     else if (pt.Type == "startoffset")
-                                        target += new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
+                                        this.target += new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
                                     else if (pt.Type == "offset")
-                                        target = position + new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
+                                        this.target = this.position + new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
                                     else if (pt.Type == "startrandom")
-                                        target += new Vector2((float)(rand.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(rand.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
+                                        this.target += new Vector2((float)(this.rand.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(this.rand.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
                                     else if (pt.Type == "random")
-                                        target = position + new Vector2((float)(rand.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(rand.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
+                                        this.target = this.position + new Vector2((float)(this.rand.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(this.rand.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
                                     else if (pt.Type == "wait")
                                         ;
                                     else
                                         Log.warn("Bad patrol point type: " + pt.Type);
 
-                                    needTarget = false;
+                                    this.needTarget = false;
                                 }
 
-                                var dist = Vector2.Distance(position, target);
-                                if (dist <= data.Behavior.Speed)
+                                var dist = Vector2.Distance(this.position, this.target);
+                                if (dist <= this.data.Behavior.Speed)
                                 {
-                                    position = target;
-                                    patrolWait = data.Behavior.PatrolPointDelay + Game1.random.Next(data.Behavior.PatrolPointDelayAddRandom);
-                                    ++patrolIndex;
-                                    if (patrolIndex >= data.Behavior.PatrolPoints.Count)
-                                        patrolIndex = 0;
-                                    waiting = true;
+                                    this.position = this.target;
+                                    this.patrolWait = this.data.Behavior.PatrolPointDelay + Game1.random.Next(this.data.Behavior.PatrolPointDelayAddRandom);
+                                    ++this.patrolIndex;
+                                    if (this.patrolIndex >= this.data.Behavior.PatrolPoints.Count)
+                                        this.patrolIndex = 0;
+                                    this.waiting = true;
                                 }
                                 else
                                 {
-                                    var v = (target - position);
-                                    Vector2 unit = (target - position) / dist;
+                                    var v = (this.target - this.position);
+                                    Vector2 unit = (this.target - this.position) / dist;
                                     //Log.trace($"{v.X} {v.Y} {unit.X} {unit.Y}");
-                                    position += unit * data.Behavior.Speed;
+                                    this.position += unit * this.data.Behavior.Speed;
                                 }
                             }
                         }
                         break;
 
                     default:
-                        Log.warn("Bad custom critter behavior: " + data.Behavior.Type);
+                        Log.warn("Bad custom critter behavior: " + this.data.Behavior.Type);
                         break;
                 }
             }
 
-            if (light != null)
-                light.position.Value = this.position;
+            if (this.light != null)
+                this.light.position.Value = this.position;
 
             return base.update(time, environment);
         }
 
         public override void draw(SpriteBatch b)
         {
-            if (data == null)
+            if (this.data == null)
                 return;
 
             //base.draw(b);
             float z = (float)((double)this.position.Y / 10000.0 + (double)this.position.X / 100000.0);
-            if (!data.SpriteData.Flying)
+            if (!this.data.SpriteData.Flying)
                 z = (float)((this.position.Y - 1.0) / 10000.0);
-            this.sprite.draw(b, Game1.GlobalToLocal(Game1.viewport, this.position - new Vector2(8, 8)), z, 0, 0, Color.White, this.flip, data.SpriteData.Scale, 0.0f, false);
+            this.sprite.draw(b, Game1.GlobalToLocal(Game1.viewport, this.position - new Vector2(8, 8)), z, 0, 0, Color.White, this.flip, this.data.SpriteData.Scale, 0.0f, false);
         }
     }
 }

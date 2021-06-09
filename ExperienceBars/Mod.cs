@@ -28,12 +28,12 @@ namespace ExperienceBars
 
         public override void Entry(IModHelper helper)
         {
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
             Config = helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.Display.RenderedHud += onRenderedHud;
-            helper.Events.Input.ButtonPressed += onButtonPressed;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.Display.RenderedHud += this.onRenderedHud;
+            helper.Events.Input.ButtonPressed += this.onButtonPressed;
         }
 
         public override object GetApi()
@@ -43,13 +43,13 @@ namespace ExperienceBars
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(ModManifest, "UI X", "The X position of the UI on-screen.", () => Config.X, (int val) => Config.X = val);
-                capi.RegisterSimpleOption(ModManifest, "UI Y", "The Y position of the UI on-screen.", () => Config.Y, (int val) => Config.Y = val);
-                capi.RegisterSimpleOption(ModManifest, "Key: Toggle Display", "Press this key to toggle the display.\nHolding Shift lets you move the display as well. ", () => Config.ToggleBars, (SButton val) => Config.ToggleBars = val);
+                capi.RegisterModConfig(this.ModManifest, () => Config = new Configuration(), () => this.Helper.WriteConfig(Config));
+                capi.RegisterSimpleOption(this.ModManifest, "UI X", "The X position of the UI on-screen.", () => Config.X, (int val) => Config.X = val);
+                capi.RegisterSimpleOption(this.ModManifest, "UI Y", "The Y position of the UI on-screen.", () => Config.Y, (int val) => Config.Y = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "Press this key to toggle the display.\nHolding Shift lets you move the display as well. ", () => Config.ToggleBars, (SButton val) => Config.ToggleBars = val);
             }
         }
 
@@ -64,7 +64,7 @@ namespace ExperienceBars
                 {
                     Config.X = (int)e.Cursor.ScreenPixels.X;
                     Config.Y = (int)e.Cursor.ScreenPixels.Y;
-                    Helper.WriteConfig(Config);
+                    this.Helper.WriteConfig(Config);
                 }
                 else
                 {
@@ -95,13 +95,13 @@ namespace ExperienceBars
             int[] exp = Game1.player.experiencePoints.ToArray();
 
             bool foundLevelExtender = false;
-            if (Helper.ModRegistry.IsLoaded("Devin Lematty.Level Extender") && !stopLevelExtenderCompat)
+            if (this.Helper.ModRegistry.IsLoaded("Devin Lematty.Level Extender") && !stopLevelExtenderCompat)
             {
                 try
                 {
                     var instance = Type.GetType("LevelExtender.ModEntry, LevelExtender").GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-                    var extLevels = Helper.Reflection.GetField<int[]>(instance, "sLevs").GetValue();
-                    var extExp = Helper.Reflection.GetField<int[]>(instance, "addedXP").GetValue();
+                    var extLevels = this.Helper.Reflection.GetField<int[]>(instance, "sLevs").GetValue();
+                    var extExp = this.Helper.Reflection.GetField<int[]>(instance, "addedXP").GetValue();
                     exp = (int[])exp.Clone();
                     for (int i = 0; i < 5; ++i)
                     {
@@ -150,7 +150,7 @@ namespace ExperienceBars
                     progress = -1;
                 }
 
-                renderSkillBar(x, y, Game1.buffsIcons, getSkillRect(i), skills[i], progress, getSkillColor(i));
+                renderSkillBar(x, y, Game1.buffsIcons, this.getSkillRect(i), skills[i], progress, this.getSkillColor(i));
 
                 y += 40;
             }
@@ -175,11 +175,11 @@ namespace ExperienceBars
         private Color[] skillColors;
         private Color getSkillColor(int skill)
         {
-            if (skillColors != null)
-                return skillColors[skill];
+            if (this.skillColors != null)
+                return this.skillColors[skill];
 
             // Taken from the icons
-            skillColors = new Color[]
+            this.skillColors = new Color[]
             {
                 new Color( 115, 255, 56 ),
                 new Color( 117, 225, 255 ),
@@ -189,7 +189,7 @@ namespace ExperienceBars
                 new Color( 255, 255, 84 ),
             };
 
-            return skillColors[skill];
+            return this.skillColors[skill];
         }
 
         private const int BAR_WIDTH = 102;

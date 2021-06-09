@@ -12,9 +12,9 @@ namespace SleepyEye
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += onMenuChanged;
+            helper.Events.Display.MenuChanged += this.onMenuChanged;
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>

@@ -16,17 +16,17 @@ namespace Displays
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.GameLaunched += OnGameLaunched;
-            helper.Events.Display.MenuChanged += OnMenuChanged;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
-            helper.ConsoleCommands.Add("player_adddisplay", "mannequin", DoCommand);
+            helper.ConsoleCommands.Add("player_adddisplay", "mannequin", this.DoCommand);
         }
 
         public void OnGameLaunched(object sender, GameLaunchedEventArgs args)
         {
-            var sc = Helper.ModRegistry.GetApi<SpaceCoreAPI>("spacechase0.SpaceCore");
+            var sc = this.Helper.ModRegistry.GetApi<SpaceCoreAPI>("spacechase0.SpaceCore");
             sc.RegisterSerializerType(typeof(Mannequin));
         }
 
@@ -101,7 +101,7 @@ namespace Displays
 
         public T Load<T>(IAssetInfo asset)
         {
-            return (T)(object)Helper.Content.Load<Texture2D>("assets/farmer_transparent.png");
+            return (T)(object)this.Helper.Content.Load<Texture2D>("assets/farmer_transparent.png");
         }
     }
 }

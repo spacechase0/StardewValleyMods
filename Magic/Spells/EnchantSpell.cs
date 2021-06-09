@@ -10,7 +10,7 @@ namespace Magic.Spells
         public EnchantSpell(bool dis)
             : base(SchoolId.Arcane, dis ? "disenchant" : "enchant")
         {
-            DoesDisenchant = dis;
+            this.DoesDisenchant = dis;
         }
 
         public override int getManaCost(Farmer player, int level)
@@ -31,13 +31,12 @@ namespace Magic.Spells
             var obj = Game1.player.ActiveObject;
             if (obj == null || obj.bigCraftable.Value)
                 return null;
-            if (!DoesDisenchant && obj.Quality == 4 ||
-                  DoesDisenchant && obj.Quality == 0)
+            if (!this.DoesDisenchant && obj.Quality == 4 || this.DoesDisenchant && obj.Quality == 0)
                 return null;
 
             var one = (Object)obj.getOne();
             int oldPrice = one.sellToStorePrice();
-            if (!DoesDisenchant)
+            if (!this.DoesDisenchant)
             {
                 if (++one.Quality == 3)
                     ++one.Quality;
@@ -50,7 +49,7 @@ namespace Magic.Spells
             int newPrice = one.sellToStorePrice();
             int diff = newPrice - oldPrice;
 
-            if (!DoesDisenchant && diff * obj.Stack > Game1.player.Money)
+            if (!this.DoesDisenchant && diff * obj.Stack > Game1.player.Money)
                 return null;
 
             obj.Quality = one.Quality;

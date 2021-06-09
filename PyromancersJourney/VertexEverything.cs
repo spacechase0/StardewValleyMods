@@ -20,10 +20,10 @@ namespace PyromancersJourney
 
         public VertexEverything(Vector3 pos, Vector3 n, Vector2 tex)
         {
-            Position = pos;
-            Color = Color.White;
-            Normal = n;
-            Texture = tex;
+            this.Position = pos;
+            this.Color = Color.White;
+            this.Normal = n;
+            this.Texture = tex;
         }
 
         VertexDeclaration IVertexType.VertexDeclaration

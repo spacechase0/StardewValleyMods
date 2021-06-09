@@ -24,8 +24,8 @@ namespace MoreBuildings.Buildings.MiniSpa
         public Dictionary<string, string> getAdditionalSaveData()
         {
             var data = new Dictionary<string, string>();
-            if (uniqueName.Value != null)
-                data.Add("u", uniqueName.Value);
+            if (this.uniqueName.Value != null)
+                data.Add("u", this.uniqueName.Value);
 
             return data;
         }
@@ -33,10 +33,10 @@ namespace MoreBuildings.Buildings.MiniSpa
         public object getReplacement()
         {
             Shed shed = new Shed("Maps\\MiniSpa", "MiniSpa");
-            foreach (Vector2 key in objects.Keys)
-                shed.objects.Add(key, objects[key]);
-            foreach (Vector2 key in terrainFeatures.Keys)
-                shed.terrainFeatures.Add(key, terrainFeatures[key]);
+            foreach (Vector2 key in this.objects.Keys)
+                shed.objects.Add(key, this.objects[key]);
+            foreach (Vector2 key in this.terrainFeatures.Keys)
+                shed.terrainFeatures.Add(key, this.terrainFeatures[key]);
 
             return shed;
         }
@@ -46,12 +46,12 @@ namespace MoreBuildings.Buildings.MiniSpa
             Shed shed = (Shed)replacement;
 
             if (additionalSaveData.ContainsKey("u"))
-                uniqueName.Value = additionalSaveData["u"];
+                this.uniqueName.Value = additionalSaveData["u"];
 
             foreach (Vector2 key in shed.objects.Keys)
-                objects.Add(key, shed.objects[key]);
-            foreach (Vector2 key in terrainFeatures.Keys)
-                terrainFeatures.Add(key, shed.terrainFeatures[key]);
+                this.objects.Add(key, shed.objects[key]);
+            foreach (Vector2 key in this.terrainFeatures.Keys)
+                this.terrainFeatures.Add(key, shed.terrainFeatures[key]);
         }
     }
 }

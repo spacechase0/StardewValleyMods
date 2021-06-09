@@ -13,8 +13,8 @@ namespace SpaceCore
         {
             public ExtensionData(string assetPath, int unitSize)
             {
-                AssetPath = assetPath;
-                UnitSize = unitSize;
+                this.AssetPath = assetPath;
+                this.UnitSize = unitSize;
             }
 
             public string AssetPath { get; }
@@ -75,8 +75,8 @@ namespace SpaceCore
 
             public AdjustedTarget(int ts, int y)
             {
-                TileSheet = ts;
-                Y = y;
+                this.TileSheet = ts;
+                this.Y = y;
             }
         }
 

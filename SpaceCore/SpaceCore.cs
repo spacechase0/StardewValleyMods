@@ -29,14 +29,14 @@ namespace SpaceCore
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
-            Config = helper.ReadConfig<Configuration>();
+            Log.Monitor = this.Monitor;
+            this.Config = helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.GameLoop.UpdateTicked += onUpdate;
-            helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
-            helper.Events.GameLoop.Saving += onSaving;
-            helper.Events.GameLoop.Saved += onSaved;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.GameLoop.UpdateTicked += this.onUpdate;
+            helper.Events.GameLoop.SaveLoaded += this.onSaveLoaded;
+            helper.Events.GameLoop.Saving += this.onSaving;
+            helper.Events.GameLoop.Saved += this.onSaved;
 
             Commands.register();
             Skills.init(helper.Events);
@@ -69,14 +69,14 @@ namespace SpaceCore
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(ModManifest, "Custom Skill Page", "Whether or not to show the custom skill page.\nThis will move the wallet so that there is room for more skills.", () => Config.CustomSkillPage, (bool val) => Config.CustomSkillPage = val);
+                capi.RegisterModConfig(this.ModManifest, () => this.Config = new Configuration(), () => this.Helper.WriteConfig(this.Config));
+                capi.RegisterSimpleOption(this.ModManifest, "Custom Skill Page", "Whether or not to show the custom skill page.\nThis will move the wallet so that there is room for more skills.", () => this.Config.CustomSkillPage, (bool val) => this.Config.CustomSkillPage = val);
             }
 
-            var efapi = Helper.ModRegistry.GetApi<EntoaroxFrameworkAPI>("Entoarox.EntoaroxFramework");
+            var efapi = this.Helper.ModRegistry.GetApi<EntoaroxFrameworkAPI>("Entoarox.EntoaroxFramework");
             if (efapi != null)
             {
                 Log.info("Telling EntoaroxFramework to let us handle the serializer");
@@ -88,13 +88,13 @@ namespace SpaceCore
         private void onUpdate(object sender, UpdateTickedEventArgs e)
         {
             TileSheetExtensions.UpdateReferences();
-            if (tickCount++ == 0 && modTypes.Count == 0)
+            if (this.tickCount++ == 0 && modTypes.Count == 0)
             {
                 Log.info("Disabling serializer patches (no mods using serializer API)");
                 foreach (var meth in SaveGamePatcher.GetSaveEnumeratorMethods())
-                    harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
+                    this.harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
                 foreach (var meth in SaveGamePatcher.GetLoadEnumeratorMethods())
-                    harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
+                    this.harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
             }
         }
 
@@ -108,7 +108,7 @@ namespace SpaceCore
                 return;
 
             // Sleep position stuff
-            var data = Helper.Data.ReadSaveData<Sleep.Data>("sleepy-eye");
+            var data = this.Helper.Data.ReadSaveData<Sleep.Data>("sleepy-eye");
             if (data == null)
             {
                 var legacyDataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
@@ -122,7 +122,7 @@ namespace SpaceCore
             Log.debug("Previously slept in a tent, replacing player position.");
 
             var loc = Game1.getLocationFromName(data.Location);
-            if (loc == null || loc.Name == festivalLocation())
+            if (loc == null || loc.Name == this.festivalLocation())
             {
                 Game1.addHUDMessage(new HUDMessage("You camped out where the festival was, so you have returned home."));
                 return;
@@ -152,7 +152,7 @@ namespace SpaceCore
 
             Log.debug("Saving tent sleep data");
 
-            if (Game1.player.currentLocation.Name == festivalLocation())
+            if (Game1.player.currentLocation.Name == this.festivalLocation())
             {
                 Log.trace("There'll be a festival here tomorrow, canceling");
                 Game1.addHUDMessage(new HUDMessage("You camped out where the festival was, so you have returned home."));
@@ -181,7 +181,7 @@ namespace SpaceCore
                 data.MineLevel = (Game1.currentLocation as MineShaft).mineLevel;
             }
 
-            Helper.Data.WriteSaveData("sleepy-eye", data);
+            this.Helper.Data.WriteSaveData("sleepy-eye", data);
             Sleep.SaveLocation = false;
         }
 

@@ -22,23 +22,23 @@ namespace BetterShopMenu
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
             Config = helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.Display.MenuChanged += onMenuChanged;
-            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
-            helper.Events.Display.RenderedActiveMenu += onRenderedActiveMenu;
-            helper.Events.Input.ButtonPressed += onButtonPressed;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.GameLoop.UpdateTicked += this.onUpdateTicked;
+            helper.Events.Display.RenderedActiveMenu += this.onRenderedActiveMenu;
+            helper.Events.Input.ButtonPressed += this.onButtonPressed;
         }
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(ModManifest, "Grid Layout)", "Whether or not to use the grid layout in shops.", () => Config.GridLayout, (bool val) => Config.GridLayout = val);
+                capi.RegisterModConfig(this.ModManifest, () => Config = new Configuration(), () => this.Helper.WriteConfig(Config));
+                capi.RegisterSimpleOption(this.ModManifest, "Grid Layout)", "Whether or not to use the grid layout in shops.", () => Config.GridLayout, (bool val) => Config.GridLayout = val);
             }
         }
 
@@ -54,126 +54,126 @@ namespace BetterShopMenu
         private TextBox search;
         private void initShop(ShopMenu shopMenu)
         {
-            shop = shopMenu;
-            firstTick = true;
+            this.shop = shopMenu;
+            this.firstTick = true;
         }
         private void initShop2()
         {
-            firstTick = false;
+            this.firstTick = false;
 
-            initialItems = Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").GetValue();
-            initialStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").GetValue();
+            this.initialItems = this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").GetValue();
+            this.initialStock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").GetValue();
 
-            categories = new List<int>();
-            hasRecipes = false;
-            foreach (var salable in initialItems)
+            this.categories = new List<int>();
+            this.hasRecipes = false;
+            foreach (var salable in this.initialItems)
             {
                 var item = salable as Item;
                 var obj = item as SObject;
-                if (!categories.Contains(item?.Category ?? 0) && (obj == null || !obj.IsRecipe))
-                    categories.Add(item?.Category ?? 0);
+                if (!this.categories.Contains(item?.Category ?? 0) && (obj == null || !obj.IsRecipe))
+                    this.categories.Add(item?.Category ?? 0);
                 if (obj != null && obj.IsRecipe)
-                    hasRecipes = true;
+                    this.hasRecipes = true;
             }
-            currCategory = -1;
+            this.currCategory = -1;
 
-            categoryNames = new Dictionary<int, string>();
-            categoryNames.Add(-1, "Everything");
-            categoryNames.Add(0, "Other");
-            categoryNames.Add(SObject.GreensCategory, "Greens");
-            categoryNames.Add(SObject.GemCategory, "Gems");
-            categoryNames.Add(SObject.VegetableCategory, "Vegetables");
-            categoryNames.Add(SObject.FishCategory, "Fish");
-            categoryNames.Add(SObject.EggCategory, "Egg");
-            categoryNames.Add(SObject.MilkCategory, "Milk");
-            categoryNames.Add(SObject.CookingCategory, "Cooking");
-            categoryNames.Add(SObject.CraftingCategory, "Crafting");
-            categoryNames.Add(SObject.BigCraftableCategory, "Big Craftables");
-            categoryNames.Add(SObject.FruitsCategory, "Fruits");
-            categoryNames.Add(SObject.SeedsCategory, "Seeds");
-            categoryNames.Add(SObject.mineralsCategory, "Minerals");
-            categoryNames.Add(SObject.flowersCategory, "Flowers");
-            categoryNames.Add(SObject.meatCategory, "Meat");
-            categoryNames.Add(SObject.metalResources, "Metals");
-            categoryNames.Add(SObject.buildingResources, "Building Resources"); //?
-            categoryNames.Add(SObject.sellAtPierres, "Sellable @ Pierres");
-            categoryNames.Add(SObject.sellAtPierresAndMarnies, "Sellable @ Pierre's/Marnie's");
-            categoryNames.Add(SObject.fertilizerCategory, "Fertilizer");
-            categoryNames.Add(SObject.junkCategory, "Junk");
-            categoryNames.Add(SObject.baitCategory, "Bait");
-            categoryNames.Add(SObject.tackleCategory, "Tackle");
-            categoryNames.Add(SObject.sellAtFishShopCategory, "Sellable @ Willy's");
-            categoryNames.Add(SObject.furnitureCategory, "Furniture");
-            categoryNames.Add(SObject.ingredientsCategory, "Ingredients");
-            categoryNames.Add(SObject.artisanGoodsCategory, "Artisan Goods");
-            categoryNames.Add(SObject.syrupCategory, "Syrups");
-            categoryNames.Add(SObject.monsterLootCategory, "Monster Loot");
-            categoryNames.Add(SObject.equipmentCategory, "Equipment");
-            categoryNames.Add(SObject.hatCategory, "Hats");
-            categoryNames.Add(SObject.ringCategory, "Rings");
-            categoryNames.Add(SObject.weaponCategory, "Weapons");
-            categoryNames.Add(SObject.bootsCategory, "Boots");
-            categoryNames.Add(SObject.toolCategory, "Tools");
-            categoryNames.Add(categories.Count == 0 ? 1 : categories.Count, "Recipes");
+            this.categoryNames = new Dictionary<int, string>();
+            this.categoryNames.Add(-1, "Everything");
+            this.categoryNames.Add(0, "Other");
+            this.categoryNames.Add(SObject.GreensCategory, "Greens");
+            this.categoryNames.Add(SObject.GemCategory, "Gems");
+            this.categoryNames.Add(SObject.VegetableCategory, "Vegetables");
+            this.categoryNames.Add(SObject.FishCategory, "Fish");
+            this.categoryNames.Add(SObject.EggCategory, "Egg");
+            this.categoryNames.Add(SObject.MilkCategory, "Milk");
+            this.categoryNames.Add(SObject.CookingCategory, "Cooking");
+            this.categoryNames.Add(SObject.CraftingCategory, "Crafting");
+            this.categoryNames.Add(SObject.BigCraftableCategory, "Big Craftables");
+            this.categoryNames.Add(SObject.FruitsCategory, "Fruits");
+            this.categoryNames.Add(SObject.SeedsCategory, "Seeds");
+            this.categoryNames.Add(SObject.mineralsCategory, "Minerals");
+            this.categoryNames.Add(SObject.flowersCategory, "Flowers");
+            this.categoryNames.Add(SObject.meatCategory, "Meat");
+            this.categoryNames.Add(SObject.metalResources, "Metals");
+            this.categoryNames.Add(SObject.buildingResources, "Building Resources"); //?
+            this.categoryNames.Add(SObject.sellAtPierres, "Sellable @ Pierres");
+            this.categoryNames.Add(SObject.sellAtPierresAndMarnies, "Sellable @ Pierre's/Marnie's");
+            this.categoryNames.Add(SObject.fertilizerCategory, "Fertilizer");
+            this.categoryNames.Add(SObject.junkCategory, "Junk");
+            this.categoryNames.Add(SObject.baitCategory, "Bait");
+            this.categoryNames.Add(SObject.tackleCategory, "Tackle");
+            this.categoryNames.Add(SObject.sellAtFishShopCategory, "Sellable @ Willy's");
+            this.categoryNames.Add(SObject.furnitureCategory, "Furniture");
+            this.categoryNames.Add(SObject.ingredientsCategory, "Ingredients");
+            this.categoryNames.Add(SObject.artisanGoodsCategory, "Artisan Goods");
+            this.categoryNames.Add(SObject.syrupCategory, "Syrups");
+            this.categoryNames.Add(SObject.monsterLootCategory, "Monster Loot");
+            this.categoryNames.Add(SObject.equipmentCategory, "Equipment");
+            this.categoryNames.Add(SObject.hatCategory, "Hats");
+            this.categoryNames.Add(SObject.ringCategory, "Rings");
+            this.categoryNames.Add(SObject.weaponCategory, "Weapons");
+            this.categoryNames.Add(SObject.bootsCategory, "Boots");
+            this.categoryNames.Add(SObject.toolCategory, "Tools");
+            this.categoryNames.Add(this.categories.Count == 0 ? 1 : this.categories.Count, "Recipes");
 
-            search = new TextBox(Game1.content.Load<Texture2D>("LooseSprites\\textBox"), null, Game1.smallFont, Game1.textColor); ;
+            this.search = new TextBox(Game1.content.Load<Texture2D>("LooseSprites\\textBox"), null, Game1.smallFont, Game1.textColor); ;
 
-            syncStock();
+            this.syncStock();
         }
         private void changeCategory(int amt)
         {
-            currCategory += amt;
+            this.currCategory += amt;
 
-            if (currCategory == -2)
-                currCategory = hasRecipes ? categories.Count : (categories.Count - 1);
-            if (currCategory == categories.Count && !hasRecipes || currCategory > categories.Count)
-                currCategory = -1;
+            if (this.currCategory == -2)
+                this.currCategory = this.hasRecipes ? this.categories.Count : (this.categories.Count - 1);
+            if (this.currCategory == this.categories.Count && !this.hasRecipes || this.currCategory > this.categories.Count)
+                this.currCategory = -1;
 
-            syncStock();
+            this.syncStock();
         }
         private void changeSorting(int amt)
         {
-            sorting += amt;
-            if (sorting > 2)
-                sorting = 0;
-            else if (sorting < 0)
-                sorting = 2;
+            this.sorting += amt;
+            if (this.sorting > 2)
+                this.sorting = 0;
+            else if (this.sorting < 0)
+                this.sorting = 2;
 
-            syncStock();
+            this.syncStock();
         }
         private void syncStock()
         {
             var items = new List<ISalable>();
             var stock = new Dictionary<ISalable, int[]>();
-            foreach (var item in initialItems)
+            foreach (var item in this.initialItems)
             {
-                if (itemMatchesCategory(item, currCategory) && (search.Text == null || item.DisplayName.ToLower().Contains(search.Text.ToLower())))
+                if (this.itemMatchesCategory(item, this.currCategory) && (this.search.Text == null || item.DisplayName.ToLower().Contains(this.search.Text.ToLower())))
                 {
                     items.Add(item);
                 }
             }
-            foreach (var item in initialStock)
+            foreach (var item in this.initialStock)
             {
-                if (itemMatchesCategory(item.Key, currCategory) && (search.Text == null || item.Key.DisplayName.ToLower().Contains(search.Text.ToLower())))
+                if (this.itemMatchesCategory(item.Key, this.currCategory) && (this.search.Text == null || item.Key.DisplayName.ToLower().Contains(this.search.Text.ToLower())))
                 {
                     stock.Add(item.Key, item.Value);
                 }
             }
 
-            Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").SetValue(items);
-            Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").SetValue(stock);
+            this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").SetValue(items);
+            this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").SetValue(stock);
 
-            doSorting();
+            this.doSorting();
         }
         private void doSorting()
         {
-            var items = Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").GetValue();
-            var stock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").GetValue();
-            if (sorting != 0)
+            var items = this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").GetValue();
+            var stock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").GetValue();
+            if (this.sorting != 0)
             {
-                if (sorting == 1)
+                if (this.sorting == 1)
                     items.Sort((a, b) => stock[a][0] - stock[b][0]);
-                else if (sorting == 2)
+                else if (this.sorting == 2)
                     items.Sort((a, b) => a.DisplayName.CompareTo(b.DisplayName));
             }
         }
@@ -183,11 +183,11 @@ namespace BetterShopMenu
         /// <param name="e">The event arguments.</param>
         private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (shop != null)
+            if (this.shop != null)
             {
-                if (firstTick)
-                    initShop2();
-                search.Update();
+                if (this.firstTick)
+                    this.initShop2();
+                this.search.Update();
             }
         }
 
@@ -196,54 +196,54 @@ namespace BetterShopMenu
         /// <param name="e">The event arguments.</param>
         private void onRenderedActiveMenu(object sender, RenderedActiveMenuEventArgs e)
         {
-            if (shop == null)
+            if (this.shop == null)
                 return;
 
-            Vector2 pos = new Vector2(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 525);
+            Vector2 pos = new Vector2(this.shop.xPositionOnScreen + 25, this.shop.yPositionOnScreen + 525);
             IClickableMenu.drawTextureBox(Game1.spriteBatch, (int)pos.X, (int)pos.Y, 200, 72, Color.White);
             pos.X += 16;
             pos.Y += 16;
-            string str = "Category: \n" + categoryNames[((currCategory == -1 || currCategory == categories.Count) ? currCategory : categories[currCategory])];
+            string str = "Category: \n" + this.categoryNames[((this.currCategory == -1 || this.currCategory == this.categories.Count) ? this.currCategory : this.categories[this.currCategory])];
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1, 1), new Color(224, 150, 80), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color(86, 22, 12), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
 
-            pos = new Vector2(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 600);
+            pos = new Vector2(this.shop.xPositionOnScreen + 25, this.shop.yPositionOnScreen + 600);
             IClickableMenu.drawTextureBox(Game1.spriteBatch, (int)pos.X, (int)pos.Y, 200, 48, Color.White);
             pos.X += 16;
             pos.Y += 16;
-            str = "Sorting: " + (sorting == 0 ? "None" : (sorting == 1 ? "Price" : "Name"));
+            str = "Sorting: " + (this.sorting == 0 ? "None" : (this.sorting == 1 ? "Price" : "Name"));
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1, 1), new Color(224, 150, 80), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color(86, 22, 12), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
 
             if (Config.GridLayout)
             {
-                drawGridLayout();
+                this.drawGridLayout();
             }
 
-            pos.X = shop.xPositionOnScreen + 25;
-            pos.Y = shop.yPositionOnScreen + 650;
+            pos.X = this.shop.xPositionOnScreen + 25;
+            pos.Y = this.shop.yPositionOnScreen + 650;
             //Game1.spriteBatch.DrawString( Game1.dialogueFont, "Search: ", pos, Game1.textColor, 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0 );
-            search.X = (int)(pos.X);// + Game1.dialogueFont.MeasureString( "Search: " ).X);
-            search.Y = (int)pos.Y;
-            search.Draw(Game1.spriteBatch);
+            this.search.X = (int)(pos.X);// + Game1.dialogueFont.MeasureString( "Search: " ).X);
+            this.search.Y = (int)pos.Y;
+            this.search.Draw(Game1.spriteBatch);
 
-            shop.drawMouse(Game1.spriteBatch);
+            this.shop.drawMouse(Game1.spriteBatch);
         }
 
         private void drawGridLayout()
         {
-            var forSale = Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").GetValue();
-            var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").GetValue();
-            var currency = Helper.Reflection.GetField<int>(shop, "currency").GetValue();
-            var animations = Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(shop, "animations").GetValue();
-            var poof = Helper.Reflection.GetField<TemporaryAnimatedSprite>(shop, "poof").GetValue();
-            var heldItem = Helper.Reflection.GetField<Item>(shop, "heldItem").GetValue();
-            var currentItemIndex = Helper.Reflection.GetField<int>(shop, "currentItemIndex").GetValue();
-            var scrollBar = Helper.Reflection.GetField<ClickableTextureComponent>(shop, "scrollBar").GetValue();
-            var scrollBarRunner = Helper.Reflection.GetField<Rectangle>(shop, "scrollBarRunner").GetValue();
+            var forSale = this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").GetValue();
+            var itemPriceAndStock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").GetValue();
+            var currency = this.Helper.Reflection.GetField<int>(this.shop, "currency").GetValue();
+            var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.shop, "animations").GetValue();
+            var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(this.shop, "poof").GetValue();
+            var heldItem = this.Helper.Reflection.GetField<Item>(this.shop, "heldItem").GetValue();
+            var currentItemIndex = this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").GetValue();
+            var scrollBar = this.Helper.Reflection.GetField<ClickableTextureComponent>(this.shop, "scrollBar").GetValue();
+            var scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(this.shop, "scrollBarRunner").GetValue();
             const int UNIT_WIDTH = 160;
             const int UNIT_HEIGHT = 144;
-            int unitsWide = (shop.width - 32) / UNIT_WIDTH;
+            int unitsWide = (this.shop.width - 32) / UNIT_WIDTH;
             ISalable hover = null;
 
             Texture2D purchase_texture = Game1.mouseCursors;
@@ -253,7 +253,7 @@ namespace BetterShopMenu
             bool purchase_draw_item_background = true;
             Rectangle purchase_item_background = new Rectangle(296, 363, 18, 18);
             Color purchase_selected_color = Color.Wheat;
-            if (shop.storeContext == "QiGemShop")
+            if (this.shop.storeContext == "QiGemShop")
             {
                 purchase_texture = Game1.mouseCursors2;
                 purchase_window_border = new Rectangle(0, 256, 18, 18);
@@ -267,34 +267,34 @@ namespace BetterShopMenu
 
             //IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), shop.xPositionOnScreen + shop.width - shop.inventory.width - 32 - 24, shop.yPositionOnScreen + shop.height - 256 + 40, shop.inventory.width + 56, shop.height - 448 + 20, Color.White, 4f, true);
             //IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f, true);
-            IClickableMenu.drawTextureBox(Game1.spriteBatch, purchase_texture, purchase_window_border, shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f);
+            IClickableMenu.drawTextureBox(Game1.spriteBatch, purchase_texture, purchase_window_border, this.shop.xPositionOnScreen, this.shop.yPositionOnScreen, this.shop.width, this.shop.height - 256 + 32 + 4, Color.White, 4f);
             for (int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i)
             {
                 bool failedCanPurchaseCheck = false;
-                if (shop.canPurchaseCheck != null && !shop.canPurchaseCheck(i))
+                if (this.shop.canPurchaseCheck != null && !this.shop.canPurchaseCheck(i))
                 {
                     failedCanPurchaseCheck = true;
                 }
                 int ix = i % unitsWide;
                 int iy = i / unitsWide;
-                Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UNIT_WIDTH, shop.yPositionOnScreen + 16 + iy * UNIT_HEIGHT - currentItemIndex * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
+                Rectangle rect = new Rectangle(this.shop.xPositionOnScreen + 16 + ix * UNIT_WIDTH, this.shop.yPositionOnScreen + 16 + iy * UNIT_HEIGHT - currentItemIndex * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
                 IClickableMenu.drawTextureBox(Game1.spriteBatch, purchase_texture, purchase_item_rect, rect.X, rect.Y, rect.Width, rect.Height, rect.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) ? purchase_selected_color : Color.White, 4f, false);
                 ISalable item = forSale[i];
                 bool buyInStacks = item.Stack > 1 && item.Stack != int.MaxValue && itemPriceAndStock[item][1] == int.MaxValue;
                 StackDrawType stackDrawType;
-                if (shop.storeContext == "QiGemShop")
+                if (this.shop.storeContext == "QiGemShop")
                 {
                     stackDrawType = StackDrawType.HideButShowQuality;
                     buyInStacks = (item.Stack > 1);
                 }
-                else if (shop.itemPriceAndStock[item][1] == int.MaxValue)
+                else if (this.shop.itemPriceAndStock[item][1] == int.MaxValue)
                 {
                     stackDrawType = StackDrawType.HideButShowQuality;
                 }
                 else
                 {
                     stackDrawType = StackDrawType.Draw_OneInclusive;
-                    if (Helper.Reflection.GetField<bool>(shop, "_isStorageShop").GetValue())
+                    if (this.Helper.Reflection.GetField<bool>(this.shop, "_isStorageShop").GetValue())
                     {
                         stackDrawType = StackDrawType.Draw;
                     }
@@ -323,7 +323,7 @@ namespace BetterShopMenu
                         required_item_count = itemPriceAndStock[forSale[i]][3];
                     }
                     bool hasEnoughToTrade = Game1.player.hasItemInInventory(requiredItem, required_item_count);
-                    if (shop.canPurchaseCheck != null && !shop.canPurchaseCheck(i))
+                    if (this.shop.canPurchaseCheck != null && !this.shop.canPurchaseCheck(i))
                     {
                         hasEnoughToTrade = false;
                     }
@@ -335,7 +335,7 @@ namespace BetterShopMenu
                     hover = forSale[i];
             }
             if (forSale.Count == 0)
-                SpriteText.drawString(Game1.spriteBatch, Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583"), shop.xPositionOnScreen + shop.width / 2 - SpriteText.getWidthOfString(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583"), 999999) / 2, shop.yPositionOnScreen + shop.height / 2 - 128, 999999, -1, 999999, 1f, 0.88f, false, -1, "", -1);
+                SpriteText.drawString(Game1.spriteBatch, Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583"), this.shop.xPositionOnScreen + this.shop.width / 2 - SpriteText.getWidthOfString(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583"), 999999) / 2, this.shop.yPositionOnScreen + this.shop.height / 2 - 128, 999999, -1, 999999, 1f, 0.88f, false, -1, "", -1);
             //shop.inventory.draw(Game1.spriteBatch);
             // Moved currency here so above doesn't draw over it
             //if (currency == 0)
@@ -378,7 +378,7 @@ namespace BetterShopMenu
         /// <param name="e">The event arguments.</param>
         private void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (shop == null)
+            if (this.shop == null)
                 return;
 
             if (e.Button == SButton.MouseLeft || e.Button == SButton.MouseRight)
@@ -387,52 +387,51 @@ namespace BetterShopMenu
                 int y = (int)e.Cursor.ScreenPixels.Y;
                 int direction = e.Button == SButton.MouseLeft ? 1 : -1;
 
-                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 525, 200, 72).Contains(x, y))
-                    changeCategory(direction);
-                if (new Rectangle(shop.xPositionOnScreen + 25, shop.yPositionOnScreen + 600, 200, 48).Contains(x, y))
-                    changeSorting(direction);
+                if (new Rectangle(this.shop.xPositionOnScreen + 25, this.shop.yPositionOnScreen + 525, 200, 72).Contains(x, y))
+                    this.changeCategory(direction);
+                if (new Rectangle(this.shop.xPositionOnScreen + 25, this.shop.yPositionOnScreen + 600, 200, 48).Contains(x, y))
+                    this.changeSorting(direction);
 
                 if (Config.GridLayout)
                 {
-                    Helper.Input.Suppress(e.Button);
+                    this.Helper.Input.Suppress(e.Button);
                     if (e.Button == SButton.MouseRight)
-                        doGridLayoutRightClick(e);
+                        this.doGridLayoutRightClick(e);
                     else
-                        doGridLayoutLeftClick(e);
+                        this.doGridLayoutLeftClick(e);
                 }
             }
-            else if ((e.Button >= SButton.A && e.Button <= SButton.Z || e.Button == SButton.Space || e.Button == SButton.Back) &&
-                      search.Selected)
+            else if ((e.Button >= SButton.A && e.Button <= SButton.Z || e.Button == SButton.Space || e.Button == SButton.Back) && this.search.Selected)
             {
-                Helper.Input.Suppress(e.Button);
-                syncStock();
+                this.Helper.Input.Suppress(e.Button);
+                this.syncStock();
             }
         }
 
         private void doGridLayoutLeftClick(ButtonPressedEventArgs e)
         {
-            var forSale = Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").GetValue();
-            var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").GetValue();
-            var currency = Helper.Reflection.GetField<int>(shop, "currency").GetValue();
-            var animations = Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(shop, "animations").GetValue();
-            var poof = Helper.Reflection.GetField<TemporaryAnimatedSprite>(shop, "poof").GetValue();
-            var heldItem = Helper.Reflection.GetField<ISalable>(shop, "heldItem").GetValue();
-            var currentItemIndex = Helper.Reflection.GetField<int>(shop, "currentItemIndex").GetValue();
-            var sellPercentage = Helper.Reflection.GetField<float>(shop, "sellPercentage").GetValue();
-            var scrollBar = Helper.Reflection.GetField<ClickableTextureComponent>(shop, "scrollBar").GetValue();
-            var scrollBarRunner = Helper.Reflection.GetField<Rectangle>(shop, "scrollBarRunner").GetValue();
-            var downArrow = Helper.Reflection.GetField<ClickableTextureComponent>(shop, "downArrow").GetValue();
-            var upArrow = Helper.Reflection.GetField<ClickableTextureComponent>(shop, "upArrow").GetValue();
+            var forSale = this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").GetValue();
+            var itemPriceAndStock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").GetValue();
+            var currency = this.Helper.Reflection.GetField<int>(this.shop, "currency").GetValue();
+            var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.shop, "animations").GetValue();
+            var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(this.shop, "poof").GetValue();
+            var heldItem = this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").GetValue();
+            var currentItemIndex = this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").GetValue();
+            var sellPercentage = this.Helper.Reflection.GetField<float>(this.shop, "sellPercentage").GetValue();
+            var scrollBar = this.Helper.Reflection.GetField<ClickableTextureComponent>(this.shop, "scrollBar").GetValue();
+            var scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(this.shop, "scrollBarRunner").GetValue();
+            var downArrow = this.Helper.Reflection.GetField<ClickableTextureComponent>(this.shop, "downArrow").GetValue();
+            var upArrow = this.Helper.Reflection.GetField<ClickableTextureComponent>(this.shop, "upArrow").GetValue();
             const int UNIT_WIDTH = 160;
             const int UNIT_HEIGHT = 144;
-            int unitsWide = (shop.width - 32) / UNIT_WIDTH;
+            int unitsWide = (this.shop.width - 32) / UNIT_WIDTH;
 
             int x = (int)e.Cursor.ScreenPixels.X;
             int y = (int)e.Cursor.ScreenPixels.Y;
 
-            if (shop.upperRightCloseButton.containsPoint(x, y))
+            if (this.shop.upperRightCloseButton.containsPoint(x, y))
             {
-                shop.exitThisMenu(true);
+                this.shop.exitThisMenu(true);
                 return;
             }
 
@@ -440,7 +439,7 @@ namespace BetterShopMenu
             if (downArrow.containsPoint(x, y) && currentItemIndex < Math.Max(0, forSale.Count - 18))
             {
                 downArrow.scale = downArrow.baseScale;
-                Helper.Reflection.GetField<int>(shop, "currentItemIndex").SetValue(currentItemIndex += 1);
+                this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").SetValue(currentItemIndex += 1);
                 if (forSale.Count > 0)
                 {
                     scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, (forSale.Count / 6) - 1 + 1) * currentItemIndex + upArrow.bounds.Bottom + 4;
@@ -454,7 +453,7 @@ namespace BetterShopMenu
             else if (upArrow.containsPoint(x, y) && currentItemIndex > 0)
             {
                 upArrow.scale = upArrow.baseScale;
-                Helper.Reflection.GetField<int>(shop, "currentItemIndex").SetValue(currentItemIndex -= 1);
+                this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").SetValue(currentItemIndex -= 1);
                 if (forSale.Count > 0)
                 {
                     scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, (forSale.Count / 6) - 1 + 1) * currentItemIndex + upArrow.bounds.Bottom + 4;
@@ -468,9 +467,9 @@ namespace BetterShopMenu
             else if (scrollBarRunner.Contains(x, y))
             {
                 int y1 = scrollBar.bounds.Y;
-                scrollBar.bounds.Y = Math.Min(shop.yPositionOnScreen + shop.height - 64 - 12 - scrollBar.bounds.Height, Math.Max(y, shop.yPositionOnScreen + upArrow.bounds.Height + 20));
+                scrollBar.bounds.Y = Math.Min(this.shop.yPositionOnScreen + this.shop.height - 64 - 12 - scrollBar.bounds.Height, Math.Max(y, this.shop.yPositionOnScreen + upArrow.bounds.Height + 20));
                 currentItemIndex = Math.Min(forSale.Count / 6 - 1, Math.Max(0, (int)((double)forSale.Count / 6 * (double)((float)(y - scrollBarRunner.Y) / (float)scrollBarRunner.Height))));
-                Helper.Reflection.GetField<int>(shop, "currentItemIndex").SetValue(currentItemIndex);
+                this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").SetValue(currentItemIndex);
                 if (forSale.Count > 0)
                 {
                     scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, (forSale.Count / 6) - 1 + 1) * currentItemIndex + upArrow.bounds.Bottom + 4;
@@ -484,15 +483,15 @@ namespace BetterShopMenu
                     return;
                 Game1.playSound("shiny4");
             }
-            Vector2 clickableComponent = shop.inventory.snapToClickableComponent(x, y);
+            Vector2 clickableComponent = this.shop.inventory.snapToClickableComponent(x, y);
             if (heldItem == null)
             {
-                Item obj = shop.inventory.leftClick(x, y, null, false);
+                Item obj = this.shop.inventory.leftClick(x, y, null, false);
                 if (obj != null)
                 {
-                    if (shop.onSell != null)
+                    if (this.shop.onSell != null)
                     {
-                        shop.onSell(obj);
+                        this.shop.onSell(obj);
                     }
                     else
                     {
@@ -513,8 +512,8 @@ namespace BetterShopMenu
                                 scale = 4f,
                                 alphaFade = 0.025f,
                                 delayBeforeAnimationStart = index * 50,
-                                motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(shop.xPositionOnScreen - 36), (float)(shop.yPositionOnScreen + shop.height - shop.inventory.height - 16)), 8f),
-                                acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(shop.xPositionOnScreen - 36), (float)(shop.yPositionOnScreen + shop.height - shop.inventory.height - 16)), 0.5f)
+                                motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(this.shop.xPositionOnScreen - 36), (float)(this.shop.yPositionOnScreen + this.shop.height - this.shop.inventory.height - 16)), 8f),
+                                acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(this.shop.xPositionOnScreen - 36), (float)(this.shop.yPositionOnScreen + this.shop.height - this.shop.inventory.height - 16)), 0.5f)
                             });
                         }
                         if (obj is StardewValley.Object && (obj as StardewValley.Object).Edibility != -300)
@@ -530,20 +529,20 @@ namespace BetterShopMenu
             }
             else
             {
-                heldItem = shop.inventory.leftClick(x, y, (Item)heldItem, true);
-                Helper.Reflection.GetField<ISalable>(shop, "heldItem").SetValue(heldItem);
+                heldItem = this.shop.inventory.leftClick(x, y, (Item)heldItem, true);
+                this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").SetValue(heldItem);
             }
             for (int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i)
             {
                 int ix = i % unitsWide;
                 int iy = i / unitsWide;
-                Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UNIT_WIDTH, shop.yPositionOnScreen + 16 + iy * UNIT_HEIGHT - currentItemIndex * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
+                Rectangle rect = new Rectangle(this.shop.xPositionOnScreen + 16 + ix * UNIT_WIDTH, this.shop.yPositionOnScreen + 16 + iy * UNIT_HEIGHT - currentItemIndex * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
                 if (rect.Contains(x, y) && forSale[i] != null)
                 {
                     int numberToBuy = Math.Min(Game1.oldKBState.IsKeyDown(Keys.LeftShift) ? Math.Min(Math.Min(5, ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) / Math.Max(1, itemPriceAndStock[forSale[i]][0])), Math.Max(1, itemPriceAndStock[forSale[i]][1])) : 1, forSale[i].maximumStackSize());
                     if (numberToBuy == -1)
                         numberToBuy = 1;
-                    var tryToPurchaseItem = Helper.Reflection.GetMethod(shop, "tryToPurchaseItem");
+                    var tryToPurchaseItem = this.Helper.Reflection.GetMethod(this.shop, "tryToPurchaseItem");
                     if (numberToBuy > 0 && tryToPurchaseItem.Invoke<bool>(forSale[i], heldItem, numberToBuy, x, y, i))
                     {
                         itemPriceAndStock.Remove(forSale[i]);
@@ -557,7 +556,7 @@ namespace BetterShopMenu
                     if (heldItem != null && Game1.options.SnappyMenus && (Game1.activeClickableMenu != null && Game1.activeClickableMenu is ShopMenu) && Game1.player.addItemToInventoryBool((Item)heldItem, false))
                     {
                         heldItem = (Item)null;
-                        Helper.Reflection.GetField<ISalable>(shop, "heldItem").SetValue(heldItem);
+                        this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").SetValue(heldItem);
                         DelayedAction.playSoundAfterDelay("coin", 100, (GameLocation)null);
                     }
                 }
@@ -566,37 +565,37 @@ namespace BetterShopMenu
 
         private void doGridLayoutRightClick(ButtonPressedEventArgs e)
         {
-            var forSale = Helper.Reflection.GetField<List<ISalable>>(shop, "forSale").GetValue();
-            var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(shop, "itemPriceAndStock").GetValue();
-            var currency = Helper.Reflection.GetField<int>(shop, "currency").GetValue();
-            var animations = Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(shop, "animations").GetValue();
-            var poof = Helper.Reflection.GetField<TemporaryAnimatedSprite>(shop, "poof").GetValue();
-            var heldItem = Helper.Reflection.GetField<ISalable>(shop, "heldItem").GetValue();
-            var currentItemIndex = Helper.Reflection.GetField<int>(shop, "currentItemIndex").GetValue();
-            var sellPercentage = Helper.Reflection.GetField<float>(shop, "sellPercentage").GetValue();
+            var forSale = this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").GetValue();
+            var itemPriceAndStock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").GetValue();
+            var currency = this.Helper.Reflection.GetField<int>(this.shop, "currency").GetValue();
+            var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.shop, "animations").GetValue();
+            var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(this.shop, "poof").GetValue();
+            var heldItem = this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").GetValue();
+            var currentItemIndex = this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").GetValue();
+            var sellPercentage = this.Helper.Reflection.GetField<float>(this.shop, "sellPercentage").GetValue();
             const int UNIT_WIDTH = 160;
             const int UNIT_HEIGHT = 144;
-            int unitsWide = (shop.width - 32) / UNIT_WIDTH;
+            int unitsWide = (this.shop.width - 32) / UNIT_WIDTH;
 
             int x = (int)e.Cursor.ScreenPixels.X;
             int y = (int)e.Cursor.ScreenPixels.Y;
 
-            if (shop.upperRightCloseButton.containsPoint(x, y))
+            if (this.shop.upperRightCloseButton.containsPoint(x, y))
             {
-                shop.exitThisMenu(true);
+                this.shop.exitThisMenu(true);
                 return;
             }
 
             // Copying a lot from right click code
-            Vector2 clickableComponent = shop.inventory.snapToClickableComponent(x, y);
+            Vector2 clickableComponent = this.shop.inventory.snapToClickableComponent(x, y);
             if (heldItem == null)
             {
-                Item obj = shop.inventory.rightClick(x, y, null, false);
+                Item obj = this.shop.inventory.rightClick(x, y, null, false);
                 if (obj != null)
                 {
-                    if (shop.onSell != null)
+                    if (this.shop.onSell != null)
                     {
-                        shop.onSell(obj);
+                        this.shop.onSell(obj);
                     }
                     else
                     {
@@ -616,7 +615,7 @@ namespace BetterShopMenu
                         {
                             (Game1.getLocationFromName("SeedShop") as StardewValley.Locations.SeedShop).itemsToStartSellingTomorrow.Add(obj.getOne());
                         }
-                        if (shop.inventory.getItemAt(x, y) == null)
+                        if (this.shop.inventory.getItemAt(x, y) == null)
                         {
                             Game1.playSound("sell");
                             animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White, 8, false, 100f, 0, -1, -1f, -1, 0)
@@ -629,21 +628,21 @@ namespace BetterShopMenu
             }
             else
             {
-                heldItem = shop.inventory.leftClick(x, y, (Item)heldItem, true);
-                Helper.Reflection.GetField<ISalable>(shop, "heldItem").SetValue(heldItem);
+                heldItem = this.shop.inventory.leftClick(x, y, (Item)heldItem, true);
+                this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").SetValue(heldItem);
             }
             for (int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i)
             {
                 int ix = i % unitsWide;
                 int iy = i / unitsWide;
-                Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UNIT_WIDTH, shop.yPositionOnScreen + 16 + iy * UNIT_HEIGHT - currentItemIndex * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
+                Rectangle rect = new Rectangle(this.shop.xPositionOnScreen + 16 + ix * UNIT_WIDTH, this.shop.yPositionOnScreen + 16 + iy * UNIT_HEIGHT - currentItemIndex * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
                 if (rect.Contains(x, y) && forSale[i] != null)
                 {
                     int index2 = i;
                     if (forSale[index2] == null)
                         break;
                     int numberToBuy = Game1.oldKBState.IsKeyDown(Keys.LeftShift) ? Math.Min(Math.Min(5, ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) / itemPriceAndStock[forSale[index2]][0]), itemPriceAndStock[forSale[index2]][1]) : 1;
-                    var tryToPurchaseItem = Helper.Reflection.GetMethod(shop, "tryToPurchaseItem");
+                    var tryToPurchaseItem = this.Helper.Reflection.GetMethod(this.shop, "tryToPurchaseItem");
                     if (numberToBuy > 0 && tryToPurchaseItem.Invoke<bool>(forSale[index2], heldItem, numberToBuy, x, y, index2))
                     {
                         itemPriceAndStock.Remove(forSale[index2]);
@@ -652,7 +651,7 @@ namespace BetterShopMenu
                     if (heldItem == null || !Game1.options.SnappyMenus || (Game1.activeClickableMenu == null || !(Game1.activeClickableMenu is ShopMenu)) || !Game1.player.addItemToInventoryBool((Item)heldItem, false))
                         break;
                     heldItem = (Item)null;
-                    Helper.Reflection.GetField<ISalable>(shop, "heldItem").SetValue(heldItem);
+                    this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").SetValue(heldItem);
                     DelayedAction.playSoundAfterDelay("coin", 100, (GameLocation)null);
                     break;
                 }
@@ -667,15 +666,15 @@ namespace BetterShopMenu
             if (e.NewMenu is ShopMenu shopMenu)
             {
                 Log.trace("Found shop menu!");
-                initShop(shopMenu);
+                this.initShop(shopMenu);
             }
             else
             {
-                shop = null;
-                if (search != null)
+                this.shop = null;
+                if (this.search != null)
                 {
-                    search.Selected = false;
-                    search = null;
+                    this.search.Selected = false;
+                    this.search = null;
                 }
             }
         }
@@ -685,9 +684,9 @@ namespace BetterShopMenu
             var obj = item as SObject;
             if (cat == -1)
                 return true;
-            if (cat == categories.Count)
+            if (cat == this.categories.Count)
                 return obj != null && obj.IsRecipe;
-            if (categories[cat] == ((item as Item)?.Category ?? 0))
+            if (this.categories[cat] == ((item as Item)?.Category ?? 0))
                 return (obj == null || !obj.IsRecipe);
             return false;
         }

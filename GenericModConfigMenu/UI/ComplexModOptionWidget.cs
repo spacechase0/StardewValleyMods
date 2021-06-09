@@ -9,7 +9,7 @@ namespace GenericModConfigMenu.UI
 
         public ComplexModOptionWidget(ComplexModOption modOption)
         {
-            ModOption = modOption;
+            this.ModOption = modOption;
         }
 
         public override int Width => 0;
@@ -18,12 +18,12 @@ namespace GenericModConfigMenu.UI
         public override void Update(bool hidden = false)
         {
             // intentionally not calling Element.Update
-            ModOption.Update(Position);
+            this.ModOption.Update(this.Position);
         }
 
         public override void Draw(SpriteBatch b)
         {
-            ModOption.Draw(b, Position);
+            this.ModOption.Draw(b, this.Position);
         }
     }
 }

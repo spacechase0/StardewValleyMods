@@ -23,7 +23,7 @@ namespace MoreBuildings.Buildings.SpookyShed
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddField(currSpawnerItem);
+            this.NetFields.AddField(this.currSpawnerItem);
         }
 
         public override void drawAboveFrontLayer(SpriteBatch b)
@@ -31,13 +31,13 @@ namespace MoreBuildings.Buildings.SpookyShed
             base.drawAboveFrontLayer(b);
 
             Color col = Color.White;
-            if (currSpawnerItem == BAT_WING)
+            if (this.currSpawnerItem == BAT_WING)
                 col = Color.Gray;
-            else if (currSpawnerItem == SOLAR_ESSENCE)
+            else if (this.currSpawnerItem == SOLAR_ESSENCE)
                 col = Color.Yellow;
-            else if (currSpawnerItem == VOID_ESSENCE)
+            else if (this.currSpawnerItem == VOID_ESSENCE)
                 col = Color.Purple;
-            else if (currSpawnerItem == BUG_MEAT)
+            else if (this.currSpawnerItem == BUG_MEAT)
                 col = Color.Pink;
 
 
@@ -65,7 +65,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                     if (!obj.bigCraftable.Value)
                     {
                         Log.trace("Changing active spawning item to " + obj.ParentSheetIndex);
-                        currSpawnerItem.Value = obj.ParentSheetIndex;
+                        this.currSpawnerItem.Value = obj.ParentSheetIndex;
                     }
                 }
                 return true;
@@ -76,10 +76,10 @@ namespace MoreBuildings.Buildings.SpookyShed
         protected override void resetSharedState()
         {
             base.resetSharedState();
-            characters.Clear();
+            this.characters.Clear();
 
-            Log.trace("Player entered spooky shed, current spawner item: " + currSpawnerItem);
-            if (currSpawnerItem == BAT_WING)
+            Log.trace("Player entered spooky shed, current spawner item: " + this.currSpawnerItem);
+            if (this.currSpawnerItem == BAT_WING)
             {
                 var total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
@@ -89,7 +89,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                     this.characters.Add(new Bat(pos, 100));
                 }
             }
-            else if (currSpawnerItem == SOLAR_ESSENCE)
+            else if (this.currSpawnerItem == SOLAR_ESSENCE)
             {
                 var total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
@@ -99,7 +99,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                     this.characters.Add(new SquidKid(pos) { currentLocation = this });
                 }
             }
-            else if (currSpawnerItem == VOID_ESSENCE)
+            else if (this.currSpawnerItem == VOID_ESSENCE)
             {
                 var total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
@@ -109,7 +109,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                     this.characters.Add(new ShadowBrute(pos));
                 }
             }
-            else if (currSpawnerItem == BUG_MEAT)
+            else if (this.currSpawnerItem == BUG_MEAT)
             {
                 var total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
@@ -124,8 +124,8 @@ namespace MoreBuildings.Buildings.SpookyShed
         public Dictionary<string, string> getAdditionalSaveData()
         {
             var data = new Dictionary<string, string>();
-            if (uniqueName.Value != null)
-                data.Add("u", uniqueName.Value);
+            if (this.uniqueName.Value != null)
+                data.Add("u", this.uniqueName.Value);
 
             return data;
         }
@@ -133,10 +133,10 @@ namespace MoreBuildings.Buildings.SpookyShed
         public object getReplacement()
         {
             Shed shed = new Shed("Maps\\SpookyShed", "SpookyShed");
-            foreach (Vector2 key in objects.Keys)
-                shed.objects.Add(key, objects[key]);
-            foreach (Vector2 key in terrainFeatures.Keys)
-                shed.terrainFeatures.Add(key, terrainFeatures[key]);
+            foreach (Vector2 key in this.objects.Keys)
+                shed.objects.Add(key, this.objects[key]);
+            foreach (Vector2 key in this.terrainFeatures.Keys)
+                shed.terrainFeatures.Add(key, this.terrainFeatures[key]);
 
             return shed;
         }
@@ -146,12 +146,12 @@ namespace MoreBuildings.Buildings.SpookyShed
             Shed shed = (Shed)replacement;
 
             if (additionalSaveData.ContainsKey("u"))
-                uniqueName.Value = additionalSaveData["u"];
+                this.uniqueName.Value = additionalSaveData["u"];
 
             foreach (Vector2 key in shed.objects.Keys)
-                objects.Add(key, shed.objects[key]);
-            foreach (Vector2 key in terrainFeatures.Keys)
-                terrainFeatures.Add(key, shed.terrainFeatures[key]);
+                this.objects.Add(key, shed.objects[key]);
+            foreach (Vector2 key in this.terrainFeatures.Keys)
+                this.terrainFeatures.Add(key, shed.terrainFeatures[key]);
         }
     }
 }

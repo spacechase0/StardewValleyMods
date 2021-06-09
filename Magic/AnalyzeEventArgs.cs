@@ -7,8 +7,8 @@ namespace Magic
 
         public AnalyzeEventArgs(int tx, int ty)
         {
-            TargetX = tx;
-            TargetY = ty;
+            this.TargetX = tx;
+            this.TargetY = ty;
         }
     }
 }

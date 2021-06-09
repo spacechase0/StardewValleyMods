@@ -21,20 +21,20 @@ namespace PyromancersJourney.Objects
                 new VertexPositionColorTexture( new Vector3( 4, 0, 0 ), Color.White, new Vector2( 1, 1 ) ),
                 new VertexPositionColorTexture( new Vector3( 4, 5, 0 ), Color.White, new Vector2( 1, 0 ) ),
             };
-            buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), 6, BufferUsage.WriteOnly);
-            buffer.SetData(test);
+            this.buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), 6, BufferUsage.WriteOnly);
+            this.buffer.SetData(test);
         }
 
         public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
             base.Render(device, projection, cam);
             effect.TextureEnabled = true;
-            effect.Texture = tex;
+            effect.Texture = this.tex;
             for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
             {
                 var pass = effect.CurrentTechnique.Passes[e];
                 pass.Apply();
-                device.SetVertexBuffer(buffer);
+                device.SetVertexBuffer(this.buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
             }
         }

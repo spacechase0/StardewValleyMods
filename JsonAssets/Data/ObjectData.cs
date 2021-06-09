@@ -63,14 +63,14 @@ namespace JsonAssets.Data
             internal string GetRecipeString(ObjectData parent)
             {
                 var str = "";
-                foreach (var ingredient in Ingredients)
+                foreach (var ingredient in this.Ingredients)
                     str += Mod.instance.ResolveObjectId(ingredient.Object) + " " + ingredient.Count + " ";
                 str = str.Substring(0, str.Length - 1);
-                str += $"/what is this for?/{parent.id} {ResultCount}/";
+                str += $"/what is this for?/{parent.id} {this.ResultCount}/";
                 if (parent.Category != Category_.Cooking)
                     str += "false/";
-                if (SkillUnlockName?.Length > 0 && SkillUnlockLevel > 0)
-                    str += "/" + SkillUnlockName + " " + SkillUnlockLevel;
+                if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)
+                    str += "/" + this.SkillUnlockName + " " + this.SkillUnlockLevel;
                 else
                     str += "/null";
                 if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
@@ -140,9 +140,9 @@ namespace JsonAssets.Data
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             /*if (currLang == LocalizedContentManager.LanguageCode.en)
                 return Name;*/
-            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
-                return Name;
-            return NameLocalization[currLang.ToString()];
+            if (this.NameLocalization == null || !this.NameLocalization.ContainsKey(currLang.ToString()))
+                return this.Name;
+            return this.NameLocalization[currLang.ToString()];
         }
 
         public string LocalizedDescription()
@@ -150,29 +150,29 @@ namespace JsonAssets.Data
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             /*if (currLang == LocalizedContentManager.LanguageCode.en)
                 return Description;*/
-            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return Description;
-            return DescriptionLocalization[currLang.ToString()];
+            if (this.DescriptionLocalization == null || !this.DescriptionLocalization.ContainsKey(currLang.ToString()))
+                return this.Description;
+            return this.DescriptionLocalization[currLang.ToString()];
         }
 
-        public int GetObjectId() { return id; }
+        public int GetObjectId() { return this.id; }
 
         internal string GetObjectInformation()
         {
-            if (Edibility != SObject.inedible)
+            if (this.Edibility != SObject.inedible)
             {
-                var itype = (int)Category;
-                var str = $"{Name}/{Price}/{Edibility}/" + (Category == Category_.Artifact ? "Arch" : $"{Category} {itype}") + $"/{LocalizedName()}/{LocalizedDescription()}/";
-                str += (EdibleIsDrink ? "drink" : "food") + "/";
-                if (EdibleBuffs == null)
-                    EdibleBuffs = new FoodBuffs_();
-                str += $"{EdibleBuffs.Farming} {EdibleBuffs.Fishing} {EdibleBuffs.Mining} 0 {EdibleBuffs.Luck} {EdibleBuffs.Foraging} 0 {EdibleBuffs.MaxStamina} {EdibleBuffs.MagnetRadius} {EdibleBuffs.Speed} {EdibleBuffs.Defense} {EdibleBuffs.Attack}/{EdibleBuffs.Duration}";
+                var itype = (int)this.Category;
+                var str = $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == Category_.Artifact ? "Arch" : $"{this.Category} {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}/";
+                str += (this.EdibleIsDrink ? "drink" : "food") + "/";
+                if (this.EdibleBuffs == null)
+                    this.EdibleBuffs = new FoodBuffs_();
+                str += $"{this.EdibleBuffs.Farming} {this.EdibleBuffs.Fishing} {this.EdibleBuffs.Mining} 0 {this.EdibleBuffs.Luck} {this.EdibleBuffs.Foraging} 0 {this.EdibleBuffs.MaxStamina} {this.EdibleBuffs.MagnetRadius} {this.EdibleBuffs.Speed} {this.EdibleBuffs.Defense} {this.EdibleBuffs.Attack}/{this.EdibleBuffs.Duration}";
                 return str;
             }
             else
             {
-                var itype = (int)Category;
-                return $"{Name}/{Price}/{Edibility}/" + (Category == Category_.Artifact ? "Arch" : $"Basic {itype}") + $"/{LocalizedName()}/{LocalizedDescription()}";
+                var itype = (int)this.Category;
+                return $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == Category_.Artifact ? "Arch" : $"Basic {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}";
             }
         }
     }

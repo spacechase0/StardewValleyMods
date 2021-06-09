@@ -22,7 +22,7 @@ namespace PyromancersJourney.Projectiles
 
         public BaseProjectile(World world)
         {
-            World = world;
+            this.World = world;
         }
 
         public virtual void Trigger(BaseObject target) { }
@@ -33,12 +33,12 @@ namespace PyromancersJourney.Projectiles
         {
             effect.Projection = projection;
             effect.View = cam.CreateViewMatrix();
-            effect.World = MakeWorldMatrix();
+            effect.World = this.MakeWorldMatrix();
         }
 
         protected virtual Matrix MakeWorldMatrix()
         {
-            return Matrix.CreateWorld(Position, Vector3.Forward, Vector3.Up);
+            return Matrix.CreateWorld(this.Position, Vector3.Forward, Vector3.Up);
         }
 
         private static BasicEffect GetBasicEffect()

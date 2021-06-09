@@ -43,74 +43,76 @@ namespace Displays
 
         public override string DisplayName
         {
-            get => name;
+            get => this.name;
             set { }
         }
 
         public Mannequin() { }
         public Mannequin(MannequinType type, MannequinGender gender, Vector2 placement)
         {
-            mannType.Value = type;
-            mannGender.Value = gender;
+            this.mannType.Value = type;
+            this.mannGender.Value = gender;
             //ParentSheetIndex = MODID;
-            name = loadDisplayName();
-            DisplayName = loadDisplayName();
-            bigCraftable.Value = true;
-            Type = "Crafting"; // Makes performObjectDropInAction work for non-objects
+            this.name = this.loadDisplayName();
+            this.DisplayName = this.loadDisplayName();
+            this.bigCraftable.Value = true;
+            this.Type = "Crafting"; // Makes performObjectDropInAction work for non-objects
 
-            TileLocation = placement;
-            boundingBox.Value = new Rectangle((int)placement.X * 64, (int)placement.Y * 64, 64, 64);
+            this.TileLocation = placement;
+            this.boundingBox.Value = new Rectangle((int)placement.X * 64, (int)placement.Y * 64, 64, 64);
         }
 
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields(mannType, mannGender, facing, hat, shirt, pants, boots);
+            this.NetFields.AddFields(this.mannType, this.mannGender, this.facing, this.hat, this.shirt, this.pants, this.boots);
 
-            mannType.fieldChangeEvent += (field, oldVal, newVal) => CacheFarmerSprite();
-            facing.fieldChangeEvent += (field, oldVal, newVal) => CacheFarmerSprite();
-            hat.fieldChangeEvent += (field, oldVal, newVal) => CacheFarmerSprite();
-            shirt.fieldChangeEvent += (field, oldVal, newVal) => CacheFarmerSprite();
-            pants.fieldChangeEvent += (field, oldVal, newVal) => CacheFarmerSprite();
-            boots.fieldChangeEvent += (field, oldVal, newVal) => CacheFarmerSprite();
+            this.mannType.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
+            this.facing.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
+            this.hat.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
+            this.shirt.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
+            this.pants.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
+            this.boots.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
         }
 
         private void CacheFarmerSprite()
         {
-            if (farmerForRendering == null)
-                farmerForRendering = new Farmer();
-            farmerForRendering.changeGender(mannGender == MannequinGender.Male);
-            if (mannGender == MannequinGender.Female)
-                farmerForRendering.changeHairStyle(16);
-            farmerForRendering.faceDirection(facing.Value);
-            farmerForRendering.hat.Value = hat.Value;
-            farmerForRendering.shirtItem.Value = shirt.Value;
-            if (shirt.Value != null)
+            if (this.farmerForRendering == null)
+                this.farmerForRendering = new Farmer();
+            this.farmerForRendering.changeGender(this.mannGender == MannequinGender.Male);
+            if (this.mannGender == MannequinGender.Female)
+                this.farmerForRendering.changeHairStyle(16);
+            this.farmerForRendering.faceDirection(this.facing.Value);
+            this.farmerForRendering.hat.Value = this.hat.Value;
+            this.farmerForRendering.shirtItem.Value = this.shirt.Value;
+            if (this.shirt.Value != null)
             {
-                farmerForRendering.shirt.Value = mannGender.Value == MannequinGender.Male ? shirt.Value.indexInTileSheetMale.Value : shirt.Value.indexInTileSheetFemale.Value;
+                this.farmerForRendering.shirt.Value = this.mannGender.Value == MannequinGender.Male ? this.shirt.Value.indexInTileSheetMale.Value : this.shirt.Value.indexInTileSheetFemale.Value;
             }
-            farmerForRendering.pantsItem.Value = pants.Value;
-            if (pants.Value != null)
+
+            this.farmerForRendering.pantsItem.Value = this.pants.Value;
+            if (this.pants.Value != null)
             {
-                farmerForRendering.pants.Value = mannGender.Value == MannequinGender.Male ? pants.Value.indexInTileSheetMale.Value : pants.Value.indexInTileSheetFemale.Value;
-                farmerForRendering.pantsColor.Value = pants.Value.clothesColor.Value;
+                this.farmerForRendering.pants.Value = this.mannGender.Value == MannequinGender.Male ? this.pants.Value.indexInTileSheetMale.Value : this.pants.Value.indexInTileSheetFemale.Value;
+                this.farmerForRendering.pantsColor.Value = this.pants.Value.clothesColor.Value;
             }
-            farmerForRendering.boots.Value = boots.Value;
-            if (boots.Value != null)
+
+            this.farmerForRendering.boots.Value = this.boots.Value;
+            if (this.boots.Value != null)
             {
-                farmerForRendering.changeShoeColor(boots.Value.indexInColorSheet.Value);
+                this.farmerForRendering.changeShoeColor(this.boots.Value.indexInColorSheet.Value);
             }
-            if (mannType == MannequinType.Plain)
+            if (this.mannType == MannequinType.Plain)
             {
-                farmerForRendering.changeHairColor(Color.Transparent);
-                farmerForRendering.FarmerRenderer.textureName.Value = "Characters\\Farmer\\farmer_transparent";
+                this.farmerForRendering.changeHairColor(Color.Transparent);
+                this.farmerForRendering.FarmerRenderer.textureName.Value = "Characters\\Farmer\\farmer_transparent";
             }
         }
 
         protected override string loadDisplayName()
         {
-            string type = Mod.instance.Helper.Translation.Get("mannequin.type." + mannType.Value.ToString());
-            string gender = Mod.instance.Helper.Translation.Get("mannequin.gender." + mannGender.Value.ToString());
+            string type = Mod.instance.Helper.Translation.Get("mannequin.type." + this.mannType.Value.ToString());
+            string gender = Mod.instance.Helper.Translation.Get("mannequin.gender." + this.mannGender.Value.ToString());
             return Mod.instance.Helper.Translation.Get("mannequin.name", new { type = type, gender = gender });
         }
 
@@ -123,18 +125,18 @@ namespace Displays
         {
             if (other is Mannequin m)
             {
-                return m.mannType.Value == mannType.Value && m.mannGender.Value == mannGender.Value;
+                return m.mannType.Value == this.mannType.Value && m.mannGender.Value == this.mannGender.Value;
             }
             return false;
         }
 
         public override Item getOne()
         {
-            var ret = new Mannequin(mannType.Value, mannGender.Value, Vector2.Zero);
-            ret.hat.Value = (Hat)hat.Value?.getOne();
-            ret.shirt.Value = (Clothing)shirt.Value?.getOne();
-            ret.pants.Value = (Clothing)pants.Value?.getOne();
-            ret.boots.Value = (Boots)boots.Value?.getOne();
+            var ret = new Mannequin(this.mannType.Value, this.mannGender.Value, Vector2.Zero);
+            ret.hat.Value = (Hat)this.hat.Value?.getOne();
+            ret.shirt.Value = (Clothing)this.shirt.Value?.getOne();
+            ret.pants.Value = (Clothing)this.pants.Value?.getOne();
+            ret.boots.Value = (Boots)this.boots.Value?.getOne();
             ret._GetOneFrom(this);
             return ret;
         }
@@ -147,7 +149,7 @@ namespace Displays
         public override bool placementAction(GameLocation location, int x, int y, Farmer who = null)
         {
             Vector2 placementTile = new Vector2(x / 64, y / 64);
-            var m = new Mannequin(mannType.Value, mannGender.Value, placementTile);
+            var m = new Mannequin(this.mannType.Value, this.mannGender.Value, placementTile);
             if (who != null)
                 ;// m.facing.Value = who.FacingDirection;
             location.Objects.Add(placementTile, m);
@@ -162,34 +164,34 @@ namespace Displays
 
             if (!(t is MeleeWeapon) && t.isHeavyHitter())
             {
-                if (hat.Value != null || shirt.Value != null || pants.Value != null || boots.Value != null)
+                if (this.hat.Value != null || this.shirt.Value != null || this.pants.Value != null || this.boots.Value != null)
                 {
-                    if (hat.Value != null)
+                    if (this.hat.Value != null)
                     {
-                        location.debris.Add(new Debris(this.hat.Value, new Vector2((TileLocation.X + 0.5f) * Game1.tileSize, (TileLocation.Y + 0.5f) * Game1.tileSize)));
-                        hat.Value = null;
+                        location.debris.Add(new Debris(this.hat.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        this.hat.Value = null;
                     }
-                    else if (shirt.Value != null)
+                    else if (this.shirt.Value != null)
                     {
-                        location.debris.Add(new Debris(this.shirt.Value, new Vector2((TileLocation.X + 0.5f) * Game1.tileSize, (TileLocation.Y + 0.5f) * Game1.tileSize)));
-                        shirt.Value = null;
+                        location.debris.Add(new Debris(this.shirt.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        this.shirt.Value = null;
                     }
-                    else if (pants.Value != null)
+                    else if (this.pants.Value != null)
                     {
-                        location.debris.Add(new Debris(this.pants.Value, new Vector2((TileLocation.X + 0.5f) * Game1.tileSize, (TileLocation.Y + 0.5f) * Game1.tileSize)));
-                        pants.Value = null;
+                        location.debris.Add(new Debris(this.pants.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        this.pants.Value = null;
                     }
-                    else if (boots.Value != null)
+                    else if (this.boots.Value != null)
                     {
-                        location.debris.Add(new Debris(this.boots.Value, new Vector2((TileLocation.X + 0.5f) * Game1.tileSize, (TileLocation.Y + 0.5f) * Game1.tileSize)));
-                        boots.Value = null;
+                        location.debris.Add(new Debris(this.boots.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        this.boots.Value = null;
                     }
                     location.playSound("hammer");
                     this.shakeTimer = 100;
                     return false;
                 }
-                location.objects.Remove(TileLocation);
-                location.debris.Add(new Debris(new Mannequin(mannType.Value, mannGender.Value, Vector2.Zero), new Vector2((TileLocation.X + 0.5f) * Game1.tileSize, (TileLocation.Y + 0.5f) * Game1.tileSize)));
+                location.objects.Remove(this.TileLocation);
+                location.debris.Add(new Debris(new Mannequin(this.mannType.Value, this.mannGender.Value, Vector2.Zero), new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
                 return false;
             }
 
@@ -205,26 +207,26 @@ namespace Displays
 
                 //if ( who.hat.Value != null )
                 {
-                    var tmp = hat.Value;
-                    hat.Value = who.hat.Value;
+                    var tmp = this.hat.Value;
+                    this.hat.Value = who.hat.Value;
                     who.hat.Value = tmp;
                 }
                 //if ( who.shirtItem.Value != null )
                 {
-                    var tmp = shirt.Value;
-                    shirt.Value = who.shirtItem.Value;
+                    var tmp = this.shirt.Value;
+                    this.shirt.Value = who.shirtItem.Value;
                     who.shirtItem.Value = tmp;
                 }
                 //if ( who.pantsItem.Value != null )
                 {
-                    var tmp = pants.Value;
-                    pants.Value = who.pantsItem.Value;
+                    var tmp = this.pants.Value;
+                    this.pants.Value = who.pantsItem.Value;
                     who.pantsItem.Value = tmp;
                 }
                 if (who.boots.Value != null)
                 {
-                    var tmp = boots.Value;
-                    boots.Value = who.boots.Value;
+                    var tmp = this.boots.Value;
+                    this.boots.Value = who.boots.Value;
                     who.boots.Value = tmp;
                 }
                 return true;
@@ -242,7 +244,7 @@ namespace Displays
             if (dropInItem is Hat hat)
             {
                 if (this.hat.Value != null)
-                    who.currentLocation.debris.Add(new Debris(this.hat.Value, new Vector2((TileLocation.X + 0.5f) * Game1.tileSize, (TileLocation.Y + 0.5f) * Game1.tileSize)));
+                    who.currentLocation.debris.Add(new Debris(this.hat.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
                 this.hat.Value = hat;
                 return true;
             }
@@ -251,14 +253,14 @@ namespace Displays
                 if (clothing.clothesType.Value == (int)Clothing.ClothesType.SHIRT)
                 {
                     if (this.shirt.Value != null)
-                        who.currentLocation.debris.Add(new Debris(this.shirt.Value, new Vector2((TileLocation.X + 0.5f) * Game1.tileSize, (TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        who.currentLocation.debris.Add(new Debris(this.shirt.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
                     this.shirt.Value = clothing;
                     return true;
                 }
                 else if (clothing.clothesType.Value == (int)Clothing.ClothesType.PANTS)
                 {
                     if (this.pants.Value != null)
-                        who.currentLocation.debris.Add(new Debris(this.pants.Value, new Vector2((TileLocation.X + 0.5f) * Game1.tileSize, (TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        who.currentLocation.debris.Add(new Debris(this.pants.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
                     this.pants.Value = clothing;
                     return true;
                 }
@@ -266,7 +268,7 @@ namespace Displays
             else if (dropInItem is Boots boots)
             {
                 if (this.boots.Value != null)
-                    who.currentLocation.debris.Add(new Debris(this.boots.Value, new Vector2((TileLocation.X + 0.5f) * Game1.tileSize, (TileLocation.Y + 0.5f) * Game1.tileSize)));
+                    who.currentLocation.debris.Add(new Debris(this.boots.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
                 this.boots.Value = boots;
                 return true;
             }
@@ -277,9 +279,9 @@ namespace Displays
         public override void drawWhenHeld(SpriteBatch spriteBatch, Vector2 objectPosition, Farmer f)
         {
             var tex = Mannequin.tex;
-            if (mannGender.Value == MannequinGender.Male)
+            if (this.mannGender.Value == MannequinGender.Male)
                 tex = texM;
-            else if (mannGender.Value == MannequinGender.Female)
+            else if (this.mannGender.Value == MannequinGender.Female)
                 tex = texF;
 
             spriteBatch.Draw(tex, objectPosition, null, Color.White, 0, Vector2.Zero, 4f, SpriteEffects.None, Math.Max(0f, (float)(f.getStandingY() + 3) / 10000f));
@@ -290,9 +292,9 @@ namespace Displays
             bool shouldDrawStackNumber = ((drawStackNumber == StackDrawType.Draw && this.maximumStackSize() > 1 && this.Stack > 1) || drawStackNumber == StackDrawType.Draw_OneInclusive) && (double)scaleSize > 0.3 && this.Stack != int.MaxValue;
 
             var tex = Mannequin.tex;
-            if (mannGender.Value == MannequinGender.Male)
+            if (this.mannGender.Value == MannequinGender.Male)
                 tex = texM;
-            else if (mannGender.Value == MannequinGender.Female)
+            else if (this.mannGender.Value == MannequinGender.Female)
                 tex = texF;
 
             spriteBatch.Draw(tex, location + new Vector2(32f, 32f), null, color * transparency, 0f, new Vector2(8f, 16f), 4f * (((double)scaleSize < 0.2) ? scaleSize : (scaleSize / 2f)), SpriteEffects.None, layerDepth);
@@ -305,9 +307,9 @@ namespace Displays
         public override void draw(SpriteBatch spriteBatch, int xNonTile, int yNonTile, float layerDepth, float alpha = 1)
         {
             var tex = Mannequin.tex;
-            if (mannGender.Value == MannequinGender.Male)
+            if (this.mannGender.Value == MannequinGender.Male)
                 tex = texM;
-            else if (mannGender.Value == MannequinGender.Female)
+            else if (this.mannGender.Value == MannequinGender.Female)
                 tex = texF;
 
             Vector2 scaleFactor = this.getScale();
@@ -320,9 +322,9 @@ namespace Displays
         public override void draw(SpriteBatch spriteBatch, int x, int y, float alpha = 1)
         {
             var tex = Mannequin.tex;
-            if (mannGender.Value == MannequinGender.Male)
+            if (this.mannGender.Value == MannequinGender.Male)
                 tex = texM;
-            else if (mannGender.Value == MannequinGender.Female)
+            else if (this.mannGender.Value == MannequinGender.Female)
                 tex = texF;
 
             Vector2 scaleFactor = this.getScale();
@@ -332,11 +334,11 @@ namespace Displays
             float draw_layer = Math.Max(0f, (float)((y + 1) * 64 - 24) / 10000f) + (float)x * 1E-05f;
             spriteBatch.Draw(tex, destination, null, Color.White * alpha, 0f, Vector2.Zero, SpriteEffects.None, draw_layer);
 
-            if (farmerForRendering == null)
-                CacheFarmerSprite();
+            if (this.farmerForRendering == null)
+                this.CacheFarmerSprite();
             //SpaceShared.Log.trace( "meow!? " + farmerForRendering.shirtItem.Value + " " + farmerForRendering.pantsItem.Value + " " + farmerForRendering.hat.Value );
-            farmerForRendering.position.Value = new Vector2(x * 64, y * 64 + 12);
-            farmerForRendering.FarmerRenderer.draw(spriteBatch, farmerForRendering.FarmerSprite, farmerForRendering.FarmerSprite.sourceRect, farmerForRendering.getLocalPosition(Game1.viewport), new Vector2(0, farmerForRendering.GetBoundingBox().Height), draw_layer + 0.001f, Color.White, 0, farmerForRendering);
+            this.farmerForRendering.position.Value = new Vector2(x * 64, y * 64 + 12);
+            this.farmerForRendering.FarmerRenderer.draw(spriteBatch, this.farmerForRendering.FarmerSprite, this.farmerForRendering.FarmerSprite.sourceRect, this.farmerForRendering.getLocalPosition(Game1.viewport), new Vector2(0, this.farmerForRendering.GetBoundingBox().Height), draw_layer + 0.001f, Color.White, 0, this.farmerForRendering);
         }
     }
 }

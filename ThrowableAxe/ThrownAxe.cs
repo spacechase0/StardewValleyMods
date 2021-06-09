@@ -48,13 +48,13 @@ namespace ThrowableAxe
 
         public override void behaviorOnCollisionWithMonster(NPC n, GameLocation location)
         {
-            if (npcsHit.Contains(n))
+            if (this.npcsHit.Contains(n))
                 return;
 
-            npcsHit.Add(n);
+            this.npcsHit.Add(n);
             if (n is Monster mob)
             {
-                location.damageMonster(getBoundingBox(), damage, damage, false, (Farmer)theOneWhoFiredMe.Get(location));
+                location.damageMonster(this.getBoundingBox(), this.damage, this.damage, false, (Farmer)this.theOneWhoFiredMe.Get(location));
             }
         }
 
@@ -73,32 +73,32 @@ namespace ThrowableAxe
         public override bool update(GameTime time, GameLocation location)
         {
             base.update(time, location);
-            return dead;
+            return this.dead;
         }
 
         public override void updatePosition(GameTime time)
         {
-            Vector2 targetDiff = target.Value - position.Value;
+            Vector2 targetDiff = this.target.Value - this.position.Value;
             Vector2 targetDir = targetDiff;
             targetDir.Normalize();
 
-            if (targetDiff.Length() < speed.Value)
-                position.Value = target.Value;
+            if (targetDiff.Length() < this.speed.Value)
+                this.position.Value = this.target.Value;
             else
-                position.Value += targetDir * speed.Value;
+                this.position.Value += targetDir * this.speed.Value;
 
             //Log.trace($"{position.Value} {target.Value} {targetDir}");
         }
 
         public override void draw(SpriteBatch b)
         {
-            int sheetShift = tier * 7;
-            if (tier > 2)
+            int sheetShift = this.tier * 7;
+            if (this.tier > 2)
                 sheetShift += 21;
             var sourceRect = Game1.getSquareSourceRectForNonStandardTileSheet(Game1.toolSpriteSheet, 16, 16, 215 + sheetShift);
             //b.Draw(Game1.staminaRect, Game1.GlobalToLocal(Game1.viewport, getBoundingBox()), null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 0.99f);
-            b.Draw(Game1.toolSpriteSheet, Game1.GlobalToLocal(Game1.viewport, position + new Vector2(32, 32)), sourceRect, Color.White, rotation, new Vector2(8, 8), 4, SpriteEffects.None, 1);
-            rotation += 0.3f;
+            b.Draw(Game1.toolSpriteSheet, Game1.GlobalToLocal(Game1.viewport, this.position + new Vector2(32, 32)), sourceRect, Color.White, this.rotation, new Vector2(8, 8), 4, SpriteEffects.None, 1);
+            this.rotation += 0.3f;
         }
 
         public override Rectangle getBoundingBox()
@@ -108,7 +108,7 @@ namespace ThrowableAxe
 
         public Vector2 GetPosition()
         {
-            return position.Value;
+            return this.position.Value;
         }
     }
 }

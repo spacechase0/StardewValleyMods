@@ -14,27 +14,27 @@ namespace PyromancersJourney.Objects
 
         public virtual void Hurt(int amt)
         {
-            Health -= amt;
+            this.Health -= amt;
         }
 
         public virtual void DoMovement() { }
 
         public override void Update()
         {
-            var oldPos = Position;
+            var oldPos = this.Position;
 
-            DoMovement();
+            this.DoMovement();
 
             // Lazy implementation - would use something better if using a real engine
-            Func<float, float, bool> solidCheck = Floats ? World.map.IsAirSolid : World.map.IsSolid;
-            if (solidCheck(Position.X, Position.Z))
+            Func<float, float, bool> solidCheck = this.Floats ? this.World.map.IsAirSolid : this.World.map.IsSolid;
+            if (solidCheck(this.Position.X, this.Position.Z))
             {
-                if (!solidCheck(oldPos.X, Position.Z))
-                    Position.X = oldPos.X;
-                else if (!solidCheck(Position.X, oldPos.Z))
-                    Position.Z = oldPos.Z;
+                if (!solidCheck(oldPos.X, this.Position.Z))
+                    this.Position.X = oldPos.X;
+                else if (!solidCheck(this.Position.X, oldPos.Z))
+                    this.Position.Z = oldPos.Z;
                 else
-                    Position = oldPos;
+                    this.Position = oldPos;
             }
         }
     }

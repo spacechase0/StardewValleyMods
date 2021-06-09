@@ -15,32 +15,32 @@ namespace GenericModConfigMenu.ModOption
         public ComplexModOption(string name, string desc, Func<Vector2, object, object> update, Func<SpriteBatch, Vector2, object, object> draw, Action<object> save, IManifest mod)
             : base(name, desc, name, mod)
         {
-            updateFunc = update;
-            drawFunc = draw;
-            saveFunc = save;
+            this.updateFunc = update;
+            this.drawFunc = draw;
+            this.saveFunc = save;
         }
 
         public override void SyncToMod()
         {
-            state = null;
+            this.state = null;
         }
 
         public override void Save()
         {
-            saveFunc.Invoke(state);
+            this.saveFunc.Invoke(this.state);
         }
 
         public void Update(Vector2 position)
         {
-            state = updateFunc.Invoke(position, state);
+            this.state = this.updateFunc.Invoke(position, this.state);
         }
 
         public void Draw(SpriteBatch b, Vector2 position)
         {
-            if (state == null)
+            if (this.state == null)
                 return;
 
-            state = drawFunc.Invoke(b, position, state);
+            this.state = this.drawFunc.Invoke(b, position, this.state);
         }
     }
 }

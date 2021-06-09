@@ -44,27 +44,27 @@ namespace Magic.Spells
 
         public SpiritEffect(Farmer theSummoner)
         {
-            summoner = theSummoner;
-            tex = Game1.content.Load<Texture2D>("Characters\\Junimo");
+            this.summoner = theSummoner;
+            this.tex = Game1.content.Load<Texture2D>("Characters\\Junimo");
 
-            pos = summoner.Position;
-            prevSummonerLoc = summoner.currentLocation;
+            this.pos = this.summoner.Position;
+            this.prevSummonerLoc = this.summoner.currentLocation;
         }
         public bool Update(UpdateTickedEventArgs e)
         {
-            if (prevSummonerLoc != Game1.currentLocation)
+            if (this.prevSummonerLoc != Game1.currentLocation)
             {
-                prevSummonerLoc = Game1.currentLocation;
-                pos = summoner.Position;
+                this.prevSummonerLoc = Game1.currentLocation;
+                this.pos = this.summoner.Position;
             }
 
             float nearestDist = float.MaxValue;
             Monster nearestMob = null;
-            foreach (var character in summoner.currentLocation.characters)
+            foreach (var character in this.summoner.currentLocation.characters)
             {
                 if (character is Monster mob)
                 {
-                    float dist = Utility.distance(mob.GetBoundingBox().Center.X, summoner.Position.X, mob.GetBoundingBox().Center.Y, summoner.Position.Y);
+                    float dist = Utility.distance(mob.GetBoundingBox().Center.X, this.summoner.Position.X, mob.GetBoundingBox().Center.Y, this.summoner.Position.Y);
                     if (dist < nearestDist)
                     {
                         nearestDist = dist;
@@ -73,46 +73,46 @@ namespace Magic.Spells
                 }
             }
 
-            if (attackTimer > 0)
-                --attackTimer;
+            if (this.attackTimer > 0)
+                --this.attackTimer;
             if (nearestMob != null)
             {
-                Vector2 unit = nearestMob.Position - pos;
+                Vector2 unit = nearestMob.Position - this.pos;
                 unit.Normalize();
 
-                pos += unit * 7;
+                this.pos += unit * 7;
 
-                if (Utility.distance(nearestMob.Position.X, pos.X, nearestMob.Position.Y, pos.Y) < Game1.tileSize)
+                if (Utility.distance(nearestMob.Position.X, this.pos.X, nearestMob.Position.Y, this.pos.Y) < Game1.tileSize)
                 {
-                    if (attackTimer <= 0)
+                    if (this.attackTimer <= 0)
                     {
-                        attackTimer = 45;
-                        int baseDmg = 20 * (summoner.CombatLevel + 1);
-                        var oldPos = summoner.Position;
-                        summoner.Position = new Vector2(nearestMob.GetBoundingBox().Center.X, nearestMob.GetBoundingBox().Center.Y);
-                        summoner.currentLocation.damageMonster(nearestMob.GetBoundingBox(), (int)(baseDmg * 0.75f), (int)(baseDmg * 1.5f), false, 1, 0, 0.1f, 2, false, summoner);
-                        summoner.Position = oldPos;
+                        this.attackTimer = 45;
+                        int baseDmg = 20 * (this.summoner.CombatLevel + 1);
+                        var oldPos = this.summoner.Position;
+                        this.summoner.Position = new Vector2(nearestMob.GetBoundingBox().Center.X, nearestMob.GetBoundingBox().Center.Y);
+                        this.summoner.currentLocation.damageMonster(nearestMob.GetBoundingBox(), (int)(baseDmg * 0.75f), (int)(baseDmg * 1.5f), false, 1, 0, 0.1f, 2, false, this.summoner);
+                        this.summoner.Position = oldPos;
                     }
                 }
             }
 
-            if (--timeLeft <= 0)
+            if (--this.timeLeft <= 0)
                 return false;
             return true;
         }
 
         public void Draw(SpriteBatch b)
         {
-            if (++animTimer >= 6)
+            if (++this.animTimer >= 6)
             {
-                animTimer = 0;
-                if (++animFrame >= 12)
-                    animFrame = 0;
+                this.animTimer = 0;
+                if (++this.animFrame >= 12)
+                    this.animFrame = 0;
             }
 
-            int tx = (animFrame % 8) * 16;
-            int ty = (animFrame / 8) * 16;
-            b.Draw(tex, Game1.GlobalToLocal(Game1.viewport, pos), new Rectangle(tx, ty, 16, 16), new Color(1f, 1f, 1f, attackTimer > 0 ? 0.1f : 1f), 0, new Vector2(8, 8), 2, SpriteEffects.None, 1);
+            int tx = (this.animFrame % 8) * 16;
+            int ty = (this.animFrame / 8) * 16;
+            b.Draw(this.tex, Game1.GlobalToLocal(Game1.viewport, this.pos), new Rectangle(tx, ty, 16, 16), new Color(1f, 1f, 1f, this.attackTimer > 0 ? 0.1f : 1f), 0, new Vector2(8, 8), 2, SpriteEffects.None, 1);
         }
     }
 }

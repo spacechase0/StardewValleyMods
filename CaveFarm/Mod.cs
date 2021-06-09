@@ -13,9 +13,9 @@ namespace CaveFarm
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.ConsoleCommands.Add("walls", "TODO", wallsCommand);
+            helper.ConsoleCommands.Add("walls", "TODO", this.wallsCommand);
         }
 
         private void wallsCommand(string cmd, string[] args)

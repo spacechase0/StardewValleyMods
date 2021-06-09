@@ -16,14 +16,14 @@ namespace GenericModConfigMenu.UI
         private bool selected = false;
         public bool Selected
         {
-            get { return selected; }
+            get { return this.selected; }
             set
             {
-                if (selected == value)
+                if (this.selected == value)
                     return;
 
-                selected = value;
-                if (selected)
+                this.selected = value;
+                if (this.selected)
                     Game1.keyboardDispatcher.Subscriber = this;
                 else
                 {
@@ -37,8 +37,8 @@ namespace GenericModConfigMenu.UI
 
         public Textbox()
         {
-            tex = Game1.content.Load<Texture2D>("LooseSprites\\textBox");
-            font = Game1.smallFont;
+            this.tex = Game1.content.Load<Texture2D>("LooseSprites\\textBox");
+            this.font = Game1.smallFont;
         }
 
         public override int Width => 192;
@@ -48,40 +48,40 @@ namespace GenericModConfigMenu.UI
         {
             base.Update(hidden);
 
-            if (ClickGestured && Callback != null)
+            if (this.ClickGestured && this.Callback != null)
             {
-                if (Hover)
-                    Selected = true;
+                if (this.Hover)
+                    this.Selected = true;
                 else
-                    Selected = false;
+                    this.Selected = false;
             }
         }
 
         public override void Draw(SpriteBatch b)
         {
-            b.Draw(tex, Position, Color.White);
+            b.Draw(this.tex, this.Position, Color.White);
 
             // Copied from game code - caret
-            string text = String;
+            string text = this.String;
             Vector2 vector2;
-            for (vector2 = font.MeasureString(text); (double)vector2.X > (double)192; vector2 = font.MeasureString(text))
+            for (vector2 = this.font.MeasureString(text); (double)vector2.X > (double)192; vector2 = this.font.MeasureString(text))
                 text = text.Substring(1);
-            if (DateTime.UtcNow.Millisecond % 1000 >= 500 && Selected)
-                b.Draw(Game1.staminaRect, new Rectangle((int)Position.X + 16 + (int)vector2.X + 2, (int)Position.Y + 8, 4, 32), Game1.textColor);
+            if (DateTime.UtcNow.Millisecond % 1000 >= 500 && this.Selected)
+                b.Draw(Game1.staminaRect, new Rectangle((int)this.Position.X + 16 + (int)vector2.X + 2, (int)this.Position.Y + 8, 4, 32), Game1.textColor);
 
-            b.DrawString(font, text, Position + new Vector2(16, 12), Game1.textColor);
+            b.DrawString(this.font, text, this.Position + new Vector2(16, 12), Game1.textColor);
         }
 
         protected virtual void receiveInput(string str)
         {
-            String += str;
-            if (Callback != null)
-                Callback.Invoke(this);
+            this.String += str;
+            if (this.Callback != null)
+                this.Callback.Invoke(this);
         }
 
         public void RecieveTextInput(char inputChar)
         {
-            receiveInput(inputChar.ToString());
+            this.receiveInput(inputChar.ToString());
 
             // Copied from game code
             switch (inputChar)
@@ -111,17 +111,17 @@ namespace GenericModConfigMenu.UI
 
         public void RecieveTextInput(string text)
         {
-            receiveInput(text);
+            this.receiveInput(text);
         }
 
         public void RecieveCommandInput(char command)
         {
-            if (command == '\b' && String.Length > 0)
+            if (command == '\b' && this.String.Length > 0)
             {
                 Game1.playSound("tinyWhip");
-                String = String.Substring(0, String.Length - 1);
-                if (Callback != null)
-                    Callback.Invoke(this);
+                this.String = this.String.Substring(0, this.String.Length - 1);
+                if (this.Callback != null)
+                    this.Callback.Invoke(this);
             }
         }
 

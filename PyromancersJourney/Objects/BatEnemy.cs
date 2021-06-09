@@ -20,7 +20,7 @@ namespace PyromancersJourney.Objects
         public BatEnemy(World world)
             : base(world)
         {
-            Health = 2;
+            this.Health = 2;
 
             if (mainBuffer == null)
             {
@@ -50,7 +50,7 @@ namespace PyromancersJourney.Objects
         public override void Hurt(int amt)
         {
             base.Hurt(amt);
-            if (Dead)
+            if (this.Dead)
             {
                 Game1.playSound("batScreech");
             }
@@ -62,24 +62,24 @@ namespace PyromancersJourney.Objects
 
         public override void DoMovement()
         {
-            var player = World.player;
-            var diff = player.Position - Position;
+            var player = this.World.player;
+            var diff = player.Position - this.Position;
             diff.Y = 0;
             diff.Normalize();
 
-            Position += diff / 50 * 1.5f;
+            this.Position += diff / 50 * 1.5f;
         }
 
         public override void Update()
         {
             base.Update();
 
-            frameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
-            if (frameAccum >= 0.15f)
+            this.frameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+            if (this.frameAccum >= 0.15f)
             {
-                frameAccum = 0;
-                if (++frame >= 4)
-                    frame = 0;
+                this.frameAccum = 0;
+                if (++this.frame >= 4)
+                    this.frame = 0;
             }
         }
 
@@ -96,7 +96,7 @@ namespace PyromancersJourney.Objects
 
             var camForward = (cam.pos - cam.target);
             camForward.Normalize();
-            effect.World = Matrix.CreateConstrainedBillboard(Position, cam.pos, cam.up, null, null);
+            effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
             effect.TextureEnabled = true;
             effect.Texture = tex;
             for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)

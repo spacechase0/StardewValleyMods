@@ -47,9 +47,9 @@ namespace JsonAssets.Data
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             /*if (currLang == LocalizedContentManager.LanguageCode.en)
                 return Name;*/
-            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
-                return Name;
-            return NameLocalization[currLang.ToString()];
+            if (this.NameLocalization == null || !this.NameLocalization.ContainsKey(currLang.ToString()))
+                return this.Name;
+            return this.NameLocalization[currLang.ToString()];
         }
 
         public string LocalizedDescription()
@@ -57,16 +57,16 @@ namespace JsonAssets.Data
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             /*if (currLang == LocalizedContentManager.LanguageCode.en)
                 return Description;*/
-            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return Description;
-            return DescriptionLocalization[currLang.ToString()];
+            if (this.DescriptionLocalization == null || !this.DescriptionLocalization.ContainsKey(currLang.ToString()))
+                return this.Description;
+            return this.DescriptionLocalization[currLang.ToString()];
         }
 
-        public int GetWeaponId() { return id; }
+        public int GetWeaponId() { return this.id; }
 
         internal string GetWeaponInformation()
         {
-            return $"{Name}/{LocalizedDescription()}/{MinimumDamage}/{MaximumDamage}/{Knockback}/{Speed}/{Accuracy}/{Defense}/{(int)Type}/{MineDropVar}/{MineDropMinimumLevel}/{ExtraSwingArea}/{CritChance}/{CritMultiplier}/{LocalizedName()}";
+            return $"{this.Name}/{this.LocalizedDescription()}/{this.MinimumDamage}/{this.MaximumDamage}/{this.Knockback}/{this.Speed}/{this.Accuracy}/{this.Defense}/{(int)this.Type}/{this.MineDropVar}/{this.MineDropMinimumLevel}/{this.ExtraSwingArea}/{this.CritChance}/{this.CritMultiplier}/{this.LocalizedName()}";
         }
     }
 }

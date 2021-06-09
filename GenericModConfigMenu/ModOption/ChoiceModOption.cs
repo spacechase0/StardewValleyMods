@@ -11,13 +11,13 @@ namespace GenericModConfigMenu.ModOption
         public override T Value
         {
             get { return base.Value; }
-            set { if (Choices.Contains(value)) base.Value = value; }
+            set { if (this.Choices.Contains(value)) base.Value = value; }
         }
 
         public ChoiceModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, T[] choices, string id, IManifest mod)
             : base(name, desc, type, theGetter, theSetter, id, mod)
         {
-            Choices = choices;
+            this.Choices = choices;
         }
     }
 }

@@ -22,9 +22,9 @@ namespace ArcadeRoom
         internal void InvokeOnRoomSetup()
         {
             Log.trace("Event: OnRoomSetup");
-            if (OnRoomSetup == null)
+            if (this.OnRoomSetup == null)
                 return;
-            Util.invokeEvent("ArcadeRoom.Api.OnRoomSetup", OnRoomSetup.GetInvocationList(), null);
+            Util.invokeEvent("ArcadeRoom.Api.OnRoomSetup", this.OnRoomSetup.GetInvocationList(), null);
         }
     }
 }

@@ -21,50 +21,50 @@ namespace ArcadeRoom
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Player.Warped += onWarped;
+            helper.Events.Player.Warped += this.onWarped;
 
-            SpaceEvents.OnBlankSave += onBlankSave;
+            SpaceEvents.OnBlankSave += this.onBlankSave;
         }
 
         internal Vector2 ReserveNextMachineSpot()
         {
-            return machineSpots.Dequeue();
+            return this.machineSpots.Dequeue();
         }
 
         private Api api;
         public override object GetApi()
         {
-            return (api = new Api());
+            return (this.api = new Api());
         }
 
         private void onBlankSave(object sender, EventArgs e)
         {
-            patchedMap = false;
+            this.patchedMap = false;
 
-            var arcade = new GameLocation(Helper.Content.GetActualAssetKey("assets/Arcade.tbin"), "Arcade");
+            var arcade = new GameLocation(this.Helper.Content.GetActualAssetKey("assets/Arcade.tbin"), "Arcade");
             Game1.locations.Add(arcade);
             for (int ix = 0; ix < arcade.Map.Layers[0].LayerWidth; ++ix)
             {
                 for (int iy = 0; iy < arcade.Map.Layers[0].LayerHeight; ++iy)
                 {
                     if (!string.IsNullOrEmpty(arcade.doesTileHaveProperty(ix, iy, "ArcadeSpot", "Back")))
-                        machineSpots.Enqueue(new Vector2(ix, iy));
+                        this.machineSpots.Enqueue(new Vector2(ix, iy));
                 }
             }
-            api.InvokeOnRoomSetup();
+            this.api.InvokeOnRoomSetup();
         }
 
         private void onWarped(object sender, WarpedEventArgs e)
         {
             if (e.NewLocation.Name != "Saloon" /*|| patchedMap*/ )
                 return;
-            patchedMap = true;
+            this.patchedMap = true;
 
             var map = e.NewLocation.Map;
 
-            var ts = new TileSheet(e.NewLocation.Map, Helper.Content.GetActualAssetKey("assets/tiles.png"), new xTile.Dimensions.Size(8, 8), new xTile.Dimensions.Size(16, 16));
+            var ts = new TileSheet(e.NewLocation.Map, this.Helper.Content.GetActualAssetKey("assets/tiles.png"), new xTile.Dimensions.Size(8, 8), new xTile.Dimensions.Size(16, 16));
             ts.Id = "\u03A9" + ts.Id;
             e.NewLocation.Map.AddTileSheet(ts);
             e.NewLocation.Map.LoadTileSheets(Game1.mapDisplayDevice);

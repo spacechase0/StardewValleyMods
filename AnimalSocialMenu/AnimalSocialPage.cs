@@ -28,11 +28,11 @@ namespace AnimalSocialMenu
         {
             foreach (FarmAnimal fa in Game1.getFarm().getAllFarmAnimals())
             {
-                animals[fa.myID.Value] = fa;
+                this.animals[fa.myID.Value] = fa;
             }
             this.names = new List<object>();
             this.sprites = new List<ClickableTextureComponent>();
-            foreach (var kvp in animals.OrderBy(p => p.Value.type.Value))
+            foreach (var kvp in this.animals.OrderBy(p => p.Value.type.Value))
             {
                 this.names.Add((object)kvp.Key);
                 //this.sprites.Add(new ClickableTextureComponent("", new Rectangle(x + IClickableMenu.borderWidth + 4, 0, width, 64), (string)null, "", Game1.objectSpriteSheet, new Rectangle(0, 0, 24, 24), 4f, false));
@@ -53,7 +53,7 @@ namespace AnimalSocialMenu
                 if (this.sprites.Count > slotPosition)
                 {
                     int num2 = this.yPositionOnScreen + IClickableMenu.borderWidth + 32 + 112 * num1 + 32;
-                    if (animals[(long)names[slotPosition]].Sprite.SourceRect.Height == 16)
+                    if (this.animals[(long)this.names[slotPosition]].Sprite.SourceRect.Height == 16)
                         num2 += 16;
                     this.sprites[slotPosition].bounds.Y = num2;
                 }
@@ -180,7 +180,7 @@ namespace AnimalSocialMenu
         private void drawNPCSlot(SpriteBatch b, int i)
         {
             this.sprites[i].draw(b);
-            var animal = animals[(long)names[i]];
+            var animal = this.animals[(long)this.names[i]];
             string name = animal.Name;
             int heartLevelForNpc = animal.friendshipTowardFarmer.Value;
             float y = Game1.smallFont.MeasureString("W").Y;

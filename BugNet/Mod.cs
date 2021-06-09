@@ -34,16 +34,16 @@ namespace BugNet
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.Display.MenuChanged += onMenuChanged;
-            helper.Events.Input.ButtonPressed += onButtonPressed;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.Input.ButtonPressed += this.onButtonPressed;
 
             BugNetTool.Texture = helper.Content.Load<Texture2D>("assets/bugnet.png");
 
             var tilesheet = helper.Content.Load<Texture2D>("assets/critters.png");
-            Action<string, int, Func<int, int, Critter>> register = (name, index, releaseFunc) => RegisterCritter(name, tilesheet, new Rectangle(index % 4 * 16, index / 4 * 16, 16, 16), () => helper.Translation.Get("critter." + name), releaseFunc);
+            Action<string, int, Func<int, int, Critter>> register = (name, index, releaseFunc) => this.RegisterCritter(name, tilesheet, new Rectangle(index % 4 * 16, index / 4 * 16, 16, 16), () => helper.Translation.Get("critter." + name), releaseFunc);
             register("SummerButterflyBlue", 0, (x, y) => Critters.MakeButterfly(x, y, 128));
             register("SummerButterflyGreen", 1, (x, y) => Critters.MakeButterfly(x, y, 148));
             register("SummerButterflyRed", 2, (x, y) => Critters.MakeButterfly(x, y, 132));
@@ -83,8 +83,8 @@ namespace BugNet
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            ja = Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
-            var spaceCore = Helper.ModRegistry.GetApi<SpaceCoreAPI>("spacechase0.SpaceCore");
+            ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            var spaceCore = this.Helper.ModRegistry.GetApi<SpaceCoreAPI>("spacechase0.SpaceCore");
             spaceCore.RegisterSerializerType(typeof(BugNetTool));
         }
 
@@ -102,7 +102,7 @@ namespace BugNet
             var jaTex = new Texture2D(Game1.graphics.GraphicsDevice, 16, 16);
             jaTex.SetData(texData);
 
-            JsonAssets.Mod.instance.RegisterObject(ModManifest, new JsonAssets.Data.ObjectData()
+            JsonAssets.Mod.instance.RegisterObject(this.ModManifest, new JsonAssets.Data.ObjectData()
             {
                 Name = $"Critter Cage: {getLocalizedName()}",
                 Description = "It's a critter! In a cage!",
@@ -154,7 +154,7 @@ namespace BugNet
 
                 Game1.player.reduceActiveItemByOne();
 
-                Helper.Input.Suppress(e.Button);
+                this.Helper.Input.Suppress(e.Button);
             }
         }
 

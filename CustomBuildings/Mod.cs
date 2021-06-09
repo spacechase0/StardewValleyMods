@@ -40,10 +40,10 @@ namespace CustomBuildings
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += onMenuChanged;
-            helper.Events.Player.Warped += onWarped;
+            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.Player.Warped += this.onWarped;
 
             HarmonyPatcher.Apply(this,
                 new CoopPatcher()
@@ -61,7 +61,7 @@ namespace CustomBuildings
                         continue;
                     binfo.texture = cp.LoadAsset<Texture2D>(Path.Combine(relDir, "building.png"));
                     binfo.mapLoader = () => cp.LoadAsset<xTile.Map>(Path.Combine(relDir, "building.tbin"));
-                    buildings.Add(binfo.Id, binfo);
+                    this.buildings.Add(binfo.Id, binfo);
                 }
             }
         }
@@ -70,8 +70,8 @@ namespace CustomBuildings
         {
             if (e.NewMenu is CarpenterMenu carp)
             {
-                var blueprints = Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
-                foreach (var building in buildings)
+                var blueprints = this.Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
+                foreach (var building in this.buildings)
                 {
                     if (building.Value.PreviousTier == null || Game1.getFarm().isBuildingConstructed(building.Value.PreviousTier))
                         blueprints.Add(new BluePrint(building.Value.Id));
@@ -94,12 +94,12 @@ namespace CustomBuildings
                     var b = farm.buildings[i];
 
                     // This is probably a new building if it hasn't been converted yet.
-                    if (buildings.ContainsKey(b.buildingType.Value) && !(b is Coop))
+                    if (this.buildings.ContainsKey(b.buildingType.Value) && !(b is Coop))
                     {
                         farm.buildings[i] = new Coop(new BluePrint(b.buildingType), new Vector2(b.tileX, b.tileY));
                         farm.buildings[i].indoors.Value = b.indoors.Value;
                         farm.buildings[i].load();
-                        (farm.buildings[i].indoors.Value as AnimalHouse).animalLimit.Value = buildings[b.buildingType.Value].MaxOccupants;
+                        (farm.buildings[i].indoors.Value as AnimalHouse).animalLimit.Value = this.buildings[b.buildingType.Value].MaxOccupants;
                     }
                 }
             }
@@ -107,7 +107,7 @@ namespace CustomBuildings
 
         public bool CanLoad<T>(IAssetInfo asset)
         {
-            foreach (var building in buildings)
+            foreach (var building in this.buildings)
             {
                 if (asset.AssetNameEquals("Buildings\\" + building.Key) || asset.AssetNameEquals("Maps\\" + building.Key))
                     return true;
@@ -117,7 +117,7 @@ namespace CustomBuildings
 
         public T Load<T>(IAssetInfo asset)
         {
-            foreach (var building in buildings)
+            foreach (var building in this.buildings)
             {
                 if (asset.AssetNameEquals("Buildings\\" + building.Key))
                     return (T)(object)building.Value.texture;
@@ -135,7 +135,7 @@ namespace CustomBuildings
         public void Edit<T>(IAssetData asset)
         {
             var dict = asset.AsDictionary<string, string>();
-            foreach (var building in buildings)
+            foreach (var building in this.buildings)
             {
                 dict.Data.Add(building.Value.Id, building.Value.BlueprintString());
             }

@@ -97,15 +97,15 @@ namespace SpaceCore.Framework
         *********/
         public void InitializeSerializers()
         {
-            if (initializedSerializers)
+            if (this.initializedSerializers)
                 return;
-            initializedSerializers = true;
+            this.initializedSerializers = true;
 
             Log.trace("Reinitializing serializers...");
 
-            SaveGame.serializer = InitializeSerializer(typeof(SaveGame), vanillaMainTypes);
-            SaveGame.farmerSerializer = InitializeSerializer(typeof(Farmer), vanillaFarmerTypes);
-            SaveGame.locationSerializer = InitializeSerializer(typeof(GameLocation), vanillaGameLocationTypes);
+            SaveGame.serializer = this.InitializeSerializer(typeof(SaveGame), this.vanillaMainTypes);
+            SaveGame.farmerSerializer = this.InitializeSerializer(typeof(Farmer), this.vanillaFarmerTypes);
+            SaveGame.locationSerializer = this.InitializeSerializer(typeof(GameLocation), this.vanillaGameLocationTypes);
 
             if (SpaceCore.instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
             {

@@ -79,7 +79,7 @@ namespace SpaceCore.Utilities
                 writer.WriteStartArray();
                 foreach (var elem in (System.Collections.IEnumerable)value)
                 {
-                    itemConverter.WriteJson(writer, elem, serializer);
+                    this.itemConverter.WriteJson(writer, elem, serializer);
                 }
                 writer.WriteEndArray();
             }

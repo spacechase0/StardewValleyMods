@@ -89,15 +89,15 @@ namespace Magic
 
         public PreparedSpell[] getPreparedSpells()
         {
-            if (selectedPrepared >= prepared.Length)
+            if (this.selectedPrepared >= this.prepared.Length)
                 return new PreparedSpell[5];
-            return prepared[selectedPrepared];
+            return this.prepared[this.selectedPrepared];
         }
 
         public void swapPreparedSet()
         {
-            selectedPrepared = (selectedPrepared + 1) % prepared.Length;
-            Log.trace("Swapped prepared spell set to set " + (selectedPrepared + 1) + "/" + prepared.Length + ".");
+            this.selectedPrepared = (this.selectedPrepared + 1) % this.prepared.Length;
+            Log.trace("Swapped prepared spell set to set " + (this.selectedPrepared + 1) + "/" + this.prepared.Length + ".");
         }
     }
 }

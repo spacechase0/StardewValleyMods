@@ -35,7 +35,7 @@ namespace BuildableLocationsFramework
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields(Animals);
+            this.NetFields.AddFields(this.Animals);
         }
 
         public override void DayUpdate(int dayOfMonth)
@@ -189,7 +189,7 @@ namespace BuildableLocationsFramework
                     FarmAnimal farmAnimal = keyValuePair.Value;
                     keyValuePair = this.Animals.Pairs.ElementAt(index);
                     FarmAnimal a = keyValuePair.Value;
-                    myWarpHome(farmAnimal, a);
+                    this.myWarpHome(farmAnimal, a);
                 }
             }
 
@@ -222,7 +222,7 @@ namespace BuildableLocationsFramework
 
         public override bool isTileOccupiedForPlacement(Vector2 tileLocation, StardewValley.Object toPlace = null)
         {
-            foreach (KeyValuePair<long, FarmAnimal> pair in Animals.Pairs)
+            foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
                 if (pair.Value.getTileLocation().Equals(tileLocation))
                     return true;
@@ -266,7 +266,7 @@ namespace BuildableLocationsFramework
 
         public override bool CanRefillWateringCanOnTile(int tileX, int tileY)
         {
-            Building buildingAt = getBuildingAt(new Vector2(tileX, tileY));
+            Building buildingAt = this.getBuildingAt(new Vector2(tileX, tileY));
             return buildingAt != null && buildingAt.CanRefillWateringCan() || base.CanRefillWateringCanOnTile(tileX, tileY);
         }
 

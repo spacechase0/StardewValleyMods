@@ -37,12 +37,12 @@ namespace JsonAssets.Data
             internal string GetRecipeString(BigCraftableData parent)
             {
                 var str = "";
-                foreach (var ingredient in Ingredients)
+                foreach (var ingredient in this.Ingredients)
                     str += Mod.instance.ResolveObjectId(ingredient.Object) + " " + ingredient.Count + " ";
                 str = str.Substring(0, str.Length - 1);
-                str += $"/what is this for?/{parent.id} {ResultCount}/true/";
-                if (SkillUnlockName?.Length > 0 && SkillUnlockLevel > 0)
-                    str += SkillUnlockName + " " + SkillUnlockLevel;
+                str += $"/what is this for?/{parent.id} {this.ResultCount}/true/";
+                if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)
+                    str += this.SkillUnlockName + " " + this.SkillUnlockLevel;
                 else
                     str += "null";
                 if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
@@ -73,9 +73,9 @@ namespace JsonAssets.Data
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             /*if (currLang == LocalizedContentManager.LanguageCode.en)
                 return Name;*/
-            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
-                return Name;
-            return NameLocalization[currLang.ToString()];
+            if (this.NameLocalization == null || !this.NameLocalization.ContainsKey(currLang.ToString()))
+                return this.Name;
+            return this.NameLocalization[currLang.ToString()];
         }
 
         public string LocalizedDescription()
@@ -83,19 +83,19 @@ namespace JsonAssets.Data
             var currLang = LocalizedContentManager.CurrentLanguageCode;
             /*if (currLang == LocalizedContentManager.LanguageCode.en)
                 return Description;*/
-            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return Description;
-            return DescriptionLocalization[currLang.ToString()];
+            if (this.DescriptionLocalization == null || !this.DescriptionLocalization.ContainsKey(currLang.ToString()))
+                return this.Description;
+            return this.DescriptionLocalization[currLang.ToString()];
         }
 
-        public int GetCraftableId() { return id; }
+        public int GetCraftableId() { return this.id; }
 
         internal string GetCraftableInformation()
         {
-            string str = $"{Name}/{Price}/-300/Crafting -9/{LocalizedDescription()}/true/true/0";
-            if (ProvidesLight)
+            string str = $"{this.Name}/{this.Price}/-300/Crafting -9/{this.LocalizedDescription()}/true/true/0";
+            if (this.ProvidesLight)
                 str += "/true";
-            str += $"/{LocalizedName()}";
+            str += $"/{this.LocalizedName()}";
             return str;
         }
     }

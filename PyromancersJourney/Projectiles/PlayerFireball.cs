@@ -17,7 +17,7 @@ namespace PyromancersJourney.Projectiles
         private static VertexBuffer buffer;
 
         public override bool HurtsPlayer => false;
-        public override int Damage => Level + 1;
+        public override int Damage => this.Level + 1;
 
         public PlayerFireball(World world)
             : base(world)
@@ -47,23 +47,23 @@ namespace PyromancersJourney.Projectiles
         {
             if (target is Enemy enemy)
             {
-                enemy.Hurt(Damage);
-                if (Level == 3)
+                enemy.Hurt(this.Damage);
+                if (this.Level == 3)
                 {
                     // explode
                 }
-                Dead = true;
+                this.Dead = true;
             }
         }
 
         public override void Update()
         {
             base.Update();
-            Position += new Vector3(Speed.X, 0, Speed.Y);
+            this.Position += new Vector3(this.Speed.X, 0, this.Speed.Y);
 
-            if (World.map.IsAirSolid(Position.X, Position.Z))
+            if (this.World.map.IsAirSolid(this.Position.X, this.Position.Z))
             {
-                Dead = true;
+                this.Dead = true;
             }
         }
 
@@ -72,7 +72,7 @@ namespace PyromancersJourney.Projectiles
             base.Render(device, projection, cam);
             var camForward = (cam.pos - cam.target);
             camForward.Normalize();
-            effect.World = Matrix.CreateConstrainedBillboard(Position, cam.pos, cam.up, null, null);
+            effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
             effect.TextureEnabled = true;
             effect.Texture = tex;
             for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
@@ -80,7 +80,7 @@ namespace PyromancersJourney.Projectiles
                 var pass = effect.CurrentTechnique.Passes[e];
                 pass.Apply();
                 device.SetVertexBuffer(buffer);
-                device.DrawPrimitives(PrimitiveType.TriangleList, 6 * Level, 2);
+                device.DrawPrimitives(PrimitiveType.TriangleList, 6 * this.Level, 2);
             }
         }
     }

@@ -17,8 +17,8 @@ namespace ProfitCalculator
 
         public override void Entry(IModHelper helper)
         {
-            Log.Monitor = Monitor;
-            helper.ConsoleCommands.Add("profits_crops", "Calculate profits for crops", perPlanting);
+            Log.Monitor = this.Monitor;
+            helper.ConsoleCommands.Add("profits_crops", "Calculate profits for crops", this.perPlanting);
         }
 
         private void perPlanting(string cmd, string[] args)

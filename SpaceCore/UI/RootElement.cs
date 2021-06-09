@@ -9,10 +9,10 @@ namespace SpaceCore.UI
 
         public override void Update(bool hidden = false)
         {
-            base.Update(hidden || Obscured);
+            base.Update(hidden || this.Obscured);
             if (!hidden)
             {
-                foreach (var child in Children)
+                foreach (var child in this.Children)
                     child.Update(hidden);
             }
         }

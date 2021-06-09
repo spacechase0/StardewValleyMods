@@ -18,7 +18,7 @@ namespace BiggerCraftables
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
             foreach (var cp in helper.ContentPacks.GetOwned())
             {
@@ -31,7 +31,7 @@ namespace BiggerCraftables
                 }
             }
 
-            helper.Events.World.ObjectListChanged += OnObjectListChanged;
+            helper.Events.World.ObjectListChanged += this.OnObjectListChanged;
 
             HarmonyPatcher.Apply(this,
                 new ObjectPatcher(),
@@ -47,9 +47,9 @@ namespace BiggerCraftables
         private bool doingStuff = false;
         private void OnObjectListChanged(object sender, ObjectListChangedEventArgs e)
         {
-            if (doingStuff)
+            if (this.doingStuff)
                 return;
-            doingStuff = true;
+            this.doingStuff = true;
 
             var loc = e.Location;
 
@@ -80,7 +80,7 @@ namespace BiggerCraftables
                 }
             }
 
-            doingStuff = false;
+            this.doingStuff = false;
         }
     }
 }

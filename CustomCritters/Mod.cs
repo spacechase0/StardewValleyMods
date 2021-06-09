@@ -14,9 +14,9 @@ namespace CustomCritters
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Player.Warped += onWarped;
+            helper.Events.Player.Warped += this.onWarped;
 
             // load content packs
             Log.info("Loading critter content packs...");

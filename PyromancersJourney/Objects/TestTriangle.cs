@@ -17,7 +17,7 @@ namespace PyromancersJourney.Objects
                 new VertexPositionColor( new Vector3( 1, 2, 0 ), Color.Green ),
                 new VertexPositionColor( new Vector3( 2, 0, 0 ), Color.Blue ),
             };
-            buffer.SetData(test);
+            this.buffer.SetData(test);
         }
 
         public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
@@ -28,7 +28,7 @@ namespace PyromancersJourney.Objects
             {
                 var pass = effect.CurrentTechnique.Passes[e];
                 pass.Apply();
-                device.SetVertexBuffer(buffer);
+                device.SetVertexBuffer(this.buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
             }
         }

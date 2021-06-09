@@ -13,20 +13,20 @@ namespace BetterMeteorites
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            SpaceShared.Log.Monitor = Monitor;
+            SpaceShared.Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.SaveCreated += onSaveCreated;
-            helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
+            helper.Events.GameLoop.SaveCreated += this.onSaveCreated;
+            helper.Events.GameLoop.SaveLoaded += this.onSaveLoaded;
         }
 
         private void onSaveCreated(object sender, SaveCreatedEventArgs e)
         {
-            Game1.getFarm().resourceClumps.OnValueRemoved += onClumpRemoved;
+            Game1.getFarm().resourceClumps.OnValueRemoved += this.onClumpRemoved;
         }
 
         private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            Game1.getFarm().resourceClumps.OnValueRemoved += onClumpRemoved;
+            Game1.getFarm().resourceClumps.OnValueRemoved += this.onClumpRemoved;
         }
 
         private void onClumpRemoved(ResourceClump value)

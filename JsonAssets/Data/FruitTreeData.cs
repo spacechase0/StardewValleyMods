@@ -19,11 +19,11 @@ namespace JsonAssets.Data
         public Dictionary<string, string> SaplingDescriptionLocalization = new Dictionary<string, string>();
 
         internal ObjectData sapling;
-        public int GetSaplingId() { return sapling.id; }
-        public int GetFruitTreeIndex() { return id; }
+        public int GetSaplingId() { return this.sapling.id; }
+        public int GetFruitTreeIndex() { return this.id; }
         internal string GetFruitTreeInformation()
         {
-            return $"{GetFruitTreeIndex()}/{Season}/{Mod.instance.ResolveObjectId(Product)}/what goes here?";
+            return $"{this.GetFruitTreeIndex()}/{this.Season}/{Mod.instance.ResolveObjectId(this.Product)}/what goes here?";
         }
     }
 }

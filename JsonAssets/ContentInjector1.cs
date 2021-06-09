@@ -20,29 +20,29 @@ namespace JsonAssets
             Func<string, string> normalize = Mod.instance.Helper.Content.NormalizeAssetName;
 
             //normalize with 
-            files = new Dictionary<string, injector>()
+            this.files = new Dictionary<string, injector>()
             {
-                {normalize("Data\\ObjectInformation"), injectDataObjectInformation},
-                {normalize("Data\\ObjectContextTags"), injectDataObjectContextTags},
-                {normalize("Data\\Crops"), injectDataCrops},
-                {normalize("Data\\fruitTrees"), injectDataFruitTrees},
-                {normalize("Data\\CookingRecipes"), injectDataCookingRecipes},
-                {normalize("Data\\CraftingRecipes"), injectDataCraftingRecipes},
-                {normalize("Data\\BigCraftablesInformation"), injectDataBigCraftablesInformation},
-                {normalize("Data\\hats"), injectDataHats},
-                {normalize("Data\\weapons"), injectDataWeapons},
-                {normalize("Data\\ClothingInformation"), injectDataClothingInformation},
-                {normalize("Data\\TailoringRecipes"), injectDataTailoringRecipes},
-                {normalize("Data\\Boots"), injectDataBoots},
-                {normalize("Maps\\springobjects"), injectMapsSpringobjects},
-                {normalize("TileSheets\\crops"), injectTileSheetsCrops},
-                {normalize("TileSheets\\fruitTrees"), injectTileSheetsFruitTrees},
-                {normalize("TileSheets\\Craftables"), injectTileSheetsCraftables},
-                {normalize("Characters\\Farmer\\hats"), injectCharactersFarmerHats},
-                {normalize("TileSheets\\weapons"), injectTileSheetsWeapons},
-                {normalize("Characters\\Farmer\\shirts"), injectCharactersFarmerShirts},
-                {normalize("Characters\\Farmer\\pants"), injectCharactersFarmerPants},
-                {normalize("Characters\\Farmer\\shoeColors"), injectCharactersFarmerShoeColors}
+                {normalize("Data\\ObjectInformation"), this.injectDataObjectInformation},
+                {normalize("Data\\ObjectContextTags"), this.injectDataObjectContextTags},
+                {normalize("Data\\Crops"), this.injectDataCrops},
+                {normalize("Data\\fruitTrees"), this.injectDataFruitTrees},
+                {normalize("Data\\CookingRecipes"), this.injectDataCookingRecipes},
+                {normalize("Data\\CraftingRecipes"), this.injectDataCraftingRecipes},
+                {normalize("Data\\BigCraftablesInformation"), this.injectDataBigCraftablesInformation},
+                {normalize("Data\\hats"), this.injectDataHats},
+                {normalize("Data\\weapons"), this.injectDataWeapons},
+                {normalize("Data\\ClothingInformation"), this.injectDataClothingInformation},
+                {normalize("Data\\TailoringRecipes"), this.injectDataTailoringRecipes},
+                {normalize("Data\\Boots"), this.injectDataBoots},
+                {normalize("Maps\\springobjects"), this.injectMapsSpringobjects},
+                {normalize("TileSheets\\crops"), this.injectTileSheetsCrops},
+                {normalize("TileSheets\\fruitTrees"), this.injectTileSheetsFruitTrees},
+                {normalize("TileSheets\\Craftables"), this.injectTileSheetsCraftables},
+                {normalize("Characters\\Farmer\\hats"), this.injectCharactersFarmerHats},
+                {normalize("TileSheets\\weapons"), this.injectTileSheetsWeapons},
+                {normalize("Characters\\Farmer\\shirts"), this.injectCharactersFarmerShirts},
+                {normalize("Characters\\Farmer\\pants"), this.injectCharactersFarmerPants},
+                {normalize("Characters\\Farmer\\shoeColors"), this.injectCharactersFarmerShoeColors}
             };
         }
 
@@ -50,13 +50,13 @@ namespace JsonAssets
         {
             Mod.instance.Helper.Content.InvalidateCache((a) =>
             {
-                return files.ContainsKey(a.AssetName);
+                return this.files.ContainsKey(a.AssetName);
             });
         }
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
-            return files.ContainsKey(asset.AssetName);
+            return this.files.ContainsKey(asset.AssetName);
         }
 
         public void Edit<T>(IAssetData asset)
@@ -64,7 +64,7 @@ namespace JsonAssets
             if (!Mod.instance.didInit)
                 return;
 
-            files[asset.AssetName](asset);
+            this.files[asset.AssetName](asset);
         }
 
         private void injectDataObjectInformation(IAssetData asset)

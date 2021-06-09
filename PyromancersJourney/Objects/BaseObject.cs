@@ -16,7 +16,7 @@ namespace PyromancersJourney.Objects
 
         public BaseObject(World world)
         {
-            World = world;
+            this.World = world;
         }
 
         public virtual void Update() { }
@@ -25,14 +25,14 @@ namespace PyromancersJourney.Objects
         {
             effect.Projection = projection;
             effect.View = cam.CreateViewMatrix();
-            effect.World = MakeWorldMatrix();
+            effect.World = this.MakeWorldMatrix();
         }
 
         public virtual void RenderOver(GraphicsDevice device, Matrix projection, Camera cam)
         {
             effect.Projection = projection;
             effect.View = cam.CreateViewMatrix();
-            effect.World = MakeWorldMatrix();
+            effect.World = this.MakeWorldMatrix();
         }
 
         public virtual void RenderUi(SpriteBatch b)
@@ -41,7 +41,7 @@ namespace PyromancersJourney.Objects
 
         protected virtual Matrix MakeWorldMatrix()
         {
-            return Matrix.CreateWorld(Position, Vector3.Forward, Vector3.Up);
+            return Matrix.CreateWorld(this.Position, Vector3.Forward, Vector3.Up);
         }
 
         private static BasicEffect GetBasicEffect()

@@ -20,35 +20,35 @@ namespace RushOrders
 
         public RushConstructionMenu(IClickableMenu oldMenu)
         {
-            old = oldMenu;
-            width = 800;
-            height = 400;
-            x = (int)Utility.getTopLeftPositionForCenteringOnScreen(width, height).X;
-            y = Game1.viewport.Height - height - Game1.tileSize;
+            this.old = oldMenu;
+            this.width = 800;
+            this.height = 400;
+            this.x = (int)Utility.getTopLeftPositionForCenteringOnScreen(this.width, this.height).X;
+            this.y = Game1.viewport.Height - this.height - Game1.tileSize;
 
-            q += $" ({Mod.getBuildingDaysLeft()} days left)";
-            r[0] += $" ({Mod.getBuildingRushPrice()}g)";
+            this.q += $" ({Mod.getBuildingDaysLeft()} days left)";
+            this.r[0] += $" ({Mod.getBuildingRushPrice()}g)";
 
-            heightForQuestions = SpriteText.getHeightOfString(q, width - Game1.pixelZoom * 4);
-            foreach (string rs in r)
-                heightForQuestions += SpriteText.getHeightOfString(rs, width - Game1.pixelZoom * 4) + Game1.pixelZoom * 4;
-            heightForQuestions += Game1.pixelZoom * 10;
+            this.heightForQuestions = SpriteText.getHeightOfString(this.q, this.width - Game1.pixelZoom * 4);
+            foreach (string rs in this.r)
+                this.heightForQuestions += SpriteText.getHeightOfString(rs, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 4;
+            this.heightForQuestions += Game1.pixelZoom * 10;
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
             base.receiveLeftClick(x, y, playSound);
 
-            if (showingBroke)
+            if (this.showingBroke)
             {
-                Game1.activeClickableMenu = old;
+                Game1.activeClickableMenu = this.old;
                 return;
             }
 
-            int num = this.y - (this.heightForQuestions - this.height) + SpriteText.getHeightOfString(q, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 12;
+            int num = this.y - (this.heightForQuestions - this.height) + SpriteText.getHeightOfString(this.q, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 12;
             for (int i = 0; i < this.r.Length; i++)
             {
-                Rectangle rect = new Rectangle(this.x + Game1.pixelZoom * 2, num, width, SpriteText.getHeightOfString(r[i]));
+                Rectangle rect = new Rectangle(this.x + Game1.pixelZoom * 2, num, this.width, SpriteText.getHeightOfString(this.r[i]));
                 if (rect.Contains(x, y))
                 {
                     if (i == 0)
@@ -56,8 +56,8 @@ namespace RushOrders
                         int cost = Mod.getBuildingRushPrice();
                         if (Game1.player.Money < cost)
                         {
-                            q = "You do not have enough money.";
-                            showingBroke = true;
+                            this.q = "You do not have enough money.";
+                            this.showingBroke = true;
                             return;
                         }
                         else
@@ -67,13 +67,13 @@ namespace RushOrders
                             Mod.rushBuilding();
                             if (Mod.getBuildingDaysLeft() > 1)
                             {
-                                Game1.activeClickableMenu = new RushConstructionMenu(old);
+                                Game1.activeClickableMenu = new RushConstructionMenu(this.old);
                                 return;
                             }
                         }
                     }
 
-                    Game1.activeClickableMenu = old;
+                    Game1.activeClickableMenu = this.old;
                     return;
                 }
                 num += SpriteText.getHeightOfString(this.r[i], this.width) + Game1.pixelZoom * 4;
@@ -89,17 +89,17 @@ namespace RushOrders
             base.draw(b);
 
             this.drawBox(b, this.x, this.y - (this.heightForQuestions - this.height), this.width, this.heightForQuestions);
-            SpriteText.drawString(b, q, this.x + Game1.pixelZoom * 2, this.y + Game1.pixelZoom * 3 - (this.heightForQuestions - this.height), 999999999, this.width - Game1.pixelZoom * 4);
+            SpriteText.drawString(b, this.q, this.x + Game1.pixelZoom * 2, this.y + Game1.pixelZoom * 3 - (this.heightForQuestions - this.height), 999999999, this.width - Game1.pixelZoom * 4);
 
-            if (showingBroke)
+            if (this.showingBroke)
                 return;
 
-            int num = this.y - (this.heightForQuestions - this.height) + SpriteText.getHeightOfString(q, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 12;
+            int num = this.y - (this.heightForQuestions - this.height) + SpriteText.getHeightOfString(this.q, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 12;
             for (int i = 0; i < this.r.Count(); i++)
             {
-                Rectangle rect = new Rectangle(this.x + Game1.pixelZoom * 2, num, width, SpriteText.getHeightOfString(r[i]));
+                Rectangle rect = new Rectangle(this.x + Game1.pixelZoom * 2, num, this.width, SpriteText.getHeightOfString(this.r[i]));
                 if (rect.Contains(Game1.getMouseX(), Game1.getMouseY()))
-                    selectedResponse = i;
+                    this.selectedResponse = i;
                 if (i == this.selectedResponse)
                 {
                     IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(375, 357, 3, 3), this.x + Game1.pixelZoom, num - Game1.pixelZoom * 2, this.width - Game1.pixelZoom * 2, SpriteText.getHeightOfString(this.r[i], this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 4, Color.White, (float)Game1.pixelZoom, false);
@@ -108,7 +108,7 @@ namespace RushOrders
                 num += SpriteText.getHeightOfString(this.r[i], this.width) + Game1.pixelZoom * 4;
             }
 
-            drawMouse(b);
+            this.drawMouse(b);
         }
 
         private void drawBox(SpriteBatch b, int xPos, int yPos, int boxWidth, int boxHeight)

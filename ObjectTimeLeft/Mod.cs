@@ -19,21 +19,21 @@ namespace ObjectTimeLeft
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
             Config = helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.Display.RenderingHud += onRenderingHud;
-            helper.Events.Input.ButtonPressed += onButtonPressed;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.Display.RenderingHud += this.onRenderingHud;
+            helper.Events.Input.ButtonPressed += this.onButtonPressed;
         }
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Config.ToggleKey, (SButton val) => Config.ToggleKey = val);
+                capi.RegisterModConfig(this.ModManifest, () => Config = new Configuration(), () => this.Helper.WriteConfig(Config));
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Config.ToggleKey, (SButton val) => Config.ToggleKey = val);
             }
         }
 
@@ -43,7 +43,7 @@ namespace ObjectTimeLeft
         private void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             if (e.Button == Config.ToggleKey)
-                showing = !showing;
+                this.showing = !this.showing;
         }
 
         /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
@@ -51,7 +51,7 @@ namespace ObjectTimeLeft
         /// <param name="e">The event arguments.</param>
         private void onRenderingHud(object sender, RenderingHudEventArgs e)
         {
-            if (!showing || !Context.IsPlayerFree)
+            if (!this.showing || !Context.IsPlayerFree)
                 return;
 
             var sb = e.SpriteBatch;

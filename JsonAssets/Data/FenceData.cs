@@ -60,6 +60,6 @@ namespace JsonAssets.Data
         public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
         public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
 
-        public int GetObjectId() { return id; }
+        public int GetObjectId() { return this.id; }
     }
 }

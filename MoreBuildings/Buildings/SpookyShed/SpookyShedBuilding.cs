@@ -20,12 +20,12 @@ namespace MoreBuildings.Buildings.SpookyShed
 
         public object getReplacement()
         {
-            Mill building = new Mill(new BluePrint("Mill"), new Vector2(tileX, tileY));
-            building.indoors.Value = indoors.Value;
-            building.daysOfConstructionLeft.Value = daysOfConstructionLeft.Value;
-            building.tileX.Value = tileX.Value;
-            building.tileY.Value = tileY.Value;
-            building.humanDoor.Value = humanDoor.Value;
+            Mill building = new Mill(new BluePrint("Mill"), new Vector2(this.tileX, this.tileY));
+            building.indoors.Value = this.indoors.Value;
+            building.daysOfConstructionLeft.Value = this.daysOfConstructionLeft.Value;
+            building.tileX.Value = this.tileX.Value;
+            building.tileY.Value = this.tileY.Value;
+            building.humanDoor.Value = this.humanDoor.Value;
             return building;
         }
 
@@ -37,14 +37,14 @@ namespace MoreBuildings.Buildings.SpookyShed
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
         {
             Mill building = (Mill)replacement;
-            indoors.Value = building.indoors.Value;
-            daysOfConstructionLeft.Value = building.daysOfConstructionLeft.Value;
-            tileX.Value = building.tileX.Value;
-            tileY.Value = building.tileY.Value;
+            this.indoors.Value = building.indoors.Value;
+            this.daysOfConstructionLeft.Value = building.daysOfConstructionLeft.Value;
+            this.tileX.Value = building.tileX.Value;
+            this.tileY.Value = building.tileY.Value;
 
-            indoors.Value.map = Game1.content.Load<xTile.Map>("Maps\\SpookyShed");
-            indoors.Value.updateWarps();
-            updateInteriorWarps();
+            this.indoors.Value.map = Game1.content.Load<xTile.Map>("Maps\\SpookyShed");
+            this.indoors.Value.updateWarps();
+            this.updateInteriorWarps();
         }
     }
 }

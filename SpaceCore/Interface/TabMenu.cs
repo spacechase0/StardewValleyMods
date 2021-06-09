@@ -10,7 +10,7 @@ namespace SpaceCore.Interface
 
         public TabMenu(TabbedMenu parent)
         {
-            Parent = parent;
+            this.Parent = parent;
         }
 
         public virtual void update(GameTime gt)

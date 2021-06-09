@@ -24,7 +24,7 @@ namespace MoreEnchantments
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
             BaseEnchantment.GetAvailableEnchantments().Add(new MoreLuresEnchantment());
 

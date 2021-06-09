@@ -18,10 +18,10 @@ namespace GenericModConfigMenu.ModOption
 
         public BaseModOption(string name, string desc, string id, IManifest mod)
         {
-            Name = name;
-            Description = desc;
-            Id = id;
-            Owner = mod;
+            this.Name = name;
+            this.Description = desc;
+            this.Id = id;
+            this.Owner = mod;
         }
     }
 }

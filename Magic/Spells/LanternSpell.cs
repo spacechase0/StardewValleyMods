@@ -31,7 +31,7 @@ namespace Magic.Spells
             else if (level == 2)
                 power = 16;
 
-            player.currentLocation.sharedLights.Add(getUnusedLightSourceID(player.currentLocation), new LightSource(1, Game1.player.position, power));
+            player.currentLocation.sharedLights.Add(this.getUnusedLightSourceID(player.currentLocation), new LightSource(1, Game1.player.position, power));
             player.AddCustomSkillExperience(Magic.Skill, level);
 
             return null;

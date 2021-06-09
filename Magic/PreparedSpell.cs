@@ -11,14 +11,14 @@ namespace Magic
 
         public PreparedSpell(string spellId, int level)
         {
-            SpellId = spellId;
-            Level = level;
+            this.SpellId = spellId;
+            this.Level = level;
         }
 
         public PreparedSpell(Spell spell, int level)
         {
-            SpellId = spell.ParentSchoolId + ":" + spell.Id;
-            Level = level;
+            this.SpellId = spell.ParentSchoolId + ":" + spell.Id;
+            this.Level = level;
         }
     }
 }

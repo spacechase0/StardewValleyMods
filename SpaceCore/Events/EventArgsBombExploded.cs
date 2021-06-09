@@ -6,8 +6,8 @@ namespace SpaceCore.Events
     {
         internal EventArgsBombExploded(Vector2 tileLocation, int radius)
         {
-            Position = tileLocation;
-            Radius = radius;
+            this.Position = tileLocation;
+            this.Radius = radius;
         }
 
         public Vector2 Position { get; }

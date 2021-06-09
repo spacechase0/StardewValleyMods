@@ -23,11 +23,11 @@ namespace CarryChest
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.UpdateTicking += onUpdateTicking;
-            helper.Events.Input.ButtonPressed += onButtonPressed;
-            helper.Events.World.ObjectListChanged += onObjectListChanged;
+            helper.Events.GameLoop.UpdateTicking += this.onUpdateTicking;
+            helper.Events.Input.ButtonPressed += this.onButtonPressed;
+            helper.Events.World.ObjectListChanged += this.onObjectListChanged;
 
             HarmonyPatcher.Apply(this,
                 new ItemPatcher(),

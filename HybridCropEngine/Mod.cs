@@ -19,11 +19,11 @@ namespace HybridCropEngine
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
             config = helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.GameLoop.DayEnding += onDayEnding;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.GameLoop.DayEnding += this.onDayEnding;
         }
 
         public bool CanLoad<T>(IAssetInfo asset)
@@ -38,11 +38,11 @@ namespace HybridCropEngine
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var gmcm = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (gmcm != null)
             {
-                gmcm.RegisterModConfig(ModManifest, () => config = new Configuration(), () => Helper.WriteConfig(config));
-                gmcm.RegisterSimpleOption(ModManifest, "Scan Everywhere", "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.", () => config.ScanEverywhere, (b) => config.ScanEverywhere = b);
+                gmcm.RegisterModConfig(this.ModManifest, () => config = new Configuration(), () => this.Helper.WriteConfig(config));
+                gmcm.RegisterSimpleOption(this.ModManifest, "Scan Everywhere", "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.", () => config.ScanEverywhere, (b) => config.ScanEverywhere = b);
             }
         }
 
@@ -52,8 +52,8 @@ namespace HybridCropEngine
                 return;
 
             var hybrids = Game1.content.Load<Dictionary<int, HybridCropData>>("Data/HybridCrops");
-            var hybridIndexByCrop = makeHybridIndex(hybrids);
-            var cropsByIndex = makeCropIndex();
+            var hybridIndexByCrop = this.makeHybridIndex(hybrids);
+            var cropsByIndex = this.makeCropIndex();
 
             //*
             foreach (var hybrid in hybrids)
@@ -85,16 +85,16 @@ namespace HybridCropEngine
                         }
                     }
 
-                    growHybrids(loc, hybrids, hybridIndexByCrop, cropsByIndex);
+                    this.growHybrids(loc, hybrids, hybridIndexByCrop, cropsByIndex);
                 }
                 foreach (var loc in moreLocs)
-                    growHybrids(loc, hybrids, hybridIndexByCrop, cropsByIndex);
+                    this.growHybrids(loc, hybrids, hybridIndexByCrop, cropsByIndex);
             }
             else
             {
-                growHybrids(Game1.getFarm(), hybrids, hybridIndexByCrop, cropsByIndex);
-                growHybrids(Game1.getLocationFromName("Greenhouse"), hybrids, hybridIndexByCrop, cropsByIndex);
-                growHybrids(Game1.getLocationFromName("IslandWest"), hybrids, hybridIndexByCrop, cropsByIndex);
+                this.growHybrids(Game1.getFarm(), hybrids, hybridIndexByCrop, cropsByIndex);
+                this.growHybrids(Game1.getLocationFromName("Greenhouse"), hybrids, hybridIndexByCrop, cropsByIndex);
+                this.growHybrids(Game1.getLocationFromName("IslandWest"), hybrids, hybridIndexByCrop, cropsByIndex);
             }
         }
 

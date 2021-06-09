@@ -37,22 +37,22 @@ namespace LuckSkill
         public override void Entry(IModHelper helper)
         {
             instance = this;
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Player.Warped += onWarped;
-            helper.Events.Display.RenderedActiveMenu += onRenderedActiveMenu;
-            helper.Events.GameLoop.DayStarted += onDayStarted;
-            helper.Events.GameLoop.DayEnding += onDayEnding;
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
+            helper.Events.Player.Warped += this.onWarped;
+            helper.Events.Display.RenderedActiveMenu += this.onRenderedActiveMenu;
+            helper.Events.GameLoop.DayStarted += this.onDayStarted;
+            helper.Events.GameLoop.DayEnding += this.onDayEnding;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
 
-            SpaceEvents.ChooseNightlyFarmEvent += changeFarmEvent;
+            SpaceEvents.ChooseNightlyFarmEvent += this.changeFarmEvent;
 
             HarmonyPatcher.Apply(this,
                 new FarmerPatcher(),
                 new LevelUpMenuPatcher()
             );
 
-            checkForAllProfessions();
+            this.checkForAllProfessions();
         }
 
         public bool CanEdit<T>(IAssetInfo asset)
@@ -62,7 +62,7 @@ namespace LuckSkill
 
         public void Edit<T>(IAssetData asset)
         {
-            Func<int, string> getProfName = (id) => Helper.Reflection.GetMethod(typeof(LevelUpMenu), "getProfessionName").Invoke<string>(id);
+            Func<int, string> getProfName = (id) => this.Helper.Reflection.GetMethod(typeof(LevelUpMenu), "getProfessionName").Invoke<string>(id);
 
             asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(PROFESSION_DAILY_LUCK), "Fortunate");
             asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(PROFESSION_DAILY_LUCK), "Better daily luck.");
@@ -285,21 +285,23 @@ namespace LuckSkill
                 GameMenu menu = Game1.activeClickableMenu as GameMenu;
                 if (menu.currentTab == GameMenu.skillsTab)
                 {
-                    var tabs = Helper.Reflection.GetField<List<IClickableMenu>>(menu, "pages").GetValue();
+                    var tabs = this.Helper.Reflection.GetField<List<IClickableMenu>>(menu, "pages").GetValue();
                     var skills = tabs[GameMenu.skillsTab] as SkillsPage;
 
                     if (skills == null)
                         return;
 
-                    if (!didInitSkills)
+                    if (!this.didInitSkills)
                     {
-                        initLuckSkill(skills);
-                        didInitSkills = true;
+                        this.initLuckSkill(skills);
+                        this.didInitSkills = true;
                     }
-                    drawLuckSkill(skills);
+
+                    this.drawLuckSkill(skills);
                 }
             }
-            else didInitSkills = false;
+            else
+                this.didInitSkills = false;
         }
 
         private void initLuckSkill(SkillsPage skills)
@@ -318,15 +320,15 @@ namespace LuckSkill
                 int num5 = -1;
 
                 flag = (Game1.player.LuckLevel > i);
-                num5 = getLuckProfessionForSkill(i + 1);//Game1.player.getProfessionForSkill(5, i + 1);
+                num5 = this.getLuckProfessionForSkill(i + 1);//Game1.player.getProfessionForSkill(5, i + 1);
                 object[] args = new object[] { text, text2, LevelUpMenu.getProfessionDescription(num5) };
-                Helper.Reflection.GetMethod(skills, "parseProfessionDescription").Invoke(args);
+                this.Helper.Reflection.GetMethod(skills, "parseProfessionDescription").Invoke(args);
                 text = (string)args[0];
                 text2 = (string)args[1];
 
                 if (flag && (i + 1) % 5 == 0)
                 {
-                    var skillBars = Helper.Reflection.GetField<List<ClickableTextureComponent>>(skills, "skillBars").GetValue();
+                    var skillBars = this.Helper.Reflection.GetField<List<ClickableTextureComponent>>(skills, "skillBars").GetValue();
                     skillBars.Add(new ClickableTextureComponent(string.Concat(num5), new Rectangle(num2 + num3 - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6), 14 * Game1.pixelZoom, 9 * Game1.pixelZoom), null, text, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), (float)Game1.pixelZoom, true));
                 }
                 num2 += Game1.pixelZoom * 6;
@@ -346,7 +348,7 @@ namespace LuckSkill
             {
                 text3 = "Luck Increased";
             }
-            var skillAreas = Helper.Reflection.GetField<List<ClickableTextureComponent>>(skills, "skillAreas").GetValue();
+            var skillAreas = this.Helper.Reflection.GetField<List<ClickableTextureComponent>>(skills, "skillAreas").GetValue();
             skillAreas.Add(new ClickableTextureComponent(string.Concat(num6), new Rectangle(num3 - Game1.tileSize * 2 - Game1.tileSize * 3 / 4, num4 + k * (Game1.tileSize / 2 + Game1.pixelZoom * 6), Game1.tileSize * 2 + Game1.pixelZoom * 5, 9 * Game1.pixelZoom), string.Concat(num6), text3, null, Rectangle.Empty, 1f, false));
         }
 
@@ -413,7 +415,7 @@ namespace LuckSkill
         {
             if (Game1.player.professions.Contains(PROFESSION_NIGHTLY_EVENTS) && !Game1.weddingToday &&
                     (args.NightEvent == null || (args.NightEvent is SoundInTheNightEvent &&
-                    Helper.Reflection.GetField<NetInt>(args.NightEvent, "behavior").GetValue().Value == 2)))
+                    this.Helper.Reflection.GetField<NetInt>(args.NightEvent, "behavior").GetValue().Value == 2)))
             {
                 //Log.Async("Doing event check");
                 FarmEvent ev = null;
@@ -422,7 +424,7 @@ namespace LuckSkill
                     Game1.stats.daysPlayed += 999999; // To rig the rng to not just give the same results.
                     try // Just in case. Want to make sure stats.daysPlayed gets fixed
                     {
-                        ev = pickFarmEvent();
+                        ev = this.pickFarmEvent();
                     }
                     catch (Exception) { }
                     Game1.stats.daysPlayed -= 999999;
@@ -501,13 +503,13 @@ namespace LuckSkill
             if (!e.IsLocalPlayer)
                 return;
 
-            if (HAS_ALL_PROFESSIONS)
+            if (this.HAS_ALL_PROFESSIONS)
             {
                 // This is where AllProfessions does it.
                 // This is that mod's code, too (from ILSpy, anyways). Just trying to give credit where credit is due. :P
                 // Except this only applies for luck professions. Since they don't exist in vanilla AllProfessions doesn't take care of it.
                 var professions = Game1.player.professions;
-                List<List<int>> list = new List<List<int>> { luckProfessions5, luckProfessions10, };
+                List<List<int>> list = new List<List<int>> { this.luckProfessions5, this.luckProfessions10 };
                 foreach (List<int> current in list)
                 {
                     bool flag = professions.Intersect(current).Any<int>();
@@ -561,7 +563,7 @@ namespace LuckSkill
             if (level != 5 && level != 10)
                 return -1;
 
-            List<int> list = (level == 5 ? luckProfessions5 : luckProfessions10);
+            List<int> list = (level == 5 ? this.luckProfessions5 : this.luckProfessions10);
             foreach (int prof in list)
             {
                 if (Game1.player.professions.Contains(prof))
@@ -574,7 +576,7 @@ namespace LuckSkill
         private void onGameLaunched(object sender, EventArgs args)
         {
             // enableLuckSkillBar
-            var api = Helper.ModRegistry.GetApi<ExperienceBarsAPI>("spacechase0.ExperienceBars");
+            var api = this.Helper.ModRegistry.GetApi<ExperienceBarsAPI>("spacechase0.ExperienceBars");
             Log.trace($"Experience Bars API {(api == null ? "not " : "")}found");
             api?.SetDrawLuck(true);
         }
@@ -585,14 +587,14 @@ namespace LuckSkill
 
         private void checkForAllProfessions()
         {
-            if (!Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
+            if (!this.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
                 Log.info("All Professions not found.");
                 return;
             }
 
             Log.info("All Professions found. You will get every luck profession for your level.");
-            HAS_ALL_PROFESSIONS = true;
+            this.HAS_ALL_PROFESSIONS = true;
         }
     }
 }

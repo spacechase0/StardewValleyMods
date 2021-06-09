@@ -11,10 +11,10 @@ namespace MoreBuildings.Buildings.FishingShack
         public FishingShackLocation()
             : base("Maps\\FishShack", "FishShack")
         {
-            this.waterTiles = new bool[map.Layers[0].LayerWidth, map.Layers[0].LayerHeight];
-            for (int xTile = 0; xTile < map.Layers[0].LayerWidth; ++xTile)
+            this.waterTiles = new bool[this.map.Layers[0].LayerWidth, this.map.Layers[0].LayerHeight];
+            for (int xTile = 0; xTile < this.map.Layers[0].LayerWidth; ++xTile)
             {
-                for (int yTile = 0; yTile < map.Layers[0].LayerHeight; ++yTile)
+                for (int yTile = 0; yTile < this.map.Layers[0].LayerHeight; ++yTile)
                 {
                     if (this.doesTileHaveProperty(xTile, yTile, "Water", "Back") != null)
                     {
@@ -35,8 +35,8 @@ namespace MoreBuildings.Buildings.FishingShack
         public Dictionary<string, string> getAdditionalSaveData()
         {
             var data = new Dictionary<string, string>();
-            if (uniqueName.Value != null)
-                data.Add("u", uniqueName.Value);
+            if (this.uniqueName.Value != null)
+                data.Add("u", this.uniqueName.Value);
 
             return data;
         }
@@ -44,10 +44,10 @@ namespace MoreBuildings.Buildings.FishingShack
         public object getReplacement()
         {
             Shed shed = new Shed("Maps\\FishShack", "FishShack");
-            foreach (Vector2 key in objects.Keys)
-                shed.objects.Add(key, objects[key]);
-            foreach (Vector2 key in terrainFeatures.Keys)
-                shed.terrainFeatures.Add(key, terrainFeatures[key]);
+            foreach (Vector2 key in this.objects.Keys)
+                shed.objects.Add(key, this.objects[key]);
+            foreach (Vector2 key in this.terrainFeatures.Keys)
+                shed.terrainFeatures.Add(key, this.terrainFeatures[key]);
 
             return shed;
         }
@@ -57,12 +57,12 @@ namespace MoreBuildings.Buildings.FishingShack
             Shed shed = (Shed)replacement;
 
             if (additionalSaveData.ContainsKey("u"))
-                uniqueName.Value = additionalSaveData["u"];
+                this.uniqueName.Value = additionalSaveData["u"];
 
             foreach (Vector2 key in shed.objects.Keys)
-                objects.Add(key, shed.objects[key]);
-            foreach (Vector2 key in terrainFeatures.Keys)
-                terrainFeatures.Add(key, shed.terrainFeatures[key]);
+                this.objects.Add(key, shed.objects[key]);
+            foreach (Vector2 key in this.terrainFeatures.Keys)
+                this.terrainFeatures.Add(key, shed.terrainFeatures[key]);
         }
     }
 }

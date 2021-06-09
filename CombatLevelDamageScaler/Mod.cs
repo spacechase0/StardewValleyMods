@@ -13,23 +13,23 @@ namespace CombatLevelDamageScaler
 
         public override void Entry(IModHelper helper)
         {
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
             Config = helper.ReadConfig<Configuration>();
 
             HarmonyPatcher.Apply(this,
                 new GameLocationPatcher()
             );
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
+            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
         }
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(ModManifest, "Damage Scale", "The amount of damage to scale up per combat level, in percentage.", () => (int)(Config.DamageScalePerLevel * 100), (int val) => Config.DamageScalePerLevel = val / 100f);
+                capi.RegisterModConfig(this.ModManifest, () => Config = new Configuration(), () => this.Helper.WriteConfig(Config));
+                capi.RegisterSimpleOption(this.ModManifest, "Damage Scale", "The amount of damage to scale up per combat level, in percentage.", () => (int)(Config.DamageScalePerLevel * 100), (int val) => Config.DamageScalePerLevel = val / 100f);
             }
         }
     }

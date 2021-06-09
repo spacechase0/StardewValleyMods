@@ -131,13 +131,13 @@ namespace GenericModConfigMenu
                 Mod.instance.configs[mod].HasAnyInGame = true;
         }
 
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<bool> optionGet, Action<bool> optionSet) => RegisterSimpleOption<bool>(mod, optionName, optionDesc, optionGet, optionSet);
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet) => RegisterSimpleOption<int>(mod, optionName, optionDesc, optionGet, optionSet);
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet) => RegisterSimpleOption<float>(mod, optionName, optionDesc, optionGet, optionSet);
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet) => RegisterSimpleOption<string>(mod, optionName, optionDesc, optionGet, optionSet);
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<SButton> optionGet, Action<SButton> optionSet) => RegisterSimpleOption<SButton>(mod, optionName, optionDesc, optionGet, optionSet);
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<KeybindList> optionGet, Action<KeybindList> optionSet) => RegisterSimpleOption<KeybindList>(mod, optionName, optionDesc, optionGet, optionSet);
-        public void RegisterSimpleOption<T>(IManifest mod, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet) => RegisterSimpleOption(mod, optionName, optionName, optionDesc, optionGet, optionSet);
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<bool> optionGet, Action<bool> optionSet) => this.RegisterSimpleOption<bool>(mod, optionName, optionDesc, optionGet, optionSet);
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet) => this.RegisterSimpleOption<int>(mod, optionName, optionDesc, optionGet, optionSet);
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet) => this.RegisterSimpleOption<float>(mod, optionName, optionDesc, optionGet, optionSet);
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet) => this.RegisterSimpleOption<string>(mod, optionName, optionDesc, optionGet, optionSet);
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<SButton> optionGet, Action<SButton> optionSet) => this.RegisterSimpleOption<SButton>(mod, optionName, optionDesc, optionGet, optionSet);
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<KeybindList> optionGet, Action<KeybindList> optionSet) => this.RegisterSimpleOption<KeybindList>(mod, optionName, optionDesc, optionGet, optionSet);
+        public void RegisterSimpleOption<T>(IManifest mod, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet) => this.RegisterSimpleOption(mod, optionName, optionName, optionDesc, optionGet, optionSet);
 
 
         public void RegisterSimpleOption<T>(IManifest mod, string id, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet)
@@ -155,14 +155,14 @@ namespace GenericModConfigMenu
                 Mod.instance.configs[mod].HasAnyInGame = true;
         }
 
-        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max) => RegisterClampedOption<int>(mod, optionName, optionDesc, optionGet, optionSet, min, max, 1);
-        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max) => RegisterClampedOption<float>(mod, optionName, optionDesc, optionGet, optionSet, min, max, 0.01f);
+        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max) => this.RegisterClampedOption<int>(mod, optionName, optionDesc, optionGet, optionSet, min, max, 1);
+        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max) => this.RegisterClampedOption<float>(mod, optionName, optionDesc, optionGet, optionSet, min, max, 0.01f);
 
-        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max, int interval) => RegisterClampedOption<int>(mod, optionName, optionDesc, optionGet, optionSet, min, max, interval);
-        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max, float interval) => RegisterClampedOption<float>(mod, optionName, optionDesc, optionGet, optionSet, min, max, interval);
+        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max, int interval) => this.RegisterClampedOption<int>(mod, optionName, optionDesc, optionGet, optionSet, min, max, interval);
+        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max, float interval) => this.RegisterClampedOption<float>(mod, optionName, optionDesc, optionGet, optionSet, min, max, interval);
 
 
-        public void RegisterClampedOption<T>(IManifest mod, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet, T min, T max, T interval) => RegisterClampedOption(mod, optionName, optionName, optionDesc, optionGet, optionSet, min, max, interval);
+        public void RegisterClampedOption<T>(IManifest mod, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet, T min, T max, T interval) => this.RegisterClampedOption(mod, optionName, optionName, optionDesc, optionGet, optionSet, min, max, interval);
 
         public void RegisterClampedOption<T>(IManifest mod, string id, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet, T min, T max, T interval)
         {
@@ -179,7 +179,7 @@ namespace GenericModConfigMenu
                 Mod.instance.configs[mod].HasAnyInGame = true;
         }
 
-        public void RegisterChoiceOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet, string[] choices) => RegisterChoiceOption(mod, optionName, optionName, optionDesc, optionGet, optionSet, choices);
+        public void RegisterChoiceOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet, string[] choices) => this.RegisterChoiceOption(mod, optionName, optionName, optionDesc, optionGet, optionSet, choices);
 
         public void RegisterChoiceOption(IManifest mod, string id, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet, string[] choices)
         {
@@ -195,7 +195,7 @@ namespace GenericModConfigMenu
                                            Func<Vector2, object, object> widgetUpdate,
                                            Func<SpriteBatch, Vector2, object, object> widgetDraw,
                                            Action<object> onSave)
-            => RegisterComplexOption<object>(mod, optionName, optionDesc, widgetUpdate, widgetDraw, onSave);
+            => this.RegisterComplexOption<object>(mod, optionName, optionDesc, widgetUpdate, widgetDraw, onSave);
 
         public void RegisterComplexOption<T>(IManifest mod, string optionName, string optionDesc,
                                                 Func<Vector2, T, T> widgetUpdate,
@@ -214,14 +214,14 @@ namespace GenericModConfigMenu
                 Mod.instance.configs[mod].HasAnyInGame = true;
         }
 
-        public void SubscribeToChange(IManifest mod, Action<string, bool> changeHandler) => SubscribeToChange<bool>(mod, changeHandler);
-        public void SubscribeToChange(IManifest mod, Action<string, int> changeHandler) => SubscribeToChange<int>(mod, changeHandler);
-        public void SubscribeToChange(IManifest mod, Action<string, float> changeHandler) => SubscribeToChange<float>(mod, changeHandler);
-        public void SubscribeToChange(IManifest mod, Action<string, string> changeHandler) => SubscribeToChange<string>(mod, changeHandler);
+        public void SubscribeToChange(IManifest mod, Action<string, bool> changeHandler) => this.SubscribeToChange<bool>(mod, changeHandler);
+        public void SubscribeToChange(IManifest mod, Action<string, int> changeHandler) => this.SubscribeToChange<int>(mod, changeHandler);
+        public void SubscribeToChange(IManifest mod, Action<string, float> changeHandler) => this.SubscribeToChange<float>(mod, changeHandler);
+        public void SubscribeToChange(IManifest mod, Action<string, string> changeHandler) => this.SubscribeToChange<string>(mod, changeHandler);
 
         public void SubscribeToChange<T>(IManifest mod, Action<string, T> changeHandler)
         {
-            InternalSubscribeToChange(mod, (id, value) =>
+            this.InternalSubscribeToChange(mod, (id, value) =>
              {
                  if (value is T v)
                      changeHandler.Invoke(id, v);
