@@ -2,7 +2,7 @@ using System.Linq;
 
 namespace GenericModConfigMenu.UI
 {
-    class Floatbox : Textbox
+    internal class Floatbox : Textbox
     {
         public float Value
         {

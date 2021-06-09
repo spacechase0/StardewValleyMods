@@ -11,7 +11,7 @@ using StardewValley.TerrainFeatures;
 
 namespace Magic.Game
 {
-    class SpellProjectile : Projectile
+    internal class SpellProjectile : Projectile
     {
         private readonly Farmer source;
         private readonly ProjectileSpell spell;

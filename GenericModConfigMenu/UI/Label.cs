@@ -6,7 +6,7 @@ using StardewValley.BellsAndWhistles;
 
 namespace GenericModConfigMenu.UI
 {
-    class Label : Element
+    internal class Label : Element
     {
         public bool Bold { get; set; } = false;
         public float NonBoldScale { get; set; } = 1f; // Only applies when Bold = false

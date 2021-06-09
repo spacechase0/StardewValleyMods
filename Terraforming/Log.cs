@@ -3,7 +3,7 @@ using StardewModdingAPI;
 
 namespace Terraforming
 {
-    class Log
+    internal class Log
     {
         public static void trace(string str)
         {

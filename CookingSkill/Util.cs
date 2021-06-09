@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace CookingSkill
 {
-    class Util
+    internal class Util
     {
         // http://stackoverflow.com/a/22456034
         public static string serialize<T>(T obj)

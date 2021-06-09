@@ -19,7 +19,7 @@ using StardewValley.Objects;
 namespace Magic
 {
     // TODO: Refactor this mess
-    static class Magic
+    internal static class Magic
     {
         public static Skill Skill;
 

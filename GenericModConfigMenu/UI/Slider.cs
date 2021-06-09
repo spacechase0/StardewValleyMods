@@ -8,7 +8,7 @@ using StardewValley.Menus;
 
 namespace GenericModConfigMenu.UI
 {
-    class Slider : Element
+    internal class Slider : Element
     {
         public int RequestWidth { get; set; }
 
@@ -29,7 +29,7 @@ namespace GenericModConfigMenu.UI
         }
     }
 
-    class Slider<T> : Slider
+    internal class Slider<T> : Slider
     {
         public T Minimum { get; set; }
         public T Maximum { get; set; }

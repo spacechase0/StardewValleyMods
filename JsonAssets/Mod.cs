@@ -166,7 +166,7 @@ namespace JsonAssets
             ContentPatcherIntegration.Initialize();
         }
 
-        bool firstTick = true;
+        private bool firstTick = true;
         private void onTick(object sender, UpdateTickedEventArgs e)
         {
             // This needs to run after GameLaunched, because of the event 

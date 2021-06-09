@@ -56,8 +56,8 @@ namespace PyromancersJourney
             this.queuedObjects.Add(obj);
         }
 
-        Vector3 baseCamPos = new Vector3(4.5f, 2, 4.5f);
-        float camAngle;
+        private Vector3 baseCamPos = new Vector3(4.5f, 2, 4.5f);
+        private float camAngle;
         public void Update()
         {
             if (this.nextLevelQueued)

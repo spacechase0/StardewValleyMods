@@ -48,7 +48,7 @@ namespace BetterShopMenu
         private Dictionary<ISalable, int[]> initialStock;
         private List<int> categories;
         private int currCategory;
-        bool hasRecipes;
+        private bool hasRecipes;
         private Dictionary<int, string> categoryNames;
         private int sorting = 0;
         private TextBox search;

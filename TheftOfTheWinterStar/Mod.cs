@@ -40,7 +40,7 @@ namespace TheftOfTheWinterStar
 
         private SaveData saveData;
 
-        Texture2D bossBarBg, bossBarFg;
+        private Texture2D bossBarBg, bossBarFg;
 
         private static string[] locs = new string[]
         {

@@ -7,7 +7,7 @@ using StardewValley.Menus;
 
 namespace RushOrders
 {
-    class RushConstructionMenu : IClickableMenu
+    internal class RushConstructionMenu : IClickableMenu
     {
         private readonly int x;
         private readonly int y;
@@ -16,7 +16,7 @@ namespace RushOrders
         private readonly IClickableMenu old;
         private string q = "Rush your building construction?";
         private int selectedResponse = -1;
-        bool showingBroke = false;
+        private bool showingBroke = false;
 
         public RushConstructionMenu(IClickableMenu oldMenu)
         {

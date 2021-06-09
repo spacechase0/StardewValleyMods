@@ -8,7 +8,7 @@ using StardewValley.Menus;
 
 namespace CustomizeExterior
 {
-    class SelectDisplayMenu : IClickableMenu
+    internal class SelectDisplayMenu : IClickableMenu
     {
         private const int PADDING_OUTER = 100;
         private const int PADDING_INNER = 50;
@@ -24,7 +24,7 @@ namespace CustomizeExterior
         private int size;
         private int entrySize;
 
-        int scroll = 0;
+        private int scroll = 0;
 
         public SelectDisplayMenu(string theType, string theActive)
         {

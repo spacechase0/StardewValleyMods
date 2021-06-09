@@ -12,7 +12,7 @@ using StardewValley.Monsters;
 namespace Magic.Spells
 {
     // TODO: Change into trap?
-    class TendrilsSpell : Spell
+    internal class TendrilsSpell : Spell
     {
         public TendrilsSpell()
             : base(SchoolId.Nature, "tendrils") { }

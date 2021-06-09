@@ -5,7 +5,7 @@ using StardewValley;
 
 namespace Magic.Spells
 {
-    class LanternSpell : Spell
+    internal class LanternSpell : Spell
     {
         private readonly Func<long> getNewId;
 

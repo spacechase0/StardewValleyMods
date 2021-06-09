@@ -10,7 +10,7 @@ using SObject = StardewValley.Object;
 
 namespace Magic.Spells
 {
-    class MeteorSpell : Spell
+    internal class MeteorSpell : Spell
     {
         public MeteorSpell()
             : base(SchoolId.Eldritch, "meteor") { }

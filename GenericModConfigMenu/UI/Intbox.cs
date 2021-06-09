@@ -1,6 +1,6 @@
 namespace GenericModConfigMenu.UI
 {
-    class Intbox : Textbox
+    internal class Intbox : Textbox
     {
         public int Value
         {

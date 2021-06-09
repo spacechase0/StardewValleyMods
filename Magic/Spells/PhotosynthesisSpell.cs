@@ -7,7 +7,7 @@ using SObject = StardewValley.Object;
 
 namespace Magic.Spells
 {
-    class PhotosynthesisSpell : Spell
+    internal class PhotosynthesisSpell : Spell
     {
         public PhotosynthesisSpell()
             : base(SchoolId.Nature, "photosynthesis") { }

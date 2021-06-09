@@ -9,7 +9,7 @@ using StardewValley.Monsters;
 
 namespace Magic.Spells
 {
-    class ShockwaveSpell : Spell
+    internal class ShockwaveSpell : Spell
     {
         public ShockwaveSpell()
             : base(SchoolId.Nature, "shockwave") { }

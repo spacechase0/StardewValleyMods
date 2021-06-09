@@ -29,7 +29,7 @@ namespace SpaceCore.UI
         }
     }
 
-    class Slider<T> : Slider
+    internal class Slider<T> : Slider
     {
         public T Minimum { get; set; }
         public T Maximum { get; set; }
