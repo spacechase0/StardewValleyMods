@@ -189,10 +189,10 @@ namespace SpaceCore.Utilities
         {
             JObject obj = JObject.Load(reader);
             Rectangle rect = new Rectangle();
-            rect.X = obj["X"].ToObject<Int32>();
-            rect.Y = obj["Y"].ToObject<Int32>();
-            rect.Width = obj["Width"].ToObject<Int32>();
-            rect.Height = obj["Height"].ToObject<Int32>();
+            rect.X = obj["X"].ToObject<int>();
+            rect.Y = obj["Y"].ToObject<int>();
+            rect.Width = obj["Width"].ToObject<int>();
+            rect.Height = obj["Height"].ToObject<int>();
             return rect;
         }
 

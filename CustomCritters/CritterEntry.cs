@@ -17,7 +17,7 @@ namespace CustomCritters
             public int FrameWidth { get; set; }
             public int FrameHeight { get; set; }
             public float Scale { get; set; } = 4;
-            public Boolean Flying { get; set; } = true;
+            public bool Flying { get; set; } = true;
         }
         public SpriteData_ SpriteData { get; set; } = new SpriteData_();
 
@@ -35,7 +35,7 @@ namespace CustomCritters
 
         public class SpawnCondition_
         {
-            public Boolean Not { get; set; } = false;
+            public bool Not { get; set; } = false;
             public string[] Seasons { get; set; } = new string[0];
             public string[] Locations { get; set; } = new string[0];
             public int MinTimeOfDay { get; set; } = -1;

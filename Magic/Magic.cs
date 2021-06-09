@@ -590,7 +590,7 @@ namespace Magic
             }
 
             int level;
-            if (!Int32.TryParse(args[1], out level))
+            if (!int.TryParse(args[1], out level))
             {
                 Log.error($"That spell only casts up to level {spell.getMaxCastingLevel()}.");
                 return;

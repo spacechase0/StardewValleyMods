@@ -50,7 +50,7 @@ namespace SpaceCore.Utilities
                 // http://stackoverflow.com/a/38783635
                 unsafe
                 {
-                    UInt64* methodDesc = (UInt64*)(replaceWith.MethodHandle.Value.ToPointer());
+                    ulong* methodDesc = (ulong*)(replaceWith.MethodHandle.Value.ToPointer());
                     int index = (int)(((*methodDesc) >> 32) & 0xFF);
                     if (IntPtr.Size == 4)
                     {
