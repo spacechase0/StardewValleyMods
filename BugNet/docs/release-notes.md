@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Includes unreleased changes by spacechase0:
+  * No longer requires PyTK.
+* Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
+* Improved documentation.
+
 ## 1.2.0
 Released 21 December 2020 for Stardew Valley 1.5.
 

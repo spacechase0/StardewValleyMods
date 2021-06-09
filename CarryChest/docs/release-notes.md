@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
+* Internal refactoring.
+* Improved documentation.
+
 ## 1.3.1
 Released 16 January 2021 for Stardew Valley 1.5.
 

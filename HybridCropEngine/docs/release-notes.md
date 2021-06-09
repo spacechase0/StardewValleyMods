@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed manifest description and update keys (thanks to rikai!).
+* Internal refactoring.
+* Improved documentation.
+
 ## 1.0.1
 Released 31 December 2020 for Stardew Valley 1.5.
 

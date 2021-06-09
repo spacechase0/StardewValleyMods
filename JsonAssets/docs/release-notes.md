@@ -1,6 +1,13 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Includes unreleased changes by spacechase0:
+  * Fixed cask contents not ID-fixed.
+* Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
+* Internal refactoring.
+* Improved documentation.
+
 ## 1.7.6
 Released 02 April 2021 for Stardew Valley 1.5.
 

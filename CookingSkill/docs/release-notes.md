@@ -1,6 +1,13 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Includes unreleased changes by spacechase0:
+  * Added [mod API](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Integrations#Mod-provided_APIs) to apply Cooking Skill effects to a custom cooked dish.
+* Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
+* Moved assets into the conventional `assets` folder.
+* Improved documentation.
+
 ## 1.1.6
 Released 17 January 2020 for Stardew Valley 1.4.
 

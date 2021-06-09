@@ -1,6 +1,13 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Includes unreleased changes by spacechase0:
+  * Fixed changing greenhouse on Four Corners farm map.
+  * Reduced the number of logs shown in the SMAPI console for players.
+* Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
+* Improved documentation.
+
 ## 1.0.7
 Released 26 November 2019 for Stardew Valley 1.4.
 
