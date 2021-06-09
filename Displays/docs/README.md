@@ -1,5 +1,5 @@
-﻿**Displays** is a [Stardew Valley](http://stardewvalley.net/) mod which adds some displays,
-currently just mannequins.
+﻿**Displays** is a [Stardew Valley](http://stardewvalley.net/) mod which adds mannequins you can use
+to display your clothes.
 
 ![](screenshot.png)
 

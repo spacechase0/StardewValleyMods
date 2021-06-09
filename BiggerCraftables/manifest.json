@@ -2,7 +2,7 @@
     "Name": "Bigger Craftables",
     "Author": "spacechase0",
     "Version": "1.0.1",
-    "Description": "...",
+    "Description": "Lets content packs add bigcraftables bigger than one tile.",
     "UniqueID": "spacechase0.BiggerCraftables",
     "EntryDll": "BiggerCraftables.dll",
     "MinimumApiVersion": "2.9.0",

@@ -1,8 +1,8 @@
 ﻿{
-    "Name": "3-heart Dance Partner",
+    "Name": "Three-Heart Dance Partner",
     "Author": "spacechase0",
     "Version": "1.0.5",
-    "Description": "Makes you only need 3 hearts for a dance partner at the flower festival.",
+    "Description": "Lets you dance with a villager at the Flower Dance with three hearts instead of four.",
     "UniqueID": "ThreeHeartDancePartner",
     "EntryDll": "ThreeHeartDancePartner.dll",
     "MinimumApiVersion": "2.9.0",

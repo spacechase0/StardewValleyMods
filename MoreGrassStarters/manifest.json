@@ -2,7 +2,7 @@
     "Name": "More Grass Starters",
     "Author": "spacechase0, eemie",
     "Version": "1.0.4",
-    "Description": "Lets you place more types of grass.",
+    "Description": "Adds nine new grass types for decorative purposes.",
     "UniqueID": "spacechase0.MoreGrassStarters",
     "EntryDll": "MoreGrassStarters.dll",
     "MinimumApiVersion": "2.9.0",

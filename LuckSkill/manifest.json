@@ -2,7 +2,7 @@
     "Name": "Luck Skill",
     "Author": "spacechase0",
     "Version": "1.0.1",
-    "Description": "Adds ways of getting the vanilla luck skill.",
+    "Description": "Reimplements the game's unimplemented luck skill and adds professions for it.",
     "UniqueID": "spacechase0.LuckSkill",
     "EntryDll": "LuckSkill.dll",
     "MinimumApiVersion": "2.9.0",

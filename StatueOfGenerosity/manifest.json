@@ -2,7 +2,7 @@
     "Name": "Statue of Generosity",
     "Author": "spacechase0, ParadigmNomad (sprites)",
     "Version": "1.0.0",
-    "Description": "...",
+    "Description": "Purchase a statue which produces loved gifts each morning.",
     "UniqueID": "spacechase0.StatueOfGenerosity",
     "EntryDll": "StatueOfGenerosity.dll",
     "UpdateKeys": [ "Nexus:", "Chucklefish:" ],

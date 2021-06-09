@@ -2,7 +2,7 @@
     "Name": "More Giant Crops",
     "Author": "spacechase0",
     "Version": "1.0.0",
-    "Description": "More giant crops!",
+    "Description": "Lets you add new giant crops.",
     "UniqueID": "spacechase0.MoreGiantCrops",
     "EntryDll": "MoreGiantCrops.dll",
     "MinimumApiVersion": "2.10.2",

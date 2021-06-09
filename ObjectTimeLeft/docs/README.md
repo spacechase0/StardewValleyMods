@@ -1,5 +1,5 @@
 ﻿**Object Time Left** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you see how
-much time is left until a machine finishes processing.
+much time is left until machines finish processing.
 
 ![](screenshot.png)
 

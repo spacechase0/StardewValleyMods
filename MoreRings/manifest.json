@@ -2,7 +2,7 @@
     "Name": "More Rings",
     "Author": "spacechase0, ParadigmNomad (sprites)",
     "Version": "1.0.4",
-    "Description": "Adds more ring types.",
+    "Description": "Adds new rings with special effects.",
     "UniqueID": "spacechase0.MoreRings",
     "EntryDll": "MoreRings.dll",
     "MinimumApiVersion": "2.9.0",

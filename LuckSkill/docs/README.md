@@ -1,4 +1,4 @@
-﻿**Luck Skill** is a [Stardew Valley](http://stardewvalley.net/) mod which re-enables the game's
+﻿**Luck Skill** is a [Stardew Valley](http://stardewvalley.net/) mod which reimplements the game's
 unimplemented luck skill and adds professions for it.
 
 ## Install

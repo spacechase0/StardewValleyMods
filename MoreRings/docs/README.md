@@ -1,5 +1,5 @@
-﻿**More Rings** is a [Stardew Valley](http://stardewvalley.net/) mod which adds some new rings to
-the game.
+﻿**More Rings** is a [Stardew Valley](http://stardewvalley.net/) mod which adds new rings with
+special effects.
 
 ![](screenshot.png)
 

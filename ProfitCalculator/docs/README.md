@@ -1,5 +1,5 @@
-﻿**Profit Calculator** is a [Stardew Valley](http://stardewvalley.net/) mod which calculates the
-profits from growing each crop for an entire season.
+﻿**Profit Calculator** is a [Stardew Valley](http://stardewvalley.net/) mod which adds a console
+command to calculate the profits from growing each crop for an entire season.
 
 ![](screenshot.png)
 

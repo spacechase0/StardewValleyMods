@@ -2,7 +2,7 @@
     "Name": "Throwable Axe",
     "Author": "spacechase0",
     "Version": "1.0.0",
-    "Description": "Lets you throw your axe.",
+    "Description": "Throw axes at monsters to damage them.",
     "UniqueID": "spacechase0.ThrowableAxe",
     "EntryDll": "ThrowableAxe.dll",
     "MinimumApiVersion": "2.9.0",

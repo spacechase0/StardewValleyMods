@@ -2,7 +2,7 @@
     "Name": "Buildable Locations Framework",
     "Author": "spacechase0",
     "Version": "1.0.0",
-    "Description": "...",
+    "Description": "Lets you construct buildings outside the farm.",
     "UniqueID": "spacechase0.BuildableLocationsFramework",
     "EntryDll": "BuildableLocationsFramework.dll",
     "UpdateKeys": [ "Nexus:", "Chucklefish:" ],

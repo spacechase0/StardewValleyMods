@@ -1,5 +1,5 @@
-﻿**Three-Heart Flower Dance Partner** is a [Stardew Valley](http://stardewvalley.net/) mod which lets
-you dance with a villager at the Flower Dance with three years instead of four, so it's achieveable
+﻿**Three-Heart Dance Partner** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you
+dance with a villager at the Flower Dance with three hearts instead of four, so it's achieveable
 in the first year.
 
 ![](screenshot.png)
