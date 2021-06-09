@@ -8,8 +8,8 @@ namespace SpaceCore
         internal static Dictionary<int, string> extraGameMenuTabs = new Dictionary<int, string>();
         public static int ReserveGameMenuTab(string name)
         {
-            int tab = currGameMenuTab++;
-            extraGameMenuTabs.Add(tab, name);
+            int tab = Menus.currGameMenuTab++;
+            Menus.extraGameMenuTabs.Add(tab, name);
             return tab;
         }
     }

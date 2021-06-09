@@ -15,9 +15,9 @@ namespace JumpOver
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
-            Config = helper.ReadConfig<Configuration>();
+            Mod.Config = helper.ReadConfig<Configuration>();
 
             helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
             helper.Events.Input.ButtonPressed += this.onButtonPressed;
@@ -28,8 +28,8 @@ namespace JumpOver
             var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Config = new Configuration(), () => this.Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Jump Key", "The key to jump", () => Config.keyJump, (SButton val) => Config.keyJump = val);
+                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
+                capi.RegisterSimpleOption(this.ModManifest, "Jump Key", "The key to jump", () => Mod.Config.keyJump, (SButton val) => Mod.Config.keyJump = val);
             }
         }
 
@@ -41,7 +41,7 @@ namespace JumpOver
             if (!Context.IsWorldReady || !Context.IsPlayerFree || Game1.activeClickableMenu != null)
                 return;
 
-            if (e.Button == Config.keyJump && Game1.player.yJumpVelocity == 0)
+            if (e.Button == Mod.Config.keyJump && Game1.player.yJumpVelocity == 0)
             {
                 // This is terrible for this case, redo it
                 new Jump(Game1.player, this.Helper.Events);
@@ -56,7 +56,7 @@ namespace JumpOver
 
             //private bool wasGoingOver = false;
 
-            public Jump(StardewValley.Farmer thePlayer, IModEvents events)
+            public Jump(Farmer thePlayer, IModEvents events)
             {
                 this.player = thePlayer;
                 this.events = events;

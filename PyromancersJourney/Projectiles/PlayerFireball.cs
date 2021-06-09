@@ -22,7 +22,7 @@ namespace PyromancersJourney.Projectiles
         public PlayerFireball(World world)
             : base(world)
         {
-            if (buffer == null)
+            if (PlayerFireball.buffer == null)
             {
                 var vertices = new List<VertexPositionColorTexture>();
                 for (int i = 0; i < 4; ++i)
@@ -38,8 +38,8 @@ namespace PyromancersJourney.Projectiles
                     vertices.Add(new VertexPositionColorTexture(new Vector3(1, 1, 0), Color.White, new Vector2(b, 1)));
                 }
 
-                buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
-                buffer.SetData(vertices.ToArray());
+                PlayerFireball.buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                PlayerFireball.buffer.SetData(vertices.ToArray());
             }
         }
 
@@ -72,14 +72,14 @@ namespace PyromancersJourney.Projectiles
             base.Render(device, projection, cam);
             var camForward = (cam.pos - cam.target);
             camForward.Normalize();
-            effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
-            effect.TextureEnabled = true;
-            effect.Texture = tex;
-            for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
+            BaseProjectile.effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
+            BaseProjectile.effect.TextureEnabled = true;
+            BaseProjectile.effect.Texture = PlayerFireball.tex;
+            for (int e = 0; e < BaseProjectile.effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = effect.CurrentTechnique.Passes[e];
+                var pass = BaseProjectile.effect.CurrentTechnique.Passes[e];
                 pass.Apply();
-                device.SetVertexBuffer(buffer);
+                device.SetVertexBuffer(PlayerFireball.buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 6 * this.Level, 2);
             }
         }

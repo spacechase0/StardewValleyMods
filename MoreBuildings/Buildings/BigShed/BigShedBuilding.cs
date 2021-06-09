@@ -11,7 +11,7 @@ namespace MoreBuildings.Buildings.BigShed
         private static readonly BluePrint blueprint = new BluePrint("Shed2");
 
         public BigShedBuilding()
-            : base(blueprint, Vector2.Zero) { }
+            : base(BigShedBuilding.blueprint, Vector2.Zero) { }
 
         protected override GameLocation getIndoors(string nameOfIndoorsWithoutUnique)
         {

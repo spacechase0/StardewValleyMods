@@ -16,7 +16,7 @@ namespace MoreGiantCrops
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             Directory.CreateDirectory(Path.Combine(this.Helper.DirectoryPath, "assets"));
@@ -32,10 +32,10 @@ namespace MoreGiantCrops
                 }
                 Log.trace("Found PNG: " + filename);
                 var tex = helper.Content.Load<Texture2D>($"assets/{filename}");
-                sprites.Add(id, tex);
+                Mod.sprites.Add(id, tex);
             }
 
-            if (!sprites.Any())
+            if (!Mod.sprites.Any())
             {
                 Log.error("You must install an asset pack to use this mod.");
                 return;

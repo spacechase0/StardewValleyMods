@@ -18,7 +18,7 @@ namespace BuildableLocationsFramework
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             this.Helper.Events.Display.MenuChanged += this.menuChanged;
@@ -69,7 +69,7 @@ namespace BuildableLocationsFramework
 
             if (this.buildableLocIndex != newLocIndex)
             {
-                var buildableLocs = GetAllLocations().FindAll(loc => loc is BuildableGameLocation);
+                var buildableLocs = Mod.GetAllLocations().FindAll(loc => loc is BuildableGameLocation);
                 while (newLocIndex < 0)
                     newLocIndex += buildableLocs.Count;
                 while (newLocIndex >= buildableLocs.Count)
@@ -93,7 +93,7 @@ namespace BuildableLocationsFramework
                 {
                     var blueprints = this.Helper.Reflection.GetField<List<BluePrint>>(menu1, "blueprints").GetValue();
 
-                    var locs = GetAllLocations();
+                    var locs = Mod.GetAllLocations();
                     foreach (var loc in locs)
                     {
                         if (loc is BuildableGameLocation bloc)
@@ -132,7 +132,7 @@ namespace BuildableLocationsFramework
                 ret.Add(loc);
                 if (loc is BuildableGameLocation bloc)
                 {
-                    AddLocations(ret, bloc);
+                    Mod.AddLocations(ret, bloc);
                 }
             }
             return ret;
@@ -147,7 +147,7 @@ namespace BuildableLocationsFramework
                     list.Add(building.indoors.Value);
                     if (building.indoors.Value is BuildableGameLocation bloc2)
                     {
-                        AddLocations(list, bloc2);
+                        Mod.AddLocations(list, bloc2);
                     }
                 }
             }
@@ -155,7 +155,7 @@ namespace BuildableLocationsFramework
 
         internal static GameLocation findOutdoorsOf(Building building)
         {
-            foreach (var loc in GetAllLocations())
+            foreach (var loc in Mod.GetAllLocations())
             {
                 if (loc is BuildableGameLocation bgl)
                 {
@@ -167,7 +167,7 @@ namespace BuildableLocationsFramework
             {
                 var oldLocs = Game1.locations;
                 Game1.game1._locations = SaveGamePatcher.locs;
-                var locs = GetAllLocations();
+                var locs = Mod.GetAllLocations();
                 Game1.game1._locations = oldLocs;
 
                 foreach (var loc in locs)

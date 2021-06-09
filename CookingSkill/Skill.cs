@@ -5,7 +5,7 @@ namespace CookingSkill
 {
     public class Skill : SpaceCore.Skills.Skill
     {
-        public class GenericProfession : SpaceCore.Skills.Skill.Profession
+        public class GenericProfession : Profession
         {
             public GenericProfession(Skill skill, string theId)
                 : base(skill, theId) { }
@@ -42,49 +42,49 @@ namespace CookingSkill
             this.ExperienceBarColor = new Microsoft.Xna.Framework.Color(196, 76, 255);
 
             // Level 5
-            ProfessionSellPrice = new GenericProfession(this, "SellPrice");
-            ProfessionSellPrice.Icon = null; // TODO
-            ProfessionSellPrice.Name = "Gourmet";
-            ProfessionSellPrice.Description = "+20% sell price";
-            this.Professions.Add(ProfessionSellPrice);
+            Skill.ProfessionSellPrice = new GenericProfession(this, "SellPrice");
+            Skill.ProfessionSellPrice.Icon = null; // TODO
+            Skill.ProfessionSellPrice.Name = "Gourmet";
+            Skill.ProfessionSellPrice.Description = "+20% sell price";
+            this.Professions.Add(Skill.ProfessionSellPrice);
 
-            ProfessionBuffTime = new GenericProfession(this, "BuffTime");
-            ProfessionBuffTime.Icon = null; // TODO
-            ProfessionBuffTime.Name = "Satisfying";
-            ProfessionBuffTime.Description = "+25% buff duration once eaten";
-            this.Professions.Add(ProfessionBuffTime);
+            Skill.ProfessionBuffTime = new GenericProfession(this, "BuffTime");
+            Skill.ProfessionBuffTime.Icon = null; // TODO
+            Skill.ProfessionBuffTime.Name = "Satisfying";
+            Skill.ProfessionBuffTime.Description = "+25% buff duration once eaten";
+            this.Professions.Add(Skill.ProfessionBuffTime);
 
-            this.ProfessionsForLevels.Add(new ProfessionPair(5, ProfessionSellPrice, ProfessionBuffTime));
+            this.ProfessionsForLevels.Add(new ProfessionPair(5, Skill.ProfessionSellPrice, Skill.ProfessionBuffTime));
 
             // Level 10 - track A
-            ProfessionConservation = new GenericProfession(this, "Conservation");
-            ProfessionConservation.Icon = null; // TODO
-            ProfessionConservation.Name = "Efficient";
-            ProfessionConservation.Description = "15% chance to not consume ingredients";
-            this.Professions.Add(ProfessionConservation);
+            Skill.ProfessionConservation = new GenericProfession(this, "Conservation");
+            Skill.ProfessionConservation.Icon = null; // TODO
+            Skill.ProfessionConservation.Name = "Efficient";
+            Skill.ProfessionConservation.Description = "15% chance to not consume ingredients";
+            this.Professions.Add(Skill.ProfessionConservation);
 
-            ProfessionSilver = new GenericProfession(this, "Silver");
-            ProfessionSilver.Icon = null; // TODO
-            ProfessionSilver.Name = "Professional Chef";
-            ProfessionSilver.Description = "Home-cooked meals are always at least silver";
-            this.Professions.Add(ProfessionSilver);
+            Skill.ProfessionSilver = new GenericProfession(this, "Silver");
+            Skill.ProfessionSilver.Icon = null; // TODO
+            Skill.ProfessionSilver.Name = "Professional Chef";
+            Skill.ProfessionSilver.Description = "Home-cooked meals are always at least silver";
+            this.Professions.Add(Skill.ProfessionSilver);
 
-            this.ProfessionsForLevels.Add(new ProfessionPair(10, ProfessionConservation, ProfessionSilver, ProfessionSellPrice));
+            this.ProfessionsForLevels.Add(new ProfessionPair(10, Skill.ProfessionConservation, Skill.ProfessionSilver, Skill.ProfessionSellPrice));
 
             // Level 10 - track B
-            ProfessionBuffLevel = new GenericProfession(this, "BuffLevel");
-            ProfessionBuffLevel.Icon = null; // TODO
-            ProfessionBuffLevel.Name = "Intense Flavors";
-            ProfessionBuffLevel.Description = "Food buffs are one level stronger once eaten\n(+20% for max energy or magnetism)";
-            this.Professions.Add(ProfessionBuffLevel);
+            Skill.ProfessionBuffLevel = new GenericProfession(this, "BuffLevel");
+            Skill.ProfessionBuffLevel.Icon = null; // TODO
+            Skill.ProfessionBuffLevel.Name = "Intense Flavors";
+            Skill.ProfessionBuffLevel.Description = "Food buffs are one level stronger once eaten\n(+20% for max energy or magnetism)";
+            this.Professions.Add(Skill.ProfessionBuffLevel);
 
-            ProfessionBuffPlain = new GenericProfession(this, "BuffPlain");
-            ProfessionBuffPlain.Icon = null; // TODO
-            ProfessionBuffPlain.Name = "Secret Spices";
-            ProfessionBuffPlain.Description = "Provides a few random buffs when eating unbuffed food";
-            this.Professions.Add(ProfessionBuffPlain);
+            Skill.ProfessionBuffPlain = new GenericProfession(this, "BuffPlain");
+            Skill.ProfessionBuffPlain.Icon = null; // TODO
+            Skill.ProfessionBuffPlain.Name = "Secret Spices";
+            Skill.ProfessionBuffPlain.Description = "Provides a few random buffs when eating unbuffed food";
+            this.Professions.Add(Skill.ProfessionBuffPlain);
 
-            this.ProfessionsForLevels.Add(new ProfessionPair(10, ProfessionBuffLevel, ProfessionBuffPlain, ProfessionBuffTime));
+            this.ProfessionsForLevels.Add(new ProfessionPair(10, Skill.ProfessionBuffLevel, Skill.ProfessionBuffPlain, Skill.ProfessionBuffTime));
         }
 
         public override string GetName()

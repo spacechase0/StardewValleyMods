@@ -28,7 +28,7 @@ namespace PyromancersJourney
 
         VertexDeclaration IVertexType.VertexDeclaration
         {
-            get { return VertexDeclaration; }
+            get { return VertexEverything.VertexDeclaration; }
         }
     }
 }

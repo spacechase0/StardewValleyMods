@@ -26,7 +26,7 @@ namespace SpaceShared
             var toCols = new Color[to.Height];
             from.GetData(fromCols);
             to.GetData(toCols);
-            return DoPaletteSwap(baseTex, fromCols, toCols);
+            return Util.DoPaletteSwap(baseTex, fromCols, toCols);
         }
 
         public static Texture2D DoPaletteSwap(Texture2D baseTex, Color[] fromCols, Color[] toCols)

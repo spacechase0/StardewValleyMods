@@ -28,7 +28,7 @@ namespace SpaceCore
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            SpaceCore.instance = this;
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<Configuration>();
 
@@ -88,7 +88,7 @@ namespace SpaceCore
         private void onUpdate(object sender, UpdateTickedEventArgs e)
         {
             TileSheetExtensions.UpdateReferences();
-            if (this.tickCount++ == 0 && modTypes.Count == 0)
+            if (this.tickCount++ == 0 && SpaceCore.modTypes.Count == 0)
             {
                 Log.info("Disabling serializer patches (no mods using serializer API)");
                 foreach (var meth in SaveGamePatcher.GetSaveEnumeratorMethods())

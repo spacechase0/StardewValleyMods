@@ -29,7 +29,7 @@ namespace ExperienceBars
         public override void Entry(IModHelper helper)
         {
             Log.Monitor = this.Monitor;
-            Config = helper.ReadConfig<Configuration>();
+            Mod.Config = helper.ReadConfig<Configuration>();
 
             helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
             helper.Events.Display.RenderedHud += this.onRenderedHud;
@@ -46,10 +46,10 @@ namespace ExperienceBars
             var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Config = new Configuration(), () => this.Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(this.ModManifest, "UI X", "The X position of the UI on-screen.", () => Config.X, (int val) => Config.X = val);
-                capi.RegisterSimpleOption(this.ModManifest, "UI Y", "The Y position of the UI on-screen.", () => Config.Y, (int val) => Config.Y = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "Press this key to toggle the display.\nHolding Shift lets you move the display as well. ", () => Config.ToggleBars, (SButton val) => Config.ToggleBars = val);
+                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
+                capi.RegisterSimpleOption(this.ModManifest, "UI X", "The X position of the UI on-screen.", () => Mod.Config.X, (int val) => Mod.Config.X = val);
+                capi.RegisterSimpleOption(this.ModManifest, "UI Y", "The Y position of the UI on-screen.", () => Mod.Config.Y, (int val) => Mod.Config.Y = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "Press this key to toggle the display.\nHolding Shift lets you move the display as well. ", () => Mod.Config.ToggleBars, (SButton val) => Mod.Config.ToggleBars = val);
             }
         }
 
@@ -58,17 +58,17 @@ namespace ExperienceBars
         /// <param name="e">The event arguments.</param>
         public void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (e.Button == Config.ToggleBars)
+            if (e.Button == Mod.Config.ToggleBars)
             {
-                if (show && (Game1.GetKeyboardState().IsKeyDown(Keys.LeftShift) || Game1.GetKeyboardState().IsKeyDown(Keys.RightShift)))
+                if (Mod.show && (Game1.GetKeyboardState().IsKeyDown(Keys.LeftShift) || Game1.GetKeyboardState().IsKeyDown(Keys.RightShift)))
                 {
-                    Config.X = (int)e.Cursor.ScreenPixels.X;
-                    Config.Y = (int)e.Cursor.ScreenPixels.Y;
-                    this.Helper.WriteConfig(Config);
+                    Mod.Config.X = (int)e.Cursor.ScreenPixels.X;
+                    Mod.Config.Y = (int)e.Cursor.ScreenPixels.Y;
+                    this.Helper.WriteConfig(Mod.Config);
                 }
                 else
                 {
-                    show = !show;
+                    Mod.show = !Mod.show;
                 }
             }
         }
@@ -80,7 +80,7 @@ namespace ExperienceBars
         {
             // renderExpBars
 
-            if (!show || Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree)
+            if (!Mod.show || Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree)
                 return;
 
             int[] skills = new int[]
@@ -95,7 +95,7 @@ namespace ExperienceBars
             int[] exp = Game1.player.experiencePoints.ToArray();
 
             bool foundLevelExtender = false;
-            if (this.Helper.ModRegistry.IsLoaded("Devin Lematty.Level Extender") && !stopLevelExtenderCompat)
+            if (this.Helper.ModRegistry.IsLoaded("Devin Lematty.Level Extender") && !Mod.stopLevelExtenderCompat)
             {
                 try
                 {
@@ -115,26 +115,26 @@ namespace ExperienceBars
                 catch (Exception ex)
                 {
                     Log.error("Exception during level extender compat: " + ex);
-                    stopLevelExtenderCompat = true;
+                    Mod.stopLevelExtenderCompat = true;
                 }
             }
 
-            int x = Config.X;
-            int y = Config.Y; ;
+            int x = Mod.Config.X;
+            int y = Mod.Config.Y; ;
             if (Game1.player.currentLocation != null && Game1.player.currentLocation is MineShaft &&
                 x <= 25 && y <= 75)
                 y += 75;
-            for (int i = 0; i < (renderLuck ? 6 : 5); ++i)
+            for (int i = 0; i < (Mod.renderLuck ? 6 : 5); ++i)
             {
                 int prevReq = 0, nextReq = 1;
                 if (skills[i] == 0)
                 {
-                    nextReq = expNeededForLevel[0];
+                    nextReq = Mod.expNeededForLevel[0];
                 }
                 else if (skills[i] < 10)
                 {
-                    prevReq = expNeededForLevel[skills[i] - 1];
-                    nextReq = expNeededForLevel[skills[i]];
+                    prevReq = Mod.expNeededForLevel[skills[i] - 1];
+                    nextReq = Mod.expNeededForLevel[skills[i]];
                 }
                 else if (foundLevelExtender)
                 {
@@ -150,11 +150,11 @@ namespace ExperienceBars
                     progress = -1;
                 }
 
-                renderSkillBar(x, y, Game1.buffsIcons, this.getSkillRect(i), skills[i], progress, this.getSkillColor(i));
+                Mod.renderSkillBar(x, y, Game1.buffsIcons, this.getSkillRect(i), skills[i], progress, this.getSkillColor(i));
 
                 y += 40;
             }
-            expBottom = y;
+            Mod.expBottom = y;
         }
 
         private Rectangle getSkillRect(int skill)
@@ -203,13 +203,13 @@ namespace ExperienceBars
 
         public static void renderSkillBar(int x, int y, Texture2D iconTex, Rectangle icon, int level, float progress, Color skillCol)
         {
-            if (!show) return;
+            if (!Mod.show) return;
             if (Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree) return;
 
             var b = Game1.spriteBatch;
 
-            if (skillBg == null || skillFg == null)
-                setupExpBars();
+            if (Mod.skillBg == null || Mod.skillFg == null)
+                Mod.setupExpBars();
 
             b.Draw(iconTex, new Rectangle(x, y, 32, 32), icon, Color.White);
 
@@ -221,40 +221,40 @@ namespace ExperienceBars
             if (progress < 0 || progress > 100)
                 return;
 
-            Rectangle barRect = new Rectangle(x + 32 + 4 + 32 + extra + 4, y + (32 - BAR_HEIGHT) / 2 - 1, BAR_WIDTH * 2, BAR_HEIGHT * 2);
-            b.Draw(skillBg, barRect, new Rectangle(0, 0, BAR_WIDTH, BAR_HEIGHT), Color.White);
+            Rectangle barRect = new Rectangle(x + 32 + 4 + 32 + extra + 4, y + (32 - Mod.BAR_HEIGHT) / 2 - 1, Mod.BAR_WIDTH * 2, Mod.BAR_HEIGHT * 2);
+            b.Draw(Mod.skillBg, barRect, new Rectangle(0, 0, Mod.BAR_WIDTH, Mod.BAR_HEIGHT), Color.White);
             barRect.Width = (int)(barRect.Width * progress);
-            b.Draw(skillFg, barRect, new Rectangle(0, 0, barRect.Width / 2, BAR_HEIGHT), skillCol);
+            b.Draw(Mod.skillFg, barRect, new Rectangle(0, 0, barRect.Width / 2, Mod.BAR_HEIGHT), skillCol);
         }
 
         private static void setupExpBars()
         {
-            skillBg = new Texture2D(Game1.graphics.GraphicsDevice, BAR_WIDTH, BAR_HEIGHT);
-            skillFg = new Texture2D(Game1.graphics.GraphicsDevice, BAR_WIDTH, BAR_HEIGHT);
-            Color[] emptyColors = new Color[BAR_WIDTH * BAR_HEIGHT];
-            Color[] fillColors = new Color[BAR_WIDTH * BAR_HEIGHT];
-            for (int ix = 0; ix < BAR_WIDTH; ++ix)
+            Mod.skillBg = new Texture2D(Game1.graphics.GraphicsDevice, Mod.BAR_WIDTH, Mod.BAR_HEIGHT);
+            Mod.skillFg = new Texture2D(Game1.graphics.GraphicsDevice, Mod.BAR_WIDTH, Mod.BAR_HEIGHT);
+            Color[] emptyColors = new Color[Mod.BAR_WIDTH * Mod.BAR_HEIGHT];
+            Color[] fillColors = new Color[Mod.BAR_WIDTH * Mod.BAR_HEIGHT];
+            for (int ix = 0; ix < Mod.BAR_WIDTH; ++ix)
             {
-                for (int iy = 0; iy < BAR_HEIGHT; ++iy)
+                for (int iy = 0; iy < Mod.BAR_HEIGHT; ++iy)
                 {
-                    Color e = BAR_BG;
-                    Color f = BAR_FG;
-                    if (ix == 0 || iy == 0 || ix == BAR_WIDTH - 1 || iy == BAR_HEIGHT - 1)
+                    Color e = Mod.BAR_BG;
+                    Color f = Mod.BAR_FG;
+                    if (ix == 0 || iy == 0 || ix == Mod.BAR_WIDTH - 1 || iy == Mod.BAR_HEIGHT - 1)
                     {
-                        e = BAR_BORDER;
+                        e = Mod.BAR_BORDER;
                         f = Color.Transparent;
 
                         // Corners
-                        if (ix == 0 && iy == 0 || ix == BAR_WIDTH - 1 && iy == 0 ||
-                             ix == 0 && iy == BAR_HEIGHT - 1 || ix == BAR_WIDTH - 1 && iy == BAR_HEIGHT - 1)
+                        if (ix == 0 && iy == 0 || ix == Mod.BAR_WIDTH - 1 && iy == 0 ||
+                             ix == 0 && iy == Mod.BAR_HEIGHT - 1 || ix == Mod.BAR_WIDTH - 1 && iy == Mod.BAR_HEIGHT - 1)
                         {
                             e = Color.Transparent;
                         }
                     }
                     else if ((ix - 1) % 10 == 0)
                     {
-                        e = BAR_BG_TICK;
-                        f = BAR_FG_TICK;
+                        e = Mod.BAR_BG_TICK;
+                        f = Mod.BAR_FG_TICK;
                     }
 
                     float s = 1;
@@ -272,12 +272,12 @@ namespace ExperienceBars
 
 
 
-                    emptyColors[ix + iy * BAR_WIDTH] = e;
-                    fillColors[ix + iy * BAR_WIDTH] = f;
+                    emptyColors[ix + iy * Mod.BAR_WIDTH] = e;
+                    fillColors[ix + iy * Mod.BAR_WIDTH] = f;
                 }
             }
-            skillBg.SetData(emptyColors);
-            skillFg.SetData(fillColors);
+            Mod.skillBg.SetData(emptyColors);
+            Mod.skillFg.SetData(fillColors);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace SpaceCore
 
         public static void RegisterMessageHandler(string id, Action<IncomingMessage> handler)
         {
-            messageHandlers.Add(id, handler);
+            Networking.messageHandlers.Add(id, handler);
         }
 
         public static void BroadcastMessage(string id, byte[] data)

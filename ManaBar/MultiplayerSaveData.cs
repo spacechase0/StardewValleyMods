@@ -34,8 +34,8 @@ namespace ManaBar
             {
                 writer.Write((int)1);
                 writer.Write(Game1.player.UniqueMultiplayerID);
-                writer.Write(JsonConvert.SerializeObject(this.players[Game1.player.UniqueMultiplayerID], networkSerializerSettings));
-                SpaceCore.Networking.BroadcastMessage(MSG_DATA, stream.ToArray());
+                writer.Write(JsonConvert.SerializeObject(this.players[Game1.player.UniqueMultiplayerID], MultiplayerSaveData.networkSerializerSettings));
+                SpaceCore.Networking.BroadcastMessage(MultiplayerSaveData.MSG_DATA, stream.ToArray());
             }
         }
 
@@ -46,7 +46,7 @@ namespace ManaBar
             {
                 writer.Write(this.players[Game1.player.UniqueMultiplayerID].mana);
                 writer.Write(this.players[Game1.player.UniqueMultiplayerID].manaCap);
-                SpaceCore.Networking.BroadcastMessage(MSG_MINIDATA, stream.ToArray());
+                SpaceCore.Networking.BroadcastMessage(MultiplayerSaveData.MSG_MINIDATA, stream.ToArray());
             }
         }
     }

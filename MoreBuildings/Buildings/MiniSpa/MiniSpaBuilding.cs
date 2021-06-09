@@ -11,7 +11,7 @@ namespace MoreBuildings.Buildings.MiniSpa
         private static readonly BluePrint blueprint = new BluePrint("MiniSpa");
 
         public MiniSpaBuilding()
-            : base(blueprint, Vector2.Zero) { }
+            : base(MiniSpaBuilding.blueprint, Vector2.Zero) { }
 
         protected override GameLocation getIndoors(string nameOfIndoorsWithoutUnique)
         {

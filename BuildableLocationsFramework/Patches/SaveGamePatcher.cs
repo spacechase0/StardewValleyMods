@@ -40,7 +40,7 @@ namespace BuildableLocationsFramework.Patches
         /// <summary>The method to call before <see cref="SaveGame.loadDataToLocations"/>.</summary>
         private static void Before_LoadDataToLocations(List<GameLocation> gamelocations)
         {
-            locs = gamelocations;
+            SaveGamePatcher.locs = gamelocations;
 
             foreach (GameLocation gamelocation in gamelocations)
             {
@@ -64,7 +64,7 @@ namespace BuildableLocationsFramework.Patches
         /// <summary>The method to call after <see cref="SaveGame.loadDataToLocations"/>.</summary>
         private static void After_LoadDataToLocations()
         {
-            locs = null;
+            SaveGamePatcher.locs = null;
         }
     }
 }

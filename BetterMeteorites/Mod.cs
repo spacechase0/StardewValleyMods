@@ -12,7 +12,7 @@ namespace BetterMeteorites
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             SpaceShared.Log.Monitor = this.Monitor;
 
             helper.Events.GameLoop.SaveCreated += this.onSaveCreated;

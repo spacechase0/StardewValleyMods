@@ -19,9 +19,9 @@ namespace ExtendedReach
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
-            config = helper.ReadConfig<Configuration>();
+            Mod.config = helper.ReadConfig<Configuration>();
 
             helper.Events.Display.RenderedWorld += this.onRenderWorld;
             helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
@@ -37,8 +37,8 @@ namespace ExtendedReach
             if (gmcm == null)
                 return;
 
-            gmcm.RegisterModConfig(this.ModManifest, () => config = new Configuration(), () => this.Helper.WriteConfig(config));
-            gmcm.RegisterSimpleOption(this.ModManifest, "Wiggly Arms", "Show wiggly arms reaching out to your cursor.", () => config.WigglyArms, (bool b) => config.WigglyArms = b);
+            gmcm.RegisterModConfig(this.ModManifest, () => Mod.config = new Configuration(), () => this.Helper.WriteConfig(Mod.config));
+            gmcm.RegisterSimpleOption(this.ModManifest, "Wiggly Arms", "Show wiggly arms reaching out to your cursor.", () => Mod.config.WigglyArms, (bool b) => Mod.config.WigglyArms = b);
         }
 
         private float ampDir = 1;
@@ -46,7 +46,7 @@ namespace ExtendedReach
         private Vector2 prevMousePos;
         private void onRenderWorld(object sender, RenderedWorldEventArgs e)
         {
-            if (!Context.IsPlayerFree || !config.WigglyArms)
+            if (!Context.IsPlayerFree || !Mod.config.WigglyArms)
                 return;
 
             var mousePos = this.Helper.Input.GetCursorPosition().ScreenPixels;
@@ -97,11 +97,11 @@ namespace ExtendedReach
             points[2] = farmerPos + (mousePos - farmerPos) / 4 * 2;
             points[3] = farmerPos + (mousePos - farmerPos) / 4 * 3 + angle * -64 * this.amp;
 
-            var curvePoints = computeCurvePoints((int)((farmerPos - mousePos).Length() / 32), points);
+            var curvePoints = Mod.computeCurvePoints((int)((farmerPos - mousePos).Length() / 32), points);
 
             for (int x = 0; x < curvePoints.Count - 1; x++)
             {
-                DrawLine(b, tex, curvePoints[x], curvePoints[x + 1], Color.White, 12);
+                Mod.DrawLine(b, tex, curvePoints[x], curvePoints[x + 1], Color.White, 12);
             }
             e.SpriteBatch.Draw(tex, mousePos, new Rectangle(153, 237, 4, 4), Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 1);
 
@@ -115,7 +115,7 @@ namespace ExtendedReach
             List<Vector2> curvePoints = new List<Vector2>();
             for (float x = 0; x < 1; x += 1 / (float)steps)
             {
-                curvePoints.Add(getBezierPointRecursive(x, pointsQ));
+                curvePoints.Add(Mod.getBezierPointRecursive(x, pointsQ));
             }
             return curvePoints;
         }
@@ -128,13 +128,13 @@ namespace ExtendedReach
                 List<Vector2> newPoints = new List<Vector2>();
                 for (int x = 0; x < ps.Length - 1; x++)
                 {
-                    newPoints.Add(interpolatedPoint(ps[x], ps[x + 1], timeStep));
+                    newPoints.Add(Mod.interpolatedPoint(ps[x], ps[x + 1], timeStep));
                 }
-                return getBezierPointRecursive(timeStep, newPoints.ToArray());
+                return Mod.getBezierPointRecursive(timeStep, newPoints.ToArray());
             }
             else
             {
-                return interpolatedPoint(ps[0], ps[1], timeStep);
+                return Mod.interpolatedPoint(ps[0], ps[1], timeStep);
             }
         }
 

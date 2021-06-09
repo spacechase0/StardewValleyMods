@@ -53,7 +53,7 @@ namespace SpaceCore.Patches
             if (sourceRectangle.HasValue)
             {
                 Rectangle rect = sourceRectangle.Value;
-                FixTilesheetReference(ref texture, ref rect);
+                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
                 sourceRectangle = rect;
             }
         }
@@ -64,7 +64,7 @@ namespace SpaceCore.Patches
             if (sourceRectangle.HasValue)
             {
                 Rectangle rect = sourceRectangle.Value;
-                FixTilesheetReference(ref texture, ref rect);
+                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
                 sourceRectangle = rect;
             }
         }
@@ -75,7 +75,7 @@ namespace SpaceCore.Patches
             if (sourceRectangle.HasValue)
             {
                 Rectangle rect = sourceRectangle.Value;
-                FixTilesheetReference(ref texture, ref rect);
+                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
                 sourceRectangle = rect;
             }
         }
@@ -86,7 +86,7 @@ namespace SpaceCore.Patches
             if (sourceRectangle.HasValue)
             {
                 Rectangle rect = sourceRectangle.Value;
-                FixTilesheetReference(ref texture, ref rect);
+                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
                 sourceRectangle = rect;
             }
         }
@@ -97,7 +97,7 @@ namespace SpaceCore.Patches
             if (sourceRectangle.HasValue)
             {
                 Rectangle rect = sourceRectangle.Value;
-                FixTilesheetReference(ref texture, ref rect);
+                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
                 sourceRectangle = rect;
             }
         }

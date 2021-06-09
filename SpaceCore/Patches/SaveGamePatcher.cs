@@ -278,7 +278,7 @@ namespace SpaceCore.Patches
                     newDoc.LoadXml(modNode.Value);
 
                     var attr = newDoc.DocumentElement.Attributes["xsi:type"];
-                    if (attr == null || FindModType(attr.Value) == null)
+                    if (attr == null || SaveGamePatcher.FindModType(attr.Value) == null)
                         continue;
 
                     var newNode = doc.ImportNode(newDoc.DocumentElement, true);
@@ -298,7 +298,7 @@ namespace SpaceCore.Patches
             for (int i = 0; i < node.ChildNodes.Count; ++i)
             {
                 //Log.trace( "child " + i + "/" + node.ChildNodes.Count );
-                RestoreModNodes(doc, node.ChildNodes[i] as XmlNode, modNodes, $"{currPath}/{i}");
+                SaveGamePatcher.RestoreModNodes(doc, node.ChildNodes[i] as XmlNode, modNodes, $"{currPath}/{i}");
             }
         }
 
@@ -324,7 +324,7 @@ namespace SpaceCore.Patches
                 List<KeyValuePair<string, string>> modNodes = null;
                 modNodes = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(File.ReadAllText(filePath));
                 if (modNodes != null)
-                    RestoreModNodes(doc, doc, modNodes, "/1"); // <?xml ... ?> is 1
+                    SaveGamePatcher.RestoreModNodes(doc, doc, modNodes, "/1"); // <?xml ... ?> is 1
             }
 
             return serializer.Deserialize(new XmlTextReader(new StringReader(doc.OuterXml)));
@@ -340,7 +340,7 @@ namespace SpaceCore.Patches
                 for (int i = node.ChildNodes.Count - 1; i >= 0; --i)
                 {
                     var child = node.ChildNodes[i];
-                    if (FindAndRemoveModNodes(child, modNodes, $"{currPath}/{i}"))
+                    if (SaveGamePatcher.FindAndRemoveModNodes(child, modNodes, $"{currPath}/{i}"))
                     {
                         modNodes.Insert(0, new KeyValuePair<string, string>($"{currPath}/{i}", child.OuterXml));
                         node.RemoveChild(child);
@@ -373,7 +373,7 @@ namespace SpaceCore.Patches
                 doc.Load(ms);
 
                 var modNodes = new List<KeyValuePair<string, string>>();
-                FindAndRemoveModNodes(doc, modNodes, "/1"); // <?xml ... ?> is /0
+                SaveGamePatcher.FindAndRemoveModNodes(doc, modNodes, "/1"); // <?xml ... ?> is /0
 
                 doc.WriteContentTo(origWriter);
                 if (serializer == SaveGame.farmerSerializer)

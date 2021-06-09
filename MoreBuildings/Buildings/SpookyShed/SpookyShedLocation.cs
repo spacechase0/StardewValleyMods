@@ -5,6 +5,7 @@ using PyTK.CustomElementHandler;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Monsters;
+using SObject = StardewValley.Object;
 
 namespace MoreBuildings.Buildings.SpookyShed
 {
@@ -31,13 +32,13 @@ namespace MoreBuildings.Buildings.SpookyShed
             base.drawAboveFrontLayer(b);
 
             Color col = Color.White;
-            if (this.currSpawnerItem == BAT_WING)
+            if (this.currSpawnerItem == SpookyShedLocation.BAT_WING)
                 col = Color.Gray;
-            else if (this.currSpawnerItem == SOLAR_ESSENCE)
+            else if (this.currSpawnerItem == SpookyShedLocation.SOLAR_ESSENCE)
                 col = Color.Yellow;
-            else if (this.currSpawnerItem == VOID_ESSENCE)
+            else if (this.currSpawnerItem == SpookyShedLocation.VOID_ESSENCE)
                 col = Color.Purple;
-            else if (this.currSpawnerItem == BUG_MEAT)
+            else if (this.currSpawnerItem == SpookyShedLocation.BUG_MEAT)
                 col = Color.Pink;
 
 
@@ -56,11 +57,11 @@ namespace MoreBuildings.Buildings.SpookyShed
             }
         }
 
-        public override bool checkAction(xTile.Dimensions.Location tileLocation, xTile.Dimensions.Rectangle viewport, StardewValley.Farmer who)
+        public override bool checkAction(xTile.Dimensions.Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who)
         {
             if (tileLocation.X == 10 && tileLocation.Y == 10)
             {
-                if (who.CurrentItem != null && who.CurrentItem is StardewValley.Object obj)
+                if (who.CurrentItem != null && who.CurrentItem is SObject obj)
                 {
                     if (!obj.bigCraftable.Value)
                     {
@@ -79,7 +80,7 @@ namespace MoreBuildings.Buildings.SpookyShed
             this.characters.Clear();
 
             Log.trace("Player entered spooky shed, current spawner item: " + this.currSpawnerItem);
-            if (this.currSpawnerItem == BAT_WING)
+            if (this.currSpawnerItem == SpookyShedLocation.BAT_WING)
             {
                 var total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
@@ -89,7 +90,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                     this.characters.Add(new Bat(pos, 100));
                 }
             }
-            else if (this.currSpawnerItem == SOLAR_ESSENCE)
+            else if (this.currSpawnerItem == SpookyShedLocation.SOLAR_ESSENCE)
             {
                 var total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
@@ -99,7 +100,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                     this.characters.Add(new SquidKid(pos) { currentLocation = this });
                 }
             }
-            else if (this.currSpawnerItem == VOID_ESSENCE)
+            else if (this.currSpawnerItem == SpookyShedLocation.VOID_ESSENCE)
             {
                 var total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
@@ -109,7 +110,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                     this.characters.Add(new ShadowBrute(pos));
                 }
             }
-            else if (this.currSpawnerItem == BUG_MEAT)
+            else if (this.currSpawnerItem == SpookyShedLocation.BUG_MEAT)
             {
                 var total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)

@@ -13,7 +13,7 @@ namespace MoreGrassStarters
         private static readonly Texture2D tex = Game1.content.Load<Texture2D>("TerrainFeatures\\grass");
         public static Texture2D tex2;
         private int whichGrass = 1;
-        public static int ExtraGrassTypes => tex2 == null ? 0 : tex2.Height / 20;
+        public static int ExtraGrassTypes => GrassStarterItem.tex2 == null ? 0 : GrassStarterItem.tex2.Height / 20;
 
         public GrassStarterItem()
         {
@@ -62,7 +62,7 @@ namespace MoreGrassStarters
             int texOffset = 20 + this.whichGrass * 20;
             if (this.whichGrass >= 5)
             {
-                tex = tex2;
+                tex = GrassStarterItem.tex2;
                 texOffset = 20 * (this.whichGrass - 5);
             }
             b.Draw(tex, new Rectangle(x, y, 16, 20), new Rectangle(0, texOffset, 16, 20), Color.White);
@@ -74,7 +74,7 @@ namespace MoreGrassStarters
             int texOffset = 20 + this.whichGrass * 20;
             if (this.whichGrass >= 5)
             {
-                tex = tex2;
+                tex = GrassStarterItem.tex2;
                 texOffset = 20 * (this.whichGrass - 5);
             }
             b.Draw(tex, pos - new Vector2(-4, 24), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, (f.getStandingY() + 3) / 10000f);
@@ -86,7 +86,7 @@ namespace MoreGrassStarters
             int texOffset = 20 + this.whichGrass * 20;
             if (this.whichGrass >= 5)
             {
-                tex = tex2;
+                tex = GrassStarterItem.tex2;
                 texOffset = 20 * (this.whichGrass - 5);
             }
             b.Draw(tex, pos + new Vector2(4, 0), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4 * scale, SpriteEffects.None, layerDepth);

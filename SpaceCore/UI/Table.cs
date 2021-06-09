@@ -27,7 +27,7 @@ namespace SpaceCore.UI
             get { return this.rowHeight; }
             set
             {
-                this.rowHeight = value + RowPadding;
+                this.rowHeight = value + Table.RowPadding;
                 this.UpdateScrollbar();
             }
         }
@@ -76,7 +76,7 @@ namespace SpaceCore.UI
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.TopRow * this.RowHeight);
                     if (!(element is Label) && // Labels must update anyway to get rid of hovertext on scrollwheel
-                            (element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - RowPadding > this.Position.Y + this.Size.Y))
+                            (element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y))
                         continue;
                     element.Update();
                 }
@@ -93,7 +93,7 @@ namespace SpaceCore.UI
                 foreach (var element in row)
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.ScrollPercent * this.rows.Count * this.RowHeight);
-                    element.Update(hidden || element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - RowPadding > this.Position.Y + this.Size.Y);
+                    element.Update(hidden || element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y);
                 }
                 ++ir;
             }
@@ -108,7 +108,7 @@ namespace SpaceCore.UI
             {
                 foreach (var element in row)
                 {
-                    if (element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - RowPadding > this.Position.Y + this.Size.Y)
+                    if (element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y)
                         continue;
                     if (element == this.RenderLast)
                         continue;

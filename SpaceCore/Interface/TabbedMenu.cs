@@ -16,7 +16,7 @@ namespace SpaceCore.Interface
 
         public override void draw(SpriteBatch b)
         {
-            drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, Color.White);
+            IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, Color.White);
 
             b.End();
             b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, (DepthStencilState)null, (RasterizerState)null, null, Matrix.CreateTranslation(this.xPositionOnScreen, this.yPositionOnScreen, 0));

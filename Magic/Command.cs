@@ -11,15 +11,15 @@ namespace Magic
         internal static void register(string name, Action<string[]> callback)
         {
             // TODO: Load documentation from a file.
-            Mod.instance.Helper.ConsoleCommands.Add(name, "TO BE IMPLEMENTED", doCommand);
-            commands.Add(name, callback);
+            Mod.instance.Helper.ConsoleCommands.Add(name, "TO BE IMPLEMENTED", Command.doCommand);
+            Command.commands.Add(name, callback);
         }
 
         private static void doCommand(string cmd, string[] args)
         {
             try
             {
-                commands[cmd].Invoke(args);
+                Command.commands[cmd].Invoke(args);
             }
             catch (Exception e)
             {

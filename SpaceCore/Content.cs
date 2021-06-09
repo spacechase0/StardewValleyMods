@@ -56,7 +56,7 @@ namespace SpaceCore
         {
             var tmap = new TiledMap(Path.Combine(modHelper.DirectoryPath, path));
             var xmap = new Map(mapName);
-            addTiledPropertiesToXTile(tmap.Properties, xmap.Properties);
+            Content.addTiledPropertiesToXTile(tmap.Properties, xmap.Properties);
 
             var tileMapping = new Dictionary<int, TileMapping>();
             var animMapping = new Dictionary<int, TileAnimation>();
@@ -76,7 +76,7 @@ namespace SpaceCore
                 }
 
                 var xtileSheet = new TileSheet(xmap, image, new Size(ttileSheet.Columns, ttileSheet.TileCount / ttileSheet.Columns), new Size(tmap.TileWidth, tmap.TileHeight));
-                addTiledPropertiesToXTile(ttileSheet.Properties, xtileSheet.Properties);
+                Content.addTiledPropertiesToXTile(ttileSheet.Properties, xtileSheet.Properties);
                 xtileSheet.Id = ttileSheet.Name;
                 xtileSheet.Spacing = new Size(ttileSheet.Spacing, ttileSheet.Spacing);
                 xtileSheet.Margin = new Size(ttileSheet.Margin, ttileSheet.Margin);
@@ -86,7 +86,7 @@ namespace SpaceCore
                 }
                 foreach (var ttile in ttileSheet.Tiles)
                 {
-                    addTiledPropertiesToXTile(ttile.Properties, xtileSheet.TileIndexProperties[ttile.Id]);
+                    Content.addTiledPropertiesToXTile(ttile.Properties, xtileSheet.TileIndexProperties[ttile.Id]);
 
                     if (ttile.Animation != null && ttile.Animation.Count > 0)
                     {
@@ -113,7 +113,7 @@ namespace SpaceCore
                     // of EVERY OTHER LAYER IN EXISTANCE to match. And guess what, that breaks things.
                     // I spent hours figuring this out. I don't care about the underlying cause. I just want to mod.
                     var xlayer = new Layer(tlayer.Name, xmap, new Size(tmap.Width, tmap.Height), new Size(tmap.TileWidth * 4, tmap.TileHeight * 4));
-                    addTiledPropertiesToXTile(tlayer.Properties, xlayer.Properties);
+                    Content.addTiledPropertiesToXTile(tlayer.Properties, xlayer.Properties);
                     if (tlayer.Data.Compression != TiledData.CompressionType.NoCompression)
                         throw new InvalidDataException("Compressed tile data is not supported.");
                     if (tlayer.Data.Encoding == TiledData.EncodingType.NoEncoding || tlayer.Data.Encoding == TiledData.EncodingType.Xml)
@@ -180,7 +180,7 @@ namespace SpaceCore
                         Log.warn("Tile property for non-existant tile; skipping");
                         continue;
                     }
-                    addTiledPropertiesToXTile(tobj.Properties, xlayer.Tiles[new Location(x, y)].Properties);
+                    Content.addTiledPropertiesToXTile(tobj.Properties, xlayer.Tiles[new Location(x, y)].Properties);
                 }
             }
 
@@ -195,7 +195,7 @@ namespace SpaceCore
             try
             {
                 stream = new FileStream(Path.Combine(modHelper.DirectoryPath, path), FileMode.Open);
-                ttileSheet = (TiledTileset)tilesheetSerializer.Deserialize(stream);
+                ttileSheet = (TiledTileset)Content.tilesheetSerializer.Deserialize(stream);
             }
             finally
             {
@@ -215,13 +215,13 @@ namespace SpaceCore
             }
 
             var xtileSheet = new TileSheet(xmap, image, new Size(ttileSheet.Columns, ttileSheet.TileCount / ttileSheet.Columns), new Size(ttileSheet.TileWidth, ttileSheet.TileHeight));
-            addTiledPropertiesToXTile(ttileSheet.Properties, xtileSheet.Properties);
+            Content.addTiledPropertiesToXTile(ttileSheet.Properties, xtileSheet.Properties);
             xtileSheet.Id = ttileSheet.Name;
             xtileSheet.Spacing = new Size(ttileSheet.Spacing, ttileSheet.Spacing);
             xtileSheet.Margin = new Size(ttileSheet.Margin, ttileSheet.Margin);
             foreach (var ttile in ttileSheet.Tiles)
             {
-                addTiledPropertiesToXTile(ttile.Properties, xtileSheet.TileIndexProperties[ttile.Id]);
+                Content.addTiledPropertiesToXTile(ttile.Properties, xtileSheet.TileIndexProperties[ttile.Id]);
 
                 if (ttile.Animation != null && ttile.Animation.Count > 0)
                 {

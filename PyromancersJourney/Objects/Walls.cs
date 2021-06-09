@@ -111,11 +111,11 @@ namespace PyromancersJourney.Objects
         {
             base.Render(device, projection, cam);
             //effect.LightingEnabled = true;
-            effect.TextureEnabled = true;
-            effect.Texture = this.outside ? this.texOutside : this.texInside;
-            for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.effect.TextureEnabled = true;
+            BaseObject.effect.Texture = this.outside ? this.texOutside : this.texInside;
+            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
                 pass.Apply();
                 device.SetVertexBuffer(this.buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, this.triCount);

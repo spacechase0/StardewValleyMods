@@ -7,6 +7,7 @@ using StardewValley.Buildings;
 using StardewValley.Locations;
 using StardewValley.Network;
 using StardewValley.Tools;
+using SObject = StardewValley.Object;
 
 namespace BuildableLocationsFramework
 {
@@ -83,7 +84,7 @@ namespace BuildableLocationsFramework
         }
 
         public override bool isCollidingPosition(
-            Microsoft.Xna.Framework.Rectangle position,
+            Rectangle position,
             xTile.Dimensions.Rectangle viewport,
             bool isFarmer,
             int damagesFarmer,
@@ -125,7 +126,7 @@ namespace BuildableLocationsFramework
             return false;
         }
 
-        public bool CheckPetAnimal(Microsoft.Xna.Framework.Rectangle rect, Farmer who)
+        public bool CheckPetAnimal(Rectangle rect, Farmer who)
         {
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
@@ -151,7 +152,7 @@ namespace BuildableLocationsFramework
             return false;
         }
 
-        public bool CheckInspectAnimal(Microsoft.Xna.Framework.Rectangle rect, Farmer who)
+        public bool CheckInspectAnimal(Rectangle rect, Farmer who)
         {
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
@@ -196,7 +197,7 @@ namespace BuildableLocationsFramework
             if (this.isThereABuildingUnderConstruction() && (int)(NetFieldBase<int, NetInt>)this.getBuildingUnderConstruction().daysOfConstructionLeft > 0 && Game1.getCharacterFromName("Robin", true).currentLocation.Equals((GameLocation)this))
             {
                 Building underConstruction = this.getBuildingUnderConstruction();
-                this.temporarySprites.Add(new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Microsoft.Xna.Framework.Rectangle(399, 262, (int)(NetFieldBase<int, NetInt>)underConstruction.daysOfConstructionLeft == 1 ? 29 : 9, 43), new Vector2((float)((int)(NetFieldBase<int, NetInt>)underConstruction.tileX + (int)(NetFieldBase<int, NetInt>)underConstruction.tilesWide / 2), (float)((int)(NetFieldBase<int, NetInt>)underConstruction.tileY + (int)(NetFieldBase<int, NetInt>)underConstruction.tilesHigh / 2)) * 64f + new Vector2(-16f, -144f), false, 0.0f, Color.White)
+                this.temporarySprites.Add(new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(399, 262, (int)(NetFieldBase<int, NetInt>)underConstruction.daysOfConstructionLeft == 1 ? 29 : 9, 43), new Vector2((float)((int)(NetFieldBase<int, NetInt>)underConstruction.tileX + (int)(NetFieldBase<int, NetInt>)underConstruction.tilesWide / 2), (float)((int)(NetFieldBase<int, NetInt>)underConstruction.tileY + (int)(NetFieldBase<int, NetInt>)underConstruction.tilesHigh / 2)) * 64f + new Vector2(-16f, -144f), false, 0.0f, Color.White)
                 {
                     id = 16846f,
                     scale = 4f,
@@ -220,7 +221,7 @@ namespace BuildableLocationsFramework
             }
         }
 
-        public override bool isTileOccupiedForPlacement(Vector2 tileLocation, StardewValley.Object toPlace = null)
+        public override bool isTileOccupiedForPlacement(Vector2 tileLocation, SObject toPlace = null)
         {
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
@@ -281,7 +282,7 @@ namespace BuildableLocationsFramework
             return base.isTileBuildingFishable(tileX, tileY);
         }
 
-        public override StardewValley.Object getFish(float millisecondsAfterNibble, int bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null)
+        public override SObject getFish(float millisecondsAfterNibble, int bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null)
         {
             if (locationName != null && locationName != this.Name)
                 return base.getFish(millisecondsAfterNibble, bait, waterDepth, who, baitPotency, bobberTile, locationName);

@@ -11,7 +11,7 @@ namespace SleepyEye
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.Display.MenuChanged += this.onMenuChanged;

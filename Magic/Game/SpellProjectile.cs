@@ -176,7 +176,7 @@ namespace Magic.Game
             if (this.spell.SoundHit != null)
                 Game1.playSound(this.spell.SoundHit);
             //Game1.createRadialDebris(loc, 22 + rand.Next( 2 ), ( int ) position.X / Game1.tileSize, ( int ) position.Y / Game1.tileSize, 3 + rand.Next(5), false);
-            Game1.createRadialDebris(loc, this.texId, Game1.getSourceRectForStandardTileSheet(Projectile.projectileSheet, 0), 4, (int)this.position.X, (int)this.position.Y, 6 + rand.Next(10), (int)((double)this.position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 8 + rand.Next(64)), 2.0f);
+            Game1.createRadialDebris(loc, this.texId, Game1.getSourceRectForStandardTileSheet(Projectile.projectileSheet, 0), 4, (int)this.position.X, (int)this.position.Y, 6 + SpellProjectile.rand.Next(10), (int)((double)this.position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 8 + SpellProjectile.rand.Next(64)), 2.0f);
             //Game1.createRadialDebris(loc, tex, new Rectangle(0, 0, tex.Width, tex.Height), 0, ( int ) position.X, ( int ) position.Y, 3 + rand.Next(5), ( int ) position.Y / Game1.tileSize, Color.White, 5.0f);
             this.destroyMe = true;
         }

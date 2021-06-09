@@ -18,9 +18,9 @@ namespace ObjectTimeLeft
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
-            Config = helper.ReadConfig<Configuration>();
+            Mod.Config = helper.ReadConfig<Configuration>();
 
             helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
             helper.Events.Display.RenderingHud += this.onRenderingHud;
@@ -32,8 +32,8 @@ namespace ObjectTimeLeft
             var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Config = new Configuration(), () => this.Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Config.ToggleKey, (SButton val) => Config.ToggleKey = val);
+                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Mod.Config.ToggleKey, (SButton val) => Mod.Config.ToggleKey = val);
             }
         }
 
@@ -42,7 +42,7 @@ namespace ObjectTimeLeft
         /// <param name="e">The event arguments.</param>
         private void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (e.Button == Config.ToggleKey)
+            if (e.Button == Mod.Config.ToggleKey)
                 this.showing = !this.showing;
         }
 

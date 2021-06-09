@@ -37,10 +37,10 @@ namespace PyromancersJourney.Objects
                 int fx = f % 12;
                 int fy = f / 12;
 
-                float xa = (80f / tex.Width) * fx;
-                float xb = (80f / tex.Width) * (fx + 1);
-                float ya = (80f / tex.Height) * (fy + 1);
-                float yb = (80f / tex.Height) * fy;
+                float xa = (80f / GolemEnemy.tex.Width) * fx;
+                float xb = (80f / GolemEnemy.tex.Width) * (fx + 1);
+                float ya = (80f / GolemEnemy.tex.Height) * (fy + 1);
+                float yb = (80f / GolemEnemy.tex.Height) * fy;
                 vertices.Add(new VertexPositionColorTexture(new Vector3(-1.5f, 0, 0), Color.White, new Vector2(xa, ya)));
                 vertices.Add(new VertexPositionColorTexture(new Vector3(1.5f, 0, 0), Color.White, new Vector2(xb, ya)));
                 vertices.Add(new VertexPositionColorTexture(new Vector3(1.5f, 3, 0), Color.White, new Vector2(xb, yb)));
@@ -214,12 +214,12 @@ namespace PyromancersJourney.Objects
             newStencil.DepthBufferWriteEnable = false;
             device.DepthStencilState = newStencil;
 
-            effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, Vector3.Up, null, null);
-            effect.TextureEnabled = true;
-            effect.Texture = tex;
-            for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, Vector3.Up, null, null);
+            BaseObject.effect.TextureEnabled = true;
+            BaseObject.effect.Texture = GolemEnemy.tex;
+            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
                 pass.Apply();
 
                 device.SetVertexBuffer(this.buffer);

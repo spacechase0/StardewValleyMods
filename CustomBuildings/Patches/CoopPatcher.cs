@@ -94,7 +94,7 @@ namespace CustomBuildings.Patches
             }
 
             var bdata = Mod.instance.buildings[__instance.buildingType];
-            __instance.indoors.Value.objects.Remove(new Microsoft.Xna.Framework.Vector2(3, 3));
+            __instance.indoors.Value.objects.Remove(new Vector2(3, 3));
             StardewValley.Object @object = new StardewValley.Object(new Vector2(bdata.FeedHopperX, bdata.FeedHopperY), 99, false);
             @object.fragility.Value = 2;
             __instance.indoors.Value.objects.Add(new Vector2(bdata.FeedHopperX, bdata.FeedHopperY), @object);

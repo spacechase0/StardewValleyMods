@@ -4,6 +4,7 @@ using Spacechase.Shared.Harmony;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Objects;
+using SObject = StardewValley.Object;
 
 namespace CarryChest.Patches
 {
@@ -32,7 +33,7 @@ namespace CarryChest.Patches
         {
             // We're checking the `.ParentSheetIndex` instead of `is Chest` because when you break a chest 
             // and pick it up it isn't a chest instance, it's just an object with the chest index.
-            if (__instance.ParentSheetIndex == 130 && (other is StardewValley.Object obj && obj.ParentSheetIndex == 130))
+            if (__instance.ParentSheetIndex == 130 && (other is SObject obj && obj.ParentSheetIndex == 130))
             {
                 Chest c1 = __instance as Chest;
                 Chest c2 = other as Chest;

@@ -21,7 +21,7 @@ namespace CookingSkill
 
         public static double getEdibilityMultiplier()
         {
-            return 1 + Game1.player.GetCustomSkillLevel(skill) * 0.03;
+            return 1 + Game1.player.GetCustomSkillLevel(Mod.skill) * 0.03;
         }
 
         public static double getNoConsumeChance()
@@ -46,7 +46,7 @@ namespace CookingSkill
                 }
                 Random rand = new Random((int)(Game1.stats.daysPlayed + Game1.uniqueIDForThisGame + (uint)obj.ParentSheetIndex + (uint)amtCrafted));
 
-                obj.Edibility = (int)(obj.Edibility * getEdibilityMultiplier());
+                obj.Edibility = (int)(obj.Edibility * Mod.getEdibilityMultiplier());
 
                 if (Game1.player.HasCustomProfession(Skill.ProfessionSellPrice))
                 {
@@ -80,7 +80,7 @@ namespace CookingSkill
                         obj.Quality = iq;
                 }
 
-                return rand.NextDouble() >= getNoConsumeChance();
+                return rand.NextDouble() >= Mod.getNoConsumeChance();
             }
 
             return true;
@@ -90,13 +90,13 @@ namespace CookingSkill
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.Display.MenuChanged += this.onMenuChanged;
             SpaceEvents.OnItemEaten += this.onItemEaten;
 
-            Skills.RegisterSkill(skill = new Skill());
+            Skills.RegisterSkill(Mod.skill = new Skill());
         }
 
         public override object GetApi()

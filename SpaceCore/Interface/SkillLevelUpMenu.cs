@@ -382,7 +382,7 @@ namespace SpaceCore.Interface
 
         public static string getProfessionTitleFromNumber(int whichProfession)
         {
-            return getProfessionName(whichProfession);
+            return SkillLevelUpMenu.getProfessionName(whichProfession);
             //return Game1.content.LoadString("Strings\\UI:LevelUp_ProfessionName_" + LevelUpMenu.getProfessionName(whichProfession));
         }
 

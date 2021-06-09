@@ -76,7 +76,7 @@ namespace BiggerCraftables.Patches
                             {
                                 for (int iy = (int)tileLocation.Y; iy < (int)tileLocation.Y + entry.Length; ++iy)
                                 {
-                                    if (farmer.GetBoundingBox().Intersects(new Microsoft.Xna.Framework.Rectangle(ix * 64, iy * 64, 64, 64)))
+                                    if (farmer.GetBoundingBox().Intersects(new Rectangle(ix * 64, iy * 64, 64, 64)))
                                     {
                                         __result = false;
                                         return false;

@@ -15,20 +15,20 @@ namespace StatueOfGenerosity
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
 
             HarmonyPatcher.Apply(this,
-                new ObjectPatcher(getStatueId: () => ja.GetBigCraftableId("Statue of Generosity"))
+                new ObjectPatcher(getStatueId: () => Mod.ja.GetBigCraftableId("Statue of Generosity"))
             );
         }
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
-            ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
+            Mod.ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            Mod.ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
         }
     }
 }

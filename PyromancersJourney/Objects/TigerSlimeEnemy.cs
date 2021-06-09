@@ -22,7 +22,7 @@ namespace PyromancersJourney.Objects
         {
             this.Health = this.eyeType + 1;
 
-            if (mainBuffer == null)
+            if (TigerSlimeEnemy.mainBuffer == null)
             {
                 float s = 0.75f;
 
@@ -31,10 +31,10 @@ namespace PyromancersJourney.Objects
                 {
                     for (int i = 0; i < 4; ++i)
                     {
-                        float xa = (16f / tex.Width) * i;
-                        float xb = (16f / tex.Width) * (i + 1);
-                        float ya = (24f / tex.Height) * (f + 1);
-                        float yb = (24f / tex.Height) * f;
+                        float xa = (16f / TigerSlimeEnemy.tex.Width) * i;
+                        float xb = (16f / TigerSlimeEnemy.tex.Width) * (i + 1);
+                        float ya = (24f / TigerSlimeEnemy.tex.Height) * (f + 1);
+                        float yb = (24f / TigerSlimeEnemy.tex.Height) * f;
                         vertices.Add(new VertexPositionColorTexture(new Vector3(0, 0, 0), Color.White, new Vector2(xa, ya)));
                         vertices.Add(new VertexPositionColorTexture(new Vector3(s, 0, 0), Color.White, new Vector2(xb, ya)));
                         vertices.Add(new VertexPositionColorTexture(new Vector3(s, s, 0), Color.White, new Vector2(xb, yb)));
@@ -45,18 +45,18 @@ namespace PyromancersJourney.Objects
                     }
                 }
 
-                mainBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
-                mainBuffer.SetData(vertices.ToArray());
+                TigerSlimeEnemy.mainBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                TigerSlimeEnemy.mainBuffer.SetData(vertices.ToArray());
 
                 vertices.Clear();
                 for (int i = 0; i < 4; ++i)
                 {
                     int x = 32 + i % 2 * 16;
                     int y = 120 + i / 2 * 24;
-                    float xa = (x / (float)tex.Width);
-                    float xb = ((x + 16) / (float)tex.Width);
-                    float ya = ((y + 24) / (float)tex.Height);
-                    float yb = (y / (float)tex.Height);
+                    float xa = (x / (float)TigerSlimeEnemy.tex.Width);
+                    float xb = ((x + 16) / (float)TigerSlimeEnemy.tex.Width);
+                    float ya = ((y + 24) / (float)TigerSlimeEnemy.tex.Height);
+                    float yb = (y / (float)TigerSlimeEnemy.tex.Height);
 
                     vertices.Add(new VertexPositionColorTexture(new Vector3(0, 0, 0), Color.White, new Vector2(xa, ya)));
                     vertices.Add(new VertexPositionColorTexture(new Vector3(s, 0, 0), Color.White, new Vector2(xb, ya)));
@@ -67,8 +67,8 @@ namespace PyromancersJourney.Objects
                     vertices.Add(new VertexPositionColorTexture(new Vector3(s, s, 0), Color.White, new Vector2(xb, yb)));
                 }
 
-                eyesBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
-                eyesBuffer.SetData(vertices.ToArray());
+                TigerSlimeEnemy.eyesBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                TigerSlimeEnemy.eyesBuffer.SetData(vertices.ToArray());
             }
         }
 
@@ -124,15 +124,15 @@ namespace PyromancersJourney.Objects
 
             var camForward = (cam.pos - cam.target);
             camForward.Normalize();
-            effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
-            effect.TextureEnabled = true;
-            effect.Texture = tex;
-            for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
+            BaseObject.effect.TextureEnabled = true;
+            BaseObject.effect.Texture = TigerSlimeEnemy.tex;
+            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
                 pass.Apply();
 
-                device.SetVertexBuffer(mainBuffer);
+                device.SetVertexBuffer(TigerSlimeEnemy.mainBuffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, frame * 6, 2);
             }
 
@@ -150,13 +150,13 @@ namespace PyromancersJourney.Objects
                 }
                 eyePos.Y *= 0.75f;
 
-                effect.World = Matrix.CreateConstrainedBillboard(this.Position + eyePos, cam.pos, cam.up, null, null);
-                for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
+                BaseObject.effect.World = Matrix.CreateConstrainedBillboard(this.Position + eyePos, cam.pos, cam.up, null, null);
+                for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
                 {
-                    var pass = effect.CurrentTechnique.Passes[e];
+                    var pass = BaseObject.effect.CurrentTechnique.Passes[e];
                     pass.Apply();
 
-                    device.SetVertexBuffer(eyesBuffer);
+                    device.SetVertexBuffer(TigerSlimeEnemy.eyesBuffer);
                     device.DrawPrimitives(PrimitiveType.TriangleList, this.eyeType * 6, 2);
                 }
             }

@@ -15,7 +15,6 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Network;
 using StardewValley.Objects;
-using static Magic.Mod;
 
 namespace Magic
 {
@@ -44,41 +43,41 @@ namespace Magic
             Magic.events = events;
             Magic.inputHelper = inputHelper;
 
-            loadAssets();
+            Magic.loadAssets();
 
             SpellBook.init(getNewId);
 
-            events.GameLoop.SaveLoaded += onSaveLoaded;
-            events.GameLoop.UpdateTicked += onUpdateTicked;
+            events.GameLoop.SaveLoaded += Magic.onSaveLoaded;
+            events.GameLoop.UpdateTicked += Magic.onUpdateTicked;
 
-            events.Input.ButtonPressed += onButtonPressed;
-            events.Input.ButtonReleased += onButtonReleased;
+            events.Input.ButtonPressed += Magic.onButtonPressed;
+            events.Input.ButtonReleased += Magic.onButtonReleased;
 
-            events.GameLoop.TimeChanged += onTimeChanged;
-            events.Player.Warped += onWarped;
+            events.GameLoop.TimeChanged += Magic.onTimeChanged;
+            events.Player.Warped += Magic.onWarped;
 
-            SpaceEvents.OnBlankSave += onBlankSave;
-            SpaceEvents.OnItemEaten += onItemEaten;
-            SpaceEvents.ActionActivated += actionTriggered;
-            SpaceCore.Networking.RegisterMessageHandler(MSG_DATA, onNetworkData);
-            SpaceCore.Networking.RegisterMessageHandler(MSG_CAST, onNetworkCast);
-            SpaceEvents.ServerGotClient += onClientConnected;
+            SpaceEvents.OnBlankSave += Magic.onBlankSave;
+            SpaceEvents.OnItemEaten += Magic.onItemEaten;
+            SpaceEvents.ActionActivated += Magic.actionTriggered;
+            Networking.RegisterMessageHandler(Magic.MSG_DATA, Magic.onNetworkData);
+            Networking.RegisterMessageHandler(Magic.MSG_CAST, Magic.onNetworkCast);
+            SpaceEvents.ServerGotClient += Magic.onClientConnected;
 
-            events.Display.RenderingHud += onRenderingHud;
-            events.Display.RenderedHud += onRenderedHud;
+            events.Display.RenderingHud += Magic.onRenderingHud;
+            events.Display.RenderedHud += Magic.onRenderedHud;
 
-            OnAnalyzeCast += onAnalyze;
-            OnAnalyzeCast += (sender, e) =>
+            Magic.OnAnalyzeCast += Magic.onAnalyze;
+            Magic.OnAnalyzeCast += (sender, e) =>
             {
                 Mod.instance.api.InvokeOnAnalyzeCast(sender as Farmer);
             };
 
-            SpaceCore.Skills.RegisterSkill(Skill = new Skill());
+            Skills.RegisterSkill(Magic.Skill = new Skill());
 
-            Command.register("player_learnspell", learnSpellCommand);
-            Command.register("magicmenu", magicMenuCommand);
+            Command.register("player_learnspell", Magic.learnSpellCommand);
+            Command.register("magicmenu", Magic.magicMenuCommand);
 
-            PyTK.CustomTV.CustomTVMod.addChannel("magic", Mod.instance.Helper.Translation.Get("tv.analyzehints.name"), onTvChannelSelected);
+            PyTK.CustomTV.CustomTVMod.addChannel("magic", Mod.instance.Helper.Translation.Get("tv.analyzehints.name"), Magic.onTvChannelSelected);
         }
 
         private static void onAnalyze(object sender, AnalyzeEventArgs e)
@@ -99,7 +98,7 @@ namespace Magic
                     else if (farmer.CurrentTool is StardewValley.Tools.WateringCan)
                         spellsLearnt.Add("toil:water");
                 }
-                else if (farmer.CurrentItem is StardewValley.Objects.Boots)
+                else if (farmer.CurrentItem is Boots)
                 {
                     spellsLearnt.Add("life:evac");
                 }
@@ -226,30 +225,30 @@ namespace Magic
         {
             IActiveEffect effect = Game1.getFarmer(msg.FarmerID).castSpell(msg.Reader.ReadString(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32());
             if (effect != null)
-                activeEffects.Add(effect);
+                Magic.activeEffects.Add(effect);
         }
 
         private static void onClientConnected(object sender, EventArgsServerGotClient args)
         {
-            if (!Data.players.ContainsKey(args.FarmerID))
-                Data.players[args.FarmerID] = new MultiplayerSaveData.PlayerData();
+            if (!Mod.Data.players.ContainsKey(args.FarmerID))
+                Mod.Data.players[args.FarmerID] = new MultiplayerSaveData.PlayerData();
 
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
-                writer.Write((int)Data.players.Count);
-                foreach (var entry in Data.players)
+                writer.Write((int)Mod.Data.players.Count);
+                foreach (var entry in Mod.Data.players)
                 {
                     writer.Write(entry.Key);
                     writer.Write(JsonConvert.SerializeObject(entry.Value, MultiplayerSaveData.networkSerializerSettings));
                 }
-                SpaceCore.Networking.BroadcastMessage(Magic.MSG_DATA, stream.ToArray());
+                Networking.BroadcastMessage(Magic.MSG_DATA, stream.ToArray());
             }
         }
 
         private static void onBlankSave(object sender, EventArgs args)
         {
-            placeAltar(Mod.Config.AltarLocation, Mod.Config.AltarX, Mod.Config.AltarY, 54 * 4);
+            Magic.placeAltar(Mod.Config.AltarLocation, Mod.Config.AltarX, Mod.Config.AltarY, 54 * 4);
         }
 
         /// <summary>Raised after the player loads a save slot.</summary>
@@ -257,12 +256,12 @@ namespace Magic
         /// <param name="e">The event arguments.</param>
         public static void onSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            Data.players[Game1.player.UniqueMultiplayerID].spellBook.Owner = Game1.player;
+            Mod.Data.players[Game1.player.UniqueMultiplayerID].spellBook.Owner = Game1.player;
             foreach (var farmer in Game1.otherFarmers)
             {
-                if (!Data.players.ContainsKey(farmer.Key))
+                if (!Mod.Data.players.ContainsKey(farmer.Key))
                     continue;
-                Data.players[farmer.Key].spellBook.Owner = farmer.Value;
+                Mod.Data.players[farmer.Key].spellBook.Owner = farmer.Value;
             }
         }
 
@@ -272,11 +271,11 @@ namespace Magic
         private static void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             // update active effects
-            for (int i = activeEffects.Count - 1; i >= 0; i--)
+            for (int i = Magic.activeEffects.Count - 1; i >= 0; i--)
             {
-                IActiveEffect effect = activeEffects[i];
+                IActiveEffect effect = Magic.activeEffects[i];
                 if (!effect.Update(e))
-                    activeEffects.RemoveAt(i);
+                    Magic.activeEffects.RemoveAt(i);
             }
         }
 
@@ -286,7 +285,7 @@ namespace Magic
         private static void onRenderingHud(object sender, RenderingHudEventArgs e)
         {
             // draw active effects
-            foreach (IActiveEffect effect in activeEffects)
+            foreach (IActiveEffect effect in Magic.activeEffects)
                 effect.Draw(e.SpriteBatch);
         }
 
@@ -316,11 +315,11 @@ namespace Magic
                 new Point((int)manaPos.X + manaBg.Width * 4 + 20, Game1.viewport.Height - 20 - 50 - 40 - 25 ),
             };*/
             {
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 4 + spotYAffector ) ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 3 + spotYAffector ) ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 2 + spotYAffector ) ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 1 + spotYAffector ) ),
-                new Point( (int)manaPos.X + manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 0 + spotYAffector ) ),
+                new Point( (int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 4 + spotYAffector ) ),
+                new Point( (int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 3 + spotYAffector ) ),
+                new Point( (int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 2 + spotYAffector ) ),
+                new Point( (int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 1 + spotYAffector ) ),
+                new Point( (int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 0 + spotYAffector ) ),
             };
 
             SpellBook book = Game1.player.getSpellBook();
@@ -330,7 +329,7 @@ namespace Magic
 
             for (int i = 0; i < (hasFifthSpellSlot ? 5 : 4); ++i)
             {
-                b.Draw(spellBg, new Rectangle(spots[i].X, spots[i].Y, 50, 50), Color.White);
+                b.Draw(Magic.spellBg, new Rectangle(spots[i].X, spots[i].Y, 50, 50), Color.White);
             }
 
             string prepStr = (book.selectedPrepared + 1) + "/" + book.prepared.Length;
@@ -359,12 +358,12 @@ namespace Magic
 
         private static void loadAssets()
         {
-            spellBg = Content.loadTexture("interface/spellbg.png");
-            manaBg = Content.loadTexture("interface/manabg.png");
+            Magic.spellBg = Content.loadTexture("interface/spellbg.png");
+            Magic.manaBg = Content.loadTexture("interface/manabg.png");
 
             Color manaCol = new Color(0, 48, 255);
-            manaFg = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
-            manaFg.SetData(new Color[] { manaCol });
+            Magic.manaFg = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
+            Magic.manaFg.SetData(new Color[] { manaCol });
         }
 
         private static bool castPressed = false;
@@ -376,27 +375,27 @@ namespace Magic
         {
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
-            if (e.Button == Config.Key_Cast)
+            if (e.Button == Mod.Config.Key_Cast)
             {
-                castPressed = true;
+                Magic.castPressed = true;
             }
 
-            if (Data == null || Game1.activeClickableMenu != null) return;
-            if (e.Button == Config.Key_SwapSpells)
+            if (Mod.Data == null || Game1.activeClickableMenu != null) return;
+            if (e.Button == Mod.Config.Key_SwapSpells)
             {
                 Game1.player.getSpellBook().swapPreparedSet();
             }
-            else if (castPressed &&
-                     (e.Button == Config.Key_Spell1 || e.Button == Config.Key_Spell2 ||
-                      e.Button == Config.Key_Spell3 || e.Button == Config.Key_Spell4 ||
-                      (e.Button == Config.Key_Spell5 && hasFifthSpellSlot)))
+            else if (Magic.castPressed &&
+                     (e.Button == Mod.Config.Key_Spell1 || e.Button == Mod.Config.Key_Spell2 ||
+                      e.Button == Mod.Config.Key_Spell3 || e.Button == Mod.Config.Key_Spell4 ||
+                      (e.Button == Mod.Config.Key_Spell5 && hasFifthSpellSlot)))
             {
                 int slot = 0;
-                if (e.Button == Config.Key_Spell1) slot = 0;
-                else if (e.Button == Config.Key_Spell2) slot = 1;
-                else if (e.Button == Config.Key_Spell3) slot = 2;
-                else if (e.Button == Config.Key_Spell4) slot = 3;
-                else if (e.Button == Config.Key_Spell5) slot = 4;
+                if (e.Button == Mod.Config.Key_Spell1) slot = 0;
+                else if (e.Button == Mod.Config.Key_Spell2) slot = 1;
+                else if (e.Button == Mod.Config.Key_Spell3) slot = 2;
+                else if (e.Button == Mod.Config.Key_Spell4) slot = 3;
+                else if (e.Button == Mod.Config.Key_Spell5) slot = 4;
 
                 Magic.inputHelper.Suppress(e.Button);
 
@@ -417,7 +416,7 @@ namespace Magic
 
                     IActiveEffect effect = Game1.player.castSpell(toCast, prep.Level);
                     if (effect != null)
-                        activeEffects.Add(effect);
+                        Magic.activeEffects.Add(effect);
                     Game1.player.addMana(-toCast.getManaCost(Game1.player, prep.Level));
                 }
             }
@@ -428,23 +427,23 @@ namespace Magic
         /// <param name="e">The event arguments.</param>
         private static void onButtonReleased(object sender, ButtonReleasedEventArgs e)
         {
-            if (e.Button == Config.Key_Cast)
+            if (e.Button == Mod.Config.Key_Cast)
             {
-                castPressed = false;
+                Magic.castPressed = false;
             }
         }
 
         private static float carryoverManaRegen = 0;
         private static void onTimeChanged(object sender, TimeChangedEventArgs e)
         {
-            float manaRegen = Game1.player.GetCustomSkillLevel(Skill) / 2 + carryoverManaRegen;
+            float manaRegen = Game1.player.GetCustomSkillLevel(Magic.Skill) / 2 + Magic.carryoverManaRegen;
             if (Game1.player.HasCustomProfession(Skill.ProfessionManaRegen2))
                 manaRegen *= 3;
             else if (Game1.player.HasCustomProfession(Skill.ProfessionManaRegen1))
                 manaRegen *= 2;
 
             Game1.player.addMana((int)manaRegen);
-            carryoverManaRegen = manaRegen - (int)manaRegen;
+            Magic.carryoverManaRegen = manaRegen - (int)manaRegen;
         }
 
         /// <summary>Raised after a player warps to a new location.</summary>
@@ -479,7 +478,7 @@ namespace Magic
                 Game1.player.CanMove = false;
                 Game1.player.showNotCarrying();
 
-                Game1.player.AddCustomSkillExperience(Skill, Skill.ExperienceCurve[0]);
+                Game1.player.AddCustomSkillExperience(Magic.Skill, Magic.Skill.ExperienceCurve[0]);
                 Game1.player.addMana(Game1.player.getMaxMana());
                 Game1.player.learnSpell("arcane:analyze", 0, true);
                 Game1.player.learnSpell("arcane:magicmissle", 0, true);
@@ -513,7 +512,7 @@ namespace Magic
                 Log.warn("No item eaten for the item eat event?!?");
                 return;
             }
-            if (Game1.player.itemToEat.ParentSheetIndex == ja.GetObjectId("Magic Elixir"))
+            if (Game1.player.itemToEat.ParentSheetIndex == Mod.ja.GetObjectId("Magic Elixir"))
                 Game1.player.addMana(Game1.player.getMaxMana());
         }
 

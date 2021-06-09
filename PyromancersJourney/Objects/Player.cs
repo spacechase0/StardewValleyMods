@@ -168,8 +168,8 @@ namespace PyromancersJourney.Objects
         {
             base.RenderOver(device, projection, cam);
 
-            effect.TextureEnabled = true;
-            effect.Texture = this.staffTex;
+            BaseObject.effect.TextureEnabled = true;
+            BaseObject.effect.Texture = this.staffTex;
             var lookVec = this.World.cam.target - this.Position;
             var lookSide = new Vector3((float)Math.Cos(this.look + (float)(Math.PI / 2)), 0, (float)Math.Sin(this.look + (float)(Math.PI / 2)));
             var staffOffset = new Vector2(0.45f, -1.15f);
@@ -179,12 +179,12 @@ namespace PyromancersJourney.Objects
                 staffOffset.X += (float)this.shakeRand.NextDouble() * 0.1f - 0.05f;
                 staffOffset.Y += (float)this.shakeRand.NextDouble() * 0.1f - 0.05f;
             }
-            effect.World = Matrix.CreateRotationZ((float)(Math.PI / 2)) *
-                           Matrix.CreateRotationY(-this.look + (float)(Math.PI / 2)) *
-                           Matrix.CreateTranslation(this.Position + lookVec + new Vector3(lookSide.X * staffOffset.X, staffOffset.Y, lookSide.Z * staffOffset.X));
-            for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.effect.World = Matrix.CreateRotationZ((float)(Math.PI / 2)) *
+                                      Matrix.CreateRotationY(-this.look + (float)(Math.PI / 2)) *
+                                      Matrix.CreateTranslation(this.Position + lookVec + new Vector3(lookSide.X * staffOffset.X, staffOffset.Y, lookSide.Z * staffOffset.X));
+            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
                 pass.Apply();
                 device.SetVertexBuffer(this.staffBuffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);

@@ -1,18 +1,19 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewValley;
+using SObject = StardewValley.Object;
 
 namespace BiggerCraftables
 {
     public interface IApi
     {
-        bool IsBiggerCraftable(StardewValley.Object obj);
+        bool IsBiggerCraftable(SObject obj);
         Vector2 GetBaseCraftable(GameLocation loc, Vector2 pos);
     }
 
     public class Api : IApi
     {
-        public bool IsBiggerCraftable(StardewValley.Object obj)
+        public bool IsBiggerCraftable(SObject obj)
         {
             if (!obj.bigCraftable.Value)
                 return false;

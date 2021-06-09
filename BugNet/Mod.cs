@@ -33,7 +33,7 @@ namespace BugNet
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
@@ -83,14 +83,14 @@ namespace BugNet
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            Mod.ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
             var spaceCore = this.Helper.ModRegistry.GetApi<SpaceCoreAPI>("spacechase0.SpaceCore");
             spaceCore.RegisterSerializerType(typeof(BugNetTool));
         }
 
         private void RegisterCritter(string critterId, Texture2D tex, Rectangle texRect, Func<string> getLocalizedName, Func<int, int, Critter> makeFunc)
         {
-            CrittersData.Add(critterId, new CritterData()
+            Mod.CrittersData.Add(critterId, new CritterData()
             {
                 Texture = new TextureTarget() { Texture = tex, SourceRect = texRect },
                 Name = getLocalizedName,
@@ -137,9 +137,9 @@ namespace BugNet
             {
                 // Get the critter ID
                 CritterData activeCritter = null;
-                foreach (var critterData in CrittersData)
+                foreach (var critterData in Mod.CrittersData)
                 {
-                    int check = ja.GetObjectId("Critter Cage: " + critterData.Value.Name());
+                    int check = Mod.ja.GetObjectId("Critter Cage: " + critterData.Value.Name());
                     if (check == Game1.player.ActiveObject.ParentSheetIndex)
                     {
                         activeCritter = critterData.Value;
@@ -160,22 +160,22 @@ namespace BugNet
 
         internal static Texture2D GetCritterTexture(string critter)
         {
-            return CrittersData.ContainsKey(critter) ? CrittersData[critter].Texture.Texture : Game1.staminaRect;
+            return Mod.CrittersData.ContainsKey(critter) ? Mod.CrittersData[critter].Texture.Texture : Game1.staminaRect;
         }
 
         internal static Rectangle GetCritterRect(string critter)
         {
-            return CrittersData.ContainsKey(critter) ? CrittersData[critter].Texture.SourceRect : new Rectangle(0, 0, 1, 1);
+            return Mod.CrittersData.ContainsKey(critter) ? Mod.CrittersData[critter].Texture.SourceRect : new Rectangle(0, 0, 1, 1);
         }
 
         internal static string GetCritterName(string critter)
         {
-            return CrittersData.ContainsKey(critter) ? CrittersData[critter].Name() : "???";
+            return Mod.CrittersData.ContainsKey(critter) ? Mod.CrittersData[critter].Name() : "???";
         }
 
         internal static Func<int, int, Critter> GetCritterMaker(string critter)
         {
-            return CrittersData.ContainsKey(critter) ? CrittersData[critter].MakeFunction : ((x, y) => null);
+            return Mod.CrittersData.ContainsKey(critter) ? Mod.CrittersData[critter].MakeFunction : ((x, y) => null);
         }
 
         internal static string GetCritterIdFrom(Critter critter)

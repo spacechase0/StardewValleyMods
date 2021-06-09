@@ -9,32 +9,32 @@ namespace SpaceShared
 
         public static void verbose(String str)
         {
-            Monitor.VerboseLog(str);
+            Log.Monitor.VerboseLog(str);
         }
 
         public static void trace(String str)
         {
-            Monitor.Log(str, LogLevel.Trace);
+            Log.Monitor.Log(str, LogLevel.Trace);
         }
 
         public static void debug(String str)
         {
-            Monitor.Log(str, LogLevel.Debug);
+            Log.Monitor.Log(str, LogLevel.Debug);
         }
 
         public static void info(String str)
         {
-            Monitor.Log(str, LogLevel.Info);
+            Log.Monitor.Log(str, LogLevel.Info);
         }
 
         public static void warn(String str)
         {
-            Monitor.Log(str, LogLevel.Warn);
+            Log.Monitor.Log(str, LogLevel.Warn);
         }
 
         public static void error(String str)
         {
-            Monitor.Log(str, LogLevel.Error);
+            Log.Monitor.Log(str, LogLevel.Error);
         }
     }
 }

@@ -21,8 +21,8 @@ namespace Magic.Spells
 
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
-            player.position.X = enterX;
-            player.position.Y = enterY;
+            player.position.X = EvacSpell.enterX;
+            player.position.Y = EvacSpell.enterY;
             player.AddCustomSkillExperience(Magic.Skill, 5);
             return null;
         }
@@ -30,8 +30,8 @@ namespace Magic.Spells
         private static float enterX, enterY;
         internal static void onLocationChanged()
         {
-            enterX = Game1.player.position.X;
-            enterY = Game1.player.position.Y;
+            EvacSpell.enterX = Game1.player.position.X;
+            EvacSpell.enterY = Game1.player.position.Y;
         }
     }
 }

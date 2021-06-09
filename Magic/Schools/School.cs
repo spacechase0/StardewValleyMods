@@ -19,37 +19,37 @@ namespace Magic.Schools
         private static Dictionary<string, School> schools;
         public static void registerSchool(School school)
         {
-            if (schools == null)
-                init();
+            if (School.schools == null)
+                School.init();
 
-            schools.Add(school.Id, school);
+            School.schools.Add(school.Id, school);
         }
 
         public static School getSchool(string id)
         {
-            if (schools == null)
-                init();
+            if (School.schools == null)
+                School.init();
 
-            return schools[id];
+            return School.schools[id];
         }
 
         public static ICollection<string> getSchoolList()
         {
-            if (schools == null)
-                init();
+            if (School.schools == null)
+                School.init();
 
-            return schools.Keys;
+            return School.schools.Keys;
         }
 
         private static void init()
         {
-            schools = new Dictionary<string, School>();
-            registerSchool(new ArcaneSchool());
-            registerSchool(new ElementalSchool());
-            registerSchool(new NatureSchool());
-            registerSchool(new LifeSchool());
-            registerSchool(new EldritchSchool());
-            registerSchool(new ToilSchool());
+            School.schools = new Dictionary<string, School>();
+            School.registerSchool(new ArcaneSchool());
+            School.registerSchool(new ElementalSchool());
+            School.registerSchool(new NatureSchool());
+            School.registerSchool(new LifeSchool());
+            School.registerSchool(new EldritchSchool());
+            School.registerSchool(new ToilSchool());
         }
     }
 }

@@ -18,9 +18,9 @@ namespace HybridCropEngine
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
-            config = helper.ReadConfig<Configuration>();
+            Mod.config = helper.ReadConfig<Configuration>();
 
             helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
             helper.Events.GameLoop.DayEnding += this.onDayEnding;
@@ -41,8 +41,8 @@ namespace HybridCropEngine
             var gmcm = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (gmcm != null)
             {
-                gmcm.RegisterModConfig(this.ModManifest, () => config = new Configuration(), () => this.Helper.WriteConfig(config));
-                gmcm.RegisterSimpleOption(this.ModManifest, "Scan Everywhere", "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.", () => config.ScanEverywhere, (b) => config.ScanEverywhere = b);
+                gmcm.RegisterModConfig(this.ModManifest, () => Mod.config = new Configuration(), () => this.Helper.WriteConfig(Mod.config));
+                gmcm.RegisterSimpleOption(this.ModManifest, "Scan Everywhere", "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.", () => Mod.config.ScanEverywhere, (b) => Mod.config.ScanEverywhere = b);
             }
         }
 
@@ -70,7 +70,7 @@ namespace HybridCropEngine
             }
             //*/
 
-            if (config.ScanEverywhere)
+            if (Mod.config.ScanEverywhere)
             {
                 var locs = new List<GameLocation>(Game1.locations);
                 var moreLocs = new List<GameLocation>();

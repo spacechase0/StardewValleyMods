@@ -33,10 +33,10 @@ namespace CustomizeExterior
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
-            content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(this.Helper.DirectoryPath, "Buildings"));
+            Mod.content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(this.Helper.DirectoryPath, "Buildings"));
             this.compileChoices();
 
             helper.Events.GameLoop.UpdateTicked += this.onUpdateTicked;
@@ -47,7 +47,7 @@ namespace CustomizeExterior
             helper.Events.Player.Warped += this.onWarped;
 
             SpaceEvents.ServerGotClient += this.onClientConnected;
-            SpaceCore.Networking.RegisterMessageHandler(MSG_CHOICES, this.onChoicesReceived);
+            SpaceCore.Networking.RegisterMessageHandler(Mod.MSG_CHOICES, this.onChoicesReceived);
         }
 
         private void onClientConnected(object sender, EventArgsServerGotClient args)
@@ -55,8 +55,8 @@ namespace CustomizeExterior
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
-                writer.Write(savedExteriors.chosen.Count);
-                foreach (var choice in savedExteriors.chosen)
+                writer.Write(Mod.savedExteriors.chosen.Count);
+                foreach (var choice in Mod.savedExteriors.chosen)
                 {
                     writer.Write(choice.Key);
                     writer.Write(choice.Value);
@@ -64,7 +64,7 @@ namespace CustomizeExterior
 
                 var server = (GameServer)sender;
                 Log.trace("Sending exteriors data to " + args.FarmerID);
-                SpaceCore.Networking.ServerSendTo(args.FarmerID, MSG_CHOICES, stream.ToArray());
+                SpaceCore.Networking.ServerSendTo(args.FarmerID, Mod.MSG_CHOICES, stream.ToArray());
             }
         }
 
@@ -78,7 +78,7 @@ namespace CustomizeExterior
                 string texId = msg.Reader.ReadString();
                 Log.trace("\t" + building + "=" + texId);
 
-                savedExteriors.chosen[building] = texId;
+                Mod.savedExteriors.chosen[building] = texId;
             }
             this.syncTexturesWithChoices();
         }
@@ -90,18 +90,18 @@ namespace CustomizeExterior
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
-                savedExteriors = this.Helper.Data.ReadSaveData<SavedExteriors>("building-exteriors");
-                if (savedExteriors == null)
+                Mod.savedExteriors = this.Helper.Data.ReadSaveData<SavedExteriors>("building-exteriors");
+                if (Mod.savedExteriors == null)
                 {
                     string legacyPath = Path.Combine(Constants.CurrentSavePath, "building-exteriors.json");
                     if (File.Exists(legacyPath))
                     {
                         Log.info($"Loading per-save config file (\"{legacyPath}\")...");
-                        savedExteriors = JsonConvert.DeserializeObject<SavedExteriors>(File.ReadAllText(legacyPath));
+                        Mod.savedExteriors = JsonConvert.DeserializeObject<SavedExteriors>(File.ReadAllText(legacyPath));
                     }
                 }
-                if (savedExteriors == null)
-                    savedExteriors = new SavedExteriors();
+                if (Mod.savedExteriors == null)
+                    Mod.savedExteriors = new SavedExteriors();
 
                 this.syncTexturesWithChoices();
             }
@@ -113,7 +113,7 @@ namespace CustomizeExterior
         private void onSaving(object sender, SavingEventArgs e)
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-                this.Helper.Data.WriteSaveData("building-exteriors", savedExteriors);
+                this.Helper.Data.WriteSaveData("building-exteriors", Mod.savedExteriors);
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
@@ -273,8 +273,8 @@ namespace CustomizeExterior
                         if (summer.Contains(building) && fall.Contains(building) && winter.Contains(building))
                         {
                             List<string> forType = Mod.choices.ContainsKey(typeStr) ? Mod.choices[typeStr] : new List<string>();
-                            if (!forType.Contains(SEASONAL_INDICATOR + choiceStr))
-                                forType.Add(SEASONAL_INDICATOR + choiceStr);
+                            if (!forType.Contains(Mod.SEASONAL_INDICATOR + choiceStr))
+                                forType.Add(Mod.SEASONAL_INDICATOR + choiceStr);
                             if (!Mod.choices.ContainsKey(typeStr))
                                 Mod.choices.Add(typeStr, forType);
 
@@ -298,7 +298,7 @@ namespace CustomizeExterior
             }
             else
             {
-                if (DateTime.Now - this.recentClickTime < clickWindow)
+                if (DateTime.Now - this.recentClickTime < Mod.clickWindow)
                     this.todoRenameFunction(target, type);
                 else
                     this.recentClickTime = DateTime.Now;
@@ -309,16 +309,16 @@ namespace CustomizeExterior
         {
             Log.trace("Target: " + target + " " + type);
 
-            if (!choices.ContainsKey(type))
+            if (!Mod.choices.ContainsKey(type))
                 return;
 
-            foreach (var choice in choices[type])
+            foreach (var choice in Mod.choices[type])
             {
                 Log.trace("Choice: " + choice);
             }
 
             this.recentTarget = target;
-            var menu = new SelectDisplayMenu(type, getChosenTexture(target))
+            var menu = new SelectDisplayMenu(type, Mod.getChosenTexture(target))
             {
                 onSelected = this.onExteriorSelected
             };
@@ -331,7 +331,7 @@ namespace CustomizeExterior
         {
             Log.trace("onExteriorSelected: " + this.recentTarget + " " + type + " " + choice);
 
-            Texture2D tex = getTextureForChoice(type, choice);
+            Texture2D tex = Mod.getTextureForChoice(type, choice);
             if (tex == null)
             {
                 Log.warn("Failed to load chosen texture '" + choice + "' for building type '" + type + "'.");
@@ -339,7 +339,7 @@ namespace CustomizeExterior
             }
             if (updateChosen)
             {
-                savedExteriors.chosen[this.recentTarget] = choice;
+                Mod.savedExteriors.chosen[this.recentTarget] = choice;
 
                 if (Game1.IsMultiplayer)
                 {
@@ -351,15 +351,15 @@ namespace CustomizeExterior
                         writer.Write(choice);
 
                         Log.trace("Broadcasting choice");
-                        SpaceCore.Networking.BroadcastMessage(MSG_CHOICES, stream.ToArray());
+                        SpaceCore.Networking.BroadcastMessage(Mod.MSG_CHOICES, stream.ToArray());
                     }
                 }
             }
 
             if (this.recentTarget == "FarmHouse" || this.recentTarget == "Greenhouse")
             {
-                housesHybrid = null;
-                typeof(Farm).GetField("houseTextures").SetValue(null, getHousesTexture());
+                Mod.housesHybrid = null;
+                typeof(Farm).GetField("houseTextures").SetValue(null, Mod.getHousesTexture());
             }
             else
             {
@@ -376,7 +376,7 @@ namespace CustomizeExterior
 
         private void syncTexturesWithChoices()
         {
-            foreach (var choice in savedExteriors.chosen)
+            foreach (var choice in Mod.savedExteriors.chosen)
             {
                 this.recentTarget = choice.Key;
                 Log.trace("Saved choice: " + choice.Key + " " + choice.Value);
@@ -404,7 +404,7 @@ namespace CustomizeExterior
 
         public static string getChosenTexture(string target)
         {
-            return savedExteriors.chosen.ContainsKey(target) ? savedExteriors.chosen[target] : "/";
+            return Mod.savedExteriors.chosen.ContainsKey(target) ? Mod.savedExteriors.chosen[target] : "/";
         }
 
         public static Texture2D getTextureForChoice(string type, string choice)
@@ -413,23 +413,23 @@ namespace CustomizeExterior
             {
                 if (choice == "/")
                     return Game1.content.Load<Texture2D>("Buildings/" + type);
-                else if (choice.StartsWith(SEASONAL_INDICATOR))
-                    return content.Load<Texture2D>(choice.Substring(SEASONAL_INDICATOR.Length) + "/" + Game1.currentSeason + "/" + type);
+                else if (choice.StartsWith(Mod.SEASONAL_INDICATOR))
+                    return Mod.content.Load<Texture2D>(choice.Substring(Mod.SEASONAL_INDICATOR.Length) + "/" + Game1.currentSeason + "/" + type);
                 else
-                    return content.Load<Texture2D>(choice + "/" + type);
+                    return Mod.content.Load<Texture2D>(choice + "/" + type);
             }
             catch (ContentLoadException)
             {
-                if (choice.StartsWith(SEASONAL_INDICATOR))
-                    return loadPng(choice.Substring(SEASONAL_INDICATOR.Length) + "/" + Game1.currentSeason + "/" + type);
+                if (choice.StartsWith(Mod.SEASONAL_INDICATOR))
+                    return Mod.loadPng(choice.Substring(Mod.SEASONAL_INDICATOR.Length) + "/" + Game1.currentSeason + "/" + type);
                 else
-                    return loadPng(choice + "/" + type);
+                    return Mod.loadPng(choice + "/" + type);
             }
         }
 
         private static Texture2D loadPng(string path)
         {
-            FileStream fs = File.Open(Path.Combine(instance.Helper.DirectoryPath, "Buildings", path + ".png"), FileMode.Open);
+            FileStream fs = File.Open(Path.Combine(Mod.instance.Helper.DirectoryPath, "Buildings", path + ".png"), FileMode.Open);
             Texture2D tex = Texture2D.FromStream(Game1.graphics.GraphicsDevice, fs);
             fs.Dispose();
             return tex;
@@ -438,8 +438,8 @@ namespace CustomizeExterior
         private static Texture2D housesHybrid = null;
         private static Texture2D getHousesTexture()
         {
-            if (housesHybrid != null)
-                return housesHybrid;
+            if (Mod.housesHybrid != null)
+                return Mod.housesHybrid;
 
             Log.trace("Creating hybrid farmhouse/greenhouse texture");
 
@@ -455,13 +455,13 @@ namespace CustomizeExterior
             {
                 dev.Clear(Color.Transparent);
                 b.Begin();
-                b.Draw(getTextureForChoice("houses", getChosenTexture("FarmHouse")), houseRect, houseRect, Color.White);
-                b.Draw(getTextureForChoice("houses", getChosenTexture("Greenhouse")), greenhouseRect, greenhouseRect, Color.White);
+                b.Draw(Mod.getTextureForChoice("houses", Mod.getChosenTexture("FarmHouse")), houseRect, houseRect, Color.White);
+                b.Draw(Mod.getTextureForChoice("houses", Mod.getChosenTexture("Greenhouse")), greenhouseRect, greenhouseRect, Color.White);
                 b.End();
             }
             dev.SetRenderTarget(null);
 
-            housesHybrid = ret;
+            Mod.housesHybrid = ret;
             return ret;
         }
     }

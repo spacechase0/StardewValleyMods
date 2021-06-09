@@ -50,14 +50,14 @@ namespace MoreRings
                     }
                     else if (obj.Name.Contains("Stone"))
                     {
-                        doDraw = mineDrops(obj.ParentSheetIndex, (int)pos.X, (int)pos.Y, Game1.player, (Game1.currentLocation as MineShaft));
+                        doDraw = TrueSight.mineDrops(obj.ParentSheetIndex, (int)pos.X, (int)pos.Y, Game1.player, (Game1.currentLocation as MineShaft));
                     }
                 }
                 if (Mod.instance.hasRingEquipped(Mod.instance.Ring_TrueSight) > 0)
                 {
                     if (obj.ParentSheetIndex == 590)
                     {
-                        doDraw = digUpArtifactSpot((int)pos.X, (int)pos.Y, Game1.player, obj.name);
+                        doDraw = TrueSight.digUpArtifactSpot((int)pos.X, (int)pos.Y, Game1.player, obj.name);
                     }
                 }
 
@@ -70,11 +70,11 @@ namespace MoreRings
                     }
                     else
                     {
-                        if (!drawObjs.ContainsKey(doDraw))
+                        if (!TrueSight.drawObjs.ContainsKey(doDraw))
                         {
-                            drawObjs.Add(doDraw, new SObject(new Vector2(0, 0), doDraw, 1));
+                            TrueSight.drawObjs.Add(doDraw, new SObject(new Vector2(0, 0), doDraw, 1));
                         }
-                        var dobj = drawObjs[doDraw];
+                        var dobj = TrueSight.drawObjs[doDraw];
                         dobj.drawInMenu(b, Game1.GlobalToLocal(Game1.viewport, new Vector2(pos.X * 64, pos.Y * 64)), 0.8f, 0.5f, 1, StackDrawType.Hide, Color.White, false);
                     }
                 }
@@ -88,9 +88,9 @@ namespace MoreRings
                     {
                         if (il.IsBuriedNutLocation(new Point(ix, iy)) && !Game1.netWorldState.Value.FoundBuriedNuts.ContainsKey($"{il.NameOrUniqueName}_{ix}_{iy}"))
                         {
-                            if (!drawObjs.ContainsKey(73))
-                                drawObjs.Add(73, new SObject(new Vector2(0, 0), 73, 1));
-                            var dobj = drawObjs[73];
+                            if (!TrueSight.drawObjs.ContainsKey(73))
+                                TrueSight.drawObjs.Add(73, new SObject(new Vector2(0, 0), 73, 1));
+                            var dobj = TrueSight.drawObjs[73];
                             var pos = new Vector2(ix, iy);
                             dobj.drawInMenu(b, Game1.GlobalToLocal(Game1.viewport, new Vector2(pos.X * 64, pos.Y * 64)), 0.8f, 0.5f, 1, StackDrawType.Hide, Color.White, false);
                         }
@@ -121,7 +121,7 @@ namespace MoreRings
                 num3 += 0.04;
             if (!ladderHasSpawned && !ms.mustKillAllMonstersToAdvance() && (stonesLeftOnThisLevel == 0 || r.NextDouble() < num3))
                 return -2;
-            int bs = breakStone(tileIndexOfStone, x, y, who, r, ms);
+            int bs = TrueSight.breakStone(tileIndexOfStone, x, y, who, r, ms);
             if (bs != -1)
                 return bs;
             if (tileIndexOfStone == 44)

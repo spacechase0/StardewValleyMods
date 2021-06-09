@@ -12,7 +12,7 @@ namespace PreexistingRelationship
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
@@ -39,7 +39,7 @@ namespace PreexistingRelationship
 
             var msg = e.ReadAs<DoMarriageMessage>();
             var player = Game1.getFarmer(e.FromPlayerID);
-            DoMarriage(player, msg.NpcName, false);
+            Mod.DoMarriage(player, msg.NpcName, false);
         }
 
         private void OnCommand(string arg1, string[] arg2)

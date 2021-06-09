@@ -17,7 +17,7 @@ namespace BiggerCraftables
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             foreach (var cp in helper.ContentPacks.GetOwned())
@@ -27,7 +27,7 @@ namespace BiggerCraftables
                 {
                     entry.Texture = cp.LoadAsset<Texture2D>(entry.Image);
                     Log.debug($"Bigger craftable - {entry.Name} from {cp.Manifest.Name} - {entry.Width}x{entry.Length}");
-                    entries.Add(entry);
+                    Mod.entries.Add(entry);
                 }
             }
 
@@ -60,7 +60,7 @@ namespace BiggerCraftables
 
                 if (!obj.bigCraftable.Value)
                     continue;
-                var entry = entries.SingleOrDefault(cle => cle.Name == obj.Name);
+                var entry = Mod.entries.SingleOrDefault(cle => cle.Name == obj.Name);
                 if (entry == null)
                     continue;
 

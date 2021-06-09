@@ -279,41 +279,41 @@ namespace JsonAssets.Other.ContentPatcher
 
         public static void Initialize()
         {
-            cp = Mod.instance.Helper.ModRegistry.GetApi<ContentPatcherAPI>("Pathoschild.ContentPatcher");
-            ja = Mod.instance.Helper.ModRegistry.GetApi<IApi>("spacechase0.JsonAssets");
-            if (cp == null)
+            ContentPatcherIntegration.cp = Mod.instance.Helper.ModRegistry.GetApi<ContentPatcherAPI>("Pathoschild.ContentPatcher");
+            ContentPatcherIntegration.ja = Mod.instance.Helper.ModRegistry.GetApi<IApi>("spacechase0.JsonAssets");
+            if (ContentPatcherIntegration.cp == null)
                 return;
 
-            ja.IdsAssigned += (s, e) => idsAssigned = true;
-            ja.IdsAssigned += (s, e) => idsAssignedGen++;
-            Mod.instance.Helper.Events.GameLoop.ReturnedToTitle += (s, e) => idsAssigned = false;
+            ContentPatcherIntegration.ja.IdsAssigned += (s, e) => ContentPatcherIntegration.idsAssigned = true;
+            ContentPatcherIntegration.ja.IdsAssigned += (s, e) => ContentPatcherIntegration.idsAssignedGen++;
+            Mod.instance.Helper.Events.GameLoop.ReturnedToTitle += (s, e) => ContentPatcherIntegration.idsAssigned = false;
 
-            tokens = new List<BaseToken>();
-            tokens.Add(new IdToken("Object", Mod.StartingObjectId, ja.GetAllObjectIds));
-            tokens.Add(new IdToken("Crop", Mod.StartingCropId, ja.GetAllCropIds));
-            tokens.Add(new IdToken("FruitTree", Mod.StartingFruitTreeId, ja.GetAllFruitTreeIds));
-            tokens.Add(new IdToken("BigCraftable", Mod.StartingBigCraftableId, ja.GetAllBigCraftableIds));
-            tokens.Add(new IdToken("Hat", Mod.StartingHatId, ja.GetAllHatIds));
-            tokens.Add(new IdToken("Weapon", Mod.StartingWeaponId, ja.GetAllWeaponIds));
-            tokens.Add(new IdToken("Clothing", Mod.StartingClothingId, ja.GetAllClothingIds));
-            tokens.Add(new SpriteTilesheetToken("Object", () => Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Object", true, () => Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Object", false, () => Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("Crop", () => Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Crop", true, () => Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Crop", false, () => Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("FruitTree", () => Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("FruitTree", true, () => Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("FruitTree", false, () => Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("BigCraftable", () => Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("BigCraftable", true, () => Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("BigCraftable", false, () => Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("Hat", () => Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Hat", true, () => Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Hat", false, () => Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteTilesheetToken("Weapon", () => Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Weapon", true, () => Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
-            tokens.Add(new SpriteCoordinateToken("Weapon", false, () => Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens = new List<BaseToken>();
+            ContentPatcherIntegration.tokens.Add(new IdToken("Object", Mod.StartingObjectId, ContentPatcherIntegration.ja.GetAllObjectIds));
+            ContentPatcherIntegration.tokens.Add(new IdToken("Crop", Mod.StartingCropId, ContentPatcherIntegration.ja.GetAllCropIds));
+            ContentPatcherIntegration.tokens.Add(new IdToken("FruitTree", Mod.StartingFruitTreeId, ContentPatcherIntegration.ja.GetAllFruitTreeIds));
+            ContentPatcherIntegration.tokens.Add(new IdToken("BigCraftable", Mod.StartingBigCraftableId, ContentPatcherIntegration.ja.GetAllBigCraftableIds));
+            ContentPatcherIntegration.tokens.Add(new IdToken("Hat", Mod.StartingHatId, ContentPatcherIntegration.ja.GetAllHatIds));
+            ContentPatcherIntegration.tokens.Add(new IdToken("Weapon", Mod.StartingWeaponId, ContentPatcherIntegration.ja.GetAllWeaponIds));
+            ContentPatcherIntegration.tokens.Add(new IdToken("Clothing", Mod.StartingClothingId, ContentPatcherIntegration.ja.GetAllClothingIds));
+            ContentPatcherIntegration.tokens.Add(new SpriteTilesheetToken("Object", () => Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("Object", true, () => Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("Object", false, () => Mod.instance.objects.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteTilesheetToken("Crop", () => Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("Crop", true, () => Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("Crop", false, () => Mod.instance.crops.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteTilesheetToken("FruitTree", () => Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("FruitTree", true, () => Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("FruitTree", false, () => Mod.instance.fruitTrees.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteTilesheetToken("BigCraftable", () => Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("BigCraftable", true, () => Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("BigCraftable", false, () => Mod.instance.bigCraftables.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteTilesheetToken("Hat", () => Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("Hat", true, () => Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("Hat", false, () => Mod.instance.hats.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteTilesheetToken("Weapon", () => Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("Weapon", true, () => Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
+            ContentPatcherIntegration.tokens.Add(new SpriteCoordinateToken("Weapon", false, () => Mod.instance.weapons.ToList<DataNeedsIdWithTexture>()));
             // TODO: Shirt tilesheet
             // TODO: Shirt x
             // TODO: Shirt y
@@ -321,10 +321,10 @@ namespace JsonAssets.Other.ContentPatcher
             // TODO: Pants x
             // TODO: Pants y
 
-            foreach (var token in tokens)
+            foreach (var token in ContentPatcherIntegration.tokens)
             {
                 //cp.RegisterToken(Mod.instance.ModManifest, token.TokenName, token.UpdateContext, token.IsReady, token.GetValue, true, true);
-                cp.RegisterToken(Mod.instance.ModManifest, token.TokenName, token);
+                ContentPatcherIntegration.cp.RegisterToken(Mod.instance.ModManifest, token.TokenName, token);
             }
         }
     }

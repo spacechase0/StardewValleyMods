@@ -314,7 +314,7 @@ namespace CustomCritters
         internal static Dictionary<string, CritterEntry> critters = new Dictionary<string, CritterEntry>();
         public static void Register(CritterEntry entry)
         {
-            critters.Add(entry.Id, entry);
+            CritterEntry.critters.Add(entry.Id, entry);
         }
     }
 }

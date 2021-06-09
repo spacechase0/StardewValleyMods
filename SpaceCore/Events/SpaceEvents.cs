@@ -47,17 +47,17 @@ namespace SpaceCore.Events
         internal static void InvokeOnBlankSave()
         {
             Log.trace("Event: OnBlankSave");
-            if (OnBlankSave == null)
+            if (SpaceEvents.OnBlankSave == null)
                 return;
-            Util.invokeEvent("SpaceEvents.OnBlankSave", OnBlankSave.GetInvocationList(), null);
+            Util.invokeEvent("SpaceEvents.OnBlankSave", SpaceEvents.OnBlankSave.GetInvocationList(), null);
         }
 
         internal static void InvokeShowNightEndMenus(EventArgsShowNightEndMenus args)
         {
             Log.trace("Event: ShowNightEndMenus");
-            if (ShowNightEndMenus == null)
+            if (SpaceEvents.ShowNightEndMenus == null)
                 return;
-            Util.invokeEvent("SpaceEvents.ShowNightEndMenus", ShowNightEndMenus.GetInvocationList(), null, args);
+            Util.invokeEvent("SpaceEvents.ShowNightEndMenus", SpaceEvents.ShowNightEndMenus.GetInvocationList(), null, args);
         }
 
         internal static FarmEvent InvokeChooseNightlyFarmEvent(FarmEvent vanilla)
@@ -66,36 +66,36 @@ namespace SpaceCore.Events
             args.NightEvent = vanilla;
 
             Log.trace("Event: ChooseNightlyFarmEvent");
-            if (ChooseNightlyFarmEvent == null)
+            if (SpaceEvents.ChooseNightlyFarmEvent == null)
                 return args.NightEvent;
-            Util.invokeEvent("SpaceEvents.ChooseNightlyFarmEvent", ChooseNightlyFarmEvent.GetInvocationList(), null, args);
+            Util.invokeEvent("SpaceEvents.ChooseNightlyFarmEvent", SpaceEvents.ChooseNightlyFarmEvent.GetInvocationList(), null, args);
             return args.NightEvent;
         }
 
         internal static void InvokeOnItemEaten(Farmer farmer)
         {
             Log.trace("Event: OnItemEaten");
-            if (OnItemEaten == null || !farmer.IsLocalPlayer)
+            if (SpaceEvents.OnItemEaten == null || !farmer.IsLocalPlayer)
                 return;
-            Util.invokeEvent("SpaceEvents.OnItemEaten", OnItemEaten.GetInvocationList(), farmer);
+            Util.invokeEvent("SpaceEvents.OnItemEaten", SpaceEvents.OnItemEaten.GetInvocationList(), farmer);
         }
 
         internal static bool InvokeActionActivated(Farmer who, string action, xTile.Dimensions.Location pos)
         {
             Log.trace("Event: ActionActivated");
-            if (ActionActivated == null || !who.IsLocalPlayer)
+            if (SpaceEvents.ActionActivated == null || !who.IsLocalPlayer)
                 return false;
             var arg = new EventArgsAction(false, action, pos);
-            return Util.invokeEventCancelable("SpaceEvents.ActionActivated", ActionActivated.GetInvocationList(), who, arg);
+            return Util.invokeEventCancelable("SpaceEvents.ActionActivated", SpaceEvents.ActionActivated.GetInvocationList(), who, arg);
         }
 
         internal static bool InvokeTouchActionActivated(Farmer who, string action, xTile.Dimensions.Location pos)
         {
             Log.trace("Event: TouchActionActivated");
-            if (TouchActionActivated == null || !who.IsLocalPlayer)
+            if (SpaceEvents.TouchActionActivated == null || !who.IsLocalPlayer)
                 return false;
             var arg = new EventArgsAction(true, action, pos);
-            return Util.invokeEventCancelable("SpaceEvents.TouchActionActivated", TouchActionActivated.GetInvocationList(), who, arg);
+            return Util.invokeEventCancelable("SpaceEvents.TouchActionActivated", SpaceEvents.TouchActionActivated.GetInvocationList(), who, arg);
         }
 
         internal static void InvokeServerGotClient(GameServer server, long peer)
@@ -104,36 +104,36 @@ namespace SpaceCore.Events
             args.FarmerID = peer;
 
             Log.trace("Event: ServerGotClient");
-            if (ServerGotClient == null)
+            if (SpaceEvents.ServerGotClient == null)
                 return;
-            Util.invokeEvent("SpaceEvents.ServerGotClient", ServerGotClient.GetInvocationList(), server, args);
+            Util.invokeEvent("SpaceEvents.ServerGotClient", SpaceEvents.ServerGotClient.GetInvocationList(), server, args);
         }
 
         internal static bool InvokeBeforeReceiveObject(NPC npc, StardewValley.Object obj, Farmer farmer)
         {
             Log.trace("Event: BeforeReceiveObject");
-            if (BeforeGiftGiven == null)
+            if (SpaceEvents.BeforeGiftGiven == null)
                 return false;
             var arg = new EventArgsBeforeReceiveObject(npc, obj);
-            return Util.invokeEventCancelable("SpaceEvents.BeforeReceiveObject", BeforeGiftGiven.GetInvocationList(), farmer, arg);
+            return Util.invokeEventCancelable("SpaceEvents.BeforeReceiveObject", SpaceEvents.BeforeGiftGiven.GetInvocationList(), farmer, arg);
         }
 
         internal static void InvokeAfterGiftGiven(NPC npc, StardewValley.Object obj, Farmer farmer)
         {
             Log.trace("Event: AfterGiftGiven");
-            if (AfterGiftGiven == null)
+            if (SpaceEvents.AfterGiftGiven == null)
                 return;
             var arg = new EventArgsGiftGiven(npc, obj);
-            Util.invokeEvent("SpaceEvents.AfterGiftGiven", AfterGiftGiven.GetInvocationList(), farmer, arg);
+            Util.invokeEvent("SpaceEvents.AfterGiftGiven", SpaceEvents.AfterGiftGiven.GetInvocationList(), farmer, arg);
         }
 
         internal static bool InvokeBeforeWarp(ref LocationRequest req, ref int targetX, ref int targetY, ref int facing)
         {
             Log.trace("Event: BeforeWarp");
-            if (BeforeWarp == null)
+            if (SpaceEvents.BeforeWarp == null)
                 return false;
             var arg = new EventArgsBeforeWarp(req, targetX, targetY, facing);
-            bool ret = Util.invokeEventCancelable("SpaceEvents.BeforeWarp", BeforeWarp.GetInvocationList(), Game1.player, arg);
+            bool ret = Util.invokeEventCancelable("SpaceEvents.BeforeWarp", SpaceEvents.BeforeWarp.GetInvocationList(), Game1.player, arg);
             req = arg.WarpTargetLocation;
             targetX = arg.WarpTargetX;
             targetY = arg.WarpTargetY;
@@ -144,10 +144,10 @@ namespace SpaceCore.Events
         internal static void InvokeBombExploded(Farmer who, Vector2 tileLocation, int radius)
         {
             Log.trace("Event: BombExploded");
-            if (BombExploded == null)
+            if (SpaceEvents.BombExploded == null)
                 return;
             var arg = new EventArgsBombExploded(tileLocation, radius);
-            Util.invokeEvent("SpaceEvents.BombExploded", BombExploded.GetInvocationList(), who, arg);
+            Util.invokeEvent("SpaceEvents.BombExploded", SpaceEvents.BombExploded.GetInvocationList(), who, arg);
         }
     }
 }

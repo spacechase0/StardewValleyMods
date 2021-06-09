@@ -115,7 +115,7 @@ namespace BuildableLocationsFramework.Patches
                         }
                     }
                     List<FarmAnimal> farmAnimalList1 = new List<FarmAnimal>();
-                    foreach (FarmAnimal allFarmAnimal in getAllFarmAnimals(farm))
+                    foreach (FarmAnimal allFarmAnimal in UtilityPatcher.getAllFarmAnimals(farm))
                     {
                         if (allFarmAnimal.home == null)
                             farmAnimalList1.Add(allFarmAnimal);

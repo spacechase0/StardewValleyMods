@@ -110,13 +110,13 @@ namespace SurfingFestival
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
-            surfboardTex = helper.Content.Load<Texture2D>("assets/surfboards.png");
-            surfboardWaterTex = helper.Content.Load<Texture2D>("assets/surfboard-water.png");
-            stunTex = helper.Content.Load<Texture2D>("assets/net-stun.png");
-            obstaclesTex = helper.Content.Load<Texture2D>("assets/obstacles.png");
+            Mod.surfboardTex = helper.Content.Load<Texture2D>("assets/surfboards.png");
+            Mod.surfboardWaterTex = helper.Content.Load<Texture2D>("assets/surfboard-water.png");
+            Mod.stunTex = helper.Content.Load<Texture2D>("assets/net-stun.png");
+            Mod.obstaclesTex = helper.Content.Load<Texture2D>("assets/obstacles.png");
 
             helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
             helper.Events.GameLoop.UpdateTicked += this.onUpdateTicked;
@@ -146,7 +146,7 @@ namespace SurfingFestival
             if (asset.AssetNameEquals("Data\\Festivals\\summer5"))
             {
                 var data = this.Helper.Content.Load<Dictionary<string, string>>("assets/festival." + LocalizedContentManager.CurrentLanguageCode + ".json");
-                festivalName = data["name"];
+                Mod.festivalName = data["name"];
                 return (T)(object)data;
             }
             else if (asset.AssetNameEquals("Maps\\Beach-Surfing"))
@@ -170,7 +170,7 @@ namespace SurfingFestival
         {
             if (asset.AssetNameEquals("Data\\Festivals\\FestivalDates"))
             {
-                asset.AsDictionary<string, string>().Data.Add("summer5", festivalName);
+                asset.AsDictionary<string, string>().Data.Add("summer5", Mod.festivalName);
             }
         }
 
@@ -181,18 +181,18 @@ namespace SurfingFestival
             spacecore.AddEventCommand("warpSurfingRacersFinish", PatchHelper.RequireMethod<Mod>(nameof(Mod.EventCommand_WarpSurfingRacersFinish)));
             spacecore.AddEventCommand("awardSurfingPrize", PatchHelper.RequireMethod<Mod>(nameof(Mod.EventCommand_AwardSurfingPrize)));
 
-            ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
-            ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "ja"));
+            Mod.ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            Mod.ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "ja"));
         }
 
         private Event prevEvent = null;
         private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (++surfboardWaterAnimTimer >= 5)
+            if (++Mod.surfboardWaterAnimTimer >= 5)
             {
-                surfboardWaterAnimTimer = 0;
-                if (++surfboardWaterAnim >= 3)
-                    surfboardWaterAnim = 0;
+                Mod.surfboardWaterAnimTimer = 0;
+                if (++Mod.surfboardWaterAnim >= 3)
+                    Mod.surfboardWaterAnim = 0;
             }
             if (++this.itemBobbleTimer >= 25)
             {
@@ -202,26 +202,26 @@ namespace SurfingFestival
             }
             ++this.netBobTimer;
 
-            if (Game1.CurrentEvent?.FestivalName != festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
+            if (Game1.CurrentEvent?.FestivalName != Mod.festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
             {
                 this.prevEvent = Game1.CurrentEvent;
                 return;
             }
 
             if (this.prevEvent == null)
-                playerDidBonfire = BonfireState.NotDone;
+                Mod.playerDidBonfire = BonfireState.NotDone;
             this.prevEvent = Game1.CurrentEvent;
 
             var rand = new Random();
             foreach (var actor in Game1.CurrentEvent.actors)
             {
-                if (racers.Contains(actor.Name))
+                if (Mod.racers.Contains(actor.Name))
                     continue;
                 if (rand.Next(30 * Game1.CurrentEvent.actors.Count / 2) == 0)
                     actor.jumpWithoutSound();
             }
 
-            foreach (var obstacle in obstacles)
+            foreach (var obstacle in Mod.obstacles)
             {
                 if (obstacle.Type == ObstacleType.HomingProjectile || obstacle.Type == ObstacleType.FirstPlaceProjectile)
                 {
@@ -304,14 +304,14 @@ namespace SurfingFestival
                 },
             };
 
-            foreach (var racerName in racers)
+            foreach (var racerName in Mod.racers)
             {
-                var state = racerState[racerName];
+                var state = Mod.racerState[racerName];
                 var racer = Game1.CurrentEvent.getCharacterByName(racerName);
 
-                for (int i = obstacles.Count - 1; i >= 0; --i)
+                for (int i = Mod.obstacles.Count - 1; i >= 0; --i)
                 {
-                    var obstacle = obstacles[i];
+                    var obstacle = Mod.obstacles[i];
                     if (obstacle.GetBoundingBox().Intersects(racer.GetBoundingBox()))
                     {
                         switch (obstacle.Type)
@@ -354,7 +354,7 @@ namespace SurfingFestival
                                     Game1.CurrentEvent.underwaterSprites.Remove(obstacle.UnderwaterSprite);
                                 break;
                         }
-                        obstacles.Remove(obstacle);
+                        Mod.obstacles.Remove(obstacle);
                     }
                 }
 
@@ -371,7 +371,7 @@ namespace SurfingFestival
                         while (true)
                         {
                             state.CurrentItem = (Item)Game1.recentMultiplayerRandom.Next(Enum.GetValues(typeof(Item)).Length);
-                            if (GetRacePlacement()[GetRacePlacement().Count - 1] == racerName && state.CurrentItem == Item.FirstPlaceProjectile)
+                            if (Mod.GetRacePlacement()[Mod.GetRacePlacement().Count - 1] == racerName && state.CurrentItem == Item.FirstPlaceProjectile)
                             { }
                             else break;
                         }
@@ -396,7 +396,7 @@ namespace SurfingFestival
                     else
                     {
                         if (state.CurrentItem == Item.Invincibility)
-                            racer.glowingColor = MyGetPrismaticColor();
+                            racer.glowingColor = Mod.MyGetPrismaticColor();
                     }
                 }
                 if (state.SlowdownTimer >= 0)
@@ -467,7 +467,7 @@ namespace SurfingFestival
                         bb.X += checkDirX * Game1.tileSize;
                         bb.Y += checkDirY * Game1.tileSize;
 
-                        foreach (var obstacle in obstacles)
+                        foreach (var obstacle in Mod.obstacles)
                         {
                             if ((obstacle.Type == ObstacleType.Net || obstacle.Type == ObstacleType.Rock) &&
                                  obstacle.GetBoundingBox().Intersects(bb))
@@ -540,7 +540,7 @@ namespace SurfingFestival
                         case Item.HomingProjectile:
                             string target = null;
                             bool next = false;
-                            foreach (var other in GetRacePlacement())
+                            foreach (var other in Mod.GetRacePlacement())
                             {
                                 if (other == racerName)
                                     next = true;
@@ -551,11 +551,11 @@ namespace SurfingFestival
                                 }
                             }
                             if (target == null)
-                                target = GetRacePlacement()[GetRacePlacement().Count - 2];
+                                target = Mod.GetRacePlacement()[Mod.GetRacePlacement().Count - 2];
 
                             state.CurrentItem = null;
                             TemporaryAnimatedSprite tas = new TemporaryAnimatedSprite(128, 0, 0, 0, new Vector2(), false, false);
-                            obstacles.Add(new Obstacle()
+                            Mod.obstacles.Add(new Obstacle()
                             {
                                 Type = ObstacleType.HomingProjectile,
                                 Position = new Vector2(racer.GetBoundingBox().Center.X, racer.GetBoundingBox().Center.Y),
@@ -569,11 +569,11 @@ namespace SurfingFestival
                             break;
                         case Item.FirstPlaceProjectile:
                             state.CurrentItem = null;
-                            obstacles.Add(new Obstacle()
+                            Mod.obstacles.Add(new Obstacle()
                             {
                                 Type = ObstacleType.FirstPlaceProjectile,
                                 Position = new Vector2(racer.GetBoundingBox().Center.X, racer.GetBoundingBox().Center.Y),
-                                HomingTarget = GetRacePlacement()[GetRacePlacement().Count - 1],
+                                HomingTarget = Mod.GetRacePlacement()[Mod.GetRacePlacement().Count - 1],
                             });
                             Game1.playSound("fishEscape");
                             break;
@@ -583,7 +583,7 @@ namespace SurfingFestival
                                 state.SlowdownTimer = 0;
                             if (state.StunTimer > 0)
                                 state.StunTimer = 0;
-                            racer.startGlowing(MyGetPrismaticColor(), false, 0);
+                            racer.startGlowing(Mod.MyGetPrismaticColor(), false, 0);
                             racer.glowingTransparency = 1;
                             state.AddedSpeed += 3;
                             Game1.playSound("yoba");
@@ -641,21 +641,21 @@ namespace SurfingFestival
                     ++state.LapsDone;
                     state.ReachedHalf = false;
 
-                    if (state.LapsDone >= 2 && raceWinner == null)
+                    if (state.LapsDone >= 2 && Mod.raceWinner == null)
                     {
-                        raceWinner = racerName;
-                        string winnerName = raceWinner;
+                        Mod.raceWinner = racerName;
+                        string winnerName = Mod.raceWinner;
 
                         Game1.CurrentEvent.playerControlSequence = false;
                         Game1.CurrentEvent.playerControlSequenceID = null;
                         var festData = Mod.instance.Helper.Reflection.GetField<Dictionary<string, string>>(Game1.CurrentEvent, "festivalData").GetValue();
-                        string winDialog = festData.ContainsKey(raceWinner + "Win") ? festData[raceWinner + "Win"] : null;
+                        string winDialog = festData.ContainsKey(Mod.raceWinner + "Win") ? festData[Mod.raceWinner + "Win"] : null;
                         if (winDialog == null)
                             winDialog = festData["FarmerWin"].Replace("{{winner}}", racer.Name);
                         Game1.CurrentEvent.eventCommands = festData["afterSurfingRace"].Replace("{{winDialog}}", winDialog).Split('/');
                         Game1.CurrentEvent.currentCommand = 0;
 
-                        foreach (var racerName_ in racers)
+                        foreach (var racerName_ in Mod.racers)
                         {
                             var racer_ = Game1.CurrentEvent.getCharacterByName(racerName_);
                             racer_.stopGlowing();
@@ -667,10 +667,10 @@ namespace SurfingFestival
 
         private void onButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (Game1.CurrentEvent?.FestivalName != festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
+            if (Game1.CurrentEvent?.FestivalName != Mod.festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
                 return;
 
-            var state = racerState["farmer" + Utility.getFarmerNumberFromFarmer(Game1.player)];
+            var state = Mod.racerState["farmer" + Utility.getFarmerNumberFromFarmer(Game1.player)];
             if (e.Button.IsActionButton())
             {
                 if (state.CurrentItem.HasValue && state.ItemObtainTimer == -1 && state.ItemUsageTimer == -1)
@@ -685,10 +685,10 @@ namespace SurfingFestival
         private uint netBobTimer = 0;
         public void DrawObstacles(SpriteBatch b)
         {
-            if (Game1.CurrentEvent?.FestivalName != festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
+            if (Game1.CurrentEvent?.FestivalName != Mod.festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
                 return;
 
-            foreach (var obstacle in obstacles)
+            foreach (var obstacle in Mod.obstacles)
             {
                 Texture2D srcTex = null;
                 Rectangle srcRect = new Rectangle();
@@ -697,17 +697,17 @@ namespace SurfingFestival
                 switch (obstacle.Type)
                 {
                     case ObstacleType.Item:
-                        srcTex = obstaclesTex;
+                        srcTex = Mod.obstaclesTex;
                         srcRect = new Rectangle(48 + 16 * this.itemBobbleFrame, 0, 16, 16);
                         break;
                     case ObstacleType.Net:
-                        srcTex = obstaclesTex;
+                        srcTex = Mod.obstaclesTex;
                         srcRect = new Rectangle(0, 48, 48, 32);
                         origin = new Vector2(0, 16);
                         offset = new Vector2(0, (float)Math.Sin(this.netBobTimer / 10) * 3);
                         break;
                     case ObstacleType.Rock:
-                        srcTex = obstaclesTex;
+                        srcTex = Mod.obstaclesTex;
                         srcRect = new Rectangle(0, 0, 48, 48);
                         origin = new Vector2(0, 32);
                         break;
@@ -745,11 +745,11 @@ namespace SurfingFestival
 
         private void onRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (Game1.CurrentEvent?.FestivalName != festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
+            if (Game1.CurrentEvent?.FestivalName != Mod.festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
                 return;
 
             var b = e.SpriteBatch;
-            var state = racerState["farmer" + Utility.getFarmerNumberFromFarmer(Game1.player)];
+            var state = Mod.racerState["farmer" + Utility.getFarmerNumberFromFarmer(Game1.player)];
 
             var pos = new Vector2(Game1.viewport.Width - (74 + 14) * 2 - 25, 25);
             b.Draw(Game1.mouseCursors, pos, new Rectangle(603, 414, 74, 74), Color.White, 0, Vector2.Zero, 2, SpriteEffects.None, 0);
@@ -787,7 +787,7 @@ namespace SurfingFestival
                     case (int)Item.Invincibility:
                         displayTex = Game1.content.Load<Texture2D>("Characters\\Junimo"); // TODO: Cache this
                         displayRect = new Rectangle(80, 80, 16, 16);
-                        displayColor = MyGetPrismaticColor();
+                        displayColor = Mod.MyGetPrismaticColor();
                         displayName = this.Helper.Translation.Get("item.invincibility");
                         break;
                 }
@@ -800,10 +800,10 @@ namespace SurfingFestival
             SpriteText.drawStringHorizontallyCenteredAt(b, lapsStr, (int)pos.X + 74, (int)pos.Y + 74 * 2 + 18 * 2 + 8);
 
             string str = this.Helper.Translation.Get("ui.ranking");
-            SpriteText.drawStringHorizontallyCenteredAt(b, str, (int)pos.X + 74, (int)Game1.viewport.Height - 128 - (racers.Count - 1) / 5 * 40);
+            SpriteText.drawStringHorizontallyCenteredAt(b, str, (int)pos.X + 74, (int)Game1.viewport.Height - 128 - (Mod.racers.Count - 1) / 5 * 40);
 
             int i = 0;
-            var sortedRacers = GetRacePlacement();
+            var sortedRacers = Mod.GetRacePlacement();
             sortedRacers.Reverse();
             foreach (var racerName in sortedRacers)
             {
@@ -834,10 +834,10 @@ namespace SurfingFestival
                     {
                         var msg = e.ReadAs<UseItemMessage>();
                         var racerName = "farmer" + Utility.getFarmerNumberFromFarmer(Game1.getFarmer(e.FromPlayerID));
-                        if (!racers.Contains(racerName))
+                        if (!Mod.racers.Contains(racerName))
                             return;
                         var racer = Game1.CurrentEvent.getCharacterByName(racerName) as Farmer;
-                        var state = racerState[racerName];
+                        var state = Mod.racerState[racerName];
 
                         state.CurrentItem = msg.ItemUsed;
                         state.ShouldUseItem = true;
@@ -876,7 +876,7 @@ namespace SurfingFestival
               }
           };
 
-            if (e.Action == "SurfingBonfire" && playerDidBonfire == BonfireState.NotDone)
+            if (e.Action == "SurfingBonfire" && Mod.playerDidBonfire == BonfireState.NotDone)
             {
                 InventoryMenu.highlightThisItem highlight = (item) => (item is StardewValley.Object obj && !obj.bigCraftable.Value && ((obj.ParentSheetIndex == 388 && obj.Stack >= 50) || obj.ParentSheetIndex == 71 || obj.ParentSheetIndex == 789));
                 ItemGrabMenu.behaviorOnItemSelect behaviorOnSelect = (item, farmer) =>
@@ -894,7 +894,7 @@ namespace SurfingFestival
                             if (character is NPC npc)
                                 farmer.changeFriendship(50, npc);
                         }
-                        playerDidBonfire = BonfireState.Normal;
+                        Mod.playerDidBonfire = BonfireState.Normal;
                         Game1.drawObjectDialogue(this.Helper.Translation.Get("dialog.wood"));
                         Game1.playSound("fireball");
                         placeBonfire(Game1.currentLocation.Map, 30, 5, false);
@@ -902,7 +902,7 @@ namespace SurfingFestival
                     else if (item.ParentSheetIndex == 71 || item.ParentSheetIndex == 789)
                     {
                         farmer.removeItemFromInventory(item);
-                        playerDidBonfire = BonfireState.Shorts;
+                        Mod.playerDidBonfire = BonfireState.Shorts;
 
                         Game1.drawDialogue(Game1.getCharacterFromName("Lewis"), this.Helper.Translation.Get("dialog.shorts"));
                         Game1.playSound("fireball");
@@ -948,39 +948,39 @@ namespace SurfingFestival
         private static int prevRacerFrame = -1;
         public static void DrawSurfboard(Character __instance, SpriteBatch b)
         {
-            if (__instance is NPC npc && !racers.Contains(__instance.Name) ||
-                 __instance is Farmer farmer && !racers.Contains("farmer" + Utility.getFarmerNumberFromFarmer(farmer)))
+            if (__instance is NPC npc && !Mod.racers.Contains(__instance.Name) ||
+                 __instance is Farmer farmer && !Mod.racers.Contains("farmer" + Utility.getFarmerNumberFromFarmer(farmer)))
                 return;
 
             bool player = __instance is Farmer;
             int ox = 0, oy = 0;
 
-            var state = racerState[__instance is NPC ? __instance.Name : ("farmer" + Utility.getFarmerNumberFromFarmer(__instance as Farmer))];
+            var state = Mod.racerState[__instance is NPC ? __instance.Name : ("farmer" + Utility.getFarmerNumberFromFarmer(__instance as Farmer))];
             var rect = new Rectangle(state.Surfboard % 2 * 32, state.Surfboard / 2 * 16, 32, 16);
-            var rect2 = new Rectangle(surfboardWaterAnim * 64, 0, 64, 48);
+            var rect2 = new Rectangle(Mod.surfboardWaterAnim * 64, 0, 64, 48);
             var origin = new Vector2(16, 8);
             var origin2 = new Vector2(32, 24);
             switch (state.Facing)
             {
                 case Game1.up:
                     ox = player ? 8 : 8;
-                    b.Draw(surfboardTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect, Color.White, 90 * 3.14f / 180, origin, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0002f);
-                    b.Draw(surfboardWaterTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect2, Color.White, -90 * 3.14f / 180, origin2, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0001f);
+                    b.Draw(Mod.surfboardTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect, Color.White, 90 * 3.14f / 180, origin, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0002f);
+                    b.Draw(Mod.surfboardWaterTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect2, Color.White, -90 * 3.14f / 180, origin2, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0001f);
                     break;
                 case Game1.down:
                     ox = player ? -8 : -4;
-                    b.Draw(surfboardTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect, Color.White, -90 * 3.14f / 180, origin, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0002f);
-                    b.Draw(surfboardWaterTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect2, Color.White, 90 * 3.14f / 180, origin2, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0001f);
+                    b.Draw(Mod.surfboardTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect, Color.White, -90 * 3.14f / 180, origin, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0002f);
+                    b.Draw(Mod.surfboardWaterTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect2, Color.White, 90 * 3.14f / 180, origin2, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0001f);
                     break;
                 case Game1.left:
                     oy = player ? 0 : 8;
-                    b.Draw(surfboardTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect, Color.White, 180 * 3.14f / 180, origin, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0002f);
-                    b.Draw(surfboardWaterTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect2, Color.White, 180 * 3.14f / 180, origin2, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0001f);
+                    b.Draw(Mod.surfboardTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect, Color.White, 180 * 3.14f / 180, origin, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0002f);
+                    b.Draw(Mod.surfboardWaterTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect2, Color.White, 180 * 3.14f / 180, origin2, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0001f);
                     break;
                 case Game1.right:
                     oy = player ? -8 : 0;
-                    b.Draw(surfboardTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect, Color.White, 0 * 3.14f / 180, origin, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0002f);
-                    b.Draw(surfboardWaterTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect2, Color.White, 0 * 3.14f / 180, origin2, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0001f);
+                    b.Draw(Mod.surfboardTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect, Color.White, 0 * 3.14f / 180, origin, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0002f);
+                    b.Draw(Mod.surfboardWaterTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + 8 * Game1.pixelZoom + ox, __instance.Position.Y + 8 * Game1.pixelZoom + oy)), rect2, Color.White, 0 * 3.14f / 180, origin2, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f - 0.0001f);
                     break;
             }
 
@@ -994,7 +994,7 @@ namespace SurfingFestival
                     shockedFrames.Add("Maru", 27);
                     shockedFrames.Add("Emily", 26);
 
-                    prevRacerFrame = (__instance as NPC).Sprite.CurrentFrame;
+                    Mod.prevRacerFrame = (__instance as NPC).Sprite.CurrentFrame;
                     if (shockedFrames.ContainsKey(__instance.Name))
                     {
                         (__instance as NPC).Sprite.CurrentFrame = shockedFrames[__instance.Name];
@@ -1002,7 +1002,7 @@ namespace SurfingFestival
                 }
                 else if (__instance is Farmer)
                 {
-                    prevRacerFrame = (__instance as Farmer).FarmerSprite.CurrentFrame;
+                    Mod.prevRacerFrame = (__instance as Farmer).FarmerSprite.CurrentFrame;
                     (__instance as Farmer).FarmerSprite.setCurrentSingleFrame(94, 1);
                 }
             }
@@ -1010,11 +1010,11 @@ namespace SurfingFestival
 
         public static void DrawSurfingStatuses(Character __instance, SpriteBatch b)
         {
-            if (__instance is NPC npc && !racers.Contains(__instance.Name) ||
-                 __instance is Farmer farmer && !racers.Contains("farmer" + Utility.getFarmerNumberFromFarmer(farmer)))
+            if (__instance is NPC npc && !Mod.racers.Contains(__instance.Name) ||
+                 __instance is Farmer farmer && !Mod.racers.Contains("farmer" + Utility.getFarmerNumberFromFarmer(farmer)))
                 return;
 
-            var state = racerState[__instance is NPC ? __instance.Name : ("farmer" + Utility.getFarmerNumberFromFarmer(__instance as Farmer))];
+            var state = Mod.racerState[__instance is NPC ? __instance.Name : ("farmer" + Utility.getFarmerNumberFromFarmer(__instance as Farmer))];
             if (state.StunTimer >= 0)
             {
                 int ox = 0, oy = 0;
@@ -1022,17 +1022,17 @@ namespace SurfingFestival
                 {
                     oy = -6 * Game1.pixelZoom;
                 }
-                b.Draw(stunTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + ox, __instance.Position.Y - 17 * Game1.pixelZoom + oy)), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f + 0.0003f);
+                b.Draw(Mod.stunTex, Game1.GlobalToLocal(new Vector2(__instance.Position.X + ox, __instance.Position.Y - 17 * Game1.pixelZoom + oy)), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, __instance.GetBoundingBox().Center.Y / 10000f + 0.0003f);
 
                 if (__instance is NPC)
                 {
-                    (__instance as NPC).Sprite.CurrentFrame = prevRacerFrame;
-                    prevRacerFrame = -1;
+                    (__instance as NPC).Sprite.CurrentFrame = Mod.prevRacerFrame;
+                    Mod.prevRacerFrame = -1;
                 }
                 else if (__instance is Farmer)
                 {
                     //( __instance as Farmer ).FarmerSprite.CurrentFrame = prevRacerFrame;
-                    prevRacerFrame = -1;
+                    Mod.prevRacerFrame = -1;
                 }
             }
         }
@@ -1040,7 +1040,7 @@ namespace SurfingFestival
         public static void EventCommand_WarpSurfingRacers(Event __instance, GameLocation location, GameTime time, string[] split)
         {
             // Generate obstacles
-            obstacles.Clear();
+            Mod.obstacles.Clear();
             Point obstaclesStart = new Point(6, 48);
             Point obstaclesEnd = new Point(143, 70);
             var obstaclesLayer = Game1.currentLocation.Map.GetLayer("RaceObstacles");
@@ -1050,19 +1050,19 @@ namespace SurfingFestival
                 {
                     var tile = obstaclesLayer.Tiles[ix, iy];
                     if (tile?.TileIndex == 3)
-                        obstacles.Add(new Obstacle()
+                        Mod.obstacles.Add(new Obstacle()
                         {
                             Type = ObstacleType.Item,
                             Position = new Vector2(ix * Game1.tileSize, iy * Game1.tileSize)
                         });
                     else if (tile?.TileIndex == 64)
-                        obstacles.Add(new Obstacle()
+                        Mod.obstacles.Add(new Obstacle()
                         {
                             Type = ObstacleType.Net,
                             Position = new Vector2(ix * Game1.tileSize, iy * Game1.tileSize)
                         });
                     else if (tile?.TileIndex == 32)
-                        obstacles.Add(new Obstacle()
+                        Mod.obstacles.Add(new Obstacle()
                         {
                             Type = ObstacleType.Rock,
                             Position = new Vector2(ix * Game1.tileSize, iy * Game1.tileSize)
@@ -1071,53 +1071,53 @@ namespace SurfingFestival
             }
 
             // Add racers
-            racers = new List<string>();
-            racers.Add("Shane");
-            racers.Add("Harvey");
-            racers.Add("Maru");
-            racers.Add("Emily");
+            Mod.racers = new List<string>();
+            Mod.racers.Add("Shane");
+            Mod.racers.Add("Harvey");
+            Mod.racers.Add("Maru");
+            Mod.racers.Add("Emily");
             foreach (var farmer in Game1.getOnlineFarmers())
             {
-                racers.Add("farmer" + Utility.getFarmerNumberFromFarmer(farmer));
+                Mod.racers.Add("farmer" + Utility.getFarmerNumberFromFarmer(farmer));
                 farmer.CanMove = false;
             }
 
             // Shuffle them
             var r = new Random((int)Game1.uniqueIDForThisGame + (int)Game1.stats.DaysPlayed);
-            for (int i = 0; i < racers.Count; ++i)
+            for (int i = 0; i < Mod.racers.Count; ++i)
             {
-                int ni = r.Next(racers.Count);
-                var old = racers[ni];
-                racers[ni] = racers[i];
-                racers[i] = old;
+                int ni = r.Next(Mod.racers.Count);
+                var old = Mod.racers[ni];
+                Mod.racers[ni] = Mod.racers[i];
+                Mod.racers[i] = old;
             }
 
             // Set states and surfboards
-            racerState.Clear();
-            foreach (var racerName in racers)
+            Mod.racerState.Clear();
+            foreach (var racerName in Mod.racers)
             {
-                racerState.Add(racerName, new RacerState()
+                Mod.racerState.Add(racerName, new RacerState()
                 {
                     Surfboard = r.Next(6),
                 });
 
                 // NPCs get a buff since they're dumb
                 if (!racerName.StartsWith("farmer"))
-                    racerState[racerName].AddedSpeed += 1;
+                    Mod.racerState[racerName].AddedSpeed += 1;
                 // Farmer's do if they paid the secret offering
                 else if (Utility.getFarmerFromFarmerNumberString(racerName, Game1.player)?.hasOrWillReceiveMail("SurfingFestivalOffering") ?? false)
-                    racerState[racerName].AddedSpeed += 2;
+                    Mod.racerState[racerName].AddedSpeed += 2;
             }
 
             // Move them to their start
             var startPos = new Vector2(18, 57);
-            if (racers.Count <= 6)
+            if (Mod.racers.Count <= 6)
             {
                 startPos.X += 1;
                 startPos.Y -= 1;
             }
             var actualPos = startPos;
-            foreach (var racerName in racers)
+            foreach (var racerName in Mod.racers)
             {
                 var racer = __instance.getCharacterByName(racerName);
 
@@ -1142,10 +1142,10 @@ namespace SurfingFestival
         {
             // Move the racers
             var startPos = new Vector2(32, 12);
-            if (racers.Count <= 6)
+            if (Mod.racers.Count <= 6)
                 ++startPos.X;
             var actualPos = startPos;
-            foreach (var racerName in racers)
+            foreach (var racerName in Mod.racers)
             {
                 var racer = __instance.getCharacterByName(racerName);
 
@@ -1170,12 +1170,12 @@ namespace SurfingFestival
 
         public static void EventCommand_AwardSurfingPrize(Event __instance, GameLocation location, GameTime time, string[] split)
         {
-            if (raceWinner == "farmer" + Utility.getFarmerNumberFromFarmer(Game1.player))
+            if (Mod.raceWinner == "farmer" + Utility.getFarmerNumberFromFarmer(Game1.player))
             {
                 if (!Game1.player.mailReceived.Contains("SurfingFestivalWinner"))
                 {
                     Game1.player.mailReceived.Add("SurfingFestivalWinner");
-                    Game1.player.addItemByMenuIfNecessary(new StardewValley.Object(Vector2.Zero, ja.GetBigCraftableId("Surfing Trophy")));
+                    Game1.player.addItemByMenuIfNecessary(new StardewValley.Object(Vector2.Zero, Mod.ja.GetBigCraftableId("Surfing Trophy")));
                 }
 
                 Game1.playSound("money");
@@ -1238,7 +1238,7 @@ namespace SurfingFestival
 
         public static List<string> GetRacePlacement()
         {
-            List<string> ret = new List<string>(racers);
+            List<string> ret = new List<string>(Mod.racers);
             var cmp = new RacerPlacementComparer();
             ret.Sort(cmp);
 

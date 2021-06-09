@@ -21,14 +21,14 @@ namespace CapstoneProfessions
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             this.Helper.Events.Player.Warped += this.OnWarped;
 
             SpaceEvents.ShowNightEndMenus += this.OnNightMenus;
 
-            clockTex = this.Helper.Content.Load<Texture2D>("assets/clock.png");
+            Mod.clockTex = this.Helper.Content.Load<Texture2D>("assets/clock.png");
 
             HarmonyPatcher.Apply(this,
                 new Game1Patcher(),
@@ -40,10 +40,10 @@ namespace CapstoneProfessions
         {
             if (e.IsLocalPlayer && this.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
-                if (e.Player.professions.Contains(PROFESSION_TIME) && !e.Player.professions.Contains(PROFESSION_PROFIT))
-                    e.Player.professions.Add(PROFESSION_PROFIT);
-                if (!e.Player.professions.Contains(PROFESSION_TIME) && e.Player.professions.Contains(PROFESSION_PROFIT))
-                    e.Player.professions.Add(PROFESSION_TIME);
+                if (e.Player.professions.Contains(Mod.PROFESSION_TIME) && !e.Player.professions.Contains(Mod.PROFESSION_PROFIT))
+                    e.Player.professions.Add(Mod.PROFESSION_PROFIT);
+                if (!e.Player.professions.Contains(Mod.PROFESSION_TIME) && e.Player.professions.Contains(Mod.PROFESSION_PROFIT))
+                    e.Player.professions.Add(Mod.PROFESSION_TIME);
             }
         }
 
@@ -53,7 +53,7 @@ namespace CapstoneProfessions
                  Game1.player.fishingLevel.Value == 10 && Game1.player.miningLevel.Value == 10 &&
                  Game1.player.combatLevel.Value == 10)
             {
-                if (Game1.player.professions.Contains(PROFESSION_TIME) || Game1.player.professions.Contains(PROFESSION_PROFIT))
+                if (Game1.player.professions.Contains(Mod.PROFESSION_TIME) || Game1.player.professions.Contains(Mod.PROFESSION_PROFIT))
                     return;
 
                 Log.debug("Doing profession menu");

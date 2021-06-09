@@ -37,8 +37,8 @@ namespace ThrowableAxe
             this.damage.Value = damage;
             this.target.Value = target;
             this.speed.Value = speed;
-            boundingBoxWidth = 64;
-            boundingBoxHeight = 64;
+            Projectile.boundingBoxWidth = 64;
+            Projectile.boundingBoxHeight = 64;
             this.NetFields.AddFields(this.tier, this.damage, this.target, this.speed);
         }
 

@@ -98,7 +98,7 @@ namespace FlowerRain.Patches
                     if (s <= 0)
                         continue;
                     //Game1.spriteBatch.Draw(Game1.objectSpriteSheet, position, getRect(fd.index), Color.White, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
-                    Game1.spriteBatch.Draw(Game1.objectSpriteSheet, position, getRect(fd.index + 1), fd.color, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
+                    Game1.spriteBatch.Draw(Game1.objectSpriteSheet, position, Game1Patcher.getRect(fd.index + 1), fd.color, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
                 }
             }
             else
@@ -115,7 +115,7 @@ namespace FlowerRain.Patches
                     if (s <= 0)
                         continue;
                     //Game1.spriteBatch.Draw(Game1.objectSpriteSheet, rd.position, getRect(fd.index), Color.White, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
-                    Game1.spriteBatch.Draw(Game1.objectSpriteSheet, rd.position, getRect(fd.index + 1), fd.color, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
+                    Game1.spriteBatch.Draw(Game1.objectSpriteSheet, rd.position, Game1Patcher.getRect(fd.index + 1), fd.color, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
                 }
             }
         }

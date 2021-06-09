@@ -45,7 +45,7 @@ namespace GenericModConfigMenu
             if (this.ingame || Constants.TargetPlatform == GamePlatform.Android)
                 this.initializeUpperRightCloseButton();
 
-            ActiveConfigMenu = this;
+            ModConfigMenu.ActiveConfigMenu = this;
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
@@ -64,7 +64,7 @@ namespace GenericModConfigMenu
             if (TitleMenu.subMenu == this || this.ingame)
                 this.table.Scrollbar.ScrollBy(direction / -120);
             else
-                ActiveConfigMenu = null;
+                ModConfigMenu.ActiveConfigMenu = null;
         }
 
         public override void update(GameTime time)

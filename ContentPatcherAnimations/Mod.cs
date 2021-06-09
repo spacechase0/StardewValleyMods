@@ -53,7 +53,7 @@ namespace ContentPatcherAnimations
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             this.Helper.Events.GameLoop.UpdateTicked += this.UpdateAnimations;
@@ -86,7 +86,7 @@ namespace ContentPatcherAnimations
             if (this.contentPatcher == null)
             {
                 var modData = this.Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
-                this.contentPatcher = (StardewModdingAPI.Mod)modData.GetType().GetProperty("Mod", PrivateI | PublicI).GetValue(modData);
+                this.contentPatcher = (StardewModdingAPI.Mod)modData.GetType().GetProperty("Mod", Mod.PrivateI | Mod.PublicI).GetValue(modData);
             }
 
             if (this.screenState.Value == null)
@@ -96,10 +96,10 @@ namespace ContentPatcherAnimations
 
             if (this.ScreenState.cpPatches == null)
             {
-                var screenManagerPerScreen = this.contentPatcher.GetType().GetField("ScreenManager", PrivateI).GetValue(this.contentPatcher);
+                var screenManagerPerScreen = this.contentPatcher.GetType().GetField("ScreenManager", Mod.PrivateI).GetValue(this.contentPatcher);
                 var screenManager = screenManagerPerScreen.GetType().GetProperty("Value").GetValue(screenManagerPerScreen);
                 var patchManager = screenManager.GetType().GetProperty("PatchManager").GetValue(screenManager);
-                this.screenState.Value.cpPatches = (IEnumerable)patchManager.GetType().GetField("Patches", PrivateI).GetValue(patchManager);
+                this.screenState.Value.cpPatches = (IEnumerable)patchManager.GetType().GetField("Patches", Mod.PrivateI).GetValue(patchManager);
 
                 this.CollectPatches();
             }
@@ -206,7 +206,7 @@ namespace ContentPatcherAnimations
                         object targetPatch = null;
                         foreach (var cpPatch in this.ScreenState.cpPatches)
                         {
-                            var path = cpPatch.GetType().GetProperty("Path", PublicI).GetValue(cpPatch);
+                            var path = cpPatch.GetType().GetProperty("Path", Mod.PublicI).GetValue(cpPatch);
                             if (path.ToString() == pack.Manifest.Name + " > " + patch.LogName)
                             {
                                 targetPatch = cpPatch;
@@ -218,9 +218,9 @@ namespace ContentPatcherAnimations
                             Log.error("Failed to find patch with name \"" + patch.LogName + "\"!?!?");
                             continue;
                         }
-                        var appliedProp = targetPatch.GetType().GetProperty("IsApplied", PublicI);
-                        var sourceProp = targetPatch.GetType().GetProperty("FromAsset", PublicI);
-                        var targetProp = targetPatch.GetType().GetProperty("TargetAsset", PublicI);
+                        var appliedProp = targetPatch.GetType().GetProperty("IsApplied", Mod.PublicI);
+                        var sourceProp = targetPatch.GetType().GetProperty("FromAsset", Mod.PublicI);
+                        var targetProp = targetPatch.GetType().GetProperty("TargetAsset", Mod.PublicI);
 
                         data.patchObj = targetPatch;
                         data.IsActive = () => (bool)appliedProp.GetValue(targetPatch);

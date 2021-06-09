@@ -24,9 +24,9 @@ namespace TheftOfTheWinterStar
         public const int WITCH_HEALTH = 1000;
 
         private readonly NetBool facingRight = new NetBool(false);
-        private readonly NetInt shootPlayerTimer = new NetInt(SHOOT_DELAY);
-        private readonly NetInt spawnRocksTimer = new NetInt(SPAWN_ROCKS_DELAY);
-        private readonly NetInt spawnEnemyTimer = new NetInt(SPAWN_ENEMY_DELAY);
+        private readonly NetInt shootPlayerTimer = new NetInt(Witch.SHOOT_DELAY);
+        private readonly NetInt spawnRocksTimer = new NetInt(Witch.SPAWN_ROCKS_DELAY);
+        private readonly NetInt spawnEnemyTimer = new NetInt(Witch.SPAWN_ENEMY_DELAY);
         private readonly NetInt stunTimer = new NetInt(0);
         private int animTimer = 0;
 
@@ -36,7 +36,7 @@ namespace TheftOfTheWinterStar
             this.HideShadow = true;
             this.isGlider.Value = true;
             this.Name = "Witch";
-            this.Health = WITCH_HEALTH;
+            this.Health = Witch.WITCH_HEALTH;
             this.speed = 7;
             this.Portrait = Mod.instance.Helper.Content.Load<Texture2D>("assets/witch-portrait.png");
         }
@@ -49,13 +49,13 @@ namespace TheftOfTheWinterStar
 
         public override Rectangle GetBoundingBox()
         {
-            return new Rectangle((int)this.Position.X + 4 * Game1.pixelZoom, (int)this.Position.Y, (TEX_WIDTH - 12) * Game1.pixelZoom, (TEX_HEIGHT - 4) * Game1.pixelZoom);
+            return new Rectangle((int)this.Position.X + 4 * Game1.pixelZoom, (int)this.Position.Y, (Witch.TEX_WIDTH - 12) * Game1.pixelZoom, (Witch.TEX_HEIGHT - 4) * Game1.pixelZoom);
         }
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)
         {
             if (this.stunTimer.Value <= 0)
-                this.stunTimer.Value = STUN_TIME;
+                this.stunTimer.Value = Witch.STUN_TIME;
             return base.takeDamage(damage, xTrajectory, yTrajectory, isBomb, addedPrecision, who);
         }
 
@@ -74,7 +74,7 @@ namespace TheftOfTheWinterStar
             else if (this.GetBoundingBox().Left > this.currentLocation.Map.DisplayWidth + Game1.tileSize)
             {
                 this.facingRight.Value = false;
-                this.position.X = this.currentLocation.Map.DisplayWidth + Game1.tileSize - TEX_WIDTH;
+                this.position.X = this.currentLocation.Map.DisplayWidth + Game1.tileSize - Witch.TEX_WIDTH;
                 this.position.Y = Game1.random.Next(4, 15) * Game1.tileSize;
             }
 
@@ -86,7 +86,7 @@ namespace TheftOfTheWinterStar
                 this.moveRight = true;
             }
 
-            if (this.stunTimer.Value >= STUN_TIME / 2)
+            if (this.stunTimer.Value >= Witch.STUN_TIME / 2)
             {
                 this.moveLeft = false;
                 this.moveRight = false;
@@ -106,7 +106,7 @@ namespace TheftOfTheWinterStar
                 Vector2 velocityTowardPlayer = Utility.getVelocityTowardPlayer(this.GetBoundingBox().Center, 15f, this.Player);
                 Projectile proj = new DebuffingProjectile(14, 7, 4, 4, 0.1963495f, velocityTowardPlayer.X, velocityTowardPlayer.Y, new Vector2((float)this.GetBoundingBox().X, (float)this.GetBoundingBox().Y), this.currentLocation, this);
                 this.currentLocation.projectiles.Add(proj);
-                this.shootPlayerTimer.Value = SHOOT_DELAY;
+                this.shootPlayerTimer.Value = Witch.SHOOT_DELAY;
             }
 
             this.spawnRocksTimer.Value -= time.ElapsedGameTime.Milliseconds;
@@ -128,7 +128,7 @@ namespace TheftOfTheWinterStar
 
                     this.currentLocation.Objects.Add(spot, obj);
                 }
-                this.spawnRocksTimer.Value = SPAWN_ROCKS_DELAY / 2 + Game1.random.Next(SPAWN_ROCKS_DELAY);
+                this.spawnRocksTimer.Value = Witch.SPAWN_ROCKS_DELAY / 2 + Game1.random.Next(Witch.SPAWN_ROCKS_DELAY);
             }
 
             this.spawnEnemyTimer.Value -= time.ElapsedGameTime.Milliseconds;
@@ -143,13 +143,13 @@ namespace TheftOfTheWinterStar
                     bat.focusedOnFarmers = true;
                     this.currentLocation.characters.Add(bat);
                 }
-                this.spawnEnemyTimer.Value = SPAWN_ENEMY_DELAY / 3 + Game1.random.Next(SPAWN_ENEMY_DELAY);
+                this.spawnEnemyTimer.Value = Witch.SPAWN_ENEMY_DELAY / 3 + Game1.random.Next(Witch.SPAWN_ENEMY_DELAY);
             }
         }
 
         public override void drawAboveAllLayers(SpriteBatch b)
         {
-            b.Draw(Game1.mouseCursors, this.getLocalPosition(Game1.viewport), new Rectangle(CURSORS_POS_X, CURSORS_POS_Y + (this.animTimer < 20 ? TEX_HEIGHT : 0), TEX_WIDTH, TEX_HEIGHT), Color.White, 0, Vector2.Zero, 4, this.facingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 1);
+            b.Draw(Game1.mouseCursors, this.getLocalPosition(Game1.viewport), new Rectangle(Witch.CURSORS_POS_X, Witch.CURSORS_POS_Y + (this.animTimer < 20 ? Witch.TEX_HEIGHT : 0), Witch.TEX_WIDTH, Witch.TEX_HEIGHT), Color.White, 0, Vector2.Zero, 4, this.facingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 1);
             if (++this.animTimer >= 40)
                 this.animTimer = 0;
         }

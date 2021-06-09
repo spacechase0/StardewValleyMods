@@ -22,9 +22,9 @@ namespace SpaceCore
     {
         internal static void register()
         {
-            Command.register("player_giveexp", expCommand);
-            Command.register("asset_invalidate", invalidateCommand);
-            Command.register("exttilesheets_dump", dumpTilesheetsCommand);
+            Command.register("player_giveexp", Commands.expCommand);
+            Command.register("asset_invalidate", Commands.invalidateCommand);
+            Command.register("exttilesheets_dump", Commands.dumpTilesheetsCommand);
             //Command.register( "test", ( args ) => Game1.player.addItemByMenuIfNecessary( new TestObject() ) );
             //SpaceCore.modTypes.Add( typeof( TestObject ) );
         }

@@ -32,10 +32,10 @@ namespace FlowerRain
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
-            config = helper.ReadConfig<Config>();
+            Mod.config = helper.ReadConfig<Config>();
 
             helper.Events.GameLoop.GameLaunched += this.gameLaunched;
 
@@ -56,16 +56,16 @@ namespace FlowerRain
             var gmcm = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (gmcm != null)
             {
-                gmcm.RegisterModConfig(this.ModManifest, () => config = new Config(), () => this.Helper.WriteConfig(config));
+                gmcm.RegisterModConfig(this.ModManifest, () => Mod.config = new Config(), () => this.Helper.WriteConfig(Mod.config));
                 gmcm.RegisterSimpleOption(
                     this.ModManifest,
                     "Use Vanilla Flowers Only",
                     "Only use vanilla flowers in the flower rain",
-                    () => config.VanillaFlowersOnly,
+                    () => Mod.config.VanillaFlowersOnly,
                     b =>
                     {
-                        config.VanillaFlowersOnly = b;
-                        if (config.VanillaFlowersOnly)
+                        Mod.config.VanillaFlowersOnly = b;
+                        if (Mod.config.VanillaFlowersOnly)
                             this.BuildFlowerData(useWhitelist: true);
                     });
             }
@@ -79,7 +79,7 @@ namespace FlowerRain
 
         private void jaIdsAssigned(object sender, EventArgs e)
         {
-            if (!config.VanillaFlowersOnly)
+            if (!Mod.config.VanillaFlowersOnly)
             {
                 this.BuildFlowerData(useWhitelist: false);
             }

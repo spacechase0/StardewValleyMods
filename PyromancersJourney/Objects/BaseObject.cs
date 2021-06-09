@@ -6,7 +6,7 @@ namespace PyromancersJourney.Objects
 {
     public abstract class BaseObject
     {
-        protected internal static BasicEffect effect = GetBasicEffect();
+        protected internal static BasicEffect effect = BaseObject.GetBasicEffect();
 
         public World World { get; }
 
@@ -23,16 +23,16 @@ namespace PyromancersJourney.Objects
 
         public virtual void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
-            effect.Projection = projection;
-            effect.View = cam.CreateViewMatrix();
-            effect.World = this.MakeWorldMatrix();
+            BaseObject.effect.Projection = projection;
+            BaseObject.effect.View = cam.CreateViewMatrix();
+            BaseObject.effect.World = this.MakeWorldMatrix();
         }
 
         public virtual void RenderOver(GraphicsDevice device, Matrix projection, Camera cam)
         {
-            effect.Projection = projection;
-            effect.View = cam.CreateViewMatrix();
-            effect.World = this.MakeWorldMatrix();
+            BaseObject.effect.Projection = projection;
+            BaseObject.effect.View = cam.CreateViewMatrix();
+            BaseObject.effect.World = this.MakeWorldMatrix();
         }
 
         public virtual void RenderUi(SpriteBatch b)

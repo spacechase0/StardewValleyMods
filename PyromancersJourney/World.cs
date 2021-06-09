@@ -7,6 +7,7 @@ using PyromancersJourney.Objects;
 using PyromancersJourney.Projectiles;
 using SpaceShared;
 using StardewValley;
+using SObject = StardewValley.Object;
 
 namespace PyromancersJourney
 {
@@ -36,7 +37,7 @@ namespace PyromancersJourney
 
         public World()
         {
-            this.target = new RenderTarget2D(Game1.game1.GraphicsDevice, 500 / SCALE, 500 / SCALE, false, Game1.game1.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
+            this.target = new RenderTarget2D(Game1.game1.GraphicsDevice, 500 / World.SCALE, 500 / World.SCALE, false, Game1.game1.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
             this.spriteBatch = new SpriteBatch(Game1.game1.GraphicsDevice);
 
             this.InitLevel("0");
@@ -166,7 +167,7 @@ namespace PyromancersJourney
             device.SetRenderTargets(oldTargets);
             Game1.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             //var oldTarget = oldTargets[0].RenderTarget as RenderTarget2D;
-            Game1.spriteBatch.Draw(this.target, new Vector2((Game1.graphics.PreferredBackBufferWidth - 500) / 2, (Game1.graphics.PreferredBackBufferHeight - 500) / 2), null, Color.White, 0, Vector2.Zero, SCALE, SpriteEffects.None, 1);
+            Game1.spriteBatch.Draw(this.target, new Vector2((Game1.graphics.PreferredBackBufferWidth - 500) / 2, (Game1.graphics.PreferredBackBufferHeight - 500) / 2), null, Color.White, 0, Vector2.Zero, World.SCALE, SpriteEffects.None, 1);
             Game1.spriteBatch.End();
         }
 
@@ -189,7 +190,7 @@ namespace PyromancersJourney
                     if (!Game1.player.hasOrWillReceiveMail("BeatPyromancersJourney"))
                     {
                         Game1.player.mailReceived.Add("BeatPyromancersJourney");
-                        Game1.player.addItemByMenuIfNecessaryElseHoldUp(new StardewValley.Object(848, 25));
+                        Game1.player.addItemByMenuIfNecessaryElseHoldUp(new SObject(848, 25));
                     }
                     break;
             }

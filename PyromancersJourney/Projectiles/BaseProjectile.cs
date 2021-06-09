@@ -7,7 +7,7 @@ namespace PyromancersJourney.Projectiles
 {
     public abstract class BaseProjectile
     {
-        protected internal static BasicEffect effect = GetBasicEffect();
+        protected internal static BasicEffect effect = BaseProjectile.GetBasicEffect();
 
         public World World { get; }
 
@@ -31,9 +31,9 @@ namespace PyromancersJourney.Projectiles
 
         public virtual void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
-            effect.Projection = projection;
-            effect.View = cam.CreateViewMatrix();
-            effect.World = this.MakeWorldMatrix();
+            BaseProjectile.effect.Projection = projection;
+            BaseProjectile.effect.View = cam.CreateViewMatrix();
+            BaseProjectile.effect.World = this.MakeWorldMatrix();
         }
 
         protected virtual Matrix MakeWorldMatrix()

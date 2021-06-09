@@ -68,7 +68,7 @@ namespace GenericModConfigMenu.UI
             }
 
             if (this.dropped)
-                ActiveDropdown = this;
+                Dropdown.ActiveDropdown = this;
             else
                 this.ActivePosition = Math.Min(this.ActiveChoice, this.Choices.Length - this.MaxValuesAtOnce);
         }
@@ -78,7 +78,7 @@ namespace GenericModConfigMenu.UI
             if (this.dropped)
                 this.ActivePosition = Math.Min(Math.Max(this.ActivePosition - (direction / 120), 0), this.Choices.Length - this.MaxValuesAtOnce);
             else
-                ActiveDropdown = null;
+                Dropdown.ActiveDropdown = null;
         }
 
         public void DrawOld(SpriteBatch b)

@@ -11,7 +11,7 @@ namespace MoreBuildings.Buildings.FishingShack
         private static readonly BluePrint blueprint = new BluePrint("FishShack");
 
         public FishingShackBuilding()
-            : base(blueprint, Vector2.Zero) { }
+            : base(FishingShackBuilding.blueprint, Vector2.Zero) { }
 
         public FishingShackBuilding(BluePrint blueprint, Vector2 tileLocation)
             : base(blueprint, tileLocation) { }

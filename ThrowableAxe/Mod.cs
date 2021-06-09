@@ -14,7 +14,7 @@ namespace ThrowableAxe
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.Input.ButtonPressed += this.onButtonPress;

@@ -309,15 +309,15 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {obj.Name} sprites @ {objectRect(obj.GetObjectId())}");
-                    asset.AsImage().PatchExtendedTileSheet(obj.texture, null, objectRect(obj.GetObjectId()));
+                    Log.verbose($"Injecting {obj.Name} sprites @ {ContentInjector1.objectRect(obj.GetObjectId())}");
+                    asset.AsImage().PatchExtendedTileSheet(obj.texture, null, ContentInjector1.objectRect(obj.GetObjectId()));
                     if (obj.IsColored)
                     {
-                        Log.verbose($"Injecting {obj.Name} color sprites @ {objectRect(obj.GetObjectId() + 1)}");
-                        asset.AsImage().PatchExtendedTileSheet(obj.textureColor, null, objectRect(obj.GetObjectId() + 1));
+                        Log.verbose($"Injecting {obj.Name} color sprites @ {ContentInjector1.objectRect(obj.GetObjectId() + 1)}");
+                        asset.AsImage().PatchExtendedTileSheet(obj.textureColor, null, ContentInjector1.objectRect(obj.GetObjectId() + 1));
                     }
 
-                    var rect = objectRect(obj.GetObjectId());
+                    var rect = ContentInjector1.objectRect(obj.GetObjectId());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
                     obj.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
@@ -334,10 +334,10 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {boots.Name} sprites @ {objectRect(boots.GetObjectId())}");
-                    asset.AsImage().PatchExtendedTileSheet(boots.texture, null, objectRect(boots.GetObjectId()));
+                    Log.verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.objectRect(boots.GetObjectId())}");
+                    asset.AsImage().PatchExtendedTileSheet(boots.texture, null, ContentInjector1.objectRect(boots.GetObjectId()));
 
-                    var rect = objectRect(boots.GetObjectId());
+                    var rect = ContentInjector1.objectRect(boots.GetObjectId());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
                     boots.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
@@ -361,10 +361,10 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {crop.Name} crop images @ {cropRect(crop.GetCropSpriteIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(crop.texture, null, cropRect(crop.GetCropSpriteIndex()));
+                    Log.verbose($"Injecting {crop.Name} crop images @ {ContentInjector1.cropRect(crop.GetCropSpriteIndex())}");
+                    asset.AsImage().PatchExtendedTileSheet(crop.texture, null, ContentInjector1.cropRect(crop.GetCropSpriteIndex()));
 
-                    var rect = cropRect(crop.GetCropSpriteIndex());
+                    var rect = ContentInjector1.cropRect(crop.GetCropSpriteIndex());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
                     crop.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
@@ -388,10 +388,10 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {fruitTree.Name} fruit tree images @ {fruitTreeRect(fruitTree.GetFruitTreeIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(fruitTree.texture, null, fruitTreeRect(fruitTree.GetFruitTreeIndex()));
+                    Log.verbose($"Injecting {fruitTree.Name} fruit tree images @ {ContentInjector1.fruitTreeRect(fruitTree.GetFruitTreeIndex())}");
+                    asset.AsImage().PatchExtendedTileSheet(fruitTree.texture, null, ContentInjector1.fruitTreeRect(fruitTree.GetFruitTreeIndex()));
 
-                    var rect = fruitTreeRect(fruitTree.GetFruitTreeIndex());
+                    var rect = ContentInjector1.fruitTreeRect(fruitTree.GetFruitTreeIndex());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
                     fruitTree.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
@@ -416,18 +416,18 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {big.Name} sprites @ {bigCraftableRect(big.GetCraftableId())}");
-                    asset.AsImage().PatchExtendedTileSheet(big.texture, null, bigCraftableRect(big.GetCraftableId()));
+                    Log.verbose($"Injecting {big.Name} sprites @ {ContentInjector1.bigCraftableRect(big.GetCraftableId())}");
+                    asset.AsImage().PatchExtendedTileSheet(big.texture, null, ContentInjector1.bigCraftableRect(big.GetCraftableId()));
                     if (big.ReserveExtraIndexCount > 0)
                     {
                         for (int i = 0; i < big.ReserveExtraIndexCount; ++i)
                         {
-                            Log.verbose($"Injecting {big.Name} reserved extra sprite {i + 1} @ {bigCraftableRect(big.GetCraftableId() + i + 1)}");
-                            asset.AsImage().PatchExtendedTileSheet(big.extraTextures[i], null, bigCraftableRect(big.GetCraftableId() + i + 1));
+                            Log.verbose($"Injecting {big.Name} reserved extra sprite {i + 1} @ {ContentInjector1.bigCraftableRect(big.GetCraftableId() + i + 1)}");
+                            asset.AsImage().PatchExtendedTileSheet(big.extraTextures[i], null, ContentInjector1.bigCraftableRect(big.GetCraftableId() + i + 1));
                         }
                     }
 
-                    var rect = bigCraftableRect(big.GetCraftableId());
+                    var rect = ContentInjector1.bigCraftableRect(big.GetCraftableId());
                     int ts = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
                     big.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                     big.tilesheetX = rect.X;
@@ -451,10 +451,10 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {hat.Name} sprites @ {hatRect(hat.GetHatId())}");
-                    asset.AsImage().PatchExtendedTileSheet(hat.texture, null, hatRect(hat.GetHatId()));
+                    Log.verbose($"Injecting {hat.Name} sprites @ {ContentInjector1.hatRect(hat.GetHatId())}");
+                    asset.AsImage().PatchExtendedTileSheet(hat.texture, null, ContentInjector1.hatRect(hat.GetHatId()));
 
-                    var rect = hatRect(hat.GetHatId());
+                    var rect = ContentInjector1.hatRect(hat.GetHatId());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
                     hat.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
@@ -479,10 +479,10 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {weapon.Name} sprites @ {weaponRect(weapon.GetWeaponId())}");
-                    asset.AsImage().PatchImage(weapon.texture, null, weaponRect(weapon.GetWeaponId()));
+                    Log.verbose($"Injecting {weapon.Name} sprites @ {ContentInjector1.weaponRect(weapon.GetWeaponId())}");
+                    asset.AsImage().PatchImage(weapon.texture, null, ContentInjector1.weaponRect(weapon.GetWeaponId()));
 
-                    var rect = weaponRect(weapon.GetWeaponId());
+                    var rect = ContentInjector1.weaponRect(weapon.GetWeaponId());
                     int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
                     weapon.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                     weapon.tilesheetX = rect.X;
@@ -504,25 +504,25 @@ namespace JsonAssets
             {
                 try
                 {
-                    string rects = shirtRectPlain(shirt.GetMaleIndex()).ToString();
+                    string rects = ContentInjector1.shirtRectPlain(shirt.GetMaleIndex()).ToString();
                     if (shirt.Dyeable)
-                        rects += ", " + shirtRectDye(shirt.GetMaleIndex()).ToString();
+                        rects += ", " + ContentInjector1.shirtRectDye(shirt.GetMaleIndex()).ToString();
                     if (shirt.HasFemaleVariant)
                     {
-                        rects += ", " + shirtRectPlain(shirt.GetFemaleIndex()).ToString();
+                        rects += ", " + ContentInjector1.shirtRectPlain(shirt.GetFemaleIndex()).ToString();
                         if (shirt.Dyeable)
-                            rects += ", " + shirtRectDye(shirt.GetFemaleIndex()).ToString();
+                            rects += ", " + ContentInjector1.shirtRectDye(shirt.GetFemaleIndex()).ToString();
                     }
 
                     Log.verbose($"Injecting {shirt.Name} sprites @ {rects}");
-                    asset.AsImage().PatchExtendedTileSheet(shirt.textureMale, null, shirtRectPlain(shirt.GetMaleIndex()));
+                    asset.AsImage().PatchExtendedTileSheet(shirt.textureMale, null, ContentInjector1.shirtRectPlain(shirt.GetMaleIndex()));
                     if (shirt.Dyeable)
-                        asset.AsImage().PatchExtendedTileSheet(shirt.textureMaleColor, null, shirtRectDye(shirt.GetMaleIndex()));
+                        asset.AsImage().PatchExtendedTileSheet(shirt.textureMaleColor, null, ContentInjector1.shirtRectDye(shirt.GetMaleIndex()));
                     if (shirt.HasFemaleVariant)
                     {
-                        asset.AsImage().PatchExtendedTileSheet(shirt.textureFemale, null, shirtRectPlain(shirt.GetFemaleIndex()));
+                        asset.AsImage().PatchExtendedTileSheet(shirt.textureFemale, null, ContentInjector1.shirtRectPlain(shirt.GetFemaleIndex()));
                         if (shirt.Dyeable)
-                            asset.AsImage().PatchExtendedTileSheet(shirt.textureFemaleColor, null, shirtRectDye(shirt.GetFemaleIndex()));
+                            asset.AsImage().PatchExtendedTileSheet(shirt.textureFemaleColor, null, ContentInjector1.shirtRectDye(shirt.GetFemaleIndex()));
                     }
                 }
                 catch (Exception e)
@@ -543,8 +543,8 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {pants.Name} sprites @ {pantsRect(pants.GetTextureIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(pants.texture, null, pantsRect(pants.GetTextureIndex()));
+                    Log.verbose($"Injecting {pants.Name} sprites @ {ContentInjector1.pantsRect(pants.GetTextureIndex())}");
+                    asset.AsImage().PatchExtendedTileSheet(pants.texture, null, ContentInjector1.pantsRect(pants.GetTextureIndex()));
                 }
                 catch (Exception e)
                 {
@@ -564,8 +564,8 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {boots.Name} sprites @ {bootsRect(boots.GetTextureIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(boots.textureColor, null, bootsRect(boots.GetTextureIndex()));
+                    Log.verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.bootsRect(boots.GetTextureIndex())}");
+                    asset.AsImage().PatchExtendedTileSheet(boots.textureColor, null, ContentInjector1.bootsRect(boots.GetTextureIndex()));
                 }
                 catch (Exception e)
                 {
@@ -603,7 +603,7 @@ namespace JsonAssets
         }
         internal static Rectangle shirtRectDye(int index)
         {
-            var rect = shirtRectPlain(index);
+            var rect = ContentInjector1.shirtRectPlain(index);
             rect.X += 16 * 8;
             return rect;
         }

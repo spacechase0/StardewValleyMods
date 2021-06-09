@@ -302,7 +302,7 @@ namespace GenericModConfigMenu
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.table.ForceUpdateEvenHidden();
 
-            ActiveConfigMenu = this;
+            SpecificModConfigMenu.ActiveConfigMenu = this;
 
             Mod.instance.Helper.Content.AssetEditors.Add(this);
         }
@@ -344,7 +344,7 @@ namespace GenericModConfigMenu
                     this.table.Scrollbar.ScrollBy(direction / -120);
             }
             else
-                ActiveConfigMenu = null;
+                SpecificModConfigMenu.ActiveConfigMenu = null;
         }
 
         public override bool readyToClose()
@@ -424,7 +424,7 @@ namespace GenericModConfigMenu
                     string title = label.String;
                     if (title != null && !title.Contains("\n"))
                         title = Game1.parseText(title, Game1.dialogueFont, 800);
-                    drawToolTip(b, text, title, null);
+                    IClickableMenu.drawToolTip(b, text, title, null);
                 }
             }
         }

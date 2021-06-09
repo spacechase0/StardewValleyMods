@@ -82,7 +82,7 @@ namespace BuildableLocationsFramework.Patches
                 if (__instance_freeze.GetValue())
                     goto ret;
                 if (!__instance_onFarm.GetValue())
-                    base_receiveLeftClick(__instance, x, y, playSound);
+                    CarpenterMenuPatcher.base_receiveLeftClick(__instance, x, y, playSound);
                 if (__instance.cancelButton.containsPoint(x, y))
                 {
                     if (!__instance_onFarm.GetValue())

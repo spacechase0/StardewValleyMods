@@ -56,7 +56,7 @@ namespace BuildableLocationsFramework.Patches
             {
                 GameLocation locationFromName = Mod.findOutdoorsOf(currentBuilding);
                 IAnimalLocation locationFromName_animals = (IAnimalLocation)locationFromName;
-                if (locationFromName.isCollidingPosition(new Microsoft.Xna.Framework.Rectangle(((int)(NetFieldBase<int, NetInt>)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)(NetFieldBase<int, NetInt>)currentBuilding.tileY + currentBuilding.animalDoor.Y) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, (Character)__instance, false, false, false) || locationFromName.isCollidingPosition(new Microsoft.Xna.Framework.Rectangle(((int)(NetFieldBase<int, NetInt>)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)(NetFieldBase<int, NetInt>)currentBuilding.tileY + currentBuilding.animalDoor.Y + 1) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, (Character)__instance, false, false, false))
+                if (locationFromName.isCollidingPosition(new Rectangle(((int)(NetFieldBase<int, NetInt>)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)(NetFieldBase<int, NetInt>)currentBuilding.tileY + currentBuilding.animalDoor.Y) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, (Character)__instance, false, false, false) || locationFromName.isCollidingPosition(new Rectangle(((int)(NetFieldBase<int, NetInt>)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)(NetFieldBase<int, NetInt>)currentBuilding.tileY + currentBuilding.animalDoor.Y + 1) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, (Character)__instance, false, false, false))
                     return false;
                 if (locationFromName_animals.Animals.ContainsKey((long)__instance.myID))
                 {
@@ -359,7 +359,7 @@ namespace BuildableLocationsFramework.Patches
                 }
                 if (location.IsOutdoors && !Game1.isRaining && (!Game1.currentSeason.Equals("winter") && (int)(NetFieldBase<int, NetInt>)__instance.currentProduce != -1) && ((int)(NetFieldBase<int, NetInt>)__instance.age >= (int)(byte)(NetFieldBase<byte, NetByte>)__instance.ageWhenMature && __instance.type.Value.Contains("Pig") && Game1.random.NextDouble() < 0.0002))
                 {
-                    Microsoft.Xna.Framework.Rectangle boundingBox = __instance.GetBoundingBox();
+                    Rectangle boundingBox = __instance.GetBoundingBox();
                     for (int corner = 0; corner < 4; ++corner)
                     {
                         Vector2 cornersOfThisRectangle = Utility.getCornersOfThisRectangle(ref boundingBox, corner);

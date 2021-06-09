@@ -22,17 +22,17 @@ namespace PyromancersJourney.Objects
         {
             this.Health = 2;
 
-            if (mainBuffer == null)
+            if (BatEnemy.mainBuffer == null)
             {
                 float s = 0.75f;
 
                 var vertices = new List<VertexPositionColorTexture>();
                 for (int i = 0; i < 4; ++i)
                 {
-                    float xa = (16f / tex.Width) * i;
-                    float xb = (16f / tex.Width) * (i + 1);
-                    float ya = (24f / tex.Height) * (0 + 1);
-                    float yb = (24f / tex.Height) * 0;
+                    float xa = (16f / BatEnemy.tex.Width) * i;
+                    float xb = (16f / BatEnemy.tex.Width) * (i + 1);
+                    float ya = (24f / BatEnemy.tex.Height) * (0 + 1);
+                    float yb = (24f / BatEnemy.tex.Height) * 0;
                     vertices.Add(new VertexPositionColorTexture(new Vector3(0, 0, 0), Color.White, new Vector2(xa, ya)));
                     vertices.Add(new VertexPositionColorTexture(new Vector3(s, 0, 0), Color.White, new Vector2(xb, ya)));
                     vertices.Add(new VertexPositionColorTexture(new Vector3(s, s, 0), Color.White, new Vector2(xb, yb)));
@@ -42,8 +42,8 @@ namespace PyromancersJourney.Objects
                     vertices.Add(new VertexPositionColorTexture(new Vector3(s, s, 0), Color.White, new Vector2(xb, yb)));
                 }
 
-                mainBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
-                mainBuffer.SetData(vertices.ToArray());
+                BatEnemy.mainBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                BatEnemy.mainBuffer.SetData(vertices.ToArray());
             }
         }
 
@@ -96,15 +96,15 @@ namespace PyromancersJourney.Objects
 
             var camForward = (cam.pos - cam.target);
             camForward.Normalize();
-            effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
-            effect.TextureEnabled = true;
-            effect.Texture = tex;
-            for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
+            BaseObject.effect.TextureEnabled = true;
+            BaseObject.effect.Texture = BatEnemy.tex;
+            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
                 pass.Apply();
 
-                device.SetVertexBuffer(mainBuffer);
+                device.SetVertexBuffer(BatEnemy.mainBuffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, frame * 6, 2);
             }
 

@@ -42,7 +42,7 @@ namespace JsonAssets
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             helper.ConsoleCommands.Add("ja_summary", "Summary of JA ids", this.doCommands);
@@ -60,13 +60,13 @@ namespace JsonAssets
             helper.Content.AssetEditors.Add(this.content1 = new ContentInjector1());
             helper.Content.AssetLoaders.Add(this.content1);
 
-            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Maps\\springobjects", 16);
-            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\Craftables", 32);
-            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\crops", 32);
-            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\fruitTrees", 80);
-            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\shirts", 32);
-            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\pants", 688);
-            SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\hats", 80);
+            TileSheetExtensions.RegisterExtendedTileSheet("Maps\\springobjects", 16);
+            TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\Craftables", 32);
+            TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\crops", 32);
+            TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\fruitTrees", 80);
+            TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\shirts", 32);
+            TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\pants", 688);
+            TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\hats", 80);
 
             HarmonyPatcher.Apply(this,
                 new CropPatcher(),
@@ -216,7 +216,7 @@ namespace JsonAssets
             }
 
             // load content pack
-            string id = nameToId.Replace(info.Name, "");
+            string id = Mod.nameToId.Replace(info.Name, "");
             IContentPack contentPack = this.Helper.ContentPacks.CreateTemporary(dir, id: id, name: info.Name, description: info.Description, author: info.Author, version: new SemanticVersion(info.Version));
             this.loadData(contentPack);
         }
@@ -1218,20 +1218,20 @@ namespace JsonAssets
             var objList = new List<DataNeedsId>();
             objList.AddRange(this.objects.ToList<DataNeedsId>());
             objList.AddRange(this.bootss.ToList<DataNeedsId>());
-            this.objectIds = this.AssignIds("objects", StartingObjectId, objList);
-            this.cropIds = this.AssignIds("crops", StartingCropId, this.crops.ToList<DataNeedsId>());
-            this.fruitTreeIds = this.AssignIds("fruittrees", StartingFruitTreeId, this.fruitTrees.ToList<DataNeedsId>());
-            this.bigCraftableIds = this.AssignIds("big-craftables", StartingBigCraftableId, this.bigCraftables.ToList<DataNeedsId>());
-            this.hatIds = this.AssignIds("hats", StartingHatId, this.hats.ToList<DataNeedsId>());
-            this.weaponIds = this.AssignIds("weapons", StartingWeaponId, this.weapons.ToList<DataNeedsId>());
+            this.objectIds = this.AssignIds("objects", Mod.StartingObjectId, objList);
+            this.cropIds = this.AssignIds("crops", Mod.StartingCropId, this.crops.ToList<DataNeedsId>());
+            this.fruitTreeIds = this.AssignIds("fruittrees", Mod.StartingFruitTreeId, this.fruitTrees.ToList<DataNeedsId>());
+            this.bigCraftableIds = this.AssignIds("big-craftables", Mod.StartingBigCraftableId, this.bigCraftables.ToList<DataNeedsId>());
+            this.hatIds = this.AssignIds("hats", Mod.StartingHatId, this.hats.ToList<DataNeedsId>());
+            this.weaponIds = this.AssignIds("weapons", Mod.StartingWeaponId, this.weapons.ToList<DataNeedsId>());
             List<DataNeedsId> clothing = new List<DataNeedsId>();
             clothing.AddRange(this.shirts);
             clothing.AddRange(this.pantss);
-            this.clothingIds = this.AssignIds("clothing", StartingClothingId, clothing.ToList<DataNeedsId>());
+            this.clothingIds = this.AssignIds("clothing", Mod.StartingClothingId, clothing.ToList<DataNeedsId>());
 
-            this.AssignTextureIndices("shirts", StartingShirtTextureIndex, this.shirts.ToList<DataSeparateTextureIndex>());
-            this.AssignTextureIndices("pants", StartingPantsTextureIndex, this.pantss.ToList<DataSeparateTextureIndex>());
-            this.AssignTextureIndices("boots", StartingBootsId, this.bootss.ToList<DataSeparateTextureIndex>());
+            this.AssignTextureIndices("shirts", Mod.StartingShirtTextureIndex, this.shirts.ToList<DataSeparateTextureIndex>());
+            this.AssignTextureIndices("pants", Mod.StartingPantsTextureIndex, this.pantss.ToList<DataSeparateTextureIndex>());
+            this.AssignTextureIndices("boots", Mod.StartingBootsId, this.bootss.ToList<DataSeparateTextureIndex>());
 
             Log.trace("Resetting max shirt/pants value");
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxShirtValue").SetValue(-1);

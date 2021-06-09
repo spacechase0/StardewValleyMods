@@ -12,7 +12,7 @@ namespace Terraforming
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
 
             helper.ConsoleCommands.Add("terraform", "TODO", this.terraformCommand);
         }
@@ -30,7 +30,7 @@ namespace Terraforming
             }
 
             Log.info("Starting up...");
-            sterilizeMap();
+            Mod.sterilizeMap();
             Game1.activeClickableMenu = new TerraformingMenu();
         }
 
@@ -63,7 +63,7 @@ namespace Terraforming
             {
                 var newLayer = new Layer(layer.Id, map, layer.LayerSize, layer.TileSize);
                 if (newLayer.Id == "Back" || newLayer.Id == "Buildings" || newLayer.Id == "Front" || newLayer.Id == "AlwaysFront")
-                    newLayer.AfterDraw += drawTerraformLayer;
+                    newLayer.AfterDraw += Mod.drawTerraformLayer;
                 if (newLayer.Id == "Back")
                 {
                     for (var ix = 0; ix < newLayer.LayerWidth; ix++)

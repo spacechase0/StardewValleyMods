@@ -16,7 +16,7 @@ namespace FlowerColorPicker
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.Input.ButtonPressed += this.onButtonPressed;

@@ -12,7 +12,7 @@ namespace Terraforming
     {
         private int terrainWidth, terrainHeight;
         private TileType[,] terrainData;
-        private Dictionary<TileType, Color> typeColors = GetCorrespondingColors();
+        private Dictionary<TileType, Color> typeColors = TerraformingMenu.GetCorrespondingColors();
 
         private TileType sel = TileType.Dirt;
 
@@ -91,7 +91,7 @@ namespace Terraforming
             }
 
             // Draw UI
-            drawTextureBox(b, 64, 64, 64 + IClickableMenu.borderWidth * 2 + 32, IClickableMenu.borderWidth * 2 + (64 + 32) * (int)TileType.Count, Color.White);
+            IClickableMenu.drawTextureBox(b, 64, 64, 64 + IClickableMenu.borderWidth * 2 + 32, IClickableMenu.borderWidth * 2 + (64 + 32) * (int)TileType.Count, Color.White);
             for (int i = 0; i < (int)TileType.Count; ++i)
             {
                 TileType type = (TileType)i;
@@ -104,7 +104,7 @@ namespace Terraforming
                     this.sel = type;
 
                 if (type == this.sel)
-                    drawTextureBox(b, x - 16, y - 16, 64 + 32, 64 + 32, Color.Green);
+                    IClickableMenu.drawTextureBox(b, x - 16, y - 16, 64 + 32, 64 + 32, Color.Green);
 
                 b.Draw(Game1.staminaRect, rect, col);
             }

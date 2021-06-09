@@ -21,9 +21,9 @@ namespace BetterShopMenu
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
-            Config = helper.ReadConfig<Configuration>();
+            Mod.Config = helper.ReadConfig<Configuration>();
 
             helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
             helper.Events.Display.MenuChanged += this.onMenuChanged;
@@ -37,8 +37,8 @@ namespace BetterShopMenu
             var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Config = new Configuration(), () => this.Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Grid Layout)", "Whether or not to use the grid layout in shops.", () => Config.GridLayout, (bool val) => Config.GridLayout = val);
+                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
+                capi.RegisterSimpleOption(this.ModManifest, "Grid Layout)", "Whether or not to use the grid layout in shops.", () => Mod.Config.GridLayout, (bool val) => Mod.Config.GridLayout = val);
             }
         }
 
@@ -204,18 +204,18 @@ namespace BetterShopMenu
             pos.X += 16;
             pos.Y += 16;
             string str = "Category: \n" + this.categoryNames[((this.currCategory == -1 || this.currCategory == this.categories.Count) ? this.currCategory : this.categories[this.currCategory])];
-            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1, 1), new Color(224, 150, 80), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
-            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color(86, 22, 12), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1, 1), new Color(224, 150, 80), 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
+            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color(86, 22, 12), 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
 
             pos = new Vector2(this.shop.xPositionOnScreen + 25, this.shop.yPositionOnScreen + 600);
             IClickableMenu.drawTextureBox(Game1.spriteBatch, (int)pos.X, (int)pos.Y, 200, 48, Color.White);
             pos.X += 16;
             pos.Y += 16;
             str = "Sorting: " + (this.sorting == 0 ? "None" : (this.sorting == 1 ? "Price" : "Name"));
-            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1, 1), new Color(224, 150, 80), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
-            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color(86, 22, 12), 0, Vector2.Zero, 0.5f, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1, 1), new Color(224, 150, 80), 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
+            Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color(86, 22, 12), 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
 
-            if (Config.GridLayout)
+            if (Mod.Config.GridLayout)
             {
                 this.drawGridLayout();
             }
@@ -392,7 +392,7 @@ namespace BetterShopMenu
                 if (new Rectangle(this.shop.xPositionOnScreen + 25, this.shop.yPositionOnScreen + 600, 200, 48).Contains(x, y))
                     this.changeSorting(direction);
 
-                if (Config.GridLayout)
+                if (Mod.Config.GridLayout)
                 {
                     this.Helper.Input.Suppress(e.Button);
                     if (e.Button == SButton.MouseRight)

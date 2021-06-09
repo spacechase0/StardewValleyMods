@@ -23,10 +23,10 @@ namespace PyromancersJourney.Objects
         public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
             base.Render(device, projection, cam);
-            effect.TextureEnabled = false;
-            for (int e = 0; e < effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.effect.TextureEnabled = false;
+            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
                 pass.Apply();
                 device.SetVertexBuffer(this.buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);

@@ -37,9 +37,9 @@ namespace CustomizeExterior
                 this.choices.Add(choice, Mod.getTextureForChoice(this.type, choice));
             }
 
-            this.size = Game1.viewport.Size.Height - PADDING_OUTER * 2;
+            this.size = Game1.viewport.Size.Height - SelectDisplayMenu.PADDING_OUTER * 2;
             this.x = (Game1.viewport.Size.Width - this.size) / 2;
-            this.entrySize = (this.size - PADDING_INNER * 4) / 3;
+            this.entrySize = (this.size - SelectDisplayMenu.PADDING_INNER * 4) / 3;
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
@@ -47,8 +47,8 @@ namespace CustomizeExterior
             int i = 0;
             foreach (var entry in this.choices)
             {
-                int ix = this.x + PADDING_INNER + (this.entrySize + PADDING_INNER) * (i % 3);
-                int iy = PADDING_OUTER + PADDING_INNER + (this.entrySize + PADDING_INNER) * (i / 3);
+                int ix = this.x + SelectDisplayMenu.PADDING_INNER + (this.entrySize + SelectDisplayMenu.PADDING_INNER) * (i % 3);
+                int iy = SelectDisplayMenu.PADDING_OUTER + SelectDisplayMenu.PADDING_INNER + (this.entrySize + SelectDisplayMenu.PADDING_INNER) * (i / 3);
                 iy += this.scroll;
 
                 if (new Rectangle(ix, iy, this.entrySize, this.entrySize).Contains(x, y))
@@ -72,14 +72,14 @@ namespace CustomizeExterior
             if (this.scroll > 0)
                 this.scroll = 0;
 
-            int cap = PADDING_OUTER + PADDING_INNER + (this.entrySize + PADDING_INNER) * (this.choices.Count / 3 - 3) + PADDING_INNER * 2;
+            int cap = SelectDisplayMenu.PADDING_OUTER + SelectDisplayMenu.PADDING_INNER + (this.entrySize + SelectDisplayMenu.PADDING_INNER) * (this.choices.Count / 3 - 3) + SelectDisplayMenu.PADDING_INNER * 2;
             if (this.scroll <= -cap)
                 this.scroll = -cap;
         }
 
         public override void draw(SpriteBatch b)
         {
-            drawTextureBox(b, this.x, PADDING_OUTER, this.size, this.size, Color.White);
+            IClickableMenu.drawTextureBox(b, this.x, SelectDisplayMenu.PADDING_OUTER, this.size, this.size, Color.White);
 
             int edge = (int)(10 * Game1.options.zoomLevel);
 
@@ -87,24 +87,24 @@ namespace CustomizeExterior
             RasterizerState state = new RasterizerState();
             state.ScissorTestEnable = true;
             b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, state);
-            b.GraphicsDevice.ScissorRectangle = new Rectangle(this.x + edge, PADDING_OUTER + edge, this.size - edge * 2, this.size - edge * 2);
+            b.GraphicsDevice.ScissorRectangle = new Rectangle(this.x + edge, SelectDisplayMenu.PADDING_OUTER + edge, this.size - edge * 2, this.size - edge * 2);
             {
                 int i = 0;
                 foreach (var entry in this.choices)
                 {
-                    int ix = this.x + PADDING_INNER + (this.entrySize + PADDING_INNER) * (i % 3);
-                    int iy = PADDING_OUTER + PADDING_INNER + (this.entrySize + PADDING_INNER) * (i / 3);
+                    int ix = this.x + SelectDisplayMenu.PADDING_INNER + (this.entrySize + SelectDisplayMenu.PADDING_INNER) * (i % 3);
+                    int iy = SelectDisplayMenu.PADDING_OUTER + SelectDisplayMenu.PADDING_INNER + (this.entrySize + SelectDisplayMenu.PADDING_INNER) * (i / 3);
                     iy += this.scroll;
 
                     Color col = entry.Key == this.active ? Color.Goldenrod : Color.White;
                     if (new Rectangle(ix, iy, this.entrySize, this.entrySize).Contains(Game1.getMousePosition()))
                         col = Color.Wheat;
-                    drawTextureBox(b, ix, iy, this.entrySize, this.entrySize, col);
+                    IClickableMenu.drawTextureBox(b, ix, iy, this.entrySize, this.entrySize, col);
 
                     if (entry.Value != null)
-                        b.Draw(entry.Value, new Rectangle(ix + PADDING_IN, iy + PADDING_IN, this.entrySize - PADDING_IN * 2, this.entrySize - PADDING_IN * 2), new Rectangle(0, 0, entry.Value.Width, entry.Value.Height), Color.White);
+                        b.Draw(entry.Value, new Rectangle(ix + SelectDisplayMenu.PADDING_IN, iy + SelectDisplayMenu.PADDING_IN, this.entrySize - SelectDisplayMenu.PADDING_IN * 2, this.entrySize - SelectDisplayMenu.PADDING_IN * 2), new Rectangle(0, 0, entry.Value.Width, entry.Value.Height), Color.White);
                     else
-                        SpriteText.drawString(b, entry.Key, ix + PADDING_IN + (this.entrySize - PADDING_IN * 2 - SpriteText.getWidthOfString(entry.Key)) / 2, iy + PADDING_IN + (this.entrySize - PADDING_IN * 2 - SpriteText.getHeightOfString(entry.Key)) / 2);
+                        SpriteText.drawString(b, entry.Key, ix + SelectDisplayMenu.PADDING_IN + (this.entrySize - SelectDisplayMenu.PADDING_IN * 2 - SpriteText.getWidthOfString(entry.Key)) / 2, iy + SelectDisplayMenu.PADDING_IN + (this.entrySize - SelectDisplayMenu.PADDING_IN * 2 - SpriteText.getHeightOfString(entry.Key)) / 2);
 
                     ++i;
                 }

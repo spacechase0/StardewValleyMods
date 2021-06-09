@@ -22,10 +22,10 @@ namespace AnotherHungerMod
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
-            Config = helper.ReadConfig<Configuration>();
+            Mod.Config = helper.ReadConfig<Configuration>();
             this.hungerBar = helper.Content.Load<Texture2D>("assets/hungerbar.png");
 
             helper.ConsoleCommands.Add("player_addfullness", "Add to your fullness", this.commands);
@@ -47,16 +47,16 @@ namespace AnotherHungerMod
             var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Config = new Configuration(), () => this.Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Fullness UI (X)", "The X position of the fullness UI.", () => Config.FullnessUiX, (int val) => Config.FullnessUiX = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Fullness UI (Y)", "The Y position of the fullness UI.", () => Config.FullnessUiY, (int val) => Config.FullnessUiY = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Max Fullness", "Maximum amount of fullness you can have.", () => Config.MaxFullness, (int val) => Config.MaxFullness = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Edibility Multiplier", "A multiplier for the amount of fullness you get, based on the food's edibility.", () => (float)Config.EdibilityMultiplier, (float val) => Config.EdibilityMultiplier = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Fullness Drain", "The amount of fullness to drain every 10 minutes in-game.", () => (float)Config.DrainPer10Min, (float val) => Config.DrainPer10Min = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Positive Buff Threshold", "The amount of fullness you need for positive buffs to apply.", () => Config.PositiveBuffThreshold, (int val) => Config.PositiveBuffThreshold = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Negative Buff Threshold", "The amount of fullness you need before negative buffs apply.", () => Config.NegativeBuffThreshold, (int val) => Config.NegativeBuffThreshold = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Starvation Damage", "The amount of starvation damage taken every 10 minutes when you have no fullness.", () => Config.StarvationDamagePer10Min, (int val) => Config.StarvationDamagePer10Min = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Unfed Spouse Penalty", "The relationship points penalty for not feeding your spouse.", () => Config.RelationshipHitForNotFeedingSpouse, (int val) => Config.RelationshipHitForNotFeedingSpouse = val);
+                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
+                capi.RegisterSimpleOption(this.ModManifest, "Fullness UI (X)", "The X position of the fullness UI.", () => Mod.Config.FullnessUiX, (int val) => Mod.Config.FullnessUiX = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Fullness UI (Y)", "The Y position of the fullness UI.", () => Mod.Config.FullnessUiY, (int val) => Mod.Config.FullnessUiY = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Max Fullness", "Maximum amount of fullness you can have.", () => Mod.Config.MaxFullness, (int val) => Mod.Config.MaxFullness = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Edibility Multiplier", "A multiplier for the amount of fullness you get, based on the food's edibility.", () => (float)Mod.Config.EdibilityMultiplier, (float val) => Mod.Config.EdibilityMultiplier = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Fullness Drain", "The amount of fullness to drain every 10 minutes in-game.", () => (float)Mod.Config.DrainPer10Min, (float val) => Mod.Config.DrainPer10Min = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Positive Buff Threshold", "The amount of fullness you need for positive buffs to apply.", () => Mod.Config.PositiveBuffThreshold, (int val) => Mod.Config.PositiveBuffThreshold = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Negative Buff Threshold", "The amount of fullness you need before negative buffs apply.", () => Mod.Config.NegativeBuffThreshold, (int val) => Mod.Config.NegativeBuffThreshold = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Starvation Damage", "The amount of starvation damage taken every 10 minutes when you have no fullness.", () => Mod.Config.StarvationDamagePer10Min, (int val) => Mod.Config.StarvationDamagePer10Min = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Unfed Spouse Penalty", "The relationship points penalty for not feeding your spouse.", () => Mod.Config.RelationshipHitForNotFeedingSpouse, (int val) => Mod.Config.RelationshipHitForNotFeedingSpouse = val);
             }
         }
 
@@ -78,7 +78,7 @@ namespace AnotherHungerMod
 
             SpriteBatch b = e.SpriteBatch;
 
-            Vector2 pos = new Vector2(Config.FullnessUiX, Config.FullnessUiY);
+            Vector2 pos = new Vector2(Mod.Config.FullnessUiX, Mod.Config.FullnessUiY);
             b.Draw(this.hungerBar, pos, new Rectangle(0, 0, this.hungerBar.Width, this.hungerBar.Height), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1);
             if (Game1.player.GetFullness() > 0)
             {
@@ -108,7 +108,7 @@ namespace AnotherHungerMod
             if (sender != Game1.player)
                 return;
 
-            int foodVal = (int)((Game1.player.itemToEat as StardewValley.Object).Edibility * Config.EdibilityMultiplier);
+            int foodVal = (int)((Game1.player.itemToEat as StardewValley.Object).Edibility * Mod.Config.EdibilityMultiplier);
             Log.trace("Player ate food for " + foodVal + " fullness");
             Game1.player.UseFullness(-foodVal);
         }
@@ -133,7 +133,7 @@ namespace AnotherHungerMod
             if (Game1.player.HasFedSpouse() && Game1.player.getSpouse() != null)
             {
                 Log.trace("Player didn't feed spouse");
-                Game1.player.changeFriendship(-Config.RelationshipHitForNotFeedingSpouse, Game1.player.getSpouse());
+                Game1.player.changeFriendship(-Mod.Config.RelationshipHitForNotFeedingSpouse, Game1.player.getSpouse());
                 Game1.player.SetFedSpouse(false);
             }
             else
@@ -150,14 +150,14 @@ namespace AnotherHungerMod
             double fullness = Game1.player.GetFullness();
 
             Buff fullBuff = Game1.buffsDisplay.otherBuffs.Find(b => b.source == "Fullness");
-            if (fullness > Config.PositiveBuffThreshold)
+            if (fullness > Mod.Config.PositiveBuffThreshold)
             {
                 if (fullBuff == null)
                 {
                     fullBuff = new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 10, "Fullness", "Fullness");
                     Game1.buffsDisplay.addOtherBuff(fullBuff);
                 }
-                fullBuff.millisecondsDuration = 7000 * (int)((fullness - Config.PositiveBuffThreshold) / Config.DrainPer10Min);
+                fullBuff.millisecondsDuration = 7000 * (int)((fullness - Mod.Config.PositiveBuffThreshold) / Mod.Config.DrainPer10Min);
             }
             else if (fullBuff != null)
             {
@@ -165,14 +165,14 @@ namespace AnotherHungerMod
             }
 
             Buff hungryBuff = Game1.buffsDisplay.otherBuffs.Find(b => b.source == "Hungry");
-            if (fullness < Config.NegativeBuffThreshold)
+            if (fullness < Mod.Config.NegativeBuffThreshold)
             {
                 if (hungryBuff == null)
                 {
                     hungryBuff = new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, -2, 0, 0, 10, "Hungry", "Hungry");
                     Game1.buffsDisplay.addOtherBuff(hungryBuff);
                 }
-                hungryBuff.millisecondsDuration = 7000 * (int)(fullness / Config.DrainPer10Min);
+                hungryBuff.millisecondsDuration = 7000 * (int)(fullness / Mod.Config.DrainPer10Min);
             }
             else if (hungryBuff != null)
             {
@@ -187,16 +187,16 @@ namespace AnotherHungerMod
 
             if (minDiff != 10 && (hourDiff != 1 && minDiff != -50))
                 return;
-            Game1.player.UseFullness(Config.DrainPer10Min);
+            Game1.player.UseFullness(Mod.Config.DrainPer10Min);
 
             if (Game1.player.GetFullness() <= 0)
             {
-                Game1.player.takeDamage(Config.StarvationDamagePer10Min, true, null);
+                Game1.player.takeDamage(Mod.Config.StarvationDamagePer10Min, true, null);
                 if (Game1.player.health <= 0)
                 {
                     Log.trace("Player starved to death, resetting hunger");
-                    if (Config.NegativeBuffThreshold != 0)
-                        Game1.player.UseFullness(-Config.NegativeBuffThreshold);
+                    if (Mod.Config.NegativeBuffThreshold != 0)
+                        Game1.player.UseFullness(-Mod.Config.NegativeBuffThreshold);
                     else
                         Game1.player.UseFullness(-25); // Just incase they set the negative buff threshold to 0
                 }
@@ -207,7 +207,7 @@ namespace AnotherHungerMod
         {
             if (Context.IsMainPlayer)
             {
-                Data = this.Helper.Data.ReadSaveData<SaveData>($"spacechase0.AnotherHungerMod.{Game1.player.UniqueMultiplayerID}") ?? new SaveData();
+                Mod.Data = this.Helper.Data.ReadSaveData<SaveData>($"spacechase0.AnotherHungerMod.{Game1.player.UniqueMultiplayerID}") ?? new SaveData();
             }
         }
 
@@ -217,12 +217,12 @@ namespace AnotherHungerMod
                 return;
             //Log.debug($"Sending hunger data to {e.Peer.PlayerID}");
             var data = this.Helper.Data.ReadSaveData<SaveData>($"spacechase0.AnotherHungerMod.{e.Peer.PlayerID}") ?? new SaveData();
-            this.Helper.Multiplayer.SendMessage(data, MSG_HUNGERDATA, null, new long[] { e.Peer.PlayerID });
+            this.Helper.Multiplayer.SendMessage(data, Mod.MSG_HUNGERDATA, null, new long[] { e.Peer.PlayerID });
         }
 
         private void onModMessageReceived(object sender, ModMessageReceivedEventArgs e)
         {
-            if (e.FromModID == this.ModManifest.UniqueID && e.Type == MSG_HUNGERDATA)
+            if (e.FromModID == this.ModManifest.UniqueID && e.Type == Mod.MSG_HUNGERDATA)
             {
                 //Log.debug($"Got hunger data from {e.FromPlayerID}");
                 var data = e.ReadAs<SaveData>();
@@ -231,7 +231,7 @@ namespace AnotherHungerMod
                     this.Helper.Data.WriteSaveData<SaveData>($"spacechase0.AnotherHungerMod.{e.FromPlayerID}", data);
                 }
                 else
-                    Data = data;
+                    Mod.Data = data;
             }
         }
     }

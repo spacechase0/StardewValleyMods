@@ -17,7 +17,7 @@ namespace Magic
 
         public static void register( Spell spell )
         {
-            spells.Add(spell.ParentSchool.Id + ":" + spell.Id, spell);
+            SpellBook.spells.Add(spell.ParentSchool.Id + ":" + spell.Id, spell);
             spell.loadIcon();
         }
 
@@ -25,49 +25,49 @@ namespace Magic
         {
             if (string.IsNullOrEmpty(id))
                 return null;
-            if (!spells.ContainsKey(id))
+            if (!SpellBook.spells.ContainsKey(id))
                 return null;// UNKNOWN_SPELL;
 
-            return spells[id];
+            return SpellBook.spells[id];
         }
 
         public static List< string > getAll()
         {
-            return spells.Keys.ToList<string>();
+            return SpellBook.spells.Keys.ToList<string>();
         }
 
         internal static void init(Func<long> getNewId)
         {
-            register(new AnalyzeSpell());
-            register(new ProjectileSpell(SchoolId.Arcane, "magicmissle", 5, 7, 15, "flameSpell", "flameSpellHit", seeking: true));
-            register(new EnchantSpell(false));
-            register(new EnchantSpell(true));
-            register(new RewindSpell());
+            SpellBook.register(new AnalyzeSpell());
+            SpellBook.register(new ProjectileSpell(SchoolId.Arcane, "magicmissle", 5, 7, 15, "flameSpell", "flameSpellHit", seeking: true));
+            SpellBook.register(new EnchantSpell(false));
+            SpellBook.register(new EnchantSpell(true));
+            SpellBook.register(new RewindSpell());
 
-            register(new ClearDebrisSpell());
-            register(new TillSpell());
-            register(new WaterSpell());
-            register(new BlinkSpell());
+            SpellBook.register(new ClearDebrisSpell());
+            SpellBook.register(new TillSpell());
+            SpellBook.register(new WaterSpell());
+            SpellBook.register(new BlinkSpell());
 
-            register(new LanternSpell(getNewId));
-            register(new TendrilsSpell());
-            register(new ShockwaveSpell());
-            register(new PhotosynthesisSpell());
+            SpellBook.register(new LanternSpell(getNewId));
+            SpellBook.register(new TendrilsSpell());
+            SpellBook.register(new ShockwaveSpell());
+            SpellBook.register(new PhotosynthesisSpell());
 
-            register(new HealSpell());
-            register(new HasteSpell());
-            register(new BuffSpell());
-            register(new EvacSpell());
+            SpellBook.register(new HealSpell());
+            SpellBook.register(new HasteSpell());
+            SpellBook.register(new BuffSpell());
+            SpellBook.register(new EvacSpell());
 
-            register(new ProjectileSpell(SchoolId.Elemental, "frostbolt", 7, 10, 20, "flameSpell", "flameSpellHit"));
-            register(new ProjectileSpell(SchoolId.Elemental, "fireball", 7, 10, 20, "flameSpell", "flameSpellHit"));
-            register(new DescendSpell());
-            register(new TeleportSpell());
+            SpellBook.register(new ProjectileSpell(SchoolId.Elemental, "frostbolt", 7, 10, 20, "flameSpell", "flameSpellHit"));
+            SpellBook.register(new ProjectileSpell(SchoolId.Elemental, "fireball", 7, 10, 20, "flameSpell", "flameSpellHit"));
+            SpellBook.register(new DescendSpell());
+            SpellBook.register(new TeleportSpell());
 
-            register(new MeteorSpell());
-            register(new BloodManaSpell());
-            register(new LuckStealSpell());
-            register(new SpiritSpell());
+            SpellBook.register(new MeteorSpell());
+            SpellBook.register(new BloodManaSpell());
+            SpellBook.register(new LuckStealSpell());
+            SpellBook.register(new SpiritSpell());
         }
 
 

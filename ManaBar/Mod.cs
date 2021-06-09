@@ -22,26 +22,26 @@ namespace ManaBar
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
-            Command.register("player_addmana", addManaCommand);
-            Command.register("player_setmaxmana", setMaxManaCommand);
+            Command.register("player_addmana", Mod.addManaCommand);
+            Command.register("player_setmaxmana", Mod.setMaxManaCommand);
 
-            helper.Events.GameLoop.DayStarted += onDayStarted;
+            helper.Events.GameLoop.DayStarted += Mod.onDayStarted;
             helper.Events.GameLoop.SaveLoaded += this.onSaveLoaded;
             helper.Events.GameLoop.Saved += this.onSaved;
-            helper.Events.Display.RenderedHud += onRenderedHud;
+            helper.Events.Display.RenderedHud += Mod.onRenderedHud;
 
-            SpaceCore.Networking.RegisterMessageHandler(MultiplayerSaveData.MSG_DATA, onNetworkData);
-            SpaceCore.Networking.RegisterMessageHandler(MultiplayerSaveData.MSG_MINIDATA, onNetworkMiniData);
-            SpaceEvents.ServerGotClient += onClientConnected;
+            SpaceCore.Networking.RegisterMessageHandler(MultiplayerSaveData.MSG_DATA, Mod.onNetworkData);
+            SpaceCore.Networking.RegisterMessageHandler(MultiplayerSaveData.MSG_MINIDATA, Mod.onNetworkMiniData);
+            SpaceEvents.ServerGotClient += Mod.onClientConnected;
 
-            manaBg = helper.Content.Load<Texture2D>("assets/manabg.png");
+            Mod.manaBg = helper.Content.Load<Texture2D>("assets/manabg.png");
 
             Color manaCol = new Color(0, 48, 255);
-            manaFg = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
-            manaFg.SetData(new Color[] { manaCol });
+            Mod.manaFg = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
+            Mod.manaFg.SetData(new Color[] { manaCol });
         }
 
         private static void addManaCommand(string[] args)
@@ -78,14 +78,14 @@ namespace ManaBar
 
         private static void onClientConnected(object sender, EventArgsServerGotClient args)
         {
-            if (!Data.players.ContainsKey(args.FarmerID))
-                Data.players[args.FarmerID] = new MultiplayerSaveData.PlayerData();
+            if (!Mod.Data.players.ContainsKey(args.FarmerID))
+                Mod.Data.players[args.FarmerID] = new MultiplayerSaveData.PlayerData();
 
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
-                writer.Write((int)Data.players.Count);
-                foreach (var entry in Data.players)
+                writer.Write((int)Mod.Data.players.Count);
+                foreach (var entry in Mod.Data.players)
                 {
                     writer.Write(entry.Key);
                     writer.Write(JsonConvert.SerializeObject(entry.Value, MultiplayerSaveData.networkSerializerSettings));
@@ -101,8 +101,8 @@ namespace ManaBar
 
             SpriteBatch b = e.SpriteBatch;
 
-            Vector2 manaPos = new Vector2(20, Game1.uiViewport.Height - manaBg.Height * 4 - 20);
-            b.Draw(manaBg, manaPos, new Rectangle(0, 0, manaBg.Width, manaBg.Height), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1);
+            Vector2 manaPos = new Vector2(20, Game1.uiViewport.Height - Mod.manaBg.Height * 4 - 20);
+            b.Draw(Mod.manaBg, manaPos, new Rectangle(0, 0, Mod.manaBg.Width, Mod.manaBg.Height), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1);
             if (Game1.player.getCurrentMana() > 0)
             {
                 Rectangle targetArea = new Rectangle(3, 13, 6, 41);
@@ -117,7 +117,7 @@ namespace ManaBar
                 targetArea.Height *= 4;
                 targetArea.X += (int)manaPos.X;
                 targetArea.Y += (int)manaPos.Y;
-                b.Draw(manaFg, targetArea, new Rectangle(0, 0, 1, 1), Color.White);
+                b.Draw(Mod.manaFg, targetArea, new Rectangle(0, 0, 1, 1), Color.White);
 
                 if ((double)Game1.getOldMouseX() >= (double)targetArea.X && (double)Game1.getOldMouseY() >= (double)targetArea.Y && (double)Game1.getOldMouseX() < (double)targetArea.X + targetArea.Width && Game1.getOldMouseY() < targetArea.Y + targetArea.Height)
                     Game1.drawWithBorder(Math.Max(0, (int)Game1.player.getCurrentMana()).ToString() + "/" + Game1.player.getMaxMana(), Color.Black * 0.0f, Color.White, new Vector2(Game1.getOldMouseX(), Game1.getOldMouseY() - 32));
@@ -142,19 +142,19 @@ namespace ManaBar
                 if (!Game1.IsMultiplayer || Game1.IsMasterGame)
                 {
                     Log.info($"Loading save data");
-                    Data = this.Helper.Data.ReadSaveData<MultiplayerSaveData>(MultiplayerSaveData.SaveKey);
-                    if (Data == null)
+                    Mod.Data = this.Helper.Data.ReadSaveData<MultiplayerSaveData>(MultiplayerSaveData.SaveKey);
+                    if (Mod.Data == null)
                     {
                         if (File.Exists(MultiplayerSaveData.OldFilePath))
                         {
-                            Data = JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.OldFilePath));
+                            Mod.Data = JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.OldFilePath));
                         }
                     }
-                    if (Data == null)
-                        Data = new MultiplayerSaveData();
+                    if (Mod.Data == null)
+                        Mod.Data = new MultiplayerSaveData();
 
-                    if (!Data.players.ContainsKey(Game1.player.UniqueMultiplayerID))
-                        Data.players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
+                    if (!Mod.Data.players.ContainsKey(Game1.player.UniqueMultiplayerID))
+                        Mod.Data.players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
                 }
             }
             catch (Exception ex)
@@ -171,7 +171,7 @@ namespace ManaBar
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
                 Log.info($"Saving save data...");
-                this.Helper.Data.WriteSaveData(MultiplayerSaveData.SaveKey, Data);
+                this.Helper.Data.WriteSaveData(MultiplayerSaveData.SaveKey, Mod.Data);
             }
         }
     }

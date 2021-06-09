@@ -16,11 +16,11 @@ namespace AnimalSocialMenu
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             this.Helper.Events.Display.MenuChanged += this.onMenuChanged;
-            myTabId = SpaceCore.Menus.ReserveGameMenuTab("animals");
+            Mod.myTabId = SpaceCore.Menus.ReserveGameMenuTab("animals");
         }
 
         private int myTabIndex = -1;

@@ -26,7 +26,7 @@ namespace Magic.Game.Interface
         private bool justRightClicked = false;
 
         public MagicMenu(School theSchool = null)
-            : base((Game1.viewport.Size.Width - WINDOW_WIDTH) / 2, (Game1.viewport.Size.Height - WINDOW_HEIGHT) / 2, WINDOW_WIDTH, WINDOW_HEIGHT, true)
+            : base((Game1.viewport.Size.Width - MagicMenu.WINDOW_WIDTH) / 2, (Game1.viewport.Size.Height - MagicMenu.WINDOW_HEIGHT) / 2, MagicMenu.WINDOW_WIDTH, MagicMenu.WINDOW_HEIGHT, true)
         {
             this.school = theSchool;
             if (this.school != null)
@@ -39,31 +39,31 @@ namespace Magic.Game.Interface
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
             var hotbarH = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
-            var gap = (WINDOW_HEIGHT - hotbarH * 2) / 3 + (hasFifthSpellSlot ? 25 : 0);
+            var gap = (MagicMenu.WINDOW_HEIGHT - hotbarH * 2) / 3 + (hasFifthSpellSlot ? 25 : 0);
             //drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + gap, 48 + 24, hotbarH, Color.White);
             //drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + WINDOW_HEIGHT - hotbarH - gap, 48 + 24, hotbarH, Color.White);
-            drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, WINDOW_WIDTH, WINDOW_HEIGHT, Color.White);
-            drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, WINDOW_WIDTH / 2, WINDOW_HEIGHT, Color.White);
-            b.Draw(Game1.staminaRect, new Rectangle(this.xPositionOnScreen + 12, this.yPositionOnScreen + 12, WINDOW_WIDTH / 2 - 24, WINDOW_HEIGHT - 24), Color.Black);
-            drawTextureBox(b, this.xPositionOnScreen - SCHOOL_ICON_SIZE - 12, this.yPositionOnScreen, SCHOOL_ICON_SIZE + 24, WINDOW_HEIGHT, Color.White);
+            IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, MagicMenu.WINDOW_WIDTH, MagicMenu.WINDOW_HEIGHT, Color.White);
+            IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, MagicMenu.WINDOW_WIDTH / 2, MagicMenu.WINDOW_HEIGHT, Color.White);
+            b.Draw(Game1.staminaRect, new Rectangle(this.xPositionOnScreen + 12, this.yPositionOnScreen + 12, MagicMenu.WINDOW_WIDTH / 2 - 24, MagicMenu.WINDOW_HEIGHT - 24), Color.Black);
+            IClickableMenu.drawTextureBox(b, this.xPositionOnScreen - MagicMenu.SCHOOL_ICON_SIZE - 12, this.yPositionOnScreen, MagicMenu.SCHOOL_ICON_SIZE + 24, MagicMenu.WINDOW_HEIGHT, Color.White);
 
             {
-                int ix = this.xPositionOnScreen - SCHOOL_ICON_SIZE - 12, iy = this.yPositionOnScreen;
+                int ix = this.xPositionOnScreen - MagicMenu.SCHOOL_ICON_SIZE - 12, iy = this.yPositionOnScreen;
                 foreach (string schoolId in School.getSchoolList())
                 {
                     var school = School.getSchool(schoolId);
-                    drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), ix, iy, SCHOOL_ICON_SIZE + 24, SCHOOL_ICON_SIZE + 24, this.active == school ? Color.Green : Color.White, 1f, false);
+                    IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), ix, iy, MagicMenu.SCHOOL_ICON_SIZE + 24, MagicMenu.SCHOOL_ICON_SIZE + 24, this.active == school ? Color.Green : Color.White, 1f, false);
                     //drawTextureBox(b, ix, iy, 64 + 24, 64 + 24, Color.White);
-                    b.Draw(Game1.staminaRect, new Rectangle(ix + 12, iy + 12, SCHOOL_ICON_SIZE, SCHOOL_ICON_SIZE), Color.Aqua);
+                    b.Draw(Game1.staminaRect, new Rectangle(ix + 12, iy + 12, MagicMenu.SCHOOL_ICON_SIZE, MagicMenu.SCHOOL_ICON_SIZE), Color.Aqua);
 
-                    if (this.justLeftClicked && new Rectangle(ix + 12, iy + 12, SCHOOL_ICON_SIZE, SCHOOL_ICON_SIZE).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
+                    if (this.justLeftClicked && new Rectangle(ix + 12, iy + 12, MagicMenu.SCHOOL_ICON_SIZE, MagicMenu.SCHOOL_ICON_SIZE).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                     {
                         if (this.school == null)
                             this.active = School.getSchool(schoolId);
                         this.justLeftClicked = false;
                     }
 
-                    iy += SCHOOL_ICON_SIZE + 12;
+                    iy += MagicMenu.SCHOOL_ICON_SIZE + 12;
                 }
             }
 
@@ -78,22 +78,22 @@ namespace Magic.Game.Interface
                 int sy = spells.Length + 1;
                 for (int t = 0; t < spells.Length; ++t)
                 {
-                    int y = this.yPositionOnScreen + (WINDOW_HEIGHT - 24) / sy * (t + 1);
+                    int y = this.yPositionOnScreen + (MagicMenu.WINDOW_HEIGHT - 24) / sy * (t + 1);
                     int sx = spells[t].Length + 1;
                     for (int s = 0; s < spells[t].Length; ++s)
                     {
-                        int x = this.xPositionOnScreen + (WINDOW_WIDTH / 2 - 24) / sx * (s + 1);
+                        int x = this.xPositionOnScreen + (MagicMenu.WINDOW_WIDTH / 2 - 24) / sx * (s + 1);
 
                         var spell = spells[t][s];
                         if (!Game1.player.knowsSpell(spell, 0))
                             continue;
-                        if (this.justLeftClicked && new Rectangle(x - SPELL_ICON_SIZE / 2, y - SPELL_ICON_SIZE / 2, SPELL_ICON_SIZE, SPELL_ICON_SIZE).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
+                        if (this.justLeftClicked && new Rectangle(x - MagicMenu.SPELL_ICON_SIZE / 2, y - MagicMenu.SPELL_ICON_SIZE / 2, MagicMenu.SPELL_ICON_SIZE, MagicMenu.SPELL_ICON_SIZE).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                         {
                             this.sel = spell;
                             this.justLeftClicked = false;
                         }
 
-                        drawTextureBox(b, x - SPELL_ICON_SIZE / 2 - 12, y - SPELL_ICON_SIZE / 2 - 12, SPELL_ICON_SIZE + 24, SPELL_ICON_SIZE + 24, spell == this.sel ? Color.Green : Color.White);
+                        IClickableMenu.drawTextureBox(b, x - MagicMenu.SPELL_ICON_SIZE / 2 - 12, y - MagicMenu.SPELL_ICON_SIZE / 2 - 12, MagicMenu.SPELL_ICON_SIZE + 24, MagicMenu.SPELL_ICON_SIZE + 24, spell == this.sel ? Color.Green : Color.White);
 
                         if (spell == null)
                             continue;
@@ -105,7 +105,7 @@ namespace Magic.Game.Interface
                                 continue;
                         }
 
-                        b.Draw(icon, new Rectangle(x - SPELL_ICON_SIZE / 2, y - SPELL_ICON_SIZE / 2, SPELL_ICON_SIZE, SPELL_ICON_SIZE), Color.White);
+                        b.Draw(icon, new Rectangle(x - MagicMenu.SPELL_ICON_SIZE / 2, y - MagicMenu.SPELL_ICON_SIZE / 2, MagicMenu.SPELL_ICON_SIZE, MagicMenu.SPELL_ICON_SIZE), Color.White);
                     }
                 }
             }
@@ -113,9 +113,9 @@ namespace Magic.Game.Interface
             if (this.sel != null)
             {
                 var title = this.sel.getTranslatedName();
-                var desc = this.WrapText(this.sel.getTranslatedDescription(), (int)((WINDOW_WIDTH / 2) / 0.75f));
+                var desc = this.WrapText(this.sel.getTranslatedDescription(), (int)((MagicMenu.WINDOW_WIDTH / 2) / 0.75f));
 
-                b.DrawString(Game1.dialogueFont, title, new Vector2(this.xPositionOnScreen + WINDOW_WIDTH / 2 + (WINDOW_WIDTH / 2 - Game1.dialogueFont.MeasureString(title).X) / 2, this.yPositionOnScreen + 30), Color.Black);
+                b.DrawString(Game1.dialogueFont, title, new Vector2(this.xPositionOnScreen + MagicMenu.WINDOW_WIDTH / 2 + (MagicMenu.WINDOW_WIDTH / 2 - Game1.dialogueFont.MeasureString(title).X) / 2, this.yPositionOnScreen + 30), Color.Black);
 
                 var icon = this.sel.Icons != null ? this.sel.Icons[this.sel.Icons.Length - 1] : Game1.staminaRect;
                 if (icon == null)
@@ -124,15 +124,15 @@ namespace Magic.Game.Interface
                 }
                 if (icon != null)
                 {
-                    b.Draw(icon, new Rectangle(this.xPositionOnScreen + WINDOW_WIDTH / 2 + (WINDOW_WIDTH / 2 - SEL_ICON_SIZE) / 2, this.yPositionOnScreen + 85, SEL_ICON_SIZE, SEL_ICON_SIZE), Color.White);
+                    b.Draw(icon, new Rectangle(this.xPositionOnScreen + MagicMenu.WINDOW_WIDTH / 2 + (MagicMenu.WINDOW_WIDTH / 2 - MagicMenu.SEL_ICON_SIZE) / 2, this.yPositionOnScreen + 85, MagicMenu.SEL_ICON_SIZE, MagicMenu.SEL_ICON_SIZE), Color.White);
                 }
-                b.DrawString(Game1.dialogueFont, desc, new Vector2(this.xPositionOnScreen + WINDOW_WIDTH / 2 + 12, this.yPositionOnScreen + 280), Color.Black, 0, Vector2.Zero, 0.75f, SpriteEffects.None, 0);
+                b.DrawString(Game1.dialogueFont, desc, new Vector2(this.xPositionOnScreen + MagicMenu.WINDOW_WIDTH / 2 + 12, this.yPositionOnScreen + 280), Color.Black, 0, Vector2.Zero, 0.75f, SpriteEffects.None, 0);
 
                 int sx = this.sel.Icons.Length + 1;
                 for (int i = 0; i < this.sel.Icons.Length; ++i)
                 {
-                    int x = this.xPositionOnScreen + WINDOW_WIDTH / 2 + (WINDOW_WIDTH / 2) / sx * (i + 1);
-                    int y = this.yPositionOnScreen + WINDOW_HEIGHT - 12 - SPELL_ICON_SIZE - 32 - 40;
+                    int x = this.xPositionOnScreen + MagicMenu.WINDOW_WIDTH / 2 + (MagicMenu.WINDOW_WIDTH / 2) / sx * (i + 1);
+                    int y = this.yPositionOnScreen + MagicMenu.WINDOW_HEIGHT - 12 - MagicMenu.SPELL_ICON_SIZE - 32 - 40;
 
                     Color stateCol = Color.Gray;
                     if (Game1.player.knowsSpell(this.sel, i))
@@ -140,8 +140,8 @@ namespace Magic.Game.Interface
                     else if (i == 0 || Game1.player.knowsSpell(this.sel, i - 1))
                         stateCol = Color.White;
 
-                    var r = new Rectangle(x - SPELL_ICON_SIZE / 2, y, SPELL_ICON_SIZE, SPELL_ICON_SIZE);
-                    drawTextureBox(b, r.Left - 12, r.Top - 12, r.Width + 24, r.Height + 24, stateCol);
+                    var r = new Rectangle(x - MagicMenu.SPELL_ICON_SIZE / 2, y, MagicMenu.SPELL_ICON_SIZE, MagicMenu.SPELL_ICON_SIZE);
+                    IClickableMenu.drawTextureBox(b, r.Left - 12, r.Top - 12, r.Width + 24, r.Height + 24, stateCol);
                     if (this.sel.Icons[i] != null)
                         b.Draw(this.sel.Icons[i], r, Color.White);
                     if (r.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
@@ -161,7 +161,7 @@ namespace Magic.Game.Interface
                     }
                 }
 
-                b.DrawString(Game1.dialogueFont, "Free points: " + Game1.player.getFreeSpellPoints(), new Vector2(this.xPositionOnScreen + WINDOW_WIDTH / 2 + 12 + 24, this.yPositionOnScreen + WINDOW_HEIGHT - 12 - 32 - 20), Color.Black);
+                b.DrawString(Game1.dialogueFont, "Free points: " + Game1.player.getFreeSpellPoints(), new Vector2(this.xPositionOnScreen + MagicMenu.WINDOW_WIDTH / 2 + 12 + 24, this.yPositionOnScreen + MagicMenu.WINDOW_HEIGHT - 12 - 32 - 20), Color.Black);
             }
             //*
             {
@@ -172,7 +172,7 @@ namespace Magic.Game.Interface
                     {
                         var prep = preps[i];
 
-                        var r = new Rectangle(this.xPositionOnScreen + WINDOW_WIDTH + 12, y, HOTBAR_ICON_SIZE, HOTBAR_ICON_SIZE);
+                        var r = new Rectangle(this.xPositionOnScreen + MagicMenu.WINDOW_WIDTH + 12, y, MagicMenu.HOTBAR_ICON_SIZE, MagicMenu.HOTBAR_ICON_SIZE);
                         if (r.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                         {
                             if (this.justRightClicked)
@@ -185,7 +185,7 @@ namespace Magic.Game.Interface
                             }
                         }
 
-                        drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), r.X - 12, y - 12, HOTBAR_ICON_SIZE + 24, HOTBAR_ICON_SIZE + 24, Color.White, 1f, false);
+                        IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), r.X - 12, y - 12, MagicMenu.HOTBAR_ICON_SIZE + 24, MagicMenu.HOTBAR_ICON_SIZE + 24, Color.White, 1f, false);
 
                         if (prep != null)
                         {
@@ -200,7 +200,7 @@ namespace Magic.Game.Interface
                                 }
                             }
                         }
-                        y += HOTBAR_ICON_SIZE + 12;
+                        y += MagicMenu.HOTBAR_ICON_SIZE + 12;
                     }
                     y += gap + 12;
                 }
@@ -225,7 +225,7 @@ namespace Magic.Game.Interface
                     {
                         Texture2D icon = icons[this.dragging.Level];
 
-                        b.Draw(icon, new Rectangle(Game1.getOldMouseX(), Game1.getOldMouseY(), HOTBAR_ICON_SIZE, HOTBAR_ICON_SIZE), Color.White);
+                        b.Draw(icon, new Rectangle(Game1.getOldMouseX(), Game1.getOldMouseY(), MagicMenu.HOTBAR_ICON_SIZE, MagicMenu.HOTBAR_ICON_SIZE), Color.White);
                     }
                 }
             }

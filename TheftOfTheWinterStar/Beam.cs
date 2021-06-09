@@ -64,10 +64,10 @@ namespace TheftOfTheWinterStar
                     var bl = new Vector2(bb.Left, bb.Bottom);
                     var br = new Vector2(bb.Right, bb.Bottom);
 
-                    var i1 = LSegsIntersectionPoint(this.basePos, lineEnd, tl, tr);
-                    var i2 = LSegsIntersectionPoint(this.basePos, lineEnd, tr, br);
-                    var i3 = LSegsIntersectionPoint(this.basePos, lineEnd, bl, br);
-                    var i4 = LSegsIntersectionPoint(this.basePos, lineEnd, tl, bl);
+                    var i1 = Beam.LSegsIntersectionPoint(this.basePos, lineEnd, tl, tr);
+                    var i2 = Beam.LSegsIntersectionPoint(this.basePos, lineEnd, tr, br);
+                    var i3 = Beam.LSegsIntersectionPoint(this.basePos, lineEnd, bl, br);
+                    var i4 = Beam.LSegsIntersectionPoint(this.basePos, lineEnd, tl, bl);
 
                     Vector2 cont = Vector2.Zero;
                     if (i1.HasValue && bb.Contains((int)i1.Value.X, (int)i1.Value.Y)) cont = i1.Value;

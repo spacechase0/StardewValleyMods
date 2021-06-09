@@ -6,6 +6,7 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Network;
 using StardewValley.Tools;
+using SObject = StardewValley.Object;
 
 namespace JsonAssets.Patches
 {
@@ -152,7 +153,7 @@ namespace JsonAssets.Patches
                                                                                     Color.White, 8, Game1.random.NextDouble() < 0.5, 50, 0, -1, -1, -1, 0));
                     if (__instance.maxHealth.Value - __instance.health.Value < 0.5)
                     {
-                        location.debris.Add(new Debris(new StardewValley.Object(fence.correspondingObject.GetObjectId(), 1, false, -1, 0),
+                        location.debris.Add(new Debris(new SObject(fence.correspondingObject.GetObjectId(), 1, false, -1, 0),
                                                             __instance.tileLocation.Value * 64 + new Vector2(32, 32)));
                     }
                     return false;
@@ -194,7 +195,7 @@ namespace JsonAssets.Patches
         /// <summary>The method to call before <see cref="Fence.CanRepairWithThisItem"/>.</summary>
         private static bool Before_CanRepairWithThisItem(Fence __instance, Item item, ref bool __result)
         {
-            if (__instance.health.Value > 1 || !(item is StardewValley.Object))
+            if (__instance.health.Value > 1 || !(item is SObject))
                 return true;
 
             foreach (var fence in Mod.instance.fences)

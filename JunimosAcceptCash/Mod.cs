@@ -6,6 +6,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using SObject = StardewValley.Object;
 
 namespace JunimosAcceptCash
 {
@@ -132,13 +133,13 @@ namespace JunimosAcceptCash
                     continue;
 
                 int mostExpensiveSlot = 0;
-                int mostExpensiveCost = new StardewValley.Object(bundle.ingredients[0].index, bundle.ingredients[0].stack, false, -1, bundle.ingredients[0].quality).sellToStorePrice() * bundle.ingredients[0].stack;
+                int mostExpensiveCost = new SObject(bundle.ingredients[0].index, bundle.ingredients[0].stack, false, -1, bundle.ingredients[0].quality).sellToStorePrice() * bundle.ingredients[0].stack;
                 for (int j = 1; j < bundle.ingredients.Count; ++j)
                 {
                     if (used.Contains(j))
                         continue;
 
-                    int itemCost = new StardewValley.Object(bundle.ingredients[j].index, bundle.ingredients[j].stack, false, -1, bundle.ingredients[j].quality).sellToStorePrice() * bundle.ingredients[j].stack;
+                    int itemCost = new SObject(bundle.ingredients[j].index, bundle.ingredients[j].stack, false, -1, bundle.ingredients[j].quality).sellToStorePrice() * bundle.ingredients[j].stack;
                     if (cost > mostExpensiveCost)
                     {
                         mostExpensiveSlot = j;
