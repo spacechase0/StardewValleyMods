@@ -54,7 +54,7 @@ namespace GenericModConfigMenu.UI
                 Game1.playSound(this.HoveredSound);
             this.Hover = newHover;
 
-            var input = Mod.instance.Helper.Reflection.GetField<InputState>(typeof(Game1), "input").GetValue();
+            var input = Game1.input;
             this.ClickGestured = Game1.oldMouseState.LeftButton == ButtonState.Released && input.GetMouseState().LeftButton == ButtonState.Pressed;
             if (this.Clicked && this.ClickedSound != null)
                 Game1.playSound(this.ClickedSound);

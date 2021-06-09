@@ -5,6 +5,7 @@
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Moved assets into the conventional `assets` folder.
 * Improved documentation.
+* Internal refactoring.
 
 ## 1.0.4
 Released 26 November 2019 for Stardew Valley 1.4.

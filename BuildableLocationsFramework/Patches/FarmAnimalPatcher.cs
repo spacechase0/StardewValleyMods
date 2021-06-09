@@ -286,7 +286,7 @@ namespace BuildableLocationsFramework.Patches
         /// <summary>The method to call before <see cref="FarmAnimal.behaviors"/>.</summary>
         public static bool Before_Behaviors(FarmAnimal __instance, GameTime time, GameLocation location, ref bool __result)
         {
-            NetBool isEating = Mod.instance.Helper.Reflection.GetField<NetBool>(__instance, "isEating").GetValue();
+            NetBool isEating = __instance.isEating;
             if (__instance.home == null)
             {
                 __result = false;

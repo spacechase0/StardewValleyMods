@@ -134,8 +134,8 @@ namespace CookingSkill
                     thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 10) ? Convert.ToInt32(buffData[10]) : 0, (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
                 else
                     thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 11) ? Convert.ToInt32(buffData[11]) : 0, (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
-                int[] oldAttr = (oldBuff == null ? null : ((int[])Util.GetInstanceField(typeof(Buff), oldBuff, "buffAttributes")));
-                int[] thisAttr = (thisBuff == null ? null : ((int[])Util.GetInstanceField(typeof(Buff), thisBuff, "buffAttributes")));
+                int[] oldAttr = oldBuff?.buffAttributes;
+                int[] thisAttr = thisBuff?.buffAttributes;
                 Log.trace("Ate something: " + obj + " " + Game1.objectInformation[obj.ParentSheetIndex] + " " + buffData + " " + oldBuff + " " + thisBuff + " " + oldAttr + " " + thisAttr);
                 if (oldBuff != null && thisBuff != null && Enumerable.SequenceEqual(oldAttr, thisAttr) &&
                      ((info[6] == "drink" && oldBuff != this.lastDrink) || (info[6] != "drink" && oldBuff != this.lastDrink)))
@@ -242,9 +242,9 @@ namespace CookingSkill
             if (e.NewMenu is CraftingPage)
             {
                 CraftingPage menu = e.NewMenu as CraftingPage;
-                bool cooking = (bool)Util.GetInstanceField(typeof(CraftingPage), e.NewMenu, "cooking");
-                bool standaloneMenu = (bool)Util.GetInstanceField(typeof(CraftingPage), e.NewMenu, "_standaloneMenu");
-                List<Chest> containers = (List<Chest>)Util.GetInstanceField(typeof(CraftingPage), e.NewMenu, "_materialContainers");
+                bool cooking = this.Helper.Reflection.GetField<bool>(e.NewMenu, "cooking").GetValue();
+                bool standaloneMenu = this.Helper.Reflection.GetField<bool>(e.NewMenu, "_standaloneMenu").GetValue();
+                List<Chest> containers = menu._materialContainers;
                 NewCraftingPage myCraftingPage = new NewCraftingPage(menu.xPositionOnScreen, menu.yPositionOnScreen, menu.width, menu.height, cooking, standaloneMenu, containers);
                 myCraftingPage.exitFunction = Game1.activeClickableMenu.exitFunction;
                 Game1.activeClickableMenu = myCraftingPage;

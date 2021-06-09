@@ -3,8 +3,8 @@
 # Release notes
 ## Upcoming release
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
-* Internal refactoring.
 * Improved documentation.
+* Internal refactoring.
 
 ## 1.0.2
 Released 26 January 2021 for Stardew Valley 1.5.

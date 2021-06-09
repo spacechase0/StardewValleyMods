@@ -584,7 +584,7 @@ namespace CookingSkill
         public static void myConsumeIngredients(CraftingRecipe recipe, List<Chest> additional_materials, bool actuallyConsume = true, List<ConsumedItem> used = null)
         {
             ///// (removed `this`)
-            Dictionary<int, int> recipeList = (Dictionary<int, int>)Util.GetInstanceField(typeof(CraftingRecipe), recipe, "recipeList");
+            Dictionary<int, int> recipeList = recipe.recipeList;
             /////
             for (int index1 = recipeList.Count - 1; index1 >= 0; --index1)
             {

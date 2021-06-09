@@ -91,13 +91,9 @@ namespace LocationLayerTool.Patches
             {
                 xTileLayerPatcher.renderTarget = new RenderTarget2D(Game1.graphics.GraphicsDevice, Game1.graphics.GraphicsDevice.Viewport.Width, Game1.graphics.GraphicsDevice.Viewport.Height, false, Game1.graphics.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
 
-                /*var screenField = Mod.instance.Helper.Reflection.GetField< RenderTarget2D >( Game1.game1, "screen" );
-                var screen = screenField.GetValue();
-                if ( screen.RenderTargetUsage != RenderTargetUsage.PreserveContents )
-                {
-                    screen = new RenderTarget2D( Game1.graphics.GraphicsDevice, screen.Width, screen.Height, false, screen.Format, screen.DepthStencilFormat, screen.MultiSampleCount, RenderTargetUsage.PreserveContents );
-                    screenField.SetValue( screen );
-                }
+                /*
+                if (Game1.game1.screen.RenderTargetUsage != RenderTargetUsage.PreserveContents)
+                    Game1.game1.screen = new RenderTarget2D(Game1.graphics.GraphicsDevice, screen.Width, screen.Height, false, screen.Format, screen.DepthStencilFormat, screen.MultiSampleCount, RenderTargetUsage.PreserveContents);
                 */
             }
             if (xTileLayerPatcher.lightmap == null)

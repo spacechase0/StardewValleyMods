@@ -359,7 +359,7 @@ namespace CustomizeExterior
             if (this.recentTarget == "FarmHouse" || this.recentTarget == "Greenhouse")
             {
                 Mod.housesHybrid = null;
-                typeof(Farm).GetField("houseTextures").SetValue(null, Mod.getHousesTexture());
+                typeof(Farm).GetField(nameof(Farm.houseTextures)).SetValue(null, Mod.getHousesTexture());
             }
             else
             {

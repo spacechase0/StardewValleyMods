@@ -7,6 +7,7 @@
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Moved assets into the conventional `assets` folder.
 * Improved documentation.
+* Internal refactoring.
 
 ## 1.1.6
 Released 17 January 2020 for Stardew Valley 1.4.

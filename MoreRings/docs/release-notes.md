@@ -7,8 +7,8 @@
   * Added three new rings: Quality+ ring, Ring of Far Reaching, and Ring of True Sight.
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Updated translations. Thanks to asqwedcxz741 (added Chinese)!
-* Internal refactoring.
 * Improved documentation.
+* Internal refactoring.
 
 ## 1.0.4
 Released 26 November 2019 for Stardew Valley 1.4.

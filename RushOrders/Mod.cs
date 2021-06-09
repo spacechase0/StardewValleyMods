@@ -82,7 +82,7 @@ namespace RushOrders
 
                 case DialogueBox diagBox:
                     {
-                        var diag = Mod.instance.Helper.Reflection.GetField<Dialogue>(diagBox, "characterDialogue").GetValue();
+                        var diag = diagBox.characterDialogue;
                         if (diag?.speaker != null && diag.speaker.Name == "Robin" && this.HasBuildingToRush() && !(e.OldMenu is RushConstructionMenu))
                             Mod.doRushBuildingDialogue();
 

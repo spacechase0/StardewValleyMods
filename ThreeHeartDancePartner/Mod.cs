@@ -33,7 +33,7 @@ namespace ThreeHeartDancePartner
                 return;
 
             // check if rejection dialogue
-            Dialogue dialog = this.Helper.Reflection.GetField<Dialogue>(dialogBox, "characterDialogue").GetValue();
+            Dialogue dialog = dialogBox.characterDialogue;
             NPC npc = dialog.speaker;
             if (!npc.datable.Value || npc.HasPartnerForDance)
                 return;

@@ -1,6 +1,4 @@
-using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -18,15 +16,6 @@ namespace CookingSkill
 
                 return Encoding.UTF8.GetString(stream.ToArray());
             }
-        }
-
-        // http://stackoverflow.com/questions/3303126/how-to-get-the-value-of-private-field-in-c
-        public static object GetInstanceField(Type type, object instance, string fieldName)
-        {
-            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-                | BindingFlags.Static;
-            FieldInfo field = type.GetField(fieldName, bindFlags);
-            return field.GetValue(instance);
         }
     }
 }

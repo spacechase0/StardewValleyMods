@@ -92,7 +92,7 @@ namespace BugNet
                 Vector2 a = Vector2.Zero, b = Vector2.Zero;
                 Rectangle area = this.getAreaOfEffect((int)toolLoc.X, (int)toolLoc.Y, who.facingDirection, ref a, ref b, who.GetBoundingBox(), who.FarmerSprite.currentAnimationIndex);
 
-                var critters = Mod.instance.Helper.Reflection.GetField<List<Critter>>(who.currentLocation, "critters", false)?.GetValue();
+                var critters = who.currentLocation.critters;
                 if (critters == null)
                     return;
 

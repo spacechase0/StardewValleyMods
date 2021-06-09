@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley;
 using StardewValley.Menus;
 using StardewValley.TerrainFeatures;
 
@@ -39,8 +37,8 @@ namespace MoreGrassStarters
 
             if (menu.portraitPerson.Name == "Pierre")
             {
-                var forSale = this.Helper.Reflection.GetField<List<ISalable>>(menu, "forSale").GetValue();
-                var itemPriceAndStock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(menu, "itemPriceAndStock").GetValue();
+                var forSale = menu.forSale;
+                var itemPriceAndStock = menu.itemPriceAndStock;
 
                 for (int i = Grass.caveGrass; i < 5 + GrassStarterItem.ExtraGrassTypes; ++i)
                 {

@@ -133,7 +133,7 @@ namespace MoreRings
                     }
                     else
                     {
-                        var attrs = this.Helper.Reflection.GetField<int[]>(Game1.buffsDisplay.drink, "buffAttributes").GetValue();
+                        var attrs = Game1.buffsDisplay.drink.buffAttributes;
                         if (attrs[Buff.speed] == -1)
                         {
                             Game1.buffsDisplay.drink.removeBuff();

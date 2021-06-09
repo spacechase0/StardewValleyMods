@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
@@ -28,8 +27,8 @@ namespace AnimalSocialMenu
         {
             if (args.NewMenu is GameMenu gm)
             {
-                var pages = this.Helper.Reflection.GetField<List<IClickableMenu>>(gm, "pages").GetValue();
-                var tabs = this.Helper.Reflection.GetField<List<ClickableComponent>>(gm, "tabs").GetValue();
+                var pages = gm.pages;
+                var tabs = gm.tabs;
 
                 this.myTabIndex = tabs.Count;
                 tabs.Add(new ClickableComponent(new Rectangle(gm.xPositionOnScreen + 192, gm.yPositionOnScreen + IClickableMenu.tabYPositionRelativeToMenuY + 64 - 64, 64, 64), "animals", "Animals")
@@ -65,7 +64,7 @@ namespace AnimalSocialMenu
             if (menu.invisible || this.myTabIndex == -1)
                 return;
 
-            var tabs = this.Helper.Reflection.GetField<List<ClickableComponent>>(menu, "tabs").GetValue();
+            var tabs = menu.tabs;
             if (tabs.Count <= this.myTabIndex)
             {
                 return;

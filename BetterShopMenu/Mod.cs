@@ -61,8 +61,8 @@ namespace BetterShopMenu
         {
             this.firstTick = false;
 
-            this.initialItems = this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").GetValue();
-            this.initialStock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").GetValue();
+            this.initialItems = this.shop.forSale;
+            this.initialStock = this.shop.itemPriceAndStock;
 
             this.categories = new List<int>();
             this.hasRecipes = false;
@@ -160,15 +160,15 @@ namespace BetterShopMenu
                 }
             }
 
-            this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").SetValue(items);
-            this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").SetValue(stock);
+            this.shop.forSale = items;
+            this.shop.itemPriceAndStock = stock;
 
             this.doSorting();
         }
         private void doSorting()
         {
-            var items = this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").GetValue();
-            var stock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").GetValue();
+            var items = this.shop.forSale;
+            var stock = this.shop.itemPriceAndStock;
             if (this.sorting != 0)
             {
                 if (this.sorting == 1)
@@ -232,14 +232,14 @@ namespace BetterShopMenu
 
         private void drawGridLayout()
         {
-            var forSale = this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").GetValue();
-            var itemPriceAndStock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").GetValue();
-            var currency = this.Helper.Reflection.GetField<int>(this.shop, "currency").GetValue();
+            var forSale = this.shop.forSale;
+            var itemPriceAndStock = this.shop.itemPriceAndStock;
+            var currency = this.shop.currency;
             var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.shop, "animations").GetValue();
             var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(this.shop, "poof").GetValue();
-            var heldItem = this.Helper.Reflection.GetField<Item>(this.shop, "heldItem").GetValue();
-            var currentItemIndex = this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").GetValue();
-            var scrollBar = this.Helper.Reflection.GetField<ClickableTextureComponent>(this.shop, "scrollBar").GetValue();
+            var heldItem = this.shop.heldItem;
+            var currentItemIndex = this.shop.currentItemIndex;
+            var scrollBar = this.shop.scrollBar;
             var scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(this.shop, "scrollBarRunner").GetValue();
             const int UNIT_WIDTH = 160;
             const int UNIT_HEIGHT = 144;
@@ -368,8 +368,9 @@ namespace BetterShopMenu
                     getHoveredItemExtraItemAmount = itemPriceAndStock[hover][3];
                 IClickableMenu.drawToolTip(Game1.spriteBatch, hoverText, boldTitleText, hover as Item, heldItem != null, -1, currency, getHoveredItemExtraItemIndex, getHoveredItemExtraItemAmount, (CraftingRecipe)null, hoverPrice);
             }
-            if (heldItem != null)
-                heldItem.drawInMenu(Game1.spriteBatch, new Vector2((float)(Game1.getOldMouseX() + 8), (float)(Game1.getOldMouseY() + 8)), 1f);
+
+            heldItem?.drawInMenu(Game1.spriteBatch, new Vector2((float)(Game1.getOldMouseX() + 8), (float)(Game1.getOldMouseY() + 8)), 1f, 1f, 0.9f, StackDrawType.Draw, Color.White, true);
+
             // some other stuff I don't think matters?
         }
 
@@ -410,18 +411,18 @@ namespace BetterShopMenu
 
         private void doGridLayoutLeftClick(ButtonPressedEventArgs e)
         {
-            var forSale = this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").GetValue();
-            var itemPriceAndStock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").GetValue();
-            var currency = this.Helper.Reflection.GetField<int>(this.shop, "currency").GetValue();
+            var forSale = this.shop.forSale;
+            var itemPriceAndStock = this.shop.itemPriceAndStock;
+            var currency = this.shop.currency;
             var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.shop, "animations").GetValue();
             var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(this.shop, "poof").GetValue();
-            var heldItem = this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").GetValue();
-            var currentItemIndex = this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").GetValue();
+            var heldItem = this.shop.heldItem;
+            var currentItemIndex = this.shop.currentItemIndex;
             var sellPercentage = this.Helper.Reflection.GetField<float>(this.shop, "sellPercentage").GetValue();
-            var scrollBar = this.Helper.Reflection.GetField<ClickableTextureComponent>(this.shop, "scrollBar").GetValue();
+            var scrollBar = this.shop.scrollBar;
             var scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(this.shop, "scrollBarRunner").GetValue();
-            var downArrow = this.Helper.Reflection.GetField<ClickableTextureComponent>(this.shop, "downArrow").GetValue();
-            var upArrow = this.Helper.Reflection.GetField<ClickableTextureComponent>(this.shop, "upArrow").GetValue();
+            var downArrow = this.shop.downArrow;
+            var upArrow = this.shop.upArrow;
             const int UNIT_WIDTH = 160;
             const int UNIT_HEIGHT = 144;
             int unitsWide = (this.shop.width - 32) / UNIT_WIDTH;
@@ -439,7 +440,7 @@ namespace BetterShopMenu
             if (downArrow.containsPoint(x, y) && currentItemIndex < Math.Max(0, forSale.Count - 18))
             {
                 downArrow.scale = downArrow.baseScale;
-                this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").SetValue(currentItemIndex += 1);
+                this.shop.currentItemIndex = currentItemIndex += 1;
                 if (forSale.Count > 0)
                 {
                     scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, (forSale.Count / 6) - 1 + 1) * currentItemIndex + upArrow.bounds.Bottom + 4;
@@ -453,7 +454,7 @@ namespace BetterShopMenu
             else if (upArrow.containsPoint(x, y) && currentItemIndex > 0)
             {
                 upArrow.scale = upArrow.baseScale;
-                this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").SetValue(currentItemIndex -= 1);
+                this.shop.currentItemIndex = currentItemIndex -= 1;
                 if (forSale.Count > 0)
                 {
                     scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, (forSale.Count / 6) - 1 + 1) * currentItemIndex + upArrow.bounds.Bottom + 4;
@@ -469,7 +470,7 @@ namespace BetterShopMenu
                 int y1 = scrollBar.bounds.Y;
                 scrollBar.bounds.Y = Math.Min(this.shop.yPositionOnScreen + this.shop.height - 64 - 12 - scrollBar.bounds.Height, Math.Max(y, this.shop.yPositionOnScreen + upArrow.bounds.Height + 20));
                 currentItemIndex = Math.Min(forSale.Count / 6 - 1, Math.Max(0, (int)((double)forSale.Count / 6 * (double)((float)(y - scrollBarRunner.Y) / (float)scrollBarRunner.Height))));
-                this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").SetValue(currentItemIndex);
+                this.shop.currentItemIndex = currentItemIndex;
                 if (forSale.Count > 0)
                 {
                     scrollBar.bounds.Y = scrollBarRunner.Height / Math.Max(1, (forSale.Count / 6) - 1 + 1) * currentItemIndex + upArrow.bounds.Bottom + 4;
@@ -530,7 +531,7 @@ namespace BetterShopMenu
             else
             {
                 heldItem = this.shop.inventory.leftClick(x, y, (Item)heldItem, true);
-                this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").SetValue(heldItem);
+                this.shop.heldItem = heldItem;
             }
             for (int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i)
             {
@@ -556,7 +557,7 @@ namespace BetterShopMenu
                     if (heldItem != null && Game1.options.SnappyMenus && (Game1.activeClickableMenu != null && Game1.activeClickableMenu is ShopMenu) && Game1.player.addItemToInventoryBool((Item)heldItem, false))
                     {
                         heldItem = (Item)null;
-                        this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").SetValue(heldItem);
+                        this.shop.heldItem = heldItem;
                         DelayedAction.playSoundAfterDelay("coin", 100, (GameLocation)null);
                     }
                 }
@@ -565,13 +566,13 @@ namespace BetterShopMenu
 
         private void doGridLayoutRightClick(ButtonPressedEventArgs e)
         {
-            var forSale = this.Helper.Reflection.GetField<List<ISalable>>(this.shop, "forSale").GetValue();
-            var itemPriceAndStock = this.Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(this.shop, "itemPriceAndStock").GetValue();
-            var currency = this.Helper.Reflection.GetField<int>(this.shop, "currency").GetValue();
+            var forSale = this.shop.forSale;
+            var itemPriceAndStock = this.shop.itemPriceAndStock;
+            var currency = this.shop.currency;
             var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.shop, "animations").GetValue();
             var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(this.shop, "poof").GetValue();
-            var heldItem = this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").GetValue();
-            var currentItemIndex = this.Helper.Reflection.GetField<int>(this.shop, "currentItemIndex").GetValue();
+            var heldItem = this.shop.heldItem;
+            var currentItemIndex = this.shop.currentItemIndex;
             var sellPercentage = this.Helper.Reflection.GetField<float>(this.shop, "sellPercentage").GetValue();
             const int UNIT_WIDTH = 160;
             const int UNIT_HEIGHT = 144;
@@ -629,7 +630,7 @@ namespace BetterShopMenu
             else
             {
                 heldItem = this.shop.inventory.leftClick(x, y, (Item)heldItem, true);
-                this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").SetValue(heldItem);
+                this.shop.heldItem = heldItem;
             }
             for (int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i)
             {
@@ -651,7 +652,7 @@ namespace BetterShopMenu
                     if (heldItem == null || !Game1.options.SnappyMenus || (Game1.activeClickableMenu == null || !(Game1.activeClickableMenu is ShopMenu)) || !Game1.player.addItemToInventoryBool((Item)heldItem, false))
                         break;
                     heldItem = (Item)null;
-                    this.Helper.Reflection.GetField<ISalable>(this.shop, "heldItem").SetValue(heldItem);
+                    this.shop.heldItem = heldItem;
                     DelayedAction.playSoundAfterDelay("coin", 100, (GameLocation)null);
                     break;
                 }

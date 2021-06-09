@@ -285,7 +285,7 @@ namespace LuckSkill
                 GameMenu menu = Game1.activeClickableMenu as GameMenu;
                 if (menu.currentTab == GameMenu.skillsTab)
                 {
-                    var tabs = this.Helper.Reflection.GetField<List<IClickableMenu>>(menu, "pages").GetValue();
+                    var tabs = menu.pages;
                     var skills = tabs[GameMenu.skillsTab] as SkillsPage;
 
                     if (skills == null)
@@ -328,7 +328,7 @@ namespace LuckSkill
 
                 if (flag && (i + 1) % 5 == 0)
                 {
-                    var skillBars = this.Helper.Reflection.GetField<List<ClickableTextureComponent>>(skills, "skillBars").GetValue();
+                    var skillBars = skills.skillBars;
                     skillBars.Add(new ClickableTextureComponent(string.Concat(num5), new Rectangle(num2 + num3 - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6), 14 * Game1.pixelZoom, 9 * Game1.pixelZoom), null, text, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), (float)Game1.pixelZoom, true));
                 }
                 num2 += Game1.pixelZoom * 6;
@@ -348,7 +348,7 @@ namespace LuckSkill
             {
                 text3 = "Luck Increased";
             }
-            var skillAreas = this.Helper.Reflection.GetField<List<ClickableTextureComponent>>(skills, "skillAreas").GetValue();
+            var skillAreas = skills.skillAreas;
             skillAreas.Add(new ClickableTextureComponent(string.Concat(num6), new Rectangle(num3 - Game1.tileSize * 2 - Game1.tileSize * 3 / 4, num4 + k * (Game1.tileSize / 2 + Game1.pixelZoom * 6), Game1.tileSize * 2 + Game1.pixelZoom * 5, 9 * Game1.pixelZoom), string.Concat(num6), text3, null, Rectangle.Empty, 1f, false));
         }
 

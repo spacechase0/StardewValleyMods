@@ -111,7 +111,7 @@ namespace JunimosAcceptCash
             if (this.purchaseButton == null)
                 return;
 
-            if (this.Helper.Reflection.GetField<ClickableTextureComponent>(this.activeMenu, "purchaseButton").GetValue() != null)
+            if (this.activeMenu.purchaseButton != null)
                 return;
 
             StardewValley.BellsAndWhistles.SpriteText.drawString(e.SpriteBatch, $"{this.calculateActiveBundleCost()}g", this.purchaseButton.bounds.X - 150, this.purchaseButton.bounds.Y + 10);
