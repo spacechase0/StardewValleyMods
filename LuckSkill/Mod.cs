@@ -75,7 +75,7 @@ namespace LuckSkill
             asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.PROFESSION_MORE_QUESTS), "Popular Helper");
             asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.PROFESSION_MORE_QUESTS), "Daily quests occur three times as often.");
             asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.PROFESSION_JUNIMO_HELP), "Spirit Child");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.PROFESSION_JUNIMO_HELP), "Giving fits makes junimos happy. They might help your farm.\n(15% chance for some form of farm advancement.)");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.PROFESSION_JUNIMO_HELP), "Giving gifts makes junimos happy. They might help your farm.\n(15% chance for some form of farm advancement.)");
         }
 
         /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>

@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
+* Fixed typo in profession description.
 * Improved documentation.
 * Internal refactoring.
 
