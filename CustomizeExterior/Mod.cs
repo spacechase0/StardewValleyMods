@@ -307,15 +307,12 @@ namespace CustomizeExterior
 
         private void todoRenameFunction(string target, string type)
         {
-            Log.trace("Target: " + target + " " + type);
-
-            if (!Mod.choices.ContainsKey(type))
-                return;
-
-            foreach (var choice in Mod.choices[type])
+            if (!Mod.choices.TryGetValue(type, out var choices))
             {
-                Log.trace("Choice: " + choice);
+                Log.trace($"Target: {target} ({type}), but no custom textures found.");
+                return;
             }
+            Log.trace($"Target: {target} ({type}), found {choices.Count} textures: '{string.Join("', '", choices)}'.");
 
             this.recentTarget = target;
             var menu = new SelectDisplayMenu(type, Mod.getChosenTexture(target))
