@@ -5,7 +5,6 @@
     "Description": "Adds nine new grass types for decorative purposes.",
     "UniqueID": "spacechase0.MoreGrassStarters",
     "EntryDll": "MoreGrassStarters.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:1702", "Chucklefish:5129" ],
     "Dependencies": [
         {

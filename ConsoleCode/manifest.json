@@ -5,7 +5,6 @@
     "Description": "Run C# code in the SMAPI console.",
     "UniqueID": "spacechase0.ConsoleCode",
     "EntryDll": "ConsoleCode.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:3101", "Chucklefish:5610" ],
     "spacechase0": "console-code"
 }

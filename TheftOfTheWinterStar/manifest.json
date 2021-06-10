@@ -5,7 +5,6 @@
     "Description": "Adds a new dungeon area before the Feast of the Winter Star festival, and a new late-game farming equipment if you beat it.",
     "UniqueID": "spacechase0.TheftOfTheWinterStar",
     "EntryDll": "TheftOfTheWinterStar.dll",
-    "MinimumApiVersion": "2.10.2",
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore",

@@ -5,7 +5,6 @@
     "Description": "Once you max out all your skills, a new profession choice arrives...",
     "UniqueID": "spacechase0.CapstoneProfessions",
     "EntryDll": "CapstoneProfessions.dll",
-    "MinimumApiVersion": "2.9.0",
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore"

@@ -5,7 +5,6 @@
     "Description": "Improves loot dropped by meteorites.",
     "UniqueID": "spacechase0.BetterMeteorites",
     "EntryDll": "BetterMeteorites.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:5096", "Chucklefish:5920" ],
     "spacechase0": "better-meteorites"
 }

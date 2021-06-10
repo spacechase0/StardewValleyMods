@@ -5,7 +5,6 @@
     "Description": "Throw axes at monsters to damage them.",
     "UniqueID": "spacechase0.ThrowableAxe",
     "EntryDll": "ThrowableAxe.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:5097", "Chucklefish:5899" ],
     "spacechase0": "throwable-axe"
 }

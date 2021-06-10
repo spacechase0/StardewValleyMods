@@ -5,7 +5,6 @@
     "Description": "Adds a hunger system to the game.",
     "UniqueID": "spacechase0.AnotherHungerMod",
     "EntryDll": "AnotherHungerMod.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:3379", "Chucklefish:" ],
     "Dependencies": [
         {

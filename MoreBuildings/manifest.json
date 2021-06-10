@@ -5,7 +5,6 @@
     "Description": "Adds some new buildings with special effects.",
     "UniqueID": "spacechase0.MoreBuildings",
     "EntryDll": "MoreBuildings.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:2757", "Chucklefish:5524" ],
     "Dependencies": [
         {

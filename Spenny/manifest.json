@@ -5,7 +5,6 @@
     "Description": "Spinning Penny. Spenny.",
     "UniqueID": "spacechase0.Spenny",
     "EntryDll": "Spenny.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:2755", "Chucklefish:5522" ],
     "spacechase0": "spenny"
 }

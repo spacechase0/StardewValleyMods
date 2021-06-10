@@ -5,7 +5,6 @@
     "Description": "Adds new rings with special effects.",
     "UniqueID": "spacechase0.MoreRings",
     "EntryDll": "MoreRings.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:2054", "Chucklefish:5271" ],
     "Dependencies": [
         {

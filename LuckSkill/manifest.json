@@ -5,7 +5,6 @@
     "Description": "Reimplements the game's unimplemented luck skill and adds professions for it.",
     "UniqueID": "spacechase0.LuckSkill",
     "EntryDll": "LuckSkill.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:521", "Chucklefish:4053" ],
     "Dependencies": [
         {

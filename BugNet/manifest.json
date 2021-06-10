@@ -5,7 +5,6 @@
     "Description": "Catch bugs and stuff.",
     "UniqueID": "spacechase0.BugNet",
     "EntryDll": "BugNet.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [
         "Nexus:5099",
         "Chucklefish:5900"

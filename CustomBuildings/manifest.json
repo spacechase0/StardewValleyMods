@@ -5,7 +5,6 @@
     "Description": "Lets content packs create custom buildings with interior maps.",
     "UniqueID": "spacechase0.CustomBuildings",
     "EntryDll": "CustomBuildings.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
     "spacechase0": "custom-buildings"
 }

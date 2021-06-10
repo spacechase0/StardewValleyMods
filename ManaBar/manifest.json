@@ -5,7 +5,6 @@
     "Description": "Adds a mana bar and provides an API for other mods to use it.",
     "UniqueID": "spacechase0.ManaBar",
     "EntryDll": "ManaBar.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
     "Dependencies": [
         {

@@ -5,7 +5,6 @@
     "Description": "Adds a full spell system to the game.",
     "UniqueID": "spacechase0.Magic",
     "EntryDll": "Magic.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:2007", "Chucklefish:5242" ],
     "Dependencies": [
         {

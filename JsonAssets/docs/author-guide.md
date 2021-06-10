@@ -695,11 +695,9 @@ Here's an example of a JsonAssets manifest. You can find more information about 
     "Author": "Your Name",
     "Version": "1.0.0",
     "Description": "One or two sentences about the mod.",
-    "MinimumApiVersion": "3.6.0",
     "UniqueID": "YourName.YourProjectName",
     "UpdateKeys": [],
-    "ContentPackFor":
-    {
+    "ContentPackFor": {
         "UniqueID": "spacechase0.JsonAssets"
     },
 }

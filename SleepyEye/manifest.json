@@ -5,7 +5,6 @@
     "Description": "Buy a reusable tent to sleep anywhere!",
     "UniqueID": "spacechase0.SleepyEye",
     "EntryDll": "SleepyEye.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:1152", "Chucklefish:4709" ],
     "Dependencies": [
         {

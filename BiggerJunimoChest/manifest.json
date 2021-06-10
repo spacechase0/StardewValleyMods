@@ -5,7 +5,6 @@
     "Description": "Increases Junimo chests from four item slots to 36, similar to regular chests.",
     "UniqueID": "spacechase0.BiggerJunimoChest",
     "EntryDll": "BiggerJunimoChest.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:" ],
     "spacechase0": "bigger-junimo-chest"
 }

@@ -5,7 +5,6 @@
     "Description": "Lets you change the exterior of your buildings individually.",
     "UniqueID": "spacechase0.CustomizeExterior",
     "EntryDll": "CustomizeExterior.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:1099", "Chucklefish:4675" ],
     "Dependencies": [
         {

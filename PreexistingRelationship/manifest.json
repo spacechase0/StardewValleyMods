@@ -5,7 +5,6 @@
     "Description": "Start the game already married to an NPC.",
     "UniqueID": "spacechase0.PreexistingRelationship",
     "EntryDll": "PreexistingRelationship.dll",
-    "MinimumApiVersion": "2.9.0",
     "UpdateKeys": [ "Nexus:7684" ],
     "Dependencies": [
         {
