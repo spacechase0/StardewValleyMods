@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Fixed update keys.
 * Improved documentation.
 * Internal refactoring.
 

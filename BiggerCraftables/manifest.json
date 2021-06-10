@@ -5,6 +5,6 @@
     "Description": "Lets content packs add bigcraftables bigger than one tile.",
     "UniqueID": "spacechase0.BiggerCraftables",
     "EntryDll": "BiggerCraftables.dll",
-    "UpdateKeys": [ "Nexus:" ],
+    "UpdateKeys": [ "Nexus:7530" ],
     "spacechase0": "bigger-craftables"
 }

@@ -5,7 +5,7 @@
     "Description": "Adds a new Doom-style arcade game.",
     "UniqueID": "spacechase0.FireArcadeGame",
     "EntryDll": "FireArcadeGame.dll",
-    "UpdateKeys": [ "Nexus:" ],
+    "UpdateKeys": [ "Nexus:7455" ],
     "spacechase0": "fire-arcade-game",
     "Dependencies": [
         {

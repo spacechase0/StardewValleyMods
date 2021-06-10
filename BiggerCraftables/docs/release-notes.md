@@ -6,6 +6,7 @@
   * Added [mod API](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Integrations#Mod-provided_APIs) to get whether an object is a bigger craftable and get its base craftable.
 * Fixed compatibility with Linux/macOS.
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
+* Fixed update keys.
 * Internal refactoring.
 * Improved documentation.
 

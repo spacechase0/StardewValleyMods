@@ -5,7 +5,7 @@
     "Description": "Adds mannequins you can use to display your clothes.",
     "UniqueID": "spacechase0.Displays",
     "EntryDll": "Displays.dll",
-    "UpdateKeys": [ "Nexus:" ],
+    "UpdateKeys": [ "Nexus:7635" ],
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore"
