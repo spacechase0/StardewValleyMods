@@ -5,6 +5,7 @@
 * Includes unreleased changes by spacechase0:
   * Fixed changing greenhouse on Four Corners farm map.
   * Reduced the number of logs shown in the SMAPI console for players.
+* Updated for Stardew Valley 1.5.
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Improved documentation.
 

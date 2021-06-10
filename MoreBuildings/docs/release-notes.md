@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Updated for Stardew Valley 1.5.
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Moved assets into the conventional `assets` folder.
 * Internal refactoring.
