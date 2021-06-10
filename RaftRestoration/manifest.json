@@ -5,6 +5,6 @@
     "Description": "Reimplements the game's unimplemented raft feature.",
     "UniqueID": "spacechase0.RaftRestoration",
     "EntryDll": "RaftRestoration.dll",
-    "UpdateKeys": [ "Nexus:" ],
+    "UpdateKeys": [],
     "spacechase0": "raft-restoration"
 }

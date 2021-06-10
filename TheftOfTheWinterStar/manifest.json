@@ -15,6 +15,6 @@
             "MinimumVersion": "1.5.3"
         }
     ],
-    "UpdateKeys": [ "Nexus:5062", "Chucklefish:5915" ],
+    "UpdateKeys": [ "Nexus:5062" ],
     "spacechase0": "theft-of-the-winter-star"
 }

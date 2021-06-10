@@ -5,6 +5,6 @@
     "Description": "A framework mod used by some of my other mods.",
     "UniqueID": "spacechase0.SpaceCore",
     "EntryDll": "SpaceCore.dll",
-    "UpdateKeys": [ "Nexus:1348", "Chucklefish:4868" ],
+    "UpdateKeys": [ "Nexus:1348" ],
     "spacechase0": "spacecore"
 }

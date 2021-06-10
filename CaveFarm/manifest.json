@@ -5,6 +5,6 @@
     "Description": "Adds a cave farm type with diggable walls.",
     "UniqueID": "spacechase0.CaveFarm",
     "EntryDll": "CaveFarm.dll",
-    "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+    "UpdateKeys": [],
     "spacechase0": "cave-farm"
 }

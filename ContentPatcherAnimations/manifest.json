@@ -5,7 +5,7 @@
     "Description": "Lets Content Patcher packs animate textures.",
     "UniqueID": "spacechase0.ContentPatcherAnimations",
     "EntryDll": "ContentPatcherAnimations.dll",
-    "UpdateKeys": [ "Nexus:3853", "Chucklefish:5740" ],
+    "UpdateKeys": [ "Nexus:3853" ],
     "Dependencies": [
         {
             "UniqueID": "Pathoschild.ContentPatcher",

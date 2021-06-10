@@ -5,7 +5,7 @@
     "Description": "Adds a mana bar and provides an API for other mods to use it.",
     "UniqueID": "spacechase0.ManaBar",
     "EntryDll": "ManaBar.dll",
-    "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+    "UpdateKeys": [ "Nexus:" ],
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore"

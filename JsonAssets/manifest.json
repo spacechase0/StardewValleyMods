@@ -5,7 +5,7 @@
     "Description": "Lets content packs add custom content to the game.",
     "UniqueID": "spacechase0.JsonAssets",
     "EntryDll": "JsonAssets.dll",
-    "UpdateKeys": [ "Nexus:1720", "Chucklefish:5138" ],
+    "UpdateKeys": [ "Nexus:1720" ],
     "spacechase0": "json-assets",
     "Dependencies": [
         {

@@ -5,6 +5,6 @@
     "Description": "Apply multiple types of fertilizer to a crop space!",
     "UniqueID": "spacechase0.MultiFertilizer",
     "EntryDll": "MultiFertilizer.dll",
-    "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+    "UpdateKeys": [ "Nexus:" ],
     "spacechase0": "multi-fertilizer"
 }

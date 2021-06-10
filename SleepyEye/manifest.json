@@ -5,7 +5,7 @@
     "Description": "Buy a reusable tent to sleep anywhere!",
     "UniqueID": "spacechase0.SleepyEye",
     "EntryDll": "SleepyEye.dll",
-    "UpdateKeys": [ "Nexus:1152", "Chucklefish:4709" ],
+    "UpdateKeys": [ "Nexus:1152" ],
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore"

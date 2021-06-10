@@ -5,7 +5,7 @@
     "Description": "Adds new rings with special effects.",
     "UniqueID": "spacechase0.MoreRings",
     "EntryDll": "MoreRings.dll",
-    "UpdateKeys": [ "Nexus:2054", "Chucklefish:5271" ],
+    "UpdateKeys": [ "Nexus:2054" ],
     "Dependencies": [
         {
             "UniqueID": "spacechase0.JsonAssets"

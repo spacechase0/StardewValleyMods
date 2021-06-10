@@ -5,10 +5,7 @@
     "Description": "Catch bugs and stuff.",
     "UniqueID": "spacechase0.BugNet",
     "EntryDll": "BugNet.dll",
-    "UpdateKeys": [
-        "Nexus:5099",
-        "Chucklefish:5900"
-    ],
+    "UpdateKeys": [ "Nexus:5099" ],
     "Dependencies": [
         {
             "UniqueID": "spacechase0.JsonAssets",

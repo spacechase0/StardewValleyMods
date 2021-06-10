@@ -5,7 +5,7 @@
     "Description": "Adds some new buildings with special effects.",
     "UniqueID": "spacechase0.MoreBuildings",
     "EntryDll": "MoreBuildings.dll",
-    "UpdateKeys": [ "Nexus:2757", "Chucklefish:5524" ],
+    "UpdateKeys": [ "Nexus:2757" ],
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore"

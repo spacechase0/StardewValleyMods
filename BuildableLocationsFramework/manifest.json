@@ -5,6 +5,6 @@
     "Description": "Lets you construct buildings outside the farm.",
     "UniqueID": "spacechase0.BuildableLocationsFramework",
     "EntryDll": "BuildableLocationsFramework.dll",
-    "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+    "UpdateKeys": [],
     "spacechase0": "buildable-locations-framework"
 }

@@ -5,7 +5,7 @@
     "Description": "Purchase a statue which produces loved gifts each morning.",
     "UniqueID": "spacechase0.StatueOfGenerosity",
     "EntryDll": "StatueOfGenerosity.dll",
-    "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+    "UpdateKeys": [ "Nexus:" ],
     "Dependencies": [
         {
             "UniqueID": "spacechase0.JsonAssets"

@@ -5,7 +5,7 @@
     "Description": "Fixes NPC spawning in custom locations, pathing to custom locations, and schedules for new NPCs.",
     "UniqueID": "spacechase0.CustomNPCFixes",
     "EntryDll": "CustomNPCFixes.dll",
-    "UpdateKeys": [ "Nexus:3849", "Chucklefish:5739" ],
+    "UpdateKeys": [ "Nexus:3849" ],
     "spacechase0": "custom-npc-fixes",
     "Dependencies": [
         {

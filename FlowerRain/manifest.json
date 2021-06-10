@@ -5,6 +5,6 @@
     "Description": "Replaces rain with falling flowers.",
     "UniqueID": "spacechase0.FlowerRain",
     "EntryDll": "FlowerRain.dll",
-    "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+    "UpdateKeys": [ "Nexus:" ],
     "spacechase0": "flower-rain"
 }

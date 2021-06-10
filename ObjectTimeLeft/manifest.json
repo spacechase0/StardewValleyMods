@@ -5,6 +5,6 @@
     "Description": "See how much time is left until machines finish processing.",
     "UniqueID": "spacechase0.ObjectTimeLeft",
     "EntryDll": "ObjectTimeLeft.dll",
-    "UpdateKeys": [ "Nexus:1315", "Chucklefish:4842" ],
+    "UpdateKeys": [ "Nexus:1315" ],
     "spacechase0": "object-time-left"
 }

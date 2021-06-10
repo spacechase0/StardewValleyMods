@@ -5,6 +5,6 @@
     "Description": "Lets you dance with a villager at the Flower Dance with three hearts instead of four.",
     "UniqueID": "ThreeHeartDancePartner",
     "EntryDll": "ThreeHeartDancePartner.dll",
-    "UpdateKeys": [ "Nexus:500", "Chucklefish:3767" ],
+    "UpdateKeys": [ "Nexus:500" ],
     "spacechase0": "three-heart-dance-partner"
 }

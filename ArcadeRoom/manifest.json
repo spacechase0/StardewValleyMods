@@ -5,6 +5,6 @@
     "Description": "Adds an arcade room in the Saloon.",
     "UniqueID": "spacechase0.ArcadeRoom",
     "EntryDll": "ArcadeRoom.dll",
-    "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
+    "UpdateKeys": [],
     "spacechase0": "arcade-room"
 }

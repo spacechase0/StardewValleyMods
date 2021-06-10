@@ -5,6 +5,6 @@
     "Description": "Lets you change maps directly in-game.",
     "UniqueID": "spacechase0.Terraforming",
     "EntryDll": "Terraforming.dll",
-    "UpdateKeys": [ "Nexus:", "Chucklefish" ],
+    "UpdateKeys": [],
     "spacechase0": "terraforming"
 }

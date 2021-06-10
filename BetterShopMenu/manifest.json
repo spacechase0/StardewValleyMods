@@ -5,6 +5,6 @@
     "Description": "Changes the shop menu into a grid, and adds buttons to filter by category and sort by price/name.",
     "UniqueID": "spacechase0.BetterShopMenu",
     "EntryDll": "BetterShopMenu.dll",
-    "UpdateKeys": [ "Nexus:2012", "Chucklefish:5245" ],
+    "UpdateKeys": [ "Nexus:2012" ],
     "spacechase0": "better-shop-menu"
 }

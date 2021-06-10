@@ -5,7 +5,7 @@
     "Description": "Adds a social menu for your animals. Check your animals' friendship values and if they need petting.",
     "UniqueID": "spacechase0.AnimalSocialMenu",
     "EntryDll": "AnimalSocialMenu.dll",
-    "UpdateKeys": [ "Nexus:3283", "Chucklefish:5649" ],
+    "UpdateKeys": [ "Nexus:3283" ],
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore",

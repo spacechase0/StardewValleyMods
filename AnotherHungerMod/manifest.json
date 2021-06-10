@@ -5,7 +5,7 @@
     "Description": "Adds a hunger system to the game.",
     "UniqueID": "spacechase0.AnotherHungerMod",
     "EntryDll": "AnotherHungerMod.dll",
-    "UpdateKeys": [ "Nexus:3379", "Chucklefish:" ],
+    "UpdateKeys": [ "Nexus:3379" ],
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore"
