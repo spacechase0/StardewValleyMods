@@ -3,7 +3,7 @@ in custom locations, pathing to custom locations, and schedules for new NPCs.
 
 ## Install
 1. Install the latest version of [SMAPI](https://smapi.io).
-2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/1255).
+2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/3849).
 3. Run the game using SMAPI.
 
 ## Use
