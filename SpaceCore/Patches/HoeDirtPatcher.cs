@@ -3,16 +3,15 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
-using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
-using StardewValley;
 using StardewValley.TerrainFeatures;
 
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="HoeDirt"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
     internal class HoeDirtPatcher : BasePatcher
     {
         /*********
@@ -31,35 +30,26 @@ namespace SpaceCore.Patches
         /*********
         ** Private methods
         *********/
-        /// <summary>The method which transpiles <see cref="HoeDirt.dayUpdate"/>.</summary>
+        /// <summary>The method which transpiles <see cref="HoeDirt.dayUpdate"/> to remove the <see cref="HoeDirt.destroyCrop"/> call.</summary>
         private static IEnumerable<CodeInstruction> Transpile_DayUpdate(IEnumerable<CodeInstruction> insns)
         {
-            Log.trace("Transpiling for hoe dirt winter stuff");
             bool happened = false;
             var newInsns = new List<CodeInstruction>();
-            foreach (var insn in insns)
+            foreach (var instr in insns)
             {
-                if (
-                    ( insn.opcode == OpCodes.Call || insn.opcode == OpCodes.Callvirt )
-                    && (insn.operand as MethodInfo).Name == "destroyCrop"
-                    )
+                if ((instr.opcode == OpCodes.Call || instr.opcode == OpCodes.Callvirt) && (instr.operand as MethodInfo)?.Name == nameof(HoeDirt.destroyCrop))
                 {
-                    Log.trace("Removing destroyCrop call");
-                    // There are 4 items loaded to the stack at this point
-                    var pop = new CodeInstruction(OpCodes.Pop);
-                    newInsns.Add(pop.Clone());
-                    newInsns.Add(pop.Clone());
-                    newInsns.Add(pop.Clone());
-                    newInsns.Add(pop.Clone());
+                    for (int i = 0; i < 4; i++) // remove the four args to the destroyCrop method
+                        newInsns.Add(new CodeInstruction(OpCodes.Pop));
                     happened = true;
                     continue;
                 }
-                newInsns.Add(insn);
+                newInsns.Add(instr);
             }
 
-            if (!happened) {
-                Log.error($"{nameof(Transpile_DayUpdate)} patching failed!");
-                }
+            if (!happened)
+                Log.error($"{nameof(Transpile_DayUpdate)} patching failed: couldn't find {nameof(HoeDirt.destroyCrop)} call in the {nameof(HoeDirt)}.{nameof(HoeDirt.dayUpdate)} method.");
+
             return newInsns;
         }
     }
