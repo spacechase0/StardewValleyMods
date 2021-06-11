@@ -18,8 +18,8 @@ namespace SpaceCore
     {
         private class TileMapping
         {
-            public TileSheet tileSheet = null;
-            public int tileId = 0;
+            public TileSheet tileSheet;
+            public int tileId;
 
             public TileMapping() { }
             public TileMapping(TileSheet ts, int id)

@@ -42,10 +42,10 @@ namespace Magic.Spells
             }
 
             private bool jumping = true;
-            private float prevJumpVel = 0;
+            private float prevJumpVel;
             private float landX, landY;
-            private float timer = 0;
-            private int currRad = 0;
+            private float timer;
+            private int currRad;
 
             /// <summary>Update the effect state if needed.</summary>
             /// <param name="e">The update tick event args.</param>

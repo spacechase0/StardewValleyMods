@@ -47,10 +47,10 @@ namespace CustomCritters
             }
         }
 
-        private int patrolIndex = 0;
-        private int patrolWait = 0;
+        private int patrolIndex;
+        private int patrolWait;
         private bool needTarget = true;
-        private bool waiting = false;
+        private bool waiting;
         private Vector2 target;
         public override bool update(GameTime time, GameLocation environment)
         {

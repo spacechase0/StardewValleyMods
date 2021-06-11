@@ -366,7 +366,7 @@ namespace Magic
             Magic.manaFg.SetData(new[] { manaCol });
         }
 
-        private static bool castPressed = false;
+        private static bool castPressed;
 
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
         /// <param name="sender">The event sender.</param>
@@ -433,7 +433,7 @@ namespace Magic
             }
         }
 
-        private static float carryoverManaRegen = 0;
+        private static float carryoverManaRegen;
         private static void onTimeChanged(object sender, TimeChangedEventArgs e)
         {
             float manaRegen = Game1.player.GetCustomSkillLevel(Magic.Skill) / 2 + Magic.carryoverManaRegen;

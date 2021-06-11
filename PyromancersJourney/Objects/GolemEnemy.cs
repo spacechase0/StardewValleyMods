@@ -21,8 +21,8 @@ namespace PyromancersJourney.Objects
             Summon,
         }
         private AnimState state = AnimState.Glow;
-        private int frame = 0;
-        private float frameAccum = 0;
+        private int frame;
+        private float frameAccum;
 
         private VertexBuffer buffer;
 

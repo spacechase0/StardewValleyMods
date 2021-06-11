@@ -11,7 +11,7 @@ namespace AnimalSocialMenu
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        private static int myTabId = 0;
+        private static int myTabId;
 
         public override void Entry(IModHelper helper)
         {

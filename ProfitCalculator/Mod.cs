@@ -11,7 +11,7 @@ namespace ProfitCalculator
     {
         internal class ProfitData
         {
-            public int profit = 0;
+            public int profit;
             public string crop = "invalid";
         }
 

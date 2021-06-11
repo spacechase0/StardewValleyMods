@@ -23,7 +23,7 @@ namespace LocationLayerTool.Patches
         /*********
         ** Fields
         *********/
-        private static int rendering = 0;
+        private static int rendering;
         private static IDisplayDevice displayDevice;
         private static SpriteBatch spriteBatch;
         private static RenderTarget2D renderTarget;

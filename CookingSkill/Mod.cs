@@ -106,7 +106,7 @@ namespace CookingSkill
 
         private bool wasEating = false;
         private int prevToEatStack = -1;
-        private Buff lastDrink = null;
+        private Buff lastDrink;
 
         private void onItemEaten(object sender, EventArgs e)
         {

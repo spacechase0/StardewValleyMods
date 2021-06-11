@@ -28,7 +28,7 @@ namespace GenericModConfigMenu
 
         public bool DefaultOptedIngame { get; set; } = false;
 
-        public ModPage ActiveRegisteringPage = null;
+        public ModPage ActiveRegisteringPage;
 
         public ModPage ActiveDisplayPage = null;
 

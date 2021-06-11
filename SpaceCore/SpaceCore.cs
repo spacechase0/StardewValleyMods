@@ -84,7 +84,7 @@ namespace SpaceCore
             }
         }
 
-        private int tickCount = 0;
+        private int tickCount;
         private void onUpdate(object sender, UpdateTickedEventArgs e)
         {
             TileSheetExtensions.UpdateReferences();

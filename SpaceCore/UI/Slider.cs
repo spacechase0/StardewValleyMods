@@ -14,7 +14,7 @@ namespace SpaceCore.UI
 
         public Action<Element> Callback { get; set; }
 
-        protected bool dragging = false;
+        protected bool dragging;
 
         public override int Width => this.RequestWidth;
         public override int Height => 24;

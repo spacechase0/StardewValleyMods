@@ -13,7 +13,7 @@ namespace GenericModConfigMenu.UI
 
         public virtual string String { get; set; }
 
-        private bool selected = false;
+        private bool selected;
         public bool Selected
         {
             get { return this.selected; }

@@ -20,7 +20,7 @@ namespace GenericModConfigMenu.UI
 
         public float ScrollPercent => (this.MaxTopRow > 0) ? this.TopRow / (float)this.MaxTopRow : 0f;
 
-        private bool dragScroll = false;
+        private bool dragScroll;
 
         public void ScrollBy(int amount)
         {

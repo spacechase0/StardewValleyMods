@@ -21,12 +21,12 @@ namespace GenericModConfigMenu.UI
             get { return this.Choices[this.ActiveChoice]; }
             set { if (this.Choices.Contains(value)) this.ActiveChoice = Array.IndexOf(this.Choices, value); }
         }
-        public int ActiveChoice { get; set; } = 0;
+        public int ActiveChoice { get; set; }
 
-        public int ActivePosition { get; set; } = 0;
+        public int ActivePosition { get; set; }
         public string[] Choices { get; set; } = new[] { "null" };
 
-        public bool dropped = false;
+        public bool dropped;
 
         public Action<Element> Callback;
 

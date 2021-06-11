@@ -52,7 +52,7 @@ namespace BuildableLocationsFramework
         {
         }
 
-        private int buildableLocIndex = 0;
+        private int buildableLocIndex;
         private void doMenuButtons(object sender, ButtonPressedEventArgs e)
         {
             if (Game1.activeClickableMenu is CarpenterMenu carpMenu)

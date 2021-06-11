@@ -10,7 +10,7 @@ namespace ThrowableAxe
     {
         public static Mod instance;
         private ThrownAxe thrown;
-        private bool clicking = false;
+        private bool clicking;
 
         public override void Entry(IModHelper helper)
         {

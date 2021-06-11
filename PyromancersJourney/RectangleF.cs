@@ -4,10 +4,10 @@ namespace PyromancersJourney
 {
     public class RectangleF
     {
-        public float X { get; set; } = 0;
-        public float Y { get; set; } = 0;
-        public float Width { get; set; } = 0;
-        public float Height { get; set; } = 0;
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
 
         public RectangleF() { }
         public RectangleF(float x, float y, float w, float h)

@@ -36,7 +36,7 @@ namespace JunimosAcceptCash
             }
         }
 
-        private JunimoNoteMenu activeMenu = null;
+        private JunimoNoteMenu activeMenu;
         private void onMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is JunimoNoteMenu menu)

@@ -47,9 +47,9 @@ namespace SurfingFestival
     {
         public ObstacleType Type { get; set; }
         public Vector2 Position { get; set; }
-        public string HomingTarget { get; set; } = null;
+        public string HomingTarget { get; set; }
 
-        public TemporaryAnimatedSprite UnderwaterSprite { get; set; } = null;
+        public TemporaryAnimatedSprite UnderwaterSprite { get; set; }
 
         public Rectangle GetBoundingBox()
         {
@@ -71,20 +71,20 @@ namespace SurfingFestival
     public class RacerState
     {
         public int Speed { get; set; } = Mod.SURF_SPEED;
-        public int AddedSpeed { get; set; } = 0;
-        public int Surfboard { get; set; } = 0;
+        public int AddedSpeed { get; set; }
+        public int Surfboard { get; set; }
         public int Facing { get; set; } = Game1.right;
 
-        public int LapsDone { get; set; } = 0;
-        public bool ReachedHalf { get; set; } = false;
+        public int LapsDone { get; set; }
+        public bool ReachedHalf { get; set; }
 
-        public Item? CurrentItem { get; set; } = null;
+        public Item? CurrentItem { get; set; }
         public int ItemObtainTimer { get; set; } = -1;
         public int ItemUsageTimer { get; set; } = -1;
         public int SlowdownTimer { get; set; } = -1;
         public int StunTimer { get; set; } = -1;
 
-        public bool ShouldUseItem { get; set; } = false;
+        public bool ShouldUseItem { get; set; }
     }
 
     public class Mod : StardewModdingAPI.Mod, IAssetLoader, IAssetEditor
@@ -96,9 +96,9 @@ namespace SurfingFestival
         public const int SURF_SPEED = 8;
 
         public static BonfireState playerDidBonfire = BonfireState.NotDone;
-        public static List<string> racers = null;
+        public static List<string> racers;
         public static Dictionary<string, RacerState> racerState = new();
-        public static string raceWinner = null;
+        public static string raceWinner;
         public static List<Obstacle> obstacles = new();
 
         public static Texture2D surfboardTex;
@@ -185,7 +185,7 @@ namespace SurfingFestival
             Mod.ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "ja"));
         }
 
-        private Event prevEvent = null;
+        private Event prevEvent;
         private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             if (++Mod.surfboardWaterAnimTimer >= 5)
@@ -680,9 +680,9 @@ namespace SurfingFestival
             }
         }
 
-        private int itemBobbleFrame = 0;
-        private int itemBobbleTimer = 0;
-        private uint netBobTimer = 0;
+        private int itemBobbleFrame;
+        private int itemBobbleTimer;
+        private uint netBobTimer;
         public void DrawObstacles(SpriteBatch b)
         {
             if (Game1.CurrentEvent?.FestivalName != Mod.festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
@@ -943,8 +943,8 @@ namespace SurfingFestival
             }
         }
 
-        private static int surfboardWaterAnim = 0;
-        private static int surfboardWaterAnimTimer = 0;
+        private static int surfboardWaterAnim;
+        private static int surfboardWaterAnimTimer;
         private static int prevRacerFrame = -1;
         public static void DrawSurfboard(Character __instance, SpriteBatch b)
         {

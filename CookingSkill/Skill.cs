@@ -24,12 +24,12 @@ namespace CookingSkill
             }
         }
 
-        public static GenericProfession ProfessionSellPrice = null;
-        public static GenericProfession ProfessionBuffTime = null;
-        public static GenericProfession ProfessionConservation = null;
-        public static GenericProfession ProfessionSilver = null;
-        public static GenericProfession ProfessionBuffLevel = null;
-        public static GenericProfession ProfessionBuffPlain = null;
+        public static GenericProfession ProfessionSellPrice;
+        public static GenericProfession ProfessionBuffTime;
+        public static GenericProfession ProfessionConservation;
+        public static GenericProfession ProfessionSilver;
+        public static GenericProfession ProfessionBuffLevel;
+        public static GenericProfession ProfessionBuffPlain;
 
         public Skill()
             : base("spacechase0.Cooking")

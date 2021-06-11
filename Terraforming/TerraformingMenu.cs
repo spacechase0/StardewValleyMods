@@ -24,7 +24,7 @@ namespace Terraforming
             this.terrainData = new TileType[this.terrainWidth + 1, this.terrainHeight + 1];
         }
 
-        private bool justClicked = false;
+        private bool justClicked;
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
             this.justClicked = true;

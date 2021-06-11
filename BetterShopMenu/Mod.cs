@@ -43,14 +43,14 @@ namespace BetterShopMenu
         }
 
         private ShopMenu shop;
-        private bool firstTick = false;
+        private bool firstTick;
         private List<ISalable> initialItems;
         private Dictionary<ISalable, int[]> initialStock;
         private List<int> categories;
         private int currCategory;
         private bool hasRecipes;
         private Dictionary<int, string> categoryNames;
-        private int sorting = 0;
+        private int sorting;
         private TextBox search;
         private void initShop(ShopMenu shopMenu)
         {

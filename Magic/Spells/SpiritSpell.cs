@@ -37,10 +37,10 @@ namespace Magic.Spells
         private Vector2 pos;
         private int timeLeft = 60 * 60;
 
-        private GameLocation prevSummonerLoc = null;
-        private int attackTimer = 0;
-        private int animTimer = 0;
-        private int animFrame = 0;
+        private GameLocation prevSummonerLoc;
+        private int attackTimer;
+        private int animTimer;
+        private int animFrame;
 
         public SpiritEffect(Farmer theSummoner)
         {

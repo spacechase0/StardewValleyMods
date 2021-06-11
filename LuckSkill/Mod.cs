@@ -273,7 +273,7 @@ namespace LuckSkill
             }
         }
 
-        private bool didInitSkills = false;
+        private bool didInitSkills;
 
         /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
         /// <param name="sender">The event sender.</param>
@@ -581,7 +581,7 @@ namespace LuckSkill
             api?.SetDrawLuck(true);
         }
 
-        private bool HAS_ALL_PROFESSIONS = false;
+        private bool HAS_ALL_PROFESSIONS;
         private List<int> luckProfessions5 = new() { Mod.PROFESSION_DAILY_LUCK, Mod.PROFESSION_MORE_QUESTS };
         private List<int> luckProfessions10 = new() { Mod.PROFESSION_CHANCE_MAX_LUCK, Mod.PROFESSION_NO_BAD_LUCK, Mod.PROFESSION_NIGHTLY_EVENTS, Mod.PROFESSION_JUNIMO_HELP };
 

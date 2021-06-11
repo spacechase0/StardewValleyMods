@@ -1166,7 +1166,7 @@ namespace JsonAssets
             ((Api)this.api).InvokeAddedItemsToShop();
         }
 
-        internal bool didInit = false;
+        internal bool didInit;
         private void initStuff(bool loadIdFiles)
         {
             if (this.didInit)
@@ -1462,7 +1462,7 @@ namespace JsonAssets
             return ret;
         }
 
-        private bool reverseFixing = false;
+        private bool reverseFixing;
         private HashSet<string> locationsFixedAlready = new();
         private void fixIdsEverywhere(bool reverse = false)
         {

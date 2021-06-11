@@ -17,10 +17,10 @@ namespace PyromancersJourney.Objects
         public int mana = 25, manaMax = 25;
         public float speed = 0.065f;
         public float turnSpeed = 0.045f;
-        public float look = 0;
-        public float chargeTime = 0;
-        public float manaRegenTimer = 0;
-        public float immunTimer = 0;
+        public float look;
+        public float chargeTime;
+        public float manaRegenTimer;
+        public float immunTimer;
 
         private Random shakeRand = new();
 

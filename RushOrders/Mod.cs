@@ -18,8 +18,8 @@ namespace RushOrders
         public static Mod instance;
         public static RushOrdersConfig ModConfig { get; private set; }
         private static Api api;
-        private static bool hadDialogue = false;
-        private static int prevMoney = 0;
+        private static bool hadDialogue;
+        private static int prevMoney;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>

@@ -28,7 +28,7 @@ namespace TheftOfTheWinterStar
         private readonly NetInt spawnRocksTimer = new(Witch.SPAWN_ROCKS_DELAY);
         private readonly NetInt spawnEnemyTimer = new(Witch.SPAWN_ENEMY_DELAY);
         private readonly NetInt stunTimer = new(0);
-        private int animTimer = 0;
+        private int animTimer;
 
         public Witch()
             : base("Serpent", new Vector2(-1000, -1000))

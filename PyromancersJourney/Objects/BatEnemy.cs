@@ -13,7 +13,7 @@ namespace PyromancersJourney.Objects
         public override bool Floats => true;
 
         private int frame = Game1.random.Next(4);
-        private float frameAccum = 0;
+        private float frameAccum;
 
         private static VertexBuffer mainBuffer;
 

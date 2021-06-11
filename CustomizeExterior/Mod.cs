@@ -286,7 +286,7 @@ namespace CustomizeExterior
         }
 
         private DateTime recentClickTime;
-        private string recentClickTarget = null;
+        private string recentClickTarget;
         private void checkBuildingClick(string target, string type)
         {
             if (Game1.activeClickableMenu != null) return;
@@ -322,7 +322,7 @@ namespace CustomizeExterior
             Game1.activeClickableMenu = menu;
         }
 
-        private string recentTarget = null;
+        private string recentTarget;
         private void onExteriorSelected(string type, string choice) { this.onExteriorSelected(type, choice, true); }
         private void onExteriorSelected(string type, string choice, bool updateChosen)
         {
@@ -432,7 +432,7 @@ namespace CustomizeExterior
             return tex;
         }
 
-        private static Texture2D housesHybrid = null;
+        private static Texture2D housesHybrid;
         private static Texture2D getHousesTexture()
         {
             if (Mod.housesHybrid != null)

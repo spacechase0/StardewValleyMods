@@ -14,8 +14,8 @@ namespace PreexistingRelationship
         private RootElement ui;
         private Table table;
 
-        private StaticContainer selectedContainer = null;
-        private string selectedNPC = null;
+        private StaticContainer selectedContainer;
+        private string selectedNPC;
 
         public MarryMenu()
             : base((Game1.uiViewport.Width - 800) / 2, (Game1.uiViewport.Height - 700) / 2, 800, 700)

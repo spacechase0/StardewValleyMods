@@ -13,7 +13,7 @@ namespace SleepyEye
     public class TentTool : Tool, ISaveElement
     {
         private SFarmer user;
-        private DateTime? startedUsing = null;
+        private DateTime? startedUsing;
 
         public TentTool()
         {

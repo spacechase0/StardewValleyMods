@@ -44,7 +44,7 @@ namespace BiggerCraftables
             return new Api();
         }
 
-        private bool doingStuff = false;
+        private bool doingStuff;
         private void OnObjectListChanged(object sender, ObjectListChangedEventArgs e)
         {
             if (this.doingStuff)

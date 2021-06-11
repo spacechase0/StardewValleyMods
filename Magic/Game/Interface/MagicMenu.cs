@@ -18,12 +18,12 @@ namespace Magic.Game.Interface
         public const int HOTBAR_ICON_SIZE = 48;
 
         private School school;
-        private School active = null;
-        private Spell sel = null;
-        private PreparedSpell dragging = null;
+        private School active;
+        private Spell sel;
+        private PreparedSpell dragging;
 
-        private bool justLeftClicked = false;
-        private bool justRightClicked = false;
+        private bool justLeftClicked;
+        private bool justRightClicked;
 
         public MagicMenu(School theSchool = null)
             : base((Game1.viewport.Size.Width - MagicMenu.WINDOW_WIDTH) / 2, (Game1.viewport.Size.Height - MagicMenu.WINDOW_HEIGHT) / 2, MagicMenu.WINDOW_WIDTH, MagicMenu.WINDOW_HEIGHT, true)

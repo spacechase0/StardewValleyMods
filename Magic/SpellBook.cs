@@ -81,7 +81,7 @@ namespace Magic
             new PreparedSpell[5] { null, null, null, null, null },
             new PreparedSpell[5] { null, null, null, null, null },
         };
-        public int selectedPrepared = 0;
+        public int selectedPrepared;
 
         public SpellBook()
         {

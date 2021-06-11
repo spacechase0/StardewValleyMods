@@ -11,7 +11,7 @@ namespace PyromancersJourney.Objects
         public static Texture2D tex = Game1.content.Load<Texture2D>("Characters\\Monsters\\Tiger Slime");
 
         private int frame = Game1.random.Next(4);
-        private float frameAccum = 0;
+        private float frameAccum;
         public int eyeType = Game1.random.Next(4);
 
         private static VertexBuffer mainBuffer;

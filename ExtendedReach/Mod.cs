@@ -42,7 +42,7 @@ namespace ExtendedReach
         }
 
         private float ampDir = 1;
-        private float amp = 0;
+        private float amp;
         private Vector2 prevMousePos;
         private void onRenderWorld(object sender, RenderedWorldEventArgs e)
         {

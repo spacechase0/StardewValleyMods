@@ -17,13 +17,13 @@ namespace Magic.Game.Interface
         public const int EDGE_PAD = 16;
 
         private List<string> locs = new();
-        private string warpTo = null;
+        private string warpTo;
 
-        private int scroll = 0;
+        private int scroll;
         private Rectangle scrollbarBack;
         private Rectangle scrollbar;
 
-        private bool dragScroll = false;
+        private bool dragScroll;
 
         public TeleportMenu()
             : base((Game1.viewport.Width - TeleportMenu.WINDOW_WIDTH) / 2, (Game1.viewport.Height - TeleportMenu.WINDOW_HEIGHT) / 2, TeleportMenu.WINDOW_WIDTH, TeleportMenu.WINDOW_HEIGHT)
@@ -126,7 +126,7 @@ namespace Magic.Game.Interface
             this.drawMouse(b);
         }
 
-        private bool justClicked = false;
+        private bool justClicked;
 
         public object ReflectGame1 { get; private set; }
 

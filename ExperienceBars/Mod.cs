@@ -22,9 +22,9 @@ namespace ExperienceBars
         public static Configuration Config;
 
         public static bool renderLuck = false;
-        public static int expBottom = 0;
+        public static int expBottom;
         public static bool show = true;
-        private static bool stopLevelExtenderCompat = false;
+        private static bool stopLevelExtenderCompat;
 
         public override void Entry(IModHelper helper)
         {

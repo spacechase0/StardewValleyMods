@@ -27,10 +27,10 @@ namespace SpaceCore.UI
         public abstract int Height { get; }
         public Rectangle Bounds => new((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);
 
-        public bool Hover { get; private set; } = false;
+        public bool Hover { get; private set; }
         public virtual string HoveredSound => null;
 
-        public bool ClickGestured { get; private set; } = false;
+        public bool ClickGestured { get; private set; }
         public bool Clicked => this.Hover && this.ClickGestured;
         public virtual string ClickedSound => null;
 

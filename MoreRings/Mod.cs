@@ -83,8 +83,8 @@ namespace MoreRings
             }
         }
 
-        private int regenCounter = 0;
-        private int refreshCounter = 0;
+        private int regenCounter;
+        private int refreshCounter;
 
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>

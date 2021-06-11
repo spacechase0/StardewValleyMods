@@ -272,7 +272,7 @@ namespace JsonAssets.Other.ContentPatcher
         private static ContentPatcherAPI cp;
         private static IApi ja;
 
-        internal static bool idsAssigned = false;
+        internal static bool idsAssigned;
         internal static int idsAssignedGen = -1;
 
         private static List<BaseToken> tokens;

@@ -24,7 +24,7 @@ namespace CustomizeExterior
         private int size;
         private int entrySize;
 
-        private int scroll = 0;
+        private int scroll;
 
         public SelectDisplayMenu(string theType, string theActive)
         {

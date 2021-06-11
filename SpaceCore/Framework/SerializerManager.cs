@@ -18,7 +18,7 @@ namespace SpaceCore.Framework
         /*********
         ** Fields
         *********/
-        private bool initializedSerializers = false;
+        private bool initializedSerializers;
 
         // Update these each game update
         private Type[] vanillaMainTypes = new Type[25]

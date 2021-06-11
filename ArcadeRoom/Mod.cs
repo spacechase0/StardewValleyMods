@@ -14,7 +14,7 @@ namespace ArcadeRoom
     {
         public static Mod instance;
 
-        private bool patchedMap = false;
+        private bool patchedMap;
 
         public Queue<Vector2> machineSpots = new();
 

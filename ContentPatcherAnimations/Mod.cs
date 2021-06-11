@@ -22,7 +22,7 @@ namespace ContentPatcherAnimations
         public Texture2D Source;
         public Func<Rectangle> FromAreaFunc;
         public Func<Rectangle> ToAreaFunc;
-        public int CurrentFrame = 0;
+        public int CurrentFrame;
     }
 
     public class ScreenState
@@ -31,8 +31,8 @@ namespace ContentPatcherAnimations
 
         public Dictionary<Patch, PatchData> animatedPatches = new();
 
-        public uint frameCounter = 0;
-        public int findTargetsCounter = 0;
+        public uint frameCounter;
+        public int findTargetsCounter;
         public Queue<Patch> findTargetsQueue = new();
     }
 

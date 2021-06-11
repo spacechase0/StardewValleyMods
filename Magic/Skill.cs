@@ -47,12 +47,12 @@ namespace Magic
             }
         }
 
-        public static GenericProfession ProfessionUpgradePoint1 = null;
-        public static GenericProfession ProfessionUpgradePoint2 = null;
-        public static GenericProfession ProfessionFifthSpellSlot = null;
-        public static GenericProfession ProfessionManaRegen1 = null;
-        public static GenericProfession ProfessionManaRegen2 = null;
-        public static GenericProfession ProfessionManaCap = null;
+        public static GenericProfession ProfessionUpgradePoint1;
+        public static GenericProfession ProfessionUpgradePoint2;
+        public static GenericProfession ProfessionFifthSpellSlot;
+        public static GenericProfession ProfessionManaRegen1;
+        public static GenericProfession ProfessionManaRegen2;
+        public static GenericProfession ProfessionManaCap;
 
         public Skill()
             : base("spacechase0.Magic")

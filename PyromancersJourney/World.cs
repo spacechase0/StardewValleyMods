@@ -23,8 +23,8 @@ namespace PyromancersJourney
         private RenderTarget2D target;
         private SpriteBatch spriteBatch;
 
-        private bool nextLevelQueued = false;
-        private int currLevel = 0;
+        private bool nextLevelQueued;
+        private int currLevel;
         private Vector2 warpPos;
         public Map map;
         public List<BaseObject> objects = new();
@@ -33,7 +33,7 @@ namespace PyromancersJourney
 
         public int ScreenSize => this.target.Width;
 
-        public bool HasQuit = false;
+        public bool HasQuit;
 
         public World()
         {

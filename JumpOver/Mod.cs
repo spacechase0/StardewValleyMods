@@ -52,7 +52,7 @@ namespace JumpOver
         {
             private readonly Farmer player;
             private readonly IModEvents events;
-            private float prevJumpVel = 0;
+            private float prevJumpVel;
 
             //private bool wasGoingOver = false;
 

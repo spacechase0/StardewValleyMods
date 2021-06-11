@@ -143,8 +143,8 @@ namespace TheftOfTheWinterStar
                 this.Helper.Data.WriteSaveData("FrostDungeon.SaveData", this.saveData);
         }
 
-        public bool startedBoss = false;
-        public List<Projectile> prevProjectiles = null;
+        public bool startedBoss;
+        public List<Projectile> prevProjectiles;
         private void onUpdated(object sender, UpdateTickedEventArgs e)
         {
             if (!Context.IsWorldReady)
@@ -541,7 +541,7 @@ namespace TheftOfTheWinterStar
             }
         }
 
-        private static int bossKeysUsed = 0;
+        private static int bossKeysUsed;
         private void onBlankSave(object sender, EventArgs e)
         {
             Log.debug("Adding frost dungeon");

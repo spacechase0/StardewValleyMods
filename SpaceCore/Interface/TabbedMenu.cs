@@ -8,7 +8,7 @@ namespace SpaceCore.Interface
 {
     public class TabbedMenu : IClickableMenu
     {
-        protected int currentTab = 0;
+        protected int currentTab;
         protected TabMenu[] tabs;
 
         public TabbedMenu(int w, int h)
