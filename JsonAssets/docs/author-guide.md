@@ -224,13 +224,13 @@ field                      | purpose
 `SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter. Do not put `Sapling` at the end of the seed name or it will not function properly. If you're trying to make a fruit tree see [FruitTrees](#fruittrees).
 `SeedDescription`          | Describe what season you plant these in. Also note if it continues to grow after first harvest and how many days it takes to regrow.
 `Type`                     | Vanilla types are `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, `AnimalGoods`, `Greens`, and `Seeds`.
-`SeedSellPrice`            | How much the seeds sell for.
+`SeedSellPrice`            | How much the seeds sell for. *Not to be confused with `SeedPurchasePrice`.*
 `CropType`                 | Available types are `Normal`, `IndoorsOnly`, and `Paddy`. If no `CropType` is specified (largely affecting pre-SDV1.4 crops) `Normal` is the default. `IndoorsOnly` means it can only grow when inside (greenhouse or garden pot). `Paddy` means it follows the same rules as rice (SDV1.4) and does not need watered if planted around a water source.
 `Seasons`                  | Seasons must be in lowercase and in quotation marks, so if you want to make your crop last all year, you'd put in "spring", "summer", "fall", "winter".
-`Phases`                   | Determines how long each phase lasts. Crops can have 2-5 phases, and the numbers in phases refer to how many days a plant spends in that phase. Seeds **do not** count as a phase. If your crop has regrowth, the last number in this set corresponds to how many days it takes for the crop to regrow. Ex. [1, 2, 3, 4, 3] This crop takes 10 days to grow and 3 days to regrow.
+`Phases`                   | Determines how many days it takes to reach each corresponding growth sprite on the crop.png. Crops must have 5 phases if it regrows, but can have 2-6 if it is a one-time harvest. The numbers in phases refer to how many days it takes for the plant to reach that phase. Seeds do not have a phase. For example, a crop with `[3, 1, 2, 2, 2, 3]` will take 3 days to reach the first growth sprite, 13 days to reach maturity, and does not regrow.
 `RegrowthPhase`            | If your plant is a one time harvest set this to `-1`. If it does, this determines which sprite the regrowth starts at. I typically recommend the sprite right before the harvest. *Requires additional sprite at the end of the crop.png*
 `HarvestWithScythe`        | Set to `true` or `false`.
-`TrellisCrop`              | Set to `true` or `false`. Determines if you can pass through a crop or not. Flowers cannot grow on trellises and have colors.
+`TrellisCrop`              | Set to `true` or `false`. Determines if you can pass through a crop or not.
 `Colors`                   | Colors use RGBA for color picking, set to `null` if your plant does not have colors. Ex. ["227, 109, 103, 255", "227, 137, 86, 255"] This crop has two different colors.
 `Bonus`                    | This block determines the chance to get multiple crops.
 `MinimumPerHarvest`        | Minimum number of crops you will get per harvest. Must be one or greater.
@@ -244,7 +244,8 @@ field                      | purpose
 `DisableWithMod`           | _(optional)_ Disables the crop when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
 **Facts about Custom Crops**:
-* Sprites are 32px tall and there are 2 per row. Vanilla `Tilesheets\crops` is 256 x 672 px
+* Sprites are 32px tall and there are 2 per row. Vanilla `Tilesheets\crops` is 256 x 672 px.
+* The first two frames on each `crop.png` are reserved for seed sprites.
 * JA starts numbering crops at ID 100, and the first sprites are placed at 0,1600.
 
 #### Giant Crops
