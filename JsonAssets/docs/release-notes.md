@@ -4,7 +4,7 @@
 ## Upcoming release
 * Includes unreleased changes by spacechase0:
   * Fixed cask contents not ID-fixed.
-* Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
+* Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows). (Thanks to pepoluan for a related winter crop fix!)
 * Internal refactoring.
 * Improved documentation. (Thanks to 6480k and ParadigmNomad for some updates in the author guide!)
 
