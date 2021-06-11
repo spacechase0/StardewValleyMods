@@ -6,7 +6,7 @@ namespace ManaBar
 {
     public static class Command
     {
-        private static Dictionary<string, Action<string[]>> commands = new Dictionary<string, Action<string[]>>();
+        private static Dictionary<string, Action<string[]>> commands = new();
 
         internal static void register(string name, Action<string[]> callback)
         {

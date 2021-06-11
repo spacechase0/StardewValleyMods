@@ -9,17 +9,17 @@ namespace Magic.Schools
 
         public override Spell[] GetSpellsTier1()
         {
-            return new Spell[] { SpellBook.get("arcane:analyze"), SpellBook.get("arcane:magicmissle") };
+            return new[] { SpellBook.get("arcane:analyze"), SpellBook.get("arcane:magicmissle") };
         }
 
         public override Spell[] GetSpellsTier2()
         {
-            return new Spell[] { SpellBook.get("arcane:disenchant"), SpellBook.get("arcane:enchant") };
+            return new[] { SpellBook.get("arcane:disenchant"), SpellBook.get("arcane:enchant") };
         }
 
         public override Spell[] GetSpellsTier3()
         {
-            return new Spell[] { SpellBook.get("arcane:rewind") };
+            return new[] { SpellBook.get("arcane:rewind") };
         }
     }
 }

@@ -16,7 +16,7 @@ namespace ArcadeRoom
 
         private bool patchedMap = false;
 
-        public Queue<Vector2> machineSpots = new Queue<Vector2>();
+        public Queue<Vector2> machineSpots = new();
 
         public override void Entry(IModHelper helper)
         {

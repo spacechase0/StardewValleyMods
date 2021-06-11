@@ -7,7 +7,7 @@ namespace PyromancersJourney
 {
     public class PyromancerMinigame : IMinigame
     {
-        private World world = new World();
+        private World world = new();
 
         public void changeScreenSize()
         {

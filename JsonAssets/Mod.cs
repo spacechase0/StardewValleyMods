@@ -203,7 +203,7 @@ namespace JsonAssets
 
         }
 
-        private static readonly Regex nameToId = new Regex("[^a-zA-Z0-9_.]");
+        private static readonly Regex nameToId = new("[^a-zA-Z0-9_.]");
         private void loadData(string dir)
         {
             // read initial info
@@ -221,14 +221,14 @@ namespace JsonAssets
             this.loadData(contentPack);
         }
 
-        internal Dictionary<IManifest, List<string>> objectsByContentPack = new Dictionary<IManifest, List<string>>();
-        internal Dictionary<IManifest, List<string>> cropsByContentPack = new Dictionary<IManifest, List<string>>();
-        internal Dictionary<IManifest, List<string>> fruitTreesByContentPack = new Dictionary<IManifest, List<string>>();
-        internal Dictionary<IManifest, List<string>> bigCraftablesByContentPack = new Dictionary<IManifest, List<string>>();
-        internal Dictionary<IManifest, List<string>> hatsByContentPack = new Dictionary<IManifest, List<string>>();
-        internal Dictionary<IManifest, List<string>> weaponsByContentPack = new Dictionary<IManifest, List<string>>();
-        internal Dictionary<IManifest, List<string>> clothingByContentPack = new Dictionary<IManifest, List<string>>();
-        internal Dictionary<IManifest, List<string>> bootsByContentPack = new Dictionary<IManifest, List<string>>();
+        internal Dictionary<IManifest, List<string>> objectsByContentPack = new();
+        internal Dictionary<IManifest, List<string>> cropsByContentPack = new();
+        internal Dictionary<IManifest, List<string>> fruitTreesByContentPack = new();
+        internal Dictionary<IManifest, List<string>> bigCraftablesByContentPack = new();
+        internal Dictionary<IManifest, List<string>> hatsByContentPack = new();
+        internal Dictionary<IManifest, List<string>> weaponsByContentPack = new();
+        internal Dictionary<IManifest, List<string>> clothingByContentPack = new();
+        internal Dictionary<IManifest, List<string>> bootsByContentPack = new();
 
         public void RegisterObject(IManifest source, ObjectData obj)
         {
@@ -240,7 +240,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = obj.Recipe.PurchaseFrom,
                     Price = obj.Recipe.PurchasePrice,
-                    PurchaseRequirements = obj.Recipe.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", obj.Recipe.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = obj.Recipe.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", obj.Recipe.PurchaseRequirements?.ToArray()) },
                     Object = () => new StardewValley.Object(obj.id, 1, true, obj.Recipe.PurchasePrice, 0),
                 });
                 if (obj.Recipe.AdditionalPurchaseData != null)
@@ -251,7 +251,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
                             Object = () => new StardewValley.Object(obj.id, 1, true, entry.PurchasePrice, 0),
                         });
                     }
@@ -263,7 +263,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = obj.PurchaseFrom,
                     Price = obj.PurchasePrice,
-                    PurchaseRequirements = obj.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", obj.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = obj.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", obj.PurchaseRequirements?.ToArray()) },
                     Object = () => new StardewValley.Object(obj.id, int.MaxValue, false, obj.PurchasePrice, 0),
                 });
                 if (obj.AdditionalPurchaseData != null)
@@ -274,7 +274,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
                             Object = () => new StardewValley.Object(obj.id, int.MaxValue, false, entry.PurchasePrice, 0),
                         });
                     }
@@ -329,7 +329,7 @@ namespace JsonAssets
             }
             if (str != "")
             {
-                string strtrimstart = str.TrimStart(new char[] { '/' });
+                string strtrimstart = str.TrimStart(new[] { '/' });
                 if (crop.SeedPurchaseRequirements != null && crop.SeedPurchaseRequirements.Count > 0)
                 {
                     for (int index = 0; index < crop.SeedPurchaseRequirements.Count; index++)
@@ -359,7 +359,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = crop.seed.PurchaseFrom,
                     Price = crop.seed.PurchasePrice,
-                    PurchaseRequirements = crop.seed.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", crop.seed.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = crop.seed.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", crop.seed.PurchaseRequirements?.ToArray()) },
                     Object = () => new StardewValley.Object(crop.seed.id, int.MaxValue, false, crop.seed.PurchasePrice),
                     ShowWithStocklist = true,
                 });
@@ -371,7 +371,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
                             Object = () => new StardewValley.Object(crop.seed.id, int.MaxValue, false, entry.PurchasePrice, 0),
                         });
                     }
@@ -423,7 +423,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = tree.sapling.PurchaseFrom,
                     Price = tree.sapling.PurchasePrice,
-                    PurchaseRequirements = tree.sapling.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", tree.sapling.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = tree.sapling.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", tree.sapling.PurchaseRequirements?.ToArray()) },
                     Object = () => new StardewValley.Object(Vector2.Zero, tree.sapling.id, int.MaxValue),
                 });
                 if (tree.sapling.AdditionalPurchaseData != null)
@@ -434,7 +434,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
                             Object = () => new StardewValley.Object(tree.sapling.id, 1, true, tree.sapling.PurchasePrice, 0),
                         });
                     }
@@ -462,7 +462,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = craftable.Recipe.PurchaseFrom,
                     Price = craftable.Recipe.PurchasePrice,
-                    PurchaseRequirements = craftable.Recipe.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", craftable.Recipe.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = craftable.Recipe.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", craftable.Recipe.PurchaseRequirements?.ToArray()) },
                     Object = () => new StardewValley.Object(Vector2.Zero, craftable.id, true),
                 });
                 if (craftable.Recipe.AdditionalPurchaseData != null)
@@ -473,7 +473,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
                             Object = () => new StardewValley.Object(Vector2.Zero, craftable.id, true),
                         });
                     }
@@ -485,7 +485,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = craftable.PurchaseFrom,
                     Price = craftable.PurchasePrice,
-                    PurchaseRequirements = craftable.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", craftable.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = craftable.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", craftable.PurchaseRequirements?.ToArray()) },
                     Object = () => new StardewValley.Object(Vector2.Zero, craftable.id, false),
                 });
                 if (craftable.AdditionalPurchaseData != null)
@@ -496,7 +496,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
                             Object = () => new StardewValley.Object(Vector2.Zero, craftable.id, false),
                         });
                     }
@@ -550,7 +550,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = weapon.PurchaseFrom,
                     Price = weapon.PurchasePrice,
-                    PurchaseRequirements = weapon.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", weapon.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = weapon.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", weapon.PurchaseRequirements?.ToArray()) },
                     Object = () => new MeleeWeapon(weapon.id)
                 });
                 if (weapon.AdditionalPurchaseData != null)
@@ -561,7 +561,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
                             Object = () => new MeleeWeapon(weapon.id)
                         });
                     }
@@ -624,7 +624,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = boots.PurchaseFrom,
                     Price = boots.PurchasePrice,
-                    PurchaseRequirements = boots.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", boots.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = boots.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", boots.PurchaseRequirements?.ToArray()) },
                     Object = () => new Boots(boots.id)
                 });
 
@@ -636,7 +636,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new string[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
                             Object = () => new Boots(boots.id)
                         });
                     }
@@ -707,17 +707,17 @@ namespace JsonAssets
             });
         }
 
-        private Dictionary<string, IManifest> dupObjects = new Dictionary<string, IManifest>();
-        private Dictionary<string, IManifest> dupCrops = new Dictionary<string, IManifest>();
-        private Dictionary<string, IManifest> dupFruitTrees = new Dictionary<string, IManifest>();
-        private Dictionary<string, IManifest> dupBigCraftables = new Dictionary<string, IManifest>();
-        private Dictionary<string, IManifest> dupHats = new Dictionary<string, IManifest>();
-        private Dictionary<string, IManifest> dupWeapons = new Dictionary<string, IManifest>();
-        private Dictionary<string, IManifest> dupShirts = new Dictionary<string, IManifest>();
-        private Dictionary<string, IManifest> dupPants = new Dictionary<string, IManifest>();
-        private Dictionary<string, IManifest> dupBoots = new Dictionary<string, IManifest>();
+        private Dictionary<string, IManifest> dupObjects = new();
+        private Dictionary<string, IManifest> dupCrops = new();
+        private Dictionary<string, IManifest> dupFruitTrees = new();
+        private Dictionary<string, IManifest> dupBigCraftables = new();
+        private Dictionary<string, IManifest> dupHats = new();
+        private Dictionary<string, IManifest> dupWeapons = new();
+        private Dictionary<string, IManifest> dupShirts = new();
+        private Dictionary<string, IManifest> dupPants = new();
+        private Dictionary<string, IManifest> dupBoots = new();
 
-        private readonly Regex SeasonLimiter = new Regex("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private readonly Regex SeasonLimiter = new("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private void loadData(IContentPack contentPack)
         {
             Log.info($"\t{contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author} - {contentPack.Manifest.Description}");
@@ -1099,7 +1099,7 @@ namespace JsonAssets
             }
         }
 
-        public List<ShopDataEntry> shopData = new List<ShopDataEntry>();
+        public List<ShopDataEntry> shopData = new();
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
@@ -1155,11 +1155,11 @@ namespace JsonAssets
                 forSale.Add(item);
                 if (qiGemShop)
                 {
-                    itemPriceAndStock.Add(item, new int[] { 0, (item is StardewValley.Object obj3 && obj3.IsRecipe) ? 1 : int.MaxValue, 858, price });
+                    itemPriceAndStock.Add(item, new[] { 0, (item is StardewValley.Object obj3 && obj3.IsRecipe) ? 1 : int.MaxValue, 858, price });
                 }
                 else
                 {
-                    itemPriceAndStock.Add(item, new int[] { price, (item is StardewValley.Object obj3 && obj3.IsRecipe) ? 1 : int.MaxValue });
+                    itemPriceAndStock.Add(item, new[] { price, (item is StardewValley.Object obj3 && obj3.IsRecipe) ? 1 : int.MaxValue });
                 }
             }
 
@@ -1321,7 +1321,7 @@ namespace JsonAssets
         internal IList<PantsData> pantss = new List<PantsData>();
         internal IList<TailoringRecipeData> tailoring = new List<TailoringRecipeData>();
         internal IList<BootsData> bootss = new List<BootsData>();
-        internal List<FenceData> fences = new List<FenceData>();
+        internal List<FenceData> fences = new();
         internal IList<ForgeRecipeData> forge = new List<ForgeRecipeData>();
 
         internal IDictionary<string, int> objectIds;
@@ -1396,7 +1396,7 @@ namespace JsonAssets
 
             Dictionary<string, int> ids = new Dictionary<string, int>();
 
-            int[] bigSkip = new int[] { 309, 310, 311, 326, 340, 434, 447, 459, 599, 621, 628, 629, 630, 631, 632, 633, 645, 812 };
+            int[] bigSkip = new[] { 309, 310, 311, 326, 340, 434, 447, 459, 599, 621, 628, 629, 630, 631, 632, 633, 645, 812 };
 
             int currId = starting;
             foreach (var d in data)
@@ -1463,7 +1463,7 @@ namespace JsonAssets
         }
 
         private bool reverseFixing = false;
-        private HashSet<string> locationsFixedAlready = new HashSet<string>();
+        private HashSet<string> locationsFixedAlready = new();
         private void fixIdsEverywhere(bool reverse = false)
         {
             this.reverseFixing = reverse;

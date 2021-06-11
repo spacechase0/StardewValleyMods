@@ -55,7 +55,7 @@ namespace MoreRings.Patches
                         newInsns.Add(insn);
 
                         newInsns.Add(new CodeInstruction(OpCodes.Ldloc_S, randVar)
-                        { labels = new List<Label>(new Label[] { pendingLabel }) });
+                        { labels = new List<Label>(new[] { pendingLabel }) });
                         newInsns.Add(new CodeInstruction(OpCodes.Ldloca_S, insn.operand));
                         newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CropPatcher>(nameof(ModifyCropQuality))));
                         continue;

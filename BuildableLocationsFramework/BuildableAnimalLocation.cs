@@ -13,7 +13,7 @@ namespace BuildableLocationsFramework
 {
     public class BuildableAnimalLocation : BuildableGameLocation, IAnimalLocation
     {
-        public NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> Animals { get; } = new NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>>();
+        public NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> Animals { get; } = new();
 
         private void myWarpHome(FarmAnimal farmAnimal, FarmAnimal a)
         {

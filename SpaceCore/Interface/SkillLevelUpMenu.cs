@@ -13,12 +13,12 @@ namespace SpaceCore.Interface
     {
         private Color leftProfessionColor = Game1.textColor;
         private Color rightProfessionColor = Game1.textColor;
-        private List<CraftingRecipe> newCraftingRecipes = new List<CraftingRecipe>();
-        private List<string> extraInfoForLevel = new List<string>();
-        private List<string> leftProfessionDescription = new List<string>();
-        private List<string> rightProfessionDescription = new List<string>();
-        private List<int> professionsToChoose = new List<int>();
-        private List<TemporaryAnimatedSprite> littleStars = new List<TemporaryAnimatedSprite>();
+        private List<CraftingRecipe> newCraftingRecipes = new();
+        private List<string> extraInfoForLevel = new();
+        private List<string> leftProfessionDescription = new();
+        private List<string> rightProfessionDescription = new();
+        private List<int> professionsToChoose = new();
+        private List<TemporaryAnimatedSprite> littleStars = new();
         public const int region_okButton = 101;
         public const int region_leftProfession = 102;
         public const int region_rightProfession = 103;
@@ -469,9 +469,9 @@ namespace SpaceCore.Interface
                     */
                     if (this.profPair != null)
                     {
-                        var la = new List<string>(new string[] { this.profPair.First.GetName() });
+                        var la = new List<string>(new[] { this.profPair.First.GetName() });
                         la.AddRange(this.profPair.First.GetDescription().Split('\n'));
-                        var ra = new List<string>(new string[] { this.profPair.Second.GetName() });
+                        var ra = new List<string>(new[] { this.profPair.Second.GetName() });
                         ra.AddRange(this.profPair.Second.GetDescription().Split('\n'));
                         this.leftProfessionDescription = la;// LevelUpMenu.getProfessionDescription(this.professionsToChoose[0]);
                         this.rightProfessionDescription = ra;//LevelUpMenu.getProfessionDescription(this.professionsToChoose[1]);

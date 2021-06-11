@@ -13,7 +13,7 @@ namespace BiggerCraftables
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        public static List<ContentList.Entry> entries = new List<ContentList.Entry>();
+        public static List<ContentList.Entry> entries = new();
 
         public override void Entry(IModHelper helper)
         {

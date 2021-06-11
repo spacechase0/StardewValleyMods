@@ -14,7 +14,7 @@ namespace MoreRings
 {
     public static class TrueSight
     {
-        private static readonly Dictionary<int, SObject> drawObjs = new Dictionary<int, SObject>();
+        private static readonly Dictionary<int, SObject> drawObjs = new();
         internal static void onDrawWorld(object sender, RenderedWorldEventArgs args)
         {
             if (!Context.IsWorldReady || Mod.instance.hasRingEquipped(Mod.instance.Ring_TrueSight) <= 0)

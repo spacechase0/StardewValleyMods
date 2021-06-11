@@ -12,7 +12,7 @@ namespace MoreGiantCrops
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        public static Dictionary<int, Texture2D> sprites = new Dictionary<int, Texture2D>();
+        public static Dictionary<int, Texture2D> sprites = new();
 
         public override void Entry(IModHelper helper)
         {

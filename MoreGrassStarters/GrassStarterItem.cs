@@ -103,7 +103,7 @@ namespace MoreGrassStarters
 
         public Dictionary<string, string> getAdditionalSaveData()
         {
-            return new Dictionary<string, string>
+            return new()
             {
                 ["whichGrass"] = this.whichGrass.ToString()
             };

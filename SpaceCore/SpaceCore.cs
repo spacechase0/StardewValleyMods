@@ -22,7 +22,7 @@ namespace SpaceCore
         internal static SpaceCore instance;
         private HarmonyInstance harmony;
 
-        internal static List<Type> modTypes = new List<Type>();
+        internal static List<Type> modTypes = new();
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>

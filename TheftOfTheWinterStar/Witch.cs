@@ -23,11 +23,11 @@ namespace TheftOfTheWinterStar
 
         public const int WITCH_HEALTH = 1000;
 
-        private readonly NetBool facingRight = new NetBool(false);
-        private readonly NetInt shootPlayerTimer = new NetInt(Witch.SHOOT_DELAY);
-        private readonly NetInt spawnRocksTimer = new NetInt(Witch.SPAWN_ROCKS_DELAY);
-        private readonly NetInt spawnEnemyTimer = new NetInt(Witch.SPAWN_ENEMY_DELAY);
-        private readonly NetInt stunTimer = new NetInt(0);
+        private readonly NetBool facingRight = new(false);
+        private readonly NetInt shootPlayerTimer = new(Witch.SHOOT_DELAY);
+        private readonly NetInt spawnRocksTimer = new(Witch.SPAWN_ROCKS_DELAY);
+        private readonly NetInt spawnEnemyTimer = new(Witch.SPAWN_ENEMY_DELAY);
+        private readonly NetInt stunTimer = new(0);
         private int animTimer = 0;
 
         public Witch()
@@ -49,7 +49,7 @@ namespace TheftOfTheWinterStar
 
         public override Rectangle GetBoundingBox()
         {
-            return new Rectangle((int)this.Position.X + 4 * Game1.pixelZoom, (int)this.Position.Y, (Witch.TEX_WIDTH - 12) * Game1.pixelZoom, (Witch.TEX_HEIGHT - 4) * Game1.pixelZoom);
+            return new((int)this.Position.X + 4 * Game1.pixelZoom, (int)this.Position.Y, (Witch.TEX_WIDTH - 12) * Game1.pixelZoom, (Witch.TEX_HEIGHT - 4) * Game1.pixelZoom);
         }
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)

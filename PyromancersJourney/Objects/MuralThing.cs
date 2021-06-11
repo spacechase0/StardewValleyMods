@@ -12,14 +12,13 @@ namespace PyromancersJourney.Objects
         public MuralThing(World world)
             : base(world)
         {
-            VertexPositionColorTexture[] test = new VertexPositionColorTexture[6]
-            {
-                new VertexPositionColorTexture( new Vector3( -3, 0, 0 ), Color.White, new Vector2( 0, 1 ) ),
-                new VertexPositionColorTexture( new Vector3( -3, 5, 0 ), Color.White, new Vector2( 0, 0 ) ),
-                new VertexPositionColorTexture( new Vector3( 4, 5, 0 ), Color.White, new Vector2( 1, 0 ) ),
-                new VertexPositionColorTexture( new Vector3( -3f, 0, 0 ), Color.White, new Vector2( 0, 1 ) ),
-                new VertexPositionColorTexture( new Vector3( 4, 0, 0 ), Color.White, new Vector2( 1, 1 ) ),
-                new VertexPositionColorTexture( new Vector3( 4, 5, 0 ), Color.White, new Vector2( 1, 0 ) ),
+            VertexPositionColorTexture[] test = {
+                new(new Vector3(-3, 0, 0), Color.White, new Vector2(0, 1)),
+                new(new Vector3(-3, 5, 0), Color.White, new Vector2(0, 0)),
+                new(new Vector3(4, 5, 0), Color.White, new Vector2(1, 0)),
+                new(new Vector3(-3f, 0, 0), Color.White, new Vector2(0, 1)),
+                new(new Vector3(4, 0, 0), Color.White, new Vector2(1, 1)),
+                new(new Vector3(4, 5, 0), Color.White, new Vector2(1, 0)),
             };
             this.buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), 6, BufferUsage.WriteOnly);
             this.buffer.SetData(test);

@@ -24,7 +24,7 @@ namespace GenericModConfigMenu.UI
         public int ActiveChoice { get; set; } = 0;
 
         public int ActivePosition { get; set; } = 0;
-        public string[] Choices { get; set; } = new string[] { "null" };
+        public string[] Choices { get; set; } = new[] { "null" };
 
         public bool dropped = false;
 

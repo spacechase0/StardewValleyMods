@@ -9,7 +9,7 @@ namespace JsonAssets.Data
         public string EnableWithMod { get; set; }
         public string DisableWithMod { get; set; }
 
-        public IList<string> FirstItemTags { get; set; } = new List<string>(new string[] { "item_cloth" });
+        public IList<string> FirstItemTags { get; set; } = new List<string>(new[] { "item_cloth" });
         public IList<string> SecondItemTags { get; set; }
 
         public bool ConsumeSecondItem { get; set; } = true;

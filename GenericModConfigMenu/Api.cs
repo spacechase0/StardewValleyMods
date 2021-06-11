@@ -145,7 +145,7 @@ namespace GenericModConfigMenu
             if (!Mod.instance.configs.ContainsKey(mod))
                 throw new ArgumentException("Mod not registered");
 
-            Type[] valid = new Type[] { typeof(bool), typeof(int), typeof(float), typeof(string), typeof(SButton), typeof(KeybindList) };
+            Type[] valid = new[] { typeof(bool), typeof(int), typeof(float), typeof(string), typeof(SButton), typeof(KeybindList) };
             if (!valid.Contains(typeof(T)))
             {
                 throw new ArgumentException("Invalid config option type.");
@@ -169,7 +169,7 @@ namespace GenericModConfigMenu
             if (!Mod.instance.configs.ContainsKey(mod))
                 throw new ArgumentException("Mod not registered");
 
-            Type[] valid = new Type[] { typeof(int), typeof(float) };
+            Type[] valid = new[] { typeof(int), typeof(float) };
             if (!valid.Contains(typeof(T)))
             {
                 throw new ArgumentException("Invalid config option type.");

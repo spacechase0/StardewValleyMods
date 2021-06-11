@@ -27,14 +27,14 @@ namespace Displays
             Female,
         }
 
-        public readonly NetEnum<MannequinType> mannType = new NetEnum<MannequinType>(MannequinType.Plain);
-        public readonly NetEnum<MannequinGender> mannGender = new NetEnum<MannequinGender>(MannequinGender.Male);
-        public readonly NetInt facing = new NetInt(Game1.down);
+        public readonly NetEnum<MannequinType> mannType = new(MannequinType.Plain);
+        public readonly NetEnum<MannequinGender> mannGender = new(MannequinGender.Male);
+        public readonly NetInt facing = new(Game1.down);
 
-        public readonly NetRef<Hat> hat = new NetRef<Hat>();
-        public readonly NetRef<Clothing> shirt = new NetRef<Clothing>();
-        public readonly NetRef<Clothing> pants = new NetRef<Clothing>();
-        public readonly NetRef<Boots> boots = new NetRef<Boots>();
+        public readonly NetRef<Hat> hat = new();
+        public readonly NetRef<Clothing> shirt = new();
+        public readonly NetRef<Clothing> pants = new();
+        public readonly NetRef<Boots> boots = new();
 
         // TODO: Magic properties (skin color, eye color, hair stuff, accessories)
 

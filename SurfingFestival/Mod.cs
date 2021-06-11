@@ -97,9 +97,9 @@ namespace SurfingFestival
 
         public static BonfireState playerDidBonfire = BonfireState.NotDone;
         public static List<string> racers = null;
-        public static Dictionary<string, RacerState> racerState = new Dictionary<string, RacerState>();
+        public static Dictionary<string, RacerState> racerState = new();
         public static string raceWinner = null;
-        public static List<Obstacle> obstacles = new List<Obstacle>();
+        public static List<Obstacle> obstacles = new();
 
         public static Texture2D surfboardTex;
         public static Texture2D surfboardWaterTex;
@@ -248,59 +248,59 @@ namespace SurfingFestival
                 }
             }
 
-            Vector2[][] switchDirs = new Vector2[][]
+            Vector2[][] switchDirs = new[]
             {
                 new Vector2[]
                 {
-                    new Vector2( 16, 60 ),
-                    new Vector2( 15, 61 ),
-                    new Vector2( 14, 62 ),
-                    new Vector2( 13, 63 ),
-                    new Vector2( 12, 64 ),
-                    new Vector2( 11, 65 ),
-                    new Vector2( 10, 66 ),
-                    new Vector2(  9, 67 ),
-                    new Vector2(  8, 68 ),
-                    new Vector2(  7, 69 ),
+                    new(16, 60),
+                    new(15, 61),
+                    new(14, 62),
+                    new(13, 63),
+                    new(12, 64),
+                    new(11, 65),
+                    new(10, 66),
+                    new(9, 67),
+                    new(8, 68),
+                    new(7, 69),
                 },
                 new Vector2[]
                 {
-                    new Vector2( 16, 58 ),
-                    new Vector2( 15, 57 ),
-                    new Vector2( 14, 56 ),
-                    new Vector2( 13, 55 ),
-                    new Vector2( 12, 54 ),
-                    new Vector2( 11, 53 ),
-                    new Vector2( 10, 52 ),
-                    new Vector2(  9, 51 ),
-                    new Vector2(  8, 50 ),
-                    new Vector2(  7, 49 ),
+                    new(16, 58),
+                    new(15, 57),
+                    new(14, 56),
+                    new(13, 55),
+                    new(12, 54),
+                    new(11, 53),
+                    new(10, 52),
+                    new(9, 51),
+                    new(8, 50),
+                    new(7, 49),
                 },
                 new Vector2[]
                 {
-                    new Vector2( 133, 58 ),
-                    new Vector2( 134, 57 ),
-                    new Vector2( 135, 56 ),
-                    new Vector2( 136, 55 ),
-                    new Vector2( 137, 54 ),
-                    new Vector2( 138, 53 ),
-                    new Vector2( 139, 52 ),
-                    new Vector2( 140, 51 ),
-                    new Vector2( 141, 50 ),
-                    new Vector2( 142, 49 ),
+                    new(133, 58),
+                    new(134, 57),
+                    new(135, 56),
+                    new(136, 55),
+                    new(137, 54),
+                    new(138, 53),
+                    new(139, 52),
+                    new(140, 51),
+                    new(141, 50),
+                    new(142, 49),
                 },
                 new Vector2[]
                 {
-                    new Vector2( 133, 60 ),
-                    new Vector2( 134, 61 ),
-                    new Vector2( 135, 62 ),
-                    new Vector2( 136, 63 ),
-                    new Vector2( 137, 64 ),
-                    new Vector2( 138, 65 ),
-                    new Vector2( 139, 66 ),
-                    new Vector2( 140, 67 ),
-                    new Vector2( 141, 68 ),
-                    new Vector2( 142, 69 ),
+                    new(133, 60),
+                    new(134, 61),
+                    new(135, 62),
+                    new(136, 63),
+                    new(137, 64),
+                    new(138, 65),
+                    new(139, 66),
+                    new(140, 67),
+                    new(141, 68),
+                    new(142, 69),
                 },
             };
 
@@ -527,7 +527,7 @@ namespace SurfingFestival
                     if (racer == Game1.player)
                     {
                         var msg = new UseItemMessage() { ItemUsed = state.CurrentItem.Value };
-                        this.Helper.Multiplayer.SendMessage(msg, UseItemMessage.TYPE, new string[] { this.ModManifest.UniqueID }, null);
+                        this.Helper.Multiplayer.SendMessage(msg, UseItemMessage.TYPE, new[] { this.ModManifest.UniqueID }, null);
                     }
                     switch (state.CurrentItem.Value)
                     {
@@ -716,8 +716,8 @@ namespace SurfingFestival
                         obstacle.UnderwaterSprite.Position = new Vector2(obstacle.GetBoundingBox().Center.X, obstacle.GetBoundingBox().Center.Y);
                         /*
                         srcTex = Game1.objectSpriteSheet;
-                        srcRect = Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, 128, 16, 16 );
-                        origin = new Vector2( 8, 8 );
+                        srcRect = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 128, 16, 16);
+                        origin = new Vector2(8, 8);
                         */
                         break;
                     case ObstacleType.FirstPlaceProjectile:
@@ -739,7 +739,7 @@ namespace SurfingFestival
                     continue;
 
                 b.Draw(srcTex, Game1.GlobalToLocal(obstacle.Position + offset), srcRect, Color.White, 0, origin, Game1.pixelZoom, SpriteEffects.None, depth);
-                //e.SpriteBatch.Draw( Game1.staminaRect, Game1.GlobalToLocal( Game1.viewport, obstacle.GetBoundingBox() ), Color.Red );
+                //e.SpriteBatch.Draw(Game1.staminaRect, Game1.GlobalToLocal(Game1.viewport, obstacle.GetBoundingBox()), Color.Red);
             }
         }
 
@@ -919,8 +919,8 @@ namespace SurfingFestival
             {
                 var answers = new Response[]
                 {
-                    new Response( "MakeOffering", this.Helper.Translation.Get( "secret.yes" ) ),
-                    new Response( "Leave", this.Helper.Translation.Get( "secret.no" ) ),
+                    new("MakeOffering", this.Helper.Translation.Get("secret.yes")),
+                    new("Leave", this.Helper.Translation.Get("secret.no")),
                 };
                 GameLocation.afterQuestionBehavior afterQuestion = (who, choice) =>
                 {
@@ -1031,7 +1031,7 @@ namespace SurfingFestival
                 }
                 else if (__instance is Farmer)
                 {
-                    //( __instance as Farmer ).FarmerSprite.CurrentFrame = prevRacerFrame;
+                    //(__instance as Farmer).FarmerSprite.CurrentFrame = prevRacerFrame;
                     Mod.prevRacerFrame = -1;
                 }
             }

@@ -15,7 +15,7 @@ namespace ManaBar
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        public static MultiplayerSaveData Data { get; private set; } = new MultiplayerSaveData();
+        public static MultiplayerSaveData Data { get; private set; } = new();
 
         private static Texture2D manaBg;
         private static Texture2D manaFg;
@@ -41,7 +41,7 @@ namespace ManaBar
 
             Color manaCol = new Color(0, 48, 255);
             Mod.manaFg = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
-            Mod.manaFg.SetData(new Color[] { manaCol });
+            Mod.manaFg.SetData(new[] { manaCol });
         }
 
         private static void addManaCommand(string[] args)

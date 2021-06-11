@@ -18,7 +18,7 @@ namespace CustomBuildings
     {
         public static Mod instance;
 
-        internal Dictionary<string, BuildingData> buildings = new Dictionary<string, BuildingData>();
+        internal Dictionary<string, BuildingData> buildings = new();
 
         internal static int ResolveObjectId(object data)
         {

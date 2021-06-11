@@ -100,7 +100,7 @@ namespace FlowerRain
             var fall = new List<FlowerData>();
             var winter = new List<FlowerData>();
 
-            var whitelist = new List<int>(new int[] { 591, 593, 595, 597, 376, 402, 418 });
+            var whitelist = new List<int>(new[] { 591, 593, 595, 597, 376, 402, 418 });
 
             foreach (var crop in cropData)
             {
@@ -113,7 +113,7 @@ namespace FlowerRain
                 if (category != StardewValley.Object.flowersCategory || useWhitelist && !whitelist.Contains(product))
                     continue;
 
-                List<Color> cols = new List<Color>(new Color[] { Color.White });
+                List<Color> cols = new List<Color>(new[] { Color.White });
                 if (toks[8].StartsWith("true "))
                 {
                     cols.Clear();

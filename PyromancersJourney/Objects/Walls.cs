@@ -28,10 +28,9 @@ namespace PyromancersJourney.Objects
             {
                 for (int iy = 0; iy < world.map.Size.Y; ++iy)
                 {
-                    Vector2[][] texCoordMap = new Vector2[][]
-                    {
+                    Vector2[][] texCoordMap = {
                         new Vector2[ 0 ],
-                        new Vector2[]
+                        new[]
                         {
                             new Vector2( 1, 0 ) * t,
                             new Vector2( 2, 0 ) * t,
@@ -44,7 +43,7 @@ namespace PyromancersJourney.Objects
                         float tx2 = 16f / this.texOutside.Width;
                         float ty2 = 16f / this.texOutside.Height;
                         Vector2 t2 = new Vector2(tx2, ty2);
-                        texCoordMap[1] = new Vector2[]
+                        texCoordMap[1] = new[]
                         {
                             new Vector2( 1, 3 ) * t2,
                             new Vector2( 2, 3 ) * t2,

@@ -15,13 +15,13 @@ namespace Magic.Game
     {
         private readonly Farmer source;
         private readonly ProjectileSpell spell;
-        private readonly NetInt damage = new NetInt();
-        private readonly NetFloat dir = new NetFloat();
-        private readonly NetFloat vel = new NetFloat();
-        private readonly NetBool seeking = new NetBool();
+        private readonly NetInt damage = new();
+        private readonly NetFloat dir = new();
+        private readonly NetFloat vel = new();
+        private readonly NetBool seeking = new();
 
         private Texture2D tex;
-        private readonly NetString texId = new NetString();
+        private readonly NetString texId = new();
 
         private Monster seekTarget;
 
@@ -117,7 +117,7 @@ namespace Magic.Game
 
         public override Rectangle getBoundingBox()
         {
-            return new Rectangle((int)(this.position.X - Game1.tileSize), (int)(this.position.Y - Game1.tileSize), Game1.tileSize / 2, Game1.tileSize / 2);
+            return new((int)(this.position.X - Game1.tileSize), (int)(this.position.Y - Game1.tileSize), Game1.tileSize / 2, Game1.tileSize / 2);
         }
 
         public override bool update(GameTime time, GameLocation location)
@@ -170,7 +170,7 @@ namespace Magic.Game
             //b.Draw(Mod.instance.manaFg, new Rectangle((int)bdp.X, (int)bdp.Y, getBoundingBox().Width, getBoundingBox().Height), Color.White);
         }
 
-        private static Random rand = new Random();
+        private static Random rand = new();
         private void disappear(GameLocation loc)
         {
             if (this.spell.SoundHit != null)

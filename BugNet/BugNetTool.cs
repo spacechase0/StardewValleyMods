@@ -50,7 +50,7 @@ namespace BugNet
 
         public Dictionary<string, string> getAdditionalSaveData()
         {
-            return new Dictionary<string, string>();
+            return new();
         }
 
         public void rebuild(Dictionary<string, string> saveData, object replacement)

@@ -177,7 +177,7 @@ namespace PreexistingRelationship
 
             if (!Game1.IsMasterGame)
             {
-                Mod.instance.Helper.Multiplayer.SendMessage(new DoMarriageMessage() { NpcName = this.selectedNPC }, nameof(DoMarriageMessage), new string[] { Mod.instance.ModManifest.UniqueID }/*, new long[] { Game1.MasterPlayer.UniqueMultiplayerID }*/ );
+                Mod.instance.Helper.Multiplayer.SendMessage(new DoMarriageMessage() { NpcName = this.selectedNPC }, nameof(DoMarriageMessage), new[] { Mod.instance.ModManifest.UniqueID }/*, new long[] { Game1.MasterPlayer.UniqueMultiplayerID }*/ );
             }
 
             Mod.DoMarriage(Game1.player, this.selectedNPC, true);

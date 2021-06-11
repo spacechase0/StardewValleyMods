@@ -32,7 +32,7 @@ namespace SleepyEye
 
             var item = new TentTool();
             forSale.Add(item);
-            itemPriceAndStock.Add(item, new int[] { item.salePrice(), item.Stack });
+            itemPriceAndStock.Add(item, new[] { item.salePrice(), item.Stack });
         }
     }
 }

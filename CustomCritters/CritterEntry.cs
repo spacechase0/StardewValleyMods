@@ -19,7 +19,7 @@ namespace CustomCritters
             public float Scale { get; set; } = 4;
             public bool Flying { get; set; } = true;
         }
-        public SpriteData_ SpriteData { get; set; } = new SpriteData_();
+        public SpriteData_ SpriteData { get; set; } = new();
 
         public class Animation_
         {
@@ -29,9 +29,9 @@ namespace CustomCritters
                 public int Duration;
             }
 
-            public List<AnimationFrame_> Frames = new List<AnimationFrame_>();
+            public List<AnimationFrame_> Frames = new();
         }
-        public Dictionary<string, Animation_> Animations { get; set; } = new Dictionary<string, Animation_>();
+        public Dictionary<string, Animation_> Animations { get; set; } = new();
 
         public class SpawnCondition_
         {
@@ -44,7 +44,7 @@ namespace CustomCritters
             public bool RequireDarkOut { get; set; } = false;
             public bool AllowRain { get; set; } = false;
             public string ChildrenCombine { get; set; } = "and";
-            public List<SpawnCondition_> Children { get; set; } = new List<SpawnCondition_>();
+            public List<SpawnCondition_> Children { get; set; } = new();
 
             public bool check(GameLocation loc)
             {
@@ -103,7 +103,7 @@ namespace CustomCritters
                 return ret;
             }
         }
-        public List<SpawnCondition_> SpawnConditions { get; set; } = new List<SpawnCondition_>();
+        public List<SpawnCondition_> SpawnConditions { get; set; } = new();
 
         public class Behavior_
         {
@@ -116,7 +116,7 @@ namespace CustomCritters
                 public float X { get; set; }
                 public float Y { get; set; }
             }
-            public List<PatrolPoint_> PatrolPoints { get; set; } = new List<PatrolPoint_>();
+            public List<PatrolPoint_> PatrolPoints { get; set; } = new();
             public int PatrolPointDelay { get; set; }
             public int PatrolPointDelayAddRandom { get; set; }
         }
@@ -138,7 +138,7 @@ namespace CustomCritters
                 public string ValueEquals { get; set; }
 
                 public string ChildrenCombine { get; set; } = "and";
-                public List<ConditionEntry_> Children { get; set; } = new List<ConditionEntry_>();
+                public List<ConditionEntry_> Children { get; set; } = new();
 
                 public bool check(object obj)
                 {
@@ -218,7 +218,7 @@ namespace CustomCritters
                     return ret;
                 }
             }
-            public List<ConditionEntry_> Conditions { get; set; } = new List<ConditionEntry_>();
+            public List<ConditionEntry_> Conditions { get; set; } = new();
 
             public bool check(object obj)
             {
@@ -266,7 +266,7 @@ namespace CustomCritters
                 else throw new ArgumentException("Bad location type");
             }
         }
-        public List<SpawnLocation_> SpawnLocations { get; set; } = new List<SpawnLocation_>();
+        public List<SpawnLocation_> SpawnLocations { get; set; } = new();
 
         public int SpawnAttempts { get; set; } = 3;
 
@@ -280,7 +280,7 @@ namespace CustomCritters
                 public int G { get; set; } = 255;
                 public int B { get; set; } = 255;
             }
-            public Color_ Color { get; set; } = new Color_();
+            public Color_ Color { get; set; } = new();
         }
         public Light_ Light { get; set; } = null;
 
@@ -311,7 +311,7 @@ namespace CustomCritters
             return new CustomCritter(pos + new Vector2(1, 1) * (Game1.tileSize / 2), this);
         }
 
-        internal static Dictionary<string, CritterEntry> critters = new Dictionary<string, CritterEntry>();
+        internal static Dictionary<string, CritterEntry> critters = new();
         public static void Register(CritterEntry entry)
         {
             CritterEntry.critters.Add(entry.Id, entry);

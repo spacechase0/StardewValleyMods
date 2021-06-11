@@ -575,31 +575,31 @@ namespace JsonAssets
         }
         internal static Rectangle objectRect(int index)
         {
-            return new Rectangle(index % 24 * 16, index / 24 * 16, 16, 16);
+            return new(index % 24 * 16, index / 24 * 16, 16, 16);
         }
         internal static Rectangle cropRect(int index)
         {
-            return new Rectangle(index % 2 * 128, index / 2 * 32, 128, 32);
+            return new(index % 2 * 128, index / 2 * 32, 128, 32);
         }
         internal static Rectangle fruitTreeRect(int index)
         {
-            return new Rectangle(0, index * 80, 432, 80);
+            return new(0, index * 80, 432, 80);
         }
         internal static Rectangle bigCraftableRect(int index)
         {
-            return new Rectangle(index % 8 * 16, index / 8 * 32, 16, 32);
+            return new(index % 8 * 16, index / 8 * 32, 16, 32);
         }
         internal static Rectangle hatRect(int index)
         {
-            return new Rectangle(index % 12 * 20, index / 12 * 80, 20, 80);
+            return new(index % 12 * 20, index / 12 * 80, 20, 80);
         }
         internal static Rectangle weaponRect(int index)
         {
-            return new Rectangle(index % 8 * 16, index / 8 * 16, 16, 16);
+            return new(index % 8 * 16, index / 8 * 16, 16, 16);
         }
         internal static Rectangle shirtRectPlain(int index)
         {
-            return new Rectangle(index % 16 * 8, index / 16 * 32, 8, 32);
+            return new(index % 16 * 8, index / 16 * 32, 8, 32);
         }
         internal static Rectangle shirtRectDye(int index)
         {
@@ -609,11 +609,11 @@ namespace JsonAssets
         }
         internal static Rectangle pantsRect(int index)
         {
-            return new Rectangle(index % 10 * 192, index / 10 * 688, 192, 688);
+            return new(index % 10 * 192, index / 10 * 688, 192, 688);
         }
         internal static Rectangle bootsRect(int index)
         {
-            return new Rectangle(0, index, 4, 1);
+            return new(0, index, 4, 1);
         }
 
         public bool CanLoad<T>(IAssetInfo asset)

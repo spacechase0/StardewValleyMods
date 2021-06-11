@@ -8,7 +8,7 @@ namespace MoreBuildings.Buildings.MiniSpa
 {
     public class MiniSpaBuilding : Building, ISaveElement
     {
-        private static readonly BluePrint blueprint = new BluePrint("MiniSpa");
+        private static readonly BluePrint blueprint = new("MiniSpa");
 
         public MiniSpaBuilding()
             : base(MiniSpaBuilding.blueprint, Vector2.Zero) { }
@@ -30,7 +30,7 @@ namespace MoreBuildings.Buildings.MiniSpa
 
         public Dictionary<string, string> getAdditionalSaveData()
         {
-            return new Dictionary<string, string>();
+            return new();
         }
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)

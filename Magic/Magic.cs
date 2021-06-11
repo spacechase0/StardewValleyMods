@@ -315,11 +315,11 @@ namespace Magic
                 new Point((int)manaPos.X + manaBg.Width * 4 + 20, Game1.viewport.Height - 20 - 50 - 40 - 25 ),
             };*/
             {
-                new Point( (int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 4 + spotYAffector ) ),
-                new Point( (int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 3 + spotYAffector ) ),
-                new Point( (int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 2 + spotYAffector ) ),
-                new Point( (int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 1 + spotYAffector ) ),
-                new Point( (int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 0 + spotYAffector ) ),
+                new((int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 4 + spotYAffector )),
+                new((int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 3 + spotYAffector )),
+                new((int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 2 + spotYAffector )),
+                new((int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 1 + spotYAffector )),
+                new((int)manaPos.X + Magic.manaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 0 + spotYAffector )),
             };
 
             SpellBook book = Game1.player.getSpellBook();
@@ -363,7 +363,7 @@ namespace Magic
 
             Color manaCol = new Color(0, 48, 255);
             Magic.manaFg = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
-            Magic.manaFg.SetData(new Color[] { manaCol });
+            Magic.manaFg.SetData(new[] { manaCol });
         }
 
         private static bool castPressed = false;

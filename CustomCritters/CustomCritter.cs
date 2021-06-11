@@ -12,7 +12,7 @@ namespace CustomCritters
     {
         /// <summary>The light type IDs recognised by the game.</summary>
         /// <remarks>Setting an invalid light ID will crash the game. Valid IDs are based on <see cref="LightSource.loadTextureFromConstantValue"/>.</remarks>
-        private readonly HashSet<int> validLightIds = new HashSet<int>(new[] { LightSource.lantern, LightSource.windowLight, LightSource.sconceLight, LightSource.cauldronLight, LightSource.indoorWindowLight });
+        private readonly HashSet<int> validLightIds = new(new[] { LightSource.lantern, LightSource.windowLight, LightSource.sconceLight, LightSource.cauldronLight, LightSource.indoorWindowLight });
 
         private CritterEntry data;
         private LightSource light;

@@ -15,7 +15,7 @@ namespace PyromancersJourney.Projectiles
 
         public bool Dead = false;
 
-        public virtual RectangleF BoundingBox { get; } = new RectangleF(0, 0, 0.5f, 0.5f);
+        public virtual RectangleF BoundingBox { get; } = new(0, 0, 0.5f, 0.5f);
 
         public virtual bool HurtsPlayer => true;
         public virtual int Damage => 1;

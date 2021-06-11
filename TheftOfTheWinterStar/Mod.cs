@@ -42,7 +42,7 @@ namespace TheftOfTheWinterStar
 
         private Texture2D bossBarBg, bossBarFg;
 
-        private static string[] locs = new string[]
+        private static string[] locs = new[]
         {
             "Entrance",
             "Arena",
@@ -431,9 +431,9 @@ namespace TheftOfTheWinterStar
             }
 
             var decoSpots = new Dictionary<string, Vector2[]>();
-            decoSpots.Add("BusStop", new Vector2[] { new Vector2(5, 8), new Vector2(9, 10), new Vector2(10, 14) });
-            decoSpots.Add("Backwoods", new Vector2[] { new Vector2(40, 30), new Vector2(32, 31), new Vector2(25, 29) });
-            decoSpots.Add("Tunnel", new Vector2[] { new Vector2(33, 10), new Vector2(23, 9), new Vector2(10, 8) });
+            decoSpots.Add("BusStop", new Vector2[] { new(5, 8), new(9, 10), new(10, 14) });
+            decoSpots.Add("Backwoods", new Vector2[] { new(40, 30), new(32, 31), new(25, 29) });
+            decoSpots.Add("Tunnel", new Vector2[] { new(33, 10), new(23, 9), new(10, 8) });
 
             if (decoSpots.ContainsKey(e.NewLocation.Name))
             {
@@ -711,7 +711,7 @@ namespace TheftOfTheWinterStar
                     case 1: ox = 1; break;
                 }
 
-                int[] validPuzzleTiles = new int[]
+                int[] validPuzzleTiles = new[]
                 {
                     240, 241, 242, 243,
                     256, 257, 258, 259, 260,

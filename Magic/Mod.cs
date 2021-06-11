@@ -13,7 +13,7 @@ namespace Magic
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        public static MultiplayerSaveData Data { get; private set; } = new MultiplayerSaveData();
+        public static MultiplayerSaveData Data { get; private set; } = new();
         public static Configuration Config { get; private set; }
 
         internal static JsonAssetsApi ja;

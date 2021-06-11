@@ -22,7 +22,7 @@ namespace PyromancersJourney.Objects
         public float manaRegenTimer = 0;
         public float immunTimer = 0;
 
-        private Random shakeRand = new Random();
+        private Random shakeRand = new();
 
         public Player(World world)
             : base(world)

@@ -11,8 +11,8 @@ namespace GenericModConfigMenu
         {
             public string Name { get; }
             public string DisplayName { get; set; }
-            public List<Action<string, object>> ChangeHandler { get; } = new List<Action<string, object>>();
-            public List<BaseModOption> Options { get; set; } = new List<BaseModOption>();
+            public List<Action<string, object>> ChangeHandler { get; } = new();
+            public List<BaseModOption> Options { get; set; } = new();
 
             public ModPage(string name)
             {
@@ -24,7 +24,7 @@ namespace GenericModConfigMenu
         public IManifest ModManifest { get; }
         public Action RevertToDefault { get; }
         public Action SaveToFile { get; }
-        public Dictionary<string, ModPage> Options { get; } = new Dictionary<string, ModPage>();
+        public Dictionary<string, ModPage> Options { get; } = new();
 
         public bool DefaultOptedIngame { get; set; } = false;
 

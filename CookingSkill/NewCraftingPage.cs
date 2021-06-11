@@ -17,8 +17,8 @@ namespace CookingSkill
     {
         private string descriptionText = "";
         private string hoverText = "";
-        protected List<Dictionary<ClickableTextureComponent, CraftingRecipe>> pagesOfCraftingRecipes = new List<Dictionary<ClickableTextureComponent, CraftingRecipe>>();
-        public List<ClickableComponent> currentPageClickableComponents = new List<ClickableComponent>();
+        protected List<Dictionary<ClickableTextureComponent, CraftingRecipe>> pagesOfCraftingRecipes = new();
+        public List<ClickableComponent> currentPageClickableComponents = new();
         private string hoverTitle = "";
         public const int howManyRecipesFitOnPage = 40;
         public const int numInRow = 10;

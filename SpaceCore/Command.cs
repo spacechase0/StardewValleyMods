@@ -6,7 +6,7 @@ namespace SpaceCore
 {
     public static class Command
     {
-        private static readonly Dictionary<string, Action<string[]>> commands = new Dictionary<string, Action<string[]>>();
+        private static readonly Dictionary<string, Action<string[]>> commands = new();
 
         internal static void register(string name, Action<string[]> callback)
         {

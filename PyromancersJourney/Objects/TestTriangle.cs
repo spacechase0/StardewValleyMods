@@ -6,16 +6,16 @@ namespace PyromancersJourney.Objects
 {
     public class TestTriangle : BaseObject
     {
-        private VertexBuffer buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
+        private VertexBuffer buffer = new(Game1.game1.GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
 
         public TestTriangle(World world)
             : base(world)
         {
             VertexPositionColor[] test = new VertexPositionColor[3]
             {
-                new VertexPositionColor( new Vector3( 0, 0, 0 ), Color.Red ),
-                new VertexPositionColor( new Vector3( 1, 2, 0 ), Color.Green ),
-                new VertexPositionColor( new Vector3( 2, 0, 0 ), Color.Blue ),
+                new(new Vector3(0, 0, 0), Color.Red),
+                new(new Vector3(1, 2, 0), Color.Green),
+                new(new Vector3(2, 0, 0), Color.Blue),
             };
             this.buffer.SetData(test);
         }

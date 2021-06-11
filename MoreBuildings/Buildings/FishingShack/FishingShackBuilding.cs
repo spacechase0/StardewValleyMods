@@ -8,7 +8,7 @@ namespace MoreBuildings.Buildings.FishingShack
 {
     public class FishingShackBuilding : Building, ISaveElement
     {
-        private static readonly BluePrint blueprint = new BluePrint("FishShack");
+        private static readonly BluePrint blueprint = new("FishShack");
 
         public FishingShackBuilding()
             : base(FishingShackBuilding.blueprint, Vector2.Zero) { }
@@ -33,7 +33,7 @@ namespace MoreBuildings.Buildings.FishingShack
 
         public Dictionary<string, string> getAdditionalSaveData()
         {
-            return new Dictionary<string, string>();
+            return new();
         }
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)

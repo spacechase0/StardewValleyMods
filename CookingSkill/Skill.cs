@@ -37,7 +37,7 @@ namespace CookingSkill
             this.Icon = Mod.instance.Helper.Content.Load<Texture2D>("assets/iconA.png");
             this.SkillsPageIcon = Mod.instance.Helper.Content.Load<Texture2D>("assets/iconB.png");
 
-            this.ExperienceCurve = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 }; ;
+            this.ExperienceCurve = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
 
             this.ExperienceBarColor = new Microsoft.Xna.Framework.Color(196, 76, 255);
 

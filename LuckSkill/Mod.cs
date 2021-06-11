@@ -582,8 +582,8 @@ namespace LuckSkill
         }
 
         private bool HAS_ALL_PROFESSIONS = false;
-        private List<int> luckProfessions5 = new List<int>() { Mod.PROFESSION_DAILY_LUCK, Mod.PROFESSION_MORE_QUESTS };
-        private List<int> luckProfessions10 = new List<int>() { Mod.PROFESSION_CHANCE_MAX_LUCK, Mod.PROFESSION_NO_BAD_LUCK, Mod.PROFESSION_NIGHTLY_EVENTS, Mod.PROFESSION_JUNIMO_HELP };
+        private List<int> luckProfessions5 = new() { Mod.PROFESSION_DAILY_LUCK, Mod.PROFESSION_MORE_QUESTS };
+        private List<int> luckProfessions10 = new() { Mod.PROFESSION_CHANCE_MAX_LUCK, Mod.PROFESSION_NO_BAD_LUCK, Mod.PROFESSION_NIGHTLY_EVENTS, Mod.PROFESSION_JUNIMO_HELP };
 
         private void checkForAllProfessions()
         {

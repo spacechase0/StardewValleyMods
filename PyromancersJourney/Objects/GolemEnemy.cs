@@ -11,7 +11,7 @@ namespace PyromancersJourney.Objects
     {
         public static Texture2D tex = Mod.instance.Helper.Content.Load<Texture2D>("assets/golem.png");
 
-        public override RectangleF BoundingBox { get; } = new RectangleF(-0.5f, -0.5f, 1, 1);
+        public override RectangleF BoundingBox { get; } = new(-0.5f, -0.5f, 1, 1);
 
         private enum AnimState
         {

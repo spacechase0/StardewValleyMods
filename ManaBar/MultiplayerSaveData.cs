@@ -19,9 +19,9 @@ namespace ManaBar
             public int mana = 0;
             public int manaCap = 0;
         }
-        public Dictionary<long, PlayerData> players = new Dictionary<long, PlayerData>();
+        public Dictionary<long, PlayerData> players = new();
 
-        internal static JsonSerializerSettings networkSerializerSettings { get; } = new JsonSerializerSettings()
+        internal static JsonSerializerSettings networkSerializerSettings { get; } = new()
         {
             Formatting = Formatting.None,
             ObjectCreationHandling = ObjectCreationHandling.Replace,

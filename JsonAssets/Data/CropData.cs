@@ -43,8 +43,8 @@ namespace JsonAssets.Data
         public string SeedPurchaseFrom { get; set; } = "Pierre";
         public IList<PurchaseData> SeedAdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-        public Dictionary<string, string> SeedNameLocalization = new Dictionary<string, string>();
-        public Dictionary<string, string> SeedDescriptionLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> SeedNameLocalization = new();
+        public Dictionary<string, string> SeedDescriptionLocalization = new();
 
         internal ObjectData seed;
         public int GetSeedId() { return this.seed.id; }

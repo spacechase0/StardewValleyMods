@@ -217,7 +217,7 @@ namespace AnotherHungerMod
                 return;
             //Log.debug($"Sending hunger data to {e.Peer.PlayerID}");
             var data = this.Helper.Data.ReadSaveData<SaveData>($"spacechase0.AnotherHungerMod.{e.Peer.PlayerID}") ?? new SaveData();
-            this.Helper.Multiplayer.SendMessage(data, Mod.MSG_HUNGERDATA, null, new long[] { e.Peer.PlayerID });
+            this.Helper.Multiplayer.SendMessage(data, Mod.MSG_HUNGERDATA, null, new[] { e.Peer.PlayerID });
         }
 
         private void onModMessageReceived(object sender, ModMessageReceivedEventArgs e)

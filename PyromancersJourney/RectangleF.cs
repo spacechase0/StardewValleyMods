@@ -29,7 +29,7 @@ namespace PyromancersJourney
 
         public static RectangleF operator +(RectangleF rect, Vector2 vec)
         {
-            return new RectangleF(rect.X + vec.X, rect.Y + vec.Y, rect.Width, rect.Height);
+            return new(rect.X + vec.X, rect.Y + vec.Y, rect.Width, rect.Height);
         }
     }
 }

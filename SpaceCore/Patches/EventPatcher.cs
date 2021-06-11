@@ -54,7 +54,7 @@ namespace SpaceCore.Patches
             if (split.Length == 0)
                 return false;
             if (EventPatcher.customCommands.ContainsKey(split[0]))
-                EventPatcher.customCommands[split[0]].Invoke(null, new object[] { __instance, _eventCommandArgs[0], _eventCommandArgs[1], _eventCommandArgs[2] });
+                EventPatcher.customCommands[split[0]].Invoke(null, new[] { __instance, _eventCommandArgs[0], _eventCommandArgs[1], _eventCommandArgs[2] });
             else if (_commandLookup.ContainsKey(split[0]))
                 _commandLookup[split[0]].Invoke((object)__instance, _eventCommandArgs);
             else

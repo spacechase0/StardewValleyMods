@@ -97,7 +97,7 @@ namespace JsonAssets.Data
         public string Description { get; set; }
         public Category_ Category { get; set; }
         public string CategoryTextOverride { get; set; }
-        public Color CategoryColorOverride { get; set; } = new Color(0, 0, 0, 0);
+        public Color CategoryColorOverride { get; set; } = new(0, 0, 0, 0);
         public bool IsColored { get; set; } = false;
 
         public int Price { get; set; }
@@ -112,7 +112,7 @@ namespace JsonAssets.Data
 
         public int Edibility { get; set; } = SObject.inedible;
         public bool EdibleIsDrink { get; set; } = false;
-        public FoodBuffs_ EdibleBuffs = new FoodBuffs_();
+        public FoodBuffs_ EdibleBuffs = new();
 
         public bool CanPurchase { get; set; } = false;
         public int PurchasePrice { get; set; }
@@ -130,10 +130,10 @@ namespace JsonAssets.Data
         }
         public GiftTastes_ GiftTastes;
 
-        public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
-        public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> NameLocalization = new();
+        public Dictionary<string, string> DescriptionLocalization = new();
 
-        public List<string> ContextTags = new List<string>();
+        public List<string> ContextTags = new();
 
         public string LocalizedName()
         {

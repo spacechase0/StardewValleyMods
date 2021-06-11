@@ -8,7 +8,7 @@ namespace MoreBuildings.Buildings.SpookyShed
 {
     public class SpookyShedBuilding : Building, ISaveElement
     {
-        private static readonly BluePrint blueprint = new BluePrint("SpookyShed");
+        private static readonly BluePrint blueprint = new("SpookyShed");
 
         public SpookyShedBuilding()
             : base(SpookyShedBuilding.blueprint, Vector2.Zero) { }
@@ -31,7 +31,7 @@ namespace MoreBuildings.Buildings.SpookyShed
 
         public Dictionary<string, string> getAdditionalSaveData()
         {
-            return new Dictionary<string, string>();
+            return new();
         }
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)

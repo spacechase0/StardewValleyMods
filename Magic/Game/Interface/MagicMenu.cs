@@ -73,7 +73,7 @@ namespace Magic.Game.Interface
                 Spell[] t2 = this.active.GetSpellsTier2();
                 Spell[] t3 = this.active.GetSpellsTier3();
 
-                Spell[][] spells = new Spell[][] { t1, t2, t3 };
+                Spell[][] spells = new[] { t1, t2, t3 };
 
                 int sy = spells.Length + 1;
                 for (int t = 0; t < spells.Length; ++t)
@@ -252,7 +252,7 @@ namespace Magic.Game.Interface
                 return text;
             }
 
-            string[] words = text.Split(new char[] { ' ', '\n' });
+            string[] words = text.Split(new[] { ' ', '\n' });
             var wrappedText = new System.Text.StringBuilder();
             float linewidth = 0f;
             float spaceWidth = Game1.dialogueFont.MeasureString(" ").X;

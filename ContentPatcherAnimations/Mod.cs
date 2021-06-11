@@ -29,11 +29,11 @@ namespace ContentPatcherAnimations
     {
         public IEnumerable cpPatches;
 
-        public Dictionary<Patch, PatchData> animatedPatches = new Dictionary<Patch, PatchData>();
+        public Dictionary<Patch, PatchData> animatedPatches = new();
 
         public uint frameCounter = 0;
         public int findTargetsCounter = 0;
-        public Queue<Patch> findTargetsQueue = new Queue<Patch>();
+        public Queue<Patch> findTargetsQueue = new();
     }
 
     public class Mod : StardewModdingAPI.Mod
@@ -46,7 +46,7 @@ namespace ContentPatcherAnimations
         public const BindingFlags PrivateS = BindingFlags.NonPublic | BindingFlags.Static;
 
         private StardewModdingAPI.Mod contentPatcher;
-        private PerScreen<ScreenState> screenState = new PerScreen<ScreenState>();
+        private PerScreen<ScreenState> screenState = new();
         internal ScreenState ScreenState => this.screenState.Value;
 
         private WatchForUpdatesAssetEditor watcher;

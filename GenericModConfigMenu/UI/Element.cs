@@ -25,7 +25,7 @@ namespace GenericModConfigMenu.UI
 
         public abstract int Width { get; }
         public abstract int Height { get; }
-        public Rectangle Bounds => new Rectangle((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);
+        public Rectangle Bounds => new((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);
 
         public bool Hover { get; private set; } = false;
         public virtual string HoveredSound => null;

@@ -82,7 +82,7 @@ namespace SpaceCore
 
             public virtual List<string> GetExtraLevelUpInfo(int level)
             {
-                return new List<string>();
+                return new();
             }
 
             public virtual string GetSkillPageHoverText(int level)
@@ -100,9 +100,9 @@ namespace SpaceCore
         private const string MSG_DATA = "spacechase0.SpaceCore.SkillData";
         private const string MSG_EXPERIENCE = "spacechase0.SpaceCore.SkillExperience";
 
-        internal static Dictionary<string, Skill> skills = new Dictionary<string, Skill>();
-        private static Dictionary<long, Dictionary<string, int>> exp = new Dictionary<long, Dictionary<string, int>>();
-        internal static List<KeyValuePair<string, int>> myNewLevels = new List<KeyValuePair<string, int>>();
+        internal static Dictionary<string, Skill> skills = new();
+        private static Dictionary<long, Dictionary<string, int>> exp = new();
+        internal static List<KeyValuePair<string, int>> myNewLevels = new();
 
         internal static void init(IModEvents events)
         {

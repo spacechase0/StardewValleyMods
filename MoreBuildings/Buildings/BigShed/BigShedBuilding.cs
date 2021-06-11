@@ -8,7 +8,7 @@ namespace MoreBuildings.Buildings.BigShed
 {
     public class BigShedBuilding : Building, ISaveElement
     {
-        private static readonly BluePrint blueprint = new BluePrint("Shed2");
+        private static readonly BluePrint blueprint = new("Shed2");
 
         public BigShedBuilding()
             : base(BigShedBuilding.blueprint, Vector2.Zero) { }
@@ -30,7 +30,7 @@ namespace MoreBuildings.Buildings.BigShed
 
         public Dictionary<string, string> getAdditionalSaveData()
         {
-            return new Dictionary<string, string>();
+            return new();
         }
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)

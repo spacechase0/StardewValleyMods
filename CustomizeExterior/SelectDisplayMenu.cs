@@ -18,7 +18,7 @@ namespace CustomizeExterior
 
         private string type;
         private string active;
-        private Dictionary<string, Texture2D> choices = new Dictionary<string, Texture2D>();
+        private Dictionary<string, Texture2D> choices = new();
 
         private int x;
         private int size;

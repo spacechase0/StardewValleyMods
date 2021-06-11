@@ -21,13 +21,13 @@ namespace CustomizeExterior
     {
         public const string SEASONAL_INDICATOR = "%";
 
-        private static readonly TimeSpan clickWindow = new TimeSpan(250 * TimeSpan.TicksPerMillisecond);
+        private static readonly TimeSpan clickWindow = new(250 * TimeSpan.TicksPerMillisecond);
 
         public static Mod instance;
-        public static SavedExteriors savedExteriors = new SavedExteriors();
+        public static SavedExteriors savedExteriors = new();
         public static ContentManager content;
 
-        public static Dictionary<string, List<string>> choices = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> choices = new();
 
         private const string MSG_CHOICES = "spacechase0.CustomizeExterior.Choices";
 

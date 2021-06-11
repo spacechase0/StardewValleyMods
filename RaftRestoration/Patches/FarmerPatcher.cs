@@ -147,7 +147,7 @@ namespace RaftRestoration.Patches
 
         public static Rectangle MakeRectangleHelper(int x, int y, int w, int h)
         {
-            return new Rectangle(x, y, w, h);
+            return new(x, y, w, h);
         }
     }
 }

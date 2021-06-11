@@ -4,7 +4,7 @@ namespace PyromancersJourney.Objects
 {
     public class Character : BaseObject
     {
-        public virtual RectangleF BoundingBox { get; } = new RectangleF(0, 0, 0.35f, 0.35f);
+        public virtual RectangleF BoundingBox { get; } = new(0, 0, 0.35f, 0.35f);
 
         public virtual bool Floats { get; } = false;
         public int Health { get; set; } = 1;

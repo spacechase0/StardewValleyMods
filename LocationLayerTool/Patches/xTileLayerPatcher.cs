@@ -83,7 +83,7 @@ namespace LocationLayerTool.Patches
             if (xTileLayerPatcher.displayDevice == null)
             {
                 var ddType = Type.GetType("StardewModdingAPI.Framework.Rendering.SDisplayDevice, StardewModdingAPI");
-                var ddCon = ddType.GetConstructor(new Type[] { typeof(ContentManager), typeof(GraphicsDevice) });
+                var ddCon = ddType.GetConstructor(new[] { typeof(ContentManager), typeof(GraphicsDevice) });
                 xTileLayerPatcher.displayDevice = (IDisplayDevice)ddCon.Invoke(new object[] { Game1.content, Game1.graphics.GraphicsDevice });
                 xTileLayerPatcher.spriteBatch = new SpriteBatch(Game1.graphics.GraphicsDevice);
             }

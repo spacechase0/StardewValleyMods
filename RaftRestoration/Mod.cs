@@ -35,7 +35,7 @@ namespace RaftRestoration
 
                 var raft = new Raft();
                 shop.forSale.Add(raft);
-                shop.itemPriceAndStock.Add(raft, new int[] { 5000, 1 });
+                shop.itemPriceAndStock.Add(raft, new[] { 5000, 1 });
             }
         }
     }

@@ -5,7 +5,7 @@ namespace CustomCritters
 {
     public static class Extensions
     {
-        private static Random rand = new Random();
+        private static Random rand = new();
         public static void Shuffle<T>(this IList<T> list)
         {
             int n = list.Count;

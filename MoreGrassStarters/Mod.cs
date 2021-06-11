@@ -44,7 +44,7 @@ namespace MoreGrassStarters
                 {
                     var item = new GrassStarterItem(i);
                     forSale.Add(item);
-                    itemPriceAndStock.Add(item, new int[] { 100, int.MaxValue });
+                    itemPriceAndStock.Add(item, new[] { 100, int.MaxValue });
                 }
             }
         }

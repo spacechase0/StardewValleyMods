@@ -20,11 +20,11 @@ namespace SpaceCore
             public string AssetPath { get; }
             public int UnitSize { get; }
             public Texture2D BaseTileSheet { get; set; }
-            public List<Texture2D> Extensions { get; } = new List<Texture2D>();
+            public List<Texture2D> Extensions { get; } = new();
         }
 
-        internal static Dictionary<string, ExtensionData> extendedTextureAssets = new Dictionary<string, ExtensionData>();
-        private static Dictionary<Texture2D, ExtensionData> extendedTextures = new Dictionary<Texture2D, ExtensionData>();
+        internal static Dictionary<string, ExtensionData> extendedTextureAssets = new();
+        private static Dictionary<Texture2D, ExtensionData> extendedTextures = new();
 
         internal static void init()
         {

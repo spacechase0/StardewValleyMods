@@ -17,7 +17,7 @@ namespace ExperienceBars
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static readonly int[] expNeededForLevel = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
+        public static readonly int[] expNeededForLevel = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
 
         public static Configuration Config;
 
@@ -83,7 +83,7 @@ namespace ExperienceBars
             if (!Mod.show || Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree)
                 return;
 
-            int[] skills = new int[]
+            int[] skills = new[]
             {
                 Game1.player.farmingLevel.Value,
                 Game1.player.fishingLevel.Value,
@@ -181,12 +181,12 @@ namespace ExperienceBars
             // Taken from the icons
             this.skillColors = new Color[]
             {
-                new Color( 115, 255, 56 ),
-                new Color( 117, 225, 255 ),
-                new Color( 0xCD, 0x7F, 0x32 ),//new Color( 78, 183, 0 ),
-                new Color( 247, 31, 0 ),
-                new Color( 178, 255, 211 ),
-                new Color( 255, 255, 84 ),
+                new(115, 255, 56),
+                new(117, 225, 255),
+                new(0xCD, 0x7F, 0x32),//new Color(78, 183, 0),
+                new(247, 31, 0),
+                new(178, 255, 211),
+                new(255, 255, 84),
             };
 
             return this.skillColors[skill];
@@ -196,9 +196,9 @@ namespace ExperienceBars
         private const int BAR_HEIGHT = 10;
         private static readonly Color BAR_BORDER = Color.DarkGoldenrod;
         private static readonly Color BAR_BG = Color.Black;
-        private static readonly Color BAR_FG = new Color(150, 150, 150);
-        private static readonly Color BAR_BG_TICK = new Color(50, 50, 50);
-        private static readonly Color BAR_FG_TICK = new Color(120, 120, 120);
+        private static readonly Color BAR_FG = new(150, 150, 150);
+        private static readonly Color BAR_BG_TICK = new(50, 50, 50);
+        private static readonly Color BAR_FG_TICK = new(120, 120, 120);
         private static Texture2D skillBg, skillFg;
 
         public static void renderSkillBar(int x, int y, Texture2D iconTex, Rectangle icon, int level, float progress, Color skillCol)

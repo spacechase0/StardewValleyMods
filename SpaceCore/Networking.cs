@@ -8,7 +8,7 @@ namespace SpaceCore
 {
     public class Networking
     {
-        internal static Dictionary<string, Action<IncomingMessage>> messageHandlers = new Dictionary<string, Action<IncomingMessage>>();
+        internal static Dictionary<string, Action<IncomingMessage>> messageHandlers = new();
 
         public static void RegisterMessageHandler(string id, Action<IncomingMessage> handler)
         {

@@ -14,11 +14,11 @@ namespace Magic
         {
             public int freePoints = 0;
 
-            public SpellBook spellBook = new SpellBook();
+            public SpellBook spellBook = new();
         }
-        public Dictionary<long, PlayerData> players = new Dictionary<long, PlayerData>();
+        public Dictionary<long, PlayerData> players = new();
 
-        internal static JsonSerializerSettings networkSerializerSettings { get; } = new JsonSerializerSettings()
+        internal static JsonSerializerSettings networkSerializerSettings { get; } = new()
         {
             Formatting = Formatting.None,
             ObjectCreationHandling = ObjectCreationHandling.Replace,

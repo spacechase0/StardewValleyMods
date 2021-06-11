@@ -104,7 +104,7 @@ namespace JsonAssets.Other.ContentPatcher
                 return this.ids.Values.Select((i) => i.ToString()).ToArray<string>();
             if (!this.ids.ContainsKey(input))
                 return new string[0];
-            return new string[] {this.ids[input].ToString() };
+            return new[] {this.ids[input].ToString() };
         }
 
         protected override void UpdateContextImpl()
@@ -154,7 +154,7 @@ namespace JsonAssets.Other.ContentPatcher
                 return this.tilesheets.Values.Select((i) => i.ToString()).ToArray<string>();
             if (!this.tilesheets.ContainsKey(input) || string.IsNullOrEmpty(this.tilesheets[input]))
                 return new string[0];
-            return new string[] { this.tilesheets[input].ToString() };
+            return new[] { this.tilesheets[input].ToString() };
         }
 
         public override bool UpdateContext()
@@ -233,7 +233,7 @@ namespace JsonAssets.Other.ContentPatcher
                 return this.coordinates.Values.Select((i) => i.ToString()).ToArray<string>();
             if (!this.coordinates.ContainsKey(input))
                 return new string[0];
-            return new string[] { (this.coordinates[input]/*-(coordinateIsX?0:16)*/).ToString() };
+            return new[] { (this.coordinates[input]/*-(coordinateIsX?0:16)*/).ToString() };
         }
 
         public override bool UpdateContext()

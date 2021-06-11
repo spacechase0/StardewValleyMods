@@ -30,7 +30,7 @@ namespace ThrowableAxe
 
             if (e.Button == SButton.MouseRight && Game1.player.CurrentTool is Axe axe && this.thrown == null)
             {
-                int[] dmg_ = new int[] { 8, 15, 30, 45, 60, 80 }; // 6 for support for prismatic tools
+                int[] dmg_ = new[] { 8, 15, 30, 45, 60, 80 }; // 6 for support for prismatic tools
                 float[] speed_ = new float[] { 10, 12, 14, 16, 18, 20 }; // 6 for support for prismatic tools
                 int dmg = dmg_[axe.UpgradeLevel];
                 float speed = speed_[axe.UpgradeLevel];

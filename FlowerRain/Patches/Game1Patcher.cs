@@ -122,7 +122,7 @@ namespace FlowerRain.Patches
 
         private static Rectangle getRect(int index)
         {
-            return new Rectangle(index % 24 * 16, index / 24 * 16, 16, 16);
+            return new(index % 24 * 16, index / 24 * 16, 16, 16);
         }
     }
 }

@@ -12,13 +12,13 @@ namespace ThrowableAxe
     public class ThrownAxe : Projectile
     {
         private GameLocation loc;
-        private readonly NetInt tier = new NetInt(0);
-        private readonly NetInt damage = new NetInt(3);
-        public readonly NetVector2 target = new NetVector2();
-        private readonly NetFloat speed = new NetFloat(1);
+        private readonly NetInt tier = new(0);
+        private readonly NetInt damage = new(3);
+        public readonly NetVector2 target = new();
+        private readonly NetFloat speed = new(1);
         private float axeRot = 0;
         public bool dead = false;
-        public List<NPC> npcsHit = new List<NPC>();
+        public List<NPC> npcsHit = new();
 
         public ThrownAxe()
         {

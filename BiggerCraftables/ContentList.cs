@@ -17,6 +17,6 @@ namespace BiggerCraftables
             public int Length { get; set; }
         }
 
-        public List<Entry> BiggerCraftables { get; set; } = new List<Entry>();
+        public List<Entry> BiggerCraftables { get; set; } = new();
     }
 }

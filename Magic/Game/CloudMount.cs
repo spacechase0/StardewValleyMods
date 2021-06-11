@@ -77,7 +77,7 @@ namespace Magic.Game
 
         public override Rectangle GetBoundingBox()
         {
-            return new Rectangle((int)this.position.X, (int)this.position.Y, 0, 0);
+            return new((int)this.position.X, (int)this.position.Y, 0, 0);
         }
     }
 }

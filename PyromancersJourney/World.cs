@@ -17,7 +17,7 @@ namespace PyromancersJourney
 
         public Player player;
         public LevelWarp warp;
-        public Camera cam = new Camera();
+        public Camera cam = new();
         private Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70), Game1.game1.GraphicsDevice.DisplayMode.AspectRatio, 0.01f, 100);
 
         private RenderTarget2D target;
@@ -27,9 +27,9 @@ namespace PyromancersJourney
         private int currLevel = 0;
         private Vector2 warpPos;
         public Map map;
-        public List<BaseObject> objects = new List<BaseObject>();
-        public List<BaseProjectile> projectiles = new List<BaseProjectile>();
-        private List<BaseObject> queuedObjects = new List<BaseObject>();
+        public List<BaseObject> objects = new();
+        public List<BaseProjectile> projectiles = new();
+        private List<BaseObject> queuedObjects = new();
 
         public int ScreenSize => this.target.Width;
 
@@ -56,7 +56,7 @@ namespace PyromancersJourney
             this.queuedObjects.Add(obj);
         }
 
-        private Vector3 baseCamPos = new Vector3(4.5f, 2, 4.5f);
+        private Vector3 baseCamPos = new(4.5f, 2, 4.5f);
         private float camAngle;
         public void Update()
         {

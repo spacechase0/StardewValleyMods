@@ -90,11 +90,11 @@ namespace TheftOfTheWinterStar
             var b = e.SpriteBatch;
             Vector2 pos = Game1.GlobalToLocal(this.basePos);
 
-            Color[] colors = new Color[]
+            Color[] colors = new[]
             {
-                new Color(109, 180, 181),
-                new Color(194, 238, 229),
-                new Color(232, 255, 244),
+                new(109, 180, 181),
+                new(194, 238, 229),
+                new(232, 255, 244),
                 Color.White,
             };
 

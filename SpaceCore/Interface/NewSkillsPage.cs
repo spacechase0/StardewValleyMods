@@ -13,18 +13,18 @@ namespace SpaceCore.Interface
     public class NewSkillsPage : IClickableMenu
     {
         public Texture2D texture;
-        public List<ClickableTextureComponent> skillBars = new List<ClickableTextureComponent>();
-        public List<ClickableTextureComponent> skillAreas = new List<ClickableTextureComponent>();
-        public List<ClickableTextureComponent> specialItems = new List<ClickableTextureComponent>();
-        public List<ClickableTextureComponent> specialItemComponents = new List<ClickableTextureComponent>();
+        public List<ClickableTextureComponent> skillBars = new();
+        public List<ClickableTextureComponent> skillAreas = new();
+        public List<ClickableTextureComponent> specialItems = new();
+        public List<ClickableTextureComponent> specialItemComponents = new();
         public ClickableTextureComponent walletUpArrow;
         public ClickableTextureComponent walletDownArrow;
         public ClickableComponent playerPanel;
         private Rectangle walletArea;
         private Rectangle walletIconArea;
-        private Rectangle walletIconAreaSource = new Rectangle(293, 360, 24, 24);
-        private Rectangle walletIconSource = new Rectangle(0, 0, 12, 12);
-        private Rectangle skillsTabSource = new Rectangle(16, 368, 16, 16);
+        private Rectangle walletIconAreaSource = new(293, 360, 24, 24);
+        private Rectangle walletIconSource = new(0, 0, 12, 12);
+        private Rectangle skillsTabSource = new(16, 368, 16, 16);
         private int SkillTabRegionId => Game1.activeClickableMenu is GameMenu ? GameMenu.region_skillsTab : -1;
         private bool IsWalletRightSide => SpaceCore.instance.Config.WalletOnRightOfSkillPage
             && !SpaceCore.instance.Helper.ModRegistry.IsLoaded("alphablackwolf.skillPrestige"); // Skill prestige places icons in right-side wallet area
@@ -96,16 +96,16 @@ namespace SpaceCore.Interface
                 // Special item names and whether they've been unlocked
                 List<KeyValuePair<string, bool>> specialFlags = new List<KeyValuePair<string, bool>>
                 {
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11587", Game1.player.canUnderstandDwarves),
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11588", Game1.player.hasRustyKey),
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11589", Game1.player.hasClubCard),
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11590", Game1.player.hasSpecialCharm),
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11591", Game1.player.hasSkullKey),
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.magnifyingglass", Game1.player.hasMagnifyingGlass),
-                    new KeyValuePair<string, bool>("Objects:DarkTalisman", Game1.player.hasDarkTalisman),
-                    new KeyValuePair<string, bool>("Objects:MagicInk", Game1.player.hasMagicInk),
-                    new KeyValuePair<string, bool>("Objects:BearPaw", Game1.player.eventsSeen.Contains(2120303)),
-                    new KeyValuePair<string, bool>("Objects:SpringOnionBugs", Game1.player.eventsSeen.Contains(3910979)),
+                    new("StringsFromCSFiles:SkillsPage.cs.11587", Game1.player.canUnderstandDwarves),
+                    new("StringsFromCSFiles:SkillsPage.cs.11588", Game1.player.hasRustyKey),
+                    new("StringsFromCSFiles:SkillsPage.cs.11589", Game1.player.hasClubCard),
+                    new("StringsFromCSFiles:SkillsPage.cs.11590", Game1.player.hasSpecialCharm),
+                    new("StringsFromCSFiles:SkillsPage.cs.11591", Game1.player.hasSkullKey),
+                    new("StringsFromCSFiles:SkillsPage.cs.magnifyingglass", Game1.player.hasMagnifyingGlass),
+                    new("Objects:DarkTalisman", Game1.player.hasDarkTalisman),
+                    new("Objects:MagicInk", Game1.player.hasMagicInk),
+                    new("Objects:BearPaw", Game1.player.eventsSeen.Contains(2120303)),
+                    new("Objects:SpringOnionBugs", Game1.player.eventsSeen.Contains(3910979)),
                 };
 
                 const int padTop = 16;

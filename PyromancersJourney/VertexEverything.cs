@@ -10,8 +10,7 @@ namespace PyromancersJourney
         public Vector3 Normal;
         public Vector2 Texture;
 
-        public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
-        (
+        public readonly static VertexDeclaration VertexDeclaration = new(
             new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
             new VertexElement(sizeof(float) * 3, VertexElementFormat.Color, VertexElementUsage.Color, 0),
             new VertexElement(sizeof(float) * 3 + 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),

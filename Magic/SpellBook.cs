@@ -13,7 +13,7 @@ namespace Magic
     {
         //private static Spell UNKNOWN_SPELL = new DummySpell("unknown");
 
-        private static readonly Dictionary<string, Spell> spells = new Dictionary<string, Spell>();
+        private static readonly Dictionary<string, Spell> spells = new();
 
         public static void register( Spell spell )
         {
@@ -74,7 +74,7 @@ namespace Magic
         [JsonIgnore]
         public Farmer Owner { get; internal set; }
 
-        public Dictionary<string, int> knownSpells = new Dictionary<string, int>();
+        public Dictionary<string, int> knownSpells = new();
         public PreparedSpell[][] prepared =
         new PreparedSpell[2][]
         {

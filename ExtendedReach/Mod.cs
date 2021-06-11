@@ -85,12 +85,12 @@ namespace ExtendedReach
             diff.Normalize();
             var angle = Vector2.Transform(diff, Matrix.CreateRotationZ(3.1415926535f / 2));
 
-            var points = new Vector2[]
+            var points = new[]
             {
                 farmerPos,
-                new Vector2(),
-                new Vector2(),
-                new Vector2(),
+                new(),
+                new(),
+                new(),
                 mousePos
             };
             points[1] = farmerPos + (mousePos - farmerPos) / 4 * 1 + angle * 64 * this.amp;

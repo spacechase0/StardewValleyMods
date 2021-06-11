@@ -88,8 +88,8 @@ namespace Displays
                     var mf = new Mannequin(Mannequin.MannequinType.Plain, Mannequin.MannequinGender.Female, Vector2.Zero);
                     shop.forSale.Add(mm);
                     shop.forSale.Add(mf);
-                    shop.itemPriceAndStock.Add(mm, new int[] { 100, int.MaxValue });
-                    shop.itemPriceAndStock.Add(mf, new int[] { 100, int.MaxValue });
+                    shop.itemPriceAndStock.Add(mm, new[] { 100, int.MaxValue });
+                    shop.itemPriceAndStock.Add(mf, new[] { 100, int.MaxValue });
                 }
             }
         }

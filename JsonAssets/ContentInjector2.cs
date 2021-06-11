@@ -13,7 +13,7 @@ namespace JsonAssets
         private List<string> files;
         public ContentInjector2()
         {
-            this.files = new List<string>(new string[]
+            this.files = new List<string>(new[]
             {
                 "Data\\NPCGiftTastes",
             });

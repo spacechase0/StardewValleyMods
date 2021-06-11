@@ -20,7 +20,7 @@ namespace AnimalSocialMenu
         private List<object> names;
         private List<ClickableTextureComponent> sprites;
         private int slotPosition;
-        private Dictionary<long, FarmAnimal> animals = new Dictionary<long, FarmAnimal>();
+        private Dictionary<long, FarmAnimal> animals = new();
         private bool scrolling;
 
         public AnimalSocialPage(int x, int y, int width, int height)

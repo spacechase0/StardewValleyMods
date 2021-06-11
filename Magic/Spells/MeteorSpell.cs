@@ -41,7 +41,7 @@ namespace Magic.Spells
     {
         private readonly GameLocation loc;
         private readonly Farmer source;
-        private static readonly Random rand = new Random();
+        private static readonly Random rand = new();
         private readonly Vector2 position;
         private readonly float yVelocity;
         private float height = 1000;

@@ -11,7 +11,7 @@ namespace MoreBuildings.Buildings.SpookyShed
 {
     public class SpookyShedLocation : GameLocation, ISaveElement//, ICustomItem
     {
-        public readonly Netcode.NetInt currSpawnerItem = new Netcode.NetInt(0);
+        public readonly Netcode.NetInt currSpawnerItem = new(0);
 
         public const int BAT_WING = 767;
         public const int SOLAR_ESSENCE = 768;

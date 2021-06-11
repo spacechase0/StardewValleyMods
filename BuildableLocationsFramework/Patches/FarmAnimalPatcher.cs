@@ -385,45 +385,45 @@ namespace BuildableLocationsFramework.Patches
                             case 0:
                                 __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>()
                                 {
-                                    new FarmerSprite.AnimationFrame(9, 250),
-                                    new FarmerSprite.AnimationFrame(11, 250),
-                                    new FarmerSprite.AnimationFrame(9, 250),
-                                    new FarmerSprite.AnimationFrame(11, 250),
-                                    new FarmerSprite.AnimationFrame(9, 250),
-                                    new FarmerSprite.AnimationFrame(11, 250, false, false, findTruffleDelegate, false)
+                                    new(9, 250),
+                                    new(11, 250),
+                                    new(9, 250),
+                                    new(11, 250),
+                                    new(9, 250),
+                                    new(11, 250, false, false, findTruffleDelegate, false)
                                 });
                                 break;
                             case 1:
                                 __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>()
                                 {
-                                    new FarmerSprite.AnimationFrame(5, 250),
-                                    new FarmerSprite.AnimationFrame(7, 250),
-                                    new FarmerSprite.AnimationFrame(5, 250),
-                                    new FarmerSprite.AnimationFrame(7, 250),
-                                    new FarmerSprite.AnimationFrame(5, 250),
-                                    new FarmerSprite.AnimationFrame(7, 250, false, false, findTruffleDelegate, false)
+                                    new(5, 250),
+                                    new(7, 250),
+                                    new(5, 250),
+                                    new(7, 250),
+                                    new(5, 250),
+                                    new(7, 250, false, false, findTruffleDelegate, false)
                                 });
                                 break;
                             case 2:
                                 __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>()
                                 {
-                                    new FarmerSprite.AnimationFrame(1, 250),
-                                    new FarmerSprite.AnimationFrame(3, 250),
-                                    new FarmerSprite.AnimationFrame(1, 250),
-                                    new FarmerSprite.AnimationFrame(3, 250),
-                                    new FarmerSprite.AnimationFrame(1, 250),
-                                    new FarmerSprite.AnimationFrame(3, 250, false, false, findTruffleDelegate, false)
+                                    new(1, 250),
+                                    new(3, 250),
+                                    new(1, 250),
+                                    new(3, 250),
+                                    new(1, 250),
+                                    new(3, 250, false, false, findTruffleDelegate, false)
                                 });
                                 break;
                             case 3:
                                 __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>()
                                 {
-                                    new FarmerSprite.AnimationFrame(5, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
-                                    new FarmerSprite.AnimationFrame(7, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
-                                    new FarmerSprite.AnimationFrame(5, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
-                                    new FarmerSprite.AnimationFrame(7, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
-                                    new FarmerSprite.AnimationFrame(5, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
-                                    new FarmerSprite.AnimationFrame(7, 250, false, true, findTruffleDelegate, false)
+                                    new(5, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
+                                    new(7, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
+                                    new(5, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
+                                    new(7, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
+                                    new(5, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
+                                    new(7, 250, false, true, findTruffleDelegate, false)
                                 });
                                 break;
                         }

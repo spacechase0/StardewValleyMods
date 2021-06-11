@@ -60,7 +60,7 @@ namespace Magic
             this.Icon = Mod.instance.Helper.Content.Load<Texture2D>("assets/interface/magicexpicon.png");
             this.SkillsPageIcon = null; // TODO: Make an icon for this
 
-            this.ExperienceCurve = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
+            this.ExperienceCurve = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
 
             this.ExperienceBarColor = new Microsoft.Xna.Framework.Color(0, 66, 255);
 

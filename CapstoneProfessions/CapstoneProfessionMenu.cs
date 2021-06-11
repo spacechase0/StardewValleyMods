@@ -11,7 +11,7 @@ namespace CapstoneProfessions
 {
     public class CapstoneProfessionMenu : IClickableMenu
     {
-        private readonly Rectangle cursorsGoldIcon = new Rectangle(280, 411, 16, 16);
+        private readonly Rectangle cursorsGoldIcon = new(280, 411, 16, 16);
 
         public const int region_okButton = 101;
 
@@ -47,19 +47,19 @@ namespace CapstoneProfessions
 
         public ClickableComponent rightProfession;
 
-        private List<string> extraInfoForLevel = new List<string>();
+        private List<string> extraInfoForLevel = new();
 
-        private List<string> leftProfessionDescription = new List<string>();
+        private List<string> leftProfessionDescription = new();
 
-        private List<string> rightProfessionDescription = new List<string>();
+        private List<string> rightProfessionDescription = new();
 
         private Rectangle sourceRectForLevelIcon;
 
         private string title;
 
-        private List<int> professionsToChoose = new List<int>();
+        private List<int> professionsToChoose = new();
 
-        private List<TemporaryAnimatedSprite> littleStars = new List<TemporaryAnimatedSprite>();
+        private List<TemporaryAnimatedSprite> littleStars = new();
 
         public bool hasMovedSelection;
 

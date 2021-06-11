@@ -9,7 +9,7 @@ namespace CaveFarm
 {
     public class CaveWall : TerrainFeature
     {
-        public readonly NetInt health = new NetInt();
+        public readonly NetInt health = new();
 
         public CaveWall()
             : base(false)
@@ -20,7 +20,7 @@ namespace CaveFarm
 
         public override Rectangle getBoundingBox(Vector2 tileLocation)
         {
-            return new Rectangle((int)tileLocation.X * 64, (int)tileLocation.Y * 64, 64, 64);
+            return new((int)tileLocation.X * 64, (int)tileLocation.Y * 64, 64, 64);
         }
 
         public override bool performToolAction(Tool t, int damage, Vector2 tileLocation, GameLocation location)

@@ -29,7 +29,7 @@ namespace BugNet
 
         public static Mod instance;
         internal static JsonAssetsAPI ja;
-        private static Dictionary<string, CritterData> CrittersData = new Dictionary<string, CritterData>();
+        private static Dictionary<string, CritterData> CrittersData = new();
 
         public override void Entry(IModHelper helper)
         {
@@ -127,7 +127,7 @@ namespace BugNet
 
             var tool = new BugNetTool();
             forSale.Add(tool);
-            itemPriceAndStock.Add(tool, new int[] { 500, 1 });
+            itemPriceAndStock.Add(tool, new[] { 500, 1 });
         }
 
         private void onButtonPressed(object sender, ButtonPressedEventArgs e)

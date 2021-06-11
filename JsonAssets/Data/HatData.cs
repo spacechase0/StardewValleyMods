@@ -14,8 +14,8 @@ namespace JsonAssets.Data
 
         public string Metadata { get; set; } = "";
 
-        public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
-        public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> NameLocalization = new();
+        public Dictionary<string, string> DescriptionLocalization = new();
 
         public string LocalizedName()
         {

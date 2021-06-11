@@ -39,8 +39,8 @@ namespace JsonAssets.Data
 
         public bool CanTrash { get; set; } = true;
 
-        public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
-        public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> NameLocalization = new();
+        public Dictionary<string, string> DescriptionLocalization = new();
 
         public string LocalizedName()
         {

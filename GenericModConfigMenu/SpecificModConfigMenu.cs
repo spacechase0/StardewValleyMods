@@ -22,13 +22,13 @@ namespace GenericModConfigMenu
         private string currPage;
         private string prevPage;
 
-        private RootElement ui = new RootElement();
+        private RootElement ui = new();
         private Table table;
-        private List<Label> optHovers = new List<Label>();
+        private List<Label> optHovers = new();
         public static IClickableMenu ActiveConfigMenu;
 
-        private Dictionary<string, List<Image>> textures = new Dictionary<string, List<Image>>();
-        private Queue<string> pendingTexChanges = new Queue<string>();
+        private Dictionary<string, List<Image>> textures = new();
+        private Queue<string> pendingTexChanges = new();
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
@@ -291,9 +291,9 @@ namespace GenericModConfigMenu
                 else if (other == null)
                     this.table.AddRow(new Element[] { label });
                 else if (other2 == null)
-                    this.table.AddRow(new Element[] { label, other });
+                    this.table.AddRow(new[] { label, other });
                 else
-                    this.table.AddRow(new Element[] { label, other, other2 });
+                    this.table.AddRow(new[] { label, other, other2 });
             }
             this.ui.AddChild(this.table);
 

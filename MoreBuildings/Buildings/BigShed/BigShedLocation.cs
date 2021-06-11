@@ -13,13 +13,13 @@ namespace MoreBuildings.Buildings.BigShed
 
         public override List<Rectangle> getFloors()
         {
-            return new List<Rectangle> { new Rectangle(1, 3, 21, 20) };
+            return new() { new Rectangle(1, 3, 21, 20) };
         }
 
 
         public override List<Rectangle> getWalls()
         {
-            return new List<Rectangle> { new Rectangle(1, 1, 21, 3) };
+            return new() { new Rectangle(1, 1, 21, 3) };
         }
 
         public Dictionary<string, string> getAdditionalSaveData()

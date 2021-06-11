@@ -140,7 +140,7 @@ namespace HybridCropEngine
                 {
                     Func<int, int, HoeDirt> getHoedirt = (x, y) => (loc.terrainFeatures.ContainsKey(new Vector2(ix + x, iy + y)) ? (loc.terrainFeatures[new Vector2(ix + x, iy + y)] as HoeDirt) : null);
 
-                    HoeDirt[] dirts = new HoeDirt[]
+                    HoeDirt[] dirts = new[]
                     {
                         getHoedirt( -1, -1 ), getHoedirt( 0, -1 ), getHoedirt( 1, -1 ),
                         getHoedirt( -1, 0 ), getHoedirt( 0, 0 ), getHoedirt( 1, 0 ),
@@ -183,7 +183,7 @@ namespace HybridCropEngine
                     Action<int, int> addIfCombo = (a, b) =>
                   {
                       if (dirts[a] != null && dirts[b] != null)
-                          combos.Add(new HoeDirt[] { dirts[a], dirts[b] });
+                          combos.Add(new[] { dirts[a], dirts[b] });
                   };
                     addIfCombo(0, 1);
                     addIfCombo(1, 2);

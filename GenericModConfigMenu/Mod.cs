@@ -19,7 +19,7 @@ namespace GenericModConfigMenu
 
         private RootElement ui;
         private Button configButton;
-        internal Dictionary<IManifest, ModConfig> configs = new Dictionary<IManifest, ModConfig>();
+        internal Dictionary<IManifest, ModConfig> configs = new();
 
         public override void Entry(IModHelper helper)
         {
@@ -63,9 +63,9 @@ namespace GenericModConfigMenu
             public float dummyFloat2 = 0.5f;
             public string dummyString1 = "Kirby";
             public string dummyString2 = "Default";
-            internal static string[] dummyString2Choices = new string[] { "Default", "Kitties", "Cats", "Meow" };
+            internal static string[] dummyString2Choices = new[] { "Default", "Kitties", "Cats", "Meow" };
             public SButton dummyKeybinding = SButton.K;
-            public KeybindList dummyKeybinding2 = new KeybindList(new Keybind(SButton.LeftShift, SButton.S));
+            public KeybindList dummyKeybinding2 = new(new Keybind(SButton.LeftShift, SButton.S));
             public Color dummyColor = Color.White;
         }
         public DummyConfig config;

@@ -51,12 +51,12 @@ namespace CustomBuildings
             public int Count { get; set; }
         }
         public int Price { get; set; } = 0;
-        public List<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
+        public List<Ingredient> Ingredients { get; set; } = new();
         public bool Magical { get; set; } = false;
         public int DaysToConstruct { get; set; } = 2;
 
-        public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
-        public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> NameLocalization = new();
+        public Dictionary<string, string> DescriptionLocalization = new();
 
         public string LocalizedName()
         {
