@@ -105,7 +105,7 @@ namespace SpaceCore.Patches
             }
             if (ret.Count != 2)
             {
-                Log.warn($"Found {ret.Count} transpiler targets, expected 2");
+                Log.warn($"{nameof(GetLoadEnumeratorMethods)}: Found {ret.Count} transpiler targets, expected 2");
                 foreach (var meth in ret)
                 {
                     Log.trace("\t" + meth.Name + " " + meth);
@@ -129,7 +129,7 @@ namespace SpaceCore.Patches
             }
             if (ret.Count != 1)
             {
-                Log.warn($"Found {ret.Count} transpiler targets, expected 1");
+                Log.warn($"{nameof(GetSaveEnumeratorMethods)}: Found {ret.Count} transpiler targets, expected 1");
                 foreach (var meth in ret)
                 {
                     Log.trace("\t" + meth.Name + " " + meth);

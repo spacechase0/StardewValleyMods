@@ -3,11 +3,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
-using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
-using StardewValley;
 using StardewValley.TerrainFeatures;
 
 namespace SpaceCore.Patches
@@ -32,32 +30,27 @@ namespace SpaceCore.Patches
         /*********
         ** Private methods
         *********/
-        /// <summary>The method which transpiles <see cref="HoeDirt.dayUpdate"/>.</summary>
-        private static IEnumerable<CodeInstruction> Transpile_DayUpdate(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /// <summary>The method which transpiles <see cref="HoeDirt.dayUpdate"/> to remove the <see cref="HoeDirt.destroyCrop"/> call.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_DayUpdate(IEnumerable<CodeInstruction> insns)
         {
-            // TODO: Learn how to use ILGenerator
-            Log.trace("Transpiling for hoe dirt winter stuff");
+            bool happened = false;
             var newInsns = new List<CodeInstruction>();
-            foreach (var insn in insns)
+            foreach (var instr in insns)
             {
-                if (insn.opcode == OpCodes.Call && (insn.operand as MethodInfo).Name == "destroyCrop")
+                if ((instr.opcode == OpCodes.Call || instr.opcode == OpCodes.Callvirt) && (instr.operand as MethodInfo)?.Name == nameof(HoeDirt.destroyCrop))
                 {
-                    Log.trace("Replacing destroyCrop with our call");
-                    // Replace with our call. We do this instead of nop to clear the stack entries
-                    // Because I'm too lazy to figure out the rest properly.
-                    insn.operand = PatchHelper.RequireMethod<HoeDirtPatcher>(nameof(DestroyCropReplacement));
+                    for (int i = 0; i < 4; i++) // remove the four args to the destroyCrop method
+                        newInsns.Add(new CodeInstruction(OpCodes.Pop));
+                    happened = true;
+                    continue;
                 }
-
-                newInsns.Add(insn);
+                newInsns.Add(instr);
             }
 
-            return newInsns;
-        }
+            if (!happened)
+                Log.error($"{nameof(Transpile_DayUpdate)} patching failed: couldn't find {nameof(HoeDirt.destroyCrop)} call in the {nameof(HoeDirt)}.{nameof(HoeDirt.dayUpdate)} method.");
 
-        private static void DestroyCropReplacement(HoeDirt hoeDirt, Vector2 tileLocation, bool showAnimation, GameLocation location)
-        {
-            // We don't want it to ever do anything.
-            // Crops wither out of season anyways.
+            return newInsns;
         }
     }
 }
