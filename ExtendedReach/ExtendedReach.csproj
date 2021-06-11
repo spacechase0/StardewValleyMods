@@ -1,4 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\common.targets" />
+  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
+  <Import Project="..\SpaceSharedHarmony\SpaceSharedHarmony.projitems" Label="Shared" />
+
   <PropertyGroup>
     <Version>1.0.3</Version>
     <TargetFramework>net452</TargetFramework>
@@ -9,8 +13,4 @@
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.3.0" />
   </ItemGroup>
-
-  <Import Project="$(SolutionDir)\common.targets" />
-  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
-  <Import Project="..\SpaceSharedHarmony\SpaceSharedHarmony.projitems" Label="Shared" />
 </Project>

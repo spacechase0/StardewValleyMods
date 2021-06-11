@@ -1,4 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\common.targets" />
+  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
+  <Import Project="..\SpaceSharedHarmony\SpaceSharedHarmony.projitems" Label="Shared" />
+
   <PropertyGroup>
     <Version>1.0.1</Version>
     <TargetFramework>net452</TargetFramework>
@@ -13,8 +17,4 @@
   <ItemGroup>
     <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="False" />
   </ItemGroup>
-
-  <Import Project="$(SolutionDir)\common.targets" />
-  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
-  <Import Project="..\SpaceSharedHarmony\SpaceSharedHarmony.projitems" Label="Shared" />
 </Project>

@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\common.targets" />
+  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
+
   <PropertyGroup>
     <Version>1.0.2</Version>
     <TargetFramework>net452</TargetFramework>
@@ -8,7 +11,4 @@
     <PackageReference Include="Mono.CSharp" Version="4.0.0.143" />
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.3.0" />
   </ItemGroup>
-
-  <Import Project="$(SolutionDir)\common.targets" />
-  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 </Project>
