@@ -24,6 +24,7 @@
   * [Boots](#boots)
   * [Tailoring](#tailoring)
   * [Fences](#fences)
+  * [Forge Recipes](#forge-recipes)
 * [Gift Tastes](#gift-tastes)
 * [Context Tags](#context-tags)
 * [Localization](#localization)
@@ -526,6 +527,24 @@ field                  | purpose
 `SkillUnlockLevel`     | The level, 1 - 10, required to unlock.
 `EnableWithMod`        | _(optional)_ Enables the recipe when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 `DisableWithMod`       | _(optional)_ Disables the recipe when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
+
+
+### Forge Recipes
+
+Recipes for the Forge added in Vanilla 1.5 update can be added via Json Assets through the `Forge` folder.
+
+An object subfolder for a recipe is a folder that contains these files:
+
+* an `recipe.json`;
+
+field                  | purpose
+---------------------- | -------
+`BaseItemName`         | (string) The name of the Item that is to be put on the left slot for the recipe.
+`IngredientContextTag` | (string) The item for the right slot must have this ContextTag for the Forge recipe to Work. (See Context Tags Section)
+`CinderShardCost`          | (int) The amount of Cinder Shard required for the receipe.
+`ResultItemName`             | (string) The name of the output item
+
+Custom ContextTags can be added to vanilla items using ContentPatcher.
 
 ## Gift Tastes
 
