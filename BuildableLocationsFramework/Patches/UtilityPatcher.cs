@@ -103,13 +103,13 @@ namespace BuildableLocationsFramework.Patches
                     {
                         if (building.indoors.Value != null && building.indoors.Value is AnimalHouse)
                         {
-                            foreach (long id in (NetList<long, NetLong>)(building.indoors.Value as AnimalHouse).animalsThatLiveHere)
+                            foreach (long id in (building.indoors.Value as AnimalHouse).animalsThatLiveHere)
                             {
                                 FarmAnimal animal = Utility.getAnimal(id);
                                 if (animal != null)
                                 {
                                     animal.home = building;
-                                    animal.homeLocation.Value = new Vector2((float)(int)(NetFieldBase<int, NetInt>)building.tileX, (float)(int)(NetFieldBase<int, NetInt>)building.tileY);
+                                    animal.homeLocation.Value = new Vector2((int)building.tileX, (int)building.tileY);
                                 }
                             }
                         }
@@ -132,7 +132,7 @@ namespace BuildableLocationsFramework.Patches
                                 {
                                     pairs = (building.indoors.Value as AnimalHouse).animals.Pairs;
                                     keyValuePair = pairs.ElementAt(index);
-                                    if (keyValuePair.Value.Equals((object)farmAnimal))
+                                    if (keyValuePair.Value.Equals(farmAnimal))
                                     {
                                         NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> animals = (building.indoors.Value as AnimalHouse).animals;
                                         pairs = (building.indoors.Value as AnimalHouse).animals.Pairs;
@@ -147,7 +147,7 @@ namespace BuildableLocationsFramework.Patches
                         {
                             pairs = farm_animals.Animals.Pairs;
                             keyValuePair = pairs.ElementAt(index);
-                            if (keyValuePair.Value.Equals((object)farmAnimal))
+                            if (keyValuePair.Value.Equals(farmAnimal))
                             {
                                 NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> animals = farm_animals.Animals;
                                 pairs = farm_animals.Animals.Pairs;
@@ -172,11 +172,11 @@ namespace BuildableLocationsFramework.Patches
                     {
                         foreach (Building building in farm.buildings)
                         {
-                            if (building.buildingType.Contains((string)(NetFieldBase<string, NetString>)farmAnimal.buildingTypeILiveIn) && building.indoors.Value != null && (building.indoors.Value is AnimalHouse && !(building.indoors.Value as AnimalHouse).isFull()))
+                            if (building.buildingType.Contains(farmAnimal.buildingTypeILiveIn) && building.indoors.Value != null && (building.indoors.Value is AnimalHouse && !(building.indoors.Value as AnimalHouse).isFull()))
                             {
                                 farmAnimal.home = building;
-                                farmAnimal.homeLocation.Value = new Vector2((float)(int)(NetFieldBase<int, NetInt>)building.tileX, (float)(int)(NetFieldBase<int, NetInt>)building.tileY);
-                                farmAnimal.setRandomPosition((GameLocation)(NetFieldBase<GameLocation, NetRef<GameLocation>>)farmAnimal.home.indoors);
+                                farmAnimal.homeLocation.Value = new Vector2((int)building.tileX, (int)building.tileY);
+                                farmAnimal.setRandomPosition(farmAnimal.home.indoors);
                                 (farmAnimal.home.indoors.Value as AnimalHouse).animals.Add((long)farmAnimal.myID, farmAnimal);
                                 (farmAnimal.home.indoors.Value as AnimalHouse).animalsThatLiveHere.Add((long)farmAnimal.myID);
                                 break;
@@ -191,7 +191,7 @@ namespace BuildableLocationsFramework.Patches
                     }
                     foreach (FarmAnimal farmAnimal in farmAnimalList2)
                     {
-                        farmAnimal.Position = Utility.recursiveFindOpenTileForCharacter((Character)farmAnimal, (GameLocation)farm, new Vector2(40f, 40f), 200) * 64f;
+                        farmAnimal.Position = Utility.recursiveFindOpenTileForCharacter(farmAnimal, farm, new Vector2(40f, 40f), 200) * 64f;
                         if (!farm_animals.Animals.ContainsKey((long)farmAnimal.myID))
                             farm_animals.Animals.Add((long)farmAnimal.myID, farmAnimal);
                     }
@@ -224,7 +224,7 @@ namespace BuildableLocationsFramework.Patches
             foreach (Building building in loc.buildings)
             {
                 if (building.indoors.Value != null && building.indoors.Value is AnimalHouse)
-                    list.AddRange((IEnumerable<FarmAnimal>)((AnimalHouse)(GameLocation)(NetFieldBase<GameLocation, NetRef<GameLocation>>)building.indoors).animals.Values.ToList<FarmAnimal>());
+                    list.AddRange(((AnimalHouse)building.indoors).animals.Values.ToList<FarmAnimal>());
             }
             return list;
         }

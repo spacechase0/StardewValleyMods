@@ -52,7 +52,7 @@ namespace MultiFertilizer.Patches
                     continue;
                 }
 
-                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == (sbyte)-19)
+                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == -19)
                 {
                     newInsns.Add(insn);
                     fertCategoryCounter++;

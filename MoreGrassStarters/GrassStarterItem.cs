@@ -44,13 +44,13 @@ namespace MoreGrassStarters
 
         public override bool placementAction(GameLocation location, int x, int y, Farmer who = null)
         {
-            Vector2 index1 = new Vector2((float)(x / Game1.tileSize), (float)(y / Game1.tileSize));
+            Vector2 index1 = new Vector2(x / Game1.tileSize, y / Game1.tileSize);
             this.health = 10;
             this.owner.Value = who?.UniqueMultiplayerID ?? Game1.player.UniqueMultiplayerID;
 
             if (location.objects.ContainsKey(index1) || location.terrainFeatures.ContainsKey(index1))
                 return false;
-            location.terrainFeatures.Add(index1, (TerrainFeature)new CustomGrass(this.whichGrass, 4));
+            location.terrainFeatures.Add(index1, new CustomGrass(this.whichGrass, 4));
             Game1.playSound("dirtyHit");
 
             return true;
@@ -91,8 +91,8 @@ namespace MoreGrassStarters
             }
             b.Draw(tex, pos + new Vector2(4, 0), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4 * scale, SpriteEffects.None, layerDepth);
 
-            if ((drawStackNumber == StackDrawType.Draw && this.maximumStackSize() > 1 && this.Stack > 1 || drawStackNumber == StackDrawType.Draw_OneInclusive) && (double)scale > 0.3 && this.Stack != int.MaxValue)
-                Utility.drawTinyDigits(this.Stack, b, pos + new Vector2((float)(Game1.tileSize - Utility.getWidthOfTinyDigitString(this.stack, 3f * scale)) + 3f * scale, (float)((double)Game1.tileSize - 18.0 * (double)scale + 2.0)), 3f * scale, 1f, Color.White);
+            if ((drawStackNumber == StackDrawType.Draw && this.maximumStackSize() > 1 && this.Stack > 1 || drawStackNumber == StackDrawType.Draw_OneInclusive) && scale > 0.3 && this.Stack != int.MaxValue)
+                Utility.drawTinyDigits(this.Stack, b, pos + new Vector2(Game1.tileSize - Utility.getWidthOfTinyDigitString(this.stack, 3f * scale) + 3f * scale, (float)(Game1.tileSize - 18.0 * scale + 2.0)), 3f * scale, 1f, Color.White);
         }
 
         // Custom Element Handler

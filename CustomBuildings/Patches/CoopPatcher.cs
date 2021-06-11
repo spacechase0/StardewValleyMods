@@ -173,8 +173,8 @@ namespace CustomBuildings.Patches
 
             __instance.humanDoor.X = bdata.HumanDoorX;
             __instance.humanDoor.Y = bdata.HumanDoorY;
-            __instance.animalDoor.X = (int)bdata.AnimalDoorX;
-            __instance.animalDoor.Y = (int)bdata.AnimalDoorY;
+            __instance.animalDoor.X = bdata.AnimalDoorX;
+            __instance.animalDoor.Y = bdata.AnimalDoorY;
 
             foreach (var warp in __instance.indoors.Value.warps)
             {

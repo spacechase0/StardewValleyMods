@@ -48,15 +48,15 @@ namespace SpaceCore.Patches
             var _eventCommandArgs = SpaceCore.instance.Helper.Reflection.GetField<object[]>(typeof(Event), "_eventCommandArgs").GetValue();
             var _commandLookup = SpaceCore.instance.Helper.Reflection.GetField<Dictionary<string, MethodInfo>>(typeof(Event), "_commandLookup").GetValue();
 
-            _eventCommandArgs[0] = (object)location;
-            _eventCommandArgs[1] = (object)time;
-            _eventCommandArgs[2] = (object)split;
+            _eventCommandArgs[0] = location;
+            _eventCommandArgs[1] = time;
+            _eventCommandArgs[2] = split;
             if (split.Length == 0)
                 return false;
             if (EventPatcher.customCommands.ContainsKey(split[0]))
                 EventPatcher.customCommands[split[0]].Invoke(null, new[] { __instance, _eventCommandArgs[0], _eventCommandArgs[1], _eventCommandArgs[2] });
             else if (_commandLookup.ContainsKey(split[0]))
-                _commandLookup[split[0]].Invoke((object)__instance, _eventCommandArgs);
+                _commandLookup[split[0]].Invoke(__instance, _eventCommandArgs);
             else
                 SpaceShared.Log.warn("ERROR: Invalid command: " + split[0]);
 

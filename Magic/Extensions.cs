@@ -148,8 +148,8 @@ namespace Magic
                 {
                     writer.Write(spell.FullId);
                     writer.Write(level);
-                    writer.Write((int)(Game1.getMouseX() + Game1.viewport.X));
-                    writer.Write((int)(Game1.getMouseY() + Game1.viewport.Y));
+                    writer.Write(Game1.getMouseX() + Game1.viewport.X);
+                    writer.Write(Game1.getMouseY() + Game1.viewport.Y);
                     SpaceCore.Networking.BroadcastMessage(Magic.MSG_CAST, stream.ToArray());
                 }
             }

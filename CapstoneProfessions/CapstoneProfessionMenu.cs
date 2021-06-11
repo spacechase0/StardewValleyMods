@@ -214,7 +214,7 @@ namespace CapstoneProfessions
                 {
                     position.X = Game1.random.Next(this.xPositionOnScreen + this.width / 2 + 116, this.xPositionOnScreen + this.width - 160);
                 }
-                if (position.Y < (float)(this.yPositionOnScreen - 64 - 8))
+                if (position.Y < this.yPositionOnScreen - 64 - 8)
                 {
                     position.X = Game1.random.Next(this.xPositionOnScreen + this.width / 2 - 116, this.xPositionOnScreen + this.width / 2 + 116);
                 }
@@ -332,10 +332,10 @@ namespace CapstoneProfessions
                     this.drawHorizontalPartition(b, this.yPositionOnScreen + 192);
                     this.drawVerticalIntersectingPartition(b, this.xPositionOnScreen + this.width / 2 - 32, this.yPositionOnScreen + 192);
                     Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, 4f, flipped: false, 0.88f);
-                    b.DrawString(Game1.dialogueFont, this.title, new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.dialogueFont.MeasureString(this.title).X / 2f, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Game1.textColor);
+                    b.DrawString(Game1.dialogueFont, this.title, new Vector2(this.xPositionOnScreen + this.width / 2 - Game1.dialogueFont.MeasureString(this.title).X / 2f, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Game1.textColor);
                     Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, 4f, flipped: false, 0.88f);
                     string chooseProfession = Mod.instance.Helper.Translation.Get("menu.extra");
-                    b.DrawString(Game1.smallFont, chooseProfession, new Vector2((float)(this.xPositionOnScreen + this.width / 2) - Game1.smallFont.MeasureString(chooseProfession).X / 2f, this.yPositionOnScreen + 64 + IClickableMenu.spaceToClearTopBorder), Game1.textColor);
+                    b.DrawString(Game1.smallFont, chooseProfession, new Vector2(this.xPositionOnScreen + this.width / 2 - Game1.smallFont.MeasureString(chooseProfession).X / 2f, this.yPositionOnScreen + 64 + IClickableMenu.spaceToClearTopBorder), Game1.textColor);
                     b.DrawString(Game1.dialogueFont, this.leftProfessionDescription[0], new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160), this.leftProfessionColor);
                     b.Draw(Mod.clockTex, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width / 2 - 112, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160 - 16), null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 1f);
                     for (int j = 1; j < this.leftProfessionDescription.Count; j++)

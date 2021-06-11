@@ -29,7 +29,7 @@ namespace Magic
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
-                writer.Write((int)1);
+                writer.Write(1);
                 writer.Write(Game1.player.UniqueMultiplayerID);
                 writer.Write(JsonConvert.SerializeObject(this.players[Game1.player.UniqueMultiplayerID], MultiplayerSaveData.networkSerializerSettings));
                 SpaceCore.Networking.BroadcastMessage(Magic.MSG_DATA, stream.ToArray());

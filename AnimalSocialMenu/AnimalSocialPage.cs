@@ -34,9 +34,9 @@ namespace AnimalSocialMenu
             this.sprites = new List<ClickableTextureComponent>();
             foreach (var kvp in this.animals.OrderBy(p => p.Value.type.Value))
             {
-                this.names.Add((object)kvp.Key);
+                this.names.Add(kvp.Key);
                 //this.sprites.Add(new ClickableTextureComponent("", new Rectangle(x + IClickableMenu.borderWidth + 4, 0, width, 64), (string)null, "", Game1.objectSpriteSheet, new Rectangle(0, 0, 24, 24), 4f, false));
-                this.sprites.Add(new ClickableTextureComponent("", new Rectangle(x + IClickableMenu.borderWidth + 4 + (kvp.Value.Sprite.SourceRect.Width == 16 ? 16 : 0), 0, width, 64), (string)null, "", kvp.Value.Sprite.Texture, kvp.Value.Sprite.SourceRect, 2, false));
+                this.sprites.Add(new ClickableTextureComponent("", new Rectangle(x + IClickableMenu.borderWidth + 4 + (kvp.Value.Sprite.SourceRect.Width == 16 ? 16 : 0), 0, width, 64), null, "", kvp.Value.Sprite.Texture, kvp.Value.Sprite.SourceRect, 2, false));
             }
             this.upButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), 4f, false);
             this.downButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + height - 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), 4f, false);
@@ -84,7 +84,7 @@ namespace AnimalSocialMenu
                 return;
             int y1 = this.scrollBar.bounds.Y;
             this.scrollBar.bounds.Y = Math.Min(this.yPositionOnScreen + this.height - 64 - 12 - this.scrollBar.bounds.Height, Math.Max(y, this.yPositionOnScreen + this.upButton.bounds.Height + 20));
-            this.slotPosition = Math.Min(this.sprites.Count - 5, Math.Max(0, (int)((double)this.sprites.Count * (double)((float)(y - this.scrollBarRunner.Y) / (float)this.scrollBarRunner.Height))));
+            this.slotPosition = Math.Min(this.sprites.Count - 5, Math.Max(0, (int)(this.sprites.Count * (double)((y - this.scrollBarRunner.Y) / (float)this.scrollBarRunner.Height))));
             this.setScrollBarToCurrentIndex();
             int y2 = this.scrollBar.bounds.Y;
             if (y1 == y2)
@@ -192,16 +192,16 @@ namespace AnimalSocialMenu
 
             double loveLevel = heartLevelForNpc / 1000.0;
             int num3 = loveLevel * 1000.0 % 200.0 >= 100.0 ? (int)(loveLevel * 1000.0 / 200.0) : -100;
-            b.DrawString(Game1.dialogueFont, name, new Vector2((float)(this.xPositionOnScreen + IClickableMenu.borderWidth * 3 / 2 + 64 - 20 + 96) - Game1.dialogueFont.MeasureString(name).X / 2f, (float)((double)(this.sprites[i].bounds.Y + 48) + (double)num - (false ? 24.0 : 20.0))), Game1.textColor);
+            b.DrawString(Game1.dialogueFont, name, new Vector2(this.xPositionOnScreen + IClickableMenu.borderWidth * 3 / 2 + 64 - 20 + 96 - Game1.dialogueFont.MeasureString(name).X / 2f, (float)(this.sprites[i].bounds.Y + 48 + (double)num - (false ? 24.0 : 20.0))), Game1.textColor);
             for (int index = 0; index < 5; ++index)
             {
-                b.Draw(Game1.mouseCursors, new Vector2((float)(this.xPositionOnScreen + 320 - 8 + index * 32), (float)(this.sprites[i].bounds.Y - n + 64 - 28)), new Rectangle?(new Rectangle(211 + (loveLevel * 1000.0 <= (double)((index + 1) * 195) ? 7 : 0), 428, 7, 6)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.89f);
+                b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + 320 - 8 + index * 32, this.sprites[i].bounds.Y - n + 64 - 28), new Rectangle?(new Rectangle(211 + (loveLevel * 1000.0 <= (double)((index + 1) * 195) ? 7 : 0), 428, 7, 6)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.89f);
                 if (num3 == index)
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(this.xPositionOnScreen + 320 - 8 + index * 32), (float)(this.sprites[i].bounds.Y - n + 64 - 28)), new Rectangle?(new Rectangle(211, 428, 4, 6)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.891f);
+                    b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + 320 - 8 + index * 32, this.sprites[i].bounds.Y - n + 64 - 28), new Rectangle?(new Rectangle(211, 428, 4, 6)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.891f);
             }
 
             if (!animal.wasPet.Value)
-                b.DrawString(Game1.dialogueFont, "Needs petting", new Vector2((float)(this.xPositionOnScreen + 250 + 264), (float)(this.sprites[i].bounds.Y + 32 - 12)), Game1.textColor);
+                b.DrawString(Game1.dialogueFont, "Needs petting", new Vector2(this.xPositionOnScreen + 250 + 264, this.sprites[i].bounds.Y + 32 - 12), Game1.textColor);
         }
 
         private int rowPosition(int i)
@@ -214,7 +214,7 @@ namespace AnimalSocialMenu
         public override void draw(SpriteBatch b)
         {
             b.End();
-            b.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, (DepthStencilState)null, new RasterizerState()
+            b.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, new RasterizerState()
             {
                 ScissorTestEnable = true
             });
@@ -249,9 +249,9 @@ namespace AnimalSocialMenu
             IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollBarRunner.X, this.scrollBarRunner.Y, this.scrollBarRunner.Width, this.scrollBarRunner.Height, Color.White, 4f, true);
             this.scrollBar.draw(b);
             if (!this.hoverText.Equals(""))
-                IClickableMenu.drawHoverText(b, this.hoverText, Game1.smallFont, 0, 0, -1, (string)null, -1, (string[])null, (Item)null, 0, -1, -1, -1, -1, 1f, (CraftingRecipe)null);
+                IClickableMenu.drawHoverText(b, this.hoverText, Game1.smallFont, 0, 0, -1, null, -1, null, null, 0, -1, -1, -1, -1, 1f, null);
             b.End();
-            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, (DepthStencilState)null, (RasterizerState)null);
+            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
         }
     }
 }

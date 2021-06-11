@@ -329,7 +329,7 @@ namespace LuckSkill
                 if (flag && (i + 1) % 5 == 0)
                 {
                     var skillBars = skills.skillBars;
-                    skillBars.Add(new ClickableTextureComponent(string.Concat(num5), new Rectangle(num2 + num3 - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6), 14 * Game1.pixelZoom, 9 * Game1.pixelZoom), null, text, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), (float)Game1.pixelZoom, true));
+                    skillBars.Add(new ClickableTextureComponent(string.Concat(num5), new Rectangle(num2 + num3 - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6), 14 * Game1.pixelZoom, 9 * Game1.pixelZoom), null, text, Game1.mouseCursors, new Rectangle(159, 338, 14, 9), Game1.pixelZoom, true));
                 }
                 num2 += Game1.pixelZoom * 6;
             }
@@ -383,24 +383,24 @@ namespace LuckSkill
 
                 if (!text.Equals(""))
                 {
-                    b.DrawString(Game1.smallFont, text, new Vector2((float)num - Game1.smallFont.MeasureString(text).X - (float)(Game1.pixelZoom * 4) - (float)Game1.tileSize, (float)(num2 + Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), Game1.textColor);
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num - Game1.pixelZoom * 16), (float)(num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(empty), Color.Black * 0.3f, 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.85f);
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num - Game1.pixelZoom * 15), (float)(num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(empty), Color.White, 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    b.DrawString(Game1.smallFont, text, new Vector2(num - Game1.smallFont.MeasureString(text).X - Game1.pixelZoom * 4 - Game1.tileSize, num2 + Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), Game1.textColor);
+                    b.Draw(Game1.mouseCursors, new Vector2(num - Game1.pixelZoom * 16, num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(empty), Color.Black * 0.3f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.85f);
+                    b.Draw(Game1.mouseCursors, new Vector2(num - Game1.pixelZoom * 15, num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(empty), Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
                 }
                 if (!flag && (i + 1) % 5 == 0)
                 {
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(145, 338, 14, 9)), Color.Black * 0.35f, 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.87f);
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(145 + (flag ? 14 : 0), 338, 14, 9)), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(new Rectangle(145, 338, 14, 9)), Color.Black * 0.35f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(new Rectangle(145 + (flag ? 14 : 0), 338, 14, 9)), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
                 }
                 else if ((i + 1) % 5 != 0)
                 {
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(129, 338, 8, 9)), Color.Black * 0.35f, 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.85f);
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom)), (float)(num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), new Rectangle?(new Rectangle(129 + (flag ? 8 : 0), 338, 8, 9)), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(new Rectangle(129, 338, 8, 9)), Color.Black * 0.35f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.85f);
+                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(new Rectangle(129 + (flag ? 8 : 0), 338, 8, 9)), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
                 }
                 if (i == 9)
                 {
-                    NumberSprite.draw(num4, b, new Vector2((float)(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 3 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0)), (float)(num2 + Game1.pixelZoom * 4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
-                    NumberSprite.draw(num4, b, new Vector2((float)(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 4 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0)), (float)(num2 + Game1.pixelZoom * 3 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6))), (flag2 ? Color.LightGreen : Color.SandyBrown) * ((num4 == 0) ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
+                    NumberSprite.draw(num4, b, new Vector2(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 3 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0), num2 + Game1.pixelZoom * 4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
+                    NumberSprite.draw(num4, b, new Vector2(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 4 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0), num2 + Game1.pixelZoom * 3 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), (flag2 ? Color.LightGreen : Color.SandyBrown) * ((num4 == 0) ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
                 }
                 if ((i + 1) % 5 == 0)
                 {
@@ -447,52 +447,52 @@ namespace LuckSkill
         {
             Random random = new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2);
             if (Game1.weddingToday)
-                return (FarmEvent)null;
+                return null;
             foreach (Farmer onlineFarmer in Game1.getOnlineFarmers())
             {
                 Friendship spouseFriendship = onlineFarmer.GetSpouseFriendship();
                 if (spouseFriendship != null && spouseFriendship.IsMarried() && spouseFriendship.WeddingDate == Game1.Date)
-                    return (FarmEvent)null;
+                    return null;
             }
             if (Game1.stats.DaysPlayed == 31U)
-                return (FarmEvent)new SoundInTheNightEvent(4);
+                return new SoundInTheNightEvent(4);
             if (Game1.player.mailForTomorrow.Contains("jojaPantry%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaPantry"))
-                return (FarmEvent)new WorldChangeEvent(0);
+                return new WorldChangeEvent(0);
             if (Game1.player.mailForTomorrow.Contains("ccPantry%&NL&%") || Game1.player.mailForTomorrow.Contains("ccPantry"))
-                return (FarmEvent)new WorldChangeEvent(1);
+                return new WorldChangeEvent(1);
             if (Game1.player.mailForTomorrow.Contains("jojaVault%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaVault"))
-                return (FarmEvent)new WorldChangeEvent(6);
+                return new WorldChangeEvent(6);
             if (Game1.player.mailForTomorrow.Contains("ccVault%&NL&%") || Game1.player.mailForTomorrow.Contains("ccVault"))
-                return (FarmEvent)new WorldChangeEvent(7);
+                return new WorldChangeEvent(7);
             if (Game1.player.mailForTomorrow.Contains("jojaBoilerRoom%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaBoilerRoom"))
-                return (FarmEvent)new WorldChangeEvent(2);
+                return new WorldChangeEvent(2);
             if (Game1.player.mailForTomorrow.Contains("ccBoilerRoom%&NL&%") || Game1.player.mailForTomorrow.Contains("ccBoilerRoom"))
-                return (FarmEvent)new WorldChangeEvent(3);
+                return new WorldChangeEvent(3);
             if (Game1.player.mailForTomorrow.Contains("jojaCraftsRoom%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaCraftsRoom"))
-                return (FarmEvent)new WorldChangeEvent(4);
+                return new WorldChangeEvent(4);
             if (Game1.player.mailForTomorrow.Contains("ccCraftsRoom%&NL&%") || Game1.player.mailForTomorrow.Contains("ccCraftsRoom"))
-                return (FarmEvent)new WorldChangeEvent(5);
+                return new WorldChangeEvent(5);
             if (Game1.player.mailForTomorrow.Contains("jojaFishTank%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaFishTank"))
-                return (FarmEvent)new WorldChangeEvent(8);
+                return new WorldChangeEvent(8);
             if (Game1.player.mailForTomorrow.Contains("ccFishTank%&NL&%") || Game1.player.mailForTomorrow.Contains("ccFishTank"))
-                return (FarmEvent)new WorldChangeEvent(9);
+                return new WorldChangeEvent(9);
             if (Game1.player.mailForTomorrow.Contains("ccMovieTheaterJoja%&NL&%") || Game1.player.mailForTomorrow.Contains("jojaMovieTheater"))
-                return (FarmEvent)new WorldChangeEvent(10);
+                return new WorldChangeEvent(10);
             if (Game1.player.mailForTomorrow.Contains("ccMovieTheater%&NL&%") || Game1.player.mailForTomorrow.Contains("ccMovieTheater"))
-                return (FarmEvent)new WorldChangeEvent(11);
+                return new WorldChangeEvent(11);
             if (Game1.MasterPlayer.eventsSeen.Contains(191393) && (Game1.isRaining || Game1.isLightning) && (!Game1.MasterPlayer.mailReceived.Contains("abandonedJojaMartAccessible") && !Game1.MasterPlayer.mailReceived.Contains("ccMovieTheater")))
-                return (FarmEvent)new WorldChangeEvent(12);
+                return new WorldChangeEvent(12);
             if (random.NextDouble() < 0.01 && !Game1.currentSeason.Equals("winter"))
-                return (FarmEvent)new FairyEvent();
+                return new FairyEvent();
             if (random.NextDouble() < 0.01)
-                return (FarmEvent)new WitchEvent();
+                return new WitchEvent();
             if (random.NextDouble() < 0.01)
-                return (FarmEvent)new SoundInTheNightEvent(1);
+                return new SoundInTheNightEvent(1);
             if (random.NextDouble() < 0.01 && Game1.year > 1)
-                return (FarmEvent)new SoundInTheNightEvent(0);
+                return new SoundInTheNightEvent(0);
             if (random.NextDouble() < 0.01)
-                return (FarmEvent)new SoundInTheNightEvent(3);
-            return (FarmEvent)null;
+                return new SoundInTheNightEvent(3);
+            return null;
         }
 
         /// <summary>Raised after a player warps to a new location.</summary>

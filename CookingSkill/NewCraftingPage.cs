@@ -52,7 +52,7 @@ namespace CookingSkill
         {
             this._standaloneMenu = standalone_menu;
             this.cooking = cooking;
-            this.inventory = new InventoryMenu(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + 320 - 16, false, (IList<Item>)null, (InventoryMenu.highlightThisItem)null, -1, 3, 0, 0, true);
+            this.inventory = new InventoryMenu(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + 320 - 16, false, null, null, -1, 3, 0, 0, true);
             this.inventory.showGrayedOutSlots = true;
             this.currentPageClickableComponents = new List<ClickableComponent>();
             foreach (ClickableComponent clickableComponent in this.inventory.GetBorder(InventoryMenu.BorderSide.Top))
@@ -115,11 +115,11 @@ namespace CookingSkill
         protected virtual IList<Item> getContainerContents()
         {
             if (this._materialContainers == null)
-                return (IList<Item>)null;
+                return null;
             List<Item> objList = new List<Item>();
             for (int index = 0; index < this._materialContainers.Count; ++index)
-                objList.AddRange((IEnumerable<Item>)this._materialContainers[index].items);
-            return (IList<Item>)objList;
+                objList.AddRange(this._materialContainers[index].items);
+            return objList;
         }
 
         private int craftingPageY()
@@ -209,7 +209,7 @@ namespace CookingSkill
                     }
                 }
                 int num5 = 200 + num3;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(num1 + x * (64 + num2), this.craftingPageY() + y * 72, 64, recipe.bigCraftable ? 128 : 64), (string)null, !this.cooking || Game1.player.cookingRecipes.ContainsKey(recipe.name) ? "" : "ghosted", recipe.bigCraftable ? Game1.bigCraftableSpriteSheet : Game1.objectSpriteSheet, recipe.bigCraftable ? Game1.getArbitrarySourceRect(Game1.bigCraftableSpriteSheet, 16, 32, recipe.getIndexOfMenuView()) : Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, recipe.getIndexOfMenuView(), 16, 16), 4f, false);
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(num1 + x * (64 + num2), this.craftingPageY() + y * 72, 64, recipe.bigCraftable ? 128 : 64), null, !this.cooking || Game1.player.cookingRecipes.ContainsKey(recipe.name) ? "" : "ghosted", recipe.bigCraftable ? Game1.bigCraftableSpriteSheet : Game1.objectSpriteSheet, recipe.bigCraftable ? Game1.getArbitrarySourceRect(Game1.bigCraftableSpriteSheet, 16, 32, recipe.getIndexOfMenuView()) : Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, recipe.getIndexOfMenuView(), 16, 16), 4f, false);
                 textureComponent.myID = num5;
                 textureComponent.rightNeighborID = -99998;
                 textureComponent.leftNeighborID = -99998;
@@ -236,7 +236,7 @@ namespace CookingSkill
 
         public override void snapToDefaultClickableComponent()
         {
-            this.currentlySnappedComponent = this.currentCraftingPage < this.pagesOfCraftingRecipes.Count ? (ClickableComponent)this.pagesOfCraftingRecipes[this.currentCraftingPage].First<KeyValuePair<ClickableTextureComponent, CraftingRecipe>>().Key : (ClickableComponent)null;
+            this.currentlySnappedComponent = this.currentCraftingPage < this.pagesOfCraftingRecipes.Count ? this.pagesOfCraftingRecipes[this.currentCraftingPage].First<KeyValuePair<ClickableTextureComponent, CraftingRecipe>>().Key : (ClickableComponent)null;
             this.snapCursorToCurrentSnappedComponent();
         }
 
@@ -255,10 +255,10 @@ namespace CookingSkill
         public override void receiveKeyPress(Keys key)
         {
             base.receiveKeyPress(key);
-            if (!key.Equals((object)Keys.Delete) || this.heldItem == null || !this.heldItem.canBeTrashed())
+            if (!key.Equals(Keys.Delete) || this.heldItem == null || !this.heldItem.canBeTrashed())
                 return;
             Utility.trashItem(this.heldItem);
-            this.heldItem = (Item)null;
+            this.heldItem = null;
         }
 
         public override void receiveScrollWheelAction(int direction)
@@ -317,21 +317,21 @@ namespace CookingSkill
                 if (this.heldItem != null && Game1.oldKBState.IsKeyDown(Keys.LeftShift) && (this.heldItem.maximumStackSize() == 1 && Game1.player.couldInventoryAcceptThisItem(this.heldItem)))
                 {
                     Game1.player.addItemToInventoryBool(this.heldItem, false);
-                    this.heldItem = (Item)null;
+                    this.heldItem = null;
                 }
             }
             if (this.trashCan != null && this.trashCan.containsPoint(x, y) && (this.heldItem != null && this.heldItem.canBeTrashed()))
             {
                 Utility.trashItem(this.heldItem);
-                this.heldItem = (Item)null;
+                this.heldItem = null;
             }
             else
             {
                 if (this.heldItem == null || this.isWithinBounds(x, y) || !this.heldItem.canBeTrashed())
                     return;
                 Game1.playSound("throwDownITem");
-                Game1.createItemDebris(this.heldItem, Game1.player.getStandingPosition(), Game1.player.FacingDirection, (GameLocation)null, -1);
-                this.heldItem = (Item)null;
+                Game1.createItemDebris(this.heldItem, Game1.player.getStandingPosition(), Game1.player.FacingDirection, null, -1);
+                this.heldItem = null;
             }
         }
 
@@ -352,7 +352,7 @@ namespace CookingSkill
             SObject itemObj = obj as SObject;
             bool didCraft = false;
             /////
-            Game1.player.checkForQuestComplete((NPC)null, -1, -1, obj, (string)null, 2, -1);
+            Game1.player.checkForQuestComplete(null, -1, -1, obj, null, 2, -1);
             if (this.heldItem == null)
             {
                 /////
@@ -383,7 +383,7 @@ namespace CookingSkill
                 Game1.player.craftingRecipes[this.pagesOfCraftingRecipes[this.currentCraftingPage][c].name] += this.pagesOfCraftingRecipes[this.currentCraftingPage][c].numberProducedPerCraft;
             if (this.cooking)
             {
-                Game1.player.cookedRecipe((int)((NetFieldBase<int, NetInt>)this.heldItem.parentSheetIndex));
+                Game1.player.cookedRecipe((int)this.heldItem.parentSheetIndex);
                 /////
                 Game1.player.AddCustomSkillExperience(Mod.skill, itemObj.Edibility);
                 /////
@@ -395,7 +395,7 @@ namespace CookingSkill
             if (!Game1.options.gamepadControls || this.heldItem == null || !Game1.player.couldInventoryAcceptThisItem(this.heldItem))
                 return;
             Game1.player.addItemToInventoryBool(this.heldItem, false);
-            this.heldItem = (Item)null;
+            this.heldItem = null;
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)
@@ -414,7 +414,7 @@ namespace CookingSkill
             this.hoverTitle = "";
             this.descriptionText = "";
             this.hoverText = "";
-            this.hoverRecipe = (CraftingRecipe)null;
+            this.hoverRecipe = null;
             this.hoverItem = this.inventory.hover(x, y, this.hoverItem);
             this.hoverAmount = -1;
             if (this.hoverItem != null)
@@ -459,7 +459,7 @@ namespace CookingSkill
                 return;
             if (this.trashCan.containsPoint(x, y))
             {
-                if ((double)this.trashCanLidRotation <= 0.0)
+                if (this.trashCanLidRotation <= 0.0)
                     Game1.playSound("trashcanlid");
                 this.trashCanLidRotation = Math.Min(this.trashCanLidRotation + (float)Math.PI / 48f, 1.570796f);
                 if (this.heldItem == null || Utility.getTrashReclamationPrice(this.heldItem, Game1.player) <= 0)
@@ -479,16 +479,16 @@ namespace CookingSkill
         public override void draw(SpriteBatch b)
         {
             if (this._standaloneMenu)
-                Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true, (string)null, false, true, -1, -1, -1);
+                Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true, null, false, true, -1, -1, -1);
             this.drawHorizontalPartition(b, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256, false, -1, -1, -1);
             this.inventory.draw(b);
             if (this.trashCan != null)
             {
                 this.trashCan.draw(b);
-                b.Draw(Game1.mouseCursors, new Vector2((float)(this.trashCan.bounds.X + 60), (float)(this.trashCan.bounds.Y + 40)), new Rectangle?(new Rectangle(564 + Game1.player.trashCanLevel * 18, 129, 18, 10)), Color.White, this.trashCanLidRotation, new Vector2(16f, 10f), 4f, SpriteEffects.None, 0.86f);
+                b.Draw(Game1.mouseCursors, new Vector2(this.trashCan.bounds.X + 60, this.trashCan.bounds.Y + 40), new Rectangle?(new Rectangle(564 + Game1.player.trashCanLevel * 18, 129, 18, 10)), Color.White, this.trashCanLidRotation, new Vector2(16f, 10f), 4f, SpriteEffects.None, 0.86f);
             }
             b.End();
-            b.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, SamplerState.PointClamp, (DepthStencilState)null, (RasterizerState)null);
+            b.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, SamplerState.PointClamp, null, null);
             foreach (ClickableTextureComponent key in this.pagesOfCraftingRecipes[this.currentCraftingPage].Keys)
             {
                 if (key.hoverText.Equals("ghosted"))
@@ -497,28 +497,28 @@ namespace CookingSkill
                 {
                     key.draw(b, Color.LightGray * 0.4f, 0.89f, 0);
                     if (this.pagesOfCraftingRecipes[this.currentCraftingPage][key].numberProducedPerCraft > 1)
-                        NumberSprite.draw(this.pagesOfCraftingRecipes[this.currentCraftingPage][key].numberProducedPerCraft, b, new Vector2((float)(key.bounds.X + 64 - 2), (float)(key.bounds.Y + 64 - 2)), Color.LightGray * 0.75f, (float)(0.5 * ((double)key.scale / 4.0)), 0.97f, 1f, 0, 0);
+                        NumberSprite.draw(this.pagesOfCraftingRecipes[this.currentCraftingPage][key].numberProducedPerCraft, b, new Vector2(key.bounds.X + 64 - 2, key.bounds.Y + 64 - 2), Color.LightGray * 0.75f, (float)(0.5 * (key.scale / 4.0)), 0.97f, 1f, 0, 0);
                 }
                 else
                 {
                     key.draw(b);
                     if (this.pagesOfCraftingRecipes[this.currentCraftingPage][key].numberProducedPerCraft > 1)
-                        NumberSprite.draw(this.pagesOfCraftingRecipes[this.currentCraftingPage][key].numberProducedPerCraft, b, new Vector2((float)(key.bounds.X + 64 - 2), (float)(key.bounds.Y + 64 - 2)), Color.White, (float)(0.5 * ((double)key.scale / 4.0)), 0.97f, 1f, 0, 0);
+                        NumberSprite.draw(this.pagesOfCraftingRecipes[this.currentCraftingPage][key].numberProducedPerCraft, b, new Vector2(key.bounds.X + 64 - 2, key.bounds.Y + 64 - 2), Color.White, (float)(0.5 * (key.scale / 4.0)), 0.97f, 1f, 0, 0);
                 }
             }
             b.End();
-            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, (DepthStencilState)null, (RasterizerState)null);
+            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             if (this.hoverItem != null)
-                IClickableMenu.drawToolTip(b, this.hoverText, this.hoverTitle, this.hoverItem, this.heldItem != null, -1, 0, -1, -1, (CraftingRecipe)null, -1);
+                IClickableMenu.drawToolTip(b, this.hoverText, this.hoverTitle, this.hoverItem, this.heldItem != null, -1, 0, -1, -1, null, -1);
             else if (!string.IsNullOrEmpty(this.hoverText))
             {
                 if (this.hoverAmount > 0)
-                    IClickableMenu.drawToolTip(b, this.hoverText, this.hoverTitle, (Item)null, true, -1, 0, -1, -1, (CraftingRecipe)null, this.hoverAmount);
+                    IClickableMenu.drawToolTip(b, this.hoverText, this.hoverTitle, null, true, -1, 0, -1, -1, null, this.hoverAmount);
                 else
-                    IClickableMenu.drawHoverText(b, this.hoverText, Game1.smallFont, this.heldItem != null ? 64 : 0, this.heldItem != null ? 64 : 0, -1, (string)null, -1, (string[])null, (Item)null, 0, -1, -1, -1, -1, 1f, (CraftingRecipe)null, (IList<Item>)null);
+                    IClickableMenu.drawHoverText(b, this.hoverText, Game1.smallFont, this.heldItem != null ? 64 : 0, this.heldItem != null ? 64 : 0, -1, null, -1, null, null, 0, -1, -1, -1, -1, 1f, null, null);
             }
             if (this.heldItem != null)
-                this.heldItem.drawInMenu(b, new Vector2((float)(Game1.getOldMouseX() + 16), (float)(Game1.getOldMouseY() + 16)), 1f);
+                this.heldItem.drawInMenu(b, new Vector2(Game1.getOldMouseX() + 16, Game1.getOldMouseY() + 16), 1f);
             base.draw(b);
             if (this.downButton != null && this.currentCraftingPage < this.pagesOfCraftingRecipes.Count - 1)
                 this.downButton.draw(b);
@@ -539,13 +539,13 @@ namespace CookingSkill
             string[] buffIconsToDisplay;
             if (this.cooking && this.lastCookingHover != null)
             {
-                if (Game1.objectInformation[(int)((NetFieldBase<int, NetInt>)(this.lastCookingHover as StardewValley.Object).parentSheetIndex)].Split('/').Length > 7)
+                if (Game1.objectInformation[(int)(this.lastCookingHover as StardewValley.Object).parentSheetIndex].Split('/').Length > 7)
                 {
-                    buffIconsToDisplay = Game1.objectInformation[(int)((NetFieldBase<int, NetInt>)(this.lastCookingHover as StardewValley.Object).parentSheetIndex)].Split('/')[7].Split(' ');
+                    buffIconsToDisplay = Game1.objectInformation[(int)(this.lastCookingHover as StardewValley.Object).parentSheetIndex].Split('/')[7].Split(' ');
                     goto label_35;
                 }
             }
-            buffIconsToDisplay = (string[])null;
+            buffIconsToDisplay = null;
             label_35:
             Item lastCookingHover = this.lastCookingHover;
             CraftingRecipe hoverRecipe = this.hoverRecipe;
@@ -592,7 +592,7 @@ namespace CookingSkill
                 bool flag = false;
                 for (int index2 = Game1.player.items.Count - 1; index2 >= 0; --index2)
                 {
-                    if (Game1.player.items[index2] != null && Game1.player.items[index2] is StardewValley.Object && !(bool)((NetFieldBase<bool, NetBool>)(Game1.player.items[index2] as StardewValley.Object).bigCraftable) && ((int)((NetFieldBase<int, NetInt>)Game1.player.items[index2].parentSheetIndex) == recipeList.Keys.ElementAt<int>(index1) || Game1.player.items[index2].Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule((StardewValley.Object)Game1.player.items[index2], recipeList.Keys.ElementAt<int>(index1))))
+                    if (Game1.player.items[index2] != null && Game1.player.items[index2] is StardewValley.Object && !(bool)(Game1.player.items[index2] as StardewValley.Object).bigCraftable && ((int)Game1.player.items[index2].parentSheetIndex == recipeList.Keys.ElementAt<int>(index1) || Game1.player.items[index2].Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule((StardewValley.Object)Game1.player.items[index2], recipeList.Keys.ElementAt<int>(index1))))
                     {
                         int recipe2 = recipeList[recipeList.Keys.ElementAt<int>(index1)];
                         recipe1 -= Game1.player.items[index2].Stack;
@@ -603,7 +603,7 @@ namespace CookingSkill
                         /////
                             Game1.player.items[index2].Stack -= recipe2;
                         if (Game1.player.items[index2].Stack <= 0)
-                            Game1.player.items[index2] = (Item)null;
+                            Game1.player.items[index2] = null;
                         if (recipe1 <= 0)
                         {
                             flag = true;
@@ -620,7 +620,7 @@ namespace CookingSkill
                         {
                             for (int index3 = additionalMaterial.items.Count - 1; index3 >= 0; --index3)
                             {
-                                if (additionalMaterial.items[index3] != null && additionalMaterial.items[index3] is SObject && ((int)((NetFieldBase<int, NetInt>)additionalMaterial.items[index3].parentSheetIndex) == recipeList.Keys.ElementAt<int>(index1) || additionalMaterial.items[index3].Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule((SObject)additionalMaterial.items[index3], recipeList.Keys.ElementAt<int>(index1))))
+                                if (additionalMaterial.items[index3] != null && additionalMaterial.items[index3] is SObject && ((int)additionalMaterial.items[index3].parentSheetIndex == recipeList.Keys.ElementAt<int>(index1) || additionalMaterial.items[index3].Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule((SObject)additionalMaterial.items[index3], recipeList.Keys.ElementAt<int>(index1))))
                                 {
                                     int num = Math.Min(recipe1, additionalMaterial.items[index3].Stack);
                                     recipe1 -= num;
@@ -631,7 +631,7 @@ namespace CookingSkill
                                         /////
                                         additionalMaterial.items[index3].Stack -= num;
                                     if (additionalMaterial.items[index3].Stack <= 0)
-                                        additionalMaterial.items[index3] = (Item)null;
+                                        additionalMaterial.items[index3] = null;
                                     if (recipe1 <= 0)
                                         break;
                                 }

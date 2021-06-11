@@ -328,7 +328,7 @@ namespace BetterShopMenu
                         hasEnoughToTrade = false;
                     }
                     float textWidth = SpriteText.getWidthOfString("x" + required_item_count);
-                    Utility.drawWithShadow(Game1.spriteBatch, Game1.objectSpriteSheet, new Vector2((float)(rect.Right - 64) - textWidth, rect.Y + 80 - 4), Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, requiredItem, 16, 16), Color.White * (hasEnoughToTrade ? 1f : 0.25f), 0f, Vector2.Zero, 3, flipped: false, -1f, -1, -1, hasEnoughToTrade ? 0.35f : 0f);
+                    Utility.drawWithShadow(Game1.spriteBatch, Game1.objectSpriteSheet, new Vector2(rect.Right - 64 - textWidth, rect.Y + 80 - 4), Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, requiredItem, 16, 16), Color.White * (hasEnoughToTrade ? 1f : 0.25f), 0f, Vector2.Zero, 3, flipped: false, -1f, -1, -1, hasEnoughToTrade ? 0.35f : 0f);
                     SpriteText.drawString(Game1.spriteBatch, "x" + required_item_count, rect.Right - (int)textWidth - 16, rect.Y + 80, 999999, -1, 999999, hasEnoughToTrade ? 1f : 0.5f, 0.88f, junimoText: false, -1, "", purchase_item_text_color);
                 }
                 if (rect.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
@@ -366,10 +366,10 @@ namespace BetterShopMenu
                 int getHoveredItemExtraItemAmount = 5;
                 if (itemPriceAndStock != null && hover != null && itemPriceAndStock.ContainsKey(hover) && itemPriceAndStock[hover].Length > 3)
                     getHoveredItemExtraItemAmount = itemPriceAndStock[hover][3];
-                IClickableMenu.drawToolTip(Game1.spriteBatch, hoverText, boldTitleText, hover as Item, heldItem != null, -1, currency, getHoveredItemExtraItemIndex, getHoveredItemExtraItemAmount, (CraftingRecipe)null, hoverPrice);
+                IClickableMenu.drawToolTip(Game1.spriteBatch, hoverText, boldTitleText, hover as Item, heldItem != null, -1, currency, getHoveredItemExtraItemIndex, getHoveredItemExtraItemAmount, null, hoverPrice);
             }
 
-            heldItem?.drawInMenu(Game1.spriteBatch, new Vector2((float)(Game1.getOldMouseX() + 8), (float)(Game1.getOldMouseY() + 8)), 1f, 1f, 0.9f, StackDrawType.Draw, Color.White, true);
+            heldItem?.drawInMenu(Game1.spriteBatch, new Vector2(Game1.getOldMouseX() + 8, Game1.getOldMouseY() + 8), 1f, 1f, 0.9f, StackDrawType.Draw, Color.White, true);
 
             // some other stuff I don't think matters?
         }
@@ -469,7 +469,7 @@ namespace BetterShopMenu
             {
                 int y1 = scrollBar.bounds.Y;
                 scrollBar.bounds.Y = Math.Min(this.shop.yPositionOnScreen + this.shop.height - 64 - 12 - scrollBar.bounds.Height, Math.Max(y, this.shop.yPositionOnScreen + upArrow.bounds.Height + 20));
-                currentItemIndex = Math.Min(forSale.Count / 6 - 1, Math.Max(0, (int)((double)forSale.Count / 6 * (double)((float)(y - scrollBarRunner.Y) / (float)scrollBarRunner.Height))));
+                currentItemIndex = Math.Min(forSale.Count / 6 - 1, Math.Max(0, (int)((double)forSale.Count / 6 * ((y - scrollBarRunner.Y) / (float)scrollBarRunner.Height))));
                 this.shop.currentItemIndex = currentItemIndex;
                 if (forSale.Count > 0)
                 {
@@ -496,14 +496,14 @@ namespace BetterShopMenu
                     }
                     else
                     {
-                        ShopMenu.chargePlayer(Game1.player, currency, -((obj is StardewValley.Object ? (int)((double)(obj as StardewValley.Object).sellToStorePrice() * (double)sellPercentage) : (int)((double)(obj.salePrice() / 2) * (double)sellPercentage)) * obj.Stack));
+                        ShopMenu.chargePlayer(Game1.player, currency, -((obj is StardewValley.Object ? (int)((obj as StardewValley.Object).sellToStorePrice() * (double)sellPercentage) : (int)(obj.salePrice() / 2 * (double)sellPercentage)) * obj.Stack));
                         int num = obj.Stack / 8 + 2;
                         for (int index = 0; index < num; ++index)
                         {
                             animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
                             {
                                 alphaFade = 0.025f,
-                                motion = new Vector2((float)Game1.random.Next(-3, 4), -4f),
+                                motion = new Vector2(Game1.random.Next(-3, 4), -4f),
                                 acceleration = new Vector2(0.0f, 0.5f),
                                 delayBeforeAnimationStart = index * 25,
                                 scale = 2f
@@ -513,8 +513,8 @@ namespace BetterShopMenu
                                 scale = 4f,
                                 alphaFade = 0.025f,
                                 delayBeforeAnimationStart = index * 50,
-                                motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(this.shop.xPositionOnScreen - 36), (float)(this.shop.yPositionOnScreen + this.shop.height - this.shop.inventory.height - 16)), 8f),
-                                acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(this.shop.xPositionOnScreen - 36), (float)(this.shop.yPositionOnScreen + this.shop.height - this.shop.inventory.height - 16)), 0.5f)
+                                motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2(this.shop.xPositionOnScreen - 36, this.shop.yPositionOnScreen + this.shop.height - this.shop.inventory.height - 16), 8f),
+                                acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2(this.shop.xPositionOnScreen - 36, this.shop.yPositionOnScreen + this.shop.height - this.shop.inventory.height - 16), 0.5f)
                             });
                         }
                         if (obj is StardewValley.Object && (obj as StardewValley.Object).Edibility != -300)
@@ -556,9 +556,9 @@ namespace BetterShopMenu
                     }
                     if (heldItem != null && Game1.options.SnappyMenus && (Game1.activeClickableMenu != null && Game1.activeClickableMenu is ShopMenu) && Game1.player.addItemToInventoryBool((Item)heldItem, false))
                     {
-                        heldItem = (Item)null;
+                        heldItem = null;
                         this.shop.heldItem = heldItem;
-                        DelayedAction.playSoundAfterDelay("coin", 100, (GameLocation)null);
+                        DelayedAction.playSoundAfterDelay("coin", 100, null);
                     }
                 }
             }
@@ -600,8 +600,8 @@ namespace BetterShopMenu
                     }
                     else
                     {
-                        ShopMenu.chargePlayer(Game1.player, currency, -((obj is StardewValley.Object ? (int)((double)(obj as StardewValley.Object).sellToStorePrice() * (double)sellPercentage) : (int)((double)(obj.salePrice() / 2) * (double)sellPercentage)) * obj.Stack));
-                        Item obj2 = (Item)null;
+                        ShopMenu.chargePlayer(Game1.player, currency, -((obj is StardewValley.Object ? (int)((obj as StardewValley.Object).sellToStorePrice() * (double)sellPercentage) : (int)(obj.salePrice() / 2 * (double)sellPercentage)) * obj.Stack));
+                        Item obj2 = null;
                         if (Game1.mouseClickPolling > 300)
                             Game1.playSound("purchaseRepeat");
                         else
@@ -651,9 +651,9 @@ namespace BetterShopMenu
                     }
                     if (heldItem == null || !Game1.options.SnappyMenus || (Game1.activeClickableMenu == null || !(Game1.activeClickableMenu is ShopMenu)) || !Game1.player.addItemToInventoryBool((Item)heldItem, false))
                         break;
-                    heldItem = (Item)null;
+                    heldItem = null;
                     this.shop.heldItem = heldItem;
-                    DelayedAction.playSoundAfterDelay("coin", 100, (GameLocation)null);
+                    DelayedAction.playSoundAfterDelay("coin", 100, null);
                     break;
                 }
             }

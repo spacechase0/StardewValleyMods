@@ -20,7 +20,7 @@ namespace MoreGrassStarters
         {
             var data = new Dictionary<string, string>();
             data["Type"] = ((int)this.grassType.Value).ToString();
-            data["WeedCount"] = ((int)this.numberOfWeeds.Value).ToString();
+            data["WeedCount"] = this.numberOfWeeds.Value.ToString();
             return data;
         }
 
@@ -85,36 +85,36 @@ namespace MoreGrassStarters
                         color = new Color(148, 146, 71);
                         break;
                     case 3:
-                        color = new Color(216, 240, (int)byte.MaxValue);
+                        color = new Color(216, 240, byte.MaxValue);
                         break;
                     case 4:
                         color = new Color(165, 93, 58);
                         break;
                 }
-                location.temporarySprites.Add(new TemporaryAnimatedSprite(28, tileLocation * (float)Game1.tileSize + new Vector2((float)Game1.random.Next(-Game1.pixelZoom * 4, Game1.pixelZoom * 4), (float)Game1.random.Next(-Game1.pixelZoom * 4, Game1.pixelZoom * 4)), color, 8, Game1.random.NextDouble() < 0.5, (float)Game1.random.Next(60, 100), 0, -1, -1f, -1, 0));
+                location.temporarySprites.Add(new TemporaryAnimatedSprite(28, tileLocation * Game1.tileSize + new Vector2(Game1.random.Next(-Game1.pixelZoom * 4, Game1.pixelZoom * 4), Game1.random.Next(-Game1.pixelZoom * 4, Game1.pixelZoom * 4)), color, 8, Game1.random.NextDouble() < 0.5, Game1.random.Next(60, 100), 0, -1, -1f, -1, 0));
                 if (this.numberOfWeeds.Value <= 0)
                 {
-                    if ((int)this.grassType.Value != 1)
+                    if (this.grassType.Value != 1)
                     {
-                        Random random = Game1.IsMultiplayer ? Game1.recentMultiplayerRandom : new Random((int)((double)Game1.uniqueIDForThisGame + (double)tileLocation.X * 1000.0 + (double)tileLocation.Y * 11.0 + /*(double)Game1.mine.mineLevel +*/ (double)Game1.player.timesReachedMineBottom));
+                        Random random = Game1.IsMultiplayer ? Game1.recentMultiplayerRandom : new Random((int)(Game1.uniqueIDForThisGame + tileLocation.X * 1000.0 + tileLocation.Y * 11.0 + /*(double)Game1.mine.mineLevel +*/ Game1.player.timesReachedMineBottom));
                         if (random.NextDouble() < 0.005)
-                            Game1.createObjectDebris(114, (int)tileLocation.X, (int)tileLocation.Y, -1, 0, 1f, (GameLocation)null);
+                            Game1.createObjectDebris(114, (int)tileLocation.X, (int)tileLocation.Y, -1, 0, 1f, null);
                         else if (random.NextDouble() < 0.01)
-                            Game1.createDebris(4, (int)tileLocation.X, (int)tileLocation.Y, random.Next(1, 2), (GameLocation)null);
+                            Game1.createDebris(4, (int)tileLocation.X, (int)tileLocation.Y, random.Next(1, 2), null);
                         else if (random.NextDouble() < 0.02)
-                            Game1.createDebris(92, (int)tileLocation.X, (int)tileLocation.Y, random.Next(2, 4), (GameLocation)null);
+                            Game1.createDebris(92, (int)tileLocation.X, (int)tileLocation.Y, random.Next(2, 4), null);
                     }
-                    else if (t is MeleeWeapon && (t.Name.Contains("Scythe") || t.ParentSheetIndex == 47) && ((Game1.IsMultiplayer ? Game1.recentMultiplayerRandom : new Random((int)((double)Game1.uniqueIDForThisGame + (double)tileLocation.X * 1000.0 + (double)tileLocation.Y * 11.0))).NextDouble() < 0.5 && (Game1.getLocationFromName("Farm") as Farm).tryToAddHay(1) == 0))
+                    else if (t is MeleeWeapon && (t.Name.Contains("Scythe") || t.ParentSheetIndex == 47) && ((Game1.IsMultiplayer ? Game1.recentMultiplayerRandom : new Random((int)(Game1.uniqueIDForThisGame + tileLocation.X * 1000.0 + tileLocation.Y * 11.0))).NextDouble() < 0.5 && (Game1.getLocationFromName("Farm") as Farm).tryToAddHay(1) == 0))
                     {
-                        t.getLastFarmerToUse().currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(Game1.objectSpriteSheetName, Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 178, 16, 16), 750f, 1, 0, t.getLastFarmerToUse().position - new Vector2(0.0f, (float)(Game1.tileSize * 2)), false, false, t.getLastFarmerToUse().position.Y / 10000f, 0.005f, Color.White, (float)Game1.pixelZoom, -0.005f, 0.0f, 0.0f, false)
+                        t.getLastFarmerToUse().currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(Game1.objectSpriteSheetName, Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 178, 16, 16), 750f, 1, 0, t.getLastFarmerToUse().position - new Vector2(0.0f, Game1.tileSize * 2), false, false, t.getLastFarmerToUse().position.Y / 10000f, 0.005f, Color.White, Game1.pixelZoom, -0.005f, 0.0f, 0.0f, false)
                         {
                             motion = {
                 Y = -1f
               },
-                            layerDepth = (float)(1.0 - (double)Game1.random.Next(100) / 10000.0),
+                            layerDepth = (float)(1.0 - Game1.random.Next(100) / 10000.0),
                             delayBeforeAnimationStart = Game1.random.Next(350)
                         });
-                        Game1.addHUDMessage(new HUDMessage("Hay", 1, true, Color.LightGoldenrodYellow, (Item)new StardewValley.Object(178, 1, false, -1, 0)));
+                        Game1.addHUDMessage(new HUDMessage("Hay", 1, true, Color.LightGoldenrodYellow, new StardewValley.Object(178, 1, false, -1, 0)));
                     }
                     return true;
                 }

@@ -102,8 +102,8 @@ namespace SpaceCore
                 return new AdjustedTarget(0, sourceRect.Y);
             }*/
 
-            int index = (int)sourceRect.Y / unit;
-            int extra = (int)sourceRect.Y % unit;
+            int index = sourceRect.Y / unit;
+            int extra = sourceRect.Y % unit;
 
             int tileSheet = 0;
             int maxTileIndexPer = 4096 / unit;

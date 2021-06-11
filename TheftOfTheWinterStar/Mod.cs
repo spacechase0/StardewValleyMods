@@ -258,7 +258,7 @@ namespace TheftOfTheWinterStar
                                     }
                                 }
                             }
-                            loc.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 2176, 320, 320), 60f, 4, 100, pair.Key * 64f + new Vector2((float)sbyte.MinValue, (float)sbyte.MinValue), false, false)
+                            loc.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 2176, 320, 320), 60f, 4, 100, pair.Key * 64f + new Vector2(sbyte.MinValue, sbyte.MinValue), false, false)
                             {
                                 color = Color.White * 0.4f,
                                 delayBeforeAnimationStart = Game1.random.Next(1000),
@@ -585,11 +585,11 @@ namespace TheftOfTheWinterStar
                 if (farmer.ActiveObject?.ParentSheetIndex == key)
                 {
                     farmer.removeFirstOfThisItemFromInventory(key);
-                    farmer.mailReceived.Add("FrostDungeon.Locked." + farmer.currentLocation.doesTileHaveProperty((int)e.Position.X, (int)e.Position.Y, "Buildings", "UnlockId"));
+                    farmer.mailReceived.Add("FrostDungeon.Locked." + farmer.currentLocation.doesTileHaveProperty(e.Position.X, e.Position.Y, "Buildings", "UnlockId"));
 
-                    var newAction = farmer.currentLocation.doesTileHaveProperty((int)e.Position.X, (int)e.Position.Y, "UnlockAction", "Buildings");
-                    farmer.currentLocation.setTileProperty((int)e.Position.X, (int)e.Position.Y, "Buildings", "Action", newAction);
-                    farmer.currentLocation.setMapTileIndex((int)e.Position.X, (int)e.Position.Y - 2, 48, "Buildings");
+                    var newAction = farmer.currentLocation.doesTileHaveProperty(e.Position.X, e.Position.Y, "UnlockAction", "Buildings");
+                    farmer.currentLocation.setTileProperty(e.Position.X, e.Position.Y, "Buildings", "Action", newAction);
+                    farmer.currentLocation.setMapTileIndex(e.Position.X, e.Position.Y - 2, 48, "Buildings");
 
                     Game1.drawDialogueNoTyping(Game1.content.LoadString("Strings\\StringsFromMaps:FrostDungeon.Unlock"));
                     Game1.playSound("crystal");
@@ -609,7 +609,7 @@ namespace TheftOfTheWinterStar
                         this.saveData.ArenaStage = ArenaStage.Stage1;
                         for (int i = 0; i < 9; ++i)
                         {
-                            int cx = (int)e.Position.X, cy = (int)e.Position.Y;
+                            int cx = e.Position.X, cy = e.Position.Y;
                             int dx = (int)(Math.Cos(Math.PI * 2 / 9 * i) * 5);
                             int dy = (int)(Math.Sin(Math.PI * 2 / 9 * i) * 5);
                             int x = cx + dx, y = cy + dy;
@@ -629,7 +629,7 @@ namespace TheftOfTheWinterStar
                         this.saveData.ArenaStage = ArenaStage.Stage2;
                         for (int i = 0; i < 3; ++i)
                         {
-                            int cx = (int)e.Position.X, cy = (int)e.Position.Y;
+                            int cx = e.Position.X, cy = e.Position.Y;
                             int dx = (int)(Math.Cos(Math.PI * 2 / 3 * i) * 4);
                             int dy = (int)(Math.Sin(Math.PI * 2 / 3 * i) * 4);
                             int x = cx + dx, y = cy + dy;
@@ -650,13 +650,13 @@ namespace TheftOfTheWinterStar
                 if (farmer.ActiveObject?.ParentSheetIndex == item)
                 {
                     farmer.removeFirstOfThisItemFromInventory(item);
-                    farmer.currentLocation.removeTileProperty((int)e.Position.X, (int)e.Position.Y, "Buildings", "Action");
+                    farmer.currentLocation.removeTileProperty(e.Position.X, e.Position.Y, "Buildings", "Action");
 
-                    int warpIndex = farmer.currentLocation.Map.GetLayer("Buildings").Tiles[(int)e.Position.X, (int)e.Position.Y].TileIndex - 32;
+                    int warpIndex = farmer.currentLocation.Map.GetLayer("Buildings").Tiles[e.Position.X, e.Position.Y].TileIndex - 32;
                     var back = farmer.currentLocation.Map.GetLayer("Back");
-                    back.Tiles[(int)e.Position.X, (int)e.Position.Y + 3] = new StaticTile(back, farmer.currentLocation.Map.TileSheets[0], BlendMode.Additive, warpIndex);
+                    back.Tiles[e.Position.X, e.Position.Y + 3] = new StaticTile(back, farmer.currentLocation.Map.TileSheets[0], BlendMode.Additive, warpIndex);
 
-                    var warp = new Warp((int)e.Position.X, (int)e.Position.Y + 3, toks[2], 7, 9, false);
+                    var warp = new Warp(e.Position.X, e.Position.Y + 3, toks[2], 7, 9, false);
                     farmer.currentLocation.warps.Add(warp);
 
                     Game1.playSound("secret1");
@@ -675,8 +675,8 @@ namespace TheftOfTheWinterStar
                 {
                     farmer.removeFirstOfThisItemFromInventory(key);
 
-                    farmer.currentLocation.removeTile((int)e.Position.X, (int)e.Position.Y - 1, "Front");
-                    farmer.currentLocation.removeTile((int)e.Position.X, (int)e.Position.Y, "Buildings");
+                    farmer.currentLocation.removeTile(e.Position.X, e.Position.Y - 1, "Front");
+                    farmer.currentLocation.removeTile(e.Position.X, e.Position.Y, "Buildings");
 
                     Game1.playSound("secret1");
 
@@ -719,7 +719,7 @@ namespace TheftOfTheWinterStar
                 };
                 int target = 243;
 
-                int tx = (int)e.Position.X, ty = (int)e.Position.Y;
+                int tx = e.Position.X, ty = e.Position.Y;
                 while (true)
                 {
                     tx += ox;
@@ -733,8 +733,8 @@ namespace TheftOfTheWinterStar
                     }
                 }
 
-                int currIndex = farmer.currentLocation.getTileIndexAt((int)e.Position.X, (int)e.Position.Y, "Buildings");
-                farmer.currentLocation.removeTile((int)e.Position.X, (int)e.Position.Y, "Buildings");
+                int currIndex = farmer.currentLocation.getTileIndexAt(e.Position.X, e.Position.Y, "Buildings");
+                farmer.currentLocation.removeTile(e.Position.X, e.Position.Y, "Buildings");
                 var buildings = farmer.currentLocation.Map.GetLayer("Buildings");
                 buildings.Tiles[tx, ty] = new StaticTile(buildings, farmer.currentLocation.Map.TileSheets[0], BlendMode.Additive, currIndex);
                 farmer.currentLocation.setTileProperty(tx, ty, "Buildings", "Action", "Movable");
@@ -804,7 +804,7 @@ namespace TheftOfTheWinterStar
             bool[,] circleOutlineGrid2 = Game1.getCircleOutlineGrid(radius);
 
             bool flag = false;
-            Vector2 index1 = new Vector2((float)(int)((double)e.Position.X - (double)radius), (float)(int)((double)e.Position.Y - (double)radius));
+            Vector2 index1 = new Vector2((int)(e.Position.X - (double)radius), (int)(e.Position.Y - (double)radius));
             for (int index2 = 0; index2 < radius * 2 + 1; ++index2)
             {
                 for (int index3 = 0; index3 < radius * 2 + 1; ++index3)
@@ -824,12 +824,12 @@ namespace TheftOfTheWinterStar
                         this.doBombableCheck(who.currentLocation, index1);
                     }
                     ++index1.Y;
-                    index1.Y = Math.Min((float)(who.currentLocation.map.Layers[0].LayerHeight - 1), Math.Max(0.0f, index1.Y));
+                    index1.Y = Math.Min(who.currentLocation.map.Layers[0].LayerHeight - 1, Math.Max(0.0f, index1.Y));
                 }
                 ++index1.X;
-                index1.Y = Math.Min((float)(who.currentLocation.map.Layers[0].LayerWidth - 1), Math.Max(0.0f, index1.X));
-                index1.Y = e.Position.Y - (float)radius;
-                index1.Y = Math.Min((float)(who.currentLocation.map.Layers[0].LayerHeight - 1), Math.Max(0.0f, index1.Y));
+                index1.Y = Math.Min(who.currentLocation.map.Layers[0].LayerWidth - 1, Math.Max(0.0f, index1.X));
+                index1.Y = e.Position.Y - radius;
+                index1.Y = Math.Min(who.currentLocation.map.Layers[0].LayerHeight - 1, Math.Max(0.0f, index1.Y));
             }
         }
 

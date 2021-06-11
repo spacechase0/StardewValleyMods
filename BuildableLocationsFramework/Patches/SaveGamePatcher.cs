@@ -48,15 +48,15 @@ namespace BuildableLocationsFramework.Patches
                     continue;
                 if (gamelocation is BuildableGameLocation bgl)
                 {
-                    GameLocation locationFromName = Game1.getLocationFromName((string)(NetFieldBase<string, NetString>)gamelocation.name);
+                    GameLocation locationFromName = Game1.getLocationFromName(gamelocation.name);
                     foreach (Building building in ((BuildableGameLocation)gamelocation).buildings)
                         building.load();
-                    ((BuildableGameLocation)locationFromName).buildings.Set((ICollection<Building>)((BuildableGameLocation)gamelocation).buildings);
+                    ((BuildableGameLocation)locationFromName).buildings.Set(((BuildableGameLocation)gamelocation).buildings);
                 }
                 else if (gamelocation is IAnimalLocation al)
                 {
                     foreach (FarmAnimal farmAnimal in al.Animals.Values)
-                        farmAnimal.reload((Building)null);
+                        farmAnimal.reload(null);
                 }
             }
         }

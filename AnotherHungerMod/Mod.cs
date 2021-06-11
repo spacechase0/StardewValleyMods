@@ -96,7 +96,7 @@ namespace AnotherHungerMod
                 targetArea.Y += (int)pos.Y;
                 b.Draw(Game1.staminaRect, targetArea, new Rectangle(0, 0, 1, 1), Color.Orange);
 
-                if ((double)Game1.getOldMouseX() >= (double)targetArea.X && (double)Game1.getOldMouseY() >= (double)targetArea.Y && (double)Game1.getOldMouseX() < (double)targetArea.X + targetArea.Width && Game1.getOldMouseY() < targetArea.Y + targetArea.Height)
+                if (Game1.getOldMouseX() >= (double)targetArea.X && Game1.getOldMouseY() >= (double)targetArea.Y && Game1.getOldMouseX() < (double)targetArea.X + targetArea.Width && Game1.getOldMouseY() < targetArea.Y + targetArea.Height)
                     Game1.drawWithBorder(Math.Max(0, (int)Game1.player.GetFullness()).ToString() + "/" + Game1.player.GetMaxFullness(), Color.Black * 0.0f, Color.White, new Vector2(Game1.getOldMouseX(), Game1.getOldMouseY() - 32));
             }
 

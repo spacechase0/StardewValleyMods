@@ -52,11 +52,11 @@ namespace BuildableLocationsFramework.Patches
             __instance.update(time, environment, (long)__instance.myID, false);
             if (!Game1.IsMasterGame)
                 return false;
-            if (currentBuilding != null && Game1.random.NextDouble() < 0.002 && ((bool)(NetFieldBase<bool, NetBool>)currentBuilding.animalDoorOpen && Game1.timeOfDay < 1630) && (!Game1.isRaining && !Game1.currentSeason.Equals("winter") && environment.farmers.Count == 0))
+            if (currentBuilding != null && Game1.random.NextDouble() < 0.002 && ((bool)currentBuilding.animalDoorOpen && Game1.timeOfDay < 1630) && (!Game1.isRaining && !Game1.currentSeason.Equals("winter") && environment.farmers.Count == 0))
             {
                 GameLocation locationFromName = Mod.findOutdoorsOf(currentBuilding);
                 IAnimalLocation locationFromName_animals = (IAnimalLocation)locationFromName;
-                if (locationFromName.isCollidingPosition(new Rectangle(((int)(NetFieldBase<int, NetInt>)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)(NetFieldBase<int, NetInt>)currentBuilding.tileY + currentBuilding.animalDoor.Y) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, (Character)__instance, false, false, false) || locationFromName.isCollidingPosition(new Rectangle(((int)(NetFieldBase<int, NetInt>)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)(NetFieldBase<int, NetInt>)currentBuilding.tileY + currentBuilding.animalDoor.Y + 1) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, (Character)__instance, false, false, false))
+                if (locationFromName.isCollidingPosition(new Rectangle(((int)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false, false, false) || locationFromName.isCollidingPosition(new Rectangle(((int)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y + 1) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false, false, false))
                     return false;
                 if (locationFromName_animals.Animals.ContainsKey((long)__instance.myID))
                 {
@@ -73,27 +73,27 @@ namespace BuildableLocationsFramework.Patches
                 locationFromName_animals.Animals.Add((long)__instance.myID, __instance);
                 __instance.faceDirection(2);
                 __instance.SetMovingDown(true);
-                __instance.Position = new Vector2((float)currentBuilding.getRectForAnimalDoor().X, (float)(((int)(NetFieldBase<int, NetInt>)currentBuilding.tileY + currentBuilding.animalDoor.Y) * 64 - (__instance.Sprite.getHeight() * 4 - __instance.GetBoundingBox().Height) + 32));
+                __instance.Position = new Vector2(currentBuilding.getRectForAnimalDoor().X, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y) * 64 - (__instance.Sprite.getHeight() * 4 - __instance.GetBoundingBox().Height) + 32);
                 if (FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick)
                 {
                     ++FarmAnimal.NumPathfindingThisTick;
-                    __instance.controller = new PathFindController((Character)__instance, (GameLocation)locationFromName, new PathFindController.isAtEnd(FarmAnimal.grassEndPointFunction), Game1.random.Next(4), false, new PathFindController.endBehavior(FarmAnimal.behaviorAfterFindingGrassPatch), 200, Point.Zero, true);
+                    __instance.controller = new PathFindController(__instance, locationFromName, new PathFindController.isAtEnd(FarmAnimal.grassEndPointFunction), Game1.random.Next(4), false, new PathFindController.endBehavior(FarmAnimal.behaviorAfterFindingGrassPatch), 200, Point.Zero, true);
                 }
                 if (__instance.controller == null || __instance.controller.pathToEndPoint == null || __instance.controller.pathToEndPoint.Count < 3)
                 {
                     __instance.SetMovingDown(true);
-                    __instance.controller = (PathFindController)null;
+                    __instance.controller = null;
                 }
                 else
                 {
                     __instance.faceDirection(2);
-                    __instance.Position = new Vector2((float)(__instance.controller.pathToEndPoint.Peek().X * 64), (float)(__instance.controller.pathToEndPoint.Peek().Y * 64 - (__instance.Sprite.getHeight() * 4 - __instance.GetBoundingBox().Height) + 16));
+                    __instance.Position = new Vector2(__instance.controller.pathToEndPoint.Peek().X * 64, __instance.controller.pathToEndPoint.Peek().Y * 64 - (__instance.Sprite.getHeight() * 4 - __instance.GetBoundingBox().Height) + 16);
                     if (!__instance.isCoopDweller())
                         __instance.position.X -= 32f;
                 }
                 __instance.noWarpTimer = 3000;
                 --currentBuilding.currentOccupants.Value;
-                if (Utility.isOnScreen(__instance.getTileLocationPoint(), 192, (GameLocation)locationFromName))
+                if (Utility.isOnScreen(__instance.getTileLocationPoint(), 192, locationFromName))
                     locationFromName.localSound("sandyStep");
                 if (environment.isTileOccupiedByFarmer(__instance.getTileLocation()) != null)
                     environment.isTileOccupiedByFarmer(__instance.getTileLocation()).TemporaryPassableTiles.Add(__instance.GetBoundingBox());
@@ -115,7 +115,7 @@ namespace BuildableLocationsFramework.Patches
             if (__instance.Sprite.CurrentAnimation != null)
             {
                 if (__instance.Sprite.animateOnce(time))
-                    __instance.Sprite.CurrentAnimation = (List<FarmerSprite.AnimationFrame>)null;
+                    __instance.Sprite.CurrentAnimation = null;
                 return false;
             }
             __instance.update(time, location, (long)__instance.myID, false);
@@ -123,7 +123,7 @@ namespace BuildableLocationsFramework.Patches
                 return false;
             if (__instance.controller != null && __instance.controller.timerSinceLastCheckPoint > 10000)
             {
-                __instance.controller = (PathFindController)null;
+                __instance.controller = null;
                 __instance.Halt();
             }
             if (location is BuildableGameLocation && location is IAnimalLocation && __instance.noWarpTimer <= 0)
@@ -135,9 +135,9 @@ namespace BuildableLocationsFramework.Patches
                         location.localSound("dwoop");
                     ((IAnimalLocation)location).Animals.Remove((long)__instance.myID);
                     (building.indoors.Value as AnimalHouse).animals[(long)__instance.myID] = __instance;
-                    __instance.setRandomPosition((GameLocation)(NetFieldBase<GameLocation, NetRef<GameLocation>>)building.indoors);
+                    __instance.setRandomPosition(building.indoors);
                     __instance.faceDirection(Game1.random.Next(4));
-                    __instance.controller = (PathFindController)null;
+                    __instance.controller = null;
                     return true;
                 }
             }
@@ -154,7 +154,7 @@ namespace BuildableLocationsFramework.Patches
             }
             else if (__instance.pauseTimer <= 0)
             {
-                if (Game1.random.NextDouble() < 0.001 && (int)(NetFieldBase<int, NetInt>)__instance.age >= (int)(byte)(NetFieldBase<byte, NetByte>)__instance.ageWhenMature && (Game1.gameMode == (byte)3 && __instance.sound.Value != null) && Utility.isOnScreen(__instance.Position, 192))
+                if (Game1.random.NextDouble() < 0.001 && (int)__instance.age >= (byte)__instance.ageWhenMature && (Game1.gameMode == 3 && __instance.sound.Value != null) && Utility.isOnScreen(__instance.Position, 192))
                     __instance.makeSound();
                 if (!Game1.IsClient && Game1.random.NextDouble() < 0.007 && __instance.uniqueFrameAccumulator == -1)
                 {
@@ -165,7 +165,7 @@ namespace BuildableLocationsFramework.Patches
                         {
                             int facingDirection = __instance.FacingDirection;
                             __instance.faceDirection(direction);
-                            if (!(bool)(NetFieldBase<bool, NetBool>)location.isOutdoors && location.isCollidingPosition(__instance.nextPosition(direction), Game1.viewport, (Character)__instance))
+                            if (!(bool)location.isOutdoors && location.isCollidingPosition(__instance.nextPosition(direction), Game1.viewport, __instance))
                             {
                                 __instance.faceDirection(facingDirection);
                                 return false;
@@ -292,11 +292,11 @@ namespace BuildableLocationsFramework.Patches
                 __result = false;
                 return false;
             }
-            if ((bool)(NetFieldBase<bool, NetBool>)isEating)
+            if ((bool)isEating)
             {
                 if (__instance.home != null && __instance.home.getRectForAnimalDoor().Intersects(__instance.GetBoundingBox()))
                 {
-                    FarmAnimal.behaviorAfterFindingGrassPatch((Character)__instance, location);
+                    FarmAnimal.behaviorAfterFindingGrassPatch(__instance, location);
                     isEating.Value = false;
                     __instance.Halt();
                     __result = false;
@@ -334,10 +334,10 @@ namespace BuildableLocationsFramework.Patches
                     __result = true;
                     return false;
                 }
-                if (location.IsOutdoors && (byte)(NetFieldBase<byte, NetByte>)__instance.fullness < (byte)195 && (Game1.random.NextDouble() < 0.002 && FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick))
+                if (location.IsOutdoors && (byte)__instance.fullness < 195 && (Game1.random.NextDouble() < 0.002 && FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick))
                 {
                     ++FarmAnimal.NumPathfindingThisTick;
-                    __instance.controller = new PathFindController((Character)__instance, location, new PathFindController.isAtEnd(FarmAnimal.grassEndPointFunction), -1, false, new PathFindController.endBehavior(FarmAnimal.behaviorAfterFindingGrassPatch), 200, Point.Zero, true);
+                    __instance.controller = new PathFindController(__instance, location, new PathFindController.isAtEnd(FarmAnimal.grassEndPointFunction), -1, false, new PathFindController.endBehavior(FarmAnimal.behaviorAfterFindingGrassPatch), 200, Point.Zero, true);
                 }
                 if (Game1.timeOfDay >= 1700 && location.IsOutdoors && (__instance.controller == null && Game1.random.NextDouble() < 0.002))
                 {
@@ -345,25 +345,25 @@ namespace BuildableLocationsFramework.Patches
                     {
                         (location as Farm).animals.Remove((long)__instance.myID);
                         (__instance.home.indoors.Value as AnimalHouse).animals.Add((long)__instance.myID, __instance);
-                        __instance.setRandomPosition((GameLocation)(NetFieldBase<GameLocation, NetRef<GameLocation>>)__instance.home.indoors);
+                        __instance.setRandomPosition(__instance.home.indoors);
                         __instance.faceDirection(Game1.random.Next(4));
-                        __instance.controller = (PathFindController)null;
+                        __instance.controller = null;
                         __result = true;
                         return false;
                     }
                     if (FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick)
                     {
                         ++FarmAnimal.NumPathfindingThisTick;
-                        __instance.controller = new PathFindController((Character)__instance, location, new PathFindController.isAtEnd(PathFindController.isAtEndPoint), 0, false, (PathFindController.endBehavior)null, 200, new Point((int)(NetFieldBase<int, NetInt>)__instance.home.tileX + __instance.home.animalDoor.X, (int)(NetFieldBase<int, NetInt>)__instance.home.tileY + __instance.home.animalDoor.Y), true);
+                        __instance.controller = new PathFindController(__instance, location, new PathFindController.isAtEnd(PathFindController.isAtEndPoint), 0, false, null, 200, new Point((int)__instance.home.tileX + __instance.home.animalDoor.X, (int)__instance.home.tileY + __instance.home.animalDoor.Y), true);
                     }
                 }
-                if (location.IsOutdoors && !Game1.isRaining && (!Game1.currentSeason.Equals("winter") && (int)(NetFieldBase<int, NetInt>)__instance.currentProduce != -1) && ((int)(NetFieldBase<int, NetInt>)__instance.age >= (int)(byte)(NetFieldBase<byte, NetByte>)__instance.ageWhenMature && __instance.type.Value.Contains("Pig") && Game1.random.NextDouble() < 0.0002))
+                if (location.IsOutdoors && !Game1.isRaining && (!Game1.currentSeason.Equals("winter") && (int)__instance.currentProduce != -1) && ((int)__instance.age >= (byte)__instance.ageWhenMature && __instance.type.Value.Contains("Pig") && Game1.random.NextDouble() < 0.0002))
                 {
                     Rectangle boundingBox = __instance.GetBoundingBox();
                     for (int corner = 0; corner < 4; ++corner)
                     {
                         Vector2 cornersOfThisRectangle = Utility.getCornersOfThisRectangle(ref boundingBox, corner);
-                        Vector2 key = new Vector2((float)(int)((double)cornersOfThisRectangle.X / 64.0), (float)(int)((double)cornersOfThisRectangle.Y / 64.0));
+                        Vector2 key = new Vector2((int)(cornersOfThisRectangle.X / 64.0), (int)(cornersOfThisRectangle.Y / 64.0));
                         if (location.terrainFeatures.ContainsKey(key) || location.objects.ContainsKey(key))
                         {
                             __result = false;
@@ -372,9 +372,9 @@ namespace BuildableLocationsFramework.Patches
                     }
                     if (Game1.player.currentLocation.Equals(location))
                     {
-                        DelayedAction.playSoundAfterDelay("dirtyHit", 450, (GameLocation)null, -1);
-                        DelayedAction.playSoundAfterDelay("dirtyHit", 900, (GameLocation)null, -1);
-                        DelayedAction.playSoundAfterDelay("dirtyHit", 1350, (GameLocation)null, -1);
+                        DelayedAction.playSoundAfterDelay("dirtyHit", 450, null, -1);
+                        DelayedAction.playSoundAfterDelay("dirtyHit", 900, null, -1);
+                        DelayedAction.playSoundAfterDelay("dirtyHit", 1350, null, -1);
                     }
                     if (location.Equals(Game1.currentLocation))
                     {
@@ -418,11 +418,11 @@ namespace BuildableLocationsFramework.Patches
                             case 3:
                                 __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>()
                                 {
-                                    new(5, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
-                                    new(7, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
-                                    new(5, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
-                                    new(7, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
-                                    new(5, 250, false, true, (AnimatedSprite.endOfAnimationBehavior)null, false),
+                                    new(5, 250, false, true, null, false),
+                                    new(7, 250, false, true, null, false),
+                                    new(5, 250, false, true, null, false),
+                                    new(7, 250, false, true, null, false),
+                                    new(5, 250, false, true, null, false),
                                     new(7, 250, false, true, findTruffleDelegate, false)
                                 });
                                 break;

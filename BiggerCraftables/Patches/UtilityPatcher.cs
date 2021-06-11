@@ -57,7 +57,7 @@ namespace BiggerCraftables.Patches
             {
                 for (int iy = (int)tileLocation.Y; iy < (int)tileLocation.Y + entry.Length; ++iy)
                 {
-                    if (Math.Abs((float)ix - playerTile.X) <= (float)1 && Math.Abs((float)iy - playerTile.Y) <= (float)1)
+                    if (Math.Abs(ix - playerTile.X) <= 1 && Math.Abs(iy - playerTile.Y) <= 1)
                     {
                         withinRadius = true;
                     }

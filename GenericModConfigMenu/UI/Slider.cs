@@ -48,14 +48,14 @@ namespace GenericModConfigMenu.UI
 
             if (this.dragging)
             {
-                float perc = (Game1.getOldMouseX() - this.Position.X) / (float)this.Width;
+                float perc = (Game1.getOldMouseX() - this.Position.X) / this.Width;
                 if (this.Value is int)
                 {
                     this.Value = Util.Clamp<T>(this.Minimum, (T)(object)(int)(perc * ((int)(object)this.Maximum - (int)(object)this.Minimum) + (int)(object)this.Minimum), this.Maximum);
                 }
                 else if (this.Value is float)
                 {
-                    this.Value = Util.Clamp<T>(this.Minimum, (T)(object)(float)(perc * ((float)(object)this.Maximum - (float)(object)this.Minimum) + (float)(object)this.Minimum), this.Maximum);
+                    this.Value = Util.Clamp<T>(this.Minimum, (T)(object)(perc * ((float)(object)this.Maximum - (float)(object)this.Minimum) + (float)(object)this.Minimum), this.Maximum);
                 }
 
                 this.Value = Util.Adjust(this.Value, this.Interval);
@@ -74,7 +74,7 @@ namespace GenericModConfigMenu.UI
             }
             else if (this.Value is float)
             {
-                perc = ((float)(object)this.Value - (float)(object)this.Minimum) / (float)((float)(object)this.Maximum - (float)(object)this.Minimum);
+                perc = ((float)(object)this.Value - (float)(object)this.Minimum) / ((float)(object)this.Maximum - (float)(object)this.Minimum);
             }
 
             Rectangle back = new Rectangle((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);

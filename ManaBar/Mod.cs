@@ -84,7 +84,7 @@ namespace ManaBar
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
-                writer.Write((int)Mod.Data.players.Count);
+                writer.Write(Mod.Data.players.Count);
                 foreach (var entry in Mod.Data.players)
                 {
                     writer.Write(entry.Key);
@@ -119,8 +119,8 @@ namespace ManaBar
                 targetArea.Y += (int)manaPos.Y;
                 b.Draw(Mod.manaFg, targetArea, new Rectangle(0, 0, 1, 1), Color.White);
 
-                if ((double)Game1.getOldMouseX() >= (double)targetArea.X && (double)Game1.getOldMouseY() >= (double)targetArea.Y && (double)Game1.getOldMouseX() < (double)targetArea.X + targetArea.Width && Game1.getOldMouseY() < targetArea.Y + targetArea.Height)
-                    Game1.drawWithBorder(Math.Max(0, (int)Game1.player.getCurrentMana()).ToString() + "/" + Game1.player.getMaxMana(), Color.Black * 0.0f, Color.White, new Vector2(Game1.getOldMouseX(), Game1.getOldMouseY() - 32));
+                if (Game1.getOldMouseX() >= (double)targetArea.X && Game1.getOldMouseY() >= (double)targetArea.Y && Game1.getOldMouseX() < (double)targetArea.X + targetArea.Width && Game1.getOldMouseY() < targetArea.Y + targetArea.Height)
+                    Game1.drawWithBorder(Math.Max(0, Game1.player.getCurrentMana()).ToString() + "/" + Game1.player.getMaxMana(), Color.Black * 0.0f, Color.White, new Vector2(Game1.getOldMouseX(), Game1.getOldMouseY() - 32));
             }
         }
 

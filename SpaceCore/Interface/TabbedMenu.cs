@@ -19,7 +19,7 @@ namespace SpaceCore.Interface
             IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, Color.White);
 
             b.End();
-            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, (DepthStencilState)null, (RasterizerState)null, null, Matrix.CreateTranslation(this.xPositionOnScreen, this.yPositionOnScreen, 0));
+            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Matrix.CreateTranslation(this.xPositionOnScreen, this.yPositionOnScreen, 0));
             {
                 int tabArea = this.width / this.tabs.Length;
 
@@ -36,7 +36,7 @@ namespace SpaceCore.Interface
                 this.tabs[this.currentTab].draw(b);
             }
             b.End();
-            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, (DepthStencilState)null, (RasterizerState)null);
+            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
 
             base.draw(b);
             this.drawMouse(b);

@@ -89,7 +89,7 @@ namespace FlowerRain.Patches
             {
                 for (int index = 0; index < Game1.rainDrops.Length; ++index)
                 {
-                    Vector2 position = new Vector2((float)Game1.random.Next(Game1.viewport.Width - 64), (float)Game1.random.Next(Game1.viewport.Height - 64));
+                    Vector2 position = new Vector2(Game1.random.Next(Game1.viewport.Width - 64), Game1.random.Next(Game1.viewport.Height - 64));
                     var rd = Game1.rainDrops[index];
                     var fd = currFlowers[index % currFlowers.Count];
                     float r = (float)(rand.NextDouble() * 3.14);
@@ -103,7 +103,7 @@ namespace FlowerRain.Patches
             }
             else
             {
-                if (Game1.eventUp && !Game1.currentLocation.isTileOnMap(new Vector2((float)(Game1.viewport.X / 64), (float)(Game1.viewport.Y / 64))))
+                if (Game1.eventUp && !Game1.currentLocation.isTileOnMap(new Vector2(Game1.viewport.X / 64, Game1.viewport.Y / 64)))
                     return;
                 for (int index = 0; index < Game1.rainDrops.Length; ++index)
                 {

@@ -104,7 +104,7 @@ namespace TheftOfTheWinterStar
             if (this.shootPlayerTimer.Value-- <= 0)
             {
                 Vector2 velocityTowardPlayer = Utility.getVelocityTowardPlayer(this.GetBoundingBox().Center, 15f, this.Player);
-                Projectile proj = new DebuffingProjectile(14, 7, 4, 4, 0.1963495f, velocityTowardPlayer.X, velocityTowardPlayer.Y, new Vector2((float)this.GetBoundingBox().X, (float)this.GetBoundingBox().Y), this.currentLocation, this);
+                Projectile proj = new DebuffingProjectile(14, 7, 4, 4, 0.1963495f, velocityTowardPlayer.X, velocityTowardPlayer.Y, new Vector2(this.GetBoundingBox().X, this.GetBoundingBox().Y), this.currentLocation, this);
                 this.currentLocation.projectiles.Add(proj);
                 this.shootPlayerTimer.Value = Witch.SHOOT_DELAY;
             }

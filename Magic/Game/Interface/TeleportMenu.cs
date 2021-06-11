@@ -116,8 +116,8 @@ namespace Magic.Game.Interface
             {
                 this.scrollbar.Y = this.scrollbarBack.Y + 2 + (int)(((this.scroll / (float)-TeleportMenu.ELEM_HEIGHT) / (this.locs.Count - (h - 20) / (float)TeleportMenu.ELEM_HEIGHT)) * (this.scrollbarBack.Height - this.scrollbar.Height));
 
-                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollbarBack.X, this.scrollbarBack.Y, this.scrollbarBack.Width, this.scrollbarBack.Height, Color.DarkGoldenrod, (float)Game1.pixelZoom, false);
-                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollbar.X, this.scrollbar.Y, this.scrollbar.Width, this.scrollbar.Height, Color.Gold, (float)Game1.pixelZoom, false);
+                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollbarBack.X, this.scrollbarBack.Y, this.scrollbarBack.Width, this.scrollbarBack.Height, Color.DarkGoldenrod, Game1.pixelZoom, false);
+                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollbar.X, this.scrollbar.Y, this.scrollbar.Width, this.scrollbar.Height, Color.Gold, Game1.pixelZoom, false);
             }
 
             this.justClicked = false;

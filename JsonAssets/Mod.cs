@@ -1163,7 +1163,7 @@ namespace JsonAssets
                 }
             }
 
-            ((Api)this.api).InvokeAddedItemsToShop();
+            this.api.InvokeAddedItemsToShop();
         }
 
         internal bool didInit;

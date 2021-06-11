@@ -165,7 +165,7 @@ namespace Magic.Game
             if (this.tex == null)
                 this.tex = Game1.content.Load<Texture2D>(this.texId.Value);
             Vector2 drawPos = Game1.GlobalToLocal(new Vector2(this.getBoundingBox().X + this.getBoundingBox().Width / 2, this.getBoundingBox().Y + this.getBoundingBox().Height / 2));
-            b.Draw(this.tex, drawPos, new Rectangle(0, 0, this.tex.Width, this.tex.Height), Color.White, this.dir, new Vector2(this.tex.Width / 2, this.tex.Height / 2), 2, SpriteEffects.None, (float)(((double)this.position.Y + (double)(Game1.tileSize * 3 / 2)) / 10000.0));
+            b.Draw(this.tex, drawPos, new Rectangle(0, 0, this.tex.Width, this.tex.Height), Color.White, this.dir, new Vector2(this.tex.Width / 2, this.tex.Height / 2), 2, SpriteEffects.None, (float)((this.position.Y + (double)(Game1.tileSize * 3 / 2)) / 10000.0));
             //Vector2 bdp = Game1.GlobalToLocal(new Vector2(getBoundingBox().X, getBoundingBox().Y));
             //b.Draw(Mod.instance.manaFg, new Rectangle((int)bdp.X, (int)bdp.Y, getBoundingBox().Width, getBoundingBox().Height), Color.White);
         }
@@ -176,7 +176,7 @@ namespace Magic.Game
             if (this.spell.SoundHit != null)
                 Game1.playSound(this.spell.SoundHit);
             //Game1.createRadialDebris(loc, 22 + rand.Next( 2 ), ( int ) position.X / Game1.tileSize, ( int ) position.Y / Game1.tileSize, 3 + rand.Next(5), false);
-            Game1.createRadialDebris(loc, this.texId, Game1.getSourceRectForStandardTileSheet(Projectile.projectileSheet, 0), 4, (int)this.position.X, (int)this.position.Y, 6 + SpellProjectile.rand.Next(10), (int)((double)this.position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 8 + SpellProjectile.rand.Next(64)), 2.0f);
+            Game1.createRadialDebris(loc, this.texId, Game1.getSourceRectForStandardTileSheet(Projectile.projectileSheet, 0), 4, (int)this.position.X, (int)this.position.Y, 6 + SpellProjectile.rand.Next(10), (int)(this.position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 8 + SpellProjectile.rand.Next(64)), 2.0f);
             //Game1.createRadialDebris(loc, tex, new Rectangle(0, 0, tex.Width, tex.Height), 0, ( int ) position.X, ( int ) position.Y, 3 + rand.Next(5), ( int ) position.Y / Game1.tileSize, Color.White, 5.0f);
             this.destroyMe = true;
         }

@@ -67,7 +67,7 @@ namespace SpaceCore.UI
             Vector2 front = new Vector2(back.X, back.Y + (this.Height - 40) * this.ScrollPercent);
 
             IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), back.X, back.Y, back.Width, back.Height, Color.White, Game1.pixelZoom, false);
-            b.Draw(Game1.mouseCursors, front, new Rectangle(435, 463, 6, 12), Color.White, 0f, new Vector2(), (float)Game1.pixelZoom, SpriteEffects.None, 0.77f);
+            b.Draw(Game1.mouseCursors, front, new Rectangle(435, 463, 6, 12), Color.White, 0f, new Vector2(), Game1.pixelZoom, SpriteEffects.None, 0.77f);
         }
     }
 }

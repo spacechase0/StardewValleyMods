@@ -21,8 +21,8 @@ namespace BuildableLocationsFramework
                 return;
             (farmAnimal.home.indoors.Value as AnimalHouse).animals.Add((long)farmAnimal.myID, farmAnimal);
             this.Animals.Remove((long)farmAnimal.myID);
-            farmAnimal.controller = (PathFindController)null;
-            farmAnimal.setRandomPosition((GameLocation)(NetFieldBase<GameLocation, NetRef<GameLocation>>)farmAnimal.home.indoors);
+            farmAnimal.controller = null;
+            farmAnimal.setRandomPosition(farmAnimal.home.indoors);
             ++farmAnimal.home.currentOccupants.Value;
         }
 
@@ -42,7 +42,7 @@ namespace BuildableLocationsFramework
         public override void DayUpdate(int dayOfMonth)
         {
             for (int index = this.Animals.Count() - 1; index >= 0; --index)
-                this.Animals.Pairs.ElementAt(index).Value.dayUpdate((GameLocation)this);
+                this.Animals.Pairs.ElementAt(index).Value.dayUpdate(this);
             base.DayUpdate(dayOfMonth);
         }
 
@@ -65,12 +65,12 @@ namespace BuildableLocationsFramework
             if (Game1.IsMasterGame)
             {
                 foreach (FarmAnimal farmAnimal in this.Animals.Values)
-                    farmAnimal.updatePerTenMinutes(Game1.timeOfDay, (GameLocation)this);
+                    farmAnimal.updatePerTenMinutes(Game1.timeOfDay, this);
             }
 
             foreach (Building building in this.buildings)
             {
-                if ((int)(NetFieldBase<int, NetInt>)building.daysOfConstructionLeft <= 0)
+                if ((int)building.daysOfConstructionLeft <= 0)
                 {
                     building.performTenMinuteAction(timeElapsed);
                     if (building.indoors.Value != null && !Game1.locations.Contains(building.indoors.Value) && timeElapsed >= 10)
@@ -98,7 +98,7 @@ namespace BuildableLocationsFramework
             {
                 foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
                 {
-                    if (character != null && !character.Equals((object)pair.Value) && (!(character is FarmAnimal) && position.Intersects(pair.Value.GetBoundingBox())) && (!isFarmer || !Game1.player.GetBoundingBox().Intersects(pair.Value.GetBoundingBox())))
+                    if (character != null && !character.Equals(pair.Value) && (!(character is FarmAnimal) && position.Intersects(pair.Value.GetBoundingBox())) && (!isFarmer || !Game1.player.GetBoundingBox().Intersects(pair.Value.GetBoundingBox())))
                     {
                         if (isFarmer && character is Farmer)
                         {
@@ -117,7 +117,7 @@ namespace BuildableLocationsFramework
         {
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
-                if (!(bool)(NetFieldBase<bool, NetBool>)pair.Value.wasPet && pair.Value.GetCursorPetBoundingBox().Contains((int)position.X, (int)position.Y))
+                if (!(bool)pair.Value.wasPet && pair.Value.GetCursorPetBoundingBox().Contains((int)position.X, (int)position.Y))
                 {
                     pair.Value.pet(who);
                     return true;
@@ -130,7 +130,7 @@ namespace BuildableLocationsFramework
         {
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
-                if (!(bool)(NetFieldBase<bool, NetBool>)pair.Value.wasPet && pair.Value.GetBoundingBox().Intersects(rect))
+                if (!(bool)pair.Value.wasPet && pair.Value.GetBoundingBox().Intersects(rect))
                 {
                     pair.Value.pet(who);
                     return true;
@@ -143,7 +143,7 @@ namespace BuildableLocationsFramework
         {
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
-                if ((bool)(NetFieldBase<bool, NetBool>)pair.Value.wasPet && pair.Value.GetCursorPetBoundingBox().Contains((int)position.X, (int)position.Y))
+                if ((bool)pair.Value.wasPet && pair.Value.GetCursorPetBoundingBox().Contains((int)position.X, (int)position.Y))
                 {
                     pair.Value.pet(who);
                     return true;
@@ -156,7 +156,7 @@ namespace BuildableLocationsFramework
         {
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
-                if ((bool)(NetFieldBase<bool, NetBool>)pair.Value.wasPet && pair.Value.GetBoundingBox().Intersects(rect))
+                if ((bool)pair.Value.wasPet && pair.Value.GetBoundingBox().Intersects(rect))
                 {
                     pair.Value.pet(who);
                     return true;
@@ -194,17 +194,17 @@ namespace BuildableLocationsFramework
                 }
             }
 
-            if (this.isThereABuildingUnderConstruction() && (int)(NetFieldBase<int, NetInt>)this.getBuildingUnderConstruction().daysOfConstructionLeft > 0 && Game1.getCharacterFromName("Robin", true).currentLocation.Equals((GameLocation)this))
+            if (this.isThereABuildingUnderConstruction() && (int)this.getBuildingUnderConstruction().daysOfConstructionLeft > 0 && Game1.getCharacterFromName("Robin", true).currentLocation.Equals(this))
             {
                 Building underConstruction = this.getBuildingUnderConstruction();
-                this.temporarySprites.Add(new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(399, 262, (int)(NetFieldBase<int, NetInt>)underConstruction.daysOfConstructionLeft == 1 ? 29 : 9, 43), new Vector2((float)((int)(NetFieldBase<int, NetInt>)underConstruction.tileX + (int)(NetFieldBase<int, NetInt>)underConstruction.tilesWide / 2), (float)((int)(NetFieldBase<int, NetInt>)underConstruction.tileY + (int)(NetFieldBase<int, NetInt>)underConstruction.tilesHigh / 2)) * 64f + new Vector2(-16f, -144f), false, 0.0f, Color.White)
+                this.temporarySprites.Add(new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(399, 262, (int)(NetFieldBase<int, NetInt>)underConstruction.daysOfConstructionLeft == 1 ? 29 : 9, 43), new Vector2((int)underConstruction.tileX + (int)underConstruction.tilesWide / 2, (int)underConstruction.tileY + (int)underConstruction.tilesHigh / 2) * 64f + new Vector2(-16f, -144f), false, 0.0f, Color.White)
                 {
                     id = 16846f,
                     scale = 4f,
                     interval = 999999f,
                     animationLength = 1,
                     totalNumberOfLoops = 99999,
-                    layerDepth = (float)(((int)(NetFieldBase<int, NetInt>)underConstruction.tileY + (int)(NetFieldBase<int, NetInt>)underConstruction.tilesHigh / 2) * 64 + 32) / 10000f
+                    layerDepth = (((int)underConstruction.tileY + (int)underConstruction.tilesHigh / 2) * 64 + 32) / 10000f
                 });
             }
             else
@@ -241,16 +241,16 @@ namespace BuildableLocationsFramework
         public override void updateEvenIfFarmerIsntHere(GameTime time, bool skipWasUpdatedFlush = false)
         {
             base.updateEvenIfFarmerIsntHere(time, skipWasUpdatedFlush);
-            if (Game1.currentLocation.Equals((GameLocation)this))
+            if (Game1.currentLocation.Equals(this))
                 return;
             NetDictionary<long, FarmAnimal, NetRef<FarmAnimal>, SerializableDictionary<long, FarmAnimal>, NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>>>.PairsCollection pairs = this.Animals.Pairs;
             for (int index = pairs.Count() - 1; index >= 0; --index)
-                pairs.ElementAt(index).Value.updateWhenNotCurrentLocation((Building)null, time, (GameLocation)this);
+                pairs.ElementAt(index).Value.updateWhenNotCurrentLocation(null, time, this);
         }
 
         public override void UpdateWhenCurrentLocation(GameTime time)
         {
-            if (this.wasUpdated && Game1.gameMode != (byte)0)
+            if (this.wasUpdated && Game1.gameMode != 0)
                 return;
             base.UpdateWhenCurrentLocation(time);
 
@@ -259,7 +259,7 @@ namespace BuildableLocationsFramework
                 _tempAnimals.Add(pair);
             foreach (KeyValuePair<long, FarmAnimal> tempAnimal in _tempAnimals)
             {
-                if (tempAnimal.Value.updateWhenCurrentLocation(time, (GameLocation)this))
+                if (tempAnimal.Value.updateWhenCurrentLocation(time, this))
                     this.Animals.Remove(tempAnimal.Key);
             }
             _tempAnimals.Clear();

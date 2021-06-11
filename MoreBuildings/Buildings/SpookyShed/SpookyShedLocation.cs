@@ -43,7 +43,7 @@ namespace MoreBuildings.Buildings.SpookyShed
 
 
             var tileLocation = new Vector2(10, 9);
-            b.Draw(Mod.instance.spookyGemTex, Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocation.X * (float)Game1.tileSize, tileLocation.Y * (float)Game1.tileSize)), null, col, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+            b.Draw(Mod.instance.spookyGemTex, Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocation.X * Game1.tileSize, tileLocation.Y * Game1.tileSize)), null, col, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
         }
 
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)

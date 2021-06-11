@@ -236,7 +236,7 @@ namespace Magic
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
-                writer.Write((int)Mod.Data.players.Count);
+                writer.Write(Mod.Data.players.Count);
                 foreach (var entry in Mod.Data.players)
                 {
                     writer.Write(entry.Key);
@@ -518,7 +518,7 @@ namespace Magic
 
         private static void onTvChannelSelected(TV tv, TemporaryAnimatedSprite sprite, Farmer farmer, string answer)
         {
-            TemporaryAnimatedSprite tas = new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(540, 305, 42, 28), 150f, 2, 999999, tv.getScreenPosition(), false, false, (float)((double)(tv.boundingBox.Bottom - 1) / 10000.0 + 9.99999974737875E-06), 0.0f, Color.White, tv.getScreenSizeModifier(), 0.0f, 0.0f, 0.0f, false);
+            TemporaryAnimatedSprite tas = new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(540, 305, 42, 28), 150f, 2, 999999, tv.getScreenPosition(), false, false, (float)((tv.boundingBox.Bottom - 1) / 10000.0 + 9.99999974737875E-06), 0.0f, Color.White, tv.getScreenSizeModifier(), 0.0f, 0.0f, 0.0f, false);
 
             string transKey = "tv.analyzehints.notmagical";
             Random r = new Random((int)Game1.stats.DaysPlayed + (int)(Game1.uniqueIDForThisGame / 2));

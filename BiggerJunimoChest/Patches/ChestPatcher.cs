@@ -39,7 +39,7 @@ namespace BiggerJunimoChest.Patches
             var newInsns = new List<CodeInstruction>();
             foreach (var insn in insns)
             {
-                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == (sbyte)9)
+                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == 9)
                 {
                     if (++counter == 2)
                         insn.operand = (sbyte)36;

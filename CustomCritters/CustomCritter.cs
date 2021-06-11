@@ -140,7 +140,7 @@ namespace CustomCritters
                 return;
 
             //base.draw(b);
-            float z = (float)((double)this.position.Y / 10000.0 + (double)this.position.X / 100000.0);
+            float z = (float)(this.position.Y / 10000.0 + this.position.X / 100000.0);
             if (!this.data.SpriteData.Flying)
                 z = (float)((this.position.Y - 1.0) / 10000.0);
             this.sprite.draw(b, Game1.GlobalToLocal(Game1.viewport, this.position - new Vector2(8, 8)), z, 0, 0, Color.White, this.flip, this.data.SpriteData.Scale, 0.0f, false);

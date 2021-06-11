@@ -102,7 +102,7 @@ namespace RushOrders
                     this.selectedResponse = i;
                 if (i == this.selectedResponse)
                 {
-                    IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(375, 357, 3, 3), this.x + Game1.pixelZoom, num - Game1.pixelZoom * 2, this.width - Game1.pixelZoom * 2, SpriteText.getHeightOfString(this.r[i], this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 4, Color.White, (float)Game1.pixelZoom, false);
+                    IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(375, 357, 3, 3), this.x + Game1.pixelZoom, num - Game1.pixelZoom * 2, this.width - Game1.pixelZoom * 2, SpriteText.getHeightOfString(this.r[i], this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 4, Color.White, Game1.pixelZoom, false);
                 }
                 SpriteText.drawString(b, this.r[i], this.x + Game1.pixelZoom * 2, num, 999999, this.width, 999999, (this.selectedResponse == i) ? 1f : 0.6f);
                 num += SpriteText.getHeightOfString(this.r[i], this.width) + Game1.pixelZoom * 4;

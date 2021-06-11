@@ -800,7 +800,7 @@ namespace SurfingFestival
             SpriteText.drawStringHorizontallyCenteredAt(b, lapsStr, (int)pos.X + 74, (int)pos.Y + 74 * 2 + 18 * 2 + 8);
 
             string str = this.Helper.Translation.Get("ui.ranking");
-            SpriteText.drawStringHorizontallyCenteredAt(b, str, (int)pos.X + 74, (int)Game1.viewport.Height - 128 - (Mod.racers.Count - 1) / 5 * 40);
+            SpriteText.drawStringHorizontallyCenteredAt(b, str, (int)pos.X + 74, Game1.viewport.Height - 128 - (Mod.racers.Count - 1) / 5 * 40);
 
             int i = 0;
             var sortedRacers = Mod.GetRacePlacement();
@@ -1252,10 +1252,10 @@ namespace SurfingFestival
             int next_index = (current_index + 1) % Utility.PRISMATIC_COLORS.Length;
             float position = (float)Game1.currentGameTime.TotalGameTime.TotalMilliseconds / interval % 1f;
             Color prismatic_color = default(Color);
-            prismatic_color.R = (byte)(Utility.Lerp((float)(int)Utility.PRISMATIC_COLORS[current_index].R / 255f, (float)(int)Utility.PRISMATIC_COLORS[next_index].R / 255f, position) * 255f);
-            prismatic_color.G = (byte)(Utility.Lerp((float)(int)Utility.PRISMATIC_COLORS[current_index].G / 255f, (float)(int)Utility.PRISMATIC_COLORS[next_index].G / 255f, position) * 255f);
-            prismatic_color.B = (byte)(Utility.Lerp((float)(int)Utility.PRISMATIC_COLORS[current_index].B / 255f, (float)(int)Utility.PRISMATIC_COLORS[next_index].B / 255f, position) * 255f);
-            prismatic_color.A = (byte)(Utility.Lerp((float)(int)Utility.PRISMATIC_COLORS[current_index].A / 255f, (float)(int)Utility.PRISMATIC_COLORS[next_index].A / 255f, position) * 255f);
+            prismatic_color.R = (byte)(Utility.Lerp(Utility.PRISMATIC_COLORS[current_index].R / 255f, Utility.PRISMATIC_COLORS[next_index].R / 255f, position) * 255f);
+            prismatic_color.G = (byte)(Utility.Lerp(Utility.PRISMATIC_COLORS[current_index].G / 255f, Utility.PRISMATIC_COLORS[next_index].G / 255f, position) * 255f);
+            prismatic_color.B = (byte)(Utility.Lerp(Utility.PRISMATIC_COLORS[current_index].B / 255f, Utility.PRISMATIC_COLORS[next_index].B / 255f, position) * 255f);
+            prismatic_color.A = (byte)(Utility.Lerp(Utility.PRISMATIC_COLORS[current_index].A / 255f, Utility.PRISMATIC_COLORS[next_index].A / 255f, position) * 255f);
             return prismatic_color;
         }
     }

@@ -164,8 +164,8 @@ namespace LocationLayerTool.Patches
                 num1 = Game1.options.lightingQuality;
                 num2 = Game1.options.zoomLevel;
             }
-            int width1 = (int)((double)width * (1.0 / (double)num2) + 64.0) / (num1 / 2);
-            int height1 = (int)((double)height * (1.0 / (double)num2) + 64.0) / (num1 / 2);
+            int width1 = (int)(width * (1.0 / num2) + 64.0) / (num1 / 2);
+            int height1 = (int)(height * (1.0 / num2) + 64.0) / (num1 / 2);
             //if ( Game1.lightmap != null && Game1.lightmap.Width == width1 && Game1.lightmap.Height == height1 )
             //    return null;
             //if ( Game1._lightmap != null )
@@ -180,7 +180,7 @@ namespace LocationLayerTool.Patches
             {
                 string[] strArray = lightProp.ToString().Split(' ');
                 for (int index = 0; index < strArray.Length; index += 3)
-                    Game1.currentLightSources.Add(new LightSource(Convert.ToInt32(strArray[index + 2]), new Vector2((float)(Convert.ToInt32(strArray[index]) * 64 + 32), (float)(Convert.ToInt32(strArray[index + 1]) * 64 + 32)), 1f, LightSource.LightContext.MapLight, 0L));
+                    Game1.currentLightSources.Add(new LightSource(Convert.ToInt32(strArray[index + 2]), new Vector2(Convert.ToInt32(strArray[index]) * 64 + 32, Convert.ToInt32(strArray[index + 1]) * 64 + 32), 1f, LightSource.LightContext.MapLight, 0L));
             }
             Game1.currentLightSources.UnionWith(Game1.currentLocation.sharedLights.Values);
         }
