@@ -17,6 +17,7 @@ Released 17 January 2019 for Stardew Valley 1.3.33.
 * Added support for [standard content packs](https://stardewvalleywiki.com/Modding:Content_packs) (thanks to Pathoschild!).
 * Updated for SMAPI 3.0 (thanks to Pathoschild!).
 * Fixed crash if a critter has an invalid light type ID (thanks to Pathoschild!).
+* Fixed error if the `Critters` folder doesn't exist (thanks to Pathoschild!).
 
 ## 1.2.4
 Released 18 August 2018 for Stardew Valley 1.3.28.
