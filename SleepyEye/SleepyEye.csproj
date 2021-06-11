@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="PyTK" HintPath="$(GamePath)\Mods\PyTK\PyTK.dll" Private="False" />
   </ItemGroup>
 

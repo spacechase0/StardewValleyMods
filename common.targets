@@ -1,10 +1,20 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--common project properties-->
   <PropertyGroup>
     <Authors>Spacechase0</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <LangVersion>latest</LangVersion>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <!--import mod build package-->
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.3.0" />
+  </ItemGroup>
+
+  <!--common mod build package options-->
+  <PropertyGroup>
     <IgnoreModFilePatterns Condition="'$(MSBuildProjectName)' != 'SpaceCore'">TiledNet\.dll, TiledNet\.pdb</IgnoreModFilePatterns>
   </PropertyGroup>
 </Project>

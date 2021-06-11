@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="ContentPatcher" HintPath="$(GamePath)\Mods\ContentPatcher\ContentPatcher.dll" Private="False" />
   </ItemGroup>
 </Project>

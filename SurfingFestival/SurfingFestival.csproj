@@ -10,10 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="False" />
   </ItemGroup>
 </Project>
