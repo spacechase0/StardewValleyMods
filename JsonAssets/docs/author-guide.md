@@ -70,7 +70,7 @@ Examples of how to set up all types of objects can be found in the [PPJA Resourc
 
 ### Things to Note Before You Start
 
-* `SkillUnlockName` & `SkillUnlockLevel` are valid but it is not recommended to use them. This adds the recipe to the level up menu, which only can handle a very small number of new recipes before the player cannot click to the next day screen. If you want your recipe to unlock via a skill/level up it is recommended to send the recipe via mail using [Mail Framework Mod](https://www.nexusmods.com/stardewvalley/mods/1536) instead.
+* `SkillUnlockName` & `SkillUnlockLevel` are valid but it is not recommended to use them. This adds the recipe to the level up menu, which only can handle a very small number of new recipes before the player cannot click to the next day screen. SDV 1.5 should have somewhat resolved this issue. Use and test at your own risk. If you want your recipe to unlock via a skill/level up it is recommended to send the recipe via mail using [Mail Framework Mod](https://www.nexusmods.com/stardewvalley/mods/1536) instead.
 * Example packs are listed above and should be used as a reference. If you're unsure of how something works it is recommended that you check out a preexisting pack. Every feature for JA more or less has an example floating around somewhere.
 
 ### Companion Mods
@@ -84,6 +84,9 @@ Json Assets is a great tool if you want to add one of the above objects, but the
  * [Farm Type Manager](https://www.nexusmods.com/stardewvalley/mods/3231) useful for adding custom foraging objects.
  * [Hybrid Crop Engine](https://www.nexusmods.com/stardewvalley/mods/6577) allows you to crossbreed crops together.
  * [Custom Furniture](https://www.nexusmods.com/stardewvalley/mods/1254) JA does not support furniture. You still have to use Custom Furniture for that.
+ * [Bigger Craftables](https://www.nexusmods.com/stardewvalley/mods/7530) allows you to make craftables larger than 16x32.
+
+ This list is not meant to be comprehensive as many mods support JA objects. If you're unsure if a mod supports JA objects it's recommended to read the mod description, release notes, or ask the creator.
 
 ## Basic Features
 ### Overview
@@ -119,13 +122,14 @@ field                    | purpose
 -------------------------| -------
 `Name`                   | The name you would like your object to have. This does not need to be identical to the folder but it is recommend to keep names consistant. If you add `arecrow` to the name the item will function as a scarecrow.
 `Price`                  | How much your item sells for.
+`CanSell`                | If you can sell the BigCraftble or not. Set to `true` or `false`. Default is `true`.
 `Description`            | Description for what this does. Note if it does anything special like provide light.
 `ProvidesLight`          | On/Off switch for if it provides light or not. Set to `true` or `false`.
 `Recipe`                 | Begins the recipe block.
 `ResultCount`            | How many of the product does the recipe produce. The game does not handle this correctly for BigCraftables, so it should generally be limited to `1`.
-`Ingredients`            | If using a vanilla object, you will have to use the objects ID number. If using a custom object added by Json Assets, you will have to use the name. Ex. "Honeysuckle".
-`Object` & `Count`       | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. You can use either the item ID or the name of the object. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used.
-`IsDefault`              | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe:
+`Ingredients`            |  Begins defining the ingredients required to craft the object.
+`Object` & `Count`       | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. You can use either the item ID or the name of the object. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used. You cannot use context tags for this field.
+`IsDefault`              | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe.
 `CanPurchase`            | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
 `PurchaseFrom`           | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `PurchasePrice`          | How much you can purchase the recipe for.
@@ -217,7 +221,7 @@ field                      | purpose
 `Name`                     | The name you would like your object to have. This does not need to be identical to the folder but it is recommend to keep names consistant.
 `Price`                    | How much your item sells for.
 `Product`                  | Determines what the crop produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the objects ID number and not include a corresponding `Objects` folder.
-`SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter.
+`SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter. Do not put `Sapling` at the end of the seed name or it will not function properly. If you're trying to make a fruit tree see [FruitTrees](#fruittrees).
 `SeedDescription`          | Describe what season you plant these in. Also note if it continues to grow after first harvest and how many days it takes to regrow.
 `Type`                     | Vanilla types are `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, `AnimalGoods`, `Greens`, and `Seeds`.
 `SeedSellPrice`            | How much the seeds sell for.
@@ -227,7 +231,7 @@ field                      | purpose
 `RegrowthPhase`            | If your plant is a one time harvest set this to `-1`. If it does, this determines which sprite the regrowth starts at. I typically recommend the sprite right before the harvest. *Requires additional sprite at the end of the crop.png*
 `HarvestWithScythe`        | Set to `true` or `false`.
 `TrellisCrop`              | Set to `true` or `false`. Determines if you can pass through a crop or not. Flowers cannot grow on trellises and have colors.
-`Colors`                   | Colors use RGBA for color picking, set to `null` if your plant does not have colors.
+`Colors`                   | Colors use RGBA for color picking, set to `null` if your plant does not have colors. Ex. ["227, 109, 103, 255", "227, 137, 86, 255"] This crop has two different colors.
 `Bonus`                    | This block determines the chance to get multiple crops.
 `MinimumPerHarvest`        | Minimum number of crops you will get per harvest. Must be one or greater.
 `MaximumPerHarvest`        | Maximum number of crops you will get per harvest. Must be one or greater. *Recommended not to exceed 10*.
@@ -276,58 +280,37 @@ field                         | purpose
 `DisableWithMod`              | _(optional)_ Disables the fruit tree when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
 **Facts about Custom Trees**:
-* Sprites are 80px tall and there is only 1 tree per row. Vanilla `Tilesheets\fruitTrees` has partial sprites for a 7th tree and is 432 x 560 px
+* Sprites are 80px tall and there is only 1 tree per row. Vanilla `Tilesheets\fruitTrees` has partial sprites for a 7th tree and is 432 x 560 px.
 * JA starts numbering its trees at ID 10, and the first sprites are placed at 0,800.
 
 ### Objects
-#### Crop and Fruit Tree Objects
 
-Unless your crop or fruit tree is producing a vanilla item, it will need to have a corresponding folder in `Objects`
-
-An object subfolder for crops & fruit trees is a folder that contains these files:
-
-* an `object.json`;
-* an `object.png`; Size: 16x16
-* _(optional)_ a `color.png`; Size: 16x16, this will be a grayscale version of the part you want colored. *[See Mizu's Flowers](https://www.nexusmods.com/stardewvalley/mods/2028) for an example*.
-
-field                         | purpose
------------------------------ | -------
-`Name`                        | The name you would like your object to have. This does not need to be identical to the folder but it is recommend to keep names consistant.
-`Price`                       | How much your item sells for.
-`Description`                 | Description of the product.
-`Category`                    | This should match the `crop.json` `Type` or for fruit trees use one of the following categories: `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, `Greens`, `AnimalGoods` and `Seeds`.
-`CategoryTextOverride`        | _(optional_) Visually allows you to alter what category the item appears as. Examples include: `herb`, `spice`, `hybrid`.
-`CategoryColorOverride`       | _(optional)_ Works the same as `Colors` field using RGBA, but only allows one input. Alters the text color of the category.
-`Edibility`                   | Edibility is for health, energy is calculated by the game. For inedibile items, set to -300.
-`IsColored`                   | _(optional)_ Set this value to `true` if your product is colored.
-`Recipe`                      | Set to `null`.
-`EnableWithMod`               | _(optional)_ Enables the object when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
-`DisableWithMod`              | _(optional)_ Disables the object when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
-
-#### Recipes
-
-Recipes and craftables (16x16) can be added via Json Assets through the `Objects` folder.
+Objects (16x16) can be added via Json Assets through the `Objects` folder. Unless your crop or fruit tree is producing a vanilla item, it will need to have a corresponding folder in `Objects`
 
 An object subfolder for a recipe is a folder that contains these files:
 
 * an `object.json`;
 * an `object.png`;
+* _(optional)_ a `color.png`; Size: 16x16, this will be a grayscale version of the part you want colored. *[See Mizu's Flowers](https://www.nexusmods.com/stardewvalley/mods/2028) for an example*.
 
 field                  | purpose
 ---------------------- | -------
 `Name`                 | The name you would like your object to have. This does not need to be identical to the folder but it is recommend to keep names consistant.
 `Price`                | How much your item sells for.
+`CanSell`              | If you can sell the object or not. Set to `true` or `false`. Default is `true`.
 `Description`          | Description of the product.
-`Category`             | Set to either `Crafting` or `Cooking` depending on the menu you want it to appear in.
+`Category`             | Use one of the following categories: `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, `Greens`, `AnimalGoods` and `Seeds`. Alternatively you can set the category to either `Crafting` or `Cooking` depending on the menu you want it to appear in if you want the object to be craftable.
+`CategoryTextOverride` | _(optional_) Visually allows you to alter what category the item appears as. Examples include: `herb`, `spice`, `hybrid`.
+`CategoryColorOverride`| _(optional)_ Works the same as `Colors` field using RGBA, but only allows one input. Alters the text color of the category.
 `Edibility`            | Edibility is for health, energy is calculated by the game. For inedibile items, set to -300.
 `EdibleIsDrink`        | Set to `true` or `false`.
 `EdibleBuffs`          | Either set to `null` or include **all** required valid fields. It will not work if you only use the needed fields. Set unused fields to 0. Supports negative values. Required valid fields: `Farming`, `Fishing`, `Mining`, `Luck`, `Duration`. Optional valid fields: `Foraging`, `MaxStamina`, `MagnetRadius`, `Speed`, `Defense`, `Attack`.
-`IsColored`            | Set to `false`.
-`Recipe`               | Begins the recipe block.
+`IsColored`            |  _(optional)_ Set this value to `true` if your product is colored. If not, set to `false`. Any object that comes from a colored crop must also be colored. Any object with `IsColored` set to `true` must also have a `color.png` (see above) included in the object subfolder.
+`Recipe`               | Begins the recipe block. If you do not want to have a recipe for this object set to `null`.
 `ResultCount`          | How many of the product does the recipe produce.
-`Ingredients`          | You can use either the item ID or the name of the object.
-`Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. You can use either the item ID or the name of the object. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used.
-`IsDefault`            | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe:
+`Ingredients`          | Begins defining the ingredients required to craft the object.
+`Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. You can use either the item ID or the name of the object. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used. You cannot use context tags for this field.
+`IsDefault`            | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe.
 `CanPurchase`          | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
 `PurchaseFrom`         | Who you can purchase the recipe from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Pierre` is the default vendor.
 `PurchasePrice`        | How much you can purchase the recipe for.
@@ -372,20 +355,20 @@ A weapon subfolder is a folder that contains these files:
 field                  | purpose
 ---------------------- | -------
 `Name`                 | The name you would like your object to have. This does not need to be identical to the folder but it is recommend to keep names consistant.
-`Description`          | Description of the product.
+`Description`          | Description of the weapon.
 `Type`                 | Depending on the weapon set this to one of the following: `sword`, `dagger`, or `club`. `Slingshot` is not valid. If you want to create a projectile weapon you'll need to use [PyTK](https://www.nexusmods.com/stardewvalley/mods/1726).
 `MinimumDamage`        | The minimum number of damage points an enemy hit with this weapon will receive.
 `MaximumDamage`        | The maximum number of damage points an enemy hit with this weapon will receive.
-`Knockback`            | How far the enemy will be pushed back from the player after being hit with this weapon.
-`Speed`                | How fast the swing of the weapon is.
-`Accuracy`             | How accurate the weapon is.
+`Knockback`            | The number of tiles an enemy will be pushed back from the player after being hit with this weapon.
+`Speed`                | How fast the swing of the weapon is. This can be a negative number to make it slower than the default swing speed.
+`Accuracy`             | How accurate the weapon is. This number cannot exceed 100.
 `Defense`              | When blocking, how much protection it provides.
-`MineDropVar`          |
+`MineDropVar`          | The base mine level. This affects the probability of [mine container drops](https://stardewvalleywiki.com/Modding:Weapon_data#Mine_container_drops).
 `MineDropMinimumLevel` | The first level the weapon can drop when in the mines.
-`ExtraSwingArea`       |
-`CritChance`           | The chance the weapon will land a critical hit.
-`CritMultiplier`       | Damage multiplied by this number is how much damage a critical hit does.
-`CanPurchase`          | Set this to `true` or `false`
+`ExtraSwingArea`       | An added area of effect for the swing area.
+`CritChance`           | The percentage chance the weapon will land a critical hit. This is a number between 0 and 1.
+`CritMultiplier`       | Damage multiplied by this number is how much damage a critical hit does. This number must be greater than 0.
+`CanSell`              | If you can sell the weapon or not. Set to `true` or `false`. Default is `true`. Normal weapon selling rules apply.
 `PurchaseFrom`         | Who you can purchase the weapon from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Pierre` is the default vendor. For weapons, `Marlon` is recommended.
 `PurchasePrice`        | How much you can purchase the weapon for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
@@ -393,6 +376,12 @@ field                  | purpose
 `DisableWithMod`       | _(optional)_ Disables the weapon when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
 Weapons do not support gift taste.
+
+**Facts about Weapons**
+* A galaxy swords minimum damage is 60 and maximum damage is 80. Keep this in mind if you want your weapons to be balanced.
+* Kockback has no maximum number but no vanilla weapon exceeds 2.
+* Most vanilla weapons have a `CritChance` of between 0 and .04 which is a very small percentage with `Infinity Needle` having the most at .1.
+* Most vanilla weapons have an `ExtraSwingArea` between 0 and 2.
 
 ### Shirts and Pants
 
@@ -418,7 +407,7 @@ field                  | purpose
 `HasFemaleVariant`     | Select `true` or `false`.
 `Price`                | How much the item sells for.
 `Dyable`               | Can the clothing item be dyed. Set to `true` or `false`.
-`DefaultColor`         | Colors use RGBA for color picking. Remove if not being used. Can only have one color option.
+`DefaultColor`         | Colors use RGBA for color picking. Remove if not being used. Can only have one color option. Ex. ["227, 109, 103, 255", "227, 137, 86, 255"] This crop has two different colors.
 `EnableWithMod`        | _(optional)_ Enables the shirt when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 `DisableWithMod`       | _(optional)_ Disables the shirt when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
@@ -442,7 +431,7 @@ field                  | purpose
 `Description`          | Description of the product.
 `Price`                | How much the item sells for.
 `Dyable`               | Can the clothing item be dyed. Set to `true` or `false`.
-`DefaultColor`         | Colors use RGBA for color picking. Remove if not being used. Can only have one color option. Default color for pants is `255, 235, 203, 255`
+`DefaultColor`         | Colors use RGBA for color picking. Remove if not being used. Can only have one color option. Ex. ["227, 109, 103, 255", "227, 137, 86, 255"] This crop has two different colors. Default color for pants is `255, 235, 203, 255`
 `EnableWithMod`        | _(optional)_ Enables the pants when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 `DisableWithMod`       | _(optional)_ Disables the pants when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
@@ -552,9 +541,9 @@ Custom ContextTags can be added to vanilla items using ContentPatcher.
 
 ## Gift Tastes
 
-You can add gift taste support to any pre-existing content pack by adding the following to the respective `.json` file. It does not matter where you put it. I tend to place it at the bottom of the `.json` but it is personal preferance.
+You can add gift taste support to any pre-existing content pack by adding the following to the respective `.json` file. It does not matter where you put it. I tend to place it at the bottom of the `.json` but it is personal preferance. 
 
-If it can be gifted to an NPC it has gift taste support built in. This means `hats`, `big-craftables`, `weapons`, `shirts`, `pants`, `boots`, `tailoring`n and `fences` do not have gift taste support. If you exclude an NPC from the gift taste, their reaction will default to `Neutral`.
+If it can be gifted to an NPC it has gift taste support built in. This means `hats`, `big-craftables`, `weapons`, `shirts`, `pants`, `boots`, `tailoring` and `fences` do not have gift taste support. If you exclude an NPC from the gift taste, their reaction will their default reaction to that item's category. This applies to custom NPCs as well if they are not specified.
 
 ```
  "GiftTastes":
@@ -753,7 +742,7 @@ Solution: There is something wrong with the JSON. You can see which one is causi
 
 ### Previous Clothing Items Gone
 
-Solution: If you have previously used clothing added via Content Patcher it will show as a blank object. Clicking on this item will make it disappear but your menu keys may lock up. Clicking `X` close to the dresser on screen works to close the menu. (Courtesy of minervamaga)
+Solution: If you have previously used clothing added via Content Patcher it will show as a blank object. Opening and closing the menu can solve this issue.
 
 It is recommended you remove any Content Patcher mods that are now being handled by Json Assets before adding in the Json Assets version to avoid this.
 
