@@ -44,13 +44,16 @@ namespace SpaceCore.Patches
                     && (insn.operand as MethodInfo).Name == "destroyCrop"
                     )
                 {
-                    Log.trace("Replacing destroyCrop with our call");
-                    // Replace with our call. We do this instead of nop to clear the stack entries
-                    // Because I'm too lazy to figure out the rest properly.
-                    insn.operand = PatchHelper.RequireMethod<HoeDirtPatcher>(nameof(DestroyCropReplacement));
+                    Log.trace("Removing destroyCrop call");
+                    // There are 4 items loaded to the stack at this point
+                    var pop = new CodeInstruction(OpCodes.Pop);
+                    newInsns.Add(pop.Clone());
+                    newInsns.Add(pop.Clone());
+                    newInsns.Add(pop.Clone());
+                    newInsns.Add(pop.Clone());
                     happened = true;
+                    continue;
                 }
-
                 newInsns.Add(insn);
             }
 
@@ -58,12 +61,6 @@ namespace SpaceCore.Patches
                 Log.error($"{nameof(Transpile_DayUpdate)} patching failed!");
                 }
             return newInsns;
-        }
-
-        private static void DestroyCropReplacement(HoeDirt hoeDirt, Vector2 tileLocation, bool showAnimation, GameLocation location)
-        {
-            // We don't want it to ever do anything.
-            // Crops wither out of season anyways.
         }
     }
 }
