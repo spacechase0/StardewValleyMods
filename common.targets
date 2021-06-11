@@ -16,5 +16,6 @@
   <!--common mod build package options-->
   <PropertyGroup>
     <IgnoreModFilePatterns Condition="'$(MSBuildProjectName)' != 'SpaceCore'">TiledNet\.dll, TiledNet\.pdb</IgnoreModFilePatterns>
+    <ModZipPath>$(SolutionDir)\_releases</ModZipPath>
   </PropertyGroup>
 </Project>
