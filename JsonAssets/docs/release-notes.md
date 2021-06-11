@@ -6,7 +6,7 @@
   * Fixed cask contents not ID-fixed.
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Internal refactoring.
-* Improved documentation.
+* Improved documentation. (Thanks to 6480k and ParadigmNomad for some updates in the author guide!)
 
 ## 1.7.6
 Released 02 April 2021 for Stardew Valley 1.5.
