@@ -12,6 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="PyTK" HintPath="$(GamePath)\Mods\PyTK\PyTK.dll" Private="False" />
+    <Reference Include="PyTK" HintPath="$(GameModsPath)\PyTK\PyTK.dll" Private="False" />
   </ItemGroup>
 </Project>
