@@ -35,10 +35,10 @@ namespace SpaceCore.Patches
                 postfix: this.GetHarmonyMethod(nameof(After_Explode))
             );
 
-            harmony.Patch(
-                original: this.RequireMethod<GameLocation>(nameof(GameLocation.updateEvenIfFarmerIsntHere)),
-                postfix: this.GetHarmonyMethod(nameof(After_UpdateEvenIfFarmerIsntHere))
-            );
+            //harmony.Patch(
+            //    original: this.RequireMethod<GameLocation>(nameof(GameLocation.updateEvenIfFarmerIsntHere)),
+            //    postfix: this.GetHarmonyMethod(nameof(After_UpdateEvenIfFarmerIsntHere))
+            //);
         }
 
 
@@ -63,12 +63,12 @@ namespace SpaceCore.Patches
             SpaceEvents.InvokeBombExploded(who, tileLocation, radius);
         }
 
-        /// <summary>The method to call after <see cref="GameLocation.updateEvenIfFarmerIsntHere"/>.</summary>
-        private static void After_UpdateEvenIfFarmerIsntHere(GameLocation __instance, GameTime time)
-        {
-            // TODO: Optimize, maybe config file too?
-            __instance.terrainFeatures.Values.DoIf((tf) => tf is IUpdateEvenWithoutFarmer, (tf) => (tf as IUpdateEvenWithoutFarmer).UpdateEvenWithoutFarmer(__instance, time));
-            __instance.Objects.Values.DoIf((o) => o is IUpdateEvenWithoutFarmer, (o) => (o as IUpdateEvenWithoutFarmer).UpdateEvenWithoutFarmer(__instance, time));
-        }
+        ///// <summary>The method to call after <see cref="GameLocation.updateEvenIfFarmerIsntHere"/>.</summary>
+        //private static void After_UpdateEvenIfFarmerIsntHere(GameLocation __instance, GameTime time)
+        //{
+        //    // TODO: Optimize, maybe config file too?
+        //    __instance.terrainFeatures.Values.DoIf((tf) => tf is IUpdateEvenWithoutFarmer, (tf) => (tf as IUpdateEvenWithoutFarmer).UpdateEvenWithoutFarmer(__instance, time));
+        //    __instance.Objects.Values.DoIf((o) => o is IUpdateEvenWithoutFarmer, (o) => (o as IUpdateEvenWithoutFarmer).UpdateEvenWithoutFarmer(__instance, time));
+        //}
     }
 }
