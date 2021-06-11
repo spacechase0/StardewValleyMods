@@ -13,7 +13,6 @@ using StardewValley.TerrainFeatures;
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="HoeDirt"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
     internal class HoeDirtPatcher : BasePatcher
     {
         /*********
@@ -33,24 +32,31 @@ namespace SpaceCore.Patches
         ** Private methods
         *********/
         /// <summary>The method which transpiles <see cref="HoeDirt.dayUpdate"/>.</summary>
-        private static IEnumerable<CodeInstruction> Transpile_DayUpdate(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        private static IEnumerable<CodeInstruction> Transpile_DayUpdate(IEnumerable<CodeInstruction> insns)
         {
-            // TODO: Learn how to use ILGenerator
             Log.trace("Transpiling for hoe dirt winter stuff");
+            bool happened = false;
             var newInsns = new List<CodeInstruction>();
             foreach (var insn in insns)
             {
-                if (insn.opcode == OpCodes.Call && (insn.operand as MethodInfo).Name == "destroyCrop")
+                if (
+                    ( insn.opcode == OpCodes.Call || insn.opcode == OpCodes.Callvirt )
+                    && (insn.operand as MethodInfo).Name == "destroyCrop"
+                    )
                 {
                     Log.trace("Replacing destroyCrop with our call");
                     // Replace with our call. We do this instead of nop to clear the stack entries
                     // Because I'm too lazy to figure out the rest properly.
                     insn.operand = PatchHelper.RequireMethod<HoeDirtPatcher>(nameof(DestroyCropReplacement));
+                    happened = true;
                 }
 
                 newInsns.Add(insn);
             }
 
+            if (!happened) {
+                Log.error($"{nameof(Transpile_DayUpdate)} patching failed!");
+                }
             return newInsns;
         }
 
