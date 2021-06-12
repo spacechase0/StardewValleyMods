@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using GenericModConfigMenu.UI;
+using GenericModConfigMenu.Framework;
+using GenericModConfigMenu.Framework.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,7 +14,7 @@ using StardewValley.Menus;
 
 namespace GenericModConfigMenu
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 

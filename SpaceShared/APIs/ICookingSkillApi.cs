@@ -4,7 +4,7 @@ using StardewValley.Objects;
 
 namespace SpaceShared.APIs
 {
-    internal interface ICookingSkillApi
+    public interface ICookingSkillApi
     {
         /// <summary>
         /// Modify a cooked item based on the player's cooking skill.

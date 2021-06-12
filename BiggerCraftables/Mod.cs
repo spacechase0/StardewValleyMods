@@ -10,7 +10,7 @@ using StardewModdingAPI.Events;
 
 namespace BiggerCraftables
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static List<ContentList.Entry> Entries = new();

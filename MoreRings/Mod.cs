@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using MoreRings.Framework;
 using MoreRings.Patches;
 using Spacechase.Shared.Harmony;
 using SpaceCore.Events;
@@ -13,7 +14,7 @@ using StardewValley.Objects;
 
 namespace MoreRings
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 

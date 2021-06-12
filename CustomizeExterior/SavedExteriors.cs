@@ -1,9 +1,0 @@
-using System.Collections.Generic;
-
-namespace CustomizeExterior
-{
-    public class SavedExteriors
-    {
-        public Dictionary<string, string> Chosen = new();
-    }
-}

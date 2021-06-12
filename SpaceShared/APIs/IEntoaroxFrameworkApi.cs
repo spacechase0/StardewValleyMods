@@ -1,6 +1,6 @@
 namespace SpaceShared.APIs
 {
-    internal interface IEntoaroxFrameworkApi
+    public interface IEntoaroxFrameworkApi
     {
         void HoistSerializerOwnership();
     }

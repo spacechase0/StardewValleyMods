@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using HybridCropEngine.Framework;
 using Microsoft.Xna.Framework;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -11,7 +12,7 @@ using StardewValley.TerrainFeatures;
 
 namespace HybridCropEngine
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetLoader
+    internal class Mod : StardewModdingAPI.Mod, IAssetLoader
     {
         public static Mod Instance;
         public static Configuration Config;

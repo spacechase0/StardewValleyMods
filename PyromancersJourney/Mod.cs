@@ -1,4 +1,5 @@
 using System.Linq;
+using PyromancersJourney.Framework;
 using SpaceCore.Events;
 using SpaceShared;
 using StardewModdingAPI;
@@ -9,7 +10,7 @@ using xTile.Dimensions;
 
 namespace PyromancersJourney
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 

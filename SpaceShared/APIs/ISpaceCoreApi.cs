@@ -4,7 +4,7 @@ using StardewValley;
 
 namespace SpaceShared.APIs
 {
-    internal interface ISpaceCoreApi
+    public interface ISpaceCoreApi
     {
         string[] GetCustomSkills();
         int GetLevelForCustomSkill(Farmer farmer, string skill);

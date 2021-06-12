@@ -5,7 +5,7 @@ using StardewModdingAPI;
 
 namespace SpaceShared.APIs
 {
-    internal interface IGenericModConfigMenuApi
+    public interface IGenericModConfigMenuApi
     {
         void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile);
         void UnregisterModConfig(IManifest mod);

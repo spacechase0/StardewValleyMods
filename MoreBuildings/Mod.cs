@@ -19,7 +19,7 @@ using StardewValley.Menus;
 
 namespace MoreBuildings
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
+    internal class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
     {
         public static Mod Instance;
         private Texture2D Shed2Exterior;

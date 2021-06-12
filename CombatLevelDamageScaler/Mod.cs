@@ -1,3 +1,4 @@
+using CombatLevelDamageScaler.Framework;
 using CombatLevelDamageScaler.Patches;
 using Spacechase.Shared.Harmony;
 using SpaceShared;
@@ -7,7 +8,7 @@ using StardewModdingAPI.Events;
 
 namespace CombatLevelDamageScaler
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Configuration Config;
 

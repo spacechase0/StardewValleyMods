@@ -16,7 +16,7 @@ using StardewValley.Locations;
 
 namespace SpaceCore
 {
-    public class SpaceCore : Mod
+    internal class SpaceCore : Mod
     {
         public Configuration Config { get; set; }
         internal static SpaceCore Instance;

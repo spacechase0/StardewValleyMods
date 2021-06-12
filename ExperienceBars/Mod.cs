@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using ExperienceBars.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -15,7 +16,7 @@ using StardewValley.Locations;
 
 namespace ExperienceBars
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static readonly int[] ExpNeededForLevel = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
 

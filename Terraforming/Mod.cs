@@ -1,12 +1,13 @@
 using StardewModdingAPI;
 using StardewValley;
+using Terraforming.Framework;
 using xTile;
 using xTile.Layers;
 using xTile.Tiles;
 
 namespace Terraforming
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 

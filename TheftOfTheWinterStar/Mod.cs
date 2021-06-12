@@ -17,12 +17,13 @@ using StardewValley.Objects;
 using StardewValley.Projectiles;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
+using TheftOfTheWinterStar.Framework;
 using TheftOfTheWinterStar.Patches;
 using xTile.Tiles;
 
 namespace TheftOfTheWinterStar
 {
-    public enum ArenaStage
+    internal enum ArenaStage
     {
         NotTriggered,
         Stage1,
@@ -31,7 +32,7 @@ namespace TheftOfTheWinterStar
         Finished2,
     }
 
-    public class Mod : StardewModdingAPI.Mod, IAssetEditor
+    internal class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
         public const int EventId = 91000;
 

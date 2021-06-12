@@ -21,7 +21,7 @@ using StardewValley.TerrainFeatures;
 
 namespace LuckSkill
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetEditor
+    internal class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
         public const int ProfessionDailyLuck = 5 * 6;
         public const int ProfessionMoreQuests = 5 * 6 + 1;// 4;

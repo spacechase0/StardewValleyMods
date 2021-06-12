@@ -1,3 +1,4 @@
+using AnimalSocialMenu.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
@@ -8,7 +9,7 @@ using StardewValley.Menus;
 
 namespace AnimalSocialMenu
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         private static int MyTabId;

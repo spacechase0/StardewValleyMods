@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using BuildableLocationsFramework.Framework;
 using BuildableLocationsFramework.Patches;
 using Spacechase.Shared.Harmony;
 using SpaceShared;
@@ -12,7 +13,7 @@ using StardewValley.Menus;
 
 namespace BuildableLocationsFramework
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 

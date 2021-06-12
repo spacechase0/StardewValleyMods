@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CookingSkill.Framework;
 using SpaceCore;
 using SpaceCore.Events;
 using SpaceShared;
@@ -14,7 +15,7 @@ using SObject = StardewValley.Object;
 namespace CookingSkill
 {
     // This really needs organizing/splitting
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static Skill Skill;

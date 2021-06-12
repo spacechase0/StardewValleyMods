@@ -6,7 +6,7 @@ using StardewValley;
 
 namespace SpaceShared.APIs
 {
-    internal interface IJsonAssetsApi
+    public interface IJsonAssetsApi
     {
         void LoadAssets(string path);
 

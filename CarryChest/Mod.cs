@@ -11,7 +11,7 @@ using SObject = StardewValley.Object;
 
 namespace CarryChest
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using RushOrders.Framework;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
@@ -13,7 +14,7 @@ using StardewValley.Tools;
 
 namespace RushOrders
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static RushOrdersConfig ModConfig { get; private set; }

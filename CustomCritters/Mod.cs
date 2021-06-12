@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using CustomCritters.Framework;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -8,7 +9,7 @@ using StardewValley;
 
 namespace CustomCritters
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public override void Entry(IModHelper helper)

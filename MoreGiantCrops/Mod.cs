@@ -9,7 +9,7 @@ using StardewModdingAPI;
 
 namespace MoreGiantCrops
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static Dictionary<int, Texture2D> Sprites = new();

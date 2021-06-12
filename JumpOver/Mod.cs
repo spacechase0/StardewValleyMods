@@ -1,3 +1,4 @@
+using JumpOver.Framework;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
@@ -6,7 +7,7 @@ using StardewValley;
 
 namespace JumpOver
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static Configuration Config;

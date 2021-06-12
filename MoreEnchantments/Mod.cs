@@ -7,7 +7,7 @@ using StardewValley;
 
 namespace MoreEnchantments
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetEditor
+    internal class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
         public static Mod Instance;
 

@@ -9,7 +9,7 @@ using StardewValley.Menus;
 
 namespace Displays
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetLoader
+    internal class Mod : StardewModdingAPI.Mod, IAssetLoader
     {
         public static Mod Instance;
 

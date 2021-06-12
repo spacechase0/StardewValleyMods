@@ -12,7 +12,7 @@ using StardewValley;
 
 namespace ContentPatcherAnimations
 {
-    public class PatchData
+    internal class PatchData
     {
         public object PatchObj;
         public Func<bool> IsActive;
@@ -25,7 +25,7 @@ namespace ContentPatcherAnimations
         public int CurrentFrame;
     }
 
-    public class ScreenState
+    internal class ScreenState
     {
         public IEnumerable CpPatches;
 
@@ -36,7 +36,7 @@ namespace ContentPatcherAnimations
         public Queue<Patch> FindTargetsQueue = new();
     }
 
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 

@@ -1,3 +1,4 @@
+using CapstoneProfessions.Framework;
 using CapstoneProfessions.Patches;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;
@@ -10,7 +11,7 @@ using StardewValley.Menus;
 
 namespace CapstoneProfessions
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 

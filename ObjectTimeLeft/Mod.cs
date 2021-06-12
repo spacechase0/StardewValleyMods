@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using ObjectTimeLeft.Framework;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
@@ -7,7 +8,7 @@ using StardewValley;
 
 namespace ObjectTimeLeft
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static Configuration Config;

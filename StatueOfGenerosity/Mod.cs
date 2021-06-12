@@ -8,7 +8,7 @@ using StatueOfGenerosity.Patches;
 
 namespace StatueOfGenerosity
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         private static IJsonAssetsApi Ja;

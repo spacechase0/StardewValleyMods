@@ -5,7 +5,7 @@ using StardewModdingAPI;
 
 namespace MultiFertilizer
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static string KeyFert => $"{Mod.Instance.ModManifest.UniqueID}/FertilizerLevel";
         public static string KeyRetain => $"{Mod.Instance.ModManifest.UniqueID}/WaterRetainLevel";

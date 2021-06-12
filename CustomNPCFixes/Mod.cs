@@ -9,7 +9,7 @@ using StardewValley;
 
 namespace CustomNPCFixes
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public override void Entry(IModHelper helper)
         {

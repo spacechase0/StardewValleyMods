@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PyTK.CustomElementHandler;
 using StardewValley;
-using StardewValley.TerrainFeatures;
 using SObject = StardewValley.Object;
 
 namespace MoreGrassStarters

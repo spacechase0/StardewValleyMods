@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BetterShopMenu.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,7 +15,7 @@ using SObject = StardewValley.Object;
 
 namespace BetterShopMenu
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static Configuration Config;

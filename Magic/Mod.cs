@@ -1,6 +1,7 @@
 using System;
 using System.IO;
-using Magic.Other;
+using Magic.Framework;
+using Magic.Framework.Apis;
 using Newtonsoft.Json;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -10,7 +11,7 @@ using StardewValley;
 
 namespace Magic
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static MultiplayerSaveData Data { get; private set; } = new();
@@ -32,7 +33,7 @@ namespace Magic
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
             helper.Events.GameLoop.Saving += this.OnSaving;
 
-            Magic.Init(helper.Events, helper.Input, helper.Multiplayer.GetNewID);
+            Framework.Magic.Init(helper.Events, helper.Input, helper.Multiplayer.GetNewID);
         }
 
         public override object GetApi()

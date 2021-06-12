@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JunimosAcceptCash.Framework;
 using Microsoft.Xna.Framework;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -10,7 +11,7 @@ using SObject = StardewValley.Object;
 
 namespace JunimosAcceptCash
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public Mod Instance;
         public Configuration Config;

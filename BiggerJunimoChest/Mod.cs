@@ -5,7 +5,7 @@ using StardewModdingAPI;
 
 namespace BiggerJunimoChest
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public override void Entry(IModHelper helper)

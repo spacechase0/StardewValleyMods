@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using GenericModConfigMenu.Framework;
 using GenericModConfigMenu.ModOption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

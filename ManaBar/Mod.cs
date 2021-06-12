@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ManaBar.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -12,7 +13,7 @@ using StardewValley.Network;
 
 namespace ManaBar
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static MultiplayerSaveData Data { get; private set; } = new();

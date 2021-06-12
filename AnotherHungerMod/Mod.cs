@@ -1,4 +1,5 @@
 using System;
+using AnotherHungerMod.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore.Events;
@@ -10,7 +11,7 @@ using StardewValley;
 
 namespace AnotherHungerMod
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static Configuration Config;

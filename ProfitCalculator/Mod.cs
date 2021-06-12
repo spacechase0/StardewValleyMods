@@ -7,7 +7,7 @@ using StardewValley;
 
 namespace ProfitCalculator
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         internal class ProfitData
         {

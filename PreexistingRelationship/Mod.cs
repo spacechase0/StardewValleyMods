@@ -1,3 +1,4 @@
+using PreexistingRelationship.Framework;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -6,7 +7,7 @@ using StardewValley.Locations;
 
 namespace PreexistingRelationship
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 

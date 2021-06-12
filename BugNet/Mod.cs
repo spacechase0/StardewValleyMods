@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BugNet.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
@@ -12,7 +13,7 @@ using StardewValley.Menus;
 
 namespace BugNet
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public class TextureTarget
         {

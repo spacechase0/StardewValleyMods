@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using CustomBuildings.Framework;
 using CustomBuildings.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,7 +15,7 @@ using StardewValley.Menus;
 
 namespace CustomBuildings
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
+    internal class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
     {
         public static Mod Instance;
 

@@ -2,7 +2,7 @@ using StardewValley;
 
 namespace SpaceShared.APIs
 {
-    internal interface IManaBarApi
+    public interface IManaBarApi
     {
         int GetMana(Farmer farmer);
         void AddMana(Farmer farmer, int amt);

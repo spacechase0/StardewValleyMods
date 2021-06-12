@@ -12,6 +12,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Menus;
+using SurfingFestival.Framework;
 using SurfingFestival.Patches;
 using xTile;
 using xTile.Layers;
@@ -19,7 +20,7 @@ using xTile.Tiles;
 
 namespace SurfingFestival
 {
-    public enum Item
+    internal enum Item
     {
         Boost,
         HomingProjectile,
@@ -27,7 +28,7 @@ namespace SurfingFestival
         Invincibility,
     }
 
-    public enum ObstacleType
+    internal enum ObstacleType
     {
         Item,
         Net,
@@ -36,14 +37,14 @@ namespace SurfingFestival
         FirstPlaceProjectile,
     }
 
-    public enum BonfireState
+    internal enum BonfireState
     {
         NotDone,
         Normal,
         Shorts,
     }
 
-    public class Obstacle
+    internal class Obstacle
     {
         public ObstacleType Type { get; set; }
         public Vector2 Position { get; set; }
@@ -68,7 +69,7 @@ namespace SurfingFestival
         }
     }
 
-    public class RacerState
+    internal class RacerState
     {
         public int Speed { get; set; } = Mod.SurfSpeed;
         public int AddedSpeed { get; set; }
@@ -87,7 +88,7 @@ namespace SurfingFestival
         public bool ShouldUseItem { get; set; }
     }
 
-    public class Mod : StardewModdingAPI.Mod, IAssetLoader, IAssetEditor
+    internal class Mod : StardewModdingAPI.Mod, IAssetLoader, IAssetEditor
     {
         public static Mod Instance;
 

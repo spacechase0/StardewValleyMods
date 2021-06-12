@@ -8,7 +8,7 @@ using StardewValley.TerrainFeatures;
 
 namespace MoreGrassStarters
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 

@@ -1,4 +1,5 @@
 using System;
+using ManaBar.Framework;
 using StardewValley;
 
 namespace ManaBar
