@@ -57,7 +57,7 @@ namespace StatueOfGenerosity.Patches
             string[] favs = str.Split('/')[1].Split(' ');
 
             __instance.MinutesUntilReady = 1;
-            __instance.heldObject.Value = new SObject(int.Parse(favs[Game1.random.Next(favs.Length)]), 1, false, -1, 0);
+            __instance.heldObject.Value = new SObject(int.Parse(favs[Game1.random.Next(favs.Length)]), 1);
         }
     }
 }

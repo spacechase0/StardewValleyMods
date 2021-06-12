@@ -19,7 +19,7 @@ namespace Terraforming
         private TileType Sel = TileType.Dirt;
 
         public TerraformingMenu()
-        : base(0, 0, Game1.viewport.Width, Game1.viewport.Height, false)
+        : base(0, 0, Game1.viewport.Width, Game1.viewport.Height)
         {
             this.TerrainWidth = Game1.currentLocation.Map.Layers[0].LayerWidth;
             this.TerrainHeight = Game1.currentLocation.Map.Layers[0].LayerHeight;

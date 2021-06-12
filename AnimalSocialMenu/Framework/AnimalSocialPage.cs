@@ -24,7 +24,7 @@ namespace AnimalSocialMenu.Framework
         private bool Scrolling;
 
         public AnimalSocialPage(int x, int y, int width, int height)
-            : base(x, y, width, height, false)
+            : base(x, y, width, height)
         {
             foreach (FarmAnimal fa in Game1.getFarm().getAllFarmAnimals())
             {
@@ -36,11 +36,11 @@ namespace AnimalSocialMenu.Framework
             {
                 this.Names.Add(kvp.Key);
                 //this.sprites.Add(new ClickableTextureComponent("", new Rectangle(x + IClickableMenu.borderWidth + 4, 0, width, 64), (string)null, "", Game1.objectSpriteSheet, new Rectangle(0, 0, 24, 24), 4f, false));
-                this.Sprites.Add(new ClickableTextureComponent("", new Rectangle(x + IClickableMenu.borderWidth + 4 + (kvp.Value.Sprite.SourceRect.Width == 16 ? 16 : 0), 0, width, 64), null, "", kvp.Value.Sprite.Texture, kvp.Value.Sprite.SourceRect, 2, false));
+                this.Sprites.Add(new ClickableTextureComponent("", new Rectangle(x + IClickableMenu.borderWidth + 4 + (kvp.Value.Sprite.SourceRect.Width == 16 ? 16 : 0), 0, width, 64), null, "", kvp.Value.Sprite.Texture, kvp.Value.Sprite.SourceRect, 2));
             }
-            this.UpButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), 4f, false);
-            this.DownButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + height - 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), 4f, false);
-            this.ScrollBar = new ClickableTextureComponent(new Rectangle(this.UpButton.bounds.X + 12, this.UpButton.bounds.Y + this.UpButton.bounds.Height + 4, 24, 40), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), 4f, false);
+            this.UpButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), 4f);
+            this.DownButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + height - 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), 4f);
+            this.ScrollBar = new ClickableTextureComponent(new Rectangle(this.UpButton.bounds.X + 12, this.UpButton.bounds.Y + this.UpButton.bounds.Height + 4, 24, 40), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), 4f);
             this.ScrollBarRunner = new Rectangle(this.ScrollBar.bounds.X, this.UpButton.bounds.Y + this.UpButton.bounds.Height + 4, this.ScrollBar.bounds.Width, height - 128 - this.UpButton.bounds.Height - 8);
             this.UpdateSlots();
         }
@@ -173,8 +173,8 @@ namespace AnimalSocialMenu.Framework
         {
             this.DescriptionText = "";
             this.HoverText = "";
-            this.UpButton.tryHover(x, y, 0.1f);
-            this.DownButton.tryHover(x, y, 0.1f);
+            this.UpButton.tryHover(x, y);
+            this.DownButton.tryHover(x, y);
         }
 
         private void DrawNpcSlot(SpriteBatch b, int i)
@@ -246,10 +246,10 @@ namespace AnimalSocialMenu.Framework
             }
             this.UpButton.draw(b);
             this.DownButton.draw(b);
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.ScrollBarRunner.X, this.ScrollBarRunner.Y, this.ScrollBarRunner.Width, this.ScrollBarRunner.Height, Color.White, 4f, true);
+            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.ScrollBarRunner.X, this.ScrollBarRunner.Y, this.ScrollBarRunner.Width, this.ScrollBarRunner.Height, Color.White, 4f);
             this.ScrollBar.draw(b);
             if (!this.HoverText.Equals(""))
-                IClickableMenu.drawHoverText(b, this.HoverText, Game1.smallFont, 0, 0, -1, null, -1, null, null, 0, -1, -1, -1, -1, 1f, null);
+                IClickableMenu.drawHoverText(b, this.HoverText, Game1.smallFont);
             b.End();
             b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
         }

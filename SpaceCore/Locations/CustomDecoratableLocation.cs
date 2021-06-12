@@ -56,17 +56,17 @@ namespace SpaceCore.Locations
                         Rectangle r = enumerator.Current;
                         for (int x = r.X; x < r.Right; x++)
                         {
-                            this.setMapTileIndex(x, r.Y, tileSheetIndex, "Back", 0);
-                            this.setMapTileIndex(x, r.Y + 1, tileSheetIndex + 16, "Back", 0);
+                            this.setMapTileIndex(x, r.Y, tileSheetIndex, "Back");
+                            this.setMapTileIndex(x, r.Y + 1, tileSheetIndex + 16, "Back");
                             if (r.Height >= 3)
                             {
                                 if (this.map.GetLayer("Buildings").Tiles[x, r.Y + 2].TileSheet.Equals(this.map.TileSheets[2]))
                                 {
-                                    this.setMapTileIndex(x, r.Y + 2, tileSheetIndex + 32, "Buildings", 0);
+                                    this.setMapTileIndex(x, r.Y + 2, tileSheetIndex + 32, "Buildings");
                                 }
                                 else
                                 {
-                                    this.setMapTileIndex(x, r.Y + 2, tileSheetIndex + 32, "Back", 0);
+                                    this.setMapTileIndex(x, r.Y + 2, tileSheetIndex + 32, "Back");
                                 }
                             }
                         }
@@ -79,17 +79,17 @@ namespace SpaceCore.Locations
                 Rectangle r2 = rooms[whichRoom];
                 for (int x2 = r2.X; x2 < r2.Right; x2++)
                 {
-                    this.setMapTileIndex(x2, r2.Y, tileSheetIndex, "Back", 0);
-                    this.setMapTileIndex(x2, r2.Y + 1, tileSheetIndex + 16, "Back", 0);
+                    this.setMapTileIndex(x2, r2.Y, tileSheetIndex, "Back");
+                    this.setMapTileIndex(x2, r2.Y + 1, tileSheetIndex + 16, "Back");
                     if (r2.Height >= 3)
                     {
                         if (this.map.GetLayer("Buildings").Tiles[x2, r2.Y + 2].TileSheet.Equals(this.map.TileSheets[2]))
                         {
-                            this.setMapTileIndex(x2, r2.Y + 2, tileSheetIndex + 32, "Buildings", 0);
+                            this.setMapTileIndex(x2, r2.Y + 2, tileSheetIndex + 32, "Buildings");
                         }
                         else
                         {
-                            this.setMapTileIndex(x2, r2.Y + 2, tileSheetIndex + 32, "Back", 0);
+                            this.setMapTileIndex(x2, r2.Y + 2, tileSheetIndex + 32, "Back");
                         }
                     }
                 }
@@ -113,19 +113,19 @@ namespace SpaceCore.Locations
                             {
                                 if (r.Contains(x, y))
                                 {
-                                    this.setMapTileIndex(x, y, tileSheetIndex, "Back", 0);
+                                    this.setMapTileIndex(x, y, tileSheetIndex, "Back");
                                 }
                                 if (r.Contains(x + 1, y))
                                 {
-                                    this.setMapTileIndex(x + 1, y, tileSheetIndex + 1, "Back", 0);
+                                    this.setMapTileIndex(x + 1, y, tileSheetIndex + 1, "Back");
                                 }
                                 if (r.Contains(x, y + 1))
                                 {
-                                    this.setMapTileIndex(x, y + 1, tileSheetIndex + 16, "Back", 0);
+                                    this.setMapTileIndex(x, y + 1, tileSheetIndex + 16, "Back");
                                 }
                                 if (r.Contains(x + 1, y + 1))
                                 {
-                                    this.setMapTileIndex(x + 1, y + 1, tileSheetIndex + 17, "Back", 0);
+                                    this.setMapTileIndex(x + 1, y + 1, tileSheetIndex + 17, "Back");
                                 }
                             }
                         }
@@ -142,19 +142,19 @@ namespace SpaceCore.Locations
                     {
                         if (r2.Contains(x2, y2))
                         {
-                            this.setMapTileIndex(x2, y2, tileSheetIndex, "Back", 0);
+                            this.setMapTileIndex(x2, y2, tileSheetIndex, "Back");
                         }
                         if (r2.Contains(x2 + 1, y2))
                         {
-                            this.setMapTileIndex(x2 + 1, y2, tileSheetIndex + 1, "Back", 0);
+                            this.setMapTileIndex(x2 + 1, y2, tileSheetIndex + 1, "Back");
                         }
                         if (r2.Contains(x2, y2 + 1))
                         {
-                            this.setMapTileIndex(x2, y2 + 1, tileSheetIndex + 16, "Back", 0);
+                            this.setMapTileIndex(x2, y2 + 1, tileSheetIndex + 16, "Back");
                         }
                         if (r2.Contains(x2 + 1, y2 + 1))
                         {
-                            this.setMapTileIndex(x2 + 1, y2 + 1, tileSheetIndex + 17, "Back", 0);
+                            this.setMapTileIndex(x2 + 1, y2 + 1, tileSheetIndex + 17, "Back");
                         }
                     }
                 }

@@ -76,8 +76,8 @@ namespace Magic.Framework.Spells
                         Game1.playSound("hoeHit");
                         float ix = this.LandX + (float)Math.Cos(Math.PI * 2 / spotsForCurrRadius * i) * this.CurrRad * Game1.tileSize;
                         float iy = this.LandY + (float)Math.Sin(Math.PI * 2 / spotsForCurrRadius * i) * this.CurrRad * Game1.tileSize;
-                        this.Player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(ix, iy), Color.White, 8, Game1.random.NextDouble() < 0.5, 30, 0, -1, -1f, -1, 0));
-                        this.Player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(ix, iy), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f, 0, -1, -1f, -1, 0));
+                        this.Player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(ix, iy), Color.White, 8, Game1.random.NextDouble() < 0.5, 30));
+                        this.Player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(ix, iy), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f));
                     }
                     ++this.CurrRad;
 

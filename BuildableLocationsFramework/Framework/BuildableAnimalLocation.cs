@@ -194,7 +194,7 @@ namespace BuildableLocationsFramework.Framework
                 }
             }
 
-            if (this.isThereABuildingUnderConstruction() && (int)this.getBuildingUnderConstruction().daysOfConstructionLeft > 0 && Game1.getCharacterFromName("Robin", true).currentLocation.Equals(this))
+            if (this.isThereABuildingUnderConstruction() && (int)this.getBuildingUnderConstruction().daysOfConstructionLeft > 0 && Game1.getCharacterFromName("Robin").currentLocation.Equals(this))
             {
                 Building underConstruction = this.getBuildingUnderConstruction();
                 this.temporarySprites.Add(new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(399, 262, (int)(NetFieldBase<int, NetInt>)underConstruction.daysOfConstructionLeft == 1 ? 29 : 9, 43), new Vector2((int)underConstruction.tileX + (int)underConstruction.tilesWide / 2, (int)underConstruction.tileY + (int)underConstruction.tilesHigh / 2) * 64f + new Vector2(-16f, -144f), false, 0.0f, Color.White)

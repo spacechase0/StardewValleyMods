@@ -528,7 +528,7 @@ namespace SurfingFestival
                     if (racer == Game1.player)
                     {
                         var msg = new UseItemMessage() { ItemUsed = state.CurrentItem.Value };
-                        this.Helper.Multiplayer.SendMessage(msg, UseItemMessage.Type, new[] { this.ModManifest.UniqueID }, null);
+                        this.Helper.Multiplayer.SendMessage(msg, UseItemMessage.Type, new[] { this.ModManifest.UniqueID });
                     }
                     switch (state.CurrentItem.Value)
                     {

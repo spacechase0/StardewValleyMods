@@ -71,7 +71,7 @@ namespace SpaceCore.Interface
         private int playerPanelTimer;
 
         public NewSkillsPage(int x, int y, int width, int height)
-            : base(x, y, width, height, false)
+            : base(x, y, width, height)
         {
             this.texture = SpaceCore.Instance.Helper.Content.Load<Texture2D>(Path.Combine("assets/sprites.png"));
 
@@ -678,7 +678,7 @@ namespace SpaceCore.Interface
 
                 // farmer portrait
                 Game1.player.FarmerRenderer.draw(b,
-                    new FarmerSprite.AnimationFrame(Game1.player.bathingClothes.Value ? 108 : this.playerPanelFrames[this.playerPanelIndex], 0, false, false, null, false),
+                    new FarmerSprite.AnimationFrame(Game1.player.bathingClothes.Value ? 108 : this.playerPanelFrames[this.playerPanelIndex], 0, false, false),
                     currentFrame: Game1.player.bathingClothes.Value ? 108 : this.playerPanelFrames[this.playerPanelIndex],
                     sourceRect: new Rectangle(this.playerPanelFrames[this.playerPanelIndex] * 16, Game1.player.bathingClothes.Value ? 576 : 0, 16, 32),
                     position: new Vector2(x1 + 32, y1 + 32),
@@ -688,7 +688,7 @@ namespace SpaceCore.Interface
                 if (Game1.timeOfDay >= 1900)
                 {
                     Game1.player.FarmerRenderer.draw(b,
-                        new FarmerSprite.AnimationFrame(this.playerPanelFrames[this.playerPanelIndex], 0, false, false, null, false),
+                        new FarmerSprite.AnimationFrame(this.playerPanelFrames[this.playerPanelIndex], 0, false, false),
                         currentFrame: this.playerPanelFrames[this.playerPanelIndex],
                         sourceRect: new Rectangle(this.playerPanelFrames[this.playerPanelIndex] * 16, 0, 16, 32),
                         position: new Vector2(x1 + 32, y1 + 32),
@@ -780,8 +780,8 @@ namespace SpaceCore.Interface
                     }
                     if (levelIndex == 9)
                     {
-                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 12 + (skillLevel >= 10 ? 12 : 0), y + 16 + skillIndex * 56), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
-                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 16 + (skillLevel >= 10 ? 12 : 0), y + 12 + skillIndex * 56), (addedSkill ? Color.LightGreen : Color.SandyBrown) * (skillLevel == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 12 + (skillLevel >= 10 ? 12 : 0), y + 16 + skillIndex * 56), Color.Black * 0.35f, 1f, 0.85f, 1f, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 16 + (skillLevel >= 10 ? 12 : 0), y + 12 + skillIndex * 56), (addedSkill ? Color.LightGreen : Color.SandyBrown) * (skillLevel == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0);
                     }
                 }
                 if ((levelIndex + 1) % 5 == 0)
@@ -833,8 +833,8 @@ namespace SpaceCore.Interface
                     }
                     if (levelIndex == 9)
                     {
-                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 12 + (skillLevel >= 10 ? 12 : 0), y + 16 + indexWithLuckSkill * 56), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
-                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 16 + (skillLevel >= 10 ? 12 : 0), y + 12 + indexWithLuckSkill * 56), (addedSkill ? Color.LightGreen : Color.SandyBrown) * (skillLevel == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 12 + (skillLevel >= 10 ? 12 : 0), y + 16 + indexWithLuckSkill * 56), Color.Black * 0.35f, 1f, 0.85f, 1f, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 16 + (skillLevel >= 10 ? 12 : 0), y + 12 + indexWithLuckSkill * 56), (addedSkill ? Color.LightGreen : Color.SandyBrown) * (skillLevel == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0);
                     }
 
                     if ((levelIndex + 1) % 5 == 0)

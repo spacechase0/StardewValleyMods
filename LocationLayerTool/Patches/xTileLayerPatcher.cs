@@ -180,7 +180,7 @@ namespace LocationLayerTool.Patches
             {
                 string[] strArray = lightProp.ToString().Split(' ');
                 for (int index = 0; index < strArray.Length; index += 3)
-                    Game1.currentLightSources.Add(new LightSource(Convert.ToInt32(strArray[index + 2]), new Vector2(Convert.ToInt32(strArray[index]) * 64 + 32, Convert.ToInt32(strArray[index + 1]) * 64 + 32), 1f, LightSource.LightContext.MapLight, 0L));
+                    Game1.currentLightSources.Add(new LightSource(Convert.ToInt32(strArray[index + 2]), new Vector2(Convert.ToInt32(strArray[index]) * 64 + 32, Convert.ToInt32(strArray[index + 1]) * 64 + 32), 1f, LightSource.LightContext.MapLight));
             }
             Game1.currentLightSources.UnionWith(Game1.currentLocation.sharedLights.Values);
         }

@@ -32,8 +32,8 @@ namespace BuildableLocationsFramework.Patches
         /// <summary>The method to call before <see cref="Shears.beginUsing"/>.</summary>
         private static bool Before_BeginUsing(Shears __instance, GameLocation location, int x, int y, Farmer who, ref bool __result)
         {
-            x = (int)who.GetToolLocation(false).X;
-            y = (int)who.GetToolLocation(false).Y;
+            x = (int)who.GetToolLocation().X;
+            y = (int)who.GetToolLocation().Y;
             Rectangle toolRect = new Rectangle(x - 32, y - 32, 64, 64);
             if (location is IAnimalLocation animalLoc)
                 Mod.Instance.Helper.Reflection.GetField<FarmAnimal>(__instance, "animal").SetValue(Utility.GetBestHarvestableFarmAnimal(animalLoc.Animals.Values, __instance, toolRect));

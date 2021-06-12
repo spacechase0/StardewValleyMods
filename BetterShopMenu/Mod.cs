@@ -336,7 +336,7 @@ namespace BetterShopMenu
                     hover = forSale[i];
             }
             if (forSale.Count == 0)
-                SpriteText.drawString(Game1.spriteBatch, Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583"), this.Shop.xPositionOnScreen + this.Shop.width / 2 - SpriteText.getWidthOfString(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583"), 999999) / 2, this.Shop.yPositionOnScreen + this.Shop.height / 2 - 128, 999999, -1, 999999, 1f, 0.88f, false, -1, "", -1);
+                SpriteText.drawString(Game1.spriteBatch, Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583"), this.Shop.xPositionOnScreen + this.Shop.width / 2 - SpriteText.getWidthOfString(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583")) / 2, this.Shop.yPositionOnScreen + this.Shop.height / 2 - 128);
             //shop.inventory.draw(Game1.spriteBatch);
             // Moved currency here so above doesn't draw over it
             //if (currency == 0)
@@ -346,14 +346,14 @@ namespace BetterShopMenu
                 if (animations[index].update(Game1.currentGameTime))
                     animations.RemoveAt(index);
                 else
-                    animations[index].draw(Game1.spriteBatch, true, 0, 0, 1f);
+                    animations[index].draw(Game1.spriteBatch, true);
             }
             if (poof != null)
-                poof.draw(Game1.spriteBatch, false, 0, 0, 1f);
+                poof.draw(Game1.spriteBatch);
             // arrows already drawn
             if (forSale.Count > 18)
             {
-                IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), scrollBarRunner.X, scrollBarRunner.Y, scrollBarRunner.Width, scrollBarRunner.Height, Color.White, 4f, true);
+                IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), scrollBarRunner.X, scrollBarRunner.Y, scrollBarRunner.Width, scrollBarRunner.Height, Color.White, 4f);
                 scrollBar.draw(Game1.spriteBatch);
             }
             if (hover != null)
@@ -433,7 +433,7 @@ namespace BetterShopMenu
 
             if (this.Shop.upperRightCloseButton.containsPoint(x, y))
             {
-                this.Shop.exitThisMenu(true);
+                this.Shop.exitThisMenu();
                 return;
             }
 
@@ -531,7 +531,7 @@ namespace BetterShopMenu
             }
             else
             {
-                heldItem = this.Shop.inventory.leftClick(x, y, (Item)heldItem, true);
+                heldItem = this.Shop.inventory.leftClick(x, y, (Item)heldItem);
                 this.Shop.heldItem = heldItem;
             }
             for (int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i)
@@ -555,11 +555,11 @@ namespace BetterShopMenu
                         Game1.dayTimeMoneyBox.moneyShakeTimer = 1000;
                         Game1.playSound("cancel");
                     }
-                    if (heldItem != null && Game1.options.SnappyMenus && (Game1.activeClickableMenu != null && Game1.activeClickableMenu is ShopMenu) && Game1.player.addItemToInventoryBool((Item)heldItem, false))
+                    if (heldItem != null && Game1.options.SnappyMenus && (Game1.activeClickableMenu != null && Game1.activeClickableMenu is ShopMenu) && Game1.player.addItemToInventoryBool((Item)heldItem))
                     {
                         heldItem = null;
                         this.Shop.heldItem = heldItem;
-                        DelayedAction.playSoundAfterDelay("coin", 100, null);
+                        DelayedAction.playSoundAfterDelay("coin", 100);
                     }
                 }
             }
@@ -584,7 +584,7 @@ namespace BetterShopMenu
 
             if (this.Shop.upperRightCloseButton.containsPoint(x, y))
             {
-                this.Shop.exitThisMenu(true);
+                this.Shop.exitThisMenu();
                 return;
             }
 
@@ -620,7 +620,7 @@ namespace BetterShopMenu
                         if (this.Shop.inventory.getItemAt(x, y) == null)
                         {
                             Game1.playSound("sell");
-                            animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White, 8, false, 100f, 0, -1, -1f, -1, 0)
+                            animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White)
                             {
                                 motion = new Vector2(0.0f, -0.5f)
                             });
@@ -630,7 +630,7 @@ namespace BetterShopMenu
             }
             else
             {
-                heldItem = this.Shop.inventory.leftClick(x, y, (Item)heldItem, true);
+                heldItem = this.Shop.inventory.leftClick(x, y, (Item)heldItem);
                 this.Shop.heldItem = heldItem;
             }
             for (int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i)
@@ -650,11 +650,11 @@ namespace BetterShopMenu
                         itemPriceAndStock.Remove(forSale[index2]);
                         forSale.RemoveAt(index2);
                     }
-                    if (heldItem == null || !Game1.options.SnappyMenus || (Game1.activeClickableMenu == null || !(Game1.activeClickableMenu is ShopMenu)) || !Game1.player.addItemToInventoryBool((Item)heldItem, false))
+                    if (heldItem == null || !Game1.options.SnappyMenus || (Game1.activeClickableMenu == null || !(Game1.activeClickableMenu is ShopMenu)) || !Game1.player.addItemToInventoryBool((Item)heldItem))
                         break;
                     heldItem = null;
                     this.Shop.heldItem = heldItem;
-                    DelayedAction.playSoundAfterDelay("coin", 100, null);
+                    DelayedAction.playSoundAfterDelay("coin", 100);
                     break;
                 }
             }

@@ -141,8 +141,8 @@ namespace MoreRings.Framework
             {
                 if (r.NextDouble() < 0.022 * (1.0 + num1) * (who.professions.Contains(22) ? 2.0 : 1.0))
                 {
-                    int objectIndex = 535 + (ms.getMineArea(-1) == 40 ? 1 : (ms.getMineArea(-1) == 80 ? 2 : 0));
-                    if (ms.getMineArea(-1) == 121)
+                    int objectIndex = 535 + (ms.getMineArea() == 40 ? 1 : (ms.getMineArea() == 80 ? 2 : 0));
+                    if (ms.getMineArea() == 121)
                         objectIndex = 749;
                     if (who.professions.Contains(19) && r.NextDouble() < 0.5)
                         return objectIndex;

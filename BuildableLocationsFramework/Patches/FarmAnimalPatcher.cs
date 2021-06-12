@@ -57,7 +57,7 @@ namespace BuildableLocationsFramework.Patches
             {
                 GameLocation locationFromName = Mod.FindOutdoorsOf(currentBuilding);
                 IAnimalLocation locationFromName_animals = (IAnimalLocation)locationFromName;
-                if (locationFromName.isCollidingPosition(new Rectangle(((int)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false, false, false) || locationFromName.isCollidingPosition(new Rectangle(((int)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y + 1) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false, false, false))
+                if (locationFromName.isCollidingPosition(new Rectangle(((int)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false) || locationFromName.isCollidingPosition(new Rectangle(((int)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y + 1) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false))
                     return false;
                 if (locationFromName_animals.Animals.ContainsKey((long)__instance.myID))
                 {
@@ -78,7 +78,7 @@ namespace BuildableLocationsFramework.Patches
                 if (FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick)
                 {
                     ++FarmAnimal.NumPathfindingThisTick;
-                    __instance.controller = new PathFindController(__instance, locationFromName, new PathFindController.isAtEnd(FarmAnimal.grassEndPointFunction), Game1.random.Next(4), false, new PathFindController.endBehavior(FarmAnimal.behaviorAfterFindingGrassPatch), 200, Point.Zero, true);
+                    __instance.controller = new PathFindController(__instance, locationFromName, new PathFindController.isAtEnd(FarmAnimal.grassEndPointFunction), Game1.random.Next(4), false, new PathFindController.endBehavior(FarmAnimal.behaviorAfterFindingGrassPatch), 200, Point.Zero);
                 }
                 if (__instance.controller == null || __instance.controller.pathToEndPoint == null || __instance.controller.pathToEndPoint.Count < 3)
                 {
@@ -151,7 +151,7 @@ namespace BuildableLocationsFramework.Patches
                 __instance.Sprite.UpdateSourceRect();
                 __instance.FacingDirection = 2;
                 if (!__instance.isEmoting && Game1.random.NextDouble() < 0.002)
-                    __instance.doEmote(24, true);
+                    __instance.doEmote(24);
             }
             else if (__instance.pauseTimer <= 0)
             {
@@ -338,7 +338,7 @@ namespace BuildableLocationsFramework.Patches
                 if (location.IsOutdoors && (byte)__instance.fullness < 195 && (Game1.random.NextDouble() < 0.002 && FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick))
                 {
                     ++FarmAnimal.NumPathfindingThisTick;
-                    __instance.controller = new PathFindController(__instance, location, new PathFindController.isAtEnd(FarmAnimal.grassEndPointFunction), -1, false, new PathFindController.endBehavior(FarmAnimal.behaviorAfterFindingGrassPatch), 200, Point.Zero, true);
+                    __instance.controller = new PathFindController(__instance, location, new PathFindController.isAtEnd(FarmAnimal.grassEndPointFunction), -1, false, new PathFindController.endBehavior(FarmAnimal.behaviorAfterFindingGrassPatch), 200, Point.Zero);
                 }
                 if (Game1.timeOfDay >= 1700 && location.IsOutdoors && (__instance.controller == null && Game1.random.NextDouble() < 0.002))
                 {
@@ -355,7 +355,7 @@ namespace BuildableLocationsFramework.Patches
                     if (FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick)
                     {
                         ++FarmAnimal.NumPathfindingThisTick;
-                        __instance.controller = new PathFindController(__instance, location, new PathFindController.isAtEnd(PathFindController.isAtEndPoint), 0, false, null, 200, new Point((int)__instance.home.tileX + __instance.home.animalDoor.X, (int)__instance.home.tileY + __instance.home.animalDoor.Y), true);
+                        __instance.controller = new PathFindController(__instance, location, new PathFindController.isAtEnd(PathFindController.isAtEndPoint), 0, false, null, 200, new Point((int)__instance.home.tileX + __instance.home.animalDoor.X, (int)__instance.home.tileY + __instance.home.animalDoor.Y));
                     }
                 }
                 if (location.IsOutdoors && !Game1.isRaining && (!Game1.currentSeason.Equals("winter") && (int)__instance.currentProduce != -1) && ((int)__instance.age >= (byte)__instance.ageWhenMature && __instance.type.Value.Contains("Pig") && Game1.random.NextDouble() < 0.0002))
@@ -373,9 +373,9 @@ namespace BuildableLocationsFramework.Patches
                     }
                     if (Game1.player.currentLocation.Equals(location))
                     {
-                        DelayedAction.playSoundAfterDelay("dirtyHit", 450, null, -1);
-                        DelayedAction.playSoundAfterDelay("dirtyHit", 900, null, -1);
-                        DelayedAction.playSoundAfterDelay("dirtyHit", 1350, null, -1);
+                        DelayedAction.playSoundAfterDelay("dirtyHit", 450);
+                        DelayedAction.playSoundAfterDelay("dirtyHit", 900);
+                        DelayedAction.playSoundAfterDelay("dirtyHit", 1350);
                     }
                     if (location.Equals(Game1.currentLocation))
                     {
@@ -391,7 +391,7 @@ namespace BuildableLocationsFramework.Patches
                                     new(9, 250),
                                     new(11, 250),
                                     new(9, 250),
-                                    new(11, 250, false, false, findTruffleDelegate, false)
+                                    new(11, 250, false, false, findTruffleDelegate)
                                 });
                                 break;
                             case 1:
@@ -402,7 +402,7 @@ namespace BuildableLocationsFramework.Patches
                                     new(5, 250),
                                     new(7, 250),
                                     new(5, 250),
-                                    new(7, 250, false, false, findTruffleDelegate, false)
+                                    new(7, 250, false, false, findTruffleDelegate)
                                 });
                                 break;
                             case 2:
@@ -413,18 +413,18 @@ namespace BuildableLocationsFramework.Patches
                                     new(1, 250),
                                     new(3, 250),
                                     new(1, 250),
-                                    new(3, 250, false, false, findTruffleDelegate, false)
+                                    new(3, 250, false, false, findTruffleDelegate)
                                 });
                                 break;
                             case 3:
                                 __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>()
                                 {
-                                    new(5, 250, false, true, null, false),
-                                    new(7, 250, false, true, null, false),
-                                    new(5, 250, false, true, null, false),
-                                    new(7, 250, false, true, null, false),
-                                    new(5, 250, false, true, null, false),
-                                    new(7, 250, false, true, findTruffleDelegate, false)
+                                    new(5, 250, false, true),
+                                    new(7, 250, false, true),
+                                    new(5, 250, false, true),
+                                    new(7, 250, false, true),
+                                    new(5, 250, false, true),
+                                    new(7, 250, false, true, findTruffleDelegate)
                                 });
                                 break;
                         }

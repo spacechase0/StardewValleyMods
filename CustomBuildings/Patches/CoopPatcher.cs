@@ -96,7 +96,7 @@ namespace CustomBuildings.Patches
 
             var bdata = Mod.Instance.Buildings[__instance.buildingType];
             __instance.indoors.Value.objects.Remove(new Vector2(3, 3));
-            StardewValley.Object @object = new StardewValley.Object(new Vector2(bdata.FeedHopperX, bdata.FeedHopperY), 99, false);
+            StardewValley.Object @object = new StardewValley.Object(new Vector2(bdata.FeedHopperX, bdata.FeedHopperY), 99);
             @object.fragility.Value = 2;
             __instance.indoors.Value.objects.Add(new Vector2(bdata.FeedHopperX, bdata.FeedHopperY), @object);
             __instance.daysOfConstructionLeft.Value = bdata.DaysToConstruct;
@@ -135,7 +135,7 @@ namespace CustomBuildings.Patches
                     {
                         if (__instance.indoors.Value.doesTileHaveProperty(ix, iy, "Trough", "Back") != null)
                         {
-                            __instance.indoors.Value.objects.Add(new Vector2(ix, iy), new StardewValley.Object(178, 1, false, -1, 0));
+                            __instance.indoors.Value.objects.Add(new Vector2(ix, iy), new StardewValley.Object(178, 1));
                             --num;
                         }
                     }
@@ -156,7 +156,7 @@ namespace CustomBuildings.Patches
             (__instance.indoors.Value as AnimalHouse).animalLimit.Value = bdata.MaxOccupants;
             if (bdata.IncubatorX != -1)
             {
-                StardewValley.Object @object = new StardewValley.Object(new Vector2(bdata.IncubatorX, bdata.IncubatorY), 104, false);
+                StardewValley.Object @object = new StardewValley.Object(new Vector2(bdata.IncubatorX, bdata.IncubatorY), 104);
                 @object.fragility.Value = 2;
                 __instance.indoors.Value.objects.Add(new Vector2(bdata.IncubatorX, bdata.IncubatorY), @object);
             }
@@ -222,7 +222,7 @@ namespace CustomBuildings.Patches
             }
             else
             {
-                __instance.drawShadow(b, -1, -1);
+                __instance.drawShadow(b);
                 Vector2 animalDoorBase = new Vector2(__instance.tileX.Value + __instance.animalDoor.X, __instance.tileY.Value + __instance.animalDoor.Y - bdata.AnimalDoorHeight + 1);
                 int animalDoorY = Mod.Instance.Helper.Reflection.GetField<NetInt>(__instance, "yPositionOfAnimalDoor").GetValue().Value;
                 float alpha = Mod.Instance.Helper.Reflection.GetField<NetFloat>(__instance, "alpha").GetValue().Value;

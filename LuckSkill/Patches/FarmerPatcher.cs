@@ -80,7 +80,7 @@ namespace LuckSkill.Patches
 
                 if (foundGeode)
                 {
-                    int msa = ms.getMineArea(-1);
+                    int msa = ms.getMineArea();
                     if (msa != 0)
                     {
                         howMuch /= msa;

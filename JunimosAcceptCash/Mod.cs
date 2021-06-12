@@ -64,7 +64,7 @@ namespace JunimosAcceptCash
                 return;
 
             if (this.PurchaseButton == null)
-                this.PurchaseButton = new ClickableTextureComponent(new Rectangle(this.ActiveMenu.xPositionOnScreen + 800, this.ActiveMenu.yPositionOnScreen + 504, 260, 72), this.ActiveMenu.noteTexture, new Rectangle(517, 286, 65, 20), 4f, false);
+                this.PurchaseButton = new ClickableTextureComponent(new Rectangle(this.ActiveMenu.xPositionOnScreen + 800, this.ActiveMenu.yPositionOnScreen + 504, 260, 72), this.ActiveMenu.noteTexture, new Rectangle(517, 286, 65, 20), 4f);
             else
             {
                 this.PurchaseButton.bounds.Y = this.ActiveMenu.yPositionOnScreen;
@@ -117,7 +117,7 @@ namespace JunimosAcceptCash
 
             StardewValley.BellsAndWhistles.SpriteText.drawString(e.SpriteBatch, $"{this.CalculateActiveBundleCost()}g", this.PurchaseButton.bounds.X - 150, this.PurchaseButton.bounds.Y + 10);
             this.PurchaseButton.draw(e.SpriteBatch);
-            Game1.dayTimeMoneyBox.drawMoneyBox(e.SpriteBatch, -1, -1);
+            Game1.dayTimeMoneyBox.drawMoneyBox(e.SpriteBatch);
             this.ActiveMenu.drawMouse(e.SpriteBatch);
         }
 

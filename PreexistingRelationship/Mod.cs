@@ -110,11 +110,11 @@ namespace PreexistingRelationship
             {
                 if (Game1.content.LoadStringReturnNullIfNotFound("Strings\\StringsFromCSFiles:" + spouse.Name + "_AfterWedding") != null)
                 {
-                    spouse.addMarriageDialogue("Strings\\StringsFromCSFiles", spouse.Name + "_AfterWedding", false);
+                    spouse.addMarriageDialogue("Strings\\StringsFromCSFiles", spouse.Name + "_AfterWedding");
                 }
                 else
                 {
-                    spouse.addMarriageDialogue("Strings\\StringsFromCSFiles", "Game1.cs.2782", false);
+                    spouse.addMarriageDialogue("Strings\\StringsFromCSFiles", "Game1.cs.2782");
                 }
 
                 Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("married")));

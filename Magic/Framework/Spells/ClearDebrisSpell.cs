@@ -85,8 +85,8 @@ namespace Magic.Framework.Spells
                             {
                                 (loc as Farm).tryToAddHay(1);
                                 Game1.playSound("swordswipe");
-                                loc.temporarySprites.Add(new TemporaryAnimatedSprite(28, pos * Game1.tileSize + new Vector2(Game1.random.Next(-Game1.pixelZoom * 4, Game1.pixelZoom * 4), Game1.random.Next(-Game1.pixelZoom * 4, Game1.pixelZoom * 4)), Color.Green, 8, Game1.random.NextDouble() < 0.5, Game1.random.Next(60, 100), 0, -1, -1f, -1, 0));
-                                loc.temporarySprites.Add(new TemporaryAnimatedSprite(Game1.objectSpriteSheetName, Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 178, 16, 16), 750f, 1, 0, player.position - new Vector2(0.0f, Game1.tileSize * 2), false, false, player.position.Y / 10000f, 0.005f, Color.White, Game1.pixelZoom, -0.005f, 0.0f, 0.0f, false)
+                                loc.temporarySprites.Add(new TemporaryAnimatedSprite(28, pos * Game1.tileSize + new Vector2(Game1.random.Next(-Game1.pixelZoom * 4, Game1.pixelZoom * 4), Game1.random.Next(-Game1.pixelZoom * 4, Game1.pixelZoom * 4)), Color.Green, 8, Game1.random.NextDouble() < 0.5, Game1.random.Next(60, 100)));
+                                loc.temporarySprites.Add(new TemporaryAnimatedSprite(Game1.objectSpriteSheetName, Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 178, 16, 16), 750f, 1, 0, player.position - new Vector2(0.0f, Game1.tileSize * 2), false, false, player.position.Y / 10000f, 0.005f, Color.White, Game1.pixelZoom, -0.005f, 0.0f, 0.0f)
                                 {
                                     motion = { Y = -1f },
                                     layerDepth = (float)(1.0 - Game1.random.Next(100) / 10000.0),

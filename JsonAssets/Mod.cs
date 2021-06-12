@@ -245,7 +245,7 @@ namespace JsonAssets
                     PurchaseFrom = obj.Recipe.PurchaseFrom,
                     Price = obj.Recipe.PurchasePrice,
                     PurchaseRequirements = obj.Recipe.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", obj.Recipe.PurchaseRequirements?.ToArray()) },
-                    Object = () => new StardewValley.Object(obj.Id, 1, true, obj.Recipe.PurchasePrice, 0),
+                    Object = () => new StardewValley.Object(obj.Id, 1, true, obj.Recipe.PurchasePrice),
                 });
                 if (obj.Recipe.AdditionalPurchaseData != null)
                 {
@@ -256,7 +256,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(obj.Id, 1, true, entry.PurchasePrice, 0),
+                            Object = () => new StardewValley.Object(obj.Id, 1, true, entry.PurchasePrice),
                         });
                     }
                 }
@@ -268,7 +268,7 @@ namespace JsonAssets
                     PurchaseFrom = obj.PurchaseFrom,
                     Price = obj.PurchasePrice,
                     PurchaseRequirements = obj.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", obj.PurchaseRequirements?.ToArray()) },
-                    Object = () => new StardewValley.Object(obj.Id, int.MaxValue, false, obj.PurchasePrice, 0),
+                    Object = () => new StardewValley.Object(obj.Id, int.MaxValue, false, obj.PurchasePrice),
                 });
                 if (obj.AdditionalPurchaseData != null)
                 {
@@ -279,7 +279,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(obj.Id, int.MaxValue, false, entry.PurchasePrice, 0),
+                            Object = () => new StardewValley.Object(obj.Id, int.MaxValue, false, entry.PurchasePrice),
                         });
                     }
                 }
@@ -376,7 +376,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(crop.seed.Id, int.MaxValue, false, entry.PurchasePrice, 0),
+                            Object = () => new StardewValley.Object(crop.seed.Id, int.MaxValue, false, entry.PurchasePrice),
                         });
                     }
                 }
@@ -439,7 +439,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(tree.Sapling.Id, 1, true, tree.Sapling.PurchasePrice, 0),
+                            Object = () => new StardewValley.Object(tree.Sapling.Id, 1, true, tree.Sapling.PurchasePrice),
                         });
                     }
                 }
@@ -490,7 +490,7 @@ namespace JsonAssets
                     PurchaseFrom = craftable.PurchaseFrom,
                     Price = craftable.PurchasePrice,
                     PurchaseRequirements = craftable.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", craftable.PurchaseRequirements?.ToArray()) },
-                    Object = () => new StardewValley.Object(Vector2.Zero, craftable.Id, false),
+                    Object = () => new StardewValley.Object(Vector2.Zero, craftable.Id),
                 });
                 if (craftable.AdditionalPurchaseData != null)
                 {
@@ -501,7 +501,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(Vector2.Zero, craftable.Id, false),
+                            Object = () => new StardewValley.Object(Vector2.Zero, craftable.Id),
                         });
                     }
                 }

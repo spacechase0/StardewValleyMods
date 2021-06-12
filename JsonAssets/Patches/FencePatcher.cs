@@ -129,7 +129,7 @@ namespace JsonAssets.Patches
                     }
                     else return false;
 
-                    location.playSound(t is Axe ? "axchop" : "hammer", NetAudio.SoundContext.Default);
+                    location.playSound(t is Axe ? "axchop" : "hammer");
                     location.objects.Remove(__instance.tileLocation.Value);
                     for (int i = 0; i < 4; ++i)
                     {
@@ -148,13 +148,13 @@ namespace JsonAssets.Patches
                             200
                         ));
                     }
-                    Game1.createRadialDebris(location, t is Axe ? 12 : 14, (int)__instance.tileLocation.X, (int)__instance.tileLocation.Y, 6, false, -1, false, -1);
+                    Game1.createRadialDebris(location, t is Axe ? 12 : 14, (int)__instance.tileLocation.X, (int)__instance.tileLocation.Y, 6, false);
                     Mod.instance.Helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue()
                         .broadcastSprites(location, new TemporaryAnimatedSprite(12, new Vector2(__instance.tileLocation.X * 64, __instance.tileLocation.Y * 64),
-                                                                                    Color.White, 8, Game1.random.NextDouble() < 0.5, 50, 0, -1, -1, -1, 0));
+                                                                                    Color.White, 8, Game1.random.NextDouble() < 0.5, 50));
                     if (__instance.maxHealth.Value - __instance.health.Value < 0.5)
                     {
-                        location.debris.Add(new Debris(new SObject(fence.correspondingObject.GetObjectId(), 1, false, -1, 0),
+                        location.debris.Add(new Debris(new SObject(fence.correspondingObject.GetObjectId(), 1),
                                                             __instance.tileLocation.Value * 64 + new Vector2(32, 32)));
                     }
                     return false;
@@ -183,7 +183,7 @@ namespace JsonAssets.Patches
                     if (dropIn.ParentSheetIndex == fence.correspondingObject.GetObjectId())
                     {
                         __instance.health.Value = fence.MaxHealth + Game1.random.Next(-1000, 1000) / 100f; // Technically I should add a field to the json to make this changeable, but meh.
-                        who.currentLocation.playSound(fence.RepairSound, NetAudio.SoundContext.Default);
+                        who.currentLocation.playSound(fence.RepairSound);
                         __result = true;
                         return false;
                     }

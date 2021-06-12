@@ -110,7 +110,7 @@ namespace Magic.Framework.Game
         {
             if (this.Seeking)
             {
-                return location.doesPositionCollideWithCharacter(this.getBoundingBox(), false) != null;
+                return location.doesPositionCollideWithCharacter(this.getBoundingBox()) != null;
             }
             else return base.isColliding(location);
         }

@@ -311,7 +311,7 @@ namespace JsonAssets.Patches
                             return false;
                         }
                         location.objects.Add(pos, new Fence(pos, fence.correspondingObject.GetObjectId(), false));
-                        location.playSound(fence.PlacementSound, NetAudio.SoundContext.Default);
+                        location.playSound(fence.PlacementSound);
                         __result = true;
                         return false;
                     }

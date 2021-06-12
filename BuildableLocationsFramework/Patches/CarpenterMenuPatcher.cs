@@ -87,7 +87,7 @@ namespace BuildableLocationsFramework.Patches
                 {
                     if (!__instance_onFarm.GetValue())
                     {
-                        __instance.exitThisMenu(true);
+                        __instance.exitThisMenu();
                         Game1.player.forceCanMove();
                         Game1.playSound("bigDeSelect");
                     }
@@ -121,21 +121,21 @@ namespace BuildableLocationsFramework.Patches
                 }
                 if (!__instance_onFarm.GetValue() && __instance.demolishButton.containsPoint(x, y) && __instance.demolishButton.visible)
                 {
-                    Game1.globalFadeToBlack(new Game1.afterFadeFunction(__instance.setUpForBuildingPlacement), 0.02f);
+                    Game1.globalFadeToBlack(new Game1.afterFadeFunction(__instance.setUpForBuildingPlacement));
                     Game1.playSound("smallSelect");
                     __instance_onFarm.SetValue(true);
                     __instance_demolishing.SetValue(true);
                 }
                 if (!__instance_onFarm.GetValue() && __instance.moveButton.containsPoint(x, y) && __instance.moveButton.visible)
                 {
-                    Game1.globalFadeToBlack(new Game1.afterFadeFunction(__instance.setUpForBuildingPlacement), 0.02f);
+                    Game1.globalFadeToBlack(new Game1.afterFadeFunction(__instance.setUpForBuildingPlacement));
                     Game1.playSound("smallSelect");
                     __instance_onFarm.SetValue(true);
                     __instance_moving.SetValue(true);
                 }
                 if (__instance.okButton.containsPoint(x, y) && !__instance_onFarm.GetValue() && (Game1.player.Money >= __instance_price.GetValue() && __instance_blueprints.GetValue()[__instance_currentBlueprintIndex.GetValue()].doesFarmerHaveEnoughResourcesToBuild()))
                 {
-                    Game1.globalFadeToBlack(new Game1.afterFadeFunction(__instance.setUpForBuildingPlacement), 0.02f);
+                    Game1.globalFadeToBlack(new Game1.afterFadeFunction(__instance.setUpForBuildingPlacement));
                     Game1.playSound("smallSelect");
                     __instance_onFarm.SetValue(true);
                 }
@@ -239,7 +239,7 @@ namespace BuildableLocationsFramework.Patches
                                 }
                                 else
                                     DelayedAction.functionAfterDelay(new DelayedAction.delayedBehavior(__instance.returnToCarpentryMenu), 500);
-                            }, null);
+                            });
                             goto ret;
                         }
                     }
@@ -285,7 +285,7 @@ namespace BuildableLocationsFramework.Patches
                             Game1.playSound("axchop");
                         }
                     }
-                    else if (((BuildableGameLocation)CarpenterMenuPatcher.ReturnCurrentLocationAnyways("Farm")).buildStructure(__instance_buildingToMove.GetValue(), new Vector2((Game1.viewport.X + Game1.getMouseX()) / 64, (Game1.viewport.Y + Game1.getMouseY()) / 64), Game1.player, false))
+                    else if (((BuildableGameLocation)CarpenterMenuPatcher.ReturnCurrentLocationAnyways("Farm")).buildStructure(__instance_buildingToMove.GetValue(), new Vector2((Game1.viewport.X + Game1.getMouseX()) / 64, (Game1.viewport.Y + Game1.getMouseY()) / 64), Game1.player))
                     {
                         __instance_buildingToMove.GetValue().isMoving = false;
                         if (__instance_buildingToMove.GetValue() is ShippingBin)
@@ -293,8 +293,8 @@ namespace BuildableLocationsFramework.Patches
                         __instance_buildingToMove.GetValue().performActionOnBuildingPlacement();
                         __instance_buildingToMove.SetValue(null);
                         Game1.playSound("axchop");
-                        DelayedAction.playSoundAfterDelay("dirtyHit", 50, null, -1);
-                        DelayedAction.playSoundAfterDelay("dirtyHit", 150, null, -1);
+                        DelayedAction.playSoundAfterDelay("dirtyHit", 50);
+                        DelayedAction.playSoundAfterDelay("dirtyHit", 150);
                     }
                     else
                         Game1.playSound("cancel");
@@ -314,7 +314,7 @@ namespace BuildableLocationsFramework.Patches
                                 Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantBuild"), Color.Red, 3500f));
                         }
                         Game1.player.team.buildLock.ReleaseLock();
-                    }, null);
+                    });
                 ret:
                 return false;
             }
@@ -330,7 +330,7 @@ namespace BuildableLocationsFramework.Patches
                 return;
             if (playSound)
                 Game1.playSound("bigDeSelect");
-            __instance.exitThisMenu(true);
+            __instance.exitThisMenu();
         }
 
         internal static IEnumerable<CodeInstruction> Transpile(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
