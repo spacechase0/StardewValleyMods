@@ -48,21 +48,22 @@ namespace SpaceCore.Patches
         {
             if (split.Length == 0)
                 return false;
-            string split0 = split[0];
+            string name = split[0];
 
-            object[] _eventCommandArgs = SpaceCore.Reflection.GetField<object[]>(typeof(Event), "_eventCommandArgs").GetValue();
-            var _commandLookup = SpaceCore.Reflection.GetField<Dictionary<string, MethodInfo>>(typeof(Event), "_commandLookup").GetValue();
+            object[] eventCommandArgs = SpaceCore.Reflection.GetField<object[]>(typeof(Event), "_eventCommandArgs").GetValue();
+            var commandLookup = SpaceCore.Reflection.GetField<Dictionary<string, MethodInfo>>(typeof(Event), "_commandLookup").GetValue();
 
-            if (CustomCommands.ContainsKey(split0))
-                CustomCommands[split0].Invoke(null, new object[] { __instance, location, time, split });
-            else if (_commandLookup.ContainsKey(split0)) {
-                _eventCommandArgs[0] = location;
-                _eventCommandArgs[1] = time;
-                _eventCommandArgs[2] = split;
-                _commandLookup[split0].Invoke(__instance, _eventCommandArgs);
-                }
+            if (EventPatcher.CustomCommands.ContainsKey(name))
+                EventPatcher.CustomCommands[name].Invoke(null, new object[] { __instance, location, time, split });
+            else if (commandLookup.ContainsKey(name))
+            {
+                eventCommandArgs[0] = location;
+                eventCommandArgs[1] = time;
+                eventCommandArgs[2] = split;
+                commandLookup[name].Invoke(__instance, eventCommandArgs);
+            }
             else
-                SpaceShared.Log.Warn("ERROR: Invalid command: " + split0);
+                Log.Warn($"ERROR: Invalid command: {name}");
 
             return false;
         }

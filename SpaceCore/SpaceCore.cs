@@ -30,7 +30,7 @@ namespace SpaceCore
         public override void Entry(IModHelper helper)
         {
             SpaceCore.Instance = this;
-            Reflection = Helper.Reflection;
+            SpaceCore.Reflection = helper.Reflection;
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<Configuration>();
 
@@ -86,7 +86,7 @@ namespace SpaceCore
             }
         }
 
-        private int TickCount = 0;
+        private int TickCount;
         private void OnUpdate(object sender, UpdateTickedEventArgs e)
         {
             TileSheetExtensions.UpdateReferences();
@@ -166,9 +166,10 @@ namespace SpaceCore
                 return;
             }
 
-            var data = new Sleep.Data {
+            var data = new Sleep.Data
+            {
                 Location = Game1.currentLocation.Name
-                };
+            };
             if (data.X != -1 && data.Y != -1)
             {
                 data.X = Game1.player.position.X;

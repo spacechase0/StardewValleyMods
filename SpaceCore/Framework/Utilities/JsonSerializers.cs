@@ -164,10 +164,11 @@ namespace SpaceCore.Framework.Utilities
             return objectType.IsSubclassOf(typeof(Item));
         }
 
-        private static int? GetTokenValue(JObject o, string tokenName) {
+        private static int? GetTokenValue(JObject o, string tokenName)
+        {
             return o.TryGetValue(tokenName, StringComparison.InvariantCultureIgnoreCase, out JToken t) ? (int)t : null;
-            }
         }
+    }
 
     internal class MyRectangleConverter : JsonConverter
     {
@@ -199,8 +200,9 @@ namespace SpaceCore.Framework.Utilities
             return objectType == typeof(Rectangle);
         }
 
-        private static int? GetTokenValue(JObject o, string tokenName) {
+        private static int? GetTokenValue(JObject o, string tokenName)
+        {
             return o.TryGetValue(tokenName, StringComparison.InvariantCultureIgnoreCase, out JToken t) ? (int)t : (int?)null;
-            }
+        }
     }
 }
