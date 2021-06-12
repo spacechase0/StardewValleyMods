@@ -69,7 +69,7 @@ namespace SpaceCore
                     string dir = Path.GetDirectoryName(path);
                     string tempKey = Path.Combine(dir, image);
                     string actualKey = modHelper.Content.GetActualAssetKey(tempKey);
-                    Log.debug($"{dir} | {image} | {tempKey} | {actualKey} ");
+                    Log.Debug($"{dir} | {image} | {tempKey} | {actualKey} ");
                     image = Path.Combine(Path.GetDirectoryName(path), image);
                     //modHelper.Content.Load<Texture2D>(image);
                     image = modHelper.Content.GetActualAssetKey(image);
@@ -177,7 +177,7 @@ namespace SpaceCore
 
                     if (xlayer.Tiles[new Location(x, y)] == null)
                     {
-                        Log.warn("Tile property for non-existant tile; skipping");
+                        Log.Warn("Tile property for non-existant tile; skipping");
                         continue;
                     }
                     Content.addTiledPropertiesToXTile(tobj.Properties, xlayer.Tiles[new Location(x, y)].Properties);
@@ -248,7 +248,7 @@ namespace SpaceCore
                 else if (tprop.Type == TiledProperty.PropertyType.Bool)
                     xprops.Add(tprop.Name, bool.Parse(tprop.Value));
                 else
-                    Log.warn("Bad tilesheet tile property type: " + tprop.Type + " " + tprop.Name + " (not supported by xTile)");
+                    Log.Warn("Bad tilesheet tile property type: " + tprop.Type + " " + tprop.Name + " (not supported by xTile)");
             }
         }
     }

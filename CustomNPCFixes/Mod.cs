@@ -109,7 +109,7 @@ namespace CustomNPCFixes
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception doing schedule for NPC " + npc.Name + ": " + e);
+                        Log.Error("Exception doing schedule for NPC " + npc.Name + ": " + e);
                     }
                 }
             }

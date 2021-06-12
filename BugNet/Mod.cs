@@ -28,7 +28,7 @@ namespace BugNet
         }
 
         public static Mod instance;
-        internal static JsonAssetsAPI ja;
+        internal static IJsonAssetsApi ja;
         private static Dictionary<string, CritterData> CrittersData = new();
 
         public override void Entry(IModHelper helper)
@@ -83,8 +83,8 @@ namespace BugNet
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            Mod.ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
-            var spaceCore = this.Helper.ModRegistry.GetApi<SpaceCoreAPI>("spacechase0.SpaceCore");
+            Mod.ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
+            var spaceCore = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
             spaceCore.RegisterSerializerType(typeof(BugNetTool));
         }
 
@@ -120,7 +120,7 @@ namespace BugNet
             if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson?.Name != "Pierre")
                 return;
 
-            Log.debug($"Adding bug net to Pierre's shop.");
+            Log.Debug($"Adding bug net to Pierre's shop.");
 
             var forSale = menu.forSale;
             var itemPriceAndStock = menu.itemPriceAndStock;

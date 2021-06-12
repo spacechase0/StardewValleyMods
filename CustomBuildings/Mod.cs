@@ -32,7 +32,7 @@ namespace CustomBuildings
                         return obj.Key;
                 }
 
-                Log.warn($"No idea what '{data}' is!");
+                Log.Warn($"No idea what '{data}' is!");
                 return 0;
             }
         }
@@ -49,7 +49,7 @@ namespace CustomBuildings
                 new CoopPatcher()
             );
 
-            Log.debug("Loading content packs...");
+            Log.Debug("Loading content packs...");
             foreach (var cp in helper.ContentPacks.GetOwned())
             {
                 DirectoryInfo buildingsDir = new DirectoryInfo(Path.Combine(cp.DirectoryPath, "Buildings"));

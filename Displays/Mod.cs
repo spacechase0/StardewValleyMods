@@ -26,7 +26,7 @@ namespace Displays
 
         public void OnGameLaunched(object sender, GameLaunchedEventArgs args)
         {
-            var sc = this.Helper.ModRegistry.GetApi<SpaceCoreAPI>("spacechase0.SpaceCore");
+            var sc = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
             sc.RegisterSerializerType(typeof(Mannequin));
         }
 
@@ -37,7 +37,7 @@ namespace Displays
 
             if (args.Length == 0)
             {
-                Log.error("Invalid command arguments. Format: player_adddisplay <item> [type] [amount]\nSuch as:\n\tplayer_adddisplay mannequin [plain|male|female] [amt]");
+                Log.Error("Invalid command arguments. Format: player_adddisplay <item> [type] [amount]\nSuch as:\n\tplayer_adddisplay mannequin [plain|male|female] [amt]");
                 return;
             }
 
@@ -57,7 +57,7 @@ namespace Displays
                             mannGender = Mannequin.MannequinGender.Female;
                             break;
                         default:
-                            Log.error("Unknown mannequin type. Choices are: male, female");
+                            Log.Error("Unknown mannequin type. Choices are: male, female");
                             return;
                     }
                 }
@@ -66,7 +66,7 @@ namespace Displays
 
             if (item == null)
             {
-                Log.error("Invalid display item");
+                Log.Error("Invalid display item");
                 return;
             }
 

@@ -55,7 +55,7 @@ namespace SpaceCore
                  info.GetParameters()[3].ParameterType != typeof(string[]))
                 throw new ArgumentException("Custom event method must take Must take (Event, GameLocation, GameTime, string[])");
 
-            Log.debug("Adding event command: " + command + " = " + info);
+            Log.Debug("Adding event command: " + command + " = " + info);
             EventPatcher.customCommands.Add(command, info);
         }
 

@@ -44,7 +44,7 @@ namespace AnotherHungerMod
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
                 capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
@@ -65,7 +65,7 @@ namespace AnotherHungerMod
             if (cmd == "player_addfullness")
             {
                 if (args.Length != 1)
-                    Log.info("Usage: player_addfullness <amt>");
+                    Log.Info("Usage: player_addfullness <amt>");
                 else
                     Game1.player.UseFullness(-double.Parse(args[0]));
             }
@@ -109,7 +109,7 @@ namespace AnotherHungerMod
                 return;
 
             int foodVal = (int)((Game1.player.itemToEat as StardewValley.Object).Edibility * Mod.Config.EdibilityMultiplier);
-            Log.trace("Player ate food for " + foodVal + " fullness");
+            Log.Trace("Player ate food for " + foodVal + " fullness");
             Game1.player.UseFullness(-foodVal);
         }
 
@@ -122,7 +122,7 @@ namespace AnotherHungerMod
             {
                 if (e.Gift.Category == StardewValley.Object.CookingCategory)
                 {
-                    Log.trace("Player gave spouse a meal");
+                    Log.Trace("Player gave spouse a meal");
                     Game1.player.SetFedSpouse(true);
                 }
             }
@@ -132,13 +132,13 @@ namespace AnotherHungerMod
         {
             if (Game1.player.HasFedSpouse() && Game1.player.getSpouse() != null)
             {
-                Log.trace("Player didn't feed spouse");
+                Log.Trace("Player didn't feed spouse");
                 Game1.player.changeFriendship(-Mod.Config.RelationshipHitForNotFeedingSpouse, Game1.player.getSpouse());
                 Game1.player.SetFedSpouse(false);
             }
             else
             {
-                Log.trace("Player fed spouse");
+                Log.Trace("Player fed spouse");
             }
         }
 
@@ -194,7 +194,7 @@ namespace AnotherHungerMod
                 Game1.player.takeDamage(Mod.Config.StarvationDamagePer10Min, true, null);
                 if (Game1.player.health <= 0)
                 {
-                    Log.trace("Player starved to death, resetting hunger");
+                    Log.Trace("Player starved to death, resetting hunger");
                     if (Mod.Config.NegativeBuffThreshold != 0)
                         Game1.player.UseFullness(-Mod.Config.NegativeBuffThreshold);
                     else

@@ -96,7 +96,7 @@ namespace CustomCritters
                                     else if (pt.Type == "wait")
                                         ;
                                     else
-                                        Log.warn("Bad patrol point type: " + pt.Type);
+                                        Log.Warn("Bad patrol point type: " + pt.Type);
 
                                     this.needTarget = false;
                                 }
@@ -123,7 +123,7 @@ namespace CustomCritters
                         break;
 
                     default:
-                        Log.warn("Bad custom critter behavior: " + this.data.Behavior.Type);
+                        Log.Warn("Bad custom critter behavior: " + this.data.Behavior.Type);
                         break;
                 }
             }

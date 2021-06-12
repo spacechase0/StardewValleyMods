@@ -11,7 +11,7 @@ namespace StatueOfGenerosity
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        private static JsonAssetsAPI ja;
+        private static IJsonAssetsApi ja;
 
         public override void Entry(IModHelper helper)
         {
@@ -27,7 +27,7 @@ namespace StatueOfGenerosity
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            Mod.ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            Mod.ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
             Mod.ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
         }
     }

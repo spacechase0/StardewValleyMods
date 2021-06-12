@@ -49,7 +49,7 @@ namespace PreexistingRelationship
 
             if (Game1.player.getSpouse() != null)
             {
-                Log.error("You are already married.");
+                Log.Error("You are already married.");
                 return;
             }
 
@@ -58,7 +58,7 @@ namespace PreexistingRelationship
 
         internal static void DoMarriage(Farmer player, string npcName, bool local)
         {
-            Log.debug(player.Name + " selected " + npcName + " (" + local + ")");
+            Log.Debug(player.Name + " selected " + npcName + " (" + local + ")");
             foreach (var farmer in Game1.getAllFarmers())
             {
                 if (farmer.spouse == npcName)

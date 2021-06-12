@@ -78,7 +78,7 @@ namespace JsonAssets
                     string[] sections = npc.Value.Split('/');
                     if (sections.Length != 11)
                     {
-                        Log.warn($"Bad gift taste data for {npc.Key}!");
+                        Log.Warn($"Bad gift taste data for {npc.Key}!");
                         continue;
                     }
 
@@ -116,7 +116,7 @@ namespace JsonAssets
                     string neutralIdStr = string.Join(" ", neutralIds);
                     newData[npc.Key] = $"{loveStr}/{loveIdStr}/{likeStr}/{likeIdStr}/{dislikeStr}/{dislikeIdStr}/{hateStr}/{hateIdStr}/{neutralStr}/{neutralIdStr}/ ";
 
-                    Log.verbose($"Adding gift tastes for {npc.Key}: {newData[npc.Key]}");
+                    Log.Verbose($"Adding gift tastes for {npc.Key}: {newData[npc.Key]}");
                 }
                 asset.ReplaceWith(newData);
             }

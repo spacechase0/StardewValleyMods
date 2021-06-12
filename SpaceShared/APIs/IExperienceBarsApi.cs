@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SpaceShared.APIs
 {
-    internal interface ExperienceBarsAPI
+    internal interface IExperienceBarsApi
     {
         void DrawExperienceBar(Texture2D icon, int level, float percentFull, Color color);
         void SetDrawLuck(bool luck);

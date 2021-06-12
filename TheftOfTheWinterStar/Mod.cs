@@ -36,7 +36,7 @@ namespace TheftOfTheWinterStar
         public const int EVENT_ID = 91000;
 
         public static Mod instance;
-        internal static JsonAssetsAPI ja;
+        internal static IJsonAssetsApi ja;
 
         private SaveData saveData;
 
@@ -122,7 +122,7 @@ namespace TheftOfTheWinterStar
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            Mod.ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            Mod.ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
             Mod.ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "ja"));
             Mod.ja.IdsFixed += this.onIdsFixed;
         }
@@ -345,13 +345,13 @@ namespace TheftOfTheWinterStar
 
         private void onIdsFixed(object sender, EventArgs e)
         {
-            Log.debug("Adding frost dungeon loot");
+            Log.Debug("Adding frost dungeon loot");
 
             int stardropPiece = Mod.ja.GetObjectId("Frosty Stardrop Piece");
             int scepter = Mod.ja.GetWeaponId("Festive Scepter");
             int key = Mod.ja.GetObjectId("Festive Key");
             int keyHalfB = Mod.ja.GetObjectId("Festive Big Key (A)");
-            Log.trace("IDs for chests: " + stardropPiece + " " + scepter + " " + key + " " + keyHalfB);
+            Log.Trace("IDs for chests: " + stardropPiece + " " + scepter + " " + key + " " + keyHalfB);
 
             foreach (string locName in Mod.locs)
             {
@@ -544,7 +544,7 @@ namespace TheftOfTheWinterStar
         private static int bossKeysUsed;
         private void onBlankSave(object sender, EventArgs e)
         {
-            Log.debug("Adding frost dungeon");
+            Log.Debug("Adding frost dungeon");
 
             foreach (string locName in Mod.locs)
             {
@@ -601,7 +601,7 @@ namespace TheftOfTheWinterStar
             {
                 if (farmer.currentLocation.Name == "FrostDungeon.Arena")
                 {
-                    Log.trace("Activate arena: Stage " + this.saveData.ArenaStage);
+                    Log.Trace("Activate arena: Stage " + this.saveData.ArenaStage);
                     Game1.playSound("batScreech");
                     Game1.playSound("rockGolemSpawn");
                     if (this.saveData.ArenaStage == ArenaStage.NotTriggered)

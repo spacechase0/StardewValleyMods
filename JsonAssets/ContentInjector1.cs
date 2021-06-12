@@ -74,12 +74,12 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting to objects: {obj.GetObjectId()}: {obj.GetObjectInformation()}");
+                    Log.Verbose($"Injecting to objects: {obj.GetObjectId()}: {obj.GetObjectInformation()}");
                     data.Add(obj.GetObjectId(), obj.GetObjectInformation());
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting object information for {obj.Name}: {e}");
+                    Log.Error($"Exception injecting object information for {obj.Name}: {e}");
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace JsonAssets
                 try
                 {
                     string tags = string.Join(", ", obj.ContextTags);
-                    Log.verbose($"Injecting to object context tags: {obj.Name}: {tags}");
+                    Log.Verbose($"Injecting to object context tags: {obj.Name}: {tags}");
                     if (data.ContainsKey(obj.Name) && data[obj.Name] == "")
                         data[obj.Name] = tags;
                     else
@@ -99,7 +99,7 @@ namespace JsonAssets
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting object context tags for {obj.Name}: {e}");
+                    Log.Error($"Exception injecting object context tags for {obj.Name}: {e}");
                 }
             }
         }
@@ -110,12 +110,12 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting to crops: {crop.GetSeedId()}: {crop.GetCropInformation()}");
+                    Log.Verbose($"Injecting to crops: {crop.GetSeedId()}: {crop.GetCropInformation()}");
                     data.Add(crop.GetSeedId(), crop.GetCropInformation());
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting crop for {crop.Name}: {e}");
+                    Log.Error($"Exception injecting crop for {crop.Name}: {e}");
                 }
             }
         }
@@ -126,12 +126,12 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting to fruit trees: {fruitTree.GetSaplingId()}: {fruitTree.GetFruitTreeInformation()}");
+                    Log.Verbose($"Injecting to fruit trees: {fruitTree.GetSaplingId()}: {fruitTree.GetFruitTreeInformation()}");
                     data.Add(fruitTree.GetSaplingId(), fruitTree.GetFruitTreeInformation());
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting fruit tree for {fruitTree.Name}: {e}");
+                    Log.Error($"Exception injecting fruit tree for {fruitTree.Name}: {e}");
                 }
             }
         }
@@ -146,12 +146,12 @@ namespace JsonAssets
                         continue;
                     if (obj.Category != ObjectData.Category_.Cooking)
                         continue;
-                    Log.verbose($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
+                    Log.Verbose($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
                     data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting cooking recipe for {obj.Name}: {e}");
+                    Log.Error($"Exception injecting cooking recipe for {obj.Name}: {e}");
                 }
             }
         }
@@ -166,12 +166,12 @@ namespace JsonAssets
                         continue;
                     if (obj.Category == ObjectData.Category_.Cooking)
                         continue;
-                    Log.verbose($"Injecting to crafting recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
+                    Log.Verbose($"Injecting to crafting recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
                     data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting crafting recipe for {obj.Name}: {e}");
+                    Log.Error($"Exception injecting crafting recipe for {obj.Name}: {e}");
                 }
             }
             foreach (var big in Mod.instance.bigCraftables)
@@ -180,12 +180,12 @@ namespace JsonAssets
                 {
                     if (big.Recipe == null)
                         continue;
-                    Log.verbose($"Injecting to crafting recipes: {big.Name}: {big.Recipe.GetRecipeString(big)}");
+                    Log.Verbose($"Injecting to crafting recipes: {big.Name}: {big.Recipe.GetRecipeString(big)}");
                     data.Add(big.Name, big.Recipe.GetRecipeString(big));
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting crafting recipe for {big.Name}: {e}");
+                    Log.Error($"Exception injecting crafting recipe for {big.Name}: {e}");
                 }
             }
         }
@@ -196,12 +196,12 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting to big craftables: {big.GetCraftableId()}: {big.GetCraftableInformation()}");
+                    Log.Verbose($"Injecting to big craftables: {big.GetCraftableId()}: {big.GetCraftableInformation()}");
                     data.Add(big.GetCraftableId(), big.GetCraftableInformation());
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting object information for {big.Name}: {e}");
+                    Log.Error($"Exception injecting object information for {big.Name}: {e}");
                 }
             }
         }
@@ -212,12 +212,12 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting to hats: {hat.GetHatId()}: {hat.GetHatInformation()}");
+                    Log.Verbose($"Injecting to hats: {hat.GetHatId()}: {hat.GetHatInformation()}");
                     data.Add(hat.GetHatId(), hat.GetHatInformation());
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting hat information for {hat.Name}: {e}");
+                    Log.Error($"Exception injecting hat information for {hat.Name}: {e}");
                 }
             }
         }
@@ -228,12 +228,12 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting to weapons: {weapon.GetWeaponId()}: {weapon.GetWeaponInformation()}");
+                    Log.Verbose($"Injecting to weapons: {weapon.GetWeaponId()}: {weapon.GetWeaponInformation()}");
                     data.Add(weapon.GetWeaponId(), weapon.GetWeaponInformation());
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting weapon information for {weapon.Name}: {e}");
+                    Log.Error($"Exception injecting weapon information for {weapon.Name}: {e}");
                 }
             }
         }
@@ -244,24 +244,24 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting to clothing information: {shirt.GetClothingId()}: {shirt.GetClothingInformation()}");
+                    Log.Verbose($"Injecting to clothing information: {shirt.GetClothingId()}: {shirt.GetClothingInformation()}");
                     data.Add(shirt.GetClothingId(), shirt.GetClothingInformation());
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting clothing information for {shirt.Name}: {e}");
+                    Log.Error($"Exception injecting clothing information for {shirt.Name}: {e}");
                 }
             }
             foreach (var pants in Mod.instance.pantss)
             {
                 try
                 {
-                    Log.verbose($"Injecting to clothing information: {pants.GetClothingId()}: {pants.GetClothingInformation()}");
+                    Log.Verbose($"Injecting to clothing information: {pants.GetClothingId()}: {pants.GetClothingInformation()}");
                     data.Add(pants.GetClothingId(), pants.GetClothingInformation());
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting clothing information for {pants.Name}: {e}");
+                    Log.Error($"Exception injecting clothing information for {pants.Name}: {e}");
                 }
             }
         }
@@ -272,12 +272,12 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting to tailoring recipe: {recipe.ToGameData()}");
+                    Log.Verbose($"Injecting to tailoring recipe: {recipe.ToGameData()}");
                     data.Add(recipe.ToGameData());
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting tailoring recipe: {e}");
+                    Log.Error($"Exception injecting tailoring recipe: {e}");
                 }
             }
         }
@@ -288,12 +288,12 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting to boots: {boots.GetObjectId()}: {boots.GetBootsInformation()}");
+                    Log.Verbose($"Injecting to boots: {boots.GetObjectId()}: {boots.GetBootsInformation()}");
                     data.Add(boots.GetObjectId(), boots.GetBootsInformation());
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting boots information for {boots.Name}: {e}");
+                    Log.Error($"Exception injecting boots information for {boots.Name}: {e}");
                 }
             }
         }
@@ -309,11 +309,11 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {obj.Name} sprites @ {ContentInjector1.objectRect(obj.GetObjectId())}");
+                    Log.Verbose($"Injecting {obj.Name} sprites @ {ContentInjector1.objectRect(obj.GetObjectId())}");
                     asset.AsImage().PatchExtendedTileSheet(obj.texture, null, ContentInjector1.objectRect(obj.GetObjectId()));
                     if (obj.IsColored)
                     {
-                        Log.verbose($"Injecting {obj.Name} color sprites @ {ContentInjector1.objectRect(obj.GetObjectId() + 1)}");
+                        Log.Verbose($"Injecting {obj.Name} color sprites @ {ContentInjector1.objectRect(obj.GetObjectId() + 1)}");
                         asset.AsImage().PatchExtendedTileSheet(obj.textureColor, null, ContentInjector1.objectRect(obj.GetObjectId() + 1));
                     }
 
@@ -326,7 +326,7 @@ namespace JsonAssets
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting sprite for {obj.Name}: {e}");
+                    Log.Error($"Exception injecting sprite for {obj.Name}: {e}");
                 }
             }
 
@@ -334,7 +334,7 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.objectRect(boots.GetObjectId())}");
+                    Log.Verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.objectRect(boots.GetObjectId())}");
                     asset.AsImage().PatchExtendedTileSheet(boots.texture, null, ContentInjector1.objectRect(boots.GetObjectId()));
 
                     var rect = ContentInjector1.objectRect(boots.GetObjectId());
@@ -346,7 +346,7 @@ namespace JsonAssets
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting sprite for {boots.Name}: {e}");
+                    Log.Error($"Exception injecting sprite for {boots.Name}: {e}");
                 }
             }
         }
@@ -361,7 +361,7 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {crop.Name} crop images @ {ContentInjector1.cropRect(crop.GetCropSpriteIndex())}");
+                    Log.Verbose($"Injecting {crop.Name} crop images @ {ContentInjector1.cropRect(crop.GetCropSpriteIndex())}");
                     asset.AsImage().PatchExtendedTileSheet(crop.texture, null, ContentInjector1.cropRect(crop.GetCropSpriteIndex()));
 
                     var rect = ContentInjector1.cropRect(crop.GetCropSpriteIndex());
@@ -373,7 +373,7 @@ namespace JsonAssets
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting crop sprite for {crop.Name}: {e}");
+                    Log.Error($"Exception injecting crop sprite for {crop.Name}: {e}");
                 }
             }
         }
@@ -388,7 +388,7 @@ namespace JsonAssets
             {
                 try
                 {
-                    Log.verbose($"Injecting {fruitTree.Name} fruit tree images @ {ContentInjector1.fruitTreeRect(fruitTree.GetFruitTreeIndex())}");
+                    Log.Verbose($"Injecting {fruitTree.Name} fruit tree images @ {ContentInjector1.fruitTreeRect(fruitTree.GetFruitTreeIndex())}");
                     asset.AsImage().PatchExtendedTileSheet(fruitTree.texture, null, ContentInjector1.fruitTreeRect(fruitTree.GetFruitTreeIndex()));
 
                     var rect = ContentInjector1.fruitTreeRect(fruitTree.GetFruitTreeIndex());
@@ -400,7 +400,7 @@ namespace JsonAssets
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting fruit tree sprite for {fruitTree.Name}: {e}");
+                    Log.Error($"Exception injecting fruit tree sprite for {fruitTree.Name}: {e}");
                 }
             }
         }
@@ -410,19 +410,19 @@ namespace JsonAssets
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
-            Log.trace($"Big craftables are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
+            Log.Trace($"Big craftables are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
             foreach (var big in Mod.instance.bigCraftables)
             {
                 try
                 {
-                    Log.verbose($"Injecting {big.Name} sprites @ {ContentInjector1.bigCraftableRect(big.GetCraftableId())}");
+                    Log.Verbose($"Injecting {big.Name} sprites @ {ContentInjector1.bigCraftableRect(big.GetCraftableId())}");
                     asset.AsImage().PatchExtendedTileSheet(big.texture, null, ContentInjector1.bigCraftableRect(big.GetCraftableId()));
                     if (big.ReserveExtraIndexCount > 0)
                     {
                         for (int i = 0; i < big.ReserveExtraIndexCount; ++i)
                         {
-                            Log.verbose($"Injecting {big.Name} reserved extra sprite {i + 1} @ {ContentInjector1.bigCraftableRect(big.GetCraftableId() + i + 1)}");
+                            Log.Verbose($"Injecting {big.Name} reserved extra sprite {i + 1} @ {ContentInjector1.bigCraftableRect(big.GetCraftableId() + i + 1)}");
                             asset.AsImage().PatchExtendedTileSheet(big.extraTextures[i], null, ContentInjector1.bigCraftableRect(big.GetCraftableId() + i + 1));
                         }
                     }
@@ -435,7 +435,7 @@ namespace JsonAssets
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting sprite for {big.Name}: {e}");
+                    Log.Error($"Exception injecting sprite for {big.Name}: {e}");
                 }
             }
         }
@@ -445,13 +445,13 @@ namespace JsonAssets
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
-            Log.trace($"Hats are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
+            Log.Trace($"Hats are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
             foreach (var hat in Mod.instance.hats)
             {
                 try
                 {
-                    Log.verbose($"Injecting {hat.Name} sprites @ {ContentInjector1.hatRect(hat.GetHatId())}");
+                    Log.Verbose($"Injecting {hat.Name} sprites @ {ContentInjector1.hatRect(hat.GetHatId())}");
                     asset.AsImage().PatchExtendedTileSheet(hat.texture, null, ContentInjector1.hatRect(hat.GetHatId()));
 
                     var rect = ContentInjector1.hatRect(hat.GetHatId());
@@ -463,7 +463,7 @@ namespace JsonAssets
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting sprite for {hat.Name}: {e}");
+                    Log.Error($"Exception injecting sprite for {hat.Name}: {e}");
                 }
             }
         }
@@ -473,13 +473,13 @@ namespace JsonAssets
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
-            Log.trace($"Weapons are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
+            Log.Trace($"Weapons are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
             foreach (var weapon in Mod.instance.weapons)
             {
                 try
                 {
-                    Log.verbose($"Injecting {weapon.Name} sprites @ {ContentInjector1.weaponRect(weapon.GetWeaponId())}");
+                    Log.Verbose($"Injecting {weapon.Name} sprites @ {ContentInjector1.weaponRect(weapon.GetWeaponId())}");
                     asset.AsImage().PatchImage(weapon.texture, null, ContentInjector1.weaponRect(weapon.GetWeaponId()));
 
                     var rect = ContentInjector1.weaponRect(weapon.GetWeaponId());
@@ -490,7 +490,7 @@ namespace JsonAssets
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting sprite for {weapon.Name}: {e}");
+                    Log.Error($"Exception injecting sprite for {weapon.Name}: {e}");
                 }
             }
         }
@@ -498,7 +498,7 @@ namespace JsonAssets
         {
             var oldTex = asset.AsImage().Data;
             asset.AsImage().ExtendImage(oldTex.Width, 4096);
-            Log.trace($"Shirts are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
+            Log.Trace($"Shirts are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
             foreach (var shirt in Mod.instance.shirts)
             {
@@ -514,7 +514,7 @@ namespace JsonAssets
                             rects += ", " + ContentInjector1.shirtRectDye(shirt.GetFemaleIndex()).ToString();
                     }
 
-                    Log.verbose($"Injecting {shirt.Name} sprites @ {rects}");
+                    Log.Verbose($"Injecting {shirt.Name} sprites @ {rects}");
                     asset.AsImage().PatchExtendedTileSheet(shirt.textureMale, null, ContentInjector1.shirtRectPlain(shirt.GetMaleIndex()));
                     if (shirt.Dyeable)
                         asset.AsImage().PatchExtendedTileSheet(shirt.textureMaleColor, null, ContentInjector1.shirtRectDye(shirt.GetMaleIndex()));
@@ -527,7 +527,7 @@ namespace JsonAssets
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting sprite for {shirt.Name}: {e}");
+                    Log.Error($"Exception injecting sprite for {shirt.Name}: {e}");
                 }
             }
         }
@@ -537,18 +537,18 @@ namespace JsonAssets
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
-            Log.trace($"Pants are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
+            Log.Trace($"Pants are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
             foreach (var pants in Mod.instance.pantss)
             {
                 try
                 {
-                    Log.verbose($"Injecting {pants.Name} sprites @ {ContentInjector1.pantsRect(pants.GetTextureIndex())}");
+                    Log.Verbose($"Injecting {pants.Name} sprites @ {ContentInjector1.pantsRect(pants.GetTextureIndex())}");
                     asset.AsImage().PatchExtendedTileSheet(pants.texture, null, ContentInjector1.pantsRect(pants.GetTextureIndex()));
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting sprite for {pants.Name}: {e}");
+                    Log.Error($"Exception injecting sprite for {pants.Name}: {e}");
                 }
             }
         }
@@ -558,18 +558,18 @@ namespace JsonAssets
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
-            Log.trace($"Boots are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
+            Log.Trace($"Boots are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
             foreach (var boots in Mod.instance.bootss)
             {
                 try
                 {
-                    Log.verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.bootsRect(boots.GetTextureIndex())}");
+                    Log.Verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.bootsRect(boots.GetTextureIndex())}");
                     asset.AsImage().PatchExtendedTileSheet(boots.textureColor, null, ContentInjector1.bootsRect(boots.GetTextureIndex()));
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception injecting sprite for {boots.Name}: {e}");
+                    Log.Error($"Exception injecting sprite for {boots.Name}: {e}");
                 }
             }
         }

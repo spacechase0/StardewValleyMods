@@ -229,37 +229,37 @@ namespace JsonAssets
         public event EventHandler ItemsRegistered;
         internal void InvokeItemsRegistered()
         {
-            Log.trace("Event: ItemsRegistered");
+            Log.Trace("Event: ItemsRegistered");
             if (this.ItemsRegistered == null)
                 return;
-            Util.invokeEvent("JsonAssets.Api.ItemsRegistered", this.ItemsRegistered.GetInvocationList(), null);
+            Util.InvokeEvent("JsonAssets.Api.ItemsRegistered", this.ItemsRegistered.GetInvocationList(), null);
         }
 
         public event EventHandler IdsAssigned;
         internal void InvokeIdsAssigned()
         {
-            Log.trace("Event: IdsAssigned");
+            Log.Trace("Event: IdsAssigned");
             if (this.IdsAssigned == null)
                 return;
-            Util.invokeEvent("JsonAssets.Api.IdsAssigned", this.IdsAssigned.GetInvocationList(), null);
+            Util.InvokeEvent("JsonAssets.Api.IdsAssigned", this.IdsAssigned.GetInvocationList(), null);
         }
 
         public event EventHandler AddedItemsToShop;
         internal void InvokeAddedItemsToShop()
         {
-            Log.trace("Event: AddedItemsToShop");
+            Log.Trace("Event: AddedItemsToShop");
             if (this.AddedItemsToShop == null)
                 return;
-            Util.invokeEvent("JsonAssets.Api.AddedItemsToShop", this.AddedItemsToShop.GetInvocationList(), null);
+            Util.InvokeEvent("JsonAssets.Api.AddedItemsToShop", this.AddedItemsToShop.GetInvocationList(), null);
         }
 
         public event EventHandler IdsFixed;
         internal void InvokeIdsFixed()
         {
-            Log.trace("Event: IdsFixed");
+            Log.Trace("Event: IdsFixed");
             if (this.IdsFixed == null)
                 return;
-            Util.invokeEvent("JsonAssets.Api.IdsFixed", this.IdsFixed.GetInvocationList(), null);
+            Util.InvokeEvent("JsonAssets.Api.IdsFixed", this.IdsFixed.GetInvocationList(), null);
         }
 
         public bool FixIdsInItem(Item item)

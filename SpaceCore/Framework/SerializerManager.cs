@@ -101,7 +101,7 @@ namespace SpaceCore.Framework
                 return;
             this.initializedSerializers = true;
 
-            Log.trace("Reinitializing serializers...");
+            Log.Trace("Reinitializing serializers...");
 
             SaveGame.serializer = this.InitializeSerializer(typeof(SaveGame), this.vanillaMainTypes);
             SaveGame.farmerSerializer = this.InitializeSerializer(typeof(Farmer), this.vanillaFarmerTypes);
@@ -117,7 +117,7 @@ namespace SpaceCore.Framework
                 }
                 catch (Exception e)
                 {
-                    Log.trace("Exception, probably because PyTK hasn't released yet: " + e);
+                    Log.Trace("Exception, probably because PyTK hasn't released yet: " + e);
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace SpaceCore.Framework
                 }
                 catch (Exception e)
                 {
-                    Log.trace("Exception, probably because PyTK hasn't released yet: " + e);
+                    Log.Trace("Exception, probably because PyTK hasn't released yet: " + e);
                 }
             }
 

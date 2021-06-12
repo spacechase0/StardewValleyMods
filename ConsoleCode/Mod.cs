@@ -25,22 +25,22 @@ namespace ConsoleCode
             {
                 line = File.ReadAllText(Path.Combine(this.Helper.DirectoryPath, args[1]));
             }
-            Log.trace($"Input: {line}");
+            Log.Trace($"Input: {line}");
             try
             {
                 var func = this.makeFunc(line);
                 object result = null;
                 func.Invoke(ref result);
                 if (result == null)
-                    Log.info("Output: <null>");
+                    Log.Info("Output: <null>");
                 else if (result is string)
-                    Log.info($"Output: \"{result}\"");
+                    Log.Info($"Output: \"{result}\"");
                 else
-                    Log.info($"Output: {result}");
+                    Log.Info($"Output: {result}");
             }
             catch (Exception e)
             {
-                Log.error("Exception: " + e);
+                Log.Error("Exception: " + e);
             }
         }
 

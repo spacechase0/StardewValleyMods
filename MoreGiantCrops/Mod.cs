@@ -21,23 +21,23 @@ namespace MoreGiantCrops
 
             Directory.CreateDirectory(Path.Combine(this.Helper.DirectoryPath, "assets"));
 
-            Log.trace("Finding giant crop images");
+            Log.Trace("Finding giant crop images");
             foreach (string path in Directory.EnumerateFiles(Path.Combine(this.Helper.DirectoryPath, "assets"), "*.png"))
             {
                 string filename = Path.GetFileName(path);
                 if (!int.TryParse(filename.Split('.')[0], out int id))
                 {
-                    Log.error("Bad PNG: " + filename);
+                    Log.Error("Bad PNG: " + filename);
                     continue;
                 }
-                Log.trace("Found PNG: " + filename);
+                Log.Trace("Found PNG: " + filename);
                 var tex = helper.Content.Load<Texture2D>($"assets/{filename}");
                 Mod.sprites.Add(id, tex);
             }
 
             if (!Mod.sprites.Any())
             {
-                Log.error("You must install an asset pack to use this mod.");
+                Log.Error("You must install an asset pack to use this mod.");
                 return;
             }
 

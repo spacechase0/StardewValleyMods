@@ -14,10 +14,10 @@ namespace Magic
         public event EventHandler OnAnalyzeCast;
         internal void InvokeOnAnalyzeCast(Farmer farmer)
         {
-            Log.trace("Event: OnAnalyzeCast");
+            Log.Trace("Event: OnAnalyzeCast");
             if (this.OnAnalyzeCast == null)
                 return;
-            Util.invokeEvent("Magic.Api.OnAnalyzeCast", this.OnAnalyzeCast.GetInvocationList(), farmer);
+            Util.InvokeEvent("Magic.Api.OnAnalyzeCast", this.OnAnalyzeCast.GetInvocationList(), farmer);
         }
     }
 }

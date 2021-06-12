@@ -97,7 +97,7 @@ namespace Magic
         public void swapPreparedSet()
         {
             this.selectedPrepared = (this.selectedPrepared + 1) % this.prepared.Length;
-            Log.trace("Swapped prepared spell set to set " + (this.selectedPrepared + 1) + "/" + this.prepared.Length + ".");
+            Log.Trace("Swapped prepared spell set to set " + (this.selectedPrepared + 1) + "/" + this.prepared.Length + ".");
         }
     }
 }

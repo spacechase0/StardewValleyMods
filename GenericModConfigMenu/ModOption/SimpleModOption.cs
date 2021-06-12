@@ -29,7 +29,7 @@ namespace GenericModConfigMenu.ModOption
 
         public override void Save()
         {
-            SpaceShared.Log.trace("saving " + this.Name + " " + this.Description);
+            SpaceShared.Log.Trace("saving " + this.Name + " " + this.Description);
             this.setter.Invoke(this.state);
         }
 

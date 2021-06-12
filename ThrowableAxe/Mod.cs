@@ -38,7 +38,7 @@ namespace ThrowableAxe
                 this.thrown = new ThrownAxe(Game1.player, axe.UpgradeLevel, dmg, e.Cursor.AbsolutePixels, speed);
                 Game1.currentLocation.projectiles.Add(this.thrown);
 
-                Log.trace("Throwing axe");
+                Log.Trace("Throwing axe");
                 this.clicking = true;
             }
         }
@@ -75,7 +75,7 @@ namespace ThrowableAxe
 
                 if (this.thrown.dead)
                 {
-                    Log.trace("Axe destroyed");
+                    Log.Trace("Axe destroyed");
                     this.thrown = null;
                 }
             }

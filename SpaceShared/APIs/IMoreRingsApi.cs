@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SpaceShared.APIs
 {
-    internal interface MoreRingsApi
+    internal interface IMoreRingsApi
     {
         /// <summary>
         /// Count how many of the specified ring type the given player has equipped. This includes the vanilla left & right rings.

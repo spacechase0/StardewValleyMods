@@ -91,7 +91,7 @@ namespace PreexistingRelationship
                         this.selectedContainer = cont;
                         this.selectedContainer.OutlineColor = Color.Green;
                         this.selectedNPC = valid[n].Name;
-                        Log.trace("Selected " + this.selectedNPC);
+                        Log.Trace("Selected " + this.selectedNPC);
                     };
                     cont.AddChild(new Image()
                     {
@@ -159,7 +159,7 @@ namespace PreexistingRelationship
 
         private void DoMarriage()
         {
-            Log.debug("Marrying " + this.selectedNPC);
+            Log.Debug("Marrying " + this.selectedNPC);
             if (this.selectedNPC == null)
                 return;
 

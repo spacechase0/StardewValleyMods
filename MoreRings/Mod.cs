@@ -17,7 +17,7 @@ namespace MoreRings
     {
         public static Mod instance;
 
-        private JsonAssetsAPI ja;
+        private IJsonAssetsApi ja;
         public int Ring_Fishing_LargeBar { get { return this.ja.GetObjectId("Ring of Wide Nets"); } }
         public int Ring_Combat_Regen { get { return this.ja.GetObjectId("Ring of Regeneration"); } }
         public int Ring_DiamondBooze { get { return this.ja.GetObjectId("Ring of Diamond Booze"); } }
@@ -26,7 +26,7 @@ namespace MoreRings
         public int Ring_MageHand { get { return this.ja.GetObjectId("Ring of Far Reaching"); } }
         public int Ring_TrueSight { get { return this.ja.GetObjectId("Ring of True Sight"); } }
 
-        private MoreRingsApi moreRings;
+        private IMoreRingsApi moreRings;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -58,17 +58,17 @@ namespace MoreRings
         /// <param name="e">The event arguments.</param>
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var api = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            var api = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
             if (api == null)
             {
-                Log.error("No Json Assets API???");
+                Log.Error("No Json Assets API???");
                 return;
             }
             this.ja = api;
 
             api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
 
-            this.moreRings = this.Helper.ModRegistry.GetApi<MoreRingsApi>("bcmpinc.WearMoreRings");
+            this.moreRings = this.Helper.ModRegistry.GetApi<IMoreRingsApi>("bcmpinc.WearMoreRings");
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>

@@ -26,7 +26,7 @@ namespace BiggerCraftables
                 foreach (var entry in list.BiggerCraftables)
                 {
                     entry.Texture = cp.LoadAsset<Texture2D>(entry.Image);
-                    Log.debug($"Bigger craftable - {entry.Name} from {cp.Manifest.Name} - {entry.Width}x{entry.Length}");
+                    Log.Debug($"Bigger craftable - {entry.Name} from {cp.Manifest.Name} - {entry.Width}x{entry.Length}");
                     Mod.entries.Add(entry);
                 }
             }

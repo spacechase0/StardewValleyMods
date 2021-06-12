@@ -38,7 +38,7 @@ namespace HybridCropEngine
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (gmcm != null)
             {
                 gmcm.RegisterModConfig(this.ModManifest, () => Mod.config = new Configuration(), () => this.Helper.WriteConfig(Mod.config));
@@ -58,15 +58,15 @@ namespace HybridCropEngine
             //*
             foreach (var hybrid in hybrids)
             {
-                Log.trace("Hybrids: " + hybrid.Key + " " + hybrid.Value.BaseCropA + " " + hybrid.Value.BaseCropB + " " + hybrid.Value.Chance);
+                Log.Trace("Hybrids: " + hybrid.Key + " " + hybrid.Value.BaseCropA + " " + hybrid.Value.BaseCropB + " " + hybrid.Value.Chance);
             }
             foreach (var index in hybridIndexByCrop)
             {
-                Log.trace("Hybrid Index: " + index.Key + " " + index.Value);
+                Log.Trace("Hybrid Index: " + index.Key + " " + index.Value);
             }
             foreach (var index in cropsByIndex)
             {
-                Log.trace("Crop Index: " + index.Key + " " + index.Value);
+                Log.Trace("Crop Index: " + index.Key + " " + index.Value);
             }
             //*/
 
@@ -176,7 +176,7 @@ namespace HybridCropEngine
                     string d = "";
                     foreach (var dirt in dirts)
                         d += (dirt == null) ? "null" : dirt.ToString();
-                    Log.trace("dirts:" + d);
+                    Log.Trace("dirts:" + d);
                     //*/
 
                     var combos = new List<HoeDirt[]>();

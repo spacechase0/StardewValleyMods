@@ -9,17 +9,17 @@
     <Import_RootNamespace>SpaceShared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)APIs\CookingSkillAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)APIs\ExpandedPreconditionsUtilityAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)APIs\EntoaroxFrameworkAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)APIs\ManaBarAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)APIs\RushOrdersAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)APIs\ContentPatcherAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)APIs\ExperienceBarsAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)APIs\GenericModConfigMenuAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)APIs\JsonAssetsApi.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)APIs\MoreRingsApi.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)APIs\SpaceCoreAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\ICookingSkillApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IExpandedPreconditionsUtilityApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IEntoaroxFrameworkApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IManaBarApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IRushOrdersApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IContentPatcherApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IExperienceBarsApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IGenericModConfigMenuApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IJsonAssetsApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IMoreRingsApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\ISpaceCoreApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CancelableEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util.cs" />

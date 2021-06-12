@@ -159,7 +159,7 @@ namespace Magic
                 Game1.playSound("secret1");
                 foreach (string spell in spellsLearnt)
                 {
-                    Log.debug("Player learnt spell: " + spell);
+                    Log.Debug("Player learnt spell: " + spell);
                     farmer.learnSpell(spell, 0, true);
                     //Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") }));
                     Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = SpellBook.get(spell).getTranslatedName() })));
@@ -197,7 +197,7 @@ namespace Magic
                 var ancientSpell = school.GetSpellsTier3()[0];
                 if (knowsAllSchool && !farmer.knowsSpell(ancientSpell, 0))
                 {
-                    Log.debug("Player learnt ancient spell: " + ancientSpell);
+                    Log.Debug("Player learnt ancient spell: " + ancientSpell);
                     farmer.learnSpell(ancientSpell, 0, true);
                     Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = ancientSpell.getTranslatedName() })));
                 }
@@ -206,7 +206,7 @@ namespace Magic
             var rewindSpell = School.getSchool(SchoolId.Arcane).GetSpellsTier3()[0];
             if (knowsAll && !farmer.knowsSpell(rewindSpell, 0))
             {
-                Log.debug("Player learnt ancient spell: " + rewindSpell);
+                Log.Debug("Player learnt ancient spell: " + rewindSpell);
                 farmer.learnSpell(rewindSpell, 0, true);
                 Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = rewindSpell.getTranslatedName() })));
             }
@@ -412,7 +412,7 @@ namespace Magic
                 //Log.trace("MEOW " + prep.SpellId + " " + prep.Level + " " + Game1.player.canCastSpell(toCast, prep.Level));
                 if (Game1.player.canCastSpell(toCast, prep.Level))
                 {
-                    Log.trace("Casting " + prep.SpellId);
+                    Log.Trace("Casting " + prep.SpellId);
 
                     IActiveEffect effect = Game1.player.castSpell(toCast, prep.Level);
                     if (effect != null)
@@ -509,7 +509,7 @@ namespace Magic
         {
             if (Game1.player.itemToEat == null)
             {
-                Log.warn("No item eaten for the item eat event?!?");
+                Log.Warn("No item eaten for the item eat event?!?");
                 return;
             }
             if (Game1.player.itemToEat.ParentSheetIndex == Mod.ja.GetObjectId("Magic Elixir"))
@@ -530,7 +530,7 @@ namespace Magic
 
         public static void placeAltar(string locName, int x, int y, int baseAltarIndex)
         {
-            Log.debug($"Placing altar @ {locName}({x}, {y})");
+            Log.Debug($"Placing altar @ {locName}({x}, {y})");
 
             // AddTileSheet sorts the tilesheets by ID after adding them.
             // The game sometimes refers to tilesheets by their index (such as in Beach.fixBridge)
@@ -578,21 +578,21 @@ namespace Magic
 
             if (args.Length != 2 || (args.Length > 1 && (args[0] == "" || args[1] == "")))
             {
-                Log.info("Usage: player_learnspell <spell> <level>");
+                Log.Info("Usage: player_learnspell <spell> <level>");
                 return;
             }
 
             Spell spell = SpellBook.get(args[0]);
             if (spell == null)
             {
-                Log.error($"Spell '{args[0]}' does not exist.");
+                Log.Error($"Spell '{args[0]}' does not exist.");
                 return;
             }
 
             int level;
             if (!int.TryParse(args[1], out level))
             {
-                Log.error($"That spell only casts up to level {spell.getMaxCastingLevel()}.");
+                Log.Error($"That spell only casts up to level {spell.getMaxCastingLevel()}.");
                 return;
             }
 

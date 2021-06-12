@@ -53,7 +53,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(After_CanBeDropped)} for {__instance} #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.Error($"Failed in {nameof(After_CanBeDropped)} for {__instance} #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
             }
         }
 
@@ -83,7 +83,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(After_CanBeTrashed)} for {__instance} #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.Error($"Failed in {nameof(After_CanBeTrashed)} for {__instance} #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
             }
         }
     }

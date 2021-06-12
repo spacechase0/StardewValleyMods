@@ -28,7 +28,7 @@ namespace RushOrders
             Mod.instance = this;
             Log.Monitor = this.Monitor;
 
-            Log.info("Loading Config");
+            Log.Info("Loading Config");
             Mod.ModConfig = this.Helper.ReadConfig<RushOrdersConfig>();
 
             helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
@@ -43,7 +43,7 @@ namespace RushOrders
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
                 capi.RegisterModConfig(this.ModManifest, () => Mod.ModConfig = new RushOrdersConfig(), () => this.Helper.WriteConfig(Mod.ModConfig));

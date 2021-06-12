@@ -251,7 +251,7 @@ namespace PyromancersJourney
                             break;
 
                         default:
-                            Log.warn("Unknown tile type " + lines[i][ix] + "!");
+                            Log.Warn("Unknown tile type " + lines[i][ix] + "!");
                             break;
                     }
                 }

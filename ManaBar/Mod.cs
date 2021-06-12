@@ -141,7 +141,7 @@ namespace ManaBar
             {
                 if (!Game1.IsMultiplayer || Game1.IsMasterGame)
                 {
-                    Log.info($"Loading save data");
+                    Log.Info($"Loading save data");
                     Mod.Data = this.Helper.Data.ReadSaveData<MultiplayerSaveData>(MultiplayerSaveData.SaveKey);
                     if (Mod.Data == null)
                     {
@@ -159,7 +159,7 @@ namespace ManaBar
             }
             catch (Exception ex)
             {
-                Log.warn($"Exception loading save data: {ex}");
+                Log.Warn($"Exception loading save data: {ex}");
             }
         }
 
@@ -170,7 +170,7 @@ namespace ManaBar
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
-                Log.info($"Saving save data...");
+                Log.Info($"Saving save data...");
                 this.Helper.Data.WriteSaveData(MultiplayerSaveData.SaveKey, Mod.Data);
             }
         }

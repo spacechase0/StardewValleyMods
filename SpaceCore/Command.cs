@@ -23,8 +23,8 @@ namespace SpaceCore
             }
             catch (Exception e)
             {
-                Log.error("Error running command.");
-                Log.debug("Exception: " + e);
+                Log.Error("Error running command.");
+                Log.Debug("Exception: " + e);
             }
         }
     }

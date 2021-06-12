@@ -86,7 +86,7 @@ namespace GenericModConfigMenu
 
         private void changeToModPage(IManifest modManifest)
         {
-            Log.trace("Changing to mod config page for mod " + modManifest.UniqueID);
+            Log.Trace("Changing to mod config page for mod " + modManifest.UniqueID);
             Game1.playSound("bigSelect");
             if (!this.ingame)
                 TitleMenu.subMenu = new SpecificModConfigMenu(modManifest, this.ingame);

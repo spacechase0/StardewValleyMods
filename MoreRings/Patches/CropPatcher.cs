@@ -63,7 +63,7 @@ namespace MoreRings.Patches
                 }
                 if (insn.labels.Contains(pendingLabel))
                 {
-                    Log.trace("taking label");
+                    Log.Trace("taking label");
                     insn.labels.Remove(pendingLabel);
                     pendingLabel = default(Label);
                 }

@@ -269,7 +269,7 @@ namespace JsonAssets.Other.ContentPatcher
 
     public class ContentPatcherIntegration
     {
-        private static ContentPatcherAPI cp;
+        private static IContentPatcherApi cp;
         private static IApi ja;
 
         internal static bool idsAssigned;
@@ -279,7 +279,7 @@ namespace JsonAssets.Other.ContentPatcher
 
         public static void Initialize()
         {
-            ContentPatcherIntegration.cp = Mod.instance.Helper.ModRegistry.GetApi<ContentPatcherAPI>("Pathoschild.ContentPatcher");
+            ContentPatcherIntegration.cp = Mod.instance.Helper.ModRegistry.GetApi<IContentPatcherApi>("Pathoschild.ContentPatcher");
             ContentPatcherIntegration.ja = Mod.instance.Helper.ModRegistry.GetApi<IApi>("spacechase0.JsonAssets");
             if (ContentPatcherIntegration.cp == null)
                 return;

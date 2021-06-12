@@ -126,7 +126,7 @@ namespace LuckSkill
 
                     if (quest != null)
                     {
-                        Log.info($"Applying quest {quest} for today, due to having PROFESSION_MOREQUESTS.");
+                        Log.Info($"Applying quest {quest} for today, due to having PROFESSION_MOREQUESTS.");
                         Game1.questOfTheDay = quest;
                     }
                 }
@@ -437,7 +437,7 @@ namespace LuckSkill
 
                 if (ev != null)
                 {
-                    Log.info($"Applying {ev} as tonight's nightly event, due to having PROFESSION_NIGHTLY_EVENTS");
+                    Log.Info($"Applying {ev} as tonight's nightly event, due to having PROFESSION_NIGHTLY_EVENTS");
                     args.NightEvent = ev;
                 }
             }
@@ -576,8 +576,8 @@ namespace LuckSkill
         private void onGameLaunched(object sender, EventArgs args)
         {
             // enableLuckSkillBar
-            var api = this.Helper.ModRegistry.GetApi<ExperienceBarsAPI>("spacechase0.ExperienceBars");
-            Log.trace($"Experience Bars API {(api == null ? "not " : "")}found");
+            var api = this.Helper.ModRegistry.GetApi<IExperienceBarsApi>("spacechase0.ExperienceBars");
+            Log.Trace($"Experience Bars API {(api == null ? "not " : "")}found");
             api?.SetDrawLuck(true);
         }
 
@@ -589,11 +589,11 @@ namespace LuckSkill
         {
             if (!this.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
-                Log.info("All Professions not found.");
+                Log.Info("All Professions not found.");
                 return;
             }
 
-            Log.info("All Professions found. You will get every luck profession for your level.");
+            Log.Info("All Professions found. You will get every luck profession for your level.");
             this.HAS_ALL_PROFESSIONS = true;
         }
     }

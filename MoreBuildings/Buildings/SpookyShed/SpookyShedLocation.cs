@@ -65,7 +65,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                 {
                     if (!obj.bigCraftable.Value)
                     {
-                        Log.trace("Changing active spawning item to " + obj.ParentSheetIndex);
+                        Log.Trace("Changing active spawning item to " + obj.ParentSheetIndex);
                         this.currSpawnerItem.Value = obj.ParentSheetIndex;
                     }
                 }
@@ -79,7 +79,7 @@ namespace MoreBuildings.Buildings.SpookyShed
             base.resetSharedState();
             this.characters.Clear();
 
-            Log.trace("Player entered spooky shed, current spawner item: " + this.currSpawnerItem);
+            Log.Trace("Player entered spooky shed, current spawner item: " + this.currSpawnerItem);
             if (this.currSpawnerItem == SpookyShedLocation.BAT_WING)
             {
                 int total = 15 + Game1.random.Next(10);

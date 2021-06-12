@@ -53,7 +53,7 @@ namespace FlowerRain
 
         private void gameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (gmcm != null)
             {
                 gmcm.RegisterModConfig(this.ModManifest, () => Mod.config = new Config(), () => this.Helper.WriteConfig(Mod.config));
@@ -70,7 +70,7 @@ namespace FlowerRain
                     });
             }
 
-            var ja = this.Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            var ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
             if (ja != null)
             {
                 ja.IdsAssigned += this.jaIdsAssigned;

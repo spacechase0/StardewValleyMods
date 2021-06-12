@@ -22,7 +22,7 @@ namespace Magic.Spells
         public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
         {
             if (Magic.OnAnalyzeCast != null)
-                Util.invokeEvent<AnalyzeEventArgs>("OnAnalyzeCast", Magic.OnAnalyzeCast.GetInvocationList(), player, new AnalyzeEventArgs(targetX, targetY));
+                Util.InvokeEvent<AnalyzeEventArgs>("OnAnalyzeCast", Magic.OnAnalyzeCast.GetInvocationList(), player, new AnalyzeEventArgs(targetX, targetY));
 
             return null;
         }

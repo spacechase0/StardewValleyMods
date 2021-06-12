@@ -58,7 +58,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(Before_IsPaddyCrop)}:\n{ex}");
+                Log.Error($"Failed in {nameof(Before_IsPaddyCrop)}:\n{ex}");
                 return true;
             }
         }
@@ -136,7 +136,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(Transpile_NewDay)}:\n{ex}");
+                Log.Error($"Failed in {nameof(Transpile_NewDay)}:\n{ex}");
                 return instructions;
             }
         }

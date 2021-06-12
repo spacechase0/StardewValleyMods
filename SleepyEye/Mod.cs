@@ -25,7 +25,7 @@ namespace SleepyEye
             if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson.Name != "Pierre")
                 return;
 
-            Log.debug("Adding tent to shop");
+            Log.Debug("Adding tent to shop");
 
             var forSale = menu.forSale;
             var itemPriceAndStock = menu.itemPriceAndStock;

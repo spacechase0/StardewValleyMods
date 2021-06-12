@@ -48,7 +48,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(GiantCropPatcher)}.{nameof(Before_Draw)}:\n{ex}");
+                Log.Error($"Failed in {nameof(GiantCropPatcher)}.{nameof(Before_Draw)}:\n{ex}");
                 return true;
             }
         }

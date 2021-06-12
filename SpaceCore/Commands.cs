@@ -33,7 +33,7 @@ namespace SpaceCore
         {
             if (args.Length != 2)
             {
-                Log.info("Usage: player_giveexp <skill> <amt>");
+                Log.Info("Usage: player_giveexp <skill> <amt>");
             }
 
             string skillName = args[0].ToLower();
@@ -50,7 +50,7 @@ namespace SpaceCore
                 var skill = Skills.GetSkill(skillName);
                 if (skill == null)
                 {
-                    Log.info("No such skill exists");
+                    Log.Info("No such skill exists");
                 }
                 else
                 {
@@ -63,7 +63,7 @@ namespace SpaceCore
         {
             if (args.Length == 0)
             {
-                Log.info("Usage: asset_invalidate <asset1> [asset2] [...]");
+                Log.Info("Usage: asset_invalidate <asset1> [asset2] [...]");
             }
 
             foreach (string arg in args)
@@ -76,7 +76,7 @@ namespace SpaceCore
         {
             foreach (var asset in TileSheetExtensions.extendedTextureAssets)
             {
-                Log.info($"Dumping for asset {asset.Key} (has {asset.Value.Extensions.Count} extensions)");
+                Log.Info($"Dumping for asset {asset.Key} (has {asset.Value.Extensions.Count} extensions)");
                 Stream stream = File.OpenWrite(Path.GetFileNameWithoutExtension(asset.Key) + "-0.png");
                 var tex = Game1.content.Load<Texture2D>(asset.Key);
                 tex.SaveAsPng(stream, tex.Width, tex.Height);
@@ -84,7 +84,7 @@ namespace SpaceCore
 
                 for (int i = 0; i < asset.Value.Extensions.Count; ++i)
                 {
-                    Log.info("\tDumping extended " + (i + 1));
+                    Log.Info("\tDumping extended " + (i + 1));
                     stream = File.OpenWrite(Path.GetFileNameWithoutExtension(asset.Key) + $"-{i + 1}.png");
                     tex = asset.Value.Extensions[i];
                     tex.SaveAsPng(stream, tex.Width, tex.Height);

@@ -19,21 +19,21 @@ namespace CustomCritters
             helper.Events.Player.Warped += this.onWarped;
 
             // load content packs
-            Log.info("Loading critter content packs...");
+            Log.Info("Loading critter content packs...");
             foreach (IContentPack contentPack in this.GetContentPacks())
             {
                 CritterEntry data = contentPack.ReadJsonFile<CritterEntry>("critter.json");
                 if (data == null)
                 {
-                    Log.warn($"   {contentPack.Manifest.Name}: ignored (no critter.json file).");
+                    Log.Warn($"   {contentPack.Manifest.Name}: ignored (no critter.json file).");
                     continue;
                 }
                 if (!File.Exists(Path.Combine(contentPack.DirectoryPath, "critter.png")))
                 {
-                    Log.warn($"   {contentPack.Manifest.Name}: ignored (no critter.png file).");
+                    Log.Warn($"   {contentPack.Manifest.Name}: ignored (no critter.png file).");
                     continue;
                 }
-                Log.info(contentPack.Manifest.Name == data.Id ? contentPack.Manifest.Name : $"   {contentPack.Manifest.Name} (id: {data.Id})");
+                Log.Info(contentPack.Manifest.Name == data.Id ? contentPack.Manifest.Name : $"   {contentPack.Manifest.Name} (id: {data.Id})");
                 CritterEntry.Register(data);
             }
         }

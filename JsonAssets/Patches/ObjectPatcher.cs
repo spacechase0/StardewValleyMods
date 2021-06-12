@@ -117,7 +117,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(Before_CanBePlacedHere)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.Error($"Failed in {nameof(Before_CanBePlacedHere)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
                 return true;
             }
         }
@@ -133,7 +133,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(Before_CheckForAction)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.Error($"Failed in {nameof(Before_CheckForAction)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
                 return true;
             }
         }
@@ -168,7 +168,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(Before_LoadDisplayName)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.Error($"Failed in {nameof(Before_LoadDisplayName)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
                 return true;
             }
         }
@@ -198,7 +198,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(Before_GetCategoryName)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.Error($"Failed in {nameof(Before_GetCategoryName)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
                 return true;
             }
         }
@@ -225,7 +225,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(After_IsIndexOkForBasicShippedCategory)} for #{index}:\n{ex}");
+                Log.Error($"Failed in {nameof(After_IsIndexOkForBasicShippedCategory)} for #{index}:\n{ex}");
             }
         }
 
@@ -254,7 +254,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(Before_GetCategoryColor)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.Error($"Failed in {nameof(Before_GetCategoryColor)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
                 return true;
             }
         }
@@ -273,7 +273,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(After_CanBeGivenAsGift)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
+                Log.Error($"Failed in {nameof(After_CanBeGivenAsGift)} for #{__instance?.ParentSheetIndex} {__instance?.Name}:\n{ex}");
             }
         }
 

@@ -72,7 +72,7 @@ namespace LocationLayerTool.Patches
                 }
                 catch (Exception e)
                 {
-                    Log.error("Exception while rendering: " + e);
+                    Log.Error("Exception while rendering: " + e);
                 }
                 xTileLayerPatcher.rendering--;
             }
@@ -135,7 +135,7 @@ namespace LocationLayerTool.Patches
             }
             catch (Exception e)
             {
-                Log.trace("Exception rendering: " + e);
+                Log.Trace("Exception rendering: " + e);
             }
             Game1.displayHUD = true;
             Game1.mapDisplayDevice = oldDd;

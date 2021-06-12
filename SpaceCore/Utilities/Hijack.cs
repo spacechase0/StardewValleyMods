@@ -26,7 +26,7 @@ namespace SpaceCore.Utilities
                     throw new ArgumentException("Target and replacement methods must match; parameter " + (i + +(withThis ? 1 : 0)));
             }
             //*/
-            Log.debug("Hijacking method \"" + target.DeclaringType + ": " + target + "\", replacing with \"" + replaceWith.DeclaringType + ": " + replaceWith + "\".");
+            Log.Debug("Hijacking method \"" + target.DeclaringType + ": " + target + "\", replacing with \"" + replaceWith.DeclaringType + ": " + replaceWith + "\".");
 
             try
             {
@@ -34,7 +34,7 @@ namespace SpaceCore.Utilities
             }
             catch (Exception e)
             {
-                Log.warn("WARNING (1): " + e);
+                Log.Warn("WARNING (1): " + e);
             }
             try
             {
@@ -42,7 +42,7 @@ namespace SpaceCore.Utilities
             }
             catch (Exception e)
             {
-                Log.warn("WARNING (2): " + e);
+                Log.Warn("WARNING (2): " + e);
             }
 
             if (target.IsVirtual)
@@ -86,7 +86,7 @@ namespace SpaceCore.Utilities
                     {
                         insOffset = 2;
                     }
-                    Log.trace("Offset: " + insOffset);
+                    Log.Trace("Offset: " + insOffset);
 
                     int* ttar = (int*)target.MethodHandle.Value.ToPointer() + insOffset;
                     int* rtar = (int*)replaceWith.MethodHandle.Value.ToPointer() + insOffset;
@@ -94,7 +94,7 @@ namespace SpaceCore.Utilities
                     // Debugger.IsAttached section not needed with VS2017? Or whatever caused the change
                     if (false && Debugger.IsAttached)
                     {
-                        Log.trace("Debugger is attached.");
+                        Log.Trace("Debugger is attached.");
 
                         byte* tinsn = (byte*)(*ttar);
                         byte* rinsn = (byte*)(*rtar);
@@ -102,21 +102,21 @@ namespace SpaceCore.Utilities
                         int* tsrc = (int*)(tinsn + 1);
                         int* rsrc = (int*)(rinsn + 1);
 
-                        Log.trace("Data (1): " + new IntPtr(ttar) + "=" + (ttar == null ? 0 : (*ttar)) + " " + new IntPtr(rtar) + "=" + (rtar == null ? 0 : (*rtar)));
-                        Log.trace("Data (2): " + new IntPtr(tinsn) + "=" + (tinsn == null ? 0 : (*tinsn)) + " " + new IntPtr(rinsn) + "=" + (rinsn == null ? 0 : (*rinsn)));
-                        Log.trace("Data (3): " + new IntPtr(tsrc) + "=" + (tinsn == null ? 1 : (*tsrc)) + " " + new IntPtr(rsrc) + "=" + (rinsn == null ? 1 : (*rsrc)));
+                        Log.Trace("Data (1): " + new IntPtr(ttar) + "=" + (ttar == null ? 0 : (*ttar)) + " " + new IntPtr(rtar) + "=" + (rtar == null ? 0 : (*rtar)));
+                        Log.Trace("Data (2): " + new IntPtr(tinsn) + "=" + (tinsn == null ? 0 : (*tinsn)) + " " + new IntPtr(rinsn) + "=" + (rinsn == null ? 0 : (*rinsn)));
+                        Log.Trace("Data (3): " + new IntPtr(tsrc) + "=" + (tinsn == null ? 1 : (*tsrc)) + " " + new IntPtr(rsrc) + "=" + (rinsn == null ? 1 : (*rsrc)));
                         (*tsrc) = (((int)rinsn + 5) + (*rsrc)) - ((int)tinsn + 5);
                     }
                     else
                     {
-                        Log.trace("Debugger is not attached.");
-                        Log.trace("Data: " + new IntPtr(ttar) + "=" + (*ttar) + " " + new IntPtr(rtar) + "=" + (*rtar));
+                        Log.Trace("Debugger is not attached.");
+                        Log.Trace("Data: " + new IntPtr(ttar) + "=" + (*ttar) + " " + new IntPtr(rtar) + "=" + (*rtar));
                         (*ttar) = (*rtar);
                     }
                 }
             }
 
-            Log.trace("Done");
+            Log.Trace("Done");
         }
     }
 }

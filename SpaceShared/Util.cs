@@ -64,7 +64,7 @@ namespace SpaceShared
             return value;
         }
 
-        public static void swap<T>(ref T lhs, ref T rhs)
+        public static void Swap<T>(ref T lhs, ref T rhs)
         {
             T temp;
             temp = lhs;
@@ -73,7 +73,7 @@ namespace SpaceShared
         }
 
         // Stolen from SMAPI
-        public static void invokeEvent(string name, IEnumerable<Delegate> handlers, object sender)
+        public static void InvokeEvent(string name, IEnumerable<Delegate> handlers, object sender)
         {
             var args = new EventArgs();
             foreach (EventHandler handler in handlers.Cast<EventHandler>())
@@ -84,12 +84,12 @@ namespace SpaceShared
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception while handling event {name}:\n{e}");
+                    Log.Error($"Exception while handling event {name}:\n{e}");
                 }
             }
         }
 
-        public static void invokeEvent<T>(string name, IEnumerable<Delegate> handlers, object sender, T args)
+        public static void InvokeEvent<T>(string name, IEnumerable<Delegate> handlers, object sender, T args)
         {
             foreach (EventHandler<T> handler in handlers.Cast<EventHandler<T>>())
             {
@@ -99,13 +99,13 @@ namespace SpaceShared
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception while handling event {name}:\n{e}");
+                    Log.Error($"Exception while handling event {name}:\n{e}");
                 }
             }
         }
 
         // Returns if the event was canceled or not
-        public static bool invokeEventCancelable<T>(string name, IEnumerable<Delegate> handlers, object sender, T args) where T : CancelableEventArgs
+        public static bool InvokeEventCancelable<T>(string name, IEnumerable<Delegate> handlers, object sender, T args) where T : CancelableEventArgs
         {
             foreach (EventHandler<T> handler in handlers.Cast<EventHandler<T>>())
             {
@@ -115,7 +115,7 @@ namespace SpaceShared
                 }
                 catch (Exception e)
                 {
-                    Log.error($"Exception while handling event {name}:\n{e}");
+                    Log.Error($"Exception while handling event {name}:\n{e}");
                 }
             }
 

@@ -160,7 +160,7 @@ namespace ContentPatcherAnimations
                 }
                 catch (Exception e)
                 {
-                    Log.trace("Exception loading " + patch.Key.LogName + " textures, delaying to try again next frame: " + e);
+                    Log.Trace("Exception loading " + patch.Key.LogName + " textures, delaying to try again next frame: " + e);
                     this.ScreenState.findTargetsQueue.Enqueue(patch.Key);
                 }
             }
@@ -179,7 +179,7 @@ namespace ContentPatcherAnimations
             }
             catch (Exception e)
             {
-                Log.error("Exception loading " + key.LogName + " textures: " + e);
+                Log.Error("Exception loading " + key.LogName + " textures: " + e);
             }
         }
 
@@ -194,10 +194,10 @@ namespace ContentPatcherAnimations
                 {
                     if (patch.AnimationFrameTime > 0 && patch.AnimationFrameCount > 0)
                     {
-                        Log.trace("Loading animated patch from content pack " + pack.Manifest.UniqueID);
+                        Log.Trace("Loading animated patch from content pack " + pack.Manifest.UniqueID);
                         if (patch.LogName == null || patch.LogName == "")
                         {
-                            Log.error("Animated patches must specify a LogName!");
+                            Log.Error("Animated patches must specify a LogName!");
                             continue;
                         }
 
@@ -215,7 +215,7 @@ namespace ContentPatcherAnimations
                         }
                         if (targetPatch == null)
                         {
-                            Log.error("Failed to find patch with name \"" + patch.LogName + "\"!?!?");
+                            Log.Error("Failed to find patch with name \"" + patch.LogName + "\"!?!?");
                             continue;
                         }
                         var appliedProp = targetPatch.GetType().GetProperty("IsApplied", Mod.PublicI);
@@ -244,7 +244,7 @@ namespace ContentPatcherAnimations
             var tex = Game1.content.Load<Texture2D>(target);
             if (tex.GetType().Name == "ScaledTexture2D")
             {
-                Log.trace("Found ScaledTexture2D from PyTK: " + target);
+                Log.Trace("Found ScaledTexture2D from PyTK: " + target);
                 tex = this.Helper.Reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
             }
             return tex;

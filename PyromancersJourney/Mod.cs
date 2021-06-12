@@ -57,7 +57,7 @@ namespace PyromancersJourney
             if (cmd == "pyrojourney")
             {
                 if (!Context.IsPlayerFree)
-                    Log.info("You must have a save loaded and be not busy.");
+                    Log.Info("You must have a save loaded and be not busy.");
                 else
                     Game1.currentMinigame = new PyromancerMinigame();
             }

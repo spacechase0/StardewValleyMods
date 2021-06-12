@@ -136,12 +136,12 @@ namespace CookingSkill
                     thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 11) ? Convert.ToInt32(buffData[11]) : 0, (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
                 int[] oldAttr = oldBuff?.buffAttributes;
                 int[] thisAttr = thisBuff?.buffAttributes;
-                Log.trace("Ate something: " + obj + " " + Game1.objectInformation[obj.ParentSheetIndex] + " " + buffData + " " + oldBuff + " " + thisBuff + " " + oldAttr + " " + thisAttr);
+                Log.Trace("Ate something: " + obj + " " + Game1.objectInformation[obj.ParentSheetIndex] + " " + buffData + " " + oldBuff + " " + thisBuff + " " + oldAttr + " " + thisAttr);
                 if (oldBuff != null && thisBuff != null && Enumerable.SequenceEqual(oldAttr, thisAttr) &&
                      ((info[6] == "drink" && oldBuff != this.lastDrink) || (info[6] != "drink" && oldBuff != this.lastDrink)))
                 {
                     // Now that we know that this is the original buff, we can buff the buff.
-                    Log.trace("Buffing buff");
+                    Log.Trace("Buffing buff");
                     int[] newAttr = (int[])thisAttr.Clone();
                     if (Game1.player.HasCustomProfession(Skill.ProfessionBuffLevel))
                     {
@@ -187,7 +187,7 @@ namespace CookingSkill
                 }
                 else if (thisBuff == null && Game1.player.HasCustomProfession(Skill.ProfessionBuffPlain))
                 {
-                    Log.trace("Buffing plain");
+                    Log.Trace("Buffing plain");
                     Random rand = new Random();
                     int[] newAttr = new int[12];
                     int count = 1 + Math.Min(obj.Edibility / 30, 3);

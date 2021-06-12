@@ -47,7 +47,7 @@ namespace MoreRings.Patches
                     {
                         if (utilWithinRadiusCount++ == 1)
                         {
-                            Log.trace("Found second Utility.withinRadiusOfPlayer call, replacing i-2 with our hook function");
+                            Log.Trace("Found second Utility.withinRadiusOfPlayer call, replacing i-2 with our hook function");
                             newInsns[newInsns.Count - 2] = new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<Game1Patcher>(nameof(toolRangeHook)));
                         }
                     }

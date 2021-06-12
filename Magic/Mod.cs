@@ -17,7 +17,7 @@ namespace Magic
         public static Configuration Config { get; private set; }
 
         internal static JsonAssetsApi ja;
-        internal static ManaBarAPI mana;
+        internal static IManaBarApi mana;
 
         internal Api api;
 
@@ -47,7 +47,7 @@ namespace Magic
         /// <param name="e">The event arguments.</param>
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
                 capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
@@ -63,10 +63,10 @@ namespace Magic
                 capi.RegisterSimpleOption(this.ModManifest, "Key: Spell 5", "The key for spell 5.", () => Mod.Config.Key_Spell5, (SButton val) => Mod.Config.Key_Spell5 = val);
             }
 
-            var api2 = this.Helper.ModRegistry.GetApi<ManaBarAPI>("spacechase0.ManaBar");
+            var api2 = this.Helper.ModRegistry.GetApi<IManaBarApi>("spacechase0.ManaBar");
             if (api2 == null)
             {
-                Log.error("No mana bar API???");
+                Log.Error("No mana bar API???");
                 return;
             }
             Mod.mana = api2;
@@ -74,7 +74,7 @@ namespace Magic
             var api = this.Helper.ModRegistry.GetApi<JsonAssetsApi>("spacechase0.JsonAssets");
             if (api == null)
             {
-                Log.error("No Json Assets API???");
+                Log.Error("No Json Assets API???");
                 return;
             }
             Mod.ja = api;
@@ -91,7 +91,7 @@ namespace Magic
             {
                 if (!Game1.IsMultiplayer || Game1.IsMasterGame)
                 {
-                    Log.info($"Loading save data (\"{MultiplayerSaveData.FilePath}\")...");
+                    Log.Info($"Loading save data (\"{MultiplayerSaveData.FilePath}\")...");
                     Mod.Data = File.Exists(MultiplayerSaveData.FilePath)
                         ? JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.FilePath))
                         : new MultiplayerSaveData();
@@ -121,7 +121,7 @@ namespace Magic
             }
             catch (Exception ex)
             {
-                Log.warn($"Exception loading save data: {ex}");
+                Log.Warn($"Exception loading save data: {ex}");
             }
         }
 
@@ -132,7 +132,7 @@ namespace Magic
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
-                Log.info($"Saving save data (\"{MultiplayerSaveData.FilePath}\")...");
+                Log.Info($"Saving save data (\"{MultiplayerSaveData.FilePath}\")...");
                 File.WriteAllText(MultiplayerSaveData.FilePath, JsonConvert.SerializeObject(Mod.Data));
             }
         }

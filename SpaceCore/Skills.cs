@@ -222,7 +222,7 @@ namespace SpaceCore
                 }
 
                 var server = (GameServer)sender;
-                Log.trace("Sending skill data to " + args.FarmerID);
+                Log.Trace("Sending skill data to " + args.FarmerID);
                 Networking.ServerSendTo(args.FarmerID, Skills.MSG_DATA, stream.ToArray());
             }
         }
@@ -234,12 +234,12 @@ namespace SpaceCore
 
         private static void onDataMessage(IncomingMessage msg)
         {
-            Log.trace("Got experience data!");
+            Log.Trace("Got experience data!");
             int count = msg.Reader.ReadInt32();
             for (int ie = 0; ie < count; ++ie)
             {
                 long id = msg.Reader.ReadInt64();
-                Log.trace("\t" + id + ":");
+                Log.Trace("\t" + id + ":");
                 int count2 = msg.Reader.ReadInt32();
                 for (int isk = 0; isk < count2; ++isk)
                 {
@@ -248,7 +248,7 @@ namespace SpaceCore
                     if (!Skills.exp.ContainsKey(id))
                         Skills.exp.Add(id, new Dictionary<string, int>());
                     Skills.exp[id][skill] = amt;
-                    Log.trace("\t" + skill + "=" + amt);
+                    Log.Trace("\t" + skill + "=" + amt);
                 }
             }
         }
@@ -275,7 +275,7 @@ namespace SpaceCore
         {
             if (Context.IsMainPlayer)
             {
-                Log.trace("Saving custom data");
+                Log.Trace("Saving custom data");
                 Skills.DataApi.WriteSaveData(Skills.DataKey, Skills.exp);
             }
         }
@@ -289,7 +289,7 @@ namespace SpaceCore
             {
                 if (File.Exists(Skills.LegacyFilePath))
                 {
-                    Log.trace($"Deleting legacy data file at {Skills.LegacyFilePath}");
+                    Log.Trace($"Deleting legacy data file at {Skills.LegacyFilePath}");
                     File.Delete(Skills.LegacyFilePath);
                 }
             }
@@ -310,7 +310,7 @@ namespace SpaceCore
         }
         private static void showLevelMenu(object sender, EventArgsShowNightEndMenus args)
         {
-            Log.debug("Doing skill menus");
+            Log.Debug("Doing skill menus");
 
             if (Game1.endOfNightMenus.Count == 0)
                 Game1.endOfNightMenus.Push(new SaveGameMenu());
@@ -321,7 +321,7 @@ namespace SpaceCore
                 {
                     string skill = Skills.myNewLevels[i].Key;
                     int level = Skills.myNewLevels[i].Value;
-                    Log.trace("Doing " + i + ": " + skill + " level " + level + " screen");
+                    Log.Trace("Doing " + i + ": " + skill + " level " + level + " screen");
 
                     Game1.endOfNightMenus.Push(new SkillLevelUpMenu(skill, level));
                 }
@@ -387,10 +387,10 @@ namespace SpaceCore
                     progress = -1;
                 }
 
-                var api = SpaceCore.instance.Helper.ModRegistry.GetApi<ExperienceBarsAPI>("spacechase0.ExperienceBars");
+                var api = SpaceCore.instance.Helper.ModRegistry.GetApi<IExperienceBarsApi>("spacechase0.ExperienceBars");
                 if (api == null)
                 {
-                    Log.warn("No experience bars API? Turning off");
+                    Log.Warn("No experience bars API? Turning off");
                     SpaceCore.instance.Helper.Events.Display.RenderedHud -= Skills.onRenderedHud;
                     return;
                 }

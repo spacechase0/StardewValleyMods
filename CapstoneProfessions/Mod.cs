@@ -56,7 +56,7 @@ namespace CapstoneProfessions
                 if (Game1.player.professions.Contains(Mod.PROFESSION_TIME) || Game1.player.professions.Contains(Mod.PROFESSION_PROFIT))
                     return;
 
-                Log.debug("Doing profession menu");
+                Log.Debug("Doing profession menu");
 
                 if (Game1.endOfNightMenus.Count == 0)
                     Game1.endOfNightMenus.Push(new SaveGameMenu());

@@ -77,7 +77,7 @@ namespace MoreGiantCrops.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(Transpile_NewDay)}:\n{ex}");
+                Log.Error($"Failed in {nameof(Transpile_NewDay)}:\n{ex}");
                 return instructions;
             }
         }

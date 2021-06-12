@@ -335,7 +335,7 @@ namespace BuildableLocationsFramework.Patches
 
         internal static IEnumerable<CodeInstruction> Transpile(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
-            Log.info("Transpiling " + original);
+            Log.Info("Transpiling " + original);
             List<CodeInstruction> ret = new List<CodeInstruction>();
 
             foreach (var insn in insns)
@@ -344,7 +344,7 @@ namespace BuildableLocationsFramework.Patches
                 {
                     if (info.DeclaringType == typeof(Game1) && info.Name == "getLocationFromName")
                     {
-                        Log.debug("Found a getLocationFromName, replacing...");
+                        Log.Debug("Found a getLocationFromName, replacing...");
                         insn.operand = PatchHelper.RequireMethod<CarpenterMenuPatcher>(nameof(ReturnCurrentLocationAnyways));
                     }
                 }

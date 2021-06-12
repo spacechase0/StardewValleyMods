@@ -58,7 +58,7 @@ namespace SpaceCore.Patches
             else if (_commandLookup.ContainsKey(split[0]))
                 _commandLookup[split[0]].Invoke(__instance, _eventCommandArgs);
             else
-                SpaceShared.Log.warn("ERROR: Invalid command: " + split[0]);
+                SpaceShared.Log.Warn("ERROR: Invalid command: " + split[0]);
 
             return false;
         }

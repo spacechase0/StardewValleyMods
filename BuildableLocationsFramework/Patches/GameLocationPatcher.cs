@@ -34,7 +34,7 @@ namespace BuildableLocationsFramework.Patches
         /// <summary>The method to call before <see cref="GameLocation.carpenters"/>.</summary>
         private static IEnumerable<CodeInstruction> Transpile_Carpenters(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
-            Log.info("Transpiling " + original);
+            Log.Info("Transpiling " + original);
             List<CodeInstruction> ret = new List<CodeInstruction>();
 
             foreach (var insn in insns)
@@ -43,7 +43,7 @@ namespace BuildableLocationsFramework.Patches
                 {
                     if (info.DeclaringType == typeof(BuildableGameLocation) && info.Name == "isThereABuildingUnderConstruction")
                     {
-                        Log.debug("Found isThereABuildingUnderConstruction, replacing...");
+                        Log.Debug("Found isThereABuildingUnderConstruction, replacing...");
                         var newInsn = new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<GameLocationPatcher>(nameof(IsAnyBuildingUnderConstruction)));
                         ret.Add(newInsn);
                         continue;

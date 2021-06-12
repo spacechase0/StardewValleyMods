@@ -34,7 +34,7 @@ namespace BetterShopMenu
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
                 capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
@@ -666,7 +666,7 @@ namespace BetterShopMenu
         {
             if (e.NewMenu is ShopMenu shopMenu)
             {
-                Log.trace("Found shop menu!");
+                Log.Trace("Found shop menu!");
                 this.initShop(shopMenu);
             }
             else

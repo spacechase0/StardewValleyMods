@@ -43,7 +43,7 @@ namespace ExperienceBars
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
                 capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
@@ -114,7 +114,7 @@ namespace ExperienceBars
                 }
                 catch (Exception ex)
                 {
-                    Log.error("Exception during level extender compat: " + ex);
+                    Log.Error("Exception during level extender compat: " + ex);
                     Mod.stopLevelExtenderCompat = true;
                 }
             }

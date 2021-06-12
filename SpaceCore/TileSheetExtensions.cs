@@ -162,7 +162,7 @@ namespace SpaceCore
                 asset.Value.BaseTileSheet = Game1.content.Load<Texture2D>(asset.Key);
                 if (asset.Value.BaseTileSheet == null)
                 {
-                    Log.error("WHAT? null " + asset.Key);
+                    Log.Error("WHAT? null " + asset.Key);
                 }
                 else if (!TileSheetExtensions.extendedTextures.ContainsKey(asset.Value.BaseTileSheet))
                 {

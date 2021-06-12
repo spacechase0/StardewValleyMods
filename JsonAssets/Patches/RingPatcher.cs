@@ -51,7 +51,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.error($"Failed in {nameof(Before_LoadDisplayFields)} for #{__instance?.indexInTileSheet}:\n{ex}");
+                Log.Error($"Failed in {nameof(Before_LoadDisplayFields)} for #{__instance?.indexInTileSheet}:\n{ex}");
                 return false;
             }
         }

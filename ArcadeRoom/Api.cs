@@ -21,10 +21,10 @@ namespace ArcadeRoom
         public event EventHandler OnRoomSetup;
         internal void InvokeOnRoomSetup()
         {
-            Log.trace("Event: OnRoomSetup");
+            Log.Trace("Event: OnRoomSetup");
             if (this.OnRoomSetup == null)
                 return;
-            Util.invokeEvent("ArcadeRoom.Api.OnRoomSetup", this.OnRoomSetup.GetInvocationList(), null);
+            Util.InvokeEvent("ArcadeRoom.Api.OnRoomSetup", this.OnRoomSetup.GetInvocationList(), null);
         }
     }
 }

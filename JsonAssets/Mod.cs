@@ -36,7 +36,7 @@ namespace JsonAssets
         public static Mod instance;
         private ContentInjector1 content1;
         private ContentInjector2 content2;
-        internal ExpandedPreconditionsUtilityAPI epu;
+        internal IExpandedPreconditionsUtilityApi epu;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -108,8 +108,8 @@ namespace JsonAssets
 
         private void PrintIdMapping(string header, Dictionary<string, KeyValuePair<int, int>> mapping)
         {
-            Log.info(header);
-            Log.info("-------------------------");
+            Log.Info(header);
+            Log.Info("-------------------------");
 
             int len = 0;
             foreach (var entry in mapping)
@@ -117,19 +117,19 @@ namespace JsonAssets
 
             foreach (var entry in mapping)
             {
-                Log.info(string.Format("{0,-" + len + "} | {1,5} -> {2,-5}",
+                Log.Info(string.Format("{0,-" + len + "} | {1,5} -> {2,-5}",
                                           entry.Key,
                                           entry.Value.Key == -1 ? "" : entry.Value.Key.ToString(),
                                           entry.Value.Value == -1 ? "" : entry.Value.Value.ToString()));
             }
-            Log.info("");
+            Log.Info("");
         }
 
         private void doCommands(string cmd, string[] args)
         {
             if (!this.didInit)
             {
-                Log.info("A save must be loaded first.");
+                Log.Info("A save must be loaded first.");
                 return;
             }
 
@@ -160,7 +160,7 @@ namespace JsonAssets
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            this.epu = this.Helper.ModRegistry.GetApi<ExpandedPreconditionsUtilityAPI>("Cherry.ExpandedPreconditionsUtility");
+            this.epu = this.Helper.ModRegistry.GetApi<IExpandedPreconditionsUtilityApi>("Cherry.ExpandedPreconditionsUtility");
             this.epu.Initialize(false, this.ModManifest.UniqueID);
 
             ContentPatcherIntegration.Initialize();
@@ -174,7 +174,7 @@ namespace JsonAssets
             {
                 this.firstTick = false;
 
-                Log.info("Loading content packs...");
+                Log.Info("Loading content packs...");
                 foreach (IContentPack contentPack in this.Helper.ContentPacks.GetOwned())
                     try
                     {
@@ -182,7 +182,7 @@ namespace JsonAssets
                     }
                     catch (Exception e1)
                     {
-                        Log.error("Exception loading content pack: " + e1);
+                        Log.Error("Exception loading content pack: " + e1);
                     }
                 if (Directory.Exists(Path.Combine(this.Helper.DirectoryPath, "ContentPacks")))
                 {
@@ -193,7 +193,7 @@ namespace JsonAssets
                         }
                         catch (Exception e2)
                         {
-                            Log.error("Exception loading content pack: " + e2);
+                            Log.Error("Exception loading content pack: " + e2);
                         }
                 }
                 this.api.InvokeItemsRegistered();
@@ -211,7 +211,7 @@ namespace JsonAssets
             ContentPackData info = temp.ReadJsonFile<ContentPackData>("content-pack.json");
             if (info == null)
             {
-                Log.warn($"\tNo {dir}/content-pack.json!");
+                Log.Warn($"\tNo {dir}/content-pack.json!");
                 return;
             }
 
@@ -287,7 +287,7 @@ namespace JsonAssets
 
             // Duplicate check
             if (this.dupObjects.ContainsKey(obj.Name))
-                Log.error($"Duplicate object: {obj.Name} just added by {source.Name}, already added by {this.dupObjects[obj.Name].Name}!");
+                Log.Error($"Duplicate object: {obj.Name} just added by {source.Name}, already added by {this.dupObjects[obj.Name].Name}!");
             else
                 this.dupObjects[obj.Name] = source;
 
@@ -337,18 +337,18 @@ namespace JsonAssets
                         if (this.SeasonLimiter.IsMatch(crop.SeedPurchaseRequirements[index]))
                         {
                             crop.SeedPurchaseRequirements[index] = strtrimstart;
-                            Log.warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
+                            Log.Warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
                         }
                     }
                     if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart('/')))
                     {
-                        Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
+                        Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
                         crop.seed.PurchaseRequirements.Add(strtrimstart);
                     }
                 }
                 else
                 {
-                    Log.trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
+                    Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
                     crop.seed.PurchaseRequirements.Add(strtrimstart);
                 }
             }
@@ -380,7 +380,7 @@ namespace JsonAssets
 
             // Duplicate check
             if (this.dupCrops.ContainsKey(crop.Name))
-                Log.error($"Duplicate crop: {crop.Name} just added by {source.Name}, already added by {this.dupCrops[crop.Name].Name}!");
+                Log.Error($"Duplicate crop: {crop.Name} just added by {source.Name}, already added by {this.dupCrops[crop.Name].Name}!");
             else
                 this.dupCrops[crop.Name] = source;
 
@@ -443,7 +443,7 @@ namespace JsonAssets
 
             // Duplicate check
             if (this.dupFruitTrees.ContainsKey(tree.Name))
-                Log.error($"Duplicate fruit tree: {tree.Name} just added by {source.Name}, already added by {this.dupFruitTrees[tree.Name].Name}!");
+                Log.Error($"Duplicate fruit tree: {tree.Name} just added by {source.Name}, already added by {this.dupFruitTrees[tree.Name].Name}!");
             else
                 this.dupFruitTrees[tree.Name] = source;
 
@@ -505,7 +505,7 @@ namespace JsonAssets
 
             // Duplicate check
             if (this.dupBigCraftables.ContainsKey(craftable.Name))
-                Log.error($"Duplicate big craftable: {craftable.Name} just added by {source.Name}, already added by {this.dupBigCraftables[craftable.Name].Name}!");
+                Log.Error($"Duplicate big craftable: {craftable.Name} just added by {source.Name}, already added by {this.dupBigCraftables[craftable.Name].Name}!");
             else
                 this.dupBigCraftables[craftable.Name] = source;
 
@@ -531,7 +531,7 @@ namespace JsonAssets
 
             // Duplicate check
             if (this.dupHats.ContainsKey(hat.Name))
-                Log.error($"Duplicate hat: {hat.Name} just added by {source.Name}, already added by {this.dupHats[hat.Name].Name}!");
+                Log.Error($"Duplicate hat: {hat.Name} just added by {source.Name}, already added by {this.dupHats[hat.Name].Name}!");
             else
                 this.dupHats[hat.Name] = source;
 
@@ -570,7 +570,7 @@ namespace JsonAssets
 
             // Duplicate check
             if (this.dupWeapons.ContainsKey(weapon.Name))
-                Log.error($"Duplicate weapon: {weapon.Name} just added by {source.Name}, already added by {this.dupWeapons[weapon.Name].Name}!");
+                Log.Error($"Duplicate weapon: {weapon.Name} just added by {source.Name}, already added by {this.dupWeapons[weapon.Name].Name}!");
             else
                 this.dupWeapons[weapon.Name] = source;
 
@@ -585,7 +585,7 @@ namespace JsonAssets
 
             // Duplicate check
             if (this.dupShirts.ContainsKey(shirt.Name))
-                Log.error($"Duplicate shirt: {shirt.Name} just added by {source.Name}, already added by {this.dupShirts[shirt.Name].Name}!");
+                Log.Error($"Duplicate shirt: {shirt.Name} just added by {source.Name}, already added by {this.dupShirts[shirt.Name].Name}!");
             else
                 this.dupShirts[shirt.Name] = source;
 
@@ -600,7 +600,7 @@ namespace JsonAssets
 
             // Duplicate check
             if (this.dupPants.ContainsKey(pants.Name))
-                Log.error($"Duplicate pants: {pants.Name} just added by {source.Name}, already added by {this.dupPants[pants.Name].Name}!");
+                Log.Error($"Duplicate pants: {pants.Name} just added by {source.Name}, already added by {this.dupPants[pants.Name].Name}!");
             else
                 this.dupPants[pants.Name] = source;
 
@@ -645,7 +645,7 @@ namespace JsonAssets
 
             // Duplicate check
             if (this.dupBoots.ContainsKey(boots.Name))
-                Log.error($"Duplicate boots: {boots.Name} just added by {source.Name}, already added by {this.dupBoots[boots.Name].Name}!");
+                Log.Error($"Duplicate boots: {boots.Name} just added by {source.Name}, already added by {this.dupBoots[boots.Name].Name}!");
             else
                 this.dupBoots[boots.Name] = source;
 
@@ -720,7 +720,7 @@ namespace JsonAssets
         private readonly Regex SeasonLimiter = new("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private void loadData(IContentPack contentPack)
         {
-            Log.info($"\t{contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author} - {contentPack.Manifest.Description}");
+            Log.Info($"\t{contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author} - {contentPack.Manifest.Description}");
 
             // load objects
             DirectoryInfo objectsDir = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Objects"));
@@ -993,7 +993,7 @@ namespace JsonAssets
 
         internal void onBlankSave()
         {
-            Log.debug("Loading stuff early (really super early)");
+            Log.Debug("Loading stuff early (really super early)");
             if (string.IsNullOrEmpty(Constants.CurrentSavePath))
             {
                 this.initStuff(loadIdFiles: false);
@@ -1002,7 +1002,7 @@ namespace JsonAssets
 
         private void onCreated(object sender, SaveCreatedEventArgs e)
         {
-            Log.debug("Loading stuff early (creation)");
+            Log.Debug("Loading stuff early (creation)");
             //initStuff(loadIdFiles: false);
         }
 
@@ -1015,12 +1015,12 @@ namespace JsonAssets
             }
             else if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveLoadedLocations)
             {
-                Log.debug("Fixing IDs");
+                Log.Debug("Fixing IDs");
                 this.fixIdsEverywhere();
             }
             else if (e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded)
             {
-                Log.debug("Adding default/leveled recipes");
+                Log.Debug("Adding default/leveled recipes");
                 foreach (var obj in this.objects)
                 {
                     if (obj.Recipe != null)
@@ -1094,7 +1094,7 @@ namespace JsonAssets
         {
             if (!Context.IsMainPlayer && !this.didInit)
             {
-                Log.debug("Loading stuff early (MP client)");
+                Log.Debug("Loading stuff early (MP client)");
                 this.initStuff(loadIdFiles: false);
             }
         }
@@ -1125,7 +1125,7 @@ namespace JsonAssets
                 return;
             bool doAllSeeds = Game1.player.hasOrWillReceiveMail("PierreStocklist");
 
-            Log.trace($"Adding objects to {portraitPerson}'s shop");
+            Log.Trace($"Adding objects to {portraitPerson}'s shop");
             var forSale = menu.forSale;
             var itemPriceAndStock = menu.itemPriceAndStock;
 
@@ -1194,24 +1194,24 @@ namespace JsonAssets
                 this.oldClothingIds = LoadDictionary<string, int>("ids-clothing.json") ?? new Dictionary<string, int>();
                 this.oldBootsIds = LoadDictionary<string, int>("ids-boots.json") ?? new Dictionary<string, int>();
 
-                Log.verbose("OLD IDS START");
+                Log.Verbose("OLD IDS START");
                 foreach (var id in this.oldObjectIds)
-                    Log.verbose("\tObject " + id.Key + " = " + id.Value);
+                    Log.Verbose("\tObject " + id.Key + " = " + id.Value);
                 foreach (var id in this.oldCropIds)
-                    Log.verbose("\tCrop " + id.Key + " = " + id.Value);
+                    Log.Verbose("\tCrop " + id.Key + " = " + id.Value);
                 foreach (var id in this.oldFruitTreeIds)
-                    Log.verbose("\tFruit Tree " + id.Key + " = " + id.Value);
+                    Log.Verbose("\tFruit Tree " + id.Key + " = " + id.Value);
                 foreach (var id in this.oldBigCraftableIds)
-                    Log.verbose("\tBigCraftable " + id.Key + " = " + id.Value);
+                    Log.Verbose("\tBigCraftable " + id.Key + " = " + id.Value);
                 foreach (var id in this.oldHatIds)
-                    Log.verbose("\tHat " + id.Key + " = " + id.Value);
+                    Log.Verbose("\tHat " + id.Key + " = " + id.Value);
                 foreach (var id in this.oldWeaponIds)
-                    Log.verbose("\tWeapon " + id.Key + " = " + id.Value);
+                    Log.Verbose("\tWeapon " + id.Key + " = " + id.Value);
                 foreach (var id in this.oldClothingIds)
-                    Log.verbose("\tClothing " + id.Key + " = " + id.Value);
+                    Log.Verbose("\tClothing " + id.Key + " = " + id.Value);
                 foreach (var id in this.oldBootsIds)
-                    Log.verbose("\tBoots " + id.Key + " = " + id.Value);
-                Log.verbose("OLD IDS END");
+                    Log.Verbose("\tBoots " + id.Key + " = " + id.Value);
+                Log.Verbose("OLD IDS END");
             }
 
             // assign IDs
@@ -1233,7 +1233,7 @@ namespace JsonAssets
             this.AssignTextureIndices("pants", Mod.StartingPantsTextureIndex, this.pantss.ToList<DataSeparateTextureIndex>());
             this.AssignTextureIndices("boots", Mod.StartingBootsId, this.bootss.ToList<DataSeparateTextureIndex>());
 
-            Log.trace("Resetting max shirt/pants value");
+            Log.Trace("Resetting max shirt/pants value");
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxShirtValue").SetValue(-1);
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxPantsValue").SetValue(-1);
 
@@ -1294,7 +1294,7 @@ namespace JsonAssets
                 var item = Game1.player.Items[i];
                 if (item is SObject obj && ringIds.Contains(obj.ParentSheetIndex))
                 {
-                    Log.trace($"Turning a ring-object of {obj.ParentSheetIndex} into a proper ring");
+                    Log.Trace($"Turning a ring-object of {obj.ParentSheetIndex} into a proper ring");
                     Game1.player.Items[i] = new Ring(obj.ParentSheetIndex);
                 }
             }
@@ -1365,7 +1365,7 @@ namespace JsonAssets
                         return obj.Key;
                 }
 
-                Log.warn($"No idea what '{data}' is!");
+                Log.Warn($"No idea what '{data}' is!");
                 return 0;
             }
         }
@@ -1385,7 +1385,7 @@ namespace JsonAssets
                         return obj.Key;
                 }
 
-                Log.warn($"No idea what '{data}' is!");
+                Log.Warn($"No idea what '{data}' is!");
                 return 0;
             }
         }
@@ -1403,7 +1403,7 @@ namespace JsonAssets
             {
                 if (d.id == -1)
                 {
-                    Log.verbose($"New ID: {d.Name} = {currId}");
+                    Log.Verbose($"New ID: {d.Name} = {currId}");
                     int id = currId++;
                     if (type == "big-craftables")
                     {
@@ -1436,7 +1436,7 @@ namespace JsonAssets
             {
                 if (d.textureIndex == -1)
                 {
-                    Log.verbose($"New texture index: {d.Name} = {currIdx}");
+                    Log.Verbose($"New texture index: {d.Name} = {currIdx}");
                     idxs.Add(d.Name, currIdx++);
                     if (type == "shirts" && ((ClothingData)d).HasFemaleVariant)
                         ++currIdx;
@@ -1469,7 +1469,7 @@ namespace JsonAssets
             this.reverseFixing = reverse;
             if (this.reverseFixing)
             {
-                Log.info("Reversing!");
+                Log.Info("Reversing!");
             }
 
             this.fixItemList(Game1.player.Items);
@@ -1550,7 +1550,7 @@ namespace JsonAssets
                     {
                         if (this.fixId(this.oldObjectIds, this.objectIds, ref oldId, this.origObjects))
                         {
-                            Log.warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
+                            Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
                             oldId = -1;
                         }
                         else
@@ -1566,7 +1566,7 @@ namespace JsonAssets
                     {
                         if (this.fixId(this.oldBigCraftableIds, this.bigCraftableIds, ref oldId, this.origBigCraftables))
                         {
-                            Log.warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
+                            Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
                             oldId = -1;
                         }
                         else
@@ -1584,7 +1584,7 @@ namespace JsonAssets
                     {
                         if (this.fixId(this.oldObjectIds, this.objectIds, ref oldId, this.origObjects))
                         {
-                            Log.warn($"Bundle item missing ({entry.Key}, {oldId})! Probably broken now!");
+                            Log.Warn($"Bundle item missing ({entry.Key}, {oldId})! Probably broken now!");
                             oldId = -1;
                         }
                         else
@@ -1668,7 +1668,7 @@ namespace JsonAssets
                     var c = this.crops.FirstOrDefault(x => x.Name == key);
                     if (c != null) // Non-JA crop
                     {
-                        Log.verbose("Fixing crop product: From " + hd.crop.indexOfHarvest.Value + " to " + c.Product + "=" + this.ResolveObjectId(c.Product));
+                        Log.Verbose("Fixing crop product: From " + hd.crop.indexOfHarvest.Value + " to " + c.Product + "=" + this.ResolveObjectId(c.Product));
                         hd.crop.indexOfHarvest.Value = this.ResolveObjectId(c.Product);
                         this.fixId(this.oldObjectIds, this.objectIds, hd.crop.netSeedIndex, this.origObjects);
                     }
@@ -1814,7 +1814,7 @@ namespace JsonAssets
                         var c = this.crops.FirstOrDefault(x => x.Name == key);
                         if (c != null) // Non-JA crop
                         {
-                            Log.verbose("Fixing crop product: From " + hd.crop.indexOfHarvest.Value + " to " + c.Product + "=" + this.ResolveObjectId(c.Product));
+                            Log.Verbose("Fixing crop product: From " + hd.crop.indexOfHarvest.Value + " to " + c.Product + "=" + this.ResolveObjectId(c.Product));
                             hd.crop.indexOfHarvest.Value = this.ResolveObjectId(c.Product);
                             this.fixId(this.oldObjectIds, this.objectIds, hd.crop.netSeedIndex, this.origObjects);
                         }
@@ -1831,7 +1831,7 @@ namespace JsonAssets
                         var ftt = this.fruitTrees.FirstOrDefault(x => x.Name == key);
                         if (ftt != null) // Non-JA fruit tree
                         {
-                            Log.verbose("Fixing fruit tree product: From " + ft.indexOfFruit.Value + " to " + ftt.Product + "=" + this.ResolveObjectId(ftt.Product));
+                            Log.Verbose("Fixing fruit tree product: From " + ft.indexOfFruit.Value + " to " + ftt.Product + "=" + this.ResolveObjectId(ftt.Product));
                             ft.indexOfFruit.Value = this.ResolveObjectId(ftt.Product);
                         }
                     }
@@ -2019,7 +2019,7 @@ namespace JsonAssets
 
                         if (attached.GetType() != typeof(StardewValley.Object) || attached.bigCraftable)
                         {
-                            Log.warn("Unsupported attachment types! Let spacechase0 know he needs to support " + attached.bigCraftable.Value + " " + attached);
+                            Log.Warn("Unsupported attachment types! Let spacechase0 know he needs to support " + attached.bigCraftable.Value + " " + attached);
                         }
                         else
                         {
@@ -2101,11 +2101,11 @@ namespace JsonAssets
             {
                 if (dict.ContainsKey(entry.Key))
                 {
-                    Log.error("Dict already has value for " + entry.Key + "!");
+                    Log.Error("Dict already has value for " + entry.Key + "!");
                     foreach (var obj in this.objects)
                     {
                         if (obj.id == entry.Key)
-                            Log.error("\tobj = " + obj.Name);
+                            Log.Error("\tobj = " + obj.Name);
                     }
                 }
                 dict.Add(entry.Key, entry.Value);
@@ -2154,12 +2154,12 @@ namespace JsonAssets
                     if (oldIds.ContainsKey(key))
                     {
                         id.Value = oldIds[key];
-                        Log.verbose("Changing ID: " + key + " from ID " + id_ + " to " + id.Value);
+                        Log.Verbose("Changing ID: " + key + " from ID " + id_ + " to " + id.Value);
                         return false;
                     }
                     else
                     {
-                        Log.warn("New item " + key + " with ID " + id_ + "!");
+                        Log.Warn("New item " + key + " with ID " + id_ + "!");
                         return false;
                     }
                 }
@@ -2175,12 +2175,12 @@ namespace JsonAssets
                     if (newIds.ContainsKey(key))
                     {
                         id.Value = newIds[key];
-                        Log.trace("Changing ID: " + key + " from ID " + id_ + " to " + id.Value);
+                        Log.Trace("Changing ID: " + key + " from ID " + id_ + " to " + id.Value);
                         return false;
                     }
                     else
                     {
-                        Log.trace("Deleting missing item " + key + " with old ID " + id_);
+                        Log.Trace("Deleting missing item " + key + " with old ID " + id_);
                         return true;
                     }
                 }
@@ -2205,12 +2205,12 @@ namespace JsonAssets
                     if (oldIds.ContainsKey(key))
                     {
                         id = oldIds[key];
-                        Log.trace("Changing ID: " + key + " from ID " + id_ + " to " + id);
+                        Log.Trace("Changing ID: " + key + " from ID " + id_ + " to " + id);
                         return false;
                     }
                     else
                     {
-                        Log.warn("New item " + key + " with ID " + id_ + "!");
+                        Log.Warn("New item " + key + " with ID " + id_ + "!");
                         return false;
                     }
                 }
@@ -2226,12 +2226,12 @@ namespace JsonAssets
                     if (newIds.ContainsKey(key))
                     {
                         id = newIds[key];
-                        Log.verbose("Changing ID: " + key + " from ID " + id_ + " to " + id);
+                        Log.Verbose("Changing ID: " + key + " from ID " + id_ + " to " + id);
                         return false;
                     }
                     else
                     {
-                        Log.trace("Deleting missing item " + key + " with old ID " + id_);
+                        Log.Trace("Deleting missing item " + key + " with old ID " + id_);
                         return true;
                     }
                 }

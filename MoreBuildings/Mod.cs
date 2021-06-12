@@ -94,7 +94,7 @@ namespace MoreBuildings
                     // This is probably a new building if it hasn't been converted yet.
                     if (b.buildingType.Value == "Shed2" && !(b is BigShedBuilding))
                     {
-                        Log.debug($"Converting big shed at ({b.tileX}, {b.tileY}) to actual big shed.");
+                        Log.Debug($"Converting big shed at ({b.tileX}, {b.tileY}) to actual big shed.");
 
                         farm.buildings[i] = new BigShedBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
@@ -108,7 +108,7 @@ namespace MoreBuildings
                     }
                     else if (b.buildingType.Value == "SpookyShed" && !(b is SpookyShedBuilding))
                     {
-                        Log.debug($"Converting spooky shed at ({b.tileX}, {b.tileY}) to actual spooky shed.");
+                        Log.Debug($"Converting spooky shed at ({b.tileX}, {b.tileY}) to actual spooky shed.");
 
                         farm.buildings[i] = new SpookyShedBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
@@ -122,7 +122,7 @@ namespace MoreBuildings
                     }
                     else if (b.buildingType.Value == "FishShack" && !(b is FishingShackBuilding))
                     {
-                        Log.debug($"Converting fishing shack at ({b.tileX}, {b.tileY}) to actual fishing shack.");
+                        Log.Debug($"Converting fishing shack at ({b.tileX}, {b.tileY}) to actual fishing shack.");
 
                         farm.buildings[i] = new FishingShackBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
@@ -137,7 +137,7 @@ namespace MoreBuildings
                     }
                     else if (b.buildingType.Value == "MiniSpa" && !(b is MiniSpaBuilding))
                     {
-                        Log.debug($"Converting mini spa at ({b.tileX}, {b.tileY}) to actual mini spa.");
+                        Log.Debug($"Converting mini spa at ({b.tileX}, {b.tileY}) to actual mini spa.");
 
                         farm.buildings[i] = new MiniSpaBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;

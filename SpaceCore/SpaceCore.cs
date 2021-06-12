@@ -69,17 +69,17 @@ namespace SpaceCore
 
         private void onGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
                 capi.RegisterModConfig(this.ModManifest, () => this.Config = new Configuration(), () => this.Helper.WriteConfig(this.Config));
                 capi.RegisterSimpleOption(this.ModManifest, "Custom Skill Page", "Whether or not to show the custom skill page.\nThis will move the wallet so that there is room for more skills.", () => this.Config.CustomSkillPage, (bool val) => this.Config.CustomSkillPage = val);
             }
 
-            var efapi = this.Helper.ModRegistry.GetApi<EntoaroxFrameworkAPI>("Entoarox.EntoaroxFramework");
+            var efapi = this.Helper.ModRegistry.GetApi<IEntoaroxFrameworkApi>("Entoarox.EntoaroxFramework");
             if (efapi != null)
             {
-                Log.info("Telling EntoaroxFramework to let us handle the serializer");
+                Log.Info("Telling EntoaroxFramework to let us handle the serializer");
                 efapi.HoistSerializerOwnership();
             }
         }
@@ -90,7 +90,7 @@ namespace SpaceCore
             TileSheetExtensions.UpdateReferences();
             if (this.tickCount++ == 0 && SpaceCore.modTypes.Count == 0)
             {
-                Log.info("Disabling serializer patches (no mods using serializer API)");
+                Log.Info("Disabling serializer patches (no mods using serializer API)");
                 foreach (var meth in SaveGamePatcher.GetSaveEnumeratorMethods())
                     this.harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
                 foreach (var meth in SaveGamePatcher.GetLoadEnumeratorMethods())
@@ -119,7 +119,7 @@ namespace SpaceCore
             if (data == null || data.Year != Game1.year || data.Season != Game1.currentSeason || data.Day != Game1.dayOfMonth)
                 return;
 
-            Log.debug("Previously slept in a tent, replacing player position.");
+            Log.Debug("Previously slept in a tent, replacing player position.");
 
             var loc = Game1.getLocationFromName(data.Location);
             if (loc == null || loc.Name == this.festivalLocation())
@@ -130,7 +130,7 @@ namespace SpaceCore
 
             if (loc is MineShaft)
             {
-                Log.trace("Slept in a mine.");
+                Log.Trace("Slept in a mine.");
                 Game1.enterMine(data.MineLevel);
                 data.X = -1;
                 data.Y = -1;
@@ -150,11 +150,11 @@ namespace SpaceCore
             if (!Sleep.SaveLocation)
                 return;
 
-            Log.debug("Saving tent sleep data");
+            Log.Debug("Saving tent sleep data");
 
             if (Game1.player.currentLocation.Name == this.festivalLocation())
             {
-                Log.trace("There'll be a festival here tomorrow, canceling");
+                Log.Trace("There'll be a festival here tomorrow, canceling");
                 Game1.addHUDMessage(new HUDMessage("You camped out where the festival was, so you have returned home."));
 
                 var house = Game1.getLocationFromName("FarmHouse") as FarmHouse;
@@ -196,7 +196,7 @@ namespace SpaceCore
             string legacyDataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
             if (File.Exists(legacyDataPath))
             {
-                Log.trace($"Deleting legacy tent sleep data file: {legacyDataPath}");
+                Log.Trace($"Deleting legacy tent sleep data file: {legacyDataPath}");
                 File.Delete(legacyDataPath);
             }
         }

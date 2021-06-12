@@ -59,7 +59,7 @@ namespace Magic.Spells
             }
             catch (ContentLoadException e)
             {
-                Log.warn("Failed to load icon for spell " + this.FullId + ": " + e);
+                Log.Warn("Failed to load icon for spell " + this.FullId + ": " + e);
             }
         }
     }

@@ -6,32 +6,32 @@ namespace SpaceShared
     {
         public static IMonitor Monitor;
 
-        public static void verbose(string str)
+        public static void Verbose(string str)
         {
             Log.Monitor.VerboseLog(str);
         }
 
-        public static void trace(string str)
+        public static void Trace(string str)
         {
             Log.Monitor.Log(str, LogLevel.Trace);
         }
 
-        public static void debug(string str)
+        public static void Debug(string str)
         {
             Log.Monitor.Log(str, LogLevel.Debug);
         }
 
-        public static void info(string str)
+        public static void Info(string str)
         {
             Log.Monitor.Log(str, LogLevel.Info);
         }
 
-        public static void warn(string str)
+        public static void Warn(string str)
         {
             Log.Monitor.Log(str, LogLevel.Warn);
         }
 
-        public static void error(string str)
+        public static void Error(string str)
         {
             Log.Monitor.Log(str, LogLevel.Error);
         }

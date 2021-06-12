@@ -89,7 +89,7 @@ namespace Magic
             if (diff <= 0 || Extensions.getFreeSpellPoints(player) < diff && !free)
                 return;
 
-            Log.debug($"Learning spell {spellId}, level {level + 1}");
+            Log.Debug($"Learning spell {spellId}, level {level + 1}");
             if (!free)
                 Extensions.useSpellPoints(player, diff, false);
             player.getSpellBook().knownSpells[spellId] = level;
@@ -109,7 +109,7 @@ namespace Magic
                 return;
             int diff = (known + 1) - level;
 
-            Log.debug($"Forgetting spell {spellId}, level {level + 1}");
+            Log.Debug($"Forgetting spell {spellId}, level {level + 1}");
             if (level == 0)
                 Game1.player.getSpellBook().knownSpells.Remove(spellId);
             else if (Game1.player.getSpellBook().knownSpells[spellId] >= level)

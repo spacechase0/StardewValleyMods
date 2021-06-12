@@ -56,7 +56,7 @@ namespace ExtendedReach.Patches
                     if (meth.Name == "withinRadiusOfPlayer" || meth.Name == "tileWithinRadiusOfPlayer")
                     {
                         var newInsn = new CodeInstruction(OpCodes.Ldc_I4, 100);
-                        Log.trace($"Found {meth.Name}, replacing {newInsns[newInsns.Count - 2]} with {newInsn}");
+                        Log.Trace($"Found {meth.Name}, replacing {newInsns[newInsns.Count - 2]} with {newInsn}");
                         newInsns[newInsns.Count - 2] = newInsn;
                     }
                 }

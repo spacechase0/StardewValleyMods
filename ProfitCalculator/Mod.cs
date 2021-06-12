@@ -26,8 +26,8 @@ namespace ProfitCalculator
             string season = "";
             if (args.Length >= 1)
                 season = args[0];
-            Log.info((season == "") ? "Doing for all seasons" : $"Doing for season {season}");
-            Log.info("NOTE: This takes into account your farming level");
+            Log.Info((season == "") ? "Doing for all seasons" : $"Doing for season {season}");
+            Log.Info("NOTE: This takes into account your farming level");
 
             var tmp = Game1.player;
 
@@ -104,7 +104,7 @@ namespace ProfitCalculator
             for (int i = 0; i < profits.Count; ++i)
             {
                 var p = profits[i];
-                Log.info($"{i + 1}. " + string.Format("{0,-20}", p.crop) + string.Format("{0,10}", p.profit) + "g");
+                Log.Info($"{i + 1}. " + string.Format("{0,-20}", p.crop) + string.Format("{0,10}", p.profit) + "g");
             }
         }
     }
