@@ -3,7 +3,7 @@ using StardewValley;
 
 namespace SpaceShared.APIs
 {
-    public interface IApi
+    internal interface IApi
     {
         event EventHandler<Tool> ToolRushed;
         event EventHandler BuildingRushed;

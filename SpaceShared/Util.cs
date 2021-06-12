@@ -7,13 +7,7 @@ using StardewValley;
 
 namespace SpaceShared
 {
-    public struct Range<T>
-    {
-        public T Minimum;
-        public T Maximum;
-    }
-
-    public class Util
+    internal class Util
     {
         public static bool UsingMono
         {

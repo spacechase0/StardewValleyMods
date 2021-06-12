@@ -5,7 +5,7 @@ using StardewModdingAPI;
 namespace SpaceShared.APIs
 {
     /// <summary>The Content Patcher API which other mods can access.</summary>
-    public interface ContentPatcherAPI
+    internal interface ContentPatcherAPI
     {
         /*********
         ** Methods

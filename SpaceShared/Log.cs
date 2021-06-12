@@ -1,4 +1,3 @@
-using System;
 using StardewModdingAPI;
 
 namespace SpaceShared

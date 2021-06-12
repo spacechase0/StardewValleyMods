@@ -1,6 +1,6 @@
 namespace SpaceShared.APIs
 {
-    public interface ExpandedPreconditionsUtilityAPI
+    internal interface ExpandedPreconditionsUtilityAPI
     {
         /// <summary>
         /// Must be called before any condition checking is done. Verbose mode will turn on logging for every step of the condition checking process
