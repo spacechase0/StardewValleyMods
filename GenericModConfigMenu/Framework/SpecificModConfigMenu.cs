@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GenericModConfigMenu.Framework.UI;
 using GenericModConfigMenu.ModOption;
 using Microsoft.Xna.Framework;
@@ -78,222 +79,251 @@ namespace GenericModConfigMenu.Framework
 
                 Element other = new Label() { String = "TODO", LocalPosition = new Vector2(500, 0) };
                 Element other2 = null;
-                if (opt is ComplexModOption c)
+                switch (opt)
                 {
-                    var custom = new ComplexModOptionWidget(c);
-                    custom.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
-                    other = custom;
-                }
-                else if (opt is SimpleModOption<bool> b)
-                {
-                    var checkbox = new Checkbox();
-                    checkbox.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
-                    checkbox.Checked = b.Value;
-                    checkbox.Callback = (Element e) => b.Value = (e as Checkbox).Checked;
-                    other = checkbox;
-                }
-                else if (opt is SimpleModOption<SButton> k)
-                {
-                    if (Constants.TargetPlatform == GamePlatform.Android)
-                        continue; // TODO: Support virtual keyboard input.
-                    var label2 = new Label() { String = k.Value.ToString() };
-                    label2.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
-                    label2.Callback = (Element e) => this.DoKeybindingFor(k, e as Label);
-                    other = label2;
-                }
-                else if (opt is SimpleModOption<KeybindList> k2)
-                {
-                    if (Constants.TargetPlatform == GamePlatform.Android)
-                        continue; // TODO: Support virtual keyboard input.
-                    var label2 = new Label() { String = k2.Value.IsBound ? k2.Value.Keybinds[0].ToString() : "(None)" };
-                    label2.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
-                    label2.Callback = (Element e) => this.DoKeybinding2For(k2, e as Label);
-                    other = label2;
-                }
-                else if (opt is ClampedModOption<int> ci)
-                {
-                    var label2 = new Label() { String = ci.Value.ToString() };
-                    label2.LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0);
-                    other2 = label2;
-                    var slider = new Slider<int>();
-                    slider.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
-                    slider.RequestWidth = (int)this.Table.Size.X / 3;
-                    slider.Value = ci.Value;
-                    slider.Minimum = ci.Minimum;
-                    slider.Maximum = ci.Maximum;
-                    slider.Interval = ci.Interval;
-                    slider.Callback = (Element e) =>
-                    {
-                        ci.Value = (e as Slider<int>).Value;
-                        label2.String = ci.Value.ToString();
-                    };
-                    other = slider;
-                }
-                else if (opt is ClampedModOption<float> cf)
-                {
-                    var label2 = new Label() { String = cf.Value.ToString() };
-                    label2.LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0);
-                    other2 = label2;
-                    var slider = new Slider<float>();
-                    slider.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
-                    slider.RequestWidth = (int)this.Table.Size.X / 3;
-                    slider.Value = cf.Value;
-                    slider.Minimum = cf.Minimum;
-                    slider.Maximum = cf.Maximum;
-                    slider.Interval = cf.Interval;
-                    slider.Callback = (Element e) =>
-                    {
-                        cf.Value = (e as Slider<float>).Value;
-                        label2.String = cf.Value.ToString();
-                    };
-                    other = slider;
-                }
-                else if (opt is ChoiceModOption<string> cs)
-                {
-                    var dropdown = new Dropdown() { Choices = cs.Choices };
-                    dropdown.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
-                    dropdown.RequestWidth = (int)this.Table.Size.X / 2;
-                    dropdown.Value = cs.Value;
-                    dropdown.MaxValuesAtOnce = Math.Min(dropdown.Choices.Length, 5);
-                    dropdown.Callback = (Element e) => cs.Value = (e as Dropdown).Value;
-                    other = dropdown;
-                }
-                // The following need to come after the Clamped/ChoiceModOption's since those subclass these
-                else if (opt is SimpleModOption<int> i)
-                {
-                    if (Constants.TargetPlatform == GamePlatform.Android)
-                        continue; // TODO: Support virtual keyboard input.
-                    var intbox = new Intbox();
-                    intbox.LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0);
-                    intbox.Value = i.Value;
-                    intbox.Callback = (Element e) => i.Value = (e as Intbox).Value;
-                    other = intbox;
-                }
-                else if (opt is SimpleModOption<float> f)
-                {
-                    if (Constants.TargetPlatform == GamePlatform.Android)
-                        continue; // TODO: Support virtual keyboard input.
-                    var floatbox = new Floatbox();
-                    floatbox.LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0);
-                    floatbox.Value = f.Value;
-                    floatbox.Callback = (Element e) => f.Value = (e as Floatbox).Value;
-                    other = floatbox;
-                }
-                else if (opt is SimpleModOption<string> s)
-                {
-                    if (Constants.TargetPlatform == GamePlatform.Android)
-                        continue; // TODO: Support virtual keyboard input.
-                    var textbox = new Textbox();
-                    textbox.LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0);
-                    textbox.String = s.Value;
-                    textbox.Callback = (Element e) => s.Value = (e as Textbox).String;
-                    other = textbox;
-                }
-                else if (opt is LabelModOption l)
-                {
-                    label.LocalPosition = new Vector2(-8, 0);
-                    label.Bold = true;
-                    if (l.Name == "")
-                        label = null;
-                    other = null;
-                }
-                else if (opt is PageLabelModOption pl)
-                {
-                    label.Bold = true;
-                    label.Callback = (Element e) =>
-                    {
-                        if (TitleMenu.subMenu == this)
-                            TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, pl.NewPage, this.CurrPage);
-                        else if (Game1.activeClickableMenu == this)
-                            Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, pl.NewPage, this.CurrPage);
-                    };
-                    other = null;
-                }
-                else if (opt is ParagraphModOption p)
-                {
-                    label.NonBoldScale = 0.75f;
-                    label.NonBoldShadow = false;
-                    other = null;
-
-                    string[] text = p.Name.Split(' ');
-                    label.String = text[0] + " ";
-                    for (int it = 1; it < text.Length; ++it)
-                    {
-                        string oldStr = label.String;
-                        label.String += text[it];
-                        if (label.Measure().X >= this.Table.Size.X)
+                    case ComplexModOption option:
+                        other = new ComplexModOptionWidget(option)
                         {
-                            label.String = oldStr + "\n" + text[it];
-                        }
-                        if (it < text.Length - 1)
-                            label.String += " ";
-                    }
-
-                    string[] lines = label.String.Split('\n');
-                    for (int il = 0; il < lines.Length; il += 2)
-                    {
-                        this.Table.AddRow(new Element[] { new Label()
-                        {
-                            UserData = opt.Description,
-                            NonBoldScale = 0.75f,
-                            NonBoldShadow = false,
-                            String = lines[ il + 0 ] + "\n" + (il + 1 >= lines.Length ? "" : lines[ il + 1 ])
-                        } });
-                        continue;
-                    }
-                    continue;
-                }
-                else if (opt is ImageModOption t)
-                {
-                    var tex = Game1.content.Load<Texture2D>(t.TexturePath);
-                    var imgSize = new Vector2(tex.Width, tex.Height);
-                    if (t.TextureRect.HasValue)
-                        imgSize = new Vector2(t.TextureRect.Value.Width, t.TextureRect.Value.Height);
-                    imgSize *= t.Scale;
-
-
-                    var localPos = new Vector2(this.Table.Size.X / 2 - imgSize.X / 2, 0);
-                    var baseRectPos = new Vector2(
-                        t.TextureRect.HasValue ? t.TextureRect.Value.X : 0,
-                        t.TextureRect.HasValue ? t.TextureRect.Value.Y : 0
-                    );
-
-                    var texs = new List<Image>();
-                    if (this.Textures.ContainsKey(t.TexturePath))
-                        texs = this.Textures[t.TexturePath];
-                    else
-                        this.Textures.Add(t.TexturePath, texs);
-
-                    for (int ir = 0; ir < imgSize.Y / this.Table.RowHeight; ++ir)
-                    {
-                        int section = Math.Min((int)(imgSize.Y / t.Scale), this.Table.RowHeight);
-                        int baseY = (int)(baseRectPos.Y + section * ir);
-                        if (baseY + section > baseRectPos.Y + imgSize.Y / t.Scale)
-                        {
-                            section = (int)(baseRectPos.Y + imgSize.Y / t.Scale) - baseY;
-                        }
-                        var img = new Image
-                        {
-                            Texture = tex,
-                            TextureRect = new Rectangle((int)baseRectPos.X, baseY, (int)imgSize.X / t.Scale, section),
-                            Scale = t.Scale,
-                            LocalPosition = localPos
+                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0)
                         };
-                        texs.Add(img);
-                        this.Table.AddRow(new Element[] { img });
-                    }
+                        break;
 
-                    continue;
+                    case SimpleModOption<bool> option:
+                        other = new Checkbox
+                        {
+                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                            Checked = option.Value,
+                            Callback = (Element e) => option.Value = (e as Checkbox).Checked
+                        };
+                        break;
+
+                    case SimpleModOption<SButton> option:
+                        if (Constants.TargetPlatform == GamePlatform.Android)
+                            continue; // TODO: Support virtual keyboard input.
+
+                        other = new Label
+                        {
+                            String = option.Value.ToString(),
+                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                            Callback = (Element e) => this.DoKeybindingFor(option, e as Label)
+                        };
+                        break;
+
+                    case SimpleModOption<KeybindList> option:
+                        if (Constants.TargetPlatform == GamePlatform.Android)
+                            continue; // TODO: Support virtual keyboard input.
+
+                        other = new Label
+                        {
+                            String = option.Value.IsBound ? option.Value.Keybinds[0].ToString() : "(None)",
+                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                            Callback = (Element e) => this.DoKeybinding2For(option, e as Label)
+                        };
+                        break;
+
+                    case ClampedModOption<int> option:
+                        {
+                            var label2 = new Label
+                            {
+                                String = option.Value.ToString(),
+                                LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
+                            };
+                            other2 = label;
+
+                            other = new Slider<int>
+                            {
+                                LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                                RequestWidth = (int)this.Table.Size.X / 3,
+                                Value = option.Value,
+                                Minimum = option.Minimum,
+                                Maximum = option.Maximum,
+                                Interval = option.Interval,
+                                Callback = e =>
+                                {
+                                    option.Value = (e as Slider<int>).Value;
+                                    label2.String = option.Value.ToString();
+                                }
+                            };
+                            break;
+                        }
+
+                    case ClampedModOption<float> option:
+                        {
+                            var label2 = new Label
+                            {
+                                String = option.Value.ToString(),
+                                LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
+                            };
+                            other2 = label2;
+
+                            other = new Slider<float>
+                            {
+                                LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                                RequestWidth = (int)this.Table.Size.X / 3,
+                                Value = option.Value,
+                                Minimum = option.Minimum,
+                                Maximum = option.Maximum,
+                                Interval = option.Interval,
+                                Callback = (Element e) =>
+                                {
+                                    option.Value = (e as Slider<float>).Value;
+                                    label2.String = option.Value.ToString();
+                                }
+                            };
+                            break;
+                        }
+
+                    // The following need to come after the Clamped/ChoiceModOption's since those subclass these
+                    case ChoiceModOption<string> option:
+                        other = new Dropdown
+                        {
+                            Choices = option.Choices,
+                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                            RequestWidth = (int)this.Table.Size.X / 2,
+                            Value = option.Value,
+                            MaxValuesAtOnce = Math.Min(option.Choices.Length, 5),
+                            Callback = (Element e) => option.Value = (e as Dropdown).Value
+                        };
+                        break;
+
+                    case SimpleModOption<int> option:
+                        if (Constants.TargetPlatform == GamePlatform.Android)
+                            continue; // TODO: Support virtual keyboard input.
+
+                        other = new Intbox
+                        {
+                            LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
+                            Value = option.Value,
+                            Callback = (Element e) => option.Value = (e as Intbox).Value
+                        };
+                        break;
+
+                    case SimpleModOption<float> option:
+                        if (Constants.TargetPlatform == GamePlatform.Android)
+                            continue; // TODO: Support virtual keyboard input.
+
+                        other = new Floatbox
+                        {
+                            LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
+                            Value = option.Value,
+                            Callback = (Element e) => option.Value = (e as Floatbox).Value
+                        };
+                        break;
+
+                    case SimpleModOption<string> option:
+                        if (Constants.TargetPlatform == GamePlatform.Android)
+                            continue; // TODO: Support virtual keyboard input.
+
+                        other = new Textbox
+                        {
+                            LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
+                            String = option.Value,
+                            Callback = (Element e) => option.Value = (e as Textbox).String
+                        };
+                        break;
+
+                    case LabelModOption option:
+                        label.LocalPosition = new Vector2(-8, 0);
+                        label.Bold = true;
+                        if (option.Name == "")
+                            label = null;
+                        other = null;
+                        break;
+
+                    case PageLabelModOption option:
+                        label.Bold = true;
+                        label.Callback = e =>
+                        {
+                            if (TitleMenu.subMenu == this)
+                                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, option.NewPage, this.CurrPage);
+                            else if (Game1.activeClickableMenu == this)
+                                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, option.NewPage, this.CurrPage);
+                        };
+                        other = null;
+                        break;
+
+                    case ParagraphModOption option:
+                        {
+                            label.NonBoldScale = 0.75f;
+                            label.NonBoldShadow = false;
+                            other = null;
+
+                            string[] text = option.Name.Split(' ');
+                            label.String = text[0] + " ";
+                            for (int it = 1; it < text.Length; ++it)
+                            {
+                                string oldStr = label.String;
+                                label.String += text[it];
+                                if (label.Measure().X >= this.Table.Size.X)
+                                {
+                                    label.String = oldStr + "\n" + text[it];
+                                }
+                                if (it < text.Length - 1)
+                                    label.String += " ";
+                            }
+
+                            string[] lines = label.String.Split('\n');
+                            for (int il = 0; il < lines.Length; il += 2)
+                            {
+                                this.Table.AddRow(new Element[]
+                                {
+                                    new Label
+                                    {
+                                        UserData = opt.Description,
+                                        NonBoldScale = 0.75f,
+                                        NonBoldShadow = false,
+                                        String = lines[ il + 0 ] + "\n" + (il + 1 >= lines.Length ? "" : lines[ il + 1 ])
+                                    }
+                                });
+                            }
+                            break;
+                        }
+
+                    case ImageModOption option:
+                        {
+                            var tex = Game1.content.Load<Texture2D>(option.TexturePath);
+                            var imgSize = new Vector2(tex.Width, tex.Height);
+                            if (option.TextureRect.HasValue)
+                                imgSize = new Vector2(option.TextureRect.Value.Width, option.TextureRect.Value.Height);
+                            imgSize *= option.Scale;
+
+
+                            var localPos = new Vector2(this.Table.Size.X / 2 - imgSize.X / 2, 0);
+                            var baseRectPos = new Vector2(
+                                option.TextureRect?.X ?? 0,
+                                option.TextureRect?.Y ?? 0
+                            );
+
+                            var texs = new List<Image>();
+                            if (this.Textures.ContainsKey(option.TexturePath))
+                                texs = this.Textures[option.TexturePath];
+                            else
+                                this.Textures.Add(option.TexturePath, texs);
+
+                            for (int ir = 0; ir < imgSize.Y / this.Table.RowHeight; ++ir)
+                            {
+                                int section = Math.Min((int)(imgSize.Y / option.Scale), this.Table.RowHeight);
+                                int baseY = (int)(baseRectPos.Y + section * ir);
+                                if (baseY + section > baseRectPos.Y + imgSize.Y / option.Scale)
+                                {
+                                    section = (int)(baseRectPos.Y + imgSize.Y / option.Scale) - baseY;
+                                }
+                                var img = new Image
+                                {
+                                    Texture = tex,
+                                    TextureRect = new Rectangle((int)baseRectPos.X, baseY, (int)imgSize.X / option.Scale, section),
+                                    Scale = option.Scale,
+                                    LocalPosition = localPos
+                                };
+                                texs.Add(img);
+                                this.Table.AddRow(new Element[] { img });
+                            }
+
+                            continue;
+                        }
                 }
 
-                if (label == null)
-                    this.Table.AddRow(new Element[] { });
-                else if (other == null)
-                    this.Table.AddRow(new Element[] { label });
-                else if (other2 == null)
-                    this.Table.AddRow(new[] { label, other });
-                else
-                    this.Table.AddRow(new[] { label, other, other2 });
+                this.Table.AddRow(new[] { label, other, other2 }.Where(p => p != null).ToArray());
             }
             this.Ui.AddChild(this.Table);
 

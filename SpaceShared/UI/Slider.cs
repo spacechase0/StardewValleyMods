@@ -2,7 +2,6 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
 
@@ -49,14 +48,12 @@ namespace SpaceShared.UI
             if (this.Dragging)
             {
                 float perc = (Game1.getOldMouseX() - this.Position.X) / this.Width;
-                if (this.Value is int)
+                this.Value = this.Value switch
                 {
-                    this.Value = Util.Clamp<T>(this.Minimum, (T)(object)(int)(perc * ((int)(object)this.Maximum - (int)(object)this.Minimum) + (int)(object)this.Minimum), this.Maximum);
-                }
-                else if (this.Value is float)
-                {
-                    this.Value = Util.Clamp<T>(this.Minimum, (T)(object)(perc * ((float)(object)this.Maximum - (float)(object)this.Minimum) + (float)(object)this.Minimum), this.Maximum);
-                }
+                    int => Util.Clamp<T>(this.Minimum, (T)(object)(int)(perc * ((int)(object)this.Maximum - (int)(object)this.Minimum) + (int)(object)this.Minimum), this.Maximum),
+                    float => Util.Clamp<T>(this.Minimum, (T)(object)(perc * ((float)(object)this.Maximum - (float)(object)this.Minimum) + (float)(object)this.Minimum), this.Maximum),
+                    _ => this.Value
+                };
 
                 this.Value = Util.Adjust(this.Value, this.Interval);
 
@@ -67,15 +64,12 @@ namespace SpaceShared.UI
 
         public override void Draw(SpriteBatch b)
         {
-            float perc = 0;
-            if (this.Value is int)
+            float perc = this.Value switch
             {
-                perc = ((int)(object)this.Value - (int)(object)this.Minimum) / (float)((int)(object)this.Maximum - (int)(object)this.Minimum);
-            }
-            else if (this.Value is float)
-            {
-                perc = ((float)(object)this.Value - (float)(object)this.Minimum) / ((float)(object)this.Maximum - (float)(object)this.Minimum);
-            }
+                int => ((int)(object)this.Value - (int)(object)this.Minimum) / (float)((int)(object)this.Maximum - (int)(object)this.Minimum),
+                float => ((float)(object)this.Value - (float)(object)this.Minimum) / ((float)(object)this.Maximum - (float)(object)this.Minimum),
+                _ => 0
+            };
 
             Rectangle back = new Rectangle((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);
             Rectangle front = new Rectangle((int)(this.Position.X + perc * (this.Width - 40)), (int)this.Position.Y, 40, this.Height);

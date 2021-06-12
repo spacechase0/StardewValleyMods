@@ -258,16 +258,19 @@ namespace ExperienceBars
                         f = Mod.BarFgTick;
                     }
 
-                    float s = 1;
-                    if (iy == 1) s = 1.3f;
-                    if (iy == 2) s = 1.7f;
-                    if (iy == 3) s = 2.0f;
-                    if (iy == 4) s = 1.9f;
-                    if (iy == 5) s = 1.5f;
-                    if (iy == 6) s = 1.3f;
-                    if (iy == 7) s = 1.0f;
-                    if (iy == 8) s = 0.8f;
-                    if (iy == 9) s = 0.4f;
+                    float s = iy switch
+                    {
+                        1 => 1.3f,
+                        2 => 1.7f,
+                        3 => 2.0f,
+                        4 => 1.9f,
+                        5 => 1.5f,
+                        6 => 1.3f,
+                        7 => 1.0f,
+                        8 => 0.8f,
+                        9 => 0.4f,
+                        _ => 1
+                    };
                     e = Color.Multiply(e, s);
                     f = Color.Multiply(f, s);
 

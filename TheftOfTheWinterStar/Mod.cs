@@ -274,10 +274,12 @@ namespace TheftOfTheWinterStar
         {
             if (this.SaveData != null)
             {
-                if (this.SaveData.ArenaStage == ArenaStage.Stage1)
-                    this.SaveData.ArenaStage = ArenaStage.NotTriggered;
-                else if (this.SaveData.ArenaStage == ArenaStage.Stage2)
-                    this.SaveData.ArenaStage = ArenaStage.Finished1;
+                this.SaveData.ArenaStage = this.SaveData.ArenaStage switch
+                {
+                    ArenaStage.Stage1 => ArenaStage.NotTriggered,
+                    ArenaStage.Stage2 => ArenaStage.Finished1,
+                    _ => this.SaveData.ArenaStage
+                };
             }
 
             var arena = Game1.getLocationFromName("FrostDungeon.Arena");

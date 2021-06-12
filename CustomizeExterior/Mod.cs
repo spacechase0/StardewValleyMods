@@ -250,10 +250,24 @@ namespace CustomizeExterior
                 foreach (string season in seasons)
                 {
                     string filename = Path.GetFileName(season);
-                    if (filename == "spring") foundSpring = true;
-                    else if (filename == "summer") foundSummer = true;
-                    else if (filename == "fall") foundFall = true;
-                    else if (filename == "winter") foundWinter = true;
+                    switch (filename)
+                    {
+                        case "spring":
+                            foundSpring = true;
+                            break;
+
+                        case "summer":
+                            foundSummer = true;
+                            break;
+
+                        case "fall":
+                            foundFall = true;
+                            break;
+
+                        case "winter":
+                            foundWinter = true;
+                            break;
+                    }
                 }
 
                 if (foundSpring && foundSummer && foundFall && foundWinter)

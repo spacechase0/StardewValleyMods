@@ -84,19 +84,34 @@ namespace CustomCritters.Framework
                                     var pt = this.Data.Behavior.PatrolPoints[this.Data.Behavior.Type == "patrol" ? this.PatrolIndex : Game1.random.Next(this.Data.Behavior.PatrolPoints.Count)];
 
                                     this.Target = this.startingPosition;
-                                    if (pt.Type == "start") ; // We just did this
-                                    else if (pt.Type == "startoffset")
-                                        this.Target += new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
-                                    else if (pt.Type == "offset")
-                                        this.Target = this.position + new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
-                                    else if (pt.Type == "startrandom")
-                                        this.Target += new Vector2((float)(this.Rand.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(this.Rand.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
-                                    else if (pt.Type == "random")
-                                        this.Target = this.position + new Vector2((float)(this.Rand.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(this.Rand.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
-                                    else if (pt.Type == "wait")
-                                        ;
-                                    else
-                                        Log.Warn("Bad patrol point type: " + pt.Type);
+                                    switch (pt.Type)
+                                    {
+                                        case "start":
+                                            break; // We just did this
+
+                                        case "startoffset":
+                                            this.Target += new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
+                                            break;
+
+                                        case "offset":
+                                            this.Target = this.position + new Vector2(pt.X * Game1.tileSize, pt.Y * Game1.tileSize);
+                                            break;
+
+                                        case "startrandom":
+                                            this.Target += new Vector2((float)(this.Rand.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(this.Rand.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
+                                            break;
+
+                                        case "random":
+                                            this.Target = this.position + new Vector2((float)(this.Rand.NextDouble() * pt.X - pt.X / 2f) * Game1.tileSize, (float)(this.Rand.NextDouble() * pt.Y - pt.Y / 2f) * Game1.tileSize);
+                                            break;
+
+                                        case "wait":
+                                            break;
+
+                                        default:
+                                            Log.Warn("Bad patrol point type: " + pt.Type);
+                                            break;
+                                    }
 
                                     this.NeedTarget = false;
                                 }

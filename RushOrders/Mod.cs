@@ -261,12 +261,13 @@ namespace RushOrders
             int num = 0;
             if (Game1.player.daysUntilHouseUpgrade.Value > 0)
             {
-                if (Game1.player.HouseUpgradeLevel == 0)
-                    num = 10000;
-                else if (Game1.player.HouseUpgradeLevel == 1)
-                    num = 50000;
-                else if (Game1.player.HouseUpgradeLevel == 2)
-                    num = 100000;
+                num = Game1.player.HouseUpgradeLevel switch
+                {
+                    0 => 10000,
+                    1 => 50000,
+                    2 => 100000,
+                    _ => num
+                };
             }
             else if (Game1.getFarm().getBuildingUnderConstruction() != null)
             {

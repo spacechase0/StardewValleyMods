@@ -496,15 +496,15 @@ namespace SurfingFestival
                         }
                     }
 
-                    // Fix some times they get stuck on the inner wall
-                    if (state.Facing == Game1.up && racer.Position.X >= 16 * Game1.tileSize + 1)
-                        facingDir = Game1.left;
-                    if (state.Facing == Game1.down && racer.Position.X <= 133 * Game1.tileSize)
-                        facingDir = Game1.right;
-                    if (state.Facing == Game1.left && racer.Position.Y <= 60 * Game1.tileSize)
-                        facingDir = Game1.down;
-                    if (state.Facing == Game1.right && racer.Position.Y >= 58 * Game1.tileSize + 1)
-                        facingDir = Game1.up;
+                    facingDir = state.Facing switch
+                    {
+                        // Fix some times they get stuck on the inner wall
+                        Game1.up when racer.Position.X >= 16 * Game1.tileSize + 1 => Game1.left,
+                        Game1.down when racer.Position.X <= 133 * Game1.tileSize => Game1.right,
+                        Game1.left when racer.Position.Y <= 60 * Game1.tileSize => Game1.down,
+                        Game1.right when racer.Position.Y >= 58 * Game1.tileSize + 1 => Game1.up,
+                        _ => facingDir
+                    };
 
                     if (facingDir != -1)
                     {
@@ -593,15 +593,14 @@ namespace SurfingFestival
                 }
 
                 // Fix some times they get stuck on the inner wall
-                int go = -1;
-                if (state.Facing == Game1.up && racer.Position.X >= 16 * Game1.tileSize + 1)
-                    go = Game1.left;
-                if (state.Facing == Game1.down && racer.Position.X <= 133 * Game1.tileSize)
-                    go = Game1.right;
-                if (state.Facing == Game1.left && racer.Position.Y <= 60 * Game1.tileSize)
-                    go = Game1.down;
-                if (state.Facing == Game1.right && racer.Position.Y >= 58 * Game1.tileSize + 1)
-                    go = Game1.up;
+                int go = state.Facing switch
+                {
+                    Game1.up when racer.Position.X >= 16 * Game1.tileSize + 1 => Game1.left,
+                    Game1.down when racer.Position.X <= 133 * Game1.tileSize => Game1.right,
+                    Game1.left when racer.Position.Y <= 60 * Game1.tileSize => Game1.down,
+                    Game1.right when racer.Position.Y >= 58 * Game1.tileSize + 1 => Game1.up,
+                    _ => -1
+                };
 
                 if (go != -1)
                 {

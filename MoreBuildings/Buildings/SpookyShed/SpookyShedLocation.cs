@@ -31,16 +31,14 @@ namespace MoreBuildings.Buildings.SpookyShed
         {
             base.drawAboveFrontLayer(b);
 
-            Color col = Color.White;
-            if (this.CurrSpawnerItem == SpookyShedLocation.BatWing)
-                col = Color.Gray;
-            else if (this.CurrSpawnerItem == SpookyShedLocation.SolarEssence)
-                col = Color.Yellow;
-            else if (this.CurrSpawnerItem == SpookyShedLocation.VoidEssence)
-                col = Color.Purple;
-            else if (this.CurrSpawnerItem == SpookyShedLocation.BugMeat)
-                col = Color.Pink;
-
+            Color col = this.CurrSpawnerItem.Value switch
+            {
+                SpookyShedLocation.BatWing => Color.Gray,
+                SpookyShedLocation.SolarEssence => Color.Yellow,
+                SpookyShedLocation.VoidEssence => Color.Purple,
+                SpookyShedLocation.BugMeat => Color.Pink,
+                _ => Color.White
+            };
 
             var tileLocation = new Vector2(10, 9);
             b.Draw(Mod.Instance.SpookyGemTex, Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocation.X * Game1.tileSize, tileLocation.Y * Game1.tileSize)), null, col, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
@@ -79,46 +77,46 @@ namespace MoreBuildings.Buildings.SpookyShed
             base.resetSharedState();
             this.characters.Clear();
 
-            Log.Trace("Player entered spooky shed, current spawner item: " + this.CurrSpawnerItem);
-            if (this.CurrSpawnerItem == SpookyShedLocation.BatWing)
+            Log.Trace("Player entered spooky shed, current spawner item: " + this.CurrSpawnerItem.Value);
+            int total = 15 + Game1.random.Next(10);
+
+            switch (this.CurrSpawnerItem.Value)
             {
-                int total = 15 + Game1.random.Next(10);
-                for (int i = 0; i < total; ++i)
-                {
-                    var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
-                    pos = pos * Game1.tileSize;
-                    this.characters.Add(new Bat(pos, 100));
-                }
-            }
-            else if (this.CurrSpawnerItem == SpookyShedLocation.SolarEssence)
-            {
-                int total = 15 + Game1.random.Next(10);
-                for (int i = 0; i < total; ++i)
-                {
-                    var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
-                    pos = pos * Game1.tileSize;
-                    this.characters.Add(new SquidKid(pos) { currentLocation = this });
-                }
-            }
-            else if (this.CurrSpawnerItem == SpookyShedLocation.VoidEssence)
-            {
-                int total = 15 + Game1.random.Next(10);
-                for (int i = 0; i < total; ++i)
-                {
-                    var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
-                    pos = pos * Game1.tileSize;
-                    this.characters.Add(new ShadowBrute(pos));
-                }
-            }
-            else if (this.CurrSpawnerItem == SpookyShedLocation.BugMeat)
-            {
-                int total = 15 + Game1.random.Next(10);
-                for (int i = 0; i < total; ++i)
-                {
-                    var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
-                    pos = pos * Game1.tileSize;
-                    this.characters.Add(new Fly(pos, Game1.random.Next(3) == 0));
-                }
+                case SpookyShedLocation.BatWing:
+                    for (int i = 0; i < total; ++i)
+                    {
+                        var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
+                        pos = pos * Game1.tileSize;
+                        this.characters.Add(new Bat(pos, 100));
+                    }
+                    break;
+
+                case SpookyShedLocation.SolarEssence:
+                    for (int i = 0; i < total; ++i)
+                    {
+                        var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
+                        pos = pos * Game1.tileSize;
+                        this.characters.Add(new SquidKid(pos) { currentLocation = this });
+                    }
+                    break;
+
+                case SpookyShedLocation.VoidEssence:
+                    for (int i = 0; i < total; ++i)
+                    {
+                        var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
+                        pos = pos * Game1.tileSize;
+                        this.characters.Add(new ShadowBrute(pos));
+                    }
+                    break;
+
+                case SpookyShedLocation.BugMeat:
+                    for (int i = 0; i < total; ++i)
+                    {
+                        var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
+                        pos = pos * Game1.tileSize;
+                        this.characters.Add(new Fly(pos, Game1.random.Next(3) == 0));
+                    }
+                    break;
             }
         }
 

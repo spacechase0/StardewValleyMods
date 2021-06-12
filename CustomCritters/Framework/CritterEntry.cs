@@ -233,37 +233,42 @@ namespace CustomCritters.Framework
 
             public Vector2? PickSpot(GameLocation loc)
             {
-                if (this.LocationType == "random")
+                switch (this.LocationType)
                 {
-                    if (this.Check(null))
-                        return loc.getRandomTile() * Game1.tileSize;
-                    return null;
-                }
-                else if (this.LocationType == "terrainfeature")
-                {
-                    var keys = loc.terrainFeatures.Keys.ToList();
-                    keys.Shuffle();
-                    foreach (var key in keys)
-                    {
-                        if (this.Check(loc.terrainFeatures[key]))
-                            return key * Game1.tileSize;
-                    }
+                    case "random":
+                        return this.Check(null)
+                            ? loc.getRandomTile() * Game1.tileSize
+                            : null;
 
-                    return null;
-                }
-                else if (this.LocationType == "object")
-                {
-                    var keys = loc.objects.Keys.ToList();
-                    keys.Shuffle();
-                    foreach (var key in keys)
-                    {
-                        if (this.Check(loc.objects[key]))
-                            return key * Game1.tileSize;
-                    }
+                    case "terrainfeature":
+                        {
+                            var keys = loc.terrainFeatures.Keys.ToList();
+                            keys.Shuffle();
+                            foreach (var key in keys)
+                            {
+                                if (this.Check(loc.terrainFeatures[key]))
+                                    return key * Game1.tileSize;
+                            }
 
-                    return null;
+                            return null;
+                        }
+
+                    case "object":
+                        {
+                            var keys = loc.objects.Keys.ToList();
+                            keys.Shuffle();
+                            foreach (var key in keys)
+                            {
+                                if (this.Check(loc.objects[key]))
+                                    return key * Game1.tileSize;
+                            }
+
+                            return null;
+                        }
+
+                    default:
+                        throw new ArgumentException("Bad location type");
                 }
-                else throw new ArgumentException("Bad location type");
             }
         }
         public List<SpawnLocation> SpawnLocations { get; set; } = new();

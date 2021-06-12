@@ -46,16 +46,12 @@ namespace Magic.Framework.Spells
 
             int l = level + 1;
             int farm = l, fish = l, mine = l, luck = l, forage = l, def = 0 /*1*/, atk = 2;
-            if (l == 2)
+            atk = l switch
             {
-                //def = 3;
-                atk = 5;
-            }
-            else if (l == 3)
-            {
-                //def = 5;
-                atk = 10;
-            }
+                2 => 5,
+                3 => 10,
+                _ => atk
+            };
 
             Game1.buffsDisplay.addOtherBuff(new Buff(farm, fish, mine, 0, luck, forage, 0, 0, 0, 0, def, atk, 60 + level * 120, "spell:life:buff", "Buff (spell)"));
             player.AddCustomSkillExperience(Magic.Skill, 10);

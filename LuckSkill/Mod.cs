@@ -335,14 +335,12 @@ namespace LuckSkill
             }
             int k = 5;
             int num6 = k;
-            if (num6 == 1)
+            num6 = num6 switch
             {
-                num6 = 3;
-            }
-            else if (num6 == 3)
-            {
-                num6 = 1;
-            }
+                1 => 3,
+                3 => 1,
+                _ => num6
+            };
             string text3 = "";
             if (Game1.player.LuckLevel > 0)
             {

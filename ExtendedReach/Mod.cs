@@ -53,18 +53,12 @@ namespace ExtendedReach
             var mousePos = this.Helper.Input.GetCursorPosition().ScreenPixels;
             var farmerPos = Game1.GlobalToLocal(Game1.player.Position);
 
-            if (Game1.player.FacingDirection == 1)
+            farmerPos += Game1.player.FacingDirection switch
             {
-                farmerPos += new Vector2(18, -10);
-            }
-            else if (Game1.player.FacingDirection == 3)
-            {
-                farmerPos += new Vector2(50, -10);
-            }
-            else
-            {
-                farmerPos += new Vector2(18, -10);
-            }
+                1 => new Vector2(18, -10),
+                3 => new Vector2(50, -10),
+                _ => new Vector2(18, -10)
+            };
 
             if ((farmerPos - mousePos).Length() <= 64)
                 return;

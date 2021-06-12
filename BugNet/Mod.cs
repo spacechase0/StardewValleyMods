@@ -189,15 +189,14 @@ namespace BugNet
 
         internal static string GetCritterIdFrom(Critter critter)
         {
-            int bframe = critter.baseFrame;
-            if (critter is Cloud)
-                bframe = -2;
-            if (critter is Frog frog)
-                bframe = Mod.Instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4;
-            if (critter is OverheadParrot parrot)
-                bframe = -10 - parrot.sourceRect.Y;
-            if (critter is CalderaMonkey monkey)
-                bframe = -100;
+            int bframe = critter switch
+            {
+                Cloud => -2,
+                Frog frog => Mod.Instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4,
+                OverheadParrot parrot => -10 - parrot.sourceRect.Y,
+                CalderaMonkey monkey => -100,
+                _ => critter.baseFrame
+            };
 
             switch (bframe)
             {

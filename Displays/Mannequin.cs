@@ -241,48 +241,52 @@ namespace Displays
             if (probe && (dropInItem is Hat || dropInItem is Clothing || dropInItem is Boots))
                 return true;
 
-            if (dropInItem is Hat hat)
+            switch (dropInItem)
             {
-                if (this.Hat.Value != null)
-                    who.currentLocation.debris.Add(new Debris(this.Hat.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
-                this.Hat.Value = hat;
-                return true;
-            }
-            else if (dropInItem is Clothing clothing)
-            {
-                if (clothing.clothesType.Value == (int)Clothing.ClothesType.SHIRT)
-                {
-                    if (this.Shirt.Value != null)
-                        who.currentLocation.debris.Add(new Debris(this.Shirt.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
-                    this.Shirt.Value = clothing;
+                case Hat hat:
+                    if (this.Hat.Value != null)
+                        who.currentLocation.debris.Add(new Debris(this.Hat.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                    this.Hat.Value = hat;
                     return true;
-                }
-                else if (clothing.clothesType.Value == (int)Clothing.ClothesType.PANTS)
-                {
-                    if (this.Pants.Value != null)
-                        who.currentLocation.debris.Add(new Debris(this.Pants.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
-                    this.Pants.Value = clothing;
-                    return true;
-                }
-            }
-            else if (dropInItem is Boots boots)
-            {
-                if (this.Boots.Value != null)
-                    who.currentLocation.debris.Add(new Debris(this.Boots.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
-                this.Boots.Value = boots;
-                return true;
-            }
 
-            return false;
+                case Clothing clothing:
+                    switch (clothing.clothesType.Value)
+                    {
+                        case (int)Clothing.ClothesType.SHIRT:
+                            if (this.Shirt.Value != null)
+                                who.currentLocation.debris.Add(new Debris(this.Shirt.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                            this.Shirt.Value = clothing;
+                            return true;
+
+                        case (int)Clothing.ClothesType.PANTS:
+                            if (this.Pants.Value != null)
+                                who.currentLocation.debris.Add(new Debris(this.Pants.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                            this.Pants.Value = clothing;
+                            return true;
+
+                        default:
+                            return false;
+                    }
+
+                case Boots boots:
+                    if (this.Boots.Value != null)
+                        who.currentLocation.debris.Add(new Debris(this.Boots.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                    this.Boots.Value = boots;
+                    return true;
+
+                default:
+                    return false;
+            }
         }
 
         public override void drawWhenHeld(SpriteBatch spriteBatch, Vector2 objectPosition, Farmer f)
         {
-            var tex = Mannequin.Tex;
-            if (this.MannGender.Value == MannequinGender.Male)
-                tex = Mannequin.TexM;
-            else if (this.MannGender.Value == MannequinGender.Female)
-                tex = Mannequin.TexF;
+            var tex = this.MannGender.Value switch
+            {
+                MannequinGender.Male => Mannequin.TexM,
+                MannequinGender.Female => Mannequin.TexF,
+                _ => Mannequin.Tex
+            };
 
             spriteBatch.Draw(tex, objectPosition, null, Color.White, 0, Vector2.Zero, 4f, SpriteEffects.None, Math.Max(0f, (f.getStandingY() + 3) / 10000f));
         }
@@ -291,11 +295,12 @@ namespace Displays
         {
             bool shouldDrawStackNumber = ((drawStackNumber == StackDrawType.Draw && this.maximumStackSize() > 1 && this.Stack > 1) || drawStackNumber == StackDrawType.Draw_OneInclusive) && scaleSize > 0.3 && this.Stack != int.MaxValue;
 
-            var tex = Mannequin.Tex;
-            if (this.MannGender.Value == MannequinGender.Male)
-                tex = Mannequin.TexM;
-            else if (this.MannGender.Value == MannequinGender.Female)
-                tex = Mannequin.TexF;
+            var tex = this.MannGender.Value switch
+            {
+                MannequinGender.Male => Mannequin.TexM,
+                MannequinGender.Female => Mannequin.TexF,
+                _ => Mannequin.Tex
+            };
 
             spriteBatch.Draw(tex, location + new Vector2(32f, 32f), null, color * transparency, 0f, new Vector2(8f, 16f), 4f * (((double)scaleSize < 0.2) ? scaleSize : (scaleSize / 2f)), SpriteEffects.None, layerDepth);
             if (shouldDrawStackNumber)
@@ -306,11 +311,12 @@ namespace Displays
 
         public override void draw(SpriteBatch spriteBatch, int xNonTile, int yNonTile, float layerDepth, float alpha = 1)
         {
-            var tex = Mannequin.Tex;
-            if (this.MannGender.Value == MannequinGender.Male)
-                tex = Mannequin.TexM;
-            else if (this.MannGender.Value == MannequinGender.Female)
-                tex = Mannequin.TexF;
+            var tex = this.MannGender.Value switch
+            {
+                MannequinGender.Male => Mannequin.TexM,
+                MannequinGender.Female => Mannequin.TexF,
+                _ => Mannequin.Tex
+            };
 
             Vector2 scaleFactor = this.getScale();
             scaleFactor *= 4f;
@@ -321,11 +327,12 @@ namespace Displays
 
         public override void draw(SpriteBatch spriteBatch, int x, int y, float alpha = 1)
         {
-            var tex = Mannequin.Tex;
-            if (this.MannGender.Value == MannequinGender.Male)
-                tex = Mannequin.TexM;
-            else if (this.MannGender.Value == MannequinGender.Female)
-                tex = Mannequin.TexF;
+            var tex = this.MannGender.Value switch
+            {
+                MannequinGender.Male => Mannequin.TexM,
+                MannequinGender.Female => Mannequin.TexF,
+                _ => Mannequin.Tex
+            };
 
             Vector2 scaleFactor = this.getScale();
             scaleFactor *= 4f;

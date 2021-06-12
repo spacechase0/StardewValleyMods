@@ -31,12 +31,21 @@ namespace ConsoleCode
                 var func = this.MakeFunc(line);
                 object result = null;
                 func.Invoke(ref result);
-                if (result == null)
-                    Log.Info("Output: <null>");
-                else if (result is string)
-                    Log.Info($"Output: \"{result}\"");
-                else
-                    Log.Info($"Output: {result}");
+
+                switch (result)
+                {
+                    case null:
+                        Log.Info("Output: <null>");
+                        break;
+
+                    case string:
+                        Log.Info($"Output: \"{result}\"");
+                        break;
+
+                    default:
+                        Log.Info($"Output: {result}");
+                        break;
+                }
             }
             catch (Exception e)
             {
