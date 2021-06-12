@@ -1,6 +1,6 @@
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
-using Terraforming.Framework;
 using xTile;
 using xTile.Layers;
 using xTile.Tiles;
@@ -14,6 +14,7 @@ namespace Terraforming
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
             helper.ConsoleCommands.Add("terraform", "TODO", this.TerraformCommand);
         }
