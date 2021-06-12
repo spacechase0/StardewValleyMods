@@ -3,12 +3,13 @@ using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="SpriteBatch"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class SpriteBatchPatcher : BasePatcher
     {
         /*********

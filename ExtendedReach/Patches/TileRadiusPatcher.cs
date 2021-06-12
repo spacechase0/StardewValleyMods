@@ -11,7 +11,7 @@ using StardewValley;
 namespace ExtendedReach.Patches
 {
     /// <summary>Applies player radius checks throughout the game code to increase the tile radius.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class TileRadiusPatcher : BasePatcher
     {
         /*********

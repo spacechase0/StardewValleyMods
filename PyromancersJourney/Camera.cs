@@ -4,13 +4,13 @@ namespace PyromancersJourney
 {
     public class Camera
     {
-        public Vector3 pos = new(10, 0, 10);
-        public Vector3 up = Vector3.Up;
-        public Vector3 target = Vector3.Zero;
+        public Vector3 Pos = new(10, 0, 10);
+        public Vector3 Up = Vector3.Up;
+        public Vector3 Target = Vector3.Zero;
 
         public Matrix CreateViewMatrix()
         {
-            return Matrix.CreateLookAt(this.pos, this.target, this.up);
+            return Matrix.CreateLookAt(this.Pos, this.Target, this.Up);
         }
     }
 }

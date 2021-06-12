@@ -9,13 +9,13 @@ namespace CaveFarm
 {
     public class CaveWall : TerrainFeature
     {
-        public readonly NetInt health = new();
+        public readonly NetInt Health = new();
 
         public CaveWall()
             : base(false)
         {
-            this.health.Value = 3;
-            this.NetFields.AddField(this.health);
+            this.Health.Value = 3;
+            this.NetFields.AddField(this.Health);
         }
 
         public override Rectangle getBoundingBox(Vector2 tileLocation)
@@ -28,14 +28,14 @@ namespace CaveFarm
             if (t is Pickaxe pickaxe)
             {
                 location.playSound("hammer");
-                this.health.Value -= ((pickaxe.UpgradeLevel + 1) / 2) + 1;
+                this.Health.Value -= ((pickaxe.UpgradeLevel + 1) / 2) + 1;
             }
             else if (damage > 0)
             {
-                this.health.Value -= damage;
+                this.Health.Value -= damage;
             }
 
-            if (this.health > 0)
+            if (this.Health > 0)
                 return true;
             return false;
         }

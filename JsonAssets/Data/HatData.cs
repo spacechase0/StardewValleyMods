@@ -1,8 +1,12 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using SpaceShared;
 using StardewValley;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class HatData : DataNeedsIdWithTexture
     {
         public string Description { get; set; }
@@ -37,7 +41,7 @@ namespace JsonAssets.Data
             return this.DescriptionLocalization[currLang.ToString()];
         }
 
-        public int GetHatId() { return this.id; }
+        public int GetHatId() { return this.Id; }
 
         internal string GetHatInformation()
         {

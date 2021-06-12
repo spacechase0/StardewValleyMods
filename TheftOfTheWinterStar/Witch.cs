@@ -11,24 +11,24 @@ namespace TheftOfTheWinterStar
 {
     public class Witch : Monster
     {
-        private const int STUN_TIME = 800;
-        private const int SHOOT_DELAY = 4000;
-        private const int SPAWN_ROCKS_DELAY = 10000;
-        private const int SPAWN_ENEMY_DELAY = 6500;
+        private const int StunTime = 800;
+        private const int ShootDelay = 4000;
+        private const int SpawnRocksDelay = 10000;
+        private const int SpawnEnemyDelay = 6500;
 
-        private const int CURSORS_POS_X = 277;
-        private const int CURSORS_POS_Y = 1885;
-        private const int TEX_WIDTH = 34;
-        private const int TEX_HEIGHT = 30;
+        private const int CursorsPosX = 277;
+        private const int CursorsPosY = 1885;
+        private const int TexWidth = 34;
+        private const int TexHeight = 30;
 
-        public const int WITCH_HEALTH = 1000;
+        public const int WitchHealth = 1000;
 
-        private readonly NetBool facingRight = new(false);
-        private readonly NetInt shootPlayerTimer = new(Witch.SHOOT_DELAY);
-        private readonly NetInt spawnRocksTimer = new(Witch.SPAWN_ROCKS_DELAY);
-        private readonly NetInt spawnEnemyTimer = new(Witch.SPAWN_ENEMY_DELAY);
-        private readonly NetInt stunTimer = new(0);
-        private int animTimer;
+        private readonly NetBool FacingRight = new(false);
+        private readonly NetInt ShootPlayerTimer = new(Witch.ShootDelay);
+        private readonly NetInt SpawnRocksTimer = new(Witch.SpawnRocksDelay);
+        private readonly NetInt SpawnEnemyTimer = new(Witch.SpawnEnemyDelay);
+        private readonly NetInt StunTimer = new(0);
+        private int AnimTimer;
 
         public Witch()
             : base("Serpent", new Vector2(-1000, -1000))
@@ -36,26 +36,26 @@ namespace TheftOfTheWinterStar
             this.HideShadow = true;
             this.isGlider.Value = true;
             this.Name = "Witch";
-            this.Health = Witch.WITCH_HEALTH;
+            this.Health = Witch.WitchHealth;
             this.speed = 7;
-            this.Portrait = Mod.instance.Helper.Content.Load<Texture2D>("assets/witch-portrait.png");
+            this.Portrait = Mod.Instance.Helper.Content.Load<Texture2D>("assets/witch-portrait.png");
         }
 
         protected override void initNetFields()
         {
             base.initNetFields();
-            this.NetFields.AddFields(this.facingRight, this.shootPlayerTimer, this.spawnRocksTimer, this.spawnEnemyTimer, this.stunTimer);
+            this.NetFields.AddFields(this.FacingRight, this.ShootPlayerTimer, this.SpawnRocksTimer, this.SpawnEnemyTimer, this.StunTimer);
         }
 
         public override Rectangle GetBoundingBox()
         {
-            return new((int)this.Position.X + 4 * Game1.pixelZoom, (int)this.Position.Y, (Witch.TEX_WIDTH - 12) * Game1.pixelZoom, (Witch.TEX_HEIGHT - 4) * Game1.pixelZoom);
+            return new((int)this.Position.X + 4 * Game1.pixelZoom, (int)this.Position.Y, (Witch.TexWidth - 12) * Game1.pixelZoom, (Witch.TexHeight - 4) * Game1.pixelZoom);
         }
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)
         {
-            if (this.stunTimer.Value <= 0)
-                this.stunTimer.Value = Witch.STUN_TIME;
+            if (this.StunTimer.Value <= 0)
+                this.StunTimer.Value = Witch.StunTime;
             return base.takeDamage(damage, xTrajectory, yTrajectory, isBomb, addedPrecision, who);
         }
 
@@ -67,50 +67,50 @@ namespace TheftOfTheWinterStar
         {
             if (this.GetBoundingBox().Right < -Game1.tileSize)
             {
-                this.facingRight.Value = true;
+                this.FacingRight.Value = true;
                 this.position.X = -Game1.tileSize;
                 this.position.Y = Game1.random.Next(4, 15) * Game1.tileSize;
             }
             else if (this.GetBoundingBox().Left > this.currentLocation.Map.DisplayWidth + Game1.tileSize)
             {
-                this.facingRight.Value = false;
-                this.position.X = this.currentLocation.Map.DisplayWidth + Game1.tileSize - Witch.TEX_WIDTH;
+                this.FacingRight.Value = false;
+                this.position.X = this.currentLocation.Map.DisplayWidth + Game1.tileSize - Witch.TexWidth;
                 this.position.Y = Game1.random.Next(4, 15) * Game1.tileSize;
             }
 
             this.moveLeft = true;
             this.moveRight = false;
-            if (this.facingRight.Value)
+            if (this.FacingRight.Value)
             {
                 this.moveLeft = false;
                 this.moveRight = true;
             }
 
-            if (this.stunTimer.Value >= Witch.STUN_TIME / 2)
+            if (this.StunTimer.Value >= Witch.StunTime / 2)
             {
                 this.moveLeft = false;
                 this.moveRight = false;
             }
-            if (this.stunTimer.Value > 0)
+            if (this.StunTimer.Value > 0)
             {
-                this.stunTimer.Value -= time.ElapsedGameTime.Milliseconds;
+                this.StunTimer.Value -= time.ElapsedGameTime.Milliseconds;
             }
 
             this.position.Y += (float)Math.Sin(time.TotalGameTime.TotalSeconds * 5) * 3;
 
             base.behaviorAtGameTick(time);
 
-            this.shootPlayerTimer.Value -= time.ElapsedGameTime.Milliseconds;
-            if (this.shootPlayerTimer.Value-- <= 0)
+            this.ShootPlayerTimer.Value -= time.ElapsedGameTime.Milliseconds;
+            if (this.ShootPlayerTimer.Value-- <= 0)
             {
                 Vector2 velocityTowardPlayer = Utility.getVelocityTowardPlayer(this.GetBoundingBox().Center, 15f, this.Player);
                 Projectile proj = new DebuffingProjectile(14, 7, 4, 4, 0.1963495f, velocityTowardPlayer.X, velocityTowardPlayer.Y, new Vector2(this.GetBoundingBox().X, this.GetBoundingBox().Y), this.currentLocation, this);
                 this.currentLocation.projectiles.Add(proj);
-                this.shootPlayerTimer.Value = Witch.SHOOT_DELAY;
+                this.ShootPlayerTimer.Value = Witch.ShootDelay;
             }
 
-            this.spawnRocksTimer.Value -= time.ElapsedGameTime.Milliseconds;
-            if (this.spawnRocksTimer.Value-- <= 0)
+            this.SpawnRocksTimer.Value -= time.ElapsedGameTime.Milliseconds;
+            if (this.SpawnRocksTimer.Value-- <= 0)
             {
                 Rectangle region = new Rectangle(4, 7, 15 - 4, 15 - 7);
                 for (int i = 3 + Game1.random.Next(5); i >= 0; --i)
@@ -128,11 +128,11 @@ namespace TheftOfTheWinterStar
 
                     this.currentLocation.Objects.Add(spot, obj);
                 }
-                this.spawnRocksTimer.Value = Witch.SPAWN_ROCKS_DELAY / 2 + Game1.random.Next(Witch.SPAWN_ROCKS_DELAY);
+                this.SpawnRocksTimer.Value = Witch.SpawnRocksDelay / 2 + Game1.random.Next(Witch.SpawnRocksDelay);
             }
 
-            this.spawnEnemyTimer.Value -= time.ElapsedGameTime.Milliseconds;
-            if (this.spawnEnemyTimer.Value-- <= 0)
+            this.SpawnEnemyTimer.Value -= time.ElapsedGameTime.Milliseconds;
+            if (this.SpawnEnemyTimer.Value-- <= 0)
             {
                 Rectangle region = new Rectangle(4, 7, 15 - 4, 15 - 7);
                 for (int i = 1 + Game1.random.Next(3); i >= 0; --i)
@@ -143,15 +143,15 @@ namespace TheftOfTheWinterStar
                     bat.focusedOnFarmers = true;
                     this.currentLocation.characters.Add(bat);
                 }
-                this.spawnEnemyTimer.Value = Witch.SPAWN_ENEMY_DELAY / 3 + Game1.random.Next(Witch.SPAWN_ENEMY_DELAY);
+                this.SpawnEnemyTimer.Value = Witch.SpawnEnemyDelay / 3 + Game1.random.Next(Witch.SpawnEnemyDelay);
             }
         }
 
         public override void drawAboveAllLayers(SpriteBatch b)
         {
-            b.Draw(Game1.mouseCursors, this.getLocalPosition(Game1.viewport), new Rectangle(Witch.CURSORS_POS_X, Witch.CURSORS_POS_Y + (this.animTimer < 20 ? Witch.TEX_HEIGHT : 0), Witch.TEX_WIDTH, Witch.TEX_HEIGHT), Color.White, 0, Vector2.Zero, 4, this.facingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 1);
-            if (++this.animTimer >= 40)
-                this.animTimer = 0;
+            b.Draw(Game1.mouseCursors, this.getLocalPosition(Game1.viewport), new Rectangle(Witch.CursorsPosX, Witch.CursorsPosY + (this.AnimTimer < 20 ? Witch.TexHeight : 0), Witch.TexWidth, Witch.TexHeight), Color.White, 0, Vector2.Zero, 4, this.FacingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 1);
+            if (++this.AnimTimer >= 40)
+                this.AnimTimer = 0;
         }
     }
 }

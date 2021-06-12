@@ -4,6 +4,6 @@ namespace CustomizeExterior
 {
     public class SavedExteriors
     {
-        public Dictionary<string, string> chosen = new();
+        public Dictionary<string, string> Chosen = new();
     }
 }

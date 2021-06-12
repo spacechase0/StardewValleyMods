@@ -12,8 +12,8 @@ namespace SleepyEye
 {
     public class TentTool : Tool, ISaveElement
     {
-        private SFarmer user;
-        private DateTime? startedUsing;
+        private SFarmer User;
+        private DateTime? StartedUsing;
 
         public TentTool()
         {
@@ -32,25 +32,25 @@ namespace SleepyEye
 
         public override bool beginUsing(GameLocation location, int x, int y, SFarmer who)
         {
-            this.user = who;
-            this.startedUsing = DateTime.Now;
+            this.User = who;
+            this.StartedUsing = DateTime.Now;
             who.canMove = false;
             return true;
         }
 
         public override bool onRelease(GameLocation location, int x, int y, SFarmer who)
         {
-            if (this.startedUsing == null)
+            if (this.StartedUsing == null)
                 return true;
 
-            TimeSpan useTime = DateTime.Now - (DateTime)this.startedUsing;
+            TimeSpan useTime = DateTime.Now - (DateTime)this.StartedUsing;
             if (useTime > TimeSpan.FromSeconds(7))
             {
                 Sleep.SaveLocation = true;
                 Game1.NewDay(0);
             }
 
-            this.startedUsing = null;
+            this.StartedUsing = null;
             who.canMove = true;
 
             return true;
@@ -58,9 +58,9 @@ namespace SleepyEye
 
         public override void tickUpdate(GameTime time, SFarmer who)
         {
-            if (this.startedUsing == null)
+            if (this.StartedUsing == null)
                 return;
-            TimeSpan useTime = DateTime.Now - (DateTime)this.startedUsing;
+            TimeSpan useTime = DateTime.Now - (DateTime)this.StartedUsing;
 
             if (who.facingDirection == Game1.up)
                 ((FarmerSprite)who.Sprite).animate(112, time);
@@ -74,16 +74,16 @@ namespace SleepyEye
 
         public override void drawInMenu(SpriteBatch b, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
-            b.Draw(Mod.instance.Helper.Content.Load<Texture2D>("Maps/" + Game1.currentSeason + "_outdoorsTileSheet", ContentSource.GameContent), new Vector2(location.X + Game1.tileSize / 2, location.Y + Game1.tileSize / 2), new Rectangle(224, 96, 48, 80), Color.White, 0, new Vector2(24, 40), scaleSize * 0.8f, SpriteEffects.None, 0);
+            b.Draw(Mod.Instance.Helper.Content.Load<Texture2D>("Maps/" + Game1.currentSeason + "_outdoorsTileSheet", ContentSource.GameContent), new Vector2(location.X + Game1.tileSize / 2, location.Y + Game1.tileSize / 2), new Rectangle(224, 96, 48, 80), Color.White, 0, new Vector2(24, 40), scaleSize * 0.8f, SpriteEffects.None, 0);
         }
 
         public override void draw(SpriteBatch b)
         {
             this.CurrentParentTileIndex = this.IndexOfMenuItemView = -999;
-            if (this.startedUsing == null)
+            if (this.StartedUsing == null)
                 return;
 
-            TimeSpan useTime = DateTime.Now - (DateTime)this.startedUsing;
+            TimeSpan useTime = DateTime.Now - (DateTime)this.StartedUsing;
 
             //if ( useTime > TimeSpan.FromSeconds( 7 ) )
             {
@@ -93,8 +93,8 @@ namespace SleepyEye
 
                 Vector2 pos = Game1.GlobalToLocal(Game1.player.getStandingPosition());
                 pos.Y -= Game1.tileSize * 2;
-                b.Draw(Mod.instance.Helper.Content.Load<Texture2D>("Maps/" + Game1.currentSeason + "_outdoorsTileSheet", ContentSource.GameContent), pos, new Rectangle(224, 96 + 80 - 16, 48, 16), col, 0, new Vector2(24, 40 - 80 + 16), 4, SpriteEffects.None, 0);
-                b.Draw(Mod.instance.Helper.Content.Load<Texture2D>("Maps/" + Game1.currentSeason + "_outdoorsTileSheet", ContentSource.GameContent), pos, new Rectangle(224, 96, 48, 80 - 16), col, 0, new Vector2(24, 40), 4, SpriteEffects.None, 0.999999f);
+                b.Draw(Mod.Instance.Helper.Content.Load<Texture2D>("Maps/" + Game1.currentSeason + "_outdoorsTileSheet", ContentSource.GameContent), pos, new Rectangle(224, 96 + 80 - 16, 48, 16), col, 0, new Vector2(24, 40 - 80 + 16), 4, SpriteEffects.None, 0);
+                b.Draw(Mod.Instance.Helper.Content.Load<Texture2D>("Maps/" + Game1.currentSeason + "_outdoorsTileSheet", ContentSource.GameContent), pos, new Rectangle(224, 96, 48, 80 - 16), col, 0, new Vector2(24, 40), 4, SpriteEffects.None, 0.999999f);
             }
         }
 

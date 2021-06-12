@@ -7,6 +7,7 @@ using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
@@ -14,7 +15,7 @@ using StardewValley.Locations;
 namespace FlowerRain.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Game1"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class Game1Patcher : BasePatcher
     {
         /*********
@@ -98,7 +99,7 @@ namespace FlowerRain.Patches
                     if (s <= 0)
                         continue;
                     //Game1.spriteBatch.Draw(Game1.objectSpriteSheet, position, getRect(fd.index), Color.White, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
-                    Game1.spriteBatch.Draw(Game1.objectSpriteSheet, position, Game1Patcher.getRect(fd.index + 1), fd.color, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
+                    Game1.spriteBatch.Draw(Game1.objectSpriteSheet, position, Game1Patcher.getRect(fd.Index + 1), fd.Color, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
                 }
             }
             else
@@ -115,7 +116,7 @@ namespace FlowerRain.Patches
                     if (s <= 0)
                         continue;
                     //Game1.spriteBatch.Draw(Game1.objectSpriteSheet, rd.position, getRect(fd.index), Color.White, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
-                    Game1.spriteBatch.Draw(Game1.objectSpriteSheet, rd.position, Game1Patcher.getRect(fd.index + 1), fd.color, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
+                    Game1.spriteBatch.Draw(Game1.objectSpriteSheet, rd.position, Game1Patcher.getRect(fd.Index + 1), fd.Color, r, new Vector2(8, 8), s, SpriteEffects.None, 1);
                 }
             }
         }

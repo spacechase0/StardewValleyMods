@@ -9,7 +9,7 @@ namespace PyromancersJourney.Objects
 {
     public class GolemEnemy : Enemy
     {
-        public static Texture2D tex = Mod.instance.Helper.Content.Load<Texture2D>("assets/golem.png");
+        public static Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/golem.png");
 
         public override RectangleF BoundingBox { get; } = new(-0.5f, -0.5f, 1, 1);
 
@@ -20,11 +20,11 @@ namespace PyromancersJourney.Objects
             Immune,
             Summon,
         }
-        private AnimState state = AnimState.Glow;
-        private int frame;
-        private float frameAccum;
+        private AnimState State = AnimState.Glow;
+        private int Frame;
+        private float FrameAccum;
 
-        private VertexBuffer buffer;
+        private VertexBuffer Buffer;
 
         public GolemEnemy(World world)
             : base(world)
@@ -37,10 +37,10 @@ namespace PyromancersJourney.Objects
                 int fx = f % 12;
                 int fy = f / 12;
 
-                float xa = (80f / GolemEnemy.tex.Width) * fx;
-                float xb = (80f / GolemEnemy.tex.Width) * (fx + 1);
-                float ya = (80f / GolemEnemy.tex.Height) * (fy + 1);
-                float yb = (80f / GolemEnemy.tex.Height) * fy;
+                float xa = (80f / GolemEnemy.Tex.Width) * fx;
+                float xb = (80f / GolemEnemy.Tex.Width) * (fx + 1);
+                float ya = (80f / GolemEnemy.Tex.Height) * (fy + 1);
+                float yb = (80f / GolemEnemy.Tex.Height) * fy;
                 vertices.Add(new VertexPositionColorTexture(new Vector3(-1.5f, 0, 0), Color.White, new Vector2(xa, ya)));
                 vertices.Add(new VertexPositionColorTexture(new Vector3(1.5f, 0, 0), Color.White, new Vector2(xb, ya)));
                 vertices.Add(new VertexPositionColorTexture(new Vector3(1.5f, 3, 0), Color.White, new Vector2(xb, yb)));
@@ -50,13 +50,13 @@ namespace PyromancersJourney.Objects
                 vertices.Add(new VertexPositionColorTexture(new Vector3(1.5f, 3, 0), Color.White, new Vector2(xb, yb)));
             }
 
-            this.buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
-            this.buffer.SetData(vertices.ToArray());
+            this.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+            this.Buffer.SetData(vertices.ToArray());
         }
 
         public override void Hurt(int amt)
         {
-            if (this.state == AnimState.Immune && this.frame > 3 && this.frame < 11)
+            if (this.State == AnimState.Immune && this.Frame > 3 && this.Frame < 11)
             {
                 Game1.playSound("crit");
                 return;
@@ -81,52 +81,52 @@ namespace PyromancersJourney.Objects
         {
             base.Update();
 
-            this.frameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
-            if (this.frameAccum >= 0.2f)
+            this.FrameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+            if (this.FrameAccum >= 0.2f)
             {
-                this.frameAccum = 0;
+                this.FrameAccum = 0;
 
-                switch (this.state)
+                switch (this.State)
                 {
                     case AnimState.Glow:
-                        if (++this.frame > 7)
+                        if (++this.Frame > 7)
                         {
                             this.GoToNextState();
                         }
                         break;
                     case AnimState.Shoot:
-                        if (++this.frame == 8)
+                        if (++this.Frame == 8)
                         {
-                            var player = this.World.player;
+                            var player = this.World.Player;
                             var speed = player.Position - this.Position;
                             speed.Y = 0;
                             speed.Normalize();
                             speed /= 10;
 
-                            this.World.projectiles.Add(new GolemArm(this.World)
+                            this.World.Projectiles.Add(new GolemArm(this.World)
                             {
                                 Position = this.Position + new Vector3(0, 0.5f, 0),
                                 Speed = new Vector2(speed.X, speed.Z)
                             });
                         }
-                        else if (this.frame > 16)
+                        else if (this.Frame > 16)
                         {
                             this.GoToNextState();
                         }
                         break;
                     case AnimState.Immune:
-                        if (this.frame < 7)
-                            ++this.frame;
-                        if (this.World.objects.OfType<Enemy>().Count() <= 1)
+                        if (this.Frame < 7)
+                            ++this.Frame;
+                        if (this.World.Objects.OfType<Enemy>().Count() <= 1)
                         {
-                            if (++this.frame > 14)
+                            if (++this.Frame > 14)
                             {
                                 this.GoToNextState();
                             }
                         }
                         break;
                     case AnimState.Summon:
-                        if (++this.frame > 6)
+                        if (++this.Frame > 6)
                         {
                             this.GoToNextState();
                         }
@@ -137,16 +137,16 @@ namespace PyromancersJourney.Objects
 
         private void GoToNextState()
         {
-            this.frame = 0;
-            if (this.state == AnimState.Summon)
+            this.Frame = 0;
+            if (this.State == AnimState.Summon)
             {
                 int amt = 2;
                 for (int i = 0; i < amt; ++i)
                 {
                     for (int t = 0; t < 10; ++t)
                     {
-                        Vector2 pos = new Vector2(1 + Game1.random.Next((int)this.World.map.Size.X - 2), 1 + Game1.random.Next((int)this.World.map.Size.Y - 2));
-                        if (this.World.map.IsAirSolid(pos.X, pos.Y))
+                        Vector2 pos = new Vector2(1 + Game1.random.Next((int)this.World.Map.Size.X - 2), 1 + Game1.random.Next((int)this.World.Map.Size.Y - 2));
+                        if (this.World.Map.IsAirSolid(pos.X, pos.Y))
                         {
                             continue;
                         }
@@ -156,11 +156,11 @@ namespace PyromancersJourney.Objects
                     }
                 }
                 Game1.playSound("debuffHit");
-                this.state = AnimState.Immune;
+                this.State = AnimState.Immune;
             }
-            else if (this.state != AnimState.Glow)
+            else if (this.State != AnimState.Glow)
             {
-                this.state = AnimState.Glow;
+                this.State = AnimState.Glow;
             }
             else
             {
@@ -168,13 +168,13 @@ namespace PyromancersJourney.Objects
                 {
                     case 0:
                     case 1:
-                        this.state = AnimState.Glow;
+                        this.State = AnimState.Glow;
                         break;
                     case 2:
-                        this.state = AnimState.Shoot;
+                        this.State = AnimState.Shoot;
                         break;
                     case 3:
-                        this.state = AnimState.Summon;
+                        this.State = AnimState.Summon;
                         break;
                 }
             }
@@ -184,9 +184,9 @@ namespace PyromancersJourney.Objects
         {
             base.Render(device, projection, cam);
 
-            int fx = this.frame;
+            int fx = this.Frame;
             int fy = 0;
-            switch (this.state)
+            switch (this.State)
             {
                 case AnimState.Glow:
                     fy = 1;
@@ -214,15 +214,15 @@ namespace PyromancersJourney.Objects
             newStencil.DepthBufferWriteEnable = false;
             device.DepthStencilState = newStencil;
 
-            BaseObject.effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, Vector3.Up, null, null);
-            BaseObject.effect.TextureEnabled = true;
-            BaseObject.effect.Texture = GolemEnemy.tex;
-            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.Effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.Pos, Vector3.Up, null, null);
+            BaseObject.Effect.TextureEnabled = true;
+            BaseObject.Effect.Texture = GolemEnemy.Tex;
+            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
 
-                device.SetVertexBuffer(this.buffer);
+                device.SetVertexBuffer(this.Buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, frame * 6, 2);
             }
 

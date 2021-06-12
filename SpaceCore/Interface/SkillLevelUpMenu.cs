@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
 
 namespace SpaceCore.Interface
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.CopiedFromGameCode)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = DiagnosticMessages.CopiedFromGameCode)]
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.CopiedFromGameCode)]
     public class SkillLevelUpMenu : IClickableMenu
     {
         private Color leftProfessionColor = Game1.textColor;
@@ -85,7 +90,7 @@ namespace SpaceCore.Interface
                     Game1.addMailForTomorrow("marnieAutoGrabber", false, false);
             }
             */
-            this.title = Game1.content.LoadString("Strings\\UI:LevelUp_Title", this.currentLevel, Skills.skills[this.currentSkill].GetName());
+            this.title = Game1.content.LoadString("Strings\\UI:LevelUp_Title", this.currentLevel, Skills.SkillsByName[this.currentSkill].GetName());
             this.extraInfoForLevel = this.getExtraInfoForLevel(this.currentSkill, this.currentLevel);
             /*
             switch (this.currentSkill)
@@ -110,7 +115,7 @@ namespace SpaceCore.Interface
                     break;
             }
             */
-            var skill = Skills.skills[skillName];
+            var skill = Skills.SkillsByName[skillName];
             this.profPair = null;
             foreach (var pair in skill.ProfessionsForLevels)
                 if (pair.Level == this.currentLevel && (pair.Requires == null || Game1.player.professions.Contains(pair.Requires.GetVanillaId())))
@@ -234,7 +239,7 @@ namespace SpaceCore.Interface
 
         public List<string> getExtraInfoForLevel(string whichSkill, int whichLevel)
         {
-            return Skills.skills[whichSkill].GetExtraLevelUpInfo(whichLevel);
+            return Skills.SkillsByName[whichSkill].GetExtraLevelUpInfo(whichLevel);
             /*
             List<string> stringList = new List<string>();
             switch (whichSkill)
@@ -272,7 +277,7 @@ namespace SpaceCore.Interface
 
         private static void addProfessionDescriptions(List<string> descriptions, string professionName)
         {
-            foreach (var skill in Skills.skills)
+            foreach (var skill in Skills.SkillsByName)
             {
                 foreach (var prof in skill.Value.Professions)
                 {
@@ -291,7 +296,7 @@ namespace SpaceCore.Interface
 
         private static string getProfessionName(int whichProfession)
         {
-            foreach (var skill in Skills.skills)
+            foreach (var skill in Skills.SkillsByName)
             {
                 foreach (var prof in skill.Value.Professions)
                 {
@@ -404,7 +409,7 @@ namespace SpaceCore.Interface
 
         public void getImmediateProfessionPerk(int whichProfession)
         {
-            var skill = Skills.skills[this.currentSkill];
+            var skill = Skills.SkillsByName[this.currentSkill];
             foreach (var prof in skill.Professions)
             {
                 if (prof.GetVanillaId() == whichProfession)
@@ -436,7 +441,7 @@ namespace SpaceCore.Interface
             {
                 if (/*this.isProfessionChooser &&*/ !this.hasUpdatedProfessions)
                 {
-                    var skill = Skills.skills[this.currentSkill];
+                    var skill = Skills.SkillsByName[this.currentSkill];
                     this.profPair = null;
                     foreach (var pair in skill.ProfessionsForLevels)
                         if (pair.Level == this.currentLevel && (pair.Requires == null || Game1.player.professions.Contains(pair.Requires.GetVanillaId())))
@@ -551,13 +556,13 @@ namespace SpaceCore.Interface
                         Game1.playSound("bigSelect");
                         this.informationUp = true;
                         this.isProfessionChooser = false;
-                        this.currentLevel = Skills.myNewLevels.First().Value;
-                        this.currentSkill = Skills.myNewLevels.First().Key;
+                        this.currentLevel = Skills.NewLevels.First().Value;
+                        this.currentSkill = Skills.NewLevels.First().Key;
                         /*
                         this.currentLevel = Game1.player.newLevels.First<Point>().Y;
                         this.currentSkill = Game1.player.newLevels.First<Point>().X;
                         */
-                        this.title = Game1.content.LoadString("Strings\\UI:LevelUp_Title", this.currentLevel, Skills.skills[this.currentSkill].GetName());
+                        this.title = Game1.content.LoadString("Strings\\UI:LevelUp_Title", this.currentLevel, Skills.SkillsByName[this.currentSkill].GetName());
                         this.extraInfoForLevel = this.getExtraInfoForLevel(this.currentSkill, this.currentLevel);
                         /*switch (this.currentSkill)
                         {
@@ -580,7 +585,7 @@ namespace SpaceCore.Interface
                                 this.sourceRectForLevelIcon = new Rectangle(64, 0, 16, 16);
                                 break;
                         }*/
-                        var skill = Skills.skills[this.currentSkill];
+                        var skill = Skills.SkillsByName[this.currentSkill];
                         this.profPair = null;
                         foreach (var pair in skill.ProfessionsForLevels)
                             if (pair.Level == this.currentLevel && Game1.player.professions.Contains(pair.Requires.GetVanillaId()))
@@ -679,7 +684,7 @@ namespace SpaceCore.Interface
 
         public void getLevelPerk(string skill, int level)
         {
-            Skills.skills[skill].DoLevelPerk(level);
+            Skills.SkillsByName[skill].DoLevelPerk(level);
             /*
             switch (skill)
             {
@@ -734,11 +739,11 @@ namespace SpaceCore.Interface
                     Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true, null, false);
                     this.drawHorizontalPartition(b, this.yPositionOnScreen + 192, false);
                     this.drawVerticalIntersectingPartition(b, this.xPositionOnScreen + this.width / 2 - 32, this.yPositionOnScreen + 192);
-                    if (Skills.skills[this.currentSkill].Icon != null)
-                        Utility.drawWithShadow(b, Skills.skills[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.skills[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f, -1, -1, 0.35f);
+                    if (Skills.SkillsByName[this.currentSkill].Icon != null)
+                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f, -1, -1, 0.35f);
                     b.DrawString(Game1.dialogueFont, this.title, new Vector2(this.xPositionOnScreen + this.width / 2 - Game1.dialogueFont.MeasureString(this.title).X / 2f, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Game1.textColor);
-                    if (Skills.skills[this.currentSkill].Icon != null)
-                        Utility.drawWithShadow(b, Skills.skills[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.skills[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f, -1, -1, 0.35f);
+                    if (Skills.SkillsByName[this.currentSkill].Icon != null)
+                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f, -1, -1, 0.35f);
                     string text = Game1.content.LoadString("Strings\\UI:LevelUp_ChooseProfession");
                     b.DrawString(Game1.smallFont, text, new Vector2(this.xPositionOnScreen + this.width / 2 - Game1.smallFont.MeasureString(text).X / 2f, this.yPositionOnScreen + 64 + IClickableMenu.spaceToClearTopBorder), Game1.textColor);
                     b.DrawString(Game1.dialogueFont, this.leftProfessionDescription[0], new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160), this.leftProfessionColor);
@@ -757,11 +762,11 @@ namespace SpaceCore.Interface
                 else
                 {
                     Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true, null, false);
-                    if (Skills.skills[this.currentSkill].Icon != null)
-                        Utility.drawWithShadow(b, Skills.skills[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.skills[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f, -1, -1, 0.35f);
+                    if (Skills.SkillsByName[this.currentSkill].Icon != null)
+                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f, -1, -1, 0.35f);
                     b.DrawString(Game1.dialogueFont, this.title, new Vector2(this.xPositionOnScreen + this.width / 2 - Game1.dialogueFont.MeasureString(this.title).X / 2f, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Game1.textColor);
-                    if (Skills.skills[this.currentSkill].Icon != null)
-                        Utility.drawWithShadow(b, Skills.skills[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.skills[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f, -1, -1, 0.35f);
+                    if (Skills.SkillsByName[this.currentSkill].Icon != null)
+                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f, -1, -1, 0.35f);
                     int num = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 80;
                     foreach (string text in this.extraInfoForLevel)
                     {

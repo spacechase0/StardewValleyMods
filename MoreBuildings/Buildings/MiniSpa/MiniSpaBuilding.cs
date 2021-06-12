@@ -8,10 +8,10 @@ namespace MoreBuildings.Buildings.MiniSpa
 {
     public class MiniSpaBuilding : Building, ISaveElement
     {
-        private static readonly BluePrint blueprint = new("MiniSpa");
+        private static readonly BluePrint Blueprint = new("MiniSpa");
 
         public MiniSpaBuilding()
-            : base(MiniSpaBuilding.blueprint, Vector2.Zero) { }
+            : base(MiniSpaBuilding.Blueprint, Vector2.Zero) { }
 
         protected override GameLocation getIndoors(string nameOfIndoorsWithoutUnique)
         {

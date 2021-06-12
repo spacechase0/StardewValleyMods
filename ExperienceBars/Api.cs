@@ -13,13 +13,13 @@ namespace ExperienceBars
     {
         public void DrawExperienceBar(Texture2D icon, int level, float percentFull, Color color)
         {
-            Mod.renderSkillBar(Mod.Config.X, Mod.expBottom, icon, new Rectangle(0, 0, icon.Width, icon.Height), level, percentFull, color);
-            Mod.expBottom += 40;
+            Mod.RenderSkillBar(Mod.Config.X, Mod.ExpBottom, icon, new Rectangle(0, 0, icon.Width, icon.Height), level, percentFull, color);
+            Mod.ExpBottom += 40;
         }
 
         public void SetDrawLuck(bool luck)
         {
-            Mod.renderLuck = luck;
+            Mod.RenderLuck = luck;
         }
     }
 }

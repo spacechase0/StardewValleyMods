@@ -8,52 +8,50 @@ namespace ThrowableAxe
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        private ThrownAxe thrown;
-        private bool clicking;
+        public static Mod Instance;
+        private ThrownAxe Thrown;
+        private bool Clicking;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.Input.ButtonPressed += this.onButtonPress;
-            helper.Events.Input.ButtonReleased += this.onButtonRelease;
-            helper.Events.GameLoop.UpdateTicking += this.onUpdateTicking;
-            helper.Events.Player.Warped += this.onWarped;
+            helper.Events.Input.ButtonPressed += this.OnButtonPress;
+            helper.Events.Input.ButtonReleased += this.OnButtonRelease;
+            helper.Events.GameLoop.UpdateTicking += this.OnUpdateTicking;
+            helper.Events.Player.Warped += this.OnWarped;
         }
 
-        private void onButtonPress(object sender, ButtonPressedEventArgs e)
+        private void OnButtonPress(object sender, ButtonPressedEventArgs e)
         {
             if (!Context.IsPlayerFree)
                 return;
 
-            if (e.Button == SButton.MouseRight && Game1.player.CurrentTool is Axe axe && this.thrown == null)
+            if (e.Button == SButton.MouseRight && Game1.player.CurrentTool is Axe axe && this.Thrown == null)
             {
-                int[] dmg_ = new[] { 8, 15, 30, 45, 60, 80 }; // 6 for support for prismatic tools
-                float[] speed_ = new float[] { 10, 12, 14, 16, 18, 20 }; // 6 for support for prismatic tools
-                int dmg = dmg_[axe.UpgradeLevel];
-                float speed = speed_[axe.UpgradeLevel];
+                int dmg = new[] { 8, 15, 30, 45, 60, 80 }[axe.UpgradeLevel]; // 6 for support for prismatic tools
+                float speed = new float[] { 10, 12, 14, 16, 18, 20 }[axe.UpgradeLevel]; // 6 for support for prismatic tools
 
-                this.thrown = new ThrownAxe(Game1.player, axe.UpgradeLevel, dmg, e.Cursor.AbsolutePixels, speed);
-                Game1.currentLocation.projectiles.Add(this.thrown);
+                this.Thrown = new ThrownAxe(Game1.player, axe.UpgradeLevel, dmg, e.Cursor.AbsolutePixels, speed);
+                Game1.currentLocation.projectiles.Add(this.Thrown);
 
                 Log.Trace("Throwing axe");
-                this.clicking = true;
+                this.Clicking = true;
             }
         }
 
-        private void onButtonRelease(object sender, ButtonReleasedEventArgs e)
+        private void OnButtonRelease(object sender, ButtonReleasedEventArgs e)
         {
             if (e.Button == SButton.MouseRight)
             {
-                this.clicking = false;
+                this.Clicking = false;
             }
         }
 
-        private void onUpdateTicking(object sender, UpdateTickingEventArgs e)
+        private void OnUpdateTicking(object sender, UpdateTickingEventArgs e)
         {
-            if (this.thrown != null)
+            if (this.Thrown != null)
             {
                 /*
                 if(clicking)
@@ -61,32 +59,32 @@ namespace ThrowableAxe
                     thrown.target.Value = Helper.Input.GetCursorPosition().AbsolutePixels;
                 }
                 */
-                if (!this.clicking || (this.thrown.GetPosition() - this.thrown.target).Length() < 1)
+                if (!this.Clicking || (this.Thrown.GetPosition() - this.Thrown.Target).Length() < 1)
                 {
                     var playerPos = Game1.player.getStandingPosition();
                     playerPos.X -= 16;
                     playerPos.Y -= 64;
-                    this.thrown.target.Value = playerPos;
-                    if ((this.thrown.GetPosition() - playerPos).Length() < 16)
+                    this.Thrown.Target.Value = playerPos;
+                    if ((this.Thrown.GetPosition() - playerPos).Length() < 16)
                     {
-                        this.thrown.dead = true;
+                        this.Thrown.Dead = true;
                     }
                 }
 
-                if (this.thrown.dead)
+                if (this.Thrown.Dead)
                 {
                     Log.Trace("Axe destroyed");
-                    this.thrown = null;
+                    this.Thrown = null;
                 }
             }
         }
 
-        private void onWarped(object sender, WarpedEventArgs e)
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (this.thrown != null)
+            if (this.Thrown != null)
             {
-                this.thrown.dead = true;
-                this.thrown = null;
+                this.Thrown.Dead = true;
+                this.Thrown = null;
             }
         }
     }

@@ -8,7 +8,7 @@ namespace SpaceCore.Utilities
     {
         public int Weight { get; set; }
 
-        public static IWeighted choose(List<IWeighted> choices, int totalWeight)
+        public static IWeighted Choose(List<IWeighted> choices, int totalWeight)
         {
             int num = new Random().Next(totalWeight);
 
@@ -24,7 +24,7 @@ namespace SpaceCore.Utilities
             return choices.Last();
         }
 
-        public static T choose<T>(List<T> choices, int totalWeight)
+        public static T Choose<T>(List<T> choices, int totalWeight)
         where T : IWeighted
         {
             int num = new Random().Next(totalWeight);

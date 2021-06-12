@@ -21,7 +21,7 @@ namespace CookingSkill
     {
         public bool ModifyCookedItem(CraftingRecipe recipe, Item craftedItem, List<Chest> additionalIngredients)
         {
-            return Mod.onCook(recipe, craftedItem, additionalIngredients);
+            return Mod.OnCook(recipe, craftedItem, additionalIngredients);
         }
     }
 }

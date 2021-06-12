@@ -6,8 +6,8 @@ namespace PyromancersJourney.Objects
 {
     public class MuralThing : BaseObject
     {
-        private Texture2D tex = Mod.instance.Helper.Content.Load<Texture2D>("assets/caldera-mural-assembled.png");
-        private VertexBuffer buffer;
+        private Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/caldera-mural-assembled.png");
+        private VertexBuffer Buffer;
 
         public MuralThing(World world)
             : base(world)
@@ -20,20 +20,20 @@ namespace PyromancersJourney.Objects
                 new(new Vector3(4, 0, 0), Color.White, new Vector2(1, 1)),
                 new(new Vector3(4, 5, 0), Color.White, new Vector2(1, 0)),
             };
-            this.buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), 6, BufferUsage.WriteOnly);
-            this.buffer.SetData(test);
+            this.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), 6, BufferUsage.WriteOnly);
+            this.Buffer.SetData(test);
         }
 
         public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
             base.Render(device, projection, cam);
-            BaseObject.effect.TextureEnabled = true;
-            BaseObject.effect.Texture = this.tex;
-            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.Effect.TextureEnabled = true;
+            BaseObject.Effect.Texture = this.Tex;
+            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
-                device.SetVertexBuffer(this.buffer);
+                device.SetVertexBuffer(this.Buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
             }
         }

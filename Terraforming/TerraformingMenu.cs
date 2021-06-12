@@ -10,24 +10,24 @@ namespace Terraforming
 {
     public class TerraformingMenu : IClickableMenu
     {
-        private int terrainWidth, terrainHeight;
-        private TileType[,] terrainData;
-        private Dictionary<TileType, Color> typeColors = TerraformingMenu.GetCorrespondingColors();
+        private int TerrainWidth, TerrainHeight;
+        private TileType[,] TerrainData;
+        private Dictionary<TileType, Color> TypeColors = TerraformingMenu.GetCorrespondingColors();
 
-        private TileType sel = TileType.Dirt;
+        private TileType Sel = TileType.Dirt;
 
         public TerraformingMenu()
         : base(0, 0, Game1.viewport.Width, Game1.viewport.Height, false)
         {
-            this.terrainWidth = Game1.currentLocation.Map.Layers[0].LayerWidth;
-            this.terrainHeight = Game1.currentLocation.Map.Layers[0].LayerHeight;
-            this.terrainData = new TileType[this.terrainWidth + 1, this.terrainHeight + 1];
+            this.TerrainWidth = Game1.currentLocation.Map.Layers[0].LayerWidth;
+            this.TerrainHeight = Game1.currentLocation.Map.Layers[0].LayerHeight;
+            this.TerrainData = new TileType[this.TerrainWidth + 1, this.TerrainHeight + 1];
         }
 
-        private bool justClicked;
+        private bool JustClicked;
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
-            this.justClicked = true;
+            this.JustClicked = true;
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)
@@ -36,14 +36,14 @@ namespace Terraforming
 
         public override void releaseLeftClick(int x, int y)
         {
-            this.justClicked = false;
+            this.JustClicked = false;
         }
 
         public override void receiveKeyPress(Keys key)
         {
             if (key == Keys.Escape)
             {
-                this.commitTerrain();
+                this.CommitTerrain();
                 Game1.exitActiveMenu();
             }
         }
@@ -68,12 +68,12 @@ namespace Terraforming
             int maxX = minX + Game1.viewport.Width / 64;
             int maxY = minY + Game1.viewport.Height / 64;
 
-            for (int ix = Math.Max(0, minX); ix <= Math.Min(maxX, this.terrainWidth); ++ix)
+            for (int ix = Math.Max(0, minX); ix <= Math.Min(maxX, this.TerrainWidth); ++ix)
             {
-                for (int iy = Math.Max(0, minY); iy <= Math.Min(maxY, this.terrainHeight); ++iy)
+                for (int iy = Math.Max(0, minY); iy <= Math.Min(maxY, this.TerrainHeight); ++iy)
                 {
-                    var type = this.terrainData[ix, iy];
-                    var col = this.typeColors[type];
+                    var type = this.TerrainData[ix, iy];
+                    var col = this.TypeColors[type];
                     col.A = 192;
 
                     Vector2 pos = Game1.GlobalToLocal(new Vector2((ix - 0.5f) * Game1.tileSize, (iy - 0.5f) * Game1.tileSize));
@@ -81,9 +81,9 @@ namespace Terraforming
                     if (rect.Contains(Game1.getMouseX(), Game1.getMouseY()))
                     {
                         col.A = 255;
-                        if (this.justClicked)
+                        if (this.JustClicked)
                         {
-                            this.terrainData[ix, iy] = type = this.sel;
+                            this.TerrainData[ix, iy] = type = this.Sel;
                         }
                     }
                     b.Draw(Game1.staminaRect, rect, col);
@@ -95,15 +95,15 @@ namespace Terraforming
             for (int i = 0; i < (int)TileType.Count; ++i)
             {
                 TileType type = (TileType)i;
-                Color col = this.typeColors[type];
+                Color col = this.TypeColors[type];
                 int x = 64 + IClickableMenu.borderWidth + 16;
                 int y = 64 + IClickableMenu.borderWidth + 16 + (64 + 32) * i;
 
                 Rectangle rect = new Rectangle(x, y, 64, 64);
-                if (this.justClicked && rect.Contains(Game1.getMouseX(), Game1.getMouseY()))
-                    this.sel = type;
+                if (this.JustClicked && rect.Contains(Game1.getMouseX(), Game1.getMouseY()))
+                    this.Sel = type;
 
-                if (type == this.sel)
+                if (type == this.Sel)
                     IClickableMenu.drawTextureBox(b, x - 16, y - 16, 64 + 32, 64 + 32, Color.Green);
 
                 b.Draw(Game1.staminaRect, rect, col);
@@ -125,7 +125,7 @@ namespace Terraforming
             return cols;
         }
 
-        private void commitTerrain()
+        private void CommitTerrain()
         {
             // Remove old layers
             var layersToRemove = new List<xTile.Layers.Layer>();
@@ -160,7 +160,7 @@ namespace Terraforming
             foreach (var type in types)
             {
                 var ts = new xTile.Tiles.TileSheet(Game1.currentLocation.Map,
-                                                   Mod.instance.Helper.Content.GetActualAssetKey($"assets/vanilla/{type}.png"),
+                                                   Mod.Instance.Helper.Content.GetActualAssetKey($"assets/vanilla/{type}.png"),
                                                    new xTile.Dimensions.Size(4, 4), new xTile.Dimensions.Size(16, 16));
                 ts.Id = "\u03a9" + ts.Id + "Terraform" + (tsCounter++) + type.ToString();
                 Game1.currentLocation.Map.AddTileSheet(ts);
@@ -175,16 +175,16 @@ namespace Terraforming
             {
                 var layer = new xTile.Layers.Layer("BackTerraform_" + type, Game1.currentLocation.Map, Game1.currentLocation.Map.Layers[0].LayerSize, new xTile.Dimensions.Size(Game1.tileSize, Game1.tileSize));
                 var ts = typesTs[type];
-                for (int ix = 0; ix < this.terrainWidth; ++ix)
+                for (int ix = 0; ix < this.TerrainWidth; ++ix)
                 {
-                    for (int iy = 0; iy < this.terrainHeight; ++iy)
+                    for (int iy = 0; iy < this.TerrainHeight; ++iy)
                     {
                         Func<int, int, bool> getTile =
                         (x, y) =>
                         {
-                            if (x < 0 || y < 0 || x > this.terrainWidth || y > this.terrainHeight)
+                            if (x < 0 || y < 0 || x > this.TerrainWidth || y > this.TerrainHeight)
                                 return false;
-                            return this.terrainData[x, y] == type;
+                            return this.TerrainData[x, y] == type;
                         };
 
                         int cornerFlags = 0;
@@ -209,12 +209,12 @@ namespace Terraforming
             // Water tile effects
             if (Game1.currentLocation.waterTiles == null)
             {
-                Game1.currentLocation.waterTiles = new bool[this.terrainWidth, this.terrainHeight];
+                Game1.currentLocation.waterTiles = new bool[this.TerrainWidth, this.TerrainHeight];
             }
             for (int i = 0; i < Game1.currentLocation.waterTiles.Length; ++i)
             {
-                int ix = i % this.terrainWidth, iy = i / this.terrainWidth;
-                var tile = this.terrainData[ix, iy];
+                int ix = i % this.TerrainWidth, iy = i / this.TerrainWidth;
+                var tile = this.TerrainData[ix, iy];
                 Game1.currentLocation.waterTiles[ix, iy] = (tile == TileType.Water || tile == TileType.DeepWater);
             }
         }

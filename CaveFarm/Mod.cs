@@ -8,17 +8,17 @@ namespace CaveFarm
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.ConsoleCommands.Add("walls", "TODO", this.wallsCommand);
+            helper.ConsoleCommands.Add("walls", "TODO", this.WallsCommand);
         }
 
-        private void wallsCommand(string cmd, string[] args)
+        private void WallsCommand(string cmd, string[] args)
         {
             for (int ix = 0; ix < Game1.currentLocation.Map.Layers[0].LayerSize.Width; ++ix)
             {

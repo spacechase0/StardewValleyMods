@@ -13,17 +13,17 @@ namespace Magic.Spells
             this.DoesDisenchant = dis;
         }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override int getMaxCastingLevel()
+        public override int GetMaxCastingLevel()
         {
             return 1;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             if (player != Game1.player)
                 return null;

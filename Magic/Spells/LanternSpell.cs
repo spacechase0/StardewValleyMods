@@ -7,20 +7,20 @@ namespace Magic.Spells
 {
     internal class LanternSpell : Spell
     {
-        private readonly Func<long> getNewId;
+        private readonly Func<long> GetNewId;
 
         public LanternSpell(Func<long> getNewId)
             : base(SchoolId.Nature, "lantern")
         {
-            this.getNewId = getNewId;
+            this.GetNewId = getNewId;
         }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return level * 3;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             if (player != Game1.player)
                 return null;
@@ -31,17 +31,17 @@ namespace Magic.Spells
             else if (level == 2)
                 power = 16;
 
-            player.currentLocation.sharedLights.Add(this.getUnusedLightSourceID(player.currentLocation), new LightSource(1, Game1.player.position, power));
+            player.currentLocation.sharedLights.Add(this.GetUnusedLightSourceId(player.currentLocation), new LightSource(1, Game1.player.position, power));
             player.AddCustomSkillExperience(Magic.Skill, level);
 
             return null;
         }
 
-        private int getUnusedLightSourceID(GameLocation location)
+        private int GetUnusedLightSourceId(GameLocation location)
         {
             while (true)
             {
-                int id = (int)this.getNewId();
+                int id = (int)this.GetNewId();
                 if (!location.hasLightSource(id))
                     return id;
             }

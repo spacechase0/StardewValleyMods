@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Netcode;
 using SpaceCore;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Objects;
@@ -13,6 +15,9 @@ using SObject = StardewValley.Object;
 
 namespace CookingSkill
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.CopiedFromGameCode)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = DiagnosticMessages.CopiedFromGameCode)]
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.CopiedFromGameCode)]
     public class NewCraftingPage : IClickableMenu
     {
         private string descriptionText = "";
@@ -347,7 +352,7 @@ namespace CookingSkill
         {
             Item obj = this.pagesOfCraftingRecipes[this.currentCraftingPage][c].createItem();
             /////
-            bool consume = Mod.onCook(this.pagesOfCraftingRecipes[this.currentCraftingPage][c], obj, this._materialContainers);
+            bool consume = Mod.OnCook(this.pagesOfCraftingRecipes[this.currentCraftingPage][c], obj, this._materialContainers);
             SObject heldObj = this.heldItem as SObject;
             SObject itemObj = obj as SObject;
             bool didCraft = false;
@@ -385,7 +390,7 @@ namespace CookingSkill
             {
                 Game1.player.cookedRecipe((int)this.heldItem.parentSheetIndex);
                 /////
-                Game1.player.AddCustomSkillExperience(Mod.skill, itemObj.Edibility);
+                Game1.player.AddCustomSkillExperience(Mod.Skill, itemObj.Edibility);
                 /////
             }
             if (!this.cooking)

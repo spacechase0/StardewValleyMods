@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Network;
@@ -11,7 +12,7 @@ using SObject = StardewValley.Object;
 namespace JsonAssets.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Fence"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class FencePatcher : BasePatcher
     {
         /*********
@@ -58,7 +59,7 @@ namespace JsonAssets.Patches
         /// <summary>The method to call after the <see cref="Fence"/> constructor.</summary>
         private static void After_Constructor(Fence __instance, Vector2 tileLocation, int whichType, bool isGate)
         {
-            foreach (var fence in Mod.instance.fences)
+            foreach (var fence in Mod.instance.Fences)
             {
                 if (whichType == fence.correspondingObject.GetObjectId())
                 {
@@ -76,7 +77,7 @@ namespace JsonAssets.Patches
         /// <summary>The method to call before <see cref="Fence.repair"/>.</summary>
         private static bool Before_Repair(Fence __instance)
         {
-            foreach (var fence in Mod.instance.fences)
+            foreach (var fence in Mod.instance.Fences)
             {
                 if (__instance.whichType.Value == fence.correspondingObject.GetObjectId())
                 {
@@ -96,7 +97,7 @@ namespace JsonAssets.Patches
             if (__instance.isGate.Value)
                 return true;
 
-            foreach (var fence in Mod.instance.fences)
+            foreach (var fence in Mod.instance.Fences)
             {
                 if (__instance.whichType.Value == fence.correspondingObject.GetObjectId())
                 {
@@ -116,7 +117,7 @@ namespace JsonAssets.Patches
             else if (__instance.isGate.Value && t != null && (t is Axe || t is Pickaxe))
                 return true;
 
-            foreach (var fence in Mod.instance.fences)
+            foreach (var fence in Mod.instance.Fences)
             {
                 if (__instance.whichType.Value == fence.correspondingObject.GetObjectId())
                 {
@@ -169,7 +170,7 @@ namespace JsonAssets.Patches
             if (__instance.health.Value > 1 || !__instance.CanRepairWithThisItem(dropIn))
                 return true;
 
-            foreach (var fence in Mod.instance.fences)
+            foreach (var fence in Mod.instance.Fences)
             {
                 if (__instance.whichType.Value == fence.correspondingObject.GetObjectId())
                 {
@@ -198,7 +199,7 @@ namespace JsonAssets.Patches
             if (__instance.health.Value > 1 || !(item is SObject))
                 return true;
 
-            foreach (var fence in Mod.instance.fences)
+            foreach (var fence in Mod.instance.Fences)
             {
                 if (__instance.whichType.Value == fence.correspondingObject.GetObjectId())
                 {

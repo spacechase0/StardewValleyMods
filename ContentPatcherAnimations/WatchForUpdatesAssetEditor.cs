@@ -11,13 +11,13 @@ namespace ContentPatcherAnimations
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
-            if (Mod.instance.ScreenState == null)
+            if (Mod.Instance.ScreenState == null)
                 return false;
 
-            foreach (var patchEntry in Mod.instance.ScreenState.animatedPatches)
+            foreach (var patchEntry in Mod.Instance.ScreenState.AnimatedPatches)
             {
-                var patch = patchEntry.Value.patchObj;
-                string target = Mod.instance.Helper.Reflection.GetProperty<string>(patch, "TargetAsset").GetValue();
+                var patch = patchEntry.Value.PatchObj;
+                string target = Mod.Instance.Helper.Reflection.GetProperty<string>(patch, "TargetAsset").GetValue();
                 if (!string.IsNullOrWhiteSpace(target) && asset.AssetNameEquals(target))
                     return true;
             }
@@ -26,16 +26,16 @@ namespace ContentPatcherAnimations
 
         public void Edit<T>(IAssetData asset)
         {
-            if (Mod.instance.ScreenState == null)
+            if (Mod.Instance.ScreenState == null)
                 return;
 
-            foreach (var patchEntry in Mod.instance.ScreenState.animatedPatches)
+            foreach (var patchEntry in Mod.Instance.ScreenState.AnimatedPatches)
             {
-                var patch = patchEntry.Value.patchObj;
-                string target = Mod.instance.Helper.Reflection.GetProperty<string>(patch, "TargetAsset").GetValue();
+                var patch = patchEntry.Value.PatchObj;
+                string target = Mod.Instance.Helper.Reflection.GetProperty<string>(patch, "TargetAsset").GetValue();
                 if (!string.IsNullOrWhiteSpace(target) && asset.AssetNameEquals(target))
                 {
-                    Mod.instance.ScreenState.findTargetsQueue.Enqueue(patchEntry.Key);
+                    Mod.Instance.ScreenState.FindTargetsQueue.Enqueue(patchEntry.Key);
                 }
             }
         }

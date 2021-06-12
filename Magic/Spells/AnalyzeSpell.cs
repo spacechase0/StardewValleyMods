@@ -9,17 +9,17 @@ namespace Magic.Spells
         public AnalyzeSpell()
             : base(SchoolId.Arcane, "analyze") { }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override int getMaxCastingLevel()
+        public override int GetMaxCastingLevel()
         {
             return 1;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             if (Magic.OnAnalyzeCast != null)
                 Util.InvokeEvent<AnalyzeEventArgs>("OnAnalyzeCast", Magic.OnAnalyzeCast.GetInvocationList(), player, new AnalyzeEventArgs(targetX, targetY));

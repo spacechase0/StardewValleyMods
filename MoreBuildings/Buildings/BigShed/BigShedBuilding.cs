@@ -8,10 +8,10 @@ namespace MoreBuildings.Buildings.BigShed
 {
     public class BigShedBuilding : Building, ISaveElement
     {
-        private static readonly BluePrint blueprint = new("Shed2");
+        private static readonly BluePrint Blueprint = new("Shed2");
 
         public BigShedBuilding()
-            : base(BigShedBuilding.blueprint, Vector2.Zero) { }
+            : base(BigShedBuilding.Blueprint, Vector2.Zero) { }
 
         protected override GameLocation getIndoors(string nameOfIndoorsWithoutUnique)
         {

@@ -3,6 +3,7 @@ using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
@@ -10,7 +11,7 @@ using StardewValley.Tools;
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="MeleeWeapon"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class MeleeWeaponPatcher : BasePatcher
     {
         /*********
@@ -34,7 +35,7 @@ namespace SpaceCore.Patches
         {
             if (f.CurrentTool is ICustomWeaponDraw tool)
             {
-                tool.draw(frameOfFarmerAnimation, facingDirection, spriteBatch, playerPosition, f, sourceRect, type, isOnSpecial);
+                tool.Draw(frameOfFarmerAnimation, facingDirection, spriteBatch, playerPosition, f, sourceRect, type, isOnSpecial);
                 return false;
             }
 

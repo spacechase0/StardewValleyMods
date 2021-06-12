@@ -15,24 +15,24 @@ namespace GenericModConfigMenu
 {
     internal class SpecificModConfigMenu : IClickableMenu, IAssetEditor
     {
-        private IManifest mod;
-        private bool ingame;
+        private IManifest Manifest;
+        private bool InGame;
 
-        private ModConfig modConfig;
-        private string currPage;
-        private string prevPage;
+        private ModConfig ModConfig;
+        private string CurrPage;
+        private string PrevPage;
 
-        private RootElement ui = new();
-        private Table table;
-        private List<Label> optHovers = new();
+        private RootElement Ui = new();
+        private Table Table;
+        private List<Label> OptHovers = new();
         public static IClickableMenu ActiveConfigMenu;
 
-        private Dictionary<string, List<Image>> textures = new();
-        private Queue<string> pendingTexChanges = new();
+        private Dictionary<string, List<Image>> Textures = new();
+        private Queue<string> PendingTexChanges = new();
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
-            foreach (string key in this.textures.Keys)
+            foreach (string key in this.Textures.Keys)
             {
                 if (asset.AssetNameEquals(key))
                     return true;
@@ -42,52 +42,52 @@ namespace GenericModConfigMenu
 
         public void Edit<T>(IAssetData asset)
         {
-            foreach (string key in this.textures.Keys)
+            foreach (string key in this.Textures.Keys)
             {
                 if (asset.AssetNameEquals(key))
                 {
-                    this.pendingTexChanges.Enqueue(key);
+                    this.PendingTexChanges.Enqueue(key);
                 }
             }
         }
 
         public SpecificModConfigMenu(IManifest modManifest, bool inGame, string page = "", string prevPage = null)
         {
-            this.mod = modManifest;
-            this.ingame = inGame;
+            this.Manifest = modManifest;
+            this.InGame = inGame;
 
-            this.modConfig = Mod.instance.configs[this.mod];
-            this.currPage = page;
+            this.ModConfig = Mod.Instance.Configs[this.Manifest];
+            this.CurrPage = page;
 
-            Mod.instance.configs[this.mod].ActiveDisplayPage = this.modConfig.Options[this.currPage];
+            Mod.Instance.Configs[this.Manifest].ActiveDisplayPage = this.ModConfig.Options[this.CurrPage];
 
-            this.table = new Table();
-            this.table.RowHeight = 50;
-            this.table.Size = new Vector2(Math.Min(1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
-            this.table.LocalPosition = new Vector2((Game1.viewport.Width - this.table.Size.X) / 2, (Game1.viewport.Height - this.table.Size.Y) / 2);
-            foreach (var opt in this.modConfig.Options[page].Options)
+            this.Table = new Table();
+            this.Table.RowHeight = 50;
+            this.Table.Size = new Vector2(Math.Min(1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
+            this.Table.LocalPosition = new Vector2((Game1.viewport.Width - this.Table.Size.X) / 2, (Game1.viewport.Height - this.Table.Size.Y) / 2);
+            foreach (var opt in this.ModConfig.Options[page].Options)
             {
                 opt.SyncToMod();
-                if (this.ingame && !opt.AvailableInGame)
+                if (this.InGame && !opt.AvailableInGame)
                     continue;
 
                 var label = new Label() { String = opt.Name };
                 label.UserData = opt.Description;
                 if (opt.Description != null && opt.Description != "")
-                    this.optHovers.Add(label);
+                    this.OptHovers.Add(label);
 
                 Element other = new Label() { String = "TODO", LocalPosition = new Vector2(500, 0) };
                 Element other2 = null;
                 if (opt is ComplexModOption c)
                 {
                     var custom = new ComplexModOptionWidget(c);
-                    custom.LocalPosition = new Vector2(this.table.Size.X / 2, 0);
+                    custom.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
                     other = custom;
                 }
                 else if (opt is SimpleModOption<bool> b)
                 {
                     var checkbox = new Checkbox();
-                    checkbox.LocalPosition = new Vector2(this.table.Size.X / 2, 0);
+                    checkbox.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
                     checkbox.Checked = b.Value;
                     checkbox.Callback = (Element e) => b.Value = (e as Checkbox).Checked;
                     other = checkbox;
@@ -97,8 +97,8 @@ namespace GenericModConfigMenu
                     if (Constants.TargetPlatform == GamePlatform.Android)
                         continue; // TODO: Support virtual keyboard input.
                     var label2 = new Label() { String = k.Value.ToString() };
-                    label2.LocalPosition = new Vector2(this.table.Size.X / 2, 0);
-                    label2.Callback = (Element e) => this.doKeybindingFor(k, e as Label);
+                    label2.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
+                    label2.Callback = (Element e) => this.DoKeybindingFor(k, e as Label);
                     other = label2;
                 }
                 else if (opt is SimpleModOption<KeybindList> k2)
@@ -106,18 +106,18 @@ namespace GenericModConfigMenu
                     if (Constants.TargetPlatform == GamePlatform.Android)
                         continue; // TODO: Support virtual keyboard input.
                     var label2 = new Label() { String = k2.Value.IsBound ? k2.Value.Keybinds[0].ToString() : "(None)" };
-                    label2.LocalPosition = new Vector2(this.table.Size.X / 2, 0);
-                    label2.Callback = (Element e) => this.doKeybinding2For(k2, e as Label);
+                    label2.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
+                    label2.Callback = (Element e) => this.DoKeybinding2For(k2, e as Label);
                     other = label2;
                 }
                 else if (opt is ClampedModOption<int> ci)
                 {
                     var label2 = new Label() { String = ci.Value.ToString() };
-                    label2.LocalPosition = new Vector2(this.table.Size.X / 2 + this.table.Size.X / 3 + 50, 0);
+                    label2.LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0);
                     other2 = label2;
                     var slider = new Slider<int>();
-                    slider.LocalPosition = new Vector2(this.table.Size.X / 2, 0);
-                    slider.RequestWidth = (int)this.table.Size.X / 3;
+                    slider.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
+                    slider.RequestWidth = (int)this.Table.Size.X / 3;
                     slider.Value = ci.Value;
                     slider.Minimum = ci.Minimum;
                     slider.Maximum = ci.Maximum;
@@ -132,11 +132,11 @@ namespace GenericModConfigMenu
                 else if (opt is ClampedModOption<float> cf)
                 {
                     var label2 = new Label() { String = cf.Value.ToString() };
-                    label2.LocalPosition = new Vector2(this.table.Size.X / 2 + this.table.Size.X / 3 + 50, 0);
+                    label2.LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0);
                     other2 = label2;
                     var slider = new Slider<float>();
-                    slider.LocalPosition = new Vector2(this.table.Size.X / 2, 0);
-                    slider.RequestWidth = (int)this.table.Size.X / 3;
+                    slider.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
+                    slider.RequestWidth = (int)this.Table.Size.X / 3;
                     slider.Value = cf.Value;
                     slider.Minimum = cf.Minimum;
                     slider.Maximum = cf.Maximum;
@@ -151,8 +151,8 @@ namespace GenericModConfigMenu
                 else if (opt is ChoiceModOption<string> cs)
                 {
                     var dropdown = new Dropdown() { Choices = cs.Choices };
-                    dropdown.LocalPosition = new Vector2(this.table.Size.X / 2, 0);
-                    dropdown.RequestWidth = (int)this.table.Size.X / 2;
+                    dropdown.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
+                    dropdown.RequestWidth = (int)this.Table.Size.X / 2;
                     dropdown.Value = cs.Value;
                     dropdown.MaxValuesAtOnce = Math.Min(dropdown.Choices.Length, 5);
                     dropdown.Callback = (Element e) => cs.Value = (e as Dropdown).Value;
@@ -164,7 +164,7 @@ namespace GenericModConfigMenu
                     if (Constants.TargetPlatform == GamePlatform.Android)
                         continue; // TODO: Support virtual keyboard input.
                     var intbox = new Intbox();
-                    intbox.LocalPosition = new Vector2(this.table.Size.X / 2 - 8, 0);
+                    intbox.LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0);
                     intbox.Value = i.Value;
                     intbox.Callback = (Element e) => i.Value = (e as Intbox).Value;
                     other = intbox;
@@ -174,7 +174,7 @@ namespace GenericModConfigMenu
                     if (Constants.TargetPlatform == GamePlatform.Android)
                         continue; // TODO: Support virtual keyboard input.
                     var floatbox = new Floatbox();
-                    floatbox.LocalPosition = new Vector2(this.table.Size.X / 2 - 8, 0);
+                    floatbox.LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0);
                     floatbox.Value = f.Value;
                     floatbox.Callback = (Element e) => f.Value = (e as Floatbox).Value;
                     other = floatbox;
@@ -184,7 +184,7 @@ namespace GenericModConfigMenu
                     if (Constants.TargetPlatform == GamePlatform.Android)
                         continue; // TODO: Support virtual keyboard input.
                     var textbox = new Textbox();
-                    textbox.LocalPosition = new Vector2(this.table.Size.X / 2 - 8, 0);
+                    textbox.LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0);
                     textbox.String = s.Value;
                     textbox.Callback = (Element e) => s.Value = (e as Textbox).String;
                     other = textbox;
@@ -203,9 +203,9 @@ namespace GenericModConfigMenu
                     label.Callback = (Element e) =>
                     {
                         if (TitleMenu.subMenu == this)
-                            TitleMenu.subMenu = new SpecificModConfigMenu(this.mod, this.ingame, pl.NewPage, this.currPage);
+                            TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, pl.NewPage, this.CurrPage);
                         else if (Game1.activeClickableMenu == this)
-                            Game1.activeClickableMenu = new SpecificModConfigMenu(this.mod, this.ingame, pl.NewPage, this.currPage);
+                            Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, pl.NewPage, this.CurrPage);
                     };
                     other = null;
                 }
@@ -221,7 +221,7 @@ namespace GenericModConfigMenu
                     {
                         string oldStr = label.String;
                         label.String += text[it];
-                        if (label.Measure().X >= this.table.Size.X)
+                        if (label.Measure().X >= this.Table.Size.X)
                         {
                             label.String = oldStr + "\n" + text[it];
                         }
@@ -232,7 +232,7 @@ namespace GenericModConfigMenu
                     string[] lines = label.String.Split('\n');
                     for (int il = 0; il < lines.Length; il += 2)
                     {
-                        this.table.AddRow(new Element[] { new Label()
+                        this.Table.AddRow(new Element[] { new Label()
                         {
                             UserData = opt.Description,
                             NonBoldScale = 0.75f,
@@ -252,21 +252,21 @@ namespace GenericModConfigMenu
                     imgSize *= t.Scale;
 
 
-                    var localPos = new Vector2(this.table.Size.X / 2 - imgSize.X / 2, 0);
+                    var localPos = new Vector2(this.Table.Size.X / 2 - imgSize.X / 2, 0);
                     var baseRectPos = new Vector2(
                         t.TextureRect.HasValue ? t.TextureRect.Value.X : 0,
                         t.TextureRect.HasValue ? t.TextureRect.Value.Y : 0
                     );
 
                     var texs = new List<Image>();
-                    if (this.textures.ContainsKey(t.TexturePath))
-                        texs = this.textures[t.TexturePath];
+                    if (this.Textures.ContainsKey(t.TexturePath))
+                        texs = this.Textures[t.TexturePath];
                     else
-                        this.textures.Add(t.TexturePath, texs);
+                        this.Textures.Add(t.TexturePath, texs);
 
-                    for (int ir = 0; ir < imgSize.Y / this.table.RowHeight; ++ir)
+                    for (int ir = 0; ir < imgSize.Y / this.Table.RowHeight; ++ir)
                     {
-                        int section = Math.Min((int)(imgSize.Y / t.Scale), this.table.RowHeight);
+                        int section = Math.Min((int)(imgSize.Y / t.Scale), this.Table.RowHeight);
                         int baseY = (int)(baseRectPos.Y + section * ir);
                         if (baseY + section > baseRectPos.Y + imgSize.Y / t.Scale)
                         {
@@ -280,68 +280,68 @@ namespace GenericModConfigMenu
                         };
                         img.LocalPosition = localPos;
                         texs.Add(img);
-                        this.table.AddRow(new Element[] { img });
+                        this.Table.AddRow(new Element[] { img });
                     }
 
                     continue;
                 }
 
                 if (label == null)
-                    this.table.AddRow(new Element[] { });
+                    this.Table.AddRow(new Element[] { });
                 else if (other == null)
-                    this.table.AddRow(new Element[] { label });
+                    this.Table.AddRow(new Element[] { label });
                 else if (other2 == null)
-                    this.table.AddRow(new[] { label, other });
+                    this.Table.AddRow(new[] { label, other });
                 else
-                    this.table.AddRow(new[] { label, other, other2 });
+                    this.Table.AddRow(new[] { label, other, other2 });
             }
-            this.ui.AddChild(this.table);
+            this.Ui.AddChild(this.Table);
 
-            this.addDefaultLabels(modManifest);
+            this.AddDefaultLabels(modManifest);
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
-            this.table.ForceUpdateEvenHidden();
+            this.Table.ForceUpdateEvenHidden();
 
             SpecificModConfigMenu.ActiveConfigMenu = this;
 
-            Mod.instance.Helper.Content.AssetEditors.Add(this);
+            Mod.Instance.Helper.Content.AssetEditors.Add(this);
         }
 
-        private void addDefaultLabels(IManifest modManifest)
+        private void AddDefaultLabels(IManifest modManifest)
         {
-            string page = this.modConfig.Options[this.currPage].DisplayName;
+            string page = this.ModConfig.Options[this.CurrPage].DisplayName;
             var titleLabel = new Label() { String = modManifest.Name + (page == "" ? "" : " > " + page), Bold = true };
             titleLabel.LocalPosition = new Vector2((Game1.viewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
             titleLabel.HoverTextColor = titleLabel.IdleTextColor;
-            this.ui.AddChild(titleLabel);
+            this.Ui.AddChild(titleLabel);
 
             var cancelLabel = new Label() { String = "Cancel", Bold = true };
             cancelLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 400, Game1.viewport.Height - 50 - 36);
-            cancelLabel.Callback = (Element e) => this.cancel();
-            this.ui.AddChild(cancelLabel);
+            cancelLabel.Callback = (Element e) => this.Cancel();
+            this.Ui.AddChild(cancelLabel);
 
             var defaultLabel = new Label() { String = "Default", Bold = true };
             defaultLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 200, Game1.viewport.Height - 50 - 36);
-            defaultLabel.Callback = (Element e) => this.revertToDefault();
-            this.ui.AddChild(defaultLabel);
+            defaultLabel.Callback = (Element e) => this.RevertToDefault();
+            this.Ui.AddChild(defaultLabel);
 
             var saveLabel = new Label() { String = "Save", Bold = true };
             saveLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 + 50, Game1.viewport.Height - 50 - 36);
-            saveLabel.Callback = (Element e) => this.save();
-            this.ui.AddChild(saveLabel);
+            saveLabel.Callback = (Element e) => this.Save();
+            this.Ui.AddChild(saveLabel);
 
             var saveCloseLabel = new Label() { String = "Save&Close", Bold = true };
             saveCloseLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 + 200, Game1.viewport.Height - 50 - 36);
-            saveCloseLabel.Callback = (Element e) => { this.save(); this.close(); };
-            this.ui.AddChild(saveCloseLabel);
+            saveCloseLabel.Callback = (Element e) => { this.Save(); this.Close(); };
+            this.Ui.AddChild(saveCloseLabel);
         }
 
-        public void receiveScrollWheelActionSmapi(int direction)
+        public void ReceiveScrollWheelActionSmapi(int direction)
         {
             if (TitleMenu.subMenu == this || Game1.activeClickableMenu == this)
             {
                 if (Dropdown.ActiveDropdown == null)
-                    this.table.Scrollbar.ScrollBy(direction / -120);
+                    this.Table.Scrollbar.ScrollBy(direction / -120);
             }
             else
                 SpecificModConfigMenu.ActiveConfigMenu = null;
@@ -355,14 +355,14 @@ namespace GenericModConfigMenu
         public override void update(GameTime time)
         {
             base.update(time);
-            this.ui.Update();
+            this.Ui.Update();
 
-            while (this.pendingTexChanges.Count > 0)
+            while (this.PendingTexChanges.Count > 0)
             {
-                string texPath = this.pendingTexChanges.Dequeue();
+                string texPath = this.PendingTexChanges.Dequeue();
                 var tex = Game1.content.Load<Texture2D>(texPath);
 
-                foreach (var images in this.textures[texPath])
+                foreach (var images in this.Textures[texPath])
                 {
                     images.Texture = tex;
                 }
@@ -376,16 +376,16 @@ namespace GenericModConfigMenu
             IClickableMenu.drawTextureBox(b, (Game1.viewport.Width - 800) / 2 - 32, 32, 800 + 64, 50 + 20, Color.White);
             IClickableMenu.drawTextureBox(b, (Game1.viewport.Width - 800) / 2 - 32, Game1.viewport.Height - 50 - 20 - 32, 800 + 64, 50 + 20, Color.White);
 
-            this.ui.Draw(b);
+            this.Ui.Draw(b);
 
-            if (this.keybindingOpt != null)
+            if (this.KeybindingOpt != null)
             {
                 b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.viewport.Width, Game1.viewport.Height), new Color(0, 0, 0, 192));
 
                 int boxX = (Game1.viewport.Width - 650) / 2, boxY = (Game1.viewport.Height - 200) / 2;
                 IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
 
-                string s = "Rebinding key: " + this.keybindingOpt.Name;
+                string s = "Rebinding key: " + this.KeybindingOpt.Name;
                 int sw = (int)Game1.dialogueFont.MeasureString(s).X;
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.viewport.Width - sw) / 2, boxY + 20), Game1.textColor);
 
@@ -394,14 +394,14 @@ namespace GenericModConfigMenu
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.viewport.Width - sw) / 2, boxY + 100), Game1.textColor);
             }
 
-            if (this.keybinding2Opt != null)
+            if (this.Keybinding2Opt != null)
             {
                 b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.viewport.Width, Game1.viewport.Height), new Color(0, 0, 0, 192));
 
                 int boxX = (Game1.viewport.Width - 650) / 2, boxY = (Game1.viewport.Height - 200) / 2;
                 IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
 
-                string s = "Rebinding key: " + this.keybinding2Opt.Name;
+                string s = "Rebinding key: " + this.Keybinding2Opt.Name;
                 int sw = (int)Game1.dialogueFont.MeasureString(s).X;
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.viewport.Width - sw) / 2, boxY + 20), Game1.textColor);
 
@@ -414,7 +414,7 @@ namespace GenericModConfigMenu
 
             if (Constants.TargetPlatform != GamePlatform.Android)
             {
-                foreach (var label in this.optHovers)
+                foreach (var label in this.OptHovers)
                 {
                     if (!label.Hover)
                         continue;
@@ -429,71 +429,71 @@ namespace GenericModConfigMenu
             }
         }
 
-        private void revertToDefault()
+        private void RevertToDefault()
         {
             Game1.playSound("backpackIN");
-            this.modConfig.RevertToDefault.Invoke();
-            foreach (var page in this.modConfig.Options)
+            this.ModConfig.RevertToDefault.Invoke();
+            foreach (var page in this.ModConfig.Options)
                 foreach (var opt in page.Value.Options)
                     opt.SyncToMod();
-            this.modConfig.SaveToFile.Invoke();
+            this.ModConfig.SaveToFile.Invoke();
 
             if (TitleMenu.subMenu == this)
-                TitleMenu.subMenu = new SpecificModConfigMenu(this.mod, this.ingame, this.currPage, this.prevPage);
+                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.CurrPage, this.PrevPage);
             else if (Game1.activeClickableMenu == this)
-                Game1.activeClickableMenu = new SpecificModConfigMenu(this.mod, this.ingame, this.currPage, this.prevPage);
+                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.CurrPage, this.PrevPage);
         }
 
-        private void save()
+        private void Save()
         {
             Game1.playSound("money");
-            foreach (var page in this.modConfig.Options)
+            foreach (var page in this.ModConfig.Options)
                 foreach (var opt in page.Value.Options)
                     opt.Save();
-            this.modConfig.SaveToFile.Invoke();
+            this.ModConfig.SaveToFile.Invoke();
         }
 
-        private void close()
+        private void Close()
         {
             if (TitleMenu.subMenu == this)
-                TitleMenu.subMenu = new ModConfigMenu(this.ingame);
-            else if (!this.ingame && Game1.activeClickableMenu == this)
+                TitleMenu.subMenu = new ModConfigMenu(this.InGame);
+            else if (!this.InGame && Game1.activeClickableMenu == this)
                 Game1.activeClickableMenu = null;
             else
-                Game1.activeClickableMenu = new ModConfigMenu(this.ingame);
+                Game1.activeClickableMenu = new ModConfigMenu(this.InGame);
 
-            Mod.instance.Helper.Content.AssetEditors.Remove(this);
+            Mod.Instance.Helper.Content.AssetEditors.Remove(this);
         }
 
-        private void cancel()
+        private void Cancel()
         {
             Game1.playSound("bigDeSelect");
-            this.close();
+            this.Close();
         }
 
-        private SimpleModOption<SButton> keybindingOpt;
-        private SimpleModOption<KeybindList> keybinding2Opt;
-        private Label keybindingLabel;
-        private void doKeybindingFor(SimpleModOption<SButton> opt, Label label)
+        private SimpleModOption<SButton> KeybindingOpt;
+        private SimpleModOption<KeybindList> Keybinding2Opt;
+        private Label KeybindingLabel;
+        private void DoKeybindingFor(SimpleModOption<SButton> opt, Label label)
         {
             Game1.playSound("breathin");
-            this.keybindingOpt = opt;
-            this.keybindingLabel = label;
-            this.ui.Obscured = true;
-            Mod.instance.Helper.Events.Input.ButtonPressed += this.assignKeybinding;
+            this.KeybindingOpt = opt;
+            this.KeybindingLabel = label;
+            this.Ui.Obscured = true;
+            Mod.Instance.Helper.Events.Input.ButtonPressed += this.AssignKeybinding;
         }
-        private void doKeybinding2For(SimpleModOption<KeybindList> opt, Label label)
+        private void DoKeybinding2For(SimpleModOption<KeybindList> opt, Label label)
         {
             Game1.playSound("breathin");
-            this.keybinding2Opt = opt;
-            this.keybindingLabel = label;
-            this.ui.Obscured = true;
-            Mod.instance.Helper.Events.Input.ButtonsChanged += this.assignKeybinding2;
+            this.Keybinding2Opt = opt;
+            this.KeybindingLabel = label;
+            this.Ui.Obscured = true;
+            Mod.Instance.Helper.Events.Input.ButtonsChanged += this.AssignKeybinding2;
         }
 
-        private void assignKeybinding(object sender, ButtonPressedEventArgs e)
+        private void AssignKeybinding(object sender, ButtonPressedEventArgs e)
         {
-            if (this.keybindingOpt == null)
+            if (this.KeybindingOpt == null)
                 return;
             if (!e.Button.TryGetKeyboard(out Keys keys) && !e.Button.TryGetController(out _))
                 return;
@@ -504,17 +504,17 @@ namespace GenericModConfigMenu
             else
             {
                 Game1.playSound("coin");
-                this.keybindingOpt.Value = e.Button;
-                this.keybindingLabel.String = e.Button.ToString();
+                this.KeybindingOpt.Value = e.Button;
+                this.KeybindingLabel.String = e.Button.ToString();
             }
-            Mod.instance.Helper.Events.Input.ButtonPressed -= this.assignKeybinding;
-            this.keybindingOpt = null;
-            this.keybindingLabel = null;
-            this.ui.Obscured = false;
+            Mod.Instance.Helper.Events.Input.ButtonPressed -= this.AssignKeybinding;
+            this.KeybindingOpt = null;
+            this.KeybindingLabel = null;
+            this.Ui.Obscured = false;
         }
-        private void assignKeybinding2(object sender, ButtonsChangedEventArgs e)
+        private void AssignKeybinding2(object sender, ButtonsChangedEventArgs e)
         {
-            if (this.keybinding2Opt == null)
+            if (this.Keybinding2Opt == null)
                 return;
 
             List<SButton> all = new List<SButton>();
@@ -540,16 +540,16 @@ namespace GenericModConfigMenu
                     all.Add(button);
 
                     Game1.playSound("coin");
-                    this.keybinding2Opt.Value.Keybinds[0] = new Keybind(all.ToArray());
-                    this.keybindingLabel.String = this.keybinding2Opt.Value.Keybinds[0].ToString();
+                    this.Keybinding2Opt.Value.Keybinds[0] = new Keybind(all.ToArray());
+                    this.KeybindingLabel.String = this.Keybinding2Opt.Value.Keybinds[0].ToString();
                 }
 
                 if (stop)
                 {
-                    Mod.instance.Helper.Events.Input.ButtonsChanged -= this.assignKeybinding2;
-                    this.keybinding2Opt = null;
-                    this.keybindingLabel = null;
-                    this.ui.Obscured = false;
+                    Mod.Instance.Helper.Events.Input.ButtonsChanged -= this.AssignKeybinding2;
+                    this.Keybinding2Opt = null;
+                    this.KeybindingLabel = null;
+                    this.Ui.Obscured = false;
                 }
 
                 return;
@@ -559,22 +559,22 @@ namespace GenericModConfigMenu
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
         {
-            this.ui = new RootElement();
+            this.Ui = new RootElement();
 
             Vector2 newSize = new Vector2(Math.Min(1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
 
-            foreach (Element opt in this.table.Children)
+            foreach (Element opt in this.Table.Children)
             {
-                opt.LocalPosition = new Vector2(newSize.X / (this.table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
+                opt.LocalPosition = new Vector2(newSize.X / (this.Table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
                 if (opt is Slider slider)
-                    slider.RequestWidth = (int)(newSize.X / (this.table.Size.X / slider.Width));
+                    slider.RequestWidth = (int)(newSize.X / (this.Table.Size.X / slider.Width));
             }
 
-            this.table.Size = newSize;
-            this.table.LocalPosition = new Vector2((Game1.viewport.Width - this.table.Size.X) / 2, (Game1.viewport.Height - this.table.Size.Y) / 2);
-            this.table.Scrollbar.Update();
-            this.ui.AddChild(this.table);
-            this.addDefaultLabels(this.mod);
+            this.Table.Size = newSize;
+            this.Table.LocalPosition = new Vector2((Game1.viewport.Width - this.Table.Size.X) / 2, (Game1.viewport.Height - this.Table.Size.Y) / 2);
+            this.Table.Scrollbar.Update();
+            this.Ui.AddChild(this.Table);
+            this.AddDefaultLabels(this.Manifest);
         }
     }
 }

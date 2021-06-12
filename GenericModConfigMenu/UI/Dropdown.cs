@@ -26,7 +26,7 @@ namespace GenericModConfigMenu.UI
         public int ActivePosition { get; set; }
         public string[] Choices { get; set; } = new[] { "null" };
 
-        public bool dropped;
+        public bool Dropped;
 
         public Action<Element> Callback;
 
@@ -42,16 +42,16 @@ namespace GenericModConfigMenu.UI
 
             if (this.Clicked)
             {
-                this.dropped = true;
+                this.Dropped = true;
                 this.Parent.RenderLast = this;
             }
 
-            if (this.dropped)
+            if (this.Dropped)
             {
                 if (Mouse.GetState().LeftButton == ButtonState.Released)
                 {
                     Game1.playSound("drumkit6");
-                    this.dropped = false;
+                    this.Dropped = false;
                     if (this.Parent.RenderLast == this)
                         this.Parent.RenderLast = null;
                 }
@@ -67,15 +67,15 @@ namespace GenericModConfigMenu.UI
                 }
             }
 
-            if (this.dropped)
+            if (this.Dropped)
                 Dropdown.ActiveDropdown = this;
             else
                 this.ActivePosition = Math.Min(this.ActiveChoice, this.Choices.Length - this.MaxValuesAtOnce);
         }
 
-        public void receiveScrollWheelAction(int direction)
+        public void ReceiveScrollWheelAction(int direction)
         {
-            if (this.dropped)
+            if (this.Dropped)
                 this.ActivePosition = Math.Min(Math.Max(this.ActivePosition - (direction / 120), 0), this.Choices.Length - this.MaxValuesAtOnce);
             else
                 Dropdown.ActiveDropdown = null;
@@ -87,7 +87,7 @@ namespace GenericModConfigMenu.UI
             b.DrawString(Game1.smallFont, this.Value, new Vector2(this.Position.X + 4, this.Position.Y + 8), Game1.textColor);
             b.Draw(this.Texture, new Vector2(this.Position.X + this.Width - 48, this.Position.Y), this.ButtonTextureRect, Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
 
-            if (this.dropped)
+            if (this.Dropped)
             {
                 int tall = this.Choices.Length * this.Height;
                 IClickableMenu.drawTextureBox(b, this.Texture, this.BackgroundTextureRect, (int)this.Position.X, (int)this.Position.Y, this.Width - 48, tall, Color.White, 4, false);
@@ -106,7 +106,7 @@ namespace GenericModConfigMenu.UI
             b.DrawString(Game1.smallFont, this.Value, new Vector2(this.Position.X + 4, this.Position.Y + 8), Game1.textColor);
             b.Draw(this.Texture, new Vector2(this.Position.X + this.Width - 48, this.Position.Y), this.ButtonTextureRect, Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
 
-            if (this.dropped)
+            if (this.Dropped)
             {
                 int maxValues = this.MaxValuesAtOnce;
                 int start = this.ActivePosition;

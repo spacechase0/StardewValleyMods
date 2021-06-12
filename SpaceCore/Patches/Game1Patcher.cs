@@ -6,13 +6,14 @@ using System.Reflection.Emit;
 using Harmony;
 using Spacechase.Shared.Harmony;
 using SpaceCore.Events;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Game1"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class Game1Patcher : BasePatcher
     {
         /*********

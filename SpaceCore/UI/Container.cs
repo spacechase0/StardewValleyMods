@@ -7,16 +7,16 @@ namespace SpaceCore.UI
 {
     public abstract class Container : Element
     {
-        private IList<Element> children = new List<Element>();
+        private IList<Element> ChildrenImpl = new List<Element>();
 
         public Element RenderLast { get; set; }
 
-        public Element[] Children { get { return this.children.ToArray(); } }
+        public Element[] Children { get { return this.ChildrenImpl.ToArray(); } }
 
         public void AddChild(Element element)
         {
             element.Parent?.RemoveChild(element);
-            this.children.Add(element);
+            this.ChildrenImpl.Add(element);
             element.Parent = this;
         }
 
@@ -24,14 +24,14 @@ namespace SpaceCore.UI
         {
             if (element.Parent != this)
                 throw new ArgumentException("Element must be a child of this container.");
-            this.children.Remove(element);
+            this.ChildrenImpl.Remove(element);
             element.Parent = null;
         }
 
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
-            foreach (var element in this.children)
+            foreach (var element in this.ChildrenImpl)
             {
                 element.Update(hidden);
             }
@@ -39,7 +39,7 @@ namespace SpaceCore.UI
 
         public override void Draw(SpriteBatch b)
         {
-            foreach (var child in this.children)
+            foreach (var child in this.ChildrenImpl)
             {
                 if (child == this.RenderLast)
                     continue;

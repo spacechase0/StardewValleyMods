@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
@@ -8,7 +9,7 @@ using StardewValley.Buildings;
 namespace BuildableLocationsFramework.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Building"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class BuildingPatcher : BasePatcher
     {
         /*********
@@ -30,7 +31,7 @@ namespace BuildableLocationsFramework.Patches
         /// <summary>The method to call before <see cref="Building.updateInteriorWarps"/>.</summary>
         private static void After_UpdateInteriorWarps(Building __instance, GameLocation interior)
         {
-            string targetName = Mod.findOutdoorsOf(__instance)?.Name;
+            string targetName = Mod.FindOutdoorsOf(__instance)?.Name;
             if (targetName == null)
                 return;
 

@@ -8,138 +8,138 @@ namespace Magic
 {
     public static class Extensions
     {
-        private static void dataCheck(Farmer player)
+        private static void DataCheck(Farmer player)
         {
-            if (!Mod.Data.players.ContainsKey(player.UniqueMultiplayerID))
-                Mod.Data.players.Add(player.UniqueMultiplayerID, new MultiplayerSaveData.PlayerData());
+            if (!Mod.Data.Players.ContainsKey(player.UniqueMultiplayerID))
+                Mod.Data.Players.Add(player.UniqueMultiplayerID, new MultiplayerSaveData.PlayerData());
         }
 
-        public static int getCurrentMana(this Farmer player)
+        public static int GetCurrentMana(this Farmer player)
         {
-            return Mod.mana.GetMana(player);
+            return Mod.Mana.GetMana(player);
         }
 
-        public static void addMana(this Farmer player, int amt)
+        public static void AddMana(this Farmer player, int amt)
         {
-            Mod.mana.AddMana(player, amt);
+            Mod.Mana.AddMana(player, amt);
         }
 
-        public static int getMaxMana(this Farmer player)
+        public static int GetMaxMana(this Farmer player)
         {
-            return Mod.mana.GetMaxMana(player);
+            return Mod.Mana.GetMaxMana(player);
         }
 
-        public static void setMaxMana(this Farmer player, int newCap)
+        public static void SetMaxMana(this Farmer player, int newCap)
         {
-            Mod.mana.SetMaxMana(player, newCap);
+            Mod.Mana.SetMaxMana(player, newCap);
         }
 
-        public static int getFreeSpellPoints(this Farmer player)
+        public static int GetFreeSpellPoints(this Farmer player)
         {
-            Extensions.dataCheck(player);
-            return Mod.Data.players[player.UniqueMultiplayerID].freePoints;
+            Extensions.DataCheck(player);
+            return Mod.Data.Players[player.UniqueMultiplayerID].FreePoints;
         }
 
-        public static void useSpellPoints(this Farmer player, int amt, bool sync = true)
+        public static void UseSpellPoints(this Farmer player, int amt, bool sync = true)
         {
-            Extensions.dataCheck(player);
-            Mod.Data.players[player.UniqueMultiplayerID].freePoints -= amt;
+            Extensions.DataCheck(player);
+            Mod.Data.Players[player.UniqueMultiplayerID].FreePoints -= amt;
             if (player == Game1.player)
-                Mod.Data.syncMineFull();
+                Mod.Data.SyncMineFull();
         }
 
-        public static SpellBook getSpellBook(this Farmer player)
+        public static SpellBook GetSpellBook(this Farmer player)
         {
-            Extensions.dataCheck(player);
-            return Mod.Data.players[player.UniqueMultiplayerID].spellBook;
+            Extensions.DataCheck(player);
+            return Mod.Data.Players[player.UniqueMultiplayerID].SpellBook;
         }
 
-        public static bool knowsSpell(this Farmer player, string spellId, int level)
+        public static bool KnowsSpell(this Farmer player, string spellId, int level)
         {
             if (player != Game1.player || Mod.Data == null)
                 return false;
-            return player.getSpellBook().knownSpells.ContainsKey(spellId) &&
-                   player.getSpellBook().knownSpells[spellId] >= level;
+            return player.GetSpellBook().KnownSpells.ContainsKey(spellId) &&
+                   player.GetSpellBook().KnownSpells[spellId] >= level;
         }
 
-        public static bool knowsSpell(this Farmer player, Spell spell, int level)
+        public static bool KnowsSpell(this Farmer player, Spell spell, int level)
         {
-            return Extensions.knowsSpell(player, spell.FullId, level);
+            return Extensions.KnowsSpell(player, spell.FullId, level);
         }
 
-        public static int knowsSpellLevel(this Farmer player, string spellId)
+        public static int KnowsSpellLevel(this Farmer player, string spellId)
         {
             if (player != Game1.player || Mod.Data == null)
                 return -1;
-            if (!player.getSpellBook().knownSpells.ContainsKey(spellId))
+            if (!player.GetSpellBook().KnownSpells.ContainsKey(spellId))
                 return -1;
-            return player.getSpellBook().knownSpells[spellId];
+            return player.GetSpellBook().KnownSpells[spellId];
         }
 
-        public static int knowsSpellLevel(this Farmer player, Spell spell)
+        public static int KnowsSpellLevel(this Farmer player, Spell spell)
         {
-            return Extensions.knowsSpellLevel(player, spell.FullId);
+            return Extensions.KnowsSpellLevel(player, spell.FullId);
         }
 
-        public static void learnSpell(this Farmer player, string spellId, int level, bool free = false)
+        public static void LearnSpell(this Farmer player, string spellId, int level, bool free = false)
         {
-            int known = Extensions.knowsSpellLevel(player, spellId);
+            int known = Extensions.KnowsSpellLevel(player, spellId);
             int diff = level - known;
 
-            if (diff <= 0 || Extensions.getFreeSpellPoints(player) < diff && !free)
+            if (diff <= 0 || Extensions.GetFreeSpellPoints(player) < diff && !free)
                 return;
 
             Log.Debug($"Learning spell {spellId}, level {level + 1}");
             if (!free)
-                Extensions.useSpellPoints(player, diff, false);
-            player.getSpellBook().knownSpells[spellId] = level;
+                Extensions.UseSpellPoints(player, diff, false);
+            player.GetSpellBook().KnownSpells[spellId] = level;
 
-            Mod.Data.syncMineFull();
+            Mod.Data.SyncMineFull();
         }
 
-        public static void learnSpell(this Farmer player, Spell spell, int level, bool free = false)
+        public static void LearnSpell(this Farmer player, Spell spell, int level, bool free = false)
         {
-            Extensions.learnSpell(player, spell.FullId, level, free);
+            Extensions.LearnSpell(player, spell.FullId, level, free);
         }
 
-        public static void forgetSpell(this Farmer player, string spellId, int level, bool sync = true)
+        public static void ForgetSpell(this Farmer player, string spellId, int level, bool sync = true)
         {
-            int known = Extensions.knowsSpellLevel(player, spellId);
+            int known = Extensions.KnowsSpellLevel(player, spellId);
             if (level > known)
                 return;
             int diff = (known + 1) - level;
 
             Log.Debug($"Forgetting spell {spellId}, level {level + 1}");
             if (level == 0)
-                Game1.player.getSpellBook().knownSpells.Remove(spellId);
-            else if (Game1.player.getSpellBook().knownSpells[spellId] >= level)
-                Game1.player.getSpellBook().knownSpells[spellId] = level - 1;
-            Extensions.useSpellPoints(player, -diff, false);
+                Game1.player.GetSpellBook().KnownSpells.Remove(spellId);
+            else if (Game1.player.GetSpellBook().KnownSpells[spellId] >= level)
+                Game1.player.GetSpellBook().KnownSpells[spellId] = level - 1;
+            Extensions.UseSpellPoints(player, -diff, false);
 
-            Mod.Data.syncMineFull();
+            Mod.Data.SyncMineFull();
         }
 
-        public static void forgetSpell(this Farmer player, Spell spell, int level, bool sync = true)
+        public static void ForgetSpell(this Farmer player, Spell spell, int level, bool sync = true)
         {
-            Extensions.forgetSpell(player, spell.FullId, level, sync);
+            Extensions.ForgetSpell(player, spell.FullId, level, sync);
         }
 
-        public static bool canCastSpell(this Farmer player, string spellId, int level)
+        public static bool CanCastSpell(this Farmer player, string spellId, int level)
         {
-            return SpellBook.get(spellId).canCast(player, level);
+            return SpellBook.Get(spellId).CanCast(player, level);
         }
 
-        public static bool canCastSpell(this Farmer player, Spell spell, int level)
+        public static bool CanCastSpell(this Farmer player, Spell spell, int level)
         {
-            return spell.canCast(player, level);
+            return spell.CanCast(player, level);
         }
 
-        public static IActiveEffect castSpell(this Farmer player, string spellId, int level, int x = int.MinValue, int y = int.MinValue)
+        public static IActiveEffect CastSpell(this Farmer player, string spellId, int level, int x = int.MinValue, int y = int.MinValue)
         {
-            return Extensions.castSpell(player, SpellBook.get(spellId), level, x, y);
+            return Extensions.CastSpell(player, SpellBook.Get(spellId), level, x, y);
         }
 
-        public static IActiveEffect castSpell(this Farmer player, Spell spell, int level, int x = int.MinValue, int y = int.MinValue)
+        public static IActiveEffect CastSpell(this Farmer player, Spell spell, int level, int x = int.MinValue, int y = int.MinValue)
         {
             if (player == Game1.player)
             {
@@ -150,14 +150,14 @@ namespace Magic
                     writer.Write(level);
                     writer.Write(Game1.getMouseX() + Game1.viewport.X);
                     writer.Write(Game1.getMouseY() + Game1.viewport.Y);
-                    SpaceCore.Networking.BroadcastMessage(Magic.MSG_CAST, stream.ToArray());
+                    SpaceCore.Networking.BroadcastMessage(Magic.MsgCast, stream.ToArray());
                 }
             }
             Point pos = new Point(x, y);
             if (x == int.MinValue && y == int.MinValue)
                 pos = new Point(Game1.getMouseX() + Game1.viewport.X, Game1.getMouseY() + Game1.viewport.Y);
 
-            return spell.onCast(player, level, pos.X, pos.Y);
+            return spell.OnCast(player, level, pos.X, pos.Y);
         }
     }
 }

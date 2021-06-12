@@ -1,10 +1,14 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using SpaceShared;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class CropData : DataNeedsIdWithTexture
     {
         [JsonIgnore]
@@ -47,8 +51,8 @@ namespace JsonAssets.Data
         public Dictionary<string, string> SeedDescriptionLocalization = new();
 
         internal ObjectData seed;
-        public int GetSeedId() { return this.seed.id; }
-        public int GetCropSpriteIndex() { return this.id; }
+        public int GetSeedId() { return this.seed.Id; }
+        public int GetCropSpriteIndex() { return this.Id; }
         internal string GetCropInformation()
         {
             string str = "";

@@ -19,7 +19,7 @@ using StardewValley.Objects;
 namespace BuildableLocationsFramework.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="CarpenterMenu"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class CarpenterMenuPatcher : BasePatcher
     {
         /*********
@@ -69,15 +69,15 @@ namespace BuildableLocationsFramework.Patches
 
             try
             {
-                var __instance_freeze = Mod.instance.Helper.Reflection.GetField<bool>(__instance, "freeze");
-                var __instance_onFarm = Mod.instance.Helper.Reflection.GetField<bool>(__instance, "onFarm");
-                var __instance_moving = Mod.instance.Helper.Reflection.GetField<bool>(__instance, "moving");
-                var __instance_upgrading = Mod.instance.Helper.Reflection.GetField<bool>(__instance, "upgrading");
-                var __instance_demolishing = Mod.instance.Helper.Reflection.GetField<bool>(__instance, "demolishing");
-                var __instance_buildingToMove = Mod.instance.Helper.Reflection.GetField<Building>(__instance, "buildingToMove");
-                var __instance_currentBlueprintIndex = Mod.instance.Helper.Reflection.GetField<int>(__instance, "currentBlueprintIndex");
-                var __instance_price = Mod.instance.Helper.Reflection.GetField<int>(__instance, "price");
-                var __instance_blueprints = Mod.instance.Helper.Reflection.GetField<List<BluePrint>>(__instance, "blueprints");
+                var __instance_freeze = Mod.Instance.Helper.Reflection.GetField<bool>(__instance, "freeze");
+                var __instance_onFarm = Mod.Instance.Helper.Reflection.GetField<bool>(__instance, "onFarm");
+                var __instance_moving = Mod.Instance.Helper.Reflection.GetField<bool>(__instance, "moving");
+                var __instance_upgrading = Mod.Instance.Helper.Reflection.GetField<bool>(__instance, "upgrading");
+                var __instance_demolishing = Mod.Instance.Helper.Reflection.GetField<bool>(__instance, "demolishing");
+                var __instance_buildingToMove = Mod.Instance.Helper.Reflection.GetField<Building>(__instance, "buildingToMove");
+                var __instance_currentBlueprintIndex = Mod.Instance.Helper.Reflection.GetField<int>(__instance, "currentBlueprintIndex");
+                var __instance_price = Mod.Instance.Helper.Reflection.GetField<int>(__instance, "price");
+                var __instance_blueprints = Mod.Instance.Helper.Reflection.GetField<List<BluePrint>>(__instance, "blueprints");
 
                 if (__instance_freeze.GetValue())
                     goto ret;

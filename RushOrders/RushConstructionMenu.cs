@@ -9,74 +9,74 @@ namespace RushOrders
 {
     internal class RushConstructionMenu : IClickableMenu
     {
-        private readonly int x;
-        private readonly int y;
-        private readonly string[] r = { "Yes", "No" };
-        private readonly int heightForQuestions;
-        private readonly IClickableMenu old;
-        private string q = "Rush your building construction?";
-        private int selectedResponse = -1;
-        private bool showingBroke;
+        private readonly int X;
+        private readonly int Y;
+        private readonly string[] Responses = { "Yes", "No" };
+        private readonly int HeightForQuestions;
+        private readonly IClickableMenu Old;
+        private string Question = "Rush your building construction?";
+        private int SelectedResponse = -1;
+        private bool ShowingBroke;
 
         public RushConstructionMenu(IClickableMenu oldMenu)
         {
-            this.old = oldMenu;
+            this.Old = oldMenu;
             this.width = 800;
             this.height = 400;
-            this.x = (int)Utility.getTopLeftPositionForCenteringOnScreen(this.width, this.height).X;
-            this.y = Game1.viewport.Height - this.height - Game1.tileSize;
+            this.X = (int)Utility.getTopLeftPositionForCenteringOnScreen(this.width, this.height).X;
+            this.Y = Game1.viewport.Height - this.height - Game1.tileSize;
 
-            this.q += $" ({Mod.getBuildingDaysLeft()} days left)";
-            this.r[0] += $" ({Mod.getBuildingRushPrice()}g)";
+            this.Question += $" ({Mod.GetBuildingDaysLeft()} days left)";
+            this.Responses[0] += $" ({Mod.GetBuildingRushPrice()}g)";
 
-            this.heightForQuestions = SpriteText.getHeightOfString(this.q, this.width - Game1.pixelZoom * 4);
-            foreach (string rs in this.r)
-                this.heightForQuestions += SpriteText.getHeightOfString(rs, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 4;
-            this.heightForQuestions += Game1.pixelZoom * 10;
+            this.HeightForQuestions = SpriteText.getHeightOfString(this.Question, this.width - Game1.pixelZoom * 4);
+            foreach (string rs in this.Responses)
+                this.HeightForQuestions += SpriteText.getHeightOfString(rs, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 4;
+            this.HeightForQuestions += Game1.pixelZoom * 10;
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
             base.receiveLeftClick(x, y, playSound);
 
-            if (this.showingBroke)
+            if (this.ShowingBroke)
             {
-                Game1.activeClickableMenu = this.old;
+                Game1.activeClickableMenu = this.Old;
                 return;
             }
 
-            int num = this.y - (this.heightForQuestions - this.height) + SpriteText.getHeightOfString(this.q, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 12;
-            for (int i = 0; i < this.r.Length; i++)
+            int num = this.Y - (this.HeightForQuestions - this.height) + SpriteText.getHeightOfString(this.Question, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 12;
+            for (int i = 0; i < this.Responses.Length; i++)
             {
-                Rectangle rect = new Rectangle(this.x + Game1.pixelZoom * 2, num, this.width, SpriteText.getHeightOfString(this.r[i]));
+                Rectangle rect = new Rectangle(this.X + Game1.pixelZoom * 2, num, this.width, SpriteText.getHeightOfString(this.Responses[i]));
                 if (rect.Contains(x, y))
                 {
                     if (i == 0)
                     {
-                        int cost = Mod.getBuildingRushPrice();
+                        int cost = Mod.GetBuildingRushPrice();
                         if (Game1.player.Money < cost)
                         {
-                            this.q = "You do not have enough money.";
-                            this.showingBroke = true;
+                            this.Question = "You do not have enough money.";
+                            this.ShowingBroke = true;
                             return;
                         }
                         else
                         {
                             Game1.player.Money -= cost;
                             Game1.playSound("coin");
-                            Mod.rushBuilding();
-                            if (Mod.getBuildingDaysLeft() > 1)
+                            Mod.RushBuilding();
+                            if (Mod.GetBuildingDaysLeft() > 1)
                             {
-                                Game1.activeClickableMenu = new RushConstructionMenu(this.old);
+                                Game1.activeClickableMenu = new RushConstructionMenu(this.Old);
                                 return;
                             }
                         }
                     }
 
-                    Game1.activeClickableMenu = this.old;
+                    Game1.activeClickableMenu = this.Old;
                     return;
                 }
-                num += SpriteText.getHeightOfString(this.r[i], this.width) + Game1.pixelZoom * 4;
+                num += SpriteText.getHeightOfString(this.Responses[i], this.width) + Game1.pixelZoom * 4;
             }
         }
 
@@ -88,30 +88,30 @@ namespace RushOrders
         {
             base.draw(b);
 
-            this.drawBox(b, this.x, this.y - (this.heightForQuestions - this.height), this.width, this.heightForQuestions);
-            SpriteText.drawString(b, this.q, this.x + Game1.pixelZoom * 2, this.y + Game1.pixelZoom * 3 - (this.heightForQuestions - this.height), 999999999, this.width - Game1.pixelZoom * 4);
+            this.DrawBox(b, this.X, this.Y - (this.HeightForQuestions - this.height), this.width, this.HeightForQuestions);
+            SpriteText.drawString(b, this.Question, this.X + Game1.pixelZoom * 2, this.Y + Game1.pixelZoom * 3 - (this.HeightForQuestions - this.height), 999999999, this.width - Game1.pixelZoom * 4);
 
-            if (this.showingBroke)
+            if (this.ShowingBroke)
                 return;
 
-            int num = this.y - (this.heightForQuestions - this.height) + SpriteText.getHeightOfString(this.q, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 12;
-            for (int i = 0; i < this.r.Count(); i++)
+            int num = this.Y - (this.HeightForQuestions - this.height) + SpriteText.getHeightOfString(this.Question, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 12;
+            for (int i = 0; i < this.Responses.Count(); i++)
             {
-                Rectangle rect = new Rectangle(this.x + Game1.pixelZoom * 2, num, this.width, SpriteText.getHeightOfString(this.r[i]));
+                Rectangle rect = new Rectangle(this.X + Game1.pixelZoom * 2, num, this.width, SpriteText.getHeightOfString(this.Responses[i]));
                 if (rect.Contains(Game1.getMouseX(), Game1.getMouseY()))
-                    this.selectedResponse = i;
-                if (i == this.selectedResponse)
+                    this.SelectedResponse = i;
+                if (i == this.SelectedResponse)
                 {
-                    IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(375, 357, 3, 3), this.x + Game1.pixelZoom, num - Game1.pixelZoom * 2, this.width - Game1.pixelZoom * 2, SpriteText.getHeightOfString(this.r[i], this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 4, Color.White, Game1.pixelZoom, false);
+                    IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(375, 357, 3, 3), this.X + Game1.pixelZoom, num - Game1.pixelZoom * 2, this.width - Game1.pixelZoom * 2, SpriteText.getHeightOfString(this.Responses[i], this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 4, Color.White, Game1.pixelZoom, false);
                 }
-                SpriteText.drawString(b, this.r[i], this.x + Game1.pixelZoom * 2, num, 999999, this.width, 999999, (this.selectedResponse == i) ? 1f : 0.6f);
-                num += SpriteText.getHeightOfString(this.r[i], this.width) + Game1.pixelZoom * 4;
+                SpriteText.drawString(b, this.Responses[i], this.X + Game1.pixelZoom * 2, num, 999999, this.width, 999999, (this.SelectedResponse == i) ? 1f : 0.6f);
+                num += SpriteText.getHeightOfString(this.Responses[i], this.width) + Game1.pixelZoom * 4;
             }
 
             this.drawMouse(b);
         }
 
-        private void drawBox(SpriteBatch b, int xPos, int yPos, int boxWidth, int boxHeight)
+        private void DrawBox(SpriteBatch b, int xPos, int yPos, int boxWidth, int boxHeight)
         {
             if (xPos > 0)
             {

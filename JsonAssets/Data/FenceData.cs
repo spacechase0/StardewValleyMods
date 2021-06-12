@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using SpaceShared;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class FenceData : DataNeedsIdWithTexture
     {
         [JsonIgnore]
@@ -60,6 +64,6 @@ namespace JsonAssets.Data
         public Dictionary<string, string> NameLocalization = new();
         public Dictionary<string, string> DescriptionLocalization = new();
 
-        public int GetObjectId() { return this.id; }
+        public int GetObjectId() { return this.Id; }
     }
 }

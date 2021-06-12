@@ -8,10 +8,10 @@ namespace MoreBuildings.Buildings.SpookyShed
 {
     public class SpookyShedBuilding : Building, ISaveElement
     {
-        private static readonly BluePrint blueprint = new("SpookyShed");
+        private static readonly BluePrint Blueprint = new("SpookyShed");
 
         public SpookyShedBuilding()
-            : base(SpookyShedBuilding.blueprint, Vector2.Zero) { }
+            : base(SpookyShedBuilding.Blueprint, Vector2.Zero) { }
 
         protected override GameLocation getIndoors(string nameOfIndoorsWithoutUnique)
         {

@@ -8,21 +8,21 @@ namespace LocationLayerTool
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             HarmonyPatcher.Apply(this,
                 new xTileLayerPatcher()
             );
 
-            this.Helper.ConsoleCommands.Add("llt_adddummy", "", this.doCommand);
+            this.Helper.ConsoleCommands.Add("llt_adddummy", "", this.DoCommand);
         }
 
-        private void doCommand(string cmd, string[] args)
+        private void DoCommand(string cmd, string[] args)
         {
             Game1.locations.Add(new GameLocation(this.Helper.Content.GetActualAssetKey("assets/Farm_overlay.tbin"), "Farm_overlay"));
             Game1.game1.parseDebugInput("warp Farm_overlay 39 31");

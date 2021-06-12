@@ -7,20 +7,20 @@ namespace SleepyEye
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson.Name != "Pierre")
                 return;

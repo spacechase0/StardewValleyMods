@@ -4,13 +4,14 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley.Objects;
 
 namespace BiggerJunimoChest.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Chest"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class ChestPatcher : BasePatcher
     {
         /*********

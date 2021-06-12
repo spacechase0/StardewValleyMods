@@ -9,7 +9,7 @@ namespace Magic.Spells
     public abstract class Spell
     {
         public string ParentSchoolId { get; }
-        public School ParentSchool { get { return School.getSchool(this.ParentSchoolId); } }
+        public School ParentSchool { get { return School.GetSchool(this.ParentSchoolId); } }
         public string Id { get; }
         public string FullId { get { return this.ParentSchoolId + ":" + this.Id; } }
         public Texture2D[] Icons
@@ -24,37 +24,37 @@ namespace Magic.Spells
             this.Id = id;
         }
 
-        public virtual int getMaxCastingLevel()
+        public virtual int GetMaxCastingLevel()
         {
             return 3;
         }
 
-        public abstract int getManaCost(Farmer player, int level);
+        public abstract int GetManaCost(Farmer player, int level);
 
-        public virtual bool canCast(Farmer player, int level)
+        public virtual bool CanCast(Farmer player, int level)
         {
-            return player.knowsSpell(this.FullId, level) && player.getCurrentMana() >= this.getManaCost(player, level);
+            return player.KnowsSpell(this.FullId, level) && player.GetCurrentMana() >= this.GetManaCost(player, level);
         }
 
-        public virtual string getTranslatedName()
+        public virtual string GetTranslatedName()
         {
-            return Mod.instance.Helper.Translation.Get("spell." + this.FullId + ".name");
+            return Mod.Instance.Helper.Translation.Get("spell." + this.FullId + ".name");
         }
-        public virtual string getTranslatedDescription()
+        public virtual string GetTranslatedDescription()
         {
-            return Mod.instance.Helper.Translation.Get("spell." + this.FullId + ".desc");
+            return Mod.Instance.Helper.Translation.Get("spell." + this.FullId + ".desc");
         }
 
-        public abstract IActiveEffect onCast(Farmer player, int level, int targetX, int targetY);
+        public abstract IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY);
 
-        public virtual void loadIcon()
+        public virtual void LoadIcon()
         {
             try
             {
-                this.Icons = new Texture2D[this.getMaxCastingLevel()];
-                for (int i = 1; i <= this.getMaxCastingLevel(); ++i)
+                this.Icons = new Texture2D[this.GetMaxCastingLevel()];
+                for (int i = 1; i <= this.GetMaxCastingLevel(); ++i)
                 {
-                    this.Icons[i - 1] = Content.loadTexture("magic/" + this.ParentSchool.Id + "/" + this.Id + "/" + i + ".png");
+                    this.Icons[i - 1] = Content.LoadTexture("magic/" + this.ParentSchool.Id + "/" + this.Id + "/" + i + ".png");
                 }
             }
             catch (ContentLoadException e)

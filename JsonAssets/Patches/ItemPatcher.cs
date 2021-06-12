@@ -12,7 +12,7 @@ using StardewValley.Tools;
 namespace JsonAssets.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Item"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class ItemPatcher : BasePatcher
     {
         /*********
@@ -43,9 +43,9 @@ namespace JsonAssets.Patches
             {
                 if (__instance is StardewValley.Object obj)
                 {
-                    if (!obj.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(obj.ParentSheetIndex))
+                    if (!obj.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(obj.ParentSheetIndex))
                     {
-                        var objData = new List<ObjectData>(Mod.instance.objects).Find(od => od.GetObjectId() == obj.ParentSheetIndex);
+                        var objData = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == obj.ParentSheetIndex);
                         if (objData != null && !objData.CanTrash)
                             __result = false;
                     }
@@ -64,18 +64,18 @@ namespace JsonAssets.Patches
             {
                 if (__instance is StardewValley.Object obj)
                 {
-                    if (!obj.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(obj.ParentSheetIndex))
+                    if (!obj.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(obj.ParentSheetIndex))
                     {
-                        var objData = new List<ObjectData>(Mod.instance.objects).Find(od => od.GetObjectId() == obj.ParentSheetIndex);
+                        var objData = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == obj.ParentSheetIndex);
                         if (objData != null && !objData.CanTrash)
                             __result = false;
                     }
                 }
                 else if (__instance is MeleeWeapon weapon)
                 {
-                    if (Mod.instance.weaponIds.Values.Contains(weapon.ParentSheetIndex))
+                    if (Mod.instance.WeaponIds.Values.Contains(weapon.ParentSheetIndex))
                     {
-                        var weaponData = new List<WeaponData>(Mod.instance.weapons).Find(wd => wd.GetWeaponId() == weapon.ParentSheetIndex);
+                        var weaponData = new List<WeaponData>(Mod.instance.Weapons).Find(wd => wd.GetWeaponId() == weapon.ParentSheetIndex);
                         if (weaponData != null && !weaponData.CanTrash)
                             __result = false;
                     }

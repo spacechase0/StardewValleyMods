@@ -1,10 +1,14 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using SpaceShared;
 using StardewValley;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class BigCraftableData : DataNeedsIdWithTexture
     {
         [JsonIgnore]
@@ -40,7 +44,7 @@ namespace JsonAssets.Data
                 foreach (var ingredient in this.Ingredients)
                     str += Mod.instance.ResolveObjectId(ingredient.Object) + " " + ingredient.Count + " ";
                 str = str.Substring(0, str.Length - 1);
-                str += $"/what is this for?/{parent.id} {this.ResultCount}/true/";
+                str += $"/what is this for?/{parent.Id} {this.ResultCount}/true/";
                 if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)
                     str += this.SkillUnlockName + " " + this.SkillUnlockLevel;
                 else
@@ -88,7 +92,7 @@ namespace JsonAssets.Data
             return this.DescriptionLocalization[currLang.ToString()];
         }
 
-        public int GetCraftableId() { return this.id; }
+        public int GetCraftableId() { return this.Id; }
 
         internal string GetCraftableInformation()
         {

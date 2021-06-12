@@ -10,7 +10,7 @@ using StardewValley.Objects;
 namespace JsonAssets.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Ring"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class RingPatcher : BasePatcher
     {
         /*********

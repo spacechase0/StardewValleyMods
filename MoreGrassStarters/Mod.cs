@@ -10,27 +10,27 @@ namespace MoreGrassStarters
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
             if (File.Exists(Path.Combine(this.Helper.DirectoryPath, "assets", "grass.png")))
             {
-                GrassStarterItem.tex2 = Mod.instance.Helper.Content.Load<Texture2D>("assets/grass.png");
+                GrassStarterItem.Tex2 = Mod.Instance.Helper.Content.Load<Texture2D>("assets/grass.png");
             }
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson == null)
                 return;

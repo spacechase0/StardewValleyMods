@@ -7,29 +7,29 @@ namespace PyromancersJourney.Objects
 {
     public class Floor : BaseObject
     {
-        private Texture2D texInside;
-        private Texture2D texOutside;
-        private VertexBuffer buffer;
-        private VertexBuffer bufferGlow;
-        private int triCount;
-        private int triCountGlow;
-        private bool outside;
+        private Texture2D TexInside;
+        private Texture2D TexOutside;
+        private VertexBuffer Buffer;
+        private VertexBuffer BufferGlow;
+        private int TriCount;
+        private int TriCountGlow;
+        private bool Outside;
 
         public Floor(World world, bool theOutside)
             : base(world)
         {
-            this.outside = theOutside;
-            this.texInside = Game1.content.Load<Texture2D>("Maps\\Mines\\volcano_dungeon");
-            this.texOutside = Game1.content.Load<Texture2D>("Maps\\Mines\\volcano_caldera");
-            float tx = 16f / this.texInside.Width;
-            float ty = 16f / this.texInside.Height;
+            this.Outside = theOutside;
+            this.TexInside = Game1.content.Load<Texture2D>("Maps\\Mines\\volcano_dungeon");
+            this.TexOutside = Game1.content.Load<Texture2D>("Maps\\Mines\\volcano_caldera");
+            float tx = 16f / this.TexInside.Width;
+            float ty = 16f / this.TexInside.Height;
             Vector2 t = new Vector2(tx, ty);
 
             var vertices = new List<VertexEverything>();
             var verticesGlow = new List<VertexEverything>();
-            for (int ix = 0; ix < world.map.Size.X; ++ix)
+            for (int ix = 0; ix < world.Map.Size.X; ++ix)
             {
-                for (int iy = 0; iy < world.map.Size.Y; ++iy)
+                for (int iy = 0; iy < world.Map.Size.Y; ++iy)
                 {
                     Vector2[][] texCoordMap = {
                         new[]
@@ -47,10 +47,10 @@ namespace PyromancersJourney.Objects
                             new Vector2( 0, 21 ) * t
                         }
                     };
-                    if (this.outside)
+                    if (this.Outside)
                     {
-                        float tx2 = 16f / this.texOutside.Width;
-                        float ty2 = 16f / this.texOutside.Height;
+                        float tx2 = 16f / this.TexOutside.Width;
+                        float ty2 = 16f / this.TexOutside.Height;
                         Vector2 t2 = new Vector2(tx2, ty2);
                         texCoordMap[0] = new[]
                         {
@@ -60,17 +60,17 @@ namespace PyromancersJourney.Objects
                             new Vector2( 1, 4 ) * t2
                         };
                     }
-                    int tile = (int)world.map.Floor[ix, iy];
+                    int tile = (int)world.Map.Floor[ix, iy];
 
 
                     float y = 0;
                     var targetVert = vertices;
-                    ref int tri = ref this.triCount;
+                    ref int tri = ref this.TriCount;
                     if (tile == (int)FloorTile.Lava)
                     {
                         y = -0.1f;
                         targetVert = verticesGlow;
-                        tri = ref this.triCountGlow;
+                        tri = ref this.TriCountGlow;
                     }
                     else
                     {
@@ -131,35 +131,35 @@ namespace PyromancersJourney.Objects
                 }
             }
 
-            this.buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexEverything), vertices.Count, BufferUsage.WriteOnly);
-            this.buffer.SetData(vertices.ToArray());
+            this.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexEverything), vertices.Count, BufferUsage.WriteOnly);
+            this.Buffer.SetData(vertices.ToArray());
 
-            this.bufferGlow = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexEverything), verticesGlow.Count, BufferUsage.WriteOnly);
-            this.bufferGlow.SetData(verticesGlow.ToArray());
+            this.BufferGlow = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexEverything), verticesGlow.Count, BufferUsage.WriteOnly);
+            this.BufferGlow.SetData(verticesGlow.ToArray());
         }
 
         public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
             base.Render(device, projection, cam);
             //effect.LightingEnabled = true;
-            BaseObject.effect.TextureEnabled = true;
-            BaseObject.effect.Texture = this.outside ? this.texOutside : this.texInside;
-            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.Effect.TextureEnabled = true;
+            BaseObject.Effect.Texture = this.Outside ? this.TexOutside : this.TexInside;
+            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
-                device.SetVertexBuffer(this.buffer);
-                device.DrawPrimitives(PrimitiveType.TriangleList, 0, this.triCount);
+                device.SetVertexBuffer(this.Buffer);
+                device.DrawPrimitives(PrimitiveType.TriangleList, 0, this.TriCount);
             }
 
-            BaseObject.effect.LightingEnabled = false;
-            BaseObject.effect.Texture = this.texInside;
-            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.Effect.LightingEnabled = false;
+            BaseObject.Effect.Texture = this.TexInside;
+            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
-                device.SetVertexBuffer(this.bufferGlow);
-                device.DrawPrimitives(PrimitiveType.TriangleList, 0, this.triCountGlow);
+                device.SetVertexBuffer(this.BufferGlow);
+                device.DrawPrimitives(PrimitiveType.TriangleList, 0, this.TriCountGlow);
             }
         }
     }

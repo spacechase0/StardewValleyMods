@@ -27,12 +27,12 @@ namespace Magic.Spells
             this.Seeking = seeking;
         }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return this.ManaBase;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             int dmg = (this.DamageBase + this.DamageIncr * level) * (player.CombatLevel + 1);
             float dir = (float)-Math.Atan2(player.getStandingY() - targetY, targetX - player.getStandingX());

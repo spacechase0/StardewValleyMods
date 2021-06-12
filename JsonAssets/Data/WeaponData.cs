@@ -1,11 +1,15 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Tools;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class WeaponData : DataNeedsIdWithTexture
     {
         [JsonConverter(typeof(StringEnumConverter))]
@@ -62,7 +66,7 @@ namespace JsonAssets.Data
             return this.DescriptionLocalization[currLang.ToString()];
         }
 
-        public int GetWeaponId() { return this.id; }
+        public int GetWeaponId() { return this.Id; }
 
         internal string GetWeaponInformation()
         {

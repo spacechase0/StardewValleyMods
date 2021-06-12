@@ -2,13 +2,14 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Spacechase.Shared.Harmony;
 using SpaceCore.Framework;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley.Menus;
 
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="LoadGameMenu"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class LoadGameMenuPatcher : BasePatcher
     {
         /*********

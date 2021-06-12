@@ -14,12 +14,12 @@ namespace Magic.Spells
         public ClearDebrisSpell()
             : base(SchoolId.Toil, "cleardebris") { }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             level += 1;
             targetX /= Game1.tileSize;
@@ -28,15 +28,15 @@ namespace Magic.Spells
 
             Tool dummyAxe = new Axe(); dummyAxe.UpgradeLevel = level;
             Tool dummyPick = new Pickaxe(); dummyPick.UpgradeLevel = level;
-            Mod.instance.Helper.Reflection.GetField<Farmer>(dummyAxe, "lastUser").SetValue(player);
-            Mod.instance.Helper.Reflection.GetField<Farmer>(dummyPick, "lastUser").SetValue(player);
+            Mod.Instance.Helper.Reflection.GetField<Farmer>(dummyAxe, "lastUser").SetValue(player);
+            Mod.Instance.Helper.Reflection.GetField<Farmer>(dummyPick, "lastUser").SetValue(player);
 
             GameLocation loc = player.currentLocation;
             for (int ix = targetX - level; ix <= targetX + level; ++ix)
             {
                 for (int iy = targetY - level; iy <= targetY + level; ++iy)
                 {
-                    if (player.getCurrentMana() <= 0)
+                    if (player.GetCurrentMana() <= 0)
                         return null;
 
                     Vector2 pos = new Vector2(ix, iy);
@@ -52,7 +52,7 @@ namespace Magic.Spells
                             }
                             obj.performRemoveAction(pos, loc);
                             loc.objects.Remove(pos);
-                            player.addMana(-3);
+                            player.AddMana(-3);
                             player.AddCustomSkillExperience(Magic.Skill, 1);
                         }
                         else
@@ -60,7 +60,7 @@ namespace Magic.Spells
                             float oldStam = player.stamina;
                             dummyPick.DoFunction(loc, ix * Game1.tileSize, iy * Game1.tileSize, 0, player);
                             player.stamina = oldStam;
-                            player.addMana(-3);
+                            player.AddMana(-3);
                             player.AddCustomSkillExperience(Magic.Skill, 1);
                         }
                     }
@@ -73,7 +73,7 @@ namespace Magic.Spells
                             TerrainFeature tf = loc.terrainFeatures[pos];
                             if (tf is Tree)
                             {
-                                player.addMana(-3);
+                                player.AddMana(-3);
                             }
                             if (tf.performToolAction(dummyAxe, 0, pos, loc) || tf is Grass || (tf is Tree && tf.performToolAction(dummyAxe, 0, pos, loc)))
                             {
@@ -108,7 +108,7 @@ namespace Magic.Spells
                             {
                                 if (new Rectangle((int)rc.tile.X, (int)rc.tile.Y, rc.width.Value, rc.height.Value).Contains(ix, iy))
                                 {
-                                    player.addMana(-3);
+                                    player.AddMana(-3);
                                     if (rc.performToolAction(dummyAxe, 1, pos, loc) || rc.performToolAction(dummyPick, 1, pos, loc))
                                     {
                                         clumps.Remove(rc);

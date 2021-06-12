@@ -7,10 +7,10 @@ namespace BiggerJunimoChest
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             HarmonyPatcher.Apply(this,

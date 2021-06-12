@@ -20,16 +20,16 @@ namespace SpaceCore
 
     public static class Commands
     {
-        internal static void register()
+        internal static void Register()
         {
-            Command.register("player_giveexp", Commands.expCommand);
-            Command.register("asset_invalidate", Commands.invalidateCommand);
-            Command.register("exttilesheets_dump", Commands.dumpTilesheetsCommand);
+            Command.Register("player_giveexp", Commands.ExpCommand);
+            Command.Register("asset_invalidate", Commands.InvalidateCommand);
+            Command.Register("exttilesheets_dump", Commands.DumpTilesheetsCommand);
             //Command.register( "test", ( args ) => Game1.player.addItemByMenuIfNecessary( new TestObject() ) );
             //SpaceCore.modTypes.Add( typeof( TestObject ) );
         }
 
-        private static void expCommand(string[] args)
+        private static void ExpCommand(string[] args)
         {
             if (args.Length != 2)
             {
@@ -59,7 +59,7 @@ namespace SpaceCore
             }
         }
 
-        private static void invalidateCommand(string[] args)
+        private static void InvalidateCommand(string[] args)
         {
             if (args.Length == 0)
             {
@@ -68,13 +68,13 @@ namespace SpaceCore
 
             foreach (string arg in args)
             {
-                SpaceCore.instance.Helper.Content.InvalidateCache(arg);
+                SpaceCore.Instance.Helper.Content.InvalidateCache(arg);
             }
         }
 
-        private static void dumpTilesheetsCommand(string[] args)
+        private static void DumpTilesheetsCommand(string[] args)
         {
-            foreach (var asset in TileSheetExtensions.extendedTextureAssets)
+            foreach (var asset in TileSheetExtensions.ExtendedTextureAssets)
             {
                 Log.Info($"Dumping for asset {asset.Key} (has {asset.Value.Extensions.Count} extensions)");
                 Stream stream = File.OpenWrite(Path.GetFileNameWithoutExtension(asset.Key) + "-0.png");

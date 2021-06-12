@@ -10,22 +10,22 @@ namespace Magic
         public TeleportSpell()
             : base(SchoolId.Elemental, "teleport") { }
 
-        public override int getMaxCastingLevel()
+        public override int GetMaxCastingLevel()
         {
             return 1;
         }
 
-        public override bool canCast(Farmer player, int level)
+        public override bool CanCast(Farmer player, int level)
         {
-            return base.canCast(player, level) && player.currentLocation.IsOutdoors && player.mount == null && player.hasItemInInventory(Mod.ja.GetObjectId("Travel Core"), 1);
+            return base.CanCast(player, level) && player.currentLocation.IsOutdoors && player.mount == null && player.hasItemInInventory(Mod.Ja.GetObjectId("Travel Core"), 1);
         }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             Game1.activeClickableMenu = new TeleportMenu();
             return null;

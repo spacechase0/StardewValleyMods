@@ -2,13 +2,14 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 
 namespace CombatLevelDamageScaler.Patches
 {
-    /// <summary>Applies Harmony patches to <see cref="TODO"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    /// <summary>Applies Harmony patches to <see cref="GameLocation"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class GameLocationPatcher : BasePatcher
     {
         /*********

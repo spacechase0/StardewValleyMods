@@ -12,37 +12,37 @@ namespace AnotherHungerMod
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
         public static Configuration Config;
         internal static SaveData Data;
 
-        public const string MSG_HUNGERDATA = "HungerData";
+        public const string MsgHungerData = "HungerData";
 
-        private Texture2D hungerBar;
+        private Texture2D HungerBar;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             Mod.Config = helper.ReadConfig<Configuration>();
-            this.hungerBar = helper.Content.Load<Texture2D>("assets/hungerbar.png");
+            this.HungerBar = helper.Content.Load<Texture2D>("assets/hungerbar.png");
 
-            helper.ConsoleCommands.Add("player_addfullness", "Add to your fullness", this.commands);
+            helper.ConsoleCommands.Add("player_addfullness", "Add to your fullness", this.Commands);
 
-            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
-            helper.Events.Display.RenderedHud += this.renderHungerBar;
-            SpaceEvents.AfterGiftGiven += this.onGiftGiven;
-            SpaceEvents.OnItemEaten += this.onItemEaten;
-            helper.Events.GameLoop.DayEnding += this.checkFedSpouse;
-            helper.Events.GameLoop.UpdateTicked += this.afterTick;
-            helper.Events.GameLoop.TimeChanged += this.timeChanged;
-            helper.Events.GameLoop.SaveLoaded += this.onSaveLoaded;
-            helper.Events.Multiplayer.PeerContextReceived += this.onPeerContextReceived;
-            helper.Events.Multiplayer.ModMessageReceived += this.onModMessageReceived;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Display.RenderedHud += this.RenderHungerBar;
+            SpaceEvents.AfterGiftGiven += this.OnGiftGiven;
+            SpaceEvents.OnItemEaten += this.OnItemEaten;
+            helper.Events.GameLoop.DayEnding += this.CheckFedSpouse;
+            helper.Events.GameLoop.UpdateTicked += this.AfterTick;
+            helper.Events.GameLoop.TimeChanged += this.TimeChanged;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.Multiplayer.PeerContextReceived += this.OnPeerContextReceived;
+            helper.Events.Multiplayer.ModMessageReceived += this.OnModMessageReceived;
         }
 
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
@@ -60,7 +60,7 @@ namespace AnotherHungerMod
             }
         }
 
-        private void commands(string cmd, string[] args)
+        private void Commands(string cmd, string[] args)
         {
             if (cmd == "player_addfullness")
             {
@@ -71,7 +71,7 @@ namespace AnotherHungerMod
             }
         }
 
-        private void renderHungerBar(object sender, RenderedHudEventArgs e)
+        private void RenderHungerBar(object sender, RenderedHudEventArgs e)
         {
             if (!Context.IsWorldReady || Game1.activeClickableMenu != null || Game1.eventUp)
                 return;
@@ -79,7 +79,7 @@ namespace AnotherHungerMod
             SpriteBatch b = e.SpriteBatch;
 
             Vector2 pos = new Vector2(Mod.Config.FullnessUiX, Mod.Config.FullnessUiY);
-            b.Draw(this.hungerBar, pos, new Rectangle(0, 0, this.hungerBar.Width, this.hungerBar.Height), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1);
+            b.Draw(this.HungerBar, pos, new Rectangle(0, 0, this.HungerBar.Width, this.HungerBar.Height), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1);
             if (Game1.player.GetFullness() > 0)
             {
                 Rectangle targetArea = new Rectangle(3, 13, 6, 41);
@@ -103,7 +103,7 @@ namespace AnotherHungerMod
 
         }
 
-        private void onItemEaten(object sender, EventArgs e)
+        private void OnItemEaten(object sender, EventArgs e)
         {
             if (sender != Game1.player)
                 return;
@@ -113,7 +113,7 @@ namespace AnotherHungerMod
             Game1.player.UseFullness(-foodVal);
         }
 
-        private void onGiftGiven(object sender, EventArgsGiftGiven e)
+        private void OnGiftGiven(object sender, EventArgsGiftGiven e)
         {
             if (sender != Game1.player)
                 return;
@@ -128,7 +128,7 @@ namespace AnotherHungerMod
             }
         }
 
-        private void checkFedSpouse(object sender, DayEndingEventArgs e)
+        private void CheckFedSpouse(object sender, DayEndingEventArgs e)
         {
             if (Game1.player.HasFedSpouse() && Game1.player.getSpouse() != null)
             {
@@ -142,7 +142,7 @@ namespace AnotherHungerMod
             }
         }
 
-        private void afterTick(object sender, UpdateTickedEventArgs e)
+        private void AfterTick(object sender, UpdateTickedEventArgs e)
         {
             if (!Context.IsWorldReady)
                 return;
@@ -180,7 +180,7 @@ namespace AnotherHungerMod
             }
         }
 
-        private void timeChanged(object sender, TimeChangedEventArgs e)
+        private void TimeChanged(object sender, TimeChangedEventArgs e)
         {
             int hourDiff = e.NewTime / 100 - e.NewTime / 100;
             int minDiff = e.NewTime % 100 - e.OldTime % 100;
@@ -203,7 +203,7 @@ namespace AnotherHungerMod
             }
         }
 
-        private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             if (Context.IsMainPlayer)
             {
@@ -211,18 +211,18 @@ namespace AnotherHungerMod
             }
         }
 
-        private void onPeerContextReceived(object sender, PeerContextReceivedEventArgs e)
+        private void OnPeerContextReceived(object sender, PeerContextReceivedEventArgs e)
         {
             if (!Game1.IsServer)
                 return;
             //Log.debug($"Sending hunger data to {e.Peer.PlayerID}");
             var data = this.Helper.Data.ReadSaveData<SaveData>($"spacechase0.AnotherHungerMod.{e.Peer.PlayerID}") ?? new SaveData();
-            this.Helper.Multiplayer.SendMessage(data, Mod.MSG_HUNGERDATA, null, new[] { e.Peer.PlayerID });
+            this.Helper.Multiplayer.SendMessage(data, Mod.MsgHungerData, null, new[] { e.Peer.PlayerID });
         }
 
-        private void onModMessageReceived(object sender, ModMessageReceivedEventArgs e)
+        private void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e)
         {
-            if (e.FromModID == this.ModManifest.UniqueID && e.Type == Mod.MSG_HUNGERDATA)
+            if (e.FromModID == this.ModManifest.UniqueID && e.Type == Mod.MsgHungerData)
             {
                 //Log.debug($"Got hunger data from {e.FromPlayerID}");
                 var data = e.ReadAs<SaveData>();

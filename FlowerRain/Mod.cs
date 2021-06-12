@@ -15,10 +15,10 @@ namespace FlowerRain
 {
     public class Mod : StardewModdingAPI.Mod, IAssetLoader
     {
-        public static Mod instance;
-        public static Config config;
-        private readonly Dictionary<string, List<FlowerData>> fd = new();
-        private Texture2D invisibleRain;
+        public static Mod Instance;
+        public static Config Config;
+        private readonly Dictionary<string, List<FlowerData>> Fd = new();
+        private Texture2D InvisibleRain;
 
         public bool CanLoad<T>(IAssetInfo asset)
         {
@@ -27,45 +27,45 @@ namespace FlowerRain
 
         public T Load<T>(IAssetInfo asset)
         {
-            return (T)(object)this.invisibleRain;
+            return (T)(object)this.InvisibleRain;
         }
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            Mod.config = helper.ReadConfig<Config>();
+            Mod.Config = helper.ReadConfig<Config>();
 
-            helper.Events.GameLoop.GameLaunched += this.gameLaunched;
+            helper.Events.GameLoop.GameLaunched += this.GameLaunched;
 
             // https://stackoverflow.com/a/9664937/1687492
             Color[] transparent = Enumerable.Range(0, 256 * 64).Select(p => Color.Transparent).ToArray();
-            this.invisibleRain = new Texture2D(Game1.graphics.GraphicsDevice, 256, 64);
-            this.invisibleRain.SetData(transparent);
+            this.InvisibleRain = new Texture2D(Game1.graphics.GraphicsDevice, 256, 64);
+            this.InvisibleRain.SetData(transparent);
 
             this.BuildFlowerData(useWhitelist: true);
 
             HarmonyPatcher.Apply(this,
-                new Game1Patcher(this.fd)
+                new Game1Patcher(this.Fd)
             );
         }
 
-        private void gameLaunched(object sender, GameLaunchedEventArgs e)
+        private void GameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (gmcm != null)
             {
-                gmcm.RegisterModConfig(this.ModManifest, () => Mod.config = new Config(), () => this.Helper.WriteConfig(Mod.config));
+                gmcm.RegisterModConfig(this.ModManifest, () => Mod.Config = new Config(), () => this.Helper.WriteConfig(Mod.Config));
                 gmcm.RegisterSimpleOption(
                     this.ModManifest,
                     "Use Vanilla Flowers Only",
                     "Only use vanilla flowers in the flower rain",
-                    () => Mod.config.VanillaFlowersOnly,
+                    () => Mod.Config.VanillaFlowersOnly,
                     b =>
                     {
-                        Mod.config.VanillaFlowersOnly = b;
-                        if (Mod.config.VanillaFlowersOnly)
+                        Mod.Config.VanillaFlowersOnly = b;
+                        if (Mod.Config.VanillaFlowersOnly)
                             this.BuildFlowerData(useWhitelist: true);
                     });
             }
@@ -73,13 +73,13 @@ namespace FlowerRain
             var ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
             if (ja != null)
             {
-                ja.IdsAssigned += this.jaIdsAssigned;
+                ja.IdsAssigned += this.JaIdsAssigned;
             }
         }
 
-        private void jaIdsAssigned(object sender, EventArgs e)
+        private void JaIdsAssigned(object sender, EventArgs e)
         {
-            if (!Mod.config.VanillaFlowersOnly)
+            if (!Mod.Config.VanillaFlowersOnly)
             {
                 this.BuildFlowerData(useWhitelist: false);
             }
@@ -87,8 +87,8 @@ namespace FlowerRain
 
         internal struct FlowerData
         {
-            public int index;
-            public Color color;
+            public int Index;
+            public Color Color;
         }
 
         private void BuildFlowerData(bool useWhitelist)
@@ -132,8 +132,8 @@ namespace FlowerRain
                 {
                     FlowerData fd = new FlowerData()
                     {
-                        index = product,
-                        color = col,
+                        Index = product,
+                        Color = col,
                     };
 
                     foreach (string season in seasons)
@@ -149,11 +149,11 @@ namespace FlowerRain
                 }
             }
 
-            this.fd.Clear();
-            this.fd.Add("spring", spring);
-            this.fd.Add("summer", summer);
-            this.fd.Add("fall", fall);
-            this.fd.Add("winter", winter);
+            this.Fd.Clear();
+            this.Fd.Add("spring", spring);
+            this.Fd.Add("summer", summer);
+            this.Fd.Add("fall", fall);
+            this.Fd.Add("winter", winter);
         }
     }
 }

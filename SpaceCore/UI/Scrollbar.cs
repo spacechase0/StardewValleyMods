@@ -20,7 +20,7 @@ namespace SpaceCore.UI
 
         public float ScrollPercent => (this.MaxTopRow > 0) ? this.TopRow / (float)this.MaxTopRow : 0f;
 
-        private bool dragScroll;
+        private bool DragScroll;
 
         public void ScrollBy(int amount)
         {
@@ -49,11 +49,11 @@ namespace SpaceCore.UI
             base.Update(hidden);
 
             if (this.Clicked)
-                this.dragScroll = true;
-            if (this.dragScroll && Mouse.GetState().LeftButton == ButtonState.Released)
-                this.dragScroll = false;
+                this.DragScroll = true;
+            if (this.DragScroll && Mouse.GetState().LeftButton == ButtonState.Released)
+                this.DragScroll = false;
 
-            if (this.dragScroll)
+            if (this.DragScroll)
             {
                 int my = Game1.getMouseY();
                 int relY = (int)(my - this.Position.Y - 40 / 2);

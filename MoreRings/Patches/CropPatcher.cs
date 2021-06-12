@@ -12,7 +12,7 @@ using StardewValley;
 namespace MoreRings.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Crop"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class CropPatcher : BasePatcher
     {
         /*********
@@ -75,7 +75,7 @@ namespace MoreRings.Patches
 
         private static void ModifyCropQuality(Random rand, ref int quality)
         {
-            if (rand.NextDouble() < Mod.instance.hasRingEquipped(Mod.instance.Ring_Quality) * 0.125)
+            if (rand.NextDouble() < Mod.Instance.HasRingEquipped(Mod.Instance.RingQuality) * 0.125)
             {
                 if (++quality == 3)
                     ++quality;

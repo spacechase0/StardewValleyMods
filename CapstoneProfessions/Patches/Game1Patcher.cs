@@ -4,13 +4,14 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 
 namespace CapstoneProfessions.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Game1"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class Game1Patcher : BasePatcher
     {
         /*********
@@ -50,7 +51,7 @@ namespace CapstoneProfessions.Patches
             float mult = 1;
             foreach (var player in Game1.getAllFarmers())
             {
-                if (player.professions.Contains(Mod.PROFESSION_TIME))
+                if (player.professions.Contains(Mod.ProfessionTime))
                 {
                     mult += 0.2f;
                 }

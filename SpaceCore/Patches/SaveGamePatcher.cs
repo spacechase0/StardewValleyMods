@@ -19,7 +19,7 @@ using StardewValley.Menus;
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="SaveGame"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class SaveGamePatcher : BasePatcher
     {
         /*********
@@ -156,7 +156,7 @@ namespace SpaceCore.Patches
         private static void Before_Load(string filename)
         {
             SaveGamePatcher.SerializerManager.InitializeSerializers();
-            SaveGamePatcher.SerializerManager.loadFileContext = filename;
+            SaveGamePatcher.SerializerManager.LoadFileContext = filename;
         }
 
         /// <summary>The method to call before <see cref="SaveGame.Save"/>.</summary>
@@ -260,7 +260,7 @@ namespace SpaceCore.Patches
         ****/
         private static Type FindModType(string xmlType)
         {
-            return SpaceCore.modTypes.SingleOrDefault(t => t.GetCustomAttribute<XmlTypeAttribute>().TypeName == xmlType);
+            return SpaceCore.ModTypes.SingleOrDefault(t => t.GetCustomAttribute<XmlTypeAttribute>().TypeName == xmlType);
         }
 
         private static void RestoreModNodes(XmlDocument doc, XmlNode node, List<KeyValuePair<string, string>> modNodes, string currPath = "")
@@ -310,7 +310,7 @@ namespace SpaceCore.Patches
             string filePath = null;
             if (fromSaveGame)
             {
-                farmerPath = Path.Combine(Constants.SavesPath, SaveGamePatcher.SerializerManager.loadFileContext);
+                farmerPath = Path.Combine(Constants.SavesPath, SaveGamePatcher.SerializerManager.LoadFileContext);
                 if (serializer == SaveGame.farmerSerializer)
                     filePath = Path.Combine(farmerPath, SaveGamePatcher.SerializerManager.FarmerFilename);
                 else

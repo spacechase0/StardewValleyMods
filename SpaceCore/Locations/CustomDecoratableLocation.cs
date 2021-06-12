@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
+using SpaceShared;
 using StardewValley.Locations;
 
 namespace SpaceCore.Locations
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public abstract class CustomDecoratableLocation : DecoratableLocation
     {
         public new abstract List<Rectangle> getWalls();
@@ -38,6 +42,7 @@ namespace SpaceCore.Locations
                 this.floor.Add(0);
             }
         }
+
         protected override void doSetVisibleWallpaper(int whichRoom, int which)
         {
             List<Rectangle> rooms = this.getWalls();

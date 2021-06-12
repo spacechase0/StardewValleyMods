@@ -6,6 +6,7 @@ using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
@@ -13,7 +14,7 @@ using StardewValley.Menus;
 namespace JsonAssets.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="ForgeMenu"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class ForgeMenuPatcher : BasePatcher
     {
         /*********
@@ -53,11 +54,11 @@ namespace JsonAssets.Patches
             if (left_item == null || right_item == null)
                 return true;
 
-            foreach (var recipe in Mod.instance.forge)
+            foreach (var recipe in Mod.instance.Forge)
             {
                 if (left_item.Name == recipe.BaseItemName &&
                     right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
-                    Mod.instance.epu.CheckConditions(recipe.AbleToForgeConditions))
+                    Mod.instance.Epu.CheckConditions(recipe.AbleToForgeConditions))
                 {
                     __result = true;
                     return false;
@@ -73,11 +74,11 @@ namespace JsonAssets.Patches
             if (left_item == null || right_item == null)
                 return true;
 
-            foreach (var recipe in Mod.instance.forge)
+            foreach (var recipe in Mod.instance.Forge)
             {
                 if (left_item.Name == recipe.BaseItemName &&
                     right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
-                    Mod.instance.epu.CheckConditions(recipe.AbleToForgeConditions))
+                    Mod.instance.Epu.CheckConditions(recipe.AbleToForgeConditions))
                 {
                     __result = Utility.fuzzyItemSearch(recipe.ResultItemName);
                     return false;
@@ -93,11 +94,11 @@ namespace JsonAssets.Patches
             if (left_item == null || right_item == null)
                 return true;
 
-            foreach (var recipe in Mod.instance.forge)
+            foreach (var recipe in Mod.instance.Forge)
             {
                 if (left_item.Name == recipe.BaseItemName &&
                     right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
-                    Mod.instance.epu.CheckConditions(recipe.AbleToForgeConditions))
+                    Mod.instance.Epu.CheckConditions(recipe.AbleToForgeConditions))
                 {
                     __result = recipe.CinderShardCost;
                     return false;

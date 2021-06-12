@@ -8,33 +8,33 @@ namespace Terraforming
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
 
-            helper.ConsoleCommands.Add("terraform", "TODO", this.terraformCommand);
+            helper.ConsoleCommands.Add("terraform", "TODO", this.TerraformCommand);
         }
 
-        private void terraformCommand(string cmd, string[] args)
+        private void TerraformCommand(string cmd, string[] args)
         {
             if (!Context.IsWorldReady)
             {
-                Log.info("World must be ready");
+                Log.Info("World must be ready");
                 return;
             }
             if (Game1.eventUp)
             {
-                Log.info("Probably shouldn't do this during an event");
+                Log.Info("Probably shouldn't do this during an event");
             }
 
-            Log.info("Starting up...");
-            Mod.sterilizeMap();
+            Log.Info("Starting up...");
+            Mod.SterilizeMap();
             Game1.activeClickableMenu = new TerraformingMenu();
         }
 
-        internal static void sterilizeMap(GameLocation loc = null)
+        internal static void SterilizeMap(GameLocation loc = null)
         {
             if (loc == null)
                 loc = Game1.currentLocation;
@@ -44,7 +44,7 @@ namespace Terraforming
                 throw new NotSupportedException("Location must be outdoors");
             */
 
-            Log.trace("Creating sterile map...");
+            Log.Trace("Creating sterile map...");
             Map map = new Map();
             map.Id = loc.Map.Id + ".Terraform";
             foreach (var prop in loc.Map.Properties)
@@ -63,7 +63,7 @@ namespace Terraforming
             {
                 var newLayer = new Layer(layer.Id, map, layer.LayerSize, layer.TileSize);
                 if (newLayer.Id == "Back" || newLayer.Id == "Buildings" || newLayer.Id == "Front" || newLayer.Id == "AlwaysFront")
-                    newLayer.AfterDraw += Mod.drawTerraformLayer;
+                    newLayer.AfterDraw += Mod.DrawTerraformLayer;
                 if (newLayer.Id == "Back")
                 {
                     for (int ix = 0; ix < newLayer.LayerWidth; ix++)
@@ -78,7 +78,7 @@ namespace Terraforming
                 map.AddLayer(newLayer);
             }
 
-            Log.trace("Replacing location's map with sterile map.");
+            Log.Trace("Replacing location's map with sterile map.");
             loc.Map = map;
             loc.Map.LoadTileSheets(Game1.mapDisplayDevice);
             if (loc.waterTiles != null)
@@ -92,7 +92,7 @@ namespace Terraforming
             }
         }
 
-        private static void drawTerraformLayer(object sender, LayerEventArgs e)
+        private static void DrawTerraformLayer(object sender, LayerEventArgs e)
         {
             foreach (var layer in e.Layer.Map.Layers)
             {

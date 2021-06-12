@@ -1,11 +1,15 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using SpaceShared;
 using StardewValley;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class ClothingData : DataSeparateTextureIndex
     {
         [JsonIgnore]
@@ -46,7 +50,7 @@ namespace JsonAssets.Data
             return this.DescriptionLocalization[currLang.ToString()];
         }
 
-        public int GetClothingId() { return this.id; }
+        public int GetClothingId() { return this.Id; }
         public int GetMaleIndex() { return this.textureIndex; }
         public int GetFemaleIndex() { return this.HasFemaleVariant ? (this.textureIndex + 1) : -1; }
 

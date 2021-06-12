@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Network;
@@ -8,7 +9,7 @@ using StardewValley.Network;
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Multiplayer"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class MultiplayerPatcher : BasePatcher
     {
         /*********
@@ -35,8 +36,8 @@ namespace SpaceCore.Patches
             if (msg.MessageType == 234)
             {
                 string msgType = msg.Reader.ReadString();
-                if (Networking.messageHandlers.ContainsKey(msgType))
-                    Networking.messageHandlers[msgType].Invoke(msg);
+                if (Networking.MessageHandlers.ContainsKey(msgType))
+                    Networking.MessageHandlers[msgType].Invoke(msg);
 
                 if (Game1.IsServer)
                 {

@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.TerrainFeatures;
@@ -9,7 +10,7 @@ using StardewValley.TerrainFeatures;
 namespace TheftOfTheWinterStar.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="HoeDirt"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class HoeDirtPatcher : BasePatcher
     {
         /*********
@@ -40,7 +41,7 @@ namespace TheftOfTheWinterStar.Patches
             if (isFertilizer)
                 return true;
 
-            int seasonalDelimiter = Mod.ja.GetBigCraftableId("Tempus Globe");
+            int seasonalDelimiter = Mod.Ja.GetBigCraftableId("Tempus Globe");
 
             var loc = Game1.currentLocation;
             for (int ix = -2; ix <= 2; ++ix)
@@ -76,7 +77,7 @@ namespace TheftOfTheWinterStar.Patches
             if (isFertilizer)
                 return true;
 
-            int seasonalDelimiter = Mod.ja.GetBigCraftableId("Tempus Globe");
+            int seasonalDelimiter = Mod.Ja.GetBigCraftableId("Tempus Globe");
 
             bool foundDelimiter = false;
             for (int ix = -2; ix <= 2; ++ix)

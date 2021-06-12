@@ -11,22 +11,22 @@ namespace Magic.Spells
         public LuckStealSpell()
             : base(SchoolId.Eldritch, "lucksteal") { }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override int getMaxCastingLevel()
+        public override int GetMaxCastingLevel()
         {
             return 1;
         }
 
-        public override bool canCast(Farmer player, int level)
+        public override bool CanCast(Farmer player, int level)
         {
-            return base.canCast(player, level) && player.team.sharedDailyLuck.Value != 0.12;
+            return base.CanCast(player, level) && player.team.sharedDailyLuck.Value != 0.12;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             int num = Game1.random.Next(player.friendshipData.Count());
             var friendshipData = player.friendshipData[new List<string>(player.friendshipData.Keys)[num]];

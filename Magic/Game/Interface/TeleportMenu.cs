@@ -10,42 +10,42 @@ namespace Magic.Game.Interface
 {
     public class TeleportMenu : IClickableMenu
     {
-        public const int WINDOW_WIDTH = 640;
-        public const int WINDOW_HEIGHT = 480;
+        public const int WindowWidth = 640;
+        public const int WindowHeight = 480;
 
-        public const int ELEM_HEIGHT = 50;
-        public const int EDGE_PAD = 16;
+        public const int ElemHeight = 50;
+        public const int EdgePad = 16;
 
-        private List<string> locs = new();
-        private string warpTo;
+        private List<string> Locs = new();
+        private string WarpTo;
 
-        private int scroll;
-        private Rectangle scrollbarBack;
-        private Rectangle scrollbar;
+        private int Scroll;
+        private Rectangle ScrollbarBack;
+        private Rectangle Scrollbar;
 
-        private bool dragScroll;
+        private bool DragScroll;
 
         public TeleportMenu()
-            : base((Game1.viewport.Width - TeleportMenu.WINDOW_WIDTH) / 2, (Game1.viewport.Height - TeleportMenu.WINDOW_HEIGHT) / 2, TeleportMenu.WINDOW_WIDTH, TeleportMenu.WINDOW_HEIGHT)
+            : base((Game1.viewport.Width - TeleportMenu.WindowWidth) / 2, (Game1.viewport.Height - TeleportMenu.WindowHeight) / 2, TeleportMenu.WindowWidth, TeleportMenu.WindowHeight)
         {
             foreach (var loc in Game1.locations)
             {
                 if (loc.IsOutdoors && !(loc.Name.StartsWith("SDM") && loc.Name.EndsWith("Farm")))
-                    this.locs.Add(loc.Name);
+                    this.Locs.Add(loc.Name);
             }
 
-            int x = this.xPositionOnScreen + 12, y = this.yPositionOnScreen + 12, w = TeleportMenu.WINDOW_WIDTH - 24, h = TeleportMenu.WINDOW_HEIGHT - 24;
-            this.scrollbarBack = new Rectangle(x + w - Game1.pixelZoom * 6, y, Game1.pixelZoom * 6, h);
-            this.scrollbar = new Rectangle(this.scrollbarBack.X + 2, this.scrollbarBack.Y + 2, 6 * Game1.pixelZoom - 4, (int)((5.0 / this.locs.Count) * this.scrollbarBack.Height) - 4);
+            int x = this.xPositionOnScreen + 12, y = this.yPositionOnScreen + 12, w = TeleportMenu.WindowWidth - 24, h = TeleportMenu.WindowHeight - 24;
+            this.ScrollbarBack = new Rectangle(x + w - Game1.pixelZoom * 6, y, Game1.pixelZoom * 6, h);
+            this.Scrollbar = new Rectangle(this.ScrollbarBack.X + 2, this.ScrollbarBack.Y + 2, 6 * Game1.pixelZoom - 4, (int)((5.0 / this.Locs.Count) * this.ScrollbarBack.Height) - 4);
         }
 
         public override void update(GameTime time)
         {
             base.update(time);
 
-            if (this.warpTo != null)
+            if (this.WarpTo != null)
             {
-                var locObj = Game1.getLocationFromName(this.warpTo);
+                var locObj = Game1.getLocationFromName(this.WarpTo);
                 int mapW = locObj.Map.Layers[0].LayerWidth;
                 int mapH = locObj.map.Layers[0].LayerHeight;
 
@@ -61,28 +61,28 @@ namespace Magic.Game.Interface
                 Game1.activeClickableMenu = null;
 
                 Game1.playSound("wand");
-                Game1.warpFarmer(this.warpTo, (int)cloud.getTileLocation().X, (int)cloud.getTileLocation().Y, false);
-                Game1.player.consumeObject(Mod.ja.GetObjectId("Travel Core"), 1);
+                Game1.warpFarmer(this.WarpTo, (int)cloud.getTileLocation().X, (int)cloud.getTileLocation().Y, false);
+                Game1.player.consumeObject(Mod.Ja.GetObjectId("Travel Core"), 1);
                 Game1.player.AddCustomSkillExperience(Magic.Skill, 25);
             }
 
-            if (this.dragScroll)
+            if (this.DragScroll)
             {
                 int my = Game1.getMouseY();
-                int relY = my - (this.scrollbarBack.Y + 2 + this.scrollbar.Height / 2);
+                int relY = my - (this.ScrollbarBack.Y + 2 + this.Scrollbar.Height / 2);
                 relY = Math.Max(0, relY);
-                relY = Math.Min(relY, this.scrollbarBack.Height - 4 - this.scrollbar.Height);
-                float percY = relY / (this.scrollbarBack.Height - 4f - this.scrollbar.Height);
-                int totalY = this.locs.Count * TeleportMenu.ELEM_HEIGHT - (TeleportMenu.WINDOW_HEIGHT - 24) + 16;
-                this.scroll = -(int)(totalY * percY);
+                relY = Math.Min(relY, this.ScrollbarBack.Height - 4 - this.Scrollbar.Height);
+                float percY = relY / (this.ScrollbarBack.Height - 4f - this.Scrollbar.Height);
+                int totalY = this.Locs.Count * TeleportMenu.ElemHeight - (TeleportMenu.WindowHeight - 24) + 16;
+                this.Scroll = -(int)(totalY * percY);
             }
         }
 
         public override void draw(SpriteBatch b)
         {
-            IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, TeleportMenu.WINDOW_WIDTH, TeleportMenu.WINDOW_HEIGHT, Color.White);
+            IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, TeleportMenu.WindowWidth, TeleportMenu.WindowHeight, Color.White);
 
-            int x = this.xPositionOnScreen + 12, y = this.yPositionOnScreen + 12, w = TeleportMenu.WINDOW_WIDTH - 24, h = TeleportMenu.WINDOW_HEIGHT - 24;
+            int x = this.xPositionOnScreen + 12, y = this.yPositionOnScreen + 12, w = TeleportMenu.WindowWidth - 24, h = TeleportMenu.WindowHeight - 24;
 
             b.End();
             RasterizerState state = new RasterizerState();
@@ -90,43 +90,43 @@ namespace Magic.Game.Interface
             b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, state);
             b.GraphicsDevice.ScissorRectangle = new Rectangle(x, y, w, h);
             {
-                int iy = y + TeleportMenu.EDGE_PAD;
-                iy += this.scroll;
-                foreach (string loc in this.locs)
+                int iy = y + TeleportMenu.EdgePad;
+                iy += this.Scroll;
+                foreach (string loc in this.Locs)
                 {
-                    Rectangle area = new Rectangle(x, iy - 4, w - this.scrollbarBack.Width, TeleportMenu.ELEM_HEIGHT);
+                    Rectangle area = new Rectangle(x, iy - 4, w - this.ScrollbarBack.Width, TeleportMenu.ElemHeight);
                     if (area.Contains(Game1.getMouseX(), Game1.getMouseY()))
                     {
                         b.Draw(Game1.staminaRect, area, new Color(200, 32, 32, 64));
-                        if (this.justClicked)
+                        if (this.JustClicked)
                         {
-                            this.warpTo = loc;
+                            this.WarpTo = loc;
                         }
                     }
 
-                    b.DrawString(Game1.dialogueFont, loc, new Vector2(x + TeleportMenu.EDGE_PAD, iy), Color.Black);
+                    b.DrawString(Game1.dialogueFont, loc, new Vector2(x + TeleportMenu.EdgePad, iy), Color.Black);
 
-                    iy += TeleportMenu.ELEM_HEIGHT;
+                    iy += TeleportMenu.ElemHeight;
                 }
             }
             b.End();
             b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
 
-            if (this.locs.Count > h / TeleportMenu.ELEM_HEIGHT)
+            if (this.Locs.Count > h / TeleportMenu.ElemHeight)
             {
-                this.scrollbar.Y = this.scrollbarBack.Y + 2 + (int)(((this.scroll / (float)-TeleportMenu.ELEM_HEIGHT) / (this.locs.Count - (h - 20) / (float)TeleportMenu.ELEM_HEIGHT)) * (this.scrollbarBack.Height - this.scrollbar.Height));
+                this.Scrollbar.Y = this.ScrollbarBack.Y + 2 + (int)(((this.Scroll / (float)-TeleportMenu.ElemHeight) / (this.Locs.Count - (h - 20) / (float)TeleportMenu.ElemHeight)) * (this.ScrollbarBack.Height - this.Scrollbar.Height));
 
-                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollbarBack.X, this.scrollbarBack.Y, this.scrollbarBack.Width, this.scrollbarBack.Height, Color.DarkGoldenrod, Game1.pixelZoom, false);
-                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollbar.X, this.scrollbar.Y, this.scrollbar.Width, this.scrollbar.Height, Color.Gold, Game1.pixelZoom, false);
+                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.ScrollbarBack.X, this.ScrollbarBack.Y, this.ScrollbarBack.Width, this.ScrollbarBack.Height, Color.DarkGoldenrod, Game1.pixelZoom, false);
+                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.Scrollbar.X, this.Scrollbar.Y, this.Scrollbar.Width, this.Scrollbar.Height, Color.Gold, Game1.pixelZoom, false);
             }
 
-            this.justClicked = false;
+            this.JustClicked = false;
 
             base.draw(b);
             this.drawMouse(b);
         }
 
-        private bool justClicked;
+        private bool JustClicked;
 
         public object ReflectGame1 { get; private set; }
 
@@ -134,13 +134,13 @@ namespace Magic.Game.Interface
         {
             base.receiveLeftClick(x, y, playSound);
 
-            if (this.scrollbarBack.Contains(x, y))
+            if (this.ScrollbarBack.Contains(x, y))
             {
-                this.dragScroll = true;
+                this.DragScroll = true;
             }
             else
             {
-                this.justClicked = true;
+                this.JustClicked = true;
             }
         }
 
@@ -148,7 +148,7 @@ namespace Magic.Game.Interface
         {
             base.releaseLeftClick(x, y);
 
-            this.dragScroll = false;
+            this.DragScroll = false;
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)
@@ -159,13 +159,13 @@ namespace Magic.Game.Interface
         {
             base.receiveScrollWheelAction(direction);
 
-            this.scroll += direction;
-            if (this.scroll > 0)
-                this.scroll = 0;
+            this.Scroll += direction;
+            if (this.Scroll > 0)
+                this.Scroll = 0;
 
-            int cap = this.locs.Count * 50 - (TeleportMenu.WINDOW_HEIGHT - 24) + 16;
-            if (this.scroll < -cap)
-                this.scroll = -cap;
+            int cap = this.Locs.Count * 50 - (TeleportMenu.WindowHeight - 24) + 16;
+            if (this.Scroll < -cap)
+                this.Scroll = -cap;
         }
     }
 }

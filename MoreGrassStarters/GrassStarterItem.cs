@@ -10,10 +10,10 @@ namespace MoreGrassStarters
 {
     public class GrassStarterItem : SObject, ISaveElement
     {
-        private static readonly Texture2D tex = Game1.content.Load<Texture2D>("TerrainFeatures\\grass");
-        public static Texture2D tex2;
-        private int whichGrass = 1;
-        public static int ExtraGrassTypes => GrassStarterItem.tex2 == null ? 0 : GrassStarterItem.tex2.Height / 20;
+        private static readonly Texture2D Tex = Game1.content.Load<Texture2D>("TerrainFeatures\\grass");
+        public static Texture2D Tex2;
+        private int WhichGrass = 1;
+        public static int ExtraGrassTypes => GrassStarterItem.Tex2 == null ? 0 : GrassStarterItem.Tex2.Height / 20;
 
         public GrassStarterItem()
         {
@@ -21,7 +21,7 @@ namespace MoreGrassStarters
 
         public GrassStarterItem(int which)
         {
-            this.whichGrass = which;
+            this.WhichGrass = which;
             this.name = $"Grass ({which})";
             this.Price = 100;
             this.ParentSheetIndex = 297;
@@ -29,7 +29,7 @@ namespace MoreGrassStarters
 
         public override Item getOne()
         {
-            return new GrassStarterItem(this.whichGrass);
+            return new GrassStarterItem(this.WhichGrass);
         }
 
         public override bool canBePlacedHere(GameLocation l, Vector2 tile)
@@ -50,7 +50,7 @@ namespace MoreGrassStarters
 
             if (location.objects.ContainsKey(index1) || location.terrainFeatures.ContainsKey(index1))
                 return false;
-            location.terrainFeatures.Add(index1, new CustomGrass(this.whichGrass, 4));
+            location.terrainFeatures.Add(index1, new CustomGrass(this.WhichGrass, 4));
             Game1.playSound("dirtyHit");
 
             return true;
@@ -58,36 +58,36 @@ namespace MoreGrassStarters
 
         public override void draw(SpriteBatch b, int x, int y, float alpha = 1)
         {
-            Texture2D tex = GrassStarterItem.tex;
-            int texOffset = 20 + this.whichGrass * 20;
-            if (this.whichGrass >= 5)
+            Texture2D tex = GrassStarterItem.Tex;
+            int texOffset = 20 + this.WhichGrass * 20;
+            if (this.WhichGrass >= 5)
             {
-                tex = GrassStarterItem.tex2;
-                texOffset = 20 * (this.whichGrass - 5);
+                tex = GrassStarterItem.Tex2;
+                texOffset = 20 * (this.WhichGrass - 5);
             }
             b.Draw(tex, new Rectangle(x, y, 16, 20), new Rectangle(0, texOffset, 16, 20), Color.White);
         }
 
         public override void drawWhenHeld(SpriteBatch b, Vector2 pos, Farmer f)
         {
-            Texture2D tex = GrassStarterItem.tex;
-            int texOffset = 20 + this.whichGrass * 20;
-            if (this.whichGrass >= 5)
+            Texture2D tex = GrassStarterItem.Tex;
+            int texOffset = 20 + this.WhichGrass * 20;
+            if (this.WhichGrass >= 5)
             {
-                tex = GrassStarterItem.tex2;
-                texOffset = 20 * (this.whichGrass - 5);
+                tex = GrassStarterItem.Tex2;
+                texOffset = 20 * (this.WhichGrass - 5);
             }
             b.Draw(tex, pos - new Vector2(-4, 24), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, (f.getStandingY() + 3) / 10000f);
         }
 
         public override void drawInMenu(SpriteBatch b, Vector2 pos, float scale, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
-            Texture2D tex = GrassStarterItem.tex;
-            int texOffset = 20 + this.whichGrass * 20;
-            if (this.whichGrass >= 5)
+            Texture2D tex = GrassStarterItem.Tex;
+            int texOffset = 20 + this.WhichGrass * 20;
+            if (this.WhichGrass >= 5)
             {
-                tex = GrassStarterItem.tex2;
-                texOffset = 20 * (this.whichGrass - 5);
+                tex = GrassStarterItem.Tex2;
+                texOffset = 20 * (this.WhichGrass - 5);
             }
             b.Draw(tex, pos + new Vector2(4, 0), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4 * scale, SpriteEffects.None, layerDepth);
 
@@ -105,14 +105,14 @@ namespace MoreGrassStarters
         {
             return new()
             {
-                ["whichGrass"] = this.whichGrass.ToString()
+                ["whichGrass"] = this.WhichGrass.ToString()
             };
         }
 
         public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
         {
-            this.whichGrass = int.Parse(additionalSaveData["whichGrass"]);
-            this.name = $"Grass ({this.whichGrass})";
+            this.WhichGrass = int.Parse(additionalSaveData["whichGrass"]);
+            this.name = $"Grass ({this.WhichGrass})";
             this.Price = 100;
             this.ParentSheetIndex = 297;
         }

@@ -6,6 +6,7 @@ using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.TerrainFeatures;
@@ -13,7 +14,7 @@ using StardewValley.TerrainFeatures;
 namespace MultiFertilizer.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="HoeDirt"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class HoeDirtPatcher : BasePatcher
     {
         /*********
@@ -71,15 +72,15 @@ namespace MultiFertilizer.Patches
                 string key = "";
                 switch (index)
                 {
-                    case 368: level = 1; key = Mod.KEY_FERT; break;
-                    case 369: level = 2; key = Mod.KEY_FERT; break;
-                    case 919: level = 3; key = Mod.KEY_FERT; break;
-                    case 370: level = 1; key = Mod.KEY_RETAIN; break;
-                    case 371: level = 2; key = Mod.KEY_RETAIN; break;
-                    case 920: level = 3; key = Mod.KEY_RETAIN; break;
-                    case 465: level = 1; key = Mod.KEY_SPEED; break;
-                    case 466: level = 2; key = Mod.KEY_SPEED; break;
-                    case 918: level = 3; key = Mod.KEY_SPEED; break;
+                    case 368: level = 1; key = Mod.KeyFert; break;
+                    case 369: level = 2; key = Mod.KeyFert; break;
+                    case 919: level = 3; key = Mod.KeyFert; break;
+                    case 370: level = 1; key = Mod.KeyRetain; break;
+                    case 371: level = 2; key = Mod.KeyRetain; break;
+                    case 920: level = 3; key = Mod.KeyRetain; break;
+                    case 465: level = 1; key = Mod.KeySpeed; break;
+                    case 466: level = 2; key = Mod.KeySpeed; break;
+                    case 918: level = 3; key = Mod.KeySpeed; break;
                 }
 
                 if (__instance.modData.ContainsKey(key))
@@ -87,8 +88,8 @@ namespace MultiFertilizer.Patches
                 else
                 {
                     __instance.modData[key] = level.ToString();
-                    if (key == Mod.KEY_SPEED)
-                        Mod.instance.Helper.Reflection.GetMethod(__instance, "applySpeedIncreases").Invoke(who);
+                    if (key == Mod.KeySpeed)
+                        Mod.Instance.Helper.Reflection.GetMethod(__instance, "applySpeedIncreases").Invoke(who);
                     location.playSound("dirtyHit");
                     return true;
                 }
@@ -138,11 +139,11 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="HoeDirt.applySpeedIncreases"/>.</summary>
         private static void Before_ApplySpeedIncreases(HoeDirt __instance, Farmer who)
         {
-            if (!__instance.modData.ContainsKey(Mod.KEY_SPEED))
+            if (!__instance.modData.ContainsKey(Mod.KeySpeed))
                 return;
 
             int index = 0;
-            switch (int.Parse(__instance.modData[Mod.KEY_SPEED]))
+            switch (int.Parse(__instance.modData[Mod.KeySpeed]))
             {
                 case 1: index = 465; break;
                 case 2: index = 466; break;
@@ -167,15 +168,15 @@ namespace MultiFertilizer.Patches
                 string key = "";
                 switch (objectIndex)
                 {
-                    case 368: level = 1; key = Mod.KEY_FERT; break;
-                    case 369: level = 2; key = Mod.KEY_FERT; break;
-                    case 919: level = 3; key = Mod.KEY_FERT; break;
-                    case 370: level = 1; key = Mod.KEY_RETAIN; break;
-                    case 371: level = 2; key = Mod.KEY_RETAIN; break;
-                    case 920: level = 3; key = Mod.KEY_RETAIN; break;
-                    case 465: level = 1; key = Mod.KEY_SPEED; break;
-                    case 466: level = 2; key = Mod.KEY_SPEED; break;
-                    case 918: level = 3; key = Mod.KEY_SPEED; break;
+                    case 368: level = 1; key = Mod.KeyFert; break;
+                    case 369: level = 2; key = Mod.KeyFert; break;
+                    case 919: level = 3; key = Mod.KeyFert; break;
+                    case 370: level = 1; key = Mod.KeyRetain; break;
+                    case 371: level = 2; key = Mod.KeyRetain; break;
+                    case 920: level = 3; key = Mod.KeyRetain; break;
+                    case 465: level = 1; key = Mod.KeySpeed; break;
+                    case 466: level = 2; key = Mod.KeySpeed; break;
+                    case 918: level = 3; key = Mod.KeySpeed; break;
                 }
 
                 __result = !__instance.modData.ContainsKey(key);
@@ -187,11 +188,11 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="HoeDirt.dayUpdate"/>.</summary>
         private static void Before_DayUpdate(HoeDirt __instance, GameLocation environment, Vector2 tileLocation)
         {
-            if (!__instance.modData.ContainsKey(Mod.KEY_RETAIN))
+            if (!__instance.modData.ContainsKey(Mod.KeyRetain))
                 return;
 
             int index = 0;
-            switch (int.Parse(__instance.modData[Mod.KEY_RETAIN]))
+            switch (int.Parse(__instance.modData[Mod.KeyRetain]))
             {
                 case 1: index = 370; break;
                 case 2: index = 371; break;
@@ -212,18 +213,18 @@ namespace MultiFertilizer.Patches
         {
             if (!onLoad && (__instance.crop == null || (bool)__instance.crop.dead || !__instance.crop.seasonsToGrowIn.Contains(Game1.currentLocation.GetSeasonForLocation())))
             {
-                __instance.modData.Remove(Mod.KEY_FERT);
-                __instance.modData.Remove(Mod.KEY_RETAIN);
-                __instance.modData.Remove(Mod.KEY_SPEED);
+                __instance.modData.Remove(Mod.KeyFert);
+                __instance.modData.Remove(Mod.KeyRetain);
+                __instance.modData.Remove(Mod.KeySpeed);
             }
         }
 
         private static void DrawMultiFertilizer(SpriteBatch spriteBatch, Texture2D tex, Vector2 pos, Rectangle? sourceRect, Color col, float rot, Vector2 origin, float scale, SpriteEffects fx, float depth, HoeDirt __instance)
         {
             List<int> fertilizers = new List<int>();
-            if (__instance.modData.ContainsKey(Mod.KEY_FERT))
+            if (__instance.modData.ContainsKey(Mod.KeyFert))
             {
-                int level = int.Parse(__instance.modData[Mod.KEY_FERT]);
+                int level = int.Parse(__instance.modData[Mod.KeyFert]);
                 int index = 0;
                 switch (level)
                 {
@@ -234,9 +235,9 @@ namespace MultiFertilizer.Patches
                 if (index != 0)
                     fertilizers.Add(index);
             }
-            if (__instance.modData.ContainsKey(Mod.KEY_RETAIN))
+            if (__instance.modData.ContainsKey(Mod.KeyRetain))
             {
-                int level = int.Parse(__instance.modData[Mod.KEY_RETAIN]);
+                int level = int.Parse(__instance.modData[Mod.KeyRetain]);
                 int index = 0;
                 switch (level)
                 {
@@ -247,9 +248,9 @@ namespace MultiFertilizer.Patches
                 if (index != 0)
                     fertilizers.Add(index);
             }
-            if (__instance.modData.ContainsKey(Mod.KEY_SPEED))
+            if (__instance.modData.ContainsKey(Mod.KeySpeed))
             {
-                int level = int.Parse(__instance.modData[Mod.KEY_SPEED]);
+                int level = int.Parse(__instance.modData[Mod.KeySpeed]);
                 int index = 0;
                 switch (level)
                 {

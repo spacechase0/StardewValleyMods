@@ -1,13 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley.Menus;
 
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="GameMenu"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class GameMenuPatcher : BasePatcher
     {
         /*********
@@ -29,7 +30,7 @@ namespace SpaceCore.Patches
         /// <summary>The method to call after <see cref="GameMenu.getTabNumberFromName"/>.</summary>
         public static void After_GetTabNumberFromName(GameMenu __instance, string name, ref int __result)
         {
-            foreach (var tab in Menus.extraGameMenuTabs)
+            foreach (var tab in Menus.ExtraGameMenuTabs)
             {
                 if (name == tab.Value)
                     __result = tab.Key;

@@ -19,32 +19,32 @@ namespace SpaceCore
     public class SpaceCore : Mod
     {
         public Configuration Config { get; set; }
-        internal static SpaceCore instance;
-        private HarmonyInstance harmony;
+        internal static SpaceCore Instance;
+        private HarmonyInstance Harmony;
 
-        internal static List<Type> modTypes = new();
+        internal static List<Type> ModTypes = new();
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            SpaceCore.instance = this;
+            SpaceCore.Instance = this;
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
-            helper.Events.GameLoop.UpdateTicked += this.onUpdate;
-            helper.Events.GameLoop.SaveLoaded += this.onSaveLoaded;
-            helper.Events.GameLoop.Saving += this.onSaving;
-            helper.Events.GameLoop.Saved += this.onSaved;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdate;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.GameLoop.Saving += this.OnSaving;
+            helper.Events.GameLoop.Saved += this.OnSaved;
 
-            Commands.register();
-            Skills.init(helper.Events);
-            TileSheetExtensions.init();
+            Commands.Register();
+            Skills.Init(helper.Events);
+            TileSheetExtensions.Init();
 
             var serializerManager = new SerializerManager();
 
-            this.harmony = HarmonyPatcher.Apply(this,
+            this.Harmony = HarmonyPatcher.Apply(this,
                 new EventPatcher(),
                 new FarmerPatcher(),
                 new Game1Patcher(),
@@ -67,7 +67,7 @@ namespace SpaceCore
             return new Api();
         }
 
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
@@ -84,24 +84,24 @@ namespace SpaceCore
             }
         }
 
-        private int tickCount;
-        private void onUpdate(object sender, UpdateTickedEventArgs e)
+        private int TickCount;
+        private void OnUpdate(object sender, UpdateTickedEventArgs e)
         {
             TileSheetExtensions.UpdateReferences();
-            if (this.tickCount++ == 0 && SpaceCore.modTypes.Count == 0)
+            if (this.TickCount++ == 0 && SpaceCore.ModTypes.Count == 0)
             {
                 Log.Info("Disabling serializer patches (no mods using serializer API)");
                 foreach (var meth in SaveGamePatcher.GetSaveEnumeratorMethods())
-                    this.harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
+                    this.Harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
                 foreach (var meth in SaveGamePatcher.GetLoadEnumeratorMethods())
-                    this.harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
+                    this.Harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
             }
         }
 
         /// <summary>Raised after the player loads a save slot.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             // todo - MP support
             if (!Context.IsMainPlayer)
@@ -122,7 +122,7 @@ namespace SpaceCore
             Log.Debug("Previously slept in a tent, replacing player position.");
 
             var loc = Game1.getLocationFromName(data.Location);
-            if (loc == null || loc.Name == this.festivalLocation())
+            if (loc == null || loc.Name == this.FestivalLocation())
             {
                 Game1.addHUDMessage(new HUDMessage("You camped out where the festival was, so you have returned home."));
                 return;
@@ -145,14 +145,14 @@ namespace SpaceCore
         /// <summary>Raised before the game begins writes data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaving(object sender, SavingEventArgs e)
+        private void OnSaving(object sender, SavingEventArgs e)
         {
             if (!Sleep.SaveLocation)
                 return;
 
             Log.Debug("Saving tent sleep data");
 
-            if (Game1.player.currentLocation.Name == this.festivalLocation())
+            if (Game1.player.currentLocation.Name == this.FestivalLocation())
             {
                 Log.Trace("There'll be a festival here tomorrow, canceling");
                 Game1.addHUDMessage(new HUDMessage("You camped out where the festival was, so you have returned home."));
@@ -188,7 +188,7 @@ namespace SpaceCore
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaved(object sender, SavedEventArgs e)
+        private void OnSaved(object sender, SavedEventArgs e)
         {
             if (!Context.IsMainPlayer)
                 return;
@@ -202,7 +202,7 @@ namespace SpaceCore
         }
 
         // TODO: Move somewhere more sensible (and make public)?
-        internal string festivalLocation()
+        internal string FestivalLocation()
         {
             try
             {

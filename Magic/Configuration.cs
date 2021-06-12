@@ -1,7 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+using SpaceShared;
 using StardewModdingAPI;
 
 namespace Magic
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class Configuration
     {
         public SButton Key_SwapSpells = SButton.Tab;

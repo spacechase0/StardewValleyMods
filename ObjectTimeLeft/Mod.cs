@@ -9,25 +9,25 @@ namespace ObjectTimeLeft
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
         public static Configuration Config;
 
-        private bool showing = true;
+        private bool Showing = true;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
-            helper.Events.Display.RenderingHud += this.onRenderingHud;
-            helper.Events.Input.ButtonPressed += this.onButtonPressed;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Display.RenderingHud += this.OnRenderingHud;
+            helper.Events.Input.ButtonPressed += this.OnButtonPressed;
         }
 
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
@@ -40,18 +40,18 @@ namespace ObjectTimeLeft
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onButtonPressed(object sender, ButtonPressedEventArgs e)
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             if (e.Button == Mod.Config.ToggleKey)
-                this.showing = !this.showing;
+                this.Showing = !this.Showing;
         }
 
         /// <summary>Raised before drawing the HUD (item toolbar, clock, etc) to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onRenderingHud(object sender, RenderingHudEventArgs e)
+        private void OnRenderingHud(object sender, RenderingHudEventArgs e)
         {
-            if (!this.showing || !Context.IsPlayerFree)
+            if (!this.Showing || !Context.IsPlayerFree)
                 return;
 
             var sb = e.SpriteBatch;

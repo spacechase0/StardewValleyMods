@@ -12,36 +12,36 @@ namespace ArcadeRoom
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
-        private bool patchedMap;
+        private bool PatchedMap;
 
-        public Queue<Vector2> machineSpots = new();
+        public Queue<Vector2> MachineSpots = new();
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.Player.Warped += this.onWarped;
+            helper.Events.Player.Warped += this.OnWarped;
 
-            SpaceEvents.OnBlankSave += this.onBlankSave;
+            SpaceEvents.OnBlankSave += this.OnBlankSave;
         }
 
         internal Vector2 ReserveNextMachineSpot()
         {
-            return this.machineSpots.Dequeue();
+            return this.MachineSpots.Dequeue();
         }
 
-        private Api api;
+        private Api Api;
         public override object GetApi()
         {
-            return (this.api = new Api());
+            return (this.Api = new Api());
         }
 
-        private void onBlankSave(object sender, EventArgs e)
+        private void OnBlankSave(object sender, EventArgs e)
         {
-            this.patchedMap = false;
+            this.PatchedMap = false;
 
             var arcade = new GameLocation(this.Helper.Content.GetActualAssetKey("assets/Arcade.tbin"), "Arcade");
             Game1.locations.Add(arcade);
@@ -50,17 +50,17 @@ namespace ArcadeRoom
                 for (int iy = 0; iy < arcade.Map.Layers[0].LayerHeight; ++iy)
                 {
                     if (!string.IsNullOrEmpty(arcade.doesTileHaveProperty(ix, iy, "ArcadeSpot", "Back")))
-                        this.machineSpots.Enqueue(new Vector2(ix, iy));
+                        this.MachineSpots.Enqueue(new Vector2(ix, iy));
                 }
             }
-            this.api.InvokeOnRoomSetup();
+            this.Api.InvokeOnRoomSetup();
         }
 
-        private void onWarped(object sender, WarpedEventArgs e)
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
             if (e.NewLocation.Name != "Saloon" /*|| patchedMap*/ )
                 return;
-            this.patchedMap = true;
+            this.PatchedMap = true;
 
             var map = e.NewLocation.Map;
 

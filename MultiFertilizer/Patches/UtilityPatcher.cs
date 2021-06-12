@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.TerrainFeatures;
@@ -12,7 +13,7 @@ using StardewValley.TerrainFeatures;
 namespace MultiFertilizer.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Utility"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class UtilityPatcher : BasePatcher
     {
         /*********
@@ -93,15 +94,15 @@ namespace MultiFertilizer.Patches
             string key = "";
             switch (item.ParentSheetIndex)
             {
-                case 368: level = 1; key = Mod.KEY_FERT; break;
-                case 369: level = 2; key = Mod.KEY_FERT; break;
-                case 919: level = 3; key = Mod.KEY_FERT; break;
-                case 370: level = 1; key = Mod.KEY_RETAIN; break;
-                case 371: level = 2; key = Mod.KEY_RETAIN; break;
-                case 920: level = 3; key = Mod.KEY_RETAIN; break;
-                case 465: level = 1; key = Mod.KEY_SPEED; break;
-                case 466: level = 2; key = Mod.KEY_SPEED; break;
-                case 918: level = 3; key = Mod.KEY_SPEED; break;
+                case 368: level = 1; key = Mod.KeyFert; break;
+                case 369: level = 2; key = Mod.KeyFert; break;
+                case 919: level = 3; key = Mod.KeyFert; break;
+                case 370: level = 1; key = Mod.KeyRetain; break;
+                case 371: level = 2; key = Mod.KeyRetain; break;
+                case 920: level = 3; key = Mod.KeyRetain; break;
+                case 465: level = 1; key = Mod.KeySpeed; break;
+                case 466: level = 2; key = Mod.KeySpeed; break;
+                case 918: level = 3; key = Mod.KeySpeed; break;
             }
 
 

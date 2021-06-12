@@ -14,16 +14,16 @@ namespace BuildableLocationsFramework
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            this.Helper.Events.Display.MenuChanged += this.menuChanged;
+            this.Helper.Events.Display.MenuChanged += this.MenuChanged;
 
-            this.Helper.ConsoleCommands.Add("blf_adddummy", "", this.doCommand);
+            this.Helper.ConsoleCommands.Add("blf_adddummy", "", this.DoCommand);
 
             HarmonyPatcher.Apply(this,
                 new BuildingPatcher(),
@@ -38,22 +38,22 @@ namespace BuildableLocationsFramework
             );
         }
 
-        private void doCommand(string cmd, string[] args)
+        private void DoCommand(string cmd, string[] args)
         {
             Game1.locations.Add(new BuildableAnimalLocation("Maps\\Beach", "Farm2"));
             Game1.game1.parseDebugInput("warp Farm2 25 10");
         }
 
-        private void doMenuUpdate(object sender, UpdateTickedEventArgs e)
+        private void DoMenuUpdate(object sender, UpdateTickedEventArgs e)
         {
         }
 
-        private void doMenuRender(object sender, RenderedActiveMenuEventArgs e)
+        private void DoMenuRender(object sender, RenderedActiveMenuEventArgs e)
         {
         }
 
-        private int buildableLocIndex;
-        private void doMenuButtons(object sender, ButtonPressedEventArgs e)
+        private int BuildableLocIndex;
+        private void DoMenuButtons(object sender, ButtonPressedEventArgs e)
         {
             if (Game1.activeClickableMenu is CarpenterMenu carpMenu)
             {
@@ -61,13 +61,13 @@ namespace BuildableLocationsFramework
                     return;
             }
 
-            int newLocIndex = this.buildableLocIndex;
+            int newLocIndex = this.BuildableLocIndex;
             if (e.Button == SButton.Z || e.Button == SButton.LeftShoulder)
                 newLocIndex--;
             else if (e.Button == SButton.X || e.Button == SButton.RightShoulder)
                 newLocIndex++;
 
-            if (this.buildableLocIndex != newLocIndex)
+            if (this.BuildableLocIndex != newLocIndex)
             {
                 var buildableLocs = Mod.GetAllLocations().FindAll(loc => loc is BuildableGameLocation);
                 while (newLocIndex < 0)
@@ -78,12 +78,12 @@ namespace BuildableLocationsFramework
                 Game1.currentLocation = buildableLocs[newLocIndex];
                 Game1.viewport.X = 0;
                 Game1.viewport.Y = 0;
-                this.buildableLocIndex = newLocIndex;
+                this.BuildableLocIndex = newLocIndex;
             }
         }
 
         [EventPriority(EventPriority.Low)]
-        private void menuChanged(object sender, MenuChangedEventArgs e)
+        private void MenuChanged(object sender, MenuChangedEventArgs e)
         {
             CarpenterMenu menu1 = e.NewMenu as CarpenterMenu;
             PurchaseAnimalsMenu menu2 = e.NewMenu as PurchaseAnimalsMenu;
@@ -112,15 +112,15 @@ namespace BuildableLocationsFramework
                     }
                 }
 
-                this.Helper.Events.GameLoop.UpdateTicked += this.doMenuUpdate;
-                this.Helper.Events.Display.RenderedActiveMenu += this.doMenuRender;
-                this.Helper.Events.Input.ButtonPressed += this.doMenuButtons;
+                this.Helper.Events.GameLoop.UpdateTicked += this.DoMenuUpdate;
+                this.Helper.Events.Display.RenderedActiveMenu += this.DoMenuRender;
+                this.Helper.Events.Input.ButtonPressed += this.DoMenuButtons;
             }
             if (e.OldMenu is CarpenterMenu || e.OldMenu is PurchaseAnimalsMenu)
             {
-                this.Helper.Events.GameLoop.UpdateTicked -= this.doMenuUpdate;
-                this.Helper.Events.Display.RenderedActiveMenu -= this.doMenuRender;
-                this.Helper.Events.Input.ButtonPressed -= this.doMenuButtons;
+                this.Helper.Events.GameLoop.UpdateTicked -= this.DoMenuUpdate;
+                this.Helper.Events.Display.RenderedActiveMenu -= this.DoMenuRender;
+                this.Helper.Events.Input.ButtonPressed -= this.DoMenuButtons;
             }
         }
 
@@ -153,7 +153,7 @@ namespace BuildableLocationsFramework
             }
         }
 
-        internal static GameLocation findOutdoorsOf(Building building)
+        internal static GameLocation FindOutdoorsOf(Building building)
         {
             foreach (var loc in Mod.GetAllLocations())
             {
@@ -163,10 +163,10 @@ namespace BuildableLocationsFramework
                         return loc;
                 }
             }
-            if (SaveGamePatcher.locs != null)
+            if (SaveGamePatcher.Locations != null)
             {
                 var oldLocs = Game1.locations;
-                Game1.game1._locations = SaveGamePatcher.locs;
+                Game1.game1._locations = SaveGamePatcher.Locations;
                 var locs = Mod.GetAllLocations();
                 Game1.game1._locations = oldLocs;
 

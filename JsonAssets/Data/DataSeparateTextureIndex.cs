@@ -1,7 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
+using SpaceShared;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public abstract class DataSeparateTextureIndex : DataNeedsId
     {
         [JsonIgnore]

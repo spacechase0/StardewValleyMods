@@ -11,11 +11,11 @@ namespace Displays
 {
     public class Mod : StardewModdingAPI.Mod, IAssetLoader
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;

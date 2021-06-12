@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
@@ -9,7 +10,7 @@ using StardewValley.Tools;
 namespace BuildableLocationsFramework.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Shears"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class ShearsPatcher : BasePatcher
     {
         /*********
@@ -35,7 +36,7 @@ namespace BuildableLocationsFramework.Patches
             y = (int)who.GetToolLocation(false).Y;
             Rectangle toolRect = new Rectangle(x - 32, y - 32, 64, 64);
             if (location is IAnimalLocation animalLoc)
-                Mod.instance.Helper.Reflection.GetField<FarmAnimal>(__instance, "animal").SetValue(Utility.GetBestHarvestableFarmAnimal(animalLoc.Animals.Values, __instance, toolRect));
+                Mod.Instance.Helper.Reflection.GetField<FarmAnimal>(__instance, "animal").SetValue(Utility.GetBestHarvestableFarmAnimal(animalLoc.Animals.Values, __instance, toolRect));
             who.Halt();
             int currentFrame = who.FarmerSprite.CurrentFrame;
             who.FarmerSprite.animateOnce(283 + who.FacingDirection, 50f, 4);

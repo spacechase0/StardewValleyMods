@@ -4,6 +4,6 @@ namespace JumpOver
 {
     public class Configuration
     {
-        public SButton keyJump = SButton.Space;
+        public SButton KeyJump = SButton.Space;
     }
 }

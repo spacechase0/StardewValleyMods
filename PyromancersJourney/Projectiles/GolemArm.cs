@@ -9,11 +9,11 @@ namespace PyromancersJourney.Projectiles
 {
     public class GolemArm : BaseProjectile
     {
-        public static Texture2D tex = Mod.instance.Helper.Content.Load<Texture2D>("assets/golem_arm.png");
+        public static Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/golem_arm.png");
 
         public Vector2 Speed;
 
-        private static VertexBuffer buffer;
+        private static VertexBuffer Buffer;
 
         public override bool HurtsPlayer => true;
         public override int Damage => 1;
@@ -21,7 +21,7 @@ namespace PyromancersJourney.Projectiles
         public GolemArm(World world)
             : base(world)
         {
-            if (GolemArm.buffer == null)
+            if (GolemArm.Buffer == null)
             {
                 float a = 0;
                 float b = 1;
@@ -34,8 +34,8 @@ namespace PyromancersJourney.Projectiles
                 vertices.Add(new VertexPositionColorTexture(new Vector3(0, 1, 0), Color.White, new Vector2(a, 1)));
                 vertices.Add(new VertexPositionColorTexture(new Vector3(0.5f, 1, 0), Color.White, new Vector2(b, 1)));
 
-                GolemArm.buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
-                GolemArm.buffer.SetData(vertices.ToArray());
+                GolemArm.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                GolemArm.Buffer.SetData(vertices.ToArray());
             }
         }
 
@@ -53,7 +53,7 @@ namespace PyromancersJourney.Projectiles
             base.Update();
             this.Position += new Vector3(this.Speed.X, 0, this.Speed.Y);
 
-            if (this.World.map.IsAirSolid(this.Position.X, this.Position.Z))
+            if (this.World.Map.IsAirSolid(this.Position.X, this.Position.Z))
             {
                 this.Dead = true;
             }
@@ -62,16 +62,16 @@ namespace PyromancersJourney.Projectiles
         public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
             base.Render(device, projection, cam);
-            var camForward = (cam.pos - cam.target);
+            var camForward = (cam.Pos - cam.Target);
             camForward.Normalize();
-            BaseProjectile.effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
-            BaseProjectile.effect.TextureEnabled = true;
-            BaseProjectile.effect.Texture = GolemArm.tex;
-            for (int e = 0; e < BaseProjectile.effect.CurrentTechnique.Passes.Count; ++e)
+            BaseProjectile.Effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.Pos, cam.Up, null, null);
+            BaseProjectile.Effect.TextureEnabled = true;
+            BaseProjectile.Effect.Texture = GolemArm.Tex;
+            for (int e = 0; e < BaseProjectile.Effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = BaseProjectile.effect.CurrentTechnique.Passes[e];
+                var pass = BaseProjectile.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
-                device.SetVertexBuffer(GolemArm.buffer);
+                device.SetVertexBuffer(GolemArm.Buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
             }
         }

@@ -7,7 +7,7 @@ namespace CookingSkill
     internal class Util
     {
         // http://stackoverflow.com/a/22456034
-        public static string serialize<T>(T obj)
+        public static string Serialize<T>(T obj)
         {
             using (MemoryStream stream = new MemoryStream())
             {

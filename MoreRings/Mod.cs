@@ -15,32 +15,32 @@ namespace MoreRings
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
-        private IJsonAssetsApi ja;
-        public int Ring_Fishing_LargeBar { get { return this.ja.GetObjectId("Ring of Wide Nets"); } }
-        public int Ring_Combat_Regen { get { return this.ja.GetObjectId("Ring of Regeneration"); } }
-        public int Ring_DiamondBooze { get { return this.ja.GetObjectId("Ring of Diamond Booze"); } }
-        public int Ring_Refresh { get { return this.ja.GetObjectId("Refreshing Ring"); } }
-        public int Ring_Quality { get { return this.ja.GetObjectId("Quality+ Ring"); } }
-        public int Ring_MageHand { get { return this.ja.GetObjectId("Ring of Far Reaching"); } }
-        public int Ring_TrueSight { get { return this.ja.GetObjectId("Ring of True Sight"); } }
+        private IJsonAssetsApi Ja;
+        public int RingFishingLargeBar { get { return this.Ja.GetObjectId("Ring of Wide Nets"); } }
+        public int RingCombatRegen { get { return this.Ja.GetObjectId("Ring of Regeneration"); } }
+        public int RingDiamondBooze { get { return this.Ja.GetObjectId("Ring of Diamond Booze"); } }
+        public int RingRefresh { get { return this.Ja.GetObjectId("Refreshing Ring"); } }
+        public int RingQuality { get { return this.Ja.GetObjectId("Quality+ Ring"); } }
+        public int RingMageHand { get { return this.Ja.GetObjectId("Ring of Far Reaching"); } }
+        public int RingTrueSight { get { return this.Ja.GetObjectId("Ring of True Sight"); } }
 
-        private IMoreRingsApi moreRings;
+        private IMoreRingsApi MoreRings;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
-            helper.Events.Display.MenuChanged += this.onMenuChanged;
-            helper.Events.GameLoop.UpdateTicked += this.onUpdateTicked;
-            helper.Events.Display.RenderedWorld += TrueSight.onDrawWorld;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
+            helper.Events.Display.RenderedWorld += TrueSight.OnDrawWorld;
 
-            SpaceEvents.OnItemEaten += this.onItemEaten;
+            SpaceEvents.OnItemEaten += this.OnItemEaten;
 
             HarmonyPatcher.Apply(
                 this,
@@ -56,7 +56,7 @@ namespace MoreRings
         /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var api = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
             if (api == null)
@@ -64,52 +64,52 @@ namespace MoreRings
                 Log.Error("No Json Assets API???");
                 return;
             }
-            this.ja = api;
+            this.Ja = api;
 
             api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
 
-            this.moreRings = this.Helper.ModRegistry.GetApi<IMoreRingsApi>("bcmpinc.WearMoreRings");
+            this.MoreRings = this.Helper.ModRegistry.GetApi<IMoreRingsApi>("bcmpinc.WearMoreRings");
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (e.NewMenu is BobberBar bobber && this.hasRingEquipped(this.Ring_Fishing_LargeBar) > 0)
+            if (e.NewMenu is BobberBar bobber && this.HasRingEquipped(this.RingFishingLargeBar) > 0)
             {
                 var field = this.Helper.Reflection.GetField<int>(bobber, "bobberBarHeight");
                 field.SetValue((int)(field.GetValue() * 1.50));
             }
         }
 
-        private int regenCounter;
-        private int refreshCounter;
+        private int RegenCounter;
+        private int RefreshCounter;
 
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             if (!Context.IsPlayerFree || !e.IsOneSecond)
                 return;
 
-            if (this.hasRingEquipped(this.Ring_Combat_Regen) > 0 && this.regenCounter++ >= 4 / this.hasRingEquipped(this.Ring_Combat_Regen))
+            if (this.HasRingEquipped(this.RingCombatRegen) > 0 && this.RegenCounter++ >= 4 / this.HasRingEquipped(this.RingCombatRegen))
             {
-                this.regenCounter = 0;
+                this.RegenCounter = 0;
                 Game1.player.health = Math.Min(Game1.player.health + 1, Game1.player.maxHealth);
             }
 
-            if (this.hasRingEquipped(this.Ring_Refresh) > 0 && this.refreshCounter++ >= 4 / this.hasRingEquipped(this.Ring_Refresh))
+            if (this.HasRingEquipped(this.RingRefresh) > 0 && this.RefreshCounter++ >= 4 / this.HasRingEquipped(this.RingRefresh))
             {
-                this.refreshCounter = 0;
+                this.RefreshCounter = 0;
                 Game1.player.Stamina = Math.Min(Game1.player.Stamina + 1, Game1.player.MaxStamina);
             }
         }
 
-        private void onItemEaten(object sender, EventArgs args)
+        private void OnItemEaten(object sender, EventArgs args)
         {
-            if (this.hasRingEquipped(this.Ring_DiamondBooze) > 0)
+            if (this.HasRingEquipped(this.RingDiamondBooze) > 0)
             {
                 Buff tipsyBuff = null;
                 foreach (var buff in Game1.buffsDisplay.otherBuffs)
@@ -151,10 +151,10 @@ namespace MoreRings
             }
         }
 
-        public int hasRingEquipped(int id)
+        public int HasRingEquipped(int id)
         {
-            if (this.moreRings != null)
-                return this.moreRings.CountEquippedRings(Game1.player, id);
+            if (this.MoreRings != null)
+                return this.MoreRings.CountEquippedRings(Game1.player, id);
 
             int num = 0;
             if (Game1.player.leftRing.Value != null && Game1.player.leftRing.Value.ParentSheetIndex == id)

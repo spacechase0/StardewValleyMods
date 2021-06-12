@@ -15,22 +15,22 @@ namespace Magic.Spells
         public MeteorSpell()
             : base(SchoolId.Eldritch, "meteor") { }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override bool canCast(Farmer player, int level)
+        public override bool CanCast(Farmer player, int level)
         {
-            return base.canCast(player, level) && player.hasItemInInventory(SObject.iridium, 1);
+            return base.CanCast(player, level) && player.hasItemInInventory(SObject.iridium, 1);
         }
 
-        public override int getMaxCastingLevel()
+        public override int GetMaxCastingLevel()
         {
             return 1;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             player.consumeObject(SObject.iridium, 1);
             return new Meteor(player, targetX, targetY);
@@ -39,21 +39,21 @@ namespace Magic.Spells
 
     internal class Meteor : IActiveEffect
     {
-        private readonly GameLocation loc;
-        private readonly Farmer source;
-        private static readonly Random rand = new();
-        private readonly Vector2 position;
-        private readonly float yVelocity;
-        private float height = 1000;
+        private readonly GameLocation Loc;
+        private readonly Farmer Source;
+        private static readonly Random Rand = new();
+        private readonly Vector2 Position;
+        private readonly float YVelocity;
+        private float Height = 1000;
 
         public Meteor(Farmer theSource, int tx, int ty)
         {
-            this.loc = theSource.currentLocation;
-            this.source = theSource;
+            this.Loc = theSource.currentLocation;
+            this.Source = theSource;
 
-            this.position.X = tx;
-            this.position.Y = ty;
-            this.yVelocity = 64;
+            this.Position.X = tx;
+            this.Position.Y = ty;
+            this.YVelocity = 64;
         }
 
         /// <summary>Update the effect state if needed.</summary>
@@ -62,8 +62,8 @@ namespace Magic.Spells
         public bool Update(UpdateTickedEventArgs e)
         {
             // decrease height until zero
-            this.height -= (int)this.yVelocity;
-            if (this.height > 0)
+            this.Height -= (int)this.YVelocity;
+            if (this.Height > 0)
                 return true;
 
             // trigger explosion
@@ -73,22 +73,22 @@ namespace Magic.Spells
                 {
                     for (int ix = -i; ix <= i; ++ix)
                         for (int iy = -i; iy <= i; ++iy)
-                            Game1.createRadialDebris(this.loc, Game1.objectSpriteSheetName, new Rectangle(352, 400, 32, 32), 4, (int)this.position.X + ix * 20, (int)this.position.Y + iy * 20, 15 - 14 + Meteor.rand.Next(15 - 14), (int)(this.position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 255), 4.0f);
+                            Game1.createRadialDebris(this.Loc, Game1.objectSpriteSheetName, new Rectangle(352, 400, 32, 32), 4, (int)this.Position.X + ix * 20, (int)this.Position.Y + iy * 20, 15 - 14 + Meteor.Rand.Next(15 - 14), (int)(this.Position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 255), 4.0f);
                 }
-                foreach (var npc in this.source.currentLocation.characters)
+                foreach (var npc in this.Source.currentLocation.characters)
                 {
                     if (npc is Monster mob)
                     {
                         float rad = 8 * 64;
-                        if (Vector2.Distance(mob.position, new Vector2(this.position.X, this.position.Y)) <= rad)
+                        if (Vector2.Distance(mob.position, new Vector2(this.Position.X, this.Position.Y)) <= rad)
                         {
                             // TODO: Use location damage method for xp and quest progress
-                            mob.takeDamage(300, 0, 0, false, 0, this.source);
-                            this.source.AddCustomSkillExperience(Magic.Skill, 5);
+                            mob.takeDamage(300, 0, 0, false, 0, this.Source);
+                            this.Source.AddCustomSkillExperience(Magic.Skill, 5);
                         }
                     }
                 }
-                this.loc.explode(new Vector2((int)this.position.X / Game1.tileSize, (int)this.position.Y / Game1.tileSize), 4 + 2, this.source);
+                this.Loc.explode(new Vector2((int)this.Position.X / Game1.tileSize, (int)this.Position.Y / Game1.tileSize), 4 + 2, this.Source);
                 return false;
             }
         }
@@ -97,8 +97,8 @@ namespace Magic.Spells
         /// <param name="spriteBatch">The sprite batch being drawn.</param>
         public void Draw(SpriteBatch spriteBatch)
         {
-            Vector2 drawPos = Game1.GlobalToLocal(new Vector2(this.position.X, this.position.Y - this.height));
-            spriteBatch.Draw(Game1.objectSpriteSheet, drawPos, new Rectangle(352, 400, 32, 32), Color.White, 0, new Vector2(16, 16), 2 + 8, SpriteEffects.None, (float)(((double)this.position.Y - this.height + Game1.tileSize * 3 / 2) / 10000.0));
+            Vector2 drawPos = Game1.GlobalToLocal(new Vector2(this.Position.X, this.Position.Y - this.Height));
+            spriteBatch.Draw(Game1.objectSpriteSheet, drawPos, new Rectangle(352, 400, 32, 32), Color.White, 0, new Vector2(16, 16), 2 + 8, SpriteEffects.None, (float)(((double)this.Position.Y - this.Height + Game1.tileSize * 3 / 2) / 10000.0));
         }
     }
 }

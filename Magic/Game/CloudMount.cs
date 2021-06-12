@@ -7,7 +7,7 @@ namespace Magic.Game
 {
     public class CloudMount : Horse
     {
-        private Texture2D tex = Content.loadTexture("entities/cloud.png");
+        private Texture2D Tex = Content.LoadTexture("entities/cloud.png");
 
         public CloudMount()
         {
@@ -44,7 +44,7 @@ namespace Magic.Game
         public override void draw(SpriteBatch b)
         {
             //Game1.player.draw(b);
-            b.Draw(this.tex, this.getLocalPosition(Game1.viewport) + new Vector2(-Game1.tileSize * 0.90f, -Game1.tileSize * 0.75f), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
+            b.Draw(this.Tex, this.getLocalPosition(Game1.viewport) + new Vector2(-Game1.tileSize * 0.90f, -Game1.tileSize * 0.75f), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
         }
 
         public override bool checkAction(Farmer who, GameLocation l)
@@ -67,7 +67,7 @@ namespace Magic.Game
                 this.rider.Halt();
                 this.rider.xOffset = 0.0f;
                 this.dismounting.Value = true;
-                Mod.instance.Helper.Reflection.GetField<Vector2>(this, "dismountTile").SetValue(tileForCharacter);
+                Mod.Instance.Helper.Reflection.GetField<Vector2>(this, "dismountTile").SetValue(tileForCharacter);
                 //Log.trace("dismount tile: " + tileForCharacter.ToString());
             }
             else

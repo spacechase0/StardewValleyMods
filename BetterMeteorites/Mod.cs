@@ -8,28 +8,28 @@ namespace BetterMeteorites
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             SpaceShared.Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.SaveCreated += this.onSaveCreated;
-            helper.Events.GameLoop.SaveLoaded += this.onSaveLoaded;
+            helper.Events.GameLoop.SaveCreated += this.OnSaveCreated;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
         }
 
-        private void onSaveCreated(object sender, SaveCreatedEventArgs e)
+        private void OnSaveCreated(object sender, SaveCreatedEventArgs e)
         {
-            Game1.getFarm().resourceClumps.OnValueRemoved += this.onClumpRemoved;
+            Game1.getFarm().resourceClumps.OnValueRemoved += this.OnClumpRemoved;
         }
 
-        private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            Game1.getFarm().resourceClumps.OnValueRemoved += this.onClumpRemoved;
+            Game1.getFarm().resourceClumps.OnValueRemoved += this.OnClumpRemoved;
         }
 
-        private void onClumpRemoved(ResourceClump value)
+        private void OnClumpRemoved(ResourceClump value)
         {
             if (value.parentSheetIndex == ResourceClump.meteoriteIndex)
             {

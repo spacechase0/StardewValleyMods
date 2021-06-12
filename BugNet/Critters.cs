@@ -13,7 +13,7 @@ namespace BugNet
             bfly.sprite.CurrentFrame = baseFrame;
             if (island)
             {
-                Mod.instance.Helper.Reflection.GetField<bool>(bfly, "islandButterfly").SetValue(true);
+                Mod.Instance.Helper.Reflection.GetField<bool>(bfly, "islandButterfly").SetValue(true);
             }
             return bfly;
         }

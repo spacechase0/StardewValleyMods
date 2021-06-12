@@ -6,7 +6,7 @@ namespace PyromancersJourney.Objects
 {
     public class TestTriangle : BaseObject
     {
-        private VertexBuffer buffer = new(Game1.game1.GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
+        private VertexBuffer Buffer = new(Game1.game1.GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
 
         public TestTriangle(World world)
             : base(world)
@@ -17,18 +17,18 @@ namespace PyromancersJourney.Objects
                 new(new Vector3(1, 2, 0), Color.Green),
                 new(new Vector3(2, 0, 0), Color.Blue),
             };
-            this.buffer.SetData(test);
+            this.Buffer.SetData(test);
         }
 
         public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
             base.Render(device, projection, cam);
-            BaseObject.effect.TextureEnabled = false;
-            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.Effect.TextureEnabled = false;
+            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
-                device.SetVertexBuffer(this.buffer);
+                device.SetVertexBuffer(this.Buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
             }
         }

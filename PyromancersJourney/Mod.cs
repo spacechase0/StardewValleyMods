@@ -11,23 +11,23 @@ namespace PyromancersJourney
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
-        private World world;
+        private World World;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.Player.Warped += this.onWarped;
+            helper.Events.Player.Warped += this.OnWarped;
 
-            SpaceEvents.ActionActivated += this.onActionActivated;
+            SpaceEvents.ActionActivated += this.OnActionActivated;
 
             helper.ConsoleCommands.Add("pyrojourney", "Start the minigame!", this.DoCommands);
         }
 
-        private void onActionActivated(object sender, EventArgsAction e)
+        private void OnActionActivated(object sender, EventArgsAction e)
         {
             if (e.Action == "FireArcadeGame")
             {
@@ -35,7 +35,7 @@ namespace PyromancersJourney
             }
         }
 
-        private void onWarped(object sender, WarpedEventArgs e)
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
             if (e.NewLocation is VolcanoDungeon vd && vd.level.Value == 5)
             {

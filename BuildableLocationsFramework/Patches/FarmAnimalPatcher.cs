@@ -5,6 +5,7 @@ using Harmony;
 using Microsoft.Xna.Framework;
 using Netcode;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
@@ -13,7 +14,7 @@ using StardewValley.Locations;
 namespace BuildableLocationsFramework.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="FarmAnimal"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class FarmAnimalPatcher : BasePatcher
     {
         /*********
@@ -45,8 +46,8 @@ namespace BuildableLocationsFramework.Patches
         /// <summary>The method to call before <see cref="FarmAnimal.updateWhenNotCurrentLocation"/>.</summary>
         private static bool Before_UpdateWhenNotCurrentLocation(FarmAnimal __instance, Building currentBuilding, GameTime time, GameLocation environment)
         {
-            Mod.instance.Helper.Reflection.GetField<NetEvent1Field<int, NetInt>>(__instance, "doFarmerPushEvent").GetValue().Poll();
-            Mod.instance.Helper.Reflection.GetField<NetEvent0>(__instance, "doBuildingPokeEvent").GetValue().Poll();
+            Mod.Instance.Helper.Reflection.GetField<NetEvent1Field<int, NetInt>>(__instance, "doFarmerPushEvent").GetValue().Poll();
+            Mod.Instance.Helper.Reflection.GetField<NetEvent0>(__instance, "doBuildingPokeEvent").GetValue().Poll();
             if (!Game1.shouldTimePass())
                 return false;
             __instance.update(time, environment, (long)__instance.myID, false);
@@ -54,7 +55,7 @@ namespace BuildableLocationsFramework.Patches
                 return false;
             if (currentBuilding != null && Game1.random.NextDouble() < 0.002 && ((bool)currentBuilding.animalDoorOpen && Game1.timeOfDay < 1630) && (!Game1.isRaining && !Game1.currentSeason.Equals("winter") && environment.farmers.Count == 0))
             {
-                GameLocation locationFromName = Mod.findOutdoorsOf(currentBuilding);
+                GameLocation locationFromName = Mod.FindOutdoorsOf(currentBuilding);
                 IAnimalLocation locationFromName_animals = (IAnimalLocation)locationFromName;
                 if (locationFromName.isCollidingPosition(new Rectangle(((int)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false, false, false) || locationFromName.isCollidingPosition(new Rectangle(((int)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y + 1) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false, false, false))
                     return false;
@@ -98,7 +99,7 @@ namespace BuildableLocationsFramework.Patches
                 if (environment.isTileOccupiedByFarmer(__instance.getTileLocation()) != null)
                     environment.isTileOccupiedByFarmer(__instance.getTileLocation()).TemporaryPassableTiles.Add(__instance.GetBoundingBox());
             }
-            Mod.instance.Helper.Reflection.GetMethod(__instance, "behaviors").Invoke(time, environment);
+            Mod.Instance.Helper.Reflection.GetMethod(__instance, "behaviors").Invoke(time, environment);
             return false;
         }
 
@@ -109,7 +110,7 @@ namespace BuildableLocationsFramework.Patches
                 return false;
             if (__instance.health.Value <= 0)
                 return true;
-            Mod.instance.Helper.Reflection.GetField<NetEvent0>(__instance, "doBuildingPokeEvent").GetValue().Poll();
+            Mod.Instance.Helper.Reflection.GetField<NetEvent0>(__instance, "doBuildingPokeEvent").GetValue().Poll();
             if (__instance.hitGlowTimer > 0)
                 __instance.hitGlowTimer -= time.ElapsedGameTime.Milliseconds;
             if (__instance.Sprite.CurrentAnimation != null)
@@ -119,7 +120,7 @@ namespace BuildableLocationsFramework.Patches
                 return false;
             }
             __instance.update(time, location, (long)__instance.myID, false);
-            if (Game1.IsMasterGame && Mod.instance.Helper.Reflection.GetMethod(__instance, "behaviors").Invoke<bool>(time, location) || __instance.Sprite.CurrentAnimation != null)
+            if (Game1.IsMasterGame && Mod.Instance.Helper.Reflection.GetMethod(__instance, "behaviors").Invoke<bool>(time, location) || __instance.Sprite.CurrentAnimation != null)
                 return false;
             if (__instance.controller != null && __instance.controller.timerSinceLastCheckPoint > 10000)
             {
@@ -378,7 +379,7 @@ namespace BuildableLocationsFramework.Patches
                     }
                     if (location.Equals(Game1.currentLocation))
                     {
-                        var findTruffleDelegate = (AnimatedSprite.endOfAnimationBehavior)Delegate.CreateDelegate(typeof(AnimatedSprite.endOfAnimationBehavior), Mod.instance.Helper.Reflection.GetMethod(__instance, "findTruffle").MethodInfo);
+                        var findTruffleDelegate = (AnimatedSprite.endOfAnimationBehavior)Delegate.CreateDelegate(typeof(AnimatedSprite.endOfAnimationBehavior), Mod.Instance.Helper.Reflection.GetMethod(__instance, "findTruffle").MethodInfo);
 
                         switch (__instance.FacingDirection)
                         {
@@ -430,7 +431,7 @@ namespace BuildableLocationsFramework.Patches
                         __instance.Sprite.loop = false;
                     }
                     else
-                        Mod.instance.Helper.Reflection.GetMethod(__instance, "findTruffle").Invoke(Game1.player);
+                        Mod.Instance.Helper.Reflection.GetMethod(__instance, "findTruffle").Invoke(Game1.player);
                 }
             }
             __result = false;

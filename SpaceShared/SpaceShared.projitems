@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IMoreRingsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ISpaceCoreApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CancelableEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DiagnosticMessages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util.cs" />
   </ItemGroup>

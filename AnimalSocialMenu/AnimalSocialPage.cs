@@ -10,52 +10,52 @@ namespace AnimalSocialMenu
 {
     public class AnimalSocialPage : IClickableMenu
     {
-        private string descriptionText = "";
-        private string hoverText = "";
-        public const int slotsOnPage = 5;
-        private ClickableTextureComponent upButton;
-        private ClickableTextureComponent downButton;
-        private ClickableTextureComponent scrollBar;
-        private Rectangle scrollBarRunner;
-        private List<object> names;
-        private List<ClickableTextureComponent> sprites;
-        private int slotPosition;
-        private Dictionary<long, FarmAnimal> animals = new();
-        private bool scrolling;
+        private string DescriptionText = "";
+        private string HoverText = "";
+        public const int SlotsOnPage = 5;
+        private ClickableTextureComponent UpButton;
+        private ClickableTextureComponent DownButton;
+        private ClickableTextureComponent ScrollBar;
+        private Rectangle ScrollBarRunner;
+        private List<object> Names;
+        private List<ClickableTextureComponent> Sprites;
+        private int SlotPosition;
+        private Dictionary<long, FarmAnimal> Animals = new();
+        private bool Scrolling;
 
         public AnimalSocialPage(int x, int y, int width, int height)
             : base(x, y, width, height, false)
         {
             foreach (FarmAnimal fa in Game1.getFarm().getAllFarmAnimals())
             {
-                this.animals[fa.myID.Value] = fa;
+                this.Animals[fa.myID.Value] = fa;
             }
-            this.names = new List<object>();
-            this.sprites = new List<ClickableTextureComponent>();
-            foreach (var kvp in this.animals.OrderBy(p => p.Value.type.Value))
+            this.Names = new List<object>();
+            this.Sprites = new List<ClickableTextureComponent>();
+            foreach (var kvp in this.Animals.OrderBy(p => p.Value.type.Value))
             {
-                this.names.Add(kvp.Key);
+                this.Names.Add(kvp.Key);
                 //this.sprites.Add(new ClickableTextureComponent("", new Rectangle(x + IClickableMenu.borderWidth + 4, 0, width, 64), (string)null, "", Game1.objectSpriteSheet, new Rectangle(0, 0, 24, 24), 4f, false));
-                this.sprites.Add(new ClickableTextureComponent("", new Rectangle(x + IClickableMenu.borderWidth + 4 + (kvp.Value.Sprite.SourceRect.Width == 16 ? 16 : 0), 0, width, 64), null, "", kvp.Value.Sprite.Texture, kvp.Value.Sprite.SourceRect, 2, false));
+                this.Sprites.Add(new ClickableTextureComponent("", new Rectangle(x + IClickableMenu.borderWidth + 4 + (kvp.Value.Sprite.SourceRect.Width == 16 ? 16 : 0), 0, width, 64), null, "", kvp.Value.Sprite.Texture, kvp.Value.Sprite.SourceRect, 2, false));
             }
-            this.upButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), 4f, false);
-            this.downButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + height - 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), 4f, false);
-            this.scrollBar = new ClickableTextureComponent(new Rectangle(this.upButton.bounds.X + 12, this.upButton.bounds.Y + this.upButton.bounds.Height + 4, 24, 40), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), 4f, false);
-            this.scrollBarRunner = new Rectangle(this.scrollBar.bounds.X, this.upButton.bounds.Y + this.upButton.bounds.Height + 4, this.scrollBar.bounds.Width, height - 128 - this.upButton.bounds.Height - 8);
-            this.updateSlots();
+            this.UpButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), 4f, false);
+            this.DownButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + height - 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), 4f, false);
+            this.ScrollBar = new ClickableTextureComponent(new Rectangle(this.UpButton.bounds.X + 12, this.UpButton.bounds.Y + this.UpButton.bounds.Height + 4, 24, 40), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), 4f, false);
+            this.ScrollBarRunner = new Rectangle(this.ScrollBar.bounds.X, this.UpButton.bounds.Y + this.UpButton.bounds.Height + 4, this.ScrollBar.bounds.Width, height - 128 - this.UpButton.bounds.Height - 8);
+            this.UpdateSlots();
         }
 
-        public void updateSlots()
+        public void UpdateSlots()
         {
             int num1 = 0;
-            for (int slotPosition = this.slotPosition; slotPosition < this.slotPosition + 5; ++slotPosition)
+            for (int slotPosition = this.SlotPosition; slotPosition < this.SlotPosition + 5; ++slotPosition)
             {
-                if (this.sprites.Count > slotPosition)
+                if (this.Sprites.Count > slotPosition)
                 {
                     int num2 = this.yPositionOnScreen + IClickableMenu.borderWidth + 32 + 112 * num1 + 32;
-                    if (this.animals[(long)this.names[slotPosition]].Sprite.SourceRect.Height == 16)
+                    if (this.Animals[(long)this.Names[slotPosition]].Sprite.SourceRect.Height == 16)
                         num2 += 16;
-                    this.sprites[slotPosition].bounds.Y = num2;
+                    this.Sprites[slotPosition].bounds.Y = num2;
                 }
                 ++num1;
             }
@@ -63,11 +63,11 @@ namespace AnimalSocialMenu
 
         public override void applyMovementKey(int direction)
         {
-            if (direction == 0 && this.slotPosition > 0)
-                this.upArrowPressed();
-            else if (direction == 2 && this.slotPosition < this.sprites.Count - 5)
+            if (direction == 0 && this.SlotPosition > 0)
+                this.UpArrowPressed();
+            else if (direction == 2 && this.SlotPosition < this.Sprites.Count - 5)
             {
-                this.downArrowPressed();
+                this.DownArrowPressed();
             }
             else
             {
@@ -80,13 +80,13 @@ namespace AnimalSocialMenu
         public override void leftClickHeld(int x, int y)
         {
             base.leftClickHeld(x, y);
-            if (!this.scrolling)
+            if (!this.Scrolling)
                 return;
-            int y1 = this.scrollBar.bounds.Y;
-            this.scrollBar.bounds.Y = Math.Min(this.yPositionOnScreen + this.height - 64 - 12 - this.scrollBar.bounds.Height, Math.Max(y, this.yPositionOnScreen + this.upButton.bounds.Height + 20));
-            this.slotPosition = Math.Min(this.sprites.Count - 5, Math.Max(0, (int)(this.sprites.Count * (double)((y - this.scrollBarRunner.Y) / (float)this.scrollBarRunner.Height))));
-            this.setScrollBarToCurrentIndex();
-            int y2 = this.scrollBar.bounds.Y;
+            int y1 = this.ScrollBar.bounds.Y;
+            this.ScrollBar.bounds.Y = Math.Min(this.yPositionOnScreen + this.height - 64 - 12 - this.ScrollBar.bounds.Height, Math.Max(y, this.yPositionOnScreen + this.UpButton.bounds.Height + 20));
+            this.SlotPosition = Math.Min(this.Sprites.Count - 5, Math.Max(0, (int)(this.Sprites.Count * (double)((y - this.ScrollBarRunner.Y) / (float)this.ScrollBarRunner.Height))));
+            this.SetScrollBarToCurrentIndex();
+            int y2 = this.ScrollBar.bounds.Y;
             if (y1 == y2)
                 return;
             Game1.playSound("shiny4");
@@ -95,74 +95,74 @@ namespace AnimalSocialMenu
         public override void releaseLeftClick(int x, int y)
         {
             base.releaseLeftClick(x, y);
-            this.scrolling = false;
+            this.Scrolling = false;
         }
 
-        private void setScrollBarToCurrentIndex()
+        private void SetScrollBarToCurrentIndex()
         {
-            if (this.sprites.Count > 0)
+            if (this.Sprites.Count > 0)
             {
-                this.scrollBar.bounds.Y = this.scrollBarRunner.Height / Math.Max(1, this.sprites.Count - 5 + 1) * this.slotPosition + this.upButton.bounds.Bottom + 4;
-                if (this.slotPosition == this.sprites.Count - 5)
-                    this.scrollBar.bounds.Y = this.downButton.bounds.Y - this.scrollBar.bounds.Height - 4;
+                this.ScrollBar.bounds.Y = this.ScrollBarRunner.Height / Math.Max(1, this.Sprites.Count - 5 + 1) * this.SlotPosition + this.UpButton.bounds.Bottom + 4;
+                if (this.SlotPosition == this.Sprites.Count - 5)
+                    this.ScrollBar.bounds.Y = this.DownButton.bounds.Y - this.ScrollBar.bounds.Height - 4;
             }
-            this.updateSlots();
+            this.UpdateSlots();
         }
 
         public override void receiveScrollWheelAction(int direction)
         {
             base.receiveScrollWheelAction(direction);
-            if (direction > 0 && this.slotPosition > 0)
+            if (direction > 0 && this.SlotPosition > 0)
             {
-                this.upArrowPressed();
+                this.UpArrowPressed();
                 Game1.playSound("shiny4");
             }
             else
             {
-                if (direction >= 0 || this.slotPosition >= Math.Max(0, this.sprites.Count - 5))
+                if (direction >= 0 || this.SlotPosition >= Math.Max(0, this.Sprites.Count - 5))
                     return;
-                this.downArrowPressed();
+                this.DownArrowPressed();
                 Game1.playSound("shiny4");
             }
         }
 
-        public void upArrowPressed()
+        public void UpArrowPressed()
         {
-            --this.slotPosition;
-            this.updateSlots();
-            this.upButton.scale = 3.5f;
-            this.setScrollBarToCurrentIndex();
+            --this.SlotPosition;
+            this.UpdateSlots();
+            this.UpButton.scale = 3.5f;
+            this.SetScrollBarToCurrentIndex();
         }
 
-        public void downArrowPressed()
+        public void DownArrowPressed()
         {
-            ++this.slotPosition;
-            this.updateSlots();
-            this.downButton.scale = 3.5f;
-            this.setScrollBarToCurrentIndex();
+            ++this.SlotPosition;
+            this.UpdateSlots();
+            this.DownButton.scale = 3.5f;
+            this.SetScrollBarToCurrentIndex();
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
-            if (this.upButton.containsPoint(x, y) && this.slotPosition > 0)
+            if (this.UpButton.containsPoint(x, y) && this.SlotPosition > 0)
             {
-                this.upArrowPressed();
+                this.UpArrowPressed();
                 Game1.playSound("shwip");
             }
-            else if (this.downButton.containsPoint(x, y) && this.slotPosition < this.sprites.Count - 5)
+            else if (this.DownButton.containsPoint(x, y) && this.SlotPosition < this.Sprites.Count - 5)
             {
-                this.downArrowPressed();
+                this.DownArrowPressed();
                 Game1.playSound("shwip");
             }
-            else if (this.scrollBar.containsPoint(x, y))
-                this.scrolling = true;
-            else if (!this.downButton.containsPoint(x, y) && x > this.xPositionOnScreen + this.width - 96 && (x < this.xPositionOnScreen + this.width + 128 && y > this.yPositionOnScreen) && y < this.yPositionOnScreen + this.height)
+            else if (this.ScrollBar.containsPoint(x, y))
+                this.Scrolling = true;
+            else if (!this.DownButton.containsPoint(x, y) && x > this.xPositionOnScreen + this.width - 96 && (x < this.xPositionOnScreen + this.width + 128 && y > this.yPositionOnScreen) && y < this.yPositionOnScreen + this.height)
             {
-                this.scrolling = true;
+                this.Scrolling = true;
                 this.leftClickHeld(x, y);
                 this.releaseLeftClick(x, y);
             }
-            this.slotPosition = Math.Max(0, Math.Min(this.sprites.Count - 5, this.slotPosition));
+            this.SlotPosition = Math.Max(0, Math.Min(this.Sprites.Count - 5, this.SlotPosition));
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)
@@ -171,16 +171,16 @@ namespace AnimalSocialMenu
 
         public override void performHoverAction(int x, int y)
         {
-            this.descriptionText = "";
-            this.hoverText = "";
-            this.upButton.tryHover(x, y, 0.1f);
-            this.downButton.tryHover(x, y, 0.1f);
+            this.DescriptionText = "";
+            this.HoverText = "";
+            this.UpButton.tryHover(x, y, 0.1f);
+            this.DownButton.tryHover(x, y, 0.1f);
         }
 
-        private void drawNPCSlot(SpriteBatch b, int i)
+        private void DrawNpcSlot(SpriteBatch b, int i)
         {
-            this.sprites[i].draw(b);
-            var animal = this.animals[(long)this.names[i]];
+            this.Sprites[i].draw(b);
+            var animal = this.Animals[(long)this.Names[i]];
             string name = animal.Name;
             int heartLevelForNpc = animal.friendshipTowardFarmer.Value;
             float y = Game1.smallFont.MeasureString("W").Y;
@@ -192,21 +192,21 @@ namespace AnimalSocialMenu
 
             double loveLevel = heartLevelForNpc / 1000.0;
             int num3 = loveLevel * 1000.0 % 200.0 >= 100.0 ? (int)(loveLevel * 1000.0 / 200.0) : -100;
-            b.DrawString(Game1.dialogueFont, name, new Vector2(this.xPositionOnScreen + IClickableMenu.borderWidth * 3 / 2 + 64 - 20 + 96 - Game1.dialogueFont.MeasureString(name).X / 2f, (float)(this.sprites[i].bounds.Y + 48 + (double)num - (false ? 24.0 : 20.0))), Game1.textColor);
+            b.DrawString(Game1.dialogueFont, name, new Vector2(this.xPositionOnScreen + IClickableMenu.borderWidth * 3 / 2 + 64 - 20 + 96 - Game1.dialogueFont.MeasureString(name).X / 2f, (float)(this.Sprites[i].bounds.Y + 48 + (double)num - (false ? 24.0 : 20.0))), Game1.textColor);
             for (int index = 0; index < 5; ++index)
             {
-                b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + 320 - 8 + index * 32, this.sprites[i].bounds.Y - n + 64 - 28), new Rectangle?(new Rectangle(211 + (loveLevel * 1000.0 <= (double)((index + 1) * 195) ? 7 : 0), 428, 7, 6)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.89f);
+                b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + 320 - 8 + index * 32, this.Sprites[i].bounds.Y - n + 64 - 28), new Rectangle?(new Rectangle(211 + (loveLevel * 1000.0 <= (double)((index + 1) * 195) ? 7 : 0), 428, 7, 6)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.89f);
                 if (num3 == index)
-                    b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + 320 - 8 + index * 32, this.sprites[i].bounds.Y - n + 64 - 28), new Rectangle?(new Rectangle(211, 428, 4, 6)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.891f);
+                    b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + 320 - 8 + index * 32, this.Sprites[i].bounds.Y - n + 64 - 28), new Rectangle?(new Rectangle(211, 428, 4, 6)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.891f);
             }
 
             if (!animal.wasPet.Value)
-                b.DrawString(Game1.dialogueFont, "Needs petting", new Vector2(this.xPositionOnScreen + 250 + 264, this.sprites[i].bounds.Y + 32 - 12), Game1.textColor);
+                b.DrawString(Game1.dialogueFont, "Needs petting", new Vector2(this.xPositionOnScreen + 250 + 264, this.Sprites[i].bounds.Y + 32 - 12), Game1.textColor);
         }
 
-        private int rowPosition(int i)
+        private int RowPosition(int i)
         {
-            int num1 = i - this.slotPosition;
+            int num1 = i - this.SlotPosition;
             int num2 = 112;
             return this.yPositionOnScreen + IClickableMenu.borderWidth + 160 + 4 + num1 * num2;
         }
@@ -224,7 +224,7 @@ namespace AnimalSocialMenu
             this.drawHorizontalPartition(b, this.yPositionOnScreen + IClickableMenu.borderWidth + 384 + 32 + 52, true);
             Rectangle scissorRectangle = b.GraphicsDevice.ScissorRectangle;
             Rectangle rectangle = scissorRectangle;
-            rectangle.Y = Math.Max(0, this.rowPosition(0 - 1));
+            rectangle.Y = Math.Max(0, this.RowPosition(0 - 1));
             rectangle.Height -= rectangle.Y;
             b.GraphicsDevice.ScissorRectangle = rectangle;
             try
@@ -236,20 +236,20 @@ namespace AnimalSocialMenu
                 b.GraphicsDevice.ScissorRectangle = scissorRectangle;
             }
             this.drawVerticalPartition(b, this.xPositionOnScreen + 256 + 12 + 200, true);
-            for (int slotPosition = this.slotPosition; slotPosition < this.slotPosition + 5; ++slotPosition)
+            for (int slotPosition = this.SlotPosition; slotPosition < this.SlotPosition + 5; ++slotPosition)
             {
-                if (slotPosition < this.sprites.Count)
+                if (slotPosition < this.Sprites.Count)
                 {
-                    if (this.names[slotPosition] is long)
-                        this.drawNPCSlot(b, slotPosition);
+                    if (this.Names[slotPosition] is long)
+                        this.DrawNpcSlot(b, slotPosition);
                 }
             }
-            this.upButton.draw(b);
-            this.downButton.draw(b);
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollBarRunner.X, this.scrollBarRunner.Y, this.scrollBarRunner.Width, this.scrollBarRunner.Height, Color.White, 4f, true);
-            this.scrollBar.draw(b);
-            if (!this.hoverText.Equals(""))
-                IClickableMenu.drawHoverText(b, this.hoverText, Game1.smallFont, 0, 0, -1, null, -1, null, null, 0, -1, -1, -1, -1, 1f, null);
+            this.UpButton.draw(b);
+            this.DownButton.draw(b);
+            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.ScrollBarRunner.X, this.ScrollBarRunner.Y, this.ScrollBarRunner.Width, this.ScrollBarRunner.Height, Color.White, 4f, true);
+            this.ScrollBar.draw(b);
+            if (!this.HoverText.Equals(""))
+                IClickableMenu.drawHoverText(b, this.HoverText, Game1.smallFont, 0, 0, -1, null, -1, null, null, 0, -1, -1, -1, -1, 1f, null);
             b.End();
             b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
         }

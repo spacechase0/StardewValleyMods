@@ -15,7 +15,7 @@ namespace BuildableLocationsFramework
     {
         public NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> Animals { get; } = new();
 
-        private void myWarpHome(FarmAnimal farmAnimal, FarmAnimal a)
+        private void MyWarpHome(FarmAnimal farmAnimal, FarmAnimal a)
         {
             if (farmAnimal.home == null)
                 return;
@@ -190,7 +190,7 @@ namespace BuildableLocationsFramework
                     FarmAnimal farmAnimal = keyValuePair.Value;
                     keyValuePair = this.Animals.Pairs.ElementAt(index);
                     FarmAnimal a = keyValuePair.Value;
-                    this.myWarpHome(farmAnimal, a);
+                    this.MyWarpHome(farmAnimal, a);
                 }
             }
 
@@ -254,15 +254,15 @@ namespace BuildableLocationsFramework
                 return;
             base.UpdateWhenCurrentLocation(time);
 
-            List<KeyValuePair<long, FarmAnimal>> _tempAnimals = new List<KeyValuePair<long, FarmAnimal>>();
+            List<KeyValuePair<long, FarmAnimal>> tempAnimals = new List<KeyValuePair<long, FarmAnimal>>();
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
-                _tempAnimals.Add(pair);
-            foreach (KeyValuePair<long, FarmAnimal> tempAnimal in _tempAnimals)
+                tempAnimals.Add(pair);
+            foreach (KeyValuePair<long, FarmAnimal> tempAnimal in tempAnimals)
             {
                 if (tempAnimal.Value.updateWhenCurrentLocation(time, this))
                     this.Animals.Remove(tempAnimal.Key);
             }
-            _tempAnimals.Clear();
+            tempAnimals.Clear();
         }
 
         public override bool CanRefillWateringCanOnTile(int tileX, int tileY)

@@ -15,13 +15,13 @@ namespace ThreeHeartDancePartner
         public override void Entry(IModHelper helper)
         {
             Log.Monitor = this.Monitor;
-            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             // get dialog box
             if (!(e.NewMenu is DialogueBox dialogBox))

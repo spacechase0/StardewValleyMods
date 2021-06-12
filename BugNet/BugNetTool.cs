@@ -43,17 +43,17 @@ namespace BugNet
         }
 
         // ISaveElement
-        public object getReplacement()
+        public object GetReplacement()
         {
             return new StardewValley.Object();
         }
 
-        public Dictionary<string, string> getAdditionalSaveData()
+        public Dictionary<string, string> GetAdditionalSaveData()
         {
             return new();
         }
 
-        public void rebuild(Dictionary<string, string> saveData, object replacement)
+        public void Rebuild(Dictionary<string, string> saveData, object replacement)
         {
         }
 
@@ -74,7 +74,7 @@ namespace BugNet
             float num2 = 0.0f;
             if (MeleeWeapon.defenseCooldown > 0)
                 num1 = MeleeWeapon.defenseCooldown / 1500f;
-            num2 = Mod.instance.Helper.Reflection.GetField<float>(typeof(MeleeWeapon), "addedSwordScale").GetValue();
+            num2 = Mod.Instance.Helper.Reflection.GetField<float>(typeof(MeleeWeapon), "addedSwordScale").GetValue();
             if (!drawShadow)
                 num2 = 0;
             spriteBatch.Draw(BugNetTool.Texture, location + (this.type == 1 ? new Vector2(Game1.tileSize * 2 / 3, Game1.tileSize / 3) : new Vector2(Game1.tileSize / 2, Game1.tileSize / 2)), new Rectangle(0, 0, 16, 16), Color.White * transparency, 0.0f, new Vector2(8f, 8f), Game1.pixelZoom * (scaleSize + num2), SpriteEffects.None, layerDepth);
@@ -105,10 +105,10 @@ namespace BugNet
                         if (critter is Cloud)
                             bframe = -2;
                         if (critter is Frog frog)
-                            bframe = Mod.instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4;
+                            bframe = Mod.Instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4;
 
                         string critterId = Mod.GetCritterIdFrom(critter);
-                        int objId = Mod.ja.GetObjectId($"Critter Cage: {Mod.GetCritterName(critterId)}");
+                        int objId = Mod.Ja.GetObjectId($"Critter Cage: {Mod.GetCritterName(critterId)}");
                         Log.Trace("Spawning a " + critterId + " with ID " + objId);
                         who.currentLocation.debris.Add(new Debris(new StardewValley.Object(objId, 1), critter.position));
                     }
@@ -126,12 +126,12 @@ namespace BugNet
             return this.loadDescription();
         }
 
-        public void draw(int frameOfFarmerAnimation, int facingDirection, SpriteBatch spriteBatch, Vector2 playerPosition, Farmer f, Rectangle sourceRect, int type, bool isOnSpecial)
+        public void Draw(int frameOfFarmerAnimation, int facingDirection, SpriteBatch spriteBatch, Vector2 playerPosition, Farmer f, Rectangle sourceRect, int type, bool isOnSpecial)
         {
             //if (!Mod.instance.Helper.Reflection.GetPrivateValue< bool >((MeleeWeapon)this, "attacking"))
             //    return;
 
-            var MeleeWeapon_center = new Vector2(1f, 15f);
+            var meleeWeaponCenter = new Vector2(1f, 15f);
             sourceRect = new Rectangle(0, 0, 16, 16);
 
             if (facingDirection == 1)
@@ -139,28 +139,28 @@ namespace BugNet
                 switch (frameOfFarmerAnimation)
                 {
                     case 0:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 40f, (float)(playerPosition.Y - (double)Game1.tileSize + 8.0)), new Rectangle?(sourceRect), Color.White, -0.7853982f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 40f, (float)(playerPosition.Y - (double)Game1.tileSize + 8.0)), new Rectangle?(sourceRect), Color.White, -0.7853982f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
                         break;
                     case 1:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 56f, (float)(playerPosition.Y - (double)Game1.tileSize + 28.0)), new Rectangle?(sourceRect), Color.White, 0.0f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 56f, (float)(playerPosition.Y - (double)Game1.tileSize + 28.0)), new Rectangle?(sourceRect), Color.White, 0.0f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
                         break;
                     case 2:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize - Game1.pixelZoom, playerPosition.Y - 4 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 0.7853982f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize - Game1.pixelZoom, playerPosition.Y - 4 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 0.7853982f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
                         break;
                     case 3:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize - Game1.pixelZoom, playerPosition.Y - Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 1.570796f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize - Game1.pixelZoom, playerPosition.Y - Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 1.570796f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
                         break;
                     case 4:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize - 7 * Game1.pixelZoom, playerPosition.Y + Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 1.963495f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize - 7 * Game1.pixelZoom, playerPosition.Y + Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 1.963495f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
                         break;
                     case 5:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize - 12 * Game1.pixelZoom, playerPosition.Y + Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 2.356194f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize - 12 * Game1.pixelZoom, playerPosition.Y + Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 2.356194f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
                         break;
                     case 6:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize - 12 * Game1.pixelZoom, playerPosition.Y + Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 2.356194f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize - 12 * Game1.pixelZoom, playerPosition.Y + Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 2.356194f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
                         break;
                     case 7:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2((float)(playerPosition.X + (double)Game1.tileSize - 16.0), (float)(playerPosition.Y + (double)Game1.tileSize + 12.0)), new Rectangle?(sourceRect), Color.White, 1.963495f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2((float)(playerPosition.X + (double)Game1.tileSize - 16.0), (float)(playerPosition.Y + (double)Game1.tileSize + 12.0)), new Rectangle?(sourceRect), Color.White, 1.963495f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
                         break;
                 }
             }
@@ -169,28 +169,28 @@ namespace BugNet
                 switch (frameOfFarmerAnimation)
                 {
                     case 0:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X - 4 * Game1.pixelZoom, playerPosition.Y - Game1.tileSize - 4 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 0.7853982f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X - 4 * Game1.pixelZoom, playerPosition.Y - Game1.tileSize - 4 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 0.7853982f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
                         break;
                     case 1:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X - 12 * Game1.pixelZoom, playerPosition.Y - Game1.tileSize + 5 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 0.0f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X - 12 * Game1.pixelZoom, playerPosition.Y - Game1.tileSize + 5 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, 0.0f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
                         break;
                     case 2:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X - Game1.tileSize + 8 * Game1.pixelZoom, playerPosition.Y + 4 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, -0.7853982f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X - Game1.tileSize + 8 * Game1.pixelZoom, playerPosition.Y + 4 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, -0.7853982f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() - 1) / 10000f));
                         break;
                     case 3:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.pixelZoom, playerPosition.Y + 11 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, -1.570796f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.pixelZoom, playerPosition.Y + 11 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, -1.570796f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
                         break;
                     case 4:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 11 * Game1.pixelZoom, playerPosition.Y + 13 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, -1.963495f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 11 * Game1.pixelZoom, playerPosition.Y + 13 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, -1.963495f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
                         break;
                     case 5:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 20 * Game1.pixelZoom, playerPosition.Y + 10 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, -2.356194f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 20 * Game1.pixelZoom, playerPosition.Y + 10 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, -2.356194f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
                         break;
                     case 6:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 20 * Game1.pixelZoom, playerPosition.Y + 10 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, -2.356194f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 20 * Game1.pixelZoom, playerPosition.Y + 10 * Game1.pixelZoom), new Rectangle?(sourceRect), Color.White, -2.356194f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.FlipHorizontally, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
                         break;
                     case 7:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X - 44f, playerPosition.Y + 96f), new Rectangle?(sourceRect), Color.White, -5.105088f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.FlipVertically, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X - 44f, playerPosition.Y + 96f), new Rectangle?(sourceRect), Color.White, -5.105088f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.FlipVertically, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize) / 10000f));
                         break;
                 }
             }
@@ -199,28 +199,28 @@ namespace BugNet
                 switch (frameOfFarmerAnimation)
                 {
                     case 0:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 32f, playerPosition.Y - 32f), new Rectangle?(sourceRect), Color.White, -2.356194f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 32f, playerPosition.Y - 32f), new Rectangle?(sourceRect), Color.White, -2.356194f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
                         break;
                     case 1:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 32f, playerPosition.Y - 48f), new Rectangle?(sourceRect), Color.White, -1.570796f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 32f, playerPosition.Y - 48f), new Rectangle?(sourceRect), Color.White, -1.570796f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
                         break;
                     case 2:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 48f, playerPosition.Y - 52f), new Rectangle?(sourceRect), Color.White, -3f * (float)Math.PI / 8f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 48f, playerPosition.Y - 52f), new Rectangle?(sourceRect), Color.White, -3f * (float)Math.PI / 8f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
                         break;
                     case 3:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 48f, playerPosition.Y - 52f), new Rectangle?(sourceRect), Color.White, -0.3926991f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 48f, playerPosition.Y - 52f), new Rectangle?(sourceRect), Color.White, -0.3926991f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
                         break;
                     case 4:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2((float)(playerPosition.X + (double)Game1.tileSize - 8.0), playerPosition.Y - 40f), new Rectangle?(sourceRect), Color.White, 0.0f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2((float)(playerPosition.X + (double)Game1.tileSize - 8.0), playerPosition.Y - 40f), new Rectangle?(sourceRect), Color.White, 0.0f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
                         break;
                     case 5:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize, playerPosition.Y - 40f), new Rectangle?(sourceRect), Color.White, 0.3926991f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize, playerPosition.Y - 40f), new Rectangle?(sourceRect), Color.White, 0.3926991f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
                         break;
                     case 6:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize, playerPosition.Y - 40f), new Rectangle?(sourceRect), Color.White, 0.3926991f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + Game1.tileSize, playerPosition.Y - 40f), new Rectangle?(sourceRect), Color.White, 0.3926991f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
                         break;
                     case 7:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2((float)(playerPosition.X + (double)Game1.tileSize - 44.0), playerPosition.Y + Game1.tileSize), new Rectangle?(sourceRect), Color.White, -1.963495f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2((float)(playerPosition.X + (double)Game1.tileSize - 44.0), playerPosition.Y + Game1.tileSize), new Rectangle?(sourceRect), Color.White, -1.963495f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() - Game1.tileSize / 2 - 8) / 10000f));
                         break;
                 }
             }
@@ -231,28 +231,28 @@ namespace BugNet
                 switch (frameOfFarmerAnimation)
                 {
                     case 0:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 56f, playerPosition.Y - 16f), new Rectangle?(sourceRect), Color.White, 0.3926991f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 56f, playerPosition.Y - 16f), new Rectangle?(sourceRect), Color.White, 0.3926991f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
                         break;
                     case 1:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 52f, playerPosition.Y - 8f), new Rectangle?(sourceRect), Color.White, 1.570796f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 52f, playerPosition.Y - 8f), new Rectangle?(sourceRect), Color.White, 1.570796f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
                         break;
                     case 2:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 40f, playerPosition.Y), new Rectangle?(sourceRect), Color.White, 1.570796f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 40f, playerPosition.Y), new Rectangle?(sourceRect), Color.White, 1.570796f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
                         break;
                     case 3:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 16f, playerPosition.Y + 4f), new Rectangle?(sourceRect), Color.White, 2.356194f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 16f, playerPosition.Y + 4f), new Rectangle?(sourceRect), Color.White, 2.356194f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
                         break;
                     case 4:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 8f, playerPosition.Y + 8f), new Rectangle?(sourceRect), Color.White, 3.141593f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 8f, playerPosition.Y + 8f), new Rectangle?(sourceRect), Color.White, 3.141593f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
                         break;
                     case 5:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 12f, playerPosition.Y), new Rectangle?(sourceRect), Color.White, 3.534292f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 12f, playerPosition.Y), new Rectangle?(sourceRect), Color.White, 3.534292f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
                         break;
                     case 6:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 12f, playerPosition.Y), new Rectangle?(sourceRect), Color.White, 3.534292f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 12f, playerPosition.Y), new Rectangle?(sourceRect), Color.White, 3.534292f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
                         break;
                     case 7:
-                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 44f, playerPosition.Y + Game1.tileSize), new Rectangle?(sourceRect), Color.White, -5.105088f, MeleeWeapon_center, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
+                        spriteBatch.Draw(BugNetTool.Texture, new Vector2(playerPosition.X + 44f, playerPosition.Y + Game1.tileSize), new Rectangle?(sourceRect), Color.White, -5.105088f, meleeWeaponCenter, Game1.pixelZoom, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + Game1.tileSize / 2) / 10000f));
                         break;
                 }
             }

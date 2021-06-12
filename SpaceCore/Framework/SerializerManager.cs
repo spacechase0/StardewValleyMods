@@ -18,10 +18,10 @@ namespace SpaceCore.Framework
         /*********
         ** Fields
         *********/
-        private bool initializedSerializers;
+        private bool InitializedSerializers;
 
         // Update these each game update
-        private Type[] vanillaMainTypes = new Type[25]
+        private Type[] VanillaMainTypes = new Type[25]
         {
             typeof(Tool),
             typeof(GameLocation),
@@ -49,11 +49,11 @@ namespace SpaceCore.Framework
             typeof(JunimoHarvester),
             typeof(TerrainFeature)
         };
-        private Type[] vanillaFarmerTypes = new Type[1]
+        private Type[] VanillaFarmerTypes = new Type[1]
         {
             typeof(Tool)
         };
-        private Type[] vanillaGameLocationTypes = new Type[24]
+        private Type[] VanillaGameLocationTypes = new Type[24]
         {
             typeof(Tool),
             typeof(Duggy),
@@ -89,7 +89,7 @@ namespace SpaceCore.Framework
         public readonly string FarmerFilename = "spacecore-serialization-farmer.json";
 
         /// <summary>The save filename currently being loaded, if any.</summary>
-        public string loadFileContext = null;
+        public string LoadFileContext = null;
 
 
         /*********
@@ -97,17 +97,17 @@ namespace SpaceCore.Framework
         *********/
         public void InitializeSerializers()
         {
-            if (this.initializedSerializers)
+            if (this.InitializedSerializers)
                 return;
-            this.initializedSerializers = true;
+            this.InitializedSerializers = true;
 
             Log.Trace("Reinitializing serializers...");
 
-            SaveGame.serializer = this.InitializeSerializer(typeof(SaveGame), this.vanillaMainTypes);
-            SaveGame.farmerSerializer = this.InitializeSerializer(typeof(Farmer), this.vanillaFarmerTypes);
-            SaveGame.locationSerializer = this.InitializeSerializer(typeof(GameLocation), this.vanillaGameLocationTypes);
+            SaveGame.serializer = this.InitializeSerializer(typeof(SaveGame), this.VanillaMainTypes);
+            SaveGame.farmerSerializer = this.InitializeSerializer(typeof(Farmer), this.VanillaFarmerTypes);
+            SaveGame.locationSerializer = this.InitializeSerializer(typeof(GameLocation), this.VanillaGameLocationTypes);
 
-            if (SpaceCore.instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
+            if (SpaceCore.Instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
             {
                 //Log.trace( "Letting PyTK know we changed the serializers..." );
                 try
@@ -127,10 +127,10 @@ namespace SpaceCore.Framework
             List<Type> types = new List<Type>();
             if (extra != null)
                 types.AddRange(extra);
-            types.AddRange(SpaceCore.modTypes);
+            types.AddRange(SpaceCore.ModTypes);
             var s = new XmlSerializer(baseType, types.ToArray());
 
-            if (SpaceCore.instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
+            if (SpaceCore.Instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
             {
                 //Log.trace( "Letting PyTK know we changed the serializers..." );
                 try

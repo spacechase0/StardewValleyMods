@@ -8,7 +8,7 @@ namespace SpaceCore.UI
             set { this.String = value.ToString(); }
         }
 
-        protected override void receiveInput(string str)
+        protected override void ReceiveInput(string str)
         {
             bool valid = true;
             for (int i = 0; i < str.Length; ++i)

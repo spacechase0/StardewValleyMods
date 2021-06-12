@@ -14,7 +14,7 @@ namespace GenericModConfigMenu.UI
 
         public Action<Element> Callback { get; set; }
 
-        protected bool dragging;
+        protected bool Dragging;
 
         public override int Width => this.RequestWidth;
         public override int Height => 24;
@@ -42,11 +42,11 @@ namespace GenericModConfigMenu.UI
             base.Update(hidden);
 
             if (this.Clicked)
-                this.dragging = true;
+                this.Dragging = true;
             if (Mouse.GetState().LeftButton == ButtonState.Released)
-                this.dragging = false;
+                this.Dragging = false;
 
-            if (this.dragging)
+            if (this.Dragging)
             {
                 float perc = (Game1.getOldMouseX() - this.Position.X) / this.Width;
                 if (this.Value is int)

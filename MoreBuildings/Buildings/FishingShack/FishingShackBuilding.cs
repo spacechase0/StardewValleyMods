@@ -8,10 +8,10 @@ namespace MoreBuildings.Buildings.FishingShack
 {
     public class FishingShackBuilding : Building, ISaveElement
     {
-        private static readonly BluePrint blueprint = new("FishShack");
+        private static readonly BluePrint Blueprint = new("FishShack");
 
         public FishingShackBuilding()
-            : base(FishingShackBuilding.blueprint, Vector2.Zero) { }
+            : base(FishingShackBuilding.Blueprint, Vector2.Zero) { }
 
         public FishingShackBuilding(BluePrint blueprint, Vector2 tileLocation)
             : base(blueprint, tileLocation) { }

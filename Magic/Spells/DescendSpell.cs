@@ -10,17 +10,17 @@ namespace Magic.Spells
         public DescendSpell()
             : base(SchoolId.Elemental, "descend") { }
 
-        public override bool canCast(Farmer player, int level)
+        public override bool CanCast(Farmer player, int level)
         {
-            return base.canCast(player, level) && player.currentLocation is MineShaft ms && ms.mineLevel != MineShaft.quarryMineShaft;
+            return base.CanCast(player, level) && player.currentLocation is MineShaft ms && ms.mineLevel != MineShaft.quarryMineShaft;
         }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 15;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             if (player != Game1.player)
                 return null;

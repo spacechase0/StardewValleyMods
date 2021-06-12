@@ -9,17 +9,17 @@ namespace Magic.Spells
         public BlinkSpell()
             : base(SchoolId.Toil, "blink") { }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 10;
         }
 
-        public override int getMaxCastingLevel()
+        public override int GetMaxCastingLevel()
         {
             return 1;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             player.position.X = targetX - player.GetBoundingBox().Width / 2;
             player.position.Y = targetY - player.GetBoundingBox().Height / 2;

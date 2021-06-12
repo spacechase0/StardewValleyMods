@@ -7,6 +7,6 @@ namespace CookingSkill
     {
         public static string FilePath => Path.Combine(Constants.CurrentSavePath, "cooking-skill.json");
 
-        public int experience = 0;
+        public int Experience = 0;
     }
 }

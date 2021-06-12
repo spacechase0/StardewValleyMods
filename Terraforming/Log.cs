@@ -5,29 +5,29 @@ namespace Terraforming
 {
     internal class Log
     {
-        public static void trace(string str)
+        public static void Trace(string str)
         {
-            Mod.instance.Monitor.Log(str, LogLevel.Trace);
+            Mod.Instance.Monitor.Log(str, LogLevel.Trace);
         }
 
-        public static void debug(string str)
+        public static void Debug(string str)
         {
-            Mod.instance.Monitor.Log(str, LogLevel.Debug);
+            Mod.Instance.Monitor.Log(str, LogLevel.Debug);
         }
 
-        public static void info(string str)
+        public static void Info(string str)
         {
-            Mod.instance.Monitor.Log(str, LogLevel.Info);
+            Mod.Instance.Monitor.Log(str, LogLevel.Info);
         }
 
-        public static void warn(string str)
+        public static void Warn(string str)
         {
-            Mod.instance.Monitor.Log(str, LogLevel.Warn);
+            Mod.Instance.Monitor.Log(str, LogLevel.Warn);
         }
 
-        public static void error(string str)
+        public static void Error(string str)
         {
-            Mod.instance.Monitor.Log(str, LogLevel.Error);
+            Mod.Instance.Monitor.Log(str, LogLevel.Error);
         }
     }
 }

@@ -10,10 +10,10 @@ namespace CustomBuildings
     public class BuildingData
     {
         [JsonIgnore]
-        public Texture2D texture;
+        public Texture2D Texture;
 
         [JsonIgnore]
-        public Func<xTile.Map> mapLoader;
+        public Func<xTile.Map> MapLoader;
 
         public string Id { get; set; }
         public string Name { get; set; }

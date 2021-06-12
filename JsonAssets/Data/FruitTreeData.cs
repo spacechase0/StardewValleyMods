@@ -18,9 +18,9 @@ namespace JsonAssets.Data
         public Dictionary<string, string> SaplingNameLocalization = new();
         public Dictionary<string, string> SaplingDescriptionLocalization = new();
 
-        internal ObjectData sapling;
-        public int GetSaplingId() { return this.sapling.id; }
-        public int GetFruitTreeIndex() { return this.id; }
+        internal ObjectData Sapling;
+        public int GetSaplingId() { return this.Sapling.Id; }
+        public int GetFruitTreeIndex() { return this.Id; }
         internal string GetFruitTreeInformation()
         {
             return $"{this.GetFruitTreeIndex()}/{this.Season}/{Mod.instance.ResolveObjectId(this.Product)}/what goes here?";

@@ -2,13 +2,14 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 
 namespace SurfingFestival.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Event"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class EventPatcher : BasePatcher
     {
         /*********
@@ -42,8 +43,8 @@ namespace SurfingFestival.Patches
         {
             if (id == "surfing")
             {
-                Mod.instance.Helper.Reflection.GetField<NPC>(__instance, "festivalHost").SetValue(__instance.getActorByName("Lewis"));
-                Mod.instance.Helper.Reflection.GetField<string>(__instance, "hostMessage").SetValue("$q -1 null#Ready for the race?#$r -1 0 yes#Yes, let's start.#$r -1 0 no#Not yet.");
+                Mod.Instance.Helper.Reflection.GetField<NPC>(__instance, "festivalHost").SetValue(__instance.getActorByName("Lewis"));
+                Mod.Instance.Helper.Reflection.GetField<string>(__instance, "hostMessage").SetValue("$q -1 null#Ready for the race?#$r -1 0 yes#Yes, let's start.#$r -1 0 no#Not yet.");
             }
         }
 
@@ -62,7 +63,7 @@ namespace SurfingFestival.Patches
             if (!__instance.isSpecificFestival("summer5"))
                 return;
 
-            Mod.instance.DrawObstacles(b);
+            Mod.Instance.DrawObstacles(b);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace MoreGrassStarters
             base.loadSprite();
             if (this.grassType >= 5)
             {
-                this.texture = new Lazy<Texture2D>(() => GrassStarterItem.tex2);
+                this.texture = new Lazy<Texture2D>(() => GrassStarterItem.Tex2);
                 this.grassSourceOffset.Value = 20 * (this.grassType - 5);
             }
         }

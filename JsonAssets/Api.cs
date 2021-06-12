@@ -52,119 +52,119 @@ namespace JsonAssets
 
     public class Api : IApi
     {
-        private readonly Action<string> loadFolder;
+        private readonly Action<string> LoadFolder;
 
         public Api(Action<string> loadFolder)
         {
-            this.loadFolder = loadFolder;
+            this.LoadFolder = loadFolder;
         }
 
         public void LoadAssets(string path)
         {
-            this.loadFolder(path);
+            this.LoadFolder(path);
         }
 
         public int GetObjectId(string name)
         {
-            if (Mod.instance.objectIds == null)
+            if (Mod.instance.ObjectIds == null)
                 return -1;
-            return Mod.instance.objectIds.ContainsKey(name) ? Mod.instance.objectIds[name] : -1;
+            return Mod.instance.ObjectIds.ContainsKey(name) ? Mod.instance.ObjectIds[name] : -1;
         }
 
         public int GetCropId(string name)
         {
-            if (Mod.instance.cropIds == null)
+            if (Mod.instance.CropIds == null)
                 return -1;
-            return Mod.instance.cropIds.ContainsKey(name) ? Mod.instance.cropIds[name] : -1;
+            return Mod.instance.CropIds.ContainsKey(name) ? Mod.instance.CropIds[name] : -1;
         }
 
         public int GetFruitTreeId(string name)
         {
-            if (Mod.instance.fruitTreeIds == null)
+            if (Mod.instance.FruitTreeIds == null)
                 return -1;
-            return Mod.instance.fruitTreeIds.ContainsKey(name) ? Mod.instance.fruitTreeIds[name] : -1;
+            return Mod.instance.FruitTreeIds.ContainsKey(name) ? Mod.instance.FruitTreeIds[name] : -1;
         }
 
         public int GetBigCraftableId(string name)
         {
-            if (Mod.instance.bigCraftableIds == null)
+            if (Mod.instance.BigCraftableIds == null)
                 return -1;
-            return Mod.instance.bigCraftableIds.ContainsKey(name) ? Mod.instance.bigCraftableIds[name] : -1;
+            return Mod.instance.BigCraftableIds.ContainsKey(name) ? Mod.instance.BigCraftableIds[name] : -1;
         }
 
         public int GetHatId(string name)
         {
-            if (Mod.instance.hatIds == null)
+            if (Mod.instance.HatIds == null)
                 return -1;
-            return Mod.instance.hatIds.ContainsKey(name) ? Mod.instance.hatIds[name] : -1;
+            return Mod.instance.HatIds.ContainsKey(name) ? Mod.instance.HatIds[name] : -1;
         }
 
         public int GetWeaponId(string name)
         {
-            if (Mod.instance.weaponIds == null)
+            if (Mod.instance.WeaponIds == null)
                 return -1;
-            return Mod.instance.weaponIds.ContainsKey(name) ? Mod.instance.weaponIds[name] : -1;
+            return Mod.instance.WeaponIds.ContainsKey(name) ? Mod.instance.WeaponIds[name] : -1;
         }
 
         public int GetClothingId(string name)
         {
-            if (Mod.instance.clothingIds == null)
+            if (Mod.instance.ClothingIds == null)
                 return -1;
-            return Mod.instance.clothingIds.ContainsKey(name) ? Mod.instance.clothingIds[name] : -1;
+            return Mod.instance.ClothingIds.ContainsKey(name) ? Mod.instance.ClothingIds[name] : -1;
         }
 
         public IDictionary<string, int> GetAllObjectIds()
         {
-            if (Mod.instance.objectIds == null)
+            if (Mod.instance.ObjectIds == null)
                 return new Dictionary<string, int>();
-            return new Dictionary<string, int>(Mod.instance.objectIds);
+            return new Dictionary<string, int>(Mod.instance.ObjectIds);
         }
 
         public IDictionary<string, int> GetAllCropIds()
         {
-            if (Mod.instance.cropIds == null)
+            if (Mod.instance.CropIds == null)
                 return new Dictionary<string, int>();
-            return new Dictionary<string, int>(Mod.instance.cropIds);
+            return new Dictionary<string, int>(Mod.instance.CropIds);
         }
 
         public IDictionary<string, int> GetAllFruitTreeIds()
         {
-            if (Mod.instance.fruitTreeIds == null)
+            if (Mod.instance.FruitTreeIds == null)
                 return new Dictionary<string, int>();
-            return new Dictionary<string, int>(Mod.instance.fruitTreeIds);
+            return new Dictionary<string, int>(Mod.instance.FruitTreeIds);
         }
 
         public IDictionary<string, int> GetAllBigCraftableIds()
         {
-            if (Mod.instance.bigCraftableIds == null)
+            if (Mod.instance.BigCraftableIds == null)
                 return new Dictionary<string, int>();
-            return new Dictionary<string, int>(Mod.instance.bigCraftableIds);
+            return new Dictionary<string, int>(Mod.instance.BigCraftableIds);
         }
 
         public IDictionary<string, int> GetAllHatIds()
         {
-            if (Mod.instance.hatIds == null)
+            if (Mod.instance.HatIds == null)
                 return new Dictionary<string, int>();
-            return new Dictionary<string, int>(Mod.instance.hatIds);
+            return new Dictionary<string, int>(Mod.instance.HatIds);
         }
 
         public IDictionary<string, int> GetAllWeaponIds()
         {
-            if (Mod.instance.weaponIds == null)
+            if (Mod.instance.WeaponIds == null)
                 return new Dictionary<string, int>();
-            return new Dictionary<string, int>(Mod.instance.weaponIds);
+            return new Dictionary<string, int>(Mod.instance.WeaponIds);
         }
 
         public IDictionary<string, int> GetAllClothingIds()
         {
-            if (Mod.instance.clothingIds == null)
+            if (Mod.instance.ClothingIds == null)
                 return new Dictionary<string, int>();
-            return new Dictionary<string, int>(Mod.instance.clothingIds);
+            return new Dictionary<string, int>(Mod.instance.ClothingIds);
         }
 
         public List<string> GetAllObjectsFromContentPack(string cp)
         {
-            foreach (var entry in Mod.instance.objectsByContentPack)
+            foreach (var entry in Mod.instance.ObjectsByContentPack)
                 if (entry.Key.UniqueID == cp)
                     return new List<string>(entry.Value);
             return null;
@@ -172,7 +172,7 @@ namespace JsonAssets
 
         public List<string> GetAllCropsFromContentPack(string cp)
         {
-            foreach (var entry in Mod.instance.cropsByContentPack)
+            foreach (var entry in Mod.instance.CropsByContentPack)
                 if (entry.Key.UniqueID == cp)
                     return new List<string>(entry.Value);
             return null;
@@ -180,7 +180,7 @@ namespace JsonAssets
 
         public List<string> GetAllFruitTreesFromContentPack(string cp)
         {
-            foreach (var entry in Mod.instance.fruitTreesByContentPack)
+            foreach (var entry in Mod.instance.FruitTreesByContentPack)
                 if (entry.Key.UniqueID == cp)
                     return new List<string>(entry.Value);
             return null;
@@ -188,7 +188,7 @@ namespace JsonAssets
 
         public List<string> GetAllBigCraftablesFromContentPack(string cp)
         {
-            foreach (var entry in Mod.instance.bigCraftablesByContentPack)
+            foreach (var entry in Mod.instance.BigCraftablesByContentPack)
                 if (entry.Key.UniqueID == cp)
                     return new List<string>(entry.Value);
             return null;
@@ -196,7 +196,7 @@ namespace JsonAssets
 
         public List<string> GetAllHatsFromContentPack(string cp)
         {
-            foreach (var entry in Mod.instance.hatsByContentPack)
+            foreach (var entry in Mod.instance.HatsByContentPack)
                 if (entry.Key.UniqueID == cp)
                     return new List<string>(entry.Value);
             return null;
@@ -204,7 +204,7 @@ namespace JsonAssets
 
         public List<string> GetAllWeaponsFromContentPack(string cp)
         {
-            foreach (var entry in Mod.instance.weaponsByContentPack)
+            foreach (var entry in Mod.instance.WeaponsByContentPack)
                 if (entry.Key.UniqueID == cp)
                     return new List<string>(entry.Value);
             return null;
@@ -212,7 +212,7 @@ namespace JsonAssets
 
         public List<string> GetAllClothingFromContentPack(string cp)
         {
-            foreach (var entry in Mod.instance.clothingByContentPack)
+            foreach (var entry in Mod.instance.ClothingByContentPack)
                 if (entry.Key.UniqueID == cp)
                     return new List<string>(entry.Value);
             return null;
@@ -220,7 +220,7 @@ namespace JsonAssets
 
         public List<string> GetAllBootsFromContentPack(string cp)
         {
-            foreach (var entry in Mod.instance.bootsByContentPack)
+            foreach (var entry in Mod.instance.BootsByContentPack)
                 if (entry.Key.UniqueID == cp)
                     return new List<string>(entry.Value);
             return null;
@@ -264,17 +264,17 @@ namespace JsonAssets
 
         public bool FixIdsInItem(Item item)
         {
-            return Mod.instance.fixItem(item);
+            return Mod.instance.FixItem(item);
         }
 
         public void FixIdsInItemList(List<Item> items)
         {
-            Mod.instance.fixItemList(items);
+            Mod.instance.FixItemList(items);
         }
 
         public void FixIdsInLocation(GameLocation location)
         {
-            Mod.instance.fixLocation(location);
+            Mod.instance.FixLocation(location);
         }
 
         public bool TryGetCustomSprite(object entity, out Texture2D texture, out Rectangle sourceRect)
@@ -324,12 +324,12 @@ namespace JsonAssets
             if (entity is FruitTree fruitTree)
             {
                 tex = FruitTree.texture;
-                rect = ContentInjector1.fruitTreeRect(fruitTree.treeType.Value);
+                rect = ContentInjector1.FruitTreeRect(fruitTree.treeType.Value);
             }
             else if (entity is Crop crop)
             {
                 tex = Game1.cropSpriteSheet;
-                rect = ContentInjector1.cropRect(crop.rowInSpriteSheet.Value);
+                rect = ContentInjector1.CropRect(crop.rowInSpriteSheet.Value);
             }
             else
             {

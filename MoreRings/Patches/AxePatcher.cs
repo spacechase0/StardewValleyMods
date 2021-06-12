@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
@@ -8,7 +9,7 @@ using StardewValley.Tools;
 namespace MoreRings.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Axe"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class AxePatcher : BasePatcher
     {
         /*********
@@ -30,7 +31,7 @@ namespace MoreRings.Patches
         /// <summary>The method to call before <see cref="Axe.DoFunction"/>.</summary>
         private static void Before_DoFunction(Hoe __instance, GameLocation location, ref int x, ref int y, int power, Farmer who)
         {
-            if (Mod.instance.hasRingEquipped(Mod.instance.Ring_MageHand) > 0)
+            if (Mod.Instance.HasRingEquipped(Mod.Instance.RingMageHand) > 0)
             {
                 x = (int)who.lastClick.X;
                 y = (int)who.lastClick.Y;

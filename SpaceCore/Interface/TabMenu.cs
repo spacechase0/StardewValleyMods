@@ -13,17 +13,17 @@ namespace SpaceCore.Interface
             this.Parent = parent;
         }
 
-        public virtual void update(GameTime gt)
+        public virtual void Update(GameTime gt)
         {
         }
 
-        public abstract void draw(SpriteBatch b);
+        public abstract void Draw(SpriteBatch b);
 
-        public virtual void mouseMove(int x, int y)
+        public virtual void MouseMove(int x, int y)
         {
         }
 
-        public virtual void leftClick(int x, int y)
+        public virtual void LeftClick(int x, int y)
         {
         }
     }

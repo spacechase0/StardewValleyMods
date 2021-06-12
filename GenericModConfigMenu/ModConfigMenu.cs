@@ -11,38 +11,38 @@ namespace GenericModConfigMenu
 {
     public class ModConfigMenu : IClickableMenu
     {
-        private RootElement ui;
-        public Table table;
+        private RootElement Ui;
+        public Table Table;
         public static IClickableMenu ActiveConfigMenu;
-        private bool ingame;
+        private bool Ingame;
 
         public ModConfigMenu(bool inGame)
         {
-            this.ingame = inGame;
+            this.Ingame = inGame;
 
-            this.ui = new RootElement();
+            this.Ui = new RootElement();
 
-            this.table = new Table();
-            this.table.RowHeight = 50;
-            this.table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64);
-            this.table.Size = new Vector2(800, Game1.viewport.Height - 128);
+            this.Table = new Table();
+            this.Table.RowHeight = 50;
+            this.Table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64);
+            this.Table.Size = new Vector2(800, Game1.viewport.Height - 128);
 
             var heading = new Label() { String = "Configure Mods", Bold = true };
             heading.LocalPosition = new Vector2((800 - heading.Measure().X) / 2, heading.LocalPosition.Y);
-            this.table.AddRow(new Element[] { heading });
+            this.Table.AddRow(new Element[] { heading });
 
-            foreach (var modConfigEntry in Mod.instance.configs.OrderBy(pair => pair.Key.Name))
+            foreach (var modConfigEntry in Mod.Instance.Configs.OrderBy(pair => pair.Key.Name))
             {
-                if (this.ingame && !modConfigEntry.Value.HasAnyInGame)
+                if (this.Ingame && !modConfigEntry.Value.HasAnyInGame)
                     continue;
                 var label = new Label() { String = modConfigEntry.Key.Name };
-                label.Callback = (Element e) => this.changeToModPage(modConfigEntry.Key);
-                this.table.AddRow(new Element[] { label });
+                label.Callback = (Element e) => this.ChangeToModPage(modConfigEntry.Key);
+                this.Table.AddRow(new Element[] { label });
             }
 
-            this.ui.AddChild(this.table);
+            this.Ui.AddChild(this.Table);
 
-            if (this.ingame || Constants.TargetPlatform == GamePlatform.Android)
+            if (this.Ingame || Constants.TargetPlatform == GamePlatform.Android)
                 this.initializeUpperRightCloseButton();
 
             ModConfigMenu.ActiveConfigMenu = this;
@@ -54,15 +54,15 @@ namespace GenericModConfigMenu
             {
                 if (playSound)
                     Game1.playSound("bigDeSelect");
-                if (!this.ingame && TitleMenu.subMenu != null && Game1.activeClickableMenu != null)
+                if (!this.Ingame && TitleMenu.subMenu != null && Game1.activeClickableMenu != null)
                     TitleMenu.subMenu = null;
             }
         }
 
-        public void receiveScrollWheelActionSmapi(int direction)
+        public void ReceiveScrollWheelActionSmapi(int direction)
         {
-            if (TitleMenu.subMenu == this || this.ingame)
-                this.table.Scrollbar.ScrollBy(direction / -120);
+            if (TitleMenu.subMenu == this || this.Ingame)
+                this.Table.Scrollbar.ScrollBy(direction / -120);
             else
                 ModConfigMenu.ActiveConfigMenu = null;
         }
@@ -70,42 +70,42 @@ namespace GenericModConfigMenu
         public override void update(GameTime time)
         {
             base.update(time);
-            this.ui.Update();
+            this.Ui.Update();
         }
 
         public override void draw(SpriteBatch b)
         {
             base.draw(b);
             b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.viewport.Width, Game1.viewport.Height), new Color(0, 0, 0, 192));
-            this.ui.Draw(b);
+            this.Ui.Draw(b);
             if (this.upperRightCloseButton != null)
                 this.upperRightCloseButton.draw(b); // bring it above the backdrop
-            if (this.ingame)
+            if (this.Ingame)
                 this.drawMouse(b);
         }
 
-        private void changeToModPage(IManifest modManifest)
+        private void ChangeToModPage(IManifest modManifest)
         {
             Log.Trace("Changing to mod config page for mod " + modManifest.UniqueID);
             Game1.playSound("bigSelect");
-            if (!this.ingame)
-                TitleMenu.subMenu = new SpecificModConfigMenu(modManifest, this.ingame);
+            if (!this.Ingame)
+                TitleMenu.subMenu = new SpecificModConfigMenu(modManifest, this.Ingame);
             else
-                Game1.activeClickableMenu = new SpecificModConfigMenu(modManifest, this.ingame);
+                Game1.activeClickableMenu = new SpecificModConfigMenu(modManifest, this.Ingame);
         }
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
         {
-            this.ui = new RootElement();
+            this.Ui = new RootElement();
 
             Vector2 newSize = new Vector2(800, Game1.viewport.Height - 128);
-            this.table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64);
-            foreach (Element opt in this.table.Children)
-                opt.LocalPosition = new Vector2(newSize.X / (this.table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
+            this.Table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64);
+            foreach (Element opt in this.Table.Children)
+                opt.LocalPosition = new Vector2(newSize.X / (this.Table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
 
-            this.table.Size = newSize;
-            this.table.Scrollbar.Update();
-            this.ui.AddChild(this.table);
+            this.Table.Size = newSize;
+            this.Table.Scrollbar.Update();
+            this.Ui.AddChild(this.Table);
         }
     }
 }

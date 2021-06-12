@@ -15,7 +15,7 @@ namespace ArcadeRoom
     {
         public Vector2 ReserveMachineSpot()
         {
-            return Mod.instance.ReserveNextMachineSpot();
+            return Mod.Instance.ReserveNextMachineSpot();
         }
 
         public event EventHandler OnRoomSetup;

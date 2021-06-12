@@ -12,27 +12,27 @@ namespace Magic
 
         public class PlayerData
         {
-            public int freePoints = 0;
+            public int FreePoints = 0;
 
-            public SpellBook spellBook = new();
+            public SpellBook SpellBook = new();
         }
-        public Dictionary<long, PlayerData> players = new();
+        public Dictionary<long, PlayerData> Players = new();
 
-        internal static JsonSerializerSettings networkSerializerSettings { get; } = new()
+        internal static JsonSerializerSettings NetworkSerializerSettings { get; } = new()
         {
             Formatting = Formatting.None,
             ObjectCreationHandling = ObjectCreationHandling.Replace,
         };
 
-        internal void syncMineFull()
+        internal void SyncMineFull()
         {
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
                 writer.Write(1);
                 writer.Write(Game1.player.UniqueMultiplayerID);
-                writer.Write(JsonConvert.SerializeObject(this.players[Game1.player.UniqueMultiplayerID], MultiplayerSaveData.networkSerializerSettings));
-                SpaceCore.Networking.BroadcastMessage(Magic.MSG_DATA, stream.ToArray());
+                writer.Write(JsonConvert.SerializeObject(this.Players[Game1.player.UniqueMultiplayerID], MultiplayerSaveData.NetworkSerializerSettings));
+                SpaceCore.Networking.BroadcastMessage(Magic.MsgData, stream.ToArray());
             }
         }
     }

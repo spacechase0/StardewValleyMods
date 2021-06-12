@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Objects;
@@ -9,7 +10,7 @@ using SObject = StardewValley.Object;
 namespace CarryChest.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Item"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class ItemPatcher : BasePatcher
     {
         /*********

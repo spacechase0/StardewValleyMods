@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Spacechase.Shared.Harmony;
 using SpaceCore.Events;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Events;
@@ -9,7 +10,7 @@ using StardewValley.Events;
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Utility"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class UtilityPatcher : BasePatcher
     {
         /*********

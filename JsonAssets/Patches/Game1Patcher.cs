@@ -1,13 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 
 namespace JsonAssets.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Game1"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class Game1Patcher : BasePatcher
     {
         /*********
@@ -29,7 +30,7 @@ namespace JsonAssets.Patches
         /// <summary>The method to call before <see cref="Game1.loadForNewGame"/>.</summary>
         private static void Before_LoadForNewGame()
         {
-            Mod.instance.onBlankSave();
+            Mod.instance.OnBlankSave();
         }
     }
 }

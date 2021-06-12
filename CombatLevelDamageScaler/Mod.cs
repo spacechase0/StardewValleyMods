@@ -20,10 +20,10 @@ namespace CombatLevelDamageScaler
                 new GameLocationPatcher()
             );
 
-            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
         }
 
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)

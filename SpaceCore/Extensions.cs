@@ -4,7 +4,7 @@ namespace SpaceCore
 {
     public static class Extensions
     {
-        public static int countStardropsEaten(this Farmer player)
+        public static int CountStardropsEaten(this Farmer player)
         {
             int count = 0;
             if (Game1.player.hasOrWillReceiveMail("CF_Fair"))

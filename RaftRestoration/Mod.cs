@@ -10,14 +10,14 @@ namespace RaftRestoration
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
             HarmonyPatcher.Apply(this,
                 new FarmerPatcher(),
@@ -26,7 +26,7 @@ namespace RaftRestoration
             );
         }
 
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is ShopMenu shop)
             {

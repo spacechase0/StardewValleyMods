@@ -23,36 +23,36 @@ namespace LuckSkill
 {
     public class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
-        public const int PROFESSION_DAILY_LUCK = 5 * 6;
-        public const int PROFESSION_MORE_QUESTS = 5 * 6 + 1;// 4;
-        public const int PROFESSION_CHANCE_MAX_LUCK = 5 * 6 + 2;
-        public const int PROFESSION_NO_BAD_LUCK = 5 * 6 + 3;
-        public const int PROFESSION_NIGHTLY_EVENTS = 5 * 6 + 4;// 1;
-        public const int PROFESSION_JUNIMO_HELP = 5 * 6 + 5;
+        public const int ProfessionDailyLuck = 5 * 6;
+        public const int ProfessionMoreQuests = 5 * 6 + 1;// 4;
+        public const int ProfessionChanceMaxLuck = 5 * 6 + 2;
+        public const int ProfessionNoBadLuck = 5 * 6 + 3;
+        public const int ProfessionNightlyEvents = 5 * 6 + 4;// 1;
+        public const int ProfessionJunimoHelp = 5 * 6 + 5;
 
-        public static Mod instance;
+        public static Mod Instance;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.Player.Warped += this.onWarped;
-            helper.Events.Display.RenderedActiveMenu += this.onRenderedActiveMenu;
-            helper.Events.GameLoop.DayStarted += this.onDayStarted;
-            helper.Events.GameLoop.DayEnding += this.onDayEnding;
-            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.Player.Warped += this.OnWarped;
+            helper.Events.Display.RenderedActiveMenu += this.OnRenderedActiveMenu;
+            helper.Events.GameLoop.DayStarted += this.OnDayStarted;
+            helper.Events.GameLoop.DayEnding += this.OnDayEnding;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
 
-            SpaceEvents.ChooseNightlyFarmEvent += this.changeFarmEvent;
+            SpaceEvents.ChooseNightlyFarmEvent += this.ChangeFarmEvent;
 
             HarmonyPatcher.Apply(this,
                 new FarmerPatcher(),
                 new LevelUpMenuPatcher()
             );
 
-            this.checkForAllProfessions();
+            this.CheckForAllProfessions();
         }
 
         public bool CanEdit<T>(IAssetInfo asset)
@@ -64,32 +64,32 @@ namespace LuckSkill
         {
             Func<int, string> getProfName = (id) => this.Helper.Reflection.GetMethod(typeof(LevelUpMenu), "getProfessionName").Invoke<string>(id);
 
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.PROFESSION_DAILY_LUCK), "Fortunate");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.PROFESSION_DAILY_LUCK), "Better daily luck.");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.PROFESSION_NIGHTLY_EVENTS), "Shooting Star");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.PROFESSION_NIGHTLY_EVENTS), "Nightly events occur twice as often.");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.PROFESSION_CHANCE_MAX_LUCK), "Lucky");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.PROFESSION_CHANCE_MAX_LUCK), "20% chance for max daily luck.");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.PROFESSION_NO_BAD_LUCK), "Un-unlucky");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.PROFESSION_NO_BAD_LUCK), "Never have bad luck.");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.PROFESSION_MORE_QUESTS), "Popular Helper");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.PROFESSION_MORE_QUESTS), "Daily quests occur three times as often.");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.PROFESSION_JUNIMO_HELP), "Spirit Child");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.PROFESSION_JUNIMO_HELP), "Giving gifts makes junimos happy. They might help your farm.\n(15% chance for some form of farm advancement.)");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionDailyLuck), "Fortunate");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionDailyLuck), "Better daily luck.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionNightlyEvents), "Shooting Star");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionNightlyEvents), "Nightly events occur twice as often.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionChanceMaxLuck), "Lucky");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionChanceMaxLuck), "20% chance for max daily luck.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionNoBadLuck), "Un-unlucky");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionNoBadLuck), "Never have bad luck.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionMoreQuests), "Popular Helper");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionMoreQuests), "Daily quests occur three times as often.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionJunimoHelp), "Spirit Child");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionJunimoHelp), "Giving gifts makes junimos happy. They might help your farm.\n(15% chance for some form of farm advancement.)");
         }
 
         /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onDayStarted(object sender, DayStartedEventArgs args)
+        private void OnDayStarted(object sender, DayStartedEventArgs args)
         {
             Game1.player.gainExperience(Farmer.luckSkill, (int)(Game1.player.team.sharedDailyLuck.Value * 750));
 
-            if (Game1.player.professions.Contains(Mod.PROFESSION_DAILY_LUCK))
+            if (Game1.player.professions.Contains(Mod.ProfessionDailyLuck))
             {
                 Game1.player.team.sharedDailyLuck.Value += 0.01;
             }
-            if (Game1.player.professions.Contains(Mod.PROFESSION_CHANCE_MAX_LUCK))
+            if (Game1.player.professions.Contains(Mod.ProfessionChanceMaxLuck))
             {
                 Random r = new Random((int)(Game1.uniqueIDForThisGame + Game1.stats.DaysPlayed * 3));
                 if (r.NextDouble() <= 0.20)
@@ -97,12 +97,12 @@ namespace LuckSkill
                     Game1.player.team.sharedDailyLuck.Value = 0.12;
                 }
             }
-            if (Game1.player.professions.Contains(Mod.PROFESSION_NO_BAD_LUCK))
+            if (Game1.player.professions.Contains(Mod.ProfessionNoBadLuck))
             {
                 if (Game1.player.team.sharedDailyLuck.Value < 0)
                     Game1.player.team.sharedDailyLuck.Value = 0;
             }
-            if (Game1.player.professions.Contains(Mod.PROFESSION_MORE_QUESTS) && Game1.questOfTheDay == null)
+            if (Game1.player.professions.Contains(Mod.ProfessionMoreQuests) && Game1.questOfTheDay == null)
             {
                 if (Utility.isFestivalDay(Game1.dayOfMonth, Game1.currentSeason) || Utility.isFestivalDay(Game1.dayOfMonth + 1, Game1.currentSeason))
                 {
@@ -133,9 +133,9 @@ namespace LuckSkill
             }
         }
 
-        private void onDayEnding(object sender, DayEndingEventArgs args)
+        private void OnDayEnding(object sender, DayEndingEventArgs args)
         {
-            if (Game1.player.professions.Contains(Mod.PROFESSION_JUNIMO_HELP))
+            if (Game1.player.professions.Contains(Mod.ProfessionJunimoHelp))
             {
                 int rolls = 0;
                 foreach (string friendKey in Game1.player.friendshipData.Keys)
@@ -273,12 +273,12 @@ namespace LuckSkill
             }
         }
 
-        private bool didInitSkills;
+        private bool DidInitSkills;
 
         /// <summary>When a menu is open (<see cref="Game1.activeClickableMenu"/> isn't null), raised after that menu is drawn to the sprite batch but before it's rendered to the screen.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onRenderedActiveMenu(object sender, RenderedActiveMenuEventArgs e)
+        private void OnRenderedActiveMenu(object sender, RenderedActiveMenuEventArgs e)
         {
             if (Game1.activeClickableMenu is GameMenu)
             {
@@ -291,20 +291,20 @@ namespace LuckSkill
                     if (skills == null)
                         return;
 
-                    if (!this.didInitSkills)
+                    if (!this.DidInitSkills)
                     {
-                        this.initLuckSkill(skills);
-                        this.didInitSkills = true;
+                        this.InitLuckSkill(skills);
+                        this.DidInitSkills = true;
                     }
 
-                    this.drawLuckSkill(skills);
+                    this.DrawLuckSkill(skills);
                 }
             }
             else
-                this.didInitSkills = false;
+                this.DidInitSkills = false;
         }
 
-        private void initLuckSkill(SkillsPage skills)
+        private void InitLuckSkill(SkillsPage skills)
         {
             // Bunch of stuff from the constructor
             int num2 = 0;
@@ -320,7 +320,7 @@ namespace LuckSkill
                 int num5 = -1;
 
                 flag = (Game1.player.LuckLevel > i);
-                num5 = this.getLuckProfessionForSkill(i + 1);//Game1.player.getProfessionForSkill(5, i + 1);
+                num5 = this.GetLuckProfessionForSkill(i + 1);//Game1.player.getProfessionForSkill(5, i + 1);
                 object[] args = new object[] { text, text2, LevelUpMenu.getProfessionDescription(num5) };
                 this.Helper.Reflection.GetMethod(skills, "parseProfessionDescription").Invoke(args);
                 text = (string)args[0];
@@ -352,7 +352,7 @@ namespace LuckSkill
             skillAreas.Add(new ClickableTextureComponent(string.Concat(num6), new Rectangle(num3 - Game1.tileSize * 2 - Game1.tileSize * 3 / 4, num4 + k * (Game1.tileSize / 2 + Game1.pixelZoom * 6), Game1.tileSize * 2 + Game1.pixelZoom * 5, 9 * Game1.pixelZoom), string.Concat(num6), text3, null, Rectangle.Empty, 1f, false));
         }
 
-        private void drawLuckSkill(SkillsPage skills)
+        private void DrawLuckSkill(SkillsPage skills)
         {
             SpriteBatch b = Game1.spriteBatch;
             int j = 5;
@@ -411,9 +411,9 @@ namespace LuckSkill
             skills.drawMouse(b);
         }
 
-        private void changeFarmEvent(object sender, EventArgsChooseNightlyFarmEvent args)
+        private void ChangeFarmEvent(object sender, EventArgsChooseNightlyFarmEvent args)
         {
-            if (Game1.player.professions.Contains(Mod.PROFESSION_NIGHTLY_EVENTS) && !Game1.weddingToday &&
+            if (Game1.player.professions.Contains(Mod.ProfessionNightlyEvents) && !Game1.weddingToday &&
                     (args.NightEvent == null || (args.NightEvent is SoundInTheNightEvent &&
                     this.Helper.Reflection.GetField<NetInt>(args.NightEvent, "behavior").GetValue().Value == 2)))
             {
@@ -424,7 +424,7 @@ namespace LuckSkill
                     Game1.stats.daysPlayed += 999999; // To rig the rng to not just give the same results.
                     try // Just in case. Want to make sure stats.daysPlayed gets fixed
                     {
-                        ev = this.pickFarmEvent();
+                        ev = this.PickFarmEvent();
                     }
                     catch (Exception) { }
                     Game1.stats.daysPlayed -= 999999;
@@ -443,7 +443,7 @@ namespace LuckSkill
             }
         }
 
-        private FarmEvent pickFarmEvent()
+        private FarmEvent PickFarmEvent()
         {
             Random random = new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2);
             if (Game1.weddingToday)
@@ -498,18 +498,18 @@ namespace LuckSkill
         /// <summary>Raised after a player warps to a new location.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onWarped(object sender, WarpedEventArgs e)
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
             if (!e.IsLocalPlayer)
                 return;
 
-            if (this.HAS_ALL_PROFESSIONS)
+            if (this.HasAllProfessions)
             {
                 // This is where AllProfessions does it.
                 // This is that mod's code, too (from ILSpy, anyways). Just trying to give credit where credit is due. :P
                 // Except this only applies for luck professions. Since they don't exist in vanilla AllProfessions doesn't take care of it.
                 var professions = Game1.player.professions;
-                List<List<int>> list = new List<List<int>> { this.luckProfessions5, this.luckProfessions10 };
+                List<List<int>> list = new List<List<int>> { this.LuckProfessions5, this.LuckProfessions10 };
                 foreach (List<int> current in list)
                 {
                     bool flag = professions.Intersect(current).Any<int>();
@@ -558,12 +558,12 @@ namespace LuckSkill
             }*/
         }
 
-        private int getLuckProfessionForSkill(int level)
+        private int GetLuckProfessionForSkill(int level)
         {
             if (level != 5 && level != 10)
                 return -1;
 
-            List<int> list = (level == 5 ? this.luckProfessions5 : this.luckProfessions10);
+            List<int> list = (level == 5 ? this.LuckProfessions5 : this.LuckProfessions10);
             foreach (int prof in list)
             {
                 if (Game1.player.professions.Contains(prof))
@@ -573,7 +573,7 @@ namespace LuckSkill
             return -1;
         }
 
-        private void onGameLaunched(object sender, EventArgs args)
+        private void OnGameLaunched(object sender, EventArgs args)
         {
             // enableLuckSkillBar
             var api = this.Helper.ModRegistry.GetApi<IExperienceBarsApi>("spacechase0.ExperienceBars");
@@ -581,11 +581,11 @@ namespace LuckSkill
             api?.SetDrawLuck(true);
         }
 
-        private bool HAS_ALL_PROFESSIONS;
-        private List<int> luckProfessions5 = new() { Mod.PROFESSION_DAILY_LUCK, Mod.PROFESSION_MORE_QUESTS };
-        private List<int> luckProfessions10 = new() { Mod.PROFESSION_CHANCE_MAX_LUCK, Mod.PROFESSION_NO_BAD_LUCK, Mod.PROFESSION_NIGHTLY_EVENTS, Mod.PROFESSION_JUNIMO_HELP };
+        private bool HasAllProfessions;
+        private List<int> LuckProfessions5 = new() { Mod.ProfessionDailyLuck, Mod.ProfessionMoreQuests };
+        private List<int> LuckProfessions10 = new() { Mod.ProfessionChanceMaxLuck, Mod.ProfessionNoBadLuck, Mod.ProfessionNightlyEvents, Mod.ProfessionJunimoHelp };
 
-        private void checkForAllProfessions()
+        private void CheckForAllProfessions()
         {
             if (!this.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
@@ -594,7 +594,7 @@ namespace LuckSkill
             }
 
             Log.Info("All Professions found. You will get every luck profession for your level.");
-            this.HAS_ALL_PROFESSIONS = true;
+            this.HasAllProfessions = true;
         }
     }
 }

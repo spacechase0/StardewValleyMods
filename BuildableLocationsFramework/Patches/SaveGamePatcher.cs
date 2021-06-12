@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
-using Netcode;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
@@ -11,13 +11,13 @@ using StardewValley.Locations;
 namespace BuildableLocationsFramework.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="SaveGame"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class SaveGamePatcher : BasePatcher
     {
         /*********
         ** Accessors
         *********/
-        internal static List<GameLocation> locs;
+        internal static List<GameLocation> Locations;
 
 
         /*********
@@ -40,7 +40,7 @@ namespace BuildableLocationsFramework.Patches
         /// <summary>The method to call before <see cref="SaveGame.loadDataToLocations"/>.</summary>
         private static void Before_LoadDataToLocations(List<GameLocation> gamelocations)
         {
-            SaveGamePatcher.locs = gamelocations;
+            SaveGamePatcher.Locations = gamelocations;
 
             foreach (GameLocation gamelocation in gamelocations)
             {
@@ -64,7 +64,7 @@ namespace BuildableLocationsFramework.Patches
         /// <summary>The method to call after <see cref="SaveGame.loadDataToLocations"/>.</summary>
         private static void After_LoadDataToLocations()
         {
-            SaveGamePatcher.locs = null;
+            SaveGamePatcher.Locations = null;
         }
     }
 }

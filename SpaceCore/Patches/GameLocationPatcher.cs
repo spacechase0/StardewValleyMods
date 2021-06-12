@@ -3,6 +3,7 @@ using Harmony;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
 using SpaceCore.Events;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using xTile.Dimensions;
@@ -10,7 +11,7 @@ using xTile.Dimensions;
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="GameLocation"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class GameLocationPatcher : BasePatcher
     {
         /*********

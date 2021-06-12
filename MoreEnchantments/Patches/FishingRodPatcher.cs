@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MoreEnchantments.Enchantments;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
@@ -14,7 +15,7 @@ using StardewValley.Tools;
 namespace MoreEnchantments.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="FishingRod"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class FishingRodPatcher : BasePatcher
     {
         /*********
@@ -84,7 +85,7 @@ namespace MoreEnchantments.Patches
             b -= c;
 
             float time = Game1.random.Next(FishingRod.minFishingBiteTime, b);
-            if (Mod.instance.Helper.Reflection.GetField<bool>(__instance, "isFirstCast").GetValue())
+            if (Mod.Instance.Helper.Reflection.GetField<bool>(__instance, "isFirstCast").GetValue())
             {
                 time *= 0.75f;
             }

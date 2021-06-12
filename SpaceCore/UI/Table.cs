@@ -7,32 +7,32 @@ namespace SpaceCore.UI
 {
     public class Table : Container
     {
-        private List<Element[]> rows = new();
+        private List<Element[]> Rows = new();
 
-        private Vector2 size;
+        private Vector2 SizeImpl;
         public Vector2 Size
         {
-            get { return this.size; }
+            get { return this.SizeImpl; }
             set
             {
-                this.size = new Vector2(value.X, ((int)value.Y) / this.RowHeight * this.RowHeight);
+                this.SizeImpl = new Vector2(value.X, ((int)value.Y) / this.RowHeight * this.RowHeight);
                 this.UpdateScrollbar();
             }
         }
 
         public const int RowPadding = 16;
-        private int rowHeight;
+        private int RowHeightImpl;
         public int RowHeight
         {
-            get { return this.rowHeight; }
+            get { return this.RowHeightImpl; }
             set
             {
-                this.rowHeight = value + Table.RowPadding;
+                this.RowHeightImpl = value + Table.RowPadding;
                 this.UpdateScrollbar();
             }
         }
 
-        public int RowCount { get { return this.rows.Count; } }
+        public int RowCount { get { return this.Rows.Count; } }
 
         public Scrollbar Scrollbar { get; }
 
@@ -45,7 +45,7 @@ namespace SpaceCore.UI
 
         public void AddRow(Element[] elements)
         {
-            this.rows.Add(elements);
+            this.Rows.Add(elements);
             foreach (var child in elements)
             {
                 this.AddChild(child);
@@ -57,7 +57,7 @@ namespace SpaceCore.UI
         {
             this.Scrollbar.LocalPosition = new Vector2(this.Size.X + 48, this.Scrollbar.LocalPosition.Y);
             this.Scrollbar.RequestHeight = (int)this.Size.Y;
-            this.Scrollbar.Rows = this.rows.Count;
+            this.Scrollbar.Rows = this.Rows.Count;
             this.Scrollbar.FrameSize = (int)(this.Size.Y / this.RowHeight);
         }
 
@@ -70,7 +70,7 @@ namespace SpaceCore.UI
             if (hidden) return;
 
             int ir = 0;
-            foreach (var row in this.rows)
+            foreach (var row in this.Rows)
             {
                 foreach (var element in row)
                 {
@@ -88,11 +88,11 @@ namespace SpaceCore.UI
         public void ForceUpdateEvenHidden(bool hidden = false)
         {
             int ir = 0;
-            foreach (var row in this.rows)
+            foreach (var row in this.Rows)
             {
                 foreach (var element in row)
                 {
-                    element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.ScrollPercent * this.rows.Count * this.RowHeight);
+                    element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.ScrollPercent * this.Rows.Count * this.RowHeight);
                     element.Update(hidden || element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y);
                 }
                 ++ir;
@@ -104,7 +104,7 @@ namespace SpaceCore.UI
         {
             IClickableMenu.drawTextureBox(b, (int)this.Position.X - 32, (int)this.Position.Y - 32, (int)this.Size.X + 64, (int)this.Size.Y + 64, Color.White);
 
-            foreach (var row in this.rows)
+            foreach (var row in this.Rows)
             {
                 foreach (var element in row)
                 {

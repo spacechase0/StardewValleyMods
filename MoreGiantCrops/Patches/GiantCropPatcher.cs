@@ -12,7 +12,7 @@ using StardewValley.TerrainFeatures;
 namespace MoreGiantCrops.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="GiantCrop"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class GiantCropPatcher : BasePatcher
     {
         /*********
@@ -36,10 +36,10 @@ namespace MoreGiantCrops.Patches
         {
             try
             {
-                if (Mod.sprites.ContainsKey(__instance.parentSheetIndex.Value))
+                if (Mod.Sprites.ContainsKey(__instance.parentSheetIndex.Value))
                 {
-                    Texture2D tex = Mod.sprites[__instance.parentSheetIndex.Value];
-                    double shakeTimer = Mod.instance.Helper.Reflection.GetField<float>(__instance, "shakeTimer").GetValue();
+                    Texture2D tex = Mod.Sprites[__instance.parentSheetIndex.Value];
+                    double shakeTimer = Mod.Instance.Helper.Reflection.GetField<float>(__instance, "shakeTimer").GetValue();
                     spriteBatch.Draw(tex, Game1.GlobalToLocal(Game1.viewport, tileLocation * 64f - new Vector2(shakeTimer > 0.0 ? (float)(Math.Sin(2.0 * Math.PI / shakeTimer) * 2.0) : 0.0f, 64f)), null, Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, (float)((tileLocation.Y + 2.0) * 64.0 / 10000.0));
                     return false;
                 }

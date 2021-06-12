@@ -8,22 +8,22 @@ namespace GenericModConfigMenu.UI
 {
     public class Textbox : Element, IKeyboardSubscriber
     {
-        private Texture2D tex;
-        private SpriteFont font;
+        private Texture2D Tex;
+        private SpriteFont Font;
 
         public virtual string String { get; set; }
 
-        private bool selected;
+        private bool SelectedImpl;
         public bool Selected
         {
-            get { return this.selected; }
+            get { return this.SelectedImpl; }
             set
             {
-                if (this.selected == value)
+                if (this.SelectedImpl == value)
                     return;
 
-                this.selected = value;
-                if (this.selected)
+                this.SelectedImpl = value;
+                if (this.SelectedImpl)
                     Game1.keyboardDispatcher.Subscriber = this;
                 else
                 {
@@ -37,8 +37,8 @@ namespace GenericModConfigMenu.UI
 
         public Textbox()
         {
-            this.tex = Game1.content.Load<Texture2D>("LooseSprites\\textBox");
-            this.font = Game1.smallFont;
+            this.Tex = Game1.content.Load<Texture2D>("LooseSprites\\textBox");
+            this.Font = Game1.smallFont;
         }
 
         public override int Width => 192;
@@ -59,20 +59,20 @@ namespace GenericModConfigMenu.UI
 
         public override void Draw(SpriteBatch b)
         {
-            b.Draw(this.tex, this.Position, Color.White);
+            b.Draw(this.Tex, this.Position, Color.White);
 
             // Copied from game code - caret
             string text = this.String;
             Vector2 vector2;
-            for (vector2 = this.font.MeasureString(text); (double)vector2.X > (double)192; vector2 = this.font.MeasureString(text))
+            for (vector2 = this.Font.MeasureString(text); (double)vector2.X > (double)192; vector2 = this.Font.MeasureString(text))
                 text = text.Substring(1);
             if (DateTime.UtcNow.Millisecond % 1000 >= 500 && this.Selected)
                 b.Draw(Game1.staminaRect, new Rectangle((int)this.Position.X + 16 + (int)vector2.X + 2, (int)this.Position.Y + 8, 4, 32), Game1.textColor);
 
-            b.DrawString(this.font, text, this.Position + new Vector2(16, 12), Game1.textColor);
+            b.DrawString(this.Font, text, this.Position + new Vector2(16, 12), Game1.textColor);
         }
 
-        protected virtual void receiveInput(string str)
+        protected virtual void ReceiveInput(string str)
         {
             this.String += str;
             if (this.Callback != null)
@@ -81,7 +81,7 @@ namespace GenericModConfigMenu.UI
 
         public void RecieveTextInput(char inputChar)
         {
-            this.receiveInput(inputChar.ToString());
+            this.ReceiveInput(inputChar.ToString());
 
             // Copied from game code
             switch (inputChar)
@@ -111,7 +111,7 @@ namespace GenericModConfigMenu.UI
 
         public void RecieveTextInput(string text)
         {
-            this.receiveInput(text);
+            this.ReceiveInput(text);
         }
 
         public void RecieveCommandInput(char command)

@@ -12,21 +12,21 @@ namespace JunimosAcceptCash
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public Mod instance;
+        public Mod Instance;
         public Configuration Config;
 
         public override void Entry(IModHelper helper)
         {
-            this.instance = this;
+            this.Instance = this;
             Log.Monitor = this.Monitor;
 
             this.Config = helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
-            helper.Events.Display.MenuChanged += this.onMenuChanged;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
         }
 
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (gmcm != null)
@@ -36,100 +36,100 @@ namespace JunimosAcceptCash
             }
         }
 
-        private JunimoNoteMenu activeMenu;
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private JunimoNoteMenu ActiveMenu;
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is JunimoNoteMenu menu)
             {
-                this.activeMenu = menu;
-                this.Helper.Events.Display.RenderedActiveMenu += this.onRenderMenu;
-                this.Helper.Events.GameLoop.UpdateTicked += this.onUpdated;
+                this.ActiveMenu = menu;
+                this.Helper.Events.Display.RenderedActiveMenu += this.OnRenderMenu;
+                this.Helper.Events.GameLoop.UpdateTicked += this.OnUpdated;
             }
             else if (e.OldMenu is JunimoNoteMenu)
             {
-                this.activeMenu = null;
-                this.Helper.Events.Display.RenderedActiveMenu -= this.onRenderMenu;
-                this.Helper.Events.GameLoop.UpdateTicked -= this.onUpdated;
+                this.ActiveMenu = null;
+                this.Helper.Events.Display.RenderedActiveMenu -= this.OnRenderMenu;
+                this.Helper.Events.GameLoop.UpdateTicked -= this.OnUpdated;
             }
         }
 
-        private void onUpdated(object sender, UpdateTickedEventArgs e)
+        private void OnUpdated(object sender, UpdateTickedEventArgs e)
         {
-            if (this.activeMenu == null)
+            if (this.ActiveMenu == null)
                 return;
 
-            var currentPageBundle = this.Helper.Reflection.GetField<Bundle>(this.activeMenu, "currentPageBundle").GetValue();
-            if (currentPageBundle == null || !this.Helper.Reflection.GetField<bool>(this.activeMenu, "specificBundlePage").GetValue())
+            var currentPageBundle = this.Helper.Reflection.GetField<Bundle>(this.ActiveMenu, "currentPageBundle").GetValue();
+            if (currentPageBundle == null || !this.Helper.Reflection.GetField<bool>(this.ActiveMenu, "specificBundlePage").GetValue())
                 return;
 
-            if (this.purchaseButton == null)
-                this.purchaseButton = new ClickableTextureComponent(new Rectangle(this.activeMenu.xPositionOnScreen + 800, this.activeMenu.yPositionOnScreen + 504, 260, 72), this.activeMenu.noteTexture, new Rectangle(517, 286, 65, 20), 4f, false);
+            if (this.PurchaseButton == null)
+                this.PurchaseButton = new ClickableTextureComponent(new Rectangle(this.ActiveMenu.xPositionOnScreen + 800, this.ActiveMenu.yPositionOnScreen + 504, 260, 72), this.ActiveMenu.noteTexture, new Rectangle(517, 286, 65, 20), 4f, false);
             else
             {
-                this.purchaseButton.bounds.Y = this.activeMenu.yPositionOnScreen;
+                this.PurchaseButton.bounds.Y = this.ActiveMenu.yPositionOnScreen;
             }
 
-            this.purchaseButton.tryHover(Game1.getOldMouseX(), Game1.getOldMouseY());
+            this.PurchaseButton.tryHover(Game1.getOldMouseX(), Game1.getOldMouseY());
 
-            if (this.purchaseButton.containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) && this.Helper.Input.IsDown(SButton.MouseLeft))
+            if (this.PurchaseButton.containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) && this.Helper.Input.IsDown(SButton.MouseLeft))
             {
                 this.Helper.Input.Suppress(SButton.MouseLeft);
 
-                int whichArea = this.Helper.Reflection.GetField<int>(this.activeMenu, "whichArea").GetValue();
+                int whichArea = this.Helper.Reflection.GetField<int>(this.ActiveMenu, "whichArea").GetValue();
 
                 // Copied from JunimoNoteMenu, modified
-                int stack = this.calculateActiveBundleCost();
+                int stack = this.CalculateActiveBundleCost();
                 if (Game1.player.Money >= stack)
                 {
                     Game1.player.Money -= stack;
                     Game1.playSound("select");
-                    if (this.purchaseButton != null)
-                        this.purchaseButton.scale = this.purchaseButton.baseScale * 0.75f;
+                    if (this.PurchaseButton != null)
+                        this.PurchaseButton.scale = this.PurchaseButton.baseScale * 0.75f;
                     for (int i = 0; i < currentPageBundle.numberOfIngredientSlots; ++i)
                     {
-                        this.activeMenu.ingredientSlots[i].item = new Object(currentPageBundle.ingredients[i].index, currentPageBundle.ingredients[i].stack, false, -1, currentPageBundle.ingredients[i].quality);
+                        this.ActiveMenu.ingredientSlots[i].item = new Object(currentPageBundle.ingredients[i].index, currentPageBundle.ingredients[i].stack, false, -1, currentPageBundle.ingredients[i].quality);
                     }
-                    this.Helper.Reflection.GetMethod(this.activeMenu, "checkIfBundleIsComplete").Invoke();
+                    this.Helper.Reflection.GetMethod(this.ActiveMenu, "checkIfBundleIsComplete").Invoke();
 
-                    this.Helper.Reflection.GetMethod(this.activeMenu, "closeBundlePage").Invoke();
+                    this.Helper.Reflection.GetMethod(this.ActiveMenu, "closeBundlePage").Invoke();
                 }
                 else
                     Game1.dayTimeMoneyBox.moneyShakeTimer = 600;
             }
         }
 
-        private ClickableTextureComponent purchaseButton;
-        private void onRenderMenu(object sender, RenderedActiveMenuEventArgs e)
+        private ClickableTextureComponent PurchaseButton;
+        private void OnRenderMenu(object sender, RenderedActiveMenuEventArgs e)
         {
-            if (this.activeMenu == null)
+            if (this.ActiveMenu == null)
                 return;
 
-            var currentPageBundle = this.Helper.Reflection.GetField<Bundle>(this.activeMenu, "currentPageBundle").GetValue();
-            if (currentPageBundle == null || !this.Helper.Reflection.GetField<bool>(this.activeMenu, "specificBundlePage").GetValue())
+            var currentPageBundle = this.Helper.Reflection.GetField<Bundle>(this.ActiveMenu, "currentPageBundle").GetValue();
+            if (currentPageBundle == null || !this.Helper.Reflection.GetField<bool>(this.ActiveMenu, "specificBundlePage").GetValue())
                 return;
 
-            if (this.purchaseButton == null)
+            if (this.PurchaseButton == null)
                 return;
 
-            if (this.activeMenu.purchaseButton != null)
+            if (this.ActiveMenu.purchaseButton != null)
                 return;
 
-            StardewValley.BellsAndWhistles.SpriteText.drawString(e.SpriteBatch, $"{this.calculateActiveBundleCost()}g", this.purchaseButton.bounds.X - 150, this.purchaseButton.bounds.Y + 10);
-            this.purchaseButton.draw(e.SpriteBatch);
+            StardewValley.BellsAndWhistles.SpriteText.drawString(e.SpriteBatch, $"{this.CalculateActiveBundleCost()}g", this.PurchaseButton.bounds.X - 150, this.PurchaseButton.bounds.Y + 10);
+            this.PurchaseButton.draw(e.SpriteBatch);
             Game1.dayTimeMoneyBox.drawMoneyBox(e.SpriteBatch, -1, -1);
-            this.activeMenu.drawMouse(e.SpriteBatch);
+            this.ActiveMenu.drawMouse(e.SpriteBatch);
         }
 
         // TODO: Cache this value
-        private int calculateActiveBundleCost()
+        private int CalculateActiveBundleCost()
         {
-            var bundle = this.Helper.Reflection.GetField<Bundle>(this.activeMenu, "currentPageBundle").GetValue();
+            var bundle = this.Helper.Reflection.GetField<Bundle>(this.ActiveMenu, "currentPageBundle").GetValue();
 
             int cost = 0;
             List<int> used = new List<int>();
             for (int i = 0; i < bundle.numberOfIngredientSlots; ++i)
             {
-                if (this.activeMenu.ingredientSlots[i].item != null)
+                if (this.ActiveMenu.ingredientSlots[i].item != null)
                     continue;
 
                 int mostExpensiveSlot = 0;

@@ -10,7 +10,7 @@ namespace GenericModConfigMenu.UI
             set { this.String = value.ToString(); }
         }
 
-        protected override void receiveInput(string str)
+        protected override void ReceiveInput(string str)
         {
             bool hasDot = this.String.Contains('.');
             bool valid = true;

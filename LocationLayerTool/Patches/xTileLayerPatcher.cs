@@ -17,17 +17,17 @@ using xTile.ObjectModel;
 namespace LocationLayerTool.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Layer"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class xTileLayerPatcher : BasePatcher
     {
         /*********
         ** Fields
         *********/
-        private static int rendering;
-        private static IDisplayDevice displayDevice;
-        private static SpriteBatch spriteBatch;
-        private static RenderTarget2D renderTarget;
-        private static RenderTarget2D lightmap;
+        private static int Rendering;
+        private static IDisplayDevice DisplayDevice;
+        private static SpriteBatch SpriteBatch;
+        private static RenderTarget2D RenderTarget;
+        private static RenderTarget2D LightMap;
 
 
         /*********
@@ -49,9 +49,9 @@ namespace LocationLayerTool.Patches
         /// <summary>The method to call before <see cref="Layer.Draw"/>.</summary>
         private static void Before_Draw(Layer __instance, IDisplayDevice displayDevice, xTile.Dimensions.Rectangle mapViewport, Location displayOffset, bool wrapAround, int pixelZoom)
         {
-            if (__instance.Id == "Back" && xTileLayerPatcher.rendering == 0 && Game1.currentLocation.Map.Properties.ContainsKey("RenderBehind"))
+            if (__instance.Id == "Back" && xTileLayerPatcher.Rendering == 0 && Game1.currentLocation.Map.Properties.ContainsKey("RenderBehind"))
             {
-                xTileLayerPatcher.rendering++;
+                xTileLayerPatcher.Rendering++;
                 try
                 {
                     string prop = Game1.currentLocation.getMapProperty("RenderBehind");
@@ -74,35 +74,35 @@ namespace LocationLayerTool.Patches
                 {
                     Log.Error("Exception while rendering: " + e);
                 }
-                xTileLayerPatcher.rendering--;
+                xTileLayerPatcher.Rendering--;
             }
         }
 
         private static void DoRendering(string locName, int offsetX, int offsetY, float scale)
         {
-            if (xTileLayerPatcher.displayDevice == null)
+            if (xTileLayerPatcher.DisplayDevice == null)
             {
                 var ddType = Type.GetType("StardewModdingAPI.Framework.Rendering.SDisplayDevice, StardewModdingAPI");
                 var ddCon = ddType.GetConstructor(new[] { typeof(ContentManager), typeof(GraphicsDevice) });
-                xTileLayerPatcher.displayDevice = (IDisplayDevice)ddCon.Invoke(new object[] { Game1.content, Game1.graphics.GraphicsDevice });
-                xTileLayerPatcher.spriteBatch = new SpriteBatch(Game1.graphics.GraphicsDevice);
+                xTileLayerPatcher.DisplayDevice = (IDisplayDevice)ddCon.Invoke(new object[] { Game1.content, Game1.graphics.GraphicsDevice });
+                xTileLayerPatcher.SpriteBatch = new SpriteBatch(Game1.graphics.GraphicsDevice);
             }
-            if (xTileLayerPatcher.renderTarget == null || xTileLayerPatcher.renderTarget.Width != Game1.graphics.GraphicsDevice.Viewport.Width || xTileLayerPatcher.renderTarget.Height != Game1.graphics.GraphicsDevice.Viewport.Height)
+            if (xTileLayerPatcher.RenderTarget == null || xTileLayerPatcher.RenderTarget.Width != Game1.graphics.GraphicsDevice.Viewport.Width || xTileLayerPatcher.RenderTarget.Height != Game1.graphics.GraphicsDevice.Viewport.Height)
             {
-                xTileLayerPatcher.renderTarget = new RenderTarget2D(Game1.graphics.GraphicsDevice, Game1.graphics.GraphicsDevice.Viewport.Width, Game1.graphics.GraphicsDevice.Viewport.Height, false, Game1.graphics.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                xTileLayerPatcher.RenderTarget = new RenderTarget2D(Game1.graphics.GraphicsDevice, Game1.graphics.GraphicsDevice.Viewport.Width, Game1.graphics.GraphicsDevice.Viewport.Height, false, Game1.graphics.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
 
                 /*
                 if (Game1.game1.screen.RenderTargetUsage != RenderTargetUsage.PreserveContents)
                     Game1.game1.screen = new RenderTarget2D(Game1.graphics.GraphicsDevice, screen.Width, screen.Height, false, screen.Format, screen.DepthStencilFormat, screen.MultiSampleCount, RenderTargetUsage.PreserveContents);
                 */
             }
-            if (xTileLayerPatcher.lightmap == null)
+            if (xTileLayerPatcher.LightMap == null)
             {
-                xTileLayerPatcher.lightmap = xTileLayerPatcher.allocateLightmapNoDispose();
+                xTileLayerPatcher.LightMap = xTileLayerPatcher.AllocateLightMapNoDispose();
             }
 
-            var lightmapField = Mod.instance.Helper.Reflection.GetField<RenderTarget2D>(typeof(Game1), "_lightmap");
-            var lightingBlend = Mod.instance.Helper.Reflection.GetField<BlendState>(Game1.game1, "lightingBlend");
+            var lightmapField = Mod.Instance.Helper.Reflection.GetField<RenderTarget2D>(typeof(Game1), "_lightmap");
+            var lightingBlend = Mod.Instance.Helper.Reflection.GetField<BlendState>(Game1.game1, "lightingBlend");
 
             bool oldHud = Game1.displayHUD;
             var oldDd = Game1.mapDisplayDevice;
@@ -117,21 +117,21 @@ namespace LocationLayerTool.Patches
             var oldAmbient = Game1.ambientLight;
             var oldLightBlend = lightingBlend.GetValue();
             Game1.displayHUD = false;
-            Game1.mapDisplayDevice = xTileLayerPatcher.displayDevice;
-            Game1.spriteBatch = xTileLayerPatcher.spriteBatch;
+            Game1.mapDisplayDevice = xTileLayerPatcher.DisplayDevice;
+            Game1.spriteBatch = xTileLayerPatcher.SpriteBatch;
             Game1.currentLocation = Game1.getLocationFromName(locName);
             Game1.debrisWeather = null;
             //Game1.drawLighting = false;
-            Game1.currentLightSources = new HashSet<LightSource>(); xTileLayerPatcher.buildLightSources();
-            lightmapField.SetValue(xTileLayerPatcher.lightmap);
+            Game1.currentLightSources = new HashSet<LightSource>(); xTileLayerPatcher.BuildLightSources();
+            lightmapField.SetValue(xTileLayerPatcher.LightMap);
             //Game1.outdoorLight = Color.White;
             Game1.ambientLight = new Color(254, 254, 254, 0);
             lightingBlend.SetValue(BlendState.Additive);
-            Game1.graphics.GraphicsDevice.SetRenderTarget(xTileLayerPatcher.renderTarget);
+            Game1.graphics.GraphicsDevice.SetRenderTarget(xTileLayerPatcher.RenderTarget);
             try
             {
                 Game1.currentLocation.map.LoadTileSheets(Game1.mapDisplayDevice);
-                Mod.instance.Helper.Reflection.GetMethod(Game1.game1, "_draw").Invoke(new GameTime(), xTileLayerPatcher.renderTarget);
+                Mod.Instance.Helper.Reflection.GetMethod(Game1.game1, "_draw").Invoke(new GameTime(), xTileLayerPatcher.RenderTarget);
             }
             catch (Exception e)
             {
@@ -151,10 +151,10 @@ namespace LocationLayerTool.Patches
             lightingBlend.SetValue(oldLightBlend);
             Game1.graphics.GraphicsDevice.SetRenderTarget(oldTarget);
 
-            Game1.spriteBatch.Draw(xTileLayerPatcher.renderTarget, new Vector2(offsetX * Game1.tileSize, offsetY * Game1.tileSize), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+            Game1.spriteBatch.Draw(xTileLayerPatcher.RenderTarget, new Vector2(offsetX * Game1.tileSize, offsetY * Game1.tileSize), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
         }
 
-        private static RenderTarget2D allocateLightmapNoDispose()
+        private static RenderTarget2D AllocateLightMapNoDispose()
         {
             int width = 2048, height = 2048;
             int num1 = 32;
@@ -173,7 +173,7 @@ namespace LocationLayerTool.Patches
             return new RenderTarget2D(Game1.graphics.GraphicsDevice, width1, height1, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
         }
 
-        private static void buildLightSources()
+        private static void BuildLightSources()
         {
             Game1.currentLocation.Map.Properties.TryGetValue("Light", out PropertyValue lightProp);
             if (lightProp != null && !Game1.currentLocation.ignoreLights.Value)

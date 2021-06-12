@@ -5,6 +5,7 @@ using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using SObject = StardewValley.Object;
@@ -12,7 +13,7 @@ using SObject = StardewValley.Object;
 namespace BiggerCraftables.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="SObject"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class ObjectPatcher : BasePatcher
     {
         /*********
@@ -61,7 +62,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.entries.SingleOrDefault(cle => cle.Name == __instance.Name);
+            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
             if (entry == null)
                 return true;
 
@@ -107,7 +108,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.entries.SingleOrDefault(cle => cle.Name == __instance.Name);
+            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
             if (entry == null)
                 return true;
             int hdiff = entry.Texture.Height - entry.Length * 16;
@@ -130,7 +131,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.entries.SingleOrDefault(cle => cle.Name == __instance.Name);
+            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
             if (entry == null)
                 return true;
             int hdiff = entry.Texture.Height;
@@ -154,7 +155,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.entries.SingleOrDefault(cle => cle.Name == __instance.Name);
+            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
             if (entry == null)
                 return true;
             int hdiff = entry.Texture.Height - entry.Length * 16;
@@ -169,7 +170,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.entries.SingleOrDefault(cle => cle.Name == __instance.Name);
+            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
             if (entry == null)
                 return true;
 
@@ -198,7 +199,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.entries.SingleOrDefault(cle => cle.Name == __instance.Name);
+            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
             if (entry == null)
                 return true;
 

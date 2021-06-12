@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
@@ -13,7 +14,7 @@ using StardewValley.Menus;
 namespace BuildableLocationsFramework.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="PurchaseAnimalsMenu"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class PurchaseAnimalsMenuPatcher : BasePatcher
     {
         /*********

@@ -8,12 +8,12 @@ namespace Magic.Spells
         public DummySpell(string school, string id)
             : base(school, id) { }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             Log.Debug($"{player.Name} cast {this.Id}.");
             return null;

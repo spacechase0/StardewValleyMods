@@ -2,8 +2,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
-using Netcode;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
@@ -11,7 +11,7 @@ using StardewValley.Tools;
 namespace BuildableLocationsFramework.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="MilkPail"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class MilkPailPatcher : BasePatcher
     {
         /*********
@@ -36,7 +36,7 @@ namespace BuildableLocationsFramework.Patches
             x = (int)who.GetToolLocation(false).X;
             y = (int)who.GetToolLocation(false).Y;
             Rectangle toolRect = new Rectangle(x - 32, y - 32, 64, 64);
-            var __instance_animal = Mod.instance.Helper.Reflection.GetField<FarmAnimal>(__instance, "animal");
+            var __instance_animal = Mod.Instance.Helper.Reflection.GetField<FarmAnimal>(__instance, "animal");
             if (location is IAnimalLocation animalLoc)
                 __instance_animal.SetValue(Utility.GetBestHarvestableFarmAnimal(animalLoc.Animals.Values, __instance, toolRect));
             if (__instance_animal.GetValue() != null && (int)__instance_animal.GetValue().currentProduce > 0 && ((int)__instance_animal.GetValue().age >= (byte)__instance_animal.GetValue().ageWhenMature && __instance_animal.GetValue().toolUsedForHarvest.Equals(__instance.BaseName)) && who.couldInventoryAcceptThisObject((int)__instance_animal.GetValue().currentProduce, 1, 0))

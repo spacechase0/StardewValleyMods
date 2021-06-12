@@ -11,7 +11,7 @@ using StardewValley.TerrainFeatures;
 namespace SpaceCore.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="HoeDirt"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class HoeDirtPatcher : BasePatcher
     {
         /*********

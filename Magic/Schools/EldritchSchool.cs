@@ -9,17 +9,17 @@ namespace Magic.Schools
 
         public override Spell[] GetSpellsTier1()
         {
-            return new[] { SpellBook.get("eldritch:meteor"), SpellBook.get("eldritch:bloodmana") };
+            return new[] { SpellBook.Get("eldritch:meteor"), SpellBook.Get("eldritch:bloodmana") };
         }
 
         public override Spell[] GetSpellsTier2()
         {
-            return new[] { SpellBook.get("eldritch:lucksteal") };
+            return new[] { SpellBook.Get("eldritch:lucksteal") };
         }
 
         public override Spell[] GetSpellsTier3()
         {
-            return new[] { SpellBook.get("eldritch:spirit") };
+            return new[] { SpellBook.Get("eldritch:spirit") };
         }
     }
 }

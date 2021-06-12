@@ -11,12 +11,12 @@ namespace MoreGiantCrops
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        public static Dictionary<int, Texture2D> sprites = new();
+        public static Mod Instance;
+        public static Dictionary<int, Texture2D> Sprites = new();
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             Directory.CreateDirectory(Path.Combine(this.Helper.DirectoryPath, "assets"));
@@ -32,10 +32,10 @@ namespace MoreGiantCrops
                 }
                 Log.Trace("Found PNG: " + filename);
                 var tex = helper.Content.Load<Texture2D>($"assets/{filename}");
-                Mod.sprites.Add(id, tex);
+                Mod.Sprites.Add(id, tex);
             }
 
-            if (!Mod.sprites.Any())
+            if (!Mod.Sprites.Any())
             {
                 Log.Error("You must install an asset pack to use this mod.");
                 return;

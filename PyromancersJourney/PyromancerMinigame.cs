@@ -7,7 +7,7 @@ namespace PyromancersJourney
 {
     public class PyromancerMinigame : IMinigame
     {
-        private World world = new();
+        private World World = new();
 
         public void changeScreenSize()
         {
@@ -20,7 +20,7 @@ namespace PyromancersJourney
 
         public void draw(SpriteBatch b)
         {
-            this.world.Render();
+            this.World.Render();
         }
 
         public bool forceQuit()
@@ -72,8 +72,8 @@ namespace PyromancersJourney
 
         public bool tick(GameTime time)
         {
-            this.world.Update();
-            return this.world.HasQuit;
+            this.World.Update();
+            return this.World.HasQuit;
         }
 
         public void unload()

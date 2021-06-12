@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
@@ -12,7 +13,7 @@ using StardewValley.Buildings;
 namespace CustomBuildings.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Coop"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class CoopPatcher : BasePatcher
     {
         /*********
@@ -64,12 +65,12 @@ namespace CustomBuildings.Patches
         /// <summary>The method to call before <see cref="Coop.getIndoors"/>.</summary>
         private static bool Before_GetIndoors(Coop __instance, string nameOfIndoorsWithoutUnique, ref GameLocation __result)
         {
-            if (!Mod.instance.buildings.ContainsKey(nameOfIndoorsWithoutUnique))
+            if (!Mod.Instance.Buildings.ContainsKey(nameOfIndoorsWithoutUnique))
             {
                 return true;
             }
 
-            var bdata = Mod.instance.buildings[nameOfIndoorsWithoutUnique];
+            var bdata = Mod.Instance.Buildings[nameOfIndoorsWithoutUnique];
 
             GameLocation loc = new AnimalHouse("Maps\\" + bdata.Id, __instance.buildingType);
             loc.IsFarm = true;
@@ -88,12 +89,12 @@ namespace CustomBuildings.Patches
         /// <summary>The method to call after <see cref="Coop.performActionOnConstruction"/>.</summary>
         private static void After_PerformActionOnConstruction(Coop __instance, GameLocation location)
         {
-            if (!Mod.instance.buildings.ContainsKey(__instance.buildingType))
+            if (!Mod.Instance.Buildings.ContainsKey(__instance.buildingType))
             {
                 return;
             }
 
-            var bdata = Mod.instance.buildings[__instance.buildingType];
+            var bdata = Mod.Instance.Buildings[__instance.buildingType];
             __instance.indoors.Value.objects.Remove(new Vector2(3, 3));
             StardewValley.Object @object = new StardewValley.Object(new Vector2(bdata.FeedHopperX, bdata.FeedHopperY), 99, false);
             @object.fragility.Value = 2;
@@ -104,12 +105,12 @@ namespace CustomBuildings.Patches
         /// <summary>The method to call before <see cref="Coop.performActionOnUpgrade"/>.</summary>
         private static bool Before_PerformActionOnUpgrade(Coop __instance, GameLocation location)
         {
-            if (!Mod.instance.buildings.ContainsKey(__instance.buildingType))
+            if (!Mod.Instance.Buildings.ContainsKey(__instance.buildingType))
             {
                 return true;
             }
 
-            var bdata = Mod.instance.buildings[__instance.buildingType];
+            var bdata = Mod.Instance.Buildings[__instance.buildingType];
 
             return false;
         }
@@ -117,12 +118,12 @@ namespace CustomBuildings.Patches
         /// <summary>The method to call after <see cref="Coop.dayUpdate"/>.</summary>
         private static void After_DayUpdate(Coop __instance, int dayOfMonth)
         {
-            if (!Mod.instance.buildings.ContainsKey(__instance.buildingType))
+            if (!Mod.Instance.Buildings.ContainsKey(__instance.buildingType))
             {
                 return;
             }
 
-            var bdata = Mod.instance.buildings[__instance.buildingType];
+            var bdata = Mod.Instance.Buildings[__instance.buildingType];
 
             if (bdata.AutoFeedsAnimals)
             {
@@ -145,12 +146,12 @@ namespace CustomBuildings.Patches
         /// <summary>The method to call before <see cref="Coop.upgrade"/>.</summary>
         private static bool Before_Upgrade(Coop __instance)
         {
-            if (!Mod.instance.buildings.ContainsKey(__instance.buildingType))
+            if (!Mod.Instance.Buildings.ContainsKey(__instance.buildingType))
             {
                 return true;
             }
 
-            var bdata = Mod.instance.buildings[__instance.buildingType];
+            var bdata = Mod.Instance.Buildings[__instance.buildingType];
 
             (__instance.indoors.Value as AnimalHouse).animalLimit.Value = bdata.MaxOccupants;
             if (bdata.IncubatorX != -1)
@@ -206,11 +207,11 @@ namespace CustomBuildings.Patches
         /// <summary>The method to call before <see cref="Coop.draw"/>.</summary>
         private static bool Before_Draw(Coop __instance, SpriteBatch b)
         {
-            if (!Mod.instance.buildings.ContainsKey(__instance.buildingType))
+            if (!Mod.Instance.Buildings.ContainsKey(__instance.buildingType))
             {
                 return false;
             }
-            var bdata = Mod.instance.buildings[__instance.buildingType];
+            var bdata = Mod.Instance.Buildings[__instance.buildingType];
 
             if (__instance.isMoving)
                 return false;
@@ -223,15 +224,15 @@ namespace CustomBuildings.Patches
             {
                 __instance.drawShadow(b, -1, -1);
                 Vector2 animalDoorBase = new Vector2(__instance.tileX.Value + __instance.animalDoor.X, __instance.tileY.Value + __instance.animalDoor.Y - bdata.AnimalDoorHeight + 1);
-                int animalDoorY = Mod.instance.Helper.Reflection.GetField<NetInt>(__instance, "yPositionOfAnimalDoor").GetValue().Value;
-                float alpha = Mod.instance.Helper.Reflection.GetField<NetFloat>(__instance, "alpha").GetValue().Value;
+                int animalDoorY = Mod.Instance.Helper.Reflection.GetField<NetInt>(__instance, "yPositionOfAnimalDoor").GetValue().Value;
+                float alpha = Mod.Instance.Helper.Reflection.GetField<NetFloat>(__instance, "alpha").GetValue().Value;
                 for (int ix = 0; ix < bdata.AnimalDoorWidth; ++ix)
                 {
                     for (int iy = 0; iy < bdata.AnimalDoorHeight; ++iy)
                     {
                         var pos = Game1.GlobalToLocal(Game1.viewport, (animalDoorBase + new Vector2(ix, iy)) * Game1.tileSize);
                         var rect = new Rectangle(ix * 16, bdata.BuildingHeight + iy * 16, 16, 16);
-                        b.Draw(bdata.texture, pos, new Rectangle(rect.X + bdata.AnimalDoorWidth * 16, rect.Y, rect.Width, rect.Height), Color.White * alpha, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1e-06f);
+                        b.Draw(bdata.Texture, pos, new Rectangle(rect.X + bdata.AnimalDoorWidth * 16, rect.Y, rect.Width, rect.Height), Color.White * alpha, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1e-06f);
                     }
                 }
                 float depth = (float)((__instance.tileY.Value + __instance.tilesHigh.Value) * 64 / 10000.0 + 9.99999974737875E-05);
@@ -241,10 +242,10 @@ namespace CustomBuildings.Patches
                     {
                         var pos = Game1.GlobalToLocal(Game1.viewport, (animalDoorBase + new Vector2(ix, iy)) * Game1.tileSize) + new Vector2(0, animalDoorY);
                         var rect = new Rectangle(ix * 16, bdata.BuildingHeight + iy * 16, 16, 16);
-                        b.Draw(bdata.texture, pos, rect, Color.White * alpha, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, depth);
+                        b.Draw(bdata.Texture, pos, rect, Color.White * alpha, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, depth);
                     }
                 }
-                b.Draw(bdata.texture, Game1.GlobalToLocal(Game1.viewport, new Vector2(__instance.tileX.Value, __instance.tileY.Value + __instance.tilesHigh.Value) * Game1.tileSize), new Rectangle(0, 0, bdata.TileWidth * 16, bdata.BuildingHeight), Color.White * alpha, 0, new Vector2(0, bdata.BuildingHeight), Game1.pixelZoom, SpriteEffects.None, depth + 0.00001f);
+                b.Draw(bdata.Texture, Game1.GlobalToLocal(Game1.viewport, new Vector2(__instance.tileX.Value, __instance.tileY.Value + __instance.tilesHigh.Value) * Game1.tileSize), new Rectangle(0, 0, bdata.TileWidth * 16, bdata.BuildingHeight), Color.White * alpha, 0, new Vector2(0, bdata.BuildingHeight), Game1.pixelZoom, SpriteEffects.None, depth + 0.00001f);
                 if (__instance.daysUntilUpgrade.Value <= 0)
                     return false;
                 b.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2(__instance.tileX.Value + bdata.UpgradeSignX, __instance.tileY.Value + bdata.UpgradeSignY) * Game1.tileSize), new Rectangle(367, 309, 16, 15), Color.White * alpha, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, depth + 0.00001f);

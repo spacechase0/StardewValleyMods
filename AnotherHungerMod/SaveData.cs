@@ -11,10 +11,10 @@ namespace AnotherHungerMod
         public void SyncToHost()
         {
             if (Context.IsMainPlayer)
-                Mod.instance.Helper.Data.WriteSaveData($"spacechase0.AnotherHungerMod.{Game1.player.UniqueMultiplayerID}", Mod.Data);
+                Mod.Instance.Helper.Data.WriteSaveData($"spacechase0.AnotherHungerMod.{Game1.player.UniqueMultiplayerID}", Mod.Data);
             else
             {
-                Mod.instance.Helper.Multiplayer.SendMessage(Mod.Data, Mod.MSG_HUNGERDATA, null, new[] { Game1.MasterPlayer.UniqueMultiplayerID });
+                Mod.Instance.Helper.Multiplayer.SendMessage(Mod.Data, Mod.MsgHungerData, null, new[] { Game1.MasterPlayer.UniqueMultiplayerID });
             }
         }
     }

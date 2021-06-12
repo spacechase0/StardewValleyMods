@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Characters;
@@ -9,7 +10,7 @@ using StardewValley.TerrainFeatures;
 namespace MultiFertilizer.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Crop"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class CropPatcher : BasePatcher
     {
         /*********
@@ -32,11 +33,11 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="Crop.harvest"/>.</summary>
         private static void Before_Harvest(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester)
         {
-            if (!soil.modData.ContainsKey(Mod.KEY_FERT))
+            if (!soil.modData.ContainsKey(Mod.KeyFert))
                 return;
 
             int index = 0;
-            switch (int.Parse(soil.modData[Mod.KEY_FERT]))
+            switch (int.Parse(soil.modData[Mod.KeyFert]))
             {
                 case 1: index = 368; break;
                 case 2: index = 369; break;

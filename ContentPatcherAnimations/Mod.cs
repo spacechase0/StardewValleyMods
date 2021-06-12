@@ -14,7 +14,7 @@ namespace ContentPatcherAnimations
 {
     public class PatchData
     {
-        public object patchObj;
+        public object PatchObj;
         public Func<bool> IsActive;
         public Func<Texture2D> TargetFunc;
         public Texture2D Target;
@@ -27,48 +27,48 @@ namespace ContentPatcherAnimations
 
     public class ScreenState
     {
-        public IEnumerable cpPatches;
+        public IEnumerable CpPatches;
 
-        public Dictionary<Patch, PatchData> animatedPatches = new();
+        public Dictionary<Patch, PatchData> AnimatedPatches = new();
 
-        public uint frameCounter;
-        public int findTargetsCounter;
-        public Queue<Patch> findTargetsQueue = new();
+        public uint FrameCounter;
+        public int FindTargetsCounter;
+        public Queue<Patch> FindTargetsQueue = new();
     }
 
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public const BindingFlags PublicI = BindingFlags.Public | BindingFlags.Instance;
         public const BindingFlags PublicS = BindingFlags.Public | BindingFlags.Static;
         public const BindingFlags PrivateI = BindingFlags.NonPublic | BindingFlags.Instance;
         public const BindingFlags PrivateS = BindingFlags.NonPublic | BindingFlags.Static;
 
-        private StardewModdingAPI.Mod contentPatcher;
-        private PerScreen<ScreenState> screenState = new();
-        internal ScreenState ScreenState => this.screenState.Value;
+        private StardewModdingAPI.Mod ContentPatcher;
+        private PerScreen<ScreenState> ScreenStateImpl = new();
+        internal ScreenState ScreenState => this.ScreenStateImpl.Value;
 
-        private WatchForUpdatesAssetEditor watcher;
+        private WatchForUpdatesAssetEditor Watcher;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             this.Helper.Events.GameLoop.UpdateTicked += this.UpdateAnimations;
 
             Action updateTargets = () =>
             {
-                foreach (var screen in this.screenState.GetActiveValues())
-                    screen.Value.findTargetsCounter = 1;
+                foreach (var screen in this.ScreenStateImpl.GetActiveValues())
+                    screen.Value.FindTargetsCounter = 1;
             };
 
             this.Helper.Events.GameLoop.SaveCreated += (s, e) => updateTargets();
             this.Helper.Events.GameLoop.SaveLoaded += (s, e) => updateTargets();
             this.Helper.Events.GameLoop.DayStarted += (s, e) => updateTargets();
 
-            helper.Content.AssetEditors.Add(this.watcher = new WatchForUpdatesAssetEditor());
+            helper.Content.AssetEditors.Add(this.Watcher = new WatchForUpdatesAssetEditor());
 
             helper.ConsoleCommands.Add("cpa", "...", this.OnCommand);
         }
@@ -83,46 +83,46 @@ namespace ContentPatcherAnimations
 
         private void UpdateAnimations(object sender, UpdateTickedEventArgs e)
         {
-            if (this.contentPatcher == null)
+            if (this.ContentPatcher == null)
             {
                 var modData = this.Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
-                this.contentPatcher = (StardewModdingAPI.Mod)modData.GetType().GetProperty("Mod", Mod.PrivateI | Mod.PublicI).GetValue(modData);
+                this.ContentPatcher = (StardewModdingAPI.Mod)modData.GetType().GetProperty("Mod", Mod.PrivateI | Mod.PublicI).GetValue(modData);
             }
 
-            if (this.screenState.Value == null)
+            if (this.ScreenStateImpl.Value == null)
             {
-                this.screenState.Value = new ScreenState();
+                this.ScreenStateImpl.Value = new ScreenState();
             }
 
-            if (this.ScreenState.cpPatches == null)
+            if (this.ScreenState.CpPatches == null)
             {
-                var screenManagerPerScreen = this.contentPatcher.GetType().GetField("ScreenManager", Mod.PrivateI).GetValue(this.contentPatcher);
+                var screenManagerPerScreen = this.ContentPatcher.GetType().GetField("ScreenManager", Mod.PrivateI).GetValue(this.ContentPatcher);
                 var screenManager = screenManagerPerScreen.GetType().GetProperty("Value").GetValue(screenManagerPerScreen);
                 var patchManager = screenManager.GetType().GetProperty("PatchManager").GetValue(screenManager);
-                this.screenState.Value.cpPatches = (IEnumerable)patchManager.GetType().GetField("Patches", Mod.PrivateI).GetValue(patchManager);
+                this.ScreenStateImpl.Value.CpPatches = (IEnumerable)patchManager.GetType().GetField("Patches", Mod.PrivateI).GetValue(patchManager);
 
                 this.CollectPatches();
             }
 
 
-            if (this.ScreenState.findTargetsCounter > 0 && --this.ScreenState.findTargetsCounter == 0)
+            if (this.ScreenState.FindTargetsCounter > 0 && --this.ScreenState.FindTargetsCounter == 0)
                 this.UpdateTargetTextures();
-            while (this.ScreenState.findTargetsQueue.Count > 0)
+            while (this.ScreenState.FindTargetsQueue.Count > 0)
             {
-                var patch = this.ScreenState.findTargetsQueue.Dequeue();
+                var patch = this.ScreenState.FindTargetsQueue.Dequeue();
                 this.UpdateTargetTextures(patch);
             }
 
-            ++this.ScreenState.frameCounter;
+            ++this.ScreenState.FrameCounter;
             Game1.graphics.GraphicsDevice.Textures[0] = null;
-            foreach (var patch in this.ScreenState.animatedPatches)
+            foreach (var patch in this.ScreenState.AnimatedPatches)
             {
                 if (!patch.Value.IsActive.Invoke() || patch.Value.Source == null || patch.Value.Target == null)
                     continue;
 
                 try
                 {
-                    if (this.ScreenState.frameCounter % patch.Key.AnimationFrameTime == 0)
+                    if (this.ScreenState.FrameCounter % patch.Key.AnimationFrameTime == 0)
                     {
                         if (++patch.Value.CurrentFrame >= patch.Key.AnimationFrameCount)
                             patch.Value.CurrentFrame = 0;
@@ -137,18 +137,18 @@ namespace ContentPatcherAnimations
                         patch.Value.Target.SetData(0, targetRect, cols, 0, cols.Length);
                     }
                 }
-                catch (ObjectDisposedException e_)
+                catch
                 {
                     // No idea why this happens, hack fix
                     patch.Value.Target = null;
-                    this.ScreenState.findTargetsQueue.Enqueue(patch.Key);
+                    this.ScreenState.FindTargetsQueue.Enqueue(patch.Key);
                 }
             }
         }
 
         private void UpdateTargetTextures()
         {
-            foreach (var patch in this.ScreenState.animatedPatches)
+            foreach (var patch in this.ScreenState.AnimatedPatches)
             {
                 try
                 {
@@ -161,7 +161,7 @@ namespace ContentPatcherAnimations
                 catch (Exception e)
                 {
                     Log.Trace("Exception loading " + patch.Key.LogName + " textures, delaying to try again next frame: " + e);
-                    this.ScreenState.findTargetsQueue.Enqueue(patch.Key);
+                    this.ScreenState.FindTargetsQueue.Enqueue(patch.Key);
                 }
             }
         }
@@ -170,7 +170,7 @@ namespace ContentPatcherAnimations
         {
             try
             {
-                var patch = this.ScreenState.animatedPatches[key];
+                var patch = this.ScreenState.AnimatedPatches[key];
                 if (!patch.IsActive())
                     return;
 
@@ -185,9 +185,9 @@ namespace ContentPatcherAnimations
 
         private void CollectPatches()
         {
-            this.ScreenState.animatedPatches.Clear();
-            this.ScreenState.findTargetsQueue.Clear();
-            foreach (var pack in this.contentPatcher.Helper.ContentPacks.GetOwned())
+            this.ScreenState.AnimatedPatches.Clear();
+            this.ScreenState.FindTargetsQueue.Clear();
+            foreach (var pack in this.ContentPatcher.Helper.ContentPacks.GetOwned())
             {
                 var patches = pack.ReadJsonFile<PatchList>("content.json");
                 foreach (var patch in patches.Changes)
@@ -204,7 +204,7 @@ namespace ContentPatcherAnimations
                         PatchData data = new PatchData();
 
                         object targetPatch = null;
-                        foreach (var cpPatch in this.ScreenState.cpPatches)
+                        foreach (var cpPatch in this.ScreenState.CpPatches)
                         {
                             var path = cpPatch.GetType().GetProperty("Path", Mod.PublicI).GetValue(cpPatch);
                             if (path.ToString() == pack.Manifest.Name + " > " + patch.LogName)
@@ -222,14 +222,14 @@ namespace ContentPatcherAnimations
                         var sourceProp = targetPatch.GetType().GetProperty("FromAsset", Mod.PublicI);
                         var targetProp = targetPatch.GetType().GetProperty("TargetAsset", Mod.PublicI);
 
-                        data.patchObj = targetPatch;
+                        data.PatchObj = targetPatch;
                         data.IsActive = () => (bool)appliedProp.GetValue(targetPatch);
                         data.SourceFunc = () => pack.LoadAsset<Texture2D>((string)sourceProp.GetValue(targetPatch));
                         data.TargetFunc = () => this.FindTargetTexture((string)targetProp.GetValue(targetPatch));
                         data.FromAreaFunc = () => this.GetRectangleFromPatch(targetPatch, "FromArea");
                         data.ToAreaFunc = () => this.GetRectangleFromPatch(targetPatch, "ToArea", new Rectangle(0, 0, data.FromAreaFunc().Width, data.FromAreaFunc().Height));
 
-                        this.ScreenState.animatedPatches.Add(patch, data);
+                        this.ScreenState.AnimatedPatches.Add(patch, data);
                     }
                 }
             }

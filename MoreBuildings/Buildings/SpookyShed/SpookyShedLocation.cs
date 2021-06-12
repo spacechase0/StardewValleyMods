@@ -11,12 +11,12 @@ namespace MoreBuildings.Buildings.SpookyShed
 {
     public class SpookyShedLocation : GameLocation, ISaveElement//, ICustomItem
     {
-        public readonly Netcode.NetInt currSpawnerItem = new(0);
+        public readonly Netcode.NetInt CurrSpawnerItem = new(0);
 
-        public const int BAT_WING = 767;
-        public const int SOLAR_ESSENCE = 768;
-        public const int VOID_ESSENCE = 769;
-        public const int BUG_MEAT = 684;
+        public const int BatWing = 767;
+        public const int SolarEssence = 768;
+        public const int VoidEssence = 769;
+        public const int BugMeat = 684;
 
         public SpookyShedLocation()
             : base("Maps\\SpookyShed", "SpookyShed") { }
@@ -24,7 +24,7 @@ namespace MoreBuildings.Buildings.SpookyShed
         protected override void initNetFields()
         {
             base.initNetFields();
-            this.NetFields.AddField(this.currSpawnerItem);
+            this.NetFields.AddField(this.CurrSpawnerItem);
         }
 
         public override void drawAboveFrontLayer(SpriteBatch b)
@@ -32,18 +32,18 @@ namespace MoreBuildings.Buildings.SpookyShed
             base.drawAboveFrontLayer(b);
 
             Color col = Color.White;
-            if (this.currSpawnerItem == SpookyShedLocation.BAT_WING)
+            if (this.CurrSpawnerItem == SpookyShedLocation.BatWing)
                 col = Color.Gray;
-            else if (this.currSpawnerItem == SpookyShedLocation.SOLAR_ESSENCE)
+            else if (this.CurrSpawnerItem == SpookyShedLocation.SolarEssence)
                 col = Color.Yellow;
-            else if (this.currSpawnerItem == SpookyShedLocation.VOID_ESSENCE)
+            else if (this.CurrSpawnerItem == SpookyShedLocation.VoidEssence)
                 col = Color.Purple;
-            else if (this.currSpawnerItem == SpookyShedLocation.BUG_MEAT)
+            else if (this.CurrSpawnerItem == SpookyShedLocation.BugMeat)
                 col = Color.Pink;
 
 
             var tileLocation = new Vector2(10, 9);
-            b.Draw(Mod.instance.spookyGemTex, Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocation.X * Game1.tileSize, tileLocation.Y * Game1.tileSize)), null, col, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+            b.Draw(Mod.Instance.SpookyGemTex, Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocation.X * Game1.tileSize, tileLocation.Y * Game1.tileSize)), null, col, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
         }
 
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
@@ -66,7 +66,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                     if (!obj.bigCraftable.Value)
                     {
                         Log.Trace("Changing active spawning item to " + obj.ParentSheetIndex);
-                        this.currSpawnerItem.Value = obj.ParentSheetIndex;
+                        this.CurrSpawnerItem.Value = obj.ParentSheetIndex;
                     }
                 }
                 return true;
@@ -79,8 +79,8 @@ namespace MoreBuildings.Buildings.SpookyShed
             base.resetSharedState();
             this.characters.Clear();
 
-            Log.Trace("Player entered spooky shed, current spawner item: " + this.currSpawnerItem);
-            if (this.currSpawnerItem == SpookyShedLocation.BAT_WING)
+            Log.Trace("Player entered spooky shed, current spawner item: " + this.CurrSpawnerItem);
+            if (this.CurrSpawnerItem == SpookyShedLocation.BatWing)
             {
                 int total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
@@ -90,7 +90,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                     this.characters.Add(new Bat(pos, 100));
                 }
             }
-            else if (this.currSpawnerItem == SpookyShedLocation.SOLAR_ESSENCE)
+            else if (this.CurrSpawnerItem == SpookyShedLocation.SolarEssence)
             {
                 int total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
@@ -100,7 +100,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                     this.characters.Add(new SquidKid(pos) { currentLocation = this });
                 }
             }
-            else if (this.currSpawnerItem == SpookyShedLocation.VOID_ESSENCE)
+            else if (this.CurrSpawnerItem == SpookyShedLocation.VoidEssence)
             {
                 int total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
@@ -110,7 +110,7 @@ namespace MoreBuildings.Buildings.SpookyShed
                     this.characters.Add(new ShadowBrute(pos));
                 }
             }
-            else if (this.currSpawnerItem == SpookyShedLocation.BUG_MEAT)
+            else if (this.CurrSpawnerItem == SpookyShedLocation.BugMeat)
             {
                 int total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)

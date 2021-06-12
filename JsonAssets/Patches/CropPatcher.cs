@@ -15,7 +15,7 @@ using StardewValley;
 namespace JsonAssets.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Crop"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class CropPatcher : BasePatcher
     {
         /*********
@@ -44,7 +44,7 @@ namespace JsonAssets.Patches
         {
             try
             {
-                var cropData = Mod.instance.crops.FirstOrDefault(c => c.GetCropSpriteIndex() == __instance.rowInSpriteSheet.Value);
+                var cropData = Mod.instance.Crops.FirstOrDefault(c => c.GetCropSpriteIndex() == __instance.rowInSpriteSheet.Value);
                 if (cropData == null)
                     return true;
 
@@ -146,7 +146,7 @@ namespace JsonAssets.Patches
             if (cropRow == 41) // Vanilla cactus fruit
                 return true;
 
-            var cropData = Mod.instance.crops.FirstOrDefault(c => c.GetCropSpriteIndex() == cropRow);
+            var cropData = Mod.instance.Crops.FirstOrDefault(c => c.GetCropSpriteIndex() == cropRow);
             if (cropData == null)
                 return false;
             return cropData.CropType == CropData.CropType_.IndoorsOnly;
@@ -155,7 +155,7 @@ namespace JsonAssets.Patches
         private static bool CheckCanBeGiant(NetInt cropRow_)
         {
             int cropRow = cropRow_.Value;
-            var cropData = Mod.instance.crops.FirstOrDefault(c => c.GetCropSpriteIndex() == cropRow);
+            var cropData = Mod.instance.Crops.FirstOrDefault(c => c.GetCropSpriteIndex() == cropRow);
             if (cropData == null)
                 return false;
             return cropData.giantTex != null;

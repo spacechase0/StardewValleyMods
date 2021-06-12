@@ -11,12 +11,12 @@ namespace Magic.Spells
         public TillSpell()
             : base(SchoolId.Toil, "till") { }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             level += 1;
             targetX /= Game1.tileSize;
@@ -24,14 +24,14 @@ namespace Magic.Spells
             Vector2 target = new Vector2(targetX, targetY);
 
             Tool dummyHoe = new Hoe();
-            Mod.instance.Helper.Reflection.GetField<Farmer>(dummyHoe, "lastUser").SetValue(player);
+            Mod.Instance.Helper.Reflection.GetField<Farmer>(dummyHoe, "lastUser").SetValue(player);
 
             GameLocation loc = player.currentLocation;
             for (int ix = targetX - level; ix <= targetX + level; ++ix)
             {
                 for (int iy = targetY - level; iy <= targetY + level; ++iy)
                 {
-                    if (player.getCurrentMana() <= 2)
+                    if (player.GetCurrentMana() <= 2)
                         return null;
 
                     Vector2 pos = new Vector2(ix, iy);
@@ -45,7 +45,7 @@ namespace Magic.Spells
                         {
                             loc.digUpArtifactSpot(ix, iy, player);
                             loc.objects.Remove(pos);
-                            player.addMana(-1);
+                            player.AddMana(-1);
                         }
                         else if (obj.performToolAction(dummyHoe, loc))
                         {
@@ -55,7 +55,7 @@ namespace Magic.Spells
                             }
                             obj.performRemoveAction(pos, loc);
                             loc.objects.Remove(pos);
-                            player.addMana(-1);
+                            player.AddMana(-1);
                         }
                     }
 
@@ -64,7 +64,7 @@ namespace Magic.Spells
                         if (loc.terrainFeatures[pos].performToolAction(dummyHoe, 0, pos, loc))
                         {
                             loc.terrainFeatures.Remove(pos);
-                            player.addMana(-1);
+                            player.AddMana(-1);
                         }
                     }
 
@@ -76,7 +76,7 @@ namespace Magic.Spells
                         loc.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(ix * (float)Game1.tileSize, iy * (float)Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f, 0, -1, -1f, -1, 0));
                         loc.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(ix * (float)Game1.tileSize, iy * (float)Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, Vector2.Distance(pos, target) * 30f, 0, -1, -1f, -1, 0));
                         loc.checkForBuriedItem(ix, iy, false, false, player);
-                        player.addMana(-3);
+                        player.AddMana(-3);
                         player.AddCustomSkillExperience(Magic.Skill, 2);
                     }
                 }

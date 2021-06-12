@@ -10,13 +10,13 @@ namespace CustomCritters
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.Player.Warped += this.onWarped;
+            helper.Events.Player.Warped += this.OnWarped;
 
             // load content packs
             Log.Info("Loading critter content packs...");
@@ -41,22 +41,22 @@ namespace CustomCritters
         /// <summary>Raised after a player warps to a new location.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onWarped(object sender, WarpedEventArgs e)
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
             if (!e.IsLocalPlayer || Game1.CurrentEvent != null)
                 return;
 
-            foreach (var entry in CritterEntry.critters)
+            foreach (var entry in CritterEntry.Critters)
             {
                 for (int i = 0; i < entry.Value.SpawnAttempts; ++i)
                 {
-                    if (entry.Value.check(e.NewLocation))
+                    if (entry.Value.Check(e.NewLocation))
                     {
-                        var spot = entry.Value.pickSpot(e.NewLocation);
+                        var spot = entry.Value.PickSpot(e.NewLocation);
                         if (spot == null)
                             continue;
 
-                        e.NewLocation.addCritter(entry.Value.makeCritter(spot.Value));
+                        e.NewLocation.addCritter(entry.Value.MakeCritter(spot.Value));
                     }
                 }
             }

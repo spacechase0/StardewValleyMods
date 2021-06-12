@@ -8,31 +8,31 @@ namespace PyromancersJourney.Objects
 {
     public class BatEnemy : Enemy
     {
-        public static Texture2D tex = Game1.content.Load<Texture2D>("Characters\\Monsters\\Lava Bat");
+        public static Texture2D Tex = Game1.content.Load<Texture2D>("Characters\\Monsters\\Lava Bat");
 
         public override bool Floats => true;
 
-        private int frame = Game1.random.Next(4);
-        private float frameAccum;
+        private int Frame = Game1.random.Next(4);
+        private float FrameAccum;
 
-        private static VertexBuffer mainBuffer;
+        private static VertexBuffer MainBuffer;
 
         public BatEnemy(World world)
             : base(world)
         {
             this.Health = 2;
 
-            if (BatEnemy.mainBuffer == null)
+            if (BatEnemy.MainBuffer == null)
             {
                 float s = 0.75f;
 
                 var vertices = new List<VertexPositionColorTexture>();
                 for (int i = 0; i < 4; ++i)
                 {
-                    float xa = (16f / BatEnemy.tex.Width) * i;
-                    float xb = (16f / BatEnemy.tex.Width) * (i + 1);
-                    float ya = (24f / BatEnemy.tex.Height) * (0 + 1);
-                    float yb = (24f / BatEnemy.tex.Height) * 0;
+                    float xa = (16f / BatEnemy.Tex.Width) * i;
+                    float xb = (16f / BatEnemy.Tex.Width) * (i + 1);
+                    float ya = (24f / BatEnemy.Tex.Height) * (0 + 1);
+                    float yb = (24f / BatEnemy.Tex.Height) * 0;
                     vertices.Add(new VertexPositionColorTexture(new Vector3(0, 0, 0), Color.White, new Vector2(xa, ya)));
                     vertices.Add(new VertexPositionColorTexture(new Vector3(s, 0, 0), Color.White, new Vector2(xb, ya)));
                     vertices.Add(new VertexPositionColorTexture(new Vector3(s, s, 0), Color.White, new Vector2(xb, yb)));
@@ -42,8 +42,8 @@ namespace PyromancersJourney.Objects
                     vertices.Add(new VertexPositionColorTexture(new Vector3(s, s, 0), Color.White, new Vector2(xb, yb)));
                 }
 
-                BatEnemy.mainBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
-                BatEnemy.mainBuffer.SetData(vertices.ToArray());
+                BatEnemy.MainBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                BatEnemy.MainBuffer.SetData(vertices.ToArray());
             }
         }
 
@@ -62,7 +62,7 @@ namespace PyromancersJourney.Objects
 
         public override void DoMovement()
         {
-            var player = this.World.player;
+            var player = this.World.Player;
             var diff = player.Position - this.Position;
             diff.Y = 0;
             diff.Normalize();
@@ -74,12 +74,12 @@ namespace PyromancersJourney.Objects
         {
             base.Update();
 
-            this.frameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
-            if (this.frameAccum >= 0.15f)
+            this.FrameAccum += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+            if (this.FrameAccum >= 0.15f)
             {
-                this.frameAccum = 0;
-                if (++this.frame >= 4)
-                    this.frame = 0;
+                this.FrameAccum = 0;
+                if (++this.Frame >= 4)
+                    this.Frame = 0;
             }
         }
 
@@ -87,24 +87,24 @@ namespace PyromancersJourney.Objects
         {
             base.Render(device, projection, cam);
 
-            int frame = this.frame;
+            int frame = this.Frame;
 
             var oldStencil = device.DepthStencilState;
             var newStencil = new DepthStencilState();
             newStencil.DepthBufferWriteEnable = false;
             device.DepthStencilState = newStencil;
 
-            var camForward = (cam.pos - cam.target);
+            var camForward = (cam.Pos - cam.Target);
             camForward.Normalize();
-            BaseObject.effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
-            BaseObject.effect.TextureEnabled = true;
-            BaseObject.effect.Texture = BatEnemy.tex;
-            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.Effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.Pos, cam.Up, null, null);
+            BaseObject.Effect.TextureEnabled = true;
+            BaseObject.Effect.Texture = BatEnemy.Tex;
+            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
 
-                device.SetVertexBuffer(BatEnemy.mainBuffer);
+                device.SetVertexBuffer(BatEnemy.MainBuffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, frame * 6, 2);
             }
 

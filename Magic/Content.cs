@@ -8,25 +8,25 @@ namespace Magic
 {
     public class Content
     {
-        public static Texture2D loadTexture(string path)
+        public static Texture2D LoadTexture(string path)
         {
-            return Mod.instance.Helper.Content.Load<Texture2D>($"assets/{path}", ContentSource.ModFolder);
+            return Mod.Instance.Helper.Content.Load<Texture2D>($"assets/{path}", ContentSource.ModFolder);
         }
-        public static string loadTextureKey(string path)
+        public static string LoadTextureKey(string path)
         {
-            return Mod.instance.Helper.Content.GetActualAssetKey($"assets/{path}", ContentSource.ModFolder);
+            return Mod.Instance.Helper.Content.GetActualAssetKey($"assets/{path}", ContentSource.ModFolder);
         }
 
-        public static Map loadMap(string mapName, string variant = "map")
+        public static Map LoadMap(string mapName, string variant = "map")
         {
             string path = $"assets/{mapName}/{variant}.tmx";
-            return SpaceCore.Content.loadTmx(Mod.instance.Helper, mapName, path);
+            return SpaceCore.Content.LoadTmx(Mod.Instance.Helper, mapName, path);
         }
 
-        public static TileSheet loadTilesheet(string ts, Map xmap, out Dictionary<int, SpaceCore.Content.TileAnimation> animMapping)
+        public static TileSheet LoadTilesheet(string ts, Map xmap, out Dictionary<int, SpaceCore.Content.TileAnimation> animMapping)
         {
             string path = $"assets/{ts}.tsx";
-            return SpaceCore.Content.loadTsx(Mod.instance.Helper, path, ts, xmap, out animMapping);
+            return SpaceCore.Content.LoadTsx(Mod.Instance.Helper, path, ts, xmap, out animMapping);
         }
     }
 }

@@ -8,11 +8,11 @@ namespace PreexistingRelationship
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
@@ -116,7 +116,7 @@ namespace PreexistingRelationship
                     spouse.addMarriageDialogue("Strings\\StringsFromCSFiles", "Game1.cs.2782", false);
                 }
 
-                Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("married")));
+                Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("married")));
             }
         }
     }

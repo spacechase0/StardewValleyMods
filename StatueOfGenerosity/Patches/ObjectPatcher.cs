@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using SObject = StardewValley.Object;
@@ -9,7 +10,7 @@ using SObject = StardewValley.Object;
 namespace StatueOfGenerosity.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="SObject"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class ObjectPatcher : BasePatcher
     {
         /*********

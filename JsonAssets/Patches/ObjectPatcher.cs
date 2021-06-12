@@ -16,7 +16,7 @@ using SObject = StardewValley.Object;
 namespace JsonAssets.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="SObject"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class ObjectPatcher : BasePatcher
     {
         /*********
@@ -81,14 +81,14 @@ namespace JsonAssets.Patches
         {
             try
             {
-                if (!__instance.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
+                if (!__instance.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
                 {
                     if (__instance.Category == SObject.SeedsCategory)
                     {
                         bool isTree = false;
-                        foreach (var tree in Mod.instance.fruitTrees)
+                        foreach (var tree in Mod.instance.FruitTrees)
                         {
-                            if (tree.sapling.id == __instance.ParentSheetIndex)
+                            if (tree.Sapling.Id == __instance.ParentSheetIndex)
                             {
                                 isTree = true;
                                 break;
@@ -127,7 +127,7 @@ namespace JsonAssets.Patches
         {
             try
             {
-                if (__instance.bigCraftable.Value && Mod.instance.bigCraftableIds.Values.Contains(__instance.ParentSheetIndex) && __instance.name.Contains("Chair"))
+                if (__instance.bigCraftable.Value && Mod.instance.BigCraftableIds.Values.Contains(__instance.ParentSheetIndex) && __instance.name.Contains("Chair"))
                     return false;
                 return true;
             }
@@ -146,14 +146,14 @@ namespace JsonAssets.Patches
                 if (!__instance.Name?.Contains("Honey") == true)
                     return true;
 
-                if (!__instance.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
+                if (!__instance.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
                 {
                     Game1.objectInformation.TryGetValue(__instance.ParentSheetIndex, out string str);
                     if (!string.IsNullOrEmpty(str))
                         __result = str.Split('/')[4];
                     return false;
                 }
-                else if (__instance.bigCraftable.Value && Mod.instance.bigCraftableIds.Values.Contains(__instance.ParentSheetIndex))
+                else if (__instance.bigCraftable.Value && Mod.instance.BigCraftableIds.Values.Contains(__instance.ParentSheetIndex))
                 {
                     Game1.bigCraftablesInformation.TryGetValue(__instance.ParentSheetIndex, out string str);
                     if (!string.IsNullOrEmpty(str))
@@ -179,7 +179,7 @@ namespace JsonAssets.Patches
             try
             {
                 ObjectData objData = null;
-                foreach (var obj in Mod.instance.objects)
+                foreach (var obj in Mod.instance.Objects)
                 {
                     if (obj.GetObjectId() == __instance.ParentSheetIndex)
                     {
@@ -208,7 +208,7 @@ namespace JsonAssets.Patches
         {
             try
             {
-                foreach (var ring in Mod.instance.myRings)
+                foreach (var ring in Mod.instance.MyRings)
                 {
                     if (ring.GetObjectId() == index)
                     {
@@ -216,9 +216,9 @@ namespace JsonAssets.Patches
                         break;
                     }
                 }
-                if (Mod.instance.objectIds.Values.Contains(index))
+                if (Mod.instance.ObjectIds.Values.Contains(index))
                 {
-                    var obj = new List<ObjectData>(Mod.instance.objects).Find(od => od.GetObjectId() == index);
+                    var obj = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == index);
                     if (obj != null && (!obj.CanSell || obj.HideFromShippingCollection))
                         __result = false;
                 }
@@ -235,7 +235,7 @@ namespace JsonAssets.Patches
             try
             {
                 ObjectData objData = null;
-                foreach (var obj in Mod.instance.objects)
+                foreach (var obj in Mod.instance.Objects)
                 {
                     if (obj.GetObjectId() == __instance.ParentSheetIndex)
                     {
@@ -264,9 +264,9 @@ namespace JsonAssets.Patches
         {
             try
             {
-                if (!__instance.bigCraftable.Value && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
+                if (!__instance.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
                 {
-                    var obj = new List<ObjectData>(Mod.instance.objects).Find(od => od.GetObjectId() == __instance.ParentSheetIndex);
+                    var obj = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == __instance.ParentSheetIndex);
                     if (obj != null && !obj.CanBeGifted)
                         __result = false;
                 }
@@ -283,9 +283,9 @@ namespace JsonAssets.Patches
             if (__instance.bigCraftable.Value)
                 return true;
 
-            if (__instance.Category == SObject.CraftingCategory && Mod.instance.objectIds.Values.Contains(__instance.ParentSheetIndex))
+            if (__instance.Category == SObject.CraftingCategory && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
             {
-                if (!Mod.instance.fences.Any(f => f.correspondingObject.id == __instance.ParentSheetIndex))
+                if (!Mod.instance.Fences.Any(f => f.correspondingObject.Id == __instance.ParentSheetIndex))
                 {
                     __result = false;
                     return false;
@@ -301,7 +301,7 @@ namespace JsonAssets.Patches
             Vector2 pos = new Vector2(x / 64, y / 64);
             if (!__instance.bigCraftable.Value && !(__instance is Furniture))
             {
-                foreach (var fence in Mod.instance.fences)
+                foreach (var fence in Mod.instance.Fences)
                 {
                     if (__instance.ParentSheetIndex == fence.correspondingObject.GetObjectId())
                     {

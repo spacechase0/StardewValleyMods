@@ -26,7 +26,7 @@ namespace PyromancersJourney.Objects
             this.DoMovement();
 
             // Lazy implementation - would use something better if using a real engine
-            Func<float, float, bool> solidCheck = this.Floats ? this.World.map.IsAirSolid : this.World.map.IsSolid;
+            Func<float, float, bool> solidCheck = this.Floats ? this.World.Map.IsAirSolid : this.World.Map.IsSolid;
             if (solidCheck(this.Position.X, this.Position.Z))
             {
                 if (!solidCheck(oldPos.X, this.Position.Z))

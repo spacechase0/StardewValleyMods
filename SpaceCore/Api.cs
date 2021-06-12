@@ -56,7 +56,7 @@ namespace SpaceCore
                 throw new ArgumentException("Custom event method must take Must take (Event, GameLocation, GameTime, string[])");
 
             Log.Debug("Adding event command: " + command + " = " + info);
-            EventPatcher.customCommands.Add(command, info);
+            EventPatcher.CustomCommands.Add(command, info);
         }
 
         public void RegisterSerializerType(Type type)
@@ -65,7 +65,7 @@ namespace SpaceCore
             {
                 throw new ArgumentException("Custom types must have an [XmlType] attribute with the TypeName starting with \"Mods_\"");
             }
-            SpaceCore.modTypes.Add(type);
+            SpaceCore.ModTypes.Add(type);
         }
     }
 }

@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
@@ -9,7 +10,7 @@ using StardewValley.Tools;
 namespace RaftRestoration.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Raft"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class RaftPatcher : BasePatcher
     {
         /*********

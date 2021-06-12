@@ -9,7 +9,7 @@ namespace MoreEnchantments
 {
     public class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
@@ -23,7 +23,7 @@ namespace MoreEnchantments
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             BaseEnchantment.GetAvailableEnchantments().Add(new MoreLuresEnchantment());

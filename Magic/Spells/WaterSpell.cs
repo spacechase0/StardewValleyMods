@@ -11,12 +11,12 @@ namespace Magic.Spells
         public WaterSpell()
             : base(SchoolId.Toil, "water") { }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 0;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             level += 1;
             targetX /= Game1.tileSize;
@@ -30,7 +30,7 @@ namespace Magic.Spells
             {
                 for (int iy = targetY - level; iy <= targetY + level; ++iy)
                 {
-                    if (player.getCurrentMana() <= 3)
+                    if (player.GetCurrentMana() <= 3)
                         return null;
 
                     Vector2 pos = new Vector2(ix, iy);
@@ -49,7 +49,7 @@ namespace Magic.Spells
                     });
                     num++;
 
-                    player.addMana(-4);
+                    player.AddMana(-4);
                     player.AddCustomSkillExperience(Magic.Skill, 1);
                     Game1.playSound("wateringCan");
                 }

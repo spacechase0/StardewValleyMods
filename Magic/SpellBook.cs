@@ -13,91 +13,91 @@ namespace Magic
     {
         //private static Spell UNKNOWN_SPELL = new DummySpell("unknown");
 
-        private static readonly Dictionary<string, Spell> spells = new();
+        private static readonly Dictionary<string, Spell> Spells = new();
 
-        public static void register( Spell spell )
+        public static void Register(Spell spell)
         {
-            SpellBook.spells.Add(spell.ParentSchool.Id + ":" + spell.Id, spell);
-            spell.loadIcon();
+            SpellBook.Spells.Add(spell.ParentSchool.Id + ":" + spell.Id, spell);
+            spell.LoadIcon();
         }
 
-        public static Spell get( string id )
+        public static Spell Get(string id)
         {
             if (string.IsNullOrEmpty(id))
                 return null;
-            if (!SpellBook.spells.ContainsKey(id))
+            if (!SpellBook.Spells.ContainsKey(id))
                 return null;// UNKNOWN_SPELL;
 
-            return SpellBook.spells[id];
+            return SpellBook.Spells[id];
         }
 
-        public static List< string > getAll()
+        public static List<string> GetAll()
         {
-            return SpellBook.spells.Keys.ToList<string>();
+            return SpellBook.Spells.Keys.ToList<string>();
         }
 
-        internal static void init(Func<long> getNewId)
+        internal static void Init(Func<long> getNewId)
         {
-            SpellBook.register(new AnalyzeSpell());
-            SpellBook.register(new ProjectileSpell(SchoolId.Arcane, "magicmissle", 5, 7, 15, "flameSpell", "flameSpellHit", seeking: true));
-            SpellBook.register(new EnchantSpell(false));
-            SpellBook.register(new EnchantSpell(true));
-            SpellBook.register(new RewindSpell());
+            SpellBook.Register(new AnalyzeSpell());
+            SpellBook.Register(new ProjectileSpell(SchoolId.Arcane, "magicmissle", 5, 7, 15, "flameSpell", "flameSpellHit", seeking: true));
+            SpellBook.Register(new EnchantSpell(false));
+            SpellBook.Register(new EnchantSpell(true));
+            SpellBook.Register(new RewindSpell());
 
-            SpellBook.register(new ClearDebrisSpell());
-            SpellBook.register(new TillSpell());
-            SpellBook.register(new WaterSpell());
-            SpellBook.register(new BlinkSpell());
+            SpellBook.Register(new ClearDebrisSpell());
+            SpellBook.Register(new TillSpell());
+            SpellBook.Register(new WaterSpell());
+            SpellBook.Register(new BlinkSpell());
 
-            SpellBook.register(new LanternSpell(getNewId));
-            SpellBook.register(new TendrilsSpell());
-            SpellBook.register(new ShockwaveSpell());
-            SpellBook.register(new PhotosynthesisSpell());
+            SpellBook.Register(new LanternSpell(getNewId));
+            SpellBook.Register(new TendrilsSpell());
+            SpellBook.Register(new ShockwaveSpell());
+            SpellBook.Register(new PhotosynthesisSpell());
 
-            SpellBook.register(new HealSpell());
-            SpellBook.register(new HasteSpell());
-            SpellBook.register(new BuffSpell());
-            SpellBook.register(new EvacSpell());
+            SpellBook.Register(new HealSpell());
+            SpellBook.Register(new HasteSpell());
+            SpellBook.Register(new BuffSpell());
+            SpellBook.Register(new EvacSpell());
 
-            SpellBook.register(new ProjectileSpell(SchoolId.Elemental, "frostbolt", 7, 10, 20, "flameSpell", "flameSpellHit"));
-            SpellBook.register(new ProjectileSpell(SchoolId.Elemental, "fireball", 7, 10, 20, "flameSpell", "flameSpellHit"));
-            SpellBook.register(new DescendSpell());
-            SpellBook.register(new TeleportSpell());
+            SpellBook.Register(new ProjectileSpell(SchoolId.Elemental, "frostbolt", 7, 10, 20, "flameSpell", "flameSpellHit"));
+            SpellBook.Register(new ProjectileSpell(SchoolId.Elemental, "fireball", 7, 10, 20, "flameSpell", "flameSpellHit"));
+            SpellBook.Register(new DescendSpell());
+            SpellBook.Register(new TeleportSpell());
 
-            SpellBook.register(new MeteorSpell());
-            SpellBook.register(new BloodManaSpell());
-            SpellBook.register(new LuckStealSpell());
-            SpellBook.register(new SpiritSpell());
+            SpellBook.Register(new MeteorSpell());
+            SpellBook.Register(new BloodManaSpell());
+            SpellBook.Register(new LuckStealSpell());
+            SpellBook.Register(new SpiritSpell());
         }
 
 
         [JsonIgnore]
         public Farmer Owner { get; internal set; }
 
-        public Dictionary<string, int> knownSpells = new();
-        public PreparedSpell[][] prepared =
+        public Dictionary<string, int> KnownSpells = new();
+        public PreparedSpell[][] Prepared =
         new PreparedSpell[2][]
         {
             new PreparedSpell[5] { null, null, null, null, null },
             new PreparedSpell[5] { null, null, null, null, null },
         };
-        public int selectedPrepared;
+        public int SelectedPrepared;
 
         public SpellBook()
         {
         }
 
-        public PreparedSpell[] getPreparedSpells()
+        public PreparedSpell[] GetPreparedSpells()
         {
-            if (this.selectedPrepared >= this.prepared.Length)
+            if (this.SelectedPrepared >= this.Prepared.Length)
                 return new PreparedSpell[5];
-            return this.prepared[this.selectedPrepared];
+            return this.Prepared[this.SelectedPrepared];
         }
 
-        public void swapPreparedSet()
+        public void SwapPreparedSet()
         {
-            this.selectedPrepared = (this.selectedPrepared + 1) % this.prepared.Length;
-            Log.Trace("Swapped prepared spell set to set " + (this.selectedPrepared + 1) + "/" + this.prepared.Length + ".");
+            this.SelectedPrepared = (this.SelectedPrepared + 1) % this.Prepared.Length;
+            Log.Trace("Swapped prepared spell set to set " + (this.SelectedPrepared + 1) + "/" + this.Prepared.Length + ".");
         }
     }
 }

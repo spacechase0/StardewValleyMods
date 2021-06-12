@@ -10,7 +10,7 @@ namespace Magic.Spells
         public BuffSpell()
             : base(SchoolId.Life, "buff") { }
 
-        public override bool canCast(Farmer player, int level)
+        public override bool CanCast(Farmer player, int level)
         {
             if (player == Game1.player)
             {
@@ -21,15 +21,15 @@ namespace Magic.Spells
                 }
             }
 
-            return base.canCast(player, level);
+            return base.CanCast(player, level);
         }
 
-        public override int getManaCost(Farmer player, int level)
+        public override int GetManaCost(Farmer player, int level)
         {
             return 25;
         }
 
-        public override IActiveEffect onCast(Farmer player, int level, int targetX, int targetY)
+        public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             if (player != Game1.player)
                 return null;
@@ -41,7 +41,7 @@ namespace Magic.Spells
             }
 
             //Game1.buffsDisplay.clearAllBuffs();
-            Mod.instance.Helper.Reflection.GetField<NetArray<int, NetInt>>(Game1.player, "appliedBuffs").GetValue().Clear();
+            Mod.Instance.Helper.Reflection.GetField<NetArray<int, NetInt>>(Game1.player, "appliedBuffs").GetValue().Clear();
             Game1.player.attack = 0;
 
             int l = level + 1;

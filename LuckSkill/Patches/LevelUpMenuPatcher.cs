@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
@@ -11,7 +12,7 @@ using StardewValley.Menus;
 namespace LuckSkill.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="LevelUpMenu"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class LevelUpMenuPatcher : BasePatcher
     {
         /*********
@@ -90,22 +91,22 @@ namespace LuckSkill.Patches
         {
             switch (whichProfession)
             {
-                case Mod.PROFESSION_DAILY_LUCK:
+                case Mod.ProfessionDailyLuck:
                     __result = "LUCK_A";
                     break;
-                case Mod.PROFESSION_MORE_QUESTS:
+                case Mod.ProfessionMoreQuests:
                     __result = "LUCK_B";
                     break;
-                case Mod.PROFESSION_CHANCE_MAX_LUCK:
+                case Mod.ProfessionChanceMaxLuck:
                     __result = "LUCK_A1";
                     break;
-                case Mod.PROFESSION_NO_BAD_LUCK:
+                case Mod.ProfessionNoBadLuck:
                     __result = "LUCK_A2";
                     break;
-                case Mod.PROFESSION_NIGHTLY_EVENTS:
+                case Mod.ProfessionNightlyEvents:
                     __result = "LUCK_B1";
                     break;
-                case Mod.PROFESSION_JUNIMO_HELP:
+                case Mod.ProfessionJunimoHelp:
                     __result = "LUCK_B2";
                     break;
             }

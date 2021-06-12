@@ -8,11 +8,11 @@ namespace SpaceCore
 {
     public class Networking
     {
-        internal static Dictionary<string, Action<IncomingMessage>> messageHandlers = new();
+        internal static Dictionary<string, Action<IncomingMessage>> MessageHandlers = new();
 
         public static void RegisterMessageHandler(string id, Action<IncomingMessage> handler)
         {
-            Networking.messageHandlers.Add(id, handler);
+            Networking.MessageHandlers.Add(id, handler);
         }
 
         public static void BroadcastMessage(string id, byte[] data)

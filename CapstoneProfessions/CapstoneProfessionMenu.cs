@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
 
 namespace CapstoneProfessions
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.CopiedFromGameCode)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = DiagnosticMessages.CopiedFromGameCode)]
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.CopiedFromGameCode)]
     public class CapstoneProfessionMenu : IClickableMenu
     {
         private readonly Rectangle cursorsGoldIcon = new(280, 411, 16, 16);
@@ -78,7 +83,7 @@ namespace CapstoneProfessions
             this.extraInfoForLevel.Clear();
             Game1.player.completelyStopAnimatingOrDoingAction();
             this.informationUp = true;
-            this.title = Mod.instance.Helper.Translation.Get("menu.title");
+            this.title = Mod.Instance.Helper.Translation.Get("menu.title");
             this.extraInfoForLevel = this.getExtraInfoForLevel();
             switch (Game1.whichFarm)
             {
@@ -169,7 +174,7 @@ namespace CapstoneProfessions
         public List<string> getExtraInfoForLevel()
         {
             List<string> extraInfo = new List<string>();
-            extraInfo.Add(Mod.instance.Helper.Translation.Get("menu.extra"));
+            extraInfo.Add(Mod.Instance.Helper.Translation.Get("menu.extra"));
             return extraInfo;
         }
 
@@ -190,10 +195,10 @@ namespace CapstoneProfessions
             }
             if (!this.hasUpdatedProfessions)
             {
-                this.professionsToChoose.Add(Mod.PROFESSION_TIME);
-                this.professionsToChoose.Add(Mod.PROFESSION_PROFIT);
-                this.leftProfessionDescription = new List<string>(new string[] { Mod.instance.Helper.Translation.Get("profession.time.name"), Mod.instance.Helper.Translation.Get("profession.time.description") });
-                this.rightProfessionDescription = new List<string>(new string[] { Mod.instance.Helper.Translation.Get("profession.profit.name"), Mod.instance.Helper.Translation.Get("profession.profit.description") });
+                this.professionsToChoose.Add(Mod.ProfessionTime);
+                this.professionsToChoose.Add(Mod.ProfessionProfit);
+                this.leftProfessionDescription = new List<string>(new string[] { Mod.Instance.Helper.Translation.Get("profession.time.name"), Mod.Instance.Helper.Translation.Get("profession.time.description") });
+                this.rightProfessionDescription = new List<string>(new string[] { Mod.Instance.Helper.Translation.Get("profession.profit.name"), Mod.Instance.Helper.Translation.Get("profession.profit.description") });
                 this.hasUpdatedProfessions = true;
             }
             for (int i = this.littleStars.Count - 1; i >= 0; i--)
@@ -334,10 +339,10 @@ namespace CapstoneProfessions
                     Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, 4f, flipped: false, 0.88f);
                     b.DrawString(Game1.dialogueFont, this.title, new Vector2(this.xPositionOnScreen + this.width / 2 - Game1.dialogueFont.MeasureString(this.title).X / 2f, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Game1.textColor);
                     Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), this.sourceRectForLevelIcon, Color.White, 0f, Vector2.Zero, 4f, flipped: false, 0.88f);
-                    string chooseProfession = Mod.instance.Helper.Translation.Get("menu.extra");
+                    string chooseProfession = Mod.Instance.Helper.Translation.Get("menu.extra");
                     b.DrawString(Game1.smallFont, chooseProfession, new Vector2(this.xPositionOnScreen + this.width / 2 - Game1.smallFont.MeasureString(chooseProfession).X / 2f, this.yPositionOnScreen + 64 + IClickableMenu.spaceToClearTopBorder), Game1.textColor);
                     b.DrawString(Game1.dialogueFont, this.leftProfessionDescription[0], new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160), this.leftProfessionColor);
-                    b.Draw(Mod.clockTex, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width / 2 - 112, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160 - 16), null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 1f);
+                    b.Draw(Mod.ClockTex, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width / 2 - 112, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160 - 16), null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 1f);
                     for (int j = 1; j < this.leftProfessionDescription.Count; j++)
                     {
                         b.DrawString(Game1.smallFont, Game1.parseText(this.leftProfessionDescription[j], Game1.smallFont, this.width / 2 - 64), new Vector2(-4 + this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 128 + 8 + 64 * (j + 1)), this.leftProfessionColor);

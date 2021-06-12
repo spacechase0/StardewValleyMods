@@ -8,7 +8,7 @@ namespace SpaceCore.Utilities
 {
     public class Hijack
     {
-        public static void hijack(MethodInfo target, MethodInfo replaceWith)
+        public static void HijackMethod(MethodInfo target, MethodInfo replaceWith)
         {
             //*
             bool withThis = !target.IsStatic && replaceWith.IsStatic; // target.CallingConvention.HasFlag(CallingConventions.HasThis);

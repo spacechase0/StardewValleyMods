@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
@@ -12,7 +13,7 @@ using StardewValley.Locations;
 namespace LuckSkill.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Farmer"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class FarmerPatcher : BasePatcher
     {
         /*********
@@ -98,26 +99,26 @@ namespace LuckSkill.Patches
 
             if (skillLevel == 5)
             {
-                if (__instance.professions.Contains(Mod.PROFESSION_DAILY_LUCK))
-                    __result = Mod.PROFESSION_DAILY_LUCK;
-                else if (__instance.professions.Contains(Mod.PROFESSION_MORE_QUESTS))
-                    __result = Mod.PROFESSION_MORE_QUESTS;
+                if (__instance.professions.Contains(Mod.ProfessionDailyLuck))
+                    __result = Mod.ProfessionDailyLuck;
+                else if (__instance.professions.Contains(Mod.ProfessionMoreQuests))
+                    __result = Mod.ProfessionMoreQuests;
             }
             else if (skillLevel == 10)
             {
-                if (__instance.professions.Contains(Mod.PROFESSION_DAILY_LUCK))
+                if (__instance.professions.Contains(Mod.ProfessionDailyLuck))
                 {
-                    if (__instance.professions.Contains(Mod.PROFESSION_CHANCE_MAX_LUCK))
-                        __result = Mod.PROFESSION_CHANCE_MAX_LUCK;
-                    else if (__instance.professions.Contains(Mod.PROFESSION_NO_BAD_LUCK))
-                        __result = Mod.PROFESSION_NO_BAD_LUCK;
+                    if (__instance.professions.Contains(Mod.ProfessionChanceMaxLuck))
+                        __result = Mod.ProfessionChanceMaxLuck;
+                    else if (__instance.professions.Contains(Mod.ProfessionNoBadLuck))
+                        __result = Mod.ProfessionNoBadLuck;
                 }
-                else if (__instance.professions.Contains(Mod.PROFESSION_MORE_QUESTS))
+                else if (__instance.professions.Contains(Mod.ProfessionMoreQuests))
                 {
-                    if (__instance.professions.Contains(Mod.PROFESSION_NIGHTLY_EVENTS))
-                        __result = Mod.PROFESSION_NIGHTLY_EVENTS;
-                    else if (__instance.professions.Contains(Mod.PROFESSION_JUNIMO_HELP))
-                        __result = Mod.PROFESSION_JUNIMO_HELP;
+                    if (__instance.professions.Contains(Mod.ProfessionNightlyEvents))
+                        __result = Mod.ProfessionNightlyEvents;
+                    else if (__instance.professions.Contains(Mod.ProfessionJunimoHelp))
+                        __result = Mod.ProfessionJunimoHelp;
                 }
             }
         }

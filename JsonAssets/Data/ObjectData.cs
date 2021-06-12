@@ -1,13 +1,17 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SpaceShared;
 using StardewValley;
 using SObject = StardewValley.Object;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class ObjectData : DataNeedsIdWithTexture
     {
         [JsonIgnore]
@@ -66,7 +70,7 @@ namespace JsonAssets.Data
                 foreach (var ingredient in this.Ingredients)
                     str += Mod.instance.ResolveObjectId(ingredient.Object) + " " + ingredient.Count + " ";
                 str = str.Substring(0, str.Length - 1);
-                str += $"/what is this for?/{parent.id} {this.ResultCount}/";
+                str += $"/what is this for?/{parent.Id} {this.ResultCount}/";
                 if (parent.Category != Category_.Cooking)
                     str += "false/";
                 if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)
@@ -155,7 +159,7 @@ namespace JsonAssets.Data
             return this.DescriptionLocalization[currLang.ToString()];
         }
 
-        public int GetObjectId() { return this.id; }
+        public int GetObjectId() { return this.Id; }
 
         internal string GetObjectInformation()
         {

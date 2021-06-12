@@ -16,9 +16,9 @@ namespace CustomBuildings
 {
     public class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
     {
-        public static Mod instance;
+        public static Mod Instance;
 
-        internal Dictionary<string, BuildingData> buildings = new();
+        internal Dictionary<string, BuildingData> Buildings = new();
 
         internal static int ResolveObjectId(object data)
         {
@@ -39,11 +39,11 @@ namespace CustomBuildings
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += this.onMenuChanged;
-            helper.Events.Player.Warped += this.onWarped;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            helper.Events.Player.Warped += this.OnWarped;
 
             HarmonyPatcher.Apply(this,
                 new CoopPatcher()
@@ -59,19 +59,19 @@ namespace CustomBuildings
                     BuildingData binfo = cp.ReadJsonFile<BuildingData>(Path.Combine(relDir, "building.json"));
                     if (binfo == null)
                         continue;
-                    binfo.texture = cp.LoadAsset<Texture2D>(Path.Combine(relDir, "building.png"));
-                    binfo.mapLoader = () => cp.LoadAsset<xTile.Map>(Path.Combine(relDir, "building.tbin"));
-                    this.buildings.Add(binfo.Id, binfo);
+                    binfo.Texture = cp.LoadAsset<Texture2D>(Path.Combine(relDir, "building.png"));
+                    binfo.MapLoader = () => cp.LoadAsset<xTile.Map>(Path.Combine(relDir, "building.tbin"));
+                    this.Buildings.Add(binfo.Id, binfo);
                 }
             }
         }
 
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is CarpenterMenu carp)
             {
                 var blueprints = this.Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
-                foreach (var building in this.buildings)
+                foreach (var building in this.Buildings)
                 {
                     if (building.Value.PreviousTier == null || Game1.getFarm().isBuildingConstructed(building.Value.PreviousTier))
                         blueprints.Add(new BluePrint(building.Value.Id));
@@ -79,7 +79,7 @@ namespace CustomBuildings
             }
         }
 
-        private void onWarped(object sender, WarpedEventArgs e)
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
             if (!e.IsLocalPlayer)
                 return;
@@ -94,12 +94,12 @@ namespace CustomBuildings
                     var b = farm.buildings[i];
 
                     // This is probably a new building if it hasn't been converted yet.
-                    if (this.buildings.ContainsKey(b.buildingType.Value) && !(b is Coop))
+                    if (this.Buildings.ContainsKey(b.buildingType.Value) && !(b is Coop))
                     {
                         farm.buildings[i] = new Coop(new BluePrint(b.buildingType), new Vector2(b.tileX, b.tileY));
                         farm.buildings[i].indoors.Value = b.indoors.Value;
                         farm.buildings[i].load();
-                        (farm.buildings[i].indoors.Value as AnimalHouse).animalLimit.Value = this.buildings[b.buildingType.Value].MaxOccupants;
+                        (farm.buildings[i].indoors.Value as AnimalHouse).animalLimit.Value = this.Buildings[b.buildingType.Value].MaxOccupants;
                     }
                 }
             }
@@ -107,7 +107,7 @@ namespace CustomBuildings
 
         public bool CanLoad<T>(IAssetInfo asset)
         {
-            foreach (var building in this.buildings)
+            foreach (var building in this.Buildings)
             {
                 if (asset.AssetNameEquals("Buildings\\" + building.Key) || asset.AssetNameEquals("Maps\\" + building.Key))
                     return true;
@@ -117,12 +117,12 @@ namespace CustomBuildings
 
         public T Load<T>(IAssetInfo asset)
         {
-            foreach (var building in this.buildings)
+            foreach (var building in this.Buildings)
             {
                 if (asset.AssetNameEquals("Buildings\\" + building.Key))
-                    return (T)(object)building.Value.texture;
+                    return (T)(object)building.Value.Texture;
                 else if (asset.AssetNameEquals("Maps\\" + building.Key))
-                    return (T)(object)building.Value.mapLoader();
+                    return (T)(object)building.Value.MapLoader();
             }
             return default(T);
         }
@@ -135,7 +135,7 @@ namespace CustomBuildings
         public void Edit<T>(IAssetData asset)
         {
             var dict = asset.AsDictionary<string, string>();
-            foreach (var building in this.buildings)
+            foreach (var building in this.Buildings)
             {
                 dict.Data.Add(building.Value.Id, building.Value.BlueprintString());
             }

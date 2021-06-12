@@ -12,12 +12,12 @@ namespace BiggerCraftables
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        public static List<ContentList.Entry> entries = new();
+        public static Mod Instance;
+        public static List<ContentList.Entry> Entries = new();
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             foreach (var cp in helper.ContentPacks.GetOwned())
@@ -27,7 +27,7 @@ namespace BiggerCraftables
                 {
                     entry.Texture = cp.LoadAsset<Texture2D>(entry.Image);
                     Log.Debug($"Bigger craftable - {entry.Name} from {cp.Manifest.Name} - {entry.Width}x{entry.Length}");
-                    Mod.entries.Add(entry);
+                    Mod.Entries.Add(entry);
                 }
             }
 
@@ -44,12 +44,12 @@ namespace BiggerCraftables
             return new Api();
         }
 
-        private bool doingStuff;
+        private bool DoingStuff;
         private void OnObjectListChanged(object sender, ObjectListChangedEventArgs e)
         {
-            if (this.doingStuff)
+            if (this.DoingStuff)
                 return;
-            this.doingStuff = true;
+            this.DoingStuff = true;
 
             var loc = e.Location;
 
@@ -60,7 +60,7 @@ namespace BiggerCraftables
 
                 if (!obj.bigCraftable.Value)
                     continue;
-                var entry = Mod.entries.SingleOrDefault(cle => cle.Name == obj.Name);
+                var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == obj.Name);
                 if (entry == null)
                     continue;
 
@@ -80,7 +80,7 @@ namespace BiggerCraftables
                 }
             }
 
-            this.doingStuff = false;
+            this.DoingStuff = false;
         }
     }
 }

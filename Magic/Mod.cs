@@ -12,40 +12,40 @@ namespace Magic
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
         public static MultiplayerSaveData Data { get; private set; } = new();
         public static Configuration Config { get; private set; }
 
-        internal static JsonAssetsApi ja;
-        internal static IManaBarApi mana;
+        internal static JsonAssetsApi Ja;
+        internal static IManaBarApi Mana;
 
-        internal Api api;
+        internal Api Api;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             Mod.Config = this.Helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
-            helper.Events.GameLoop.SaveLoaded += this.onSaveLoaded;
-            helper.Events.GameLoop.Saving += this.onSaving;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.GameLoop.Saving += this.OnSaving;
 
-            Magic.init(helper.Events, helper.Input, helper.Multiplayer.GetNewID);
+            Magic.Init(helper.Events, helper.Input, helper.Multiplayer.GetNewID);
         }
 
         public override object GetApi()
         {
-            if (this.api == null)
-                this.api = new Api();
-            return this.api;
+            if (this.Api == null)
+                this.Api = new Api();
+            return this.Api;
         }
 
         /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
@@ -69,7 +69,7 @@ namespace Magic
                 Log.Error("No mana bar API???");
                 return;
             }
-            Mod.mana = api2;
+            Mod.Mana = api2;
 
             var api = this.Helper.ModRegistry.GetApi<JsonAssetsApi>("spacechase0.JsonAssets");
             if (api == null)
@@ -77,7 +77,7 @@ namespace Magic
                 Log.Error("No Json Assets API???");
                 return;
             }
-            Mod.ja = api;
+            Mod.Ja = api;
 
             api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
         }
@@ -85,7 +85,7 @@ namespace Magic
         /// <summary>Raised after the player loads a save slot.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             try
             {
@@ -96,27 +96,27 @@ namespace Magic
                         ? JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.FilePath))
                         : new MultiplayerSaveData();
 
-                    foreach (var magic in Mod.Data.players)
+                    foreach (var magic in Mod.Data.Players)
                     {
-                        if (magic.Value.spellBook.prepared[0].Length == 4)
+                        if (magic.Value.SpellBook.Prepared[0].Length == 4)
                         {
                             var newSpells = new PreparedSpell[5];
                             for (int i = 0; i < 4; ++i)
-                                newSpells[i] = magic.Value.spellBook.prepared[0][i];
-                            magic.Value.spellBook.prepared[0] = newSpells;
+                                newSpells[i] = magic.Value.SpellBook.Prepared[0][i];
+                            magic.Value.SpellBook.Prepared[0] = newSpells;
                         }
 
-                        if (magic.Value.spellBook.prepared[1].Length == 4)
+                        if (magic.Value.SpellBook.Prepared[1].Length == 4)
                         {
                             var newSpells = new PreparedSpell[5];
                             for (int i = 0; i < 4; ++i)
-                                newSpells[i] = magic.Value.spellBook.prepared[1][i];
-                            magic.Value.spellBook.prepared[1] = newSpells;
+                                newSpells[i] = magic.Value.SpellBook.Prepared[1][i];
+                            magic.Value.SpellBook.Prepared[1] = newSpells;
                         }
                     }
 
-                    if (!Mod.Data.players.ContainsKey(Game1.player.UniqueMultiplayerID))
-                        Mod.Data.players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
+                    if (!Mod.Data.Players.ContainsKey(Game1.player.UniqueMultiplayerID))
+                        Mod.Data.Players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
                 }
             }
             catch (Exception ex)
@@ -128,7 +128,7 @@ namespace Magic
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaving(object sender, SavingEventArgs e)
+        private void OnSaving(object sender, SavingEventArgs e)
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {

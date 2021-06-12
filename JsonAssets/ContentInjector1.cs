@@ -13,36 +13,36 @@ namespace JsonAssets
 {
     public class ContentInjector1 : IAssetEditor, IAssetLoader
     {
-        private delegate void injector(IAssetData asset);
-        private Dictionary<string, injector> files;
+        private delegate void Injector(IAssetData asset);
+        private Dictionary<string, Injector> Files;
         public ContentInjector1()
         {
             Func<string, string> normalize = Mod.instance.Helper.Content.NormalizeAssetName;
 
             //normalize with 
-            this.files = new Dictionary<string, injector>()
+            this.Files = new Dictionary<string, Injector>()
             {
-                {normalize("Data\\ObjectInformation"), this.injectDataObjectInformation},
-                {normalize("Data\\ObjectContextTags"), this.injectDataObjectContextTags},
-                {normalize("Data\\Crops"), this.injectDataCrops},
-                {normalize("Data\\fruitTrees"), this.injectDataFruitTrees},
-                {normalize("Data\\CookingRecipes"), this.injectDataCookingRecipes},
-                {normalize("Data\\CraftingRecipes"), this.injectDataCraftingRecipes},
-                {normalize("Data\\BigCraftablesInformation"), this.injectDataBigCraftablesInformation},
-                {normalize("Data\\hats"), this.injectDataHats},
-                {normalize("Data\\weapons"), this.injectDataWeapons},
-                {normalize("Data\\ClothingInformation"), this.injectDataClothingInformation},
-                {normalize("Data\\TailoringRecipes"), this.injectDataTailoringRecipes},
-                {normalize("Data\\Boots"), this.injectDataBoots},
-                {normalize("Maps\\springobjects"), this.injectMapsSpringobjects},
-                {normalize("TileSheets\\crops"), this.injectTileSheetsCrops},
-                {normalize("TileSheets\\fruitTrees"), this.injectTileSheetsFruitTrees},
-                {normalize("TileSheets\\Craftables"), this.injectTileSheetsCraftables},
-                {normalize("Characters\\Farmer\\hats"), this.injectCharactersFarmerHats},
-                {normalize("TileSheets\\weapons"), this.injectTileSheetsWeapons},
-                {normalize("Characters\\Farmer\\shirts"), this.injectCharactersFarmerShirts},
-                {normalize("Characters\\Farmer\\pants"), this.injectCharactersFarmerPants},
-                {normalize("Characters\\Farmer\\shoeColors"), this.injectCharactersFarmerShoeColors}
+                {normalize("Data\\ObjectInformation"), this.InjectDataObjectInformation},
+                {normalize("Data\\ObjectContextTags"), this.InjectDataObjectContextTags},
+                {normalize("Data\\Crops"), this.InjectDataCrops},
+                {normalize("Data\\fruitTrees"), this.InjectDataFruitTrees},
+                {normalize("Data\\CookingRecipes"), this.InjectDataCookingRecipes},
+                {normalize("Data\\CraftingRecipes"), this.InjectDataCraftingRecipes},
+                {normalize("Data\\BigCraftablesInformation"), this.InjectDataBigCraftablesInformation},
+                {normalize("Data\\hats"), this.InjectDataHats},
+                {normalize("Data\\weapons"), this.InjectDataWeapons},
+                {normalize("Data\\ClothingInformation"), this.InjectDataClothingInformation},
+                {normalize("Data\\TailoringRecipes"), this.InjectDataTailoringRecipes},
+                {normalize("Data\\Boots"), this.InjectDataBoots},
+                {normalize("Maps\\springobjects"), this.InjectMapsSpringobjects},
+                {normalize("TileSheets\\crops"), this.InjectTileSheetsCrops},
+                {normalize("TileSheets\\fruitTrees"), this.InjectTileSheetsFruitTrees},
+                {normalize("TileSheets\\Craftables"), this.InjectTileSheetsCraftables},
+                {normalize("Characters\\Farmer\\hats"), this.InjectCharactersFarmerHats},
+                {normalize("TileSheets\\weapons"), this.InjectTileSheetsWeapons},
+                {normalize("Characters\\Farmer\\shirts"), this.InjectCharactersFarmerShirts},
+                {normalize("Characters\\Farmer\\pants"), this.InjectCharactersFarmerPants},
+                {normalize("Characters\\Farmer\\shoeColors"), this.InjectCharactersFarmerShoeColors}
             };
         }
 
@@ -50,27 +50,27 @@ namespace JsonAssets
         {
             Mod.instance.Helper.Content.InvalidateCache((a) =>
             {
-                return this.files.ContainsKey(a.AssetName);
+                return this.Files.ContainsKey(a.AssetName);
             });
         }
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
-            return this.files.ContainsKey(asset.AssetName);
+            return this.Files.ContainsKey(asset.AssetName);
         }
 
         public void Edit<T>(IAssetData asset)
         {
-            if (!Mod.instance.didInit)
+            if (!Mod.instance.DidInit)
                 return;
 
-            this.files[asset.AssetName](asset);
+            this.Files[asset.AssetName](asset);
         }
 
-        private void injectDataObjectInformation(IAssetData asset)
+        private void InjectDataObjectInformation(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
-            foreach (var obj in Mod.instance.objects)
+            foreach (var obj in Mod.instance.Objects)
             {
                 try
                 {
@@ -83,10 +83,10 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectDataObjectContextTags(IAssetData asset)
+        private void InjectDataObjectContextTags(IAssetData asset)
         {
             var data = asset.AsDictionary<string, string>().Data;
-            foreach (var obj in Mod.instance.objects)
+            foreach (var obj in Mod.instance.Objects)
             {
                 try
                 {
@@ -103,10 +103,10 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectDataCrops(IAssetData asset)
+        private void InjectDataCrops(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
-            foreach (var crop in Mod.instance.crops)
+            foreach (var crop in Mod.instance.Crops)
             {
                 try
                 {
@@ -119,10 +119,10 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectDataFruitTrees(IAssetData asset)
+        private void InjectDataFruitTrees(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
-            foreach (var fruitTree in Mod.instance.fruitTrees)
+            foreach (var fruitTree in Mod.instance.FruitTrees)
             {
                 try
                 {
@@ -135,10 +135,10 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectDataCookingRecipes(IAssetData asset)
+        private void InjectDataCookingRecipes(IAssetData asset)
         {
             var data = asset.AsDictionary<string, string>().Data;
-            foreach (var obj in Mod.instance.objects)
+            foreach (var obj in Mod.instance.Objects)
             {
                 try
                 {
@@ -155,10 +155,10 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectDataCraftingRecipes(IAssetData asset)
+        private void InjectDataCraftingRecipes(IAssetData asset)
         {
             var data = asset.AsDictionary<string, string>().Data;
-            foreach (var obj in Mod.instance.objects)
+            foreach (var obj in Mod.instance.Objects)
             {
                 try
                 {
@@ -174,7 +174,7 @@ namespace JsonAssets
                     Log.Error($"Exception injecting crafting recipe for {obj.Name}: {e}");
                 }
             }
-            foreach (var big in Mod.instance.bigCraftables)
+            foreach (var big in Mod.instance.BigCraftables)
             {
                 try
                 {
@@ -189,10 +189,10 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectDataBigCraftablesInformation(IAssetData asset)
+        private void InjectDataBigCraftablesInformation(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
-            foreach (var big in Mod.instance.bigCraftables)
+            foreach (var big in Mod.instance.BigCraftables)
             {
                 try
                 {
@@ -205,10 +205,10 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectDataHats(IAssetData asset)
+        private void InjectDataHats(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
-            foreach (var hat in Mod.instance.hats)
+            foreach (var hat in Mod.instance.Hats)
             {
                 try
                 {
@@ -221,10 +221,10 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectDataWeapons(IAssetData asset)
+        private void InjectDataWeapons(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
-            foreach (var weapon in Mod.instance.weapons)
+            foreach (var weapon in Mod.instance.Weapons)
             {
                 try
                 {
@@ -237,10 +237,10 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectDataClothingInformation(IAssetData asset)
+        private void InjectDataClothingInformation(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
-            foreach (var shirt in Mod.instance.shirts)
+            foreach (var shirt in Mod.instance.Shirts)
             {
                 try
                 {
@@ -252,7 +252,7 @@ namespace JsonAssets
                     Log.Error($"Exception injecting clothing information for {shirt.Name}: {e}");
                 }
             }
-            foreach (var pants in Mod.instance.pantss)
+            foreach (var pants in Mod.instance.Pants)
             {
                 try
                 {
@@ -265,10 +265,10 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectDataTailoringRecipes(IAssetData asset)
+        private void InjectDataTailoringRecipes(IAssetData asset)
         {
             var data = asset.GetData<List<TailorItemRecipe>>();
-            foreach (var recipe in Mod.instance.tailoring)
+            foreach (var recipe in Mod.instance.Tailoring)
             {
                 try
                 {
@@ -281,10 +281,10 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectDataBoots(IAssetData asset)
+        private void InjectDataBoots(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
-            foreach (var boots in Mod.instance.bootss)
+            foreach (var boots in Mod.instance.Boots)
             {
                 try
                 {
@@ -297,7 +297,7 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectMapsSpringobjects(IAssetData asset)
+        private void InjectMapsSpringobjects(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
             asset.AsImage().ExtendImage(oldTex.Width, 4096);
@@ -305,19 +305,19 @@ namespace JsonAssets
             //asset.ReplaceWith(newTex);
             //asset.AsImage().PatchImage(oldTex);
 
-            foreach (var obj in Mod.instance.objects)
+            foreach (var obj in Mod.instance.Objects)
             {
                 try
                 {
-                    Log.Verbose($"Injecting {obj.Name} sprites @ {ContentInjector1.objectRect(obj.GetObjectId())}");
-                    asset.AsImage().PatchExtendedTileSheet(obj.texture, null, ContentInjector1.objectRect(obj.GetObjectId()));
+                    Log.Verbose($"Injecting {obj.Name} sprites @ {ContentInjector1.ObjectRect(obj.GetObjectId())}");
+                    asset.AsImage().PatchExtendedTileSheet(obj.texture, null, ContentInjector1.ObjectRect(obj.GetObjectId()));
                     if (obj.IsColored)
                     {
-                        Log.Verbose($"Injecting {obj.Name} color sprites @ {ContentInjector1.objectRect(obj.GetObjectId() + 1)}");
-                        asset.AsImage().PatchExtendedTileSheet(obj.textureColor, null, ContentInjector1.objectRect(obj.GetObjectId() + 1));
+                        Log.Verbose($"Injecting {obj.Name} color sprites @ {ContentInjector1.ObjectRect(obj.GetObjectId() + 1)}");
+                        asset.AsImage().PatchExtendedTileSheet(obj.textureColor, null, ContentInjector1.ObjectRect(obj.GetObjectId() + 1));
                     }
 
-                    var rect = ContentInjector1.objectRect(obj.GetObjectId());
+                    var rect = ContentInjector1.ObjectRect(obj.GetObjectId());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
                     obj.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
@@ -330,14 +330,14 @@ namespace JsonAssets
                 }
             }
 
-            foreach (var boots in Mod.instance.bootss)
+            foreach (var boots in Mod.instance.Boots)
             {
                 try
                 {
-                    Log.Verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.objectRect(boots.GetObjectId())}");
-                    asset.AsImage().PatchExtendedTileSheet(boots.texture, null, ContentInjector1.objectRect(boots.GetObjectId()));
+                    Log.Verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.ObjectRect(boots.GetObjectId())}");
+                    asset.AsImage().PatchExtendedTileSheet(boots.texture, null, ContentInjector1.ObjectRect(boots.GetObjectId()));
 
-                    var rect = ContentInjector1.objectRect(boots.GetObjectId());
+                    var rect = ContentInjector1.ObjectRect(boots.GetObjectId());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
                     boots.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
@@ -350,21 +350,21 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectTileSheetsCrops(IAssetData asset)
+        private void InjectTileSheetsCrops(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
 
-            foreach (var crop in Mod.instance.crops)
+            foreach (var crop in Mod.instance.Crops)
             {
                 try
                 {
-                    Log.Verbose($"Injecting {crop.Name} crop images @ {ContentInjector1.cropRect(crop.GetCropSpriteIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(crop.texture, null, ContentInjector1.cropRect(crop.GetCropSpriteIndex()));
+                    Log.Verbose($"Injecting {crop.Name} crop images @ {ContentInjector1.CropRect(crop.GetCropSpriteIndex())}");
+                    asset.AsImage().PatchExtendedTileSheet(crop.texture, null, ContentInjector1.CropRect(crop.GetCropSpriteIndex()));
 
-                    var rect = ContentInjector1.cropRect(crop.GetCropSpriteIndex());
+                    var rect = ContentInjector1.CropRect(crop.GetCropSpriteIndex());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
                     crop.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
@@ -377,21 +377,21 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectTileSheetsFruitTrees(IAssetData asset)
+        private void InjectTileSheetsFruitTrees(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
 
-            foreach (var fruitTree in Mod.instance.fruitTrees)
+            foreach (var fruitTree in Mod.instance.FruitTrees)
             {
                 try
                 {
-                    Log.Verbose($"Injecting {fruitTree.Name} fruit tree images @ {ContentInjector1.fruitTreeRect(fruitTree.GetFruitTreeIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(fruitTree.texture, null, ContentInjector1.fruitTreeRect(fruitTree.GetFruitTreeIndex()));
+                    Log.Verbose($"Injecting {fruitTree.Name} fruit tree images @ {ContentInjector1.FruitTreeRect(fruitTree.GetFruitTreeIndex())}");
+                    asset.AsImage().PatchExtendedTileSheet(fruitTree.texture, null, ContentInjector1.FruitTreeRect(fruitTree.GetFruitTreeIndex()));
 
-                    var rect = ContentInjector1.fruitTreeRect(fruitTree.GetFruitTreeIndex());
+                    var rect = ContentInjector1.FruitTreeRect(fruitTree.GetFruitTreeIndex());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
                     fruitTree.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
@@ -404,7 +404,7 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectTileSheetsCraftables(IAssetData asset)
+        private void InjectTileSheetsCraftables(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
@@ -412,22 +412,22 @@ namespace JsonAssets
             asset.AsImage().PatchImage(oldTex);
             Log.Trace($"Big craftables are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
-            foreach (var big in Mod.instance.bigCraftables)
+            foreach (var big in Mod.instance.BigCraftables)
             {
                 try
                 {
-                    Log.Verbose($"Injecting {big.Name} sprites @ {ContentInjector1.bigCraftableRect(big.GetCraftableId())}");
-                    asset.AsImage().PatchExtendedTileSheet(big.texture, null, ContentInjector1.bigCraftableRect(big.GetCraftableId()));
+                    Log.Verbose($"Injecting {big.Name} sprites @ {ContentInjector1.BigCraftableRect(big.GetCraftableId())}");
+                    asset.AsImage().PatchExtendedTileSheet(big.texture, null, ContentInjector1.BigCraftableRect(big.GetCraftableId()));
                     if (big.ReserveExtraIndexCount > 0)
                     {
                         for (int i = 0; i < big.ReserveExtraIndexCount; ++i)
                         {
-                            Log.Verbose($"Injecting {big.Name} reserved extra sprite {i + 1} @ {ContentInjector1.bigCraftableRect(big.GetCraftableId() + i + 1)}");
-                            asset.AsImage().PatchExtendedTileSheet(big.extraTextures[i], null, ContentInjector1.bigCraftableRect(big.GetCraftableId() + i + 1));
+                            Log.Verbose($"Injecting {big.Name} reserved extra sprite {i + 1} @ {ContentInjector1.BigCraftableRect(big.GetCraftableId() + i + 1)}");
+                            asset.AsImage().PatchExtendedTileSheet(big.extraTextures[i], null, ContentInjector1.BigCraftableRect(big.GetCraftableId() + i + 1));
                         }
                     }
 
-                    var rect = ContentInjector1.bigCraftableRect(big.GetCraftableId());
+                    var rect = ContentInjector1.BigCraftableRect(big.GetCraftableId());
                     int ts = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
                     big.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                     big.tilesheetX = rect.X;
@@ -439,7 +439,7 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectCharactersFarmerHats(IAssetData asset)
+        private void InjectCharactersFarmerHats(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
@@ -447,14 +447,14 @@ namespace JsonAssets
             asset.AsImage().PatchImage(oldTex);
             Log.Trace($"Hats are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
-            foreach (var hat in Mod.instance.hats)
+            foreach (var hat in Mod.instance.Hats)
             {
                 try
                 {
-                    Log.Verbose($"Injecting {hat.Name} sprites @ {ContentInjector1.hatRect(hat.GetHatId())}");
-                    asset.AsImage().PatchExtendedTileSheet(hat.texture, null, ContentInjector1.hatRect(hat.GetHatId()));
+                    Log.Verbose($"Injecting {hat.Name} sprites @ {ContentInjector1.HatRect(hat.GetHatId())}");
+                    asset.AsImage().PatchExtendedTileSheet(hat.texture, null, ContentInjector1.HatRect(hat.GetHatId()));
 
-                    var rect = ContentInjector1.hatRect(hat.GetHatId());
+                    var rect = ContentInjector1.HatRect(hat.GetHatId());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
                     hat.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
@@ -467,7 +467,7 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectTileSheetsWeapons(IAssetData asset)
+        private void InjectTileSheetsWeapons(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
@@ -475,14 +475,14 @@ namespace JsonAssets
             asset.AsImage().PatchImage(oldTex);
             Log.Trace($"Weapons are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
-            foreach (var weapon in Mod.instance.weapons)
+            foreach (var weapon in Mod.instance.Weapons)
             {
                 try
                 {
-                    Log.Verbose($"Injecting {weapon.Name} sprites @ {ContentInjector1.weaponRect(weapon.GetWeaponId())}");
-                    asset.AsImage().PatchImage(weapon.texture, null, ContentInjector1.weaponRect(weapon.GetWeaponId()));
+                    Log.Verbose($"Injecting {weapon.Name} sprites @ {ContentInjector1.WeaponRect(weapon.GetWeaponId())}");
+                    asset.AsImage().PatchImage(weapon.texture, null, ContentInjector1.WeaponRect(weapon.GetWeaponId()));
 
-                    var rect = ContentInjector1.weaponRect(weapon.GetWeaponId());
+                    var rect = ContentInjector1.WeaponRect(weapon.GetWeaponId());
                     int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
                     weapon.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
                     weapon.tilesheetX = rect.X;
@@ -494,35 +494,35 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectCharactersFarmerShirts(IAssetData asset)
+        private void InjectCharactersFarmerShirts(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
             asset.AsImage().ExtendImage(oldTex.Width, 4096);
             Log.Trace($"Shirts are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
-            foreach (var shirt in Mod.instance.shirts)
+            foreach (var shirt in Mod.instance.Shirts)
             {
                 try
                 {
-                    string rects = ContentInjector1.shirtRectPlain(shirt.GetMaleIndex()).ToString();
+                    string rects = ContentInjector1.ShirtRectPlain(shirt.GetMaleIndex()).ToString();
                     if (shirt.Dyeable)
-                        rects += ", " + ContentInjector1.shirtRectDye(shirt.GetMaleIndex()).ToString();
+                        rects += ", " + ContentInjector1.ShirtRectDye(shirt.GetMaleIndex()).ToString();
                     if (shirt.HasFemaleVariant)
                     {
-                        rects += ", " + ContentInjector1.shirtRectPlain(shirt.GetFemaleIndex()).ToString();
+                        rects += ", " + ContentInjector1.ShirtRectPlain(shirt.GetFemaleIndex()).ToString();
                         if (shirt.Dyeable)
-                            rects += ", " + ContentInjector1.shirtRectDye(shirt.GetFemaleIndex()).ToString();
+                            rects += ", " + ContentInjector1.ShirtRectDye(shirt.GetFemaleIndex()).ToString();
                     }
 
                     Log.Verbose($"Injecting {shirt.Name} sprites @ {rects}");
-                    asset.AsImage().PatchExtendedTileSheet(shirt.textureMale, null, ContentInjector1.shirtRectPlain(shirt.GetMaleIndex()));
+                    asset.AsImage().PatchExtendedTileSheet(shirt.textureMale, null, ContentInjector1.ShirtRectPlain(shirt.GetMaleIndex()));
                     if (shirt.Dyeable)
-                        asset.AsImage().PatchExtendedTileSheet(shirt.textureMaleColor, null, ContentInjector1.shirtRectDye(shirt.GetMaleIndex()));
+                        asset.AsImage().PatchExtendedTileSheet(shirt.textureMaleColor, null, ContentInjector1.ShirtRectDye(shirt.GetMaleIndex()));
                     if (shirt.HasFemaleVariant)
                     {
-                        asset.AsImage().PatchExtendedTileSheet(shirt.textureFemale, null, ContentInjector1.shirtRectPlain(shirt.GetFemaleIndex()));
+                        asset.AsImage().PatchExtendedTileSheet(shirt.textureFemale, null, ContentInjector1.ShirtRectPlain(shirt.GetFemaleIndex()));
                         if (shirt.Dyeable)
-                            asset.AsImage().PatchExtendedTileSheet(shirt.textureFemaleColor, null, ContentInjector1.shirtRectDye(shirt.GetFemaleIndex()));
+                            asset.AsImage().PatchExtendedTileSheet(shirt.textureFemaleColor, null, ContentInjector1.ShirtRectDye(shirt.GetFemaleIndex()));
                     }
                 }
                 catch (Exception e)
@@ -531,7 +531,7 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectCharactersFarmerPants(IAssetData asset)
+        private void InjectCharactersFarmerPants(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
@@ -539,12 +539,12 @@ namespace JsonAssets
             asset.AsImage().PatchImage(oldTex);
             Log.Trace($"Pants are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
-            foreach (var pants in Mod.instance.pantss)
+            foreach (var pants in Mod.instance.Pants)
             {
                 try
                 {
-                    Log.Verbose($"Injecting {pants.Name} sprites @ {ContentInjector1.pantsRect(pants.GetTextureIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(pants.texture, null, ContentInjector1.pantsRect(pants.GetTextureIndex()));
+                    Log.Verbose($"Injecting {pants.Name} sprites @ {ContentInjector1.PantsRect(pants.GetTextureIndex())}");
+                    asset.AsImage().PatchExtendedTileSheet(pants.texture, null, ContentInjector1.PantsRect(pants.GetTextureIndex()));
                 }
                 catch (Exception e)
                 {
@@ -552,7 +552,7 @@ namespace JsonAssets
                 }
             }
         }
-        private void injectCharactersFarmerShoeColors(IAssetData asset)
+        private void InjectCharactersFarmerShoeColors(IAssetData asset)
         {
             var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
@@ -560,12 +560,12 @@ namespace JsonAssets
             asset.AsImage().PatchImage(oldTex);
             Log.Trace($"Boots are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
 
-            foreach (var boots in Mod.instance.bootss)
+            foreach (var boots in Mod.instance.Boots)
             {
                 try
                 {
-                    Log.Verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.bootsRect(boots.GetTextureIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(boots.textureColor, null, ContentInjector1.bootsRect(boots.GetTextureIndex()));
+                    Log.Verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.BootsRect(boots.GetTextureIndex())}");
+                    asset.AsImage().PatchExtendedTileSheet(boots.textureColor, null, ContentInjector1.BootsRect(boots.GetTextureIndex()));
                 }
                 catch (Exception e)
                 {
@@ -573,52 +573,52 @@ namespace JsonAssets
                 }
             }
         }
-        internal static Rectangle objectRect(int index)
+        internal static Rectangle ObjectRect(int index)
         {
             return new(index % 24 * 16, index / 24 * 16, 16, 16);
         }
-        internal static Rectangle cropRect(int index)
+        internal static Rectangle CropRect(int index)
         {
             return new(index % 2 * 128, index / 2 * 32, 128, 32);
         }
-        internal static Rectangle fruitTreeRect(int index)
+        internal static Rectangle FruitTreeRect(int index)
         {
             return new(0, index * 80, 432, 80);
         }
-        internal static Rectangle bigCraftableRect(int index)
+        internal static Rectangle BigCraftableRect(int index)
         {
             return new(index % 8 * 16, index / 8 * 32, 16, 32);
         }
-        internal static Rectangle hatRect(int index)
+        internal static Rectangle HatRect(int index)
         {
             return new(index % 12 * 20, index / 12 * 80, 20, 80);
         }
-        internal static Rectangle weaponRect(int index)
+        internal static Rectangle WeaponRect(int index)
         {
             return new(index % 8 * 16, index / 8 * 16, 16, 16);
         }
-        internal static Rectangle shirtRectPlain(int index)
+        internal static Rectangle ShirtRectPlain(int index)
         {
             return new(index % 16 * 8, index / 16 * 32, 8, 32);
         }
-        internal static Rectangle shirtRectDye(int index)
+        internal static Rectangle ShirtRectDye(int index)
         {
-            var rect = ContentInjector1.shirtRectPlain(index);
+            var rect = ContentInjector1.ShirtRectPlain(index);
             rect.X += 16 * 8;
             return rect;
         }
-        internal static Rectangle pantsRect(int index)
+        internal static Rectangle PantsRect(int index)
         {
             return new(index % 10 * 192, index / 10 * 688, 192, 688);
         }
-        internal static Rectangle bootsRect(int index)
+        internal static Rectangle BootsRect(int index)
         {
             return new(0, index, 4, 1);
         }
 
         public bool CanLoad<T>(IAssetInfo asset)
         {
-            foreach (var fence in Mod.instance.fences)
+            foreach (var fence in Mod.instance.Fences)
             {
                 if (asset.AssetNameEquals("LooseSprites\\Fence" + fence.correspondingObject?.GetObjectId()))
                     return true;
@@ -628,7 +628,7 @@ namespace JsonAssets
 
         public T Load<T>(IAssetInfo asset)
         {
-            foreach (var fence in Mod.instance.fences)
+            foreach (var fence in Mod.instance.Fences)
             {
                 if (asset.AssetNameEquals("LooseSprites\\Fence" + fence.correspondingObject?.GetObjectId()))
                     return (T)(object)fence.texture;

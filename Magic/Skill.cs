@@ -32,7 +32,7 @@ namespace Magic
 
             public override void DoImmediateProfessionPerk()
             {
-                Game1.player.useSpellPoints(-2);
+                Game1.player.UseSpellPoints(-2);
             }
         }
 
@@ -43,7 +43,7 @@ namespace Magic
 
             public override void DoImmediateProfessionPerk()
             {
-                Game1.player.setMaxMana(Game1.player.getMaxMana() + 500);
+                Game1.player.SetMaxMana(Game1.player.GetMaxMana() + 500);
             }
         }
 
@@ -57,7 +57,7 @@ namespace Magic
         public Skill()
             : base("spacechase0.Magic")
         {
-            this.Icon = Mod.instance.Helper.Content.Load<Texture2D>("assets/interface/magicexpicon.png");
+            this.Icon = Mod.Instance.Helper.Content.Load<Texture2D>("assets/interface/magicexpicon.png");
             this.SkillsPageIcon = null; // TODO: Make an icon for this
 
             this.ExperienceCurve = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
@@ -129,8 +129,8 @@ namespace Magic
 
         public override void DoLevelPerk(int level)
         {
-            Game1.player.setMaxMana(Game1.player.getMaxMana() + 100);
-            Game1.player.useSpellPoints(-1);
+            Game1.player.SetMaxMana(Game1.player.GetMaxMana() + 100);
+            Game1.player.UseSpellPoints(-1);
         }
     }
 }

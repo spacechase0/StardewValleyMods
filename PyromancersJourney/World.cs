@@ -13,32 +13,32 @@ namespace PyromancersJourney
 {
     public class World
     {
-        public static readonly int SCALE = 4;
+        public static readonly int Scale = 4;
 
-        public Player player;
-        public LevelWarp warp;
-        public Camera cam = new();
-        private Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70), Game1.game1.GraphicsDevice.DisplayMode.AspectRatio, 0.01f, 100);
+        public Player Player;
+        public LevelWarp Warp;
+        public Camera Cam = new();
+        private Matrix Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70), Game1.game1.GraphicsDevice.DisplayMode.AspectRatio, 0.01f, 100);
 
-        private RenderTarget2D target;
-        private SpriteBatch spriteBatch;
+        private RenderTarget2D Target;
+        private SpriteBatch SpriteBatch;
 
-        private bool nextLevelQueued;
-        private int currLevel;
-        private Vector2 warpPos;
-        public Map map;
-        public List<BaseObject> objects = new();
-        public List<BaseProjectile> projectiles = new();
-        private List<BaseObject> queuedObjects = new();
+        private bool NextLevelQueued;
+        private int CurrLevel;
+        private Vector2 WarpPos;
+        public Map Map;
+        public List<BaseObject> Objects = new();
+        public List<BaseProjectile> Projectiles = new();
+        private List<BaseObject> QueuedObjects = new();
 
-        public int ScreenSize => this.target.Width;
+        public int ScreenSize => this.Target.Width;
 
         public bool HasQuit;
 
         public World()
         {
-            this.target = new RenderTarget2D(Game1.game1.GraphicsDevice, 500 / World.SCALE, 500 / World.SCALE, false, Game1.game1.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
-            this.spriteBatch = new SpriteBatch(Game1.game1.GraphicsDevice);
+            this.Target = new RenderTarget2D(Game1.game1.GraphicsDevice, 500 / World.Scale, 500 / World.Scale, false, Game1.game1.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
+            this.SpriteBatch = new SpriteBatch(Game1.game1.GraphicsDevice);
 
             this.InitLevel("0");
 
@@ -53,52 +53,52 @@ namespace PyromancersJourney
 
         public void QueueObject(BaseObject obj)
         {
-            this.queuedObjects.Add(obj);
+            this.QueuedObjects.Add(obj);
         }
 
-        private Vector3 baseCamPos = new(4.5f, 2, 4.5f);
-        private float camAngle;
+        private Vector3 BaseCamPos = new(4.5f, 2, 4.5f);
+        private float CamAngle;
         public void Update()
         {
-            if (this.nextLevelQueued)
+            if (this.NextLevelQueued)
             {
-                this.nextLevelQueued = false;
+                this.NextLevelQueued = false;
                 this.NextLevel();
             }
 
-            foreach (var obj in this.objects)
+            foreach (var obj in this.Objects)
             {
                 obj.Update();
             }
-            foreach (var proj in this.projectiles)
+            foreach (var proj in this.Projectiles)
             {
                 proj.Update();
             }
 
-            for (int i = this.objects.Count - 1; i >= 0; --i)
+            for (int i = this.Objects.Count - 1; i >= 0; --i)
             {
-                if (this.objects[i].Dead)
-                    this.objects.RemoveAt(i);
+                if (this.Objects[i].Dead)
+                    this.Objects.RemoveAt(i);
             }
 
-            for (int i = this.projectiles.Count - 1; i >= 0; --i)
+            for (int i = this.Projectiles.Count - 1; i >= 0; --i)
             {
-                if (this.projectiles[i].Dead)
-                    this.projectiles.RemoveAt(i);
+                if (this.Projectiles[i].Dead)
+                    this.Projectiles.RemoveAt(i);
             }
 
-            foreach (var obj in this.queuedObjects)
+            foreach (var obj in this.QueuedObjects)
             {
-                this.objects.Add(obj);
+                this.Objects.Add(obj);
             }
-            this.queuedObjects.Clear();
+            this.QueuedObjects.Clear();
 
-            if (this.objects.OfType<Enemy>().Count() == 0)
+            if (this.Objects.OfType<Enemy>().Count() == 0)
             {
-                if (this.warp == null)
+                if (this.Warp == null)
                 {
-                    this.map.Floor[(int)this.warpPos.X, (int)this.warpPos.Y] = FloorTile.Stone;
-                    this.objects.Add(this.warp = new LevelWarp(this) { Position = new Vector3(this.warpPos.X, 0, this.warpPos.Y) });
+                    this.Map.Floor[(int)this.WarpPos.X, (int)this.WarpPos.Y] = FloorTile.Stone;
+                    this.Objects.Add(this.Warp = new LevelWarp(this) { Position = new Vector3(this.WarpPos.X, 0, this.WarpPos.Y) });
                     Game1.playSound("detector");
                 }
             }
@@ -114,10 +114,10 @@ namespace PyromancersJourney
         {
             var device = Game1.game1.GraphicsDevice;
             var oldTargets = device.GetRenderTargets();
-            device.SetRenderTarget(this.target);
+            device.SetRenderTarget(this.Target);
             var oldDepth = device.DepthStencilState;
             device.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
-            device.Clear(this.map.Sky);
+            device.Clear(this.Map.Sky);
 
             RasterizerState rast = new RasterizerState();
             rast.CullMode = CullMode.None;
@@ -132,13 +132,13 @@ namespace PyromancersJourney
                 cam.up = new Vector3( 0, 0, 1 );
                 //*/
 
-                foreach (var obj in this.objects)
+                foreach (var obj in this.Objects)
                 {
-                    obj.Render(device, this.projection, this.cam);
+                    obj.Render(device, this.Projection, this.Cam);
                 }
-                foreach (var proj in this.projectiles)
+                foreach (var proj in this.Projectiles)
                 {
-                    proj.Render(device, this.projection, this.cam);
+                    proj.Render(device, this.Projection, this.Cam);
                 }
             }
             {
@@ -147,9 +147,9 @@ namespace PyromancersJourney
                 var oldDepth2 = device.DepthStencilState;
                 device.DepthStencilState = depth2;
                 {
-                    foreach (var obj in this.objects)
+                    foreach (var obj in this.Objects)
                     {
-                        obj.RenderOver(device, this.projection, this.cam);
+                        obj.RenderOver(device, this.Projection, this.Cam);
                     }
                 }
                 device.DepthStencilState = oldDepth2;
@@ -159,26 +159,26 @@ namespace PyromancersJourney
             device.SetVertexBuffer(null);
             device.DepthStencilState = oldDepth;
 
-            foreach (var obj in this.objects)
+            foreach (var obj in this.Objects)
             {
-                obj.RenderUi(this.spriteBatch);
+                obj.RenderUi(this.SpriteBatch);
             }
 
             device.SetRenderTargets(oldTargets);
             Game1.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             //var oldTarget = oldTargets[0].RenderTarget as RenderTarget2D;
-            Game1.spriteBatch.Draw(this.target, new Vector2((Game1.graphics.PreferredBackBufferWidth - 500) / 2, (Game1.graphics.PreferredBackBufferHeight - 500) / 2), null, Color.White, 0, Vector2.Zero, World.SCALE, SpriteEffects.None, 1);
+            Game1.spriteBatch.Draw(this.Target, new Vector2((Game1.graphics.PreferredBackBufferWidth - 500) / 2, (Game1.graphics.PreferredBackBufferHeight - 500) / 2), null, Color.White, 0, Vector2.Zero, World.Scale, SpriteEffects.None, 1);
             Game1.spriteBatch.End();
         }
 
         public void QueueNextLevel()
         {
-            this.nextLevelQueued = true;
+            this.NextLevelQueued = true;
         }
 
         private void NextLevel()
         {
-            switch (++this.currLevel)
+            switch (++this.CurrLevel)
             {
                 case 1: this.InitLevel("1"); break;
                 case 2: this.InitLevel("2"); break;
@@ -198,55 +198,55 @@ namespace PyromancersJourney
 
         private void InitLevel(string path)
         {
-            string[] lines = File.ReadAllLines(Path.Combine(Mod.instance.Helper.DirectoryPath, "assets", "levels", path + ".txt"));
+            string[] lines = File.ReadAllLines(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "levels", path + ".txt"));
 
             string[] toks = lines[0].Split(' ');
 
-            this.warp = null;
-            this.objects.Clear();
-            this.projectiles.Clear();
+            this.Warp = null;
+            this.Objects.Clear();
+            this.Projectiles.Clear();
 
             Vector2 playerPos = Vector2.Zero;
 
-            this.map = new Map(new Vector2(int.Parse(toks[0]), int.Parse(toks[1])));
+            this.Map = new Map(new Vector2(int.Parse(toks[0]), int.Parse(toks[1])));
             if (toks.Length > 2 && toks[2] == "sky")
             {
-                this.map.Sky = Color.SkyBlue;
+                this.Map.Sky = Color.SkyBlue;
             }
-            for (int i = 1; i <= this.map.Size.Y; ++i)
+            for (int i = 1; i <= this.Map.Size.Y; ++i)
             {
                 int iy = i - 1;
-                for (int ix = 0; ix < this.map.Size.X; ++ix)
+                for (int ix = 0; ix < this.Map.Size.X; ++ix)
                 {
-                    this.map.Floor[ix, iy] = FloorTile.Stone;
-                    this.map.Walls[ix, iy] = WallTile.Empty;
+                    this.Map.Floor[ix, iy] = FloorTile.Stone;
+                    this.Map.Walls[ix, iy] = WallTile.Empty;
                     switch (lines[i][ix])
                     {
                         case ' ': break;
                         case '#':
                         case 'M':
-                            this.map.Walls[ix, iy] = WallTile.Stone;
+                            this.Map.Walls[ix, iy] = WallTile.Stone;
                             if (lines[i][ix] == 'M')
                             {
-                                this.objects.Add(new MuralThing(this) { Position = new Vector3(ix, 0, iy - 0.01f) });
+                                this.Objects.Add(new MuralThing(this) { Position = new Vector3(ix, 0, iy - 0.01f) });
                             }
                             break;
                         case 'L':
-                            this.map.Floor[ix, iy] = FloorTile.Lava;
+                            this.Map.Floor[ix, iy] = FloorTile.Lava;
                             break;
                         case 'F':
                             // TODO: Forge
                             break;
                         case 'P': playerPos = new Vector2(ix, iy); break;
-                        case 's': this.objects.Add(new TigerSlimeEnemy(this) { Position = new Vector3(ix + 0.5f, 0, iy + 0.5f) }); break;
-                        case 'b': this.objects.Add(new BatEnemy(this) { Position = new Vector3(ix + 0.5f, 0.5f, iy + 0.5f) }); break;
+                        case 's': this.Objects.Add(new TigerSlimeEnemy(this) { Position = new Vector3(ix + 0.5f, 0, iy + 0.5f) }); break;
+                        case 'b': this.Objects.Add(new BatEnemy(this) { Position = new Vector3(ix + 0.5f, 0.5f, iy + 0.5f) }); break;
                         case 'W':
                         case 'G':
-                            this.warpPos = new Vector2(ix, iy);
+                            this.WarpPos = new Vector2(ix, iy);
                             if (lines[i][ix] == 'G')
                             {
-                                this.map.Floor[ix, iy] = FloorTile.Lava;
-                                this.objects.Add(new GolemEnemy(this) { Position = new Vector3(ix + 0.5f, -0.65f, iy + 0.5f) });
+                                this.Map.Floor[ix, iy] = FloorTile.Lava;
+                                this.Objects.Add(new GolemEnemy(this) { Position = new Vector3(ix + 0.5f, -0.65f, iy + 0.5f) });
                             }
                             break;
 
@@ -258,13 +258,13 @@ namespace PyromancersJourney
             }
 
 
-            this.objects.Insert(0, new Floor(this, path == "ending"));
-            this.objects.Insert(1, new Walls(this, path == "ending"));
-            this.objects.Add(this.player = new Player(this) { Position = new Vector3(playerPos.X, 0.5f, playerPos.Y) });
+            this.Objects.Insert(0, new Floor(this, path == "ending"));
+            this.Objects.Insert(1, new Walls(this, path == "ending"));
+            this.Objects.Add(this.Player = new Player(this) { Position = new Vector3(playerPos.X, 0.5f, playerPos.Y) });
 
             if (path == "0" || path == "ending")
             {
-                this.objects.Add(this.warp = new LevelWarp(this) { Position = new Vector3(this.warpPos.X, 0, this.warpPos.Y) });
+                this.Objects.Add(this.Warp = new LevelWarp(this) { Position = new Vector3(this.WarpPos.X, 0, this.WarpPos.Y) });
             }
         }
     }

@@ -14,10 +14,10 @@ namespace MoreRings
 {
     public static class TrueSight
     {
-        private static readonly Dictionary<int, SObject> drawObjs = new();
-        internal static void onDrawWorld(object sender, RenderedWorldEventArgs args)
+        private static readonly Dictionary<int, SObject> DrawObjs = new();
+        internal static void OnDrawWorld(object sender, RenderedWorldEventArgs args)
         {
-            if (!Context.IsWorldReady || Mod.instance.hasRingEquipped(Mod.instance.Ring_TrueSight) <= 0)
+            if (!Context.IsWorldReady || Mod.Instance.HasRingEquipped(Mod.Instance.RingTrueSight) <= 0)
                 return;
 
             var b = args.SpriteBatch;
@@ -28,7 +28,7 @@ namespace MoreRings
                 var obj = pair.Value;
 
                 int doDraw = -1;
-                if (Mod.instance.hasRingEquipped(Mod.instance.Ring_TrueSight) > 0)
+                if (Mod.Instance.HasRingEquipped(Mod.Instance.RingTrueSight) > 0)
                 {
                     if (!(Game1.currentLocation.Name.StartsWith("UndergroundMine")))
                     {
@@ -50,14 +50,14 @@ namespace MoreRings
                     }
                     else if (obj.Name.Contains("Stone"))
                     {
-                        doDraw = TrueSight.mineDrops(obj.ParentSheetIndex, (int)pos.X, (int)pos.Y, Game1.player, (Game1.currentLocation as MineShaft));
+                        doDraw = TrueSight.MineDrops(obj.ParentSheetIndex, (int)pos.X, (int)pos.Y, Game1.player, (Game1.currentLocation as MineShaft));
                     }
                 }
-                if (Mod.instance.hasRingEquipped(Mod.instance.Ring_TrueSight) > 0)
+                if (Mod.Instance.HasRingEquipped(Mod.Instance.RingTrueSight) > 0)
                 {
                     if (obj.ParentSheetIndex == 590)
                     {
-                        doDraw = TrueSight.digUpArtifactSpot((int)pos.X, (int)pos.Y, Game1.player, obj.name);
+                        doDraw = TrueSight.DigUpArtifactSpot((int)pos.X, (int)pos.Y, Game1.player, obj.name);
                     }
                 }
 
@@ -70,11 +70,11 @@ namespace MoreRings
                     }
                     else
                     {
-                        if (!TrueSight.drawObjs.ContainsKey(doDraw))
+                        if (!TrueSight.DrawObjs.ContainsKey(doDraw))
                         {
-                            TrueSight.drawObjs.Add(doDraw, new SObject(new Vector2(0, 0), doDraw, 1));
+                            TrueSight.DrawObjs.Add(doDraw, new SObject(new Vector2(0, 0), doDraw, 1));
                         }
-                        var dobj = TrueSight.drawObjs[doDraw];
+                        var dobj = TrueSight.DrawObjs[doDraw];
                         dobj.drawInMenu(b, Game1.GlobalToLocal(Game1.viewport, new Vector2(pos.X * 64, pos.Y * 64)), 0.8f, 0.5f, 1, StackDrawType.Hide, Color.White, false);
                     }
                 }
@@ -88,9 +88,9 @@ namespace MoreRings
                     {
                         if (il.IsBuriedNutLocation(new Point(ix, iy)) && !Game1.netWorldState.Value.FoundBuriedNuts.ContainsKey($"{il.NameOrUniqueName}_{ix}_{iy}"))
                         {
-                            if (!TrueSight.drawObjs.ContainsKey(73))
-                                TrueSight.drawObjs.Add(73, new SObject(new Vector2(0, 0), 73, 1));
-                            var dobj = TrueSight.drawObjs[73];
+                            if (!TrueSight.DrawObjs.ContainsKey(73))
+                                TrueSight.DrawObjs.Add(73, new SObject(new Vector2(0, 0), 73, 1));
+                            var dobj = TrueSight.DrawObjs[73];
                             var pos = new Vector2(ix, iy);
                             dobj.drawInMenu(b, Game1.GlobalToLocal(Game1.viewport, new Vector2(pos.X * 64, pos.Y * 64)), 0.8f, 0.5f, 1, StackDrawType.Hide, Color.White, false);
                         }
@@ -101,11 +101,11 @@ namespace MoreRings
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidImplicitNetFieldCast")]
-        public static int mineDrops(int tileIndexOfStone, int x, int y, Farmer who, MineShaft ms)
+        public static int MineDrops(int tileIndexOfStone, int x, int y, Farmer who, MineShaft ms)
         {
             int mineLevel = ms.mineLevel;
-            int stonesLeftOnThisLevel = Mod.instance.Helper.Reflection.GetProperty<int>(ms, "stonesLeftOnThisLevel").GetValue();
-            bool ladderHasSpawned = Mod.instance.Helper.Reflection.GetField<bool>(ms, "ladderHasSpawned").GetValue();
+            int stonesLeftOnThisLevel = Mod.Instance.Helper.Reflection.GetProperty<int>(ms, "stonesLeftOnThisLevel").GetValue();
+            bool ladderHasSpawned = Mod.Instance.Helper.Reflection.GetField<bool>(ms, "ladderHasSpawned").GetValue();
 
             if (who == null)
                 who = Game1.player;
@@ -121,7 +121,7 @@ namespace MoreRings
                 num3 += 0.04;
             if (!ladderHasSpawned && !ms.mustKillAllMonstersToAdvance() && (stonesLeftOnThisLevel == 0 || r.NextDouble() < num3))
                 return -2;
-            int bs = TrueSight.breakStone(tileIndexOfStone, x, y, who, r, ms);
+            int bs = TrueSight.BreakStone(tileIndexOfStone, x, y, who, r, ms);
             if (bs != -1)
                 return bs;
             if (tileIndexOfStone == 44)
@@ -180,7 +180,7 @@ namespace MoreRings
         // I commented out the part that makes it appear for now
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidImplicitNetFieldCast")]
-        public static int breakStone(int indexOfStone, int x, int y, Farmer who, Random r, MineShaft ms)
+        public static int BreakStone(int indexOfStone, int x, int y, Farmer who, Random r, MineShaft ms)
         {
             int ret = -1;
             int num1 = who.professions.Contains(18) ? 1 : 0;
@@ -353,7 +353,7 @@ namespace MoreRings
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidImplicitNetFieldCast")]
-        public static int digUpArtifactSpot(int xLocation, int yLocation, Farmer who, string name)
+        public static int DigUpArtifactSpot(int xLocation, int yLocation, Farmer who, string name)
         {
             Random random = new Random(xLocation * 2000 + yLocation + (int)Game1.uniqueIDForThisGame / 2 + (int)Game1.stats.DaysPlayed);
             bool archaeologyEnchant = who != null && who.CurrentTool != null && who.CurrentTool is Hoe && who.CurrentTool.hasEnchantmentOfType<ArchaeologistEnchantment>();

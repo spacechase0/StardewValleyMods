@@ -11,11 +11,11 @@ namespace PreexistingRelationship
 {
     public class MarryMenu : IClickableMenu
     {
-        private RootElement ui;
-        private Table table;
+        private RootElement Ui;
+        private Table Table;
 
-        private StaticContainer selectedContainer;
-        private string selectedNPC;
+        private StaticContainer SelectedContainer;
+        private string SelectedNpc;
 
         public MarryMenu()
             : base((Game1.uiViewport.Width - 800) / 2, (Game1.uiViewport.Height - 700) / 2, 800, 700)
@@ -41,28 +41,28 @@ namespace PreexistingRelationship
             }
             */
 
-            this.ui = new RootElement()
+            this.Ui = new RootElement()
             {
                 LocalPosition = new Vector2(this.xPositionOnScreen, this.yPositionOnScreen),
             };
 
             var title = new Label()
             {
-                String = Mod.instance.Helper.Translation.Get("menu.title"),
+                String = Mod.Instance.Helper.Translation.Get("menu.title"),
                 Bold = true,
             };
             title.LocalPosition = new Vector2((800 - title.Measure().X) / 2, 10);
-            this.ui.AddChild(title);
+            this.Ui.AddChild(title);
 
-            this.ui.AddChild(new Label()
+            this.Ui.AddChild(new Label()
             {
-                String = Mod.instance.Helper.Translation.Get("menu.text").ToString().Replace("\\n", "\n"),
+                String = Mod.Instance.Helper.Translation.Get("menu.text").ToString().Replace("\\n", "\n"),
                 LocalPosition = new Vector2(50, 75),
                 NonBoldScale = 0.75f,
                 NonBoldShadow = false,
             });
 
-            this.table = new Table()
+            this.Table = new Table()
             {
                 RowHeight = 200,
                 Size = new Vector2(700, 500),
@@ -71,11 +71,10 @@ namespace PreexistingRelationship
             for (int i = 0; i < (valid.Count + 2) / 3; ++i)
             {
                 var row = new StaticContainer();
-                for (int n_ = i * 3; n_ < (i + 1) * 3; ++n_)
+                for (int n = i * 3; n < (i + 1) * 3; ++n)
                 {
-                    if (n_ >= valid.Count)
+                    if (n >= valid.Count)
                         continue;
-                    int n = n_;
 
                     var cont = new StaticContainer()
                     {
@@ -86,12 +85,12 @@ namespace PreexistingRelationship
                     // Probably a UI framework bug.
                     Action<Element> selCallback = (e) =>
                     {
-                        if (this.selectedContainer != null)
-                            this.selectedContainer.OutlineColor = null;
-                        this.selectedContainer = cont;
-                        this.selectedContainer.OutlineColor = Color.Green;
-                        this.selectedNPC = valid[n].Name;
-                        Log.Trace("Selected " + this.selectedNPC);
+                        if (this.SelectedContainer != null)
+                            this.SelectedContainer.OutlineColor = null;
+                        this.SelectedContainer = cont;
+                        this.SelectedContainer.OutlineColor = Color.Green;
+                        this.SelectedNpc = valid[n].Name;
+                        Log.Trace("Selected " + this.SelectedNpc);
                     };
                     cont.AddChild(new Image()
                     {
@@ -119,19 +118,19 @@ namespace PreexistingRelationship
 
                     row.AddChild(cont);
                 }
-                this.table.AddRow(new Element[] { row });
+                this.Table.AddRow(new Element[] { row });
             }
-            this.ui.AddChild(this.table);
+            this.Ui.AddChild(this.Table);
 
-            this.ui.AddChild(new Label()
+            this.Ui.AddChild(new Label()
             {
-                String = Mod.instance.Helper.Translation.Get("menu.button.cancel"),
+                String = Mod.Instance.Helper.Translation.Get("menu.button.cancel"),
                 LocalPosition = new Vector2(175, 650),
                 Callback = (e) => Game1.exitActiveMenu(),
             });
-            this.ui.AddChild(new Label()
+            this.Ui.AddChild(new Label()
             {
-                String = Mod.instance.Helper.Translation.Get("menu.button.accept"),
+                String = Mod.Instance.Helper.Translation.Get("menu.button.accept"),
                 LocalPosition = new Vector2(500, 650),
                 Callback = (e) => { this.DoMarriage(); }
             });
@@ -139,12 +138,12 @@ namespace PreexistingRelationship
 
         public override void receiveScrollWheelAction(int direction)
         {
-            this.table.Scrollbar.ScrollBy(direction / -120);
+            this.Table.Scrollbar.ScrollBy(direction / -120);
         }
 
         public override void update(GameTime time)
         {
-            this.ui.Update();
+            this.Ui.Update();
         }
 
         public override void draw(SpriteBatch b)
@@ -152,40 +151,40 @@ namespace PreexistingRelationship
             base.draw(b);
             IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, Color.White);
 
-            this.ui.Draw(b);
+            this.Ui.Draw(b);
 
             this.drawMouse(b);
         }
 
         private void DoMarriage()
         {
-            Log.Debug("Marrying " + this.selectedNPC);
-            if (this.selectedNPC == null)
+            Log.Debug("Marrying " + this.SelectedNpc);
+            if (this.SelectedNpc == null)
                 return;
 
             foreach (var player in Game1.getAllFarmers())
             {
-                if (player.spouse == this.selectedNPC)
+                if (player.spouse == this.SelectedNpc)
                 {
-                    Game1.addHUDMessage(new HUDMessage(Mod.instance.Helper.Translation.Get("spouse-taken")));
-                    this.selectedContainer.OutlineColor = null;
-                    this.selectedContainer = null;
-                    this.selectedNPC = null;
+                    Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("spouse-taken")));
+                    this.SelectedContainer.OutlineColor = null;
+                    this.SelectedContainer = null;
+                    this.SelectedNpc = null;
                     return;
                 }
             }
 
             if (!Game1.IsMasterGame)
             {
-                Mod.instance.Helper.Multiplayer.SendMessage(new DoMarriageMessage() { NpcName = this.selectedNPC }, nameof(DoMarriageMessage), new[] { Mod.instance.ModManifest.UniqueID }/*, new long[] { Game1.MasterPlayer.UniqueMultiplayerID }*/ );
+                Mod.Instance.Helper.Multiplayer.SendMessage(new DoMarriageMessage() { NpcName = this.SelectedNpc }, nameof(DoMarriageMessage), new[] { Mod.Instance.ModManifest.UniqueID }/*, new long[] { Game1.MasterPlayer.UniqueMultiplayerID }*/ );
             }
 
-            Mod.DoMarriage(Game1.player, this.selectedNPC, true);
+            Mod.DoMarriage(Game1.player, this.SelectedNpc, true);
             //Game1.addHUDMessage( new HUDMessage( Mod.instance.Helper.Translation.Get( "married" ) ) );
 
-            this.selectedContainer.OutlineColor = null;
-            this.selectedContainer = null;
-            this.selectedNPC = null;
+            this.SelectedContainer.OutlineColor = null;
+            this.SelectedContainer = null;
+            this.SelectedNpc = null;
             Game1.exitActiveMenu();
         }
     }

@@ -11,7 +11,7 @@ namespace CustomCritters
     public class CritterEntry
     {
         public string Id { get; set; }
-        public class SpriteData_
+        public class CritterSpriteData
         {
             public int Variations { get; set; }
             public int FrameWidth { get; set; }
@@ -19,21 +19,21 @@ namespace CustomCritters
             public float Scale { get; set; } = 4;
             public bool Flying { get; set; } = true;
         }
-        public SpriteData_ SpriteData { get; set; } = new();
+        public CritterSpriteData SpriteData { get; set; } = new();
 
-        public class Animation_
+        public class Animation
         {
-            public class AnimationFrame_
+            public class AnimationFrame
             {
                 public int Frame;
                 public int Duration;
             }
 
-            public List<AnimationFrame_> Frames = new();
+            public List<AnimationFrame> Frames = new();
         }
-        public Dictionary<string, Animation_> Animations { get; set; } = new();
+        public Dictionary<string, Animation> Animations { get; set; } = new();
 
-        public class SpawnCondition_
+        public class SpawnCondition
         {
             public bool Not { get; set; } = false;
             public string[] Seasons { get; set; } = new string[0];
@@ -44,9 +44,9 @@ namespace CustomCritters
             public bool RequireDarkOut { get; set; } = false;
             public bool AllowRain { get; set; } = false;
             public string ChildrenCombine { get; set; } = "and";
-            public List<SpawnCondition_> Children { get; set; } = new();
+            public List<SpawnCondition> Children { get; set; } = new();
 
-            public bool check(GameLocation loc)
+            public bool Check(GameLocation loc)
             {
                 bool ret = true;
 
@@ -58,7 +58,7 @@ namespace CustomCritters
                     int totalMet = 0;
                     foreach (var child in this.Children)
                     {
-                        bool childCheck = child.check(loc);
+                        bool childCheck = child.Check(loc);
                         if (childCheck)
                             ++totalMet;
 
@@ -103,31 +103,31 @@ namespace CustomCritters
                 return ret;
             }
         }
-        public List<SpawnCondition_> SpawnConditions { get; set; } = new();
+        public List<SpawnCondition> SpawnConditions { get; set; } = new();
 
-        public class Behavior_
+        public class BehaviorModel
         {
             public string Type { get; set; }
             public float Speed { get; set; }
 
-            public class PatrolPoint_
+            public class PatrolPoint
             {
                 public string Type { get; set; } = "start";
                 public float X { get; set; }
                 public float Y { get; set; }
             }
-            public List<PatrolPoint_> PatrolPoints { get; set; } = new();
+            public List<PatrolPoint> PatrolPoints { get; set; } = new();
             public int PatrolPointDelay { get; set; }
             public int PatrolPointDelayAddRandom { get; set; }
         }
-        public Behavior_ Behavior { get; set; }
+        public BehaviorModel Behavior { get; set; }
 
-        public class SpawnLocation_
+        public class SpawnLocation
         {
             public string LocationType { get; set; } = "random";
             //public Vector2 Offset { get; set; } = new Vector2();
 
-            public class ConditionEntry_
+            public class ConditionEntry
             {
                 public bool Not { get; set; } = false;
 
@@ -138,9 +138,9 @@ namespace CustomCritters
                 public string ValueEquals { get; set; }
 
                 public string ChildrenCombine { get; set; } = "and";
-                public List<ConditionEntry_> Children { get; set; } = new();
+                public List<ConditionEntry> Children { get; set; } = new();
 
-                public bool check(object obj)
+                public bool Check(object obj)
                 {
                     bool ret = true;
 
@@ -152,7 +152,7 @@ namespace CustomCritters
                         int totalMet = 0;
                         foreach (var child in this.Children)
                         {
-                            bool childCheck = child.check(obj);
+                            bool childCheck = child.Check(obj);
                             if (childCheck)
                                 ++totalMet;
 
@@ -218,24 +218,24 @@ namespace CustomCritters
                     return ret;
                 }
             }
-            public List<ConditionEntry_> Conditions { get; set; } = new();
+            public List<ConditionEntry> Conditions { get; set; } = new();
 
-            public bool check(object obj)
+            public bool Check(object obj)
             {
                 foreach (var cond in this.Conditions)
                 {
-                    if (!cond.check(obj))
+                    if (!cond.Check(obj))
                         return false;
                 }
 
                 return true;
             }
 
-            public Vector2? pickSpot(GameLocation loc)
+            public Vector2? PickSpot(GameLocation loc)
             {
                 if (this.LocationType == "random")
                 {
-                    if (this.check(null))
+                    if (this.Check(null))
                         return loc.getRandomTile() * Game1.tileSize;
                     return null;
                 }
@@ -245,7 +245,7 @@ namespace CustomCritters
                     keys.Shuffle();
                     foreach (var key in keys)
                     {
-                        if (this.check(loc.terrainFeatures[key]))
+                        if (this.Check(loc.terrainFeatures[key]))
                             return key * Game1.tileSize;
                     }
 
@@ -257,7 +257,7 @@ namespace CustomCritters
                     keys.Shuffle();
                     foreach (var key in keys)
                     {
-                        if (this.check(loc.objects[key]))
+                        if (this.Check(loc.objects[key]))
                             return key * Game1.tileSize;
                     }
 
@@ -266,55 +266,55 @@ namespace CustomCritters
                 else throw new ArgumentException("Bad location type");
             }
         }
-        public List<SpawnLocation_> SpawnLocations { get; set; } = new();
+        public List<SpawnLocation> SpawnLocations { get; set; } = new();
 
         public int SpawnAttempts { get; set; } = 3;
 
-        public class Light_
+        public class LightModel
         {
             public int VanillaLightId = 3;
             public float Radius { get; set; } = 0.5f;
-            public class Color_
+            public class ColorModel
             {
                 public int R { get; set; } = 255;
                 public int G { get; set; } = 255;
                 public int B { get; set; } = 255;
             }
-            public Color_ Color { get; set; } = new();
+            public ColorModel Color { get; set; } = new();
         }
-        public Light_ Light { get; set; } = null;
+        public LightModel Light { get; set; } = null;
 
-        public virtual bool check(GameLocation loc)
+        public virtual bool Check(GameLocation loc)
         {
             foreach (var cond in this.SpawnConditions)
             {
-                if (!cond.check(loc))
+                if (!cond.Check(loc))
                     return false;
             }
 
             return true;
         }
 
-        public virtual Vector2? pickSpot(GameLocation loc)
+        public virtual Vector2? PickSpot(GameLocation loc)
         {
             foreach (var sl in this.SpawnLocations)
             {
-                var ret = sl.pickSpot(loc);
+                var ret = sl.PickSpot(loc);
                 if (ret.HasValue)
                     return ret.Value;
             }
             return null;
         }
 
-        public virtual Critter makeCritter(Vector2 pos)
+        public virtual Critter MakeCritter(Vector2 pos)
         {
             return new CustomCritter(pos + new Vector2(1, 1) * (Game1.tileSize / 2), this);
         }
 
-        internal static Dictionary<string, CritterEntry> critters = new();
+        internal static Dictionary<string, CritterEntry> Critters = new();
         public static void Register(CritterEntry entry)
         {
-            CritterEntry.critters.Add(entry.Id, entry);
+            CritterEntry.Critters.Add(entry.Id, entry);
         }
     }
 }

@@ -16,15 +16,15 @@ namespace CookingSkill
     // This really needs organizing/splitting
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        public static Skill skill;
+        public static Mod Instance;
+        public static Skill Skill;
 
-        public static double getEdibilityMultiplier()
+        public static double GetEdibilityMultiplier()
         {
-            return 1 + Game1.player.GetCustomSkillLevel(Mod.skill) * 0.03;
+            return 1 + Game1.player.GetCustomSkillLevel(Mod.Skill) * 0.03;
         }
 
-        public static double getNoConsumeChance()
+        public static double GetNoConsumeChance()
         {
             if (Game1.player.HasCustomProfession(Skill.ProfessionConservation))
                 return 0.15;
@@ -35,7 +35,7 @@ namespace CookingSkill
 
         // Modifies the item based on professions and stuff
         // Returns for whether or not we should consume the ingredients
-        public static bool onCook(CraftingRecipe recipe, Item item, List<Chest> additionalItems)
+        public static bool OnCook(CraftingRecipe recipe, Item item, List<Chest> additionalItems)
         {
             if (recipe.isCookingRecipe && item is SObject obj)
             {
@@ -46,7 +46,7 @@ namespace CookingSkill
                 }
                 Random rand = new Random((int)(Game1.stats.daysPlayed + Game1.uniqueIDForThisGame + (uint)obj.ParentSheetIndex + (uint)amtCrafted));
 
-                obj.Edibility = (int)(obj.Edibility * Mod.getEdibilityMultiplier());
+                obj.Edibility = (int)(obj.Edibility * Mod.GetEdibilityMultiplier());
 
                 if (Game1.player.HasCustomProfession(Skill.ProfessionSellPrice))
                 {
@@ -80,7 +80,7 @@ namespace CookingSkill
                         obj.Quality = iq;
                 }
 
-                return rand.NextDouble() >= Mod.getNoConsumeChance();
+                return rand.NextDouble() >= Mod.GetNoConsumeChance();
             }
 
             return true;
@@ -90,13 +90,13 @@ namespace CookingSkill
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += this.onMenuChanged;
-            SpaceEvents.OnItemEaten += this.onItemEaten;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            SpaceEvents.OnItemEaten += this.OnItemEaten;
 
-            Skills.RegisterSkill(Mod.skill = new Skill());
+            Skills.RegisterSkill(Mod.Skill = new Skill());
         }
 
         public override object GetApi()
@@ -104,11 +104,11 @@ namespace CookingSkill
             return new Api();
         }
 
-        private bool wasEating = false;
-        private int prevToEatStack = -1;
-        private Buff lastDrink;
+        private bool WasEating = false;
+        private int PrevToEatStack = -1;
+        private Buff LastDrink;
 
-        private void onItemEaten(object sender, EventArgs e)
+        private void OnItemEaten(object sender, EventArgs e)
         {
             SObject obj = Game1.player.itemToEat as SObject;
             string[] info = Game1.objectInformation[obj.ParentSheetIndex].Split('/');
@@ -138,7 +138,7 @@ namespace CookingSkill
                 int[] thisAttr = thisBuff?.buffAttributes;
                 Log.Trace("Ate something: " + obj + " " + Game1.objectInformation[obj.ParentSheetIndex] + " " + buffData + " " + oldBuff + " " + thisBuff + " " + oldAttr + " " + thisAttr);
                 if (oldBuff != null && thisBuff != null && Enumerable.SequenceEqual(oldAttr, thisAttr) &&
-                     ((info[6] == "drink" && oldBuff != this.lastDrink) || (info[6] != "drink" && oldBuff != this.lastDrink)))
+                     ((info[6] == "drink" && oldBuff != this.LastDrink) || (info[6] != "drink" && oldBuff != this.LastDrink)))
                 {
                     // Now that we know that this is the original buff, we can buff the buff.
                     Log.Trace("Buffing buff");
@@ -175,7 +175,7 @@ namespace CookingSkill
                         Game1.buffsDisplay.drink.removeBuff();
                         Game1.buffsDisplay.drink = newBuff;
                         Game1.buffsDisplay.drink.addBuff();
-                        this.lastDrink = newBuff;
+                        this.LastDrink = newBuff;
                     }
                     else
                     {
@@ -223,7 +223,7 @@ namespace CookingSkill
                             Game1.buffsDisplay.drink.removeBuff();
                         Game1.buffsDisplay.drink = newBuff;
                         Game1.buffsDisplay.drink.addBuff();
-                        this.lastDrink = newBuff;
+                        this.LastDrink = newBuff;
                     }
                     else
                     {
@@ -237,7 +237,7 @@ namespace CookingSkill
             }
         }
 
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is CraftingPage)
             {

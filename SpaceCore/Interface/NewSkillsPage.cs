@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
 
 namespace SpaceCore.Interface
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.CopiedFromGameCode)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = DiagnosticMessages.CopiedFromGameCode)]
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.CopiedFromGameCode)]
     public class NewSkillsPage : IClickableMenu
     {
         public Texture2D texture;
@@ -26,9 +31,9 @@ namespace SpaceCore.Interface
         private Rectangle walletIconSource = new(0, 0, 12, 12);
         private Rectangle skillsTabSource = new(16, 368, 16, 16);
         private int SkillTabRegionId => Game1.activeClickableMenu is GameMenu ? GameMenu.region_skillsTab : -1;
-        private bool IsWalletRightSide => SpaceCore.instance.Config.WalletOnRightOfSkillPage
-            && !SpaceCore.instance.Helper.ModRegistry.IsLoaded("alphablackwolf.skillPrestige"); // Skill prestige places icons in right-side wallet area
-        private bool IsLegacyWallet => SpaceCore.instance.Config.WalletLegacyStyle;
+        private bool IsWalletRightSide => SpaceCore.Instance.Config.WalletOnRightOfSkillPage
+            && !SpaceCore.Instance.Helper.ModRegistry.IsLoaded("alphablackwolf.skillPrestige"); // Skill prestige places icons in right-side wallet area
+        private bool IsLegacyWallet => SpaceCore.Instance.Config.WalletLegacyStyle;
         private int walletSelectionOffset;
         private int WalletSelectionOffset
         {
@@ -68,7 +73,7 @@ namespace SpaceCore.Interface
         public NewSkillsPage(int x, int y, int width, int height)
             : base(x, y, width, height, false)
         {
-            this.texture = SpaceCore.instance.Helper.Content.Load<Texture2D>(Path.Combine("assets/sprites.png"));
+            this.texture = SpaceCore.Instance.Helper.Content.Load<Texture2D>(Path.Combine("assets/sprites.png"));
 
             // Player panel
             this.playerPanel = new ClickableComponent(
@@ -187,7 +192,7 @@ namespace SpaceCore.Interface
             int drawX = 0;
             int addedX = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + width - 448 - 48 + 4 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 4;
             int drawY = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 12;
-            int gameSkillCount = SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
+            int gameSkillCount = SpaceCore.Instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
             int walletSnapId = this.specialItems.Any() ? NewSkillsPage.WalletRegionStartId : -1;
             int leftSnapId = this.playerPanel.myID;
             int rightSnapId = this.IsLegacyWallet || !this.IsWalletRightSide ? -1 : walletSnapId;
@@ -262,7 +267,7 @@ namespace SpaceCore.Interface
                     int totalSkillIndex = gameSkillCount + skillIndex;
                     int professionLevel = professionIndex - 1 + (professionIndex * 4);
                     Skills.Skill skill = Skills.GetSkill(skills[skillIndex]);
-                    Skills.Skill.Profession profession = Skills.getProfessionFor(skill, professionLevel + 1);// Game1.player.getProfessionForSkill(0, num4 + 1);
+                    Skills.Skill.Profession profession = Skills.GetProfessionFor(skill, professionLevel + 1);// Game1.player.getProfessionForSkill(0, num4 + 1);
                     bool drawRed = Game1.player.GetCustomSkillLevel(skill) > professionLevel;
                     List<string> professionLines = new List<string>();
                     string professionBlurb = "";
@@ -642,7 +647,7 @@ namespace SpaceCore.Interface
         {
             int x = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + this.width - 448 - 48 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 8;
             int y = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 8;
-            int indexWithLuckSkill = SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
+            int indexWithLuckSkill = SpaceCore.Instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
             int xOffset = 0;
 
             // Menu container
@@ -852,7 +857,7 @@ namespace SpaceCore.Interface
                         skillBar.scale = Game1.pixelZoom;
                         if (skillBar.containsPoint(Game1.getMouseX(), Game1.getMouseY()) && !skillBar.name.Equals("-1") && skillBar.hoverText.Length > 0)
                         {
-                            List<Skills.Skill.Profession> professions = Skills.skills.SelectMany(s => s.Value.Professions).ToList();
+                            List<Skills.Skill.Profession> professions = Skills.SkillsByName.SelectMany(s => s.Value.Professions).ToList();
                             Skills.Skill.Profession profession = professions.Where(p => NewSkillsPage.CustomSkillPrefix + p.Id == skillBar.name).FirstOrDefault();
                             this.hoverText = profession.GetDescription();
                             this.hoverTitle = profession.GetName();

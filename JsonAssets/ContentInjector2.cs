@@ -10,10 +10,10 @@ namespace JsonAssets
     // with vanilla + stuff, our stuff will still get added.
     public class ContentInjector2 : IAssetEditor
     {
-        private List<string> files;
+        private List<string> Files;
         public ContentInjector2()
         {
-            this.files = new List<string>(new[]
+            this.Files = new List<string>(new[]
             {
                 "Data\\NPCGiftTastes",
             });
@@ -23,7 +23,7 @@ namespace JsonAssets
         {
             Mod.instance.Helper.Content.InvalidateCache((a) =>
             {
-                foreach (string file in this.files)
+                foreach (string file in this.Files)
                 {
                     if (a.AssetNameEquals(file))
                         return true;
@@ -34,7 +34,7 @@ namespace JsonAssets
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
-            foreach (string file in this.files)
+            foreach (string file in this.Files)
             {
                 if (asset.AssetNameEquals(file))
                     return true;
@@ -44,7 +44,7 @@ namespace JsonAssets
 
         public void Edit<T>(IAssetData asset)
         {
-            if (!Mod.instance.didInit)
+            if (!Mod.instance.DidInit)
                 return;
 
             if (asset.AssetNameEquals("Data\\NPCGiftTastes"))
@@ -59,7 +59,7 @@ namespace JsonAssets
                 {
                     if (npc.Key.StartsWith("Universal_"))
                     {
-                        foreach (var obj in Mod.instance.objects)
+                        foreach (var obj in Mod.instance.Objects)
                         {
                             if (npc.Key == "Universal_Love" && (obj.GiftTastes?.Love?.Contains("Universal") ?? false))
                                 newData[npc.Key] = npc.Value + " " + obj.GetObjectId();
@@ -93,7 +93,7 @@ namespace JsonAssets
                     string neutralStr = sections[8];
                     List<string> neutralIds = new List<string>(sections[9].Split(' '));
 
-                    foreach (var obj in Mod.instance.objects)
+                    foreach (var obj in Mod.instance.Objects)
                     {
                         if (obj.GiftTastes == null)
                             continue;

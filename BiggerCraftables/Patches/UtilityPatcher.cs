@@ -4,6 +4,7 @@ using System.Linq;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
@@ -12,7 +13,7 @@ using StardewValley.Objects;
 namespace BiggerCraftables.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Utility"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class UtilityPatcher : BasePatcher
     {
         /*********
@@ -36,7 +37,7 @@ namespace BiggerCraftables.Patches
         {
             if (!(item is StardewValley.Object obj && obj.bigCraftable.Value))
                 return true;
-            var entry = Mod.entries.SingleOrDefault(cle => cle.Name == obj.Name);
+            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == obj.Name);
             if (entry == null)
                 return true;
 
@@ -85,7 +86,7 @@ namespace BiggerCraftables.Patches
                             }
                         }
                     }
-                    var itemCanBePlaced = Mod.instance.Helper.Reflection.GetMethod(typeof(Utility), "itemCanBePlaced");
+                    var itemCanBePlaced = Mod.Instance.Helper.Reflection.GetMethod(typeof(Utility), "itemCanBePlaced");
                     if (itemCanBePlaced.Invoke<bool>(location, tileLocation, item) || Utility.isViableSeedSpot(location, tileLocation, item))
                     {
                         __result = true;

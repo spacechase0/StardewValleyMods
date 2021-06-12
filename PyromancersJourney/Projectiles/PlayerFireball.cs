@@ -9,12 +9,12 @@ namespace PyromancersJourney.Projectiles
 {
     public class PlayerFireball : BaseProjectile
     {
-        public static Texture2D tex = Mod.instance.Helper.Content.Load<Texture2D>("assets/fireball.png");
+        public static Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/fireball.png");
 
         public int Level = 0;
         public Vector2 Speed;
 
-        private static VertexBuffer buffer;
+        private static VertexBuffer Buffer;
 
         public override bool HurtsPlayer => false;
         public override int Damage => this.Level + 1;
@@ -22,7 +22,7 @@ namespace PyromancersJourney.Projectiles
         public PlayerFireball(World world)
             : base(world)
         {
-            if (PlayerFireball.buffer == null)
+            if (PlayerFireball.Buffer == null)
             {
                 var vertices = new List<VertexPositionColorTexture>();
                 for (int i = 0; i < 4; ++i)
@@ -38,8 +38,8 @@ namespace PyromancersJourney.Projectiles
                     vertices.Add(new VertexPositionColorTexture(new Vector3(1, 1, 0), Color.White, new Vector2(b, 1)));
                 }
 
-                PlayerFireball.buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
-                PlayerFireball.buffer.SetData(vertices.ToArray());
+                PlayerFireball.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                PlayerFireball.Buffer.SetData(vertices.ToArray());
             }
         }
 
@@ -61,7 +61,7 @@ namespace PyromancersJourney.Projectiles
             base.Update();
             this.Position += new Vector3(this.Speed.X, 0, this.Speed.Y);
 
-            if (this.World.map.IsAirSolid(this.Position.X, this.Position.Z))
+            if (this.World.Map.IsAirSolid(this.Position.X, this.Position.Z))
             {
                 this.Dead = true;
             }
@@ -70,16 +70,16 @@ namespace PyromancersJourney.Projectiles
         public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
             base.Render(device, projection, cam);
-            var camForward = (cam.pos - cam.target);
+            var camForward = (cam.Pos - cam.Target);
             camForward.Normalize();
-            BaseProjectile.effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.pos, cam.up, null, null);
-            BaseProjectile.effect.TextureEnabled = true;
-            BaseProjectile.effect.Texture = PlayerFireball.tex;
-            for (int e = 0; e < BaseProjectile.effect.CurrentTechnique.Passes.Count; ++e)
+            BaseProjectile.Effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.Pos, cam.Up, null, null);
+            BaseProjectile.Effect.TextureEnabled = true;
+            BaseProjectile.Effect.Texture = PlayerFireball.Tex;
+            for (int e = 0; e < BaseProjectile.Effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = BaseProjectile.effect.CurrentTechnique.Passes[e];
+                var pass = BaseProjectile.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
-                device.SetVertexBuffer(PlayerFireball.buffer);
+                device.SetVertexBuffer(PlayerFireball.Buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 6 * this.Level, 2);
             }
         }

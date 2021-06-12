@@ -7,15 +7,15 @@ namespace MultiFertilizer
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static string KEY_FERT => $"{Mod.instance.ModManifest.UniqueID}/FertilizerLevel";
-        public static string KEY_RETAIN => $"{Mod.instance.ModManifest.UniqueID}/WaterRetainLevel";
-        public static string KEY_SPEED => $"{Mod.instance.ModManifest.UniqueID}/SpeedGrowLevel";
+        public static string KeyFert => $"{Mod.Instance.ModManifest.UniqueID}/FertilizerLevel";
+        public static string KeyRetain => $"{Mod.Instance.ModManifest.UniqueID}/WaterRetainLevel";
+        public static string KeySpeed => $"{Mod.Instance.ModManifest.UniqueID}/SpeedGrowLevel";
 
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             HarmonyPatcher.Apply(this,

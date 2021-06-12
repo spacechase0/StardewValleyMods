@@ -4,12 +4,13 @@ namespace SpaceCore
 {
     public class Menus
     {
-        private static int currGameMenuTab = 8;
-        internal static Dictionary<int, string> extraGameMenuTabs = new();
+        private static int CurrGameMenuTab = 8;
+        internal static Dictionary<int, string> ExtraGameMenuTabs = new();
+
         public static int ReserveGameMenuTab(string name)
         {
-            int tab = Menus.currGameMenuTab++;
-            Menus.extraGameMenuTabs.Add(tab, name);
+            int tab = Menus.CurrGameMenuTab++;
+            Menus.ExtraGameMenuTabs.Add(tab, name);
             return tab;
         }
     }

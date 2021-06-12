@@ -8,17 +8,17 @@ namespace ConsoleCode
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.ConsoleCommands.Add("cs", "Execute C# code.", this.onCommandReceived);
+            helper.ConsoleCommands.Add("cs", "Execute C# code.", this.OnCommandReceived);
         }
 
-        private void onCommandReceived(string cmd, string[] args)
+        private void OnCommandReceived(string cmd, string[] args)
         {
             string line = string.Join(" ", args).Replace('`', '"');
             if (args[0] == "--script")
@@ -28,7 +28,7 @@ namespace ConsoleCode
             Log.Trace($"Input: {line}");
             try
             {
-                var func = this.makeFunc(line);
+                var func = this.MakeFunc(line);
                 object result = null;
                 func.Invoke(ref result);
                 if (result == null)
@@ -44,7 +44,7 @@ namespace ConsoleCode
             }
         }
 
-        private CompiledMethod makeFunc(string userCode)
+        private CompiledMethod MakeFunc(string userCode)
         {
             var settings = new CompilerSettings
             {

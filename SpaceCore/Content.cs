@@ -18,52 +18,52 @@ namespace SpaceCore
     {
         private class TileMapping
         {
-            public TileSheet tileSheet;
-            public int tileId;
+            public TileSheet TileSheet;
+            public int TileId;
 
             public TileMapping() { }
             public TileMapping(TileSheet ts, int id)
             {
-                this.tileSheet = ts;
-                this.tileId = id;
+                this.TileSheet = ts;
+                this.TileId = id;
             }
         }
 
         public class TileAnimation
         {
-            public int[] tileIds = new int[0];
-            public int duration;
+            public int[] TileIds = new int[0];
+            public int Duration;
 
             public TileAnimation() { }
             public TileAnimation(int[] ids, int frameLen)
             {
-                this.tileIds = ids;
-                this.duration = frameLen;
+                this.TileIds = ids;
+                this.Duration = frameLen;
             }
 
-            public AnimatedTile makeTile(TileSheet ts, Layer xlayer)
+            public AnimatedTile MakeTile(TileSheet ts, Layer xLayer)
             {
-                var tanim = this;
+                var tileAnimation = this;
 
-                var xanimTiles = new StaticTile[tanim.tileIds.Length];
-                for (int ia = 0; ia < xanimTiles.Length; ++ia)
-                    xanimTiles[ia] = new StaticTile(xlayer, ts, BlendMode.Alpha, this.tileIds[ia]);
-                return new AnimatedTile(xlayer, xanimTiles, tanim.duration);
+                var animTiles = new StaticTile[tileAnimation.TileIds.Length];
+                for (int ia = 0; ia < animTiles.Length; ++ia)
+                    animTiles[ia] = new StaticTile(xLayer, ts, BlendMode.Alpha, this.TileIds[ia]);
+                return new AnimatedTile(xLayer, animTiles, tileAnimation.Duration);
             }
         }
 
-        public static Map loadTmx(IModHelper modHelper, string mapName, string path)
+        public static Map LoadTmx(IModHelper modHelper, string mapName, string path)
         {
-            var tmap = new TiledMap(Path.Combine(modHelper.DirectoryPath, path));
-            var xmap = new Map(mapName);
-            Content.addTiledPropertiesToXTile(tmap.Properties, xmap.Properties);
+            var tMap = new TiledMap(Path.Combine(modHelper.DirectoryPath, path));
+            var xMap = new Map(mapName);
+            Content.AddTiledPropertiesToXTile(tMap.Properties, xMap.Properties);
 
             var tileMapping = new Dictionary<int, TileMapping>();
             var animMapping = new Dictionary<int, TileAnimation>();
-            foreach (var ttileSheet in tmap.Tilesets)
+            foreach (var tTileSheet in tMap.Tilesets)
             {
                 // xTile wants things like "Mines/mine", not "Mines/mine.png"
-                string image = ttileSheet.Image.Source;
+                string image = tTileSheet.Image.Source;
                 if (image.EndsWith(".png"))
                 {
                     string dir = Path.GetDirectoryName(path);
@@ -75,36 +75,35 @@ namespace SpaceCore
                     image = modHelper.Content.GetActualAssetKey(image);
                 }
 
-                var xtileSheet = new TileSheet(xmap, image, new Size(ttileSheet.Columns, ttileSheet.TileCount / ttileSheet.Columns), new Size(tmap.TileWidth, tmap.TileHeight));
-                Content.addTiledPropertiesToXTile(ttileSheet.Properties, xtileSheet.Properties);
-                xtileSheet.Id = ttileSheet.Name;
-                xtileSheet.Spacing = new Size(ttileSheet.Spacing, ttileSheet.Spacing);
-                xtileSheet.Margin = new Size(ttileSheet.Margin, ttileSheet.Margin);
-                for (int i = 0; i < ttileSheet.TileCount; ++i)
+                var xTileSheet = new TileSheet(xMap, image, new Size(tTileSheet.Columns, tTileSheet.TileCount / tTileSheet.Columns), new Size(tMap.TileWidth, tMap.TileHeight));
+                Content.AddTiledPropertiesToXTile(tTileSheet.Properties, xTileSheet.Properties);
+                xTileSheet.Id = tTileSheet.Name;
+                xTileSheet.Spacing = new Size(tTileSheet.Spacing, tTileSheet.Spacing);
+                xTileSheet.Margin = new Size(tTileSheet.Margin, tTileSheet.Margin);
+                for (int i = 0; i < tTileSheet.TileCount; ++i)
                 {
-                    tileMapping.Add(ttileSheet.FirstGlobalId + i, new TileMapping(xtileSheet, i));
+                    tileMapping.Add(tTileSheet.FirstGlobalId + i, new TileMapping(xTileSheet, i));
                 }
-                foreach (var ttile in ttileSheet.Tiles)
+                foreach (var tTile in tTileSheet.Tiles)
                 {
-                    Content.addTiledPropertiesToXTile(ttile.Properties, xtileSheet.TileIndexProperties[ttile.Id]);
+                    Content.AddTiledPropertiesToXTile(tTile.Properties, xTileSheet.TileIndexProperties[tTile.Id]);
 
-                    if (ttile.Animation != null && ttile.Animation.Count > 0)
+                    if (tTile.Animation != null && tTile.Animation.Count > 0)
                     {
-                        List<int> tanimFrames = new List<int>();
-                        foreach (var ttileAnim in ttile.Animation)
-                            tanimFrames.Add(ttileSheet.FirstGlobalId + ttileAnim.TileId);
-                        animMapping.Add(ttileSheet.FirstGlobalId + ttile.Id, new TileAnimation(tanimFrames.ToArray<int>(), ttile.Animation[0].Duration));
+                        List<int> tAnimFrames = new List<int>();
+                        foreach (var tTileAnim in tTile.Animation)
+                            tAnimFrames.Add(tTileSheet.FirstGlobalId + tTileAnim.TileId);
+                        animMapping.Add(tTileSheet.FirstGlobalId + tTile.Id, new TileAnimation(tAnimFrames.ToArray<int>(), tTile.Animation[0].Duration));
                     }
                 }
-                xmap.AddTileSheet(xtileSheet);
+                xMap.AddTileSheet(xTileSheet);
             }
 
-            var tobjectGroups = new List<TiledObjectGroup>();
-            foreach (var tlayer_ in tmap.Layers)
+            var tObjectGroups = new List<TiledObjectGroup>();
+            foreach (var rawLayer in tMap.Layers)
             {
-                if (tlayer_ is TiledTileLayer)
+                if (rawLayer is TiledTileLayer tLayer)
                 {
-                    var tlayer = tlayer_ as TiledTileLayer;
                     // Note that the tile size needs to be * 4. Otherwise, you will break collisions and many other things.
                     // Yes, even if you don't use the loaded map. Creating the layer is enough.
                     // For some reason vanilla has a tilesize of 16 for tilesheets, but 64 for the layers.
@@ -112,90 +111,90 @@ namespace SpaceCore
                     // Anyways, whenever you create a layer with a different tile size, it changes the tile size
                     // of EVERY OTHER LAYER IN EXISTANCE to match. And guess what, that breaks things.
                     // I spent hours figuring this out. I don't care about the underlying cause. I just want to mod.
-                    var xlayer = new Layer(tlayer.Name, xmap, new Size(tmap.Width, tmap.Height), new Size(tmap.TileWidth * 4, tmap.TileHeight * 4));
-                    Content.addTiledPropertiesToXTile(tlayer.Properties, xlayer.Properties);
-                    if (tlayer.Data.Compression != TiledData.CompressionType.NoCompression)
+                    var xLayer = new Layer(tLayer.Name, xMap, new Size(tMap.Width, tMap.Height), new Size(tMap.TileWidth * 4, tMap.TileHeight * 4));
+                    Content.AddTiledPropertiesToXTile(tLayer.Properties, xLayer.Properties);
+                    if (tLayer.Data.Compression != TiledData.CompressionType.NoCompression)
                         throw new InvalidDataException("Compressed tile data is not supported.");
-                    if (tlayer.Data.Encoding == TiledData.EncodingType.NoEncoding || tlayer.Data.Encoding == TiledData.EncodingType.Xml)
+                    if (tLayer.Data.Encoding == TiledData.EncodingType.NoEncoding || tLayer.Data.Encoding == TiledData.EncodingType.Xml)
                     {
-                        for (int i = 0; i < tlayer.Data.Tiles.Count; ++i)
+                        for (int i = 0; i < tLayer.Data.Tiles.Count; ++i)
                         {
-                            var ttile = tlayer.Data.Tiles[i];
-                            int ix = i % tmap.Width;
-                            int iy = i / tmap.Width;
+                            var tTile = tLayer.Data.Tiles[i];
+                            int ix = i % tMap.Width;
+                            int iy = i / tMap.Width;
 
-                            var xtile = new StaticTile(xlayer, tileMapping[ttile.GlobalId].tileSheet, BlendMode.Alpha, tileMapping[ttile.GlobalId].tileId);
-                            xlayer.Tiles[ix, iy] = xtile;
+                            var xTile = new StaticTile(xLayer, tileMapping[tTile.GlobalId].TileSheet, BlendMode.Alpha, tileMapping[tTile.GlobalId].TileId);
+                            xLayer.Tiles[ix, iy] = xTile;
                         }
                     }
-                    else if (tlayer.Data.Encoding == TiledData.EncodingType.Csv)
+                    else if (tLayer.Data.Encoding == TiledData.EncodingType.Csv)
                     {
-                        string[] ttiles = string.Join("", tlayer.Data.Data).Split(',');
-                        for (int i = 0; i < ttiles.Length; ++i)
+                        string[] tTiles = string.Join("", tLayer.Data.Data).Split(',');
+                        for (int i = 0; i < tTiles.Length; ++i)
                         {
-                            int ttile = int.Parse(ttiles[i]);
-                            if (!tileMapping.ContainsKey(ttile))
+                            int tTile = int.Parse(tTiles[i]);
+                            if (!tileMapping.ContainsKey(tTile))
                                 continue;
-                            int ix = i % tmap.Width;
-                            int iy = i / tmap.Width;
+                            int ix = i % tMap.Width;
+                            int iy = i / tMap.Width;
 
-                            Tile xtile = null;
-                            if (animMapping.ContainsKey(ttile))
+                            Tile xTile = null;
+                            if (animMapping.ContainsKey(tTile))
                             {
-                                TileAnimation tanim = animMapping[ttile];
-                                var xanimTiles = new StaticTile[tanim.tileIds.Length];
-                                for (int ia = 0; ia < xanimTiles.Length; ++ia)
-                                    xanimTiles[ia] = new StaticTile(xlayer, tileMapping[tanim.tileIds[ia]].tileSheet, BlendMode.Alpha, tileMapping[tanim.tileIds[ia]].tileId);
-                                xtile = new AnimatedTile(xlayer, xanimTiles, tanim.duration);
+                                TileAnimation tAnim = animMapping[tTile];
+                                var xAnimTiles = new StaticTile[tAnim.TileIds.Length];
+                                for (int ia = 0; ia < xAnimTiles.Length; ++ia)
+                                    xAnimTiles[ia] = new StaticTile(xLayer, tileMapping[tAnim.TileIds[ia]].TileSheet, BlendMode.Alpha, tileMapping[tAnim.TileIds[ia]].TileId);
+                                xTile = new AnimatedTile(xLayer, xAnimTiles, tAnim.Duration);
                             }
                             else
-                                xtile = new StaticTile(xlayer, tileMapping[ttile].tileSheet, BlendMode.Alpha, tileMapping[ttile].tileId);
-                            xlayer.Tiles[ix, iy] = xtile;
+                                xTile = new StaticTile(xLayer, tileMapping[tTile].TileSheet, BlendMode.Alpha, tileMapping[tTile].TileId);
+                            xLayer.Tiles[ix, iy] = xTile;
                         }
                     }
-                    else throw new InvalidDataException("Tile data encoding type " + tlayer.Data.Encoding + " not supported.");
-                    xmap.AddLayer(xlayer);
+                    else throw new InvalidDataException("Tile data encoding type " + tLayer.Data.Encoding + " not supported.");
+                    xMap.AddLayer(xLayer);
                 }
-                else if (tlayer_ is TiledObjectGroup)
+                else if (rawLayer is TiledObjectGroup tiledObjectGroup)
                 {
-                    tobjectGroups.Add(tlayer_ as TiledObjectGroup);
+                    tObjectGroups.Add(tiledObjectGroup);
                 }
             }
 
-            foreach (var tobjectGroup in tobjectGroups)
+            foreach (var tObjectGroup in tObjectGroups)
             {
-                var xlayer = xmap.GetLayer(tobjectGroup.Name);
-                if (xlayer == null)
+                var xLayer = xMap.GetLayer(tObjectGroup.Name);
+                if (xLayer == null)
                     continue;
 
-                foreach (var tobj in tobjectGroup.Objects)
+                foreach (var tObj in tObjectGroup.Objects)
                 {
-                    if (tobj.Name != "TileData" || tobj.Width != tmap.TileWidth || tobj.Height != tmap.TileWidth || tobj.Properties.Count == 0)
+                    if (tObj.Name != "TileData" || tObj.Width != tMap.TileWidth || tObj.Height != tMap.TileWidth || tObj.Properties.Count == 0)
                         continue;
-                    int x = (int)tobj.X / tmap.TileWidth;
-                    int y = (int)tobj.Y / tmap.TileWidth;
+                    int x = (int)tObj.X / tMap.TileWidth;
+                    int y = (int)tObj.Y / tMap.TileWidth;
 
-                    if (xlayer.Tiles[new Location(x, y)] == null)
+                    if (xLayer.Tiles[new Location(x, y)] == null)
                     {
                         Log.Warn("Tile property for non-existant tile; skipping");
                         continue;
                     }
-                    Content.addTiledPropertiesToXTile(tobj.Properties, xlayer.Tiles[new Location(x, y)].Properties);
+                    Content.AddTiledPropertiesToXTile(tObj.Properties, xLayer.Tiles[new Location(x, y)].Properties);
                 }
             }
 
-            return xmap;
+            return xMap;
         }
 
-        private static XmlSerializer tilesheetSerializer = new(typeof(TiledTileset), new XmlRootAttribute("tileset"));
-        public static TileSheet loadTsx(IModHelper modHelper, string path, string ts, Map xmap, out Dictionary<int, TileAnimation> animMapping)
+        private static XmlSerializer TilesheetSerializer = new(typeof(TiledTileset), new XmlRootAttribute("tileset"));
+        public static TileSheet LoadTsx(IModHelper modHelper, string path, string ts, Map xmap, out Dictionary<int, TileAnimation> animMapping)
         {
             TiledTileset ttileSheet = null;
             Stream stream = null;
             try
             {
                 stream = new FileStream(Path.Combine(modHelper.DirectoryPath, path), FileMode.Open);
-                ttileSheet = (TiledTileset)Content.tilesheetSerializer.Deserialize(stream);
+                ttileSheet = (TiledTileset)Content.TilesheetSerializer.Deserialize(stream);
             }
             finally
             {
@@ -215,40 +214,40 @@ namespace SpaceCore
             }
 
             var xtileSheet = new TileSheet(xmap, image, new Size(ttileSheet.Columns, ttileSheet.TileCount / ttileSheet.Columns), new Size(ttileSheet.TileWidth, ttileSheet.TileHeight));
-            Content.addTiledPropertiesToXTile(ttileSheet.Properties, xtileSheet.Properties);
+            Content.AddTiledPropertiesToXTile(ttileSheet.Properties, xtileSheet.Properties);
             xtileSheet.Id = ttileSheet.Name;
             xtileSheet.Spacing = new Size(ttileSheet.Spacing, ttileSheet.Spacing);
             xtileSheet.Margin = new Size(ttileSheet.Margin, ttileSheet.Margin);
-            foreach (var ttile in ttileSheet.Tiles)
+            foreach (var tTile in ttileSheet.Tiles)
             {
-                Content.addTiledPropertiesToXTile(ttile.Properties, xtileSheet.TileIndexProperties[ttile.Id]);
+                Content.AddTiledPropertiesToXTile(tTile.Properties, xtileSheet.TileIndexProperties[tTile.Id]);
 
-                if (ttile.Animation != null && ttile.Animation.Count > 0)
+                if (tTile.Animation != null && tTile.Animation.Count > 0)
                 {
-                    List<int> tanimFrames = new List<int>();
-                    foreach (var ttileAnim in ttile.Animation)
-                        tanimFrames.Add(ttileSheet.FirstGlobalId + ttileAnim.TileId);
-                    animMapping.Add(ttileSheet.FirstGlobalId + ttile.Id, new TileAnimation(tanimFrames.ToArray<int>(), ttile.Animation[0].Duration));
+                    List<int> tAnimFrames = new List<int>();
+                    foreach (var tTileAnim in tTile.Animation)
+                        tAnimFrames.Add(ttileSheet.FirstGlobalId + tTileAnim.TileId);
+                    animMapping.Add(ttileSheet.FirstGlobalId + tTile.Id, new TileAnimation(tAnimFrames.ToArray<int>(), tTile.Animation[0].Duration));
                 }
             }
 
             return xtileSheet;
         }
 
-        private static void addTiledPropertiesToXTile(List<TiledProperty> tprops, IPropertyCollection xprops)
+        private static void AddTiledPropertiesToXTile(List<TiledProperty> tProps, IPropertyCollection xProps)
         {
-            foreach (var tprop in tprops)
+            foreach (var tProp in tProps)
             {
-                if (tprop.Type == TiledProperty.PropertyType.String)
-                    xprops.Add(tprop.Name, tprop.Value);
-                else if (tprop.Type == TiledProperty.PropertyType.Float)
-                    xprops.Add(tprop.Name, float.Parse(tprop.Value));
-                else if (tprop.Type == TiledProperty.PropertyType.Int)
-                    xprops.Add(tprop.Name, int.Parse(tprop.Value));
-                else if (tprop.Type == TiledProperty.PropertyType.Bool)
-                    xprops.Add(tprop.Name, bool.Parse(tprop.Value));
+                if (tProp.Type == TiledProperty.PropertyType.String)
+                    xProps.Add(tProp.Name, tProp.Value);
+                else if (tProp.Type == TiledProperty.PropertyType.Float)
+                    xProps.Add(tProp.Name, float.Parse(tProp.Value));
+                else if (tProp.Type == TiledProperty.PropertyType.Int)
+                    xProps.Add(tProp.Name, int.Parse(tProp.Value));
+                else if (tProp.Type == TiledProperty.PropertyType.Bool)
+                    xProps.Add(tProp.Name, bool.Parse(tProp.Value));
                 else
-                    Log.Warn("Bad tilesheet tile property type: " + tprop.Type + " " + tprop.Name + " (not supported by xTile)");
+                    Log.Warn("Bad tilesheet tile property type: " + tProp.Type + " " + tProp.Name + " (not supported by xTile)");
             }
         }
     }

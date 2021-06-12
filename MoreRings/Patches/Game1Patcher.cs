@@ -12,7 +12,7 @@ using StardewValley.Tools;
 namespace MoreRings.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Game1"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class Game1Patcher : BasePatcher
     {
         /*********
@@ -65,7 +65,7 @@ namespace MoreRings.Patches
                 return 1;
             else if (tool is Hoe || tool is Pickaxe || tool is WateringCan || tool is Axe)
             {
-                if (Mod.instance.hasRingEquipped(Mod.instance.Ring_MageHand) > 0)
+                if (Mod.Instance.HasRingEquipped(Mod.Instance.RingMageHand) > 0)
                     return 100;
                 else
                     return 1;

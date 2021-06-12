@@ -2,7 +2,7 @@ namespace BiggerCraftables
 {
     public static class Extensions
     {
-        public static string BiggerIndexKey => $"{Mod.instance.ModManifest.UniqueID}/BiggerIndex";
+        public static string BiggerIndexKey => $"{Mod.Instance.ModManifest.UniqueID}/BiggerIndex";
 
         public static int GetBiggerIndex(this StardewValley.Object obj)
         {

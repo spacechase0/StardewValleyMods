@@ -11,17 +11,17 @@ namespace ProfitCalculator
     {
         internal class ProfitData
         {
-            public int profit;
-            public string crop = "invalid";
+            public int Profit;
+            public string Crop = "invalid";
         }
 
         public override void Entry(IModHelper helper)
         {
             Log.Monitor = this.Monitor;
-            helper.ConsoleCommands.Add("profits_crops", "Calculate profits for crops", this.perPlanting);
+            helper.ConsoleCommands.Add("profits_crops", "Calculate profits for crops", this.PerPlanting);
         }
 
-        private void perPlanting(string cmd, string[] args)
+        private void PerPlanting(string cmd, string[] args)
         {
             string season = "";
             if (args.Length >= 1)
@@ -94,17 +94,17 @@ namespace ProfitCalculator
 
                 var data = new ProfitData()
                 {
-                    profit = profit,
-                    crop = name,
+                    Profit = profit,
+                    Crop = name,
                 };
                 profits.Add(data);
             }
 
-            profits.Sort(Comparer<ProfitData>.Create((p1, p2) => p2.profit - p1.profit));
+            profits.Sort(Comparer<ProfitData>.Create((p1, p2) => p2.Profit - p1.Profit));
             for (int i = 0; i < profits.Count; ++i)
             {
                 var p = profits[i];
-                Log.Info($"{i + 1}. " + string.Format("{0,-20}", p.crop) + string.Format("{0,10}", p.profit) + "g");
+                Log.Info($"{i + 1}. " + string.Format("{0,-20}", p.Crop) + string.Format("{0,10}", p.Profit) + "g");
             }
         }
     }

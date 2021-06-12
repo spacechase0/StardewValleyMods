@@ -2,13 +2,14 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 
 namespace SurfingFestival.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Farmer"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class FarmerPatcher : BasePatcher
     {
         /*********
@@ -31,7 +32,7 @@ namespace SurfingFestival.Patches
         /// <summary>The method to call before <see cref="Farmer.draw(SpriteBatch)"/>.</summary>
         public static void Before_Draw(Character __instance, SpriteBatch b)
         {
-            if (Game1.CurrentEvent?.FestivalName != Mod.festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
+            if (Game1.CurrentEvent?.FestivalName != Mod.FestivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
                 return;
 
             Mod.DrawSurfboard(__instance, b);
@@ -40,7 +41,7 @@ namespace SurfingFestival.Patches
         /// <summary>The method to call after <see cref="Farmer.draw(SpriteBatch)"/>.</summary>
         public static void After_Draw(Character __instance, SpriteBatch b)
         {
-            if (Game1.CurrentEvent?.FestivalName != Mod.festivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
+            if (Game1.CurrentEvent?.FestivalName != Mod.FestivalName || Game1.CurrentEvent?.playerControlSequenceID != "surfingRace")
                 return;
 
             Mod.DrawSurfingStatuses(__instance, b);

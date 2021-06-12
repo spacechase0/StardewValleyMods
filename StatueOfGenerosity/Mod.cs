@@ -10,25 +10,25 @@ namespace StatueOfGenerosity
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        private static IJsonAssetsApi ja;
+        public static Mod Instance;
+        private static IJsonAssetsApi Ja;
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
 
             HarmonyPatcher.Apply(this,
-                new ObjectPatcher(getStatueId: () => Mod.ja.GetBigCraftableId("Statue of Generosity"))
+                new ObjectPatcher(getStatueId: () => Mod.Ja.GetBigCraftableId("Statue of Generosity"))
             );
         }
 
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            Mod.ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
-            Mod.ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
+            Mod.Ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
+            Mod.Ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
         }
     }
 }

@@ -5,38 +5,38 @@ namespace ManaBar
 {
     public static class Extensions
     {
-        private static void dataCheck(Farmer player)
+        private static void DataCheck(Farmer player)
         {
-            if (!Mod.Data.players.ContainsKey(player.UniqueMultiplayerID))
-                Mod.Data.players.Add(player.UniqueMultiplayerID, new MultiplayerSaveData.PlayerData());
+            if (!Mod.Data.Players.ContainsKey(player.UniqueMultiplayerID))
+                Mod.Data.Players.Add(player.UniqueMultiplayerID, new MultiplayerSaveData.PlayerData());
         }
 
-        public static int getCurrentMana(this Farmer player)
+        public static int GetCurrentMana(this Farmer player)
         {
-            Extensions.dataCheck(player);
-            return Mod.Data.players[player.UniqueMultiplayerID].mana;
+            Extensions.DataCheck(player);
+            return Mod.Data.Players[player.UniqueMultiplayerID].Mana;
         }
 
-        public static void addMana(this Farmer player, int amt)
+        public static void AddMana(this Farmer player, int amt)
         {
-            Extensions.dataCheck(player);
-            Mod.Data.players[player.UniqueMultiplayerID].mana = Math.Max(0, Math.Min(player.getCurrentMana() + amt, player.getMaxMana()));
+            Extensions.DataCheck(player);
+            Mod.Data.Players[player.UniqueMultiplayerID].Mana = Math.Max(0, Math.Min(player.GetCurrentMana() + amt, player.GetMaxMana()));
             if (player == Game1.player)
-                Mod.Data.syncMineMini();
+                Mod.Data.SyncMineMini();
         }
 
-        public static int getMaxMana(this Farmer player)
+        public static int GetMaxMana(this Farmer player)
         {
-            Extensions.dataCheck(player);
-            return Mod.Data.players[player.UniqueMultiplayerID].manaCap;
+            Extensions.DataCheck(player);
+            return Mod.Data.Players[player.UniqueMultiplayerID].ManaCap;
         }
 
-        public static void setMaxMana(this Farmer player, int newCap)
+        public static void SetMaxMana(this Farmer player, int newCap)
         {
-            Extensions.dataCheck(player);
-            Mod.Data.players[player.UniqueMultiplayerID].manaCap = newCap;
+            Extensions.DataCheck(player);
+            Mod.Data.Players[player.UniqueMultiplayerID].ManaCap = newCap;
             if (player == Game1.player)
-                Mod.Data.syncMineMini();
+                Mod.Data.SyncMineMini();
         }
     }
 }

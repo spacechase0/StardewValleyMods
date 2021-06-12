@@ -27,18 +27,18 @@ namespace BugNet
             public Func<int, int, Critter> MakeFunction { get; set; }
         }
 
-        public static Mod instance;
-        internal static IJsonAssetsApi ja;
+        public static Mod Instance;
+        internal static IJsonAssetsApi Ja;
         private static Dictionary<string, CritterData> CrittersData = new();
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.GameLaunched += this.onGameLaunched;
-            helper.Events.Display.MenuChanged += this.onMenuChanged;
-            helper.Events.Input.ButtonPressed += this.onButtonPressed;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            helper.Events.Input.ButtonPressed += this.OnButtonPressed;
 
             BugNetTool.Texture = helper.Content.Load<Texture2D>("assets/bugnet.png");
 
@@ -81,9 +81,9 @@ namespace BugNet
             //register("Marsupial", 34, (x, y) => Critters.MakeMarsupial(x, y));
         }
 
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            Mod.ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
+            Mod.Ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
             var spaceCore = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
             spaceCore.RegisterSerializerType(typeof(BugNetTool));
         }
@@ -115,7 +115,7 @@ namespace BugNet
             });
         }
 
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson?.Name != "Pierre")
                 return;
@@ -130,7 +130,7 @@ namespace BugNet
             itemPriceAndStock.Add(tool, new[] { 500, 1 });
         }
 
-        private void onButtonPressed(object sender, ButtonPressedEventArgs e)
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             if (e.Button.IsActionButton() && Game1.player.ActiveObject != null &&
                  Game1.player.ActiveObject.Name.StartsWith("Critter Cage: "))
@@ -139,7 +139,7 @@ namespace BugNet
                 CritterData activeCritter = null;
                 foreach (var critterData in Mod.CrittersData)
                 {
-                    int check = Mod.ja.GetObjectId("Critter Cage: " + critterData.Value.Name());
+                    int check = Mod.Ja.GetObjectId("Critter Cage: " + critterData.Value.Name());
                     if (check == Game1.player.ActiveObject.ParentSheetIndex)
                     {
                         activeCritter = critterData.Value;
@@ -184,7 +184,7 @@ namespace BugNet
             if (critter is Cloud)
                 bframe = -2;
             if (critter is Frog frog)
-                bframe = Mod.instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4;
+                bframe = Mod.Instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4;
             if (critter is OverheadParrot parrot)
                 bframe = -10 - parrot.sourceRect.Y;
             if (critter is CalderaMonkey monkey)

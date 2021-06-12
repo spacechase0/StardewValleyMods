@@ -7,26 +7,26 @@ namespace PyromancersJourney.Objects
 {
     public class Walls : BaseObject
     {
-        private Texture2D texInside;
-        private Texture2D texOutside;
-        private VertexBuffer buffer;
-        private int triCount;
-        private bool outside;
+        private Texture2D TexInside;
+        private Texture2D TexOutside;
+        private VertexBuffer Buffer;
+        private int TriCount;
+        private bool Outside;
 
         public Walls(World world, bool theOutside)
             : base(world)
         {
-            this.outside = theOutside;
-            this.texInside = Game1.content.Load<Texture2D>("Maps\\Mines\\volcano_dungeon");
-            this.texOutside = Game1.content.Load<Texture2D>("Maps\\Mines\\volcano_caldera");
-            float tx = 16f / this.texInside.Width;
-            float ty = 16f / this.texInside.Height;
+            this.Outside = theOutside;
+            this.TexInside = Game1.content.Load<Texture2D>("Maps\\Mines\\volcano_dungeon");
+            this.TexOutside = Game1.content.Load<Texture2D>("Maps\\Mines\\volcano_caldera");
+            float tx = 16f / this.TexInside.Width;
+            float ty = 16f / this.TexInside.Height;
             Vector2 t = new Vector2(tx, ty);
 
             var vertices = new List<VertexEverything>();
-            for (int ix = 0; ix < world.map.Size.X; ++ix)
+            for (int ix = 0; ix < world.Map.Size.X; ++ix)
             {
-                for (int iy = 0; iy < world.map.Size.Y; ++iy)
+                for (int iy = 0; iy < world.Map.Size.Y; ++iy)
                 {
                     Vector2[][] texCoordMap = {
                         new Vector2[ 0 ],
@@ -38,10 +38,10 @@ namespace PyromancersJourney.Objects
                             new Vector2( 1, 1 ) * t
                         }
                     };
-                    if (this.outside)
+                    if (this.Outside)
                     {
-                        float tx2 = 16f / this.texOutside.Width;
-                        float ty2 = 16f / this.texOutside.Height;
+                        float tx2 = 16f / this.TexOutside.Width;
+                        float ty2 = 16f / this.TexOutside.Height;
                         Vector2 t2 = new Vector2(tx2, ty2);
                         texCoordMap[1] = new[]
                         {
@@ -51,7 +51,7 @@ namespace PyromancersJourney.Objects
                             new Vector2( 1, 4 ) * t2
                         };
                     }
-                    int tile = (int)world.map.Walls[ix, iy];
+                    int tile = (int)world.Map.Walls[ix, iy];
 
                     if (tile != (int)WallTile.Empty)
                     {
@@ -59,65 +59,65 @@ namespace PyromancersJourney.Objects
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 1, iy + 0), n, texCoordMap[tile][0]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 1, iy + 0), n, texCoordMap[tile][1]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 0, iy + 0), n, texCoordMap[tile][2]));
-                        ++this.triCount;
+                        ++this.TriCount;
 
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 1, iy + 0), n, texCoordMap[tile][0]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 0, iy + 0), n, texCoordMap[tile][2]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 0, iy + 0), n, texCoordMap[tile][3]));
-                        ++this.triCount;
+                        ++this.TriCount;
 
                         n = new Vector3(-1, 0, 0);
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 1, iy + 0), n, texCoordMap[tile][0]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 1, iy + 1), n, texCoordMap[tile][1]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 0, iy + 1), n, texCoordMap[tile][2]));
-                        ++this.triCount;
+                        ++this.TriCount;
 
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 1, iy + 0), n, texCoordMap[tile][0]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 0, iy + 1), n, texCoordMap[tile][2]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 0, iy + 0), n, texCoordMap[tile][3]));
-                        ++this.triCount;
+                        ++this.TriCount;
 
                         n = new Vector3(1, 0, 0);
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 1, iy + 0), n, texCoordMap[tile][0]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 1, iy + 1), n, texCoordMap[tile][1]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 0, iy + 1), n, texCoordMap[tile][2]));
-                        ++this.triCount;
+                        ++this.TriCount;
 
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 1, iy + 0), n, texCoordMap[tile][0]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 0, iy + 1), n, texCoordMap[tile][2]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 0, iy + 0), n, texCoordMap[tile][3]));
-                        ++this.triCount;
+                        ++this.TriCount;
 
                         n = new Vector3(0, 0, 1);
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 1, iy + 1), n, texCoordMap[tile][0]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 1, iy + 1), n, texCoordMap[tile][1]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 0, iy + 1), n, texCoordMap[tile][2]));
-                        ++this.triCount;
+                        ++this.TriCount;
 
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 1, iy + 1), n, texCoordMap[tile][0]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 1, 0, iy + 1), n, texCoordMap[tile][2]));
                         vertices.Add(new VertexEverything(new Vector3(ix + 0, 0, iy + 1), n, texCoordMap[tile][3]));
-                        ++this.triCount;
+                        ++this.TriCount;
                     }
                 }
             }
 
-            this.buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexEverything), vertices.Count, BufferUsage.WriteOnly);
-            this.buffer.SetData(vertices.ToArray());
+            this.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexEverything), vertices.Count, BufferUsage.WriteOnly);
+            this.Buffer.SetData(vertices.ToArray());
         }
 
         public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
         {
             base.Render(device, projection, cam);
             //effect.LightingEnabled = true;
-            BaseObject.effect.TextureEnabled = true;
-            BaseObject.effect.Texture = this.outside ? this.texOutside : this.texInside;
-            for (int e = 0; e < BaseObject.effect.CurrentTechnique.Passes.Count; ++e)
+            BaseObject.Effect.TextureEnabled = true;
+            BaseObject.Effect.Texture = this.Outside ? this.TexOutside : this.TexInside;
+            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
             {
-                var pass = BaseObject.effect.CurrentTechnique.Passes[e];
+                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
-                device.SetVertexBuffer(this.buffer);
-                device.DrawPrimitives(PrimitiveType.TriangleList, 0, this.triCount);
+                device.SetVertexBuffer(this.Buffer);
+                device.DrawPrimitives(PrimitiveType.TriangleList, 0, this.TriCount);
             }
         }
     }

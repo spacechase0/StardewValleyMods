@@ -14,7 +14,7 @@ using StardewValley;
 namespace MoreGiantCrops.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="Crop"/>.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The naming is determined by Harmony.")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class CropPatcher : BasePatcher
     {
         /*********
@@ -82,9 +82,9 @@ namespace MoreGiantCrops.Patches
             }
         }
 
-        public static bool CheckCanBeGiant(NetInt indexOfHarvest_)
+        public static bool CheckCanBeGiant(NetInt indexOfHarvest)
         {
-            return Mod.sprites.ContainsKey(indexOfHarvest_.Value);
+            return Mod.Sprites.ContainsKey(indexOfHarvest.Value);
         }
     }
 }

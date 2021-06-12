@@ -19,44 +19,44 @@ namespace CustomizeExterior
 {
     public class Mod : StardewModdingAPI.Mod
     {
-        public const string SEASONAL_INDICATOR = "%";
+        public const string SeasonalIndicator = "%";
 
-        private static readonly TimeSpan clickWindow = new(250 * TimeSpan.TicksPerMillisecond);
+        private static readonly TimeSpan ClickWindow = new(250 * TimeSpan.TicksPerMillisecond);
 
-        public static Mod instance;
-        public static SavedExteriors savedExteriors = new();
-        public static ContentManager content;
+        public static Mod Instance;
+        public static SavedExteriors SavedExteriors = new();
+        public static ContentManager Content;
 
-        public static Dictionary<string, List<string>> choices = new();
+        public static Dictionary<string, List<string>> Choices = new();
 
-        private const string MSG_CHOICES = "spacechase0.CustomizeExterior.Choices";
+        private const string MsgChoices = "spacechase0.CustomizeExterior.Choices";
 
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
+            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            Mod.content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(this.Helper.DirectoryPath, "Buildings"));
-            this.compileChoices();
+            Mod.Content = new ContentManager(Game1.content.ServiceProvider, Path.Combine(this.Helper.DirectoryPath, "Buildings"));
+            this.CompileChoices();
 
-            helper.Events.GameLoop.UpdateTicked += this.onUpdateTicked;
-            helper.Events.GameLoop.SaveLoaded += this.onSaveLoaded;
-            helper.Events.GameLoop.Saving += this.onSaving;
-            helper.Events.GameLoop.Saved += this.onSaved;
-            helper.Events.Input.ButtonPressed += this.onButtonPressed;
-            helper.Events.Player.Warped += this.onWarped;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.GameLoop.Saving += this.OnSaving;
+            helper.Events.GameLoop.Saved += this.OnSaved;
+            helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+            helper.Events.Player.Warped += this.OnWarped;
 
-            SpaceEvents.ServerGotClient += this.onClientConnected;
-            SpaceCore.Networking.RegisterMessageHandler(Mod.MSG_CHOICES, this.onChoicesReceived);
+            SpaceEvents.ServerGotClient += this.OnClientConnected;
+            SpaceCore.Networking.RegisterMessageHandler(Mod.MsgChoices, this.OnChoicesReceived);
         }
 
-        private void onClientConnected(object sender, EventArgsServerGotClient args)
+        private void OnClientConnected(object sender, EventArgsServerGotClient args)
         {
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
-                writer.Write(Mod.savedExteriors.chosen.Count);
-                foreach (var choice in Mod.savedExteriors.chosen)
+                writer.Write(Mod.SavedExteriors.Chosen.Count);
+                foreach (var choice in Mod.SavedExteriors.Chosen)
                 {
                     writer.Write(choice.Key);
                     writer.Write(choice.Value);
@@ -64,11 +64,11 @@ namespace CustomizeExterior
 
                 var server = (GameServer)sender;
                 Log.Trace("Sending exteriors data to " + args.FarmerID);
-                SpaceCore.Networking.ServerSendTo(args.FarmerID, Mod.MSG_CHOICES, stream.ToArray());
+                SpaceCore.Networking.ServerSendTo(args.FarmerID, Mod.MsgChoices, stream.ToArray());
             }
         }
 
-        private void onChoicesReceived(IncomingMessage msg)
+        private void OnChoicesReceived(IncomingMessage msg)
         {
             Log.Trace("Got exterior data");
             int count = msg.Reader.ReadInt32();
@@ -78,48 +78,48 @@ namespace CustomizeExterior
                 string texId = msg.Reader.ReadString();
                 Log.Trace("\t" + building + "=" + texId);
 
-                Mod.savedExteriors.chosen[building] = texId;
+                Mod.SavedExteriors.Chosen[building] = texId;
             }
-            this.syncTexturesWithChoices();
+            this.SyncTexturesWithChoices();
         }
 
         /// <summary>Raised after the player loads a save slot.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
-                Mod.savedExteriors = this.Helper.Data.ReadSaveData<SavedExteriors>("building-exteriors");
-                if (Mod.savedExteriors == null)
+                Mod.SavedExteriors = this.Helper.Data.ReadSaveData<SavedExteriors>("building-exteriors");
+                if (Mod.SavedExteriors == null)
                 {
                     string legacyPath = Path.Combine(Constants.CurrentSavePath, "building-exteriors.json");
                     if (File.Exists(legacyPath))
                     {
                         Log.Info($"Loading per-save config file (\"{legacyPath}\")...");
-                        Mod.savedExteriors = JsonConvert.DeserializeObject<SavedExteriors>(File.ReadAllText(legacyPath));
+                        Mod.SavedExteriors = JsonConvert.DeserializeObject<SavedExteriors>(File.ReadAllText(legacyPath));
                     }
                 }
-                if (Mod.savedExteriors == null)
-                    Mod.savedExteriors = new SavedExteriors();
+                if (Mod.SavedExteriors == null)
+                    Mod.SavedExteriors = new SavedExteriors();
 
-                this.syncTexturesWithChoices();
+                this.SyncTexturesWithChoices();
             }
         }
 
         /// <summary>Raised before the game begins writes data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaving(object sender, SavingEventArgs e)
+        private void OnSaving(object sender, SavingEventArgs e)
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-                this.Helper.Data.WriteSaveData("building-exteriors", Mod.savedExteriors);
+                this.Helper.Data.WriteSaveData("building-exteriors", Mod.SavedExteriors);
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaved(object sender, SavedEventArgs e)
+        private void OnSaved(object sender, SavedEventArgs e)
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
@@ -135,36 +135,36 @@ namespace CustomizeExterior
         /// <summary>Raised after a player warps to a new location. NOTE: this event is currently only raised for the current player.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onWarped(object sender, WarpedEventArgs e)
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
             if (e.IsLocalPlayer && e.NewLocation is BuildableGameLocation)
-                this.syncTexturesWithChoices();
+                this.SyncTexturesWithChoices();
         }
 
-        private void onSeasonChange()
+        private void OnSeasonChange()
         {
             Log.Debug("Season change, syncing textures...");
-            this.syncTexturesWithChoices();
+            this.SyncTexturesWithChoices();
         }
 
-        public string prevSeason = "";
+        public string PrevSeason = "";
 
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (Context.IsWorldReady && Game1.currentSeason != this.prevSeason)
+            if (Context.IsWorldReady && Game1.currentSeason != this.PrevSeason)
             {
-                this.onSeasonChange();
-                this.prevSeason = Game1.currentSeason;
+                this.OnSeasonChange();
+                this.PrevSeason = Game1.currentSeason;
             }
         }
 
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onButtonPressed(object sender, ButtonPressedEventArgs e)
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             if (Context.IsPlayerFree && e.Button == SButton.MouseRight)
             {
@@ -179,7 +179,7 @@ namespace CustomizeExterior
                         if (tileBounds.Contains(pos.X, pos.Y))
                         {
                             Log.Trace($"Right clicked a building: {building.nameOfIndoors}");
-                            this.checkBuildingClick(building.nameOfIndoors, building.buildingType.Value);
+                            this.CheckBuildingClick(building.nameOfIndoors, building.buildingType.Value);
                         }
                     }
                 }
@@ -196,18 +196,18 @@ namespace CustomizeExterior
                     if (house.Contains(pos.X, pos.Y))
                     {
                         Log.Trace("Right clicked the house.");
-                        this.checkBuildingClick("FarmHouse", "houses");
+                        this.CheckBuildingClick("FarmHouse", "houses");
                     }
                     else if (greenhouse.Contains(pos.X, pos.Y))
                     {
                         Log.Trace("Right clicked the greenhouse.");
-                        this.checkBuildingClick("Greenhouse", "houses");
+                        this.CheckBuildingClick("Greenhouse", "houses");
                     }
                 }
             }
         }
 
-        private void compileChoices()
+        private void CompileChoices()
         {
             Log.Trace("Creating list of building choices...");
             string buildingsPath = Path.Combine(this.Helper.DirectoryPath, "Buildings");
@@ -232,11 +232,11 @@ namespace CustomizeExterior
 
                     string choiceStr = Path.GetFileName(choice);
                     string typeStr = Path.GetFileNameWithoutExtension(type);
-                    List<string> forType = Mod.choices.ContainsKey(typeStr) ? Mod.choices[typeStr] : new List<string>();
+                    List<string> forType = Mod.Choices.ContainsKey(typeStr) ? Mod.Choices[typeStr] : new List<string>();
                     if (!forType.Contains(choiceStr))
                         forType.Add(choiceStr);
-                    if (!Mod.choices.ContainsKey(typeStr))
-                        Mod.choices.Add(typeStr, forType);
+                    if (!Mod.Choices.ContainsKey(typeStr))
+                        Mod.Choices.Add(typeStr, forType);
 
                     Log.Trace("\tChoice: " + typeStr);
                 }
@@ -272,11 +272,11 @@ namespace CustomizeExterior
                         string typeStr = Path.GetFileNameWithoutExtension(building);
                         if (summer.Contains(building) && fall.Contains(building) && winter.Contains(building))
                         {
-                            List<string> forType = Mod.choices.ContainsKey(typeStr) ? Mod.choices[typeStr] : new List<string>();
-                            if (!forType.Contains(Mod.SEASONAL_INDICATOR + choiceStr))
-                                forType.Add(Mod.SEASONAL_INDICATOR + choiceStr);
-                            if (!Mod.choices.ContainsKey(typeStr))
-                                Mod.choices.Add(typeStr, forType);
+                            List<string> forType = Mod.Choices.ContainsKey(typeStr) ? Mod.Choices[typeStr] : new List<string>();
+                            if (!forType.Contains(Mod.SeasonalIndicator + choiceStr))
+                                forType.Add(Mod.SeasonalIndicator + choiceStr);
+                            if (!Mod.Choices.ContainsKey(typeStr))
+                                Mod.Choices.Add(typeStr, forType);
 
                             Log.Trace("\tChoice: " + typeStr);
                         }
@@ -285,50 +285,50 @@ namespace CustomizeExterior
             }
         }
 
-        private DateTime recentClickTime;
-        private string recentClickTarget;
-        private void checkBuildingClick(string target, string type)
+        private DateTime RecentClickTime;
+        private string RecentClickTarget;
+        private void CheckBuildingClick(string target, string type)
         {
             if (Game1.activeClickableMenu != null) return;
 
-            if (this.recentClickTarget != target)
+            if (this.RecentClickTarget != target)
             {
-                this.recentClickTarget = target;
-                this.recentClickTime = DateTime.Now;
+                this.RecentClickTarget = target;
+                this.RecentClickTime = DateTime.Now;
             }
             else
             {
-                if (DateTime.Now - this.recentClickTime < Mod.clickWindow)
-                    this.todoRenameFunction(target, type);
+                if (DateTime.Now - this.RecentClickTime < Mod.ClickWindow)
+                    this.TodoRenameFunction(target, type);
                 else
-                    this.recentClickTime = DateTime.Now;
+                    this.RecentClickTime = DateTime.Now;
             }
         }
 
-        private void todoRenameFunction(string target, string type)
+        private void TodoRenameFunction(string target, string type)
         {
-            if (!Mod.choices.TryGetValue(type, out var choices))
+            if (!Mod.Choices.TryGetValue(type, out var choices))
             {
                 Log.Trace($"Target: {target} ({type}), but no custom textures found.");
                 return;
             }
             Log.Trace($"Target: {target} ({type}), found {choices.Count} textures: '{string.Join("', '", choices)}'.");
 
-            this.recentTarget = target;
-            var menu = new SelectDisplayMenu(type, Mod.getChosenTexture(target))
+            this.RecentTarget = target;
+            var menu = new SelectDisplayMenu(type, Mod.GetChosenTexture(target))
             {
-                onSelected = this.onExteriorSelected
+                OnSelected = this.OnExteriorSelected
             };
             Game1.activeClickableMenu = menu;
         }
 
-        private string recentTarget;
-        private void onExteriorSelected(string type, string choice) { this.onExteriorSelected(type, choice, true); }
-        private void onExteriorSelected(string type, string choice, bool updateChosen)
+        private string RecentTarget;
+        private void OnExteriorSelected(string type, string choice) { this.OnExteriorSelected(type, choice, true); }
+        private void OnExteriorSelected(string type, string choice, bool updateChosen)
         {
-            Log.Trace("onExteriorSelected: " + this.recentTarget + " " + type + " " + choice);
+            Log.Trace("onExteriorSelected: " + this.RecentTarget + " " + type + " " + choice);
 
-            Texture2D tex = Mod.getTextureForChoice(type, choice);
+            Texture2D tex = Mod.GetTextureForChoice(type, choice);
             if (tex == null)
             {
                 Log.Warn("Failed to load chosen texture '" + choice + "' for building type '" + type + "'.");
@@ -336,7 +336,7 @@ namespace CustomizeExterior
             }
             if (updateChosen)
             {
-                Mod.savedExteriors.chosen[this.recentTarget] = choice;
+                Mod.SavedExteriors.Chosen[this.RecentTarget] = choice;
 
                 if (Game1.IsMultiplayer)
                 {
@@ -344,25 +344,25 @@ namespace CustomizeExterior
                     using (var writer = new BinaryWriter(stream))
                     {
                         writer.Write(1);
-                        writer.Write(this.recentTarget);
+                        writer.Write(this.RecentTarget);
                         writer.Write(choice);
 
                         Log.Trace("Broadcasting choice");
-                        SpaceCore.Networking.BroadcastMessage(Mod.MSG_CHOICES, stream.ToArray());
+                        SpaceCore.Networking.BroadcastMessage(Mod.MsgChoices, stream.ToArray());
                     }
                 }
             }
 
-            if (this.recentTarget == "FarmHouse" || this.recentTarget == "Greenhouse")
+            if (this.RecentTarget == "FarmHouse" || this.RecentTarget == "Greenhouse")
             {
-                Mod.housesHybrid = null;
-                typeof(Farm).GetField(nameof(Farm.houseTextures)).SetValue(null, Mod.getHousesTexture());
+                Mod.HousesHybrid = null;
+                typeof(Farm).GetField(nameof(Farm.houseTextures)).SetValue(null, Mod.GetHousesTexture());
             }
             else
             {
                 foreach (Building building in Game1.getFarm().buildings)
                 {
-                    if (building.buildingType.Value == type && building.nameOfIndoors == this.recentTarget)
+                    if (building.buildingType.Value == type && building.nameOfIndoors == this.RecentTarget)
                     {
                         building.texture = new Lazy<Texture2D>(() => tex);
                         break;
@@ -371,15 +371,15 @@ namespace CustomizeExterior
             }
         }
 
-        private void syncTexturesWithChoices()
+        private void SyncTexturesWithChoices()
         {
-            foreach (var choice in Mod.savedExteriors.chosen)
+            foreach (var choice in Mod.SavedExteriors.Chosen)
             {
-                this.recentTarget = choice.Key;
+                this.RecentTarget = choice.Key;
                 Log.Trace("Saved choice: " + choice.Key + " " + choice.Value);
 
                 string type = null;
-                if (this.recentTarget == "FarmHouse" || this.recentTarget == "Greenhouse")
+                if (this.RecentTarget == "FarmHouse" || this.RecentTarget == "Greenhouse")
                 {
                     type = "houses";
                 }
@@ -395,48 +395,48 @@ namespace CustomizeExterior
                 }
 
                 if (type != null)
-                    this.onExteriorSelected(type, choice.Value, false);
+                    this.OnExteriorSelected(type, choice.Value, false);
             }
         }
 
-        public static string getChosenTexture(string target)
+        public static string GetChosenTexture(string target)
         {
-            return Mod.savedExteriors.chosen.ContainsKey(target) ? Mod.savedExteriors.chosen[target] : "/";
+            return Mod.SavedExteriors.Chosen.ContainsKey(target) ? Mod.SavedExteriors.Chosen[target] : "/";
         }
 
-        public static Texture2D getTextureForChoice(string type, string choice)
+        public static Texture2D GetTextureForChoice(string type, string choice)
         {
             try
             {
                 if (choice == "/")
                     return Game1.content.Load<Texture2D>("Buildings/" + type);
-                else if (choice.StartsWith(Mod.SEASONAL_INDICATOR))
-                    return Mod.content.Load<Texture2D>(choice.Substring(Mod.SEASONAL_INDICATOR.Length) + "/" + Game1.currentSeason + "/" + type);
+                else if (choice.StartsWith(Mod.SeasonalIndicator))
+                    return Mod.Content.Load<Texture2D>(choice.Substring(Mod.SeasonalIndicator.Length) + "/" + Game1.currentSeason + "/" + type);
                 else
-                    return Mod.content.Load<Texture2D>(choice + "/" + type);
+                    return Mod.Content.Load<Texture2D>(choice + "/" + type);
             }
             catch (ContentLoadException)
             {
-                if (choice.StartsWith(Mod.SEASONAL_INDICATOR))
-                    return Mod.loadPng(choice.Substring(Mod.SEASONAL_INDICATOR.Length) + "/" + Game1.currentSeason + "/" + type);
+                if (choice.StartsWith(Mod.SeasonalIndicator))
+                    return Mod.LoadPng(choice.Substring(Mod.SeasonalIndicator.Length) + "/" + Game1.currentSeason + "/" + type);
                 else
-                    return Mod.loadPng(choice + "/" + type);
+                    return Mod.LoadPng(choice + "/" + type);
             }
         }
 
-        private static Texture2D loadPng(string path)
+        private static Texture2D LoadPng(string path)
         {
-            FileStream fs = File.Open(Path.Combine(Mod.instance.Helper.DirectoryPath, "Buildings", path + ".png"), FileMode.Open);
+            FileStream fs = File.Open(Path.Combine(Mod.Instance.Helper.DirectoryPath, "Buildings", path + ".png"), FileMode.Open);
             Texture2D tex = Texture2D.FromStream(Game1.graphics.GraphicsDevice, fs);
             fs.Dispose();
             return tex;
         }
 
-        private static Texture2D housesHybrid;
-        private static Texture2D getHousesTexture()
+        private static Texture2D HousesHybrid;
+        private static Texture2D GetHousesTexture()
         {
-            if (Mod.housesHybrid != null)
-                return Mod.housesHybrid;
+            if (Mod.HousesHybrid != null)
+                return Mod.HousesHybrid;
 
             Log.Trace("Creating hybrid farmhouse/greenhouse texture");
 
@@ -446,19 +446,19 @@ namespace CustomizeExterior
 
             GraphicsDevice dev = Game1.graphics.GraphicsDevice;
             RenderTarget2D ret = new RenderTarget2D(dev, baseTex.Width, baseTex.Height);
-            ret.Name = Mod.instance.ModManifest.UniqueID + ".houses";
+            ret.Name = Mod.Instance.ModManifest.UniqueID + ".houses";
             SpriteBatch b = Game1.spriteBatch;
             dev.SetRenderTarget(ret);
             {
                 dev.Clear(Color.Transparent);
                 b.Begin();
-                b.Draw(Mod.getTextureForChoice("houses", Mod.getChosenTexture("FarmHouse")), houseRect, houseRect, Color.White);
-                b.Draw(Mod.getTextureForChoice("houses", Mod.getChosenTexture("Greenhouse")), greenhouseRect, greenhouseRect, Color.White);
+                b.Draw(Mod.GetTextureForChoice("houses", Mod.GetChosenTexture("FarmHouse")), houseRect, houseRect, Color.White);
+                b.Draw(Mod.GetTextureForChoice("houses", Mod.GetChosenTexture("Greenhouse")), greenhouseRect, greenhouseRect, Color.White);
                 b.End();
             }
             dev.SetRenderTarget(null);
 
-            Mod.housesHybrid = ret;
+            Mod.HousesHybrid = ret;
             return ret;
         }
     }

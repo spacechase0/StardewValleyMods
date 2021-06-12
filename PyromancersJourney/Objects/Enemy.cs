@@ -20,7 +20,7 @@ namespace PyromancersJourney.Objects
         {
             base.Update();
 
-            foreach (var proj in this.World.projectiles)
+            foreach (var proj in this.World.Projectiles)
             {
                 if (proj.Dead)
                     continue;
@@ -31,9 +31,9 @@ namespace PyromancersJourney.Objects
                 }
             }
 
-            if ((this.World.player.BoundingBox + new Vector2(this.World.player.Position.X, this.World.player.Position.Z)).Intersects(this.BoundingBox + new Vector2(this.Position.X, this.Position.Z)))
+            if ((this.World.Player.BoundingBox + new Vector2(this.World.Player.Position.X, this.World.Player.Position.Z)).Intersects(this.BoundingBox + new Vector2(this.Position.X, this.Position.Z)))
             {
-                this.World.player.Hurt(1);
+                this.World.Player.Hurt(1);
             }
         }
     }

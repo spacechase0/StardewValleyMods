@@ -16,40 +16,40 @@ namespace Magic.Schools
             this.Id = id;
         }
 
-        private static Dictionary<string, School> schools;
-        public static void registerSchool(School school)
+        private static Dictionary<string, School> Schools;
+        public static void RegisterSchool(School school)
         {
-            if (School.schools == null)
-                School.init();
+            if (School.Schools == null)
+                School.Init();
 
-            School.schools.Add(school.Id, school);
+            School.Schools.Add(school.Id, school);
         }
 
-        public static School getSchool(string id)
+        public static School GetSchool(string id)
         {
-            if (School.schools == null)
-                School.init();
+            if (School.Schools == null)
+                School.Init();
 
-            return School.schools[id];
+            return School.Schools[id];
         }
 
-        public static ICollection<string> getSchoolList()
+        public static ICollection<string> GetSchoolList()
         {
-            if (School.schools == null)
-                School.init();
+            if (School.Schools == null)
+                School.Init();
 
-            return School.schools.Keys;
+            return School.Schools.Keys;
         }
 
-        private static void init()
+        private static void Init()
         {
-            School.schools = new Dictionary<string, School>();
-            School.registerSchool(new ArcaneSchool());
-            School.registerSchool(new ElementalSchool());
-            School.registerSchool(new NatureSchool());
-            School.registerSchool(new LifeSchool());
-            School.registerSchool(new EldritchSchool());
-            School.registerSchool(new ToilSchool());
+            School.Schools = new Dictionary<string, School>();
+            School.RegisterSchool(new ArcaneSchool());
+            School.RegisterSchool(new ElementalSchool());
+            School.RegisterSchool(new NatureSchool());
+            School.RegisterSchool(new LifeSchool());
+            School.RegisterSchool(new EldritchSchool());
+            School.RegisterSchool(new ToilSchool());
         }
     }
 }

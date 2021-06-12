@@ -79,7 +79,7 @@ namespace SpaceCore.Utilities
                 writer.WriteStartArray();
                 foreach (var elem in (System.Collections.IEnumerable)value)
                 {
-                    this.itemConverter.WriteJson(writer, elem, serializer);
+                    this.ItemConverter.WriteJson(writer, elem, serializer);
                 }
                 writer.WriteEndArray();
             }
@@ -89,7 +89,7 @@ namespace SpaceCore.Utilities
             }
         }
 
-        private JsonConverter itemConverter = new ItemConverter();
+        private JsonConverter ItemConverter = new ItemConverter();
     }
 
     public class ItemConverter : JsonConverter
