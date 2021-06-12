@@ -46,8 +46,8 @@ namespace MoreBuildings.Buildings.BigShed
         {
             Shed shed = (Shed)replacement;
 
-            if (additionalSaveData.ContainsKey("u"))
-                this.uniqueName.Value = additionalSaveData["u"];
+            if (additionalSaveData.TryGetValue("u", out string savedName))
+                this.uniqueName.Value = savedName;
 
             foreach (Vector2 key in shed.objects.Keys)
                 this.objects.Add(key, shed.objects[key]);

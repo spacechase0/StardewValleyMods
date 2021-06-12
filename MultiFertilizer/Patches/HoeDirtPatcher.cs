@@ -139,11 +139,11 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="HoeDirt.applySpeedIncreases"/>.</summary>
         private static void Before_ApplySpeedIncreases(HoeDirt __instance, Farmer who)
         {
-            if (!__instance.modData.ContainsKey(Mod.KeySpeed))
+            if (!__instance.modData.TryGetValue(Mod.KeySpeed, out string rawValue))
                 return;
 
             int index = 0;
-            switch (int.Parse(__instance.modData[Mod.KeySpeed]))
+            switch (int.Parse(rawValue))
             {
                 case 1: index = 465; break;
                 case 2: index = 466; break;
@@ -188,11 +188,11 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="HoeDirt.dayUpdate"/>.</summary>
         private static void Before_DayUpdate(HoeDirt __instance, GameLocation environment, Vector2 tileLocation)
         {
-            if (!__instance.modData.ContainsKey(Mod.KeyRetain))
+            if (!__instance.modData.TryGetValue(Mod.KeyRetain, out string rawValue))
                 return;
 
             int index = 0;
-            switch (int.Parse(__instance.modData[Mod.KeyRetain]))
+            switch (int.Parse(rawValue))
             {
                 case 1: index = 370; break;
                 case 2: index = 371; break;
@@ -222,9 +222,9 @@ namespace MultiFertilizer.Patches
         private static void DrawMultiFertilizer(SpriteBatch spriteBatch, Texture2D tex, Vector2 pos, Rectangle? sourceRect, Color col, float rot, Vector2 origin, float scale, SpriteEffects fx, float depth, HoeDirt __instance)
         {
             List<int> fertilizers = new List<int>();
-            if (__instance.modData.ContainsKey(Mod.KeyFert))
+            if (__instance.modData.TryGetValue(Mod.KeyFert, out string rawFertValue))
             {
-                int level = int.Parse(__instance.modData[Mod.KeyFert]);
+                int level = int.Parse(rawFertValue);
                 int index = 0;
                 switch (level)
                 {
@@ -235,9 +235,9 @@ namespace MultiFertilizer.Patches
                 if (index != 0)
                     fertilizers.Add(index);
             }
-            if (__instance.modData.ContainsKey(Mod.KeyRetain))
+            if (__instance.modData.TryGetValue(Mod.KeyRetain, out string rawRetainerValue))
             {
-                int level = int.Parse(__instance.modData[Mod.KeyRetain]);
+                int level = int.Parse(rawRetainerValue);
                 int index = 0;
                 switch (level)
                 {
@@ -248,9 +248,9 @@ namespace MultiFertilizer.Patches
                 if (index != 0)
                     fertilizers.Add(index);
             }
-            if (__instance.modData.ContainsKey(Mod.KeySpeed))
+            if (__instance.modData.TryGetValue(Mod.KeySpeed, out string rawSpeedValue))
             {
-                int level = int.Parse(__instance.modData[Mod.KeySpeed]);
+                int level = int.Parse(rawSpeedValue);
                 int index = 0;
                 switch (level)
                 {

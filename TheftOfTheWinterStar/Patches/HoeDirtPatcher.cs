@@ -6,6 +6,7 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.TerrainFeatures;
+using SObject = StardewValley.Object;
 
 namespace TheftOfTheWinterStar.Patches
 {
@@ -49,9 +50,8 @@ namespace TheftOfTheWinterStar.Patches
                 for (int iy = -2; iy <= 2; ++iy)
                 {
                     var key = new Vector2(tileX + ix, tileY + iy);
-                    if (loc.objects.ContainsKey(key))
+                    if (loc.objects.TryGetValue(key, out SObject obj))
                     {
-                        var obj = loc.objects[key];
                         if (obj.bigCraftable.Value && obj.ParentSheetIndex == seasonalDelimiter)
                         {
                             if (__instance.crop == null)

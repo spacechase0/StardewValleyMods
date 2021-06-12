@@ -33,11 +33,11 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="Crop.harvest"/>.</summary>
         private static void Before_Harvest(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester)
         {
-            if (!soil.modData.ContainsKey(Mod.KeyFert))
+            if (!soil.modData.TryGetValue(Mod.KeyFert, out string fertilizerData))
                 return;
 
             int index = 0;
-            switch (int.Parse(soil.modData[Mod.KeyFert]))
+            switch (int.Parse(fertilizerData))
             {
                 case 1: index = 368; break;
                 case 2: index = 369; break;

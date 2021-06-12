@@ -82,12 +82,16 @@ namespace PreexistingRelationship
             // Do spouse stuff
             if (local)
             {
-                if (!player.friendshipData.ContainsKey(npcName))
-                    player.friendshipData.Add(npcName, new Friendship());
-                player.friendshipData[npcName].Points = 2500;
+                if (!player.friendshipData.TryGetValue(npcName, out Friendship friendship))
+                {
+                    friendship = new Friendship();
+                    player.friendshipData.Add(npcName, friendship);
+                }
+
+                friendship.Points = 2500;
                 player.spouse = npcName;
-                player.friendshipData[npcName].WeddingDate = new WorldDate(Game1.Date);
-                player.friendshipData[npcName].Status = FriendshipStatus.Married;
+                friendship.WeddingDate = new WorldDate(Game1.Date);
+                friendship.Status = FriendshipStatus.Married;
             }
 
             NPC spouse = Game1.getCharacterFromName(npcName);

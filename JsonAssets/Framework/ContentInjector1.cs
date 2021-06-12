@@ -92,10 +92,8 @@ namespace JsonAssets.Framework
                 {
                     string tags = string.Join(", ", obj.ContextTags);
                     Log.Verbose($"Injecting to object context tags: {obj.Name}: {tags}");
-                    if (data.ContainsKey(obj.Name) && data[obj.Name] == "")
+                    if (!data.TryGetValue(obj.Name, out string prevTags) || prevTags == "")
                         data[obj.Name] = tags;
-                    else
-                        data.Add(obj.Name, tags);
                 }
                 catch (Exception e)
                 {

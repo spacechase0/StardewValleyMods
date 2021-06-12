@@ -77,11 +77,11 @@ namespace BuildableLocationsFramework.Patches
             var locs = Mod.GetAllLocations();
             foreach (var loc in locs)
             {
-                if (loc is IAnimalLocation aloc)
+                if (loc is IAnimalLocation animalLocation)
                 {
-                    if (aloc.Animals.ContainsKey(id))
+                    if (animalLocation.Animals.TryGetValue(id, out FarmAnimal animal))
                     {
-                        __result = aloc.Animals[id];
+                        __result = animal;
                         return false;
                     }
                 }

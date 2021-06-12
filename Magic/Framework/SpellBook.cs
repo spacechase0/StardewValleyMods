@@ -23,12 +23,9 @@ namespace Magic.Framework
 
         public static Spell Get(string id)
         {
-            if (string.IsNullOrEmpty(id))
-                return null;
-            if (!SpellBook.Spells.ContainsKey(id))
-                return null;// UNKNOWN_SPELL;
-
-            return SpellBook.Spells[id];
+            return !string.IsNullOrEmpty(id) && SpellBook.Spells.TryGetValue(id, out Spell spell)
+                ? spell
+                : null;// UNKNOWN_SPELL;
         }
 
         public static List<string> GetAll()

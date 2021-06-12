@@ -73,9 +73,8 @@ namespace BiggerCraftables
                     for (int iy = 0; iy < entry.Length; ++iy)
                     {
                         Vector2 localPos = basePos + new Vector2(ix, iy);
-                        if (localPos == pos || !loc.Objects.ContainsKey(localPos))
-                            continue;
-                        loc.Objects.Remove(localPos);
+                        if (localPos != pos)
+                            loc.Objects.Remove(localPos);
                     }
                 }
             }

@@ -56,42 +56,38 @@ namespace Magic.Framework
 
         public static bool KnowsSpell(this Farmer player, string spellId, int level)
         {
-            if (player != Game1.player || Mod.Data == null)
-                return false;
-            return player.GetSpellBook().KnownSpells.ContainsKey(spellId) &&
-                   player.GetSpellBook().KnownSpells[spellId] >= level;
+            int curLevel = player.KnowsSpellLevel(spellId);
+            return curLevel > -1 && curLevel >= level;
         }
 
         public static bool KnowsSpell(this Farmer player, Spell spell, int level)
         {
-            return Extensions.KnowsSpell(player, spell.FullId, level);
+            return player.KnowsSpell(spell.FullId, level);
         }
 
         public static int KnowsSpellLevel(this Farmer player, string spellId)
         {
-            if (player != Game1.player || Mod.Data == null)
-                return -1;
-            if (!player.GetSpellBook().KnownSpells.ContainsKey(spellId))
-                return -1;
-            return player.GetSpellBook().KnownSpells[spellId];
+            return player == Game1.player && Mod.Data != null && player.GetSpellBook().KnownSpells.TryGetValue(spellId, out int level)
+                ? level
+                : -1;
         }
 
         public static int KnowsSpellLevel(this Farmer player, Spell spell)
         {
-            return Extensions.KnowsSpellLevel(player, spell.FullId);
+            return player.KnowsSpellLevel(spell.FullId);
         }
 
         public static void LearnSpell(this Farmer player, string spellId, int level, bool free = false)
         {
-            int known = Extensions.KnowsSpellLevel(player, spellId);
+            int known = player.KnowsSpellLevel(spellId);
             int diff = level - known;
 
-            if (diff <= 0 || Extensions.GetFreeSpellPoints(player) < diff && !free)
+            if (diff <= 0 || player.GetFreeSpellPoints() < diff && !free)
                 return;
 
             Log.Debug($"Learning spell {spellId}, level {level + 1}");
             if (!free)
-                Extensions.UseSpellPoints(player, diff, false);
+                player.UseSpellPoints(diff, false);
             player.GetSpellBook().KnownSpells[spellId] = level;
 
             Mod.Data.SyncMineFull();
@@ -99,12 +95,12 @@ namespace Magic.Framework
 
         public static void LearnSpell(this Farmer player, Spell spell, int level, bool free = false)
         {
-            Extensions.LearnSpell(player, spell.FullId, level, free);
+            player.LearnSpell(spell.FullId, level, free);
         }
 
         public static void ForgetSpell(this Farmer player, string spellId, int level, bool sync = true)
         {
-            int known = Extensions.KnowsSpellLevel(player, spellId);
+            int known = player.KnowsSpellLevel(spellId);
             if (level > known)
                 return;
             int diff = (known + 1) - level;
@@ -114,14 +110,14 @@ namespace Magic.Framework
                 Game1.player.GetSpellBook().KnownSpells.Remove(spellId);
             else if (Game1.player.GetSpellBook().KnownSpells[spellId] >= level)
                 Game1.player.GetSpellBook().KnownSpells[spellId] = level - 1;
-            Extensions.UseSpellPoints(player, -diff, false);
+            player.UseSpellPoints(-diff, false);
 
             Mod.Data.SyncMineFull();
         }
 
         public static void ForgetSpell(this Farmer player, Spell spell, int level, bool sync = true)
         {
-            Extensions.ForgetSpell(player, spell.FullId, level, sync);
+            player.ForgetSpell(spell.FullId, level, sync);
         }
 
         public static bool CanCastSpell(this Farmer player, string spellId, int level)
@@ -136,7 +132,7 @@ namespace Magic.Framework
 
         public static IActiveEffect CastSpell(this Farmer player, string spellId, int level, int x = int.MinValue, int y = int.MinValue)
         {
-            return Extensions.CastSpell(player, SpellBook.Get(spellId), level, x, y);
+            return player.CastSpell(SpellBook.Get(spellId), level, x, y);
         }
 
         public static IActiveEffect CastSpell(this Farmer player, Spell spell, int level, int x = int.MinValue, int y = int.MinValue)

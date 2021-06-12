@@ -2,7 +2,9 @@ using Magic.Framework.Schools;
 using Microsoft.Xna.Framework;
 using SpaceCore;
 using StardewValley;
+using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
+using SObject = StardewValley.Object;
 
 namespace Magic.Framework.Spells
 {
@@ -38,9 +40,8 @@ namespace Magic.Framework.Spells
                     if (loc.terrainFeatures.ContainsKey(pos))
                         continue; // ?
 
-                    if (loc.objects.ContainsKey(pos))
+                    if (loc.objects.TryGetValue(pos, out SObject obj))
                     {
-                        var obj = loc.objects[pos];
                         if (obj.ParentSheetIndex == 590)
                         {
                             loc.digUpArtifactSpot(ix, iy, player);
@@ -59,9 +60,9 @@ namespace Magic.Framework.Spells
                         }
                     }
 
-                    if (loc.terrainFeatures.ContainsKey(pos))
+                    if (loc.terrainFeatures.TryGetValue(pos, out TerrainFeature feature))
                     {
-                        if (loc.terrainFeatures[pos].performToolAction(dummyHoe, 0, pos, loc))
+                        if (feature.performToolAction(dummyHoe, 0, pos, loc))
                         {
                             loc.terrainFeatures.Remove(pos);
                             player.AddMana(-1);

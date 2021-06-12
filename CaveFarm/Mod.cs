@@ -27,9 +27,7 @@ namespace CaveFarm
                     if (Math.Abs(Game1.player.getTileX() - ix) < 3 && Math.Abs(Game1.player.getTileY() - iy) < 3)
                         continue;
                     var key = new Vector2(ix, iy);
-                    if (Game1.currentLocation.terrainFeatures.ContainsKey(key))
-                        Game1.currentLocation.terrainFeatures.Remove(key);
-                    Game1.currentLocation.terrainFeatures.Add(key, new CaveWall());
+                    Game1.currentLocation.terrainFeatures[key] = new CaveWall();
                 }
             }
         }

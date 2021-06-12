@@ -107,12 +107,12 @@ namespace MultiFertilizer.Patches
 
 
             Vector2 tileLocation = new Vector2(x / 64, y / 64);
-            if (!location.terrainFeatures.ContainsKey(tileLocation))
+            if (!location.terrainFeatures.TryGetValue(tileLocation, out TerrainFeature feature) || feature is not HoeDirt dirt)
                 return true;
-            HoeDirt hoe_dirt = location.terrainFeatures[tileLocation] as HoeDirt;
-            if ((int)(location.terrainFeatures[tileLocation] as HoeDirt).fertilizer != 0)
+
+            if ((int)dirt.fertilizer != 0)
             {
-                if ((location.terrainFeatures[tileLocation] as HoeDirt).modData.ContainsKey(key))
+                if (dirt.modData.ContainsKey(key))
                 {
                     Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HoeDirt.cs.13916-2"));
                 }

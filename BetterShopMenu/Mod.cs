@@ -358,15 +358,20 @@ namespace BetterShopMenu
             }
             if (hover != null)
             {
+                // get hover price & stock
+                if (itemPriceAndStock == null || !itemPriceAndStock.TryGetValue(hover, out int[] hoverPriceAndStock))
+                    hoverPriceAndStock = null;
+
+                // render tooltip
                 string hoverText = hover.getDescription();
                 string boldTitleText = hover.DisplayName;
-                int hoverPrice = itemPriceAndStock == null || !itemPriceAndStock.ContainsKey(hover) ? hover.salePrice() : itemPriceAndStock[hover][0];
+                int hoverPrice = hoverPriceAndStock?[0] ?? hover.salePrice();
                 int getHoveredItemExtraItemIndex = -1;
-                if (itemPriceAndStock != null && hover != null && (itemPriceAndStock.ContainsKey(hover) && itemPriceAndStock[hover].Length > 2))
-                    getHoveredItemExtraItemIndex = itemPriceAndStock[hover][2];
+                if (hoverPriceAndStock?.Length > 2)
+                    getHoveredItemExtraItemIndex = hoverPriceAndStock[2];
                 int getHoveredItemExtraItemAmount = 5;
-                if (itemPriceAndStock != null && hover != null && itemPriceAndStock.ContainsKey(hover) && itemPriceAndStock[hover].Length > 3)
-                    getHoveredItemExtraItemAmount = itemPriceAndStock[hover][3];
+                if (hoverPriceAndStock?.Length > 3)
+                    getHoveredItemExtraItemAmount = hoverPriceAndStock[3];
                 IClickableMenu.drawToolTip(Game1.spriteBatch, hoverText, boldTitleText, hover as Item, heldItem != null, -1, currency, getHoveredItemExtraItemIndex, getHoveredItemExtraItemAmount, null, hoverPrice);
             }
 

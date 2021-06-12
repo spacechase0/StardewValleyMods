@@ -60,22 +60,18 @@ namespace CustomBuildings.Framework
 
         public string LocalizedName()
         {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            if (currLang == LocalizedContentManager.LanguageCode.en)
-                return this.Name;
-            if (this.NameLocalization == null || !this.NameLocalization.ContainsKey(currLang.ToString()))
-                return this.Name;
-            return this.NameLocalization[currLang.ToString()];
+            var lang = LocalizedContentManager.CurrentLanguageCode;
+            return lang != LocalizedContentManager.LanguageCode.en && this.NameLocalization != null && this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
+                ? localization
+                : this.Name;
         }
 
         public string LocalizedDescription()
         {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            if (currLang == LocalizedContentManager.LanguageCode.en)
-                return this.Description;
-            if (this.DescriptionLocalization == null || !this.DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return this.Description;
-            return this.DescriptionLocalization[currLang.ToString()];
+            var lang = LocalizedContentManager.CurrentLanguageCode;
+            return lang != LocalizedContentManager.LanguageCode.en && this.DescriptionLocalization != null && this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
+                ? localization
+                : this.Description;
         }
 
         public string BlueprintString()

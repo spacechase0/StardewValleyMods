@@ -89,10 +89,8 @@ namespace MultiFertilizer.Patches
 
         private static bool IsTileOccupiedForPlacementLogic(GameLocation __instance, Vector2 tileLocation, SObject toPlace)
         {
-            if (toPlace.Category == -19 && __instance.terrainFeatures.ContainsKey(tileLocation) && __instance.terrainFeatures[tileLocation] is HoeDirt)
+            if (toPlace.Category == -19 && __instance.terrainFeatures.TryGetValue(tileLocation, out TerrainFeature feature) && feature is HoeDirt hoe_dirt)
             {
-                HoeDirt hoe_dirt = __instance.terrainFeatures[tileLocation] as HoeDirt;
-
                 int level = 0;
                 string key = "";
                 switch (toPlace.ParentSheetIndex)

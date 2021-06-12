@@ -53,14 +53,14 @@ namespace SpaceCore.Patches
             object[] eventCommandArgs = SpaceCore.Reflection.GetField<object[]>(typeof(Event), "_eventCommandArgs").GetValue();
             var commandLookup = SpaceCore.Reflection.GetField<Dictionary<string, MethodInfo>>(typeof(Event), "_commandLookup").GetValue();
 
-            if (EventPatcher.CustomCommands.ContainsKey(name))
-                EventPatcher.CustomCommands[name].Invoke(null, new object[] { __instance, location, time, split });
-            else if (commandLookup.ContainsKey(name))
+            if (EventPatcher.CustomCommands.TryGetValue(name, out MethodInfo customCommand))
+                customCommand.Invoke(null, new object[] { __instance, location, time, split });
+            else if (commandLookup.TryGetValue(name, out MethodInfo command))
             {
                 eventCommandArgs[0] = location;
                 eventCommandArgs[1] = time;
                 eventCommandArgs[2] = split;
-                commandLookup[name].Invoke(__instance, eventCommandArgs);
+                command.Invoke(__instance, eventCommandArgs);
             }
             else
                 Log.Warn($"ERROR: Invalid command: {name}");

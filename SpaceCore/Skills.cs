@@ -125,8 +125,8 @@ namespace SpaceCore
 
         public static Skill GetSkill(string name)
         {
-            if (Skills.SkillsByName.ContainsKey(name))
-                return Skills.SkillsByName[name];
+            if (Skills.SkillsByName.TryGetValue(name, out Skill found))
+                return found;
 
             foreach (var skill in Skills.SkillsByName)
             {
@@ -146,6 +146,7 @@ namespace SpaceCore
         {
             if (!Skills.SkillsByName.ContainsKey(skillName))
                 return 0;
+
             Skills.ValidateSkill(farmer, skillName);
 
             return Skills.Exp[farmer.UniqueMultiplayerID][skillName];
@@ -192,19 +193,29 @@ namespace SpaceCore
 
         private static void ValidateSkill(Farmer farmer, string skillName)
         {
-            if (!Skills.Exp.ContainsKey(farmer.UniqueMultiplayerID))
-                Skills.Exp.Add(farmer.UniqueMultiplayerID, new Dictionary<string, int>());
-            if (!Skills.Exp[farmer.UniqueMultiplayerID].ContainsKey(skillName))
-                Skills.Exp[farmer.UniqueMultiplayerID].Add(skillName, 0);
+            if (!Skills.Exp.TryGetValue(farmer.UniqueMultiplayerID, out var skillExp))
+            {
+                skillExp = new();
+                Skills.Exp.Add(farmer.UniqueMultiplayerID, skillExp);
+            }
+
+            if (!skillExp.ContainsKey(skillName))
+                skillExp.Add(skillName, 0);
         }
 
         private static void ClientJoined(object sender, EventArgsServerGotClient args)
         {
-            if (!Skills.Exp.ContainsKey(args.FarmerID))
-                Skills.Exp.Add(args.FarmerID, new Dictionary<string, int>());
+            if (!Skills.Exp.TryGetValue(args.FarmerID, out var skillExp))
+            {
+                skillExp = new();
+                Skills.Exp.Add(args.FarmerID, skillExp);
+            }
+
             foreach (var skill in Skills.SkillsByName)
-                if (!Skills.Exp[args.FarmerID].ContainsKey(skill.Key))
-                    Skills.Exp[args.FarmerID].Add(skill.Key, 0);
+            {
+                if (!skillExp.ContainsKey(skill.Key))
+                    skillExp.Add(skill.Key, 0);
+            }
 
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
@@ -245,10 +256,14 @@ namespace SpaceCore
                 {
                     string skill = msg.Reader.ReadString();
                     int amt = msg.Reader.ReadInt32();
-                    if (!Skills.Exp.ContainsKey(id))
-                        Skills.Exp.Add(id, new Dictionary<string, int>());
-                    Skills.Exp[id][skill] = amt;
-                    Log.Trace("\t" + skill + "=" + amt);
+
+                    if (!Skills.Exp.TryGetValue(id, out var skillExp))
+                    {
+                        skillExp = new();
+                        Skills.Exp.Add(id, skillExp);
+                    }
+                    skillExp[skill] = amt;
+                    Log.Trace($"\t{skill}={amt}");
                 }
             }
         }

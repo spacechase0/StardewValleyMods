@@ -135,6 +135,7 @@ namespace SpaceCore
                             int tTile = int.Parse(tTiles[i]);
                             if (!tileMapping.ContainsKey(tTile))
                                 continue;
+
                             int ix = i % tMap.Width;
                             int iy = i / tMap.Width;
 

@@ -233,7 +233,10 @@ namespace CustomizeExterior
 
                     string choiceStr = Path.GetFileName(choice);
                     string typeStr = Path.GetFileNameWithoutExtension(type);
-                    List<string> forType = Mod.Choices.ContainsKey(typeStr) ? Mod.Choices[typeStr] : new List<string>();
+
+                    if (!Mod.Choices.TryGetValue(typeStr, out List<string> forType))
+                        forType = new();
+
                     if (!forType.Contains(choiceStr))
                         forType.Add(choiceStr);
                     if (!Mod.Choices.ContainsKey(typeStr))
@@ -273,7 +276,9 @@ namespace CustomizeExterior
                         string typeStr = Path.GetFileNameWithoutExtension(building);
                         if (summer.Contains(building) && fall.Contains(building) && winter.Contains(building))
                         {
-                            List<string> forType = Mod.Choices.ContainsKey(typeStr) ? Mod.Choices[typeStr] : new List<string>();
+                            if (!Mod.Choices.TryGetValue(typeStr, out List<string> forType))
+                                forType = new();
+
                             if (!forType.Contains(Mod.SeasonalIndicator + choiceStr))
                                 forType.Add(Mod.SeasonalIndicator + choiceStr);
                             if (!Mod.Choices.ContainsKey(typeStr))
@@ -402,7 +407,9 @@ namespace CustomizeExterior
 
         public static string GetChosenTexture(string target)
         {
-            return Mod.SavedExteriors.Chosen.ContainsKey(target) ? Mod.SavedExteriors.Chosen[target] : "/";
+            return Mod.SavedExteriors.Chosen.TryGetValue(target, out string choice)
+                ? choice
+                : "/";
         }
 
         public static Texture2D GetTextureForChoice(string type, string choice)

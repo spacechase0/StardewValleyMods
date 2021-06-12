@@ -6,7 +6,9 @@ namespace BiggerCraftables
 
         public static int GetBiggerIndex(this StardewValley.Object obj)
         {
-            return obj.modData.ContainsKey(Extensions.BiggerIndexKey) ? int.Parse(obj.modData[Extensions.BiggerIndexKey]) : 0;
+            return obj.modData.TryGetValue(Extensions.BiggerIndexKey, out string rawIndex)
+                ? int.Parse(rawIndex)
+                : 0;
         }
 
         public static void SetBiggerIndex(this StardewValley.Object obj, int index)

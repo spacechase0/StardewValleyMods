@@ -15,6 +15,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Network;
 using StardewValley.Objects;
+using StardewValley.TerrainFeatures;
 
 namespace Magic.Framework
 {
@@ -129,11 +130,9 @@ namespace Magic.Framework
                 }
             }
             var tilePos = new Vector2(e.TargetX / Game1.tileSize, e.TargetY / Game1.tileSize);
-            if (farmer.currentLocation.terrainFeatures.ContainsKey(tilePos) && farmer.currentLocation.terrainFeatures[tilePos] is StardewValley.TerrainFeatures.HoeDirt hd)
-            {
-                if (hd.crop != null)
-                    spellsLearnt.Add("nature:tendrils");
-            }
+            if (farmer.currentLocation.terrainFeatures.TryGetValue(tilePos, out TerrainFeature feature) && feature is HoeDirt dirt && dirt.crop != null)
+                spellsLearnt.Add("nature:tendrils");
+
             // TODO: Add proper tilesheet check
             var tile = farmer.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y];
             if (tile != null && tile.TileIndex == 173)
@@ -261,6 +260,7 @@ namespace Magic.Framework
             {
                 if (!Mod.Data.Players.ContainsKey(farmer.Key))
                     continue;
+
                 Mod.Data.Players[farmer.Key].SpellBook.Owner = farmer.Value;
             }
         }
@@ -458,20 +458,22 @@ namespace Magic.Framework
             EvacSpell.OnLocationChanged();
 
             // check events
-            if (e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains(90001) &&
-                 Game1.player.friendshipData.ContainsKey("Wizard") && Game1.player.friendshipData["Wizard"].Points > 750)
+            if (e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains(90001) && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points > 750)
             {
                 string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{9}\"/pause 750/fade 750/end";
-                eventStr = string.Format(eventStr, Mod.Instance.Helper.Translation.Get("event.wizard.1"),
-                                                   Mod.Instance.Helper.Translation.Get("event.wizard.2"),
-                                                   Mod.Instance.Helper.Translation.Get("event.wizard.3"),
-                                                   Mod.Instance.Helper.Translation.Get("event.wizard.4"),
-                                                   Mod.Instance.Helper.Translation.Get("event.wizard.5"),
-                                                   Mod.Instance.Helper.Translation.Get("event.wizard.6"),
-                                                   Mod.Instance.Helper.Translation.Get("event.wizard.7"),
-                                                   Mod.Instance.Helper.Translation.Get("event.wizard.8"),
-                                                   Mod.Instance.Helper.Translation.Get("event.wizard.9"),
-                                                   Mod.Instance.Helper.Translation.Get("event.wizard.abovehead"));
+                eventStr = string.Format(
+                    eventStr,
+                    Mod.Instance.Helper.Translation.Get("event.wizard.1"),
+                    Mod.Instance.Helper.Translation.Get("event.wizard.2"),
+                    Mod.Instance.Helper.Translation.Get("event.wizard.3"),
+                    Mod.Instance.Helper.Translation.Get("event.wizard.4"),
+                    Mod.Instance.Helper.Translation.Get("event.wizard.5"),
+                    Mod.Instance.Helper.Translation.Get("event.wizard.6"),
+                    Mod.Instance.Helper.Translation.Get("event.wizard.7"),
+                    Mod.Instance.Helper.Translation.Get("event.wizard.8"),
+                    Mod.Instance.Helper.Translation.Get("event.wizard.9"),
+                    Mod.Instance.Helper.Translation.Get("event.wizard.abovehead")
+                );
                 e.NewLocation.currentEvent = new Event(eventStr, 90001);
                 Game1.eventUp = true;
                 Game1.displayHUD = false;

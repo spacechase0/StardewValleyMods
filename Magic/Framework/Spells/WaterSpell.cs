@@ -34,11 +34,11 @@ namespace Magic.Framework.Spells
                         return null;
 
                     Vector2 pos = new Vector2(ix, iy);
-                    if (!loc.terrainFeatures.ContainsKey(pos))
+
+                    if (!loc.terrainFeatures.TryGetValue(pos, out TerrainFeature feature) || feature is not HoeDirt dirt)
                         continue;
 
-                    HoeDirt dirt = loc.terrainFeatures[pos] as HoeDirt;
-                    if (dirt == null || dirt.state.Value != HoeDirt.dry)
+                    if (dirt.state.Value != HoeDirt.dry)
                         continue;
 
                     dirt.state.Value = HoeDirt.watered;

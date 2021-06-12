@@ -249,13 +249,12 @@ namespace TheftOfTheWinterStar
                                 for (int iy = -2; iy <= 2; ++iy)
                                 {
                                     var key = new Vector2(pair.Key.X + ix, pair.Key.Y + iy);
-                                    if (!loc.terrainFeatures.ContainsKey(key))
+                                    if (!loc.terrainFeatures.TryGetValue(key, out TerrainFeature feature))
                                         continue;
-                                    var tf = loc.terrainFeatures[key];
-                                    if (tf is HoeDirt hd)
+                                    if (feature is HoeDirt dirt)
                                     {
-                                        hd.state.Value = HoeDirt.watered;
-                                        hd.updateNeighbors(loc, key);
+                                        dirt.state.Value = HoeDirt.watered;
+                                        dirt.updateNeighbors(loc, key);
                                     }
                                 }
                             }
@@ -436,9 +435,8 @@ namespace TheftOfTheWinterStar
             decoSpots.Add("Backwoods", new Vector2[] { new(40, 30), new(32, 31), new(25, 29) });
             decoSpots.Add("Tunnel", new Vector2[] { new(33, 10), new(23, 9), new(10, 8) });
 
-            if (decoSpots.ContainsKey(e.NewLocation.Name))
+            if (decoSpots.TryGetValue(e.NewLocation.Name, out Vector2[] spots))
             {
-                var spots = decoSpots[e.NewLocation.Name];
                 if (Game1.currentSeason == "winter" && Game1.dayOfMonth < 25 && !this.SaveData.BeatBoss)
                 {
                     TileSheet ts = null;

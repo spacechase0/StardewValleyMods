@@ -70,12 +70,13 @@ namespace MoreRings.Framework
                     }
                     else
                     {
-                        if (!TrueSight.DrawObjs.ContainsKey(doDraw))
+                        if (!TrueSight.DrawObjs.TryGetValue(doDraw, out SObject drawObj))
                         {
-                            TrueSight.DrawObjs.Add(doDraw, new SObject(new Vector2(0, 0), doDraw, 1));
+                            drawObj = new SObject(new Vector2(0, 0), doDraw, 1);
+                            TrueSight.DrawObjs.Add(doDraw, drawObj);
                         }
-                        var dobj = TrueSight.DrawObjs[doDraw];
-                        dobj.drawInMenu(b, Game1.GlobalToLocal(Game1.viewport, new Vector2(pos.X * 64, pos.Y * 64)), 0.8f, 0.5f, 1, StackDrawType.Hide, Color.White, false);
+
+                        drawObj.drawInMenu(b, Game1.GlobalToLocal(Game1.viewport, new Vector2(pos.X * 64, pos.Y * 64)), 0.8f, 0.5f, 1, StackDrawType.Hide, Color.White, false);
                     }
                 }
             }
@@ -88,11 +89,14 @@ namespace MoreRings.Framework
                     {
                         if (il.IsBuriedNutLocation(new Point(ix, iy)) && !Game1.netWorldState.Value.FoundBuriedNuts.ContainsKey($"{il.NameOrUniqueName}_{ix}_{iy}"))
                         {
-                            if (!TrueSight.DrawObjs.ContainsKey(73))
-                                TrueSight.DrawObjs.Add(73, new SObject(new Vector2(0, 0), 73, 1));
-                            var dobj = TrueSight.DrawObjs[73];
+                            if (!TrueSight.DrawObjs.TryGetValue(73, out SObject drawObj))
+                            {
+                                drawObj = new SObject(new Vector2(0, 0), 73, 1);
+                                TrueSight.DrawObjs.Add(73, drawObj);
+                            }
+
                             var pos = new Vector2(ix, iy);
-                            dobj.drawInMenu(b, Game1.GlobalToLocal(Game1.viewport, new Vector2(pos.X * 64, pos.Y * 64)), 0.8f, 0.5f, 1, StackDrawType.Hide, Color.White, false);
+                            drawObj.drawInMenu(b, Game1.GlobalToLocal(Game1.viewport, new Vector2(pos.X * 64, pos.Y * 64)), 0.8f, 0.5f, 1, StackDrawType.Hide, Color.White, false);
                         }
                     }
                 }
@@ -380,7 +384,7 @@ namespace MoreRings.Framework
             }
             if (random.NextDouble() < 0.2 && !(Game1.currentLocation is Farm))
                 objectIndex = 102;
-            if (objectIndex == 102 && who.archaeologyFound.ContainsKey(102) && who.archaeologyFound[102][0] >= 21)
+            if (objectIndex == 102 && who.archaeologyFound.TryGetValue(102, out int[] archeologyValues) && archeologyValues[0] >= 21)
                 objectIndex = 770;
             if (objectIndex != -1)
             {
@@ -417,9 +421,9 @@ namespace MoreRings.Framework
                 //*/
 
                 Dictionary<string, string> dictionary = Game1.content.Load<Dictionary<string, string>>("Data\\Locations");
-                if (!dictionary.ContainsKey(Game1.currentLocation.name))
+                if (!dictionary.TryGetValue(Game1.currentLocation.name, out string rawLocationData))
                     return -1;
-                string[] strArray = dictionary[Game1.currentLocation.Name].Split('/')[8].Split(' ');
+                string[] strArray = rawLocationData.Split('/')[8].Split(' ');
                 if (strArray.Length == 0 || strArray[0].Equals("-1"))
                     return -1;
                 int index1 = 0;
@@ -428,9 +432,9 @@ namespace MoreRings.Framework
                     if (random.NextDouble() <= Convert.ToDouble(strArray[index1 + 1]))
                     {
                         int index2 = Convert.ToInt32(strArray[index1]);
-                        if (Game1.objectInformation.ContainsKey(index2))
+                        if (Game1.objectInformation.TryGetValue(index2, out string objData))
                         {
-                            if (Game1.objectInformation[index2].Split('/')[3].Contains("Arch") || index2 == 102)
+                            if (objData.Split('/')[3].Contains("Arch") || index2 == 102)
                             {
                                 if (index2 == 102 && Game1.netWorldState.Value.LostBooksFound.Value >= 21)
                                     index2 = 770;

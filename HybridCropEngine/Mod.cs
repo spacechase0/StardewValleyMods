@@ -129,7 +129,7 @@ namespace HybridCropEngine
             return ret;
         }
 
-        private void GrowHybrids(GameLocation loc, Dictionary<int, HybridCropData> hybrids, Dictionary<ulong, int> hybridIndex, Dictionary<int, int> cropSeedIndex)
+        private void GrowHybrids(GameLocation loc, Dictionary<int, HybridCropData> hybrids, Dictionary<ulong, int> hybridIndexes, Dictionary<int, int> cropSeedIndex)
         {
             int baseSeed = loc.NameOrUniqueName.GetHashCode();
             baseSeed ^= (int)Game1.uniqueIDForThisGame;
@@ -139,7 +139,7 @@ namespace HybridCropEngine
             {
                 for (int iy = 0; iy < loc.Map.Layers[0].LayerSize.Height; ++iy)
                 {
-                    Func<int, int, HoeDirt> getHoedirt = (x, y) => (loc.terrainFeatures.ContainsKey(new Vector2(ix + x, iy + y)) ? (loc.terrainFeatures[new Vector2(ix + x, iy + y)] as HoeDirt) : null);
+                    Func<int, int, HoeDirt> getHoedirt = (x, y) => (loc.terrainFeatures.TryGetValue(new Vector2(ix + x, iy + y), out TerrainFeature feature) ? feature as HoeDirt : null);
 
                     HoeDirt[] dirts = new[]
                     {
@@ -207,17 +207,17 @@ namespace HybridCropEngine
                         ulong cb = (ulong)combo[1].crop.rowInSpriteSheet.Value;
                         ulong code = (ca << 32) | cb;
 
-                        if (!hybridIndex.ContainsKey(code))
+                        if (!hybridIndexes.TryGetValue(code, out int index))
                         {
                             //Log.trace( "No hybrid for " + ca + "/" + cb );
                             continue;
                         }
 
-                        var hybridData = hybrids[hybridIndex[code]];
+                        var hybridData = hybrids[index];
                         if (r.NextDouble() < hybridData.Chance)
                         {
                             //Log.trace( "Making hybrid @ " + ix + " " + iy );
-                            dirts[4].crop = new Crop(cropSeedIndex[hybridIndex[code]], ix, iy);
+                            dirts[4].crop = new Crop(cropSeedIndex[index], ix, iy);
                             break;
                         }
                     }

@@ -101,10 +101,11 @@ namespace JsonAssets.Framework
                 return new string[0];
 
             if (input == "")
-                return this.Ids.Values.Select((i) => i.ToString()).ToArray<string>();
-            if (!this.Ids.ContainsKey(input))
-                return new string[0];
-            return new[] {this.Ids[input].ToString() };
+                return this.Ids.Values.Select(p => p.ToString()).ToArray();
+
+            return this.Ids.TryGetValue(input, out int value)
+                ? new[] { value.ToString() }
+                : new string[0];
         }
 
         protected override void UpdateContextImpl()
@@ -151,10 +152,11 @@ namespace JsonAssets.Framework
                 return new string[0];
 
             if (input == "")
-                return this.Tilesheets.Values.Select((i) => i.ToString()).ToArray<string>();
-            if (!this.Tilesheets.ContainsKey(input) || string.IsNullOrEmpty(this.Tilesheets[input]))
-                return new string[0];
-            return new[] { this.Tilesheets[input].ToString() };
+                return this.Tilesheets.Values.Select(p => p.ToString()).ToArray();
+
+            return this.Tilesheets.TryGetValue(input, out string value) && !string.IsNullOrEmpty(value)
+                ? new[] { value }
+                : new string[0];
         }
 
         public override bool UpdateContext()
@@ -230,10 +232,11 @@ namespace JsonAssets.Framework
                 return new string[0];
 
             if (input == "")
-                return this.Coordinates.Values.Select((i) => i.ToString()).ToArray<string>();
-            if (!this.Coordinates.ContainsKey(input))
-                return new string[0];
-            return new[] { (this.Coordinates[input]/*-(coordinateIsX?0:16)*/).ToString() };
+                return this.Coordinates.Values.Select(p => p.ToString()).ToArray();
+
+            return this.Coordinates.TryGetValue(input, out int value)
+                ? new[] { value.ToString() }
+                : new string[0];
         }
 
         public override bool UpdateContext()

@@ -9,7 +9,6 @@ using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Network;
 using StardewValley.Objects;
 using SObject = StardewValley.Object;
 
@@ -95,7 +94,9 @@ namespace JsonAssets.Patches
                             }
                         }
 
-                        var tileObj = l.objects.ContainsKey(tile) ? l.objects[tile] : null;
+                        if (!l.objects.TryGetValue(tile, out SObject tileObj))
+                            tileObj = null;
+
                         if (isTree)
                         {
                             __result = tileObj == null && !l.isTileOccupiedForPlacement(tile, __instance);

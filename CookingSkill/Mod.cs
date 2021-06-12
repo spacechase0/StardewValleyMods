@@ -40,12 +40,10 @@ namespace CookingSkill
         {
             if (recipe.isCookingRecipe && item is SObject obj)
             {
-                int amtCrafted = 0;
-                if (Game1.player.recipesCooked.ContainsKey(obj.ParentSheetIndex))
-                {
-                    amtCrafted = Game1.player.recipesCooked[obj.ParentSheetIndex];
-                }
-                Random rand = new Random((int)(Game1.stats.daysPlayed + Game1.uniqueIDForThisGame + (uint)obj.ParentSheetIndex + (uint)amtCrafted));
+                if (!Game1.player.recipesCooked.TryGetValue(obj.ParentSheetIndex, out int timesCooked))
+                    timesCooked = 0;
+
+                Random rand = new Random((int)(Game1.stats.daysPlayed + Game1.uniqueIDForThisGame + (uint)obj.ParentSheetIndex + (uint)timesCooked));
 
                 obj.Edibility = (int)(obj.Edibility * Mod.GetEdibilityMultiplier());
 

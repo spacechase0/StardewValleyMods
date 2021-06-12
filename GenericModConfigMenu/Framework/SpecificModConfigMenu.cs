@@ -272,13 +272,13 @@ namespace GenericModConfigMenu.Framework
                         {
                             section = (int)(baseRectPos.Y + imgSize.Y / t.Scale) - baseY;
                         }
-                        var img = new Image()
+                        var img = new Image
                         {
                             Texture = tex,
                             TextureRect = new Rectangle((int)baseRectPos.X, baseY, (int)imgSize.X / t.Scale, section),
                             Scale = t.Scale,
+                            LocalPosition = localPos
                         };
-                        img.LocalPosition = localPos;
                         texs.Add(img);
                         this.Table.AddRow(new Element[] { img });
                     }

@@ -95,12 +95,12 @@ namespace CustomBuildings
                     var b = farm.buildings[i];
 
                     // This is probably a new building if it hasn't been converted yet.
-                    if (this.Buildings.ContainsKey(b.buildingType.Value) && !(b is Coop))
+                    if (this.Buildings.TryGetValue(b.buildingType.Value, out BuildingData buildingData) && !(b is Coop))
                     {
                         farm.buildings[i] = new Coop(new BluePrint(b.buildingType), new Vector2(b.tileX, b.tileY));
                         farm.buildings[i].indoors.Value = b.indoors.Value;
                         farm.buildings[i].load();
-                        (farm.buildings[i].indoors.Value as AnimalHouse).animalLimit.Value = this.Buildings[b.buildingType.Value].MaxOccupants;
+                        (farm.buildings[i].indoors.Value as AnimalHouse).animalLimit.Value = buildingData.MaxOccupants;
                     }
                 }
             }

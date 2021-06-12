@@ -35,8 +35,8 @@ namespace SpaceShared
             baseTex.GetData(cols);
             for (int i = 0; i < cols.Length; ++i)
             {
-                if (colMap.ContainsKey(cols[i]))
-                    cols[i] = colMap[cols[i]];
+                if (colMap.TryGetValue(cols[i], out Color color))
+                    cols[i] = color;
             }
 
             var newTex = new Texture2D(Game1.graphics.GraphicsDevice, baseTex.Width, baseTex.Height);

@@ -6,6 +6,7 @@ using StardewValley;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
+using SObject = StardewValley.Object;
 
 namespace Magic.Framework.Spells
 {
@@ -41,9 +42,8 @@ namespace Magic.Framework.Spells
 
                     Vector2 pos = new Vector2(ix, iy);
 
-                    if (loc.objects.ContainsKey(pos))
+                    if (loc.objects.TryGetValue(pos, out SObject obj))
                     {
-                        var obj = loc.objects[pos];
                         if (obj.performToolAction(dummyAxe, loc))
                         {
                             if (obj.Type == "Crafting" && obj.Fragility != 2)
@@ -68,20 +68,19 @@ namespace Magic.Framework.Spells
                     // Trees
                     if (level >= 2)
                     {
-                        if (loc.terrainFeatures.ContainsKey(pos) && !(loc.terrainFeatures[pos] is HoeDirt))
+                        if (loc.terrainFeatures.TryGetValue(pos, out TerrainFeature feature) && !(feature is HoeDirt))
                         {
-                            TerrainFeature tf = loc.terrainFeatures[pos];
-                            if (tf is Tree)
+                            if (feature is Tree)
                             {
                                 player.AddMana(-3);
                             }
-                            if (tf.performToolAction(dummyAxe, 0, pos, loc) || tf is Grass || (tf is Tree && tf.performToolAction(dummyAxe, 0, pos, loc)))
+                            if (feature.performToolAction(dummyAxe, 0, pos, loc) || feature is Grass || (feature is Tree && feature.performToolAction(dummyAxe, 0, pos, loc)))
                             {
-                                if (tf is Tree)
+                                if (feature is Tree)
                                     player.AddCustomSkillExperience(Magic.Skill, 5);
                                 loc.terrainFeatures.Remove(pos);
                             }
-                            if (tf is Grass && loc is Farm)
+                            if (feature is Grass && loc is Farm)
                             {
                                 (loc as Farm).tryToAddHay(1);
                                 Game1.playSound("swordswipe");

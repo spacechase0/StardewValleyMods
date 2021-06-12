@@ -651,9 +651,11 @@ namespace SurfingFestival
                         Game1.CurrentEvent.playerControlSequence = false;
                         Game1.CurrentEvent.playerControlSequenceID = null;
                         var festData = Mod.Instance.Helper.Reflection.GetField<Dictionary<string, string>>(Game1.CurrentEvent, "festivalData").GetValue();
-                        string winDialog = festData.ContainsKey(Mod.RaceWinner + "Win") ? festData[Mod.RaceWinner + "Win"] : null;
-                        if (winDialog == null)
-                            winDialog = festData["FarmerWin"].Replace("{{winner}}", racer.Name);
+
+                        if (!festData.TryGetValue($"{Mod.RaceWinner}Win", out string winDialog))
+                            winDialog = null;
+                        winDialog ??= festData["FarmerWin"].Replace("{{winner}}", racer.Name);
+
                         Game1.CurrentEvent.eventCommands = festData["afterSurfingRace"].Replace("{{winDialog}}", winDialog).Split('/');
                         Game1.CurrentEvent.currentCommand = 0;
 
@@ -947,8 +949,10 @@ namespace SurfingFestival
         private static int PrevRacerFrame = -1;
         public static void DrawSurfboard(Character instance, SpriteBatch b)
         {
-            if (instance is NPC npc && !Mod.Racers.Contains(instance.Name) ||
-                 instance is Farmer farmer && !Mod.Racers.Contains("farmer" + Utility.getFarmerNumberFromFarmer(farmer)))
+            var npc = instance as NPC;
+            var farmer = instance as Farmer;
+
+            if ((npc != null && !Mod.Racers.Contains(instance.Name)) || (farmer != null && !Mod.Racers.Contains($"farmer{Utility.getFarmerNumberFromFarmer(farmer)}")))
                 return;
 
             bool player = instance is Farmer;
@@ -985,7 +989,7 @@ namespace SurfingFestival
 
             if (state.StunTimer >= 0)
             {
-                if (instance is NPC)
+                if (npc != null)
                 {
                     var shockedFrames = new Dictionary<string, int>();
                     shockedFrames.Add("Shane", 18);
@@ -993,42 +997,42 @@ namespace SurfingFestival
                     shockedFrames.Add("Maru", 27);
                     shockedFrames.Add("Emily", 26);
 
-                    Mod.PrevRacerFrame = (instance as NPC).Sprite.CurrentFrame;
-                    if (shockedFrames.ContainsKey(instance.Name))
-                    {
-                        (instance as NPC).Sprite.CurrentFrame = shockedFrames[instance.Name];
-                    }
+                    Mod.PrevRacerFrame = npc.Sprite.CurrentFrame;
+                    if (shockedFrames.TryGetValue(instance.Name, out int frame))
+                        npc.Sprite.CurrentFrame = frame;
                 }
-                else if (instance is Farmer)
+                else if (farmer != null)
                 {
-                    Mod.PrevRacerFrame = (instance as Farmer).FarmerSprite.CurrentFrame;
-                    (instance as Farmer).FarmerSprite.setCurrentSingleFrame(94, 1);
+                    Mod.PrevRacerFrame = farmer.FarmerSprite.CurrentFrame;
+                    farmer.FarmerSprite.setCurrentSingleFrame(94, 1);
                 }
             }
         }
 
         public static void DrawSurfingStatuses(Character instance, SpriteBatch b)
         {
-            if (instance is NPC npc && !Mod.Racers.Contains(instance.Name) ||
-                 instance is Farmer farmer && !Mod.Racers.Contains("farmer" + Utility.getFarmerNumberFromFarmer(farmer)))
+            NPC npc = instance as NPC;
+            Farmer farmer = instance as Farmer;
+
+            if ((npc != null && !Mod.Racers.Contains(instance.Name)) || (farmer != null && !Mod.Racers.Contains("farmer" + Utility.getFarmerNumberFromFarmer(farmer))))
                 return;
 
             var state = Mod.RacerState[instance is NPC ? instance.Name : ("farmer" + Utility.getFarmerNumberFromFarmer(instance as Farmer))];
             if (state.StunTimer >= 0)
             {
                 int ox = 0, oy = 0;
-                if (instance is Farmer)
+                if (farmer != null)
                 {
                     oy = -6 * Game1.pixelZoom;
                 }
                 b.Draw(Mod.StunTex, Game1.GlobalToLocal(new Vector2(instance.Position.X + ox, instance.Position.Y - 17 * Game1.pixelZoom + oy)), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, instance.GetBoundingBox().Center.Y / 10000f + 0.0003f);
 
-                if (instance is NPC)
+                if (npc != null)
                 {
-                    (instance as NPC).Sprite.CurrentFrame = Mod.PrevRacerFrame;
+                    npc.Sprite.CurrentFrame = Mod.PrevRacerFrame;
                     Mod.PrevRacerFrame = -1;
                 }
-                else if (instance is Farmer)
+                else if (farmer != null)
                 {
                     //(__instance as Farmer).FarmerSprite.CurrentFrame = prevRacerFrame;
                     Mod.PrevRacerFrame = -1;

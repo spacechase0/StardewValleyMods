@@ -111,11 +111,11 @@ namespace MultiFertilizer.Patches
                 {
                     return true;
                 }
-                if (l.terrainFeatures.ContainsKey(tile) && l.terrainFeatures[tile] is HoeDirt && (l.terrainFeatures[tile] as HoeDirt).modData.ContainsKey(key))
+                if (l.terrainFeatures.TryGetValue(tile, out TerrainFeature feature) && feature is HoeDirt dirt && dirt.modData.ContainsKey(key))
                 {
                     return true;
                 }
-                if (l.objects.ContainsKey(tile) && l.objects[tile] is IndoorPot && (l.objects[tile] as IndoorPot).hoeDirt.Value.modData.ContainsKey(key))
+                if (l.objects.TryGetValue(tile, out SObject obj) && obj is IndoorPot pot && pot.hoeDirt.Value.modData.ContainsKey(key))
                 {
                     return true;
                 }

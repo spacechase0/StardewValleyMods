@@ -102,8 +102,8 @@ namespace JsonAssets
             }
             foreach (var newId in newIds)
             {
-                if (ret.ContainsKey(newId.Key))
-                    ret[newId.Key] = new KeyValuePair<int, int>(ret[newId.Key].Key, newId.Value);
+                if (ret.TryGetValue(newId.Key, out var pair))
+                    ret[newId.Key] = new KeyValuePair<int, int>(pair.Key, newId.Value);
                 else
                     ret.Add(newId.Key, new KeyValuePair<int, int>(-1, newId.Value));
             }
@@ -290,14 +290,14 @@ namespace JsonAssets
                 this.MyRings.Add(obj);
 
             // Duplicate check
-            if (this.DupObjects.ContainsKey(obj.Name))
-                Log.Error($"Duplicate object: {obj.Name} just added by {source.Name}, already added by {this.DupObjects[obj.Name].Name}!");
+            if (this.DupObjects.TryGetValue(obj.Name, out IManifest prevManifest))
+                Log.Error($"Duplicate object: {obj.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
                 this.DupObjects[obj.Name] = source;
 
-            if (!this.ObjectsByContentPack.ContainsKey(source))
-                this.ObjectsByContentPack.Add(source, new List<string>());
-            this.ObjectsByContentPack[source].Add(obj.Name);
+            if (!this.ObjectsByContentPack.TryGetValue(source, out List<string> addedNames))
+                addedNames = this.ObjectsByContentPack[source] = new();
+            addedNames.Add(obj.Name);
         }
 
         public void RegisterCrop(IManifest source, CropData crop, Texture2D seedTex)
@@ -383,20 +383,20 @@ namespace JsonAssets
             }
 
             // Duplicate check
-            if (this.DupCrops.ContainsKey(crop.Name))
-                Log.Error($"Duplicate crop: {crop.Name} just added by {source.Name}, already added by {this.DupCrops[crop.Name].Name}!");
+            if (this.DupCrops.TryGetValue(crop.Name, out IManifest prevManifest))
+                Log.Error($"Duplicate crop: {crop.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
                 this.DupCrops[crop.Name] = source;
 
             this.Objects.Add(crop.seed);
 
-            if (!this.CropsByContentPack.ContainsKey(source))
-                this.CropsByContentPack.Add(source, new List<string>());
-            this.CropsByContentPack[source].Add(crop.Name);
+            if (!this.CropsByContentPack.TryGetValue(source, out List<string> addedCrops))
+                addedCrops = this.CropsByContentPack[source] = new();
+            addedCrops.Add(crop.Name);
 
-            if (!this.ObjectsByContentPack.ContainsKey(source))
-                this.ObjectsByContentPack.Add(source, new List<string>());
-            this.ObjectsByContentPack[source].Add(crop.seed.Name);
+            if (!this.ObjectsByContentPack.TryGetValue(source, out List<string> addedSeeds))
+                addedSeeds = this.ObjectsByContentPack[source] = new();
+            addedSeeds.Add(crop.seed.Name);
         }
 
         public void RegisterFruitTree(IManifest source, FruitTreeData tree, Texture2D saplingTex)
@@ -446,14 +446,14 @@ namespace JsonAssets
             }
 
             // Duplicate check
-            if (this.DupFruitTrees.ContainsKey(tree.Name))
-                Log.Error($"Duplicate fruit tree: {tree.Name} just added by {source.Name}, already added by {this.DupFruitTrees[tree.Name].Name}!");
+            if (this.DupFruitTrees.TryGetValue(tree.Name, out IManifest prevManifest))
+                Log.Error($"Duplicate fruit tree: {tree.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
                 this.DupFruitTrees[tree.Name] = source;
 
-            if (!this.FruitTreesByContentPack.ContainsKey(source))
-                this.FruitTreesByContentPack.Add(source, new List<string>());
-            this.FruitTreesByContentPack[source].Add(tree.Name);
+            if (!this.FruitTreesByContentPack.TryGetValue(source, out List<string> addedNames))
+                addedNames = this.FruitTreesByContentPack[source] = new List<string>();
+            addedNames.Add(tree.Name);
         }
 
         public void RegisterBigCraftable(IManifest source, BigCraftableData craftable)
@@ -508,14 +508,14 @@ namespace JsonAssets
             }
 
             // Duplicate check
-            if (this.DupBigCraftables.ContainsKey(craftable.Name))
-                Log.Error($"Duplicate big craftable: {craftable.Name} just added by {source.Name}, already added by {this.DupBigCraftables[craftable.Name].Name}!");
+            if (this.DupBigCraftables.TryGetValue(craftable.Name, out IManifest prevManifest))
+                Log.Error($"Duplicate big craftable: {craftable.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
                 this.DupBigCraftables[craftable.Name] = source;
 
-            if (!this.BigCraftablesByContentPack.ContainsKey(source))
-                this.BigCraftablesByContentPack.Add(source, new List<string>());
-            this.BigCraftablesByContentPack[source].Add(craftable.Name);
+            if (!this.BigCraftablesByContentPack.TryGetValue(source, out List<string> addedNames))
+                addedNames = this.BigCraftablesByContentPack[source] = new();
+            addedNames.Add(craftable.Name);
         }
 
         public void RegisterHat(IManifest source, HatData hat)
@@ -534,14 +534,14 @@ namespace JsonAssets
             }
 
             // Duplicate check
-            if (this.DupHats.ContainsKey(hat.Name))
-                Log.Error($"Duplicate hat: {hat.Name} just added by {source.Name}, already added by {this.DupHats[hat.Name].Name}!");
+            if (this.DupHats.TryGetValue(hat.Name, out IManifest prevManifest))
+                Log.Error($"Duplicate hat: {hat.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
                 this.DupHats[hat.Name] = source;
 
-            if (!this.HatsByContentPack.ContainsKey(source))
-                this.HatsByContentPack.Add(source, new List<string>());
-            this.HatsByContentPack[source].Add(hat.Name);
+            if (!this.HatsByContentPack.TryGetValue(source, out List<string> addedNames))
+                addedNames = this.HatsByContentPack[source] = new();
+            addedNames.Add(hat.Name);
         }
 
         public void RegisterWeapon(IManifest source, WeaponData weapon)
@@ -573,14 +573,14 @@ namespace JsonAssets
             }
 
             // Duplicate check
-            if (this.DupWeapons.ContainsKey(weapon.Name))
-                Log.Error($"Duplicate weapon: {weapon.Name} just added by {source.Name}, already added by {this.DupWeapons[weapon.Name].Name}!");
+            if (this.DupWeapons.TryGetValue(weapon.Name, out IManifest prevManifest))
+                Log.Error($"Duplicate weapon: {weapon.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
                 this.DupWeapons[weapon.Name] = source;
 
-            if (!this.WeaponsByContentPack.ContainsKey(source))
-                this.WeaponsByContentPack.Add(source, new List<string>());
-            this.WeaponsByContentPack[source].Add(weapon.Name);
+            if (!this.WeaponsByContentPack.TryGetValue(source, out List<string> addedNames))
+                addedNames = this.WeaponsByContentPack[source] = new();
+            addedNames.Add(weapon.Name);
         }
 
         public void RegisterShirt(IManifest source, ShirtData shirt)
@@ -588,14 +588,14 @@ namespace JsonAssets
             this.Shirts.Add(shirt);
 
             // Duplicate check
-            if (this.DupShirts.ContainsKey(shirt.Name))
-                Log.Error($"Duplicate shirt: {shirt.Name} just added by {source.Name}, already added by {this.DupShirts[shirt.Name].Name}!");
+            if (this.DupShirts.TryGetValue(shirt.Name, out IManifest prevManifest))
+                Log.Error($"Duplicate shirt: {shirt.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
                 this.DupShirts[shirt.Name] = source;
 
-            if (!this.ClothingByContentPack.ContainsKey(source))
-                this.ClothingByContentPack.Add(source, new List<string>());
-            this.ClothingByContentPack[source].Add(shirt.Name);
+            if (!this.ClothingByContentPack.TryGetValue(source, out List<string> addedNames))
+                addedNames = this.ClothingByContentPack[source] = new();
+            addedNames.Add(shirt.Name);
         }
 
         public void RegisterPants(IManifest source, PantsData pants)
@@ -603,14 +603,14 @@ namespace JsonAssets
             this.Pants.Add(pants);
 
             // Duplicate check
-            if (this.DupPants.ContainsKey(pants.Name))
-                Log.Error($"Duplicate pants: {pants.Name} just added by {source.Name}, already added by {this.DupPants[pants.Name].Name}!");
+            if (this.DupPants.TryGetValue(pants.Name, out IManifest prevManifest))
+                Log.Error($"Duplicate pants: {pants.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
                 this.DupPants[pants.Name] = source;
 
-            if (!this.ClothingByContentPack.ContainsKey(source))
-                this.ClothingByContentPack.Add(source, new List<string>());
-            this.ClothingByContentPack[source].Add(pants.Name);
+            if (!this.ClothingByContentPack.TryGetValue(source, out List<string> addedNames))
+                addedNames = this.ClothingByContentPack[source] = new();
+            addedNames.Add(pants.Name);
         }
 
         public void RegisterTailoringRecipe(IManifest source, TailoringRecipeData recipe)
@@ -648,14 +648,14 @@ namespace JsonAssets
             }
 
             // Duplicate check
-            if (this.DupBoots.ContainsKey(boots.Name))
-                Log.Error($"Duplicate boots: {boots.Name} just added by {source.Name}, already added by {this.DupBoots[boots.Name].Name}!");
+            if (this.DupBoots.TryGetValue(boots.Name, out IManifest prevManifest))
+                Log.Error($"Duplicate boots: {boots.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
                 this.DupBoots[boots.Name] = source;
 
-            if (!this.BootsByContentPack.ContainsKey(source))
-                this.BootsByContentPack.Add(source, new List<string>());
-            this.BootsByContentPack[source].Add(boots.Name);
+            if (!this.BootsByContentPack.TryGetValue(source, out List<string> addedNames))
+                addedNames = this.BootsByContentPack[source] = new();
+            addedNames.Add(boots.Name);
         }
 
         public void RegisterForgeRecipe(IManifest source, ForgeRecipeData recipe)
@@ -1362,8 +1362,8 @@ namespace JsonAssets
                 return (int)(long)data;
             else
             {
-                if (this.ObjectIds.ContainsKey((string)data))
-                    return this.ObjectIds[(string)data];
+                if (this.ObjectIds.TryGetValue((string)data, out int id))
+                    return id;
 
                 foreach (var obj in Game1.objectInformation)
                 {
@@ -1382,8 +1382,8 @@ namespace JsonAssets
                 return (int)(long)data;
             else
             {
-                if (this.ClothingIds.ContainsKey((string)data))
-                    return this.ClothingIds[(string)data];
+                if (this.ClothingIds.TryGetValue((string)data, out int id))
+                    return id;
 
                 foreach (var obj in Game1.clothingInformation)
                 {
@@ -2084,7 +2084,8 @@ namespace JsonAssets
             {
                 if (this.OrigObjects.ContainsKey(entry))
                     continue;
-                else if (this.OldObjectIds.Values.Contains(entry))
+
+                if (this.OldObjectIds.Values.Contains(entry))
                 {
                     string key = this.OldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
                     bool isRing = this.MyRings.FirstOrDefault(r => r.Id == entry) != null;
@@ -2092,12 +2093,12 @@ namespace JsonAssets
                     bool hideShippable = this.Objects.FirstOrDefault(o => o.Id == entry)?.HideFromShippingCollection ?? true;
 
                     toRemove.Add(entry);
-                    if (this.ObjectIds.ContainsKey(key))
+                    if (this.ObjectIds.TryGetValue(key, out int id))
                     {
                         if (removeUnshippable && (!canShip || hideShippable || isRing))
                             ;// Log.warn("Found unshippable");
                         else
-                            toAdd.Add(this.ObjectIds[key], dict[entry]);
+                            toAdd.Add(id, dict[entry]);
                     }
                 }
             }
@@ -2126,15 +2127,14 @@ namespace JsonAssets
             {
                 if (this.OrigObjects.ContainsKey(entry))
                     continue;
-                else if (this.OldObjectIds.Values.Contains(entry))
+
+                if (this.OldObjectIds.Values.Contains(entry))
                 {
                     string key = this.OldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
 
                     toRemove.Add(entry);
-                    if (this.ObjectIds.ContainsKey(key))
-                    {
-                        toAdd.Add(this.ObjectIds[key], dict[entry]);
-                    }
+                    if (this.ObjectIds.TryGetValue(key, out int id))
+                        toAdd.Add(id, dict[entry]);
                 }
             }
             foreach (int entry in toRemove)
@@ -2157,9 +2157,9 @@ namespace JsonAssets
                     int curId = id.Value;
                     string key = newIds.FirstOrDefault(x => x.Value == curId).Key;
 
-                    if (oldIds.ContainsKey(key))
+                    if (oldIds.TryGetValue(key, out int oldId))
                     {
-                        id.Value = oldIds[key];
+                        id.Value = oldId;
                         Log.Verbose("Changing ID: " + key + " from ID " + curId + " to " + id.Value);
                         return false;
                     }
@@ -2178,9 +2178,9 @@ namespace JsonAssets
                     int curId = id.Value;
                     string key = oldIds.FirstOrDefault(x => x.Value == curId).Key;
 
-                    if (newIds.ContainsKey(key))
+                    if (newIds.TryGetValue(key, out int newId))
                     {
-                        id.Value = newIds[key];
+                        id.Value = newId;
                         Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id.Value);
                         return false;
                     }
@@ -2208,9 +2208,9 @@ namespace JsonAssets
                     int curId = id;
                     string key = newIds.FirstOrDefault(xTile => xTile.Value == curId).Key;
 
-                    if (oldIds.ContainsKey(key))
+                    if (oldIds.TryGetValue(key, out int oldId))
                     {
-                        id = oldIds[key];
+                        id = oldId;
                         Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id);
                         return false;
                     }
@@ -2229,9 +2229,9 @@ namespace JsonAssets
                     int curId = id;
                     string key = oldIds.FirstOrDefault(x => x.Value == curId).Key;
 
-                    if (newIds.ContainsKey(key))
+                    if (newIds.TryGetValue(key, out int newId))
                     {
-                        id = newIds[key];
+                        id = newId;
                         Log.Verbose("Changing ID: " + key + " from ID " + curId + " to " + id);
                         return false;
                     }

@@ -36,14 +36,16 @@ namespace SpaceCore.Patches
             if (msg.MessageType == 234)
             {
                 string msgType = msg.Reader.ReadString();
-                if (Networking.MessageHandlers.ContainsKey(msgType))
-                    Networking.MessageHandlers[msgType].Invoke(msg);
+                if (Networking.MessageHandlers.TryGetValue(msgType, out var handler))
+                    handler.Invoke(msg);
 
                 if (Game1.IsServer)
                 {
                     foreach (long key in Game1.otherFarmers.Keys)
+                    {
                         if (key != msg.FarmerID)
                             Game1.server.sendMessage(key, 234, Game1.otherFarmers[msg.FarmerID], msg.Data);
+                    }
                 }
             }
 

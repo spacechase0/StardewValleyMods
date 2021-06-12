@@ -49,13 +49,12 @@ namespace LocationLayerTool.Patches
         /// <summary>The method to call before <see cref="Layer.Draw"/>.</summary>
         private static void Before_Draw(Layer __instance, IDisplayDevice displayDevice, xTile.Dimensions.Rectangle mapViewport, Location displayOffset, bool wrapAround, int pixelZoom)
         {
-            if (__instance.Id == "Back" && xTileLayerPatcher.Rendering == 0 && Game1.currentLocation.Map.Properties.ContainsKey("RenderBehind"))
+            if (__instance.Id == "Back" && xTileLayerPatcher.Rendering == 0 && Game1.currentLocation.Map.Properties.TryGetValue("RenderBehind", out PropertyValue renderBehind))
             {
                 xTileLayerPatcher.Rendering++;
                 try
                 {
-                    string prop = Game1.currentLocation.getMapProperty("RenderBehind");
-                    string[] fields = prop.Split(' ');
+                    string[] fields = renderBehind.ToString().Split(' ');
                     string locName = fields[0];
                     int offsetX = 0, offsetY = 0;
                     if (fields.Length >= 3)

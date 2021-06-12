@@ -44,28 +44,29 @@ namespace SpaceCore
 
         public static int GetTileSheetUnitSize(Texture2D tex)
         {
-            if (TileSheetExtensions.ExtendedTextures.ContainsKey(tex))
-                return TileSheetExtensions.ExtendedTextures[tex].UnitSize;
-            return -1;
+            return TileSheetExtensions.ExtendedTextures.TryGetValue(tex, out ExtensionData data)
+                ? data.UnitSize
+                : -1;
         }
 
         public static int GetTileSheetUnitSize(string asset)
         {
-            if (TileSheetExtensions.ExtendedTextureAssets.ContainsKey(asset))
-                return TileSheetExtensions.ExtendedTextureAssets[asset].UnitSize;
-            return -1;
+            return TileSheetExtensions.ExtendedTextureAssets.TryGetValue(asset, out ExtensionData data)
+                ? data.UnitSize
+                : -1;
         }
 
         public static Texture2D GetTileSheet(Texture2D tex, int index)
         {
-            if (!TileSheetExtensions.ExtendedTextures.ContainsKey(tex))
+            if (!TileSheetExtensions.ExtendedTextures.TryGetValue(tex, out ExtensionData data))
                 return tex;
-            var data = TileSheetExtensions.ExtendedTextures[tex];
 
             while (data.Extensions.Count <= index - 1)
                 data.Extensions.Add(new Texture2D(Game1.graphics.GraphicsDevice, tex.Width, 4096));
 
-            return index == 0 ? tex : data.Extensions[index - 1];
+            return index == 0
+                ? tex
+                : data.Extensions[index - 1];
         }
 
         public struct AdjustedTarget
@@ -119,14 +120,18 @@ namespace SpaceCore
         public static void PatchExtendedTileSheet(this IAssetDataForImage asset, Texture2D source, Rectangle? sourceArea = null, Rectangle? targetArea = null, PatchMode patchMode = PatchMode.Replace)
         {
             string assetName = asset.AssetName.Replace('/', '\\');
-            if (!TileSheetExtensions.ExtendedTextureAssets.ContainsKey(assetName) || !targetArea.HasValue)
+            if (!TileSheetExtensions.ExtendedTextureAssets.TryGetValue(assetName, out ExtensionData assetData) || !targetArea.HasValue)
             {
                 asset.PatchImage(source, sourceArea, targetArea, patchMode);
                 return;
             }
-            TileSheetExtensions.ExtendedTextures.Remove(TileSheetExtensions.ExtendedTextureAssets[assetName].BaseTileSheet);
-            TileSheetExtensions.ExtendedTextureAssets[assetName].BaseTileSheet = asset.Data;
-            TileSheetExtensions.ExtendedTextures.Add(TileSheetExtensions.ExtendedTextureAssets[assetName].BaseTileSheet, TileSheetExtensions.ExtendedTextureAssets[assetName]);
+
+            if (assetData.BaseTileSheet != asset.Data)
+            {
+                TileSheetExtensions.ExtendedTextures.Remove(assetData.BaseTileSheet);
+                TileSheetExtensions.ExtendedTextures.Add(asset.Data, assetData);
+                assetData.BaseTileSheet = asset.Data;
+            }
 
             var adjustedTarget = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.Data, targetArea.Value);
             //Log.trace("Tilesheet target:" + adjustedTarget.TileSheet + " " + adjustedTarget.Y);
