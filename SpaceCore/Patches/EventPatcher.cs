@@ -46,20 +46,24 @@ namespace SpaceCore.Patches
         /// <summary>The method to call before <see cref="Event.tryEventCommand"/>.</summary>
         private static bool Before_TryEventCommand(Event __instance, GameLocation location, GameTime time, string[] split)
         {
-            var _eventCommandArgs = SpaceCore.Instance.Helper.Reflection.GetField<object[]>(typeof(Event), "_eventCommandArgs").GetValue();
-            var _commandLookup = SpaceCore.Instance.Helper.Reflection.GetField<Dictionary<string, MethodInfo>>(typeof(Event), "_commandLookup").GetValue();
-
-            _eventCommandArgs[0] = location;
-            _eventCommandArgs[1] = time;
-            _eventCommandArgs[2] = split;
             if (split.Length == 0)
                 return false;
-            if (EventPatcher.CustomCommands.ContainsKey(split[0]))
-                EventPatcher.CustomCommands[split[0]].Invoke(null, new[] { __instance, _eventCommandArgs[0], _eventCommandArgs[1], _eventCommandArgs[2] });
-            else if (_commandLookup.ContainsKey(split[0]))
-                _commandLookup[split[0]].Invoke(__instance, _eventCommandArgs);
+            string name = split[0];
+
+            object[] eventCommandArgs = SpaceCore.Reflection.GetField<object[]>(typeof(Event), "_eventCommandArgs").GetValue();
+            var commandLookup = SpaceCore.Reflection.GetField<Dictionary<string, MethodInfo>>(typeof(Event), "_commandLookup").GetValue();
+
+            if (EventPatcher.CustomCommands.ContainsKey(name))
+                EventPatcher.CustomCommands[name].Invoke(null, new object[] { __instance, location, time, split });
+            else if (commandLookup.ContainsKey(name))
+            {
+                eventCommandArgs[0] = location;
+                eventCommandArgs[1] = time;
+                eventCommandArgs[2] = split;
+                commandLookup[name].Invoke(__instance, eventCommandArgs);
+            }
             else
-                SpaceShared.Log.Warn("ERROR: Invalid command: " + split[0]);
+                Log.Warn($"ERROR: Invalid command: {name}");
 
             return false;
         }
