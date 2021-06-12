@@ -87,7 +87,7 @@ namespace JsonAssets
         private Api Api;
         public override object GetApi()
         {
-            return this.Api ?? (this.Api = new Api(this.LoadData));
+            return this.Api ??= new Api(this.LoadData);
         }
 
         private Dictionary<string, KeyValuePair<int, int>> MakeIdMapping(IDictionary<string, int> oldIds, IDictionary<string, int> newIds)
