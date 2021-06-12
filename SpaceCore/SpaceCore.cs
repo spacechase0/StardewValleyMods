@@ -20,6 +20,7 @@ namespace SpaceCore
     {
         public Configuration Config { get; set; }
         internal static SpaceCore Instance;
+        internal static IReflectionHelper Reflection;
         private HarmonyInstance Harmony;
 
         internal static List<Type> ModTypes = new();
@@ -29,6 +30,7 @@ namespace SpaceCore
         public override void Entry(IModHelper helper)
         {
             SpaceCore.Instance = this;
+            Reflection = Helper.Reflection;
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<Configuration>();
 
@@ -84,7 +86,7 @@ namespace SpaceCore
             }
         }
 
-        private int TickCount;
+        private int TickCount = 0;
         private void OnUpdate(object sender, UpdateTickedEventArgs e)
         {
             TileSheetExtensions.UpdateReferences();
@@ -164,8 +166,9 @@ namespace SpaceCore
                 return;
             }
 
-            var data = new Sleep.Data();
-            data.Location = Game1.currentLocation.Name;
+            var data = new Sleep.Data {
+                Location = Game1.currentLocation.Name
+                };
             if (data.X != -1 && data.Y != -1)
             {
                 data.X = Game1.player.position.X;

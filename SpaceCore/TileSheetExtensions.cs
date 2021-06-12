@@ -212,7 +212,7 @@ namespace SpaceCore
                         return (T)(object)extAsset.Value.Extensions[i];
             }
 
-            return default(T);
+            return default;
         }
     }
 }
