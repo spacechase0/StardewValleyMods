@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
+* Reduced performance impact (thanks to pepoluan!).
 * Internal refactoring.
 * Improved documentation.
 
