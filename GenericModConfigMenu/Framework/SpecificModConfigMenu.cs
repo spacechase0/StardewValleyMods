@@ -15,20 +15,20 @@ namespace GenericModConfigMenu.Framework
 {
     internal class SpecificModConfigMenu : IClickableMenu, IAssetEditor
     {
-        private IManifest Manifest;
-        private bool InGame;
+        private readonly IManifest Manifest;
+        private readonly bool InGame;
 
-        private ModConfig ModConfig;
-        private string CurrPage;
+        private readonly ModConfig ModConfig;
+        private readonly string CurrPage;
         private string PrevPage;
 
         private RootElement Ui = new();
-        private Table Table;
-        private List<Label> OptHovers = new();
+        private readonly Table Table;
+        private readonly List<Label> OptHovers = new();
         public static IClickableMenu ActiveConfigMenu;
 
-        private Dictionary<string, List<Image>> Textures = new();
-        private Queue<string> PendingTexChanges = new();
+        private readonly Dictionary<string, List<Image>> Textures = new();
+        private readonly Queue<string> PendingTexChanges = new();
 
         public bool CanEdit<T>(IAssetInfo asset)
         {

@@ -27,9 +27,9 @@ namespace SpaceCore.Interface
         public ClickableComponent playerPanel;
         private Rectangle walletArea;
         private Rectangle walletIconArea;
-        private Rectangle walletIconAreaSource = new(293, 360, 24, 24);
-        private Rectangle walletIconSource = new(0, 0, 12, 12);
-        private Rectangle skillsTabSource = new(16, 368, 16, 16);
+        private readonly Rectangle walletIconAreaSource = new(293, 360, 24, 24);
+        private readonly Rectangle walletIconSource = new(0, 0, 12, 12);
+        private readonly Rectangle skillsTabSource = new(16, 368, 16, 16);
         private int SkillTabRegionId => Game1.activeClickableMenu is GameMenu ? GameMenu.region_skillsTab : -1;
         private bool IsWalletRightSide => SpaceCore.Instance.Config.WalletOnRightOfSkillPage
             && !SpaceCore.Instance.Helper.ModRegistry.IsLoaded("alphablackwolf.skillPrestige"); // Skill prestige places icons in right-side wallet area
@@ -51,7 +51,7 @@ namespace SpaceCore.Interface
         private string hoverText = "";
         private string hoverTitle = "";
         private int professionImage = -1;
-        private int[] playerPanelFrames = new int[4]
+        private readonly int[] playerPanelFrames = new int[4]
         {
             0,
             1,

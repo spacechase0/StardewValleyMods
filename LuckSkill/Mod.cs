@@ -582,8 +582,8 @@ namespace LuckSkill
         }
 
         private bool HasAllProfessions;
-        private List<int> LuckProfessions5 = new() { Mod.ProfessionDailyLuck, Mod.ProfessionMoreQuests };
-        private List<int> LuckProfessions10 = new() { Mod.ProfessionChanceMaxLuck, Mod.ProfessionNoBadLuck, Mod.ProfessionNightlyEvents, Mod.ProfessionJunimoHelp };
+        private readonly List<int> LuckProfessions5 = new() { Mod.ProfessionDailyLuck, Mod.ProfessionMoreQuests };
+        private readonly List<int> LuckProfessions10 = new() { Mod.ProfessionChanceMaxLuck, Mod.ProfessionNoBadLuck, Mod.ProfessionNightlyEvents, Mod.ProfessionJunimoHelp };
 
         private void CheckForAllProfessions()
         {

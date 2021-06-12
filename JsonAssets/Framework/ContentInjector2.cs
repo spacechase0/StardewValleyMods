@@ -10,7 +10,7 @@ namespace JsonAssets.Framework
     // with vanilla + stuff, our stuff will still get added.
     internal class ContentInjector2 : IAssetEditor
     {
-        private List<string> Files;
+        private readonly List<string> Files;
         public ContentInjector2()
         {
             this.Files = new List<string>(new[]

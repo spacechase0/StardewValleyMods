@@ -7,9 +7,9 @@ namespace PyromancersJourney.Framework.Objects
 {
     internal class LevelWarp : BaseObject
     {
-        private Texture2D Tex;
-        private VertexBuffer Buffer;
-        private int TriCount;
+        private readonly Texture2D Tex;
+        private readonly VertexBuffer Buffer;
+        private readonly int TriCount;
 
         public LevelWarp(World world)
             : base(world)

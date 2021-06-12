@@ -7,11 +7,11 @@ namespace PyromancersJourney.Framework.Objects
 {
     internal class Walls : BaseObject
     {
-        private Texture2D TexInside;
-        private Texture2D TexOutside;
-        private VertexBuffer Buffer;
-        private int TriCount;
-        private bool Outside;
+        private readonly Texture2D TexInside;
+        private readonly Texture2D TexOutside;
+        private readonly VertexBuffer Buffer;
+        private readonly int TriCount;
+        private readonly bool Outside;
 
         public Walls(World world, bool theOutside)
             : base(world)

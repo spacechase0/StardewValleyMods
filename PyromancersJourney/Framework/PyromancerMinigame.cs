@@ -7,7 +7,7 @@ namespace PyromancersJourney.Framework
 {
     internal class PyromancerMinigame : IMinigame
     {
-        private World World = new();
+        private readonly World World = new();
 
         public void changeScreenSize()
         {

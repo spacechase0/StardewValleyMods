@@ -711,15 +711,15 @@ namespace JsonAssets
             });
         }
 
-        private Dictionary<string, IManifest> DupObjects = new();
-        private Dictionary<string, IManifest> DupCrops = new();
-        private Dictionary<string, IManifest> DupFruitTrees = new();
-        private Dictionary<string, IManifest> DupBigCraftables = new();
-        private Dictionary<string, IManifest> DupHats = new();
-        private Dictionary<string, IManifest> DupWeapons = new();
-        private Dictionary<string, IManifest> DupShirts = new();
-        private Dictionary<string, IManifest> DupPants = new();
-        private Dictionary<string, IManifest> DupBoots = new();
+        private readonly Dictionary<string, IManifest> DupObjects = new();
+        private readonly Dictionary<string, IManifest> DupCrops = new();
+        private readonly Dictionary<string, IManifest> DupFruitTrees = new();
+        private readonly Dictionary<string, IManifest> DupBigCraftables = new();
+        private readonly Dictionary<string, IManifest> DupHats = new();
+        private readonly Dictionary<string, IManifest> DupWeapons = new();
+        private readonly Dictionary<string, IManifest> DupShirts = new();
+        private readonly Dictionary<string, IManifest> DupPants = new();
+        private readonly Dictionary<string, IManifest> DupBoots = new();
 
         private readonly Regex SeasonLimiter = new("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private void LoadData(IContentPack contentPack)
@@ -1469,7 +1469,7 @@ namespace JsonAssets
         }
 
         private bool ReverseFixing;
-        private HashSet<string> LocationsFixedAlready = new();
+        private readonly HashSet<string> LocationsFixedAlready = new();
         private void FixIdsEverywhere(bool reverse = false)
         {
             this.ReverseFixing = reverse;

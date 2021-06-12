@@ -24,7 +24,7 @@ namespace SpaceCore
         }
 
         internal static Dictionary<string, ExtensionData> ExtendedTextureAssets = new();
-        private static Dictionary<Texture2D, ExtensionData> ExtendedTextures = new();
+        private static readonly Dictionary<Texture2D, ExtensionData> ExtendedTextures = new();
 
         internal static void Init()
         {

@@ -30,7 +30,7 @@ namespace BugNet
 
         public static Mod Instance;
         internal static IJsonAssetsApi Ja;
-        private static Dictionary<string, CritterData> CrittersData = new();
+        private static readonly Dictionary<string, CritterData> CrittersData = new();
 
         public override void Entry(IModHelper helper)
         {

@@ -95,7 +95,7 @@ namespace SpaceCore
             }
         }
 
-        private static string DataKey = "skills";
+        private static readonly string DataKey = "skills";
         private static string LegacyFilePath => Path.Combine(Constants.CurrentSavePath, "spacecore-skills.json");
         private const string MsgData = "spacechase0.SpaceCore.SkillData";
         private const string MsgExperience = "spacechase0.SpaceCore.SkillExperience";

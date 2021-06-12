@@ -8,9 +8,9 @@ namespace GenericModConfigMenu.ModOption
     internal class ComplexModOption : BaseModOption
     {
         private object State;
-        private Func<Vector2, object, object> UpdateFunc;
-        private Func<SpriteBatch, Vector2, object, object> DrawFunc;
-        private Action<object> SaveFunc;
+        private readonly Func<Vector2, object, object> UpdateFunc;
+        private readonly Func<SpriteBatch, Vector2, object, object> DrawFunc;
+        private readonly Action<object> SaveFunc;
 
         public ComplexModOption(string name, string desc, Func<Vector2, object, object> update, Func<SpriteBatch, Vector2, object, object> draw, Action<object> save, IManifest mod)
             : base(name, desc, name, mod)

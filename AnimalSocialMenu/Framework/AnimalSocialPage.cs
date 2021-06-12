@@ -13,14 +13,14 @@ namespace AnimalSocialMenu.Framework
         private string DescriptionText = "";
         private string HoverText = "";
         public const int SlotsOnPage = 5;
-        private ClickableTextureComponent UpButton;
-        private ClickableTextureComponent DownButton;
-        private ClickableTextureComponent ScrollBar;
-        private Rectangle ScrollBarRunner;
-        private List<object> Names;
-        private List<ClickableTextureComponent> Sprites;
+        private readonly ClickableTextureComponent UpButton;
+        private readonly ClickableTextureComponent DownButton;
+        private readonly ClickableTextureComponent ScrollBar;
+        private readonly Rectangle ScrollBarRunner;
+        private readonly List<object> Names;
+        private readonly List<ClickableTextureComponent> Sprites;
         private int SlotPosition;
-        private Dictionary<long, FarmAnimal> Animals = new();
+        private readonly Dictionary<long, FarmAnimal> Animals = new();
         private bool Scrolling;
 
         public AnimalSocialPage(int x, int y, int width, int height)

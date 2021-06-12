@@ -43,7 +43,7 @@ namespace TheftOfTheWinterStar
 
         private Texture2D BossBarBg, BossBarFg;
 
-        private static string[] Locs = new[]
+        private static readonly string[] Locs = new[]
         {
             "Entrance",
             "Arena",

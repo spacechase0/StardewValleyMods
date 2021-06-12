@@ -11,7 +11,7 @@ namespace ThrowableAxe
 {
     public class ThrownAxe : Projectile
     {
-        private GameLocation Loc;
+        private readonly GameLocation Loc;
         private readonly NetInt Tier = new(0);
         private readonly NetInt Damage = new(3);
         public readonly NetVector2 Target = new();

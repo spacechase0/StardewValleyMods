@@ -39,7 +39,7 @@ namespace CookingSkill.Framework
         private CraftingRecipe hoverRecipe;
         public ClickableTextureComponent upButton;
         public ClickableTextureComponent downButton;
-        private bool cooking;
+        private readonly bool cooking;
         public ClickableTextureComponent trashCan;
         public ClickableComponent dropItemInvisibleButton;
         public float trashCanLidRotation;

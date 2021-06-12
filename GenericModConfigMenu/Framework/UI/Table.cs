@@ -7,7 +7,7 @@ namespace GenericModConfigMenu.Framework.UI
 {
     internal class Table : Container
     {
-        private List<Element[]> Rows = new();
+        private readonly List<Element[]> Rows = new();
 
         private Vector2 SizeImpl;
         public Vector2 Size

@@ -14,7 +14,7 @@ namespace JsonAssets.Framework
     internal class ContentInjector1 : IAssetEditor, IAssetLoader
     {
         private delegate void Injector(IAssetData asset);
-        private Dictionary<string, Injector> Files;
+        private readonly Dictionary<string, Injector> Files;
         public ContentInjector1()
         {
             Func<string, string> normalize = Mod.instance.Helper.Content.NormalizeAssetName;

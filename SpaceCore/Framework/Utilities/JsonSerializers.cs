@@ -89,7 +89,7 @@ namespace SpaceCore.Framework.Utilities
             }
         }
 
-        private JsonConverter ItemConverter = new ItemConverter();
+        private readonly JsonConverter ItemConverter = new ItemConverter();
     }
 
     internal class ItemConverter : JsonConverter

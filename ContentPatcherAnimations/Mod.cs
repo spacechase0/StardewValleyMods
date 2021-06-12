@@ -46,7 +46,7 @@ namespace ContentPatcherAnimations
         public const BindingFlags PrivateS = BindingFlags.NonPublic | BindingFlags.Static;
 
         private StardewModdingAPI.Mod ContentPatcher;
-        private PerScreen<ScreenState> ScreenStateImpl = new();
+        private readonly PerScreen<ScreenState> ScreenStateImpl = new();
         internal ScreenState ScreenState => this.ScreenStateImpl.Value;
 
         private WatchForUpdatesAssetEditor Watcher;

@@ -11,9 +11,10 @@ namespace Terraforming
 {
     internal class TerraformingMenu : IClickableMenu
     {
-        private int TerrainWidth, TerrainHeight;
-        private TileType[,] TerrainData;
-        private Dictionary<TileType, Color> TypeColors = TerraformingMenu.GetCorrespondingColors();
+        private readonly int TerrainWidth;
+        private readonly int TerrainHeight;
+        private readonly TileType[,] TerrainData;
+        private readonly Dictionary<TileType, Color> TypeColors = TerraformingMenu.GetCorrespondingColors();
 
         private TileType Sel = TileType.Dirt;
 

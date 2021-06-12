@@ -6,7 +6,7 @@ namespace ManaBar.Framework
 {
     internal static class Command
     {
-        private static Dictionary<string, Action<string[]>> Commands = new();
+        private static readonly Dictionary<string, Action<string[]>> Commands = new();
 
         internal static void Register(string name, Action<string[]> callback)
         {

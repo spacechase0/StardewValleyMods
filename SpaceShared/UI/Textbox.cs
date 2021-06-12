@@ -8,8 +8,8 @@ namespace SpaceShared.UI
 {
     internal class Textbox : Element, IKeyboardSubscriber
     {
-        private Texture2D Tex;
-        private SpriteFont Font;
+        private readonly Texture2D Tex;
+        private readonly SpriteFont Font;
 
         public virtual string String { get; set; }
 

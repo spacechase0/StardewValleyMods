@@ -7,7 +7,7 @@ namespace GenericModConfigMenu.Framework.UI
 {
     internal abstract class Container : Element
     {
-        private IList<Element> ChildrenImpl = new List<Element>();
+        private readonly IList<Element> ChildrenImpl = new List<Element>();
 
         public Element RenderLast { get; set; }
 

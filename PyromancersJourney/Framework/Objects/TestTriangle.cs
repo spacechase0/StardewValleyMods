@@ -6,7 +6,7 @@ namespace PyromancersJourney.Framework.Objects
 {
     internal class TestTriangle : BaseObject
     {
-        private VertexBuffer Buffer = new(Game1.game1.GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
+        private readonly VertexBuffer Buffer = new(Game1.game1.GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
 
         public TestTriangle(World world)
             : base(world)

@@ -11,8 +11,8 @@ namespace PreexistingRelationship.Framework
 {
     internal class MarryMenu : IClickableMenu
     {
-        private RootElement Ui;
-        private Table Table;
+        private readonly RootElement Ui;
+        private readonly Table Table;
 
         private StaticContainer SelectedContainer;
         private string SelectedNpc;

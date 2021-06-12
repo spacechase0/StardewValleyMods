@@ -14,9 +14,9 @@ namespace CustomCritters.Framework
         /// <remarks>Setting an invalid light ID will crash the game. Valid IDs are based on <see cref="LightSource.loadTextureFromConstantValue"/>.</remarks>
         private readonly HashSet<int> ValidLightIds = new(new[] { LightSource.lantern, LightSource.windowLight, LightSource.sconceLight, LightSource.cauldronLight, LightSource.indoorWindowLight });
 
-        private CritterEntry Data;
-        private LightSource Light;
-        private Random Rand;
+        private readonly CritterEntry Data;
+        private readonly LightSource Light;
+        private readonly Random Rand;
 
         public CustomCritter(Vector2 pos, CritterEntry data)
         {

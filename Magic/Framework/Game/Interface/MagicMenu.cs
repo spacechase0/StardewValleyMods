@@ -17,7 +17,7 @@ namespace Magic.Framework.Game.Interface
         public const int SelIconSize = 192;
         public const int HotbarIconSize = 48;
 
-        private School School;
+        private readonly School School;
         private School Active;
         private Spell Sel;
         private PreparedSpell Dragging;

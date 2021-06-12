@@ -21,7 +21,7 @@ namespace SpaceCore.Framework
         private bool InitializedSerializers;
 
         // Update these each game update
-        private Type[] VanillaMainTypes = new Type[25]
+        private readonly Type[] VanillaMainTypes = new Type[25]
         {
             typeof(Tool),
             typeof(GameLocation),
@@ -49,11 +49,11 @@ namespace SpaceCore.Framework
             typeof(JunimoHarvester),
             typeof(TerrainFeature)
         };
-        private Type[] VanillaFarmerTypes = new Type[1]
+        private readonly Type[] VanillaFarmerTypes = new Type[1]
         {
             typeof(Tool)
         };
-        private Type[] VanillaGameLocationTypes = new Type[24]
+        private readonly Type[] VanillaGameLocationTypes = new Type[24]
         {
             typeof(Tool),
             typeof(Duggy),

@@ -10,10 +10,10 @@ namespace TheftOfTheWinterStar.Framework
 {
     internal class Beam
     {
-        private Farmer Shooter;
-        private Vector2 BasePos;
-        private float Angle;
-        private ICue Sound;
+        private readonly Farmer Shooter;
+        private readonly Vector2 BasePos;
+        private readonly float Angle;
+        private readonly ICue Sound;
 
         private int Timer = 30;
 

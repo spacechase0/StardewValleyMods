@@ -16,7 +16,7 @@ namespace Magic.Framework.Game.Interface
         public const int ElemHeight = 50;
         public const int EdgePad = 16;
 
-        private List<string> Locs = new();
+        private readonly List<string> Locs = new();
         private string WarpTo;
 
         private int Scroll;

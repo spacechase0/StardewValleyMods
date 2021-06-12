@@ -23,7 +23,7 @@ namespace Magic.Framework.Game
         private Texture2D Tex;
         private readonly NetString TexId = new();
 
-        private Monster SeekTarget;
+        private readonly Monster SeekTarget;
 
         public SpellProjectile()
         {
@@ -170,7 +170,7 @@ namespace Magic.Framework.Game
             //b.Draw(Mod.instance.manaFg, new Rectangle((int)bdp.X, (int)bdp.Y, getBoundingBox().Width, getBoundingBox().Height), Color.White);
         }
 
-        private static Random Rand = new();
+        private static readonly Random Rand = new();
         private void Disappear(GameLocation loc)
         {
             if (this.Spell.SoundHit != null)

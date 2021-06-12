@@ -10,8 +10,8 @@ namespace PyromancersJourney.Framework.Objects
 {
     internal class Player : Character
     {
-        private Texture2D StaffTex;
-        private VertexBuffer StaffBuffer;
+        private readonly Texture2D StaffTex;
+        private readonly VertexBuffer StaffBuffer;
 
         public int HealthMax = 5;
         public int Mana = 25, ManaMax = 25;
@@ -22,7 +22,7 @@ namespace PyromancersJourney.Framework.Objects
         public float ManaRegenTimer;
         public float ImmunTimer;
 
-        private Random ShakeRand = new();
+        private readonly Random ShakeRand = new();
 
         public Player(World world)
             : base(world)

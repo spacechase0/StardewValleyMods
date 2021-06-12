@@ -61,8 +61,8 @@ namespace JsonAssets.Framework
 
     internal class IdToken : BaseToken
     {
-        private int StartingId;
-        private Func<IDictionary<string, int>> IdsFunc;
+        private readonly int StartingId;
+        private readonly Func<IDictionary<string, int>> IdsFunc;
         private IDictionary<string, int> Ids = new Dictionary<string, int>();
 
         public IdToken(string type, int startingId, Func<IDictionary<string, int>> theIdsFunc)
@@ -115,7 +115,7 @@ namespace JsonAssets.Framework
 
     internal class SpriteTilesheetToken : BaseToken
     {
-        private Func<List<DataNeedsIdWithTexture>> ObjsFunc;
+        private readonly Func<List<DataNeedsIdWithTexture>> ObjsFunc;
         private IDictionary<string, string> Tilesheets = new Dictionary<string, string>();
 
         public SpriteTilesheetToken(string type, Func<List<DataNeedsIdWithTexture>> func)
@@ -191,7 +191,7 @@ namespace JsonAssets.Framework
     internal class SpriteCoordinateToken : BaseToken
     {
         public readonly bool CoordinateIsX;
-        private Func<List<DataNeedsIdWithTexture>> ObjsFunc;
+        private readonly Func<List<DataNeedsIdWithTexture>> ObjsFunc;
         private IDictionary<string, int> Coordinates = new Dictionary<string, int>();
 
         public SpriteCoordinateToken(string type, bool coordinateIsX, Func<List<DataNeedsIdWithTexture>> func)

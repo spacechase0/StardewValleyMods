@@ -52,19 +52,19 @@ namespace CapstoneProfessions.Framework
 
         public ClickableComponent rightProfession;
 
-        private List<string> extraInfoForLevel = new();
+        private readonly List<string> extraInfoForLevel = new();
 
         private List<string> leftProfessionDescription = new();
 
         private List<string> rightProfessionDescription = new();
 
-        private Rectangle sourceRectForLevelIcon;
+        private readonly Rectangle sourceRectForLevelIcon;
 
-        private string title;
+        private readonly string title;
 
-        private List<int> professionsToChoose = new();
+        private readonly List<int> professionsToChoose = new();
 
-        private List<TemporaryAnimatedSprite> littleStars = new();
+        private readonly List<TemporaryAnimatedSprite> littleStars = new();
 
         public bool hasMovedSelection;
 

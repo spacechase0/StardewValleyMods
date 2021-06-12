@@ -18,12 +18,12 @@ namespace SpaceCore.Interface
     {
         private Color leftProfessionColor = Game1.textColor;
         private Color rightProfessionColor = Game1.textColor;
-        private List<CraftingRecipe> newCraftingRecipes = new();
+        private readonly List<CraftingRecipe> newCraftingRecipes = new();
         private List<string> extraInfoForLevel = new();
         private List<string> leftProfessionDescription = new();
         private List<string> rightProfessionDescription = new();
-        private List<int> professionsToChoose = new();
-        private List<TemporaryAnimatedSprite> littleStars = new();
+        private readonly List<int> professionsToChoose = new();
+        private readonly List<TemporaryAnimatedSprite> littleStars = new();
         public const int region_okButton = 101;
         public const int region_leftProfession = 102;
         public const int region_rightProfession = 103;

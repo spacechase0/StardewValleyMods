@@ -14,7 +14,7 @@ namespace GenericModConfigMenu.Framework
         private RootElement Ui;
         public Table Table;
         public static IClickableMenu ActiveConfigMenu;
-        private bool Ingame;
+        private readonly bool Ingame;
 
         public ModConfigMenu(bool inGame)
         {

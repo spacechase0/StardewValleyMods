@@ -16,13 +16,13 @@ namespace CustomizeExterior.Framework
 
         public Action<string, string> OnSelected = null;
 
-        private string Type;
+        private readonly string Type;
         private string Active;
-        private Dictionary<string, Texture2D> Choices = new();
+        private readonly Dictionary<string, Texture2D> Choices = new();
 
-        private int X;
-        private int Size;
-        private int EntrySize;
+        private readonly int X;
+        private readonly int Size;
+        private readonly int EntrySize;
 
         private int Scroll;
 

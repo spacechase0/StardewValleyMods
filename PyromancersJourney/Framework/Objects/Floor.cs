@@ -7,13 +7,13 @@ namespace PyromancersJourney.Framework.Objects
 {
     internal class Floor : BaseObject
     {
-        private Texture2D TexInside;
-        private Texture2D TexOutside;
-        private VertexBuffer Buffer;
-        private VertexBuffer BufferGlow;
-        private int TriCount;
-        private int TriCountGlow;
-        private bool Outside;
+        private readonly Texture2D TexInside;
+        private readonly Texture2D TexOutside;
+        private readonly VertexBuffer Buffer;
+        private readonly VertexBuffer BufferGlow;
+        private readonly int TriCount;
+        private readonly int TriCountGlow;
+        private readonly bool Outside;
 
         public Floor(World world, bool theOutside)
             : base(world)

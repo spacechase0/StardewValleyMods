@@ -18,10 +18,10 @@ namespace PyromancersJourney.Framework
         public Player Player;
         public LevelWarp Warp;
         public Camera Cam = new();
-        private Matrix Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70), Game1.game1.GraphicsDevice.DisplayMode.AspectRatio, 0.01f, 100);
+        private readonly Matrix Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70), Game1.game1.GraphicsDevice.DisplayMode.AspectRatio, 0.01f, 100);
 
-        private RenderTarget2D Target;
-        private SpriteBatch SpriteBatch;
+        private readonly RenderTarget2D Target;
+        private readonly SpriteBatch SpriteBatch;
 
         private bool NextLevelQueued;
         private int CurrLevel;
@@ -29,7 +29,7 @@ namespace PyromancersJourney.Framework
         public Map Map;
         public List<BaseObject> Objects = new();
         public List<BaseProjectile> Projectiles = new();
-        private List<BaseObject> QueuedObjects = new();
+        private readonly List<BaseObject> QueuedObjects = new();
 
         public int ScreenSize => this.Target.Width;
 

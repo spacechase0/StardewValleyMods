@@ -186,7 +186,7 @@ namespace SpaceCore
             return xMap;
         }
 
-        private static XmlSerializer TilesheetSerializer = new(typeof(TiledTileset), new XmlRootAttribute("tileset"));
+        private static readonly XmlSerializer TilesheetSerializer = new(typeof(TiledTileset), new XmlRootAttribute("tileset"));
         public static TileSheet LoadTsx(IModHelper modHelper, string path, string ts, Map xmap, out Dictionary<int, TileAnimation> animMapping)
         {
             TiledTileset ttileSheet = null;

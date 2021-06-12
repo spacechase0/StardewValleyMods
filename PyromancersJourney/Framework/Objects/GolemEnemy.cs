@@ -24,7 +24,7 @@ namespace PyromancersJourney.Framework.Objects
         private int Frame;
         private float FrameAccum;
 
-        private VertexBuffer Buffer;
+        private readonly VertexBuffer Buffer;
 
         public GolemEnemy(World world)
             : base(world)

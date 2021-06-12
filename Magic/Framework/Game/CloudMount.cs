@@ -7,7 +7,7 @@ namespace Magic.Framework.Game
 {
     internal class CloudMount : Horse
     {
-        private Texture2D Tex = Content.LoadTexture("entities/cloud.png");
+        private readonly Texture2D Tex = Content.LoadTexture("entities/cloud.png");
 
         public CloudMount()
         {

@@ -6,8 +6,8 @@ namespace PyromancersJourney.Framework.Objects
 {
     internal class MuralThing : BaseObject
     {
-        private Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/caldera-mural-assembled.png");
-        private VertexBuffer Buffer;
+        private readonly Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/caldera-mural-assembled.png");
+        private readonly VertexBuffer Buffer;
 
         public MuralThing(World world)
             : base(world)
