@@ -53,8 +53,8 @@ namespace SpaceCore.Patches
             object[] _eventCommandArgs = SpaceCore.Reflection.GetField<object[]>(typeof(Event), "_eventCommandArgs").GetValue();
             var _commandLookup = SpaceCore.Reflection.GetField<Dictionary<string, MethodInfo>>(typeof(Event), "_commandLookup").GetValue();
 
-            if (customCommands.ContainsKey(split0))
-                customCommands[split0].Invoke(null, new object[] { __instance, location, time, split });
+            if (CustomCommands.ContainsKey(split0))
+                CustomCommands[split0].Invoke(null, new object[] { __instance, location, time, split });
             else if (_commandLookup.ContainsKey(split0)) {
                 _eventCommandArgs[0] = location;
                 _eventCommandArgs[1] = time;
