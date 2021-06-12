@@ -17,7 +17,7 @@ namespace ContentPatcherAnimations
             foreach (var patchEntry in Mod.instance.ScreenState.animatedPatches)
             {
                 var patch = patchEntry.Value.patchObj;
-                var target = Mod.instance.Helper.Reflection.GetProperty<string>(patch, "TargetAsset").GetValue();
+                string target = Mod.instance.Helper.Reflection.GetProperty<string>(patch, "TargetAsset").GetValue();
                 if (!string.IsNullOrWhiteSpace(target) && asset.AssetNameEquals(target))
                     return true;
             }
@@ -32,7 +32,7 @@ namespace ContentPatcherAnimations
             foreach (var patchEntry in Mod.instance.ScreenState.animatedPatches)
             {
                 var patch = patchEntry.Value.patchObj;
-                var target = Mod.instance.Helper.Reflection.GetProperty<string>(patch, "TargetAsset").GetValue();
+                string target = Mod.instance.Helper.Reflection.GetProperty<string>(patch, "TargetAsset").GetValue();
                 if (!string.IsNullOrWhiteSpace(target) && asset.AssetNameEquals(target))
                 {
                     Mod.instance.ScreenState.findTargetsQueue.Enqueue(patchEntry.Key);

@@ -22,7 +22,7 @@ namespace MoreGiantCrops
             Directory.CreateDirectory(Path.Combine(this.Helper.DirectoryPath, "assets"));
 
             Log.trace("Finding giant crop images");
-            foreach (var path in Directory.EnumerateFiles(Path.Combine(this.Helper.DirectoryPath, "assets"), "*.png"))
+            foreach (string path in Directory.EnumerateFiles(Path.Combine(this.Helper.DirectoryPath, "assets"), "*.png"))
             {
                 string filename = Path.GetFileName(path);
                 if (!int.TryParse(filename.Split('.')[0], out int id))

@@ -23,7 +23,7 @@ namespace ProfitCalculator
 
         private void perPlanting(string cmd, string[] args)
         {
-            var season = "";
+            string season = "";
             if (args.Length >= 1)
                 season = args[0];
             Log.info((season == "") ? "Doing for all seasons" : $"Doing for season {season}");
@@ -38,13 +38,13 @@ namespace ProfitCalculator
 
             foreach (var crop in cropInfo)
             {
-                var seedObjData = objectInfo[crop.Key].Split('/');
-                var cropData = crop.Value.Split('/');
-                var productObjData = objectInfo[int.Parse(cropData[3])].Split('/');
+                string[] seedObjData = objectInfo[crop.Key].Split('/');
+                string[] cropData = crop.Value.Split('/');
+                string[] productObjData = objectInfo[int.Parse(cropData[3])].Split('/');
 
-                var name = productObjData[0];
-                var cost = int.Parse(seedObjData[1]);
-                var value = int.Parse(productObjData[1]);
+                string name = productObjData[0];
+                int cost = int.Parse(seedObjData[1]);
+                int value = int.Parse(productObjData[1]);
 
                 //Monitor.Log("Doing for " + name);
 
@@ -68,7 +68,7 @@ namespace ProfitCalculator
                     int avgPerHarvest = 1;
                     if (cropData[6].StartsWith("true "))
                     {
-                        var multiStrs = cropData[6].Split(' ');
+                        string[] multiStrs = cropData[6].Split(' ');
                         int min = int.Parse(multiStrs[1]);
                         int max = int.Parse(multiStrs[2]);
                         int bonus = int.Parse(multiStrs[3]);

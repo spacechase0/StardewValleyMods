@@ -133,7 +133,7 @@ namespace MoreRings
                     }
                     else
                     {
-                        var attrs = Game1.buffsDisplay.drink.buffAttributes;
+                        int[] attrs = Game1.buffsDisplay.drink.buffAttributes;
                         if (attrs[Buff.speed] == -1)
                         {
                             Game1.buffsDisplay.drink.removeBuff();

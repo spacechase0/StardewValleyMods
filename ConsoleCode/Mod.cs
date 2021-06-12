@@ -64,7 +64,7 @@ namespace ConsoleCode
             }
 
             var eval = new Evaluator(new CompilerContext(settings, new ConsoleReportPrinter()));
-            var code = @"using System;
+            string code = @"using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

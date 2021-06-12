@@ -104,13 +104,13 @@ namespace LocationLayerTool.Patches
             var lightmapField = Mod.instance.Helper.Reflection.GetField<RenderTarget2D>(typeof(Game1), "_lightmap");
             var lightingBlend = Mod.instance.Helper.Reflection.GetField<BlendState>(Game1.game1, "lightingBlend");
 
-            var oldHud = Game1.displayHUD;
+            bool oldHud = Game1.displayHUD;
             var oldDd = Game1.mapDisplayDevice;
             var oldSb = Game1.spriteBatch;
             var oldLoc = Game1.currentLocation;
             var oldTarget = (RenderTarget2D)(Game1.graphics.GraphicsDevice.GetRenderTargets().Length > 0 ? Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget : null);
             var oldDebris = Game1.debrisWeather;
-            var oldLighting = Game1.drawLighting;
+            bool oldLighting = Game1.drawLighting;
             var oldLights = Game1.currentLightSources;
             var oldLightmap = Game1.lightmap;
             var oldOutdoor = Game1.outdoorLight;

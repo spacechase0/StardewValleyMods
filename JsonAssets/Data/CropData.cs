@@ -53,12 +53,12 @@ namespace JsonAssets.Data
         {
             string str = "";
             //str += GetProductId() + "/";
-            foreach (var phase in this.Phases)
+            foreach (int phase in this.Phases)
             {
                 str += phase + " ";
             }
             str = str.Substring(0, str.Length - 1) + "/";
-            foreach (var season in this.Seasons)
+            foreach (string season in this.Seasons)
             {
                 str += season + " ";
             }

@@ -92,7 +92,7 @@ namespace Magic.Game.Interface
             {
                 int iy = y + TeleportMenu.EDGE_PAD;
                 iy += this.scroll;
-                foreach (var loc in this.locs)
+                foreach (string loc in this.locs)
                 {
                     Rectangle area = new Rectangle(x, iy - 4, w - this.scrollbarBack.Width, TeleportMenu.ELEM_HEIGHT);
                     if (area.Contains(Game1.getMouseX(), Game1.getMouseY()))

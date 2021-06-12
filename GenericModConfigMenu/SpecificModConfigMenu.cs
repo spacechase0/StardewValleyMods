@@ -32,7 +32,7 @@ namespace GenericModConfigMenu
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
-            foreach (var key in this.textures.Keys)
+            foreach (string key in this.textures.Keys)
             {
                 if (asset.AssetNameEquals(key))
                     return true;
@@ -42,7 +42,7 @@ namespace GenericModConfigMenu
 
         public void Edit<T>(IAssetData asset)
         {
-            foreach (var key in this.textures.Keys)
+            foreach (string key in this.textures.Keys)
             {
                 if (asset.AssetNameEquals(key))
                 {
@@ -359,7 +359,7 @@ namespace GenericModConfigMenu
 
             while (this.pendingTexChanges.Count > 0)
             {
-                var texPath = this.pendingTexChanges.Dequeue();
+                string texPath = this.pendingTexChanges.Dequeue();
                 var tex = Game1.content.Load<Texture2D>(texPath);
 
                 foreach (var images in this.textures[texPath])

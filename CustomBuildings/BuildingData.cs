@@ -80,7 +80,7 @@ namespace CustomBuildings
 
         public string BlueprintString()
         {
-            var str = "";
+            string str = "";
             foreach (var ingredient in this.Ingredients)
                 str += Mod.ResolveObjectId(ingredient.Object) + " " + ingredient.Count + " ";
             str = str.Substring(0, str.Length - 1);

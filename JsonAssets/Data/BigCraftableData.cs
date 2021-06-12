@@ -36,7 +36,7 @@ namespace JsonAssets.Data
 
             internal string GetRecipeString(BigCraftableData parent)
             {
-                var str = "";
+                string str = "";
                 foreach (var ingredient in this.Ingredients)
                     str += Mod.instance.ResolveObjectId(ingredient.Object) + " " + ingredient.Count + " ";
                 str = str.Substring(0, str.Length - 1);

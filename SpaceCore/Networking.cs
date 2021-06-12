@@ -29,7 +29,7 @@ namespace SpaceCore
 
                 if (Game1.IsServer)
                 {
-                    foreach (var key in Game1.otherFarmers.Keys)
+                    foreach (long key in Game1.otherFarmers.Keys)
                         Game1.server.sendMessage(key, 234, Game1.player, stream.ToArray());
                 }
                 else

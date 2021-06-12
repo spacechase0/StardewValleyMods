@@ -138,7 +138,7 @@ namespace LuckSkill
             if (Game1.player.professions.Contains(Mod.PROFESSION_JUNIMO_HELP))
             {
                 int rolls = 0;
-                foreach (var friendKey in Game1.player.friendshipData.Keys)
+                foreach (string friendKey in Game1.player.friendshipData.Keys)
                 {
                     var data = Game1.player.friendshipData[friendKey];
                     if (data.GiftsToday > 0)

@@ -234,11 +234,11 @@ namespace BetterShopMenu
         {
             var forSale = this.shop.forSale;
             var itemPriceAndStock = this.shop.itemPriceAndStock;
-            var currency = this.shop.currency;
+            int currency = this.shop.currency;
             var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.shop, "animations").GetValue();
             var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(this.shop, "poof").GetValue();
             var heldItem = this.shop.heldItem;
-            var currentItemIndex = this.shop.currentItemIndex;
+            int currentItemIndex = this.shop.currentItemIndex;
             var scrollBar = this.shop.scrollBar;
             var scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(this.shop, "scrollBarRunner").GetValue();
             const int UNIT_WIDTH = 160;
@@ -308,7 +308,7 @@ namespace BetterShopMenu
                     item.drawInMenu(Game1.spriteBatch, new Vector2(rect.X + 48, rect.Y + 16), 1f, 1, 1, stackDrawType, Color.White, true);
                 }
                 int price = itemPriceAndStock[forSale[i]][0];
-                var priceStr = price.ToString();
+                string priceStr = price.ToString();
                 if (price > 0)
                 {
                     SpriteText.drawString(Game1.spriteBatch, priceStr, rect.Right - SpriteText.getWidthOfString(priceStr) - 16, rect.Y + 80, alpha: ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) >= price && !failedCanPurchaseCheck ? 1f : 0.5f, color: purchase_item_text_color);
@@ -413,12 +413,12 @@ namespace BetterShopMenu
         {
             var forSale = this.shop.forSale;
             var itemPriceAndStock = this.shop.itemPriceAndStock;
-            var currency = this.shop.currency;
+            int currency = this.shop.currency;
             var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.shop, "animations").GetValue();
             var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(this.shop, "poof").GetValue();
             var heldItem = this.shop.heldItem;
-            var currentItemIndex = this.shop.currentItemIndex;
-            var sellPercentage = this.Helper.Reflection.GetField<float>(this.shop, "sellPercentage").GetValue();
+            int currentItemIndex = this.shop.currentItemIndex;
+            float sellPercentage = this.Helper.Reflection.GetField<float>(this.shop, "sellPercentage").GetValue();
             var scrollBar = this.shop.scrollBar;
             var scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(this.shop, "scrollBarRunner").GetValue();
             var downArrow = this.shop.downArrow;
@@ -568,12 +568,12 @@ namespace BetterShopMenu
         {
             var forSale = this.shop.forSale;
             var itemPriceAndStock = this.shop.itemPriceAndStock;
-            var currency = this.shop.currency;
+            int currency = this.shop.currency;
             var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.shop, "animations").GetValue();
             var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(this.shop, "poof").GetValue();
             var heldItem = this.shop.heldItem;
-            var currentItemIndex = this.shop.currentItemIndex;
-            var sellPercentage = this.Helper.Reflection.GetField<float>(this.shop, "sellPercentage").GetValue();
+            int currentItemIndex = this.shop.currentItemIndex;
+            float sellPercentage = this.Helper.Reflection.GetField<float>(this.shop, "sellPercentage").GetValue();
             const int UNIT_WIDTH = 160;
             const int UNIT_HEIGHT = 144;
             int unitsWide = (this.shop.width - 32) / UNIT_WIDTH;

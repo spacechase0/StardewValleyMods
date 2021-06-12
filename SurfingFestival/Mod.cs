@@ -304,7 +304,7 @@ namespace SurfingFestival
                 },
             };
 
-            foreach (var racerName in Mod.racers)
+            foreach (string racerName in Mod.racers)
             {
                 var state = Mod.racerState[racerName];
                 var racer = Game1.CurrentEvent.getCharacterByName(racerName);
@@ -540,7 +540,7 @@ namespace SurfingFestival
                         case Item.HomingProjectile:
                             string target = null;
                             bool next = false;
-                            foreach (var other in Mod.GetRacePlacement())
+                            foreach (string other in Mod.GetRacePlacement())
                             {
                                 if (other == racerName)
                                     next = true;
@@ -655,7 +655,7 @@ namespace SurfingFestival
                         Game1.CurrentEvent.eventCommands = festData["afterSurfingRace"].Replace("{{winDialog}}", winDialog).Split('/');
                         Game1.CurrentEvent.currentCommand = 0;
 
-                        foreach (var racerName_ in Mod.racers)
+                        foreach (string racerName_ in Mod.racers)
                         {
                             var racer_ = Game1.CurrentEvent.getCharacterByName(racerName_);
                             racer_.stopGlowing();
@@ -805,7 +805,7 @@ namespace SurfingFestival
             int i = 0;
             var sortedRacers = Mod.GetRacePlacement();
             sortedRacers.Reverse();
-            foreach (var racerName in sortedRacers)
+            foreach (string racerName in sortedRacers)
             {
                 var racer = Game1.CurrentEvent.getCharacterByName(racerName);
                 int x = (int)pos.X + 74 - SpriteText.getWidthOfString(str) / 2 + i % 5 * 40 - 20;
@@ -833,7 +833,7 @@ namespace SurfingFestival
                 case UseItemMessage.TYPE:
                     {
                         var msg = e.ReadAs<UseItemMessage>();
-                        var racerName = "farmer" + Utility.getFarmerNumberFromFarmer(Game1.getFarmer(e.FromPlayerID));
+                        string racerName = "farmer" + Utility.getFarmerNumberFromFarmer(Game1.getFarmer(e.FromPlayerID));
                         if (!Mod.racers.Contains(racerName))
                             return;
                         var racer = Game1.CurrentEvent.getCharacterByName(racerName) as Farmer;
@@ -1087,14 +1087,14 @@ namespace SurfingFestival
             for (int i = 0; i < Mod.racers.Count; ++i)
             {
                 int ni = r.Next(Mod.racers.Count);
-                var old = Mod.racers[ni];
+                string old = Mod.racers[ni];
                 Mod.racers[ni] = Mod.racers[i];
                 Mod.racers[i] = old;
             }
 
             // Set states and surfboards
             Mod.racerState.Clear();
-            foreach (var racerName in Mod.racers)
+            foreach (string racerName in Mod.racers)
             {
                 Mod.racerState.Add(racerName, new RacerState()
                 {
@@ -1117,7 +1117,7 @@ namespace SurfingFestival
                 startPos.Y -= 1;
             }
             var actualPos = startPos;
-            foreach (var racerName in Mod.racers)
+            foreach (string racerName in Mod.racers)
             {
                 var racer = __instance.getCharacterByName(racerName);
 
@@ -1145,7 +1145,7 @@ namespace SurfingFestival
             if (Mod.racers.Count <= 6)
                 ++startPos.X;
             var actualPos = startPos;
-            foreach (var racerName in Mod.racers)
+            foreach (string racerName in Mod.racers)
             {
                 var racer = __instance.getCharacterByName(racerName);
 

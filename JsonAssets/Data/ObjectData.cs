@@ -62,7 +62,7 @@ namespace JsonAssets.Data
 
             internal string GetRecipeString(ObjectData parent)
             {
-                var str = "";
+                string str = "";
                 foreach (var ingredient in this.Ingredients)
                     str += Mod.instance.ResolveObjectId(ingredient.Object) + " " + ingredient.Count + " ";
                 str = str.Substring(0, str.Length - 1);
@@ -161,8 +161,8 @@ namespace JsonAssets.Data
         {
             if (this.Edibility != SObject.inedible)
             {
-                var itype = (int)this.Category;
-                var str = $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == Category_.Artifact ? "Arch" : $"{this.Category} {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}/";
+                int itype = (int)this.Category;
+                string str = $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == Category_.Artifact ? "Arch" : $"{this.Category} {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}/";
                 str += (this.EdibleIsDrink ? "drink" : "food") + "/";
                 if (this.EdibleBuffs == null)
                     this.EdibleBuffs = new FoodBuffs_();
@@ -171,7 +171,7 @@ namespace JsonAssets.Data
             }
             else
             {
-                var itype = (int)this.Category;
+                int itype = (int)this.Category;
                 return $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == Category_.Artifact ? "Arch" : $"Basic {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}";
             }
         }

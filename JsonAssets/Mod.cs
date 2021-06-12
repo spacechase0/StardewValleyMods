@@ -323,7 +323,7 @@ namespace JsonAssets
             string[] array = new[] { "spring", "summer", "fall", "winter" }
                 .Except(crop.Seasons)
                 .ToArray();
-            foreach (var season in array)
+            foreach (string season in array)
             {
                 str += $"/z {season}";
             }
@@ -1659,12 +1659,12 @@ namespace JsonAssets
                 if (hd == null || hd.crop == null)
                     return false;
 
-                var oldId = hd.crop.rowInSpriteSheet.Value;
+                int oldId = hd.crop.rowInSpriteSheet.Value;
                 if (this.fixId(this.oldCropIds, this.cropIds, hd.crop.rowInSpriteSheet, this.origCrops))
                     hd.crop = null;
                 else
                 {
-                    var key = this.cropIds.FirstOrDefault(x => x.Value == hd.crop.rowInSpriteSheet.Value).Key;
+                    string key = this.cropIds.FirstOrDefault(x => x.Value == hd.crop.rowInSpriteSheet.Value).Key;
                     var c = this.crops.FirstOrDefault(x => x.Name == key);
                     if (c != null) // Non-JA crop
                     {
@@ -1805,12 +1805,12 @@ namespace JsonAssets
                     if (hd.crop == null)
                         continue;
 
-                    var oldId = hd.crop.rowInSpriteSheet.Value;
+                    int oldId = hd.crop.rowInSpriteSheet.Value;
                     if (this.fixId(this.oldCropIds, this.cropIds, hd.crop.rowInSpriteSheet, this.origCrops))
                         hd.crop = null;
                     else
                     {
-                        var key = this.cropIds.FirstOrDefault(x => x.Value == hd.crop.rowInSpriteSheet.Value).Key;
+                        string key = this.cropIds.FirstOrDefault(x => x.Value == hd.crop.rowInSpriteSheet.Value).Key;
                         var c = this.crops.FirstOrDefault(x => x.Name == key);
                         if (c != null) // Non-JA crop
                         {
@@ -1822,12 +1822,12 @@ namespace JsonAssets
                 }
                 else if (tf is FruitTree ft)
                 {
-                    var oldId = ft.treeType.Value;
+                    int oldId = ft.treeType.Value;
                     if (this.fixId(this.oldFruitTreeIds, this.fruitTreeIds, ft.treeType, this.origFruitTrees))
                         toRemove.Add(tfk);
                     else
                     {
-                        var key = this.fruitTreeIds.FirstOrDefault(x => x.Value == ft.treeType.Value).Key;
+                        string key = this.fruitTreeIds.FirstOrDefault(x => x.Value == ft.treeType.Value).Key;
                         var ftt = this.fruitTrees.FirstOrDefault(x => x.Name == key);
                         if (ftt != null) // Non-JA fruit tree
                         {
@@ -2074,13 +2074,13 @@ namespace JsonAssets
         {
             var toRemove = new List<int>();
             var toAdd = new Dictionary<int, int>();
-            foreach (var entry in dict.Keys)
+            foreach (int entry in dict.Keys)
             {
                 if (this.origObjects.ContainsKey(entry))
                     continue;
                 else if (this.oldObjectIds.Values.Contains(entry))
                 {
-                    var key = this.oldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
+                    string key = this.oldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
                     bool isRing = this.myRings.FirstOrDefault(r => r.id == entry) != null;
                     bool canShip = this.objects.FirstOrDefault(o => o.id == entry)?.CanSell ?? true;
                     bool hideShippable = this.objects.FirstOrDefault(o => o.id == entry)?.HideFromShippingCollection ?? true;
@@ -2095,7 +2095,7 @@ namespace JsonAssets
                     }
                 }
             }
-            foreach (var entry in toRemove)
+            foreach (int entry in toRemove)
                 dict.Remove(entry);
             foreach (var entry in toAdd)
             {
@@ -2116,13 +2116,13 @@ namespace JsonAssets
         {
             var toRemove = new List<int>();
             var toAdd = new Dictionary<int, int[]>();
-            foreach (var entry in dict.Keys)
+            foreach (int entry in dict.Keys)
             {
                 if (this.origObjects.ContainsKey(entry))
                     continue;
                 else if (this.oldObjectIds.Values.Contains(entry))
                 {
-                    var key = this.oldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
+                    string key = this.oldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
 
                     toRemove.Add(entry);
                     if (this.objectIds.ContainsKey(key))
@@ -2131,7 +2131,7 @@ namespace JsonAssets
                     }
                 }
             }
-            foreach (var entry in toRemove)
+            foreach (int entry in toRemove)
                 dict.Remove(entry);
             foreach (var entry in toAdd)
                 dict.Add(entry.Key, entry.Value);
@@ -2149,7 +2149,7 @@ namespace JsonAssets
                 if (newIds.Values.Contains(id.Value))
                 {
                     int id_ = id.Value;
-                    var key = newIds.FirstOrDefault(x => x.Value == id_).Key;
+                    string key = newIds.FirstOrDefault(x => x.Value == id_).Key;
 
                     if (oldIds.ContainsKey(key))
                     {
@@ -2170,7 +2170,7 @@ namespace JsonAssets
                 if (oldIds.Values.Contains(id.Value))
                 {
                     int id_ = id.Value;
-                    var key = oldIds.FirstOrDefault(x => x.Value == id_).Key;
+                    string key = oldIds.FirstOrDefault(x => x.Value == id_).Key;
 
                     if (newIds.ContainsKey(key))
                     {
@@ -2200,7 +2200,7 @@ namespace JsonAssets
                 if (newIds.Values.Contains(id))
                 {
                     int id_ = id;
-                    var key = newIds.FirstOrDefault(xTile => xTile.Value == id_).Key;
+                    string key = newIds.FirstOrDefault(xTile => xTile.Value == id_).Key;
 
                     if (oldIds.ContainsKey(key))
                     {
@@ -2221,7 +2221,7 @@ namespace JsonAssets
                 if (oldIds.Values.Contains(id))
                 {
                     int id_ = id;
-                    var key = oldIds.FirstOrDefault(x => x.Value == id_).Key;
+                    string key = oldIds.FirstOrDefault(x => x.Value == id_).Key;
 
                     if (newIds.ContainsKey(key))
                     {

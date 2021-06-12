@@ -36,7 +36,7 @@ namespace SpaceCore
                 Log.info("Usage: player_giveexp <skill> <amt>");
             }
 
-            var skillName = args[0].ToLower();
+            string skillName = args[0].ToLower();
             int amt = int.Parse(args[1]);
 
             if (skillName == "farming") Game1.player.gainExperience(Farmer.farmingSkill, amt);
@@ -66,7 +66,7 @@ namespace SpaceCore
                 Log.info("Usage: asset_invalidate <asset1> [asset2] [...]");
             }
 
-            foreach (var arg in args)
+            foreach (string arg in args)
             {
                 SpaceCore.instance.Helper.Content.InvalidateCache(arg);
             }

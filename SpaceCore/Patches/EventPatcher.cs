@@ -66,7 +66,7 @@ namespace SpaceCore.Patches
         /// <summary>The method to call before <see cref="Event.checkAction"/>.</summary>
         private static bool Before_CheckAction(Event __instance, Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who)
         {
-            var actionStr = Game1.currentLocation.doesTileHaveProperty(tileLocation.X, tileLocation.Y, "Action", "Buildings");
+            string actionStr = Game1.currentLocation.doesTileHaveProperty(tileLocation.X, tileLocation.Y, "Action", "Buildings");
             if (actionStr != null)
                 return !SpaceEvents.InvokeActionActivated(who, actionStr, tileLocation);
             return true;

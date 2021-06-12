@@ -66,9 +66,9 @@ namespace Terraforming
                     newLayer.AfterDraw += Mod.drawTerraformLayer;
                 if (newLayer.Id == "Back")
                 {
-                    for (var ix = 0; ix < newLayer.LayerWidth; ix++)
+                    for (int ix = 0; ix < newLayer.LayerWidth; ix++)
                     {
-                        for (var iy = 0; iy < newLayer.LayerHeight; iy++)
+                        for (int iy = 0; iy < newLayer.LayerHeight; iy++)
                         {
                             var tile = new StaticTile(newLayer, map.TileSheets[1], BlendMode.Alpha, 587);
                             newLayer.Tiles[ix, iy] = tile;

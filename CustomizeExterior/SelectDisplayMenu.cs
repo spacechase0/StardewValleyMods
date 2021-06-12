@@ -32,7 +32,7 @@ namespace CustomizeExterior
             this.active = theActive;
 
             this.choices.Add("/", null);
-            foreach (var choice in Mod.choices[this.type])
+            foreach (string choice in Mod.choices[this.type])
             {
                 this.choices.Add(choice, Mod.getTextureForChoice(this.type, choice));
             }

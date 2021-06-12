@@ -114,7 +114,7 @@ namespace Magic.Spells
             public void Draw(SpriteBatch spriteBatch)
             {
                 Vector2 mobPos = new Vector2(this.mob.GetBoundingBox().Center.X, this.mob.GetBoundingBox().Center.Y);
-                var dist = Vector2.Distance(mobPos, this.pos);
+                float dist = Vector2.Distance(mobPos, this.pos);
                 Rectangle r = new Rectangle((int)this.pos.X, (int)this.pos.Y, 10, (int)dist);
                 r = Game1.GlobalToLocal(Game1.viewport, r);
                 float rot = (float)-Math.Atan2(this.pos.Y - mobPos.Y, mobPos.X - this.pos.X);

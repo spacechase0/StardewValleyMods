@@ -25,7 +25,7 @@ namespace CustomCritters
             this.rand = new Random(((int)this.startingPosition.X) << 32 | ((int)this.startingPosition.Y));
 
             var tex = Mod.instance.Helper.Content.Load<Texture2D>("Critters/" + data.Id + "/critter.png");
-            var texStr = Mod.instance.Helper.Content.GetActualAssetKey($"Critters/{data.Id}/critter.png");
+            string texStr = Mod.instance.Helper.Content.GetActualAssetKey($"Critters/{data.Id}/critter.png");
 
             this.baseFrame = Game1.random.Next(data.SpriteData.Variations) * (tex.Width / data.SpriteData.FrameWidth);
 
@@ -101,7 +101,7 @@ namespace CustomCritters
                                     this.needTarget = false;
                                 }
 
-                                var dist = Vector2.Distance(this.position, this.target);
+                                float dist = Vector2.Distance(this.position, this.target);
                                 if (dist <= this.data.Behavior.Speed)
                                 {
                                     this.position = this.target;

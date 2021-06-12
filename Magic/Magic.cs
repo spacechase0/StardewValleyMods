@@ -157,7 +157,7 @@ namespace Magic
             if (spellsLearnt.Count > 0)
             {
                 Game1.playSound("secret1");
-                foreach (var spell in spellsLearnt)
+                foreach (string spell in spellsLearnt)
                 {
                     Log.debug("Player learnt spell: " + spell);
                     farmer.learnSpell(spell, 0, true);
@@ -168,7 +168,7 @@ namespace Magic
 
             // Temporary - 0.3.0 will add dungeons to get these
             bool knowsAll = true;
-            foreach (var schoolId in School.getSchoolList())
+            foreach (string schoolId in School.getSchoolList())
             {
                 var school = School.getSchool(schoolId);
 
@@ -571,7 +571,7 @@ namespace Magic
         {
             if (args.Length == 1 && args[0] == "all")
             {
-                foreach (var spellName in SpellBook.getAll())
+                foreach (string spellName in SpellBook.getAll())
                     Game1.player.learnSpell(SpellBook.get(spellName), SpellBook.get(spellName).getMaxCastingLevel(), true);
                 return;
             }

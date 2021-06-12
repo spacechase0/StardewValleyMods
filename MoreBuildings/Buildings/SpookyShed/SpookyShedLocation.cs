@@ -82,7 +82,7 @@ namespace MoreBuildings.Buildings.SpookyShed
             Log.trace("Player entered spooky shed, current spawner item: " + this.currSpawnerItem);
             if (this.currSpawnerItem == SpookyShedLocation.BAT_WING)
             {
-                var total = 15 + Game1.random.Next(10);
+                int total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
                 {
                     var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
@@ -92,7 +92,7 @@ namespace MoreBuildings.Buildings.SpookyShed
             }
             else if (this.currSpawnerItem == SpookyShedLocation.SOLAR_ESSENCE)
             {
-                var total = 15 + Game1.random.Next(10);
+                int total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
                 {
                     var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
@@ -102,7 +102,7 @@ namespace MoreBuildings.Buildings.SpookyShed
             }
             else if (this.currSpawnerItem == SpookyShedLocation.VOID_ESSENCE)
             {
-                var total = 15 + Game1.random.Next(10);
+                int total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
                 {
                     var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));
@@ -112,7 +112,7 @@ namespace MoreBuildings.Buildings.SpookyShed
             }
             else if (this.currSpawnerItem == SpookyShedLocation.BUG_MEAT)
             {
-                var total = 15 + Game1.random.Next(10);
+                int total = 15 + Game1.random.Next(10);
                 for (int i = 0; i < total; ++i)
                 {
                     var pos = new Vector2(4 + Game1.random.Next(12), 6 + Game1.random.Next(10));

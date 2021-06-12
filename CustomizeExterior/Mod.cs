@@ -210,12 +210,12 @@ namespace CustomizeExterior
         private void compileChoices()
         {
             Log.trace("Creating list of building choices...");
-            var buildingsPath = Path.Combine(this.Helper.DirectoryPath, "Buildings");
+            string buildingsPath = Path.Combine(this.Helper.DirectoryPath, "Buildings");
             if (!Directory.Exists(buildingsPath))
                 Directory.CreateDirectory(buildingsPath);
 
-            var choices = Directory.GetDirectories(buildingsPath);
-            foreach (var choice in choices)
+            string[] choices = Directory.GetDirectories(buildingsPath);
+            foreach (string choice in choices)
             {
                 if (choice == "spring" || choice == "summer" || choice == "fall" || choice == "winter")
                 {
@@ -224,8 +224,8 @@ namespace CustomizeExterior
                 }
 
                 Log.info("Choice type: " + Path.GetFileName(choice));
-                var types = Directory.GetFiles(choice);
-                foreach (var type in types)
+                string[] types = Directory.GetFiles(choice);
+                foreach (string type in types)
                 {
                     if (Path.GetExtension(type) != ".xnb" && Path.GetExtension(type) != ".png")
                         continue;
@@ -241,11 +241,11 @@ namespace CustomizeExterior
                     Log.trace("\tChoice: " + typeStr);
                 }
 
-                var seasons = Directory.GetDirectories(choice);
+                string[] seasons = Directory.GetDirectories(choice);
                 bool foundSpring = false, foundSummer = false, foundFall = false, foundWinter = false;
-                foreach (var season in seasons)
+                foreach (string season in seasons)
                 {
-                    var filename = Path.GetFileName(season);
+                    string filename = Path.GetFileName(season);
                     if (filename == "spring") foundSpring = true;
                     else if (filename == "summer") foundSummer = true;
                     else if (filename == "fall") foundFall = true;
@@ -266,7 +266,7 @@ namespace CustomizeExterior
                     winter = winter.Select(Path.GetFileName).ToList();
 
                     var common = new List<string>();
-                    foreach (var building in spring)
+                    foreach (string building in spring)
                     {
                         string choiceStr = Path.GetFileName(choice);
                         string typeStr = Path.GetFileNameWithoutExtension(building);

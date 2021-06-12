@@ -111,7 +111,7 @@ namespace SpaceCore
             var data = this.Helper.Data.ReadSaveData<Sleep.Data>("sleepy-eye");
             if (data == null)
             {
-                var legacyDataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
+                string legacyDataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
                 data = File.Exists(legacyDataPath)
                     ? JsonConvert.DeserializeObject<Sleep.Data>(File.ReadAllText(legacyDataPath))
                     : null;
@@ -193,7 +193,7 @@ namespace SpaceCore
             if (!Context.IsMainPlayer)
                 return;
 
-            var legacyDataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
+            string legacyDataPath = Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json");
             if (File.Exists(legacyDataPath))
             {
                 Log.trace($"Deleting legacy tent sleep data file: {legacyDataPath}");

@@ -117,7 +117,7 @@ namespace FlowerRain
                 if (toks[8].StartsWith("true "))
                 {
                     cols.Clear();
-                    var colToks = toks[8].Split(' ');
+                    string[] colToks = toks[8].Split(' ');
                     for (int i = 1; i < colToks.Length; i += 3)
                     {
                         int r = int.Parse(colToks[i + 0]);
@@ -136,7 +136,7 @@ namespace FlowerRain
                         color = col,
                     };
 
-                    foreach (var season in seasons)
+                    foreach (string season in seasons)
                     {
                         switch (season)
                         {

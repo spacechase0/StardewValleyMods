@@ -57,7 +57,7 @@ namespace Magic.Spells
                         }
                         else
                         {
-                            var oldStam = player.stamina;
+                            float oldStam = player.stamina;
                             dummyPick.DoFunction(loc, ix * Game1.tileSize, iy * Game1.tileSize, 0, player);
                             player.stamina = oldStam;
                             player.addMana(-3);

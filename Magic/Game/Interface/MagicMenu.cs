@@ -38,8 +38,8 @@ namespace Magic.Game.Interface
             var spellbook = Game1.player.getSpellBook();
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
-            var hotbarH = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
-            var gap = (MagicMenu.WINDOW_HEIGHT - hotbarH * 2) / 3 + (hasFifthSpellSlot ? 25 : 0);
+            int hotbarH = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
+            int gap = (MagicMenu.WINDOW_HEIGHT - hotbarH * 2) / 3 + (hasFifthSpellSlot ? 25 : 0);
             //drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + gap, 48 + 24, hotbarH, Color.White);
             //drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + WINDOW_HEIGHT - hotbarH - gap, 48 + 24, hotbarH, Color.White);
             IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, MagicMenu.WINDOW_WIDTH, MagicMenu.WINDOW_HEIGHT, Color.White);
@@ -112,8 +112,8 @@ namespace Magic.Game.Interface
 
             if (this.sel != null)
             {
-                var title = this.sel.getTranslatedName();
-                var desc = this.WrapText(this.sel.getTranslatedDescription(), (int)((MagicMenu.WINDOW_WIDTH / 2) / 0.75f));
+                string title = this.sel.getTranslatedName();
+                string desc = this.WrapText(this.sel.getTranslatedDescription(), (int)((MagicMenu.WINDOW_WIDTH / 2) / 0.75f));
 
                 b.DrawString(Game1.dialogueFont, title, new Vector2(this.xPositionOnScreen + MagicMenu.WINDOW_WIDTH / 2 + (MagicMenu.WINDOW_WIDTH / 2 - Game1.dialogueFont.MeasureString(title).X) / 2, this.yPositionOnScreen + 30), Color.Black);
 

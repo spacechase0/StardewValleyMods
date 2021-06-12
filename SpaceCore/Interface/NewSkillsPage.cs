@@ -375,7 +375,7 @@ namespace SpaceCore.Interface
                         // allow the player to navigate to the wallet without having profession 2 unlocked for a skill
                         for (int professionIndex = 2; professionIndex >= 0; --professionIndex)
                         {
-                            var snapTo = textureComponent.myID + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                            int snapTo = textureComponent.myID + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
                             var clickable = (ClickableComponent)this.skillBars.FirstOrDefault(c => c.myID == snapTo);
                             if (clickable != null)
                                 clickable.rightNeighborID = rightSnapId;
@@ -414,7 +414,7 @@ namespace SpaceCore.Interface
                         // allow the player to navigate to the wallet without having profession 2 unlocked for a skill
                         for (int professionIndex = 2; professionIndex >= 0; --professionIndex)
                         {
-                            var snapTo = textureComponent.myID + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                            int snapTo = textureComponent.myID + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
                             var clickable = (ClickableComponent)this.skillBars.FirstOrDefault(c => c.myID == snapTo);
                             if (clickable != null)
                                 clickable.rightNeighborID = rightSnapId;
@@ -784,7 +784,7 @@ namespace SpaceCore.Interface
             }
 
             // Custom skills
-            foreach (var skillName in Skills.GetSkillList())
+            foreach (string skillName in Skills.GetSkillList())
             {
                 xOffset = 0;
                 Skills.Skill skill = Skills.GetSkill(skillName);

@@ -40,7 +40,7 @@ namespace SpaceCore.Patches
 
                 if (Game1.IsServer)
                 {
-                    foreach (var key in Game1.otherFarmers.Keys)
+                    foreach (long key in Game1.otherFarmers.Keys)
                         if (key != msg.FarmerID)
                             Game1.server.sendMessage(key, 234, Game1.otherFarmers[msg.FarmerID], msg.Data);
                 }

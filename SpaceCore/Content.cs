@@ -133,7 +133,7 @@ namespace SpaceCore
                         string[] ttiles = string.Join("", tlayer.Data.Data).Split(',');
                         for (int i = 0; i < ttiles.Length; ++i)
                         {
-                            var ttile = int.Parse(ttiles[i]);
+                            int ttile = int.Parse(ttiles[i]);
                             if (!tileMapping.ContainsKey(ttile))
                                 continue;
                             int ix = i % tmap.Width;

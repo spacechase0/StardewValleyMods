@@ -353,7 +353,7 @@ namespace TheftOfTheWinterStar
             int keyHalfB = Mod.ja.GetObjectId("Festive Big Key (A)");
             Log.trace("IDs for chests: " + stardropPiece + " " + scepter + " " + key + " " + keyHalfB);
 
-            foreach (var locName in Mod.locs)
+            foreach (string locName in Mod.locs)
             {
                 var loc = Game1.getLocationFromName("FrostDungeon." + locName);
                 if (locName == "Entrance")
@@ -418,11 +418,11 @@ namespace TheftOfTheWinterStar
                 {
                     for (int iy = 0; iy < e.NewLocation.Map.Layers[0].LayerHeight; ++iy)
                     {
-                        var prop = e.NewLocation.doesTileHaveProperty(ix, iy, "UnlockId", "Buildings");
+                        string prop = e.NewLocation.doesTileHaveProperty(ix, iy, "UnlockId", "Buildings");
 
                         if (!string.IsNullOrEmpty(prop) && e.Player.mailReceived.Contains("FrostDungeon.Lock." + prop))
                         {
-                            var newAction = e.Player.currentLocation.doesTileHaveProperty(ix, iy, "UnlockAction", "Buildings");
+                            string newAction = e.Player.currentLocation.doesTileHaveProperty(ix, iy, "UnlockAction", "Buildings");
                             e.NewLocation.setTileProperty(ix, iy, "Buildings", "Action", newAction);
                             e.NewLocation.setMapTileIndex(ix, iy - 2, 48, "Buildings");
                         }
@@ -546,7 +546,7 @@ namespace TheftOfTheWinterStar
         {
             Log.debug("Adding frost dungeon");
 
-            foreach (var locName in Mod.locs)
+            foreach (string locName in Mod.locs)
             {
                 var loc = new GameLocation(this.Helper.Content.GetActualAssetKey("assets/" + locName + ".tbin"), "FrostDungeon." + locName);
                 Game1.locations.Add(loc);
@@ -587,7 +587,7 @@ namespace TheftOfTheWinterStar
                     farmer.removeFirstOfThisItemFromInventory(key);
                     farmer.mailReceived.Add("FrostDungeon.Locked." + farmer.currentLocation.doesTileHaveProperty(e.Position.X, e.Position.Y, "Buildings", "UnlockId"));
 
-                    var newAction = farmer.currentLocation.doesTileHaveProperty(e.Position.X, e.Position.Y, "UnlockAction", "Buildings");
+                    string newAction = farmer.currentLocation.doesTileHaveProperty(e.Position.X, e.Position.Y, "UnlockAction", "Buildings");
                     farmer.currentLocation.setTileProperty(e.Position.X, e.Position.Y, "Buildings", "Action", newAction);
                     farmer.currentLocation.setMapTileIndex(e.Position.X, e.Position.Y - 2, 48, "Buildings");
 
@@ -840,7 +840,7 @@ namespace TheftOfTheWinterStar
                 return;
 
             string[] bombActions = propVal.Split(' ');
-            foreach (var actStr in bombActions)
+            foreach (string actStr in bombActions)
             {
                 int eq = actStr.IndexOf('=');
                 string act = actStr.Substring(0, eq);
