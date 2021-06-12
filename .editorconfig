@@ -39,7 +39,7 @@ dotnet_style_predefined_type_for_locals_parameters_members = true:error
 dotnet_style_predefined_type_for_member_access = true:error
 
 # don't use 'var' for language keywords
-csharp_style_var_for_built_in_types = false:error
+csharp_style_var_for_built_in_types =false:suggestion
 
 # suggest modern C# features where simpler
 dotnet_style_object_initializer = true:suggestion
