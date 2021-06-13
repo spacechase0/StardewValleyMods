@@ -1658,7 +1658,6 @@ namespace JsonAssets
                 if (hd == null || hd.crop == null)
                     return false;
 
-                int oldId = hd.crop.rowInSpriteSheet.Value;
                 if (this.FixId(this.OldCropIds, this.CropIds, hd.crop.rowInSpriteSheet, this.OrigCrops))
                     hd.crop = null;
                 else
@@ -1804,7 +1803,6 @@ namespace JsonAssets
                     if (hd.crop == null)
                         continue;
 
-                    int oldId = hd.crop.rowInSpriteSheet.Value;
                     if (this.FixId(this.OldCropIds, this.CropIds, hd.crop.rowInSpriteSheet, this.OrigCrops))
                         hd.crop = null;
                     else
@@ -1821,7 +1819,6 @@ namespace JsonAssets
                 }
                 else if (tf is FruitTree ft)
                 {
-                    int oldId = ft.treeType.Value;
                     if (this.FixId(this.OldFruitTreeIds, this.FruitTreeIds, ft.treeType, this.OrigFruitTrees))
                         toRemove.Add(tfk);
                     else

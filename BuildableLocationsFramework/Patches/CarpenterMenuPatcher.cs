@@ -199,8 +199,6 @@ namespace BuildableLocationsFramework.Patches
 
                                 if (!farm.destroyStructure(destroyed))
                                     return;
-                                int tileY = (int)destroyed.tileY;
-                                int tilesHigh = (int)destroyed.tilesHigh;
                                 Game1.flashAlpha = 1f;
                                 destroyed.showDestroyedAnimation(Game1.getFarm());
                                 Game1.playSound("explosion");

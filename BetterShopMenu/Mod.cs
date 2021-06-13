@@ -421,7 +421,6 @@ namespace BetterShopMenu
             var itemPriceAndStock = this.Shop.itemPriceAndStock;
             int currency = this.Shop.currency;
             var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.Shop, "animations").GetValue();
-            var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(this.Shop, "poof").GetValue();
             var heldItem = this.Shop.heldItem;
             int currentItemIndex = this.Shop.currentItemIndex;
             float sellPercentage = this.Helper.Reflection.GetField<float>(this.Shop, "sellPercentage").GetValue();
@@ -576,7 +575,6 @@ namespace BetterShopMenu
             var itemPriceAndStock = this.Shop.itemPriceAndStock;
             int currency = this.Shop.currency;
             var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.Shop, "animations").GetValue();
-            var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(this.Shop, "poof").GetValue();
             var heldItem = this.Shop.heldItem;
             int currentItemIndex = this.Shop.currentItemIndex;
             float sellPercentage = this.Helper.Reflection.GetField<float>(this.Shop, "sellPercentage").GetValue();

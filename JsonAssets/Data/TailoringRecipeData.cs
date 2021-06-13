@@ -19,23 +19,24 @@ namespace JsonAssets.Data
 
         public TailorItemRecipe ToGameData()
         {
-            var tir = new TailorItemRecipe();
-            tir.FirstItemTags = new List<string>(this.FirstItemTags);
-            tir.SecondItemTags = new List<string>(this.SecondItemTags);
-
-            tir.SpendRightItem = this.ConsumeSecondItem;
+            var recipe = new TailorItemRecipe
+            {
+                FirstItemTags = new List<string>(this.FirstItemTags),
+                SecondItemTags = new List<string>(this.SecondItemTags),
+                SpendRightItem = this.ConsumeSecondItem,
+                CraftedItemColor = $"{this.CraftedItemColor.R} {this.CraftedItemColor.G} {this.CraftedItemColor.B}"
+            };
 
             if (this.CraftedItems.Count > 1)
             {
-                tir.CraftedItemIDs = new List<string>();
-                foreach (var entry in this.CraftedItems)
-                    tir.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(this.CraftedItems[0]).ToString());
+                recipe.CraftedItemIDs = new List<string>();
+                foreach (object entry in this.CraftedItems)
+                    recipe.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(this.CraftedItems[0]).ToString());
             }
             else
-                tir.CraftedItemID = Mod.instance.ResolveClothingId(this.CraftedItems[0]);
-            tir.CraftedItemColor = $"{this.CraftedItemColor.R} {this.CraftedItemColor.G} {this.CraftedItemColor.B}";
+                recipe.CraftedItemID = Mod.instance.ResolveClothingId(this.CraftedItems[0]);
 
-            return tir;
+            return recipe;
         }
     }
 }

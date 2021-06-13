@@ -62,7 +62,6 @@ namespace CookingSkill.Framework
             foreach (ClickableComponent clickableComponent in this.inventory.GetBorder(InventoryMenu.BorderSide.Top))
                 clickableComponent.upNeighborID = -99998;
             this._materialContainers = material_containers;
-            List<Chest> materialContainers = this._materialContainers;
             if (this._standaloneMenu)
                 this.initializeUpperRightCloseButton();
             ClickableTextureComponent textureComponent1 = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 4, this.yPositionOnScreen + height - 192 - 32 - IClickableMenu.borderWidth - 104, 64, 104), Game1.mouseCursors, new Rectangle(564 + Game1.player.trashCanLevel * 18, 102, 18, 26), 4f);
@@ -352,7 +351,6 @@ namespace CookingSkill.Framework
             Item obj = this.pagesOfCraftingRecipes[this.currentCraftingPage][c].createItem();
             /////
             bool consume = Mod.OnCook(this.pagesOfCraftingRecipes[this.currentCraftingPage][c], obj, this._materialContainers);
-            SObject heldObj = this.heldItem as SObject;
             SObject itemObj = obj as SObject;
             bool didCraft = false;
             /////

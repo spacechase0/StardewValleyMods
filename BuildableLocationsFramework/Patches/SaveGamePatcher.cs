@@ -46,12 +46,12 @@ namespace BuildableLocationsFramework.Patches
             {
                 if (gamelocation.Name == "Farm")
                     continue;
-                if (gamelocation is BuildableGameLocation bgl)
+                if (gamelocation is BuildableGameLocation buildableGameLocation)
                 {
-                    GameLocation locationFromName = Game1.getLocationFromName(gamelocation.name);
-                    foreach (Building building in ((BuildableGameLocation)gamelocation).buildings)
+                    BuildableGameLocation locationFromName = (BuildableGameLocation)Game1.getLocationFromName(gamelocation.name);
+                    foreach (Building building in buildableGameLocation.buildings)
                         building.load();
-                    ((BuildableGameLocation)locationFromName).buildings.Set(((BuildableGameLocation)gamelocation).buildings);
+                    locationFromName.buildings.Set(buildableGameLocation.buildings);
                 }
                 else if (gamelocation is IAnimalLocation al)
                 {

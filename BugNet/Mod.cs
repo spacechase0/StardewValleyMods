@@ -198,7 +198,7 @@ namespace BugNet
                 Cloud => -2,
                 Frog frog => Mod.Instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4,
                 OverheadParrot parrot => -10 - parrot.sourceRect.Y,
-                CalderaMonkey monkey => -100,
+                CalderaMonkey => -100,
                 _ => critter.baseFrame
             };
 

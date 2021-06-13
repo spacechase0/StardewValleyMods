@@ -5,7 +5,6 @@ using GenericModConfigMenu.Framework.UI;
 using GenericModConfigMenu.ModOption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -525,12 +524,11 @@ namespace GenericModConfigMenu.Framework
         {
             if (this.KeybindingOpt == null)
                 return;
-            if (!e.Button.TryGetKeyboard(out Keys keys) && !e.Button.TryGetController(out _))
+            if (!e.Button.TryGetKeyboard(out _) && !e.Button.TryGetController(out _))
                 return;
-            if (e.Button.ToString() == "Escape")
-            {
+
+            if (e.Button == SButton.Escape)
                 Game1.playSound("bigDeSelect");
-            }
             else
             {
                 Game1.playSound("coin");
@@ -550,21 +548,19 @@ namespace GenericModConfigMenu.Framework
             List<SButton> all = new List<SButton>();
             foreach (var button in e.Held)
             {
-                if (button.TryGetKeyboard(out Keys keys) || button.TryGetController(out _))
-                {
+                if (button.TryGetKeyboard(out _) || button.TryGetController(out _))
                     all.Add(button);
-                }
             }
 
             foreach (var button in e.Released)
             {
                 bool stop = false;
-                if (button.ToString() == "Escape")
+                if (button == SButton.Escape)
                 {
                     stop = true;
                     Game1.playSound("bigDeSelect");
                 }
-                if (!stop && (button.TryGetKeyboard(out Keys keys) || button.TryGetController(out _)))
+                if (!stop && (button.TryGetKeyboard(out _) || button.TryGetController(out _)))
                 {
                     stop = true;
                     all.Add(button);

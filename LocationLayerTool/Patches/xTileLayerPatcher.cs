@@ -103,7 +103,6 @@ namespace LocationLayerTool.Patches
             var lightmapField = Mod.Instance.Helper.Reflection.GetField<RenderTarget2D>(typeof(Game1), "_lightmap");
             var lightingBlend = Mod.Instance.Helper.Reflection.GetField<BlendState>(Game1.game1, "lightingBlend");
 
-            bool oldHud = Game1.displayHUD;
             var oldDd = Game1.mapDisplayDevice;
             var oldSb = Game1.spriteBatch;
             var oldLoc = Game1.currentLocation;

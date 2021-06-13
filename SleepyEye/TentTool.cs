@@ -60,16 +60,26 @@ namespace SleepyEye
         {
             if (this.StartedUsing == null)
                 return;
-            TimeSpan useTime = DateTime.Now - (DateTime)this.StartedUsing;
 
-            if (who.facingDirection == Game1.up)
-                ((FarmerSprite)who.Sprite).animate(112, time);
-            else if (who.facingDirection == Game1.right)
-                ((FarmerSprite)who.Sprite).animate(104, time);
-            else if (who.facingDirection == Game1.down)
-                ((FarmerSprite)who.Sprite).animate(96, time);
-            else if (who.facingDirection == Game1.left)
-                ((FarmerSprite)who.Sprite).animate(120, time);
+            FarmerSprite sprite = (FarmerSprite)who.Sprite;
+            switch (who.FacingDirection)
+            {
+                case Game1.up:
+                    sprite.animate(112, time);
+                    break;
+
+                case Game1.right:
+                    sprite.animate(104, time);
+                    break;
+
+                case Game1.down:
+                    sprite.animate(96, time);
+                    break;
+
+                case Game1.left:
+                    sprite.animate(120, time);
+                    break;
+            }
         }
 
         public override void drawInMenu(SpriteBatch b, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)

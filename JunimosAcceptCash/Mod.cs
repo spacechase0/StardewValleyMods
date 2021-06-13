@@ -76,8 +76,6 @@ namespace JunimosAcceptCash
             {
                 this.Helper.Input.Suppress(SButton.MouseLeft);
 
-                int whichArea = this.Helper.Reflection.GetField<int>(this.ActiveMenu, "whichArea").GetValue();
-
                 // Copied from JunimoNoteMenu, modified
                 int stack = this.CalculateActiveBundleCost();
                 if (Game1.player.Money >= stack)

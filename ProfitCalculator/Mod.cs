@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using SpaceShared;
@@ -28,9 +27,6 @@ namespace ProfitCalculator
                 season = args[0];
             Log.Info((season == "") ? "Doing for all seasons" : $"Doing for season {season}");
             Log.Info("NOTE: This takes into account your farming level");
-
-            var tmp = Game1.player;
-
 
             var profits = new List<ProfitData>();
             var objectInfo = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
@@ -71,6 +67,9 @@ namespace ProfitCalculator
                         string[] multiStrs = cropData[6].Split(' ');
                         int min = int.Parse(multiStrs[1]);
                         int max = int.Parse(multiStrs[2]);
+
+                        // TODO: Integrate chance?
+                        /*
                         int bonus = int.Parse(multiStrs[3]);
                         double chance = double.Parse(multiStrs[4]);
 
@@ -79,10 +78,9 @@ namespace ProfitCalculator
                             farmLevel = Game1.player.FarmingLevel;
 
                         int newMax = Math.Min(min + 1, max + 1 + farmLevel / (bonus == 0 ? 1 : bonus));
-                        // TODO: Integrate chance?
-                        /*
-                    while (random.NextDouble() < Math.Min(0.9, (double)((NetFieldBase<double, NetDouble>)this.chanceForExtraCrops)))
-                        ++num1;
+
+                        while (random.NextDouble() < Math.Min(0.9, (double)((NetFieldBase<double, NetDouble>)this.chanceForExtraCrops)))
+                            ++num1;
                         */
 
                         avgPerHarvest = (min + max) / 2;

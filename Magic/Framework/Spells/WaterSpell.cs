@@ -21,7 +21,6 @@ namespace Magic.Framework.Spells
             level += 1;
             targetX /= Game1.tileSize;
             targetY /= Game1.tileSize;
-            Vector2 target = new Vector2(targetX, targetY);
 
             int num = 0;
 

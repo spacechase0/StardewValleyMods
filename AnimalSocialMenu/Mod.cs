@@ -46,7 +46,7 @@ namespace AnimalSocialMenu
 
                 this.Helper.Events.Display.RenderedActiveMenu += this.DrawSocialIcon;
             }
-            else if (args.OldMenu is GameMenu ogm)
+            else if (args.OldMenu is GameMenu)
             {
                 this.Helper.Events.Display.RenderedActiveMenu -= this.DrawSocialIcon;
             }

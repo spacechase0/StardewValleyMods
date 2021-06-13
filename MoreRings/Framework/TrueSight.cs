@@ -162,7 +162,6 @@ namespace MoreRings.Framework
                 {
                     r.Next(1, 3);
                     r.NextDouble();
-                    double num4 = 0.1 * (1.0 + num1);
                     if (r.NextDouble() < 0.25 * (who.professions.Contains(21) ? 2.0 : 1.0))
                     {
                         return 382;
@@ -187,7 +186,6 @@ namespace MoreRings.Framework
         public static int BreakStone(int indexOfStone, int x, int y, Farmer who, Random r, MineShaft ms)
         {
             int ret = -1;
-            int num1 = who.professions.Contains(18) ? 1 : 0;
             if (indexOfStone == 44)
                 indexOfStone = Game1.random.Next(1, 8) * 2;
             switch (indexOfStone)
@@ -341,7 +339,6 @@ namespace MoreRings.Framework
                 {
                     random.Next(1, 3);
                     random.NextDouble();
-                    double num3 = 0.1 * (1.0 + num2);
                     random.NextDouble();
                     ret = 382;
                 }

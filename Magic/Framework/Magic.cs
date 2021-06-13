@@ -492,7 +492,6 @@ namespace Magic.Framework
 
         private static void ActionTriggered(object sender, EventArgsAction args)
         {
-            string[] actionArgs = args.ActionString.Split(' ');
             if (args.Action == "MagicAltar")
             {
                 if (!Game1.player.eventsSeen.Contains(90001))

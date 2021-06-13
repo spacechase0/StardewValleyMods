@@ -158,7 +158,6 @@ namespace BiggerCraftables.Patches
             var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
             if (entry == null)
                 return true;
-            int hdiff = entry.Texture.Height - entry.Length * 16;
 
             spriteBatch.Draw(entry.Texture, objectPosition + new Vector2(32, 32), null, Color.White, 0, new Vector2(entry.Texture.Width / 2, entry.Texture.Height / 2), 4, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + 3) / 10000f));
 
@@ -218,9 +217,7 @@ namespace BiggerCraftables.Patches
             {
                 for (int iy = 0; iy < entry.Length; ++iy)
                 {
-                    int iOffset = ix + (entry.Length - 1 - iy) * entry.Width;
                     spriteBatch.Draw(Game1.mouseCursors, new Vector2(x / 64 * 64 + ix * 64 - Game1.viewport.X, y / 64 * 64 + iy * 64 - Game1.viewport.Y), new Rectangle(flag ? 194 : 210, 388, 16, 16), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.01f);
-                    int oldI = __instance.ParentSheetIndex;
                     if (ix == 0 && iy == entry.Length - 1)
                         __instance.draw(spriteBatch, x / 64 + ix, y / 64 + iy, 0.5f);
                 }

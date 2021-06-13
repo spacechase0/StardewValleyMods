@@ -128,7 +128,6 @@ namespace CustomCritters.Framework
                                 }
                                 else
                                 {
-                                    var v = (this.Target - this.position);
                                     Vector2 unit = (this.Target - this.position) / dist;
                                     //Log.trace($"{v.X} {v.Y} {unit.X} {unit.Y}");
                                     this.position += unit * this.Data.Behavior.Speed;

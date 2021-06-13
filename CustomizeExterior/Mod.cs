@@ -63,7 +63,6 @@ namespace CustomizeExterior
                     writer.Write(choice.Value);
                 }
 
-                var server = (GameServer)sender;
                 Log.Trace("Sending exteriors data to " + args.FarmerID);
                 SpaceCore.Networking.ServerSendTo(args.FarmerID, Mod.MsgChoices, stream.ToArray());
             }
@@ -283,7 +282,6 @@ namespace CustomizeExterior
                     fall = fall.Select(Path.GetFileName).ToList();
                     winter = winter.Select(Path.GetFileName).ToList();
 
-                    var common = new List<string>();
                     foreach (string building in spring)
                     {
                         string choiceStr = Path.GetFileName(choice);

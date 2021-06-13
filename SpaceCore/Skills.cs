@@ -232,7 +232,6 @@ namespace SpaceCore
                     }
                 }
 
-                var server = (GameServer)sender;
                 Log.Trace("Sending skill data to " + args.FarmerID);
                 Networking.ServerSendTo(args.FarmerID, Skills.MsgData, stream.ToArray());
             }

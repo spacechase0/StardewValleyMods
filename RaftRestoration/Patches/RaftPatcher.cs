@@ -51,16 +51,16 @@ namespace RaftRestoration.Patches
             if (!who.isRafting && location.doesTileHaveProperty(x / 64, y / 64, "Water", "Back") != null)
             {
                 who.isRafting = true;
-                Rectangle position = new Rectangle(x - 32, y - 32, 64, 64);
                 /*
-                if ( location.isCollidingPosition( position, Game1.viewport, true ) )
+                Rectangle position = new Rectangle(x - 32, y - 32, 64, 64);
+                if (location.isCollidingPosition(position, Game1.viewport, true))
                 {
                     who.isRafting = false;
                     return false;
                 }
                 */
                 int xo = 0, yo = 0;
-                /*switch ( who.FacingDirection )
+                /*switch (who.FacingDirection)
                 {
                     case 0: yo -= 64; break;
                     case 1: xo += 64; break;

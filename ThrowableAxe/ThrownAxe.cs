@@ -52,7 +52,7 @@ namespace ThrowableAxe
                 return;
 
             this.NpcsHit.Add(n);
-            if (n is Monster mob)
+            if (n is Monster)
             {
                 location.damageMonster(this.getBoundingBox(), this.Damage, this.Damage, false, (Farmer)this.theOneWhoFiredMe.Get(location));
             }

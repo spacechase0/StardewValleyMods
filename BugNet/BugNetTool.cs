@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
 using SpaceShared;
 using StardewValley;
-using StardewValley.BellsAndWhistles;
 using StardewValley.Tools;
 
 namespace BugNet
@@ -101,14 +100,6 @@ namespace BugNet
                     if (critter.getBoundingBox(0, 0).Intersects(area))
                     {
                         critters.Remove(critter);
-                        int bframe = critter switch
-                        {
-                            Cloud => -2,
-                            Frog frog => Mod.Instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue()
-                                ? -3
-                                : -4,
-                            _ => critter.baseFrame
-                        };
 
                         string critterId = Mod.GetCritterIdFrom(critter);
                         int objId = Mod.Ja.GetObjectId($"Critter Cage: {Mod.GetCritterName(critterId)}");

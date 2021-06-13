@@ -81,8 +81,6 @@ namespace JumpOver
                 }
                 else
                 {
-                    int tx = (int)this.Player.position.X / Game1.tileSize;
-                    int ty = (int)this.Player.position.Y / Game1.tileSize;
                     int ox = 0, oy = 0; // Offset x, y
                     switch (this.Player.facingDirection.Value)
                     {

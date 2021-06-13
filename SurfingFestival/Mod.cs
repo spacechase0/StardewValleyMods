@@ -419,7 +419,7 @@ namespace SurfingFestival
                     continue;
                 }
 
-                if (racer is Farmer farmer)
+                if (racer is Farmer)
                 {
                     if (racer == Game1.player)
                     {
@@ -811,7 +811,7 @@ namespace SurfingFestival
                 int x = (int)pos.X + 74 - SpriteText.getWidthOfString(str) / 2 + i % 5 * 40 - 20;
                 int y = Game1.viewport.Height - 64 + i / 5 * 50;
 
-                if (racer is NPC npc)
+                if (racer is NPC)
                 {
                     var rect = new Rectangle(0, 3, 16, 16);
                     b.Draw(racer.Sprite.Texture, new Vector2(x, y), rect, Color.White, 0, Vector2.Zero, 2, SpriteEffects.None, 1);
@@ -836,7 +836,6 @@ namespace SurfingFestival
                         string racerName = "farmer" + Utility.getFarmerNumberFromFarmer(Game1.getFarmer(e.FromPlayerID));
                         if (!Mod.Racers.Contains(racerName))
                             return;
-                        var racer = Game1.CurrentEvent.getCharacterByName(racerName) as Farmer;
                         var state = Mod.RacerState[racerName];
 
                         state.CurrentItem = msg.ItemUsed;
