@@ -19,19 +19,6 @@ namespace JsonAssets.Framework
             });
         }
 
-        public void InvalidateUsed()
-        {
-            Mod.instance.Helper.Content.InvalidateCache((a) =>
-            {
-                foreach (string file in this.Files)
-                {
-                    if (a.AssetNameEquals(file))
-                        return true;
-                }
-                return false;
-            });
-        }
-
         public bool CanEdit<T>(IAssetInfo asset)
         {
             foreach (string file in this.Files)

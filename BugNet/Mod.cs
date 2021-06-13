@@ -163,32 +163,11 @@ namespace BugNet
             }
         }
 
-        internal static Texture2D GetCritterTexture(string critter)
-        {
-            return Mod.CrittersData.TryGetValue(critter, out CritterData critterData)
-                ? critterData.Texture.Texture
-                : Game1.staminaRect;
-        }
-
-        internal static Rectangle GetCritterRect(string critter)
-        {
-            return Mod.CrittersData.TryGetValue(critter, out CritterData critterData)
-                ? critterData.Texture.SourceRect
-                : new Rectangle(0, 0, 1, 1);
-        }
-
         internal static string GetCritterName(string critter)
         {
             return Mod.CrittersData.TryGetValue(critter, out CritterData critterData)
                 ? critterData.Name()
                 : "???";
-        }
-
-        internal static Func<int, int, Critter> GetCritterMaker(string critter)
-        {
-            return Mod.CrittersData.TryGetValue(critter, out CritterData critterData)
-                ? critterData.MakeFunction
-                : ((x, y) => null);
         }
 
         internal static string GetCritterIdFrom(Critter critter)

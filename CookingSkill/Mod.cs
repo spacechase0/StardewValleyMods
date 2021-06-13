@@ -126,7 +126,7 @@ namespace CookingSkill
                 // Need to make sure this is the original buff first.
                 // So it doesn't get rebuffed from eating a buff food -> non buff food -> buff food or something
                 Buff oldBuff = (info[6] == "drink" ? Game1.buffsDisplay.drink : Game1.buffsDisplay.food);
-                Buff thisBuff = null;
+                Buff thisBuff;
                 if (info[6] == "drink")
                     thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 10) ? Convert.ToInt32(buffData[10]) : 0, (info.Length > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
                 else

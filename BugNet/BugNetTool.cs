@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
@@ -41,21 +40,6 @@ namespace BugNet
             return new BugNetTool();
         }
 
-        // ISaveElement
-        public object GetReplacement()
-        {
-            return new StardewValley.Object();
-        }
-
-        public Dictionary<string, string> GetAdditionalSaveData()
-        {
-            return new();
-        }
-
-        public void Rebuild(Dictionary<string, string> saveData, object replacement)
-        {
-        }
-
         protected override string loadDisplayName()
         {
             return "Bug Net";
@@ -70,10 +54,9 @@ namespace BugNet
         {
             // Copied from melee weapon
             float num1 = 0.0f;
-            float num2 = 0.0f;
             if (MeleeWeapon.defenseCooldown > 0)
                 num1 = MeleeWeapon.defenseCooldown / 1500f;
-            num2 = Mod.Instance.Helper.Reflection.GetField<float>(typeof(MeleeWeapon), "addedSwordScale").GetValue();
+            float num2 = Mod.Instance.Helper.Reflection.GetField<float>(typeof(MeleeWeapon), "addedSwordScale").GetValue();
             if (!drawShadow)
                 num2 = 0;
             spriteBatch.Draw(BugNetTool.Texture, location + (this.type == 1 ? new Vector2(Game1.tileSize * 2 / 3, Game1.tileSize / 3) : new Vector2(Game1.tileSize / 2, Game1.tileSize / 2)), new Rectangle(0, 0, 16, 16), Color.White * transparency, 0.0f, new Vector2(8f, 8f), Game1.pixelZoom * (scaleSize + num2), SpriteEffects.None, layerDepth);

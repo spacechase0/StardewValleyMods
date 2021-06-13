@@ -72,11 +72,6 @@ namespace Magic.Framework
                 : -1;
         }
 
-        public static int KnowsSpellLevel(this Farmer player, Spell spell)
-        {
-            return player.KnowsSpellLevel(spell.FullId);
-        }
-
         public static void LearnSpell(this Farmer player, string spellId, int level, bool free = false)
         {
             int known = player.KnowsSpellLevel(spellId);
@@ -118,11 +113,6 @@ namespace Magic.Framework
         public static void ForgetSpell(this Farmer player, Spell spell, int level, bool sync = true)
         {
             player.ForgetSpell(spell.FullId, level, sync);
-        }
-
-        public static bool CanCastSpell(this Farmer player, string spellId, int level)
-        {
-            return SpellBook.Get(spellId).CanCast(player, level);
         }
 
         public static bool CanCastSpell(this Farmer player, Spell spell, int level)
