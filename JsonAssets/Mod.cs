@@ -1468,32 +1468,10 @@ namespace JsonAssets
             this.FixItemList(Game1.player.Items);
             this.FixItemList(Game1.player.team.junimoChest);
 #pragma warning disable AvoidNetField
-            if (Game1.player.leftRing.Value != null && this.FixId(this.OldObjectIds, this.ObjectIds, Game1.player.leftRing.Value.indexInTileSheet, this.OrigObjects))
+            if (Game1.player.leftRing.Value != null && this.FixRing(Game1.player.leftRing.Value))
                 Game1.player.leftRing.Value = null;
-            if (Game1.player.leftRing.Value is CombinedRing cring)
-            {
-                var toRemoveRing = new List<Ring>();
-                foreach (var ring2 in cring.combinedRings)
-                {
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, ring2.indexInTileSheet, this.OrigObjects))
-                        toRemoveRing.Add(ring2);
-                }
-                foreach (var removeRing in toRemoveRing)
-                    cring.combinedRings.Remove(removeRing);
-            }
-            if (Game1.player.rightRing.Value != null && this.FixId(this.OldObjectIds, this.ObjectIds, Game1.player.rightRing.Value.indexInTileSheet, this.OrigObjects))
+            if (Game1.player.rightRing.Value != null && this.FixRing(Game1.player.rightRing.Value))
                 Game1.player.rightRing.Value = null;
-            if (Game1.player.rightRing.Value is CombinedRing cring2)
-            {
-                var toRemoveRing = new List<Ring>();
-                foreach (var ring2 in cring2.combinedRings)
-                {
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, ring2.indexInTileSheet, this.OrigObjects))
-                        toRemoveRing.Add(ring2);
-                }
-                foreach (var removeRing in toRemoveRing)
-                    cring2.combinedRings.Remove(removeRing);
-            }
             if (Game1.player.hat.Value != null && this.FixId(this.OldHatIds, this.HatIds, Game1.player.hat.Value.which, this.OrigHats))
                 Game1.player.hat.Value = null;
             if (Game1.player.shirtItem.Value != null && this.FixId(this.OldClothingIds, this.ClothingIds, Game1.player.shirtItem.Value.parentSheetIndex, this.OrigClothing))
@@ -1616,8 +1594,7 @@ namespace JsonAssets
             }
             else if (item is Ring ring)
             {
-                if (this.FixId(this.OldObjectIds, this.ObjectIds, ring.indexInTileSheet, this.OrigObjects))
-                    return true;
+                return this.FixRing(ring);
             }
             else if (item is Clothing clothing)
             {
@@ -1701,7 +1678,26 @@ namespace JsonAssets
 
             return false;
         }
+        internal bool FixRing(Ring ring)
+        {
+            if (ring is CombinedRing cring)
+            {
+                var toRemoveRing = new List<Ring>();
+                foreach (var ring2 in cring.combinedRings)
+                {
+                    if (this.FixRing(ring2))
+                        toRemoveRing.Add(ring2);
+                }
+                foreach (var removeRing in toRemoveRing)
+                    cring.combinedRings.Remove(removeRing);
+                return false;
+            }
+            else
+            {
+                return this.FixId(this.OldObjectIds, this.ObjectIds, ring.indexInTileSheet, this.OrigObjects);
+            }
 
+        }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
         internal void FixLocation(GameLocation loc)
         {
@@ -1733,32 +1729,10 @@ namespace JsonAssets
                     this.FixItemList(player.Items);
                     //fixItemList( player.team.junimoChest );
 #pragma warning disable AvoidNetField
-                    if (player.leftRing.Value != null && this.FixId(this.OldObjectIds, this.ObjectIds, player.leftRing.Value.parentSheetIndex, this.OrigObjects))
+                    if (player.leftRing.Value != null && this.FixRing(player.leftRing.Value))
                         player.leftRing.Value = null;
-                    if (player.leftRing.Value is CombinedRing cring)
-                    {
-                        var toRemoveRing = new List<Ring>();
-                        foreach (var ring2 in cring.combinedRings)
-                        {
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, ring2.indexInTileSheet, this.OrigObjects))
-                                toRemoveRing.Add(ring2);
-                        }
-                        foreach (var removeRing in toRemoveRing)
-                            cring.combinedRings.Remove(removeRing);
-                    }
-                    if (player.rightRing.Value != null && this.FixId(this.OldObjectIds, this.ObjectIds, player.rightRing.Value.parentSheetIndex, this.OrigObjects))
+                    if (player.rightRing.Value != null && this.FixRing(player.rightRing.Value))
                         player.rightRing.Value = null;
-                    if (player.rightRing.Value is CombinedRing cring2)
-                    {
-                        var toRemoveRing = new List<Ring>();
-                        foreach (var ring2 in cring2.combinedRings)
-                        {
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, ring2.indexInTileSheet, this.OrigObjects))
-                                toRemoveRing.Add(ring2);
-                        }
-                        foreach (var removeRing in toRemoveRing)
-                            cring2.combinedRings.Remove(removeRing);
-                    }
                     if (player.hat.Value != null && this.FixId(this.OldHatIds, this.HatIds, player.hat.Value.which, this.OrigHats))
                         player.hat.Value = null;
                     if (player.shirtItem.Value != null && this.FixId(this.OldClothingIds, this.ClothingIds, player.shirtItem.Value.parentSheetIndex, this.OrigClothing))
@@ -2030,19 +2004,8 @@ namespace JsonAssets
                 }
                 else if (item is Ring ring)
                 {
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, ring.indexInTileSheet, this.OrigObjects))
+                    if (this.FixRing(ring))
                         items[i] = null;
-                    if (ring is CombinedRing cring)
-                    {
-                        var toRemove = new List<Ring>();
-                        foreach (var ring2 in cring.combinedRings)
-                        {
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, ring2.indexInTileSheet, this.OrigObjects))
-                                toRemove.Add(ring2);
-                        }
-                        foreach (var removeRing in toRemove)
-                            cring.combinedRings.Remove(removeRing);
-                    }
                 }
                 else if (item is Clothing clothing)
                 {
