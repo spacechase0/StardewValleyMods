@@ -1,0 +1,10 @@
+{
+  "Name": "Surfing Festival [MFM]",
+  "Author": "spacechase0 & paradigmnomad",
+  "Version": "1.0.5",
+  "Description": "Adds a letter to announce the upcoming festival",
+  "UniqueID": "spacechase0.SurfingFestival.MFM",
+  "ContentPackFor": {
+    "UniqueID": "DIGUS.MailFrameworkMod"
+  }
+}

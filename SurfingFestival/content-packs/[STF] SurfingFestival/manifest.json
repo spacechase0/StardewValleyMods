@@ -1,0 +1,16 @@
+{
+  "Name": "Surfing Festival [STF]",
+  "Author": "spacechase0, ParadigmNomad",
+  "Version": "1.0.5",
+  "Description": "Adds the vendor data for the Surfing Festival",
+  "UniqueID": "spacechase0.SurfingFestival.STF",
+  "ContentPackFor": {
+    "UniqueID": "Cherry.ShopTileFramework",
+    "MinimumVersion": "1.0.8",
+  },
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.SurfingFestival",
+    }
+  ]
+}

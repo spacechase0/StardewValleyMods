@@ -1,0 +1,18 @@
+{
+  "Name": "Surfing Festival [CP-A]",
+  "Author": "spacechase0, CP-A",
+  "Version": "1.0.5",
+  "Description": "Adds the animated prize for winning the surfing competition.",
+  "UniqueID": "spacechase0.SurfingFestival.CP-A",
+  "ContentPackFor": {
+    "UniqueID": "Pathoschild.ContentPatcher",
+  },
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.ContentPatcherAnimations",
+    },
+    {
+      "UniqueID": "spacechase0.JsonAssets",
+    }
+  ]
+}
