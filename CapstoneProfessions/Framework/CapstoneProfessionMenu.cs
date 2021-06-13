@@ -36,8 +36,6 @@ namespace CapstoneProfessions.Framework
 
         private int timerBeforeStart;
 
-        private float scale;
-
         private Color leftProfessionColor = Game1.textColor;
 
         private Color rightProfessionColor = Game1.textColor;
@@ -173,9 +171,10 @@ namespace CapstoneProfessions.Framework
 
         public List<string> getExtraInfoForLevel()
         {
-            List<string> extraInfo = new List<string>();
-            extraInfo.Add(Mod.Instance.Helper.Translation.Get("menu.extra"));
-            return extraInfo;
+            return new()
+            {
+                Mod.Instance.Helper.Translation.Get("menu.extra")
+            };
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)
@@ -210,15 +209,12 @@ namespace CapstoneProfessions.Framework
             }
             if (Game1.random.NextDouble() < 0.03)
             {
-                Vector2 position = new Vector2(0f, Game1.random.Next(this.yPositionOnScreen - 128, this.yPositionOnScreen - 4) / 20 * 4 * 5 + 32);
-                if (Game1.random.NextDouble() < 0.5)
+                Vector2 position = new Vector2(0f, Game1.random.Next(this.yPositionOnScreen - 128, this.yPositionOnScreen - 4) / 20 * 4 * 5 + 32)
                 {
-                    position.X = Game1.random.Next(this.xPositionOnScreen + this.width / 2 - 228, this.xPositionOnScreen + this.width / 2 - 132);
-                }
-                else
-                {
-                    position.X = Game1.random.Next(this.xPositionOnScreen + this.width / 2 + 116, this.xPositionOnScreen + this.width - 160);
-                }
+                    X = Game1.random.NextDouble() < 0.5
+                        ? Game1.random.Next(this.xPositionOnScreen + this.width / 2 - 228, this.xPositionOnScreen + this.width / 2 - 132)
+                        : Game1.random.Next(this.xPositionOnScreen + this.width / 2 + 116, this.xPositionOnScreen + this.width - 160)
+                };
                 if (position.Y < this.yPositionOnScreen - 64 - 8)
                 {
                     position.X = Game1.random.Next(this.xPositionOnScreen + this.width / 2 - 116, this.xPositionOnScreen + this.width / 2 + 116);
@@ -273,14 +269,9 @@ namespace CapstoneProfessions.Framework
             this.oldMouseState = Game1.input.GetMouseState();
             if (this.isActive && !this.informationUp && this.starIcon != null)
             {
-                if (this.starIcon.containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()))
-                {
-                    this.starIcon.sourceRect.X = 294;
-                }
-                else
-                {
-                    this.starIcon.sourceRect.X = 310;
-                }
+                this.starIcon.sourceRect.X = this.starIcon.containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY())
+                    ? 294
+                    : 310;
             }
             if (!this.isActive || !this.informationUp)
             {
@@ -329,7 +320,7 @@ namespace CapstoneProfessions.Framework
                 }
                 //if ( this.isProfessionChooser )
                 {
-                    if (this.professionsToChoose.Count() == 0)
+                    if (!this.professionsToChoose.Any())
                     {
                         return;
                     }

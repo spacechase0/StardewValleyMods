@@ -164,20 +164,19 @@ namespace MultiFertilizer.Patches
         {
             if (isFertilizer)
             {
-                int level = 0;
-                string key = "";
-                switch (objectIndex)
+                string key = objectIndex switch
                 {
-                    case 368: level = 1; key = Mod.KeyFert; break;
-                    case 369: level = 2; key = Mod.KeyFert; break;
-                    case 919: level = 3; key = Mod.KeyFert; break;
-                    case 370: level = 1; key = Mod.KeyRetain; break;
-                    case 371: level = 2; key = Mod.KeyRetain; break;
-                    case 920: level = 3; key = Mod.KeyRetain; break;
-                    case 465: level = 1; key = Mod.KeySpeed; break;
-                    case 466: level = 2; key = Mod.KeySpeed; break;
-                    case 918: level = 3; key = Mod.KeySpeed; break;
-                }
+                    368 => Mod.KeyFert,
+                    369 => Mod.KeyFert,
+                    919 => Mod.KeyFert,
+                    370 => Mod.KeyRetain,
+                    371 => Mod.KeyRetain,
+                    920 => Mod.KeyRetain,
+                    465 => Mod.KeySpeed,
+                    466 => Mod.KeySpeed,
+                    918 => Mod.KeySpeed,
+                    _ => ""
+                };
 
                 __result = !__instance.modData.ContainsKey(key);
                 return false;

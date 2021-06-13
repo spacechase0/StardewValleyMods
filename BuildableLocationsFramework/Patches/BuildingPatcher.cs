@@ -35,8 +35,7 @@ namespace BuildableLocationsFramework.Patches
             if (targetName == null)
                 return;
 
-            if (interior == null)
-                interior = __instance.indoors.Value;
+            interior ??= __instance.indoors.Value;
             if (interior == null)
                 return;
             foreach (Warp warp in interior.warps)

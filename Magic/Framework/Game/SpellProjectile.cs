@@ -162,8 +162,7 @@ namespace Magic.Framework.Game
 
         public override void draw(SpriteBatch b)
         {
-            if (this.Tex == null)
-                this.Tex = Game1.content.Load<Texture2D>(this.TexId.Value);
+            this.Tex ??= Game1.content.Load<Texture2D>(this.TexId.Value);
             Vector2 drawPos = Game1.GlobalToLocal(new Vector2(this.getBoundingBox().X + this.getBoundingBox().Width / 2, this.getBoundingBox().Y + this.getBoundingBox().Height / 2));
             b.Draw(this.Tex, drawPos, new Rectangle(0, 0, this.Tex.Width, this.Tex.Height), Color.White, this.Dir, new Vector2(this.Tex.Width / 2, this.Tex.Height / 2), 2, SpriteEffects.None, (float)((this.position.Y + (double)(Game1.tileSize * 3 / 2)) / 10000.0));
             //Vector2 bdp = Game1.GlobalToLocal(new Vector2(getBoundingBox().X, getBoundingBox().Y));

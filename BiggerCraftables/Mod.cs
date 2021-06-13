@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using BiggerCraftables.Framework;
 using BiggerCraftables.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

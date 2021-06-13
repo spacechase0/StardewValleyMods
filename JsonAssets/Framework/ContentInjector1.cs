@@ -48,10 +48,7 @@ namespace JsonAssets.Framework
 
         public void InvalidateUsed()
         {
-            Mod.instance.Helper.Content.InvalidateCache((a) =>
-            {
-                return this.Files.ContainsKey(a.AssetName);
-            });
+            Mod.instance.Helper.Content.InvalidateCache(asset => this.Files.ContainsKey(asset.AssetName));
         }
 
         public bool CanEdit<T>(IAssetInfo asset)

@@ -84,8 +84,10 @@ namespace CustomizeExterior.Framework
             int edge = (int)(10 * Game1.options.zoomLevel);
 
             b.End();
-            RasterizerState state = new RasterizerState();
-            state.ScissorTestEnable = true;
+            RasterizerState state = new RasterizerState
+            {
+                ScissorTestEnable = true
+            };
             b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, state);
             b.GraphicsDevice.ScissorRectangle = new Rectangle(this.X + edge, SelectDisplayMenu.PaddingOuter + edge, this.Size - edge * 2, this.Size - edge * 2);
             {

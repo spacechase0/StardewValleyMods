@@ -14,8 +14,6 @@ namespace PyromancersJourney
     {
         public static Mod Instance;
 
-        private World World;
-
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;

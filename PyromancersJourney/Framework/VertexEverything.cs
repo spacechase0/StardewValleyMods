@@ -10,7 +10,9 @@ namespace PyromancersJourney.Framework
         public Vector3 Normal;
         public Vector2 Texture;
 
-        public readonly static VertexDeclaration VertexDeclaration = new(
+        VertexDeclaration IVertexType.VertexDeclaration => VertexEverything.VertexDeclaration;
+
+        public static readonly VertexDeclaration VertexDeclaration = new(
             new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
             new VertexElement(sizeof(float) * 3, VertexElementFormat.Color, VertexElementUsage.Color, 0),
             new VertexElement(sizeof(float) * 3 + 4, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
@@ -23,11 +25,6 @@ namespace PyromancersJourney.Framework
             this.Color = Color.White;
             this.Normal = n;
             this.Texture = tex;
-        }
-
-        VertexDeclaration IVertexType.VertexDeclaration
-        {
-            get { return VertexEverything.VertexDeclaration; }
         }
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PyromancersJourney.Framework.Objects;
@@ -25,17 +23,19 @@ namespace PyromancersJourney.Framework.Projectiles
             {
                 float a = 0;
                 float b = 1;
-                var vertices = new List<VertexPositionColorTexture>();
-                vertices.Add(new VertexPositionColorTexture(new Vector3(0, 0, 0), Color.White, new Vector2(a, 0)));
-                vertices.Add(new VertexPositionColorTexture(new Vector3(0.5f, 0, 0), Color.White, new Vector2(b, 0)));
-                vertices.Add(new VertexPositionColorTexture(new Vector3(0.5f, 1, 0), Color.White, new Vector2(b, 1)));
+                var vertices = new VertexPositionColorTexture[]
+                {
+                    new(new Vector3(0, 0, 0), Color.White, new Vector2(a, 0)),
+                    new(new Vector3(0.5f, 0, 0), Color.White, new Vector2(b, 0)),
+                    new(new Vector3(0.5f, 1, 0), Color.White, new Vector2(b, 1)),
+                    new(new Vector3(0, 0, 0), Color.White, new Vector2(a, 0)),
+                    new(new Vector3(0, 1, 0), Color.White, new Vector2(a, 1)),
+                    new(new Vector3(0.5f, 1, 0), Color.White, new Vector2(b, 1))
+                };
 
-                vertices.Add(new VertexPositionColorTexture(new Vector3(0, 0, 0), Color.White, new Vector2(a, 0)));
-                vertices.Add(new VertexPositionColorTexture(new Vector3(0, 1, 0), Color.White, new Vector2(a, 1)));
-                vertices.Add(new VertexPositionColorTexture(new Vector3(0.5f, 1, 0), Color.White, new Vector2(b, 1)));
 
-                GolemArm.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
-                GolemArm.Buffer.SetData(vertices.ToArray());
+                GolemArm.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Length, BufferUsage.WriteOnly);
+                GolemArm.Buffer.SetData(vertices);
             }
         }
 
@@ -67,9 +67,8 @@ namespace PyromancersJourney.Framework.Projectiles
             BaseProjectile.Effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.Pos, cam.Up, null, null);
             BaseProjectile.Effect.TextureEnabled = true;
             BaseProjectile.Effect.Texture = GolemArm.Tex;
-            for (int e = 0; e < BaseProjectile.Effect.CurrentTechnique.Passes.Count; ++e)
+            foreach (EffectPass pass in BaseProjectile.Effect.CurrentTechnique.Passes)
             {
-                var pass = BaseProjectile.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
                 device.SetVertexBuffer(GolemArm.Buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);

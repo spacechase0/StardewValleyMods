@@ -1,4 +1,4 @@
-namespace BiggerCraftables
+namespace BiggerCraftables.Framework
 {
     internal static class Extensions
     {

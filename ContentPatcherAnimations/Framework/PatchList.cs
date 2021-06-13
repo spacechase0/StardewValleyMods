@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using StardewModdingAPI;
 
-namespace ContentPatcherAnimations
+namespace ContentPatcherAnimations.Framework
 {
     internal class Patch
     {

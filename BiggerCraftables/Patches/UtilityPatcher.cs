@@ -65,7 +65,7 @@ namespace BiggerCraftables.Patches
                 }
             }
 
-            if (withinRadius || (item is Wallpaper && location is DecoratableLocation) || (item is Furniture && location.CanPlaceThisFurnitureHere(item as Furniture)))
+            if (withinRadius || (item is Wallpaper && location is DecoratableLocation) || (item is Furniture furniture && location.CanPlaceThisFurnitureHere(furniture)))
             {
                 if (item.canBePlacedHere(location, tileLocation))
                 {

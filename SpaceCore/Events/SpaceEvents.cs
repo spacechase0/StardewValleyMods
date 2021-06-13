@@ -62,8 +62,10 @@ namespace SpaceCore.Events
 
         internal static FarmEvent InvokeChooseNightlyFarmEvent(FarmEvent vanilla)
         {
-            var args = new EventArgsChooseNightlyFarmEvent();
-            args.NightEvent = vanilla;
+            var args = new EventArgsChooseNightlyFarmEvent
+            {
+                NightEvent = vanilla
+            };
 
             Log.Trace("Event: ChooseNightlyFarmEvent");
             if (SpaceEvents.ChooseNightlyFarmEvent == null)
@@ -100,8 +102,10 @@ namespace SpaceCore.Events
 
         internal static void InvokeServerGotClient(GameServer server, long peer)
         {
-            var args = new EventArgsServerGotClient();
-            args.FarmerID = peer;
+            var args = new EventArgsServerGotClient
+            {
+                FarmerID = peer
+            };
 
             Log.Trace("Event: ServerGotClient");
             if (SpaceEvents.ServerGotClient == null)

@@ -103,15 +103,13 @@ namespace CookingSkill
             return new Api();
         }
 
-        private bool WasEating = false;
-        private int PrevToEatStack = -1;
         private Buff LastDrink;
 
         private void OnItemEaten(object sender, EventArgs e)
         {
             SObject obj = Game1.player.itemToEat as SObject;
             string[] info = Game1.objectInformation[obj.ParentSheetIndex].Split('/');
-            string[] buffData = ((Convert.ToInt32(info[2]) > 0 && info.Count() > 7) ? info[7].Split(' ') : null);
+            string[] buffData = ((Convert.ToInt32(info[2]) > 0 && info.Length > 7) ? info[7].Split(' ') : null);
 
             if (buffData != null)
             {
@@ -130,13 +128,13 @@ namespace CookingSkill
                 Buff oldBuff = (info[6] == "drink" ? Game1.buffsDisplay.drink : Game1.buffsDisplay.food);
                 Buff thisBuff = null;
                 if (info[6] == "drink")
-                    thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 10) ? Convert.ToInt32(buffData[10]) : 0, (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
+                    thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 10) ? Convert.ToInt32(buffData[10]) : 0, (info.Length > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
                 else
-                    thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 11) ? Convert.ToInt32(buffData[11]) : 0, (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
+                    thisBuff = buffData == null ? null : new Buff(Convert.ToInt32(buffData[0]), Convert.ToInt32(buffData[1]), Convert.ToInt32(buffData[2]), Convert.ToInt32(buffData[3]), Convert.ToInt32(buffData[4]), Convert.ToInt32(buffData[5]), Convert.ToInt32(buffData[6]), Convert.ToInt32(buffData[7]), Convert.ToInt32(buffData[8]), Convert.ToInt32(buffData[9]), Convert.ToInt32(buffData[10]), (buffData.Length > 11) ? Convert.ToInt32(buffData[11]) : 0, (info.Length > 8) ? Convert.ToInt32(info[8]) : -1, info[0], info[4]);
                 int[] oldAttr = oldBuff?.buffAttributes;
                 int[] thisAttr = thisBuff?.buffAttributes;
                 Log.Trace("Ate something: " + obj + " " + Game1.objectInformation[obj.ParentSheetIndex] + " " + buffData + " " + oldBuff + " " + thisBuff + " " + oldAttr + " " + thisAttr);
-                if (oldBuff != null && thisBuff != null && Enumerable.SequenceEqual(oldAttr, thisAttr) &&
+                if (oldBuff != null && thisBuff != null && oldAttr.SequenceEqual(thisAttr) &&
                      ((info[6] == "drink" && oldBuff != this.LastDrink) || (info[6] != "drink" && oldBuff != this.LastDrink)))
                 {
                     // Now that we know that this is the original buff, we can buff the buff.
@@ -156,14 +154,16 @@ namespace CookingSkill
                         }
                     }
 
-                    int newTime = (info.Count<string>() > 8) ? Convert.ToInt32(info[8]) : -1;
+                    int newTime = (info.Length > 8) ? Convert.ToInt32(info[8]) : -1;
                     if (newTime != -1 && Game1.player.HasCustomProfession(Skill.ProfessionBuffTime))
                     {
                         newTime = (int)(newTime * 1.25);
                     }
 
-                    Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4]);
-                    newBuff.millisecondsDuration = newTime / 10 * 7000;
+                    Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4])
+                    {
+                        millisecondsDuration = newTime / 10 * 7000
+                    };
                     // ^ The vanilla code decreases the duration based on the time of day.
                     // This is fine normally, since it ends as the day ends.
                     // However if you have something like TimeSpeed it just means it won't
@@ -213,21 +213,21 @@ namespace CookingSkill
 
                     int newTime = 120 + obj.Edibility / 10 * 30;
 
-                    Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4]);
-                    newBuff.millisecondsDuration = newTime / 10 * 7000;
+                    Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4])
+                    {
+                        millisecondsDuration = newTime / 10 * 7000
+                    };
 
                     if (info[6] == "drink")
                     {
-                        if (Game1.buffsDisplay.drink != null)
-                            Game1.buffsDisplay.drink.removeBuff();
+                        Game1.buffsDisplay.drink?.removeBuff();
                         Game1.buffsDisplay.drink = newBuff;
                         Game1.buffsDisplay.drink.addBuff();
                         this.LastDrink = newBuff;
                     }
                     else
                     {
-                        if (Game1.buffsDisplay.drink != null)
-                            Game1.buffsDisplay.drink.removeBuff();
+                        Game1.buffsDisplay.drink?.removeBuff();
                         Game1.buffsDisplay.drink = newBuff;
                         Game1.buffsDisplay.drink.addBuff();
                     }
@@ -238,15 +238,15 @@ namespace CookingSkill
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (e.NewMenu is CraftingPage)
+            if (e.NewMenu is CraftingPage menu)
             {
-                CraftingPage menu = e.NewMenu as CraftingPage;
                 bool cooking = this.Helper.Reflection.GetField<bool>(e.NewMenu, "cooking").GetValue();
                 bool standaloneMenu = this.Helper.Reflection.GetField<bool>(e.NewMenu, "_standaloneMenu").GetValue();
                 List<Chest> containers = menu._materialContainers;
-                NewCraftingPage myCraftingPage = new NewCraftingPage(menu.xPositionOnScreen, menu.yPositionOnScreen, menu.width, menu.height, cooking, standaloneMenu, containers);
-                myCraftingPage.exitFunction = Game1.activeClickableMenu.exitFunction;
-                Game1.activeClickableMenu = myCraftingPage;
+                Game1.activeClickableMenu = new NewCraftingPage(menu.xPositionOnScreen, menu.yPositionOnScreen, menu.width, menu.height, cooking, standaloneMenu, containers)
+                {
+                    exitFunction = Game1.activeClickableMenu.exitFunction
+                };
             }
         }
     }

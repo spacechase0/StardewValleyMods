@@ -26,14 +26,12 @@ namespace Magic.Framework
 
         internal void SyncMineFull()
         {
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
-            {
-                writer.Write(1);
-                writer.Write(Game1.player.UniqueMultiplayerID);
-                writer.Write(JsonConvert.SerializeObject(this.Players[Game1.player.UniqueMultiplayerID], MultiplayerSaveData.NetworkSerializerSettings));
-                SpaceCore.Networking.BroadcastMessage(Magic.MsgData, stream.ToArray());
-            }
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(1);
+            writer.Write(Game1.player.UniqueMultiplayerID);
+            writer.Write(JsonConvert.SerializeObject(this.Players[Game1.player.UniqueMultiplayerID], MultiplayerSaveData.NetworkSerializerSettings));
+            SpaceCore.Networking.BroadcastMessage(Magic.MsgData, stream.ToArray());
         }
     }
 }

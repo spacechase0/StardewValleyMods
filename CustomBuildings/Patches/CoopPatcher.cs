@@ -69,11 +69,13 @@ namespace CustomBuildings.Patches
             if (!Mod.Instance.Buildings.TryGetValue(nameOfIndoorsWithoutUnique, out BuildingData buildingData))
                 return true;
 
-            GameLocation loc = new AnimalHouse($"Maps\\{buildingData.Id}", __instance.buildingType);
-            loc.IsFarm = true;
+            AnimalHouse loc = new AnimalHouse($"Maps\\{buildingData.Id}", __instance.buildingType)
+            {
+                IsFarm = true
+            };
             loc.isStructure.Value = true;
-            loc.uniqueName.Value = nameOfIndoorsWithoutUnique + Guid.NewGuid().ToString();
-            (loc as AnimalHouse).animalLimit.Value = buildingData.MaxOccupants;
+            loc.uniqueName.Value = nameOfIndoorsWithoutUnique + Guid.NewGuid();
+            loc.animalLimit.Value = buildingData.MaxOccupants;
             foreach (var warp in loc.warps)
             {
                 warp.TargetX = __instance.humanDoor.X + __instance.tileX;

@@ -10,9 +10,7 @@ namespace AnimalSocialMenu.Framework
 {
     internal class AnimalSocialPage : IClickableMenu
     {
-        private string DescriptionText = "";
         private string HoverText = "";
-        public const int SlotsOnPage = 5;
         private readonly ClickableTextureComponent UpButton;
         private readonly ClickableTextureComponent DownButton;
         private readonly ClickableTextureComponent ScrollBar;
@@ -171,7 +169,6 @@ namespace AnimalSocialMenu.Framework
 
         public override void performHoverAction(int x, int y)
         {
-            this.DescriptionText = "";
             this.HoverText = "";
             this.UpButton.tryHover(x, y);
             this.DownButton.tryHover(x, y);
@@ -192,7 +189,7 @@ namespace AnimalSocialMenu.Framework
 
             double loveLevel = heartLevelForNpc / 1000.0;
             int num3 = loveLevel * 1000.0 % 200.0 >= 100.0 ? (int)(loveLevel * 1000.0 / 200.0) : -100;
-            b.DrawString(Game1.dialogueFont, name, new Vector2(this.xPositionOnScreen + IClickableMenu.borderWidth * 3 / 2 + 64 - 20 + 96 - Game1.dialogueFont.MeasureString(name).X / 2f, (float)(this.Sprites[i].bounds.Y + 48 + (double)num - (false ? 24.0 : 20.0))), Game1.textColor);
+            b.DrawString(Game1.dialogueFont, name, new Vector2(this.xPositionOnScreen + IClickableMenu.borderWidth * 3 / 2 + 64 - 20 + 96 - Game1.dialogueFont.MeasureString(name).X / 2f, (float)(this.Sprites[i].bounds.Y + 48 + (double)num - 20.0)), Game1.textColor);
             for (int index = 0; index < 5; ++index)
             {
                 b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + 320 - 8 + index * 32, this.Sprites[i].bounds.Y - n + 64 - 28), new Rectangle?(new Rectangle(211 + (loveLevel * 1000.0 <= (double)((index + 1) * 195) ? 7 : 0), 428, 7, 6)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.89f);

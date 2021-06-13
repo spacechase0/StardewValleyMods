@@ -12,7 +12,6 @@ namespace SleepyEye
 {
     public class TentTool : Tool, ISaveElement
     {
-        private SFarmer User;
         private DateTime? StartedUsing;
 
         public TentTool()
@@ -32,7 +31,6 @@ namespace SleepyEye
 
         public override bool beginUsing(GameLocation location, int x, int y, SFarmer who)
         {
-            this.User = who;
             this.StartedUsing = DateTime.Now;
             who.canMove = false;
             return true;

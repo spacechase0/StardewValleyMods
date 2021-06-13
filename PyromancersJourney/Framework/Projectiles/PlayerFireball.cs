@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PyromancersJourney.Framework.Objects;
@@ -38,7 +37,7 @@ namespace PyromancersJourney.Framework.Projectiles
                     vertices.Add(new VertexPositionColorTexture(new Vector3(1, 1, 0), Color.White, new Vector2(b, 1)));
                 }
 
-                PlayerFireball.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                PlayerFireball.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count, BufferUsage.WriteOnly);
                 PlayerFireball.Buffer.SetData(vertices.ToArray());
             }
         }
@@ -75,9 +74,8 @@ namespace PyromancersJourney.Framework.Projectiles
             BaseProjectile.Effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.Pos, cam.Up, null, null);
             BaseProjectile.Effect.TextureEnabled = true;
             BaseProjectile.Effect.Texture = PlayerFireball.Tex;
-            for (int e = 0; e < BaseProjectile.Effect.CurrentTechnique.Passes.Count; ++e)
+            foreach (EffectPass pass in BaseProjectile.Effect.CurrentTechnique.Passes)
             {
-                var pass = BaseProjectile.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
                 device.SetVertexBuffer(PlayerFireball.Buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 6 * this.Level, 2);

@@ -16,7 +16,6 @@ namespace ThrowableAxe
         private readonly NetInt Damage = new(3);
         public readonly NetVector2 Target = new();
         private readonly NetFloat Speed = new(1);
-        private float AxeRot = 0;
         public bool Dead = false;
         public List<NPC> NpcsHit = new();
 
@@ -99,11 +98,6 @@ namespace ThrowableAxe
             //b.Draw(Game1.staminaRect, Game1.GlobalToLocal(Game1.viewport, getBoundingBox()), null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 0.99f);
             b.Draw(Game1.toolSpriteSheet, Game1.GlobalToLocal(Game1.viewport, this.position + new Vector2(32, 32)), sourceRect, Color.White, this.rotation, new Vector2(8, 8), 4, SpriteEffects.None, 1);
             this.rotation += 0.3f;
-        }
-
-        public override Rectangle getBoundingBox()
-        {
-            return base.getBoundingBox();
         }
 
         public Vector2 GetPosition()

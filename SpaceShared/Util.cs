@@ -9,10 +9,7 @@ namespace SpaceShared
 {
     internal class Util
     {
-        public static bool UsingMono
-        {
-            get { return Type.GetType("Mono.Runtime") != null; }
-        }
+        public static bool UsingMono => Type.GetType("Mono.Runtime") != null;
 
         public static Texture2D DoPaletteSwap(Texture2D baseTex, Texture2D from, Texture2D to)
         {
@@ -66,8 +63,7 @@ namespace SpaceShared
 
         public static void Swap<T>(ref T lhs, ref T rhs)
         {
-            T temp;
-            temp = lhs;
+            T temp = lhs;
             lhs = rhs;
             rhs = temp;
         }

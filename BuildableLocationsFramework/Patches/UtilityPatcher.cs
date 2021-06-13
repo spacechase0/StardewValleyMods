@@ -102,9 +102,9 @@ namespace BuildableLocationsFramework.Patches
                 {
                     foreach (Building building in farm.buildings)
                     {
-                        if (building.indoors.Value != null && building.indoors.Value is AnimalHouse)
+                        if (building.indoors.Value is AnimalHouse house)
                         {
-                            foreach (long id in (building.indoors.Value as AnimalHouse).animalsThatLiveHere)
+                            foreach (long id in house.animalsThatLiveHere)
                             {
                                 FarmAnimal animal = Utility.getAnimal(id);
                                 if (animal != null)
@@ -127,16 +127,16 @@ namespace BuildableLocationsFramework.Patches
                         KeyValuePair<long, FarmAnimal> keyValuePair;
                         foreach (Building building in farm.buildings)
                         {
-                            if (building.indoors.Value != null && building.indoors.Value is AnimalHouse)
+                            if (building.indoors.Value is AnimalHouse house)
                             {
-                                for (int index = (building.indoors.Value as AnimalHouse).animals.Count() - 1; index >= 0; --index)
+                                for (int index = house.animals.Count() - 1; index >= 0; --index)
                                 {
-                                    pairs = (building.indoors.Value as AnimalHouse).animals.Pairs;
+                                    pairs = house.animals.Pairs;
                                     keyValuePair = pairs.ElementAt(index);
                                     if (keyValuePair.Value.Equals(farmAnimal))
                                     {
-                                        NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> animals = (building.indoors.Value as AnimalHouse).animals;
-                                        pairs = (building.indoors.Value as AnimalHouse).animals.Pairs;
+                                        NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> animals = house.animals;
+                                        pairs = house.animals.Pairs;
                                         keyValuePair = pairs.ElementAt(index);
                                         long key = keyValuePair.Key;
                                         animals.Remove(key);
@@ -160,12 +160,12 @@ namespace BuildableLocationsFramework.Patches
                     }
                     foreach (Building building in farm.buildings)
                     {
-                        if (building.indoors.Value != null && building.indoors.Value is AnimalHouse)
+                        if (building.indoors.Value is AnimalHouse house)
                         {
-                            for (int index = (building.indoors.Value as AnimalHouse).animalsThatLiveHere.Count - 1; index >= 0; --index)
+                            for (int index = house.animalsThatLiveHere.Count - 1; index >= 0; --index)
                             {
-                                if (Utility.getAnimal((building.indoors.Value as AnimalHouse).animalsThatLiveHere[index]).home != building)
-                                    (building.indoors.Value as AnimalHouse).animalsThatLiveHere.RemoveAt(index);
+                                if (Utility.getAnimal(house.animalsThatLiveHere[index]).home != building)
+                                    house.animalsThatLiveHere.RemoveAt(index);
                             }
                         }
                     }
@@ -173,7 +173,7 @@ namespace BuildableLocationsFramework.Patches
                     {
                         foreach (Building building in farm.buildings)
                         {
-                            if (building.buildingType.Contains(farmAnimal.buildingTypeILiveIn) && building.indoors.Value != null && (building.indoors.Value is AnimalHouse && !(building.indoors.Value as AnimalHouse).isFull()))
+                            if (building.buildingType.Contains(farmAnimal.buildingTypeILiveIn) && building.indoors.Value is AnimalHouse house && !house.isFull())
                             {
                                 farmAnimal.home = building;
                                 farmAnimal.homeLocation.Value = new Vector2((int)building.tileX, (int)building.tileY);
@@ -224,7 +224,7 @@ namespace BuildableLocationsFramework.Patches
                 list = loca.Animals.Values.ToList<FarmAnimal>();
             foreach (Building building in loc.buildings)
             {
-                if (building.indoors.Value != null && building.indoors.Value is AnimalHouse)
+                if (building.indoors.Value is AnimalHouse)
                     list.AddRange(((AnimalHouse)building.indoors).animals.Values.ToList<FarmAnimal>());
             }
             return list;

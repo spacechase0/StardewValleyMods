@@ -62,7 +62,7 @@ namespace MoreEnchantments.Patches
             if (Game1.currentLocation.isTileBuildingFishable((int)bobberTile.X, (int)bobberTile.Y) && Game1.currentLocation is BuildableGameLocation)
             {
                 Building bldg = (Game1.currentLocation as BuildableGameLocation).getBuildingAt(bobberTile);
-                if (bldg != null && bldg is FishPond && (int)(bldg as FishPond).currentOccupants > 0)
+                if (bldg is FishPond pond && pond.currentOccupants > 0)
                 {
                     __result = FishPond.FISHING_MILLISECONDS;
                     return false;

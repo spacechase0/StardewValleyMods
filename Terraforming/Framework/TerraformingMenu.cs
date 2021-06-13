@@ -5,9 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewValley;
 using StardewValley.Menus;
-using Terraforming.Framework;
 
-namespace Terraforming
+namespace Terraforming.Framework
 {
     internal class TerraformingMenu : IClickableMenu
     {
@@ -116,15 +115,16 @@ namespace Terraforming
 
         public static Dictionary<TileType, Color> GetCorrespondingColors()
         {
-            var cols = new Dictionary<TileType, Color>();
-            cols.Add(TileType.Dirt, Color.Goldenrod);
-            cols.Add(TileType.DarkDirt, Color.DarkGoldenrod);
-            cols.Add(TileType.LightGrass, Color.LawnGreen);
-            cols.Add(TileType.MediumGrass, Color.Green);
-            cols.Add(TileType.DarkGrass, Color.DarkGreen);
-            cols.Add(TileType.Water, Color.DodgerBlue);
-            cols.Add(TileType.DeepWater, Color.Blue);
-            return cols;
+            return new()
+            {
+                [TileType.Dirt] = Color.Goldenrod,
+                [TileType.DarkDirt] = Color.DarkGoldenrod,
+                [TileType.LightGrass] = Color.LawnGreen,
+                [TileType.MediumGrass] = Color.Green,
+                [TileType.DarkGrass] = Color.DarkGreen,
+                [TileType.Water] = Color.DodgerBlue,
+                [TileType.DeepWater] = Color.Blue
+            };
         }
 
         private void CommitTerrain()
@@ -150,11 +150,13 @@ namespace Terraforming
                 Game1.currentLocation.Map.RemoveTileSheet(remove);
 
             // Collect tile types
-            var types = new List<TileType>();
-            types.Add(TileType.DarkDirt);
-            types.Add(TileType.LightGrass);
-            types.Add(TileType.MediumGrass);
-            types.Add(TileType.DarkGrass);
+            var types = new List<TileType>
+            {
+                TileType.DarkDirt,
+                TileType.LightGrass,
+                TileType.MediumGrass,
+                TileType.DarkGrass
+            };
 
             // Add tile sheets
             var typesTs = new Dictionary<TileType, xTile.Tiles.TileSheet>();
@@ -208,10 +210,7 @@ namespace Terraforming
             }
 
             // Water tile effects
-            if (Game1.currentLocation.waterTiles == null)
-            {
-                Game1.currentLocation.waterTiles = new bool[this.TerrainWidth, this.TerrainHeight];
-            }
+            Game1.currentLocation.waterTiles ??= new bool[this.TerrainWidth, this.TerrainHeight];
             for (int i = 0; i < Game1.currentLocation.waterTiles.Length; ++i)
             {
                 int ix = i % this.TerrainWidth, iy = i / this.TerrainWidth;

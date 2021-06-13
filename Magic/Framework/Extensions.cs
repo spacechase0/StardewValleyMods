@@ -139,15 +139,13 @@ namespace Magic.Framework
         {
             if (player == Game1.player)
             {
-                using (var stream = new MemoryStream())
-                using (var writer = new BinaryWriter(stream))
-                {
-                    writer.Write(spell.FullId);
-                    writer.Write(level);
-                    writer.Write(Game1.getMouseX() + Game1.viewport.X);
-                    writer.Write(Game1.getMouseY() + Game1.viewport.Y);
-                    SpaceCore.Networking.BroadcastMessage(Magic.MsgCast, stream.ToArray());
-                }
+                using var stream = new MemoryStream();
+                using var writer = new BinaryWriter(stream);
+                writer.Write(spell.FullId);
+                writer.Write(level);
+                writer.Write(Game1.getMouseX() + Game1.viewport.X);
+                writer.Write(Game1.getMouseY() + Game1.viewport.Y);
+                SpaceCore.Networking.BroadcastMessage(Magic.MsgCast, stream.ToArray());
             }
             Point pos = new Point(x, y);
             if (x == int.MinValue && y == int.MinValue)

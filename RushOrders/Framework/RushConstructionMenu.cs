@@ -95,7 +95,7 @@ namespace RushOrders.Framework
                 return;
 
             int num = this.Y - (this.HeightForQuestions - this.height) + SpriteText.getHeightOfString(this.Question, this.width - Game1.pixelZoom * 4) + Game1.pixelZoom * 12;
-            for (int i = 0; i < this.Responses.Count(); i++)
+            for (int i = 0; i < this.Responses.Length; i++)
             {
                 Rectangle rect = new Rectangle(this.X + Game1.pixelZoom * 2, num, this.width, SpriteText.getHeightOfString(this.Responses[i]));
                 if (rect.Contains(Game1.getMouseX(), Game1.getMouseY()))

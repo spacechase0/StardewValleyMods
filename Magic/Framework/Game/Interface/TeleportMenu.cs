@@ -49,9 +49,11 @@ namespace Magic.Framework.Game.Interface
                 int mapW = locObj.Map.Layers[0].LayerWidth;
                 int mapH = locObj.map.Layers[0].LayerHeight;
 
-                var cloud = new CloudMount();
-                cloud.currentLocation = locObj;
-                cloud.Position = new Vector2(mapW * Game1.tileSize / 2, mapH * Game1.tileSize / 2);
+                var cloud = new CloudMount
+                {
+                    currentLocation = locObj,
+                    Position = new Vector2(mapW * Game1.tileSize / 2, mapH * Game1.tileSize / 2)
+                };
                 Vector2 tileForCharacter = Utility.recursiveFindOpenTileForCharacter(cloud, locObj, cloud.getTileLocation(), 9 * 9);
                 cloud.Position = new Vector2(tileForCharacter.X * Game1.tileSize, tileForCharacter.Y * Game1.tileSize);
                 locObj.addCharacter(cloud);
@@ -85,8 +87,10 @@ namespace Magic.Framework.Game.Interface
             int x = this.xPositionOnScreen + 12, y = this.yPositionOnScreen + 12, w = TeleportMenu.WindowWidth - 24, h = TeleportMenu.WindowHeight - 24;
 
             b.End();
-            RasterizerState state = new RasterizerState();
-            state.ScissorTestEnable = true;
+            RasterizerState state = new RasterizerState
+            {
+                ScissorTestEnable = true
+            };
             b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, state);
             b.GraphicsDevice.ScissorRectangle = new Rectangle(x, y, w, h);
             {
@@ -127,8 +131,6 @@ namespace Magic.Framework.Game.Interface
         }
 
         private bool JustClicked;
-
-        public object ReflectGame1 { get; private set; }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {

@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
@@ -159,19 +157,19 @@ namespace BuildableLocationsFramework.Patches
                             return;
                         if ((int)destroyed.daysOfConstructionLeft > 0 || (int)destroyed.daysUntilUpgrade > 0)
                             Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_DuringConstruction"), Color.Red, 3500f));
-                        else if (destroyed.indoors.Value != null && destroyed.indoors.Value is AnimalHouse && (destroyed.indoors.Value as AnimalHouse).animalsThatLiveHere.Count > 0)
+                        else if (destroyed.indoors.Value is AnimalHouse house && house.animalsThatLiveHere.Count > 0)
                             Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_AnimalsHere"), Color.Red, 3500f));
-                        else if (destroyed.indoors.Value != null && destroyed.indoors.Value.farmers.Count<Farmer>() > 0)
+                        else if (destroyed.indoors.Value != null && destroyed.indoors.Value.farmers.Any())
                         {
                             Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_PlayerHere"), Color.Red, 3500f));
                         }
                         else
                         {
-                            if (destroyed.indoors.Value != null && destroyed.indoors.Value is Cabin)
+                            if (destroyed.indoors.Value is Cabin cabin)
                             {
-                                foreach (Character allFarmer in Game1.getAllFarmers())
+                                foreach (Farmer allFarmer in Game1.getAllFarmers())
                                 {
-                                    if (allFarmer.currentLocation.Name == (destroyed.indoors.Value as Cabin).GetCellarName())
+                                    if (allFarmer.currentLocation.Name == cabin.GetCellarName())
                                     {
                                         Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_PlayerHere"), Color.Red, 3500f));
                                         return;
@@ -215,7 +213,7 @@ namespace BuildableLocationsFramework.Patches
 
                     if (destroyed != null)
                     {
-                        if (destroyed.indoors.Value != null && destroyed.indoors.Value is Cabin && !Game1.IsMasterGame)
+                        if (destroyed.indoors.Value is Cabin && !Game1.IsMasterGame)
                         {
                             Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_LockFailed"), Color.Red, 3500f));
                             destroyed = null;
@@ -227,12 +225,11 @@ namespace BuildableLocationsFramework.Patches
                             goto ret;
                         }
                     }
-                    if (destroyed != null && destroyed.indoors.Value is Cabin)
+                    if (destroyed?.indoors.Value is Cabin cabinB)
                     {
-                        Cabin cabin = destroyed.indoors.Value as Cabin;
-                        if (cabin.farmhand.Value != null && (bool)cabin.farmhand.Value.isCustomized)
+                        if (cabinB.farmhand.Value != null && (bool)cabinB.farmhand.Value.isCustomized)
                         {
-                            Game1.currentLocation.createQuestionDialogue(Game1.content.LoadString("Strings\\UI:Carpenter_DemolishCabinConfirm", cabin.farmhand.Value.Name), Game1.currentLocation.createYesNoResponses(), (f, answer) =>
+                            Game1.currentLocation.createQuestionDialogue(Game1.content.LoadString("Strings\\UI:Carpenter_DemolishCabinConfirm", cabinB.farmhand.Value.Name), Game1.currentLocation.createYesNoResponses(), (f, answer) =>
                             {
                                 if (answer == "Yes")
                                 {
@@ -320,7 +317,7 @@ namespace BuildableLocationsFramework.Patches
                 ret:
                 return false;
             }
-            catch (Exception e)
+            catch
             {
                 return true;
             }

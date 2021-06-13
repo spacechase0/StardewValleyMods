@@ -20,11 +20,6 @@ namespace PyromancersJourney.Framework.Projectiles
         public virtual bool HurtsPlayer => true;
         public virtual int Damage => 1;
 
-        public BaseProjectile(World world)
-        {
-            this.World = world;
-        }
-
         public virtual void Trigger(BaseObject target) { }
 
         public virtual void Update() { }
@@ -36,6 +31,11 @@ namespace PyromancersJourney.Framework.Projectiles
             BaseProjectile.Effect.World = this.MakeWorldMatrix();
         }
 
+        protected BaseProjectile(World world)
+        {
+            this.World = world;
+        }
+
         protected virtual Matrix MakeWorldMatrix()
         {
             return Matrix.CreateWorld(this.Position, Vector3.Forward, Vector3.Up);
@@ -43,16 +43,13 @@ namespace PyromancersJourney.Framework.Projectiles
 
         private static BasicEffect GetBasicEffect()
         {
-            var ret = new BasicEffect(Game1.game1.GraphicsDevice)
+            return new(Game1.game1.GraphicsDevice)
             {
                 Alpha = 1,
                 VertexColorEnabled = true,
                 LightingEnabled = false,
+                AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f),
             };
-
-            //ret.EnableDefaultLighting();
-            ret.AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f);
-            return ret;
         }
     }
 }

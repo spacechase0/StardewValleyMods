@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
@@ -132,9 +133,9 @@ namespace LuckSkill.Patches
 
         private static int[] GetFixedArray(int[] oldArray)
         {
-            var list = new List<int>(oldArray);
-            list.Add(Farmer.luckSkill);
-            return list.ToArray();
+            return oldArray
+                .Concat(new[] { Farmer.luckSkill })
+                .ToArray();
         }
     }
 }

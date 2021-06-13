@@ -9,9 +9,10 @@ namespace Magic.Framework.Spells
     internal abstract class Spell
     {
         public string ParentSchoolId { get; }
-        public School ParentSchool { get { return School.GetSchool(this.ParentSchoolId); } }
+        public School ParentSchool => School.GetSchool(this.ParentSchoolId);
         public string Id { get; }
-        public string FullId { get { return this.ParentSchoolId + ":" + this.Id; } }
+        public string FullId => this.ParentSchoolId + ":" + this.Id;
+
         public Texture2D[] Icons
         {
             get;

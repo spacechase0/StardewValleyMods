@@ -12,8 +12,8 @@ namespace GenericModConfigMenu.ModOption
 
         public override T Value
         {
-            get { return base.Value; }
-            set { base.Value = Util.Adjust(Util.Clamp(this.Minimum, value, this.Maximum), this.Interval); }
+            get => base.Value;
+            set => base.Value = Util.Adjust(Util.Clamp(this.Minimum, value, this.Maximum), this.Interval);
         }
 
         public ClampedModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, T theMin, T theMax, T interval, string id, IManifest mod)

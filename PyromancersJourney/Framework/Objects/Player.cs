@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -31,17 +30,19 @@ namespace PyromancersJourney.Framework.Objects
 
             this.StaffTex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/staff.png");
 
-            List<VertexPositionColorTexture> staffVerts = new List<VertexPositionColorTexture>();
-            staffVerts.Add(new VertexPositionColorTexture(new Vector3(0, 0, 0), Color.White, new Vector2(0, 0)));
-            staffVerts.Add(new VertexPositionColorTexture(new Vector3(1, 0, 0), Color.White, new Vector2(1, 0)));
-            staffVerts.Add(new VertexPositionColorTexture(new Vector3(1, 1, 0), Color.White, new Vector2(1, 1)));
+            var staffVerts = new VertexPositionColorTexture[]
+            {
+                new(new Vector3(0, 0, 0), Color.White, new Vector2(0, 0)),
+                new(new Vector3(1, 0, 0), Color.White, new Vector2(1, 0)),
+                new(new Vector3(1, 1, 0), Color.White, new Vector2(1, 1)),
+                new(new Vector3(0, 0, 0), Color.White, new Vector2(0, 0)),
+                new(new Vector3(0, 1, 0), Color.White, new Vector2(0, 1)),
+                new(new Vector3(1, 1, 0), Color.White, new Vector2(1, 1))
+            };
 
-            staffVerts.Add(new VertexPositionColorTexture(new Vector3(0, 0, 0), Color.White, new Vector2(0, 0)));
-            staffVerts.Add(new VertexPositionColorTexture(new Vector3(0, 1, 0), Color.White, new Vector2(0, 1)));
-            staffVerts.Add(new VertexPositionColorTexture(new Vector3(1, 1, 0), Color.White, new Vector2(1, 1)));
 
-            this.StaffBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), 6, BufferUsage.WriteOnly);
-            this.StaffBuffer.SetData(staffVerts.ToArray());
+            this.StaffBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), staffVerts.Length, BufferUsage.WriteOnly);
+            this.StaffBuffer.SetData(staffVerts);
         }
 
         public override void Hurt(int amt)
@@ -182,9 +183,8 @@ namespace PyromancersJourney.Framework.Objects
             BaseObject.Effect.World = Matrix.CreateRotationZ((float)(Math.PI / 2)) *
                                       Matrix.CreateRotationY(-this.Look + (float)(Math.PI / 2)) *
                                       Matrix.CreateTranslation(this.Position + lookVec + new Vector3(lookSide.X * staffOffset.X, staffOffset.Y, lookSide.Z * staffOffset.X));
-            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
+            foreach (EffectPass pass in BaseObject.Effect.CurrentTechnique.Passes)
             {
-                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
                 device.SetVertexBuffer(this.StaffBuffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);

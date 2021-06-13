@@ -14,11 +14,6 @@ namespace PyromancersJourney.Framework.Objects
 
         public bool Dead = false;
 
-        public BaseObject(World world)
-        {
-            this.World = world;
-        }
-
         public virtual void Update() { }
 
         public virtual void Render(GraphicsDevice device, Matrix projection, Camera cam)
@@ -35,8 +30,11 @@ namespace PyromancersJourney.Framework.Objects
             BaseObject.Effect.World = this.MakeWorldMatrix();
         }
 
-        public virtual void RenderUi(SpriteBatch b)
+        public virtual void RenderUi(SpriteBatch b) { }
+
+        protected BaseObject(World world)
         {
+            this.World = world;
         }
 
         protected virtual Matrix MakeWorldMatrix()
@@ -46,16 +44,13 @@ namespace PyromancersJourney.Framework.Objects
 
         private static BasicEffect GetBasicEffect()
         {
-            var ret = new BasicEffect(Game1.game1.GraphicsDevice)
+            return new(Game1.game1.GraphicsDevice)
             {
                 Alpha = 1,
                 VertexColorEnabled = true,
                 LightingEnabled = false,
+                AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f),
             };
-
-            //ret.EnableDefaultLighting();
-            ret.AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f);
-            return ret;
         }
     }
 }

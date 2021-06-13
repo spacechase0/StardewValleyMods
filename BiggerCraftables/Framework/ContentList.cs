@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
-namespace BiggerCraftables
+namespace BiggerCraftables.Framework
 {
     internal class ContentList
     {

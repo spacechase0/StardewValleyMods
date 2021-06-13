@@ -1,6 +1,7 @@
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
+using Terraforming.Framework;
 using xTile;
 using xTile.Layers;
 using xTile.Tiles;
@@ -38,8 +39,7 @@ namespace Terraforming
 
         internal static void SterilizeMap(GameLocation loc = null)
         {
-            if (loc == null)
-                loc = Game1.currentLocation;
+            loc ??= Game1.currentLocation;
 
             /*
             if (!loc.IsOutdoors)
@@ -47,8 +47,10 @@ namespace Terraforming
             */
 
             Log.Trace("Creating sterile map...");
-            Map map = new Map();
-            map.Id = loc.Map.Id + ".Terraform";
+            Map map = new Map
+            {
+                Id = loc.Map.Id + ".Terraform"
+            };
             foreach (var prop in loc.Map.Properties)
                 map.Properties.Add(prop.Key, prop.Value);
             foreach (var ts in Game1.getFarm().Map.TileSheets)

@@ -111,8 +111,7 @@ namespace MoreRings.Framework
             int stonesLeftOnThisLevel = Mod.Instance.Helper.Reflection.GetProperty<int>(ms, "stonesLeftOnThisLevel").GetValue();
             bool ladderHasSpawned = Mod.Instance.Helper.Reflection.GetField<bool>(ms, "ladderHasSpawned").GetValue();
 
-            if (who == null)
-                who = Game1.player;
+            who ??= Game1.player;
             double num1 = who.DailyLuck / 2.0 + who.MiningLevel * 0.005 + who.LuckLevel * 0.001;
             Random r = new Random(x * 1000 + y + mineLevel + (int)Game1.uniqueIDForThisGame / 2);
             r.NextDouble();
@@ -263,7 +262,7 @@ namespace MoreRings.Framework
                     r.NextDouble(); r.NextDouble();
                     break;
                 case 765:
-                    ret = 386; ;
+                    ret = 386;
                     r.Next(1, 4);
                     r.NextDouble(); r.NextDouble();
                     if (r.NextDouble() < 0.04)
@@ -357,7 +356,7 @@ namespace MoreRings.Framework
         public static int DigUpArtifactSpot(int xLocation, int yLocation, Farmer who, string name)
         {
             Random random = new Random(xLocation * 2000 + yLocation + (int)Game1.uniqueIDForThisGame / 2 + (int)Game1.stats.DaysPlayed);
-            bool archaeologyEnchant = who != null && who.CurrentTool != null && who.CurrentTool is Hoe && who.CurrentTool.hasEnchantmentOfType<ArchaeologistEnchantment>();
+            bool archaeologyEnchant = who?.CurrentTool is Hoe && who.CurrentTool.hasEnchantmentOfType<ArchaeologistEnchantment>();
             int objectIndex = -1;
             foreach (KeyValuePair<int, string> keyValuePair in Game1.objectInformation)
             {
@@ -411,7 +410,7 @@ namespace MoreRings.Framework
                 {
                     return 273;
                 }
-                if (Game1.random.NextDouble() <= 0.2 && (Game1.MasterPlayer.mailReceived.Contains("guntherBones") || (Game1.player.team.specialOrders.Where((SpecialOrder x) => (string)x.questKey == "Gunther") != null && Game1.player.team.specialOrders.Where((SpecialOrder x) => (string)x.questKey == "Gunther").Count() > 0)))
+                if (Game1.random.NextDouble() <= 0.2 && (Game1.MasterPlayer.mailReceived.Contains("guntherBones") || Game1.player.team.specialOrders.Any(x => x.questKey == "Gunther")))
                 {
                     return 881;
                 }

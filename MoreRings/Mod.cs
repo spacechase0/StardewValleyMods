@@ -19,13 +19,13 @@ namespace MoreRings
         public static Mod Instance;
 
         private IJsonAssetsApi Ja;
-        public int RingFishingLargeBar { get { return this.Ja.GetObjectId("Ring of Wide Nets"); } }
-        public int RingCombatRegen { get { return this.Ja.GetObjectId("Ring of Regeneration"); } }
-        public int RingDiamondBooze { get { return this.Ja.GetObjectId("Ring of Diamond Booze"); } }
-        public int RingRefresh { get { return this.Ja.GetObjectId("Refreshing Ring"); } }
-        public int RingQuality { get { return this.Ja.GetObjectId("Quality+ Ring"); } }
-        public int RingMageHand { get { return this.Ja.GetObjectId("Ring of Far Reaching"); } }
-        public int RingTrueSight { get { return this.Ja.GetObjectId("Ring of True Sight"); } }
+        public int RingFishingLargeBar => this.Ja.GetObjectId("Ring of Wide Nets");
+        public int RingCombatRegen => this.Ja.GetObjectId("Ring of Regeneration");
+        public int RingDiamondBooze => this.Ja.GetObjectId("Ring of Diamond Booze");
+        public int RingRefresh => this.Ja.GetObjectId("Refreshing Ring");
+        public int RingQuality => this.Ja.GetObjectId("Quality+ Ring");
+        public int RingMageHand => this.Ja.GetObjectId("Ring of Far Reaching");
+        public int RingTrueSight => this.Ja.GetObjectId("Ring of True Sight");
 
         private IMoreRingsApi MoreRings;
 

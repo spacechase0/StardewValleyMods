@@ -29,46 +29,45 @@ namespace Magic.Framework.Spells
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
-            List<GameLocation> locs = new List<GameLocation>();
-            locs.Add(Game1.getLocationFromName("Farm"));
-            locs.Add(Game1.getLocationFromName("Greenhouse"));
+            List<GameLocation> locs = new List<GameLocation>
+            {
+                Game1.getLocationFromName("Farm"),
+                Game1.getLocationFromName("Greenhouse")
+            };
             // TODO: API for other places to grow
             // TODO: Garden pots
             // Such as the SDM farms
 
             foreach (GameLocation loc in locs)
             {
-                foreach (var entry in loc.terrainFeatures.Pairs)
+                foreach (var terrainFeature in loc.terrainFeatures.Values)
                 {
-                    var tf = entry.Value;
-                    if (tf is HoeDirt dirt)
+                    switch (terrainFeature)
                     {
-                        if (dirt.crop == null)
-                            continue;
+                        case HoeDirt dirt:
+                            if (dirt.crop != null)
+                            {
+                                dirt.crop.currentPhase.Value = Math.Min(dirt.crop.phaseDays.Count - 1, dirt.crop.currentPhase.Value + 1);
+                                dirt.crop.dayOfCurrentPhase.Value = 0;
+                                if (dirt.crop.regrowAfterHarvest.Value != -1 && dirt.crop.currentPhase.Value == dirt.crop.phaseDays.Count - 1)
+                                    dirt.crop.fullyGrown.Value = true;
+                            }
+                            break;
 
-                        dirt.crop.currentPhase.Value = Math.Min(dirt.crop.phaseDays.Count - 1, dirt.crop.currentPhase.Value + 1);
-                        dirt.crop.dayOfCurrentPhase.Value = 0;
-                        if (dirt.crop.regrowAfterHarvest.Value != -1 && dirt.crop.currentPhase.Value == dirt.crop.phaseDays.Count - 1)
-                        {
-                            dirt.crop.fullyGrown.Value = true;
-                        }
-                    }
-                    else if (tf is FruitTree ftree)
-                    {
-                        if (ftree.daysUntilMature.Value > 0)
-                        {
-                            ftree.daysUntilMature.Value = Math.Max(0, ftree.daysUntilMature.Value - 7);
-                            ftree.growthStage.Value = ftree.daysUntilMature.Value > 0 ? (ftree.daysUntilMature.Value > 7 ? (ftree.daysUntilMature.Value > 14 ? (ftree.daysUntilMature.Value > 21 ? 0 : 1) : 2) : 3) : 4;
-                        }
-                        else if (!ftree.stump.Value && ftree.growthStage.Value == 4 && (Game1.currentSeason == ftree.fruitSeason.Value || loc.Name == "Greenhouse"))
-                        {
-                            ftree.fruitsOnTree.Value = 3;
-                        }
-                    }
-                    else if (tf is Tree tree)
-                    {
-                        if (tree.growthStage.Value < 5)
-                            tree.growthStage.Value++;
+                        case FruitTree tree:
+                            if (tree.daysUntilMature.Value > 0)
+                            {
+                                tree.daysUntilMature.Value = Math.Max(0, tree.daysUntilMature.Value - 7);
+                                tree.growthStage.Value = tree.daysUntilMature.Value > 0 ? (tree.daysUntilMature.Value > 7 ? (tree.daysUntilMature.Value > 14 ? (tree.daysUntilMature.Value > 21 ? 0 : 1) : 2) : 3) : 4;
+                            }
+                            else if (!tree.stump.Value && tree.growthStage.Value == 4 && (Game1.currentSeason == tree.fruitSeason.Value || loc.Name == "Greenhouse"))
+                                tree.fruitsOnTree.Value = 3;
+                            break;
+
+                        case Tree tree:
+                            if (tree.growthStage.Value < 5)
+                                tree.growthStage.Value++;
+                            break;
                     }
                 }
             }

@@ -50,7 +50,7 @@ namespace PyromancersJourney.Framework.Objects
                 vertices.Add(new VertexPositionColorTexture(new Vector3(1.5f, 3, 0), Color.White, new Vector2(xb, yb)));
             }
 
-            this.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+            this.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count, BufferUsage.WriteOnly);
             this.Buffer.SetData(vertices.ToArray());
         }
 
@@ -63,14 +63,7 @@ namespace PyromancersJourney.Framework.Objects
             }
 
             base.Hurt(amt);
-            if (this.Dead)
-            {
-                Game1.playSound("explosion");
-            }
-            else
-            {
-                Game1.playSound("stoneCrack");
-            }
+            Game1.playSound(this.Dead ? "explosion" : "stoneCrack");
         }
 
         public override void DoMovement()
@@ -210,16 +203,16 @@ namespace PyromancersJourney.Framework.Objects
             int frame = fy * 12 + fx;
 
             var oldStencil = device.DepthStencilState;
-            var newStencil = new DepthStencilState();
-            newStencil.DepthBufferWriteEnable = false;
-            device.DepthStencilState = newStencil;
+            device.DepthStencilState = new DepthStencilState
+            {
+                DepthBufferWriteEnable = false
+            };
 
             BaseObject.Effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.Pos, Vector3.Up, null, null);
             BaseObject.Effect.TextureEnabled = true;
             BaseObject.Effect.Texture = GolemEnemy.Tex;
-            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
+            foreach (EffectPass pass in BaseObject.Effect.CurrentTechnique.Passes)
             {
-                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
 
                 device.SetVertexBuffer(this.Buffer);

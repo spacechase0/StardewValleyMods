@@ -164,8 +164,7 @@ namespace JsonAssets.Data
                 int itype = (int)this.Category;
                 string str = $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == Category_.Artifact ? "Arch" : $"{this.Category} {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}/";
                 str += (this.EdibleIsDrink ? "drink" : "food") + "/";
-                if (this.EdibleBuffs == null)
-                    this.EdibleBuffs = new FoodBuffs_();
+                this.EdibleBuffs ??= new FoodBuffs_();
                 str += $"{this.EdibleBuffs.Farming} {this.EdibleBuffs.Fishing} {this.EdibleBuffs.Mining} 0 {this.EdibleBuffs.Luck} {this.EdibleBuffs.Foraging} 0 {this.EdibleBuffs.MaxStamina} {this.EdibleBuffs.MagnetRadius} {this.EdibleBuffs.Speed} {this.EdibleBuffs.Defense} {this.EdibleBuffs.Attack}/{this.EdibleBuffs.Duration}";
                 return str;
             }

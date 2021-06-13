@@ -6,8 +6,8 @@ namespace GenericModConfigMenu.Framework.UI
     {
         public float Value
         {
-            get { return (this.String == "" || this.String == "-") ? 0 : float.Parse(this.String); }
-            set { this.String = value.ToString(); }
+            get => (this.String == "" || this.String == "-") ? 0 : float.Parse(this.String);
+            set => this.String = value.ToString();
         }
 
         protected override void ReceiveInput(string str)
@@ -29,8 +29,7 @@ namespace GenericModConfigMenu.Framework.UI
                 return;
 
             this.String += str;
-            if (this.Callback != null)
-                this.Callback.Invoke(this);
+            this.Callback?.Invoke(this);
         }
     }
 }

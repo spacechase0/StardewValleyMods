@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
@@ -42,7 +41,7 @@ namespace PyromancersJourney.Framework.Objects
                     vertices.Add(new VertexPositionColorTexture(new Vector3(s, s, 0), Color.White, new Vector2(xb, yb)));
                 }
 
-                BatEnemy.MainBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                BatEnemy.MainBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count, BufferUsage.WriteOnly);
                 BatEnemy.MainBuffer.SetData(vertices.ToArray());
             }
         }
@@ -50,14 +49,7 @@ namespace PyromancersJourney.Framework.Objects
         public override void Hurt(int amt)
         {
             base.Hurt(amt);
-            if (this.Dead)
-            {
-                Game1.playSound("batScreech");
-            }
-            else
-            {
-                Game1.playSound("hitEnemy");
-            }
+            Game1.playSound(this.Dead ? "batScreech" : "hitEnemy");
         }
 
         public override void DoMovement()
@@ -90,8 +82,10 @@ namespace PyromancersJourney.Framework.Objects
             int frame = this.Frame;
 
             var oldStencil = device.DepthStencilState;
-            var newStencil = new DepthStencilState();
-            newStencil.DepthBufferWriteEnable = false;
+            var newStencil = new DepthStencilState
+            {
+                DepthBufferWriteEnable = false
+            };
             device.DepthStencilState = newStencil;
 
             var camForward = (cam.Pos - cam.Target);
@@ -99,9 +93,8 @@ namespace PyromancersJourney.Framework.Objects
             BaseObject.Effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.Pos, cam.Up, null, null);
             BaseObject.Effect.TextureEnabled = true;
             BaseObject.Effect.Texture = BatEnemy.Tex;
-            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
+            foreach (EffectPass pass in BaseObject.Effect.CurrentTechnique.Passes)
             {
-                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
 
                 device.SetVertexBuffer(BatEnemy.MainBuffer);

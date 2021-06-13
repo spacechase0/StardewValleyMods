@@ -72,17 +72,11 @@ namespace Magic.Framework
         public Farmer Owner { get; internal set; }
 
         public Dictionary<string, int> KnownSpells = new();
-        public PreparedSpell[][] Prepared =
-        new PreparedSpell[2][]
-        {
-            new PreparedSpell[5] { null, null, null, null, null },
-            new PreparedSpell[5] { null, null, null, null, null },
+        public PreparedSpell[][] Prepared = {
+            new PreparedSpell[] { null, null, null, null, null },
+            new PreparedSpell[] { null, null, null, null, null },
         };
         public int SelectedPrepared;
-
-        public SpellBook()
-        {
-        }
 
         public PreparedSpell[] GetPreparedSpells()
         {

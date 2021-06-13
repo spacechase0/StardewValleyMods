@@ -49,9 +49,7 @@ namespace StatueOfGenerosity.Patches
             if (!__instance.bigCraftable.Value || __instance.ParentSheetIndex != ObjectPatcher.GetStatueId())
                 return;
 
-            NPC npc = Utility.getTodaysBirthdayNPC(Game1.currentSeason, Game1.dayOfMonth);
-            if (npc == null)
-                npc = Utility.getRandomTownNPC();
+            NPC npc = Utility.getTodaysBirthdayNPC(Game1.currentSeason, Game1.dayOfMonth) ?? Utility.getRandomTownNPC();
 
             Game1.NPCGiftTastes.TryGetValue(npc.Name, out string str);
             string[] favs = str.Split('/')[1].Split(' ');

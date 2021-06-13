@@ -87,9 +87,9 @@ namespace CustomCritters.Framework
                     ret = false;
                 else if (this.MaxTimeOfDay != -1 && Game1.timeOfDay > this.MaxTimeOfDay)
                     ret = false;
-                else if (this.Seasons != null && this.Seasons.Count() > 0 && !this.Seasons.Contains(Game1.currentSeason))
+                else if (this.Seasons != null && this.Seasons.Any() && !this.Seasons.Contains(Game1.currentSeason))
                     ret = false;
-                else if (this.Locations != null && this.Locations.Count() > 0 && !this.Locations.Contains(loc.Name))
+                else if (this.Locations != null && this.Locations.Any() && !this.Locations.Contains(loc.Name))
                     ret = false;
                 else if (Game1.random.NextDouble() >= Math.Max(0.15, (Math.Min(0.5, loc.map.Layers[0].LayerWidth * loc.map.Layers[0].LayerHeight / this.ChancePerTile))))
                     ret = false;
@@ -183,14 +183,14 @@ namespace CustomCritters.Framework
                             ret = false;
                         if (!string.IsNullOrEmpty(this.Variable))
                         {
-                            string[] toks = this.Variable.Split('.');
+                            string[] tokens = this.Variable.Split('.');
 
                             object o = obj;
-                            for (int i = 0; i < toks.Length; ++i)
+                            foreach (string token in tokens)
                             {
                                 if (o == null)
                                     break;
-                                var f = o.GetType().GetField(toks[i], BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                                var f = o.GetType().GetField(token, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                                 if (f == null)
                                 {
                                     o = null;

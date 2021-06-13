@@ -307,14 +307,14 @@ namespace SpaceCore.Patches
             XmlDocument doc = new XmlDocument();
             doc.Load(stream);
 
-            string filePath = null;
+            string filePath;
             if (fromSaveGame)
             {
                 farmerPath = Path.Combine(Constants.SavesPath, SaveGamePatcher.SerializerManager.LoadFileContext);
-                if (serializer == SaveGame.farmerSerializer)
-                    filePath = Path.Combine(farmerPath, SaveGamePatcher.SerializerManager.FarmerFilename);
-                else
-                    filePath = Path.Combine(farmerPath, SaveGamePatcher.SerializerManager.Filename);
+                string filename = serializer == SaveGame.farmerSerializer
+                    ? SaveGamePatcher.SerializerManager.FarmerFilename
+                    : SaveGamePatcher.SerializerManager.Filename;
+                filePath = Path.Combine(farmerPath, filename);
             }
             else
                 filePath = Path.Combine(Path.GetDirectoryName(farmerPath), SaveGamePatcher.SerializerManager.FarmerFilename);
@@ -348,10 +348,7 @@ namespace SpaceCore.Patches
                 }
             }
 
-            if (node.Attributes == null)
-                return false;
-
-            var attr = node.Attributes["xsi:type"];
+            var attr = node.Attributes?["xsi:type"];
             if (attr == null)
                 return false;
 
@@ -363,25 +360,27 @@ namespace SpaceCore.Patches
         private static void SerializeProxy(XmlSerializer serializer, XmlWriter origWriter, object obj)
         {
             //Log.trace( "Start serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
-            using (var ms = new MemoryStream())
-            {
-                using var writer = XmlWriter.Create(ms, new XmlWriterSettings() { CloseOutput = false });
+            using var ms = new MemoryStream();
+            using var writer = XmlWriter.Create(ms, new XmlWriterSettings() { CloseOutput = false });
 
-                serializer.Serialize(writer, obj);
-                XmlDocument doc = new XmlDocument();
-                ms.Position = 0;
-                doc.Load(ms);
+            serializer.Serialize(writer, obj);
+            XmlDocument doc = new XmlDocument();
+            ms.Position = 0;
+            doc.Load(ms);
 
-                var modNodes = new List<KeyValuePair<string, string>>();
-                SaveGamePatcher.FindAndRemoveModNodes(doc, modNodes, "/1"); // <?xml ... ?> is /0
+            var modNodes = new List<KeyValuePair<string, string>>();
+            SaveGamePatcher.FindAndRemoveModNodes(doc, modNodes, "/1"); // <?xml ... ?> is /0
 
-                doc.WriteContentTo(origWriter);
-                if (serializer == SaveGame.farmerSerializer)
-                    File.WriteAllText(Path.Combine(Constants.CurrentSavePath, SaveGamePatcher.SerializerManager.FarmerFilename), JsonConvert.SerializeObject(modNodes));
-                else
-                    File.WriteAllText(Path.Combine(Constants.CurrentSavePath, SaveGamePatcher.SerializerManager.Filename), JsonConvert.SerializeObject(modNodes));
-                //Log.trace( "Mid serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
-            }
+            doc.WriteContentTo(origWriter);
+            string filename = serializer == SaveGame.farmerSerializer
+                ? SaveGamePatcher.SerializerManager.FarmerFilename
+                : SaveGamePatcher.SerializerManager.Filename;
+
+            File.WriteAllText(
+                Path.Combine(Constants.CurrentSavePath, filename),
+                JsonConvert.SerializeObject(modNodes)
+            );
+            //Log.trace( "Mid serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
             //Log.trace( "End serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
         }
     }

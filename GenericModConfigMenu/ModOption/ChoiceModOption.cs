@@ -10,7 +10,7 @@ namespace GenericModConfigMenu.ModOption
 
         public override T Value
         {
-            get { return base.Value; }
+            get => base.Value;
             set { if (this.Choices.Contains(value)) base.Value = value; }
         }
 

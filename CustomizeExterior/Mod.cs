@@ -53,19 +53,17 @@ namespace CustomizeExterior
 
         private void OnClientConnected(object sender, EventArgsServerGotClient args)
         {
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(Mod.SavedExteriors.Chosen.Count);
+            foreach (var choice in Mod.SavedExteriors.Chosen)
             {
-                writer.Write(Mod.SavedExteriors.Chosen.Count);
-                foreach (var choice in Mod.SavedExteriors.Chosen)
-                {
-                    writer.Write(choice.Key);
-                    writer.Write(choice.Value);
-                }
-
-                Log.Trace("Sending exteriors data to " + args.FarmerID);
-                SpaceCore.Networking.ServerSendTo(args.FarmerID, Mod.MsgChoices, stream.ToArray());
+                writer.Write(choice.Key);
+                writer.Write(choice.Value);
             }
+
+            Log.Trace("Sending exteriors data to " + args.FarmerID);
+            SpaceCore.Networking.ServerSendTo(args.FarmerID, Mod.MsgChoices, stream.ToArray());
         }
 
         private void OnChoicesReceived(IncomingMessage msg)
@@ -100,8 +98,7 @@ namespace CustomizeExterior
                         Mod.SavedExteriors = JsonConvert.DeserializeObject<SavedExteriors>(File.ReadAllText(legacyPath));
                     }
                 }
-                if (Mod.SavedExteriors == null)
-                    Mod.SavedExteriors = new SavedExteriors();
+                Mod.SavedExteriors ??= new SavedExteriors();
 
                 this.SyncTexturesWithChoices();
             }
@@ -358,16 +355,14 @@ namespace CustomizeExterior
 
                 if (Game1.IsMultiplayer)
                 {
-                    using (var stream = new MemoryStream())
-                    using (var writer = new BinaryWriter(stream))
-                    {
-                        writer.Write(1);
-                        writer.Write(this.RecentTarget);
-                        writer.Write(choice);
+                    using var stream = new MemoryStream();
+                    using var writer = new BinaryWriter(stream);
+                    writer.Write(1);
+                    writer.Write(this.RecentTarget);
+                    writer.Write(choice);
 
-                        Log.Trace("Broadcasting choice");
-                        SpaceCore.Networking.BroadcastMessage(Mod.MsgChoices, stream.ToArray());
-                    }
+                    Log.Trace("Broadcasting choice");
+                    SpaceCore.Networking.BroadcastMessage(Mod.MsgChoices, stream.ToArray());
                 }
             }
 
@@ -465,8 +460,10 @@ namespace CustomizeExterior
             Rectangle greenhouseRect = new Rectangle(160, 0, 112, baseTex.Height);// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "greenhouseSource");
 
             GraphicsDevice dev = Game1.graphics.GraphicsDevice;
-            RenderTarget2D ret = new RenderTarget2D(dev, baseTex.Width, baseTex.Height);
-            ret.Name = Mod.Instance.ModManifest.UniqueID + ".houses";
+            RenderTarget2D ret = new RenderTarget2D(dev, baseTex.Width, baseTex.Height)
+            {
+                Name = Mod.Instance.ModManifest.UniqueID + ".houses"
+            };
             SpriteBatch b = Game1.spriteBatch;
             dev.SetRenderTarget(ret);
             {

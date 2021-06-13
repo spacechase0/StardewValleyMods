@@ -82,9 +82,7 @@ namespace MoreBuildings
                 Game1.player.swimming.Value = false;
             }
 
-            BuildableGameLocation farm = e.NewLocation as BuildableGameLocation;
-            if (farm == null)
-                farm = e.OldLocation as BuildableGameLocation;
+            BuildableGameLocation farm = e.NewLocation as BuildableGameLocation ?? e.OldLocation as BuildableGameLocation;
             if (farm != null)
             {
                 for (int i = 0; i < farm.buildings.Count; ++i)

@@ -61,9 +61,11 @@ namespace GenericModConfigMenu.Framework
 
             Mod.Instance.Configs[this.Manifest].ActiveDisplayPage = this.ModConfig.Options[this.CurrPage];
 
-            this.Table = new Table();
-            this.Table.RowHeight = 50;
-            this.Table.Size = new Vector2(Math.Min(1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116);
+            this.Table = new Table
+            {
+                RowHeight = 50,
+                Size = new Vector2(Math.Min(1200, Game1.viewport.Width - 200), Game1.viewport.Height - 128 - 116)
+            };
             this.Table.LocalPosition = new Vector2((Game1.viewport.Width - this.Table.Size.X) / 2, (Game1.viewport.Height - this.Table.Size.Y) / 2);
             foreach (var opt in this.ModConfig.Options[page].Options)
             {
@@ -71,12 +73,19 @@ namespace GenericModConfigMenu.Framework
                 if (this.InGame && !opt.AvailableInGame)
                     continue;
 
-                var label = new Label() { String = opt.Name };
-                label.UserData = opt.Description;
+                var label = new Label
+                {
+                    String = opt.Name,
+                    UserData = opt.Description
+                };
                 if (!string.IsNullOrEmpty(opt.Description))
                     this.OptHovers.Add(label);
 
-                Element other = new Label() { String = "TODO", LocalPosition = new Vector2(500, 0) };
+                Element other = new Label
+                {
+                    String = "TODO",
+                    LocalPosition = new Vector2(500, 0)
+                };
                 Element other2 = null;
                 switch (opt)
                 {
@@ -339,29 +348,53 @@ namespace GenericModConfigMenu.Framework
         private void AddDefaultLabels(IManifest modManifest)
         {
             string page = this.ModConfig.Options[this.CurrPage].DisplayName;
-            var titleLabel = new Label() { String = modManifest.Name + (page == "" ? "" : " > " + page), Bold = true };
+            var titleLabel = new Label
+            {
+                String = modManifest.Name + (page == "" ? "" : " > " + page),
+                Bold = true
+            };
             titleLabel.LocalPosition = new Vector2((Game1.viewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
             titleLabel.HoverTextColor = titleLabel.IdleTextColor;
             this.Ui.AddChild(titleLabel);
 
-            var cancelLabel = new Label() { String = "Cancel", Bold = true };
-            cancelLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 400, Game1.viewport.Height - 50 - 36);
-            cancelLabel.Callback = (Element e) => this.Cancel();
+            var cancelLabel = new Label
+            {
+                String = "Cancel",
+                Bold = true,
+                LocalPosition = new Vector2(Game1.viewport.Width / 2 - 400, Game1.viewport.Height - 50 - 36),
+                Callback = _ => this.Cancel()
+            };
             this.Ui.AddChild(cancelLabel);
 
-            var defaultLabel = new Label() { String = "Default", Bold = true };
-            defaultLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 - 200, Game1.viewport.Height - 50 - 36);
-            defaultLabel.Callback = (Element e) => this.RevertToDefault();
+            var defaultLabel = new Label
+            {
+                String = "Default",
+                Bold = true,
+                LocalPosition = new Vector2(Game1.viewport.Width / 2 - 200, Game1.viewport.Height - 50 - 36),
+                Callback = _ => this.RevertToDefault()
+            };
             this.Ui.AddChild(defaultLabel);
 
-            var saveLabel = new Label() { String = "Save", Bold = true };
-            saveLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 + 50, Game1.viewport.Height - 50 - 36);
-            saveLabel.Callback = (Element e) => this.Save();
+            var saveLabel = new Label
+            {
+                String = "Save",
+                Bold = true,
+                LocalPosition = new Vector2(Game1.viewport.Width / 2 + 50, Game1.viewport.Height - 50 - 36),
+                Callback = _ => this.Save()
+            };
             this.Ui.AddChild(saveLabel);
 
-            var saveCloseLabel = new Label() { String = "Save&Close", Bold = true };
-            saveCloseLabel.LocalPosition = new Vector2(Game1.viewport.Width / 2 + 200, Game1.viewport.Height - 50 - 36);
-            saveCloseLabel.Callback = (Element e) => { this.Save(); this.Close(); };
+            var saveCloseLabel = new Label
+            {
+                String = "Save&Close",
+                Bold = true,
+                LocalPosition = new Vector2(Game1.viewport.Width / 2 + 200, Game1.viewport.Height - 50 - 36),
+                Callback = _ =>
+                {
+                    this.Save();
+                    this.Close();
+                }
+            };
             this.Ui.AddChild(saveCloseLabel);
         }
 

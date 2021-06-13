@@ -11,7 +11,7 @@ namespace SpaceShared.UI
 
         public Element RenderLast { get; set; }
 
-        public Element[] Children { get { return this.ChildrenImpl.ToArray(); } }
+        public Element[] Children => this.ChildrenImpl.ToArray();
 
         public void AddChild(Element element)
         {
@@ -45,8 +45,7 @@ namespace SpaceShared.UI
                     continue;
                 child.Draw(b);
             }
-            if (this.RenderLast != null)
-                this.RenderLast.Draw(b);
+            this.RenderLast?.Draw(b);
         }
     }
 }

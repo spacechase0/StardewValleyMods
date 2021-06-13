@@ -14,8 +14,6 @@ namespace ArcadeRoom
     {
         public static Mod Instance;
 
-        private bool PatchedMap;
-
         public Queue<Vector2> MachineSpots = new();
 
         public override void Entry(IModHelper helper)
@@ -41,8 +39,6 @@ namespace ArcadeRoom
 
         private void OnBlankSave(object sender, EventArgs e)
         {
-            this.PatchedMap = false;
-
             var arcade = new GameLocation(this.Helper.Content.GetActualAssetKey("assets/Arcade.tbin"), "Arcade");
             Game1.locations.Add(arcade);
             for (int ix = 0; ix < arcade.Map.Layers[0].LayerWidth; ++ix)
@@ -58,9 +54,8 @@ namespace ArcadeRoom
 
         private void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (e.NewLocation.Name != "Saloon" /*|| patchedMap*/ )
+            if (e.NewLocation.Name != "Saloon")
                 return;
-            this.PatchedMap = true;
 
             var map = e.NewLocation.Map;
 

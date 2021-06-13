@@ -1,4 +1,5 @@
 using System.Linq;
+using BiggerCraftables.Framework;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using SObject = StardewValley.Object;

@@ -36,8 +36,10 @@ namespace SpaceCore
             if (TileSheetExtensions.ExtendedTextureAssets.ContainsKey(asset))
                 return;
 
-            var data = new ExtensionData(asset, unitSize);
-            data.BaseTileSheet = Game1.content.Load<Texture2D>(asset);
+            var data = new ExtensionData(asset, unitSize)
+            {
+                BaseTileSheet = Game1.content.Load<Texture2D>(asset)
+            };
             TileSheetExtensions.ExtendedTextureAssets.Add(asset, data);
             TileSheetExtensions.ExtendedTextures.Add(data.BaseTileSheet, data);
         }
@@ -163,19 +165,19 @@ namespace SpaceCore
         {
             foreach (var asset in TileSheetExtensions.ExtendedTextureAssets)
             {
-                Texture2D oldTS = asset.Value.BaseTileSheet;
+                Texture2D oldTexture = asset.Value.BaseTileSheet;
                 asset.Value.BaseTileSheet = Game1.content.Load<Texture2D>(asset.Key);
                 if (asset.Value.BaseTileSheet == null)
                 {
                     Log.Error("WHAT? null " + asset.Key);
-                    TileSheetExtensions.ExtendedTextures.Remove(oldTS);
-                    oldTS.Dispose();
+                    TileSheetExtensions.ExtendedTextures.Remove(oldTexture);
+                    oldTexture.Dispose();
                 }
                 else
                 {
                     TileSheetExtensions.ExtendedTextures[asset.Value.BaseTileSheet] = asset.Value;
-                    if (oldTS != asset.Value.BaseTileSheet)
-                        oldTS.Dispose();
+                    if (oldTexture != asset.Value.BaseTileSheet)
+                        oldTexture.Dispose();
                 }
             }
         }

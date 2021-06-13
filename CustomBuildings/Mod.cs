@@ -23,19 +23,17 @@ namespace CustomBuildings
 
         internal static int ResolveObjectId(object data)
         {
-            if (data.GetType() == typeof(long))
-                return (int)(long)data;
-            else
-            {
-                foreach (var obj in Game1.objectInformation)
-                {
-                    if (obj.Value.Split('/')[0] == (string)data)
-                        return obj.Key;
-                }
+            if (data is long inputId)
+                return (int)inputId;
 
-                Log.Warn($"No idea what '{data}' is!");
-                return 0;
+            foreach (var obj in Game1.objectInformation)
+            {
+                if (obj.Value.Split('/')[0] == (string)data)
+                    return obj.Key;
             }
+
+            Log.Warn($"No idea what '{data}' is!");
+            return 0;
         }
 
         public override void Entry(IModHelper helper)
@@ -85,9 +83,7 @@ namespace CustomBuildings
             if (!e.IsLocalPlayer)
                 return;
 
-            BuildableGameLocation farm = e.NewLocation as BuildableGameLocation;
-            if (farm == null)
-                farm = e.OldLocation as BuildableGameLocation;
+            BuildableGameLocation farm = e.NewLocation as BuildableGameLocation ?? e.OldLocation as BuildableGameLocation;
             if (farm != null)
             {
                 for (int i = 0; i < farm.buildings.Count; ++i)

@@ -26,7 +26,6 @@ namespace Magic.Framework
 
         public static EventHandler<AnalyzeEventArgs> OnAnalyzeCast;
 
-        private static IModEvents Events;
         private static IInputHelper InputHelper;
 
         private static Texture2D SpellBg;
@@ -41,7 +40,6 @@ namespace Magic.Framework
 
         internal static void Init(IModEvents events, IInputHelper inputHelper, Func<long> getNewId)
         {
-            Magic.Events = events;
             Magic.InputHelper = inputHelper;
 
             Magic.LoadAssets();
@@ -147,7 +145,7 @@ namespace Magic.Framework
             }
             if (farmer.currentLocation.doesTileHaveProperty((int)tilePos.X, (int)tilePos.Y, "Action", "Buildings") == "EvilShrineLeft")
                 spellsLearnt.Add("eldritch:lucksteal");
-            if (farmer.currentLocation is StardewValley.Locations.MineShaft ms && ms.mineLevel == 100 && ms.waterTiles[(int)tilePos.X, (int)tilePos.Y])
+            if (farmer.currentLocation is StardewValley.Locations.MineShaft { mineLevel: 100 } ms && ms.waterTiles[(int)tilePos.X, (int)tilePos.Y])
                 spellsLearnt.Add("eldritch:bloodmana");
 
             for (int i = spellsLearnt.Count - 1; i >= 0; --i)
@@ -232,17 +230,15 @@ namespace Magic.Framework
             if (!Mod.Data.Players.ContainsKey(args.FarmerID))
                 Mod.Data.Players[args.FarmerID] = new MultiplayerSaveData.PlayerData();
 
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(Mod.Data.Players.Count);
+            foreach (var entry in Mod.Data.Players)
             {
-                writer.Write(Mod.Data.Players.Count);
-                foreach (var entry in Mod.Data.Players)
-                {
-                    writer.Write(entry.Key);
-                    writer.Write(JsonConvert.SerializeObject(entry.Value, MultiplayerSaveData.NetworkSerializerSettings));
-                }
-                Networking.BroadcastMessage(Magic.MsgData, stream.ToArray());
+                writer.Write(entry.Key);
+                writer.Write(JsonConvert.SerializeObject(entry.Value, MultiplayerSaveData.NetworkSerializerSettings));
             }
+            Networking.BroadcastMessage(Magic.MsgData, stream.ToArray());
         }
 
         private static void OnBlankSave(object sender, EventArgs args)
@@ -541,8 +537,7 @@ namespace Magic.Framework
 
             GameLocation loc = Game1.getLocationFromName(locName);
 
-            Dictionary<int, SpaceCore.Content.TileAnimation> anims;
-            var tileSheet = Content.LoadTilesheet("altarsobjects", loc.Map, out anims);
+            var tileSheet = Content.LoadTilesheet("altarsobjects", loc.Map, out Dictionary<int, SpaceCore.Content.TileAnimation> anims);
             tileSheet.Id = comeLast + tileSheet.Id;
             loc.map.AddTileSheet(tileSheet);
             if (Game1.currentLocation == loc)
@@ -590,8 +585,7 @@ namespace Magic.Framework
                 return;
             }
 
-            int level;
-            if (!int.TryParse(args[1], out level))
+            if (!int.TryParse(args[1], out int level))
             {
                 Log.Error($"That spell only casts up to level {spell.GetMaxCastingLevel()}.");
                 return;

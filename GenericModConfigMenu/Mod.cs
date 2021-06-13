@@ -30,12 +30,14 @@ namespace GenericModConfigMenu
             this.Ui = new RootElement();
 
             Texture2D tex = this.Helper.Content.Load<Texture2D>("assets/config-button.png");
-            this.ConfigButton = new Button(tex);
-            this.ConfigButton.LocalPosition = new Vector2(36, Game1.viewport.Height - 100);
-            this.ConfigButton.Callback = (Element e) =>
+            this.ConfigButton = new Button(tex)
             {
-                Game1.playSound("newArtifact");
-                TitleMenu.subMenu = new ModConfigMenu(false);
+                LocalPosition = new Vector2(36, Game1.viewport.Height - 100),
+                Callback = e =>
+                {
+                    Game1.playSound("newArtifact");
+                    TitleMenu.subMenu = new ModConfigMenu(false);
+                }
             };
 
             this.Ui.AddChild(this.ConfigButton);

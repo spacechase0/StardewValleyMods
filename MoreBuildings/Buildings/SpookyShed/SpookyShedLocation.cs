@@ -59,7 +59,7 @@ namespace MoreBuildings.Buildings.SpookyShed
         {
             if (tileLocation.X == 10 && tileLocation.Y == 10)
             {
-                if (who.CurrentItem != null && who.CurrentItem is SObject obj)
+                if (who.CurrentItem is SObject obj)
                 {
                     if (!obj.bigCraftable.Value)
                     {

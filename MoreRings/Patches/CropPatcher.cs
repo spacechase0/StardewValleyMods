@@ -41,7 +41,7 @@ namespace MoreRings.Patches
             Label pendingLabel = default(Label);
             foreach (var insn in insns)
             {
-                if (insn.operand is LocalBuilder lb && lb.LocalIndex == 9)
+                if (insn.operand is LocalBuilder { LocalIndex: 9 } lb)
                 {
                     randVar = lb;
                 }

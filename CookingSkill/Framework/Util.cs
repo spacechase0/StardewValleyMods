@@ -9,13 +9,11 @@ namespace CookingSkill.Framework
         // http://stackoverflow.com/a/22456034
         public static string Serialize<T>(T obj)
         {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                XmlSerializer serializer = new XmlSerializer(obj.GetType());
-                serializer.Serialize(stream, obj);
+            using MemoryStream stream = new MemoryStream();
+            XmlSerializer serializer = new XmlSerializer(obj.GetType());
+            serializer.Serialize(stream, obj);
 
-                return Encoding.UTF8.GetString(stream.ToArray());
-            }
+            return Encoding.UTF8.GetString(stream.ToArray());
         }
     }
 }

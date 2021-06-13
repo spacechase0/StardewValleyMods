@@ -18,10 +18,11 @@ namespace MoreGrassStarters
 
         public Dictionary<string, string> getAdditionalSaveData()
         {
-            var data = new Dictionary<string, string>();
-            data["Type"] = ((int)this.grassType.Value).ToString();
-            data["WeedCount"] = this.numberOfWeeds.Value.ToString();
-            return data;
+            return new()
+            {
+                ["Type"] = ((int)this.grassType.Value).ToString(),
+                ["WeedCount"] = this.numberOfWeeds.Value.ToString()
+            };
         }
 
         public object getReplacement()
@@ -50,11 +51,10 @@ namespace MoreGrassStarters
         // It references `Game1.mine.mineLevel`, but `Game1.mine` is null.
         public override bool performToolAction(Tool t, int explosion, Vector2 tileLocation, GameLocation location = null)
         {
-            if (location == null)
-                location = Game1.currentLocation;
-            if (t != null && t is MeleeWeapon && ((MeleeWeapon)t).type.Value != 2 || explosion > 0)
+            location ??= Game1.currentLocation;
+            if (t is MeleeWeapon weapon && (weapon.type.Value != 2 || explosion > 0))
             {
-                if (t != null && (t as MeleeWeapon).type.Value != 1)
+                if (weapon.type.Value != 1)
                     DelayedAction.playSoundAfterDelay("daggerswipe", 50);
                 else if (location.Equals((object)Game1.currentLocation))
                     Game1.playSound("swordswipe");
@@ -64,22 +64,20 @@ namespace MoreGrassStarters
                 switch (this.grassType.Value)
                 {
                     case 1:
-                        string currentSeason = Game1.currentSeason;
-                        if (!(currentSeason == "spring"))
+                        switch (Game1.currentSeason)
                         {
-                            if (!(currentSeason == "summer"))
-                            {
-                                if (currentSeason == "fall")
-                                {
-                                    color = new Color(219, 102, 58);
-                                    break;
-                                }
+                            case "spring":
+                                color = new Color(60, 180, 58);
                                 break;
-                            }
-                            color = new Color(110, 190, 24);
-                            break;
+
+                            case "summer":
+                                color = new Color(110, 190, 24);
+                                break;
+
+                            case "fall":
+                                color = new Color(219, 102, 58);
+                                break;
                         }
-                        color = new Color(60, 180, 58);
                         break;
                     case 2:
                         color = new Color(148, 146, 71);

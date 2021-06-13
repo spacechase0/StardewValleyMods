@@ -1145,21 +1145,19 @@ namespace JsonAssets
                 int price = entry.Price;
                 if (!normalCond)
                     price = (int)(price * 1.5);
-                if (item is StardewValley.Object obj && obj.Category == StardewValley.Object.SeedsCategory)
+                if (item is SObject { Category: SObject.SeedsCategory })
                 {
                     price = (int)(price * Game1.MasterPlayer.difficultyModifier);
                 }
-                if (item is StardewValley.Object obj2 && obj2.IsRecipe && Game1.player.knowsRecipe(obj2.Name))
+                if (item is SObject { IsRecipe: true } obj2 && Game1.player.knowsRecipe(obj2.Name))
                     continue;
                 forSale.Add(item);
-                if (qiGemShop)
-                {
-                    itemPriceAndStock.Add(item, new[] { 0, (item is StardewValley.Object obj3 && obj3.IsRecipe) ? 1 : int.MaxValue, 858, price });
-                }
-                else
-                {
-                    itemPriceAndStock.Add(item, new[] { price, (item is StardewValley.Object obj3 && obj3.IsRecipe) ? 1 : int.MaxValue });
-                }
+
+                bool isRecipe = (item as SObject)?.IsRecipe == true;
+                int[] values = qiGemShop
+                    ? new[] { 0, isRecipe ? 1 : int.MaxValue, 858, price }
+                    : new[] { price, isRecipe ? 1 : int.MaxValue };
+                itemPriceAndStock.Add(item, values);
             }
 
             this.Api.InvokeAddedItemsToShop();
@@ -1351,42 +1349,38 @@ namespace JsonAssets
 
         public int ResolveObjectId(object data)
         {
-            if (data.GetType() == typeof(long))
-                return (int)(long)data;
-            else
+            if (data is long inputId)
+                return (int)inputId;
+
+            if (this.ObjectIds.TryGetValue((string)data, out int id))
+                return id;
+
+            foreach (var obj in Game1.objectInformation)
             {
-                if (this.ObjectIds.TryGetValue((string)data, out int id))
-                    return id;
-
-                foreach (var obj in Game1.objectInformation)
-                {
-                    if (obj.Value.Split('/')[0] == (string)data)
-                        return obj.Key;
-                }
-
-                Log.Warn($"No idea what '{data}' is!");
-                return 0;
+                if (obj.Value.Split('/')[0] == (string)data)
+                    return obj.Key;
             }
+
+            Log.Warn($"No idea what '{data}' is!");
+            return 0;
         }
 
         public int ResolveClothingId(object data)
         {
-            if (data.GetType() == typeof(long))
-                return (int)(long)data;
-            else
+            if (data is long inputId)
+                return (int)inputId;
+
+            if (this.ClothingIds.TryGetValue((string)data, out int id))
+                return id;
+
+            foreach (var obj in Game1.clothingInformation)
             {
-                if (this.ClothingIds.TryGetValue((string)data, out int id))
-                    return id;
-
-                foreach (var obj in Game1.clothingInformation)
-                {
-                    if (obj.Value.Split('/')[0] == (string)data)
-                        return obj.Key;
-                }
-
-                Log.Warn($"No idea what '{data}' is!");
-                return 0;
+                if (obj.Value.Split('/')[0] == (string)data)
+                    return obj.Key;
             }
+
+            Log.Warn($"No idea what '{data}' is!");
+            return 0;
         }
 
         private Dictionary<string, int> AssignIds(string type, int starting, List<DataNeedsId> data)
@@ -1413,7 +1407,7 @@ namespace JsonAssets
                     }
 
                     ids.Add(d.Name, id);
-                    if (type == "objects" && d is ObjectData objd && objd.IsColored)
+                    if (type == "objects" && d is ObjectData { IsColored: true })
                         ++currId;
                     else if (type == "big-craftables" && ((BigCraftableData)d).ReserveExtraIndexCount > 0)
                         currId += ((BigCraftableData)d).ReserveExtraIndexCount;
@@ -1529,8 +1523,7 @@ namespace JsonAssets
 
                 // First, fix some stuff we broke in an earlier build by using .BundleData instead of the unlocalized version
                 // Copied from Game1.applySaveFix (case FixBotchedBundleData)
-                int temp = 0;
-                while (toks.Count > 4 && !int.TryParse(toks[toks.Count - 1], out temp))
+                while (toks.Count > 4 && !int.TryParse(toks[toks.Count - 1], out _))
                 {
                     string lastValue = toks[toks.Count - 1];
                     if (char.IsDigit(lastValue[lastValue.Length - 1]) && lastValue.Contains(":") && lastValue.Contains("\\"))
@@ -1655,7 +1648,7 @@ namespace JsonAssets
             else if (obj is IndoorPot pot)
             {
                 var hd = pot.hoeDirt.Value;
-                if (hd == null || hd.crop == null)
+                if (hd?.crop == null)
                     return false;
 
                 if (this.FixId(this.OldCropIds, this.CropIds, hd.crop.rowInSpriteSheet, this.OrigCrops))
@@ -2083,13 +2076,8 @@ namespace JsonAssets
                     bool hideShippable = this.Objects.FirstOrDefault(o => o.Id == entry)?.HideFromShippingCollection ?? true;
 
                     toRemove.Add(entry);
-                    if (this.ObjectIds.TryGetValue(key, out int id))
-                    {
-                        if (removeUnshippable && (!canShip || hideShippable || isRing))
-                            ;// Log.warn("Found unshippable");
-                        else
-                            toAdd.Add(id, dict[entry]);
-                    }
+                    if (this.ObjectIds.TryGetValue(key, out int id) && (!removeUnshippable || (canShip && !hideShippable && !isRing)))
+                        toAdd.Add(id, dict[entry]);
                 }
             }
             foreach (int entry in toRemove)

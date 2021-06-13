@@ -95,10 +95,7 @@ namespace LocationLayerTool.Patches
                     Game1.game1.screen = new RenderTarget2D(Game1.graphics.GraphicsDevice, screen.Width, screen.Height, false, screen.Format, screen.DepthStencilFormat, screen.MultiSampleCount, RenderTargetUsage.PreserveContents);
                 */
             }
-            if (xTileLayerPatcher.LightMap == null)
-            {
-                xTileLayerPatcher.LightMap = xTileLayerPatcher.AllocateLightMapNoDispose();
-            }
+            xTileLayerPatcher.LightMap ??= xTileLayerPatcher.AllocateLightMapNoDispose();
 
             var lightmapField = Mod.Instance.Helper.Reflection.GetField<RenderTarget2D>(typeof(Game1), "_lightmap");
             var lightingBlend = Mod.Instance.Helper.Reflection.GetField<BlendState>(Game1.game1, "lightingBlend");

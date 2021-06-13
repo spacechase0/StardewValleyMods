@@ -29,25 +29,21 @@ namespace ManaBar.Framework
 
         internal void SyncMineFull()
         {
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
-            {
-                writer.Write(1);
-                writer.Write(Game1.player.UniqueMultiplayerID);
-                writer.Write(JsonConvert.SerializeObject(this.Players[Game1.player.UniqueMultiplayerID], MultiplayerSaveData.NetworkSerializerSettings));
-                SpaceCore.Networking.BroadcastMessage(MultiplayerSaveData.MsgData, stream.ToArray());
-            }
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(1);
+            writer.Write(Game1.player.UniqueMultiplayerID);
+            writer.Write(JsonConvert.SerializeObject(this.Players[Game1.player.UniqueMultiplayerID], MultiplayerSaveData.NetworkSerializerSettings));
+            SpaceCore.Networking.BroadcastMessage(MultiplayerSaveData.MsgData, stream.ToArray());
         }
 
         internal void SyncMineMini()
         {
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
-            {
-                writer.Write(this.Players[Game1.player.UniqueMultiplayerID].Mana);
-                writer.Write(this.Players[Game1.player.UniqueMultiplayerID].ManaCap);
-                SpaceCore.Networking.BroadcastMessage(MultiplayerSaveData.MsgMinidata, stream.ToArray());
-            }
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(this.Players[Game1.player.UniqueMultiplayerID].Mana);
+            writer.Write(this.Players[Game1.player.UniqueMultiplayerID].ManaCap);
+            SpaceCore.Networking.BroadcastMessage(MultiplayerSaveData.MsgMinidata, stream.ToArray());
         }
     }
 }

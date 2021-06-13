@@ -4,8 +4,8 @@ namespace GenericModConfigMenu.Framework.UI
     {
         public int Value
         {
-            get { return (this.String == "" || this.String == "-") ? 0 : int.Parse(this.String); }
-            set { this.String = value.ToString(); }
+            get => (this.String == "" || this.String == "-") ? 0 : int.Parse(this.String);
+            set => this.String = value.ToString();
         }
 
         protected override void ReceiveInput(string str)
@@ -24,8 +24,7 @@ namespace GenericModConfigMenu.Framework.UI
                 return;
 
             this.String += str;
-            if (this.Callback != null)
-                this.Callback.Invoke(this);
+            this.Callback?.Invoke(this);
         }
     }
 }

@@ -117,11 +117,9 @@ namespace Magic.Framework.Game.Interface
 
                 b.DrawString(Game1.dialogueFont, title, new Vector2(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + (MagicMenu.WindowWidth / 2 - Game1.dialogueFont.MeasureString(title).X) / 2, this.yPositionOnScreen + 30), Color.Black);
 
-                var icon = this.Sel.Icons != null ? this.Sel.Icons[this.Sel.Icons.Length - 1] : Game1.staminaRect;
-                if (icon == null)
-                {
-                    icon = this.Sel.Icons[0];
-                }
+                var icon =
+                    (this.Sel.Icons != null ? this.Sel.Icons[this.Sel.Icons.Length - 1] : Game1.staminaRect)
+                    ?? this.Sel.Icons[0];
                 if (icon != null)
                 {
                     b.Draw(icon, new Rectangle(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + (MagicMenu.WindowWidth / 2 - MagicMenu.SelIconSize) / 2, this.yPositionOnScreen + 85, MagicMenu.SelIconSize, MagicMenu.SelIconSize), Color.White);
@@ -190,14 +188,11 @@ namespace Magic.Framework.Game.Interface
                         if (prep != null)
                         {
                             Spell spell = SpellBook.Get(prep.SpellId);
-                            if (spell != null)
+                            Texture2D[] icons = spell?.Icons;
+                            if (icons != null && icons.Length > prep.Level && icons[prep.Level] != null)
                             {
-                                Texture2D[] icons = spell.Icons;
-                                if (icons != null && icons.Length > prep.Level && icons[prep.Level] != null)
-                                {
-                                    Texture2D icon = icons[prep.Level];
-                                    b.Draw(icon, r, Color.White);
-                                }
+                                Texture2D icon = icons[prep.Level];
+                                b.Draw(icon, r, Color.White);
                             }
                         }
                         y += MagicMenu.HotbarIconSize + 12;
@@ -218,15 +213,12 @@ namespace Magic.Framework.Game.Interface
             if (this.Dragging != null)
             {
                 Spell spell = SpellBook.Get(this.Dragging.SpellId);
-                if (spell != null)
+                Texture2D[] icons = spell?.Icons;
+                if (icons != null && icons.Length > this.Dragging.Level && icons[this.Dragging.Level] != null)
                 {
-                    Texture2D[] icons = spell.Icons;
-                    if (icons != null && icons.Length > this.Dragging.Level && icons[this.Dragging.Level] != null)
-                    {
-                        Texture2D icon = icons[this.Dragging.Level];
+                    Texture2D icon = icons[this.Dragging.Level];
 
-                        b.Draw(icon, new Rectangle(Game1.getOldMouseX(), Game1.getOldMouseY(), MagicMenu.HotbarIconSize, MagicMenu.HotbarIconSize), Color.White);
-                    }
+                    b.Draw(icon, new Rectangle(Game1.getOldMouseX(), Game1.getOldMouseY(), MagicMenu.HotbarIconSize, MagicMenu.HotbarIconSize), Color.White);
                 }
             }
             this.drawMouse(b);
@@ -252,23 +244,23 @@ namespace Magic.Framework.Game.Interface
                 return text;
             }
 
-            string[] words = text.Split(new[] { ' ', '\n' });
+            string[] words = text.Split(' ', '\n');
             var wrappedText = new System.Text.StringBuilder();
-            float linewidth = 0f;
+            float lineWidth = 0f;
             float spaceWidth = Game1.dialogueFont.MeasureString(" ").X;
-            for (int i = 0; i < words.Length; ++i)
+            foreach (string word in words)
             {
-                Vector2 size = Game1.dialogueFont.MeasureString(words[i]);
-                if (linewidth + size.X < maxLineWidth)
+                Vector2 size = Game1.dialogueFont.MeasureString(word);
+                if (lineWidth + size.X < maxLineWidth)
                 {
-                    linewidth += size.X + spaceWidth;
+                    lineWidth += size.X + spaceWidth;
                 }
                 else
                 {
                     wrappedText.Append("\n");
-                    linewidth = size.X + spaceWidth;
+                    lineWidth = size.X + spaceWidth;
                 }
-                wrappedText.Append(words[i]);
+                wrappedText.Append(word);
                 wrappedText.Append(" ");
             }
 

@@ -12,7 +12,7 @@ namespace SpaceShared.UI
         private Vector2 SizeImpl;
         public Vector2 Size
         {
-            get { return this.SizeImpl; }
+            get => this.SizeImpl;
             set
             {
                 this.SizeImpl = new Vector2(value.X, ((int)value.Y) / this.RowHeight * this.RowHeight);
@@ -24,7 +24,7 @@ namespace SpaceShared.UI
         private int RowHeightImpl;
         public int RowHeight
         {
-            get { return this.RowHeightImpl; }
+            get => this.RowHeightImpl;
             set
             {
                 this.RowHeightImpl = value + Table.RowPadding;
@@ -32,14 +32,16 @@ namespace SpaceShared.UI
             }
         }
 
-        public int RowCount { get { return this.Rows.Count; } }
+        public int RowCount => this.Rows.Count;
 
         public Scrollbar Scrollbar { get; }
 
         public Table()
         {
-            this.Scrollbar = new Scrollbar();
-            this.Scrollbar.LocalPosition = new Vector2(0, 0);
+            this.Scrollbar = new Scrollbar
+            {
+                LocalPosition = new Vector2(0, 0)
+            };
             this.AddChild(this.Scrollbar);
         }
 
@@ -116,8 +118,7 @@ namespace SpaceShared.UI
                 }
             }
 
-            if (this.RenderLast != null)
-                this.RenderLast.Draw(b);
+            this.RenderLast?.Draw(b);
 
             this.Scrollbar.Draw(b);
         }

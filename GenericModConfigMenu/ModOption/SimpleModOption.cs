@@ -12,7 +12,7 @@ namespace GenericModConfigMenu.ModOption
         private T State;
         public virtual T Value
         {
-            get { return this.State; }
+            get => this.State;
             set
             {
                 if (!this.State.Equals(value))

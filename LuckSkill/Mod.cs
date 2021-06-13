@@ -264,10 +264,7 @@ namespace LuckSkill
                         }
                     }
 
-                    List<Action> choices = new List<Action>();
-                    choices.Add(AdvanceCrops);
-                    choices.Add(AdvanceCrops);
-                    choices.Add(AdvanceCrops);
+                    List<Action> choices = new() { AdvanceCrops, AdvanceCrops, AdvanceCrops };
                     foreach (var ah in animalHouses)
                     {
                         choices.Add(() => AdvanceBarn(ah));
@@ -361,29 +358,20 @@ namespace LuckSkill
             SpriteBatch b = Game1.spriteBatch;
             int j = 5;
 
-            int num;
-            int num2;
-
-            num = skills.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 4 * Game1.tileSize - 8;
-            num2 = skills.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - Game1.pixelZoom * 2;
+            int num = skills.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 4 * Game1.tileSize - 8;
+            int num2 = skills.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - Game1.pixelZoom * 2;
 
             int num3 = 0;
             for (int i = 0; i < 10; i++)
             {
-                bool flag = false;
-                bool flag2 = false;
                 string text = "";
-                int num4 = 0;
-                Rectangle empty = Rectangle.Empty;
 
-                flag = (Game1.player.LuckLevel > i);
+                bool flag = (Game1.player.LuckLevel > i);
                 if (i == 0)
-                {
                     text = "Luck";
-                }
-                num4 = Game1.player.LuckLevel;
-                flag2 = (Game1.player.addedLuckLevel.Value > 0);
-                empty = new Rectangle(50, 428, 10, 10);
+                int num4 = Game1.player.LuckLevel;
+                bool flag2 = (Game1.player.addedLuckLevel.Value > 0);
+                Rectangle empty = new Rectangle(50, 428, 10, 10);
 
                 if (!text.Equals(""))
                 {

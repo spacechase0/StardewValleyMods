@@ -48,12 +48,12 @@ namespace BuildableLocationsFramework.Framework
 
         public override bool performToolAction(Tool t, int tileX, int tileY)
         {
-            if (t is MeleeWeapon)
+            if (t is MeleeWeapon weapon)
             {
                 foreach (FarmAnimal farmAnimal in this.Animals.Values)
                 {
-                    if (farmAnimal.GetBoundingBox().Intersects((t as MeleeWeapon).mostRecentArea))
-                        farmAnimal.hitWithWeapon(t as MeleeWeapon);
+                    if (farmAnimal.GetBoundingBox().Intersects(weapon.mostRecentArea))
+                        farmAnimal.hitWithWeapon(weapon);
                 }
             }
             return base.performToolAction(t, tileX, tileY);
@@ -100,9 +100,9 @@ namespace BuildableLocationsFramework.Framework
                 {
                     if (character != null && !character.Equals(pair.Value) && (!(character is FarmAnimal) && position.Intersects(pair.Value.GetBoundingBox())) && (!isFarmer || !Game1.player.GetBoundingBox().Intersects(pair.Value.GetBoundingBox())))
                     {
-                        if (isFarmer && character is Farmer)
+                        if (isFarmer && character is Farmer farmer)
                         {
-                            if ((character as Farmer).TemporaryPassableTiles.Intersects(position))
+                            if (farmer.TemporaryPassableTiles.Intersects(position))
                                 break;
                         }
                         pair.Value.farmerPushing();
@@ -290,8 +290,8 @@ namespace BuildableLocationsFramework.Framework
             {
                 foreach (Building building in this.buildings)
                 {
-                    if (building is FishPond && building.isTileFishable(bobberTile))
-                        return (building as FishPond).CatchFish();
+                    if (building is FishPond pond && pond.isTileFishable(bobberTile))
+                        return pond.CatchFish();
                 }
             }
             return base.getFish(millisecondsAfterNibble, bait, waterDepth, who, baitPotency, bobberTile, locationName);

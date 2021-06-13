@@ -38,9 +38,7 @@ namespace Magic
 
         public override object GetApi()
         {
-            if (this.Api == null)
-                this.Api = new Api();
-            return this.Api;
+            return this.Api ??= new Api();
         }
 
         /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>

@@ -80,7 +80,7 @@ namespace BuildableLocationsFramework.Patches
                     ++FarmAnimal.NumPathfindingThisTick;
                     __instance.controller = new PathFindController(__instance, locationFromName, new PathFindController.isAtEnd(FarmAnimal.grassEndPointFunction), Game1.random.Next(4), false, new PathFindController.endBehavior(FarmAnimal.behaviorAfterFindingGrassPatch), 200, Point.Zero);
                 }
-                if (__instance.controller == null || __instance.controller.pathToEndPoint == null || __instance.controller.pathToEndPoint.Count < 3)
+                if (__instance.controller?.pathToEndPoint == null || __instance.controller.pathToEndPoint.Count < 3)
                 {
                     __instance.SetMovingDown(true);
                     __instance.controller = null;
@@ -127,14 +127,14 @@ namespace BuildableLocationsFramework.Patches
                 __instance.controller = null;
                 __instance.Halt();
             }
-            if (location is BuildableGameLocation && location is IAnimalLocation && __instance.noWarpTimer <= 0)
+            if (location is BuildableGameLocation && location is IAnimalLocation animalLocation && __instance.noWarpTimer <= 0)
             {
                 Building building = __instance.home;
                 if (building != null && Game1.IsMasterGame && building.getRectForAnimalDoor().Contains(__instance.GetBoundingBox().Center.X, __instance.GetBoundingBox().Top))
                 {
                     if (Utility.isOnScreen(__instance.getTileLocationPoint(), 192, location))
                         location.localSound("dwoop");
-                    ((IAnimalLocation)location).Animals.Remove((long)__instance.myID);
+                    animalLocation.Animals.Remove((long)__instance.myID);
                     (building.indoors.Value as AnimalHouse).animals[(long)__instance.myID] = __instance;
                     __instance.setRandomPosition(building.indoors);
                     __instance.faceDirection(Game1.random.Next(4));

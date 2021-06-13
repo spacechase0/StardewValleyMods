@@ -86,13 +86,12 @@ namespace BuildableLocationsFramework
         [EventPriority(EventPriority.Low)]
         private void MenuChanged(object sender, MenuChangedEventArgs e)
         {
-            CarpenterMenu menu1 = e.NewMenu as CarpenterMenu;
-            PurchaseAnimalsMenu menu2 = e.NewMenu as PurchaseAnimalsMenu;
-            if (menu1 != null || menu2 != null)
+            CarpenterMenu carpenterMenu = e.NewMenu as CarpenterMenu;
+            if (carpenterMenu != null || e.NewMenu is PurchaseAnimalsMenu)
             {
-                if (menu1 != null)
+                if (carpenterMenu != null)
                 {
-                    var blueprints = this.Helper.Reflection.GetField<List<BluePrint>>(menu1, "blueprints").GetValue();
+                    var blueprints = this.Helper.Reflection.GetField<List<BluePrint>>(carpenterMenu, "blueprints").GetValue();
 
                     var locs = Mod.GetAllLocations();
                     foreach (var loc in locs)

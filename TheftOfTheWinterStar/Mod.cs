@@ -432,10 +432,12 @@ namespace TheftOfTheWinterStar
                 }
             }
 
-            var decoSpots = new Dictionary<string, Vector2[]>();
-            decoSpots.Add("BusStop", new Vector2[] { new(5, 8), new(9, 10), new(10, 14) });
-            decoSpots.Add("Backwoods", new Vector2[] { new(40, 30), new(32, 31), new(25, 29) });
-            decoSpots.Add("Tunnel", new Vector2[] { new(33, 10), new(23, 9), new(10, 8) });
+            var decoSpots = new Dictionary<string, Vector2[]>
+            {
+                ["BusStop"] = new Vector2[] { new(5, 8), new(9, 10), new(10, 14) },
+                ["Backwoods"] = new Vector2[] { new(40, 30), new(32, 31), new(25, 29) },
+                ["Tunnel"] = new Vector2[] { new(33, 10), new(23, 9), new(10, 8) }
+            };
 
             if (decoSpots.TryGetValue(e.NewLocation.Name, out Vector2[] spots))
             {
@@ -780,8 +782,7 @@ namespace TheftOfTheWinterStar
         {
             var b = e.SpriteBatch;
 
-            var witch = Game1.currentLocation.characters.SingleOrDefault(npc => npc is Witch) as Witch;
-            if (witch != null)
+            if (Game1.currentLocation.characters.SingleOrDefault(npc => npc is Witch) is Witch witch)
             {
                 int posX = (Game1.viewport.Width - this.BossBarBg.Width * 4) / 2;
                 b.Draw(this.BossBarBg, new Vector2(posX, 5), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);

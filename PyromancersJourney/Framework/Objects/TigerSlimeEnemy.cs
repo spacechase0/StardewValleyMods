@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
@@ -45,7 +44,7 @@ namespace PyromancersJourney.Framework.Objects
                     }
                 }
 
-                TigerSlimeEnemy.MainBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                TigerSlimeEnemy.MainBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count, BufferUsage.WriteOnly);
                 TigerSlimeEnemy.MainBuffer.SetData(vertices.ToArray());
 
                 vertices.Clear();
@@ -67,7 +66,7 @@ namespace PyromancersJourney.Framework.Objects
                     vertices.Add(new VertexPositionColorTexture(new Vector3(s, s, 0), Color.White, new Vector2(xb, yb)));
                 }
 
-                TigerSlimeEnemy.EyesBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count(), BufferUsage.WriteOnly);
+                TigerSlimeEnemy.EyesBuffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count, BufferUsage.WriteOnly);
                 TigerSlimeEnemy.EyesBuffer.SetData(vertices.ToArray());
             }
         }
@@ -75,14 +74,7 @@ namespace PyromancersJourney.Framework.Objects
         public override void Hurt(int amt)
         {
             base.Hurt(amt);
-            if (this.Dead)
-            {
-                Game1.playSound("slimedead");
-            }
-            else
-            {
-                Game1.playSound("slimeHit");
-            }
+            Game1.playSound(this.Dead ? "slimedead" : "slimeHit");
         }
 
         public override void DoMovement()
@@ -118,18 +110,18 @@ namespace PyromancersJourney.Framework.Objects
 
 
             var oldStencil = device.DepthStencilState;
-            var newStencil = new DepthStencilState();
-            newStencil.DepthBufferWriteEnable = false;
-            device.DepthStencilState = newStencil;
+            device.DepthStencilState = new DepthStencilState
+            {
+                DepthBufferWriteEnable = false
+            };
 
             var camForward = (cam.Pos - cam.Target);
             camForward.Normalize();
             BaseObject.Effect.World = Matrix.CreateConstrainedBillboard(this.Position, cam.Pos, cam.Up, null, null);
             BaseObject.Effect.TextureEnabled = true;
             BaseObject.Effect.Texture = TigerSlimeEnemy.Tex;
-            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
+            foreach (var pass in BaseObject.Effect.CurrentTechnique.Passes)
             {
-                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
 
                 device.SetVertexBuffer(TigerSlimeEnemy.MainBuffer);
@@ -151,9 +143,8 @@ namespace PyromancersJourney.Framework.Objects
                 eyePos.Y *= 0.75f;
 
                 BaseObject.Effect.World = Matrix.CreateConstrainedBillboard(this.Position + eyePos, cam.Pos, cam.Up, null, null);
-                for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
+                foreach (EffectPass pass in BaseObject.Effect.CurrentTechnique.Passes)
                 {
-                    var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                     pass.Apply();
 
                     device.SetVertexBuffer(TigerSlimeEnemy.EyesBuffer);

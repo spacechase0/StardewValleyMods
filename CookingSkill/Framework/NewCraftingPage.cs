@@ -19,10 +19,9 @@ namespace CookingSkill.Framework
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.CopiedFromGameCode)]
     internal class NewCraftingPage : IClickableMenu
     {
-        private string descriptionText = "";
         private string hoverText = "";
         protected List<Dictionary<ClickableTextureComponent, CraftingRecipe>> pagesOfCraftingRecipes = new();
-        public List<ClickableComponent> currentPageClickableComponents = new();
+        public List<ClickableComponent> currentPageClickableComponents;
         private string hoverTitle = "";
         public const int howManyRecipesFitOnPage = 40;
         public const int numInRow = 10;
@@ -56,16 +55,21 @@ namespace CookingSkill.Framework
         {
             this._standaloneMenu = standalone_menu;
             this.cooking = cooking;
-            this.inventory = new InventoryMenu(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + 320 - 16, false);
-            this.inventory.showGrayedOutSlots = true;
+            this.inventory = new InventoryMenu(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + 320 - 16, false)
+            {
+                showGrayedOutSlots = true
+            };
+
             this.currentPageClickableComponents = new List<ClickableComponent>();
             foreach (ClickableComponent clickableComponent in this.inventory.GetBorder(InventoryMenu.BorderSide.Top))
                 clickableComponent.upNeighborID = -99998;
             this._materialContainers = material_containers;
             if (this._standaloneMenu)
                 this.initializeUpperRightCloseButton();
-            ClickableTextureComponent textureComponent1 = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 4, this.yPositionOnScreen + height - 192 - 32 - IClickableMenu.borderWidth - 104, 64, 104), Game1.mouseCursors, new Rectangle(564 + Game1.player.trashCanLevel * 18, 102, 18, 26), 4f);
-            textureComponent1.myID = 106;
+            ClickableTextureComponent textureComponent1 = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 4, this.yPositionOnScreen + height - 192 - 32 - IClickableMenu.borderWidth - 104, 64, 104), Game1.mouseCursors, new Rectangle(564 + Game1.player.trashCanLevel * 18, 102, 18, 26), 4f)
+            {
+                myID = 106
+            };
             this.trashCan = textureComponent1;
             this.dropItemInvisibleButton = new ClickableComponent(new Rectangle(this.xPositionOnScreen - IClickableMenu.borderWidth - IClickableMenu.spaceToClearSideBorder - 64, this.trashCan.bounds.Y, 64, 64), "")
             {
@@ -91,18 +95,20 @@ namespace CookingSkill.Framework
             this.layoutRecipes(playerRecipes);
             if (this.pagesOfCraftingRecipes.Count > 1)
             {
-                ClickableTextureComponent textureComponent2 = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + 768 + 32, this.craftingPageY(), 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 12), 0.8f);
-                textureComponent2.myID = 88;
-                textureComponent2.downNeighborID = 89;
-                textureComponent2.rightNeighborID = 106;
-                textureComponent2.leftNeighborID = -99998;
-                this.upButton = textureComponent2;
-                ClickableTextureComponent textureComponent3 = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + 768 + 32, this.craftingPageY() + 192 + 32, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 11), 0.8f);
-                textureComponent3.myID = 89;
-                textureComponent3.upNeighborID = 88;
-                textureComponent3.rightNeighborID = 106;
-                textureComponent3.leftNeighborID = -99998;
-                this.downButton = textureComponent3;
+                this.upButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + 768 + 32, this.craftingPageY(), 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 12), 0.8f)
+                {
+                    myID = 88,
+                    downNeighborID = 89,
+                    rightNeighborID = 106,
+                    leftNeighborID = -99998
+                };
+                this.downButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + 768 + 32, this.craftingPageY() + 192 + 32, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 11), 0.8f)
+                {
+                    myID = 89,
+                    upNeighborID = 88,
+                    rightNeighborID = 106,
+                    leftNeighborID = -99998
+                };
             }
             this._UpdateCurrentPageButtons();
             if (!Game1.options.SnappyMenus)
@@ -110,18 +116,14 @@ namespace CookingSkill.Framework
             this.snapToDefaultClickableComponent();
         }
 
-        protected override void cleanupBeforeExit()
-        {
-            base.cleanupBeforeExit();
-        }
-
         protected virtual IList<Item> getContainerContents()
         {
             if (this._materialContainers == null)
                 return null;
             List<Item> objList = new List<Item>();
-            for (int index = 0; index < this._materialContainers.Count; ++index)
-                objList.AddRange(this._materialContainers[index].items);
+            foreach (Chest container in this._materialContainers)
+                objList.AddRange(container.items);
+
             return objList;
         }
 
@@ -187,8 +189,7 @@ namespace CookingSkill.Framework
             int y = 0;
             int num3 = 0;
             ClickableTextureComponent[,] newPageLayout = this.createNewPageLayout();
-            List<ClickableTextureComponent[,]> textureComponentArrayList = new List<ClickableTextureComponent[,]>();
-            textureComponentArrayList.Add(newPageLayout);
+            List<ClickableTextureComponent[,]> textureComponentArrayList = new() { newPageLayout };
             foreach (string playerRecipe in playerRecipes)
             {
                 ++num3;
@@ -212,15 +213,16 @@ namespace CookingSkill.Framework
                     }
                 }
                 int num5 = 200 + num3;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent("", new Rectangle(num1 + x * (64 + num2), this.craftingPageY() + y * 72, 64, recipe.bigCraftable ? 128 : 64), null, !this.cooking || Game1.player.cookingRecipes.ContainsKey(recipe.name) ? "" : "ghosted", recipe.bigCraftable ? Game1.bigCraftableSpriteSheet : Game1.objectSpriteSheet, recipe.bigCraftable ? Game1.getArbitrarySourceRect(Game1.bigCraftableSpriteSheet, 16, 32, recipe.getIndexOfMenuView()) : Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, recipe.getIndexOfMenuView(), 16, 16), 4f);
-                textureComponent.myID = num5;
-                textureComponent.rightNeighborID = -99998;
-                textureComponent.leftNeighborID = -99998;
-                textureComponent.upNeighborID = -99998;
-                textureComponent.downNeighborID = -99998;
-                textureComponent.fullyImmutable = true;
-                textureComponent.region = 8000;
-                ClickableTextureComponent key = textureComponent;
+                ClickableTextureComponent key = new("", new Rectangle(num1 + x * (64 + num2), this.craftingPageY() + y * 72, 64, recipe.bigCraftable ? 128 : 64), null, !this.cooking || Game1.player.cookingRecipes.ContainsKey(recipe.name) ? "" : "ghosted", recipe.bigCraftable ? Game1.bigCraftableSpriteSheet : Game1.objectSpriteSheet, recipe.bigCraftable ? Game1.getArbitrarySourceRect(Game1.bigCraftableSpriteSheet, 16, 32, recipe.getIndexOfMenuView()) : Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, recipe.getIndexOfMenuView(), 16, 16), 4f)
+                {
+                    myID = num5,
+                    rightNeighborID = -99998,
+                    leftNeighborID = -99998,
+                    upNeighborID = -99998,
+                    downNeighborID = -99998,
+                    fullyImmutable = true,
+                    region = 8000
+                };
                 newPage.Add(key, recipe);
                 newPageLayout[x, y] = key;
                 if (recipe.bigCraftable)
@@ -341,7 +343,7 @@ namespace CookingSkill.Framework
         protected void _UpdateCurrentPageButtons()
         {
             this.currentPageClickableComponents.Clear();
-            foreach (ClickableComponent key in this.pagesOfCraftingRecipes[this.currentCraftingPage].Keys)
+            foreach (ClickableTextureComponent key in this.pagesOfCraftingRecipes[this.currentCraftingPage].Keys)
                 this.currentPageClickableComponents.Add(key);
             this.populateClickableComponentList();
         }
@@ -414,7 +416,6 @@ namespace CookingSkill.Framework
         {
             base.performHoverAction(x, y);
             this.hoverTitle = "";
-            this.descriptionText = "";
             this.hoverText = "";
             this.hoverRecipe = null;
             this.hoverItem = this.inventory.hover(x, y, this.hoverItem);
@@ -445,17 +446,15 @@ namespace CookingSkill.Framework
             }
             if (this.upButton != null)
             {
-                if (this.upButton.containsPoint(x, y))
-                    this.upButton.scale = Math.Min(this.upButton.scale + 0.02f, this.upButton.baseScale + 0.1f);
-                else
-                    this.upButton.scale = Math.Max(this.upButton.scale - 0.02f, this.upButton.baseScale);
+                this.upButton.scale = this.upButton.containsPoint(x, y)
+                    ? Math.Min(this.upButton.scale + 0.02f, this.upButton.baseScale + 0.1f)
+                    : Math.Max(this.upButton.scale - 0.02f, this.upButton.baseScale);
             }
             if (this.downButton != null)
             {
-                if (this.downButton.containsPoint(x, y))
-                    this.downButton.scale = Math.Min(this.downButton.scale + 0.02f, this.downButton.baseScale + 0.1f);
-                else
-                    this.downButton.scale = Math.Max(this.downButton.scale - 0.02f, this.downButton.baseScale);
+                this.downButton.scale = this.downButton.containsPoint(x, y)
+                    ? Math.Min(this.downButton.scale + 0.02f, this.downButton.baseScale + 0.1f)
+                    : Math.Max(this.downButton.scale - 0.02f, this.downButton.baseScale);
             }
             if (this.trashCan == null)
                 return;
@@ -519,8 +518,7 @@ namespace CookingSkill.Framework
                 else
                     IClickableMenu.drawHoverText(b, this.hoverText, Game1.smallFont, this.heldItem != null ? 64 : 0, this.heldItem != null ? 64 : 0);
             }
-            if (this.heldItem != null)
-                this.heldItem.drawInMenu(b, new Vector2(Game1.getOldMouseX() + 16, Game1.getOldMouseY() + 16), 1f);
+            this.heldItem?.drawInMenu(b, new Vector2(Game1.getOldMouseX() + 16, Game1.getOldMouseY() + 16), 1f);
             base.draw(b);
             if (this.downButton != null && this.currentCraftingPage < this.pagesOfCraftingRecipes.Count - 1)
                 this.downButton.draw(b);
@@ -599,8 +597,7 @@ namespace CookingSkill.Framework
                         int recipe2 = recipeList[recipeList.Keys.ElementAt<int>(index1)];
                         recipe1 -= Game1.player.items[index2].Stack;
                         /////
-                        if (used != null)
-                            used.Add(new ConsumedItem(Game1.player.items[index2] as SObject));
+                        used?.Add(new ConsumedItem(Game1.player.items[index2] as SObject));
                         if (actuallyConsume)
                         /////
                             Game1.player.items[index2].Stack -= recipe2;
@@ -615,32 +612,30 @@ namespace CookingSkill.Framework
                 }
                 if (additional_materials != null && !flag)
                 {
-                    for (int index2 = 0; index2 < additional_materials.Count; ++index2)
+                    foreach (Chest additionalMaterial in additional_materials)
                     {
-                        Chest additionalMaterial = additional_materials[index2];
-                        if (additionalMaterial != null)
+                        if (additionalMaterial == null)
+                            continue;
+
+                        for (int index3 = additionalMaterial.items.Count - 1; index3 >= 0; --index3)
                         {
-                            for (int index3 = additionalMaterial.items.Count - 1; index3 >= 0; --index3)
+                            if (additionalMaterial.items[index3] != null && additionalMaterial.items[index3] is SObject && ((int)additionalMaterial.items[index3].parentSheetIndex == recipeList.Keys.ElementAt<int>(index1) || additionalMaterial.items[index3].Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule((SObject)additionalMaterial.items[index3], recipeList.Keys.ElementAt<int>(index1))))
                             {
-                                if (additionalMaterial.items[index3] != null && additionalMaterial.items[index3] is SObject && ((int)additionalMaterial.items[index3].parentSheetIndex == recipeList.Keys.ElementAt<int>(index1) || additionalMaterial.items[index3].Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule((SObject)additionalMaterial.items[index3], recipeList.Keys.ElementAt<int>(index1))))
-                                {
-                                    int num = Math.Min(recipe1, additionalMaterial.items[index3].Stack);
-                                    recipe1 -= num;
+                                int num = Math.Min(recipe1, additionalMaterial.items[index3].Stack);
+                                recipe1 -= num;
+                                /////
+                                used?.Add(new ConsumedItem(additionalMaterial.items[index3] as SObject));
+                                if (actuallyConsume)
                                     /////
-                                    if (used != null)
-                                        used.Add(new ConsumedItem(additionalMaterial.items[index3] as SObject));
-                                    if (actuallyConsume)
-                                        /////
-                                        additionalMaterial.items[index3].Stack -= num;
-                                    if (additionalMaterial.items[index3].Stack <= 0)
-                                        additionalMaterial.items[index3] = null;
-                                    if (recipe1 <= 0)
-                                        break;
-                                }
+                                    additionalMaterial.items[index3].Stack -= num;
+                                if (additionalMaterial.items[index3].Stack <= 0)
+                                    additionalMaterial.items[index3] = null;
+                                if (recipe1 <= 0)
+                                    break;
                             }
-                            if (recipe1 <= 0)
-                                break;
                         }
+                        if (recipe1 <= 0)
+                            break;
                     }
                 }
             }

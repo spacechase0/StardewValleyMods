@@ -16,7 +16,7 @@ namespace GenericModConfigMenu.ModOption
         public abstract void SyncToMod();
         public abstract void Save();
 
-        public BaseModOption(string name, string desc, string id, IManifest mod)
+        protected BaseModOption(string name, string desc, string id, IManifest mod)
         {
             this.Name = name;
             this.Description = desc;

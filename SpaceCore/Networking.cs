@@ -20,22 +20,20 @@ namespace SpaceCore
             if (!Game1.IsMultiplayer)
                 return;
 
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
-            {
-                //writer.Write((byte)234);
-                writer.Write(id);
-                writer.Write(data);
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            //writer.Write((byte)234);
+            writer.Write(id);
+            writer.Write(data);
 
-                if (Game1.IsServer)
-                {
-                    foreach (long key in Game1.otherFarmers.Keys)
-                        Game1.server.sendMessage(key, 234, Game1.player, stream.ToArray());
-                }
-                else
-                {
-                    Game1.client.sendMessage(234, stream.ToArray());
-                }
+            if (Game1.IsServer)
+            {
+                foreach (long key in Game1.otherFarmers.Keys)
+                    Game1.server.sendMessage(key, 234, Game1.player, stream.ToArray());
+            }
+            else
+            {
+                Game1.client.sendMessage(234, stream.ToArray());
             }
         }
 
@@ -44,14 +42,12 @@ namespace SpaceCore
             if (!Game1.IsServer)
                 return;
 
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
-            {
-                //writer.Write((byte)234);
-                writer.Write(id);
-                writer.Write(data);
-                Game1.server.sendMessage(farmerId, 234, Game1.player, stream.ToArray());
-            }
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            //writer.Write((byte)234);
+            writer.Write(id);
+            writer.Write(data);
+            Game1.server.sendMessage(farmerId, 234, Game1.player, stream.ToArray());
         }
     }
 }

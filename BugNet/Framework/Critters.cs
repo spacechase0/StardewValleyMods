@@ -8,14 +8,18 @@ namespace BugNet.Framework
     {
         public static Critter MakeButterfly(int x, int y, int baseFrame, bool island = false)
         {
-            var bfly = new Butterfly(new Vector2(x, y));
-            bfly.baseFrame = baseFrame;
-            bfly.sprite.CurrentFrame = baseFrame;
-            if (island)
+            var butterfly = new Butterfly(new Vector2(x, y))
             {
-                Mod.Instance.Helper.Reflection.GetField<bool>(bfly, "islandButterfly").SetValue(true);
-            }
-            return bfly;
+                baseFrame = baseFrame,
+                sprite =
+                {
+                    CurrentFrame = baseFrame
+                }
+            };
+            if (island)
+                Mod.Instance.Helper.Reflection.GetField<bool>(butterfly, "islandButterfly").SetValue(true);
+
+            return butterfly;
         }
 
         public static Critter MakeBird(int x, int y, int frame)
@@ -50,9 +54,10 @@ namespace BugNet.Framework
 
         public static Critter MakeRabbit(int x, int y, bool white)
         {
-            var rabbit = new Rabbit(new Vector2(x, y), false);
-            rabbit.baseFrame = white ? 74 : 54;
-            return rabbit;
+            return new Rabbit(new Vector2(x, y), false)
+            {
+                baseFrame = white ? 74 : 54
+            };
         }
 
         public static Critter MakeSeagull(int x, int y)

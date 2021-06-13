@@ -40,14 +40,9 @@ namespace SpaceCore.Interface
             get => this.walletSelectionOffset;
             set => this.walletSelectionOffset = value < 0 ? ((this.specialItemComponents.Count - 1) * 2) - 1 : value % ((this.specialItemComponents.Count - 1) * 2);
         }
-        private bool CanScrollWalletItems
-        {
-            get => !this.IsLegacyWallet && this.specialItems.Count > this.specialItemComponents.Count;
-        }
-        private bool CanNavigateToWallet
-        {
-            get => this.specialItems.Any() && (!this.IsLegacyWallet || this.specialItemComponents.First().bounds.Y > 0);
-        }
+        private bool CanScrollWalletItems => !this.IsLegacyWallet && this.specialItems.Count > this.specialItemComponents.Count;
+
+        private bool CanNavigateToWallet => this.specialItems.Any() && (!this.IsLegacyWallet || this.specialItemComponents.First().bounds.Y > 0);
         private string hoverText = "";
         private string hoverTitle = "";
         private int professionImage = -1;
@@ -76,10 +71,10 @@ namespace SpaceCore.Interface
             this.texture = SpaceCore.Instance.Helper.Content.Load<Texture2D>(Path.Combine("assets/sprites.png"));
 
             // Player panel
-            this.playerPanel = new ClickableComponent(
-                bounds: new Rectangle(this.xPositionOnScreen + 64, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder, 128, 192),
-                name: null);
-            this.playerPanel.myID = NewSkillsPage.PlayerPanelRegionId;
+            this.playerPanel = new ClickableComponent(bounds: new Rectangle(this.xPositionOnScreen + 64, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder, 128, 192), name: null)
+            {
+                myID = NewSkillsPage.PlayerPanelRegionId
+            };
             // navigation is handled in receiveKeyPress to avoid confusing the navigation logic
 
             // Wallet area
@@ -162,10 +157,16 @@ namespace SpaceCore.Interface
                     int x2 = this.IsLegacyWallet ? this.walletArea.X + 48 + ((iconDestWidth + padRight) * index) : this.walletUpArrow.bounds.X + (this.walletUpArrow.bounds.Width / 2) - (iconDestWidth / 2);
                     int y2 = this.IsLegacyWallet ? this.walletArea.Y + 120 : this.walletUpArrow.bounds.Y + (this.specialItems.Count > iconCount ? this.walletUpArrow.bounds.Height : 0) + padTop + (index * iconDestWidth);
                     ClickableTextureComponent textureComponent = new ClickableTextureComponent(
-                        name: "", bounds: new Rectangle(x2, y2, iconDestWidth, iconDestWidth),
-                        label: "", hoverText: "",
-                        texture: Game1.mouseCursors, sourceRect: new Rectangle(-1, -1, iconWidth, iconWidth), scale: Game1.pixelZoom, drawShadow: true);
-                    textureComponent.myID = NewSkillsPage.WalletRegionStartId + this.specialItemComponents.Count;
+                        name: "",
+                        bounds: new Rectangle(x2, y2, iconDestWidth, iconDestWidth),
+                        label: "",
+                        hoverText: "",
+                        texture: Game1.mouseCursors, sourceRect: new Rectangle(-1, -1, iconWidth, iconWidth),
+                        scale: Game1.pixelZoom, drawShadow: true
+                    )
+                    {
+                        myID = NewSkillsPage.WalletRegionStartId + this.specialItemComponents.Count
+                    };
                     if (this.IsLegacyWallet)
                     {
                         textureComponent.leftNeighborID = index == 0 ? -1 : textureComponent.myID - NewSkillsPage.WalletIdIncrement;
@@ -245,10 +246,15 @@ namespace SpaceCore.Interface
                     if (drawRed)
                     {
                         ClickableTextureComponent textureComponent = new ClickableTextureComponent(
-                            name: string.Concat(whichProfession), bounds: new Rectangle(drawX + addedX - 4 + professionCheckLevel * 36, drawY + skillIndex * 56, 56, 36),
+                            name: string.Concat(whichProfession),
+                            bounds: new Rectangle(drawX + addedX - 4 + professionCheckLevel * 36, drawY + skillIndex * 56, 56, 36),
                             label: null, hoverText: professionBlurb,
-                            texture: Game1.mouseCursors, sourceRect: new Rectangle(159, 338, 14, 9), scale: 4f, drawShadow: true);
-                        textureComponent.myID = NewSkillsPage.SkillRegionStartId + (skillIndex * NewSkillsPage.SkillIdIncrement) + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                            texture: Game1.mouseCursors, sourceRect: new Rectangle(159, 338, 14, 9), scale: 4f,
+                            drawShadow: true
+                        )
+                        {
+                            myID = NewSkillsPage.SkillRegionStartId + (skillIndex * NewSkillsPage.SkillIdIncrement) + (professionIndex * NewSkillsPage.SkillProfessionIncrement)
+                        };
                         textureComponent.leftNeighborID = textureComponent.myID - NewSkillsPage.SkillProfessionIncrement;
                         textureComponent.rightNeighborID = professionIndex == 2 ? rightSnapId : textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
                         textureComponent.downNeighborID = skillIndex == gameSkillCount - 1 && skills.Length == 0 ? walletSnapId : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
@@ -283,10 +289,15 @@ namespace SpaceCore.Interface
                     {
                         List<ClickableTextureComponent> skillBars = this.skillBars;
                         ClickableTextureComponent textureComponent = new ClickableTextureComponent(
-                            name: NewSkillsPage.CustomSkillPrefix + profession.Id, bounds: new Rectangle(drawX + addedX - 4 + (professionLevel * 36), drawY + (gameSkillCount * 56), 56, 36),
+                            name: NewSkillsPage.CustomSkillPrefix + profession.Id,
+                            bounds: new Rectangle(drawX + addedX - 4 + (professionLevel * 36), drawY + (gameSkillCount * 56), 56, 36),
                             label: null, hoverText: professionBlurb,
-                            texture: Game1.mouseCursors, sourceRect: new Rectangle(159, 338, 14, 9), scale: 4f, drawShadow: true);
-                        textureComponent.myID = (totalSkillIndex * NewSkillsPage.SkillIdIncrement) + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                            texture: Game1.mouseCursors, sourceRect: new Rectangle(159, 338, 14, 9), scale: 4f,
+                            drawShadow: true
+                        )
+                        {
+                            myID = (totalSkillIndex * NewSkillsPage.SkillIdIncrement) + (professionIndex * NewSkillsPage.SkillProfessionIncrement)
+                        };
                         textureComponent.leftNeighborID = textureComponent.myID - NewSkillsPage.SkillProfessionIncrement;
                         textureComponent.rightNeighborID = professionIndex == 2 ? rightSnapId : textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
                         textureComponent.downNeighborID = skillIndex == skills.Length - 1 ? walletSnapId : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
@@ -362,11 +373,16 @@ namespace SpaceCore.Interface
                         }
                         break;
                 }
+
                 ClickableTextureComponent textureComponent = new ClickableTextureComponent(
-                    name: string.Concat(actualSkillIndex), bounds: new Rectangle(addedX - 128 - 48, drawY + (skillIndex * 56), 148, 36),
+                    name: string.Concat(actualSkillIndex),
+                    bounds: new Rectangle(addedX - 128 - 48, drawY + (skillIndex * 56), 148, 36),
                     label: string.Concat(actualSkillIndex), hoverText,
-                    texture: null, sourceRect: Rectangle.Empty, scale: 1f, drawShadow: false);
-                textureComponent.myID = NewSkillsPage.SkillRegionStartId + (skillIndex * NewSkillsPage.SkillIdIncrement);
+                    texture: null, sourceRect: Rectangle.Empty, scale: 1f, drawShadow: false
+                )
+                {
+                    myID = NewSkillsPage.SkillRegionStartId + (skillIndex * NewSkillsPage.SkillIdIncrement)
+                };
                 textureComponent.rightNeighborID = textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
                 textureComponent.leftNeighborID = leftSnapId;
                 textureComponent.downNeighborID = skillIndex == gameSkillCount - 1 && skills.Length == 0 ? walletSnapId : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
@@ -402,10 +418,14 @@ namespace SpaceCore.Interface
                 if (Game1.player.GetCustomSkillLevel(skill) > 0)
                     hoverText = skill.GetSkillPageHoverText(Game1.player.GetCustomSkillLevel(skill));
                 ClickableTextureComponent textureComponent = new ClickableTextureComponent(
-                    name: NewSkillsPage.CustomSkillPrefix + skill.GetName(), bounds: new Rectangle(addedX - 128 - 48, drawY + (actualSkillIndex * 56), 148, 36),
+                    name: NewSkillsPage.CustomSkillPrefix + skill.GetName(),
+                    bounds: new Rectangle(addedX - 128 - 48, drawY + (actualSkillIndex * 56), 148, 36),
                     label: string.Concat(actualSkillIndex), hoverText,
-                    texture: null, sourceRect: Rectangle.Empty, scale: 1f, drawShadow: false);
-                textureComponent.myID = NewSkillsPage.SkillRegionStartId + (actualSkillIndex * NewSkillsPage.SkillIdIncrement);
+                    texture: null, sourceRect: Rectangle.Empty, scale: 1f, drawShadow: false
+                )
+                {
+                    myID = NewSkillsPage.SkillRegionStartId + (actualSkillIndex * NewSkillsPage.SkillIdIncrement)
+                };
                 textureComponent.rightNeighborID = textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
                 textureComponent.leftNeighborID = leftSnapId;
                 textureComponent.downNeighborID = skillIndex == skills.Length - 1 ? -1 : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
@@ -858,7 +878,7 @@ namespace SpaceCore.Interface
                         if (skillBar.containsPoint(Game1.getMouseX(), Game1.getMouseY()) && !skillBar.name.Equals("-1") && skillBar.hoverText.Length > 0)
                         {
                             List<Skills.Skill.Profession> professions = Skills.SkillsByName.SelectMany(s => s.Value.Professions).ToList();
-                            Skills.Skill.Profession profession = professions.Where(p => NewSkillsPage.CustomSkillPrefix + p.Id == skillBar.name).FirstOrDefault();
+                            Skills.Skill.Profession profession = professions.FirstOrDefault(p => NewSkillsPage.CustomSkillPrefix + p.Id == skillBar.name);
                             this.hoverText = profession.GetDescription();
                             this.hoverTitle = profession.GetName();
                             Texture2D actuallyAProfessionImage = profession.Icon ?? Game1.staminaRect;

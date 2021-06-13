@@ -16,7 +16,7 @@ namespace GenericModConfigMenu.Framework.UI
         private bool SelectedImpl;
         public bool Selected
         {
-            get { return this.SelectedImpl; }
+            get => this.SelectedImpl;
             set
             {
                 if (this.SelectedImpl == value)
@@ -50,10 +50,7 @@ namespace GenericModConfigMenu.Framework.UI
 
             if (this.ClickGestured && this.Callback != null)
             {
-                if (this.Hover)
-                    this.Selected = true;
-                else
-                    this.Selected = false;
+                this.Selected = this.Hover;
             }
         }
 
@@ -75,8 +72,7 @@ namespace GenericModConfigMenu.Framework.UI
         protected virtual void ReceiveInput(string str)
         {
             this.String += str;
-            if (this.Callback != null)
-                this.Callback.Invoke(this);
+            this.Callback?.Invoke(this);
         }
 
         public void RecieveTextInput(char inputChar)
@@ -120,8 +116,7 @@ namespace GenericModConfigMenu.Framework.UI
             {
                 Game1.playSound("tinyWhip");
                 this.String = this.String.Substring(0, this.String.Length - 1);
-                if (this.Callback != null)
-                    this.Callback.Invoke(this);
+                this.Callback?.Invoke(this);
             }
         }
 

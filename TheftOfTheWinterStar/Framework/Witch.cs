@@ -139,8 +139,10 @@ namespace TheftOfTheWinterStar.Framework
                 {
                     int x = region.X + Game1.random.Next(region.Width);
                     int y = region.Y + Game1.random.Next(region.Height);
-                    Bat bat = new Bat(new Vector2(x * Game1.tileSize, y * Game1.tileSize), MineShaft.frostArea);
-                    bat.focusedOnFarmers = true;
+                    Bat bat = new Bat(new Vector2(x * Game1.tileSize, y * Game1.tileSize), MineShaft.frostArea)
+                    {
+                        focusedOnFarmers = true
+                    };
                     this.currentLocation.characters.Add(bat);
                 }
                 this.SpawnEnemyTimer.Value = Witch.SpawnEnemyDelay / 3 + Game1.random.Next(Witch.SpawnEnemyDelay);

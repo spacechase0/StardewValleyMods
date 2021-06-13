@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using ContentPatcherAnimations.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
@@ -49,8 +50,6 @@ namespace ContentPatcherAnimations
         private readonly PerScreen<ScreenState> ScreenStateImpl = new();
         internal ScreenState ScreenState => this.ScreenStateImpl.Value;
 
-        private WatchForUpdatesAssetEditor Watcher;
-
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;
@@ -68,7 +67,7 @@ namespace ContentPatcherAnimations
             this.Helper.Events.GameLoop.SaveLoaded += (s, e) => UpdateTargets();
             this.Helper.Events.GameLoop.DayStarted += (s, e) => UpdateTargets();
 
-            helper.Content.AssetEditors.Add(this.Watcher = new WatchForUpdatesAssetEditor());
+            helper.Content.AssetEditors.Add(new WatchForUpdatesAssetEditor());
 
             helper.ConsoleCommands.Add("cpa", "...", this.OnCommand);
         }
@@ -89,10 +88,7 @@ namespace ContentPatcherAnimations
                 this.ContentPatcher = (StardewModdingAPI.Mod)modData.GetType().GetProperty("Mod", Mod.PrivateI | Mod.PublicI).GetValue(modData);
             }
 
-            if (this.ScreenStateImpl.Value == null)
-            {
-                this.ScreenStateImpl.Value = new ScreenState();
-            }
+            this.ScreenStateImpl.Value ??= new ScreenState();
 
             if (this.ScreenState.CpPatches == null)
             {
@@ -250,7 +246,7 @@ namespace ContentPatcherAnimations
             return tex;
         }
 
-        private Rectangle GetRectangleFromPatch(object targetPatch, string rectName, Rectangle defaultTo = default(Rectangle))
+        private Rectangle GetRectangleFromPatch(object targetPatch, string rectName, Rectangle defaultTo = default)
         {
             object rect = targetPatch.GetType().GetField(rectName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(targetPatch);
             if (rect == null)

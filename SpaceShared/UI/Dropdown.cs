@@ -18,7 +18,7 @@ namespace SpaceShared.UI
 
         public string Value
         {
-            get { return this.Choices[this.ActiveChoice]; }
+            get => this.Choices[this.ActiveChoice];
             set { if (this.Choices.Contains(value)) this.ActiveChoice = Array.IndexOf(this.Choices, value); }
         }
         public int ActiveChoice { get; set; }
@@ -62,8 +62,7 @@ namespace SpaceShared.UI
                     int choice = (Game1.getOldMouseY() - (int)this.Position.Y) / this.Height;
                     this.ActiveChoice = choice + this.ActivePosition;
 
-                    if (this.Callback != null)
-                        this.Callback.Invoke(this);
+                    this.Callback?.Invoke(this);
                 }
             }
 

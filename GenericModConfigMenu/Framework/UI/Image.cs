@@ -20,8 +20,8 @@ namespace GenericModConfigMenu.Framework.UI
         {
             base.Update(hidden);
 
-            if (this.Clicked && this.Callback != null)
-                this.Callback.Invoke(this);
+            if (this.Clicked)
+                Callback?.Invoke(this);
         }
 
         public Vector2 GetActualSize()

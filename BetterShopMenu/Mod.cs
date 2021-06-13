@@ -78,46 +78,48 @@ namespace BetterShopMenu
             }
             this.CurrCategory = -1;
 
-            this.CategoryNames = new Dictionary<int, string>();
-            this.CategoryNames.Add(-1, "Everything");
-            this.CategoryNames.Add(0, "Other");
-            this.CategoryNames.Add(SObject.GreensCategory, "Greens");
-            this.CategoryNames.Add(SObject.GemCategory, "Gems");
-            this.CategoryNames.Add(SObject.VegetableCategory, "Vegetables");
-            this.CategoryNames.Add(SObject.FishCategory, "Fish");
-            this.CategoryNames.Add(SObject.EggCategory, "Egg");
-            this.CategoryNames.Add(SObject.MilkCategory, "Milk");
-            this.CategoryNames.Add(SObject.CookingCategory, "Cooking");
-            this.CategoryNames.Add(SObject.CraftingCategory, "Crafting");
-            this.CategoryNames.Add(SObject.BigCraftableCategory, "Big Craftables");
-            this.CategoryNames.Add(SObject.FruitsCategory, "Fruits");
-            this.CategoryNames.Add(SObject.SeedsCategory, "Seeds");
-            this.CategoryNames.Add(SObject.mineralsCategory, "Minerals");
-            this.CategoryNames.Add(SObject.flowersCategory, "Flowers");
-            this.CategoryNames.Add(SObject.meatCategory, "Meat");
-            this.CategoryNames.Add(SObject.metalResources, "Metals");
-            this.CategoryNames.Add(SObject.buildingResources, "Building Resources"); //?
-            this.CategoryNames.Add(SObject.sellAtPierres, "Sellable @ Pierres");
-            this.CategoryNames.Add(SObject.sellAtPierresAndMarnies, "Sellable @ Pierre's/Marnie's");
-            this.CategoryNames.Add(SObject.fertilizerCategory, "Fertilizer");
-            this.CategoryNames.Add(SObject.junkCategory, "Junk");
-            this.CategoryNames.Add(SObject.baitCategory, "Bait");
-            this.CategoryNames.Add(SObject.tackleCategory, "Tackle");
-            this.CategoryNames.Add(SObject.sellAtFishShopCategory, "Sellable @ Willy's");
-            this.CategoryNames.Add(SObject.furnitureCategory, "Furniture");
-            this.CategoryNames.Add(SObject.ingredientsCategory, "Ingredients");
-            this.CategoryNames.Add(SObject.artisanGoodsCategory, "Artisan Goods");
-            this.CategoryNames.Add(SObject.syrupCategory, "Syrups");
-            this.CategoryNames.Add(SObject.monsterLootCategory, "Monster Loot");
-            this.CategoryNames.Add(SObject.equipmentCategory, "Equipment");
-            this.CategoryNames.Add(SObject.hatCategory, "Hats");
-            this.CategoryNames.Add(SObject.ringCategory, "Rings");
-            this.CategoryNames.Add(SObject.weaponCategory, "Weapons");
-            this.CategoryNames.Add(SObject.bootsCategory, "Boots");
-            this.CategoryNames.Add(SObject.toolCategory, "Tools");
-            this.CategoryNames.Add(this.Categories.Count == 0 ? 1 : this.Categories.Count, "Recipes");
+            this.CategoryNames = new Dictionary<int, string>
+            {
+                [-1] = "Everything",
+                [0] = "Other",
+                [SObject.GreensCategory] = "Greens",
+                [SObject.GemCategory] = "Gems",
+                [SObject.VegetableCategory] = "Vegetables",
+                [SObject.FishCategory] = "Fish",
+                [SObject.EggCategory] = "Egg",
+                [SObject.MilkCategory] = "Milk",
+                [SObject.CookingCategory] = "Cooking",
+                [SObject.CraftingCategory] = "Crafting",
+                [SObject.BigCraftableCategory] = "Big Craftables",
+                [SObject.FruitsCategory] = "Fruits",
+                [SObject.SeedsCategory] = "Seeds",
+                [SObject.mineralsCategory] = "Minerals",
+                [SObject.flowersCategory] = "Flowers",
+                [SObject.meatCategory] = "Meat",
+                [SObject.metalResources] = "Metals",
+                [SObject.buildingResources] = "Building Resources", //?
+                [SObject.sellAtPierres] = "Sellable @ Pierres",
+                [SObject.sellAtPierresAndMarnies] = "Sellable @ Pierre's/Marnie's",
+                [SObject.fertilizerCategory] = "Fertilizer",
+                [SObject.junkCategory] = "Junk",
+                [SObject.baitCategory] = "Bait",
+                [SObject.tackleCategory] = "Tackle",
+                [SObject.sellAtFishShopCategory] = "Sellable @ Willy's",
+                [SObject.furnitureCategory] = "Furniture",
+                [SObject.ingredientsCategory] = "Ingredients",
+                [SObject.artisanGoodsCategory] = "Artisan Goods",
+                [SObject.syrupCategory] = "Syrups",
+                [SObject.monsterLootCategory] = "Monster Loot",
+                [SObject.equipmentCategory] = "Equipment",
+                [SObject.hatCategory] = "Hats",
+                [SObject.ringCategory] = "Rings",
+                [SObject.weaponCategory] = "Weapons",
+                [SObject.bootsCategory] = "Boots",
+                [SObject.toolCategory] = "Tools",
+                [this.Categories.Count == 0 ? 1 : this.Categories.Count] = "Recipes"
+            };
 
-            this.Search = new TextBox(Game1.content.Load<Texture2D>("LooseSprites\\textBox"), null, Game1.smallFont, Game1.textColor); ;
+            this.Search = new TextBox(Game1.content.Load<Texture2D>("LooseSprites\\textBox"), null, Game1.smallFont, Game1.textColor);
 
             this.SyncStock();
         }
@@ -251,8 +253,6 @@ namespace BetterShopMenu
             Rectangle purchaseWindowBorder = new Rectangle(384, 373, 18, 18);
             Rectangle purchaseItemRect = new Rectangle(384, 396, 15, 15);
             int purchaseItemTextColor = -1;
-            bool purchaseDrawItemBackground = true;
-            Rectangle purchaseItemBackground = new Rectangle(296, 363, 18, 18);
             Color purchaseSelectedColor = Color.Wheat;
             if (this.Shop.storeContext == "QiGemShop")
             {
@@ -261,8 +261,6 @@ namespace BetterShopMenu
                 purchaseItemRect = new Rectangle(18, 256, 15, 15);
                 purchaseItemTextColor = 4;
                 purchaseSelectedColor = Color.Blue;
-                purchaseDrawItemBackground = true;
-                purchaseItemBackground = new Rectangle(33, 256, 18, 18);
             }
 
 
@@ -271,41 +269,25 @@ namespace BetterShopMenu
             IClickableMenu.drawTextureBox(Game1.spriteBatch, purchaseTexture, purchaseWindowBorder, this.Shop.xPositionOnScreen, this.Shop.yPositionOnScreen, this.Shop.width, this.Shop.height - 256 + 32 + 4, Color.White, 4f);
             for (int i = currentItemIndex * unitsWide; i < forSale.Count && i < currentItemIndex * unitsWide + unitsWide * 3; ++i)
             {
-                bool failedCanPurchaseCheck = false;
-                if (this.Shop.canPurchaseCheck != null && !this.Shop.canPurchaseCheck(i))
-                {
-                    failedCanPurchaseCheck = true;
-                }
+                bool failedCanPurchaseCheck = this.Shop.canPurchaseCheck != null && !this.Shop.canPurchaseCheck(i);
                 int ix = i % unitsWide;
                 int iy = i / unitsWide;
                 Rectangle rect = new Rectangle(this.Shop.xPositionOnScreen + 16 + ix * unitWidth, this.Shop.yPositionOnScreen + 16 + iy * unitHeight - currentItemIndex * unitHeight, unitWidth, unitHeight);
                 IClickableMenu.drawTextureBox(Game1.spriteBatch, purchaseTexture, purchaseItemRect, rect.X, rect.Y, rect.Width, rect.Height, rect.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()) ? purchaseSelectedColor : Color.White, 4f, false);
                 ISalable item = forSale[i];
-                bool buyInStacks = item.Stack > 1 && item.Stack != int.MaxValue && itemPriceAndStock[item][1] == int.MaxValue;
                 StackDrawType stackDrawType;
                 if (this.Shop.storeContext == "QiGemShop")
-                {
                     stackDrawType = StackDrawType.HideButShowQuality;
-                    buyInStacks = (item.Stack > 1);
-                }
                 else if (this.Shop.itemPriceAndStock[item][1] == int.MaxValue)
-                {
                     stackDrawType = StackDrawType.HideButShowQuality;
-                }
                 else
                 {
                     stackDrawType = StackDrawType.Draw_OneInclusive;
                     if (this.Helper.Reflection.GetField<bool>(this.Shop, "_isStorageShop").GetValue())
-                    {
                         stackDrawType = StackDrawType.Draw;
-                    }
                 }
                 if (forSale[i].ShouldDrawIcon())
                 {
-                    if (purchaseDrawItemBackground)
-                    {
-                        //Game1.spriteBatch.Draw( purchase_texture, new Vector2( rect.X + 48 + 4, rect.Y + 16 ), purchase_item_background, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f );
-                    }
                     item.drawInMenu(Game1.spriteBatch, new Vector2(rect.X + 48, rect.Y + 16), 1f, 1, 1, stackDrawType, Color.White, true);
                 }
                 int price = itemPriceAndStock[forSale[i]][0];
@@ -348,8 +330,7 @@ namespace BetterShopMenu
                 else
                     animations[index].draw(Game1.spriteBatch, true);
             }
-            if (poof != null)
-                poof.draw(Game1.spriteBatch);
+            poof?.draw(Game1.spriteBatch);
             // arrows already drawn
             if (forSale.Count > 18)
             {
@@ -492,17 +473,17 @@ namespace BetterShopMenu
             Vector2 clickableComponent = this.Shop.inventory.snapToClickableComponent(x, y);
             if (heldItem == null)
             {
-                Item obj = this.Shop.inventory.leftClick(x, y, null, false);
-                if (obj != null)
+                Item item = this.Shop.inventory.leftClick(x, y, null, false);
+                if (item != null)
                 {
                     if (this.Shop.onSell != null)
                     {
-                        this.Shop.onSell(obj);
+                        this.Shop.onSell(item);
                     }
                     else
                     {
-                        ShopMenu.chargePlayer(Game1.player, currency, -((obj is StardewValley.Object ? (int)((obj as StardewValley.Object).sellToStorePrice() * (double)sellPercentage) : (int)(obj.salePrice() / 2 * (double)sellPercentage)) * obj.Stack));
-                        int num = obj.Stack / 8 + 2;
+                        ShopMenu.chargePlayer(Game1.player, currency, -((item is SObject obj ? (int)(obj.sellToStorePrice() * (double)sellPercentage) : (int)(item.salePrice() / 2 * (double)sellPercentage)) * item.Stack));
+                        int num = item.Stack / 8 + 2;
                         for (int index = 0; index < num; ++index)
                         {
                             animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
@@ -522,10 +503,10 @@ namespace BetterShopMenu
                                 acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2(this.Shop.xPositionOnScreen - 36, this.Shop.yPositionOnScreen + this.Shop.height - this.Shop.inventory.height - 16), 0.5f)
                             });
                         }
-                        if (obj is StardewValley.Object && (obj as StardewValley.Object).Edibility != -300)
+                        if (item is SObject o && o.Edibility != -300)
                         {
-                            Item one = obj.getOne();
-                            one.Stack = obj.Stack;
+                            Item one = item.getOne();
+                            one.Stack = item.Stack;
                             (Game1.getLocationFromName("SeedShop") as StardewValley.Locations.SeedShop).itemsToStartSellingTomorrow.Add(one);
                         }
                         Game1.playSound("sell");
@@ -595,30 +576,26 @@ namespace BetterShopMenu
             Vector2 clickableComponent = this.Shop.inventory.snapToClickableComponent(x, y);
             if (heldItem == null)
             {
-                Item obj = this.Shop.inventory.rightClick(x, y, null, false);
-                if (obj != null)
+                Item item = this.Shop.inventory.rightClick(x, y, null, false);
+                if (item != null)
                 {
                     if (this.Shop.onSell != null)
                     {
-                        this.Shop.onSell(obj);
+                        this.Shop.onSell(item);
                     }
                     else
                     {
-                        ShopMenu.chargePlayer(Game1.player, currency, -((obj is StardewValley.Object ? (int)((obj as StardewValley.Object).sellToStorePrice() * (double)sellPercentage) : (int)(obj.salePrice() / 2 * (double)sellPercentage)) * obj.Stack));
-                        Item obj2 = null;
-                        if (Game1.mouseClickPolling > 300)
-                            Game1.playSound("purchaseRepeat");
-                        else
-                            Game1.playSound("purchaseClick");
+                        ShopMenu.chargePlayer(Game1.player, currency, -((item is SObject obj ? (int)(obj.sellToStorePrice() * (double)sellPercentage) : (int)(item.salePrice() / 2 * (double)sellPercentage)) * item.Stack));
+                        Game1.playSound(Game1.mouseClickPolling > 300 ? "purchaseRepeat" : "purchaseClick");
                         animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 64, 256, 64, 64), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
                         {
                             alphaFade = 0.025f,
                             motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 12f),
                             acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 0.5f)
                         });
-                        if (obj is StardewValley.Object && (obj as StardewValley.Object).Edibility != -300)
+                        if (item is SObject o && o.Edibility != -300)
                         {
-                            (Game1.getLocationFromName("SeedShop") as StardewValley.Locations.SeedShop).itemsToStartSellingTomorrow.Add(obj.getOne());
+                            (Game1.getLocationFromName("SeedShop") as StardewValley.Locations.SeedShop).itemsToStartSellingTomorrow.Add(item.getOne());
                         }
                         if (this.Shop.inventory.getItemAt(x, y) == null)
                         {

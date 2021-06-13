@@ -18,14 +18,7 @@ namespace SpaceShared.UI
         public override int Width => this.RequestWidth;
         public override int Height => 24;
 
-        public override void Draw(SpriteBatch b)
-        {
-        }
-
-        public override void Update(bool hidden = false)
-        {
-            base.Update(hidden);
-        }
+        public override void Draw(SpriteBatch b) { }
     }
 
     internal class Slider<T> : Slider
@@ -57,8 +50,7 @@ namespace SpaceShared.UI
 
                 this.Value = Util.Adjust(this.Value, this.Interval);
 
-                if (this.Callback != null)
-                    this.Callback.Invoke(this);
+                this.Callback?.Invoke(this);
             }
         }
 

@@ -77,8 +77,7 @@ namespace Displays
 
         private void CacheFarmerSprite()
         {
-            if (this.FarmerForRendering == null)
-                this.FarmerForRendering = new Farmer();
+            this.FarmerForRendering ??= new Farmer();
             this.FarmerForRendering.changeGender(this.MannGender == MannequinGender.Male);
             if (this.MannGender == MannequinGender.Female)
                 this.FarmerForRendering.changeHairStyle(16);
@@ -150,8 +149,8 @@ namespace Displays
         {
             Vector2 placementTile = new Vector2(x / 64, y / 64);
             var m = new Mannequin(this.MannType.Value, this.MannGender.Value, placementTile);
-            if (who != null)
-                ;// m.facing.Value = who.FacingDirection;
+            //if (who != null)
+            //    m.facing.Value = who.FacingDirection;
             location.Objects.Add(placementTile, m);
             location.playSound("woodyStep");
             return true;

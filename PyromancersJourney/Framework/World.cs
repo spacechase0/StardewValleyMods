@@ -56,8 +56,6 @@ namespace PyromancersJourney.Framework
             this.QueuedObjects.Add(obj);
         }
 
-        private Vector3 BaseCamPos = new(4.5f, 2, 4.5f);
-        private float CamAngle;
         public void Update()
         {
             if (this.NextLevelQueued)
@@ -93,7 +91,7 @@ namespace PyromancersJourney.Framework
             }
             this.QueuedObjects.Clear();
 
-            if (this.Objects.OfType<Enemy>().Count() == 0)
+            if (!this.Objects.OfType<Enemy>().Any())
             {
                 if (this.Warp == null)
                 {
@@ -119,10 +117,11 @@ namespace PyromancersJourney.Framework
             device.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
             device.Clear(this.Map.Sky);
 
-            RasterizerState rast = new RasterizerState();
-            rast.CullMode = CullMode.None;
             var oldRast = device.RasterizerState;
-            device.RasterizerState = rast;
+            device.RasterizerState = new RasterizerState
+            {
+                CullMode = CullMode.None
+            };
             var oldSample = device.SamplerStates[0];
             device.SamplerStates[0] = SamplerState.PointClamp;
             {
@@ -142,17 +141,16 @@ namespace PyromancersJourney.Framework
                 }
             }
             {
-                DepthStencilState depth2 = new DepthStencilState();
-                depth2.DepthBufferFunction = CompareFunction.Always;
-                var oldDepth2 = device.DepthStencilState;
-                device.DepthStencilState = depth2;
+                var oldStencilState = device.DepthStencilState;
+                device.DepthStencilState = new DepthStencilState
+                {
+                    DepthBufferFunction = CompareFunction.Always
+                };
                 {
                     foreach (var obj in this.Objects)
-                    {
                         obj.RenderOver(device, this.Projection, this.Cam);
-                    }
                 }
-                device.DepthStencilState = oldDepth2;
+                device.DepthStencilState = oldStencilState;
             }
             device.SamplerStates[0] = oldSample;
             device.RasterizerState = oldRast;

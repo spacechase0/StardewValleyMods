@@ -112,9 +112,8 @@ namespace PyromancersJourney.Framework.Objects
             //effect.LightingEnabled = true;
             BaseObject.Effect.TextureEnabled = true;
             BaseObject.Effect.Texture = this.Outside ? this.TexOutside : this.TexInside;
-            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
+            foreach (EffectPass pass in BaseObject.Effect.CurrentTechnique.Passes)
             {
-                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
                 device.SetVertexBuffer(this.Buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, this.TriCount);

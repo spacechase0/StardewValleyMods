@@ -121,7 +121,7 @@ namespace ExperienceBars
             }
 
             int x = Mod.Config.X;
-            int y = Mod.Config.Y; ;
+            int y = Mod.Config.Y;
             if (Game1.player.currentLocation != null && Game1.player.currentLocation is MineShaft &&
                 x <= 25 && y <= 75)
                 y += 75;

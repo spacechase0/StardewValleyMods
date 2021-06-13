@@ -24,12 +24,6 @@ namespace SpaceCore
         {
             public abstract class Profession
             {
-                public Profession(Skill skill, string id)
-                {
-                    this.Skill = skill;
-                    this.Id = id;
-                }
-
                 public Skill Skill { get; }
                 public string Id { get; }
 
@@ -42,8 +36,12 @@ namespace SpaceCore
                     return this.Skill.Id.GetHashCode() ^ this.Id.GetHashCode(); // TODO: Something better
                 }
 
-                public virtual void DoImmediateProfessionPerk()
+                public virtual void DoImmediateProfessionPerk() { }
+
+                protected Profession(Skill skill, string id)
                 {
+                    this.Skill = skill;
+                    this.Id = id;
                 }
             }
 
@@ -61,11 +59,6 @@ namespace SpaceCore
                 public Profession Requires { get; }
                 public Profession First { get; }
                 public Profession Second { get; }
-            }
-
-            public Skill(string id)
-            {
-                this.Id = id;
             }
 
             public string Id { get; }
@@ -90,8 +83,11 @@ namespace SpaceCore
                 return "";
             }
 
-            public virtual void DoLevelPerk(int level)
+            public virtual void DoLevelPerk(int level) { }
+
+            protected Skill(string id)
             {
+                this.Id = id;
             }
         }
 
@@ -182,13 +178,11 @@ namespace SpaceCore
                 for (int i = prevLevel + 1; i <= Skills.GetSkillLevel(farmer, skillName); ++i)
                     Skills.NewLevels.Add(new KeyValuePair<string, int>(skillName, i));
 
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
-            {
-                writer.Write(skillName);
-                writer.Write(Skills.Exp[farmer.UniqueMultiplayerID][skillName]);
-                Networking.BroadcastMessage(Skills.MsgExperience, stream.ToArray());
-            }
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(skillName);
+            writer.Write(Skills.Exp[farmer.UniqueMultiplayerID][skillName]);
+            Networking.BroadcastMessage(Skills.MsgExperience, stream.ToArray());
         }
 
         private static void ValidateSkill(Farmer farmer, string skillName)
@@ -217,24 +211,22 @@ namespace SpaceCore
                     skillExp.Add(skill.Key, 0);
             }
 
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(Skills.Exp.Count);
+            foreach (var data in Skills.Exp)
             {
-                writer.Write(Skills.Exp.Count);
-                foreach (var data in Skills.Exp)
+                writer.Write(data.Key);
+                writer.Write(data.Value.Count);
+                foreach (var skill in data.Value)
                 {
-                    writer.Write(data.Key);
-                    writer.Write(data.Value.Count);
-                    foreach (var skill in data.Value)
-                    {
-                        writer.Write(skill.Key);
-                        writer.Write(skill.Value);
-                    }
+                    writer.Write(skill.Key);
+                    writer.Write(skill.Value);
                 }
-
-                Log.Trace("Sending skill data to " + args.FarmerID);
-                Networking.ServerSendTo(args.FarmerID, Skills.MsgData, stream.ToArray());
             }
+
+            Log.Trace("Sending skill data to " + args.FarmerID);
+            Networking.ServerSendTo(args.FarmerID, Skills.MsgData, stream.ToArray());
         }
 
         private static void OnExpMessage(IncomingMessage msg)
@@ -277,8 +269,7 @@ namespace SpaceCore
                 Skills.Exp = Skills.DataApi.ReadSaveData<Dictionary<long, Dictionary<string, int>>>(Skills.DataKey);
                 if (Skills.Exp == null && File.Exists(Skills.LegacyFilePath))
                     Skills.Exp = JsonConvert.DeserializeObject<Dictionary<long, Dictionary<string, int>>>(File.ReadAllText(Skills.LegacyFilePath));
-                if (Skills.Exp == null)
-                    Skills.Exp = new Dictionary<long, Dictionary<string, int>>();
+                Skills.Exp ??= new Dictionary<long, Dictionary<string, int>>();
             }
         }
 
@@ -329,9 +320,9 @@ namespace SpaceCore
             if (Game1.endOfNightMenus.Count == 0)
                 Game1.endOfNightMenus.Push(new SaveGameMenu());
 
-            if (Skills.NewLevels.Count() > 0)
+            if (Skills.NewLevels.Any())
             {
-                for (int i = Skills.NewLevels.Count() - 1; i >= 0; --i)
+                for (int i = Skills.NewLevels.Count - 1; i >= 0; --i)
                 {
                     string skill = Skills.NewLevels[i].Key;
                     int level = Skills.NewLevels[i].Value;

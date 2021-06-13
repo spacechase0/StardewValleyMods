@@ -36,13 +36,11 @@ namespace SpaceCore.Interface
         private int currentLevel;
         private string currentSkill; // Used to be int
         private int timerBeforeStart;
-        private float scale;
         private MouseState oldMouseState;
         public ClickableTextureComponent starIcon;
         public ClickableTextureComponent okButton;
         public ClickableComponent leftProfession;
         public ClickableComponent rightProfession;
-        private Rectangle sourceRectForLevelIcon;
         private string title;
         public bool hasMovedSelection;
 
@@ -71,9 +69,10 @@ namespace SpaceCore.Interface
             this.isActive = true;
             this.width = 960;
             this.height = 512;
-            ClickableTextureComponent textureComponent = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - 64 - IClickableMenu.borderWidth, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f);
-            textureComponent.myID = 101;
-            this.okButton = textureComponent;
+            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - 64 - IClickableMenu.borderWidth, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f)
+            {
+                myID = 101
+            };
             this.newCraftingRecipes.Clear();
             this.extraInfoForLevel.Clear();
             Game1.player.completelyStopAnimatingOrDoingAction();
@@ -490,8 +489,15 @@ namespace SpaceCore.Interface
                 }
                 if (Game1.random.NextDouble() < 0.03)
                 {
-                    Vector2 position = new Vector2(0.0f, Game1.random.Next(this.yPositionOnScreen - 128, this.yPositionOnScreen - 4) / 20 * 4 * 5 + 32);
-                    position.X = Game1.random.NextDouble() >= 0.5 ? Game1.random.Next(this.xPositionOnScreen + this.width / 2 + 116, this.xPositionOnScreen + this.width - 160) : (float)Game1.random.Next(this.xPositionOnScreen + this.width / 2 - 228, this.xPositionOnScreen + this.width / 2 - 132);
+                    Vector2 position = new Vector2(
+                        x: 0.0f,
+                        y: Game1.random.Next(this.yPositionOnScreen - 128, this.yPositionOnScreen - 4) / 20 * 4 * 5 + 32
+                    )
+                    {
+                        X = Game1.random.NextDouble() >= 0.5
+                            ? Game1.random.Next(this.xPositionOnScreen + this.width / 2 + 116, this.xPositionOnScreen + this.width - 160)
+                            : Game1.random.Next(this.xPositionOnScreen + this.width / 2 - 228, this.xPositionOnScreen + this.width / 2 - 132)
+                    };
                     if (position.Y < (double)(this.yPositionOnScreen - 64 - 8))
                         position.X = Game1.random.Next(this.xPositionOnScreen + this.width / 2 - 116, this.xPositionOnScreen + this.width / 2 + 116);
                     position.X = (float)(position.X / 20.0 * 4.0 * 5.0);
@@ -734,7 +740,7 @@ namespace SpaceCore.Interface
                     return;
                 if (this.isProfessionChooser)
                 {
-                    if (this.professionsToChoose.Count<int>() == 0)
+                    if (!this.professionsToChoose.Any())
                         return;
                     Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true);
                     this.drawHorizontalPartition(b, this.yPositionOnScreen + 192);

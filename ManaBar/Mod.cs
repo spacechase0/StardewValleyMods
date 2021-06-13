@@ -57,9 +57,7 @@ namespace ManaBar
         private IApi Api;
         public override object GetApi()
         {
-            if (this.Api == null)
-                this.Api = new Api();
-            return this.Api;
+            return this.Api ??= new Api();
         }
 
         private static void OnNetworkData(IncomingMessage msg)
@@ -82,17 +80,15 @@ namespace ManaBar
             if (!Mod.Data.Players.ContainsKey(args.FarmerID))
                 Mod.Data.Players[args.FarmerID] = new MultiplayerSaveData.PlayerData();
 
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(Mod.Data.Players.Count);
+            foreach (var entry in Mod.Data.Players)
             {
-                writer.Write(Mod.Data.Players.Count);
-                foreach (var entry in Mod.Data.Players)
-                {
-                    writer.Write(entry.Key);
-                    writer.Write(JsonConvert.SerializeObject(entry.Value, MultiplayerSaveData.NetworkSerializerSettings));
-                }
-                SpaceCore.Networking.BroadcastMessage(MultiplayerSaveData.MsgData, stream.ToArray());
+                writer.Write(entry.Key);
+                writer.Write(JsonConvert.SerializeObject(entry.Value, MultiplayerSaveData.NetworkSerializerSettings));
             }
+            SpaceCore.Networking.BroadcastMessage(MultiplayerSaveData.MsgData, stream.ToArray());
         }
 
         public static void OnRenderedHud(object sender, RenderedHudEventArgs e)
@@ -151,8 +147,7 @@ namespace ManaBar
                             Mod.Data = JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.OldFilePath));
                         }
                     }
-                    if (Mod.Data == null)
-                        Mod.Data = new MultiplayerSaveData();
+                    Mod.Data ??= new MultiplayerSaveData();
 
                     if (!Mod.Data.Players.ContainsKey(Game1.player.UniqueMultiplayerID))
                         Mod.Data.Players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();

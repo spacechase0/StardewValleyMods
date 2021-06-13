@@ -47,7 +47,7 @@ namespace ProfitCalculator
                 if (season != "" && !cropData[1].Split(' ').Contains(season))
                     continue;
 
-                var phases = cropData[0].Split(' ').Select<string, int>(p => int.Parse(p));
+                var phases = cropData[0].Split(' ').Select<string, int>(int.Parse);
                 int total = phases.Sum();
                 int regrowth = int.Parse(cropData[4]);
 
@@ -102,7 +102,7 @@ namespace ProfitCalculator
             for (int i = 0; i < profits.Count; ++i)
             {
                 var p = profits[i];
-                Log.Info($"{i + 1}. " + string.Format("{0,-20}", p.Crop) + string.Format("{0,10}", p.Profit) + "g");
+                Log.Info($"{i + 1}. {p.Crop,-20}{p.Profit,10}g");
             }
         }
     }

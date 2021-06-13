@@ -16,7 +16,7 @@ namespace SpaceShared.UI
         private bool SelectedImpl;
         public bool Selected
         {
-            get { return this.SelectedImpl; }
+            get => this.SelectedImpl;
             set
             {
                 if (this.SelectedImpl == value)
@@ -49,12 +49,7 @@ namespace SpaceShared.UI
             base.Update(hidden);
 
             if (this.ClickGestured && this.Callback != null)
-            {
-                if (this.Hover)
-                    this.Selected = true;
-                else
-                    this.Selected = false;
-            }
+                this.Selected = this.Hover;
         }
 
         public override void Draw(SpriteBatch b)
@@ -75,8 +70,7 @@ namespace SpaceShared.UI
         protected virtual void ReceiveInput(string str)
         {
             this.String += str;
-            if (this.Callback != null)
-                this.Callback.Invoke(this);
+            this.Callback?.Invoke(this);
         }
 
         public void RecieveTextInput(char inputChar)
@@ -120,8 +114,7 @@ namespace SpaceShared.UI
             {
                 Game1.playSound("tinyWhip");
                 this.String = this.String.Substring(0, this.String.Length - 1);
-                if (this.Callback != null)
-                    this.Callback.Invoke(this);
+                this.Callback?.Invoke(this);
             }
         }
 

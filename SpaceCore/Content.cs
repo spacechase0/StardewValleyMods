@@ -18,8 +18,8 @@ namespace SpaceCore
     {
         private class TileMapping
         {
-            public TileSheet TileSheet;
-            public int TileId;
+            public readonly TileSheet TileSheet;
+            public readonly int TileId;
 
             public TileMapping() { }
             public TileMapping(TileSheet ts, int id)
@@ -199,8 +199,7 @@ namespace SpaceCore
             }
             finally
             {
-                if (stream != null)
-                    stream.Close();
+                stream?.Close();
             }
 
             animMapping = new Dictionary<int, TileAnimation>();

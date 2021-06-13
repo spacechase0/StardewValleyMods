@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
@@ -20,19 +19,20 @@ namespace PyromancersJourney.Framework.Objects
             Vector2 tb = new Vector2(224f / this.Tex.Width, 224f / this.Tex.Height);
             float tx = 16f / this.Tex.Width, ty = 16f / this.Tex.Height;
 
-            var vertices = new List<VertexPositionColorTexture>();
-            vertices.Add(new VertexPositionColorTexture(new Vector3(0, 0.01f, 0), Color.White, tb + new Vector2(0, 0)));
-            vertices.Add(new VertexPositionColorTexture(new Vector3(1, 0.01f, 0), Color.White, tb + new Vector2(tx, 0)));
-            vertices.Add(new VertexPositionColorTexture(new Vector3(1, 0.01f, 1), Color.White, tb + new Vector2(tx, ty)));
-            ++this.TriCount;
+            var vertices = new VertexPositionColorTexture[]
+            {
+                new(new Vector3(0, 0.01f, 0), Color.White, tb + new Vector2(0, 0)),
+                new(new Vector3(1, 0.01f, 0), Color.White, tb + new Vector2(tx, 0)),
+                new(new Vector3(1, 0.01f, 1), Color.White, tb + new Vector2(tx, ty)),
+                new(new Vector3(0, 0.01f, 0), Color.White, tb + new Vector2(0, 0)),
+                new(new Vector3(1, 0.01f, 1), Color.White, tb + new Vector2(tx, ty)),
+                new(new Vector3(0, 0.01f, 1), Color.White, tb + new Vector2(0, ty))
+            };
 
-            vertices.Add(new VertexPositionColorTexture(new Vector3(0, 0.01f, 0), Color.White, tb + new Vector2(0, 0)));
-            vertices.Add(new VertexPositionColorTexture(new Vector3(1, 0.01f, 1), Color.White, tb + new Vector2(tx, ty)));
-            vertices.Add(new VertexPositionColorTexture(new Vector3(0, 0.01f, 1), Color.White, tb + new Vector2(0, ty)));
-            ++this.TriCount;
+            this.TriCount += 2;
 
-            this.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count, BufferUsage.WriteOnly);
-            this.Buffer.SetData(vertices.ToArray());
+            this.Buffer = new VertexBuffer(Game1.game1.GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Length, BufferUsage.WriteOnly);
+            this.Buffer.SetData(vertices);
         }
 
         public override void Render(GraphicsDevice device, Matrix projection, Camera cam)
@@ -40,9 +40,8 @@ namespace PyromancersJourney.Framework.Objects
             base.Render(device, projection, cam);
             BaseObject.Effect.TextureEnabled = true;
             BaseObject.Effect.Texture = this.Tex;
-            for (int e = 0; e < BaseObject.Effect.CurrentTechnique.Passes.Count; ++e)
+            foreach (EffectPass pass in BaseObject.Effect.CurrentTechnique.Passes)
             {
-                var pass = BaseObject.Effect.CurrentTechnique.Passes[e];
                 pass.Apply();
                 device.SetVertexBuffer(this.Buffer);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, this.TriCount);
