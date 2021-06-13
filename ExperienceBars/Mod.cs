@@ -100,7 +100,7 @@ namespace ExperienceBars
             {
                 try
                 {
-                    var instance = Type.GetType("LevelExtender.ModEntry, LevelExtender").GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+                    object instance = Type.GetType("LevelExtender.ModEntry, LevelExtender").GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
                     int[] extLevels = this.Helper.Reflection.GetField<int[]>(instance, "sLevs").GetValue();
                     int[] extExp = this.Helper.Reflection.GetField<int[]>(instance, "addedXP").GetValue();
                     exp = (int[])exp.Clone();

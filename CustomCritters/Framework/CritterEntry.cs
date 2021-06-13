@@ -185,7 +185,7 @@ namespace CustomCritters.Framework
                         {
                             string[] toks = this.Variable.Split('.');
 
-                            var o = obj;
+                            object o = obj;
                             for (int i = 0; i < toks.Length; ++i)
                             {
                                 if (o == null)

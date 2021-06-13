@@ -96,9 +96,9 @@ namespace ContentPatcherAnimations
 
             if (this.ScreenState.CpPatches == null)
             {
-                var screenManagerPerScreen = this.ContentPatcher.GetType().GetField("ScreenManager", Mod.PrivateI).GetValue(this.ContentPatcher);
-                var screenManager = screenManagerPerScreen.GetType().GetProperty("Value").GetValue(screenManagerPerScreen);
-                var patchManager = screenManager.GetType().GetProperty("PatchManager").GetValue(screenManager);
+                object screenManagerPerScreen = this.ContentPatcher.GetType().GetField("ScreenManager", Mod.PrivateI).GetValue(this.ContentPatcher);
+                object screenManager = screenManagerPerScreen.GetType().GetProperty("Value").GetValue(screenManagerPerScreen);
+                object patchManager = screenManager.GetType().GetProperty("PatchManager").GetValue(screenManager);
                 this.ScreenStateImpl.Value.CpPatches = (IEnumerable)patchManager.GetType().GetField("Patches", Mod.PrivateI).GetValue(patchManager);
 
                 this.CollectPatches();
@@ -204,9 +204,9 @@ namespace ContentPatcherAnimations
                         PatchData data = new PatchData();
 
                         object targetPatch = null;
-                        foreach (var cpPatch in this.ScreenState.CpPatches)
+                        foreach (object cpPatch in this.ScreenState.CpPatches)
                         {
-                            var path = cpPatch.GetType().GetProperty("Path", Mod.PublicI).GetValue(cpPatch);
+                            object path = cpPatch.GetType().GetProperty("Path", Mod.PublicI).GetValue(cpPatch);
                             if (path.ToString() == pack.Manifest.Name + " > " + patch.LogName)
                             {
                                 targetPatch = cpPatch;
@@ -252,7 +252,7 @@ namespace ContentPatcherAnimations
 
         private Rectangle GetRectangleFromPatch(object targetPatch, string rectName, Rectangle defaultTo = default(Rectangle))
         {
-            var rect = targetPatch.GetType().GetField(rectName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(targetPatch);
+            object rect = targetPatch.GetType().GetField(rectName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(targetPatch);
             if (rect == null)
             {
                 return defaultTo;

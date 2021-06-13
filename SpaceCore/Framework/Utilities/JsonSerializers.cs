@@ -77,7 +77,7 @@ namespace SpaceCore.Framework.Utilities
                 // Couldn't get JArray to work correctly, and this was simpler
                 // than figuring that out.
                 writer.WriteStartArray();
-                foreach (var elem in (System.Collections.IEnumerable)value)
+                foreach (object elem in (System.Collections.IEnumerable)value)
                 {
                     this.ItemConverter.WriteJson(writer, elem, serializer);
                 }
@@ -111,7 +111,7 @@ namespace SpaceCore.Framework.Utilities
                 if (field.IsStatic)
                     continue;
 
-                var val = field.GetValue(value);
+                object val = field.GetValue(value);
                 writer.WritePropertyName(field.Name);
                 if (val == null)
                     writer.WriteNull();
@@ -125,7 +125,7 @@ namespace SpaceCore.Framework.Utilities
                 if (prop.GetGetMethod().IsStatic)
                     continue;
 
-                var val = prop.GetValue(value);
+                object val = prop.GetValue(value);
                 //if (prop.GetValue(prop.Name) != null)
                 //    continue;
 
@@ -153,7 +153,7 @@ namespace SpaceCore.Framework.Utilities
             else
                 id = id.Replace(", StardewValley", ", Stardew Valley");
 
-            var data = Type.GetType(id).GetConstructor(new Type[0]).Invoke(null);
+            object data = Type.GetType(id).GetConstructor(new Type[0]).Invoke(null);
             serializer.Populate(o.CreateReader(), data);
 
             return data;
