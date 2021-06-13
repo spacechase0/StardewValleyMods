@@ -87,7 +87,7 @@ namespace Magic.Framework.Game.Interface
             int x = this.xPositionOnScreen + 12, y = this.yPositionOnScreen + 12, w = TeleportMenu.WindowWidth - 24, h = TeleportMenu.WindowHeight - 24;
 
             b.End();
-            RasterizerState state = new RasterizerState
+            using RasterizerState state = new RasterizerState
             {
                 ScissorTestEnable = true
             };

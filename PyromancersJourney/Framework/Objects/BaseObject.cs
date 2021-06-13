@@ -1,10 +1,11 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 
 namespace PyromancersJourney.Framework.Objects
 {
-    internal abstract class BaseObject
+    internal abstract class BaseObject : IDisposable
     {
         protected internal static BasicEffect Effect = BaseObject.GetBasicEffect();
 
@@ -31,6 +32,9 @@ namespace PyromancersJourney.Framework.Objects
         }
 
         public virtual void RenderUi(SpriteBatch b) { }
+
+        /// <inheritdoc />
+        public abstract void Dispose();
 
         protected BaseObject(World world)
         {

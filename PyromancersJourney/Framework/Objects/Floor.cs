@@ -160,5 +160,12 @@ namespace PyromancersJourney.Framework.Objects
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, this.TriCountGlow);
             }
         }
+
+        /// <inheritdoc />
+        public override void Dispose()
+        {
+            this.Buffer?.Dispose();
+            this.BufferGlow?.Dispose();
+        }
     }
 }

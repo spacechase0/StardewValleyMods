@@ -84,7 +84,7 @@ namespace CustomizeExterior.Framework
             int edge = (int)(10 * Game1.options.zoomLevel);
 
             b.End();
-            RasterizerState state = new RasterizerState
+            using RasterizerState state = new RasterizerState
             {
                 ScissorTestEnable = true
             };

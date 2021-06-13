@@ -42,17 +42,8 @@ namespace SpaceCore
         private static readonly XmlSerializer TilesheetSerializer = new(typeof(TiledTileset), new XmlRootAttribute("tileset"));
         public static TileSheet LoadTsx(IModHelper modHelper, string path, string ts, Map xmap, out Dictionary<int, TileAnimation> animMapping)
         {
-            TiledTileset ttileSheet;
-            Stream stream = null;
-            try
-            {
-                stream = new FileStream(Path.Combine(modHelper.DirectoryPath, path), FileMode.Open);
-                ttileSheet = (TiledTileset)Content.TilesheetSerializer.Deserialize(stream);
-            }
-            finally
-            {
-                stream?.Close();
-            }
+            using Stream stream = new FileStream(Path.Combine(modHelper.DirectoryPath, path), FileMode.Open);
+            TiledTileset ttileSheet = (TiledTileset)Content.TilesheetSerializer.Deserialize(stream);
 
             animMapping = new Dictionary<int, TileAnimation>();
 

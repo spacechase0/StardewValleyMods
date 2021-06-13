@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -11,7 +13,7 @@ using SObject = StardewValley.Object;
 
 namespace PyromancersJourney.Framework
 {
-    internal class World
+    internal class World : IDisposable
     {
         public static readonly int Scale = 4;
 
@@ -76,7 +78,10 @@ namespace PyromancersJourney.Framework
             for (int i = this.Objects.Count - 1; i >= 0; --i)
             {
                 if (this.Objects[i].Dead)
+                {
+                    this.Objects[i].Dispose();
                     this.Objects.RemoveAt(i);
+                }
             }
 
             for (int i = this.Projectiles.Count - 1; i >= 0; --i)
@@ -194,6 +199,7 @@ namespace PyromancersJourney.Framework
             }
         }
 
+        [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
         private void InitLevel(string path)
         {
             string[] lines = File.ReadAllLines(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "levels", path + ".txt"));
@@ -201,6 +207,10 @@ namespace PyromancersJourney.Framework
             string[] toks = lines[0].Split(' ');
 
             this.Warp = null;
+
+            foreach (var obj in this.Objects)
+                obj.Dispose();
+
             this.Objects.Clear();
             this.Projectiles.Clear();
 
@@ -264,6 +274,21 @@ namespace PyromancersJourney.Framework
             {
                 this.Objects.Add(this.Warp = new LevelWarp(this) { Position = new Vector3(this.WarpPos.X, 0, this.WarpPos.Y) });
             }
+        }
+
+        public void Dispose()
+        {
+            foreach (var obj in this.Objects)
+                obj.Dispose();
+
+            foreach (var obj in this.QueuedObjects)
+                obj.Dispose();
+
+            this.Objects.Clear();
+            this.QueuedObjects.Clear();
+
+            this.Player.Dispose();
+            this.Warp.Dispose();
         }
     }
 }

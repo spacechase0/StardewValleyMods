@@ -13,5 +13,8 @@ namespace SpaceShared
 
         /// <summary>The parameter names must match the convention defined by Harmony so it can find them.</summary>
         public const string NamedForHarmony = "The parameter names must match the convention defined by Harmony so it can find them.";
+
+        /// <summary>The disposable object can't be disposed since it survives past the end of this scope.</summary>
+        public const string DisposableOutlivesScope = "The disposable object can't be disposed since it survives past the end of this scope.";
     }
 }

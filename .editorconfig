@@ -77,6 +77,10 @@ dotnet_naming_rule.most_identifiers_should_be_pascal_case.symbols=pascal_types
 dotnet_naming_rule.most_identifiers_should_be_pascal_case.style=pascal_case_style
 dotnet_naming_rule.most_identifiers_should_be_pascal_case.severity=warning
 
+# configure stricter code analysis warnings
+# documentation: https://docs.microsoft.com/en-ca/dotnet/fundamentals/code-analysis/categories
+dotnet_diagnostic.CA1001.severity = error # Types that own disposable fields should be disposable
+dotnet_diagnostic.CA2000.severity = error # Dispose objects before losing scope
 
 ##########
 ## Column guidelines

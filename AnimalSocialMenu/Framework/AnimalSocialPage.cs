@@ -210,11 +210,13 @@ namespace AnimalSocialMenu.Framework
 
         public override void draw(SpriteBatch b)
         {
-            b.End();
-            b.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, new RasterizerState()
+            using RasterizerState rasterizerState = new RasterizerState
             {
                 ScissorTestEnable = true
-            });
+            };
+
+            b.End();
+            b.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             this.drawHorizontalPartition(b, this.yPositionOnScreen + IClickableMenu.borderWidth + 128 + 4, true);
             this.drawHorizontalPartition(b, this.yPositionOnScreen + IClickableMenu.borderWidth + 192 + 32 + 20, true);
             this.drawHorizontalPartition(b, this.yPositionOnScreen + IClickableMenu.borderWidth + 320 + 36, true);

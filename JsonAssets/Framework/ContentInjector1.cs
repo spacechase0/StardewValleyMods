@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using JsonAssets.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -345,9 +346,11 @@ namespace JsonAssets.Framework
                 }
             }
         }
+
+        [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
         private void InjectTileSheetsCrops(IAssetData asset)
         {
-            var oldTex = asset.AsImage().Data;
+            using var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
@@ -372,9 +375,11 @@ namespace JsonAssets.Framework
                 }
             }
         }
+
+        [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
         private void InjectTileSheetsFruitTrees(IAssetData asset)
         {
-            var oldTex = asset.AsImage().Data;
+            using var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
@@ -399,9 +404,11 @@ namespace JsonAssets.Framework
                 }
             }
         }
+
+        [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
         private void InjectTileSheetsCraftables(IAssetData asset)
         {
-            var oldTex = asset.AsImage().Data;
+            using var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
@@ -434,9 +441,11 @@ namespace JsonAssets.Framework
                 }
             }
         }
+
+        [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
         private void InjectCharactersFarmerHats(IAssetData asset)
         {
-            var oldTex = asset.AsImage().Data;
+            using var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
@@ -462,9 +471,11 @@ namespace JsonAssets.Framework
                 }
             }
         }
+
+        [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
         private void InjectTileSheetsWeapons(IAssetData asset)
         {
-            var oldTex = asset.AsImage().Data;
+            using var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
@@ -526,9 +537,11 @@ namespace JsonAssets.Framework
                 }
             }
         }
+
+        [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
         private void InjectCharactersFarmerPants(IAssetData asset)
         {
-            var oldTex = asset.AsImage().Data;
+            using var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);
@@ -547,9 +560,11 @@ namespace JsonAssets.Framework
                 }
             }
         }
+
+        [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
         private void InjectCharactersFarmerShoeColors(IAssetData asset)
         {
-            var oldTex = asset.AsImage().Data;
+            using var oldTex = asset.AsImage().Data;
             Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
             asset.ReplaceWith(newTex);
             asset.AsImage().PatchImage(oldTex);

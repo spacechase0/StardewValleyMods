@@ -225,5 +225,12 @@ namespace PyromancersJourney.Framework.Objects
 
             b.End();
         }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            this.StaffBuffer?.Dispose();
+        }
     }
 }

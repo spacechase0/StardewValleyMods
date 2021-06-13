@@ -327,7 +327,8 @@ namespace SpaceCore.Patches
                     SaveGamePatcher.RestoreModNodes(doc, doc, modNodes, "/1"); // <?xml ... ?> is 1
             }
 
-            return serializer.Deserialize(new XmlTextReader(new StringReader(doc.OuterXml)));
+            using var reader = new XmlTextReader(new StringReader(doc.OuterXml));
+            return serializer.Deserialize(reader);
         }
 
         /****

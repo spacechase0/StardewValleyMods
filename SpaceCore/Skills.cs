@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -313,6 +314,8 @@ namespace SpaceCore
                 }
             }
         }
+
+        [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
         private static void ShowLevelMenu(object sender, EventArgsShowNightEndMenus args)
         {
             Log.Debug("Doing skill menus");

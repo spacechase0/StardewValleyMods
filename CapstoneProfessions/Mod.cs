@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using CapstoneProfessions.Framework;
 using CapstoneProfessions.Patches;
 using Microsoft.Xna.Framework.Graphics;
@@ -48,6 +49,7 @@ namespace CapstoneProfessions
             }
         }
 
+        [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
         private void OnNightMenus(object sender, EventArgsShowNightEndMenus e)
         {
             if (Game1.player.farmingLevel.Value == 10 && Game1.player.foragingLevel.Value == 10 &&

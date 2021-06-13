@@ -37,5 +37,8 @@ namespace PyromancersJourney.Framework.Objects
                     this.Position = oldPos;
             }
         }
+
+        /// <inheritdoc />
+        public override void Dispose() { }
     }
 }
