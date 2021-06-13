@@ -48,20 +48,18 @@ namespace SpaceCore.Locations
             int tileSheetIndex = which % 16 + which / 16 * 48;
             if (whichRoom == -1)
             {
-                using List<Rectangle>.Enumerator enumerator = rooms.GetEnumerator();
-                while (enumerator.MoveNext())
+                foreach (Rectangle room in rooms)
                 {
-                    Rectangle r = enumerator.Current;
-                    for (int x = r.X; x < r.Right; x++)
+                    for (int x = room.X; x < room.Right; x++)
                     {
-                        this.setMapTileIndex(x, r.Y, tileSheetIndex, "Back");
-                        this.setMapTileIndex(x, r.Y + 1, tileSheetIndex + 16, "Back");
-                        if (r.Height >= 3)
+                        this.setMapTileIndex(x, room.Y, tileSheetIndex, "Back");
+                        this.setMapTileIndex(x, room.Y + 1, tileSheetIndex + 16, "Back");
+                        if (room.Height >= 3)
                         {
-                            string layer = this.map.GetLayer("Buildings").Tiles[x, r.Y + 2].TileSheet.Equals(this.map.TileSheets[2])
+                            string layer = this.map.GetLayer("Buildings").Tiles[x, room.Y + 2].TileSheet.Equals(this.map.TileSheets[2])
                                 ? "Buildings"
                                 : "Back";
-                            this.setMapTileIndex(x, r.Y + 2, tileSheetIndex + 32, layer);
+                            this.setMapTileIndex(x, room.Y + 2, tileSheetIndex + 32, layer);
                         }
                     }
                 }
@@ -91,27 +89,25 @@ namespace SpaceCore.Locations
             int tileSheetIndex = 336 + which % 8 * 2 + which / 8 * 32;
             if (whichRoom == -1)
             {
-                using List<Rectangle>.Enumerator enumerator = rooms.GetEnumerator();
-                while (enumerator.MoveNext())
+                foreach (var room in rooms)
                 {
-                    Rectangle r = enumerator.Current;
-                    for (int x = r.X; x < r.Right; x += 2)
+                    for (int x = room.X; x < room.Right; x += 2)
                     {
-                        for (int y = r.Y; y < r.Bottom; y += 2)
+                        for (int y = room.Y; y < room.Bottom; y += 2)
                         {
-                            if (r.Contains(x, y))
+                            if (room.Contains(x, y))
                             {
                                 this.setMapTileIndex(x, y, tileSheetIndex, "Back");
                             }
-                            if (r.Contains(x + 1, y))
+                            if (room.Contains(x + 1, y))
                             {
                                 this.setMapTileIndex(x + 1, y, tileSheetIndex + 1, "Back");
                             }
-                            if (r.Contains(x, y + 1))
+                            if (room.Contains(x, y + 1))
                             {
                                 this.setMapTileIndex(x, y + 1, tileSheetIndex + 16, "Back");
                             }
-                            if (r.Contains(x + 1, y + 1))
+                            if (room.Contains(x + 1, y + 1))
                             {
                                 this.setMapTileIndex(x + 1, y + 1, tileSheetIndex + 17, "Back");
                             }
