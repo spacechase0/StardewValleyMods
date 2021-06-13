@@ -181,22 +181,21 @@ namespace Terraforming
                 {
                     for (int iy = 0; iy < this.TerrainHeight; ++iy)
                     {
-                        Func<int, int, bool> getTile =
-                        (x, y) =>
+                        bool GetTile(int x, int y)
                         {
                             if (x < 0 || y < 0 || x > this.TerrainWidth || y > this.TerrainHeight)
                                 return false;
                             return this.TerrainData[x, y] == type;
-                        };
+                        }
 
                         int cornerFlags = 0;
-                        if (getTile(ix + 1, iy + 0))
+                        if (GetTile(ix + 1, iy + 0))
                             cornerFlags |= 1;
-                        if (getTile(ix + 1, iy + 1))
+                        if (GetTile(ix + 1, iy + 1))
                             cornerFlags |= 2;
-                        if (getTile(ix + 0, iy + 1))
+                        if (GetTile(ix + 0, iy + 1))
                             cornerFlags |= 4;
-                        if (getTile(ix + 0, iy + 0))
+                        if (GetTile(ix + 0, iy + 0))
                             cornerFlags |= 8;
 
                         if (cornerFlags == 0)

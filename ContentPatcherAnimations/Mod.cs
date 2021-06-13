@@ -58,15 +58,15 @@ namespace ContentPatcherAnimations
 
             this.Helper.Events.GameLoop.UpdateTicked += this.UpdateAnimations;
 
-            Action updateTargets = () =>
+            void UpdateTargets()
             {
                 foreach (var screen in this.ScreenStateImpl.GetActiveValues())
                     screen.Value.FindTargetsCounter = 1;
-            };
+            }
 
-            this.Helper.Events.GameLoop.SaveCreated += (s, e) => updateTargets();
-            this.Helper.Events.GameLoop.SaveLoaded += (s, e) => updateTargets();
-            this.Helper.Events.GameLoop.DayStarted += (s, e) => updateTargets();
+            this.Helper.Events.GameLoop.SaveCreated += (s, e) => UpdateTargets();
+            this.Helper.Events.GameLoop.SaveLoaded += (s, e) => UpdateTargets();
+            this.Helper.Events.GameLoop.DayStarted += (s, e) => UpdateTargets();
 
             helper.Content.AssetEditors.Add(this.Watcher = new WatchForUpdatesAssetEditor());
 

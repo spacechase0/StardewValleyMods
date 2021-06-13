@@ -848,38 +848,38 @@ namespace SurfingFestival
 
         private void OnActionActivated(object sender, EventArgsAction e)
         {
-            Action<Map, int, int, bool> placeBonfire = (map, x, y, purple) =>
-          {
-              int bw = 48 / 16, bh = 80 / 16;
-              TileSheet ts = map.GetTileSheet("surfing");
-              int baseY = (purple ? 272 : 112) / 16 * ts.SheetWidth;
-              Layer buildings = map.GetLayer("Buildings");
-              Layer front = map.GetLayer("Front");
-              for (int ix = 0; ix < bw; ++ix)
-              {
-                  for (int iy = 0; iy < bh; ++iy)
-                  {
-                      var layer = iy < bh - 2 ? front : buildings;
+            void PlaceBonfire(Map map, int x, int y, bool purple)
+            {
+                int bw = 48 / 16, bh = 80 / 16;
+                TileSheet ts = map.GetTileSheet("surfing");
+                int baseY = (purple ? 272 : 112) / 16 * ts.SheetWidth;
+                Layer buildings = map.GetLayer("Buildings");
+                Layer front = map.GetLayer("Front");
+                for (int ix = 0; ix < bw; ++ix)
+                {
+                    for (int iy = 0; iy < bh; ++iy)
+                    {
+                        var layer = iy < bh - 2 ? front : buildings;
 
-                      var frames = new List<StaticTile>();
-                      for (int i = 0; i < 8; ++i)
-                      {
-                          int toThisTile = ix + iy * ts.SheetWidth;
-                          int toThisFrame = (i % 4) * 3 + (i / 4) * (ts.SheetWidth * bh);
-                          frames.Add(new StaticTile(layer, ts, BlendMode.Alpha, baseY + toThisTile + toThisFrame));
-                      }
+                        var frames = new List<StaticTile>();
+                        for (int i = 0; i < 8; ++i)
+                        {
+                            int toThisTile = ix + iy * ts.SheetWidth;
+                            int toThisFrame = (i % 4) * 3 + (i / 4) * (ts.SheetWidth * bh);
+                            frames.Add(new StaticTile(layer, ts, BlendMode.Alpha, baseY + toThisTile + toThisFrame));
+                        }
 
-                      layer.Tiles[x + ix, y + iy] = new AnimatedTile(layer, frames.ToArray(), 75);
-                      if (layer == buildings)
-                          layer.Tiles[x + ix, y + iy].Properties.Add("Action", "SurfingBonfire");
-                  }
-              }
-          };
+                        layer.Tiles[x + ix, y + iy] = new AnimatedTile(layer, frames.ToArray(), 75);
+                        if (layer == buildings)
+                            layer.Tiles[x + ix, y + iy].Properties.Add("Action", "SurfingBonfire");
+                    }
+                }
+            }
 
             if (e.Action == "SurfingBonfire" && Mod.PlayerDidBonfire == BonfireState.NotDone)
             {
-                InventoryMenu.highlightThisItem highlight = (item) => (item is StardewValley.Object obj && !obj.bigCraftable.Value && ((obj.ParentSheetIndex == 388 && obj.Stack >= 50) || obj.ParentSheetIndex == 71 || obj.ParentSheetIndex == 789));
-                ItemGrabMenu.behaviorOnItemSelect behaviorOnSelect = (item, farmer) =>
+                bool Highlight(StardewValley.Item item) => (item is StardewValley.Object obj && !obj.bigCraftable.Value && ((obj.ParentSheetIndex == 388 && obj.Stack >= 50) || obj.ParentSheetIndex == 71 || obj.ParentSheetIndex == 789));
+                void BehaviorOnSelect(StardewValley.Item item, Farmer farmer)
                 {
                     if (item == null)
                         return;
@@ -894,10 +894,11 @@ namespace SurfingFestival
                             if (character is NPC npc)
                                 farmer.changeFriendship(50, npc);
                         }
+
                         Mod.PlayerDidBonfire = BonfireState.Normal;
                         Game1.drawObjectDialogue(this.Helper.Translation.Get("dialog.wood"));
                         Game1.playSound("fireball");
-                        placeBonfire(Game1.currentLocation.Map, 30, 5, false);
+                        PlaceBonfire(Game1.currentLocation.Map, 30, 5, false);
                     }
                     else if (item.ParentSheetIndex == 71 || item.ParentSheetIndex == 789)
                     {
@@ -906,11 +907,11 @@ namespace SurfingFestival
 
                         Game1.drawDialogue(Game1.getCharacterFromName("Lewis"), this.Helper.Translation.Get("dialog.shorts"));
                         Game1.playSound("fireball");
-                        placeBonfire(Game1.currentLocation.Map, 30, 5, true);
+                        PlaceBonfire(Game1.currentLocation.Map, 30, 5, true);
                     }
-                };
+                }
 
-                var menu = new ItemGrabMenu(null, true, false, highlight, behaviorOnSelect, this.Helper.Translation.Get("ui.wood"), behaviorOnSelect);
+                var menu = new ItemGrabMenu(null, true, false, Highlight, BehaviorOnSelect, this.Helper.Translation.Get("ui.wood"), BehaviorOnSelect);
                 Game1.activeClickableMenu = menu;
 
                 e.Cancel = true;
@@ -922,7 +923,8 @@ namespace SurfingFestival
                     new("MakeOffering", this.Helper.Translation.Get("secret.yes")),
                     new("Leave", this.Helper.Translation.Get("secret.no")),
                 };
-                GameLocation.afterQuestionBehavior afterQuestion = (who, choice) =>
+
+                void AfterQuestion(Farmer who, string choice)
                 {
                     if (choice == "MakeOffering")
                     {
@@ -936,8 +938,9 @@ namespace SurfingFestival
                             Game1.drawObjectDialogue(this.Helper.Translation.Get("secret.broke"));
                         }
                     }
-                };
-                Game1.currentLocation.createQuestionDialogue(Game1.parseText(this.Helper.Translation.Get("secret.text")), answers, afterQuestion);
+                }
+
+                Game1.currentLocation.createQuestionDialogue(Game1.parseText(this.Helper.Translation.Get("secret.text")), answers, AfterQuestion);
 
                 e.Cancel = true;
             }

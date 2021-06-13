@@ -109,12 +109,9 @@ namespace GenericModConfigMenu
             api.RegisterLabel(this.ModManifest, "", "");
 
             // Complex widget - this just generates a random  color on click.
-            Func<Vector2, object, object> randomColorUpdate =
-            (Vector2 pos, object rawState) =>
+            object RandomColorUpdate(Vector2 pos, object rawState)
             {
-                var state = rawState as RandomColorWidgetState;
-                if (state == null)
-                    state = new RandomColorWidgetState() { Color = this.Config.DummyColor };
+                var state = rawState as RandomColorWidgetState ?? new RandomColorWidgetState { Color = this.Config.DummyColor };
 
                 var bounds = new Rectangle((int)pos.X + 12, (int)pos.Y + 12, 50 - 12 * 2, 50 - 12 * 2);
                 bool hover = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
@@ -128,24 +125,24 @@ namespace GenericModConfigMenu
                 }
 
                 return state;
-            };
-            Func<SpriteBatch, Vector2, object, object> randomColorDraw =
-            (SpriteBatch b, Vector2 pos, object rawState) =>
+            }
+
+            object RandomColorDraw(SpriteBatch b, Vector2 pos, object rawState)
             {
                 var state = rawState as RandomColorWidgetState;
                 IClickableMenu.drawTextureBox(b, (int)pos.X, (int)pos.Y, 50, 50, Color.White);
                 var colorBox = new Rectangle((int)pos.X + 12, (int)pos.Y + 12, 50 - 12 * 2, 50 - 12 * 2);
                 b.Draw(Game1.staminaRect, colorBox, state.Color);
                 return state;
-            };
-            Action<object> randomColorSave =
-            (object state) =>
+            }
+
+            void RandomColorSave(object state)
             {
-                if (state == null)
-                    return;
+                if (state == null) return;
                 this.Config.DummyColor = (state as RandomColorWidgetState).Color;
-            };
-            api.RegisterComplexOption(this.ModManifest, "Dummy Color", "Testing a complex widget (random color on click)", randomColorUpdate, randomColorDraw, randomColorSave);
+            }
+
+            api.RegisterComplexOption(this.ModManifest, "Dummy Color", "Testing a complex widget (random color on click)", RandomColorUpdate, RandomColorDraw, RandomColorSave);
         }
 
         private bool IsTitleMenuInteractable()

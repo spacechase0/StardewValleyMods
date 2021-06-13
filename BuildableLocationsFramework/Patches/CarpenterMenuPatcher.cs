@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Microsoft.Xna.Framework;
-using Netcode;
 using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
@@ -146,13 +145,15 @@ namespace BuildableLocationsFramework.Patches
                     // MINE - Farm -> BuildableGameLocation
                     BuildableGameLocation farm = CarpenterMenuPatcher.ReturnCurrentLocationAnyways("Farm") as BuildableGameLocation;
                     Building destroyed = farm.getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / 64, (Game1.viewport.Y + Game1.getOldMouseY()) / 64));
-                    Action buildingLockFailed = () =>
+
+                    void BuildingLockFailed()
                     {
                         if (!__instance_demolishing.GetValue())
                             return;
                         Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_LockFailed"), Color.Red, 3500f));
-                    };
-                    Action continueDemolish = () =>
+                    }
+
+                    void ContinueDemolish()
                     {
                         if (!__instance_demolishing.GetValue() || destroyed == null || !farm.buildings.Contains(destroyed))
                             return;
@@ -177,16 +178,17 @@ namespace BuildableLocationsFramework.Patches
                                     }
                                 }
                             }
-                            if (destroyed.indoors.Value is Cabin && (destroyed.indoors.Value as Cabin).farmhand.Value.isActive())
+
+                            if (destroyed.indoors.Value is Cabin cabinA && cabinA.farmhand.Value.isActive())
                             {
                                 Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_FarmhandOnline"), Color.Red, 3500f));
                             }
                             else
                             {
                                 Chest chest = null;
-                                if (destroyed.indoors.Value is Cabin)
+                                if (destroyed.indoors.Value is Cabin cabinB)
                                 {
-                                    List<Item> objList = (destroyed.indoors.Value as Cabin).demolish();
+                                    List<Item> objList = cabinB.demolish();
                                     if (objList.Count > 0)
                                     {
                                         chest = new Chest(true);
@@ -194,6 +196,7 @@ namespace BuildableLocationsFramework.Patches
                                         chest.items.Set(objList);
                                     }
                                 }
+
                                 if (!farm.destroyStructure(destroyed))
                                     return;
                                 int tileY = (int)destroyed.tileY;
@@ -203,14 +206,15 @@ namespace BuildableLocationsFramework.Patches
                                 Game1.playSound("explosion");
                                 // function does nothing
                                 //Utility.spreadAnimalsAround(destroyed, farm);
-                                DelayedAction.functionAfterDelay(new DelayedAction.delayedBehavior(__instance.returnToCarpentryMenu), 1500);
+                                DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenu, 1500);
                                 __instance_freeze.SetValue(true);
                                 if (chest == null)
                                     return;
                                 farm.objects[new Vector2((int)destroyed.tileX + (int)destroyed.tilesWide / 2, (int)destroyed.tileY + (int)destroyed.tilesHigh / 2)] = chest;
                             }
                         }
-                    };
+                    }
+
                     if (destroyed != null)
                     {
                         if (destroyed.indoors.Value != null && destroyed.indoors.Value is Cabin && !Game1.IsMasterGame)
@@ -235,7 +239,7 @@ namespace BuildableLocationsFramework.Patches
                                 if (answer == "Yes")
                                 {
                                     Game1.activeClickableMenu = __instance;
-                                    Game1.player.team.demolishLock.RequestLock(continueDemolish, buildingLockFailed);
+                                    Game1.player.team.demolishLock.RequestLock(ContinueDemolish, BuildingLockFailed);
                                 }
                                 else
                                     DelayedAction.functionAfterDelay(new DelayedAction.delayedBehavior(__instance.returnToCarpentryMenu), 500);
@@ -245,7 +249,7 @@ namespace BuildableLocationsFramework.Patches
                     }
                     if (destroyed == null)
                         goto ret;
-                    Game1.player.team.demolishLock.RequestLock(continueDemolish, buildingLockFailed);
+                    Game1.player.team.demolishLock.RequestLock(ContinueDemolish, BuildingLockFailed);
                 }
                 else if (__instance_upgrading.GetValue())
                 {

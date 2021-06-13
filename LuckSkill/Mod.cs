@@ -62,20 +62,20 @@ namespace LuckSkill
 
         public void Edit<T>(IAssetData asset)
         {
-            Func<int, string> getProfName = (id) => this.Helper.Reflection.GetMethod(typeof(LevelUpMenu), "getProfessionName").Invoke<string>(id);
+            string GetProfName(int id) => this.Helper.Reflection.GetMethod(typeof(LevelUpMenu), "getProfessionName").Invoke<string>(id);
 
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionDailyLuck), "Fortunate");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionDailyLuck), "Better daily luck.");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionNightlyEvents), "Shooting Star");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionNightlyEvents), "Nightly events occur twice as often.");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionChanceMaxLuck), "Lucky");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionChanceMaxLuck), "20% chance for max daily luck.");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionNoBadLuck), "Un-unlucky");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionNoBadLuck), "Never have bad luck.");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionMoreQuests), "Popular Helper");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionMoreQuests), "Daily quests occur three times as often.");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + getProfName(Mod.ProfessionJunimoHelp), "Spirit Child");
-            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + getProfName(Mod.ProfessionJunimoHelp), "Giving gifts makes junimos happy. They might help your farm.\n(15% chance for some form of farm advancement.)");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + GetProfName(Mod.ProfessionDailyLuck), "Fortunate");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + GetProfName(Mod.ProfessionDailyLuck), "Better daily luck.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + GetProfName(Mod.ProfessionNightlyEvents), "Shooting Star");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + GetProfName(Mod.ProfessionNightlyEvents), "Nightly events occur twice as often.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + GetProfName(Mod.ProfessionChanceMaxLuck), "Lucky");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + GetProfName(Mod.ProfessionChanceMaxLuck), "20% chance for max daily luck.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + GetProfName(Mod.ProfessionNoBadLuck), "Un-unlucky");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + GetProfName(Mod.ProfessionNoBadLuck), "Never have bad luck.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + GetProfName(Mod.ProfessionMoreQuests), "Popular Helper");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + GetProfName(Mod.ProfessionMoreQuests), "Daily quests occur three times as often.");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionName_" + GetProfName(Mod.ProfessionJunimoHelp), "Spirit Child");
+            asset.AsDictionary<string, string>().Data.Add("LevelUp_ProfessionDescription_" + GetProfName(Mod.ProfessionJunimoHelp), "Giving gifts makes junimos happy. They might help your farm.\n(15% chance for some form of farm advancement.)");
         }
 
         /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
@@ -152,7 +152,7 @@ namespace LuckSkill
                         continue;
                     rolls = 0;
 
-                    Action advanceCrops = () =>
+                    void AdvanceCrops()
                     {
                         List<GameLocation> locs = new List<GameLocation>();
                         locs.AddRange(Game1.locations);
@@ -176,6 +176,7 @@ namespace LuckSkill
                                     dirt.crop.newDay(HoeDirt.watered, dirt.fertilizer.Value, (int)entry.Key.X, (int)entry.Key.Y, loc);
                                 }
                             }
+
                             foreach (var entry in loc.terrainFeatures.Pairs.ToList())
                             {
                                 var tf = entry.Value;
@@ -198,16 +199,19 @@ namespace LuckSkill
                         }
 
                         Game1.showGlobalMessage("The junimos advanced your crops!");
-                    };
-                    Action<AnimalHouse> advanceBarn = (AnimalHouse house) =>
+                    }
+
+                    void AdvanceBarn(AnimalHouse house)
                     {
                         foreach (var animal in house.Animals.Values)
                         {
                             animal.friendshipTowardFarmer.Value = Math.Min(1000, animal.friendshipTowardFarmer.Value + 100);
                         }
+
                         Game1.showGlobalMessage("The junimos made some of your animals more fond of you!");
-                    };
-                    Action grassAndFences = () =>
+                    }
+
+                    void GrassAndFences()
                     {
                         var farm = Game1.getFarm();
                         foreach (var entry in farm.terrainFeatures.Values)
@@ -217,6 +221,7 @@ namespace LuckSkill
                                 grass.numberOfWeeds.Value = 4;
                             }
                         }
+
                         foreach (var entry in farm.Objects.Values)
                         {
                             if (entry is Fence fence)
@@ -224,8 +229,9 @@ namespace LuckSkill
                                 fence.repair();
                             }
                         }
+
                         Game1.showGlobalMessage("The junimos grew your grass and repaired your fences!");
-                    };
+                    }
 
                     if (r.Next() <= 0.05 && Game1.player.addItemToInventoryBool(new StardewValley.Object(StardewValley.Object.prismaticShardIndex, 1)))
                     {
@@ -259,14 +265,14 @@ namespace LuckSkill
                     }
 
                     List<Action> choices = new List<Action>();
-                    choices.Add(advanceCrops);
-                    choices.Add(advanceCrops);
-                    choices.Add(advanceCrops);
+                    choices.Add(AdvanceCrops);
+                    choices.Add(AdvanceCrops);
+                    choices.Add(AdvanceCrops);
                     foreach (var ah in animalHouses)
                     {
-                        choices.Add(() => advanceBarn(ah));
+                        choices.Add(() => AdvanceBarn(ah));
                     }
-                    choices.Add(grassAndFences);
+                    choices.Add(GrassAndFences);
 
                     choices[r.Next(choices.Count)]();
                 }

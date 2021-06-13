@@ -139,13 +139,13 @@ namespace HybridCropEngine
             {
                 for (int iy = 0; iy < loc.Map.Layers[0].LayerSize.Height; ++iy)
                 {
-                    Func<int, int, HoeDirt> getHoedirt = (x, y) => (loc.terrainFeatures.TryGetValue(new Vector2(ix + x, iy + y), out TerrainFeature feature) ? feature as HoeDirt : null);
+                    HoeDirt GetHoeDirt(int x, int y) => (loc.terrainFeatures.TryGetValue(new Vector2(ix + x, iy + y), out TerrainFeature feature) ? feature as HoeDirt : null);
 
                     HoeDirt[] dirts = new[]
                     {
-                        getHoedirt( -1, -1 ), getHoedirt( 0, -1 ), getHoedirt( 1, -1 ),
-                        getHoedirt( -1, 0 ), getHoedirt( 0, 0 ), getHoedirt( 1, 0 ),
-                        getHoedirt( -1, 1 ), getHoedirt( 0, 1 ), getHoedirt( 1, 1 ),
+                        GetHoeDirt(-1, -1), GetHoeDirt(0, -1), GetHoeDirt(1, -1),
+                        GetHoeDirt(-1, 0), GetHoeDirt(0, 0), GetHoeDirt(1, 0),
+                        GetHoeDirt(-1, 1), GetHoeDirt(0, 1), GetHoeDirt(1, 1),
                     };
 
                     if (dirts[4] == null || dirts[4].crop != null)
@@ -181,23 +181,25 @@ namespace HybridCropEngine
                     //*/
 
                     var combos = new List<HoeDirt[]>();
-                    Action<int, int> addIfCombo = (a, b) =>
-                  {
-                      if (dirts[a] != null && dirts[b] != null)
-                          combos.Add(new[] { dirts[a], dirts[b] });
-                  };
-                    addIfCombo(0, 1);
-                    addIfCombo(1, 2);
-                    addIfCombo(0, 3);
-                    addIfCombo(2, 5);
-                    addIfCombo(3, 6);
-                    addIfCombo(5, 8);
-                    addIfCombo(6, 7);
-                    addIfCombo(7, 8);
-                    addIfCombo(1, 3);
-                    addIfCombo(1, 5);
-                    addIfCombo(3, 7);
-                    addIfCombo(5, 7);
+
+                    void AddIfCombo(int a, int b)
+                    {
+                        if (dirts[a] != null && dirts[b] != null)
+                            combos.Add(new[] { dirts[a], dirts[b] });
+                    }
+
+                    AddIfCombo(0, 1);
+                    AddIfCombo(1, 2);
+                    AddIfCombo(0, 3);
+                    AddIfCombo(2, 5);
+                    AddIfCombo(3, 6);
+                    AddIfCombo(5, 8);
+                    AddIfCombo(6, 7);
+                    AddIfCombo(7, 8);
+                    AddIfCombo(1, 3);
+                    AddIfCombo(1, 5);
+                    AddIfCombo(3, 7);
+                    AddIfCombo(5, 7);
                     //Log.trace( "Combo size: " + combos.Count );
 
                     Random r = new Random(baseSeed + ix * loc.Map.Layers[0].LayerSize.Height + iy);

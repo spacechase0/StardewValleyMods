@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -83,7 +82,7 @@ namespace PreexistingRelationship.Framework
                     };
                     // Note: This is being called 4 times for some reason
                     // Probably a UI framework bug.
-                    Action<Element> selCallback = (e) =>
+                    void SelCallback(Element e)
                     {
                         if (this.SelectedContainer != null)
                             this.SelectedContainer.OutlineColor = null;
@@ -91,14 +90,15 @@ namespace PreexistingRelationship.Framework
                         this.SelectedContainer.OutlineColor = Color.Green;
                         this.SelectedNpc = valid[n].Name;
                         Log.Trace("Selected " + this.SelectedNpc);
-                    };
+                    }
+
                     cont.AddChild(new Image()
                     {
                         Texture = Game1.mouseCursors,
                         TextureRect = new Rectangle(583, 411, 115, 97),
                         Scale = 2,
                         LocalPosition = new Vector2(0, 0),
-                        Callback = selCallback,
+                        Callback = SelCallback,
                     });
                     cont.AddChild(new Image()
                     {

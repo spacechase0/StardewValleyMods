@@ -199,11 +199,11 @@ namespace GenericModConfigMenu
             if (!Mod.Instance.Configs.TryGetValue(mod, out ModConfig modConfig))
                 throw new ArgumentException("Mod not registered");
 
-            Func<Vector2, object, object> update = (Vector2 v2, object o) => widgetUpdate.Invoke(v2, (T)o);
-            Func<SpriteBatch, Vector2, object, object> draw = (SpriteBatch b, Vector2 v2, object o) => widgetDraw.Invoke(b, v2, (T)o);
-            Action<object> save = (object o) => onSave.Invoke((T)o);
+            object Update(Vector2 v2, object o) => widgetUpdate.Invoke(v2, (T)o);
+            object Draw(SpriteBatch b, Vector2 v2, object o) => widgetDraw.Invoke(b, v2, (T)o);
+            void Save(object o) => onSave.Invoke((T)o);
 
-            modConfig.ActiveRegisteringPage.Options.Add(new ComplexModOption(optionName, optionDesc, update, draw, save, mod) { AvailableInGame = modConfig.DefaultOptedIngame });
+            modConfig.ActiveRegisteringPage.Options.Add(new ComplexModOption(optionName, optionDesc, Update, Draw, Save, mod) { AvailableInGame = modConfig.DefaultOptedIngame });
             if (modConfig.DefaultOptedIngame)
                 modConfig.HasAnyInGame = true;
         }

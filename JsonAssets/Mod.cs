@@ -667,19 +667,12 @@ namespace JsonAssets
         {
             this.Fences.Add(fence);
 
-            Func<IList<FenceData.Recipe_.Ingredient>, IList<ObjectData.Recipe_.Ingredient>> convertIngredients = (ingredients) =>
+            IList<ObjectData.Recipe_.Ingredient> ConvertIngredients(IList<FenceData.Recipe_.Ingredient> ingredients)
             {
-                var ret = new List<ObjectData.Recipe_.Ingredient>();
-                foreach (var ingred in ingredients)
-                {
-                    ret.Add(new ObjectData.Recipe_.Ingredient()
-                    {
-                        Object = ingred.Object,
-                        Count = ingred.Count,
-                    });
-                }
-                return ret;
-            };
+                return ingredients
+                    .Select(ingredient => new ObjectData.Recipe_.Ingredient { Object = ingredient.Object, Count = ingredient.Count })
+                    .ToList();
+            }
 
             this.RegisterObject(source, fence.correspondingObject = new ObjectData()
             {
@@ -693,7 +686,7 @@ namespace JsonAssets
                     SkillUnlockName = fence.Recipe.SkillUnlockName,
                     SkillUnlockLevel = fence.Recipe.SkillUnlockLevel,
                     ResultCount = fence.Recipe.ResultCount,
-                    Ingredients = convertIngredients(fence.Recipe.Ingredients),
+                    Ingredients = ConvertIngredients(fence.Recipe.Ingredients),
                     IsDefault = fence.Recipe.IsDefault,
                     CanPurchase = fence.Recipe.CanPurchase,
                     PurchasePrice = fence.Recipe.PurchasePrice,
