@@ -4,7 +4,7 @@
     "Version": "1.0.0",
     "Description": "Adds a new Doom-style arcade game.",
     "UniqueID": "spacechase0.FireArcadeGame",
-    "EntryDll": "FireArcadeGame.dll",
+    "EntryDll": "PyromancersJourney.dll",
     "UpdateKeys": [ "Nexus:7455" ],
     "Dependencies": [
         {
