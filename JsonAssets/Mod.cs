@@ -1120,7 +1120,7 @@ namespace JsonAssets
             string portraitPerson = menu?.portraitPerson?.Name;
             if (portraitPerson == null && Game1.currentLocation?.Name == "Hospital")
                 portraitPerson = "Harvey";
-            if (menu == null || (portraitPerson == null || portraitPerson == "") && !hatMouse && !qiGemShop)
+            if (menu == null || string.IsNullOrEmpty(portraitPerson) && !hatMouse && !qiGemShop)
                 return;
             bool doAllSeeds = Game1.player.hasOrWillReceiveMail("PierreStocklist");
 

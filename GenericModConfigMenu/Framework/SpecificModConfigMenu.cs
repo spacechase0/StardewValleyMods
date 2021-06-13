@@ -73,7 +73,7 @@ namespace GenericModConfigMenu.Framework
 
                 var label = new Label() { String = opt.Name };
                 label.UserData = opt.Description;
-                if (opt.Description != null && opt.Description != "")
+                if (!string.IsNullOrEmpty(opt.Description))
                     this.OptHovers.Add(label);
 
                 Element other = new Label() { String = "TODO", LocalPosition = new Vector2(500, 0) };

@@ -195,7 +195,7 @@ namespace ContentPatcherAnimations
                     if (patch.AnimationFrameTime > 0 && patch.AnimationFrameCount > 0)
                     {
                         Log.Trace("Loading animated patch from content pack " + pack.Manifest.UniqueID);
-                        if (patch.LogName == null || patch.LogName == "")
+                        if (string.IsNullOrEmpty(patch.LogName))
                         {
                             Log.Error("Animated patches must specify a LogName!");
                             continue;

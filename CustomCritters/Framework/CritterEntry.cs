@@ -181,7 +181,7 @@ namespace CustomCritters.Framework
                     {
                         if (this.Chance != 1.0 && Game1.random.NextDouble() > this.Chance)
                             ret = false;
-                        if (this.Variable != null && this.Variable != "")
+                        if (!string.IsNullOrEmpty(this.Variable))
                         {
                             string[] toks = this.Variable.Split('.');
 
@@ -202,9 +202,9 @@ namespace CustomCritters.Framework
 
                             if (o != null)
                             {
-                                if (this.Is != null && this.Is != "" && !o.GetType().IsInstanceOfType(Type.GetType(this.Is)))
+                                if (!string.IsNullOrEmpty(this.Is) && !o.GetType().IsInstanceOfType(Type.GetType(this.Is)))
                                     ret = false;
-                                else if (this.ValueEquals != null && this.ValueEquals != "" && !o.ToString().Equals(this.ValueEquals))
+                                else if (!string.IsNullOrEmpty(this.ValueEquals) && !o.ToString().Equals(this.ValueEquals))
                                     ret = false;
                             }
                             else if (this.RequireNotNull)

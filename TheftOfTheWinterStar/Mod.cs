@@ -692,7 +692,7 @@ namespace TheftOfTheWinterStar
                             buildings.Tiles[x, y].TileIndex += 2;
 
                             string prop = farmer.currentLocation.doesTileHaveProperty(x, y, "UnlockAction", "Buildings");
-                            if (prop != null && prop != "")
+                            if (!string.IsNullOrEmpty(prop))
                             {
                                 farmer.currentLocation.setTileProperty(x, y, "Buildings", "Action", prop);
                             }
@@ -837,7 +837,7 @@ namespace TheftOfTheWinterStar
         private void DoBombableCheck(GameLocation loc, Vector2 pos)
         {
             string propVal = loc.doesTileHaveProperty((int)pos.X, (int)pos.Y, "Bombable", "Buildings");
-            if (propVal == null || propVal == "")
+            if (string.IsNullOrEmpty(propVal))
                 return;
 
             string[] bombActions = propVal.Split(' ');
