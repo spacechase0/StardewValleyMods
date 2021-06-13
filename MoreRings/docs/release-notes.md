@@ -2,13 +2,14 @@
 
 # Release notes
 ## Upcoming release
-* Includes unreleased changes by spacechase0:
-  * Updated for Stardew Valley 1.5.
-  * Added three new rings: Quality+ ring, Ring of Far Reaching, and Ring of True Sight.
+* Updated for Stardew Valley 1.5.¹
+* Added three new rings: Quality+ ring, Ring of Far Reaching, and Ring of True Sight.¹
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Updated translations. Thanks to asqwedcxz741 (added Chinese)!
 * Improved documentation.
 * Internal refactoring.
+
+<sup>¹ Unreleased changes by spacechase0.</sup>
 
 ## 1.0.4
 Released 26 November 2019 for Stardew Valley 1.4.

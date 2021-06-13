@@ -2,12 +2,13 @@
 
 # Release notes
 ## Upcoming release
-* Includes unreleased changes by spacechase0:
-  * Updated for Stardew Valley 1.5.
-  * Added search box to shop UI.
+* Updated for Stardew Valley 1.5.¹
+* Added search box to shop UI.¹
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Improved documentation.
 * Internal refactoring.
+
+<sup>¹ Unreleased changes by spacechase0.</sup>
 
 ## 1.1.3
 Released 26 November 2019 for Stardew Valley 1.4.

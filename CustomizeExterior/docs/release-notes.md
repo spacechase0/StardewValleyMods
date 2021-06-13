@@ -2,12 +2,13 @@
 
 # Release notes
 ## Upcoming release
-* Includes unreleased changes by spacechase0:
-  * Fixed changing greenhouse on Four Corners farm map.
-  * Reduced the number of logs shown in the SMAPI console for players.
 * Updated for Stardew Valley 1.5.
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
+* Fixed customizing the greenhouse on the Four Corners farm map.¹
+* Reduced logs shown in the SMAPI console for players.¹
 * Improved documentation.
+
+<sup>¹ Unreleased changes by spacechase0.</sup>
 
 ## 1.0.7
 Released 26 November 2019 for Stardew Valley 1.4.

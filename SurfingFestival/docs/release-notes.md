@@ -2,12 +2,13 @@
 
 # Release notes
 ## Upcoming release
-* Includes unreleased changes by spacechase0:
-  * Fixed Cheap Amulet counted for shopping collection.
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Fixed Linux/macOS compatibility issue.
+* Fixed Cheap Amulet counted for shopping collection.¹
 * Internal refactoring.
 * Improved documentation.
+
+<sup>¹ Unreleased changes by spacechase0.</sup>
 
 ## 1.0.5
 Released 29 August 2020 for Stardew Valley 1.4.
