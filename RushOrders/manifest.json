@@ -5,6 +5,5 @@
     "Description": "Spend more gold to have Clint upgrade tools faster or Robin construct buildings faster.",
     "UniqueID": "spacechase0.RushOrders",
     "EntryDll": "RushOrders.dll",
-    "UpdateKeys": [ "Nexus:605" ],
-    "spacechase0": "rush-orders"
+    "UpdateKeys": [ "Nexus:605" ]
 }

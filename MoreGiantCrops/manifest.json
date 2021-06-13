@@ -5,6 +5,5 @@
     "Description": "Lets you add new giant crops.",
     "UniqueID": "spacechase0.MoreGiantCrops",
     "EntryDll": "MoreGiantCrops.dll",
-    "UpdateKeys": [ "Nexus:5263" ],
-    "spacechase0": "more-giant-crops"
+    "UpdateKeys": [ "Nexus:5263" ]
 }

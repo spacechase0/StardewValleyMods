@@ -5,6 +5,5 @@
     "Description": "Carry chests with their contents.",
     "UniqueID": "spacechase0.CarryChest",
     "EntryDll": "CarryChest.dll",
-    "UpdateKeys": [ "Nexus:1333" ],
-    "spacechase0": "carry-chest"
+    "UpdateKeys": [ "Nexus:1333" ]
 }

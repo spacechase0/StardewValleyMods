@@ -6,7 +6,6 @@
     "UniqueID": "spacechase0.JsonAssets",
     "EntryDll": "JsonAssets.dll",
     "UpdateKeys": [ "Nexus:1720" ],
-    "spacechase0": "json-assets",
     "Dependencies": [
         {
             "UniqueID": "Pathoschild.ContentPatcher",

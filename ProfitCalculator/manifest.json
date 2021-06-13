@@ -5,6 +5,5 @@
     "Description": "Adds a console command to calculate the profits from growing each crop for an entire season.",
     "UniqueID": "spacechase0.ProfitCalculator",
     "EntryDll": "ProfitCalculator.dll",
-    "UpdateKeys": [ "Nexus:3378" ],
-    "spacechase0": "profit-calculator"
+    "UpdateKeys": [ "Nexus:3378" ]
 }

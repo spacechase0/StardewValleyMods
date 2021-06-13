@@ -5,6 +5,5 @@
     "Description": "Lets content packs create custom buildings with interior maps.",
     "UniqueID": "spacechase0.CustomBuildings",
     "EntryDll": "CustomBuildings.dll",
-    "UpdateKeys": [],
-    "spacechase0": "custom-buildings"
+    "UpdateKeys": []
 }

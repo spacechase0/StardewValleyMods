@@ -5,6 +5,5 @@
     "Description": "Change the color of planted flowers.",
     "UniqueID": "spacechase0.FlowerColorPicker",
     "EntryDll": "FlowerColorPicker.dll",
-    "UpdateKeys": [ "Nexus:1229" ],
-    "spacechase0": "flower-color-picker"
+    "UpdateKeys": [ "Nexus:1229" ]
 }

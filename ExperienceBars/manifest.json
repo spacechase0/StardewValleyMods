@@ -5,6 +5,5 @@
     "Description": "Shows experience bars in the top-left corner.",
     "UniqueID": "spacechase0.ExperienceBars",
     "EntryDll": "ExperienceBars.dll",
-    "UpdateKeys": [ "Nexus:509" ],
-    "spacechase0": "experience-bars"
+    "UpdateKeys": [ "Nexus:509" ]
 }

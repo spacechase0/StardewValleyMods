@@ -5,6 +5,5 @@
     "Description": "Purchase community center bundles with gold.",
     "UniqueID": "spacechase0.JunimosAcceptCash",
     "EntryDll": "JunimosAcceptCash.dll",
-    "UpdateKeys": [ "Nexus:7437" ],
-    "spacechase0": "junimos-accept-cash"
+    "UpdateKeys": [ "Nexus:7437" ]
 }

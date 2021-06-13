@@ -5,6 +5,5 @@
     "Description": "Lets you layer one map under another, so the 'lower' map shows through transparent areas in the 'upper' map.",
     "UniqueID": "spacechase0.LocationLayerTool",
     "EntryDll": "LocationLayerTool.dll",
-    "UpdateKeys": [],
-    "spacechase0": "location-layer-tool"
+    "UpdateKeys": []
 }

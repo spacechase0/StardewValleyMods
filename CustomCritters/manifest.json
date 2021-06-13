@@ -5,6 +5,5 @@
     "Description": "Lets content packs add custom critters to the world.",
     "UniqueID": "spacechase0.CustomCritters",
     "EntryDll": "CustomCritters.dll",
-    "UpdateKeys": [ "Nexus:1255" ],
-    "spacechase0": "custom-critters"
+    "UpdateKeys": [ "Nexus:1255" ]
 }

@@ -6,7 +6,6 @@
     "UniqueID": "spacechase0.FireArcadeGame",
     "EntryDll": "FireArcadeGame.dll",
     "UpdateKeys": [ "Nexus:7455" ],
-    "spacechase0": "fire-arcade-game",
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore"

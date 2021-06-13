@@ -5,6 +5,5 @@
     "Description": "Reach chests and other tile actions from anywhere.",
     "UniqueID": "spacechase0.ExtendedReach",
     "EntryDll": "ExtendedReach.dll",
-    "UpdateKeys": [ "Nexus:1493" ],
-    "spacechase0": "extended-reach"
+    "UpdateKeys": [ "Nexus:1493" ]
 }

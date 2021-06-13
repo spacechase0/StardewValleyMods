@@ -5,6 +5,5 @@
     "Description": "Lets content packs add hybrid crops, which have a chance of appearing between two fully-grown parent crops.",
     "UniqueID": "spacechase0.HybridCropEngine",
     "EntryDll": "HybridCropEngine.dll",
-    "UpdateKeys": [ "Nexus:6577" ],
-    "spacechase0": "hybrid-crop-engine"
+    "UpdateKeys": [ "Nexus:6577" ]
 }

@@ -6,7 +6,6 @@
     "UniqueID": "spacechase0.CustomNPCFixes",
     "EntryDll": "CustomNPCFixes.dll",
     "UpdateKeys": [ "Nexus:3849" ],
-    "spacechase0": "custom-npc-fixes",
     "Dependencies": [
         {
             "UniqueID": "Platonymous.TMXLoader",

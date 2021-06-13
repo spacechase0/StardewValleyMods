@@ -5,6 +5,5 @@
     "Description": "Adds an in-game UI to edit other mods' config options (for mods which support it).",
     "UniqueID": "spacechase0.GenericModConfigMenu",
     "EntryDll": "GenericModConfigMenu.dll",
-    "UpdateKeys": [ "Nexus:5098" ],
-    "spacechase0": "generic-mod-config-menu"
+    "UpdateKeys": [ "Nexus:5098" ]
 }
