@@ -106,9 +106,9 @@ namespace SpaceCore
             if (this.Config.DisposeOldTextures)
                 {
                 // TryDequeue not available on net452
-                if (TextureDisposalQueue.Count == 0) return;
-                // Dispose exactly one item. We don't want too-early disposal.
-                this.NextToDispose = TextureDisposalQueue.Dequeue();
+                if (TextureDisposalQueue.Count != 0)
+                    // Dispose exactly one item. We don't want too-early disposal.
+                    this.NextToDispose = TextureDisposalQueue.Dequeue();
                 }
             }
 
