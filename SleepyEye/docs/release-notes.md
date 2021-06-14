@@ -3,11 +3,16 @@
 # Release notes
 ## Upcoming release
 * Updated for Stardew Valley 1.5.
-* The time you need to hold the tent button is now configurable.
+* The place-tent delay is now configurable.
 * Holding the tent button now triggers a save after the delay without waiting for you to release the button.
+* SpaceCore is no longer required.
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Improved documentation.
 * Internal refactoring.
+
+**Update note:**  
+If you slept in a tent before updating the mod, you'll start the day at home. The tent location
+will be saved correctly thereafter.
 
 ## 1.0.4
 Released 26 November 2019 for Stardew Valley 1.4.

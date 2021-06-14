@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PyTK.CustomElementHandler;
-using SpaceCore;
 using StardewModdingAPI;
 using StardewValley;
 using SFarmer = StardewValley.Farmer;
@@ -125,7 +124,7 @@ namespace SleepyEye
                     this.CancelUse(who);
 
                     this.StartedSaving = this.GetTicks();
-                    Sleep.SaveLocation = true;
+                    Mod.Instance.RememberLocation();
                     Game1.player.isInBed.Value = true;
                     Game1.NewDay(0);
                 }

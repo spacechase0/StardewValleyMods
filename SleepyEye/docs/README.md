@@ -6,8 +6,7 @@ tent to sleep anywhere!
 ## Install
 1. Install the latest version of...
    * [SMAPI](https://smapi.io);
-   * [PyTK](https://www.nexusmods.com/stardewvalley/mods/1726);
-   * and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
+   * and [PyTK](https://www.nexusmods.com/stardewvalley/mods/1726).
 2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/1152).
 3. Run the game using SMAPI.
 
