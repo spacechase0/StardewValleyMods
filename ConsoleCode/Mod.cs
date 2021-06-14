@@ -73,17 +73,18 @@ namespace ConsoleCode
             }
 
             var eval = new Evaluator(new CompilerContext(settings, new ConsoleReportPrinter()));
-            string code = @"using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using StardewModdingAPI;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using StardewValley;
-using xTile;";
-            eval.Compile(code);
-            return eval.Compile("IModHelper Helper = ConsoleCode.Mod.instance.Helper;\n" + userCode);
+            eval.Compile(@"
+                using System;
+                using System.Collections.Generic;
+                using System.Linq;
+                using System.Text;
+                using StardewModdingAPI;
+                using Microsoft.Xna.Framework;
+                using Microsoft.Xna.Framework.Graphics;
+                using StardewValley;
+                using xTile;
+            ");
+            return eval.Compile(userCode);
         }
     }
 }
