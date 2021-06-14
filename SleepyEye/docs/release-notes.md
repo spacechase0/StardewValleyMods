@@ -2,6 +2,8 @@
 
 # Release notes
 ## Upcoming release
+* Updated for Stardew Valley 1.5.
+* Holding the tent button now triggers a save after seven seconds without waiting for you to release the button.
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Improved documentation.
 * Internal refactoring.
