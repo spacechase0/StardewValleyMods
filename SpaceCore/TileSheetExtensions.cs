@@ -161,7 +161,7 @@ namespace SpaceCore
             }
         }
 
-        internal static void UpdateReferences()
+        internal static void UpdateReferences(bool disposeOld)
         {
             foreach (var asset in TileSheetExtensions.ExtendedTextureAssets)
             {
@@ -171,13 +171,14 @@ namespace SpaceCore
                 {
                     Log.Error("WHAT? null " + asset.Key);
                     TileSheetExtensions.ExtendedTextures.Remove(oldTexture);
-                    SpaceCore.DisposingQueue.Enqueue(oldTexture);
+                    if (disposeOld)
+                        SpaceCore.TextureDisposalQueue.Enqueue(oldTexture);
                 }
                 else
                 {
                     TileSheetExtensions.ExtendedTextures[asset.Value.BaseTileSheet] = asset.Value;
-                    if (oldTexture != asset.Value.BaseTileSheet)
-                        SpaceCore.DisposingQueue.Enqueue(oldTexture);
+                    if (disposeOld && oldTexture != asset.Value.BaseTileSheet)
+                        SpaceCore.TextureDisposalQueue.Enqueue(oldTexture);
                 }
             }
         }

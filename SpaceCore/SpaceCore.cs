@@ -20,7 +20,8 @@ namespace SpaceCore
         private HarmonyInstance Harmony;
 
         internal static List<Type> ModTypes = new();
-        internal static Queue<IDisposable> DisposingQueue = new();
+        internal static Queue<IDisposable> TextureDisposalQueue = new();
+        private IDisposable NextToDispose = null;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -85,7 +86,7 @@ namespace SpaceCore
         private int TickCount;
         private void OnUpdate(object sender, UpdateTickedEventArgs e)
         {
-            TileSheetExtensions.UpdateReferences();
+            TileSheetExtensions.UpdateReferences(this.Config.DisposeOldTextures);
             if (this.TickCount++ == 0 && SpaceCore.ModTypes.Count == 0)
             {
                 Log.Info("Disabling serializer patches (no mods using serializer API)");
@@ -97,10 +98,18 @@ namespace SpaceCore
         }
 
         private void OnOneSecondUpdateTicked(object sender, OneSecondUpdateTickedEventArgs e) {
-            // TryDequeue not available on net452
-            if (DisposingQueue.Count == 0) return;
-            // Dispose exactly one item. We don't want too-early disposal.
-            DisposingQueue.Dequeue().Dispose();
+            if (this.NextToDispose != null)
+                {
+                this.NextToDispose.Dispose();
+                this.NextToDispose = null;
+                }
+            if (this.Config.DisposeOldTextures)
+                {
+                // TryDequeue not available on net452
+                if (TextureDisposalQueue.Count == 0) return;
+                // Dispose exactly one item. We don't want too-early disposal.
+                this.NextToDispose = TextureDisposalQueue.Dequeue();
+                }
             }
 
         /// <summary>Raised after the player loads a save slot.</summary>
