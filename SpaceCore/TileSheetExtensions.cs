@@ -171,13 +171,13 @@ namespace SpaceCore
                 {
                     Log.Error("WHAT? null " + asset.Key);
                     TileSheetExtensions.ExtendedTextures.Remove(oldTexture);
-                    oldTexture.Dispose();
+                    SpaceCore.DisposingQueue.Enqueue(oldTexture);
                 }
                 else
                 {
                     TileSheetExtensions.ExtendedTextures[asset.Value.BaseTileSheet] = asset.Value;
                     if (oldTexture != asset.Value.BaseTileSheet)
-                        oldTexture.Dispose();
+                        SpaceCore.DisposingQueue.Enqueue(oldTexture);
                 }
             }
         }
