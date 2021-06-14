@@ -27,11 +27,15 @@ namespace SleepyEye
         /// <summary>Whether the tent triggered an ongoing save.</summary>
         private bool IsSaving => this.StartedSaving != null;
 
-        /// <summary>How long the tent must be used before a save is triggered.</summary>
-        private readonly TimeSpan UseDelay = TimeSpan.FromSeconds(7);
-
         /// <summary>How long after a save is triggered before resetting the tool's use and save flags.</summary>
         private readonly TimeSpan ResetDelay = TimeSpan.FromSeconds(3);
+
+
+        /*********
+        ** Accessors
+        *********/
+        /// <summary>How long the tent must be used before a save is triggered.</summary>
+        internal static TimeSpan UseDelay { get; set; }
 
 
         /*********
@@ -116,7 +120,7 @@ namespace SleepyEye
 
                 // save if done
                 TimeSpan useTime = this.GetTimeSince(this.StartedUsing!.Value);
-                if (useTime > this.UseDelay)
+                if (useTime > TentTool.UseDelay)
                 {
                     this.CancelUse(who);
 
@@ -141,10 +145,10 @@ namespace SleepyEye
             {
                 // get transparency
                 Color color = Color.White;
-                if (!this.IsSaving && this.IsUsing && this.GetTimeSince(this.StartedUsing!.Value) < this.UseDelay)
+                if (!this.IsSaving && this.IsUsing && this.GetTimeSince(this.StartedUsing!.Value) < TentTool.UseDelay)
                 {
                     var useTime = this.GetTimeSince(this.StartedUsing!.Value);
-                    color *= (0.2f + (float)useTime.TotalSeconds / 7f * 0.6f);
+                    color *= (0.2f + (float)useTime.TotalSeconds / (float)TentTool.UseDelay.TotalSeconds * 0.6f);
                 }
 
                 // draw
