@@ -68,10 +68,10 @@ apply.
 ### Textures in screenshot
 For the texture sets shown in the screenshot, see:
 * [Birch Building Mods](https://www.nexusmods.com/stardewvalley/mods/583)
-* [Medieval Modern Buildings](https://www.nexusmods.com/stardewvalley/mods/419)
+* ~~[Medieval Modern Buildings](https://www.nexusmods.com/stardewvalley/mods/419)~~
 * [Seasonal Vanilla](https://www.nexusmods.com/stardewvalley/mods/928)
-* [Victorian Era Buildings](https://www.nexusmods.com/stardewvalley/mods/682)
-* [Seasonal Victorian Buildings](https://www.nexusmods.com/stardewvalley/mods/891)
+* ~~[Victorian Era Buildings](https://www.nexusmods.com/stardewvalley/mods/682)~~
+* ~~[Seasonal Victorian Buildings](https://www.nexusmods.com/stardewvalley/mods/891)~~
 
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
