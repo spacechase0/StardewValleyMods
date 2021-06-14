@@ -9,7 +9,7 @@ dropped by meteorites. They drop a lot of stone, coal, iridium ore, and geodes.
 3. Run the game using SMAPI.
 
 ## Use
-Just break meteorites and they'll drop new items.
+Just break meteorites and they'll drop many more items.
 
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
