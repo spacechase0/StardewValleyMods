@@ -11,7 +11,6 @@ namespace ThrowableAxe
 {
     public class ThrownAxe : Projectile
     {
-        private readonly GameLocation Loc;
         private readonly NetInt Tier = new(0);
         private readonly NetInt Damage = new(3);
         public readonly NetVector2 Target = new();
@@ -29,8 +28,7 @@ namespace ThrowableAxe
             this.position.X = thrower.getStandingX() - 16;
             this.position.Y = thrower.getStandingY() - 64;
 
-            this.Loc = thrower.currentLocation;
-            this.theOneWhoFiredMe.Set(this.Loc, thrower);
+            this.theOneWhoFiredMe.Set(thrower.currentLocation, thrower);
             this.damagesMonsters.Value = true;
             this.Tier.Value = tier;
             this.Damage.Value = damage;
@@ -53,7 +51,7 @@ namespace ThrowableAxe
             this.NpcsHit.Add(n);
             if (n is Monster)
             {
-                location.damageMonster(this.getBoundingBox(), this.Damage, this.Damage, false, (Farmer)this.theOneWhoFiredMe.Get(location));
+                location.damageMonster(this.getBoundingBox(), this.Damage.Value, this.Damage.Value, false, (Farmer)this.theOneWhoFiredMe.Get(location));
             }
         }
 
@@ -91,8 +89,8 @@ namespace ThrowableAxe
 
         public override void draw(SpriteBatch b)
         {
-            int sheetShift = this.Tier * 7;
-            if (this.Tier > 2)
+            int sheetShift = this.Tier.Value * 7;
+            if (this.Tier.Value > 2)
                 sheetShift += 21;
             var sourceRect = Game1.getSquareSourceRectForNonStandardTileSheet(Game1.toolSpriteSheet, 16, 16, 215 + sheetShift);
             //b.Draw(Game1.staminaRect, Game1.GlobalToLocal(Game1.viewport, getBoundingBox()), null, Color.Red, 0, Vector2.Zero, SpriteEffects.None, 0.99f);

@@ -108,7 +108,7 @@ namespace MultiFertilizer.Patches
             if (!location.terrainFeatures.TryGetValue(tileLocation, out TerrainFeature feature) || feature is not HoeDirt dirt)
                 return true;
 
-            if ((int)dirt.fertilizer != 0)
+            if (dirt.fertilizer.Value != 0)
             {
                 if (dirt.modData.ContainsKey(key))
                 {

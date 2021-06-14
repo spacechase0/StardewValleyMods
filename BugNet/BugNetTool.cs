@@ -17,7 +17,7 @@ namespace BugNet
 
         public BugNetTool()
         {
-            this.category.Value = StardewValley.Object.toolCategory;
+            this.Category = StardewValley.Object.toolCategory;
             this.Name = "Bug Net";
             this.ParentSheetIndex = MeleeWeapon.scythe; // Gets us out of annoying stuff
 
@@ -59,7 +59,7 @@ namespace BugNet
             float num2 = Mod.Instance.Helper.Reflection.GetField<float>(typeof(MeleeWeapon), "addedSwordScale").GetValue();
             if (!drawShadow)
                 num2 = 0;
-            spriteBatch.Draw(BugNetTool.Texture, location + (this.type == 1 ? new Vector2(Game1.tileSize * 2 / 3, Game1.tileSize / 3) : new Vector2(Game1.tileSize / 2, Game1.tileSize / 2)), new Rectangle(0, 0, 16, 16), Color.White * transparency, 0.0f, new Vector2(8f, 8f), Game1.pixelZoom * (scaleSize + num2), SpriteEffects.None, layerDepth);
+            spriteBatch.Draw(BugNetTool.Texture, location + (this.type.Value == 1 ? new Vector2(Game1.tileSize * 2 / 3, Game1.tileSize / 3) : new Vector2(Game1.tileSize / 2, Game1.tileSize / 2)), new Rectangle(0, 0, 16, 16), Color.White * transparency, 0.0f, new Vector2(8f, 8f), Game1.pixelZoom * (scaleSize + num2), SpriteEffects.None, layerDepth);
             if (num1 <= 0.0 || drawShadow)
                 return;
             spriteBatch.Draw(Game1.staminaRect, new Rectangle((int)location.X, (int)location.Y + (Game1.tileSize - (int)(num1 * (double)Game1.tileSize)), Game1.tileSize, (int)(num1 * (double)Game1.tileSize)), Color.Red * 0.66f);

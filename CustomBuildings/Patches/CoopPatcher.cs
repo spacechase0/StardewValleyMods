@@ -69,7 +69,7 @@ namespace CustomBuildings.Patches
             if (!Mod.Instance.Buildings.TryGetValue(nameOfIndoorsWithoutUnique, out BuildingData buildingData))
                 return true;
 
-            AnimalHouse loc = new AnimalHouse($"Maps\\{buildingData.Id}", __instance.buildingType)
+            AnimalHouse loc = new AnimalHouse($"Maps\\{buildingData.Id}", __instance.buildingType.Value)
             {
                 IsFarm = true
             };
@@ -78,8 +78,8 @@ namespace CustomBuildings.Patches
             loc.animalLimit.Value = buildingData.MaxOccupants;
             foreach (var warp in loc.warps)
             {
-                warp.TargetX = __instance.humanDoor.X + __instance.tileX;
-                warp.TargetY = __instance.humanDoor.Y + __instance.tileY + 1;
+                warp.TargetX = __instance.humanDoor.X + __instance.tileX.Value;
+                warp.TargetY = __instance.humanDoor.Y + __instance.tileY.Value + 1;
             }
             __result = loc;
             return false;
@@ -88,12 +88,14 @@ namespace CustomBuildings.Patches
         /// <summary>The method to call after <see cref="Coop.performActionOnConstruction"/>.</summary>
         private static void After_PerformActionOnConstruction(Coop __instance, GameLocation location)
         {
-            if (!Mod.Instance.Buildings.TryGetValue(__instance.buildingType, out BuildingData buildingData))
+            if (!Mod.Instance.Buildings.TryGetValue(__instance.buildingType.Value, out BuildingData buildingData))
                 return;
 
             __instance.indoors.Value.objects.Remove(new Vector2(3, 3));
-            StardewValley.Object @object = new StardewValley.Object(new Vector2(buildingData.FeedHopperX, buildingData.FeedHopperY), 99);
-            @object.fragility.Value = 2;
+            StardewValley.Object @object = new StardewValley.Object(new Vector2(buildingData.FeedHopperX, buildingData.FeedHopperY), 99)
+            {
+                Fragility = 2
+            };
             __instance.indoors.Value.objects.Add(new Vector2(buildingData.FeedHopperX, buildingData.FeedHopperY), @object);
             __instance.daysOfConstructionLeft.Value = buildingData.DaysToConstruct;
         }
@@ -101,19 +103,21 @@ namespace CustomBuildings.Patches
         /// <summary>The method to call before <see cref="Coop.performActionOnUpgrade"/>.</summary>
         private static bool Before_PerformActionOnUpgrade(Coop __instance, GameLocation location)
         {
-            return !Mod.Instance.Buildings.ContainsKey(__instance.buildingType);
+            return !Mod.Instance.Buildings.ContainsKey(__instance.buildingType.Value);
         }
 
         /// <summary>The method to call after <see cref="Coop.dayUpdate"/>.</summary>
         private static void After_DayUpdate(Coop __instance, int dayOfMonth)
         {
-            if (!Mod.Instance.Buildings.TryGetValue(__instance.buildingType, out BuildingData buildingData))
+            if (!Mod.Instance.Buildings.TryGetValue(__instance.buildingType.Value, out BuildingData buildingData))
                 return;
 
-            if (buildingData.AutoFeedsAnimals)
+            if (buildingData.AutoFeedsAnimals && __instance.indoors.Value is AnimalHouse animalHouse)
             {
-                int num = Math.Min((__instance.indoors.Value as AnimalHouse).animals.Count() - __instance.indoors.Value.numberOfObjectsWithName("Hay"), (Game1.getLocationFromName("Farm") as Farm).piecesOfHay);
-                (Game1.getLocationFromName("Farm") as Farm).piecesOfHay.Value -= num;
+                Farm farm = Game1.getFarm();
+
+                int num = Math.Min(animalHouse.animals.Count() - __instance.indoors.Value.numberOfObjectsWithName("Hay"), farm.piecesOfHay.Value);
+                farm.piecesOfHay.Value -= num;
                 for (int ix = 0; ix < __instance.indoors.Value.map.Layers[0].LayerWidth && num > 0; ++ix)
                 {
                     for (int iy = 0; iy < __instance.indoors.Value.map.Layers[0].LayerHeight && num > 0; ++iy)
@@ -131,14 +135,16 @@ namespace CustomBuildings.Patches
         /// <summary>The method to call before <see cref="Coop.upgrade"/>.</summary>
         private static bool Before_Upgrade(Coop __instance)
         {
-            if (!Mod.Instance.Buildings.TryGetValue(__instance.buildingType, out BuildingData buildingData))
+            if (!Mod.Instance.Buildings.TryGetValue(__instance.buildingType.Value, out BuildingData buildingData) || __instance.indoors.Value is not AnimalHouse animalHouse)
                 return true;
 
-            (__instance.indoors.Value as AnimalHouse).animalLimit.Value = buildingData.MaxOccupants;
+            animalHouse.animalLimit.Value = buildingData.MaxOccupants;
             if (buildingData.IncubatorX != -1)
             {
-                StardewValley.Object @object = new StardewValley.Object(new Vector2(buildingData.IncubatorX, buildingData.IncubatorY), 104);
-                @object.fragility.Value = 2;
+                StardewValley.Object @object = new StardewValley.Object(new Vector2(buildingData.IncubatorX, buildingData.IncubatorY), 104)
+                {
+                    Fragility = 2
+                };
                 __instance.indoors.Value.objects.Add(new Vector2(buildingData.IncubatorX, buildingData.IncubatorY), @object);
             }
 
@@ -160,8 +166,8 @@ namespace CustomBuildings.Patches
 
             foreach (var warp in __instance.indoors.Value.warps)
             {
-                warp.TargetX = __instance.humanDoor.X + __instance.tileX;
-                warp.TargetY = __instance.humanDoor.Y + __instance.tileY + 1;
+                warp.TargetX = __instance.humanDoor.X + __instance.tileX.Value;
+                warp.TargetY = __instance.humanDoor.Y + __instance.tileY.Value + 1;
             }
 
             return false;
@@ -184,7 +190,7 @@ namespace CustomBuildings.Patches
         /// <summary>The method to call before <see cref="Coop.draw"/>.</summary>
         private static bool Before_Draw(Coop __instance, SpriteBatch b)
         {
-            if (__instance.isMoving || !Mod.Instance.Buildings.TryGetValue(__instance.buildingType, out BuildingData buildingData))
+            if (__instance.isMoving || !Mod.Instance.Buildings.TryGetValue(__instance.buildingType.Value, out BuildingData buildingData))
                 return false;
 
             if (__instance.daysOfConstructionLeft.Value > 0)

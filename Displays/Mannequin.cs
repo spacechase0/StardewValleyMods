@@ -78,8 +78,8 @@ namespace Displays
         private void CacheFarmerSprite()
         {
             this.FarmerForRendering ??= new Farmer();
-            this.FarmerForRendering.changeGender(this.MannGender == MannequinGender.Male);
-            if (this.MannGender == MannequinGender.Female)
+            this.FarmerForRendering.changeGender(this.MannGender.Value == MannequinGender.Male);
+            if (this.MannGender.Value == MannequinGender.Female)
                 this.FarmerForRendering.changeHairStyle(16);
             this.FarmerForRendering.faceDirection(this.Facing.Value);
             this.FarmerForRendering.hat.Value = this.Hat.Value;
@@ -101,7 +101,7 @@ namespace Displays
             {
                 this.FarmerForRendering.changeShoeColor(this.Boots.Value.indexInColorSheet.Value);
             }
-            if (this.MannType == MannequinType.Plain)
+            if (this.MannType.Value == MannequinType.Plain)
             {
                 this.FarmerForRendering.changeHairColor(Color.Transparent);
                 this.FarmerForRendering.FarmerRenderer.textureName.Value = "Characters\\Farmer\\farmer_transparent";

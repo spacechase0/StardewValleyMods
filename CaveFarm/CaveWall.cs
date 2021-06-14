@@ -35,7 +35,7 @@ namespace CaveFarm
                 this.Health.Value -= damage;
             }
 
-            if (this.Health > 0)
+            if (this.Health.Value > 0)
                 return true;
             return false;
         }

@@ -65,7 +65,7 @@ namespace MultiFertilizer.Patches
         {
             if (isFertilizer)
             {
-                if (__instance.crop != null && __instance.crop.currentPhase != 0)
+                if (__instance.crop != null && __instance.crop.currentPhase.Value != 0)
                     return false;
 
                 int level = 0;
@@ -210,7 +210,7 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="HoeDirt.seasonUpdate"/>.</summary>
         private static void Before_SeasonUpdate(HoeDirt __instance, bool onLoad)
         {
-            if (!onLoad && (__instance.crop == null || (bool)__instance.crop.dead || !__instance.crop.seasonsToGrowIn.Contains(Game1.currentLocation.GetSeasonForLocation())))
+            if (!onLoad && (__instance.crop == null || __instance.crop.dead.Value || !__instance.crop.seasonsToGrowIn.Contains(Game1.currentLocation.GetSeasonForLocation())))
             {
                 __instance.modData.Remove(Mod.KeyFert);
                 __instance.modData.Remove(Mod.KeyRetain);

@@ -55,9 +55,9 @@ namespace BuildableLocationsFramework.Patches
             var locs = Mod.GetAllLocations();
             foreach (var loc in locs)
             {
-                if (loc is IAnimalLocation aloc)
+                if (loc is IAnimalLocation animalLocation)
                 {
-                    foreach (var animal in aloc.Animals.Values)
+                    foreach (var animal in animalLocation.Animals.Values)
                     {
                         if (animal.displayName == name)
                         {
@@ -110,13 +110,13 @@ namespace BuildableLocationsFramework.Patches
                                 if (animal != null)
                                 {
                                     animal.home = building;
-                                    animal.homeLocation.Value = new Vector2((int)building.tileX, (int)building.tileY);
+                                    animal.homeLocation.Value = new Vector2(building.tileX.Value, building.tileY.Value);
                                 }
                             }
                         }
                     }
                     List<FarmAnimal> farmAnimalList1 = new List<FarmAnimal>();
-                    foreach (FarmAnimal allFarmAnimal in UtilityPatcher.getAllFarmAnimals(farm))
+                    foreach (FarmAnimal allFarmAnimal in UtilityPatcher.GetAllFarmAnimals(farm))
                     {
                         if (allFarmAnimal.home == null)
                             farmAnimalList1.Add(allFarmAnimal);
@@ -173,13 +173,13 @@ namespace BuildableLocationsFramework.Patches
                     {
                         foreach (Building building in farm.buildings)
                         {
-                            if (building.buildingType.Contains(farmAnimal.buildingTypeILiveIn) && building.indoors.Value is AnimalHouse house && !house.isFull())
+                            if (building.buildingType.Contains(farmAnimal.buildingTypeILiveIn.Value) && building.indoors.Value is AnimalHouse house && !house.isFull())
                             {
                                 farmAnimal.home = building;
-                                farmAnimal.homeLocation.Value = new Vector2((int)building.tileX, (int)building.tileY);
-                                farmAnimal.setRandomPosition(farmAnimal.home.indoors);
-                                (farmAnimal.home.indoors.Value as AnimalHouse).animals.Add((long)farmAnimal.myID, farmAnimal);
-                                (farmAnimal.home.indoors.Value as AnimalHouse).animalsThatLiveHere.Add((long)farmAnimal.myID);
+                                farmAnimal.homeLocation.Value = new Vector2(building.tileX.Value, building.tileY.Value);
+                                farmAnimal.setRandomPosition(farmAnimal.home.indoors.Value);
+                                (farmAnimal.home.indoors.Value as AnimalHouse).animals.Add(farmAnimal.myID.Value, farmAnimal);
+                                (farmAnimal.home.indoors.Value as AnimalHouse).animalsThatLiveHere.Add(farmAnimal.myID.Value);
                                 break;
                             }
                         }
@@ -193,8 +193,8 @@ namespace BuildableLocationsFramework.Patches
                     foreach (FarmAnimal farmAnimal in farmAnimalList2)
                     {
                         farmAnimal.Position = Utility.recursiveFindOpenTileForCharacter(farmAnimal, farm, new Vector2(40f, 40f), 200) * 64f;
-                        if (!farm_animals.Animals.ContainsKey((long)farmAnimal.myID))
-                            farm_animals.Animals.Add((long)farmAnimal.myID, farmAnimal);
+                        if (!farm_animals.Animals.ContainsKey(farmAnimal.myID.Value))
+                            farm_animals.Animals.Add(farmAnimal.myID.Value, farmAnimal);
                     }
                 }
             }
@@ -204,9 +204,10 @@ namespace BuildableLocationsFramework.Patches
         /// <summary>The method to call after <see cref="Utility.numSilos"/>.</summary>
         private static void After_NumSilos(ref int __result)
         {
+            Farm farm = Game1.getFarm();
             foreach (var loc in Mod.GetAllLocations())
             {
-                if (loc != Game1.getFarm() && loc is BuildableGameLocation bgl)
+                if (loc != farm && loc is BuildableGameLocation bgl)
                 {
                     foreach (var building in bgl.buildings)
                     {
@@ -217,16 +218,19 @@ namespace BuildableLocationsFramework.Patches
             }
         }
 
-        private static List<FarmAnimal> getAllFarmAnimals(BuildableGameLocation loc)
+        private static List<FarmAnimal> GetAllFarmAnimals(BuildableGameLocation loc)
         {
             List<FarmAnimal> list = new List<FarmAnimal>();
-            if (loc is IAnimalLocation loca)
-                list = loca.Animals.Values.ToList<FarmAnimal>();
+
+            if (loc is IAnimalLocation animalLocation)
+                list = animalLocation.Animals.Values.ToList();
+
             foreach (Building building in loc.buildings)
             {
-                if (building.indoors.Value is AnimalHouse)
-                    list.AddRange(((AnimalHouse)building.indoors).animals.Values.ToList<FarmAnimal>());
+                if (building.indoors.Value is AnimalHouse animalHouse)
+                    list.AddRange(animalHouse.animals.Values);
             }
+
             return list;
         }
     }

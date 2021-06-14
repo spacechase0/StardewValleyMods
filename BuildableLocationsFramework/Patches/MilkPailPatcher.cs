@@ -36,26 +36,32 @@ namespace BuildableLocationsFramework.Patches
             x = (int)who.GetToolLocation().X;
             y = (int)who.GetToolLocation().Y;
             Rectangle toolRect = new Rectangle(x - 32, y - 32, 64, 64);
-            var __instance_animal = Mod.Instance.Helper.Reflection.GetField<FarmAnimal>(__instance, "animal");
+
+            var animalField = Mod.Instance.Helper.Reflection.GetField<FarmAnimal>(__instance, "animal");
+            var animal = animalField.GetValue();
+
             if (location is IAnimalLocation animalLoc)
-                __instance_animal.SetValue(Utility.GetBestHarvestableFarmAnimal(animalLoc.Animals.Values, __instance, toolRect));
-            if (__instance_animal.GetValue() != null && (int)__instance_animal.GetValue().currentProduce > 0 && ((int)__instance_animal.GetValue().age >= (byte)__instance_animal.GetValue().ageWhenMature && __instance_animal.GetValue().toolUsedForHarvest.Equals(__instance.BaseName)) && who.couldInventoryAcceptThisObject((int)__instance_animal.GetValue().currentProduce, 1))
             {
-                __instance_animal.GetValue().doEmote(20);
-                __instance_animal.GetValue().friendshipTowardFarmer.Value = Math.Min(1000, (int)__instance_animal.GetValue().friendshipTowardFarmer + 5);
-                who.currentLocation.localSound("Milking");
-                __instance_animal.GetValue().pauseTimer = 1500;
+                animalField.SetValue(animal = Utility.GetBestHarvestableFarmAnimal(animalLoc.Animals.Values, __instance, toolRect));
             }
-            else if (__instance_animal.GetValue() != null && (int)__instance_animal.GetValue().currentProduce > 0 && (int)__instance_animal.GetValue().age >= (byte)__instance_animal.GetValue().ageWhenMature)
+
+            if (animal != null && animal.currentProduce.Value > 0 && (animal.age.Value >= animal.ageWhenMature.Value && animal.toolUsedForHarvest.Value.Equals(__instance.BaseName)) && who.couldInventoryAcceptThisObject(animal.currentProduce.Value, 1))
+            {
+                animal.doEmote(20);
+                animal.friendshipTowardFarmer.Value = Math.Min(1000, animal.friendshipTowardFarmer.Value + 5);
+                who.currentLocation.localSound("Milking");
+                animal.pauseTimer = 1500;
+            }
+            else if (animal != null && animal.currentProduce.Value > 0 && animal.age.Value >= animal.ageWhenMature.Value)
             {
                 if (who != null && Game1.player.Equals(who))
                 {
-                    if (!__instance_animal.GetValue().toolUsedForHarvest.Equals(__instance.BaseName))
+                    if (!animal.toolUsedForHarvest.Value.Equals(__instance.BaseName))
                     {
-                        if (!(__instance_animal.GetValue().toolUsedForHarvest == null) && !__instance_animal.GetValue().toolUsedForHarvest.Equals("null"))
-                            Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:MilkPail.cs.14167", __instance_animal.GetValue().toolUsedForHarvest));
+                        if (animal.toolUsedForHarvest.Value != null && !animal.toolUsedForHarvest.Value.Equals("null"))
+                            Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:MilkPail.cs.14167", animal.toolUsedForHarvest.Value));
                     }
-                    else if (!who.couldInventoryAcceptThisObject((int)__instance_animal.GetValue().currentProduce, 1))
+                    else if (!who.couldInventoryAcceptThisObject(animal.currentProduce.Value, 1))
                         Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Crop.cs.588"));
                 }
             }
@@ -64,12 +70,12 @@ namespace BuildableLocationsFramework.Patches
                 DelayedAction.playSoundAfterDelay("fishingRodBend", 300);
                 DelayedAction.playSoundAfterDelay("fishingRodBend", 1200);
                 string dialogue = "";
-                if (__instance_animal.GetValue() != null && !__instance_animal.GetValue().toolUsedForHarvest.Equals(__instance.BaseName))
-                    dialogue = Game1.content.LoadString("Strings\\StringsFromCSFiles:MilkPail.cs.14175", __instance_animal.GetValue().displayName);
-                if (__instance_animal.GetValue() != null && __instance_animal.GetValue().isBaby() && __instance_animal.GetValue().toolUsedForHarvest.Equals(__instance.BaseName))
-                    dialogue = Game1.content.LoadString("Strings\\StringsFromCSFiles:MilkPail.cs.14176", __instance_animal.GetValue().displayName);
-                if (__instance_animal.GetValue() != null && (int)__instance_animal.GetValue().age >= (byte)__instance_animal.GetValue().ageWhenMature && __instance_animal.GetValue().toolUsedForHarvest.Equals(__instance.BaseName))
-                    dialogue = Game1.content.LoadString("Strings\\StringsFromCSFiles:MilkPail.cs.14177", __instance_animal.GetValue().displayName);
+                if (animal != null && !animal.toolUsedForHarvest.Value.Equals(__instance.BaseName))
+                    dialogue = Game1.content.LoadString("Strings\\StringsFromCSFiles:MilkPail.cs.14175", animal.displayName);
+                if (animal != null && animal.isBaby() && animal.toolUsedForHarvest.Value.Equals(__instance.BaseName))
+                    dialogue = Game1.content.LoadString("Strings\\StringsFromCSFiles:MilkPail.cs.14176", animal.displayName);
+                if (animal != null && animal.age.Value >= animal.ageWhenMature.Value && animal.toolUsedForHarvest.Value.Equals(__instance.BaseName))
+                    dialogue = Game1.content.LoadString("Strings\\StringsFromCSFiles:MilkPail.cs.14177", animal.displayName);
                 if (dialogue.Length > 0)
                     DelayedAction.showDialogueAfterDelay(dialogue, 1000);
             }

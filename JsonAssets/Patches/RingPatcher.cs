@@ -38,12 +38,12 @@ namespace JsonAssets.Patches
             //  the game will still run.
             try
             {
-                if (Game1.objectInformation == null || __instance.indexInTileSheet == null)
+                if (Game1.objectInformation == null || __instance.indexInTileSheet.Value == null)
                 {
                     __result = false;
                     return false;
                 }
-                string[] strArray = Game1.objectInformation[__instance.indexInTileSheet].Split('/');
+                string[] strArray = Game1.objectInformation[__instance.indexInTileSheet.Value].Split('/');
                 __instance.displayName = strArray[4];
                 __instance.description = strArray[5];
                 __result = true;

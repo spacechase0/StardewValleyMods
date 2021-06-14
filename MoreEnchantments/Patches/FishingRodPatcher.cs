@@ -62,7 +62,7 @@ namespace MoreEnchantments.Patches
             if (Game1.currentLocation.isTileBuildingFishable((int)bobberTile.X, (int)bobberTile.Y) && Game1.currentLocation is BuildableGameLocation)
             {
                 Building bldg = (Game1.currentLocation as BuildableGameLocation).getBuildingAt(bobberTile);
-                if (bldg is FishPond pond && pond.currentOccupants > 0)
+                if (bldg is FishPond pond && pond.currentOccupants.Value > 0)
                 {
                     __result = FishPond.FISHING_MILLISECONDS;
                     return false;
@@ -92,7 +92,7 @@ namespace MoreEnchantments.Patches
             if (__instance.attachments[0] != null)
             {
                 time *= 0.5f;
-                if ((int)__instance.attachments[0].parentSheetIndex == 774)
+                if (__instance.attachments[0].ParentSheetIndex == 774)
                 {
                     time *= 0.75f;
                 }
@@ -104,7 +104,7 @@ namespace MoreEnchantments.Patches
         /// <summary>The method to call before <see cref="FishingRod.attach"/>.</summary>
         private static bool Before_Attach(FishingRod __instance, StardewValley.Object o, ref StardewValley.Object __result)
         {
-            if (o != null && o.Category == -21 && (int)__instance.upgradeLevel > 1)
+            if (o != null && o.Category == -21 && __instance.UpgradeLevel > 1)
             {
                 StardewValley.Object tmp = __instance.attachments[0];
                 if (tmp != null && tmp.canStackWith(o))
@@ -120,7 +120,7 @@ namespace MoreEnchantments.Patches
                 __result = tmp;
                 return false;
             }
-            if (o != null && o.Category == -22 && (int)__instance.upgradeLevel > 2)
+            if (o != null && o.Category == -22 && __instance.UpgradeLevel > 2)
             {
                 // Rewrote this portion
                 bool hasEnchant = __instance.hasEnchantmentOfType<MoreLuresEnchantment>();
@@ -179,7 +179,7 @@ namespace MoreEnchantments.Patches
         /// <summary>The method to call before <see cref="FishingRod.drawAttachments"/>.</summary>
         private static void After_DrawAttachments(FishingRod __instance, SpriteBatch b, int x, int y)
         {
-            if ((int)__instance.upgradeLevel > 2 && __instance.hasEnchantmentOfType<MoreLuresEnchantment>())
+            if (__instance.UpgradeLevel > 2 && __instance.hasEnchantmentOfType<MoreLuresEnchantment>())
             {
                 if (__instance.attachments[2] == null)
                 {

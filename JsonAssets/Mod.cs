@@ -2006,9 +2006,9 @@ namespace JsonAssets
                         if (attached == null)
                             continue;
 
-                        if (attached.GetType() != typeof(StardewValley.Object) || attached.bigCraftable)
+                        if (attached.GetType() != typeof(SObject) || attached.bigCraftable.Value)
                         {
-                            Log.Warn("Unsupported attachment types! Let spacechase0 know he needs to support " + attached.bigCraftable.Value + " " + attached);
+                            Log.Warn($"Unsupported attachment types! Let spacechase0 know he needs to support {attached.bigCraftable.Value} {attached}");
                         }
                         else
                         {

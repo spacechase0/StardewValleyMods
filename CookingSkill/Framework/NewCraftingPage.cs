@@ -387,7 +387,7 @@ namespace CookingSkill.Framework
                 Game1.player.craftingRecipes[this.pagesOfCraftingRecipes[this.currentCraftingPage][c].name] += this.pagesOfCraftingRecipes[this.currentCraftingPage][c].numberProducedPerCraft;
             if (this.cooking)
             {
-                Game1.player.cookedRecipe((int)this.heldItem.parentSheetIndex);
+                Game1.player.cookedRecipe(this.heldItem.ParentSheetIndex);
                 /////
                 Game1.player.AddCustomSkillExperience(Mod.Skill, itemObj.Edibility);
                 /////
@@ -537,11 +537,11 @@ namespace CookingSkill.Framework
             int yOffset = this.heldItem != null ? 48 : 0;
             string displayName = this.hoverRecipe.DisplayName;
             string[] buffIconsToDisplay;
-            if (this.cooking && this.lastCookingHover != null)
+            if (this.cooking && this.lastCookingHover is SObject lastCookingObj)
             {
-                if (Game1.objectInformation[(int)(this.lastCookingHover as StardewValley.Object).parentSheetIndex].Split('/').Length > 7)
+                if (Game1.objectInformation[lastCookingObj.ParentSheetIndex].Split('/').Length > 7)
                 {
-                    buffIconsToDisplay = Game1.objectInformation[(int)(this.lastCookingHover as StardewValley.Object).parentSheetIndex].Split('/')[7].Split(' ');
+                    buffIconsToDisplay = Game1.objectInformation[lastCookingObj.ParentSheetIndex].Split('/')[7].Split(' ');
                     goto label_35;
                 }
             }
@@ -590,19 +590,19 @@ namespace CookingSkill.Framework
             {
                 int recipe1 = recipeList[recipeList.Keys.ElementAt<int>(index1)];
                 bool flag = false;
-                for (int index2 = Game1.player.items.Count - 1; index2 >= 0; --index2)
+                for (int index2 = Game1.player.Items.Count - 1; index2 >= 0; --index2)
                 {
-                    if (Game1.player.items[index2] != null && Game1.player.items[index2] is StardewValley.Object && !(bool)(Game1.player.items[index2] as StardewValley.Object).bigCraftable && ((int)Game1.player.items[index2].parentSheetIndex == recipeList.Keys.ElementAt<int>(index1) || Game1.player.items[index2].Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule((StardewValley.Object)Game1.player.items[index2], recipeList.Keys.ElementAt<int>(index1))))
+                    if (Game1.player.Items[index2] is SObject obj && !obj.bigCraftable.Value && (obj.ParentSheetIndex == recipeList.Keys.ElementAt<int>(index1) || obj.Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule(obj, recipeList.Keys.ElementAt<int>(index1))))
                     {
                         int recipe2 = recipeList[recipeList.Keys.ElementAt<int>(index1)];
-                        recipe1 -= Game1.player.items[index2].Stack;
+                        recipe1 -= obj.Stack;
                         /////
-                        used?.Add(new ConsumedItem(Game1.player.items[index2] as SObject));
+                        used?.Add(new ConsumedItem(obj));
                         if (actuallyConsume)
                         /////
-                            Game1.player.items[index2].Stack -= recipe2;
-                        if (Game1.player.items[index2].Stack <= 0)
-                            Game1.player.items[index2] = null;
+                            obj.Stack -= recipe2;
+                        if (obj.Stack <= 0)
+                            Game1.player.Items[index2] = null;
                         if (recipe1 <= 0)
                         {
                             flag = true;
@@ -619,7 +619,7 @@ namespace CookingSkill.Framework
 
                         for (int index3 = additionalMaterial.items.Count - 1; index3 >= 0; --index3)
                         {
-                            if (additionalMaterial.items[index3] != null && additionalMaterial.items[index3] is SObject && ((int)additionalMaterial.items[index3].parentSheetIndex == recipeList.Keys.ElementAt<int>(index1) || additionalMaterial.items[index3].Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule((SObject)additionalMaterial.items[index3], recipeList.Keys.ElementAt<int>(index1))))
+                            if (additionalMaterial.items[index3] != null && additionalMaterial.items[index3] is SObject && (additionalMaterial.items[index3].ParentSheetIndex == recipeList.Keys.ElementAt<int>(index1) || additionalMaterial.items[index3].Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule((SObject)additionalMaterial.items[index3], recipeList.Keys.ElementAt<int>(index1))))
                             {
                                 int num = Math.Min(recipe1, additionalMaterial.items[index3].Stack);
                                 recipe1 -= num;

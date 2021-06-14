@@ -16,9 +16,9 @@ namespace Magic.Framework.Game
         private readonly Farmer Source;
         private readonly ProjectileSpell Spell;
         private readonly NetInt Damage = new();
-        private readonly NetFloat Dir = new();
-        private readonly NetFloat Vel = new();
-        private readonly NetBool Seeking = new();
+        private readonly NetFloat Direction = new();
+        private readonly NetFloat Velocity = new();
+        private readonly NetBool IsSeeking = new();
 
         private Texture2D Tex;
         private readonly NetString TexId = new();
@@ -27,37 +27,37 @@ namespace Magic.Framework.Game
 
         public SpellProjectile()
         {
-            this.NetFields.AddFields(this.Damage, this.Dir, this.Vel, this.Seeking, this.TexId);
+            this.NetFields.AddFields(this.Damage, this.Direction, this.Velocity, this.IsSeeking, this.TexId);
         }
 
-        public SpellProjectile(Farmer theSource, ProjectileSpell theSpell, int dmg, float theDir, float theVel, bool theSeeking)
+        public SpellProjectile(Farmer source, ProjectileSpell spell, int damage, float direction, float velocity, bool isSeeking)
             : this()
         {
 
-            this.Source = theSource;
-            this.Spell = theSpell;
-            this.Damage.Value = dmg;
-            this.Dir.Value = theDir;
-            this.Vel.Value = theVel;
-            this.Seeking.Value = theSeeking;
+            this.Source = source;
+            this.Spell = spell;
+            this.Damage.Value = damage;
+            this.Direction.Value = direction;
+            this.Velocity.Value = velocity;
+            this.IsSeeking.Value = isSeeking;
 
-            this.theOneWhoFiredMe.Set(theSource.currentLocation, this.Source);
+            this.theOneWhoFiredMe.Set(source.currentLocation, this.Source);
             this.position.Value = this.Source.getStandingPosition();
             this.position.X += this.Source.GetBoundingBox().Width;
             this.position.Y += this.Source.GetBoundingBox().Height;
-            this.rotation = theDir;
-            this.xVelocity.Value = (float)Math.Cos(this.Dir) * this.Vel;
-            this.yVelocity.Value = (float)Math.Sin(this.Dir) * this.Vel;
+            this.rotation = direction;
+            this.xVelocity.Value = (float)Math.Cos(this.Direction.Value) * this.Velocity.Value;
+            this.yVelocity.Value = (float)Math.Sin(this.Direction.Value) * this.Velocity.Value;
             this.damagesMonsters.Value = true;
 
             this.Tex = Content.LoadTexture("magic/" + this.Spell.ParentSchoolId + "/" + this.Spell.Id + "/projectile.png");
             this.TexId.Value = Content.LoadTextureKey("magic/" + this.Spell.ParentSchoolId + "/" + this.Spell.Id + "/projectile.png");
 
-            if (this.Seeking)
+            if (this.IsSeeking.Value)
             {
                 float nearestDist = float.MaxValue;
                 Monster nearestMob = null;
-                foreach (var character in theSource.currentLocation.characters)
+                foreach (var character in source.currentLocation.characters)
                 {
                     if (character is Monster mob)
                     {
@@ -84,15 +84,15 @@ namespace Magic.Framework.Game
             if (!(npc is Monster))
                 return;
 
-            bool didDmg = loc.damageMonster(npc.GetBoundingBox(), this.Damage, this.Damage + 1, false, this.Source);
+            bool didDmg = loc.damageMonster(npc.GetBoundingBox(), this.Damage.Value, this.Damage.Value + 1, false, this.Source);
             if (this.Source != null && didDmg)
-                this.Source.AddCustomSkillExperience(Magic.Skill, this.Damage / ((this.theOneWhoFiredMe.Get(loc) as Farmer).CombatLevel + 1));
+                this.Source.AddCustomSkillExperience(Magic.Skill, this.Damage.Value / ((this.theOneWhoFiredMe.Get(loc) as Farmer).CombatLevel + 1));
             this.Disappear(loc);
         }
 
         public override void behaviorOnCollisionWithOther(GameLocation loc)
         {
-            if (!this.Seeking)
+            if (!this.IsSeeking.Value)
                 this.Disappear(loc);
         }
 
@@ -102,13 +102,13 @@ namespace Magic.Framework.Game
 
         public override void behaviorOnCollisionWithTerrainFeature(TerrainFeature t, Vector2 tileLocation, GameLocation loc)
         {
-            if (!this.Seeking)
+            if (!this.IsSeeking.Value)
                 this.Disappear(loc);
         }
 
         public override bool isColliding(GameLocation location)
         {
-            if (this.Seeking)
+            if (this.IsSeeking.Value)
             {
                 return location.doesPositionCollideWithCharacter(this.getBoundingBox()) != null;
             }
@@ -122,7 +122,7 @@ namespace Magic.Framework.Game
 
         public override bool update(GameTime time, GameLocation location)
         {
-            if (this.Seeking)
+            if (this.IsSeeking.Value)
             {
                 if (this.SeekTarget == null || this.SeekTarget.Health <= 0 || this.SeekTarget.currentLocation == null)
                 {
@@ -134,8 +134,8 @@ namespace Magic.Framework.Game
                     Vector2 unit = new Vector2(this.SeekTarget.GetBoundingBox().Center.X + 32, this.SeekTarget.GetBoundingBox().Center.Y + 32) - this.position;
                     unit.Normalize();
 
-                    this.xVelocity.Value = unit.X * this.Vel;
-                    this.yVelocity.Value = unit.Y * this.Vel;
+                    this.xVelocity.Value = unit.X * this.Velocity.Value;
+                    this.yVelocity.Value = unit.Y * this.Velocity.Value;
                 }
             }
 
@@ -145,8 +145,8 @@ namespace Magic.Framework.Game
         public override void updatePosition(GameTime time)
         {
             //if (true) return;
-            this.position.X += this.xVelocity;
-            this.position.Y += this.yVelocity;
+            this.position.X += this.xVelocity.Value;
+            this.position.Y += this.yVelocity.Value;
         }
         /*
         public override bool isColliding(GameLocation location)
@@ -164,7 +164,7 @@ namespace Magic.Framework.Game
         {
             this.Tex ??= Game1.content.Load<Texture2D>(this.TexId.Value);
             Vector2 drawPos = Game1.GlobalToLocal(new Vector2(this.getBoundingBox().X + this.getBoundingBox().Width / 2, this.getBoundingBox().Y + this.getBoundingBox().Height / 2));
-            b.Draw(this.Tex, drawPos, new Rectangle(0, 0, this.Tex.Width, this.Tex.Height), Color.White, this.Dir, new Vector2(this.Tex.Width / 2, this.Tex.Height / 2), 2, SpriteEffects.None, (float)((this.position.Y + (double)(Game1.tileSize * 3 / 2)) / 10000.0));
+            b.Draw(this.Tex, drawPos, new Rectangle(0, 0, this.Tex.Width, this.Tex.Height), Color.White, this.Direction.Value, new Vector2(this.Tex.Width / 2, this.Tex.Height / 2), 2, SpriteEffects.None, (float)((this.position.Y + (double)(Game1.tileSize * 3 / 2)) / 10000.0));
             //Vector2 bdp = Game1.GlobalToLocal(new Vector2(getBoundingBox().X, getBoundingBox().Y));
             //b.Draw(Mod.instance.manaFg, new Rectangle((int)bdp.X, (int)bdp.Y, getBoundingBox().Width, getBoundingBox().Height), Color.White);
         }
@@ -175,7 +175,7 @@ namespace Magic.Framework.Game
             if (this.Spell.SoundHit != null)
                 Game1.playSound(this.Spell.SoundHit);
             //Game1.createRadialDebris(loc, 22 + rand.Next( 2 ), ( int ) position.X / Game1.tileSize, ( int ) position.Y / Game1.tileSize, 3 + rand.Next(5), false);
-            Game1.createRadialDebris(loc, this.TexId, Game1.getSourceRectForStandardTileSheet(Projectile.projectileSheet, 0), 4, (int)this.position.X, (int)this.position.Y, 6 + SpellProjectile.Rand.Next(10), (int)(this.position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 8 + SpellProjectile.Rand.Next(64)), 2.0f);
+            Game1.createRadialDebris(loc, this.TexId.Value, Game1.getSourceRectForStandardTileSheet(Projectile.projectileSheet, 0), 4, (int)this.position.X, (int)this.position.Y, 6 + SpellProjectile.Rand.Next(10), (int)(this.position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 8 + SpellProjectile.Rand.Next(64)), 2.0f);
             //Game1.createRadialDebris(loc, tex, new Rectangle(0, 0, tex.Width, tex.Height), 0, ( int ) position.X, ( int ) position.Y, 3 + rand.Next(5), ( int ) position.Y / Game1.tileSize, Color.White, 5.0f);
             this.destroyMe = true;
         }

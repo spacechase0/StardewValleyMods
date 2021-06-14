@@ -20,7 +20,7 @@ namespace MoreBuildings.Buildings.BigShed
 
         public object getReplacement()
         {
-            Mill building = new Mill(new BluePrint("Mill"), new Vector2(this.tileX, this.tileY));
+            Mill building = new Mill(new BluePrint("Mill"), new Vector2(this.tileX.Value, this.tileY.Value));
             building.indoors.Value = this.indoors.Value;
             building.daysOfConstructionLeft.Value = this.daysOfConstructionLeft.Value;
             building.tileX.Value = this.tileX.Value;

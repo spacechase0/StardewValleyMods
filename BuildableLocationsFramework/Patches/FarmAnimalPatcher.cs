@@ -50,35 +50,35 @@ namespace BuildableLocationsFramework.Patches
             Mod.Instance.Helper.Reflection.GetField<NetEvent0>(__instance, "doBuildingPokeEvent").GetValue().Poll();
             if (!Game1.shouldTimePass())
                 return false;
-            __instance.update(time, environment, (long)__instance.myID, false);
+            __instance.update(time, environment, __instance.myID.Value, false);
             if (!Game1.IsMasterGame)
                 return false;
-            if (currentBuilding != null && Game1.random.NextDouble() < 0.002 && ((bool)currentBuilding.animalDoorOpen && Game1.timeOfDay < 1630) && (!Game1.isRaining && !Game1.currentSeason.Equals("winter") && environment.farmers.Count == 0))
+            if (currentBuilding != null && Game1.random.NextDouble() < 0.002 && (currentBuilding.animalDoorOpen.Value && Game1.timeOfDay < 1630) && (!Game1.isRaining && !Game1.currentSeason.Equals("winter") && environment.farmers.Count == 0))
             {
                 GameLocation locationFromName = Mod.FindOutdoorsOf(currentBuilding);
                 IAnimalLocation locationFromName_animals = (IAnimalLocation)locationFromName;
-                if (locationFromName.isCollidingPosition(new Rectangle(((int)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false) || locationFromName.isCollidingPosition(new Rectangle(((int)currentBuilding.tileX + currentBuilding.animalDoor.X) * 64 + 2, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y + 1) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false))
+                if (locationFromName.isCollidingPosition(new Rectangle((currentBuilding.tileX.Value + currentBuilding.animalDoor.X) * 64 + 2, (currentBuilding.tileY.Value + currentBuilding.animalDoor.Y) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false) || locationFromName.isCollidingPosition(new Rectangle((currentBuilding.tileX.Value + currentBuilding.animalDoor.X) * 64 + 2, (currentBuilding.tileY.Value + currentBuilding.animalDoor.Y + 1) * 64 + 2, (__instance.isCoopDweller() ? 64 : 128) - 4, 60), Game1.viewport, false, 0, false, __instance, false))
                     return false;
-                if (locationFromName_animals.Animals.ContainsKey((long)__instance.myID))
+                if (locationFromName_animals.Animals.ContainsKey(__instance.myID.Value))
                 {
                     for (int index = locationFromName_animals.Animals.Count() - 1; index >= 0; --index)
                     {
-                        if (locationFromName_animals.Animals.Pairs.ElementAt(index).Key.Equals((long)__instance.myID))
+                        if (locationFromName_animals.Animals.Pairs.ElementAt(index).Key.Equals(__instance.myID.Value))
                         {
-                            locationFromName_animals.Animals.Remove((long)__instance.myID);
+                            locationFromName_animals.Animals.Remove(__instance.myID.Value);
                             break;
                         }
                     }
                 }
-                (currentBuilding.indoors.Value as AnimalHouse).animals.Remove((long)__instance.myID);
-                locationFromName_animals.Animals.Add((long)__instance.myID, __instance);
+                (currentBuilding.indoors.Value as AnimalHouse).animals.Remove(__instance.myID.Value);
+                locationFromName_animals.Animals.Add(__instance.myID.Value, __instance);
                 __instance.faceDirection(2);
                 __instance.SetMovingDown(true);
-                __instance.Position = new Vector2(currentBuilding.getRectForAnimalDoor().X, ((int)currentBuilding.tileY + currentBuilding.animalDoor.Y) * 64 - (__instance.Sprite.getHeight() * 4 - __instance.GetBoundingBox().Height) + 32);
+                __instance.Position = new Vector2(currentBuilding.getRectForAnimalDoor().X, (currentBuilding.tileY.Value + currentBuilding.animalDoor.Y) * 64 - (__instance.Sprite.getHeight() * 4 - __instance.GetBoundingBox().Height) + 32);
                 if (FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick)
                 {
                     ++FarmAnimal.NumPathfindingThisTick;
-                    __instance.controller = new PathFindController(__instance, locationFromName, new PathFindController.isAtEnd(FarmAnimal.grassEndPointFunction), Game1.random.Next(4), false, new PathFindController.endBehavior(FarmAnimal.behaviorAfterFindingGrassPatch), 200, Point.Zero);
+                    __instance.controller = new PathFindController(__instance, locationFromName, FarmAnimal.grassEndPointFunction, Game1.random.Next(4), false, FarmAnimal.behaviorAfterFindingGrassPatch, 200, Point.Zero);
                 }
                 if (__instance.controller?.pathToEndPoint == null || __instance.controller.pathToEndPoint.Count < 3)
                 {
@@ -119,7 +119,7 @@ namespace BuildableLocationsFramework.Patches
                     __instance.Sprite.CurrentAnimation = null;
                 return false;
             }
-            __instance.update(time, location, (long)__instance.myID, false);
+            __instance.update(time, location, __instance.myID.Value, false);
             if (Game1.IsMasterGame && Mod.Instance.Helper.Reflection.GetMethod(__instance, "behaviors").Invoke<bool>(time, location) || __instance.Sprite.CurrentAnimation != null)
                 return false;
             if (__instance.controller != null && __instance.controller.timerSinceLastCheckPoint > 10000)
@@ -134,9 +134,9 @@ namespace BuildableLocationsFramework.Patches
                 {
                     if (Utility.isOnScreen(__instance.getTileLocationPoint(), 192, location))
                         location.localSound("dwoop");
-                    animalLocation.Animals.Remove((long)__instance.myID);
-                    (building.indoors.Value as AnimalHouse).animals[(long)__instance.myID] = __instance;
-                    __instance.setRandomPosition(building.indoors);
+                    animalLocation.Animals.Remove(__instance.myID.Value);
+                    (building.indoors.Value as AnimalHouse).animals[__instance.myID.Value] = __instance;
+                    __instance.setRandomPosition(building.indoors.Value);
                     __instance.faceDirection(Game1.random.Next(4));
                     __instance.controller = null;
                     return true;
@@ -155,7 +155,7 @@ namespace BuildableLocationsFramework.Patches
             }
             else if (__instance.pauseTimer <= 0)
             {
-                if (Game1.random.NextDouble() < 0.001 && (int)__instance.age >= (byte)__instance.ageWhenMature && (Game1.gameMode == 3 && __instance.sound.Value != null) && Utility.isOnScreen(__instance.Position, 192))
+                if (Game1.random.NextDouble() < 0.001 && __instance.age.Value >= __instance.ageWhenMature.Value && (Game1.gameMode == 3 && __instance.sound.Value != null) && Utility.isOnScreen(__instance.Position, 192))
                     __instance.makeSound();
                 if (!Game1.IsClient && Game1.random.NextDouble() < 0.007 && __instance.uniqueFrameAccumulator == -1)
                 {
@@ -166,7 +166,7 @@ namespace BuildableLocationsFramework.Patches
                         {
                             int facingDirection = __instance.FacingDirection;
                             __instance.faceDirection(direction);
-                            if (!(bool)location.isOutdoors && location.isCollidingPosition(__instance.nextPosition(direction), Game1.viewport, __instance))
+                            if (!location.IsOutdoors && location.isCollidingPosition(__instance.nextPosition(direction), Game1.viewport, __instance))
                             {
                                 __instance.faceDirection(facingDirection);
                                 return false;
@@ -287,18 +287,17 @@ namespace BuildableLocationsFramework.Patches
         /// <summary>The method to call before <see cref="FarmAnimal.behaviors"/>.</summary>
         public static bool Before_Behaviors(FarmAnimal __instance, GameTime time, GameLocation location, ref bool __result)
         {
-            NetBool isEating = __instance.isEating;
             if (__instance.home == null)
             {
                 __result = false;
                 return false;
             }
-            if ((bool)isEating)
+            if (__instance.isEating.Value)
             {
                 if (__instance.home != null && __instance.home.getRectForAnimalDoor().Intersects(__instance.GetBoundingBox()))
                 {
                     FarmAnimal.behaviorAfterFindingGrassPatch(__instance, location);
-                    isEating.Value = false;
+                    __instance.isEating.Value = false;
                     __instance.Halt();
                     __result = false;
                     return false;
@@ -308,7 +307,7 @@ namespace BuildableLocationsFramework.Patches
                     __instance.Sprite.Animate(time, 16, 4, 100f);
                     if (__instance.Sprite.currentFrame >= 20)
                     {
-                        isEating.Value = false;
+                        __instance.isEating.Value = false;
                         __instance.Sprite.loop = true;
                         __instance.Sprite.currentFrame = 0;
                         __instance.faceDirection(2);
@@ -319,7 +318,7 @@ namespace BuildableLocationsFramework.Patches
                     __instance.Sprite.Animate(time, 24, 4, 100f);
                     if (__instance.Sprite.currentFrame >= 28)
                     {
-                        isEating.Value = false;
+                        __instance.isEating.Value = false;
                         __instance.Sprite.loop = true;
                         __instance.Sprite.currentFrame = 0;
                         __instance.faceDirection(2);
@@ -335,18 +334,18 @@ namespace BuildableLocationsFramework.Patches
                     __result = true;
                     return false;
                 }
-                if (location.IsOutdoors && (byte)__instance.fullness < 195 && (Game1.random.NextDouble() < 0.002 && FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick))
+                if (location.IsOutdoors && __instance.fullness.Value < 195 && (Game1.random.NextDouble() < 0.002 && FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick))
                 {
                     ++FarmAnimal.NumPathfindingThisTick;
-                    __instance.controller = new PathFindController(__instance, location, new PathFindController.isAtEnd(FarmAnimal.grassEndPointFunction), -1, false, new PathFindController.endBehavior(FarmAnimal.behaviorAfterFindingGrassPatch), 200, Point.Zero);
+                    __instance.controller = new PathFindController(__instance, location, FarmAnimal.grassEndPointFunction, -1, false, FarmAnimal.behaviorAfterFindingGrassPatch, 200, Point.Zero);
                 }
                 if (Game1.timeOfDay >= 1700 && location.IsOutdoors && (__instance.controller == null && Game1.random.NextDouble() < 0.002))
                 {
                     if (location.farmers.Count == 0)
                     {
-                        (location as Farm).animals.Remove((long)__instance.myID);
-                        (__instance.home.indoors.Value as AnimalHouse).animals.Add((long)__instance.myID, __instance);
-                        __instance.setRandomPosition(__instance.home.indoors);
+                        (location as Farm).animals.Remove(__instance.myID.Value);
+                        (__instance.home.indoors.Value as AnimalHouse).animals.Add(__instance.myID.Value, __instance);
+                        __instance.setRandomPosition(__instance.home.indoors.Value);
                         __instance.faceDirection(Game1.random.Next(4));
                         __instance.controller = null;
                         __result = true;
@@ -355,10 +354,10 @@ namespace BuildableLocationsFramework.Patches
                     if (FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick)
                     {
                         ++FarmAnimal.NumPathfindingThisTick;
-                        __instance.controller = new PathFindController(__instance, location, new PathFindController.isAtEnd(PathFindController.isAtEndPoint), 0, false, null, 200, new Point((int)__instance.home.tileX + __instance.home.animalDoor.X, (int)__instance.home.tileY + __instance.home.animalDoor.Y));
+                        __instance.controller = new PathFindController(__instance, location, PathFindController.isAtEndPoint, 0, false, null, 200, new Point(__instance.home.tileX.Value + __instance.home.animalDoor.X, __instance.home.tileY.Value + __instance.home.animalDoor.Y));
                     }
                 }
-                if (location.IsOutdoors && !Game1.isRaining && (!Game1.currentSeason.Equals("winter") && (int)__instance.currentProduce != -1) && ((int)__instance.age >= (byte)__instance.ageWhenMature && __instance.type.Value.Contains("Pig") && Game1.random.NextDouble() < 0.0002))
+                if (location.IsOutdoors && !Game1.isRaining && (!Game1.currentSeason.Equals("winter") && __instance.currentProduce.Value != -1) && (__instance.age.Value >= __instance.ageWhenMature.Value && __instance.type.Value.Contains("Pig") && Game1.random.NextDouble() < 0.0002))
                 {
                     Rectangle boundingBox = __instance.GetBoundingBox();
                     for (int corner = 0; corner < 4; ++corner)

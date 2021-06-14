@@ -40,10 +40,10 @@ namespace MoreGrassStarters
         public override void loadSprite()
         {
             base.loadSprite();
-            if (this.grassType >= 5)
+            if (this.grassType.Value >= 5)
             {
                 this.texture = new Lazy<Texture2D>(() => GrassStarterItem.Tex2);
-                this.grassSourceOffset.Value = 20 * (this.grassType - 5);
+                this.grassSourceOffset.Value = 20 * (this.grassType.Value - 5);
             }
         }
 

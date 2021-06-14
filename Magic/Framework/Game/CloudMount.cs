@@ -27,7 +27,7 @@ namespace Magic.Framework.Game
                     dismountedOnce = true;
                 }
                 else*/
-                if (!this.dismounting)
+                if (!this.dismounting.Value)
                     this.currentLocation.characters.Remove(this);
                 return;
             }

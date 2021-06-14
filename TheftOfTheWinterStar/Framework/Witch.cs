@@ -151,7 +151,7 @@ namespace TheftOfTheWinterStar.Framework
 
         public override void drawAboveAllLayers(SpriteBatch b)
         {
-            b.Draw(Game1.mouseCursors, this.getLocalPosition(Game1.viewport), new Rectangle(Witch.CursorsPosX, Witch.CursorsPosY + (this.AnimTimer < 20 ? Witch.TexHeight : 0), Witch.TexWidth, Witch.TexHeight), Color.White, 0, Vector2.Zero, 4, this.FacingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 1);
+            b.Draw(Game1.mouseCursors, this.getLocalPosition(Game1.viewport), new Rectangle(Witch.CursorsPosX, Witch.CursorsPosY + (this.AnimTimer < 20 ? Witch.TexHeight : 0), Witch.TexWidth, Witch.TexHeight), Color.White, 0, Vector2.Zero, 4, this.FacingRight.Value ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 1);
             if (++this.AnimTimer >= 40)
                 this.AnimTimer = 0;
         }

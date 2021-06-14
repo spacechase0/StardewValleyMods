@@ -59,7 +59,7 @@ namespace ThrowableAxe
                     thrown.target.Value = Helper.Input.GetCursorPosition().AbsolutePixels;
                 }
                 */
-                if (!this.Clicking || (this.Thrown.GetPosition() - this.Thrown.Target).Length() < 1)
+                if (!this.Clicking || (this.Thrown.GetPosition() - this.Thrown.Target.Value).Length() < 1)
                 {
                     var playerPos = Game1.player.getStandingPosition();
                     playerPos.X -= 16;

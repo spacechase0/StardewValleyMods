@@ -15,14 +15,15 @@ namespace BuildableLocationsFramework.Framework
     {
         public NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> Animals { get; } = new();
 
-        private void MyWarpHome(FarmAnimal farmAnimal, FarmAnimal a)
+        private void MyWarpHome(FarmAnimal farmAnimal)
         {
-            if (farmAnimal.home == null)
+            if (farmAnimal.home?.indoors.Value is not AnimalHouse animalHouse)
                 return;
-            (farmAnimal.home.indoors.Value as AnimalHouse).animals.Add((long)farmAnimal.myID, farmAnimal);
-            this.Animals.Remove((long)farmAnimal.myID);
+
+            animalHouse.animals.Add(farmAnimal.myID.Value, farmAnimal);
+            this.Animals.Remove(farmAnimal.myID.Value);
             farmAnimal.controller = null;
-            farmAnimal.setRandomPosition(farmAnimal.home.indoors);
+            farmAnimal.setRandomPosition(animalHouse);
             ++farmAnimal.home.currentOccupants.Value;
         }
 
@@ -70,7 +71,7 @@ namespace BuildableLocationsFramework.Framework
 
             foreach (Building building in this.buildings)
             {
-                if ((int)building.daysOfConstructionLeft <= 0)
+                if (building.daysOfConstructionLeft.Value <= 0)
                 {
                     building.performTenMinuteAction(timeElapsed);
                     if (building.indoors.Value != null && !Game1.locations.Contains(building.indoors.Value) && timeElapsed >= 10)
@@ -117,7 +118,7 @@ namespace BuildableLocationsFramework.Framework
         {
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
-                if (!(bool)pair.Value.wasPet && pair.Value.GetCursorPetBoundingBox().Contains((int)position.X, (int)position.Y))
+                if (!pair.Value.wasPet.Value && pair.Value.GetCursorPetBoundingBox().Contains((int)position.X, (int)position.Y))
                 {
                     pair.Value.pet(who);
                     return true;
@@ -130,7 +131,7 @@ namespace BuildableLocationsFramework.Framework
         {
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
-                if (!(bool)pair.Value.wasPet && pair.Value.GetBoundingBox().Intersects(rect))
+                if (!pair.Value.wasPet.Value && pair.Value.GetBoundingBox().Intersects(rect))
                 {
                     pair.Value.pet(who);
                     return true;
@@ -143,7 +144,7 @@ namespace BuildableLocationsFramework.Framework
         {
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
-                if ((bool)pair.Value.wasPet && pair.Value.GetCursorPetBoundingBox().Contains((int)position.X, (int)position.Y))
+                if (pair.Value.wasPet.Value && pair.Value.GetCursorPetBoundingBox().Contains((int)position.X, (int)position.Y))
                 {
                     pair.Value.pet(who);
                     return true;
@@ -156,7 +157,7 @@ namespace BuildableLocationsFramework.Framework
         {
             foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
             {
-                if ((bool)pair.Value.wasPet && pair.Value.GetBoundingBox().Intersects(rect))
+                if (pair.Value.wasPet.Value && pair.Value.GetBoundingBox().Intersects(rect))
                 {
                     pair.Value.pet(who);
                     return true;
@@ -188,23 +189,21 @@ namespace BuildableLocationsFramework.Framework
                 {
                     KeyValuePair<long, FarmAnimal> keyValuePair = this.Animals.Pairs.ElementAt(index);
                     FarmAnimal farmAnimal = keyValuePair.Value;
-                    keyValuePair = this.Animals.Pairs.ElementAt(index);
-                    FarmAnimal a = keyValuePair.Value;
-                    this.MyWarpHome(farmAnimal, a);
+                    this.MyWarpHome(farmAnimal);
                 }
             }
 
-            if (this.isThereABuildingUnderConstruction() && (int)this.getBuildingUnderConstruction().daysOfConstructionLeft > 0 && Game1.getCharacterFromName("Robin").currentLocation.Equals(this))
+            Building underConstruction = this.getBuildingUnderConstruction();
+            if (underConstruction?.daysOfConstructionLeft.Value > 0 && Game1.getCharacterFromName("Robin").currentLocation.Equals(this))
             {
-                Building underConstruction = this.getBuildingUnderConstruction();
-                this.temporarySprites.Add(new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(399, 262, (int)(NetFieldBase<int, NetInt>)underConstruction.daysOfConstructionLeft == 1 ? 29 : 9, 43), new Vector2((int)underConstruction.tileX + (int)underConstruction.tilesWide / 2, (int)underConstruction.tileY + (int)underConstruction.tilesHigh / 2) * 64f + new Vector2(-16f, -144f), false, 0.0f, Color.White)
+                this.temporarySprites.Add(new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(399, 262, underConstruction.daysOfConstructionLeft.Value == 1 ? 29 : 9, 43), new Vector2(underConstruction.tileX.Value + underConstruction.tilesWide.Value / 2, underConstruction.tileY.Value + underConstruction.tilesHigh.Value / 2) * 64f + new Vector2(-16f, -144f), false, 0.0f, Color.White)
                 {
                     id = 16846f,
                     scale = 4f,
                     interval = 999999f,
                     animationLength = 1,
                     totalNumberOfLoops = 99999,
-                    layerDepth = (((int)underConstruction.tileY + (int)underConstruction.tilesHigh / 2) * 64 + 32) / 10000f
+                    layerDepth = ((underConstruction.tileY.Value + underConstruction.tilesHigh.Value / 2) * 64 + 32) / 10000f
                 });
             }
             else

@@ -55,12 +55,12 @@ namespace CustomBuildings
                 foreach (var dir in buildingsDir.EnumerateDirectories())
                 {
                     string relDir = $"Buildings/{dir.Name}";
-                    BuildingData binfo = cp.ReadJsonFile<BuildingData>(Path.Combine(relDir, "building.json"));
-                    if (binfo == null)
+                    BuildingData buildingData = cp.ReadJsonFile<BuildingData>(Path.Combine(relDir, "building.json"));
+                    if (buildingData == null)
                         continue;
-                    binfo.Texture = cp.LoadAsset<Texture2D>(Path.Combine(relDir, "building.png"));
-                    binfo.MapLoader = () => cp.LoadAsset<xTile.Map>(Path.Combine(relDir, "building.tbin"));
-                    this.Buildings.Add(binfo.Id, binfo);
+                    buildingData.Texture = cp.LoadAsset<Texture2D>(Path.Combine(relDir, "building.png"));
+                    buildingData.MapLoader = () => cp.LoadAsset<xTile.Map>(Path.Combine(relDir, "building.tbin"));
+                    this.Buildings.Add(buildingData.Id, buildingData);
                 }
             }
         }
@@ -93,7 +93,7 @@ namespace CustomBuildings
                     // This is probably a new building if it hasn't been converted yet.
                     if (this.Buildings.TryGetValue(b.buildingType.Value, out BuildingData buildingData) && !(b is Coop))
                     {
-                        farm.buildings[i] = new Coop(new BluePrint(b.buildingType), new Vector2(b.tileX, b.tileY));
+                        farm.buildings[i] = new Coop(new BluePrint(b.buildingType.Value), new Vector2(b.tileX.Value, b.tileY.Value));
                         farm.buildings[i].indoors.Value = b.indoors.Value;
                         farm.buildings[i].load();
                         (farm.buildings[i].indoors.Value as AnimalHouse).animalLimit.Value = buildingData.MaxOccupants;
@@ -121,7 +121,7 @@ namespace CustomBuildings
                 else if (asset.AssetNameEquals("Maps\\" + building.Key))
                     return (T)(object)building.Value.MapLoader();
             }
-            return default(T);
+            return default;
         }
 
         public bool CanEdit<T>(IAssetInfo asset)

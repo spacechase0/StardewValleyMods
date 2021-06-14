@@ -91,13 +91,13 @@ namespace MoreGrassStarters
             b.Draw(tex, pos + new Vector2(4, 0), new Rectangle(0, texOffset, 16, 20), Color.White, 0, Vector2.Zero, 4 * scale, SpriteEffects.None, layerDepth);
 
             if ((drawStackNumber == StackDrawType.Draw && this.maximumStackSize() > 1 && this.Stack > 1 || drawStackNumber == StackDrawType.Draw_OneInclusive) && scale > 0.3 && this.Stack != int.MaxValue)
-                Utility.drawTinyDigits(this.Stack, b, pos + new Vector2(Game1.tileSize - Utility.getWidthOfTinyDigitString(this.stack, 3f * scale) + 3f * scale, (float)(Game1.tileSize - 18.0 * scale + 2.0)), 3f * scale, 1f, Color.White);
+                Utility.drawTinyDigits(this.Stack, b, pos + new Vector2(Game1.tileSize - Utility.getWidthOfTinyDigitString(this.Stack, 3f * scale) + 3f * scale, (float)(Game1.tileSize - 18.0 * scale + 2.0)), 3f * scale, 1f, Color.White);
         }
 
         // Custom Element Handler
         public object getReplacement()
         {
-            return new SObject(297, this.stack);
+            return new SObject(297, this.Stack);
         }
 
         public Dictionary<string, string> getAdditionalSaveData()

@@ -67,7 +67,7 @@ namespace CustomNPCFixes
                             continue;
                         }
                         found = true;
-                        if ((bool)n2.datable && n2.getSpouse() == null)
+                        if (n2.datable.Value && n2.getSpouse() == null)
                         {
                             string defaultMap = npcDispositions[s].Split('/')[10].Split(' ')[0];
                             if (n2.DefaultMap != defaultMap && (n2.DefaultMap.ToLower().Contains("cabin") || n2.DefaultMap.Equals("FarmHouse")))

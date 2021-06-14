@@ -57,7 +57,7 @@ namespace TheftOfTheWinterStar.Patches
                             if (__instance.crop == null)
                             {
                                 Crop crop = new Crop(objectIndex, tileX, tileY);
-                                __result = !crop.raisedSeeds || !Utility.doesRectangleIntersectTile(Game1.player.GetBoundingBox(), tileX, tileY);
+                                __result = !crop.raisedSeeds.Value || !Utility.doesRectangleIntersectTile(Game1.player.GetBoundingBox(), tileX, tileY);
                             }
                             else
                                 __result = false;
@@ -102,15 +102,15 @@ namespace TheftOfTheWinterStar.Patches
             {
                 return false;
             }
-            if (!who.currentLocation.isFarm && !who.currentLocation.IsGreenhouse && !who.currentLocation.CanPlantSeedsHere(index, tileX, tileY) && who.currentLocation.IsOutdoors)
+            if (!who.currentLocation.IsFarm && !who.currentLocation.IsGreenhouse && !who.currentLocation.CanPlantSeedsHere(index, tileX, tileY) && who.currentLocation.IsOutdoors)
             {
                 Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HoeDirt.cs.13919"));
                 return false;
             }
-            if (foundDelimiter || !who.currentLocation.isOutdoors || who.currentLocation.IsGreenhouse || c.seasonsToGrowIn.Contains(location.GetSeasonForLocation()) || who.currentLocation.SeedsIgnoreSeasonsHere())
+            if (foundDelimiter || !who.currentLocation.IsOutdoors || who.currentLocation.IsGreenhouse || c.seasonsToGrowIn.Contains(location.GetSeasonForLocation()) || who.currentLocation.SeedsIgnoreSeasonsHere())
             {
                 __instance.crop = c;
-                if ((bool)c.raisedSeeds)
+                if (c.raisedSeeds.Value)
                 {
                     location.playSound("stoneStep");
                 }

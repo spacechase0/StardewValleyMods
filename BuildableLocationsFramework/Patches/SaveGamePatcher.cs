@@ -48,7 +48,7 @@ namespace BuildableLocationsFramework.Patches
                     continue;
                 if (gamelocation is BuildableGameLocation buildableGameLocation)
                 {
-                    BuildableGameLocation locationFromName = (BuildableGameLocation)Game1.getLocationFromName(gamelocation.name);
+                    BuildableGameLocation locationFromName = (BuildableGameLocation)Game1.getLocationFromName(gamelocation.Name);
                     foreach (Building building in buildableGameLocation.buildings)
                         building.load();
                     locationFromName.buildings.Set(buildableGameLocation.buildings);
