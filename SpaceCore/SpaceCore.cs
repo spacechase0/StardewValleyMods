@@ -20,6 +20,7 @@ namespace SpaceCore
         private HarmonyInstance Harmony;
 
         internal static List<Type> ModTypes = new();
+        internal static Queue<IDisposable> DisposingQueue = new();
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -32,6 +33,7 @@ namespace SpaceCore
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdate;
+            helper.Events.GameLoop.OneSecondUpdateTicked += this.OnOneSecondUpdateTicked;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
 
             Commands.Register();
@@ -93,6 +95,13 @@ namespace SpaceCore
                     this.Harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
             }
         }
+
+        private void OnOneSecondUpdateTicked(object sender, OneSecondUpdateTickedEventArgs e) {
+            // TryDequeue not available on net452
+            if (DisposingQueue.Count == 0) return;
+            // Dispose exactly one item. We don't want too-early disposal.
+            DisposingQueue.Dequeue().Dispose();
+            }
 
         /// <summary>Raised after the player loads a save slot.</summary>
         /// <param name="sender">The event sender.</param>
