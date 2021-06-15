@@ -5,6 +5,6 @@ namespace SpaceCore.Framework
         public bool CustomSkillPage { get; set; } = true;
         public bool WalletLegacyStyle { get; set; } = false;
         public bool WalletOnRightOfSkillPage { get; set; } = false;
-        public bool DisposeOldTextures { get; set; } = true;
+        public bool DisposeOldTextures { get; set; } = false;
     }
 }
