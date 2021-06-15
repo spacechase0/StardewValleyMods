@@ -9,6 +9,8 @@ namespace SpaceCore
 {
     public static class TileSheetExtensions
     {
+        const int TEXTURE_DISPOSAL_DELAY = 5;
+
         internal class ExtensionData
         {
             public ExtensionData(string assetPath, int unitSize)
@@ -172,14 +174,18 @@ namespace SpaceCore
                     Log.Error("WHAT? null " + asset.Key);
                     TileSheetExtensions.ExtendedTextures.Remove(oldTexture);
                     if (disposeOld)
-                        SpaceCore.TextureDisposalQueue.Enqueue(oldTexture);
+                        SpaceCore.TextureDisposalQueue.Enqueue(
+                            new KeyValuePair<System.IDisposable, int>(oldTexture, SpaceCore.SecondsSinceStart + TEXTURE_DISPOSAL_DELAY)
+                        );
                 }
                 else
                 {
                     TileSheetExtensions.ExtendedTextures[asset.Value.BaseTileSheet] = asset.Value;
                     if (disposeOld && oldTexture != asset.Value.BaseTileSheet)
-                        SpaceCore.TextureDisposalQueue.Enqueue(oldTexture);
-                }
+                        SpaceCore.TextureDisposalQueue.Enqueue(
+                            new KeyValuePair<System.IDisposable, int>(oldTexture, SpaceCore.SecondsSinceStart + TEXTURE_DISPOSAL_DELAY)
+                        );
+                    }
             }
         }
 
