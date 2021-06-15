@@ -20,8 +20,8 @@ namespace SpaceCore
         private HarmonyInstance Harmony;
 
         internal static List<Type> ModTypes = new();
-        internal static Queue<IDisposable> TextureDisposalQueue = new();
-        private IDisposable NextToDispose = null;
+        internal static int SecondsSinceStart = 0;
+        internal static Queue<KeyValuePair<IDisposable, int>> TextureDisposalQueue = new();
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -97,20 +97,24 @@ namespace SpaceCore
             }
         }
 
-        private void OnOneSecondUpdateTicked(object sender, OneSecondUpdateTickedEventArgs e) {
-            if (this.NextToDispose != null)
-                {
-                this.NextToDispose.Dispose();
-                this.NextToDispose = null;
-                }
+        private void OnOneSecondUpdateTicked(object sender, OneSecondUpdateTickedEventArgs e)
+        {
+            // Question: Is there an internal counter somewhere, accessible outside event handlers?
+            // If there is one, and it's accessible from TileSheetExtensions, I'd rather use that than adding another counter.
+            // But I haven't found one, so I'm using an internal counter here.
+            SecondsSinceStart++;
             if (this.Config.DisposeOldTextures)
-                {
+            {
                 // TryDequeue not available on net452
                 if (TextureDisposalQueue.Count != 0)
-                    // Dispose exactly one item. We don't want too-early disposal.
-                    this.NextToDispose = TextureDisposalQueue.Dequeue();
+                {
+                    while (TextureDisposalQueue.Peek().Value < SecondsSinceStart)
+                    {
+                        TextureDisposalQueue.Dequeue().Key.Dispose();
+                    }
                 }
             }
+        }
 
         /// <summary>Raised after the player loads a save slot.</summary>
         /// <param name="sender">The event sender.</param>
