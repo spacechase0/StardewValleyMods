@@ -242,6 +242,8 @@ namespace GenericModConfigMenu.Framework
                         label.Bold = true;
                         label.Callback = e =>
                         {
+                            // Gonna transition to a new menu, let go of current Escape detector
+                            this.CheckEscape(false);
                             if (TitleMenu.subMenu == this)
                                 TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, option.NewPage, this.CurrPage);
                             else if (Game1.activeClickableMenu == this)
@@ -501,6 +503,8 @@ namespace GenericModConfigMenu.Framework
                     opt.SyncToMod();
             this.ModConfig.SaveToFile.Invoke();
 
+            // Gonna transition to a new menu, let go of current Escape detector
+            this.CheckEscape(false);
             if (TitleMenu.subMenu == this)
                 TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.CurrPage, this.PrevPage);
             else if (Game1.activeClickableMenu == this)
@@ -518,13 +522,13 @@ namespace GenericModConfigMenu.Framework
 
         private void Close()
         {
+            this.CheckEscape(false);
             if (TitleMenu.subMenu == this)
                 TitleMenu.subMenu = new ModConfigMenu(this.InGame);
             else if (!this.InGame && Game1.activeClickableMenu == this)
                 Game1.activeClickableMenu = null;
             else
                 Game1.activeClickableMenu = new ModConfigMenu(this.InGame);
-
             Mod.Instance.Helper.Content.AssetEditors.Remove(this);
         }
 
@@ -547,7 +551,6 @@ namespace GenericModConfigMenu.Framework
         {
             if (args.Button == SButton.Escape)
             {
-                this.CheckEscape(false);
                 this.Cancel();
             }
         }
