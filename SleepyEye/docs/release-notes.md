@@ -8,7 +8,7 @@
 * SpaceCore is no longer required.
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Improved documentation.
-* Internal refactoring.
+* Internal refactoring and optimizations.
 
 **Update note:**  
 If you slept in a tent before updating the mod, you'll start the day at home. The tent location

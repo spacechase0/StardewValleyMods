@@ -193,7 +193,7 @@ namespace SpaceCore.Patches
             var newInsns = new List<CodeInstruction>();
             foreach (var insn in insns)
             {
-                if (insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo).Name == "Deserialize")
+                if (insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo).Name == nameof(XmlSerializer.Deserialize))
                 {
                     insn.opcode = OpCodes.Call;
                     insn.operand = PatchHelper.RequireMethod<SaveGamePatcher>(nameof(DeserializeProxy));
@@ -304,9 +304,11 @@ namespace SpaceCore.Patches
 
         private static object DeserializeProxy(XmlSerializer serializer, Stream stream, string farmerPath, bool fromSaveGame)
         {
-            XmlDocument doc = new XmlDocument();
+            // load XML
+            XmlDocument doc = new();
             doc.Load(stream);
 
+            // get path to serialized SpaceCore data file
             string filePath;
             if (fromSaveGame)
             {
@@ -319,14 +321,15 @@ namespace SpaceCore.Patches
             else
                 filePath = Path.Combine(Path.GetDirectoryName(farmerPath), SaveGamePatcher.SerializerManager.FarmerFilename);
 
+            // restore mod nodes
             if (File.Exists(filePath))
             {
-                List<KeyValuePair<string, string>> modNodes = null;
-                modNodes = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(File.ReadAllText(filePath));
+                var modNodes = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(File.ReadAllText(filePath));
                 if (modNodes != null)
                     SaveGamePatcher.RestoreModNodes(doc, doc, modNodes, "/1"); // <?xml ... ?> is 1
             }
 
+            // deserialize XML
             using var reader = new XmlTextReader(new StringReader(doc.OuterXml));
             return serializer.Deserialize(reader);
         }
