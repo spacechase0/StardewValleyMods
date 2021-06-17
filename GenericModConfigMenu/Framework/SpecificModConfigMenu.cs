@@ -123,7 +123,7 @@ namespace GenericModConfigMenu.Framework
 
                         other = new Label
                         {
-                            String = option.Value.IsBound ? option.Value.Keybinds[0].ToString() : "(None)",
+                            String = option.Value.IsBound ? option.Value.ToString() : "(None)",
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                             Callback = (Element e) => this.DoKeybinding2For(option, e as Label)
                         };
@@ -573,6 +573,7 @@ namespace GenericModConfigMenu.Framework
             this.KeybindingLabel = null;
             this.Ui.Obscured = false;
         }
+
         private void AssignKeybinding2(object sender, ButtonsChangedEventArgs e)
         {
             if (this.Keybinding2Opt == null)
@@ -599,8 +600,8 @@ namespace GenericModConfigMenu.Framework
                     all.Add(button);
 
                     Game1.playSound("coin");
-                    this.Keybinding2Opt.Value.Keybinds[0] = new Keybind(all.ToArray());
-                    this.KeybindingLabel.String = this.Keybinding2Opt.Value.Keybinds[0].ToString();
+                    this.Keybinding2Opt.Value = new KeybindList(new Keybind(all.ToArray()));
+                    this.KeybindingLabel.String = this.Keybinding2Opt.Value.ToString();
                 }
 
                 if (stop)
