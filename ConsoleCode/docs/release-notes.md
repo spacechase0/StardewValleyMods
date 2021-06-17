@@ -5,11 +5,12 @@
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Improved documentation.
 
-# 1.0.2
+## 1.0.2
 Released 26 November 2019 for Stardew Valley 1.4.
 
 * Updated for Stardew Valley 1.4.
 * Fixed Linux/macOS support.
+* You can now use backticks (<code>\`</code>) in the console in place of double-quotes (`"`).
 
 ## 1.0.1
 Released 17 January 2019 for Stardew Valley 1.3.33.
