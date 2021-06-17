@@ -4,6 +4,7 @@
 ## Upcoming release
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows). (Thanks to pepoluan for a related winter crop fix!)
 * Fixed cask contents not ID-fixed.¹
+* Fixed combined rings not ID-fixed in some cases (thanks to SlivaStari!).
 * Internal refactoring.
 * Improved documentation. (Thanks to 6480k and ParadigmNomad for some updates in the author guide!)
 
