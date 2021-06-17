@@ -24,8 +24,10 @@ namespace GenericModConfigMenu
 
         public override void Entry(IModHelper helper)
         {
+            this.Monitor.Log($"GMCM version {ModManifest.Version} loading...", LogLevel.Info);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
+            Api.ApiLog = Monitor.Log;
 
             this.Ui = new RootElement();
 
