@@ -476,6 +476,7 @@ namespace GenericModConfigMenu.Framework
 
             if (Constants.TargetPlatform != GamePlatform.Android)
             {
+                this.CheckEscape(true);
                 foreach (var label in this.OptHovers)
                 {
                     if (!label.Hover)
@@ -533,11 +534,30 @@ namespace GenericModConfigMenu.Framework
             this.Close();
         }
 
+
+        private void CheckEscape(bool active)
+        {
+            if (active)
+                Mod.Instance.Helper.Events.Input.ButtonReleased += this.Escape;
+            else
+                Mod.Instance.Helper.Events.Input.ButtonReleased -= this.Escape;
+        }
+
+        private void Escape(object sender, ButtonReleasedEventArgs args)
+        {
+            if (args.Button == SButton.Escape)
+            {
+                this.CheckEscape(false);
+                this.Cancel();
+            }
+        }
+
         private SimpleModOption<SButton> KeybindingOpt;
         private SimpleModOption<KeybindList> Keybinding2Opt;
         private Label KeybindingLabel;
         private void DoKeybindingFor(SimpleModOption<SButton> opt, Label label)
         {
+            this.CheckEscape(false);
             Game1.playSound("breathin");
             this.KeybindingOpt = opt;
             this.KeybindingLabel = label;
@@ -546,6 +566,7 @@ namespace GenericModConfigMenu.Framework
         }
         private void DoKeybinding2For(SimpleModOption<KeybindList> opt, Label label)
         {
+            this.CheckEscape(false);
             Game1.playSound("breathin");
             this.Keybinding2Opt = opt;
             this.KeybindingLabel = label;
@@ -572,6 +593,8 @@ namespace GenericModConfigMenu.Framework
             this.KeybindingOpt = null;
             this.KeybindingLabel = null;
             this.Ui.Obscured = false;
+            if (Constants.TargetPlatform != GamePlatform.Android)
+                this.CheckEscape(true);
         }
 
         private void AssignKeybinding2(object sender, ButtonsChangedEventArgs e)
