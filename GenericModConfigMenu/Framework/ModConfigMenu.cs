@@ -25,8 +25,8 @@ namespace GenericModConfigMenu.Framework
             this.Table = new Table
             {
                 RowHeight = 50,
-                LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64),
-                Size = new Vector2(800, Game1.viewport.Height - 128)
+                LocalPosition = new Vector2((Game1.uiViewport.Width - 800) / 2, 64),
+                Size = new Vector2(800, Game1.uiViewport.Height - 128)
             };
 
             var heading = new Label
@@ -85,7 +85,7 @@ namespace GenericModConfigMenu.Framework
         public override void draw(SpriteBatch b)
         {
             base.draw(b);
-            b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.viewport.Width, Game1.viewport.Height), new Color(0, 0, 0, 192));
+            b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
             this.Ui.Draw(b);
             this.upperRightCloseButton?.draw(b); // bring it above the backdrop
             if (this.InGame)
@@ -106,8 +106,8 @@ namespace GenericModConfigMenu.Framework
         {
             this.Ui = new RootElement();
 
-            Vector2 newSize = new Vector2(800, Game1.viewport.Height - 128);
-            this.Table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64);
+            Vector2 newSize = new Vector2(800, Game1.uiViewport.Height - 128);
+            this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - 800) / 2, 64);
             foreach (Element opt in this.Table.Children)
                 opt.LocalPosition = new Vector2(newSize.X / (this.Table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
 
