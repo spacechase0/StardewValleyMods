@@ -14,9 +14,15 @@ using StardewValley.Menus;
 
 namespace GenericModConfigMenu
 {
+    public class GMCMConfig
+        {
+        public int ScrollSpeed { get; set; } = 120;
+        }
+
     internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
+        public static GMCMConfig Config;
 
         private RootElement Ui;
         private Button ConfigButton;
@@ -26,6 +32,7 @@ namespace GenericModConfigMenu
         {
             this.Monitor.Log($"GMCM version {ModManifest.Version} loading...", LogLevel.Info);
             Mod.Instance = this;
+            Mod.Config = helper.ReadConfig<GMCMConfig>();
             Log.Monitor = this.Monitor;
 
             this.SetupTitleMenuButton();
