@@ -4,6 +4,7 @@ using GenericModConfigMenu.Framework;
 using GenericModConfigMenu.ModOption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
@@ -52,19 +53,18 @@ namespace GenericModConfigMenu
 
     public class Api : IApi
     {
-        internal static Action<string, LogLevel> ApiLog;
         public void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile)
         {
             if (mod is null) {
-                ApiLog("mod is null! Who called me??", LogLevel.Error);
+                Log.Error("mod is null! Who called me??");
                 throw new ArgumentNullException(nameof(mod));
                 }
             if (revertToDefault is null) {
-                ApiLog($"{mod.UniqueID} gave null revertToDefault!", LogLevel.Error);
+                Log.Error($"{mod.UniqueID} gave null revertToDefault!");
                 throw new ArgumentNullException(nameof(revertToDefault));
                 }
             if (saveToFile is null) {
-                ApiLog($"{mod.UniqueID} gave null saveToFile!", LogLevel.Error);
+                Log.Error($"{mod.UniqueID} gave null saveToFile!");
                 throw new ArgumentNullException(nameof(saveToFile));
                 }
 

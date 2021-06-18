@@ -27,22 +27,8 @@ namespace GenericModConfigMenu
             this.Monitor.Log($"GMCM version {ModManifest.Version} loading...", LogLevel.Info);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
-            Api.ApiLog = Monitor.Log;
 
-            this.Ui = new RootElement();
-
-            Texture2D tex = this.Helper.Content.Load<Texture2D>("assets/config-button.png");
-            this.ConfigButton = new Button(tex)
-            {
-                LocalPosition = new Vector2(36, Game1.viewport.Height - 100),
-                Callback = e =>
-                {
-                    Game1.playSound("newArtifact");
-                    TitleMenu.subMenu = new ModConfigMenu(false);
-                }
-            };
-
-            this.Ui.AddChild(this.ConfigButton);
+            this.SetupTitleMenuButton();
 
             // helper.Events.GameLoop.GameLaunched += this.OnLaunched;
             helper.Events.GameLoop.UpdateTicking += this.OnUpdate;
@@ -62,6 +48,21 @@ namespace GenericModConfigMenu
         {
             public Color Color;
         }
+
+        private void SetupTitleMenuButton() {
+            this.Ui = new RootElement();
+
+            Texture2D tex = this.Helper.Content.Load<Texture2D>("assets/config-button.png");
+            this.ConfigButton = new Button(tex) {
+                LocalPosition = new Vector2(36, Game1.viewport.Height - 100),
+                Callback = e => {
+                    Game1.playSound("newArtifact");
+                    TitleMenu.subMenu = new ModConfigMenu(false);
+                }
+                };
+
+            this.Ui.AddChild(this.ConfigButton);
+            }
 
         private bool IsTitleMenuInteractable()
         {
