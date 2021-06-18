@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.2.0
+Released 20 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Added [mod API](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Integrations#Mod-provided_APIs) to apply Cooking Skill effects to a custom cooked dish.¹
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Moved assets into the conventional `assets` folder.

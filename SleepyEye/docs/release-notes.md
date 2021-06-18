@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.0.5
+Released 20 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Updated for Stardew Valley 1.5.
 * The place-tent delay is now configurable.
 * Holding the tent button now triggers a save after the delay without waiting for you to release the button.

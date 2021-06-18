@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.2.2
+Released 18 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Fixed experience bars shown during cutscenes.¹
 * Improved documentation.

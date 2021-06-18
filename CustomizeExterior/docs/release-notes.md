@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.0.8
+Released 20 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Updated for Stardew Valley 1.5.
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Fixed customizing the greenhouse on the Four Corners farm map.¹

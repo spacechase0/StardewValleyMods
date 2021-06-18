@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.0.2
+Released 18 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Fixed error when a custom crop has a chance-for-extra-crops of 0%.¹
 * Improved documentation.

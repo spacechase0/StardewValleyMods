@@ -1,17 +1,19 @@
 ﻿{
     "Name": "More Rings",
     "Author": "spacechase0, ParadigmNomad (sprites)",
-    "Version": "1.0.4",
+    "Version": "1.1.0",
     "Description": "Adds new rings with special effects.",
     "UniqueID": "spacechase0.MoreRings",
     "EntryDll": "MoreRings.dll",
     "UpdateKeys": [ "Nexus:2054" ],
     "Dependencies": [
         {
-            "UniqueID": "spacechase0.JsonAssets"
+            "UniqueID": "spacechase0.JsonAssets",
+            "MinimumVersion": "1.7.7"
         },
         {
-            "UniqueID": "spacechase0.SpaceCore"
+            "UniqueID": "spacechase0.SpaceCore",
+            "MinimumVersion": "1.5.7"
         }
     ]
 }
