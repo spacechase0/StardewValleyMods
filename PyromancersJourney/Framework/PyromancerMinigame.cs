@@ -7,11 +7,9 @@ namespace PyromancersJourney.Framework
 {
     internal class PyromancerMinigame : IMinigame
     {
-        private readonly World World = new();
+        private World World = new();
 
-        public void changeScreenSize()
-        {
-        }
+        public void changeScreenSize() { }
 
         public bool doMainGameUpdates()
         {
@@ -25,6 +23,8 @@ namespace PyromancersJourney.Framework
 
         public bool forceQuit()
         {
+            this.unload();
+
             return true;
         }
 
@@ -42,33 +42,19 @@ namespace PyromancersJourney.Framework
             return false;
         }
 
-        public void receiveEventPoke(int data)
-        {
-        }
+        public void receiveEventPoke(int data) { }
 
-        public void receiveKeyPress(Keys k)
-        {
-        }
+        public void receiveKeyPress(Keys k) { }
 
-        public void receiveKeyRelease(Keys k)
-        {
-        }
+        public void receiveKeyRelease(Keys k) { }
 
-        public void receiveLeftClick(int x, int y, bool playSound = true)
-        {
-        }
+        public void receiveLeftClick(int x, int y, bool playSound = true) { }
 
-        public void receiveRightClick(int x, int y, bool playSound = true)
-        {
-        }
+        public void receiveRightClick(int x, int y, bool playSound = true) { }
 
-        public void releaseLeftClick(int x, int y)
-        {
-        }
+        public void releaseLeftClick(int x, int y) { }
 
-        public void releaseRightClick(int x, int y)
-        {
-        }
+        public void releaseRightClick(int x, int y) { }
 
         public bool tick(GameTime time)
         {
@@ -78,6 +64,8 @@ namespace PyromancersJourney.Framework
 
         public void unload()
         {
+            this.World?.Dispose();
+            this.World = null;
         }
     }
 }

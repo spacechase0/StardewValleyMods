@@ -288,7 +288,7 @@ namespace PyromancersJourney.Framework
             this.QueuedObjects.Clear();
 
             this.Player.Dispose();
-            this.Warp.Dispose();
+            this.Warp?.Dispose();
         }
     }
 }

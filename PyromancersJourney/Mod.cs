@@ -29,9 +29,7 @@ namespace PyromancersJourney
         private void OnActionActivated(object sender, EventArgsAction e)
         {
             if (e.Action == "FireArcadeGame")
-            {
                 Game1.currentMinigame = new PyromancerMinigame();
-            }
         }
 
         private void OnWarped(object sender, WarpedEventArgs e)
