@@ -15,10 +15,11 @@ namespace GenericModConfigMenu.Framework
         public Table Table;
         public static IClickableMenu ActiveConfigMenu;
         private readonly bool InGame;
-
+        private readonly int ScrollSpeed;
         public ModConfigMenu(bool inGame)
         {
             this.InGame = inGame;
+            this.ScrollSpeed = Mod.Config.ScrollSpeed;
 
             this.Ui = new RootElement();
 
@@ -54,7 +55,7 @@ namespace GenericModConfigMenu.Framework
             if (Constants.TargetPlatform == GamePlatform.Android)
                 this.initializeUpperRightCloseButton();
             else
-                upperRightCloseButton = null;
+                this.upperRightCloseButton = null;
 
             ModConfigMenu.ActiveConfigMenu = this;
         }
@@ -73,7 +74,7 @@ namespace GenericModConfigMenu.Framework
         public void ReceiveScrollWheelActionSmapi(int direction)
         {
             if (TitleMenu.subMenu == this || this.InGame)
-                this.Table.Scrollbar.ScrollBy(direction / -120);
+                this.Table.Scrollbar.ScrollBy(direction / -(this.ScrollSpeed));
             else
                 ModConfigMenu.ActiveConfigMenu = null;
         }
