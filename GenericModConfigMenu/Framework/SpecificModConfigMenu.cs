@@ -5,6 +5,7 @@ using GenericModConfigMenu.Framework.UI;
 using GenericModConfigMenu.ModOption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -20,7 +21,7 @@ namespace GenericModConfigMenu.Framework
 
         private readonly ModConfig ModConfig;
         private readonly string CurrPage;
-        private string PrevPage;
+        private readonly int ScrollSpeed;
 
         private RootElement Ui = new();
         private readonly Table Table;
@@ -29,6 +30,8 @@ namespace GenericModConfigMenu.Framework
 
         private readonly Dictionary<string, List<Image>> Textures = new();
         private readonly Queue<string> PendingTexChanges = new();
+
+        private readonly EscapeChecker Esc = new(Mod.Instance, invoker: nameof(SpecificModConfigMenu));
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
@@ -51,10 +54,11 @@ namespace GenericModConfigMenu.Framework
             }
         }
 
-        public SpecificModConfigMenu(IManifest modManifest, bool inGame, string page = "", string prevPage = null)
+        public SpecificModConfigMenu(IManifest modManifest, bool inGame, string page = "")
         {
             this.Manifest = modManifest;
             this.InGame = inGame;
+            this.ScrollSpeed = Mod.Config.ScrollSpeed;
 
             this.ModConfig = Mod.Instance.Configs[this.Manifest];
             this.CurrPage = page;
@@ -243,11 +247,11 @@ namespace GenericModConfigMenu.Framework
                         label.Callback = e =>
                         {
                             // Gonna transition to a new menu, let go of current Escape detector
-                            this.CheckEscape(false);
+                            this.Esc.Deactivate();
                             if (TitleMenu.subMenu == this)
-                                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, option.NewPage, this.CurrPage);
+                                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, option.NewPage);
                             else if (Game1.activeClickableMenu == this)
-                                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, option.NewPage, this.CurrPage);
+                                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, option.NewPage);
                         };
                         other = null;
                         break;
@@ -336,14 +340,14 @@ namespace GenericModConfigMenu.Framework
                 this.Table.AddRow(new[] { label, other, other2 }.Where(p => p != null).ToArray());
             }
             this.Ui.AddChild(this.Table);
-
             this.AddDefaultLabels(modManifest);
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
 
-            SpecificModConfigMenu.ActiveConfigMenu = this;
+            this.Esc.Activate();
 
+            SpecificModConfigMenu.ActiveConfigMenu = this;
             Mod.Instance.Helper.Content.AssetEditors.Add(this);
         }
 
@@ -405,7 +409,7 @@ namespace GenericModConfigMenu.Framework
             if (TitleMenu.subMenu == this || Game1.activeClickableMenu == this)
             {
                 if (Dropdown.ActiveDropdown == null)
-                    this.Table.Scrollbar.ScrollBy(direction / -120);
+                    this.Table.Scrollbar.ScrollBy(direction / -(this.ScrollSpeed));
             }
             else
                 SpecificModConfigMenu.ActiveConfigMenu = null;
@@ -431,6 +435,8 @@ namespace GenericModConfigMenu.Framework
                     images.Texture = tex;
                 }
             }
+
+            if (this.Esc.Requested) this.Cancel();
         }
 
         public override void draw(SpriteBatch b)
@@ -478,7 +484,6 @@ namespace GenericModConfigMenu.Framework
 
             if (Constants.TargetPlatform != GamePlatform.Android)
             {
-                this.CheckEscape(true);
                 foreach (var label in this.OptHovers)
                 {
                     if (!label.Hover)
@@ -504,11 +509,11 @@ namespace GenericModConfigMenu.Framework
             this.ModConfig.SaveToFile.Invoke();
 
             // Gonna transition to a new menu, let go of current Escape detector
-            this.CheckEscape(false);
+            this.Esc.Deactivate();
             if (TitleMenu.subMenu == this)
-                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.CurrPage, this.PrevPage);
+                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.CurrPage);
             else if (Game1.activeClickableMenu == this)
-                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.CurrPage, this.PrevPage);
+                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.CurrPage);
         }
 
         private void Save()
@@ -522,7 +527,7 @@ namespace GenericModConfigMenu.Framework
 
         private void Close()
         {
-            this.CheckEscape(false);
+            this.Esc.Deactivate();
             if (TitleMenu.subMenu == this)
                 TitleMenu.subMenu = new ModConfigMenu(this.InGame);
             else if (!this.InGame && Game1.activeClickableMenu == this)
@@ -538,29 +543,12 @@ namespace GenericModConfigMenu.Framework
             this.Close();
         }
 
-
-        private void CheckEscape(bool active)
-        {
-            if (active)
-                Mod.Instance.Helper.Events.Input.ButtonReleased += this.Escape;
-            else
-                Mod.Instance.Helper.Events.Input.ButtonReleased -= this.Escape;
-        }
-
-        private void Escape(object sender, ButtonReleasedEventArgs args)
-        {
-            if (args.Button == SButton.Escape)
-            {
-                this.Cancel();
-            }
-        }
-
         private SimpleModOption<SButton> KeybindingOpt;
         private SimpleModOption<KeybindList> Keybinding2Opt;
         private Label KeybindingLabel;
         private void DoKeybindingFor(SimpleModOption<SButton> opt, Label label)
         {
-            this.CheckEscape(false);
+            this.Esc.Deactivate();
             Game1.playSound("breathin");
             this.KeybindingOpt = opt;
             this.KeybindingLabel = label;
@@ -569,7 +557,7 @@ namespace GenericModConfigMenu.Framework
         }
         private void DoKeybinding2For(SimpleModOption<KeybindList> opt, Label label)
         {
-            this.CheckEscape(false);
+            this.Esc.Deactivate();
             Game1.playSound("breathin");
             this.Keybinding2Opt = opt;
             this.KeybindingLabel = label;
@@ -597,7 +585,7 @@ namespace GenericModConfigMenu.Framework
             this.KeybindingLabel = null;
             this.Ui.Obscured = false;
             if (Constants.TargetPlatform != GamePlatform.Android)
-                this.CheckEscape(true);
+                this.Esc.Activate();
         }
 
         private void AssignKeybinding2(object sender, ButtonsChangedEventArgs e)
