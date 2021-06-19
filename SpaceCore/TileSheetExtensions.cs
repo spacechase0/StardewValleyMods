@@ -161,7 +161,9 @@ namespace SpaceCore
             }
         }
 
-        internal static void UpdateReferences()
+        /// <summary>Update tilesheet texture references if needed.</summary>
+        /// <returns>Returns the dereferenced tilesheet textures.</returns>
+        internal static IEnumerable<Texture2D> UpdateReferences()
         {
             foreach (var asset in TileSheetExtensions.ExtendedTextureAssets)
             {
@@ -171,13 +173,13 @@ namespace SpaceCore
                 {
                     Log.Error("WHAT? null " + asset.Key);
                     TileSheetExtensions.ExtendedTextures.Remove(oldTexture);
-                    oldTexture.Dispose();
+                    yield return oldTexture;
                 }
                 else
                 {
                     TileSheetExtensions.ExtendedTextures[asset.Value.BaseTileSheet] = asset.Value;
                     if (oldTexture != asset.Value.BaseTileSheet)
-                        oldTexture.Dispose();
+                        yield return oldTexture;
                 }
             }
         }

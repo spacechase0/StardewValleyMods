@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Harmony;
+using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Harmony;
 using SpaceCore.Framework;
 using SpaceCore.Patches;
@@ -9,6 +10,7 @@ using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewValley;
 
 namespace SpaceCore
 {
@@ -19,7 +21,13 @@ namespace SpaceCore
         internal static IReflectionHelper Reflection;
         private HarmonyInstance Harmony;
 
+        /// <summary>Whether the current update tick is the first one raised by SMAPI.</summary>
+        private bool IsFirstTick;
+
         internal static List<Type> ModTypes = new();
+
+        /// <summary>A queue of textures to dispose, with the <see cref="Game1.ticks"/> value when they were queued.</summary>
+        private readonly Queue<KeyValuePair<Texture2D, int>> TextureDisposalQueue = new();
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -31,7 +39,7 @@ namespace SpaceCore
             this.Config = helper.ReadConfig<Configuration>();
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
-            helper.Events.GameLoop.UpdateTicked += this.OnUpdate;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
 
             Commands.Register();
@@ -80,17 +88,48 @@ namespace SpaceCore
             }
         }
 
-        private int TickCount;
-        private void OnUpdate(object sender, UpdateTickedEventArgs e)
+        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            TileSheetExtensions.UpdateReferences();
-            if (this.TickCount++ == 0 && SpaceCore.ModTypes.Count == 0)
+            // update tilesheet references
+            foreach (Texture2D oldTexture in TileSheetExtensions.UpdateReferences())
             {
+                if (this.Config.DisposeOldTextures)
+                    this.TextureDisposalQueue.Enqueue(new(oldTexture, Game1.ticks));
+            }
+
+            // disable serializer if not used
+            if (this.IsFirstTick && SpaceCore.ModTypes.Count == 0)
+            {
+                this.IsFirstTick = false;
+
                 Log.Info("Disabling serializer patches (no mods using serializer API)");
-                foreach (var meth in SaveGamePatcher.GetSaveEnumeratorMethods())
-                    this.Harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
-                foreach (var meth in SaveGamePatcher.GetLoadEnumeratorMethods())
-                    this.Harmony.Unpatch(meth, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
+                foreach (var method in SaveGamePatcher.GetSaveEnumeratorMethods())
+                    this.Harmony.Unpatch(method, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
+                foreach (var method in SaveGamePatcher.GetLoadEnumeratorMethods())
+                    this.Harmony.Unpatch(method, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
+            }
+
+            // dispose old textures
+            if (e.IsOneSecond)
+            {
+                while (this.TextureDisposalQueue.Count != 0)
+                {
+                    const int delayTicks = 60; // sixty ticks per second
+
+                    var next = this.TextureDisposalQueue.Peek();
+                    Texture2D asset = next.Key;
+                    int queuedTicks = next.Value;
+
+                    if (Game1.ticks - queuedTicks <= delayTicks)
+                        break;
+
+                    this.TextureDisposalQueue.Dequeue();
+                    if (!asset.IsDisposed)
+                        asset.Dispose();
+                }
             }
         }
 
