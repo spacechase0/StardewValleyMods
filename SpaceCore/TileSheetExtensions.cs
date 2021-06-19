@@ -9,8 +9,6 @@ namespace SpaceCore
 {
     public static class TileSheetExtensions
     {
-        const int TEXTURE_DISPOSAL_DELAY = 5;
-
         internal class ExtensionData
         {
             public ExtensionData(string assetPath, int unitSize)
@@ -163,7 +161,9 @@ namespace SpaceCore
             }
         }
 
-        internal static void UpdateReferences(bool disposeOld)
+        /// <summary>Update tilesheet texture references if needed.</summary>
+        /// <returns>Returns the dereferenced tilesheet textures.</returns>
+        internal static IEnumerable<Texture2D> UpdateReferences()
         {
             foreach (var asset in TileSheetExtensions.ExtendedTextureAssets)
             {
@@ -173,19 +173,14 @@ namespace SpaceCore
                 {
                     Log.Error("WHAT? null " + asset.Key);
                     TileSheetExtensions.ExtendedTextures.Remove(oldTexture);
-                    if (disposeOld)
-                        SpaceCore.TextureDisposalQueue.Enqueue(
-                            new KeyValuePair<System.IDisposable, int>(oldTexture, SpaceCore.SecondsSinceStart + TEXTURE_DISPOSAL_DELAY)
-                        );
+                    yield return oldTexture;
                 }
                 else
                 {
                     TileSheetExtensions.ExtendedTextures[asset.Value.BaseTileSheet] = asset.Value;
-                    if (disposeOld && oldTexture != asset.Value.BaseTileSheet)
-                        SpaceCore.TextureDisposalQueue.Enqueue(
-                            new KeyValuePair<System.IDisposable, int>(oldTexture, SpaceCore.SecondsSinceStart + TEXTURE_DISPOSAL_DELAY)
-                        );
-                    }
+                    if (oldTexture != asset.Value.BaseTileSheet)
+                        yield return oldTexture;
+                }
             }
         }
 
