@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.7.7
+Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows). (Thanks to pepoluan for a related winter crop fix!)
 * Fixed cask contents not ID-fixed.¹
 * Fixed combined rings not ID-fixed in some cases (thanks to SlivaStari!).

@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.1.0
+Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Updated for Stardew Valley 1.5.¹
 * Added three new rings: Quality+ ring, Ring of Far Reaching, and Ring of True Sight.¹
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
