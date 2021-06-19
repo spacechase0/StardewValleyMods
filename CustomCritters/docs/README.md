@@ -9,7 +9,7 @@ add custom critters to the world.
 3. Run the game using SMAPI.
 
 ## Use
-* **For players:** kust install the mod and it'll work automatically for content packs that use it.
+* **For players:** just install the mod and it'll work automatically for content packs that use it.
 * **For mod authors:** see [example content pack](https://www.nexusmods.com/stardewvalley/mods/1259).
 
 ## Compatibility

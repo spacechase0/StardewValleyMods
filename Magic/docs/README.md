@@ -6,6 +6,7 @@ the game.
 ## Install
 1. Install the latest version of...
    * [SMAPI](https://smapi.io);
+   * [Json Assets](https://www.nexusmods.com/stardewvalley/mods/1720);
    * [Mana Bar](https://www.nexusmods.com/stardewvalley/mods/7831);
    * [PyTK](https://www.nexusmods.com/stardewvalley/mods/1726);
    * and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
