@@ -1,54 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Harmony;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley;
+using StatueOfGenerosity.Patches;
 
 namespace StatueOfGenerosity
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        private static JsonAssetsAPI ja;
+        public static Mod Instance;
+        private static IJsonAssetsApi Ja;
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
 
-            var harmony = HarmonyInstance.Create( ModManifest.UniqueID );
-            harmony.Patch( AccessTools.Method( typeof( StardewValley.Object ), nameof( StardewValley.Object.DayUpdate ) ), new HarmonyMethod( this.GetType().GetMethod( nameof( DayUpdatePostfix ) ) ) );
+            HarmonyPatcher.Apply(this,
+                new ObjectPatcher(getStatueId: () => Mod.Ja.GetBigCraftableId("Statue of Generosity"))
+            );
         }
 
-        private void onGameLaunched( object sender, GameLaunchedEventArgs e )
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            ja = Helper.ModRegistry.GetApi<JsonAssetsAPI>( "spacechase0.JsonAssets" );
-            ja.LoadAssets( Path.Combine( Helper.DirectoryPath, "assets" ) );
-        }
-
-        public static void DayUpdatePostfix(StardewValley.Object __instance, GameLocation location )
-        {
-            if ( !__instance.bigCraftable.Value || __instance.ParentSheetIndex != ja.GetBigCraftableId( "Statue of Generosity" ) )
-                return;
-
-            NPC npc = Utility.getTodaysBirthdayNPC(Game1.currentSeason, Game1.dayOfMonth);
-            if ( npc == null )
-                npc = Utility.getRandomTownNPC();
-
-            Game1.NPCGiftTastes.TryGetValue( npc.Name, out string str );
-            string[] favs = str.Split('/')[1].Split(' ');
-            
-            __instance.MinutesUntilReady = 1;
-            __instance.heldObject.Value = new StardewValley.Object( int.Parse( favs[ Game1.random.Next( favs.Length ) ] ), 1, false, -1, 0 );
+            Mod.Ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
+            Mod.Ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
         }
     }
 }

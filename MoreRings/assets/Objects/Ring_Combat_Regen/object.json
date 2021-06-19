@@ -1,33 +1,31 @@
-{
-  "Name": "Ring of Regeneration",
-  "Description": "Slowly heal over time.",
-  "Category": "Ring",
-  "Edibility": -300,
-  "Price": 10000,
-  "Recipe": {
-    "ResultCount": 1,
-    "Ingredients": [
-      {
-        "Object": 773,
-        "Count": 3,
-      },
-      {
-        "Object": 337,
-        "Count": 3,
-      }
-    ],
-    "CanPurchase": true,
-    "PurchaseFrom": "Marlon",
-    "PurchasePrice": 10000
-  },
-      "NameLocalization":
-    {
-
-        "zh": "再生之戒", //Chinese (Simplified)
+﻿{
+    "Name": "Ring of Regeneration",
+    "Description": "Slowly heal over time.",
+    "Category": "Ring",
+    "Edibility": -300,
+    "Price": 10000,
+    "Recipe": {
+        "ResultCount": 1,
+        "Ingredients": [
+            {
+                "Object": 773,
+                "Count": 3
+            },
+            {
+                "Object": 337,
+                "Count": 3
+            }
+        ],
+        "CanPurchase": true,
+        "PurchaseFrom": "Marlon",
+        "PurchasePrice": 10000
     },
-    "DescriptionLocalization":
-    {
+    "NameLocalization": {
 
-        "zh": "戴上它，能感觉到身体在缓慢愈合。", //Chinese (Simplified)
+        "zh": "再生之戒" //Chinese (Simplified)
+    },
+    "DescriptionLocalization": {
+
+        "zh": "戴上它，能感觉到身体在缓慢愈合。" //Chinese (Simplified)
     }
 }

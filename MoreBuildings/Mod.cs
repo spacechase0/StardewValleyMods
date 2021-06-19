@@ -1,63 +1,65 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using StardewModdingAPI;
-using StardewModdingAPI.Events;
-using StardewValley.Menus;
-using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using MoreBuildings.SpookyShed;
-using StardewValley.Locations;
-using MoreBuildings.BigShed;
 using System.Reflection;
-using MoreBuildings.FishingShack;
-using MoreBuildings.MiniSpa;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
+using MoreBuildings.Buildings.BigShed;
+using MoreBuildings.Buildings.FishingShack;
+using MoreBuildings.Buildings.MiniSpa;
+using MoreBuildings.Buildings.SpookyShed;
+using MoreBuildings.Patches;
 using PyTK.CustomElementHandler;
-using Harmony;
-using MoreBuildings.Overrides;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
+using StardewValley.Locations;
+using StardewValley.Menus;
 
 namespace MoreBuildings
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
+    internal class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
     {
-        public static Mod instance;
-        private Texture2D shed2Exterior;
-        private Texture2D spookyExterior;
-        private Texture2D fishingExterior;
-        private Texture2D spaExterior;
-        public Texture2D spookyGemTex;
+        public static Mod Instance;
+        private Texture2D Shed2Exterior;
+        private Texture2D SpookyExterior;
+        private Texture2D FishingExterior;
+        private Texture2D SpaExterior;
+        public Texture2D SpookyGemTex;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
-            
-            helper.Events.Display.MenuChanged += onMenuChanged;
-            helper.Events.Player.Warped += onWarped;
-            helper.Events.Specialized.UnvalidatedUpdateTicked += onUnvalidatedUpdateTicked;
-            SaveHandler.FinishedRebuilding += fixWarps;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            shed2Exterior = Helper.Content.Load<Texture2D>("assets/BigShed/building.png");
-            spookyExterior = Helper.Content.Load<Texture2D>("assets/SpookyShed/building.png");
-            fishingExterior = Helper.Content.Load<Texture2D>("assets/FishingShack/building.png");
-            spaExterior = Helper.Content.Load<Texture2D>("assets/MiniSpa/building.png");
-            spookyGemTex = Helper.Content.Load<Texture2D>("assets/SpookyShed/Shrine_Gem.png");
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            helper.Events.Player.Warped += this.OnWarped;
+            helper.Events.Specialized.UnvalidatedUpdateTicked += this.OnUnvalidatedUpdateTicked;
+            SaveHandler.FinishedRebuilding += this.FixWarps;
 
-            var harmony = HarmonyInstance.Create("spacechase0.MoreBuildings");
-            harmony.Patch(typeof(Shed).GetMethod(nameof(Shed.updateLayout)), prefix: new HarmonyMethod(typeof(ShedUpdateLayoutWorkaround).GetMethod("Prefix")));
+            this.Shed2Exterior = this.Helper.Content.Load<Texture2D>("assets/BigShed/building.png");
+            this.SpookyExterior = this.Helper.Content.Load<Texture2D>("assets/SpookyShed/building.png");
+            this.FishingExterior = this.Helper.Content.Load<Texture2D>("assets/FishingShack/building.png");
+            this.SpaExterior = this.Helper.Content.Load<Texture2D>("assets/MiniSpa/building.png");
+            this.SpookyGemTex = this.Helper.Content.Load<Texture2D>("assets/SpookyShed/Shrine_Gem.png");
+
+            HarmonyPatcher.Apply(this,
+                new ShedPatcher()
+            );
+
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( e.NewMenu is CarpenterMenu carp )
+            if (e.NewMenu is CarpenterMenu carp)
             {
-                var blueprints = Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
+                var blueprints = this.Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
                 //if ( Game1.getFarm().isBuildingConstructed("Shed"))
                 //    blueprints.Add(new BluePrint("Shed2"));
                 blueprints.Add(new BluePrint("SpookyShed"));
@@ -69,31 +71,29 @@ namespace MoreBuildings
         /// <summary>Raised after a player warps to a new location. NOTE: this event is currently only raised for the current player.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onWarped(object sender, WarpedEventArgs e)
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
             if (!e.IsLocalPlayer)
                 return;
 
-            if ( e.OldLocation is MiniSpaLocation )
+            if (e.OldLocation is MiniSpaLocation)
             {
                 Game1.player.changeOutOfSwimSuit();
                 Game1.player.swimming.Value = false;
             }
 
-            BuildableGameLocation farm = e.NewLocation as BuildableGameLocation;
-            if (farm == null)
-                farm = e.OldLocation as BuildableGameLocation;
-            if ( farm != null )
+            BuildableGameLocation farm = e.NewLocation as BuildableGameLocation ?? e.OldLocation as BuildableGameLocation;
+            if (farm != null)
             {
-                for ( int i = 0; i < farm.buildings.Count; ++i )
+                for (int i = 0; i < farm.buildings.Count; ++i)
                 {
                     var b = farm.buildings[i];
 
                     // This is probably a new building if it hasn't been converted yet.
-                    if ( b.buildingType.Value == "Shed2" && !(b is BigShedBuilding))
+                    if (b.buildingType.Value == "Shed2" && !(b is BigShedBuilding))
                     {
-                        Log.debug($"Converting big shed at ({b.tileX}, {b.tileY}) to actual big shed.");
-                        
+                        Log.Debug($"Converting big shed at ({b.tileX}, {b.tileY}) to actual big shed.");
+
                         farm.buildings[i] = new BigShedBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
                         farm.buildings[i].daysOfConstructionLeft.Value = b.daysOfConstructionLeft.Value;
@@ -106,7 +106,7 @@ namespace MoreBuildings
                     }
                     else if (b.buildingType.Value == "SpookyShed" && !(b is SpookyShedBuilding))
                     {
-                        Log.debug($"Converting spooky shed at ({b.tileX}, {b.tileY}) to actual spooky shed.");
+                        Log.Debug($"Converting spooky shed at ({b.tileX}, {b.tileY}) to actual spooky shed.");
 
                         farm.buildings[i] = new SpookyShedBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
@@ -120,7 +120,7 @@ namespace MoreBuildings
                     }
                     else if (b.buildingType.Value == "FishShack" && !(b is FishingShackBuilding))
                     {
-                        Log.debug($"Converting fishing shack at ({b.tileX}, {b.tileY}) to actual fishing shack.");
+                        Log.Debug($"Converting fishing shack at ({b.tileX}, {b.tileY}) to actual fishing shack.");
 
                         farm.buildings[i] = new FishingShackBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
@@ -133,9 +133,9 @@ namespace MoreBuildings
                         farm.buildings[i].tilesHigh.Value = b.tilesHigh.Value;
                         farm.buildings[i].load();
                     }
-                    else if (b.buildingType.Value  == "MiniSpa" && !(b is MiniSpaBuilding))
+                    else if (b.buildingType.Value == "MiniSpa" && !(b is MiniSpaBuilding))
                     {
-                        Log.debug($"Converting mini spa at ({b.tileX}, {b.tileY}) to actual mini spa.");
+                        Log.Debug($"Converting mini spa at ({b.tileX}, {b.tileY}) to actual mini spa.");
 
                         farm.buildings[i] = new MiniSpaBuilding();
                         farm.buildings[i].buildingType.Value = b.buildingType.Value;
@@ -151,21 +151,21 @@ namespace MoreBuildings
             }
         }
 
-        bool taskWasThere = false;
+        private bool TaskWasThere;
 
         /// <summary>Raised after the game state is updated (≈60 times per second), regardless of normal SMAPI validation. This event is not thread-safe and may be invoked while game logic is running asynchronously. Changes to game state in this method may crash the game or corrupt an in-progress save. Do not use this event unless you're fully aware of the context in which your code will be run. Mods using this event will trigger a stability warning in the SMAPI console.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onUnvalidatedUpdateTicked(object sender, EventArgs e)
+        private void OnUnvalidatedUpdateTicked(object sender, EventArgs e)
         {
-            var task = (Task) typeof(Game1).GetField("_newDayTask", BindingFlags.Static | BindingFlags.NonPublic).GetValue( null );
-            if ( task != null && !taskWasThere )
+            var task = (Task)typeof(Game1).GetField("_newDayTask", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+            if (task != null && !this.TaskWasThere)
             {
-                foreach ( var loc in Game1.locations )
+                foreach (var loc in Game1.locations)
                 {
-                    if ( loc is BuildableGameLocation buildable )
+                    if (loc is BuildableGameLocation buildable)
                     {
-                        for ( int i = 0; i < buildable.buildings.Count; ++i )
+                        for (int i = 0; i < buildable.buildings.Count; ++i)
                         {/*
                             if ( buildable.buildings[ i ].buildingType.Value == "Shed" && buildable.buildings[i].daysUntilUpgrade.Value == 1 )
                             {
@@ -185,10 +185,10 @@ namespace MoreBuildings
                     }
                 }
             }
-            taskWasThere = task != null;
+            this.TaskWasThere = task != null;
         }
 
-        public void fixWarps(object sender, EventArgs args)
+        public void FixWarps(object sender, EventArgs args)
         {
             foreach (var loc in Game1.locations)
                 if (loc is BuildableGameLocation buildable)
@@ -240,21 +240,21 @@ namespace MoreBuildings
         public T Load<T>(IAssetInfo asset)
         {
             if (asset.AssetNameEquals("Buildings\\Shed2"))
-                return (T)(object)shed2Exterior;
+                return (T)(object)this.Shed2Exterior;
             else if (asset.AssetNameEquals("Maps\\Shed2_"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("assets/BigShed/map.tbin");
+                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/BigShed/map.tbin");
             if (asset.AssetNameEquals("Buildings\\SpookyShed"))
-                return (T)(object)spookyExterior;
+                return (T)(object)this.SpookyExterior;
             else if (asset.AssetNameEquals("Maps\\SpookyShed"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("assets/SpookyShed/map.tbin");
+                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/SpookyShed/map.tbin");
             if (asset.AssetNameEquals("Buildings\\FishShack"))
-                return (T)(object)fishingExterior;
+                return (T)(object)this.FishingExterior;
             else if (asset.AssetNameEquals("Maps\\FishShack"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("assets/FishingShack/map.tbin");
+                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/FishingShack/map.tbin");
             if (asset.AssetNameEquals("Buildings\\MiniSpa"))
-                return (T)(object)spaExterior;
+                return (T)(object)this.SpaExterior;
             else if (asset.AssetNameEquals("Maps\\MiniSpa"))
-                return (T)(object)Helper.Content.Load<xTile.Map>("assets/MiniSpa/map.tbin");
+                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/MiniSpa/map.tbin");
 
             return (T)(object)null;
         }

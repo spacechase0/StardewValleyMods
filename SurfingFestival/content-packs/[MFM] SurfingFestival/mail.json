@@ -1,0 +1,12 @@
+﻿[
+    {
+        "Id": "surfingfestival.woodletter",
+        "GroupID": "surfingfestival.letter",
+        "Title": "SurfingFestival.title",
+        "Text": "SurfingFestival.text",
+        "Date": "1 summer Y1",
+        "Days": [ 1 ],
+        "Seasons": [ "summer" ],
+        "Repeatable": true
+    },
+]

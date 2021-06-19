@@ -1,10 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenericModConfigMenu.ModOption
 {
@@ -22,12 +17,12 @@ namespace GenericModConfigMenu.ModOption
         {
         }
 
-        public ImageModOption( string texPath, Rectangle? texRect, int scale, IManifest mod )
-        :   base( texPath, "", texPath, mod )
+        public ImageModOption(string texPath, Rectangle? texRect, int scale, IManifest mod)
+            : base(texPath, "", texPath, mod)
         {
-            TexturePath = texPath;
-            TextureRect = texRect;
-            Scale = scale;
+            this.TexturePath = texPath;
+            this.TextureRect = texRect;
+            this.Scale = scale;
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using StardewModdingAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StardewModdingAPI;
 
 namespace GenericModConfigMenu.ModOption
 {
@@ -19,10 +14,10 @@ namespace GenericModConfigMenu.ModOption
         {
         }
 
-        public PageLabelModOption( string name, string desc, string newPage, IManifest mod )
-        :   base( name, desc, name, mod )
+        public PageLabelModOption(string name, string desc, string newPage, IManifest mod)
+            : base(name, desc, name, mod)
         {
-            NewPage = newPage;
+            this.NewPage = newPage;
         }
     }
 }

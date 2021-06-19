@@ -1,28 +1,28 @@
-﻿using SpaceShared;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 
 namespace Spenny
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
         }
 
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onUpdateTicked(object sender, UpdateTickedEventArgs e)
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             if (e.IsMultipleOf(8))
             {

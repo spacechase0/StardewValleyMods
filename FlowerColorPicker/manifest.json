@@ -1,11 +1,10 @@
-{
-  "Name": "Flower Color Picker",
-  "Author": "spacechase0",
-  "Version": "1.0.3",
-  "Description": "Change flower colors. Left click with the grown flower color you want to copy.",
-  "UniqueID": "spacechase0.FlowerColorPicker",
-  "EntryDll": "FlowerColorPicker.dll",
-  "MinimumApiVersion": "2.9.0",
-  "UpdateKeys": [ "Nexus:1229", "Chucklefish:4765" ],
-  "spacechase0": "flower-color-picker"
+﻿{
+    "Name": "Flower Color Picker",
+    "Author": "spacechase0",
+    "Version": "1.0.4",
+    "MinimumApiVersion": "3.9.5",
+    "Description": "Change the color of planted flowers.",
+    "UniqueID": "spacechase0.FlowerColorPicker",
+    "EntryDll": "FlowerColorPicker.dll",
+    "UpdateKeys": [ "Nexus:1229" ]
 }

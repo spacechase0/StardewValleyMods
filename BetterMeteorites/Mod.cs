@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -10,32 +6,32 @@ using StardewValley.TerrainFeatures;
 
 namespace BetterMeteorites
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            SpaceShared.Log.Monitor = Monitor;
+            Mod.Instance = this;
+            SpaceShared.Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.SaveCreated += onSaveCreated;
-            helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
+            helper.Events.GameLoop.SaveCreated += this.OnSaveCreated;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
         }
 
-        private void onSaveCreated(object sender, SaveCreatedEventArgs e)
+        private void OnSaveCreated(object sender, SaveCreatedEventArgs e)
         {
-            Game1.getFarm().resourceClumps.OnValueRemoved += onClumpRemoved;
+            Game1.getFarm().resourceClumps.OnValueRemoved += this.OnClumpRemoved;
         }
 
-        private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            Game1.getFarm().resourceClumps.OnValueRemoved += onClumpRemoved;
+            Game1.getFarm().resourceClumps.OnValueRemoved += this.OnClumpRemoved;
         }
 
-        private void onClumpRemoved(ResourceClump value)
+        private void OnClumpRemoved(ResourceClump value)
         {
-            if ( value.parentSheetIndex == ResourceClump.meteoriteIndex )
+            if (value.parentSheetIndex.Value == ResourceClump.meteoriteIndex)
             {
                 Random r = new Random((int)value.tile.X * 1000 + (int)value.tile.Y);
                 Game1.createMultipleObjectDebris(StardewValley.Object.stone, (int)value.tile.X, (int)value.tile.Y, 75 + r.Next(175));

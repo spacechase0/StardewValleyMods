@@ -1,15 +1,20 @@
-{
-  "Name": "More Rings",
-  "Author": "spacechase0, ParadigmNomad (sprites)",
-  "Version": "1.0.4",
-  "Description": "Adds more ring types.",
-  "UniqueID": "spacechase0.MoreRings",
-  "EntryDll": "MoreRings.dll",
-  "MinimumApiVersion": "2.9.0",
-  "UpdateKeys": [ "Nexus:2054", "Chucklefish:5271" ],
-  "Dependencies": [
-    { "UniqueID": "spacechase0.JsonAssets" },
-    { "UniqueID": "spacechase0.SpaceCore" }
-  ],
-  "spacechase0": "more-rings"
+﻿{
+    "Name": "More Rings",
+    "Author": "spacechase0, ParadigmNomad (sprites)",
+    "Version": "1.1.0",
+    "MinimumApiVersion": "3.9.5",
+    "Description": "Adds new rings with special effects.",
+    "UniqueID": "spacechase0.MoreRings",
+    "EntryDll": "MoreRings.dll",
+    "UpdateKeys": [ "Nexus:2054" ],
+    "Dependencies": [
+        {
+            "UniqueID": "spacechase0.JsonAssets",
+            "MinimumVersion": "1.7.7"
+        },
+        {
+            "UniqueID": "spacechase0.SpaceCore",
+            "MinimumVersion": "1.5.7"
+        }
+    ]
 }

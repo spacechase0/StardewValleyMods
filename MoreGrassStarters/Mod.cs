@@ -1,52 +1,50 @@
-﻿using System.Collections.Generic;
-using StardewModdingAPI;
-using StardewModdingAPI.Events;
-using StardewValley;
-using StardewValley.TerrainFeatures;
-using StardewValley.Menus;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley.Menus;
+using StardewValley.TerrainFeatures;
 
 namespace MoreGrassStarters
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += onMenuChanged;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
-            if ( File.Exists(Path.Combine(Helper.DirectoryPath, "assets", "grass.png")) )
+            if (File.Exists(Path.Combine(this.Helper.DirectoryPath, "assets", "grass.png")))
             {
-                GrassStarterItem.tex2 = Mod.instance.Helper.Content.Load<Texture2D>("assets/grass.png");
+                GrassStarterItem.Tex2 = Mod.Instance.Helper.Content.Load<Texture2D>("assets/grass.png");
             }
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson == null)
                 return;
 
             if (menu.portraitPerson.Name == "Pierre")
             {
-                var forSale = Helper.Reflection.GetField<List<ISalable>>(menu, "forSale").GetValue();
-                var itemPriceAndStock = Helper.Reflection.GetField<Dictionary<ISalable, int[]>>(menu, "itemPriceAndStock").GetValue();
+                var forSale = menu.forSale;
+                var itemPriceAndStock = menu.itemPriceAndStock;
 
                 for (int i = Grass.caveGrass; i < 5 + GrassStarterItem.ExtraGrassTypes; ++i)
                 {
                     var item = new GrassStarterItem(i);
                     forSale.Add(item);
-                    itemPriceAndStock.Add(item, new int[] { 100, int.MaxValue });
+                    itemPriceAndStock.Add(item, new[] { 100, int.MaxValue });
                 }
             }
         }

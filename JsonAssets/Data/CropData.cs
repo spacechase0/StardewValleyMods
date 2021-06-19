@@ -1,10 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using System.Collections.Generic;
+using SpaceShared;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class CropData : DataNeedsIdWithTexture
     {
         [JsonIgnore]
@@ -43,36 +47,36 @@ namespace JsonAssets.Data
         public string SeedPurchaseFrom { get; set; } = "Pierre";
         public IList<PurchaseData> SeedAdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-        public Dictionary<string, string> SeedNameLocalization = new Dictionary<string, string>();
-        public Dictionary<string, string> SeedDescriptionLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> SeedNameLocalization = new();
+        public Dictionary<string, string> SeedDescriptionLocalization = new();
 
         internal ObjectData seed;
-        public int GetSeedId() { return seed.id; }
-        public int GetCropSpriteIndex() { return id; }
+        public int GetSeedId() { return this.seed.Id; }
+        public int GetCropSpriteIndex() { return this.Id; }
         internal string GetCropInformation()
         {
             string str = "";
             //str += GetProductId() + "/";
-            foreach ( var phase in Phases )
+            foreach (int phase in this.Phases)
             {
                 str += phase + " ";
             }
             str = str.Substring(0, str.Length - 1) + "/";
-            foreach (var season in Seasons)
+            foreach (string season in this.Seasons)
             {
                 str += season + " ";
             }
             str = str.Substring(0, str.Length - 1) + "/";
-            str += $"{GetCropSpriteIndex()}/{Mod.instance.ResolveObjectId(Product)}/{RegrowthPhase}/";
-            str += (HarvestWithScythe ? "1" : "0") + "/";
-            if (Bonus != null)
-                str += $"true {Bonus.MinimumPerHarvest} {Bonus.MaximumPerHarvest} {Bonus.MaxIncreasePerFarmLevel} {Bonus.ExtraChance}/";
+            str += $"{this.GetCropSpriteIndex()}/{Mod.instance.ResolveObjectId(this.Product)}/{this.RegrowthPhase}/";
+            str += (this.HarvestWithScythe ? "1" : "0") + "/";
+            if (this.Bonus != null)
+                str += $"true {this.Bonus.MinimumPerHarvest} {this.Bonus.MaximumPerHarvest} {this.Bonus.MaxIncreasePerFarmLevel} {this.Bonus.ExtraChance}/";
             else str += "false/";
-            str += (TrellisCrop ? "true" : "false") + "/";
-            if (Colors != null && Colors.Count > 0)
+            str += (this.TrellisCrop ? "true" : "false") + "/";
+            if (this.Colors != null && this.Colors.Count > 0)
             {
                 str += "true";
-                foreach (var color in Colors)
+                foreach (var color in this.Colors)
                     str += $" {color.R} {color.G} {color.B}";
             }
             else

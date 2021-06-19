@@ -1,8 +1,8 @@
 ﻿{
-  "menu.title": "Preexisting Relationship",
-  "menu.text": "You've been talking to someone for a while, \nand finally moved to the valley to be with them... \nWho is it?",
-  "menu.button.accept": "Accept",
-  "menu.button.cancel": "Cancel",
-  "married": "Your spouse has moved in!",
-  "spouse-taken": "This NPC is already married.",
+    "menu.title": "Preexisting Relationship",
+    "menu.text": "You've been talking to someone for a while, \nand finally moved to the valley to be with them... \nWho is it?",
+    "menu.button.accept": "Accept",
+    "menu.button.cancel": "Cancel",
+    "married": "Your spouse has moved in!",
+    "spouse-taken": "This NPC is already married."
 }

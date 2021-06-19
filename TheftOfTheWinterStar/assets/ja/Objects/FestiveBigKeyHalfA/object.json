@@ -1,10 +1,10 @@
-{
-  "Name": "Festive Big Key (A)",
-  "Description": "Half of a 'big key' used in the Frost Dungeon.",
-  "Category": "Gem",
-  "Edibility": -300,
-  "CategoryTextOverride": "Treasure",
-  "CanTrash": false,
-  "CanSell": false,
-  "CanBeGifted": false,
+﻿{
+    "Name": "Festive Big Key (A)",
+    "Description": "Half of a 'big key' used in the Frost Dungeon.",
+    "Category": "Gem",
+    "Edibility": -300,
+    "CategoryTextOverride": "Treasure",
+    "CanTrash": false,
+    "CanSell": false,
+    "CanBeGifted": false
 }

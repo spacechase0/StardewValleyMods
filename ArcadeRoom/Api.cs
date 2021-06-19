@@ -1,10 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using SpaceShared;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using SpaceShared;
 
 namespace ArcadeRoom
 {
@@ -12,23 +8,23 @@ namespace ArcadeRoom
     {
         Vector2 ReserveMachineSpot();
 
-        event EventHandler OnRoomSetup; 
+        event EventHandler OnRoomSetup;
     }
 
     public class Api : IApi
     {
         public Vector2 ReserveMachineSpot()
         {
-            return Mod.instance.ReserveNextMachineSpot();
+            return Mod.Instance.ReserveNextMachineSpot();
         }
-        
+
         public event EventHandler OnRoomSetup;
         internal void InvokeOnRoomSetup()
         {
-            Log.trace( "Event: OnRoomSetup" );
-            if ( OnRoomSetup == null )
+            Log.Trace("Event: OnRoomSetup");
+            if (this.OnRoomSetup == null)
                 return;
-            Util.invokeEvent( "ArcadeRoom.Api.OnRoomSetup", OnRoomSetup.GetInvocationList(), null );
+            Util.InvokeEvent("ArcadeRoom.Api.OnRoomSetup", this.OnRoomSetup.GetInvocationList(), null);
         }
     }
 }

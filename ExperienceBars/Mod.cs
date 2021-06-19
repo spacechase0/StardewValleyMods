@@ -1,39 +1,40 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
-using StardewModdingAPI;
-using StardewModdingAPI.Events;
-using StardewValley;
+using ExperienceBars.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewValley.Locations;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using SpaceShared.APIs;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
+using StardewValley.Locations;
 
 // TODO: Render on skills page?
 
 namespace ExperienceBars
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static readonly int[] expNeededForLevel = new int[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
+        public static readonly int[] ExpNeededForLevel = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
 
         public static Configuration Config;
 
-        public static bool renderLuck = false;
-        public static int expBottom = 0;
-        public static bool show = true;
-        private static bool stopLevelExtenderCompat = false;
+        public static bool RenderLuck = false;
+        public static int ExpBottom;
+        public static bool Show = true;
+        private static bool StopLevelExtenderCompat;
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
-            Log.Monitor = Monitor;
-            Config = helper.ReadConfig<Configuration>();
+            Log.Monitor = this.Monitor;
+            Mod.Config = helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.Display.RenderedHud += onRenderedHud;
-            helper.Events.Input.ButtonPressed += onButtonPressed;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Display.RenderedHud += this.OnRenderedHud;
+            helper.Events.Input.ButtonPressed += this.OnButtonPressed;
         }
 
         public override object GetApi()
@@ -41,34 +42,34 @@ namespace ExperienceBars
             return new Api();
         }
 
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(ModManifest, "UI X", "The X position of the UI on-screen.", () => Config.X, (int val) => Config.X = val);
-                capi.RegisterSimpleOption(ModManifest, "UI Y", "The Y position of the UI on-screen.", () => Config.Y, (int val) => Config.Y = val);
-                capi.RegisterSimpleOption(ModManifest, "Key: Toggle Display", "Press this key to toggle the display.\nHolding Shift lets you move the display as well. ", () => Config.ToggleBars, (SButton val) => Config.ToggleBars = val);
+                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
+                capi.RegisterSimpleOption(this.ModManifest, "UI X", "The X position of the UI on-screen.", () => Mod.Config.X, (int val) => Mod.Config.X = val);
+                capi.RegisterSimpleOption(this.ModManifest, "UI Y", "The Y position of the UI on-screen.", () => Mod.Config.Y, (int val) => Mod.Config.Y = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "Press this key to toggle the display.\nHolding Shift lets you move the display as well. ", () => Mod.Config.ToggleBars, (SButton val) => Mod.Config.ToggleBars = val);
             }
         }
 
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        public void onButtonPressed(object sender, ButtonPressedEventArgs e)
+        public void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if ( e.Button == Config.ToggleBars )
+            if (e.Button == Mod.Config.ToggleBars)
             {
-                if (show && (Game1.GetKeyboardState().IsKeyDown(Keys.LeftShift) || Game1.GetKeyboardState().IsKeyDown(Keys.RightShift)))
+                if (Mod.Show && (Game1.GetKeyboardState().IsKeyDown(Keys.LeftShift) || Game1.GetKeyboardState().IsKeyDown(Keys.RightShift)))
                 {
-                    Config.X = (int)e.Cursor.ScreenPixels.X;
-                    Config.Y = (int)e.Cursor.ScreenPixels.Y;
-                    Helper.WriteConfig(Config);
+                    Mod.Config.X = (int)e.Cursor.ScreenPixels.X;
+                    Mod.Config.Y = (int)e.Cursor.ScreenPixels.Y;
+                    this.Helper.WriteConfig(Mod.Config);
                 }
                 else
                 {
-                    show = !show;
+                    Mod.Show = !Mod.Show;
                 }
             }
         }
@@ -76,14 +77,14 @@ namespace ExperienceBars
         /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        public void onRenderedHud(object sender, RenderedHudEventArgs e)
+        public void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // renderExpBars
 
-            if (!show || Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree)
+            if (!Mod.Show || Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree)
                 return;
-            
-            int[] skills = new int[]
+
+            int[] skills = new[]
             {
                 Game1.player.farmingLevel.Value,
                 Game1.player.fishingLevel.Value,
@@ -95,14 +96,14 @@ namespace ExperienceBars
             int[] exp = Game1.player.experiencePoints.ToArray();
 
             bool foundLevelExtender = false;
-            if (Helper.ModRegistry.IsLoaded("Devin Lematty.Level Extender") && !stopLevelExtenderCompat)
+            if (this.Helper.ModRegistry.IsLoaded("Devin Lematty.Level Extender") && !Mod.StopLevelExtenderCompat)
             {
                 try
                 {
-                    var instance = Type.GetType("LevelExtender.ModEntry, LevelExtender").GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-                    var extLevels = Helper.Reflection.GetField<int[]>(instance, "sLevs").GetValue();
-                    var extExp = Helper.Reflection.GetField<int[]>(instance, "addedXP").GetValue();
-                    exp = (int[]) exp.Clone();
+                    object instance = Type.GetType("LevelExtender.ModEntry, LevelExtender").GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+                    int[] extLevels = this.Helper.Reflection.GetField<int[]>(instance, "sLevs").GetValue();
+                    int[] extExp = this.Helper.Reflection.GetField<int[]>(instance, "addedXP").GetValue();
+                    exp = (int[])exp.Clone();
                     for (int i = 0; i < 5; ++i)
                     {
                         if (skills[i] < extLevels[i])
@@ -114,50 +115,50 @@ namespace ExperienceBars
                 }
                 catch (Exception ex)
                 {
-                    Log.error("Exception during level extender compat: " + ex);
-                    stopLevelExtenderCompat = true;
+                    Log.Error("Exception during level extender compat: " + ex);
+                    Mod.StopLevelExtenderCompat = true;
                 }
             }
 
-            int x = Config.X;
-            int y = Config.Y; ;
+            int x = Mod.Config.X;
+            int y = Mod.Config.Y;
             if (Game1.player.currentLocation != null && Game1.player.currentLocation is MineShaft &&
                 x <= 25 && y <= 75)
                 y += 75;
-            for ( int i = 0; i < (renderLuck ? 6 : 5); ++i )
+            for (int i = 0; i < (Mod.RenderLuck ? 6 : 5); ++i)
             {
                 int prevReq = 0, nextReq = 1;
-                if ( skills[ i ] == 0 )
+                if (skills[i] == 0)
                 {
-                    nextReq = expNeededForLevel[ 0 ];
+                    nextReq = Mod.ExpNeededForLevel[0];
                 }
-                else if ( skills[ i ] < 10 )
+                else if (skills[i] < 10)
                 {
-                    prevReq = expNeededForLevel[ skills[ i ] - 1 ];
-                    nextReq = expNeededForLevel[ skills[ i ] ];
+                    prevReq = Mod.ExpNeededForLevel[skills[i] - 1];
+                    nextReq = Mod.ExpNeededForLevel[skills[i]];
                 }
-                else if ( foundLevelExtender )
+                else if (foundLevelExtender)
                 {
                     prevReq = 0;
                     nextReq = (int)(skills[i] * 1000 + (skills[i] * skills[i] * skills[i] * 0.3));
                 }
 
-                int haveExp = exp[ i ] - prevReq;
+                int haveExp = exp[i] - prevReq;
                 int needExp = nextReq - prevReq;
-                float progress = ( float ) haveExp / needExp;
-                if ( skills[ i ] == 10 && !foundLevelExtender || skills[ i ] == 100 )
+                float progress = (float)haveExp / needExp;
+                if (skills[i] == 10 && !foundLevelExtender || skills[i] == 100)
                 {
                     progress = -1;
                 }
-                
-                renderSkillBar( x, y, Game1.buffsIcons, getSkillRect( i ), skills[ i ], progress, getSkillColor( i ) );
-                
+
+                Mod.RenderSkillBar(x, y, Game1.buffsIcons, this.GetSkillRect(i), skills[i], progress, this.GetSkillColor(i));
+
                 y += 40;
             }
-            expBottom = y;
+            Mod.ExpBottom = y;
         }
 
-        private Rectangle getSkillRect(int skill)
+        private Rectangle GetSkillRect(int skill)
         {
             switch (skill)
             {
@@ -172,112 +173,115 @@ namespace ExperienceBars
             return new Rectangle(32, 16, 16, 16); // The eye thing
         }
 
-        private Color[] skillColors;
-        private Color getSkillColor( int skill )
+        private Color[] SkillColors;
+        private Color GetSkillColor(int skill)
         {
-            if (skillColors != null)
-                return skillColors[skill];
+            if (this.SkillColors != null)
+                return this.SkillColors[skill];
 
             // Taken from the icons
-            skillColors = new Color[]
+            this.SkillColors = new Color[]
             {
-                new Color( 115, 255, 56 ),
-                new Color( 117, 225, 255 ),
-                new Color( 0xCD, 0x7F, 0x32 ),//new Color( 78, 183, 0 ),
-                new Color( 247, 31, 0 ),
-                new Color( 178, 255, 211 ),
-                new Color( 255, 255, 84 ),
+                new(115, 255, 56),
+                new(117, 225, 255),
+                new(0xCD, 0x7F, 0x32),//new Color(78, 183, 0),
+                new(247, 31, 0),
+                new(178, 255, 211),
+                new(255, 255, 84),
             };
 
-            return skillColors[skill];
+            return this.SkillColors[skill];
         }
 
-        private const int BAR_WIDTH = 102;
-        private const int BAR_HEIGHT = 10;
-        private static readonly Color BAR_BORDER = Color.DarkGoldenrod;
-        private static readonly Color BAR_BG = Color.Black;
-        private static readonly Color BAR_FG = new Color(150, 150, 150);
-        private static readonly Color BAR_BG_TICK = new Color(50, 50, 50);
-        private static readonly Color BAR_FG_TICK = new Color(120, 120, 120);
-        private static Texture2D skillBg, skillFg;
+        private const int BarWidth = 102;
+        private const int BarHeight = 10;
+        private static readonly Color BarBorder = Color.DarkGoldenrod;
+        private static readonly Color BarBg = Color.Black;
+        private static readonly Color BarFg = new(150, 150, 150);
+        private static readonly Color BarBgTick = new(50, 50, 50);
+        private static readonly Color BarFgTick = new(120, 120, 120);
+        private static Texture2D SkillBg, SkillFg;
 
-        public static void renderSkillBar( int x, int y, Texture2D iconTex, Rectangle icon, int level, float progress, Color skillCol )
+        public static void RenderSkillBar(int x, int y, Texture2D iconTex, Rectangle icon, int level, float progress, Color skillCol)
         {
-            if (!show) return;
-            if ( Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree ) return;
+            if (!Mod.Show) return;
+            if (Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree) return;
 
             var b = Game1.spriteBatch;
 
-            if ( skillBg == null || skillFg == null )
-                setupExpBars();
+            if (Mod.SkillBg == null || Mod.SkillFg == null)
+                Mod.SetupExpBars();
 
-            b.Draw( iconTex, new Rectangle( x, y, 32, 32 ), icon, Color.White );
+            b.Draw(iconTex, new Rectangle(x, y, 32, 32), icon, Color.White);
 
             int extra = 0;
-            if ( level > 9  ) extra += 16;
-            if ( level > 99 ) extra += 20;
+            if (level > 9) extra += 16;
+            if (level > 99) extra += 20;
             NumberSprite.draw(level, b, new Vector2(x + 32 + 4 + 16 + extra, y + 16), Color.White, 0.75f, 0, 1, 0);
 
             if (progress < 0 || progress > 100)
                 return;
 
-            Rectangle barRect = new Rectangle( x + 32 + 4 + 32 + extra + 4, y + ( 32 - BAR_HEIGHT ) / 2 - 1, BAR_WIDTH * 2, BAR_HEIGHT * 2 );
-            b.Draw(skillBg, barRect, new Rectangle(0, 0, BAR_WIDTH, BAR_HEIGHT), Color.White);
+            Rectangle barRect = new Rectangle(x + 32 + 4 + 32 + extra + 4, y + (32 - Mod.BarHeight) / 2 - 1, Mod.BarWidth * 2, Mod.BarHeight * 2);
+            b.Draw(Mod.SkillBg, barRect, new Rectangle(0, 0, Mod.BarWidth, Mod.BarHeight), Color.White);
             barRect.Width = (int)(barRect.Width * progress);
-            b.Draw(skillFg, barRect, new Rectangle(0, 0, barRect.Width / 2, BAR_HEIGHT), skillCol);
+            b.Draw(Mod.SkillFg, barRect, new Rectangle(0, 0, barRect.Width / 2, Mod.BarHeight), skillCol);
         }
 
-        private static void setupExpBars()
+        private static void SetupExpBars()
         {
-            skillBg = new Texture2D(Game1.graphics.GraphicsDevice, BAR_WIDTH, BAR_HEIGHT);
-            skillFg = new Texture2D(Game1.graphics.GraphicsDevice, BAR_WIDTH, BAR_HEIGHT);
-            Color[] emptyColors = new Color[BAR_WIDTH * BAR_HEIGHT];
-            Color[] fillColors = new Color[BAR_WIDTH * BAR_HEIGHT];
-            for (int ix = 0; ix < BAR_WIDTH; ++ix)
+            Mod.SkillBg = new Texture2D(Game1.graphics.GraphicsDevice, Mod.BarWidth, Mod.BarHeight);
+            Mod.SkillFg = new Texture2D(Game1.graphics.GraphicsDevice, Mod.BarWidth, Mod.BarHeight);
+            Color[] emptyColors = new Color[Mod.BarWidth * Mod.BarHeight];
+            Color[] fillColors = new Color[Mod.BarWidth * Mod.BarHeight];
+            for (int ix = 0; ix < Mod.BarWidth; ++ix)
             {
-                for (int iy = 0; iy < BAR_HEIGHT; ++iy)
+                for (int iy = 0; iy < Mod.BarHeight; ++iy)
                 {
-                    Color e = BAR_BG;
-                    Color f = BAR_FG;
-                    if (ix == 0 || iy == 0 || ix == BAR_WIDTH - 1 || iy == BAR_HEIGHT - 1)
+                    Color e = Mod.BarBg;
+                    Color f = Mod.BarFg;
+                    if (ix == 0 || iy == 0 || ix == Mod.BarWidth - 1 || iy == Mod.BarHeight - 1)
                     {
-                        e = BAR_BORDER;
+                        e = Mod.BarBorder;
                         f = Color.Transparent;
 
                         // Corners
-                        if (ix == 0 && iy == 0 || ix == BAR_WIDTH - 1 && iy == 0 ||
-                             ix == 0 && iy == BAR_HEIGHT - 1 || ix == BAR_WIDTH - 1 && iy == BAR_HEIGHT - 1)
+                        if (ix == 0 && iy == 0 || ix == Mod.BarWidth - 1 && iy == 0 ||
+                             ix == 0 && iy == Mod.BarHeight - 1 || ix == Mod.BarWidth - 1 && iy == Mod.BarHeight - 1)
                         {
                             e = Color.Transparent;
                         }
                     }
                     else if ((ix - 1) % 10 == 0)
                     {
-                        e = BAR_BG_TICK;
-                        f = BAR_FG_TICK;
+                        e = Mod.BarBgTick;
+                        f = Mod.BarFgTick;
                     }
 
-                    float s = 1;
-                    if (iy == 1) s = 1.3f;
-                    if (iy == 2) s = 1.7f;
-                    if (iy == 3) s = 2.0f;
-                    if (iy == 4) s = 1.9f;
-                    if (iy == 5) s = 1.5f;
-                    if (iy == 6) s = 1.3f;
-                    if (iy == 7) s = 1.0f;
-                    if (iy == 8) s = 0.8f;
-                    if (iy == 9) s = 0.4f;
+                    float s = iy switch
+                    {
+                        1 => 1.3f,
+                        2 => 1.7f,
+                        3 => 2.0f,
+                        4 => 1.9f,
+                        5 => 1.5f,
+                        6 => 1.3f,
+                        7 => 1.0f,
+                        8 => 0.8f,
+                        9 => 0.4f,
+                        _ => 1
+                    };
                     e = Color.Multiply(e, s);
                     f = Color.Multiply(f, s);
 
 
 
-                    emptyColors[ix + iy * BAR_WIDTH] = e;
-                    fillColors[ix + iy * BAR_WIDTH] = f;
+                    emptyColors[ix + iy * Mod.BarWidth] = e;
+                    fillColors[ix + iy * Mod.BarWidth] = f;
                 }
             }
-            skillBg.SetData(emptyColors);
-            skillFg.SetData(fillColors);
+            Mod.SkillBg.SetData(emptyColors);
+            Mod.SkillFg.SetData(fillColors);
         }
     }
 }

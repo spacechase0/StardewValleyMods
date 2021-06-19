@@ -1,85 +1,90 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.IO;
-using System.Reflection;
-using Microsoft.CSharp;
 using Mono.CSharp;
 using SpaceShared;
 using StardewModdingAPI;
 
 namespace ConsoleCode
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            helper.ConsoleCommands.Add("cs", "Execute C# code.", onCommandReceived);
+            helper.ConsoleCommands.Add("cs", "Execute C# code.", this.OnCommandReceived);
         }
 
-        private void onCommandReceived( string cmd, string[] args )
+        private void OnCommandReceived(string cmd, string[] args)
         {
             string line = string.Join(" ", args).Replace('`', '"');
-            if ( args[0] == "--script" )
+            if (args[0] == "--script")
             {
-                line = File.ReadAllText(Path.Combine(Helper.DirectoryPath, args[1]));
+                line = File.ReadAllText(Path.Combine(this.Helper.DirectoryPath, args[1]));
             }
-            Log.trace($"Input: {line}");
+            Log.Trace($"Input: {line}");
             try
             {
-                var func = makeFunc(line);
+                var func = this.MakeFunc(line);
                 object result = null;
                 func.Invoke(ref result);
-                if (result == null)
-                    Log.info("Output: <null>");
-                else if (result is string)
-                    Log.info($"Output: \"{result}\"");
-                else
-                    Log.info($"Output: {result}");
+
+                switch (result)
+                {
+                    case null:
+                        Log.Info("Output: <null>");
+                        break;
+
+                    case string:
+                        Log.Info($"Output: \"{result}\"");
+                        break;
+
+                    default:
+                        Log.Info($"Output: {result}");
+                        break;
+                }
             }
             catch (Exception e)
             {
-                Log.error("Exception: " + e);
+                Log.Error("Exception: " + e);
             }
         }
-        
-        private CompiledMethod makeFunc(string userCode)
+
+        private CompiledMethod MakeFunc(string userCode)
         {
-            var settings = new CompilerSettings()
+            var settings = new CompilerSettings
             {
-                Unsafe = true,
+                Unsafe = true
             };
 
-            var libs = new List<string>();
             foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
                     settings.AssemblyReferences.Add(asm.CodeBase);
                 }
-                catch (Exception e)
+                catch
                 {
                     //Log.trace("Couldn't add assembly " + asm + ": " + e);
                 }
             }
 
             var eval = new Evaluator(new CompilerContext(settings, new ConsoleReportPrinter()));
-            eval.ReferenceAssembly( typeof( StardewValley.Game1 ).Assembly );
-            var code = @"using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using StardewModdingAPI;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using StardewValley;
-using xTile;";
-            eval.Compile(code);
-            return eval.Compile("IModHelper Helper = ConsoleCode.Mod.instance.Helper;\n" + userCode);
+            eval.Compile(@"
+                using System;
+                using System.Collections.Generic;
+                using System.Linq;
+                using System.Text;
+                using StardewModdingAPI;
+                using Microsoft.Xna.Framework;
+                using Microsoft.Xna.Framework.Graphics;
+                using StardewValley;
+                using xTile;
+            ");
+            return eval.Compile(userCode);
         }
     }
 }

@@ -1,52 +1,52 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using StardewValley;
-using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using SpaceShared;
+using StardewValley;
+using StardewValley.Menus;
 
 namespace SpaceCore.Interface
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.CopiedFromGameCode)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = DiagnosticMessages.CopiedFromGameCode)]
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.CopiedFromGameCode)]
     public class NewSkillsPage : IClickableMenu
     {
         public Texture2D texture;
-        public List<ClickableTextureComponent> skillBars = new List<ClickableTextureComponent>();
-        public List<ClickableTextureComponent> skillAreas = new List<ClickableTextureComponent>();
-        public List<ClickableTextureComponent> specialItems = new List<ClickableTextureComponent>();
-        public List<ClickableTextureComponent> specialItemComponents = new List<ClickableTextureComponent>();
+        public List<ClickableTextureComponent> skillBars = new();
+        public List<ClickableTextureComponent> skillAreas = new();
+        public List<ClickableTextureComponent> specialItems = new();
+        public List<ClickableTextureComponent> specialItemComponents = new();
         public ClickableTextureComponent walletUpArrow;
         public ClickableTextureComponent walletDownArrow;
         public ClickableComponent playerPanel;
         private Rectangle walletArea;
         private Rectangle walletIconArea;
-        private Rectangle walletIconAreaSource = new Rectangle(293, 360, 24, 24);
-        private Rectangle walletIconSource = new Rectangle(0, 0, 12, 12);
-        private Rectangle skillsTabSource = new Rectangle(16, 368, 16, 16);
+        private readonly Rectangle walletIconAreaSource = new(293, 360, 24, 24);
+        private readonly Rectangle walletIconSource = new(0, 0, 12, 12);
+        private readonly Rectangle skillsTabSource = new(16, 368, 16, 16);
         private int SkillTabRegionId => Game1.activeClickableMenu is GameMenu ? GameMenu.region_skillsTab : -1;
-        private bool IsWalletRightSide => SpaceCore.instance.Config.WalletOnRightOfSkillPage
-            && !SpaceCore.instance.Helper.ModRegistry.IsLoaded("alphablackwolf.skillPrestige"); // Skill prestige places icons in right-side wallet area
-        private bool IsLegacyWallet => SpaceCore.instance.Config.WalletLegacyStyle;
+        private bool IsWalletRightSide => SpaceCore.Instance.Config.WalletOnRightOfSkillPage
+            && !SpaceCore.Instance.Helper.ModRegistry.IsLoaded("alphablackwolf.skillPrestige"); // Skill prestige places icons in right-side wallet area
+        private bool IsLegacyWallet => SpaceCore.Instance.Config.WalletLegacyStyle;
         private int walletSelectionOffset;
         private int WalletSelectionOffset
         {
-            get => walletSelectionOffset;
-            set => walletSelectionOffset = value < 0 ? ((specialItemComponents.Count - 1) * 2) - 1 : value % ((specialItemComponents.Count - 1) * 2);
+            get => this.walletSelectionOffset;
+            set => this.walletSelectionOffset = value < 0 ? ((this.specialItemComponents.Count - 1) * 2) - 1 : value % ((this.specialItemComponents.Count - 1) * 2);
         }
-        private bool CanScrollWalletItems
-        {
-            get => !this.IsLegacyWallet && this.specialItems.Count > this.specialItemComponents.Count;
-        }
-        private bool CanNavigateToWallet
-        {
-            get => this.specialItems.Any() && (!this.IsLegacyWallet || this.specialItemComponents.First().bounds.Y > 0);
-        }
+        private bool CanScrollWalletItems => !this.IsLegacyWallet && this.specialItems.Count > this.specialItemComponents.Count;
+
+        private bool CanNavigateToWallet => this.specialItems.Any() && (!this.IsLegacyWallet || this.specialItemComponents.First().bounds.Y > 0);
         private string hoverText = "";
         private string hoverTitle = "";
         private int professionImage = -1;
-        private int[] playerPanelFrames = new int[4]
+        private readonly int[] playerPanelFrames = new int[4]
         {
             0,
             1,
@@ -66,15 +66,15 @@ namespace SpaceCore.Interface
         private int playerPanelTimer;
 
         public NewSkillsPage(int x, int y, int width, int height)
-            : base(x, y, width, height, false)
+            : base(x, y, width, height)
         {
-            this.texture = SpaceCore.instance.Helper.Content.Load<Texture2D>(Path.Combine("assets/sprites.png"));
+            this.texture = SpaceCore.Instance.Helper.Content.Load<Texture2D>(Path.Combine("assets/sprites.png"));
 
             // Player panel
-            this.playerPanel = new ClickableComponent(
-                bounds: new Rectangle(this.xPositionOnScreen + 64, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder, 128, 192),
-                name: null);
-            this.playerPanel.myID = NewSkillsPage.PlayerPanelRegionId;
+            this.playerPanel = new ClickableComponent(bounds: new Rectangle(this.xPositionOnScreen + 64, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder, 128, 192), name: null)
+            {
+                myID = NewSkillsPage.PlayerPanelRegionId
+            };
             // navigation is handled in receiveKeyPress to avoid confusing the navigation logic
 
             // Wallet area
@@ -96,16 +96,16 @@ namespace SpaceCore.Interface
                 // Special item names and whether they've been unlocked
                 List<KeyValuePair<string, bool>> specialFlags = new List<KeyValuePair<string, bool>>
                 {
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11587", Game1.player.canUnderstandDwarves),
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11588", Game1.player.hasRustyKey),
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11589", Game1.player.hasClubCard),
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11590", Game1.player.hasSpecialCharm),
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.11591", Game1.player.hasSkullKey),
-                    new KeyValuePair<string, bool>("StringsFromCSFiles:SkillsPage.cs.magnifyingglass", Game1.player.hasMagnifyingGlass),
-                    new KeyValuePair<string, bool>("Objects:DarkTalisman", Game1.player.hasDarkTalisman),
-                    new KeyValuePair<string, bool>("Objects:MagicInk", Game1.player.hasMagicInk),
-                    new KeyValuePair<string, bool>("Objects:BearPaw", Game1.player.eventsSeen.Contains(2120303)),
-                    new KeyValuePair<string, bool>("Objects:SpringOnionBugs", Game1.player.eventsSeen.Contains(3910979)),
+                    new("StringsFromCSFiles:SkillsPage.cs.11587", Game1.player.canUnderstandDwarves),
+                    new("StringsFromCSFiles:SkillsPage.cs.11588", Game1.player.hasRustyKey),
+                    new("StringsFromCSFiles:SkillsPage.cs.11589", Game1.player.hasClubCard),
+                    new("StringsFromCSFiles:SkillsPage.cs.11590", Game1.player.hasSpecialCharm),
+                    new("StringsFromCSFiles:SkillsPage.cs.11591", Game1.player.hasSkullKey),
+                    new("StringsFromCSFiles:SkillsPage.cs.magnifyingglass", Game1.player.hasMagnifyingGlass),
+                    new("Objects:DarkTalisman", Game1.player.hasDarkTalisman),
+                    new("Objects:MagicInk", Game1.player.hasMagicInk),
+                    new("Objects:BearPaw", Game1.player.eventsSeen.Contains(2120303)),
+                    new("Objects:SpringOnionBugs", Game1.player.eventsSeen.Contains(3910979)),
                 };
 
                 const int padTop = 16;
@@ -150,17 +150,23 @@ namespace SpaceCore.Interface
                 const int padRight = 4;
                 iconWidth = 16;
                 int iconCount = this.IsLegacyWallet ? 10 : (this.walletDownArrow.bounds.Y - this.walletUpArrow.bounds.Y - (padTop * 2)) / iconWidth / Game1.pixelZoom;
-                bool shouldNavButtonsBeShown = !this.IsLegacyWallet && specialItems.Count > iconCount;
+                bool shouldNavButtonsBeShown = !this.IsLegacyWallet && this.specialItems.Count > iconCount;
                 for (int index = 0; index < iconCount; ++index)
                 {
                     int iconDestWidth = iconWidth * Game1.pixelZoom;
                     int x2 = this.IsLegacyWallet ? this.walletArea.X + 48 + ((iconDestWidth + padRight) * index) : this.walletUpArrow.bounds.X + (this.walletUpArrow.bounds.Width / 2) - (iconDestWidth / 2);
                     int y2 = this.IsLegacyWallet ? this.walletArea.Y + 120 : this.walletUpArrow.bounds.Y + (this.specialItems.Count > iconCount ? this.walletUpArrow.bounds.Height : 0) + padTop + (index * iconDestWidth);
                     ClickableTextureComponent textureComponent = new ClickableTextureComponent(
-                        name: "", bounds: new Rectangle(x2, y2, iconDestWidth, iconDestWidth),
-                        label: "", hoverText: "",
-                        texture: Game1.mouseCursors, sourceRect: new Rectangle(-1, -1, iconWidth, iconWidth), scale: Game1.pixelZoom, drawShadow: true);
-                    textureComponent.myID = NewSkillsPage.WalletRegionStartId + this.specialItemComponents.Count;
+                        name: "",
+                        bounds: new Rectangle(x2, y2, iconDestWidth, iconDestWidth),
+                        label: "",
+                        hoverText: "",
+                        texture: Game1.mouseCursors, sourceRect: new Rectangle(-1, -1, iconWidth, iconWidth),
+                        scale: Game1.pixelZoom, drawShadow: true
+                    )
+                    {
+                        myID = NewSkillsPage.WalletRegionStartId + this.specialItemComponents.Count
+                    };
                     if (this.IsLegacyWallet)
                     {
                         textureComponent.leftNeighborID = index == 0 ? -1 : textureComponent.myID - NewSkillsPage.WalletIdIncrement;
@@ -187,7 +193,7 @@ namespace SpaceCore.Interface
             int drawX = 0;
             int addedX = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + width - 448 - 48 + 4 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 4;
             int drawY = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 12;
-            int gameSkillCount = SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
+            int gameSkillCount = SpaceCore.Instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
             int walletSnapId = this.specialItems.Any() ? NewSkillsPage.WalletRegionStartId : -1;
             int leftSnapId = this.playerPanel.myID;
             int rightSnapId = this.IsLegacyWallet || !this.IsWalletRightSide ? -1 : walletSnapId;
@@ -240,10 +246,15 @@ namespace SpaceCore.Interface
                     if (drawRed)
                     {
                         ClickableTextureComponent textureComponent = new ClickableTextureComponent(
-                            name: string.Concat(whichProfession), bounds: new Rectangle(drawX + addedX - 4 + professionCheckLevel * 36, drawY + skillIndex * 56, 56, 36),
+                            name: string.Concat(whichProfession),
+                            bounds: new Rectangle(drawX + addedX - 4 + professionCheckLevel * 36, drawY + skillIndex * 56, 56, 36),
                             label: null, hoverText: professionBlurb,
-                            texture: Game1.mouseCursors, sourceRect: new Rectangle(159, 338, 14, 9), scale: 4f, drawShadow: true);
-                        textureComponent.myID = NewSkillsPage.SkillRegionStartId + (skillIndex * NewSkillsPage.SkillIdIncrement) + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                            texture: Game1.mouseCursors, sourceRect: new Rectangle(159, 338, 14, 9), scale: 4f,
+                            drawShadow: true
+                        )
+                        {
+                            myID = NewSkillsPage.SkillRegionStartId + (skillIndex * NewSkillsPage.SkillIdIncrement) + (professionIndex * NewSkillsPage.SkillProfessionIncrement)
+                        };
                         textureComponent.leftNeighborID = textureComponent.myID - NewSkillsPage.SkillProfessionIncrement;
                         textureComponent.rightNeighborID = professionIndex == 2 ? rightSnapId : textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
                         textureComponent.downNeighborID = skillIndex == gameSkillCount - 1 && skills.Length == 0 ? walletSnapId : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
@@ -262,7 +273,7 @@ namespace SpaceCore.Interface
                     int totalSkillIndex = gameSkillCount + skillIndex;
                     int professionLevel = professionIndex - 1 + (professionIndex * 4);
                     Skills.Skill skill = Skills.GetSkill(skills[skillIndex]);
-                    Skills.Skill.Profession profession = Skills.getProfessionFor(skill, professionLevel + 1);// Game1.player.getProfessionForSkill(0, num4 + 1);
+                    Skills.Skill.Profession profession = Skills.GetProfessionFor(skill, professionLevel + 1);// Game1.player.getProfessionForSkill(0, num4 + 1);
                     bool drawRed = Game1.player.GetCustomSkillLevel(skill) > professionLevel;
                     List<string> professionLines = new List<string>();
                     string professionBlurb = "";
@@ -278,10 +289,15 @@ namespace SpaceCore.Interface
                     {
                         List<ClickableTextureComponent> skillBars = this.skillBars;
                         ClickableTextureComponent textureComponent = new ClickableTextureComponent(
-                            name: NewSkillsPage.CustomSkillPrefix + profession.Id, bounds: new Rectangle(drawX + addedX - 4 + (professionLevel * 36), drawY + (gameSkillCount * 56), 56, 36),
+                            name: NewSkillsPage.CustomSkillPrefix + profession.Id,
+                            bounds: new Rectangle(drawX + addedX - 4 + (professionLevel * 36), drawY + (gameSkillCount * 56), 56, 36),
                             label: null, hoverText: professionBlurb,
-                            texture: Game1.mouseCursors, sourceRect: new Rectangle(159, 338, 14, 9), scale: 4f, drawShadow: true);
-                        textureComponent.myID = (totalSkillIndex * NewSkillsPage.SkillIdIncrement) + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                            texture: Game1.mouseCursors, sourceRect: new Rectangle(159, 338, 14, 9), scale: 4f,
+                            drawShadow: true
+                        )
+                        {
+                            myID = (totalSkillIndex * NewSkillsPage.SkillIdIncrement) + (professionIndex * NewSkillsPage.SkillProfessionIncrement)
+                        };
                         textureComponent.leftNeighborID = textureComponent.myID - NewSkillsPage.SkillProfessionIncrement;
                         textureComponent.rightNeighborID = professionIndex == 2 ? rightSnapId : textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
                         textureComponent.downNeighborID = skillIndex == skills.Length - 1 ? walletSnapId : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
@@ -357,11 +373,16 @@ namespace SpaceCore.Interface
                         }
                         break;
                 }
+
                 ClickableTextureComponent textureComponent = new ClickableTextureComponent(
-                    name: string.Concat(actualSkillIndex), bounds: new Rectangle(addedX - 128 - 48, drawY + (skillIndex * 56), 148, 36),
+                    name: string.Concat(actualSkillIndex),
+                    bounds: new Rectangle(addedX - 128 - 48, drawY + (skillIndex * 56), 148, 36),
                     label: string.Concat(actualSkillIndex), hoverText,
-                    texture: null, sourceRect: Rectangle.Empty, scale: 1f, drawShadow: false);
-                textureComponent.myID = NewSkillsPage.SkillRegionStartId + (skillIndex * NewSkillsPage.SkillIdIncrement);
+                    texture: null, sourceRect: Rectangle.Empty, scale: 1f, drawShadow: false
+                )
+                {
+                    myID = NewSkillsPage.SkillRegionStartId + (skillIndex * NewSkillsPage.SkillIdIncrement)
+                };
                 textureComponent.rightNeighborID = textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
                 textureComponent.leftNeighborID = leftSnapId;
                 textureComponent.downNeighborID = skillIndex == gameSkillCount - 1 && skills.Length == 0 ? walletSnapId : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
@@ -375,7 +396,7 @@ namespace SpaceCore.Interface
                         // allow the player to navigate to the wallet without having profession 2 unlocked for a skill
                         for (int professionIndex = 2; professionIndex >= 0; --professionIndex)
                         {
-                            var snapTo = textureComponent.myID + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                            int snapTo = textureComponent.myID + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
                             var clickable = (ClickableComponent)this.skillBars.FirstOrDefault(c => c.myID == snapTo);
                             if (clickable != null)
                                 clickable.rightNeighborID = rightSnapId;
@@ -397,10 +418,14 @@ namespace SpaceCore.Interface
                 if (Game1.player.GetCustomSkillLevel(skill) > 0)
                     hoverText = skill.GetSkillPageHoverText(Game1.player.GetCustomSkillLevel(skill));
                 ClickableTextureComponent textureComponent = new ClickableTextureComponent(
-                    name: NewSkillsPage.CustomSkillPrefix + skill.GetName(), bounds: new Rectangle(addedX - 128 - 48, drawY + (actualSkillIndex * 56), 148, 36),
+                    name: NewSkillsPage.CustomSkillPrefix + skill.GetName(),
+                    bounds: new Rectangle(addedX - 128 - 48, drawY + (actualSkillIndex * 56), 148, 36),
                     label: string.Concat(actualSkillIndex), hoverText,
-                    texture: null, sourceRect: Rectangle.Empty, scale: 1f, drawShadow: false);
-                textureComponent.myID = NewSkillsPage.SkillRegionStartId + (actualSkillIndex * NewSkillsPage.SkillIdIncrement);
+                    texture: null, sourceRect: Rectangle.Empty, scale: 1f, drawShadow: false
+                )
+                {
+                    myID = NewSkillsPage.SkillRegionStartId + (actualSkillIndex * NewSkillsPage.SkillIdIncrement)
+                };
                 textureComponent.rightNeighborID = textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
                 textureComponent.leftNeighborID = leftSnapId;
                 textureComponent.downNeighborID = skillIndex == skills.Length - 1 ? -1 : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
@@ -414,7 +439,7 @@ namespace SpaceCore.Interface
                         // allow the player to navigate to the wallet without having profession 2 unlocked for a skill
                         for (int professionIndex = 2; professionIndex >= 0; --professionIndex)
                         {
-                            var snapTo = textureComponent.myID + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
+                            int snapTo = textureComponent.myID + (professionIndex * NewSkillsPage.SkillProfessionIncrement);
                             var clickable = (ClickableComponent)this.skillBars.FirstOrDefault(c => c.myID == snapTo);
                             if (clickable != null)
                                 clickable.rightNeighborID = rightSnapId;
@@ -456,7 +481,7 @@ namespace SpaceCore.Interface
         {
             if (id == -1)
                 return;
-            this.currentlySnappedComponent = getComponentWithID(id);
+            this.currentlySnappedComponent = this.getComponentWithID(id);
             this.snapCursorToCurrentSnappedComponent();
         }
 
@@ -642,7 +667,7 @@ namespace SpaceCore.Interface
         {
             int x = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + this.width - 448 - 48 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 8;
             int y = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 8;
-            int indexWithLuckSkill = SpaceCore.instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
+            int indexWithLuckSkill = SpaceCore.Instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
             int xOffset = 0;
 
             // Menu container
@@ -673,7 +698,7 @@ namespace SpaceCore.Interface
 
                 // farmer portrait
                 Game1.player.FarmerRenderer.draw(b,
-                    new FarmerSprite.AnimationFrame(Game1.player.bathingClothes.Value ? 108 : this.playerPanelFrames[this.playerPanelIndex], 0, false, false, null, false),
+                    new FarmerSprite.AnimationFrame(Game1.player.bathingClothes.Value ? 108 : this.playerPanelFrames[this.playerPanelIndex], 0, false, false),
                     currentFrame: Game1.player.bathingClothes.Value ? 108 : this.playerPanelFrames[this.playerPanelIndex],
                     sourceRect: new Rectangle(this.playerPanelFrames[this.playerPanelIndex] * 16, Game1.player.bathingClothes.Value ? 576 : 0, 16, 32),
                     position: new Vector2(x1 + 32, y1 + 32),
@@ -683,7 +708,7 @@ namespace SpaceCore.Interface
                 if (Game1.timeOfDay >= 1900)
                 {
                     Game1.player.FarmerRenderer.draw(b,
-                        new FarmerSprite.AnimationFrame(this.playerPanelFrames[this.playerPanelIndex], 0, false, false, null, false),
+                        new FarmerSprite.AnimationFrame(this.playerPanelFrames[this.playerPanelIndex], 0, false, false),
                         currentFrame: this.playerPanelFrames[this.playerPanelIndex],
                         sourceRect: new Rectangle(this.playerPanelFrames[this.playerPanelIndex] * 16, 0, 16, 32),
                         position: new Vector2(x1 + 32, y1 + 32),
@@ -775,8 +800,8 @@ namespace SpaceCore.Interface
                     }
                     if (levelIndex == 9)
                     {
-                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 12 + (skillLevel >= 10 ? 12 : 0), y + 16 + skillIndex * 56), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
-                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 16 + (skillLevel >= 10 ? 12 : 0), y + 12 + skillIndex * 56), (addedSkill ? Color.LightGreen : Color.SandyBrown) * (skillLevel == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 12 + (skillLevel >= 10 ? 12 : 0), y + 16 + skillIndex * 56), Color.Black * 0.35f, 1f, 0.85f, 1f, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 16 + (skillLevel >= 10 ? 12 : 0), y + 12 + skillIndex * 56), (addedSkill ? Color.LightGreen : Color.SandyBrown) * (skillLevel == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0);
                     }
                 }
                 if ((levelIndex + 1) % 5 == 0)
@@ -784,7 +809,7 @@ namespace SpaceCore.Interface
             }
 
             // Custom skills
-            foreach (var skillName in Skills.GetSkillList())
+            foreach (string skillName in Skills.GetSkillList())
             {
                 xOffset = 0;
                 Skills.Skill skill = Skills.GetSkill(skillName);
@@ -828,8 +853,8 @@ namespace SpaceCore.Interface
                     }
                     if (levelIndex == 9)
                     {
-                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 12 + (skillLevel >= 10 ? 12 : 0), y + 16 + indexWithLuckSkill * 56), Color.Black * 0.35f, 1f, 0.85f, 1f, 0, 0);
-                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 16 + (skillLevel >= 10 ? 12 : 0), y + 12 + indexWithLuckSkill * 56), (addedSkill ? Color.LightGreen : Color.SandyBrown) * (skillLevel == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 12 + (skillLevel >= 10 ? 12 : 0), y + 16 + indexWithLuckSkill * 56), Color.Black * 0.35f, 1f, 0.85f, 1f, 0);
+                        NumberSprite.draw(skillLevel, b, new Vector2(xOffset + x + (levelIndex + 2) * 36 + 16 + (skillLevel >= 10 ? 12 : 0), y + 12 + indexWithLuckSkill * 56), (addedSkill ? Color.LightGreen : Color.SandyBrown) * (skillLevel == 0 ? 0.75f : 1f), 1f, 0.87f, 1f, 0);
                     }
 
                     if ((levelIndex + 1) % 5 == 0)
@@ -852,8 +877,8 @@ namespace SpaceCore.Interface
                         skillBar.scale = Game1.pixelZoom;
                         if (skillBar.containsPoint(Game1.getMouseX(), Game1.getMouseY()) && !skillBar.name.Equals("-1") && skillBar.hoverText.Length > 0)
                         {
-                            List<Skills.Skill.Profession> professions = Skills.skills.SelectMany(s => s.Value.Professions).ToList();
-                            Skills.Skill.Profession profession = professions.Where(p => NewSkillsPage.CustomSkillPrefix + p.Id == skillBar.name).FirstOrDefault();
+                            List<Skills.Skill.Profession> professions = Skills.SkillsByName.SelectMany(s => s.Value.Professions).ToList();
+                            Skills.Skill.Profession profession = professions.FirstOrDefault(p => NewSkillsPage.CustomSkillPrefix + p.Id == skillBar.name);
                             this.hoverText = profession.GetDescription();
                             this.hoverTitle = profession.GetName();
                             Texture2D actuallyAProfessionImage = profession.Icon ?? Game1.staminaRect;

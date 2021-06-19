@@ -1,57 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
+using Terraforming.Framework;
 using xTile;
 using xTile.Layers;
 using xTile.Tiles;
 
 namespace Terraforming
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            helper.ConsoleCommands.Add("terraform", "TODO", terraformCommand);
+            helper.ConsoleCommands.Add("terraform", "TODO", this.TerraformCommand);
         }
 
-        private void terraformCommand(string cmd, string[] args)
+        private void TerraformCommand(string cmd, string[] args)
         {
             if (!Context.IsWorldReady)
             {
-                Log.info("World must be ready");
+                Log.Info("World must be ready");
                 return;
             }
             if (Game1.eventUp)
             {
-                Log.info("Probably shouldn't do this during an event");
+                Log.Info("Probably shouldn't do this during an event");
             }
 
-            Log.info("Starting up...");
-            sterilizeMap();
+            Log.Info("Starting up...");
+            Mod.SterilizeMap();
             Game1.activeClickableMenu = new TerraformingMenu();
         }
 
-        internal static void sterilizeMap(GameLocation loc = null)
+        internal static void SterilizeMap(GameLocation loc = null)
         {
-            if (loc == null)
-                loc = Game1.currentLocation;
+            loc ??= Game1.currentLocation;
 
             /*
             if (!loc.IsOutdoors)
                 throw new NotSupportedException("Location must be outdoors");
             */
 
-            Log.trace("Creating sterile map...");
-            Map map = new Map();
-            map.Id = loc.Map.Id + ".Terraform";
+            Log.Trace("Creating sterile map...");
+            Map map = new Map
+            {
+                Id = loc.Map.Id + ".Terraform"
+            };
             foreach (var prop in loc.Map.Properties)
                 map.Properties.Add(prop.Key, prop.Value);
             foreach (var ts in Game1.getFarm().Map.TileSheets)
@@ -68,12 +67,12 @@ namespace Terraforming
             {
                 var newLayer = new Layer(layer.Id, map, layer.LayerSize, layer.TileSize);
                 if (newLayer.Id == "Back" || newLayer.Id == "Buildings" || newLayer.Id == "Front" || newLayer.Id == "AlwaysFront")
-                    newLayer.AfterDraw += drawTerraformLayer;
+                    newLayer.AfterDraw += Mod.DrawTerraformLayer;
                 if (newLayer.Id == "Back")
                 {
-                    for (var ix = 0; ix < newLayer.LayerWidth; ix++)
+                    for (int ix = 0; ix < newLayer.LayerWidth; ix++)
                     {
-                        for (var iy = 0; iy < newLayer.LayerHeight; iy++)
+                        for (int iy = 0; iy < newLayer.LayerHeight; iy++)
                         {
                             var tile = new StaticTile(newLayer, map.TileSheets[1], BlendMode.Alpha, 587);
                             newLayer.Tiles[ix, iy] = tile;
@@ -83,7 +82,7 @@ namespace Terraforming
                 map.AddLayer(newLayer);
             }
 
-            Log.trace("Replacing location's map with sterile map.");
+            Log.Trace("Replacing location's map with sterile map.");
             loc.Map = map;
             loc.Map.LoadTileSheets(Game1.mapDisplayDevice);
             if (loc.waterTiles != null)
@@ -97,7 +96,7 @@ namespace Terraforming
             }
         }
 
-        private static void drawTerraformLayer(object sender, LayerEventArgs e)
+        private static void DrawTerraformLayer(object sender, LayerEventArgs e)
         {
             foreach (var layer in e.Layer.Map.Layers)
             {

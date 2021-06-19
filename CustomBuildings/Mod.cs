@@ -1,13 +1,10 @@
-﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CustomBuildings.Overrides;
-using Harmony;
+using CustomBuildings.Framework;
+using CustomBuildings.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -18,69 +15,62 @@ using StardewValley.Menus;
 
 namespace CustomBuildings
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
+    internal class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
     {
-        public static Mod instance;
+        public static Mod Instance;
 
-        internal Dictionary<string, BuildingData> buildings = new Dictionary<string, BuildingData>();
-        
+        internal Dictionary<string, BuildingData> Buildings = new();
+
         internal static int ResolveObjectId(object data)
         {
-            if (data.GetType() == typeof(long))
-                return (int)(long)data;
-            else
-            {
-                foreach (var obj in Game1.objectInformation)
-                {
-                    if (obj.Value.Split('/')[0] == (string)data)
-                        return obj.Key;
-                }
+            if (data is long inputId)
+                return (int)inputId;
 
-                Log.warn($"No idea what '{data}' is!");
-                return 0;
+            foreach (var obj in Game1.objectInformation)
+            {
+                if (obj.Value.Split('/')[0] == (string)data)
+                    return obj.Key;
             }
+
+            Log.Warn($"No idea what '{data}' is!");
+            return 0;
         }
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += onMenuChanged;
-            helper.Events.Player.Warped += onWarped;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            helper.Events.Player.Warped += this.OnWarped;
 
-            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-            harmony.Patch(AccessTools.Method(typeof(Coop), "getIndoors"), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.getIndoors_Prefix))));
-            harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.performActionOnConstruction)), postfix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.performActionOnConstruction_Postfix))));
-            harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.performActionOnUpgrade)), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.performActionOnUpgrade_Prefix))));
-            harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.dayUpdate)), postfix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.dayUpdate_Postfix))));
-            harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.upgrade)), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.upgrade_Prefix))));
-            //harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.getUpgradeSignLocation)), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.getUpgradeSignLocation_Postfix))));
-            harmony.Patch(AccessTools.Method(typeof(Coop), nameof(Coop.draw)), prefix: new HarmonyMethod(AccessTools.Method(typeof(CoopPatches), nameof(CoopPatches.draw_Prefix))));
-            
-            Log.debug("Loading content packs...");
-            foreach ( var cp in helper.ContentPacks.GetOwned() )
+            HarmonyPatcher.Apply(this,
+                new CoopPatcher()
+            );
+
+            Log.Debug("Loading content packs...");
+            foreach (var cp in helper.ContentPacks.GetOwned())
             {
                 DirectoryInfo buildingsDir = new DirectoryInfo(Path.Combine(cp.DirectoryPath, "Buildings"));
-                foreach ( var dir in buildingsDir.EnumerateDirectories() )
+                foreach (var dir in buildingsDir.EnumerateDirectories())
                 {
                     string relDir = $"Buildings/{dir.Name}";
-                    BuildingData binfo = cp.ReadJsonFile<BuildingData>(Path.Combine(relDir, "building.json"));
-                    if (binfo == null)
+                    BuildingData buildingData = cp.ReadJsonFile<BuildingData>(Path.Combine(relDir, "building.json"));
+                    if (buildingData == null)
                         continue;
-                    binfo.texture = cp.LoadAsset<Texture2D>(Path.Combine(relDir, "building.png"));
-                    binfo.mapLoader = () => cp.LoadAsset<xTile.Map>(Path.Combine(relDir, "building.tbin"));
-                    buildings.Add(binfo.Id, binfo);
+                    buildingData.Texture = cp.LoadAsset<Texture2D>(Path.Combine(relDir, "building.png"));
+                    buildingData.MapLoader = () => cp.LoadAsset<xTile.Map>(Path.Combine(relDir, "building.tbin"));
+                    this.Buildings.Add(buildingData.Id, buildingData);
                 }
             }
         }
 
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is CarpenterMenu carp)
             {
-                var blueprints = Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
-                foreach ( var building in buildings )
+                var blueprints = this.Helper.Reflection.GetField<List<BluePrint>>(carp, "blueprints").GetValue();
+                foreach (var building in this.Buildings)
                 {
                     if (building.Value.PreviousTier == null || Game1.getFarm().isBuildingConstructed(building.Value.PreviousTier))
                         blueprints.Add(new BluePrint(building.Value.Id));
@@ -88,14 +78,12 @@ namespace CustomBuildings
             }
         }
 
-        private void onWarped(object sender, WarpedEventArgs e)
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
             if (!e.IsLocalPlayer)
                 return;
-            
-            BuildableGameLocation farm = e.NewLocation as BuildableGameLocation;
-            if (farm == null)
-                farm = e.OldLocation as BuildableGameLocation;
+
+            BuildableGameLocation farm = e.NewLocation as BuildableGameLocation ?? e.OldLocation as BuildableGameLocation;
             if (farm != null)
             {
                 for (int i = 0; i < farm.buildings.Count; ++i)
@@ -103,12 +91,12 @@ namespace CustomBuildings
                     var b = farm.buildings[i];
 
                     // This is probably a new building if it hasn't been converted yet.
-                    if (buildings.ContainsKey(b.buildingType.Value) && !(b is Coop))
+                    if (this.Buildings.TryGetValue(b.buildingType.Value, out BuildingData buildingData) && !(b is Coop))
                     {
-                        farm.buildings[i] = new Coop(new BluePrint(b.buildingType), new Vector2(b.tileX, b.tileY));
+                        farm.buildings[i] = new Coop(new BluePrint(b.buildingType.Value), new Vector2(b.tileX.Value, b.tileY.Value));
                         farm.buildings[i].indoors.Value = b.indoors.Value;
                         farm.buildings[i].load();
-                        (farm.buildings[i].indoors.Value as AnimalHouse).animalLimit.Value = buildings[b.buildingType.Value].MaxOccupants;
+                        (farm.buildings[i].indoors.Value as AnimalHouse).animalLimit.Value = buildingData.MaxOccupants;
                     }
                 }
             }
@@ -116,7 +104,7 @@ namespace CustomBuildings
 
         public bool CanLoad<T>(IAssetInfo asset)
         {
-            foreach ( var building in buildings )
+            foreach (var building in this.Buildings)
             {
                 if (asset.AssetNameEquals("Buildings\\" + building.Key) || asset.AssetNameEquals("Maps\\" + building.Key))
                     return true;
@@ -126,14 +114,14 @@ namespace CustomBuildings
 
         public T Load<T>(IAssetInfo asset)
         {
-            foreach (var building in buildings)
+            foreach (var building in this.Buildings)
             {
                 if (asset.AssetNameEquals("Buildings\\" + building.Key))
-                    return (T) (object) building.Value.texture;
+                    return (T)(object)building.Value.Texture;
                 else if (asset.AssetNameEquals("Maps\\" + building.Key))
-                    return (T)(object)building.Value.mapLoader();
+                    return (T)(object)building.Value.MapLoader();
             }
-            return default(T);
+            return default;
         }
 
         public bool CanEdit<T>(IAssetInfo asset)
@@ -144,7 +132,7 @@ namespace CustomBuildings
         public void Edit<T>(IAssetData asset)
         {
             var dict = asset.AsDictionary<string, string>();
-            foreach ( var building in buildings)
+            foreach (var building in this.Buildings)
             {
                 dict.Data.Add(building.Value.Id, building.Value.BlueprintString());
             }

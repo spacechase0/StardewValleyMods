@@ -1,14 +1,20 @@
-{
-  "Name": "Displays",
-  "Author": "spacechase0",
-  "Version": "1.0.1",
-  "Description": "...",
-  "UniqueID": "spacechase0.Displays",
-  "EntryDll": "Displays.dll",
-  "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
-  "Dependencies": [
-    { "UniqueID": "spacechase0.SpaceCore" },
-    { "UniqueID": "spacechase0.JsonAssets" }
-  ],
-  "spacechase0": "displays"
+﻿{
+    "Name": "Displays",
+    "Author": "spacechase0",
+    "Version": "1.0.2",
+    "MinimumApiVersion": "3.9.5",
+    "Description": "Adds mannequins you can use to display your clothes.",
+    "UniqueID": "spacechase0.Displays",
+    "EntryDll": "Displays.dll",
+    "UpdateKeys": [ "Nexus:7635" ],
+    "Dependencies": [
+        {
+            "UniqueID": "spacechase0.SpaceCore",
+            "MinimumVersion": "1.5.7"
+        },
+        {
+            "UniqueID": "spacechase0.JsonAssets",
+            "MinimumVersion": "1.7.7"
+        }
+    ]
 }

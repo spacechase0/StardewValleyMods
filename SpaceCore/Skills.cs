@@ -1,35 +1,30 @@
-﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using SpaceCore.Events;
 using SpaceCore.Interface;
+using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Network;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Newtonsoft.Json;
-using SpaceShared;
-using SpaceShared.APIs;
 
 namespace SpaceCore
 {
     public class Skills
     {
-        private static IDataHelper DataApi => SpaceCore.instance.Helper.Data;
+        private static IDataHelper DataApi => SpaceCore.Instance.Helper.Data;
 
         public abstract class Skill
         {
             public abstract class Profession
             {
-                public Profession( Skill skill, string id )
-                {
-                    Skill = skill;
-                    Id = id;
-                }
-
                 public Skill Skill { get; }
                 public string Id { get; }
 
@@ -39,33 +34,32 @@ namespace SpaceCore
 
                 public int GetVanillaId()
                 {
-                    return Skill.Id.GetHashCode() ^ Id.GetHashCode(); // TODO: Something better
+                    return this.Skill.Id.GetHashCode() ^ this.Id.GetHashCode(); // TODO: Something better
                 }
 
-                public virtual void DoImmediateProfessionPerk()
+                public virtual void DoImmediateProfessionPerk() { }
+
+                protected Profession(Skill skill, string id)
                 {
+                    this.Skill = skill;
+                    this.Id = id;
                 }
             }
 
             public class ProfessionPair
             {
-                public ProfessionPair( int level, Profession first, Profession second, Profession req = null )
+                public ProfessionPair(int level, Profession first, Profession second, Profession req = null)
                 {
-                    Level = level;
-                    First = first;
-                    Second = second;
-                    Requires = req;
+                    this.Level = level;
+                    this.First = first;
+                    this.Second = second;
+                    this.Requires = req;
                 }
 
                 public int Level { get; }
                 public Profession Requires { get; }
                 public Profession First { get; }
                 public Profession Second { get; }
-            }
-
-            public Skill( string id )
-            {
-                Id = id;
             }
 
             public string Id { get; }
@@ -77,12 +71,12 @@ namespace SpaceCore
 
             public int[] ExperienceCurve { get; set; }
             public IList<ProfessionPair> ProfessionsForLevels { get; } = new List<ProfessionPair>();
-            
+
             public Color ExperienceBarColor { get; set; }
 
-            public virtual List<string> GetExtraLevelUpInfo( int level )
+            public virtual List<string> GetExtraLevelUpInfo(int level)
             {
-                return new List<string>();
+                return new();
             }
 
             public virtual string GetSkillPageHoverText(int level)
@@ -90,45 +84,48 @@ namespace SpaceCore
                 return "";
             }
 
-            public virtual void DoLevelPerk( int level )
+            public virtual void DoLevelPerk(int level) { }
+
+            protected Skill(string id)
             {
+                this.Id = id;
             }
         }
 
-        private static string DataKey = "skills";
+        private static readonly string DataKey = "skills";
         private static string LegacyFilePath => Path.Combine(Constants.CurrentSavePath, "spacecore-skills.json");
-        private const string MSG_DATA = "spacechase0.SpaceCore.SkillData";
-        private const string MSG_EXPERIENCE = "spacechase0.SpaceCore.SkillExperience";
+        private const string MsgData = "spacechase0.SpaceCore.SkillData";
+        private const string MsgExperience = "spacechase0.SpaceCore.SkillExperience";
 
-        internal static Dictionary<string, Skill> skills = new Dictionary<string, Skill>();
-        private static Dictionary<long, Dictionary<string, int>> exp = new Dictionary<long, Dictionary<string, int>>();
-        internal static List<KeyValuePair<string, int>> myNewLevels = new List<KeyValuePair<string, int>>();
+        internal static Dictionary<string, Skill> SkillsByName = new();
+        private static Dictionary<long, Dictionary<string, int>> Exp = new();
+        internal static List<KeyValuePair<string, int>> NewLevels = new();
 
-        internal static void init(IModEvents events)
+        internal static void Init(IModEvents events)
         {
-            events.GameLoop.SaveLoaded += onSaveLoaded;
-            events.GameLoop.Saving += onSaving;
-            events.GameLoop.Saved += onSaved;
-            events.Display.MenuChanged += onMenuChanged;
-            events.Player.Warped += onWarped;
-            events.Display.RenderedHud += onRenderedHud;
-            SpaceEvents.ShowNightEndMenus += showLevelMenu;
-            SpaceEvents.ServerGotClient += clientJoined;
-            Networking.RegisterMessageHandler(MSG_DATA, onDataMessage);
-            Networking.RegisterMessageHandler(MSG_EXPERIENCE, onExpMessage);
+            events.GameLoop.SaveLoaded += Skills.OnSaveLoaded;
+            events.GameLoop.Saving += Skills.OnSaving;
+            events.GameLoop.Saved += Skills.OnSaved;
+            events.Display.MenuChanged += Skills.OnMenuChanged;
+            events.Player.Warped += Skills.OnWarped;
+            events.Display.RenderedHud += Skills.OnRenderedHud;
+            SpaceEvents.ShowNightEndMenus += Skills.ShowLevelMenu;
+            SpaceEvents.ServerGotClient += Skills.ClientJoined;
+            Networking.RegisterMessageHandler(Skills.MsgData, Skills.OnDataMessage);
+            Networking.RegisterMessageHandler(Skills.MsgExperience, Skills.OnExpMessage);
         }
 
-        public static void RegisterSkill( Skill skill )
+        public static void RegisterSkill(Skill skill)
         {
-            skills.Add(skill.Id, skill);
+            Skills.SkillsByName.Add(skill.Id, skill);
         }
 
-        public static Skill GetSkill( string name )
+        public static Skill GetSkill(string name)
         {
-            if ( skills.ContainsKey( name ) )
-                return skills[name];
+            if (Skills.SkillsByName.TryGetValue(name, out Skill found))
+                return found;
 
-            foreach (var skill in skills )
+            foreach (var skill in Skills.SkillsByName)
             {
                 if (skill.Key.ToLower() == name.ToLower() || skill.Value.GetName().ToLower() == name.ToLower())
                     return skill.Value;
@@ -139,28 +136,29 @@ namespace SpaceCore
 
         public static string[] GetSkillList()
         {
-            return skills.Keys.ToArray();
+            return Skills.SkillsByName.Keys.ToArray();
         }
 
-        public static int GetExperienceFor( Farmer farmer, string skillName)
+        public static int GetExperienceFor(Farmer farmer, string skillName)
         {
-            if (!skills.ContainsKey(skillName))
+            if (!Skills.SkillsByName.ContainsKey(skillName))
                 return 0;
-            validateSkill(farmer, skillName);
 
-            return exp[farmer.UniqueMultiplayerID][skillName];
+            Skills.ValidateSkill(farmer, skillName);
+
+            return Skills.Exp[farmer.UniqueMultiplayerID][skillName];
         }
 
-        public static int GetSkillLevel( Farmer farmer, string skillName )
+        public static int GetSkillLevel(Farmer farmer, string skillName)
         {
-            if (!skills.ContainsKey(skillName))
+            if (!Skills.SkillsByName.ContainsKey(skillName))
                 return 0;
-            validateSkill(farmer, skillName);
+            Skills.ValidateSkill(farmer, skillName);
 
-            var skill = skills[skillName];
+            var skill = Skills.SkillsByName[skillName];
             for (int i = skill.ExperienceCurve.Length - 1; i >= 0; --i)
             {
-                if (GetExperienceFor(farmer, skillName) >= skill.ExperienceCurve[i])
+                if (Skills.GetExperienceFor(farmer, skillName) >= skill.ExperienceCurve[i])
                 {
                     return i + 1;
                 }
@@ -169,86 +167,95 @@ namespace SpaceCore
             return 0;
         }
 
-        public static void AddExperience( Farmer farmer, string skillName, int amt )
+        public static void AddExperience(Farmer farmer, string skillName, int amt)
         {
-            if (!skills.ContainsKey(skillName))
+            if (!Skills.SkillsByName.ContainsKey(skillName))
                 return;
-            validateSkill(farmer, skillName);
+            Skills.ValidateSkill(farmer, skillName);
 
-            int prevLevel = GetSkillLevel(farmer, skillName);
-            exp[farmer.UniqueMultiplayerID][skillName] += amt;
-            if (farmer == Game1.player && prevLevel != GetSkillLevel(farmer, skillName))
-                for ( int i = prevLevel + 1; i <= GetSkillLevel( farmer, skillName ); ++i )
-                    myNewLevels.Add(new KeyValuePair<string, int>(skillName, i));
+            int prevLevel = Skills.GetSkillLevel(farmer, skillName);
+            Skills.Exp[farmer.UniqueMultiplayerID][skillName] += amt;
+            if (farmer == Game1.player && prevLevel != Skills.GetSkillLevel(farmer, skillName))
+                for (int i = prevLevel + 1; i <= Skills.GetSkillLevel(farmer, skillName); ++i)
+                    Skills.NewLevels.Add(new KeyValuePair<string, int>(skillName, i));
 
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(skillName);
+            writer.Write(Skills.Exp[farmer.UniqueMultiplayerID][skillName]);
+            Networking.BroadcastMessage(Skills.MsgExperience, stream.ToArray());
+        }
+
+        private static void ValidateSkill(Farmer farmer, string skillName)
+        {
+            if (!Skills.Exp.TryGetValue(farmer.UniqueMultiplayerID, out var skillExp))
             {
-                writer.Write(skillName);
-                writer.Write(exp[farmer.UniqueMultiplayerID][skillName]);
-                Networking.BroadcastMessage(MSG_EXPERIENCE, stream.ToArray());
+                skillExp = new();
+                Skills.Exp.Add(farmer.UniqueMultiplayerID, skillExp);
             }
+
+            if (!skillExp.ContainsKey(skillName))
+                skillExp.Add(skillName, 0);
         }
 
-        private static void validateSkill( Farmer farmer, string skillName )
+        private static void ClientJoined(object sender, EventArgsServerGotClient args)
         {
-            if (!exp.ContainsKey(farmer.UniqueMultiplayerID))
-                exp.Add(farmer.UniqueMultiplayerID, new Dictionary<string, int>());
-            if (!exp[farmer.UniqueMultiplayerID].ContainsKey(skillName))
-                exp[farmer.UniqueMultiplayerID].Add(skillName, 0);
-        }
-
-        private static void clientJoined(object sender, EventArgsServerGotClient args)
-        {
-            if (!exp.ContainsKey(args.FarmerID))
-                exp.Add(args.FarmerID, new Dictionary<string, int>());
-            foreach (var skill in skills)
-                if (!exp[args.FarmerID].ContainsKey(skill.Key))
-                    exp[args.FarmerID].Add(skill.Key, 0);
-
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
+            if (!Skills.Exp.TryGetValue(args.FarmerID, out var skillExp))
             {
-                writer.Write(exp.Count);
-                foreach (var data in exp)
+                skillExp = new();
+                Skills.Exp.Add(args.FarmerID, skillExp);
+            }
+
+            foreach (var skill in Skills.SkillsByName)
+            {
+                if (!skillExp.ContainsKey(skill.Key))
+                    skillExp.Add(skill.Key, 0);
+            }
+
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(Skills.Exp.Count);
+            foreach (var data in Skills.Exp)
+            {
+                writer.Write(data.Key);
+                writer.Write(data.Value.Count);
+                foreach (var skill in data.Value)
                 {
-                    writer.Write(data.Key);
-                    writer.Write(data.Value.Count);
-                    foreach (var skill in data.Value)
-                    {
-                        writer.Write(skill.Key);
-                        writer.Write(skill.Value);
-                    }
+                    writer.Write(skill.Key);
+                    writer.Write(skill.Value);
                 }
-
-                var server = (GameServer)sender;
-                Log.trace("Sending skill data to " + args.FarmerID);
-                Networking.ServerSendTo(args.FarmerID, MSG_DATA, stream.ToArray());
             }
+
+            Log.Trace("Sending skill data to " + args.FarmerID);
+            Networking.ServerSendTo(args.FarmerID, Skills.MsgData, stream.ToArray());
         }
 
-        private static void onExpMessage(IncomingMessage msg)
+        private static void OnExpMessage(IncomingMessage msg)
         {
-            exp[msg.FarmerID][msg.Reader.ReadString()] = msg.Reader.ReadInt32();
+            Skills.Exp[msg.FarmerID][msg.Reader.ReadString()] = msg.Reader.ReadInt32();
         }
 
-        private static void onDataMessage(IncomingMessage msg)
+        private static void OnDataMessage(IncomingMessage msg)
         {
-            Log.trace("Got experience data!");
+            Log.Trace("Got experience data!");
             int count = msg.Reader.ReadInt32();
             for (int ie = 0; ie < count; ++ie)
             {
                 long id = msg.Reader.ReadInt64();
-                Log.trace("\t" + id + ":");
+                Log.Trace("\t" + id + ":");
                 int count2 = msg.Reader.ReadInt32();
-                for ( int isk = 0; isk < count2; ++isk )
+                for (int isk = 0; isk < count2; ++isk)
                 {
                     string skill = msg.Reader.ReadString();
                     int amt = msg.Reader.ReadInt32();
-                    if (!exp.ContainsKey(id))
-                        exp.Add(id, new Dictionary<string, int>());
-                    exp[id][skill] = amt;
-                    Log.trace("\t" + skill + "=" + amt);
+
+                    if (!Skills.Exp.TryGetValue(id, out var skillExp))
+                    {
+                        skillExp = new();
+                        Skills.Exp.Add(id, skillExp);
+                    }
+                    skillExp[skill] = amt;
+                    Log.Trace($"\t{skill}={amt}");
                 }
             }
         }
@@ -256,41 +263,40 @@ namespace SpaceCore
         /// <summary>Raised after the player loads a save slot.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void onSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private static void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             if (Context.IsMainPlayer)
             {
-                exp = DataApi.ReadSaveData<Dictionary<long, Dictionary<string, int>>>(DataKey);
-                if (exp == null && File.Exists(LegacyFilePath))
-                    exp = JsonConvert.DeserializeObject<Dictionary<long, Dictionary<string, int>>>(File.ReadAllText(LegacyFilePath));
-                if (exp == null)
-                    exp = new Dictionary<long, Dictionary<string, int>>();
+                Skills.Exp = Skills.DataApi.ReadSaveData<Dictionary<long, Dictionary<string, int>>>(Skills.DataKey);
+                if (Skills.Exp == null && File.Exists(Skills.LegacyFilePath))
+                    Skills.Exp = JsonConvert.DeserializeObject<Dictionary<long, Dictionary<string, int>>>(File.ReadAllText(Skills.LegacyFilePath));
+                Skills.Exp ??= new Dictionary<long, Dictionary<string, int>>();
             }
         }
 
         /// <summary>Raised before the game begins writes data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void onSaving(object sender, SavingEventArgs e)
+        private static void OnSaving(object sender, SavingEventArgs e)
         {
             if (Context.IsMainPlayer)
             {
-                Log.trace("Saving custom data");
-                DataApi.WriteSaveData(DataKey, exp);
+                Log.Trace("Saving custom data");
+                Skills.DataApi.WriteSaveData(Skills.DataKey, Skills.Exp);
             }
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void onSaved(object sender, SavedEventArgs e)
+        private static void OnSaved(object sender, SavedEventArgs e)
         {
             if (Context.IsMainPlayer)
             {
-                if (File.Exists(LegacyFilePath))
+                if (File.Exists(Skills.LegacyFilePath))
                 {
-                    Log.trace($"Deleting legacy data file at {LegacyFilePath}");
-                    File.Delete(LegacyFilePath);
+                    Log.Trace($"Deleting legacy data file at {Skills.LegacyFilePath}");
+                    File.Delete(Skills.LegacyFilePath);
                 }
             }
         }
@@ -298,50 +304,52 @@ namespace SpaceCore
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private static void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( e.NewMenu is GameMenu gm )
+            if (e.NewMenu is GameMenu gm)
             {
-                if (SpaceCore.instance.Config.CustomSkillPage && Skills.skills.Count > 0)
+                if (SpaceCore.Instance.Config.CustomSkillPage && Skills.SkillsByName.Count > 0)
                 {
                     gm.pages[GameMenu.skillsTab] = new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0), gm.height);
                 }
             }
         }
-        private static void showLevelMenu(object sender, EventArgsShowNightEndMenus args)
+
+        [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
+        private static void ShowLevelMenu(object sender, EventArgsShowNightEndMenus args)
         {
-            Log.debug("Doing skill menus");
+            Log.Debug("Doing skill menus");
 
             if (Game1.endOfNightMenus.Count == 0)
                 Game1.endOfNightMenus.Push(new SaveGameMenu());
 
-            if (myNewLevels.Count() > 0)
+            if (Skills.NewLevels.Any())
             {
-                for (int i = myNewLevels.Count() - 1; i >= 0; --i)
+                for (int i = Skills.NewLevels.Count - 1; i >= 0; --i)
                 {
-                    string skill = myNewLevels[i].Key;
-                    int level = myNewLevels[i].Value;
-                    Log.trace("Doing " + i + ": " + skill + " level " + level + " screen");
+                    string skill = Skills.NewLevels[i].Key;
+                    int level = Skills.NewLevels[i].Value;
+                    Log.Trace("Doing " + i + ": " + skill + " level " + level + " screen");
 
                     Game1.endOfNightMenus.Push(new SkillLevelUpMenu(skill, level));
                 }
-                myNewLevels.Clear();
+                Skills.NewLevels.Clear();
             }
         }
 
         /// <summary>Raised after a player warps to a new location.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void onWarped(object sender, WarpedEventArgs e)
+        private static void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (e.IsLocalPlayer && SpaceCore.instance.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
+            if (e.IsLocalPlayer && SpaceCore.Instance.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
-                foreach ( var skill in skills )
+                foreach (var skill in Skills.SkillsByName)
                 {
                     int level = Game1.player.GetCustomSkillLevel(skill.Key);
                     foreach (var profPair in skill.Value.ProfessionsForLevels)
                     {
-                        if ( level >= profPair.Level )
+                        if (level >= profPair.Level)
                         {
                             if (!Game1.player.professions.Contains(profPair.First.GetVanillaId()))
                                 Game1.player.professions.Add(profPair.First.GetVanillaId());
@@ -356,13 +364,13 @@ namespace SpaceCore
         /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void onRenderedHud(object sender, RenderedHudEventArgs e)
+        private static void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             if (Game1.activeClickableMenu != null || Game1.eventUp)
                 return;
 
             // draw exp bars
-            foreach ( var skillPair in skills )
+            foreach (var skillPair in Skills.SkillsByName)
             {
                 var skill = skillPair.Value;
                 int level = Game1.player.GetCustomSkillLevel(skillPair.Key);
@@ -387,22 +395,22 @@ namespace SpaceCore
                     progress = -1;
                 }
 
-                var api = SpaceCore.instance.Helper.ModRegistry.GetApi<ExperienceBarsAPI>("spacechase0.ExperienceBars");
+                var api = SpaceCore.Instance.Helper.ModRegistry.GetApi<IExperienceBarsApi>("spacechase0.ExperienceBars");
                 if (api == null)
                 {
-                    Log.warn("No experience bars API? Turning off");
-                    SpaceCore.instance.Helper.Events.Display.RenderedHud -= onRenderedHud;
+                    Log.Warn("No experience bars API? Turning off");
+                    SpaceCore.Instance.Helper.Events.Display.RenderedHud -= Skills.OnRenderedHud;
                     return;
                 }
                 api.DrawExperienceBar(skill.Icon ?? Game1.staminaRect, level, progress, skill.ExperienceBarColor);
             }
         }
 
-        internal static Skill.Profession getProfessionFor( Skill skill, int level )
+        internal static Skill.Profession GetProfessionFor(Skill skill, int level)
         {
-            foreach ( var profPair in skill.ProfessionsForLevels )
+            foreach (var profPair in skill.ProfessionsForLevels)
             {
-                if ( level == profPair.Level )
+                if (level == profPair.Level)
                 {
                     if (Game1.player.HasCustomProfession(profPair.First))
                         return profPair.First;
@@ -422,12 +430,12 @@ namespace SpaceCore
             return Skills.GetExperienceFor(farmer, skill.Id);
         }
 
-        public static int GetCustomSkillExperience( this Farmer farmer, string skill )
+        public static int GetCustomSkillExperience(this Farmer farmer, string skill)
         {
             return Skills.GetExperienceFor(farmer, skill);
         }
 
-        public static int GetCustomSkillLevel( this Farmer farmer, Skills.Skill skill )
+        public static int GetCustomSkillLevel(this Farmer farmer, Skills.Skill skill)
         {
             return Skills.GetSkillLevel(farmer, skill.Id);
         }

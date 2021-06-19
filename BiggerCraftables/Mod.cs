@@ -1,43 +1,43 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Harmony;
+using BiggerCraftables.Framework;
+using BiggerCraftables.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 
 namespace BiggerCraftables
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        public static List<ContentList.Entry> entries = new List<ContentList.Entry>();
+        public static Mod Instance;
+        public static List<ContentList.Entry> Entries = new();
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            foreach ( var cp in helper.ContentPacks.GetOwned() )
+            foreach (var cp in helper.ContentPacks.GetOwned())
             {
                 var list = cp.ReadJsonFile<ContentList>("content.json");
-                foreach ( var entry in list.BiggerCraftables )
+                foreach (var entry in list.BiggerCraftables)
                 {
-                    entry.Texture = cp.LoadAsset<Texture2D>( entry.Image );
-                    Log.debug( $"Bigger craftable - {entry.Name} from {cp.Manifest.Name} - {entry.Width}x{entry.Length}" );
-                    entries.Add( entry );
+                    entry.Texture = cp.LoadAsset<Texture2D>(entry.Image);
+                    Log.Debug($"Bigger craftable - {entry.Name} from {cp.Manifest.Name} - {entry.Width}x{entry.Length}");
+                    Mod.Entries.Add(entry);
                 }
             }
 
-            helper.Events.World.ObjectListChanged += OnObjectListChanged;
+            helper.Events.World.ObjectListChanged += this.OnObjectListChanged;
 
-            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-            harmony.PatchAll();
+            HarmonyPatcher.Apply(this,
+                new ObjectPatcher(),
+                new UtilityPatcher()
+            );
         }
 
         public override object GetApi()
@@ -45,43 +45,42 @@ namespace BiggerCraftables
             return new Api();
         }
 
-        private bool doingStuff = false;
-        private void OnObjectListChanged( object sender, ObjectListChangedEventArgs e )
+        private bool DoingStuff;
+        private void OnObjectListChanged(object sender, ObjectListChangedEventArgs e)
         {
-            if ( doingStuff )
+            if (this.DoingStuff)
                 return;
-            doingStuff = true;
+            this.DoingStuff = true;
 
             var loc = e.Location;
 
-            foreach ( var pair in e.Removed )
+            foreach (var pair in e.Removed)
             {
                 var pos = pair.Key;
                 var obj = pair.Value;
 
-                if ( !obj.bigCraftable.Value )
+                if (!obj.bigCraftable.Value)
                     continue;
-                var entry = entries.SingleOrDefault( cle => cle.Name == obj.Name );
-                if ( entry == null )
+                var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == obj.Name);
+                if (entry == null)
                     continue;
 
                 int ind = obj.GetBiggerIndex();
 
                 int relPosX = ind % entry.Width, relPosY = entry.Length - 1 - ind / entry.Width;
-                Vector2 basePos = new Vector2( pos.X - relPosX, pos.Y - relPosY );
-                for ( int ix = 0; ix < entry.Width; ++ix )
+                Vector2 basePos = new Vector2(pos.X - relPosX, pos.Y - relPosY);
+                for (int ix = 0; ix < entry.Width; ++ix)
                 {
-                    for ( int iy = 0; iy < entry.Length; ++iy )
+                    for (int iy = 0; iy < entry.Length; ++iy)
                     {
-                        Vector2 localPos = basePos + new Vector2( ix, iy );
-                        if ( localPos == pos || !loc.Objects.ContainsKey( localPos ) )
-                            continue;
-                        loc.Objects.Remove( localPos );
+                        Vector2 localPos = basePos + new Vector2(ix, iy);
+                        if (localPos != pos)
+                            loc.Objects.Remove(localPos);
                     }
                 }
             }
 
-            doingStuff = false;
+            this.DoingStuff = false;
         }
     }
 }

@@ -1,11 +1,10 @@
-{
-  "Name": "Extended Reach",
-  "Author": "spacechase0",
-  "Version": "1.0.3",
-  "Description": "Reach tile actions like chests or the mailbox from anywhere.",
-  "UniqueID": "spacechase0.ExtendedReach",
-  "EntryDll": "ExtendedReach.dll",
-  "MinimumApiVersion": "2.9.0",
-  "UpdateKeys": [ "Nexus:1493", "Chucklefish:4997" ],
-  "spacechase0": "extended-reach"
+﻿{
+    "Name": "Extended Reach",
+    "Author": "spacechase0",
+    "Version": "1.1.0",
+    "MinimumApiVersion": "3.9.5",
+    "Description": "Reach chests and other tile actions from anywhere.",
+    "UniqueID": "spacechase0.ExtendedReach",
+    "EntryDll": "ExtendedReach.dll",
+    "UpdateKeys": [ "Nexus:1493" ]
 }

@@ -1,52 +1,49 @@
-﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Harmony;
 using Microsoft.Xna.Framework.Graphics;
+using MoreGiantCrops.Patches;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
-using StardewValley;
-using StardewValley.TerrainFeatures;
 
 namespace MoreGiantCrops
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        public static Dictionary<int, Texture2D> sprites = new Dictionary<int, Texture2D>();
+        public static Mod Instance;
+        public static Dictionary<int, Texture2D> Sprites = new();
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            SpaceShared.Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            Log.trace("Finding giant crop images");
-            foreach ( var path in Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets"), "*.png") )
+            Directory.CreateDirectory(Path.Combine(this.Helper.DirectoryPath, "assets"));
+
+            Log.Trace("Finding giant crop images");
+            foreach (string path in Directory.EnumerateFiles(Path.Combine(this.Helper.DirectoryPath, "assets"), "*.png"))
             {
                 string filename = Path.GetFileName(path);
                 if (!int.TryParse(filename.Split('.')[0], out int id))
                 {
-                    Log.error("Bad PNG: " + filename);
+                    Log.Error("Bad PNG: " + filename);
                     continue;
                 }
-                Log.trace("Found PNG: " + filename);
+                Log.Trace("Found PNG: " + filename);
                 var tex = helper.Content.Load<Texture2D>($"assets/{filename}");
-                sprites.Add(id, tex);
+                Mod.Sprites.Add(id, tex);
             }
 
-            var harmony = HarmonyInstance.Create(ModManifest.UniqueID);
-            
-            harmony.Patch(
-                original: AccessTools.Method(typeof(Crop), nameof(Crop.newDay)),
-                transpiler: new HarmonyMethod(typeof(CropPatches), nameof(CropPatches.NewDay_Transpiler))
-            );
-            
-            harmony.Patch(
-                original: AccessTools.Method(typeof(GiantCrop), nameof(GiantCrop.draw)),
-                prefix: new HarmonyMethod(typeof(GiantCropPatches), nameof(GiantCropPatches.Draw_Prefix))
+            if (!Mod.Sprites.Any())
+            {
+                Log.Error("You must install an asset pack to use this mod.");
+                return;
+            }
+
+            HarmonyPatcher.Apply(this,
+                new CropPatcher(),
+                new GiantCropPatcher()
             );
         }
     }

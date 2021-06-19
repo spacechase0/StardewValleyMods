@@ -1,49 +1,46 @@
-﻿using StardewModdingAPI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StardewModdingAPI;
 
 namespace GenericModConfigMenu.ModOption
 {
     internal class SimpleModOption<T> : BaseModOption
     {
         public Type Type { get; }
-        protected Func<T> getter;
-        protected Action<T> setter;
+        protected Func<T> Getter;
+        protected Action<T> Setter;
 
-        private T state;
+        private T State;
         public virtual T Value
         {
-            get { return state; }
-            set {
-                if (!state.Equals(value))
-                    Mod.instance.configs[Owner].Options[Mod.instance.configs[Owner].ActiveDisplayPage.Name].ChangeHandler.ForEach(c => c.Invoke(Id, value));
+            get => this.State;
+            set
+            {
+                if (!this.State.Equals(value))
+                    Mod.Instance.Configs[this.Owner].Options[Mod.Instance.Configs[this.Owner].ActiveDisplayPage.Name].ChangeHandler.ForEach(c => c.Invoke(this.Id, value));
 
-                state = value; 
+                this.State = value;
             }
         }
 
         public override void SyncToMod()
         {
-            state = getter.Invoke();
+            this.State = this.Getter.Invoke();
         }
 
         public override void Save()
         {
-            SpaceShared.Log.trace( "saving " + Name + " " + Description );
-            setter.Invoke(state);
+            SpaceShared.Log.Trace("saving " + this.Name + " " + this.Description);
+            this.Setter.Invoke(this.State);
         }
 
-        public SimpleModOption( string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, string id, IManifest mod )
-        :   base( name, desc, id, mod )
+        public SimpleModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, string id, IManifest mod)
+            : base(name, desc, id, mod)
         {
-            Type = type;
-            getter = theGetter;
-            setter = theSetter;
+            this.Type = type;
+            this.Getter = theGetter;
+            this.Setter = theSetter;
 
-            state = getter.Invoke();
+            this.State = this.Getter.Invoke();
         }
     }
 }

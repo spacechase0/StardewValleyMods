@@ -1,4 +1,4 @@
-﻿namespace SpaceShared
+namespace SpaceShared
 {
     public class CancelableEventArgs
     {

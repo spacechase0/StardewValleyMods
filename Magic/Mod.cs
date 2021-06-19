@@ -1,139 +1,138 @@
-﻿using StardewModdingAPI;
-using StardewModdingAPI.Events;
-using StardewValley;
 using System;
 using System.IO;
-using Magic.Other;
+using Magic.Framework;
+using Magic.Framework.Apis;
 using Newtonsoft.Json;
 using SpaceShared;
 using SpaceShared.APIs;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
 
 namespace Magic
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        public static MultiplayerSaveData Data { get; private set; } = new MultiplayerSaveData();
+        public static Mod Instance;
+        public static MultiplayerSaveData Data { get; private set; } = new();
         public static Configuration Config { get; private set; }
-        
-        internal static JsonAssetsApi ja;
-        internal static ManaBarAPI mana;
 
-        internal Api api;
+        internal static JsonAssetsApi Ja;
+        internal static IManaBarApi Mana;
+
+        internal Api Api;
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            Config = Helper.ReadConfig<Configuration>();
+            Mod.Config = this.Helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
-            helper.Events.GameLoop.Saving += onSaving;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.GameLoop.Saving += this.OnSaving;
 
-            Magic.init(helper.Events, helper.Input, helper.Multiplayer.GetNewID);
+            Framework.Magic.Init(helper.Events, helper.Input, helper.Multiplayer.GetNewID);
         }
 
         public override object GetApi()
         {
-            if (api == null)
-                api = new Api();
-            return api;
+            return this.Api ??= new Api();
         }
 
         /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config));
-                capi.RegisterSimpleOption(ModManifest, "Altar Location", "The (internal) name of the location the magic altar should be placed at.", () => Config.AltarLocation, (string val) => Config.AltarLocation = val);
-                capi.RegisterSimpleOption(ModManifest, "Altar X", "The X tile position of where the magic altar should be placed.", () => Config.AltarX, (int val) => Config.AltarX = val);
-                capi.RegisterSimpleOption(ModManifest, "Altar Y", "The Y tile position of where the magic altar should be placed.", () => Config.AltarY, (int val) => Config.AltarY = val);
-                capi.RegisterSimpleOption(ModManifest, "Key: Cast", "The key to initiate casting a spell.", () => Config.Key_Cast, (SButton val) => Config.Key_Cast = val);
-                capi.RegisterSimpleOption(ModManifest, "Key: Swap Spells", "The key to swap spell sets.", () => Config.Key_SwapSpells, (SButton val) => Config.Key_SwapSpells = val);
-                capi.RegisterSimpleOption(ModManifest, "Key: Spell 1", "The key for spell 1.", () => Config.Key_Spell1, (SButton val) => Config.Key_Spell1 = val);
-                capi.RegisterSimpleOption(ModManifest, "Key: Spell 2", "The key for spell 2.", () => Config.Key_Spell2, (SButton val) => Config.Key_Spell2 = val);
-                capi.RegisterSimpleOption(ModManifest, "Key: Spell 3", "The key for spell 3.", () => Config.Key_Spell3, (SButton val) => Config.Key_Spell3 = val);
-                capi.RegisterSimpleOption(ModManifest, "Key: Spell 4", "The key for spell 4.", () => Config.Key_Spell4, (SButton val) => Config.Key_Spell4 = val);
-                capi.RegisterSimpleOption(ModManifest, "Key: Spell 5", "The key for spell 5.", () => Config.Key_Spell5, (SButton val) => Config.Key_Spell5 = val);
+                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
+                capi.RegisterSimpleOption(this.ModManifest, "Altar Location", "The (internal) name of the location the magic altar should be placed at.", () => Mod.Config.AltarLocation, (string val) => Mod.Config.AltarLocation = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Altar X", "The X tile position of where the magic altar should be placed.", () => Mod.Config.AltarX, (int val) => Mod.Config.AltarX = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Altar Y", "The Y tile position of where the magic altar should be placed.", () => Mod.Config.AltarY, (int val) => Mod.Config.AltarY = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Cast", "The key to initiate casting a spell.", () => Mod.Config.Key_Cast, (SButton val) => Mod.Config.Key_Cast = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Swap Spells", "The key to swap spell sets.", () => Mod.Config.Key_SwapSpells, (SButton val) => Mod.Config.Key_SwapSpells = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Spell 1", "The key for spell 1.", () => Mod.Config.Key_Spell1, (SButton val) => Mod.Config.Key_Spell1 = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Spell 2", "The key for spell 2.", () => Mod.Config.Key_Spell2, (SButton val) => Mod.Config.Key_Spell2 = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Spell 3", "The key for spell 3.", () => Mod.Config.Key_Spell3, (SButton val) => Mod.Config.Key_Spell3 = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Spell 4", "The key for spell 4.", () => Mod.Config.Key_Spell4, (SButton val) => Mod.Config.Key_Spell4 = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Spell 5", "The key for spell 5.", () => Mod.Config.Key_Spell5, (SButton val) => Mod.Config.Key_Spell5 = val);
             }
-            
-            var api2 = Helper.ModRegistry.GetApi<ManaBarAPI>("spacechase0.ManaBar" );
-            if ( api2 == null )
+
+            var api2 = this.Helper.ModRegistry.GetApi<IManaBarApi>("spacechase0.ManaBar");
+            if (api2 == null)
             {
-                Log.error( "No mana bar API???" );
+                Log.Error("No mana bar API???");
                 return;
             }
-            mana = api2;
+            Mod.Mana = api2;
 
-            var api = Helper.ModRegistry.GetApi<JsonAssetsApi>("spacechase0.JsonAssets");
+            var api = this.Helper.ModRegistry.GetApi<JsonAssetsApi>("spacechase0.JsonAssets");
             if (api == null)
             {
-                Log.error("No Json Assets API???");
+                Log.Error("No Json Assets API???");
                 return;
             }
-            ja = api;
+            Mod.Ja = api;
 
-            api.LoadAssets(Path.Combine(Helper.DirectoryPath, "assets"));
+            api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
         }
 
         /// <summary>Raised after the player loads a save slot.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             try
             {
                 if (!Game1.IsMultiplayer || Game1.IsMasterGame)
                 {
-                    Log.info($"Loading save data (\"{MultiplayerSaveData.FilePath}\")...");
-                    Data = File.Exists(MultiplayerSaveData.FilePath)
+                    Log.Info($"Loading save data (\"{MultiplayerSaveData.FilePath}\")...");
+                    Mod.Data = File.Exists(MultiplayerSaveData.FilePath)
                         ? JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.FilePath))
                         : new MultiplayerSaveData();
 
-                    foreach (var magic in Data.players)
+                    foreach (var magic in Mod.Data.Players)
                     {
-                        if (magic.Value.spellBook.prepared[0].Length == 4)
+                        if (magic.Value.SpellBook.Prepared[0].Length == 4)
                         {
                             var newSpells = new PreparedSpell[5];
                             for (int i = 0; i < 4; ++i)
-                                newSpells[i] = magic.Value.spellBook.prepared[0][i];
-                            magic.Value.spellBook.prepared[0] = newSpells;
+                                newSpells[i] = magic.Value.SpellBook.Prepared[0][i];
+                            magic.Value.SpellBook.Prepared[0] = newSpells;
                         }
 
-                        if (magic.Value.spellBook.prepared[1].Length == 4)
+                        if (magic.Value.SpellBook.Prepared[1].Length == 4)
                         {
                             var newSpells = new PreparedSpell[5];
                             for (int i = 0; i < 4; ++i)
-                                newSpells[i] = magic.Value.spellBook.prepared[1][i];
-                            magic.Value.spellBook.prepared[1] = newSpells;
+                                newSpells[i] = magic.Value.SpellBook.Prepared[1][i];
+                            magic.Value.SpellBook.Prepared[1] = newSpells;
                         }
                     }
 
-                    if ( !Data.players.ContainsKey( Game1.player.UniqueMultiplayerID ) )
-                        Data.players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
+                    if (!Mod.Data.Players.ContainsKey(Game1.player.UniqueMultiplayerID))
+                        Mod.Data.Players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
                 }
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
-                Log.warn($"Exception loading save data: {ex}");
+                Log.Warn($"Exception loading save data: {ex}");
             }
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaving(object sender, SavingEventArgs e)
+        private void OnSaving(object sender, SavingEventArgs e)
         {
             if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
-                Log.info($"Saving save data (\"{MultiplayerSaveData.FilePath}\")...");
-                File.WriteAllText(MultiplayerSaveData.FilePath, JsonConvert.SerializeObject(Data));
+                Log.Info($"Saving save data (\"{MultiplayerSaveData.FilePath}\")...");
+                File.WriteAllText(MultiplayerSaveData.FilePath, JsonConvert.SerializeObject(Mod.Data));
             }
         }
     }

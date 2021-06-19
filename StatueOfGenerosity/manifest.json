@@ -1,12 +1,16 @@
-{
-  "Name": "Statue of Generosity",
-  "Author": "spacechase0, ParadigmNomad (sprites)",
-  "Version": "1.0.0",
-  "Description": "...",
-  "UniqueID": "spacechase0.StatueOfGenerosity",
-  "EntryDll": "StatueOfGenerosity.dll",
-  "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
-  "Dependencies": [
-    { "UniqueID": "spacechase0.JsonAssets" },
-  ],
+﻿{
+    "Name": "Statue of Generosity",
+    "Author": "spacechase0, ParadigmNomad (sprites)",
+    "Version": "1.0.1",
+    "MinimumApiVersion": "3.9.5",
+    "Description": "Purchase a statue which produces loved gifts each morning.",
+    "UniqueID": "spacechase0.StatueOfGenerosity",
+    "EntryDll": "StatueOfGenerosity.dll",
+    "UpdateKeys": [ "Nexus:7532" ],
+    "Dependencies": [
+        {
+            "UniqueID": "spacechase0.JsonAssets",
+            "MinimumVersion": "1.7.7"
+        }
+    ]
 }

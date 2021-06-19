@@ -7,9 +7,8 @@
     "Price": 50,
     "HideFromShippingCollection": true,
     "IsColored": false,
-    "Recipe": null,    
-    "NameLocalization":
-    {
+    "Recipe": null,
+    "NameLocalization": {
         // "es": "",
         // "ko": "",
         // "de": "",
@@ -22,8 +21,7 @@
         //"tr": "",
         // "zh": ""
     },
-    "DescriptionLocalization":
-    {
+    "DescriptionLocalization": {
         // "es": "",
         // "ko": "",
         // "de": "",
@@ -35,5 +33,5 @@
         // "ru": "",
         //"tr": "",
         // "zh": ""
-    },
+    }
 }

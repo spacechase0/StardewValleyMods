@@ -1,40 +1,176 @@
-﻿using StardewModdingAPI;
-using StardewValley;
-using StardewValley.Menus;
+using System;
 using System.Collections.Generic;
-using StardewModdingAPI.Events;
+using SleepyEye.Framework;
 using SpaceShared;
+using SpaceShared.APIs;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
+using StardewValley.Locations;
+using StardewValley.Menus;
 
 namespace SleepyEye
 {
-    public class Mod : StardewModdingAPI.Mod
+    /// <summary>The mod entry point.</summary>
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        /*********
+        ** Fields
+        *********/
+        /// <summary>The data key in the save file for the tent location.</summary>
+        private readonly string TentLocationKey = "tent-location";
 
+
+        /*********
+        ** Accessors
+        *********/
+        /// <summary>The static mod instance.</summary>
+        public static Mod Instance;
+
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            // load config
+            this.ApplyConfig(helper.ReadConfig<ModConfig>());
 
-            helper.Events.Display.MenuChanged += onMenuChanged;
+            // init
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.GameLoop.DayStarted += this.OnDayStarted;
+        }
+
+        /// <summary>Remember the location where the player saved, and restore it on the next day.</summary>
+        internal void RememberLocation()
+        {
+            if (Context.IsMainPlayer) // TODO multiplayer support
+            {
+                this.Helper.Data.WriteSaveData(this.TentLocationKey, new CampData
+                {
+                    Location = Game1.player.currentLocation?.NameOrUniqueName,
+                    Position = Game1.player.Position,
+                    MineLevel = (Game1.currentLocation as MineShaft)?.mineLevel,
+                    DaysPlayed = Game1.Date.TotalDays
+                });
+            }
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (gmcm != null)
+            {
+                gmcm.RegisterModConfig(this.ModManifest, revertToDefault: () => this.ApplyConfig(new ModConfig()), saveToFile: this.SaveConfig);
+                gmcm.RegisterSimpleOption(this.ModManifest, "Seconds until save", "The number of seconds until the tent tool should trigger a save.", () => (int)TentTool.UseDelay.TotalSeconds, (int val) => TentTool.UseDelay = TimeSpan.FromSeconds(val));
+            }
+        }
+
+        /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
+        {
+            // move player back to their tent location
+            if (Context.IsMainPlayer)
+            {
+                CampData camp = this.Helper.Data.ReadSaveData<CampData>(this.TentLocationKey);
+                if (camp != null && camp.DaysPlayed == Game1.Date.TotalDays - 1)
+                {
+                    this.Helper.Data.WriteSaveData<CampData>(this.TentLocationKey, null);
+                    this.TryRestoreLocation(camp);
+                }
+            }
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onMenuChanged( object sender, MenuChangedEventArgs e )
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson.Name != "Pierre")
+            if (e.NewMenu is not ShopMenu menu || menu.portraitPerson.Name != "Pierre")
                 return;
 
-            Log.debug("Adding tent to shop");
+            Log.Debug("Adding tent to shop");
 
             var forSale = menu.forSale;
             var itemPriceAndStock = menu.itemPriceAndStock;
 
             var item = new TentTool();
             forSale.Add(item);
-            itemPriceAndStock.Add(item, new int[] { item.salePrice(), item.Stack });
+            itemPriceAndStock.Add(item, new[] { item.salePrice(), item.Stack });
+        }
+
+        /// <summary>Move the player back to where they camped, if possible.</summary>
+        /// <param name="camp">The metadata about where and when the player camped.</param>
+        private void TryRestoreLocation(CampData camp)
+        {
+            Log.Debug("Previously slept in a tent, replacing player position.");
+
+            // get location
+            GameLocation location = Game1.getLocationFromName(camp.Location);
+            if (location == null)
+            {
+                Game1.addHUDMessage(new HUDMessage("You camped somewhere strange, so you've returned home."));
+                return;
+            }
+            if (location.Name == this.GetFestivalLocation())
+            {
+                Game1.addHUDMessage(new HUDMessage("You camped on the festival grounds, so you've returned home."));
+                return;
+            }
+
+            // restore position
+            if (location is MineShaft)
+            {
+                Log.Trace("Slept in a mine.");
+                Game1.enterMine(camp.MineLevel ?? 0);
+            }
+            else
+            {
+                Game1.player.currentLocation = Game1.currentLocation = location;
+                Game1.player.Position = camp.Position;
+            }
+        }
+
+        /// <summary>Get the location where a festival will be today, if any.</summary>
+        internal string GetFestivalLocation()
+        {
+            try
+            {
+                return Game1.temporaryContent.Load<Dictionary<string, string>>($"Data\\Festivals\\{Game1.currentSeason}{Game1.dayOfMonth}")["conditions"].Split('/')[0];
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>Apply the given mod configuration.</summary>
+        /// <param name="config">The configuration model.</param>
+        private void ApplyConfig(ModConfig config)
+        {
+            TentTool.UseDelay = TimeSpan.FromSeconds(config.SecondsUntilSave);
+        }
+
+        /// <summary>Save the current mod configuration.</summary>
+        private void SaveConfig()
+        {
+            this.Helper.WriteConfig(new ModConfig
+            {
+                SecondsUntilSave = (int)TentTool.UseDelay.TotalSeconds
+            });
         }
     }
 }

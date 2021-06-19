@@ -1,5 +1,3 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace JsonAssets.Data
@@ -17,15 +15,15 @@ namespace JsonAssets.Data
         public string SaplingPurchaseFrom { get; set; } = "Pierre";
         public IList<PurchaseData> SaplingAdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-        public Dictionary<string, string> SaplingNameLocalization = new Dictionary<string, string>();
-        public Dictionary<string, string> SaplingDescriptionLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> SaplingNameLocalization = new();
+        public Dictionary<string, string> SaplingDescriptionLocalization = new();
 
-        internal ObjectData sapling;
-        public int GetSaplingId() { return sapling.id; }
-        public int GetFruitTreeIndex() { return id; }
+        internal ObjectData Sapling;
+        public int GetSaplingId() { return this.Sapling.Id; }
+        public int GetFruitTreeIndex() { return this.Id; }
         internal string GetFruitTreeInformation()
         {
-            return $"{GetFruitTreeIndex()}/{Season}/{Mod.instance.ResolveObjectId(Product)}/what goes here?";
+            return $"{this.GetFruitTreeIndex()}/{this.Season}/{Mod.instance.ResolveObjectId(this.Product)}/what goes here?";
         }
     }
 }

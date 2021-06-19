@@ -1,13 +1,26 @@
-This repository contains my SMAPI mods for Stardew Valley. See the individual mods in the
+﻿This repository contains my SMAPI mods for Stardew Valley. See the individual mods in the
 subfolders for documentation and release notes.
 
 ## Translating the mods
 The mods can be translated into any language supported by the game, and SMAPI will automatically
 use the right translations.
 
-(â‘ = untranslated, â†» = partly translated, âœ“ = fully translated)
+(❑ = untranslated, ↻ = partly translated, ✓ = fully translated)
 
-**TODO**
+&nbsp;     | Bug Net     | Capstone Professions | Displays   | Magic                   | Preexisting Relationships
+---------- | :---------- | :------------------- | :--------- | :---------------------- | :-------------------------
+Chinese    | ❑ missing  | ❑ missing            | ❑ missing | [✓](Magic/i18n/zh.json) | ❑ missing
+French     | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
+German     | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
+Hungarian  | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
+Italian    | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
+Japanese   | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
+Korean     | ❑ missing  | ❑ missing            | ❑ missing | [✓](Magic/i18n/ko.json) | ❑ missing
+Portuguese | ❑ missing  | ❑ missing            | ❑ missing | [✓](Magic/i18n/pt.json) | ❑ missing
+Russian    | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
+Spanish    | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
+Turkish    | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
+
 
 Contributions are welcome! See [Modding:Translations](https://stardewvalleywiki.com/Modding:Translations)
 on the wiki for help contributing translations.

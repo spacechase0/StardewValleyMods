@@ -1,34 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Harmony;
+using LocationLayerTool.Patches;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 
 namespace LocationLayerTool
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            var harmony = HarmonyInstance.Create( ModManifest.UniqueID );
-            harmony.PatchAll();
+            HarmonyPatcher.Apply(this,
+                new xTileLayerPatcher()
+            );
 
-            Helper.ConsoleCommands.Add( "llt_adddummy", "", doCommand );
+            this.Helper.ConsoleCommands.Add("llt_adddummy", "", this.DoCommand);
         }
 
-        private void doCommand( string cmd, string[] args )
+        private void DoCommand(string cmd, string[] args)
         {
-            Game1.locations.Add( new GameLocation( Helper.Content.GetActualAssetKey( "assets/Farm_overlay.tbin" ), "Farm_overlay" ) );
-            Game1.game1.parseDebugInput( "warp Farm_overlay 39 31" );
+            Game1.locations.Add(new GameLocation(this.Helper.Content.GetActualAssetKey("assets/Farm_overlay.tbin"), "Farm_overlay"));
+            Game1.game1.parseDebugInput("warp Farm_overlay 39 31");
         }
     }
 }

@@ -1,16 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using SpaceCore.Overrides;
-using SpaceShared;
-using StardewValley;
-using StardewValley.TerrainFeatures;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Microsoft.Xna.Framework;
+using SpaceCore.Patches;
+using SpaceShared;
+using StardewValley;
 
 namespace SpaceCore
 {
@@ -22,10 +17,10 @@ namespace SpaceCore
         int GetProfessionId(string skill, string profession);
 
         // Must take (Event, GameLocation, GameTime, string[])
-        void AddEventCommand( string command, MethodInfo info );
+        void AddEventCommand(string command, MethodInfo info);
 
         // Must have [XmlType("Mods_SOMETHINGHERE")] attribute (required to start with "Mods_")
-        void RegisterSerializerType( Type type );
+        void RegisterSerializerType(Type type);
     }
 
     public class Api : IApi
@@ -50,27 +45,27 @@ namespace SpaceCore
             return Skills.GetSkill(skill).Professions.Single(p => p.Id == profession).GetVanillaId();
         }
 
-        public void AddEventCommand( string command, MethodInfo info )
+        public void AddEventCommand(string command, MethodInfo info)
         {
-            if ( info.GetParameters().Length != 4 )
-                throw new ArgumentException( "Custom event method must take Must take (Event, GameLocation, GameTime, string[])" );
-            if ( info.GetParameters()[ 0 ].ParameterType != typeof( Event ) ||
-                 info.GetParameters()[ 1 ].ParameterType != typeof( GameLocation ) ||
-                 info.GetParameters()[ 2 ].ParameterType != typeof( GameTime ) ||
-                 info.GetParameters()[ 3 ].ParameterType != typeof( string[] ) )
-                throw new ArgumentException( "Custom event method must take Must take (Event, GameLocation, GameTime, string[])" );
+            if (info.GetParameters().Length != 4)
+                throw new ArgumentException("Custom event method must take Must take (Event, GameLocation, GameTime, string[])");
+            if (info.GetParameters()[0].ParameterType != typeof(Event) ||
+                 info.GetParameters()[1].ParameterType != typeof(GameLocation) ||
+                 info.GetParameters()[2].ParameterType != typeof(GameTime) ||
+                 info.GetParameters()[3].ParameterType != typeof(string[]))
+                throw new ArgumentException("Custom event method must take Must take (Event, GameLocation, GameTime, string[])");
 
-            Log.debug( "Adding event command: " + command + " = " + info );
-            EventTryCommandPatch.customCommands.Add( command, info );
+            Log.Debug("Adding event command: " + command + " = " + info);
+            EventPatcher.CustomCommands.Add(command, info);
         }
 
-        public void RegisterSerializerType( Type type )
+        public void RegisterSerializerType(Type type)
         {
-            if ( !type.GetCustomAttribute< XmlTypeAttribute >().TypeName.StartsWith( "Mods_" ) )
+            if (!type.GetCustomAttribute<XmlTypeAttribute>().TypeName.StartsWith("Mods_"))
             {
-                throw new ArgumentException( "Custom types must have an [XmlType] attribute with the TypeName starting with \"Mods_\"" );
+                throw new ArgumentException("Custom types must have an [XmlType] attribute with the TypeName starting with \"Mods_\"");
             }
-            SpaceCore.modTypes.Add( type );
+            SpaceCore.ModTypes.Add(type);
         }
     }
 }

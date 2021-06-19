@@ -1,10 +1,6 @@
-﻿using SpaceShared;
-using StardewModdingAPI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SpaceShared;
+using StardewModdingAPI;
 
 namespace GenericModConfigMenu.ModOption
 {
@@ -16,16 +12,16 @@ namespace GenericModConfigMenu.ModOption
 
         public override T Value
         {
-            get { return base.Value; }
-            set { base.Value = Util.Adjust(Util.Clamp(Minimum, value, Maximum), Interval); }
+            get => base.Value;
+            set => base.Value = Util.Adjust(Util.Clamp(this.Minimum, value, this.Maximum), this.Interval);
         }
 
-        public ClampedModOption( string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, T theMin, T theMax, T interval, string id, IManifest mod )
-        :   base( name, desc, type, theGetter, theSetter, id, mod )
+        public ClampedModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, T theMin, T theMax, T interval, string id, IManifest mod)
+            : base(name, desc, type, theGetter, theSetter, id, mod)
         {
-            Minimum = theMin;
-            Maximum = theMax;
-            Interval = interval;
+            this.Minimum = theMin;
+            this.Maximum = theMax;
+            this.Interval = interval;
         }
     }
 }

@@ -1,10 +1,4 @@
-﻿using SpaceShared;
 using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ManaBar
 {
@@ -21,22 +15,22 @@ namespace ManaBar
     {
         public int GetMana(Farmer farmer)
         {
-            return farmer.getCurrentMana();
+            return farmer.GetCurrentMana();
         }
 
         public void AddMana(Farmer farmer, int amt)
         {
-            farmer.addMana(amt);
+            farmer.AddMana(amt);
         }
 
         public int GetMaxMana(Farmer farmer)
         {
-            return farmer.getMaxMana();
+            return farmer.GetMaxMana();
         }
 
         public void SetMaxMana(Farmer farmer, int newMaxMana)
         {
-            farmer.setMaxMana(newMaxMana);
+            farmer.SetMaxMana(newMaxMana);
         }
     }
 }

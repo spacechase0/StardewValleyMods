@@ -1,13 +1,15 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Tools;
-using System.Collections.Generic;
-using SObject = StardewValley.Object;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class WeaponData : DataNeedsIdWithTexture
     {
         [JsonConverter(typeof(StringEnumConverter))]
@@ -17,7 +19,7 @@ namespace JsonAssets.Data
             Club = MeleeWeapon.club,
             Sword = MeleeWeapon.defenseSword,
         }
-        
+
         public string Description { get; set; }
         public Type_ Type { get; set; }
 
@@ -41,34 +43,30 @@ namespace JsonAssets.Data
 
         public bool CanTrash { get; set; } = true;
 
-        public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
-        public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> NameLocalization = new();
+        public Dictionary<string, string> DescriptionLocalization = new();
 
         public string LocalizedName()
         {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            /*if (currLang == LocalizedContentManager.LanguageCode.en)
-                return Name;*/
-            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
-                return Name;
-            return NameLocalization[currLang.ToString()];
+            var lang = LocalizedContentManager.CurrentLanguageCode;
+            return this.NameLocalization != null && this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
+                ? localization
+                : this.Name;
         }
 
         public string LocalizedDescription()
         {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            /*if (currLang == LocalizedContentManager.LanguageCode.en)
-                return Description;*/
-            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return Description;
-            return DescriptionLocalization[currLang.ToString()];
+            var lang = LocalizedContentManager.CurrentLanguageCode;
+            return this.DescriptionLocalization != null && this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
+                ? localization
+                : this.Description;
         }
 
-        public int GetWeaponId() { return id; }
+        public int GetWeaponId() { return this.Id; }
 
         internal string GetWeaponInformation()
         {
-            return $"{Name}/{LocalizedDescription()}/{MinimumDamage}/{MaximumDamage}/{Knockback}/{Speed}/{Accuracy}/{Defense}/{(int)Type}/{MineDropVar}/{MineDropMinimumLevel}/{ExtraSwingArea}/{CritChance}/{CritMultiplier}/{LocalizedName()}";
+            return $"{this.Name}/{this.LocalizedDescription()}/{this.MinimumDamage}/{this.MaximumDamage}/{this.Knockback}/{this.Speed}/{this.Accuracy}/{this.Defense}/{(int)this.Type}/{this.MineDropVar}/{this.MineDropMinimumLevel}/{this.ExtraSwingArea}/{this.CritChance}/{this.CritMultiplier}/{this.LocalizedName()}";
         }
     }
 }

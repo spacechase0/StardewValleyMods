@@ -1,160 +1,155 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using JunimosAcceptCash.Framework;
 using Microsoft.Xna.Framework;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Locations;
 using StardewValley.Menus;
+using SObject = StardewValley.Object;
 
 namespace JunimosAcceptCash
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public Mod instance;
+        public Mod Instance;
         public Configuration Config;
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            this.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            Config = helper.ReadConfig<Configuration>();
+            this.Config = helper.ReadConfig<Configuration>();
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.Display.MenuChanged += onMenuChanged;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
         }
 
-        private void onGameLaunched( object sender, GameLaunchedEventArgs e )
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = Helper.ModRegistry.GetApi< GenericModConfigMenuAPI >( "spacechase0.GenericModConfigMenu" );
-            if ( gmcm != null )
+            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (gmcm != null)
             {
-                gmcm.RegisterModConfig( ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig( Config ) );
-                gmcm.RegisterSimpleOption( ModManifest, "Cost Multiplier", "The multiplier for the cost of the items to charge.", () => Config.CostMultiplier, ( i ) => Config.CostMultiplier = i );
+                gmcm.RegisterModConfig(this.ModManifest, () => this.Config = new Configuration(), () => this.Helper.WriteConfig(this.Config));
+                gmcm.RegisterSimpleOption(this.ModManifest, "Cost Multiplier", "The multiplier for the cost of the items to charge.", () => this.Config.CostMultiplier, (i) => this.Config.CostMultiplier = i);
             }
         }
 
-        private JunimoNoteMenu activeMenu = null;
-        private void onMenuChanged( object sender, MenuChangedEventArgs e )
+        private JunimoNoteMenu ActiveMenu;
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( e.NewMenu is JunimoNoteMenu menu )
+            if (e.NewMenu is JunimoNoteMenu menu)
             {
-                activeMenu = menu;
-                Helper.Events.Display.RenderedActiveMenu += onRenderMenu;
-                Helper.Events.GameLoop.UpdateTicked += onUpdated;
+                this.ActiveMenu = menu;
+                this.Helper.Events.Display.RenderedActiveMenu += this.OnRenderMenu;
+                this.Helper.Events.GameLoop.UpdateTicked += this.OnUpdated;
             }
-            else if ( e.OldMenu is JunimoNoteMenu )
+            else if (e.OldMenu is JunimoNoteMenu)
             {
-                activeMenu = null;
-                Helper.Events.Display.RenderedActiveMenu -= onRenderMenu;
-                Helper.Events.GameLoop.UpdateTicked -= onUpdated;
+                this.ActiveMenu = null;
+                this.Helper.Events.Display.RenderedActiveMenu -= this.OnRenderMenu;
+                this.Helper.Events.GameLoop.UpdateTicked -= this.OnUpdated;
             }
         }
 
-        private void onUpdated( object sender, UpdateTickedEventArgs e )
+        private void OnUpdated(object sender, UpdateTickedEventArgs e)
         {
-            if ( activeMenu == null )
+            if (this.ActiveMenu == null)
                 return;
 
-            var currentPageBundle = Helper.Reflection.GetField<Bundle>( activeMenu, "currentPageBundle" ).GetValue();
-            if ( currentPageBundle == null || !Helper.Reflection.GetField<bool>( activeMenu, "specificBundlePage" ).GetValue() )
+            var currentPageBundle = this.Helper.Reflection.GetField<Bundle>(this.ActiveMenu, "currentPageBundle").GetValue();
+            if (currentPageBundle == null || !this.Helper.Reflection.GetField<bool>(this.ActiveMenu, "specificBundlePage").GetValue())
                 return;
 
-            if ( purchaseButton == null )
-                purchaseButton = new ClickableTextureComponent( new Rectangle( activeMenu.xPositionOnScreen + 800, activeMenu.yPositionOnScreen + 504, 260, 72 ), activeMenu.noteTexture, new Rectangle( 517, 286, 65, 20 ), 4f, false );
+            if (this.PurchaseButton == null)
+                this.PurchaseButton = new ClickableTextureComponent(new Rectangle(this.ActiveMenu.xPositionOnScreen + 800, this.ActiveMenu.yPositionOnScreen + 504, 260, 72), this.ActiveMenu.noteTexture, new Rectangle(517, 286, 65, 20), 4f);
             else
             {
-                purchaseButton.bounds.Y = activeMenu.yPositionOnScreen;
+                this.PurchaseButton.bounds.Y = this.ActiveMenu.yPositionOnScreen;
             }
 
-            purchaseButton.tryHover( Game1.getOldMouseX(), Game1.getOldMouseY() );
-            
-            if ( purchaseButton.containsPoint( Game1.getOldMouseX(), Game1.getOldMouseY() ) && Helper.Input.IsDown( SButton.MouseLeft ) )
-            {
-                Helper.Input.Suppress( SButton.MouseLeft );
+            this.PurchaseButton.tryHover(Game1.getOldMouseX(), Game1.getOldMouseY());
 
-                int whichArea = Helper.Reflection.GetField< int >( activeMenu, "whichArea" ).GetValue();
+            if (this.PurchaseButton.containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) && this.Helper.Input.IsDown(SButton.MouseLeft))
+            {
+                this.Helper.Input.Suppress(SButton.MouseLeft);
 
                 // Copied from JunimoNoteMenu, modified
-                int stack = calculateActiveBundleCost();
-                if ( Game1.player.Money >= stack )
+                int stack = this.CalculateActiveBundleCost();
+                if (Game1.player.Money >= stack)
                 {
                     Game1.player.Money -= stack;
-                    Game1.playSound( "select" );
-                    if ( this.purchaseButton != null )
-                        this.purchaseButton.scale = this.purchaseButton.baseScale * 0.75f;
-                    for ( int i = 0; i < currentPageBundle.numberOfIngredientSlots; ++i )
+                    Game1.playSound("select");
+                    if (this.PurchaseButton != null)
+                        this.PurchaseButton.scale = this.PurchaseButton.baseScale * 0.75f;
+                    for (int i = 0; i < currentPageBundle.numberOfIngredientSlots; ++i)
                     {
-                        activeMenu.ingredientSlots[ i ].item = new StardewValley.Object( currentPageBundle.ingredients[ i ].index, currentPageBundle.ingredients[ i ].stack, false, -1, currentPageBundle.ingredients[ i ].quality );
+                        this.ActiveMenu.ingredientSlots[i].item = new Object(currentPageBundle.ingredients[i].index, currentPageBundle.ingredients[i].stack, false, -1, currentPageBundle.ingredients[i].quality);
                     }
-                    Helper.Reflection.GetMethod( activeMenu, "checkIfBundleIsComplete" ).Invoke();
+                    this.Helper.Reflection.GetMethod(this.ActiveMenu, "checkIfBundleIsComplete").Invoke();
 
-                    Helper.Reflection.GetMethod( activeMenu, "closeBundlePage" ).Invoke();
+                    this.Helper.Reflection.GetMethod(this.ActiveMenu, "closeBundlePage").Invoke();
                 }
                 else
                     Game1.dayTimeMoneyBox.moneyShakeTimer = 600;
             }
         }
 
-        private ClickableTextureComponent purchaseButton;
-        private void onRenderMenu( object sender, RenderedActiveMenuEventArgs e )
+        private ClickableTextureComponent PurchaseButton;
+        private void OnRenderMenu(object sender, RenderedActiveMenuEventArgs e)
         {
-            if ( activeMenu == null )
+            if (this.ActiveMenu == null)
                 return;
 
-            var currentPageBundle = Helper.Reflection.GetField<Bundle>( activeMenu, "currentPageBundle" ).GetValue();
-            if ( currentPageBundle == null || !Helper.Reflection.GetField<bool>( activeMenu, "specificBundlePage" ).GetValue() )
-                return;
-            
-            if ( purchaseButton == null )
-                return;
-            
-            if ( Helper.Reflection.GetField<ClickableTextureComponent>( activeMenu, "purchaseButton" ).GetValue() != null )
+            var currentPageBundle = this.Helper.Reflection.GetField<Bundle>(this.ActiveMenu, "currentPageBundle").GetValue();
+            if (currentPageBundle == null || !this.Helper.Reflection.GetField<bool>(this.ActiveMenu, "specificBundlePage").GetValue())
                 return;
 
-            StardewValley.BellsAndWhistles.SpriteText.drawString( e.SpriteBatch, $"{calculateActiveBundleCost()}g", purchaseButton.bounds.X - 150, purchaseButton.bounds.Y + 10 );
-            purchaseButton.draw( e.SpriteBatch );
-            Game1.dayTimeMoneyBox.drawMoneyBox( e.SpriteBatch, -1, -1 );
-            activeMenu.drawMouse( e.SpriteBatch );
+            if (this.PurchaseButton == null)
+                return;
+
+            if (this.ActiveMenu.purchaseButton != null)
+                return;
+
+            StardewValley.BellsAndWhistles.SpriteText.drawString(e.SpriteBatch, $"{this.CalculateActiveBundleCost()}g", this.PurchaseButton.bounds.X - 150, this.PurchaseButton.bounds.Y + 10);
+            this.PurchaseButton.draw(e.SpriteBatch);
+            Game1.dayTimeMoneyBox.drawMoneyBox(e.SpriteBatch);
+            this.ActiveMenu.drawMouse(e.SpriteBatch);
         }
 
         // TODO: Cache this value
-        private int calculateActiveBundleCost()
+        private int CalculateActiveBundleCost()
         {
-            var bundle = Helper.Reflection.GetField<Bundle>( activeMenu, "currentPageBundle" ).GetValue();
+            var bundle = this.Helper.Reflection.GetField<Bundle>(this.ActiveMenu, "currentPageBundle").GetValue();
 
             int cost = 0;
             List<int> used = new List<int>();
-            for ( int i = 0; i < bundle.numberOfIngredientSlots; ++i )
+            for (int i = 0; i < bundle.numberOfIngredientSlots; ++i)
             {
-                if ( activeMenu.ingredientSlots[ i ].item != null )
+                if (this.ActiveMenu.ingredientSlots[i].item != null)
                     continue;
 
                 int mostExpensiveSlot = 0;
-                int mostExpensiveCost = new StardewValley.Object( bundle.ingredients[ 0 ].index, bundle.ingredients[ 0 ].stack, false, -1, bundle.ingredients[ 0 ].quality ).sellToStorePrice() * bundle.ingredients[ 0 ].stack;
-                for ( int j = 1; j < bundle.ingredients.Count; ++j )
+                int mostExpensiveCost = new SObject(bundle.ingredients[0].index, bundle.ingredients[0].stack, false, -1, bundle.ingredients[0].quality).sellToStorePrice() * bundle.ingredients[0].stack;
+                for (int j = 1; j < bundle.ingredients.Count; ++j)
                 {
-                    if ( used.Contains( j ) )
+                    if (used.Contains(j))
                         continue;
 
-                    int itemCost = new StardewValley.Object( bundle.ingredients[ j ].index, bundle.ingredients[ j ].stack, false, -1, bundle.ingredients[ j ].quality ).sellToStorePrice() * bundle.ingredients[ j ].stack;
-                    if ( cost > mostExpensiveCost )
+                    int itemCost = new SObject(bundle.ingredients[j].index, bundle.ingredients[j].stack, false, -1, bundle.ingredients[j].quality).sellToStorePrice() * bundle.ingredients[j].stack;
+                    if (cost > mostExpensiveCost)
                     {
                         mostExpensiveSlot = j;
                         mostExpensiveCost = itemCost;
                     }
                 }
-                used.Add( mostExpensiveSlot );
+                used.Add(mostExpensiveSlot);
                 cost += mostExpensiveCost;
             }
 
-            return cost * Config.CostMultiplier;
+            return cost * this.Config.CostMultiplier;
         }
     }
 }

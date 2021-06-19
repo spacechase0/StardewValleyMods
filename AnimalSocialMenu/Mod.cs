@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AnimalSocialMenu.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
@@ -13,29 +9,29 @@ using StardewValley.Menus;
 
 namespace AnimalSocialMenu
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        private static int myTabId = 0;
+        public static Mod Instance;
+        private static int MyTabId;
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            Helper.Events.Display.MenuChanged += onMenuChanged;
-            myTabId = SpaceCore.Menus.ReserveGameMenuTab( "animals" );
+            this.Helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            Mod.MyTabId = SpaceCore.Menus.ReserveGameMenuTab("animals");
         }
 
-        private int myTabIndex = -1;
-        private void onMenuChanged(object sender, MenuChangedEventArgs args)
+        private int MyTabIndex = -1;
+        private void OnMenuChanged(object sender, MenuChangedEventArgs args)
         {
-            if ( args.NewMenu is GameMenu gm )
+            if (args.NewMenu is GameMenu gm)
             {
-                var pages = Helper.Reflection.GetField<List<IClickableMenu>>(gm, "pages").GetValue();
-                var tabs = Helper.Reflection.GetField<List<ClickableComponent>>(gm, "tabs").GetValue();
+                var pages = gm.pages;
+                var tabs = gm.tabs;
 
-                myTabIndex = tabs.Count;
+                this.MyTabIndex = tabs.Count;
                 tabs.Add(new ClickableComponent(new Rectangle(gm.xPositionOnScreen + 192, gm.yPositionOnScreen + IClickableMenu.tabYPositionRelativeToMenuY + 64 - 64, 64, 64), "animals", "Animals")
                 {
                     myID = 912342,
@@ -46,40 +42,40 @@ namespace AnimalSocialMenu
                     fullyImmutable = true
                 });
                 tabs[1].upNeighborID = 912342;
-                pages.Add((IClickableMenu)new AnimalSocialPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width, gm.height));
+                pages.Add(new AnimalSocialPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width, gm.height));
 
-                Helper.Events.Display.RenderedActiveMenu += drawSocialIcon;
+                this.Helper.Events.Display.RenderedActiveMenu += this.DrawSocialIcon;
             }
-            else if ( args.OldMenu is GameMenu ogm )
+            else if (args.OldMenu is GameMenu)
             {
-                Helper.Events.Display.RenderedActiveMenu -= drawSocialIcon;
+                this.Helper.Events.Display.RenderedActiveMenu -= this.DrawSocialIcon;
             }
         }
 
         // The tab by default is rendered with the inventory icon due to how the tabs are hard-coded
         // This draws over it with the social icon instead of the inventory one
-        private void drawSocialIcon(object sender, RenderedActiveMenuEventArgs e)
+        private void DrawSocialIcon(object sender, RenderedActiveMenuEventArgs e)
         {
             // For some reason this check is necessary despite removing it in the onMenuChanged event.
             if (!(Game1.activeClickableMenu is GameMenu menu))
             {
-                Helper.Events.Display.RenderedActiveMenu -= drawSocialIcon;
+                this.Helper.Events.Display.RenderedActiveMenu -= this.DrawSocialIcon;
                 return;
             }
-            if (menu.invisible || myTabIndex == -1)
+            if (menu.invisible || this.MyTabIndex == -1)
                 return;
 
-            var tabs = Helper.Reflection.GetField<List<ClickableComponent>>(menu, "tabs").GetValue();
-            if (tabs.Count <= myTabIndex)
+            var tabs = menu.tabs;
+            if (tabs.Count <= this.MyTabIndex)
             {
                 return;
             }
-            var tab = tabs[myTabIndex];
-            e.SpriteBatch.Draw(Game1.mouseCursors, new Vector2((float)tab.bounds.X, (float)(tab.bounds.Y + (menu.currentTab == menu.getTabNumberFromName(tab.name) ? 8 : 0))), new Rectangle?(new Rectangle(2 * 16, 368, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.0001f);
+            var tab = tabs[this.MyTabIndex];
+            e.SpriteBatch.Draw(Game1.mouseCursors, new Vector2(tab.bounds.X, tab.bounds.Y + (menu.currentTab == menu.getTabNumberFromName(tab.name) ? 8 : 0)), new Rectangle?(new Rectangle(2 * 16, 368, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.0001f);
 
             if (!Game1.options.hardwareCursor)
             {
-                e.SpriteBatch.Draw(Game1.mouseCursors, new Vector2((float)Game1.getOldMouseX(), (float)Game1.getOldMouseY()), new Rectangle?(Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, Game1.options.gamepadControls ? 44 : 0, 16, 16)), Color.White, 0.0f, Vector2.Zero, (float)(4.0 + (double)Game1.dialogueButtonScale / 150.0), SpriteEffects.None, 1f);
+                e.SpriteBatch.Draw(Game1.mouseCursors, new Vector2(Game1.getOldMouseX(), Game1.getOldMouseY()), new Rectangle?(Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, Game1.options.gamepadControls ? 44 : 0, 16, 16)), Color.White, 0.0f, Vector2.Zero, (float)(4.0 + Game1.dialogueButtonScale / 150.0), SpriteEffects.None, 1f);
             }
         }
     }

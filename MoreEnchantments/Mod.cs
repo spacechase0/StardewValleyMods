@@ -1,39 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Harmony;
 using MoreEnchantments.Enchantments;
+using MoreEnchantments.Patches;
+using Spacechase.Shared.Harmony;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 
 namespace MoreEnchantments
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetEditor
+    internal class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
-        public static Mod instance;
+        public static Mod Instance;
 
-        public bool CanEdit<T>( IAssetInfo asset )
+        public bool CanEdit<T>(IAssetInfo asset)
         {
-            return asset.AssetNameEquals( "Strings\\EnchantmentNames" );
+            return asset.AssetNameEquals("Strings\\EnchantmentNames");
         }
 
-        public void Edit<T>( IAssetData asset )
+        public void Edit<T>(IAssetData asset)
         {
-            asset.AsDictionary<string, string>().Data.Add( "MoreLures", "A-lure-ing" );
+            asset.AsDictionary<string, string>().Data.Add("MoreLures", "A-lure-ing");
         }
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            BaseEnchantment.GetAvailableEnchantments().Add( new MoreLuresEnchantment() );
+            BaseEnchantment.GetAvailableEnchantments().Add(new MoreLuresEnchantment());
 
-            var harmony = HarmonyInstance.Create( ModManifest.UniqueID );
-            harmony.PatchAll();
+            HarmonyPatcher.Apply(this,
+                new FishingRodPatcher()
+            );
         }
     }
 }

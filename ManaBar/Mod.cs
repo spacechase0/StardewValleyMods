@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ManaBar.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -16,101 +13,97 @@ using StardewValley.Network;
 
 namespace ManaBar
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        public static MultiplayerSaveData Data { get; private set; } = new MultiplayerSaveData();
+        public static Mod Instance;
+        public static MultiplayerSaveData Data { get; private set; } = new();
 
-        private static Texture2D manaBg;
-        private static Texture2D manaFg;
+        private static Texture2D ManaBg;
+        private static Texture2D ManaFg;
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            Command.register( "player_addmana", addManaCommand );
-            Command.register( "player_setmaxmana", setMaxManaCommand );
+            Command.Register("player_addmana", Mod.AddManaCommand);
+            Command.Register("player_setmaxmana", Mod.SetMaxManaCommand);
 
-            helper.Events.GameLoop.DayStarted += onDayStarted;
-            helper.Events.GameLoop.SaveLoaded += onSaveLoaded;
-            helper.Events.GameLoop.Saved += onSaved;
-            helper.Events.Display.RenderedHud += onRenderedHud;
+            helper.Events.GameLoop.DayStarted += Mod.OnDayStarted;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.GameLoop.Saved += this.OnSaved;
+            helper.Events.Display.RenderedHud += Mod.OnRenderedHud;
 
-            SpaceCore.Networking.RegisterMessageHandler( MultiplayerSaveData.MSG_DATA, onNetworkData );
-            SpaceCore.Networking.RegisterMessageHandler( MultiplayerSaveData.MSG_MINIDATA, onNetworkMiniData );
-            SpaceEvents.ServerGotClient += onClientConnected;
+            SpaceCore.Networking.RegisterMessageHandler(MultiplayerSaveData.MsgData, Mod.OnNetworkData);
+            SpaceCore.Networking.RegisterMessageHandler(MultiplayerSaveData.MsgMinidata, Mod.OnNetworkMiniData);
+            SpaceEvents.ServerGotClient += Mod.OnClientConnected;
 
-            manaBg = helper.Content.Load<Texture2D>( "assets/manabg.png" );
+            Mod.ManaBg = helper.Content.Load<Texture2D>("assets/manabg.png");
 
             Color manaCol = new Color(0, 48, 255);
-            manaFg = new Texture2D( Game1.graphics.GraphicsDevice, 1, 1 );
-            manaFg.SetData( new Color[] { manaCol } );
+            Mod.ManaFg = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
+            Mod.ManaFg.SetData(new[] { manaCol });
         }
 
-        private static void addManaCommand( string[] args )
+        private static void AddManaCommand(string[] args)
         {
-            Game1.player.addMana( int.Parse( args[ 0 ] ) );
+            Game1.player.AddMana(int.Parse(args[0]));
         }
-        private static void setMaxManaCommand( string[] args )
+        private static void SetMaxManaCommand(string[] args)
         {
-            Game1.player.setMaxMana( int.Parse( args[ 0 ] ) );
+            Game1.player.SetMaxMana(int.Parse(args[0]));
         }
 
-        private IApi api;
+        private IApi Api;
         public override object GetApi()
         {
-            if ( api == null )
-                api = new Api();
-            return api;
+            return this.Api ??= new Api();
         }
 
-        private static void onNetworkData( IncomingMessage msg )
+        private static void OnNetworkData(IncomingMessage msg)
         {
             int count = msg.Reader.ReadInt32();
-            for ( int i = 0; i < count; ++i )
+            for (int i = 0; i < count; ++i)
             {
-                Mod.Data.players[ msg.Reader.ReadInt64() ] = JsonConvert.DeserializeObject<MultiplayerSaveData.PlayerData>( msg.Reader.ReadString() );
+                Mod.Data.Players[msg.Reader.ReadInt64()] = JsonConvert.DeserializeObject<MultiplayerSaveData.PlayerData>(msg.Reader.ReadString());
             }
         }
 
-        private static void onNetworkMiniData( IncomingMessage msg )
+        private static void OnNetworkMiniData(IncomingMessage msg)
         {
-            Mod.Data.players[ msg.FarmerID ].mana = msg.Reader.ReadInt32();
-            Mod.Data.players[ msg.FarmerID ].manaCap = msg.Reader.ReadInt32();
+            Mod.Data.Players[msg.FarmerID].Mana = msg.Reader.ReadInt32();
+            Mod.Data.Players[msg.FarmerID].ManaCap = msg.Reader.ReadInt32();
         }
 
-        private static void onClientConnected( object sender, EventArgsServerGotClient args )
+        private static void OnClientConnected(object sender, EventArgsServerGotClient args)
         {
-            if ( !Data.players.ContainsKey( args.FarmerID ) )
-                Data.players[ args.FarmerID ] = new MultiplayerSaveData.PlayerData();
+            if (!Mod.Data.Players.ContainsKey(args.FarmerID))
+                Mod.Data.Players[args.FarmerID] = new MultiplayerSaveData.PlayerData();
 
-            using ( var stream = new MemoryStream() )
-            using ( var writer = new BinaryWriter( stream ) )
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write(Mod.Data.Players.Count);
+            foreach (var entry in Mod.Data.Players)
             {
-                writer.Write( ( int ) Data.players.Count );
-                foreach ( var entry in Data.players )
-                {
-                    writer.Write( entry.Key );
-                    writer.Write( JsonConvert.SerializeObject( entry.Value, MultiplayerSaveData.networkSerializerSettings ) );
-                }
-                SpaceCore.Networking.BroadcastMessage( MultiplayerSaveData.MSG_DATA, stream.ToArray() );
+                writer.Write(entry.Key);
+                writer.Write(JsonConvert.SerializeObject(entry.Value, MultiplayerSaveData.NetworkSerializerSettings));
             }
+            SpaceCore.Networking.BroadcastMessage(MultiplayerSaveData.MsgData, stream.ToArray());
         }
 
-        public static void onRenderedHud( object sender, RenderedHudEventArgs e )
+        public static void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if ( Game1.activeClickableMenu != null || Game1.eventUp || Game1.player.getMaxMana() == 0 )
+            if (Game1.activeClickableMenu != null || Game1.eventUp || Game1.player.GetMaxMana() == 0)
                 return;
 
             SpriteBatch b = e.SpriteBatch;
 
-            Vector2 manaPos = new Vector2(20, Game1.uiViewport.Height - manaBg.Height * 4 - 20);
-            b.Draw( manaBg, manaPos, new Rectangle( 0, 0, manaBg.Width, manaBg.Height ), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1 );
-            if ( Game1.player.getCurrentMana() > 0 )
+            Vector2 manaPos = new Vector2(20, Game1.uiViewport.Height - Mod.ManaBg.Height * 4 - 20);
+            b.Draw(Mod.ManaBg, manaPos, new Rectangle(0, 0, Mod.ManaBg.Width, Mod.ManaBg.Height), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1);
+            if (Game1.player.GetCurrentMana() > 0)
             {
                 Rectangle targetArea = new Rectangle(3, 13, 6, 41);
-                float perc = Game1.player.getCurrentMana() / (float)Game1.player.getMaxMana();
+                float perc = Game1.player.GetCurrentMana() / (float)Game1.player.GetMaxMana();
                 int h = (int)(targetArea.Height * perc);
                 targetArea.Y += targetArea.Height - h;
                 targetArea.Height = h;
@@ -119,63 +112,62 @@ namespace ManaBar
                 targetArea.Y *= 4;
                 targetArea.Width *= 4;
                 targetArea.Height *= 4;
-                targetArea.X += ( int ) manaPos.X;
-                targetArea.Y += ( int ) manaPos.Y;
-                b.Draw( manaFg, targetArea, new Rectangle( 0, 0, 1, 1 ), Color.White );
+                targetArea.X += (int)manaPos.X;
+                targetArea.Y += (int)manaPos.Y;
+                b.Draw(Mod.ManaFg, targetArea, new Rectangle(0, 0, 1, 1), Color.White);
 
-                if ( ( double ) Game1.getOldMouseX() >= ( double ) targetArea.X && ( double ) Game1.getOldMouseY() >= ( double ) targetArea.Y && ( double ) Game1.getOldMouseX() < ( double ) targetArea.X + targetArea.Width && Game1.getOldMouseY() < targetArea.Y + targetArea.Height )
-                    Game1.drawWithBorder( Math.Max( 0, ( int ) Game1.player.getCurrentMana() ).ToString() + "/" + Game1.player.getMaxMana(), Color.Black * 0.0f, Color.White, new Vector2( Game1.getOldMouseX(), Game1.getOldMouseY() - 32 ) );
+                if (Game1.getOldMouseX() >= (double)targetArea.X && Game1.getOldMouseY() >= (double)targetArea.Y && Game1.getOldMouseX() < (double)targetArea.X + targetArea.Width && Game1.getOldMouseY() < targetArea.Y + targetArea.Height)
+                    Game1.drawWithBorder(Math.Max(0, Game1.player.GetCurrentMana()).ToString() + "/" + Game1.player.GetMaxMana(), Color.Black * 0.0f, Color.White, new Vector2(Game1.getOldMouseX(), Game1.getOldMouseY() - 32));
             }
         }
 
         /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void onDayStarted( object sender, DayStartedEventArgs e )
+        private static void OnDayStarted(object sender, DayStartedEventArgs e)
         {
-            Game1.player.addMana( Game1.player.getMaxMana() );
+            Game1.player.AddMana(Game1.player.GetMaxMana());
         }
 
         /// <summary>Raised after the player loads a save slot.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaveLoaded( object sender, SaveLoadedEventArgs e )
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             try
             {
-                if ( !Game1.IsMultiplayer || Game1.IsMasterGame )
+                if (!Game1.IsMultiplayer || Game1.IsMasterGame)
                 {
-                    Log.info( $"Loading save data" );
-                    Data = Helper.Data.ReadSaveData<MultiplayerSaveData>( MultiplayerSaveData.SaveKey );
-                    if ( Data == null )
+                    Log.Info($"Loading save data");
+                    Mod.Data = this.Helper.Data.ReadSaveData<MultiplayerSaveData>(MultiplayerSaveData.SaveKey);
+                    if (Mod.Data == null)
                     {
-                        if ( File.Exists( MultiplayerSaveData.OldFilePath ) )
+                        if (File.Exists(MultiplayerSaveData.OldFilePath))
                         {
-                            Data = JsonConvert.DeserializeObject<MultiplayerSaveData>( File.ReadAllText( MultiplayerSaveData.OldFilePath ) );
+                            Mod.Data = JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.OldFilePath));
                         }
                     }
-                    if ( Data == null )
-                        Data = new MultiplayerSaveData();
-                    
-                    if ( !Data.players.ContainsKey( Game1.player.UniqueMultiplayerID ) )
-                        Data.players[ Game1.player.UniqueMultiplayerID ] = new MultiplayerSaveData.PlayerData();
+                    Mod.Data ??= new MultiplayerSaveData();
+
+                    if (!Mod.Data.Players.ContainsKey(Game1.player.UniqueMultiplayerID))
+                        Mod.Data.Players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
                 }
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
-                Log.warn( $"Exception loading save data: {ex}" );
+                Log.Warn($"Exception loading save data: {ex}");
             }
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onSaved( object sender, SavedEventArgs e )
+        private void OnSaved(object sender, SavedEventArgs e)
         {
-            if ( !Game1.IsMultiplayer || Game1.IsMasterGame )
+            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
             {
-                Log.info( $"Saving save data..." );
-                Helper.Data.WriteSaveData( MultiplayerSaveData.SaveKey, Data );
+                Log.Info($"Saving save data...");
+                this.Helper.Data.WriteSaveData(MultiplayerSaveData.SaveKey, Mod.Data);
             }
         }
     }

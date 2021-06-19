@@ -1,10 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 
 namespace SpaceCore.Events
 {
@@ -12,10 +6,10 @@ namespace SpaceCore.Events
     {
         internal EventArgsBombExploded(Vector2 tileLocation, int radius)
         {
-            Position = tileLocation;
-            Radius = radius;
+            this.Position = tileLocation;
+            this.Radius = radius;
         }
-        
+
         public Vector2 Position { get; }
         public int Radius { get; }
     }

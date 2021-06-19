@@ -1,10 +1,10 @@
 ﻿{
-  "Name": "Profit Calculator",
-  "Author": "spacechase0",
-  "Version": "1.0.1",
-  "Description": "Commands to calculate profits",
-  "UniqueID": "spacechase0.ProfitCalculator",
-  "EntryDll": "ProfitCalculator.dll",
-  "UpdateKeys": [ "Nexus:3378" ],
-  "spacechase0": "profit-calculator",
+    "Name": "Profit Calculator",
+    "Author": "spacechase0",
+    "Version": "1.0.2",
+    "MinimumApiVersion": "3.9.5",
+    "Description": "Adds a console command to calculate the profits from growing each crop for an entire season.",
+    "UniqueID": "spacechase0.ProfitCalculator",
+    "EntryDll": "ProfitCalculator.dll",
+    "UpdateKeys": [ "Nexus:3378" ]
 }

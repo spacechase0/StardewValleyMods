@@ -1,10 +1,12 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-using StardewValley;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using SpaceShared;
+using StardewValley;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class HatData : DataNeedsIdWithTexture
     {
         public string Description { get; set; }
@@ -16,34 +18,30 @@ namespace JsonAssets.Data
 
         public string Metadata { get; set; } = "";
 
-        public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
-        public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> NameLocalization = new();
+        public Dictionary<string, string> DescriptionLocalization = new();
 
         public string LocalizedName()
         {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            /*if (currLang == LocalizedContentManager.LanguageCode.en)
-                return Name;*/
-            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
-                return Name;
-            return NameLocalization[currLang.ToString()];
+            var lang = LocalizedContentManager.CurrentLanguageCode;
+            return this.NameLocalization != null && this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
+                ? localization
+                : this.Name;
         }
 
         public string LocalizedDescription()
         {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            /*if (currLang == LocalizedContentManager.LanguageCode.en)
-                return Description;*/
-            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return Description;
-            return DescriptionLocalization[currLang.ToString()];
+            var lang = LocalizedContentManager.CurrentLanguageCode;
+            return this.DescriptionLocalization != null && this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
+                ? localization
+                : this.Description;
         }
 
-        public int GetHatId() { return id; }
+        public int GetHatId() { return this.Id; }
 
         internal string GetHatInformation()
         {
-            return $"{Name}/{LocalizedDescription()}/" + ( ShowHair ? "true" : "false" ) + "/" + (IgnoreHairstyleOffset ? "true" : "false") + $"/{Metadata}/{LocalizedName()}";
+            return $"{this.Name}/{this.LocalizedDescription()}/" + (this.ShowHair ? "true" : "false") + "/" + (this.IgnoreHairstyleOffset ? "true" : "false") + $"/{this.Metadata}/{this.LocalizedName()}";
         }
     }
 }

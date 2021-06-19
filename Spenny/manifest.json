@@ -1,11 +1,10 @@
-{
-  "Name": "Spenny",
-  "Author": "spacechase0",
-  "Version": "1.0.2",
-  "Description": "Spinning Penny. Spenny.",
-  "UniqueID": "spacechase0.Spenny",
-  "EntryDll": "Spenny.dll",
-  "MinimumApiVersion": "2.9.0",
-  "UpdateKeys": [ "Nexus:2755", "Chucklefish:5522" ],
-  "spacechase0": "spenny" 
+﻿{
+    "Name": "Spenny",
+    "Author": "spacechase0",
+    "Version": "1.0.3",
+    "MinimumApiVersion": "3.9.5",
+    "Description": "Spinning Penny. Spenny.",
+    "UniqueID": "spacechase0.Spenny",
+    "EntryDll": "Spenny.dll",
+    "UpdateKeys": [ "Nexus:2755" ]
 }

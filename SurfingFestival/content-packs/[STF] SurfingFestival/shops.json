@@ -1,0 +1,27 @@
+﻿{
+    "Shops": [
+        {
+            "ShopName": "SurfingFestival.Shop",
+            "ShopPrice": 500,
+            "ItemStocks": [
+                {
+                    "ItemType": "Object",
+                    "StockPrice": 50,
+                    "JAPacks": [ "SurfingFestivalContentPack" ]
+                },
+                {
+                    "ItemType": "BigCraftable",
+                    "StockPrice": 2500,
+                    "JAPacks": [ "SurfingFestivalContentPack" ],
+                    "ExcludeFromJAPacks": [
+                        "Surfing Trophy"
+                    ]
+                },
+                {
+                    "ItemType": "Hat",
+                    "JAPacks": [ "SurfingFestivalContentPack" ]
+                }
+            ]
+        }
+    ]
+}

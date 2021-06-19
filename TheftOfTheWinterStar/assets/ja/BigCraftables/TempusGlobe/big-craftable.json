@@ -1,23 +1,23 @@
-{
-  "Name": "Tempus Globe",
-  "Description": "A mystical item that allows crops around it to grow year-long. It also waters crops near it.\n5x5 area, centered on the object.",
-  "ProvidesLight": true,
-  "Recipe": {
-    "ResultCount": 1,
-    "Ingredients": [
-      {
-        "Object": 768,
-        "Count": 25
-      },
-      {
-        "Object": 769,
-        "Count": 25
-      },
-      {
-        "Object": 645,
-        "Count": 1
-      }
-    ],
-    "IsDefault": false,
-  },
+﻿{
+    "Name": "Tempus Globe",
+    "Description": "A mystical item that allows crops around it to grow year-long. It also waters crops near it.\n5x5 area, centered on the object.",
+    "ProvidesLight": true,
+    "Recipe": {
+        "ResultCount": 1,
+        "Ingredients": [
+            {
+                "Object": 768,
+                "Count": 25
+            },
+            {
+                "Object": 769,
+                "Count": 25
+            },
+            {
+                "Object": 645,
+                "Count": 1
+            }
+        ],
+        "IsDefault": false
+    }
 }

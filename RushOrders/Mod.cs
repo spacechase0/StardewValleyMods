@@ -1,62 +1,63 @@
-﻿using System;
-using System.Linq;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using RushOrders.Framework;
+using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Buildings;
 using StardewValley.Menus;
 using StardewValley.Tools;
-using StardewValley.Buildings;
-using SpaceShared;
-using SpaceShared.APIs;
 
 namespace RushOrders
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
         public static RushOrdersConfig ModConfig { get; private set; }
-        private static Api api;
-        private static bool hadDialogue = false;
-        private static int prevMoney = 0;
+        private static Api Api;
+        private static bool HadDialogue;
+        private static int PrevMoney;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            Log.info("Loading Config");
-            ModConfig = Helper.ReadConfig<RushOrdersConfig>();
+            Log.Info("Loading Config");
+            Mod.ModConfig = this.Helper.ReadConfig<RushOrdersConfig>();
 
-            helper.Events.GameLoop.GameLaunched += onGameLaunched;
-            helper.Events.Display.MenuChanged += onMenuChanged;
-            helper.Events.GameLoop.UpdateTicked += onUpdateTicked;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
         }
 
         public override object GetApi()
         {
-            return (api = new Api());
+            return (Mod.Api = new Api());
         }
 
-        private void onGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(ModManifest, () => ModConfig = new RushOrdersConfig(), () => Helper.WriteConfig(ModConfig));
-                capi.RegisterSimpleOption(ModManifest, "Price: Tool - One day", "The price multiplier for a one-day tool upgrade.", () => (float)ModConfig.PriceFactor.Tool.Rush, (float val) => ModConfig.PriceFactor.Tool.Rush = val);
-                capi.RegisterSimpleOption(ModManifest, "Price: Tool - Instant", "The price multiplier for an instant upgrade.", () => (float)ModConfig.PriceFactor.Tool.Rush, (float val) => ModConfig.PriceFactor.Tool.Now = val);
-                capi.RegisterSimpleOption(ModManifest, "Price: Building - Accelerate", "The price multiplier to accelerate building construction by one day.", () => (float)ModConfig.PriceFactor.Building.RushOneDay, (float val) => ModConfig.PriceFactor.Building.RushOneDay = val);
+                capi.RegisterModConfig(this.ModManifest, () => Mod.ModConfig = new RushOrdersConfig(), () => this.Helper.WriteConfig(Mod.ModConfig));
+                capi.RegisterSimpleOption(this.ModManifest, "Price: Tool - One day", "The price multiplier for a one-day tool upgrade.", () => (float)Mod.ModConfig.PriceFactor.Tool.Rush, (float val) => Mod.ModConfig.PriceFactor.Tool.Rush = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Price: Tool - Instant", "The price multiplier for an instant upgrade.", () => (float)Mod.ModConfig.PriceFactor.Tool.Rush, (float val) => Mod.ModConfig.PriceFactor.Tool.Now = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Price: Building - Accelerate", "The price multiplier to accelerate building construction by one day.", () => (float)Mod.ModConfig.PriceFactor.Building.RushOneDay, (float val) => Mod.ModConfig.PriceFactor.Building.RushOneDay = val);
             }
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        public void onMenuChanged(object sender, MenuChangedEventArgs e)
+        public void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (!Context.IsWorldReady)
                 return;
@@ -65,39 +66,39 @@ namespace RushOrders
             switch (Game1.activeClickableMenu)
             {
                 case ShopMenu shop:
-                {
-                    switch (shop.portraitPerson?.Name)
                     {
-                        case "Clint":
-                            addToolRushOrders(shop);
-                            break;
+                        switch (shop.portraitPerson?.Name)
+                        {
+                            case "Clint":
+                                Mod.AddToolRushOrders(shop);
+                                break;
 
-                        case "Robin":
-                            if (this.HasBuildingToRush() && !(e.OldMenu is RushConstructionMenu))
-                                doRushBuildingDialogue();
-                            break;
+                            case "Robin":
+                                if (this.HasBuildingToRush() && !(e.OldMenu is RushConstructionMenu))
+                                    Mod.DoRushBuildingDialogue();
+                                break;
+                        }
+                        break;
                     }
-                    break;
-                }
 
                 case DialogueBox diagBox:
-                {
-                    var diag = instance.Helper.Reflection.GetField<Dialogue>(diagBox, "characterDialogue").GetValue();
-                    if (diag?.speaker != null && diag.speaker.Name == "Robin" && this.HasBuildingToRush() && !(e.OldMenu is RushConstructionMenu))
-                        doRushBuildingDialogue();
+                    {
+                        var diag = diagBox.characterDialogue;
+                        if (diag?.speaker != null && diag.speaker.Name == "Robin" && this.HasBuildingToRush() && !(e.OldMenu is RushConstructionMenu))
+                            Mod.DoRushBuildingDialogue();
 
-                    break;
-                }
+                        break;
+                    }
             }
         }
 
-        private static void addToolRushOrders( ShopMenu shop )
+        private static void AddToolRushOrders(ShopMenu shop)
         {
             Dictionary<ISalable, int[]> toAddStock = new Dictionary<ISalable, int[]>();
             Dictionary<ISalable, int[]> stock = shop.itemPriceAndStock;
             List<ISalable> toAddItems = new List<ISalable>();
             List<ISalable> items = shop.forSale;
-            foreach ( KeyValuePair<ISalable, int[] > entry in stock )
+            foreach (KeyValuePair<ISalable, int[]> entry in stock)
             {
                 if (!(entry.Key is Tool)) continue;
                 Tool tool = entry.Key as Tool;
@@ -130,24 +131,24 @@ namespace RushOrders
                 toolRush.UpgradeLevel = tool.UpgradeLevel;
                 toolNow.UpgradeLevel = tool.UpgradeLevel;
                 toolRush.DisplayName = tool.DisplayName + "         *RUSH*";
-                toolNow.DisplayName  = tool.DisplayName + "       =INSTANT=";
+                toolNow.DisplayName = tool.DisplayName + "       =INSTANT=";
                 toolRush.description = "The tool will take one day to upgrade." + Environment.NewLine + Environment.NewLine + tool.description;
                 toolNow.description = "The tool will be immediately upgraded." + Environment.NewLine + Environment.NewLine + tool.description;
-                
-                int price = getToolUpgradePrice(tool.UpgradeLevel);
+
+                int price = Mod.GetToolUpgradePrice(tool.UpgradeLevel);
                 if (entry.Value[0] == price)
                 {
                     int[] entryDataRush = (int[])entry.Value.Clone();
                     int[] entryDataNow = (int[])entry.Value.Clone();
-                    entryDataRush[0] = (int)(entry.Value[ 0 ] * ModConfig.PriceFactor.Tool.Rush);
-                    entryDataNow[0] = (int)(entry.Value[ 0 ] * ModConfig.PriceFactor.Tool.Now);
+                    entryDataRush[0] = (int)(entry.Value[0] * Mod.ModConfig.PriceFactor.Tool.Rush);
+                    entryDataNow[0] = (int)(entry.Value[0] * Mod.ModConfig.PriceFactor.Tool.Now);
 
-                    if (entryDataRush[0] != entry.Value[0] && ModConfig.PriceFactor.Tool.Rush > 0)
+                    if (entryDataRush[0] != entry.Value[0] && Mod.ModConfig.PriceFactor.Tool.Rush > 0)
                     {
                         toAddStock.Add(toolRush, entryDataRush);
                         toAddItems.Add(toolRush);
                     }
-                    if (entryDataNow[0] != entry.Value[0] && ModConfig.PriceFactor.Tool.Now > 0)
+                    if (entryDataNow[0] != entry.Value[0] && Mod.ModConfig.PriceFactor.Tool.Now > 0)
                     {
                         toAddStock.Add(toolNow, entryDataNow);
                         toAddItems.Add(toolNow);
@@ -177,7 +178,7 @@ namespace RushOrders
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void onUpdateTicked(object sender, EventArgs e)
+        private void OnUpdateTicked(object sender, EventArgs e)
         {
             if (!Context.IsWorldReady)
                 return;
@@ -185,46 +186,46 @@ namespace RushOrders
             // add tool rush order
             NPC clint = Game1.getCharacterFromName("Clint");
             bool hasDialog = clint?.CurrentDialogue.Count > 0 && clint.CurrentDialogue.Peek().getCurrentDialogue() == Game1.content.LoadString("Strings\\StringsFromCSFiles:Tool.cs.14317");
-            if ( hasDialog && !hadDialogue && Game1.player.daysLeftForToolUpgrade.Value == 2 && Game1.player.toolBeingUpgraded.Value != null )
+            if (hasDialog && !Mod.HadDialogue && Game1.player.daysLeftForToolUpgrade.Value == 2 && Game1.player.toolBeingUpgraded.Value != null)
             {
-                int curPrice = getToolUpgradePrice(Game1.player.toolBeingUpgraded.Value.UpgradeLevel);
-                int diff = prevMoney - Game1.player.Money;
+                int curPrice = Mod.GetToolUpgradePrice(Game1.player.toolBeingUpgraded.Value.UpgradeLevel);
+                int diff = Mod.PrevMoney - Game1.player.Money;
 
-                if (diff == (int)(curPrice * ModConfig.PriceFactor.Tool.Now))
+                if (diff == (int)(curPrice * Mod.ModConfig.PriceFactor.Tool.Now))
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 0;
                     clint.CurrentDialogue.Pop();
                     Game1.drawDialogue(clint, "Thanks. I'll get started right away. It should be ready in a few minutes.");
-                    api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
+                    Mod.Api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
-                else if ( diff == ( int )( curPrice * ModConfig.PriceFactor.Tool.Rush) )
+                else if (diff == (int)(curPrice * Mod.ModConfig.PriceFactor.Tool.Rush))
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 1;
                     clint.CurrentDialogue.Pop();
                     Game1.drawDialogue(clint, "Thanks. I'll get started right away. It should be ready tomorrow.");
-                    api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
+                    Mod.Api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
             }
-            hadDialogue = hasDialog;
-            prevMoney = Game1.player.Money;
+            Mod.HadDialogue = hasDialog;
+            Mod.PrevMoney = Game1.player.Money;
         }
 
-        private static void doRushBuildingDialogue()
+        private static void DoRushBuildingDialogue()
         {
-            Game1.activeClickableMenu = new RushConstructionMenu( Game1.activeClickableMenu );
+            Game1.activeClickableMenu = new RushConstructionMenu(Game1.activeClickableMenu);
         }
 
-        private static MethodInfo getToolUpgradePriceInfo;
-        public static int getToolUpgradePrice( int level )
+        private static MethodInfo GetToolUpgradePriceInfo;
+        public static int GetToolUpgradePrice(int level)
         {
-            if (getToolUpgradePriceInfo == null)
+            if (Mod.GetToolUpgradePriceInfo == null)
             {
-                getToolUpgradePriceInfo = typeof(Utility).GetMethod("priceForToolUpgradeLevel", BindingFlags.NonPublic | BindingFlags.Static);
+                Mod.GetToolUpgradePriceInfo = typeof(Utility).GetMethod("priceForToolUpgradeLevel", BindingFlags.NonPublic | BindingFlags.Static);
             }
-            return (int) getToolUpgradePriceInfo.Invoke(null, new object[] { level });
+            return (int)Mod.GetToolUpgradePriceInfo.Invoke(null, new object[] { level });
         }
 
-        public static void rushBuilding()
+        public static void RushBuilding()
         {
             if (Game1.player.daysUntilHouseUpgrade.Value > 0)
                 Game1.player.daysUntilHouseUpgrade.Value--;
@@ -236,10 +237,10 @@ namespace RushOrders
                 else if (building.daysUntilUpgrade.Value > 0)
                     building.daysUntilUpgrade.Value--;
             }
-            api.InvokeBuildingRushed();
+            Mod.Api.InvokeBuildingRushed();
         }
 
-        public static int getBuildingDaysLeft()
+        public static int GetBuildingDaysLeft()
         {
             if (Game1.player.daysUntilHouseUpgrade.Value > 0)
                 return Game1.player.daysUntilHouseUpgrade.Value;
@@ -255,19 +256,20 @@ namespace RushOrders
             return -1;
         }
 
-        public static int getBuildingRushPrice()
+        public static int GetBuildingRushPrice()
         {
             int num = 0;
             if (Game1.player.daysUntilHouseUpgrade.Value > 0)
             {
-                if (Game1.player.HouseUpgradeLevel == 0)
-                    num = 10000;
-                else if (Game1.player.HouseUpgradeLevel == 1)
-                    num = 50000;
-                else if (Game1.player.HouseUpgradeLevel == 2)
-                    num = 100000;
+                num = Game1.player.HouseUpgradeLevel switch
+                {
+                    0 => 10000,
+                    1 => 50000,
+                    2 => 100000,
+                    _ => num
+                };
             }
-            else if ( Game1.getFarm().getBuildingUnderConstruction() != null )
+            else if (Game1.getFarm().getBuildingUnderConstruction() != null)
             {
                 Building building = Game1.getFarm().getBuildingUnderConstruction();
                 if (building.daysOfConstructionLeft.Value > 0)

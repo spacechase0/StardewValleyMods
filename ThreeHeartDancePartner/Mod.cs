@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -9,20 +8,20 @@ using StardewValley.Menus;
 
 namespace ThreeHeartDancePartner
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            Log.Monitor = Monitor;
-            helper.Events.Display.MenuChanged += onMenuChanged;
+            Log.Monitor = this.Monitor;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             // get dialog box
             if (!(e.NewMenu is DialogueBox dialogBox))
@@ -34,7 +33,7 @@ namespace ThreeHeartDancePartner
                 return;
 
             // check if rejection dialogue
-            Dialogue dialog = this.Helper.Reflection.GetField<Dialogue>(dialogBox, "characterDialogue").GetValue();
+            Dialogue dialog = dialogBox.characterDialogue;
             NPC npc = dialog.speaker;
             if (!npc.datable.Value || npc.HasPartnerForDance)
                 return;

@@ -1,96 +1,90 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using xTile.ObjectModel;
 
 namespace CustomNPCFixes
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public override void Entry(IModHelper helper)
         {
-            Log.Monitor = Monitor;
+            Log.Monitor = this.Monitor;
 
             // We need to make sure to run after Content Patcher, which registers its events after its first update tick.
-            helper.Events.GameLoop.UpdateTicked += onUpdate;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdate;
         }
 
-        private bool firstTick = true;
-        private void onUpdate(object sender, UpdateTickedEventArgs e)
+        private bool FirstTick = true;
+        private void OnUpdate(object sender, UpdateTickedEventArgs e)
         {
-            if ( firstTick )
+            if (this.FirstTick)
             {
-                firstTick = false;
+                this.FirstTick = false;
 
-                Helper.Events.GameLoop.SaveCreated += doNpcFixes;
-                Helper.Events.GameLoop.SaveLoaded += doNpcFixes;
+                this.Helper.Events.GameLoop.SaveCreated += this.DoNpcFixes;
+                this.Helper.Events.GameLoop.SaveLoaded += this.DoNpcFixes;
 
-                Helper.Events.GameLoop.DayStarted += (s, a) => { spawnNpcs(); fixSchedules(); }; // See comments in doNpcFixes. This handles conditional spawning.
+                this.Helper.Events.GameLoop.DayStarted += (s, a) => { this.SpawnNpcs(); this.FixSchedules(); }; // See comments in doNpcFixes. This handles conditional spawning.
             }
         }
 
-        public void doNpcFixes(object sender, EventArgs args)
+        public void DoNpcFixes(object sender, EventArgs args)
         {
             // This needs to be called again so that custom NPCs spawn in locations added after the original call
             //Game1.fixProblems();
-            spawnNpcs();
+            this.SpawnNpcs();
 
             // Similarly, this needs to be called again so that pathing works.
             NPC.populateRoutesFromLocationToLocationList();
 
             // Schedules for new NPCs don't work the first time.
-            fixSchedules();
+            this.FixSchedules();
         }
 
-        private void spawnNpcs()
+        private void SpawnNpcs()
         {
             List<NPC> allCharacters = Utility.getPooledList();
             try
             {
-                Utility.getAllCharacters( allCharacters );
-                Dictionary<string, string> NPCDispositions = Game1.content.Load<Dictionary<string, string>>("Data\\NPCDispositions");
-                foreach ( string s in NPCDispositions.Keys )
+                Utility.getAllCharacters(allCharacters);
+                Dictionary<string, string> npcDispositions = Game1.content.Load<Dictionary<string, string>>("Data\\NPCDispositions");
+                foreach (string s in npcDispositions.Keys)
                 {
                     bool found = false;
-                    if ( ( s == "Kent" && Game1.year <= 1 ) || ( s == "Leo" && !Game1.MasterPlayer.hasOrWillReceiveMail( "addedParrotBoy" ) ) )
+                    if ((s == "Kent" && Game1.year <= 1) || (s == "Leo" && !Game1.MasterPlayer.hasOrWillReceiveMail("addedParrotBoy")))
                     {
                         continue;
                     }
-                    foreach ( NPC n2 in allCharacters )
+                    foreach (NPC n2 in allCharacters)
                     {
-                        if ( !n2.isVillager() || !n2.Name.Equals( s ) )
+                        if (!n2.isVillager() || !n2.Name.Equals(s))
                         {
                             continue;
                         }
                         found = true;
-                        if ( ( bool ) n2.datable && n2.getSpouse() == null )
+                        if (n2.datable.Value && n2.getSpouse() == null)
                         {
-                            string defaultMap = NPCDispositions[s].Split('/')[10].Split(' ')[0];
-                            if ( n2.DefaultMap != defaultMap && ( n2.DefaultMap.ToLower().Contains( "cabin" ) || n2.DefaultMap.Equals( "FarmHouse" ) ) )
+                            string defaultMap = npcDispositions[s].Split('/')[10].Split(' ')[0];
+                            if (n2.DefaultMap != defaultMap && (n2.DefaultMap.ToLower().Contains("cabin") || n2.DefaultMap.Equals("FarmHouse")))
                             {
-                                Console.WriteLine( "Fixing " + n2.Name + " who was improperly divorced and left stranded" );
+                                Console.WriteLine("Fixing " + n2.Name + " who was improperly divorced and left stranded");
                                 n2.PerformDivorce();
                             }
                         }
                         break;
                     }
-                    if ( !found )
+                    if (!found)
                     {
                         try
                         {
-                            Game1.getLocationFromName( NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 0 ] ).addCharacter( new NPC( new AnimatedSprite( "Characters\\" + NPC.getTextureNameForCharacter( s ), 0, 16, 32 ), new Vector2( Convert.ToInt32( NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 1 ] ) * 64, Convert.ToInt32( NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 2 ] ) * 64 ), NPCDispositions[ s ].Split( '/' )[ 10 ].Split( ' ' )[ 0 ], 0, s, null, Game1.content.Load<Texture2D>( "Portraits\\" + NPC.getTextureNameForCharacter( s ) ), eventActor: false ) );
+                            Game1.getLocationFromName(npcDispositions[s].Split('/')[10].Split(' ')[0]).addCharacter(new NPC(new AnimatedSprite("Characters\\" + NPC.getTextureNameForCharacter(s), 0, 16, 32), new Vector2(Convert.ToInt32(npcDispositions[s].Split('/')[10].Split(' ')[1]) * 64, Convert.ToInt32(npcDispositions[s].Split('/')[10].Split(' ')[2]) * 64), npcDispositions[s].Split('/')[10].Split(' ')[0], 0, s, null, Game1.content.Load<Texture2D>("Portraits\\" + NPC.getTextureNameForCharacter(s)), eventActor: false));
                         }
-                        catch ( Exception )
+                        catch (Exception)
                         {
                         }
                     }
@@ -98,11 +92,11 @@ namespace CustomNPCFixes
             }
             finally
             {
-                Utility.returnPooledList( allCharacters );
+                Utility.returnPooledList(allCharacters);
             }
         }
 
-        private void fixSchedules()
+        private void FixSchedules()
         {
             foreach (var npc in Utility.getAllCharacters())
             {
@@ -115,7 +109,7 @@ namespace CustomNPCFixes
                     }
                     catch (Exception e)
                     {
-                        Log.error("Exception doing schedule for NPC " + npc.Name + ": " + e);
+                        Log.Error("Exception doing schedule for NPC " + npc.Name + ": " + e);
                     }
                 }
             }

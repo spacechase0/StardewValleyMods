@@ -1,9 +1,4 @@
-﻿using StardewModdingAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StardewModdingAPI;
 
 namespace GenericModConfigMenu.ModOption
 {
@@ -18,9 +13,7 @@ namespace GenericModConfigMenu.ModOption
         {
         }
 
-        public LabelModOption( string name, string desc, IManifest mod )
-        :   base( name, desc, name, mod )
-        {
-        }
+        public LabelModOption(string name, string desc, IManifest mod)
+            : base(name, desc, name, mod) { }
     }
 }

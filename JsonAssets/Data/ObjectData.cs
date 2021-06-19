@@ -1,13 +1,17 @@
-﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SpaceShared;
 using StardewValley;
-using System.Collections.Generic;
 using SObject = StardewValley.Object;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class ObjectData : DataNeedsIdWithTexture
     {
         [JsonIgnore]
@@ -60,17 +64,17 @@ namespace JsonAssets.Data
             public IList<string> PurchaseRequirements { get; set; } = new List<string>();
             public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-            internal string GetRecipeString( ObjectData parent )
+            internal string GetRecipeString(ObjectData parent)
             {
-                var str = "";
-                foreach (var ingredient in Ingredients)
+                string str = "";
+                foreach (var ingredient in this.Ingredients)
                     str += Mod.instance.ResolveObjectId(ingredient.Object) + " " + ingredient.Count + " ";
                 str = str.Substring(0, str.Length - 1);
-                str += $"/what is this for?/{parent.id} {ResultCount}/";
+                str += $"/what is this for?/{parent.Id} {this.ResultCount}/";
                 if (parent.Category != Category_.Cooking)
                     str += "false/";
-                if (SkillUnlockName?.Length > 0 && SkillUnlockLevel > 0)
-                    str += "/" + SkillUnlockName + " " + SkillUnlockLevel;
+                if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)
+                    str += "/" + this.SkillUnlockName + " " + this.SkillUnlockLevel;
                 else
                     str += "/null";
                 if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
@@ -97,7 +101,7 @@ namespace JsonAssets.Data
         public string Description { get; set; }
         public Category_ Category { get; set; }
         public string CategoryTextOverride { get; set; }
-        public Color CategoryColorOverride { get; set; } = new Color(0, 0, 0, 0);
+        public Color CategoryColorOverride { get; set; } = new(0, 0, 0, 0);
         public bool IsColored { get; set; } = false;
 
         public int Price { get; set; }
@@ -112,7 +116,7 @@ namespace JsonAssets.Data
 
         public int Edibility { get; set; } = SObject.inedible;
         public bool EdibleIsDrink { get; set; } = false;
-        public FoodBuffs_ EdibleBuffs = new FoodBuffs_();
+        public FoodBuffs_ EdibleBuffs = new();
 
         public bool CanPurchase { get; set; } = false;
         public int PurchasePrice { get; set; }
@@ -130,49 +134,44 @@ namespace JsonAssets.Data
         }
         public GiftTastes_ GiftTastes;
 
-        public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
-        public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
+        public Dictionary<string, string> NameLocalization = new();
+        public Dictionary<string, string> DescriptionLocalization = new();
 
-        public List<string> ContextTags = new List<string>();
+        public List<string> ContextTags = new();
 
         public string LocalizedName()
         {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            /*if (currLang == LocalizedContentManager.LanguageCode.en)
-                return Name;*/
-            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
-                return Name;
-            return NameLocalization[currLang.ToString()];
+            var lang = LocalizedContentManager.CurrentLanguageCode;
+            return this.NameLocalization != null && this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
+                ? localization
+                : this.Name;
         }
 
         public string LocalizedDescription()
         {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            /*if (currLang == LocalizedContentManager.LanguageCode.en)
-                return Description;*/
-            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return Description;
-            return DescriptionLocalization[currLang.ToString()];
+            var lang = LocalizedContentManager.CurrentLanguageCode;
+            return this.DescriptionLocalization != null && this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
+                ? localization
+                : this.Description;
         }
 
-        public int GetObjectId() { return id; }
+        public int GetObjectId() { return this.Id; }
 
         internal string GetObjectInformation()
         {
-            if (Edibility != SObject.inedible)
+            if (this.Edibility != SObject.inedible)
             {
-                var itype = (int)Category;
-                var str = $"{Name}/{Price}/{Edibility}/" + (Category == Category_.Artifact ? "Arch" : $"{Category} {itype}") + $"/{LocalizedName()}/{LocalizedDescription()}/";
-                str += (EdibleIsDrink ? "drink" : "food") + "/";
-                if (EdibleBuffs == null)
-                    EdibleBuffs = new FoodBuffs_();
-                str += $"{EdibleBuffs.Farming} {EdibleBuffs.Fishing} {EdibleBuffs.Mining} 0 {EdibleBuffs.Luck} {EdibleBuffs.Foraging} 0 {EdibleBuffs.MaxStamina} {EdibleBuffs.MagnetRadius} {EdibleBuffs.Speed} {EdibleBuffs.Defense} {EdibleBuffs.Attack}/{EdibleBuffs.Duration}";
+                int itype = (int)this.Category;
+                string str = $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == Category_.Artifact ? "Arch" : $"{this.Category} {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}/";
+                str += (this.EdibleIsDrink ? "drink" : "food") + "/";
+                this.EdibleBuffs ??= new FoodBuffs_();
+                str += $"{this.EdibleBuffs.Farming} {this.EdibleBuffs.Fishing} {this.EdibleBuffs.Mining} 0 {this.EdibleBuffs.Luck} {this.EdibleBuffs.Foraging} 0 {this.EdibleBuffs.MaxStamina} {this.EdibleBuffs.MagnetRadius} {this.EdibleBuffs.Speed} {this.EdibleBuffs.Defense} {this.EdibleBuffs.Attack}/{this.EdibleBuffs.Duration}";
                 return str;
             }
             else
             {
-                var itype = (int)Category;
-                return $"{Name}/{Price}/{Edibility}/" + (Category == Category_.Artifact ? "Arch" : $"Basic {itype}") + $"/{LocalizedName()}/{LocalizedDescription()}";
+                int itype = (int)this.Category;
+                return $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == Category_.Artifact ? "Arch" : $"Basic {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}";
             }
         }
     }

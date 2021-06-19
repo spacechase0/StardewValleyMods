@@ -1,4 +1,4 @@
-﻿namespace JsonAssets.Data
+namespace JsonAssets.Data
 {
     public abstract class DataNeedsId
     {
@@ -7,6 +7,6 @@
         public string EnableWithMod { get; set; }
         public string DisableWithMod { get; set; }
 
-        internal int id = -1;
+        internal int Id = -1;
     }
 }

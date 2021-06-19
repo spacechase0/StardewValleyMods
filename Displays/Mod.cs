@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -6,54 +6,49 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Displays
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetLoader
+    internal class Mod : StardewModdingAPI.Mod, IAssetLoader
     {
-        public static Mod instance;
+        public static Mod Instance;
 
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.GameLoop.GameLaunched += OnGameLaunched;
-            helper.Events.Display.MenuChanged += OnMenuChanged;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
-            helper.ConsoleCommands.Add( "player_adddisplay", "mannequin", DoCommand );
+            helper.ConsoleCommands.Add("player_adddisplay", "mannequin", this.DoCommand);
         }
 
-        public void OnGameLaunched( object sender, GameLaunchedEventArgs args )
+        public void OnGameLaunched(object sender, GameLaunchedEventArgs args)
         {
-            var sc = Helper.ModRegistry.GetApi< SpaceCoreAPI >( "spacechase0.SpaceCore" );
-            sc.RegisterSerializerType( typeof( Mannequin ) );
+            var sc = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
+            sc.RegisterSerializerType(typeof(Mannequin));
         }
 
-        public void DoCommand( string cmd, string[] args )
+        public void DoCommand(string cmd, string[] args)
         {
-            if ( !Context.IsPlayerFree )
+            if (!Context.IsPlayerFree)
                 return;
 
-            if ( args.Length == 0 )
+            if (args.Length == 0)
             {
-                Log.error( "Invalid command arguments. Format: player_adddisplay <item> [type] [amount]\nSuch as:\n\tplayer_adddisplay mannequin [plain|male|female] [amt]" );
+                Log.Error("Invalid command arguments. Format: player_adddisplay <item> [type] [amount]\nSuch as:\n\tplayer_adddisplay mannequin [plain|male|female] [amt]");
                 return;
             }
 
             Item item = null;
-            if ( args[ 0 ] == "mannequin" )
+            if (args[0] == "mannequin")
             {
                 var mannType = Mannequin.MannequinType.Plain;
                 var mannGender = Mannequin.MannequinGender.Male;
-                if ( args.Length >= 2 )
+                if (args.Length >= 2)
                 {
-                    switch ( args[ 1 ].ToLower() )
+                    switch (args[1].ToLower())
                     {
                         case "male":
                             mannGender = Mannequin.MannequinGender.Male;
@@ -62,51 +57,51 @@ namespace Displays
                             mannGender = Mannequin.MannequinGender.Female;
                             break;
                         default:
-                            Log.error( "Unknown mannequin type. Choices are: male, female" );
+                            Log.Error("Unknown mannequin type. Choices are: male, female");
                             return;
                     }
                 }
-                item = new Mannequin( mannType, mannGender, Vector2.Zero );
+                item = new Mannequin(mannType, mannGender, Vector2.Zero);
             }
 
-            if ( item == null )
+            if (item == null)
             {
-                Log.error( "Invalid display item" );
+                Log.Error("Invalid display item");
                 return;
             }
 
-            if ( args.Length >= 3 )
+            if (args.Length >= 3)
             {
-                item.Stack = int.Parse( args[ 2 ] );
+                item.Stack = int.Parse(args[2]);
             }
 
-            Game1.player.addItemByMenuIfNecessary( item );
+            Game1.player.addItemByMenuIfNecessary(item);
         }
 
-        private void OnMenuChanged( object sender, MenuChangedEventArgs e )
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if ( e.NewMenu is ShopMenu shop )
+            if (e.NewMenu is ShopMenu shop)
             {
-                if ( shop.portraitPerson?.Name == "Robin" )
+                if (shop.portraitPerson?.Name == "Robin")
                 {
-                    var mm = new Mannequin( Mannequin.MannequinType.Plain, Mannequin.MannequinGender.Male, Vector2.Zero );
-                    var mf = new Mannequin( Mannequin.MannequinType.Plain, Mannequin.MannequinGender.Female, Vector2.Zero );
-                    shop.forSale.Add( mm );
-                    shop.forSale.Add( mf );
-                    shop.itemPriceAndStock.Add( mm, new int[] { 100, int.MaxValue } );
-                    shop.itemPriceAndStock.Add( mf, new int[] { 100, int.MaxValue } );
+                    var mm = new Mannequin(Mannequin.MannequinType.Plain, Mannequin.MannequinGender.Male, Vector2.Zero);
+                    var mf = new Mannequin(Mannequin.MannequinType.Plain, Mannequin.MannequinGender.Female, Vector2.Zero);
+                    shop.forSale.Add(mm);
+                    shop.forSale.Add(mf);
+                    shop.itemPriceAndStock.Add(mm, new[] { 100, int.MaxValue });
+                    shop.itemPriceAndStock.Add(mf, new[] { 100, int.MaxValue });
                 }
             }
         }
 
-        public bool CanLoad<T>( IAssetInfo asset )
+        public bool CanLoad<T>(IAssetInfo asset)
         {
-            return asset.AssetNameEquals( "Characters\\Farmer\\farmer_transparent" );
+            return asset.AssetNameEquals("Characters\\Farmer\\farmer_transparent");
         }
 
-        public T Load<T>( IAssetInfo asset )
+        public T Load<T>(IAssetInfo asset)
         {
-            return (T) (object) Helper.Content.Load<Texture2D>("assets/farmer_transparent.png");
+            return (T)(object)this.Helper.Content.Load<Texture2D>("assets/farmer_transparent.png");
         }
     }
 }

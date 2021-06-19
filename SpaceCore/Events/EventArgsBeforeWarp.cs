@@ -1,4 +1,4 @@
-﻿using SpaceShared;
+using SpaceShared;
 using StardewValley;
 
 namespace SpaceCore.Events
@@ -10,12 +10,12 @@ namespace SpaceCore.Events
         public int WarpTargetY;
         public int WarpTargetFacing;
 
-        public EventArgsBeforeWarp( LocationRequest req, int targetX, int targetY, int targetFacing )
+        public EventArgsBeforeWarp(LocationRequest req, int targetX, int targetY, int targetFacing)
         {
-            WarpTargetLocation = req;
-            WarpTargetX = targetX;
-            WarpTargetY = targetY;
-            WarpTargetFacing = targetFacing;
+            this.WarpTargetLocation = req;
+            this.WarpTargetX = targetX;
+            this.WarpTargetY = targetY;
+            this.WarpTargetFacing = targetFacing;
         }
     }
 }

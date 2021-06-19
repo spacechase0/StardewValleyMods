@@ -1,39 +1,40 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using CustomCritters.Framework;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using System.IO;
-using SpaceShared;
 
 namespace CustomCritters
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            helper.Events.Player.Warped += onWarped;
+            helper.Events.Player.Warped += this.OnWarped;
 
             // load content packs
-            Log.info("Loading critter content packs...");
+            Log.Info("Loading critter content packs...");
             foreach (IContentPack contentPack in this.GetContentPacks())
             {
                 CritterEntry data = contentPack.ReadJsonFile<CritterEntry>("critter.json");
                 if (data == null)
                 {
-                    Log.warn($"   {contentPack.Manifest.Name}: ignored (no critter.json file).");
+                    Log.Warn($"   {contentPack.Manifest.Name}: ignored (no critter.json file).");
                     continue;
                 }
                 if (!File.Exists(Path.Combine(contentPack.DirectoryPath, "critter.png")))
                 {
-                    Log.warn($"   {contentPack.Manifest.Name}: ignored (no critter.png file).");
+                    Log.Warn($"   {contentPack.Manifest.Name}: ignored (no critter.png file).");
                     continue;
                 }
-                Log.info( contentPack.Manifest.Name == data.Id ? contentPack.Manifest.Name : $"   {contentPack.Manifest.Name} (id: {data.Id})");
+                Log.Info(contentPack.Manifest.Name == data.Id ? contentPack.Manifest.Name : $"   {contentPack.Manifest.Name} (id: {data.Id})");
                 CritterEntry.Register(data);
             }
         }
@@ -41,22 +42,22 @@ namespace CustomCritters
         /// <summary>Raised after a player warps to a new location.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void onWarped( object sender, WarpedEventArgs e )
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
             if (!e.IsLocalPlayer || Game1.CurrentEvent != null)
                 return;
 
-            foreach ( var entry in CritterEntry.critters )
+            foreach (var entry in CritterEntry.Critters)
             {
                 for (int i = 0; i < entry.Value.SpawnAttempts; ++i)
                 {
-                    if (entry.Value.check(e.NewLocation))
+                    if (entry.Value.Check(e.NewLocation))
                     {
-                        var spot = entry.Value.pickSpot(e.NewLocation);
+                        var spot = entry.Value.PickSpot(e.NewLocation);
                         if (spot == null)
                             continue;
 
-                        e.NewLocation.addCritter(entry.Value.makeCritter(spot.Value));
+                        e.NewLocation.addCritter(entry.Value.MakeCritter(spot.Value));
                     }
                 }
             }
@@ -75,11 +76,11 @@ namespace CustomCritters
             foreach (string folderPath in Directory.EnumerateDirectories(legacyRoot))
             {
                 yield return this.Helper.ContentPacks.CreateTemporary(
-                    directoryPath: folderPath, 
+                    directoryPath: folderPath,
                     id: Guid.NewGuid().ToString("N"),
                     name: new DirectoryInfo(folderPath).Name,
-                    description: null, 
-                    author: null, 
+                    description: null,
+                    author: null,
                     version: new SemanticVersion(1, 0, 0)
                 );
             }

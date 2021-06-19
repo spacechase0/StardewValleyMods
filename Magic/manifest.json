@@ -1,17 +1,26 @@
-{
-  "Name": "Magic",
-  "Author": "spacechase0",
-  "Version": "0.3.2",
-  "Description": "Magic!",
-  "UniqueID": "spacechase0.Magic",
-  "EntryDll": "Magic.dll",
-  "MinimumApiVersion": "2.9.0",
-  "UpdateKeys": [ "Nexus:2007", "Chucklefish:5242" ],
-  "Dependencies": [
-    { "UniqueID": "spacechase0.SpaceCore" },
-    { "UniqueID": "spacechase0.JsonAssets" },
-    { "UniqueID": "Platonymous.Toolkit" },
-    { "UniqueID": "spacechase0.ManaBar" }
-  ],
-  "spacechase0": "magic"
+﻿{
+    "Name": "Magic",
+    "Author": "spacechase0",
+    "Version": "0.3.3",
+    "MinimumApiVersion": "3.9.5",
+    "Description": "Adds a full spell system to the game.",
+    "UniqueID": "spacechase0.Magic",
+    "EntryDll": "Magic.dll",
+    "UpdateKeys": [ "Nexus:2007" ],
+    "Dependencies": [
+        {
+            "UniqueID": "spacechase0.SpaceCore",
+            "MinimumVersion": "1.5.7"
+        },
+        {
+            "UniqueID": "spacechase0.JsonAssets",
+            "MinimumVersion": "1.7.7"
+        },
+        {
+            "UniqueID": "Platonymous.Toolkit"
+        },
+        {
+            "UniqueID": "spacechase0.ManaBar"
+        }
+    ]
 }

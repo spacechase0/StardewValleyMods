@@ -1,14 +1,16 @@
-{
-  "Name": "Mana Bar",
-  "Author": "spacechase0",
-  "Version": "1.0.0",
-  "Description": "A common mana bar API for use by multiple mods.",
-  "UniqueID": "spacechase0.ManaBar",
-  "EntryDll": "ManaBar.dll",
-  "MinimumApiVersion": "2.9.0",
-  "UpdateKeys": [ "Nexus:", "Chucklefish:" ],
-  "Dependencies": [
-    { "UniqueID": "spacechase0.SpaceCore" }
-  ],
-  "spacechase0": "mana-bar"
+﻿{
+    "Name": "Mana Bar",
+    "Author": "spacechase0",
+    "Version": "1.0.1",
+    "MinimumApiVersion": "3.9.5",
+    "Description": "Adds a mana bar and provides an API for other mods to use it.",
+    "UniqueID": "spacechase0.ManaBar",
+    "EntryDll": "ManaBar.dll",
+    "UpdateKeys": [ "Nexus:7831" ],
+    "Dependencies": [
+        {
+            "UniqueID": "spacechase0.SpaceCore",
+            "MinimumVersion": "1.5.7"
+        }
+    ]
 }

@@ -1,9 +1,4 @@
-﻿using StardewModdingAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StardewModdingAPI;
 
 namespace GenericModConfigMenu.ModOption
 {
@@ -18,8 +13,8 @@ namespace GenericModConfigMenu.ModOption
         {
         }
 
-        public ParagraphModOption( string paragraph, IManifest mod )
-        :   base( paragraph, "", paragraph, mod )
+        public ParagraphModOption(string paragraph, IManifest mod)
+            : base(paragraph, "", paragraph, mod)
         {
         }
     }

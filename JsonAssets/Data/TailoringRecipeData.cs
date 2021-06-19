@@ -1,10 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using StardewValley.GameData.Crafting;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using StardewValley.GameData.Crafting;
 
 namespace JsonAssets.Data
 {
@@ -13,7 +9,7 @@ namespace JsonAssets.Data
         public string EnableWithMod { get; set; }
         public string DisableWithMod { get; set; }
 
-        public IList<string> FirstItemTags { get; set; } = new List<string>(new string[] { "item_cloth" });
+        public IList<string> FirstItemTags { get; set; } = new List<string>(new[] { "item_cloth" });
         public IList<string> SecondItemTags { get; set; }
 
         public bool ConsumeSecondItem { get; set; } = true;
@@ -23,23 +19,24 @@ namespace JsonAssets.Data
 
         public TailorItemRecipe ToGameData()
         {
-            var tir = new TailorItemRecipe();
-            tir.FirstItemTags = new List<string>(FirstItemTags);
-            tir.SecondItemTags = new List<string>(SecondItemTags);
-
-            tir.SpendRightItem = ConsumeSecondItem;
-
-            if (CraftedItems.Count > 1)
+            var recipe = new TailorItemRecipe
             {
-                tir.CraftedItemIDs = new List<string>();
-                foreach (var entry in CraftedItems)
-                    tir.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(CraftedItems[0]).ToString());
+                FirstItemTags = new List<string>(this.FirstItemTags),
+                SecondItemTags = new List<string>(this.SecondItemTags),
+                SpendRightItem = this.ConsumeSecondItem,
+                CraftedItemColor = $"{this.CraftedItemColor.R} {this.CraftedItemColor.G} {this.CraftedItemColor.B}"
+            };
+
+            if (this.CraftedItems.Count > 1)
+            {
+                recipe.CraftedItemIDs = new List<string>();
+                foreach (object entry in this.CraftedItems)
+                    recipe.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(this.CraftedItems[0]).ToString());
             }
             else
-                tir.CraftedItemID = Mod.instance.ResolveClothingId(CraftedItems[0]);
-            tir.CraftedItemColor = $"{CraftedItemColor.R} {CraftedItemColor.G} {CraftedItemColor.B}";
+                recipe.CraftedItemID = Mod.instance.ResolveClothingId(this.CraftedItems[0]);
 
-            return tir;
+            return recipe;
         }
     }
 }

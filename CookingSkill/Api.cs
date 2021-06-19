@@ -1,10 +1,6 @@
-﻿using StardewValley;
-using StardewValley.Objects;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StardewValley;
+using StardewValley.Objects;
 
 namespace CookingSkill
 {
@@ -18,14 +14,14 @@ namespace CookingSkill
         /// <param name="craftedItem">The crafted item from the recipe. Nothing is changed if the recipe isn't cooking.</param>
         /// <param name="additionalIngredients">The additional places to draw ingredients from.</param>
         /// <returns>If ingredients should be consumed or not.</returns>
-        bool ModifyCookedItem( CraftingRecipe recipe, Item craftedItem, List<Chest> additionalIngredients );
+        bool ModifyCookedItem(CraftingRecipe recipe, Item craftedItem, List<Chest> additionalIngredients);
     }
 
     public class Api : IApi
     {
-        public bool ModifyCookedItem( CraftingRecipe recipe, Item craftedItem, List<Chest> additionalIngredients )
+        public bool ModifyCookedItem(CraftingRecipe recipe, Item craftedItem, List<Chest> additionalIngredients)
         {
-            return Mod.onCook( recipe, craftedItem, additionalIngredients );
+            return Mod.OnCook(recipe, craftedItem, additionalIngredients);
         }
     }
 }

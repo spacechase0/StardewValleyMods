@@ -1,13 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceCore
 {
@@ -17,59 +13,62 @@ namespace SpaceCore
         {
             public ExtensionData(string assetPath, int unitSize)
             {
-                AssetPath = assetPath;
-                UnitSize = unitSize;
+                this.AssetPath = assetPath;
+                this.UnitSize = unitSize;
             }
 
             public string AssetPath { get; }
             public int UnitSize { get; }
             public Texture2D BaseTileSheet { get; set; }
-            public List<Texture2D> Extensions { get; } = new List<Texture2D>();
+            public List<Texture2D> Extensions { get; } = new();
         }
 
-        internal static Dictionary<string, ExtensionData> extendedTextureAssets = new Dictionary<string, ExtensionData>();
-        private static Dictionary<Texture2D, ExtensionData> extendedTextures = new Dictionary<Texture2D, ExtensionData>();
+        internal static Dictionary<string, ExtensionData> ExtendedTextureAssets = new();
+        private static readonly Dictionary<Texture2D, ExtensionData> ExtendedTextures = new();
 
-        internal static void init()
+        internal static void Init()
         {
-            SpaceCore.instance.Helper.Content.AssetLoaders.Add(new ExtendedTileSheetLoader());
+            SpaceCore.Instance.Helper.Content.AssetLoaders.Add(new ExtendedTileSheetLoader());
         }
 
         public static void RegisterExtendedTileSheet(string asset, int unitSize)
         {
-            if (extendedTextureAssets.ContainsKey(asset))
+            if (TileSheetExtensions.ExtendedTextureAssets.ContainsKey(asset))
                 return;
 
-            var data = new ExtensionData(asset, unitSize);
-            data.BaseTileSheet = Game1.content.Load<Texture2D>(asset);
-            extendedTextureAssets.Add(asset, data);
-            extendedTextures.Add(data.BaseTileSheet, data);
+            var data = new ExtensionData(asset, unitSize)
+            {
+                BaseTileSheet = Game1.content.Load<Texture2D>(asset)
+            };
+            TileSheetExtensions.ExtendedTextureAssets.Add(asset, data);
+            TileSheetExtensions.ExtendedTextures.Add(data.BaseTileSheet, data);
         }
 
         public static int GetTileSheetUnitSize(Texture2D tex)
         {
-            if (extendedTextures.ContainsKey(tex))
-                return extendedTextures[tex].UnitSize;
-            return -1;
+            return TileSheetExtensions.ExtendedTextures.TryGetValue(tex, out ExtensionData data)
+                ? data.UnitSize
+                : -1;
         }
 
         public static int GetTileSheetUnitSize(string asset)
         {
-            if (extendedTextureAssets.ContainsKey(asset))
-                return extendedTextureAssets[asset].UnitSize;
-            return -1;
+            return TileSheetExtensions.ExtendedTextureAssets.TryGetValue(asset, out ExtensionData data)
+                ? data.UnitSize
+                : -1;
         }
 
         public static Texture2D GetTileSheet(Texture2D tex, int index)
         {
-            if (!extendedTextures.ContainsKey(tex))
+            if (!TileSheetExtensions.ExtendedTextures.TryGetValue(tex, out ExtensionData data))
                 return tex;
-            var data = extendedTextures[tex];
 
             while (data.Extensions.Count <= index - 1)
                 data.Extensions.Add(new Texture2D(Game1.graphics.GraphicsDevice, tex.Width, 4096));
 
-            return index == 0 ? tex : data.Extensions[index - 1];
+            return index == 0
+                ? tex
+                : data.Extensions[index - 1];
         }
 
         public struct AdjustedTarget
@@ -79,21 +78,21 @@ namespace SpaceCore
 
             public AdjustedTarget(int ts, int y)
             {
-                TileSheet = ts;
-                Y = y;
+                this.TileSheet = ts;
+                this.Y = y;
             }
         }
 
-        public static AdjustedTarget GetAdjustedTileSheetTarget(Texture2D tex, Rectangle sourceRect )
+        public static AdjustedTarget GetAdjustedTileSheetTarget(Texture2D tex, Rectangle sourceRect)
         {
-            int unit = GetTileSheetUnitSize(tex);
-            return GetAdjustedTileSheetTargetImpl(unit, sourceRect);
+            int unit = TileSheetExtensions.GetTileSheetUnitSize(tex);
+            return TileSheetExtensions.GetAdjustedTileSheetTargetImpl(unit, sourceRect);
         }
 
         public static AdjustedTarget GetAdjustedTileSheetTarget(string asset, Rectangle sourceRect)
         {
-            int unit = GetTileSheetUnitSize(asset);
-            return GetAdjustedTileSheetTargetImpl(unit, sourceRect);
+            int unit = TileSheetExtensions.GetTileSheetUnitSize(asset);
+            return TileSheetExtensions.GetAdjustedTileSheetTargetImpl(unit, sourceRect);
         }
 
         private static AdjustedTarget GetAdjustedTileSheetTargetImpl(int unit, Rectangle sourceRect)
@@ -105,9 +104,9 @@ namespace SpaceCore
                 Log.warn("Unsupported use case for automatic tilesheet expansion");
                 return new AdjustedTarget(0, sourceRect.Y);
             }*/
-            
-            int index = (int)sourceRect.Y / unit;
-            int extra = (int)sourceRect.Y % unit;
+
+            int index = sourceRect.Y / unit;
+            int extra = sourceRect.Y % unit;
 
             int tileSheet = 0;
             int maxTileIndexPer = 4096 / unit;
@@ -120,21 +119,25 @@ namespace SpaceCore
             return new AdjustedTarget(tileSheet, index * unit + extra);
         }
 
-        public static void PatchExtendedTileSheet(this IAssetDataForImage asset, Texture2D source, Rectangle? sourceArea = null, Rectangle? targetArea = null, PatchMode patchMode = PatchMode.Replace )
+        public static void PatchExtendedTileSheet(this IAssetDataForImage asset, Texture2D source, Rectangle? sourceArea = null, Rectangle? targetArea = null, PatchMode patchMode = PatchMode.Replace)
         {
             string assetName = asset.AssetName.Replace('/', '\\');
-            if (!extendedTextureAssets.ContainsKey(assetName) || !targetArea.HasValue )
+            if (!TileSheetExtensions.ExtendedTextureAssets.TryGetValue(assetName, out ExtensionData assetData) || !targetArea.HasValue)
             {
                 asset.PatchImage(source, sourceArea, targetArea, patchMode);
                 return;
             }
-            extendedTextures.Remove(extendedTextureAssets[assetName].BaseTileSheet);
-            extendedTextureAssets[assetName].BaseTileSheet = asset.Data;
-            extendedTextures.Add(extendedTextureAssets[assetName].BaseTileSheet, extendedTextureAssets[assetName]);
 
-            var adjustedTarget = GetAdjustedTileSheetTarget(asset.Data, targetArea.Value);
+            if (assetData.BaseTileSheet != asset.Data)
+            {
+                TileSheetExtensions.ExtendedTextures.Remove(assetData.BaseTileSheet);
+                TileSheetExtensions.ExtendedTextures.Add(asset.Data, assetData);
+                assetData.BaseTileSheet = asset.Data;
+            }
+
+            var adjustedTarget = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.Data, targetArea.Value);
             //Log.trace("Tilesheet target:" + adjustedTarget.TileSheet + " " + adjustedTarget.Y);
-            if ( adjustedTarget.TileSheet == 0 )
+            if (adjustedTarget.TileSheet == 0)
             {
                 asset.PatchImage(source, sourceArea, targetArea, patchMode);
                 return;
@@ -145,7 +148,7 @@ namespace SpaceCore
             var dataProp = asset.GetType().GetProperty("Data");
             try
             {
-                dataProp.SetValue(asset, GetTileSheet(oldData, adjustedTarget.TileSheet));
+                dataProp.SetValue(asset, TileSheetExtensions.GetTileSheet(oldData, adjustedTarget.TileSheet));
 
                 Rectangle r = targetArea.Value;
                 r.Y = adjustedTarget.Y;
@@ -158,23 +161,25 @@ namespace SpaceCore
             }
         }
 
-        internal static void UpdateReferences()
+        /// <summary>Update tilesheet texture references if needed.</summary>
+        /// <returns>Returns the dereferenced tilesheet textures.</returns>
+        internal static IEnumerable<Texture2D> UpdateReferences()
         {
-            foreach ( var asset in extendedTextureAssets )
+            foreach (var asset in TileSheetExtensions.ExtendedTextureAssets)
             {
-                extendedTextures.Remove(asset.Value.BaseTileSheet);
+                Texture2D oldTexture = asset.Value.BaseTileSheet;
                 asset.Value.BaseTileSheet = Game1.content.Load<Texture2D>(asset.Key);
-                if ( asset.Value.BaseTileSheet == null )
+                if (asset.Value.BaseTileSheet == null)
                 {
-                    Log.error( "WHAT? null " + asset.Key );
-                }
-                else if ( !extendedTextures.ContainsKey( asset.Value.BaseTileSheet ) )
-                {
-                    extendedTextures.Add( asset.Value.BaseTileSheet, asset.Value );
+                    Log.Error("WHAT? null " + asset.Key);
+                    TileSheetExtensions.ExtendedTextures.Remove(oldTexture);
+                    yield return oldTexture;
                 }
                 else
                 {
-                    extendedTextures[ asset.Value.BaseTileSheet ] = asset.Value;
+                    TileSheetExtensions.ExtendedTextures[asset.Value.BaseTileSheet] = asset.Value;
+                    if (oldTexture != asset.Value.BaseTileSheet)
+                        yield return oldTexture;
                 }
             }
         }
@@ -199,7 +204,7 @@ namespace SpaceCore
     {
         public bool CanLoad<T>(IAssetInfo asset)
         {
-            foreach ( var extAsset in TileSheetExtensions.extendedTextureAssets )
+            foreach (var extAsset in TileSheetExtensions.ExtendedTextureAssets)
             {
                 for (int i = 0; i < extAsset.Value.Extensions.Count; ++i)
                     if (asset.AssetNameEquals(extAsset.Key + (i + 2).ToString()))
@@ -211,14 +216,14 @@ namespace SpaceCore
 
         public T Load<T>(IAssetInfo asset)
         {
-            foreach (var extAsset in TileSheetExtensions.extendedTextureAssets)
+            foreach (var extAsset in TileSheetExtensions.ExtendedTextureAssets)
             {
                 for (int i = 0; i < extAsset.Value.Extensions.Count; ++i)
                     if (asset.AssetNameEquals(extAsset.Key + (i + 2).ToString()))
-                        return (T) (object) extAsset.Value.Extensions[i];
+                        return (T)(object)extAsset.Value.Extensions[i];
             }
 
-            return default(T);
+            return default;
         }
     }
 }

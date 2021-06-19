@@ -1,40 +1,39 @@
-﻿using System;
 using StardewModdingAPI;
 
 namespace SpaceShared
 {
-    class Log
+    internal class Log
     {
         public static IMonitor Monitor;
 
-        public static void verbose(String str)
+        public static void Verbose(string str)
         {
-            Monitor.VerboseLog(str);
+            Log.Monitor.VerboseLog(str);
         }
 
-        public static void trace(String str)
+        public static void Trace(string str)
         {
-            Monitor.Log(str, LogLevel.Trace);
+            Log.Monitor.Log(str, LogLevel.Trace);
         }
 
-        public static void debug(String str)
+        public static void Debug(string str)
         {
-            Monitor.Log(str, LogLevel.Debug);
+            Log.Monitor.Log(str, LogLevel.Debug);
         }
 
-        public static void info(String str)
+        public static void Info(string str)
         {
-            Monitor.Log(str, LogLevel.Info);
+            Log.Monitor.Log(str, LogLevel.Info);
         }
 
-        public static void warn(String str)
+        public static void Warn(string str)
         {
-            Monitor.Log(str, LogLevel.Warn);
+            Log.Monitor.Log(str, LogLevel.Warn);
         }
 
-        public static void error(String str)
+        public static void Error(string str)
         {
-            Monitor.Log(str, LogLevel.Error);
+            Log.Monitor.Log(str, LogLevel.Error);
         }
     }
 }

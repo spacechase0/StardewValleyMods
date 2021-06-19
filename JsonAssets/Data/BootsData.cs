@@ -1,14 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using SpaceShared;
 using StardewValley;
-using System;
-using System.Collections.Generic;
-using SObject = StardewValley.Object;
 
 namespace JsonAssets.Data
 {
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class BootsData : DataSeparateTextureIndex
     {
         [JsonIgnore]
@@ -16,49 +16,45 @@ namespace JsonAssets.Data
 
         [JsonIgnore]
         public Texture2D textureColor;
-        
+
         public string Description { get; set; }
 
         public int Price { get; set; }
-        
+
         public bool CanPurchase { get; set; } = false;
         public int PurchasePrice { get; set; }
         public string PurchaseFrom { get; set; } = "Marlon";
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
         public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-        public Dictionary<string, string> NameLocalization = new Dictionary<string, string>();
-        public Dictionary<string, string> DescriptionLocalization = new Dictionary<string, string>();
-        
+        public Dictionary<string, string> NameLocalization = new();
+        public Dictionary<string, string> DescriptionLocalization = new();
+
         public int Defense { get; set; }
         public int Immunity { get; set; }
 
         public string LocalizedName()
         {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            /*if (currLang == LocalizedContentManager.LanguageCode.en)
-                return Name;*/
-            if (NameLocalization == null || !NameLocalization.ContainsKey(currLang.ToString()))
-                return Name;
-            return NameLocalization[currLang.ToString()];
+            var lang = LocalizedContentManager.CurrentLanguageCode;
+            return this.NameLocalization != null && this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
+                ? localization
+                : this.Name;
         }
 
         public string LocalizedDescription()
         {
-            var currLang = LocalizedContentManager.CurrentLanguageCode;
-            /*if (currLang == LocalizedContentManager.LanguageCode.en)
-                return Description;*/
-            if (DescriptionLocalization == null || !DescriptionLocalization.ContainsKey(currLang.ToString()))
-                return Description;
-            return DescriptionLocalization[currLang.ToString()];
+            var lang = LocalizedContentManager.CurrentLanguageCode;
+            return this.DescriptionLocalization != null && this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
+                ? localization
+                : this.Description;
         }
 
-        public int GetObjectId() { return id; }
-        public int GetTextureIndex() { return textureIndex; }
+        public int GetObjectId() { return this.Id; }
+        public int GetTextureIndex() { return this.textureIndex; }
 
         internal string GetBootsInformation()
         {
-            return $"{Name}/{LocalizedDescription()}/{Price}/{Defense}/{Immunity}/{textureIndex}/{LocalizedName()}";
+            return $"{this.Name}/{this.LocalizedDescription()}/{this.Price}/{this.Defense}/{this.Immunity}/{this.textureIndex}/{this.LocalizedName()}";
         }
     }
 }

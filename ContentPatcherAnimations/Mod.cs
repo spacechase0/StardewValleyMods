@@ -1,28 +1,21 @@
-﻿using System;
+using System;
 using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StardewModdingAPI;
-using ContentPatcher;
-using System.Reflection;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
-using StardewValley;
-using StardewValley.BellsAndWhistles;
-using StardewValley.Projectiles;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using StardewModdingAPI.Events;
+using System.Reflection;
+using ContentPatcherAnimations.Framework;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
+using StardewValley;
 
 namespace ContentPatcherAnimations
 {
-    public class PatchData
+    internal class PatchData
     {
-        public object patchObj;
+        public object PatchObj;
         public Func<bool> IsActive;
         public Func<Texture2D> TargetFunc;
         public Texture2D Target;
@@ -30,191 +23,186 @@ namespace ContentPatcherAnimations
         public Texture2D Source;
         public Func<Rectangle> FromAreaFunc;
         public Func<Rectangle> ToAreaFunc;
-        public int CurrentFrame = 0;
+        public int CurrentFrame;
     }
 
-    public class ScreenState
+    internal class ScreenState
     {
-        public IEnumerable cpPatches;
+        public IEnumerable CpPatches;
 
-        public Dictionary<Patch, PatchData> animatedPatches = new Dictionary<Patch, PatchData>();
+        public Dictionary<Patch, PatchData> AnimatedPatches = new();
 
-        public uint frameCounter = 0;
-        public int findTargetsCounter = 0;
-        public Queue<Patch> findTargetsQueue = new Queue<Patch>();
+        public uint FrameCounter;
+        public int FindTargetsCounter;
+        public Queue<Patch> FindTargetsQueue = new();
     }
 
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod Instance;
 
         public const BindingFlags PublicI = BindingFlags.Public | BindingFlags.Instance;
         public const BindingFlags PublicS = BindingFlags.Public | BindingFlags.Static;
         public const BindingFlags PrivateI = BindingFlags.NonPublic | BindingFlags.Instance;
         public const BindingFlags PrivateS = BindingFlags.NonPublic | BindingFlags.Static;
 
-        private StardewModdingAPI.Mod contentPatcher;
-        private PerScreen<ScreenState> screenState = new PerScreen<ScreenState>();
-        internal ScreenState ScreenState => screenState.Value;
-
-        private WatchForUpdatesAssetEditor watcher;
+        private StardewModdingAPI.Mod ContentPatcher;
+        private readonly PerScreen<ScreenState> ScreenStateImpl = new();
+        internal ScreenState ScreenState => this.ScreenStateImpl.Value;
 
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.Instance = this;
+            Log.Monitor = this.Monitor;
 
-            Helper.Events.GameLoop.UpdateTicked += UpdateAnimations;
+            this.Helper.Events.GameLoop.UpdateTicked += this.UpdateAnimations;
 
-            Action updateTargets = () =>
+            void UpdateTargets()
             {
-                foreach ( var screen in screenState.GetActiveValues() )
-                    screen.Value.findTargetsCounter = 1;
-            };
+                foreach (var screen in this.ScreenStateImpl.GetActiveValues())
+                    screen.Value.FindTargetsCounter = 1;
+            }
 
-            Helper.Events.GameLoop.SaveCreated += (s, e) => updateTargets();
-            Helper.Events.GameLoop.SaveLoaded += (s, e) => updateTargets();
-            Helper.Events.GameLoop.DayStarted += (s, e) => updateTargets();
+            this.Helper.Events.GameLoop.SaveCreated += (s, e) => UpdateTargets();
+            this.Helper.Events.GameLoop.SaveLoaded += (s, e) => UpdateTargets();
+            this.Helper.Events.GameLoop.DayStarted += (s, e) => UpdateTargets();
 
-            helper.Content.AssetEditors.Add( watcher = new WatchForUpdatesAssetEditor() );
+            helper.Content.AssetEditors.Add(new WatchForUpdatesAssetEditor());
 
-            helper.ConsoleCommands.Add( "cpa", "...", OnCommand );
+            helper.ConsoleCommands.Add("cpa", "...", this.OnCommand);
         }
 
-        private void OnCommand( string cmd, string[] args )
+        private void OnCommand(string cmd, string[] args)
         {
-            if ( args[0] == "reload" )
+            if (args[0] == "reload")
             {
-                CollectPatches();
+                this.CollectPatches();
             }
         }
 
         private void UpdateAnimations(object sender, UpdateTickedEventArgs e)
         {
-            if ( contentPatcher == null )
+            if (this.ContentPatcher == null)
             {
-                var modData = Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
-                contentPatcher = (StardewModdingAPI.Mod)modData.GetType().GetProperty("Mod", PrivateI | PublicI).GetValue(modData);
+                var modData = this.Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
+                this.ContentPatcher = (StardewModdingAPI.Mod)modData.GetType().GetProperty("Mod", Mod.PrivateI | Mod.PublicI).GetValue(modData);
             }
 
-            if ( screenState.Value == null )
-            {
-                screenState.Value = new ScreenState();
-            }
+            this.ScreenStateImpl.Value ??= new ScreenState();
 
-            if ( ScreenState.cpPatches == null )
+            if (this.ScreenState.CpPatches == null)
             {
-                var screenManagerPerScreen = contentPatcher.GetType().GetField("ScreenManager", PrivateI).GetValue(contentPatcher);
-                var screenManager = screenManagerPerScreen.GetType().GetProperty( "Value" ).GetValue( screenManagerPerScreen );
-                var patchManager = screenManager.GetType().GetProperty( "PatchManager" ).GetValue( screenManager );
-                screenState.Value.cpPatches = ( IEnumerable ) patchManager.GetType().GetField( "Patches", PrivateI ).GetValue( patchManager );
+                object screenManagerPerScreen = this.ContentPatcher.GetType().GetField("ScreenManager", Mod.PrivateI).GetValue(this.ContentPatcher);
+                object screenManager = screenManagerPerScreen.GetType().GetProperty("Value").GetValue(screenManagerPerScreen);
+                object patchManager = screenManager.GetType().GetProperty("PatchManager").GetValue(screenManager);
+                this.ScreenStateImpl.Value.CpPatches = (IEnumerable)patchManager.GetType().GetField("Patches", Mod.PrivateI).GetValue(patchManager);
 
-                CollectPatches();
+                this.CollectPatches();
             }
 
 
-            if ( ScreenState.findTargetsCounter > 0 && --ScreenState.findTargetsCounter == 0)
-                UpdateTargetTextures();
-            while ( ScreenState.findTargetsQueue.Count > 0 )
+            if (this.ScreenState.FindTargetsCounter > 0 && --this.ScreenState.FindTargetsCounter == 0)
+                this.UpdateTargetTextures();
+            while (this.ScreenState.FindTargetsQueue.Count > 0)
             {
-                var patch = ScreenState.findTargetsQueue.Dequeue();
-                UpdateTargetTextures( patch );
+                var patch = this.ScreenState.FindTargetsQueue.Dequeue();
+                this.UpdateTargetTextures(patch);
             }
 
-            ++ScreenState.frameCounter;
+            ++this.ScreenState.FrameCounter;
             Game1.graphics.GraphicsDevice.Textures[0] = null;
-            foreach ( var patch in ScreenState.animatedPatches )
+            foreach (var patch in this.ScreenState.AnimatedPatches)
             {
                 if (!patch.Value.IsActive.Invoke() || patch.Value.Source == null || patch.Value.Target == null)
                     continue;
 
                 try
                 {
-                    if ( ScreenState.frameCounter % patch.Key.AnimationFrameTime == 0 )
+                    if (this.ScreenState.FrameCounter % patch.Key.AnimationFrameTime == 0)
                     {
-                        if ( ++patch.Value.CurrentFrame >= patch.Key.AnimationFrameCount )
+                        if (++patch.Value.CurrentFrame >= patch.Key.AnimationFrameCount)
                             patch.Value.CurrentFrame = 0;
 
                         var sourceRect = patch.Value.FromAreaFunc.Invoke();
                         sourceRect.X += patch.Value.CurrentFrame * sourceRect.Width;
                         var targetRect = patch.Value.ToAreaFunc.Invoke();
-                        if ( targetRect == Rectangle.Empty )
-                            targetRect = new Rectangle( 0, 0, sourceRect.Width, sourceRect.Height );
+                        if (targetRect == Rectangle.Empty)
+                            targetRect = new Rectangle(0, 0, sourceRect.Width, sourceRect.Height);
                         var cols = new Color[sourceRect.Width * sourceRect.Height];
-                        patch.Value.Source.GetData( 0, sourceRect, cols, 0, cols.Length );
-                        patch.Value.Target.SetData( 0, targetRect, cols, 0, cols.Length );
+                        patch.Value.Source.GetData(0, sourceRect, cols, 0, cols.Length);
+                        patch.Value.Target.SetData(0, targetRect, cols, 0, cols.Length);
                     }
                 }
-                catch ( ObjectDisposedException e_ )
+                catch
                 {
                     // No idea why this happens, hack fix
                     patch.Value.Target = null;
-                    ScreenState.findTargetsQueue.Enqueue( patch.Key );
+                    this.ScreenState.FindTargetsQueue.Enqueue(patch.Key);
                 }
             }
         }
 
         private void UpdateTargetTextures()
         {
-            foreach ( var patch in ScreenState.animatedPatches )
+            foreach (var patch in this.ScreenState.AnimatedPatches)
             {
                 try
                 {
-                    if ( !patch.Value.IsActive.Invoke() )
+                    if (!patch.Value.IsActive.Invoke())
                         continue;
 
                     patch.Value.Source = patch.Value.SourceFunc();
                     patch.Value.Target = patch.Value.TargetFunc();
                 }
-                catch ( Exception e )
+                catch (Exception e)
                 {
-                    Log.trace("Exception loading " + patch.Key.LogName + " textures, delaying to try again next frame: " + e);
-                    ScreenState.findTargetsQueue.Enqueue( patch.Key );
+                    Log.Trace("Exception loading " + patch.Key.LogName + " textures, delaying to try again next frame: " + e);
+                    this.ScreenState.FindTargetsQueue.Enqueue(patch.Key);
                 }
             }
         }
 
-        private void UpdateTargetTextures( Patch key )
+        private void UpdateTargetTextures(Patch key)
         {
             try
             {
-                var patch = ScreenState.animatedPatches[ key ];
-                if ( !patch.IsActive() )
+                var patch = this.ScreenState.AnimatedPatches[key];
+                if (!patch.IsActive())
                     return;
 
                 patch.Source = patch.SourceFunc();
                 patch.Target = patch.TargetFunc();
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
-                Log.error( "Exception loading " + key.LogName + " textures: " + e );
+                Log.Error("Exception loading " + key.LogName + " textures: " + e);
             }
         }
 
         private void CollectPatches()
         {
-            ScreenState.animatedPatches.Clear();
-            ScreenState.findTargetsQueue.Clear();
-            foreach (var pack in contentPatcher.Helper.ContentPacks.GetOwned())
+            this.ScreenState.AnimatedPatches.Clear();
+            this.ScreenState.FindTargetsQueue.Clear();
+            foreach (var pack in this.ContentPatcher.Helper.ContentPacks.GetOwned())
             {
                 var patches = pack.ReadJsonFile<PatchList>("content.json");
                 foreach (var patch in patches.Changes)
                 {
                     if (patch.AnimationFrameTime > 0 && patch.AnimationFrameCount > 0)
                     {
-                        Log.trace("Loading animated patch from content pack " + pack.Manifest.UniqueID);
-                        if (patch.LogName == null || patch.LogName == "")
+                        Log.Trace("Loading animated patch from content pack " + pack.Manifest.UniqueID);
+                        if (string.IsNullOrEmpty(patch.LogName))
                         {
-                            Log.error("Animated patches must specify a LogName!");
+                            Log.Error("Animated patches must specify a LogName!");
                             continue;
                         }
 
                         PatchData data = new PatchData();
 
                         object targetPatch = null;
-                        foreach (var cpPatch in ScreenState.cpPatches )
+                        foreach (object cpPatch in this.ScreenState.CpPatches)
                         {
-                            var path = cpPatch.GetType().GetProperty("Path", PublicI).GetValue(cpPatch);
+                            object path = cpPatch.GetType().GetProperty("Path", Mod.PublicI).GetValue(cpPatch);
                             if (path.ToString() == pack.Manifest.Name + " > " + patch.LogName)
                             {
                                 targetPatch = cpPatch;
@@ -223,21 +211,21 @@ namespace ContentPatcherAnimations
                         }
                         if (targetPatch == null)
                         {
-                            Log.error("Failed to find patch with name \"" + patch.LogName + "\"!?!?");
+                            Log.Error("Failed to find patch with name \"" + patch.LogName + "\"!?!?");
                             continue;
                         }
-                        var appliedProp = targetPatch.GetType().GetProperty("IsApplied", PublicI);
-                        var sourceProp = targetPatch.GetType().GetProperty("FromAsset", PublicI);
-                        var targetProp = targetPatch.GetType().GetProperty("TargetAsset", PublicI);
+                        var appliedProp = targetPatch.GetType().GetProperty("IsApplied", Mod.PublicI);
+                        var sourceProp = targetPatch.GetType().GetProperty("FromAsset", Mod.PublicI);
+                        var targetProp = targetPatch.GetType().GetProperty("TargetAsset", Mod.PublicI);
 
-                        data.patchObj = targetPatch;
+                        data.PatchObj = targetPatch;
                         data.IsActive = () => (bool)appliedProp.GetValue(targetPatch);
                         data.SourceFunc = () => pack.LoadAsset<Texture2D>((string)sourceProp.GetValue(targetPatch));
-                        data.TargetFunc = () => FindTargetTexture((string)targetProp.GetValue(targetPatch));
-                        data.FromAreaFunc = () => GetRectangleFromPatch(targetPatch, "FromArea");
-                        data.ToAreaFunc = () => GetRectangleFromPatch(targetPatch, "ToArea", new Rectangle(0, 0, data.FromAreaFunc().Width, data.FromAreaFunc().Height));
+                        data.TargetFunc = () => this.FindTargetTexture((string)targetProp.GetValue(targetPatch));
+                        data.FromAreaFunc = () => this.GetRectangleFromPatch(targetPatch, "FromArea");
+                        data.ToAreaFunc = () => this.GetRectangleFromPatch(targetPatch, "ToArea", new Rectangle(0, 0, data.FromAreaFunc().Width, data.FromAreaFunc().Height));
 
-                        ScreenState.animatedPatches.Add(patch, data);
+                        this.ScreenState.AnimatedPatches.Add(patch, data);
                     }
                 }
             }
@@ -245,30 +233,30 @@ namespace ContentPatcherAnimations
 
         private Texture2D FindTargetTexture(string target)
         {
-            if ( Helper.Content.NormalizeAssetName(target) == Helper.Content.NormalizeAssetName("TileSheets\\tools" ) )
+            if (this.Helper.Content.NormalizeAssetName(target) == this.Helper.Content.NormalizeAssetName("TileSheets\\tools"))
             {
-                return Helper.Reflection.GetField<Texture2D>(typeof(Game1), "_toolSpriteSheet").GetValue();
+                return this.Helper.Reflection.GetField<Texture2D>(typeof(Game1), "_toolSpriteSheet").GetValue();
             }
             var tex = Game1.content.Load<Texture2D>(target);
-            if ( tex.GetType().Name == "ScaledTexture2D" )
+            if (tex.GetType().Name == "ScaledTexture2D")
             {
-                Log.trace("Found ScaledTexture2D from PyTK: " + target);
-                tex = Helper.Reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
+                Log.Trace("Found ScaledTexture2D from PyTK: " + target);
+                tex = this.Helper.Reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
             }
             return tex;
         }
 
-        private Rectangle GetRectangleFromPatch(object targetPatch, string rectName, Rectangle defaultTo = default(Rectangle))
+        private Rectangle GetRectangleFromPatch(object targetPatch, string rectName, Rectangle defaultTo = default)
         {
-            var rect = targetPatch.GetType().GetField(rectName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(targetPatch);
-            if ( rect == null )
+            object rect = targetPatch.GetType().GetField(rectName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(targetPatch);
+            if (rect == null)
             {
                 return defaultTo;
             }
             var tryGetRectValue = rect.GetType().GetMethod("TryGetRectangle");
 
             object[] args = new object[] { null, null };
-            if ( !((bool) tryGetRectValue.Invoke(rect, args)) )
+            if (!((bool)tryGetRectValue.Invoke(rect, args)))
             {
                 return Rectangle.Empty;
             }

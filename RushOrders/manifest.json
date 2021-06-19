@@ -1,11 +1,10 @@
-{
-  "Name": "Rush Orders",
-  "Author": "spacechase0",
-  "Version": "1.1.5",
-  "Description": "Lets you rush order upgrades.",
-  "UniqueID": "spacechase0.RushOrders",
-  "EntryDll": "RushOrders.dll",
-  "MinimumApiVersion": "2.9.0",
-  "UpdateKeys": [ "Nexus:605", "Chucklefish:4274" ],
-  "spacechase0": "rush-orders"
+﻿{
+    "Name": "Rush Orders",
+    "Author": "spacechase0",
+    "Version": "1.1.6",
+    "MinimumApiVersion": "3.9.5",
+    "Description": "Spend more gold to have Clint upgrade tools faster or Robin construct buildings faster.",
+    "UniqueID": "spacechase0.RushOrders",
+    "EntryDll": "RushOrders.dll",
+    "UpdateKeys": [ "Nexus:605" ]
 }
