@@ -1,5 +1,5 @@
 ﻿**Bigger Craftables** is a [Stardew Valley](http://stardewvalley.net/) mod which lets content packs
-add bigcraftables bigger than one tile!
+add big craftables bigger than one tile!
 
 ![](screenshot.png)
 
@@ -9,9 +9,12 @@ add bigcraftables bigger than one tile!
 3. Run the game using SMAPI.
 
 ## Use
-**This is a framework for mod authors.** If you're a player, you only need to install the mod and
-it'll work automatically for content packs that use it.
+### For players
+This mod does nothing on its own; you need to install content packs by unzipping them into your
+`Mods` folder. See _Requirements_ > _Mods requiring this file_ on the Nexus mod page to find
+content packs.
 
+### For mod authors
 See [example content pack](https://spacechase0.com/files/sdvmod/BiggerCraftables.Example.zip).
 
 ## Compatibility

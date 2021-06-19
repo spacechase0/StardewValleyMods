@@ -13,8 +13,8 @@ tent to sleep anywhere!
 ## Use
 Sleep here. Sleep there. Sleep everywhere!
 
-You can buy the tend from Pierre's shop for 5000g. Select it in your toolbar and **hold** left-click
-for seven seconds to go to sleep.
+You can buy the tent from Pierre's shop for 5000g. Select it in your toolbar and **hold** left-click
+for seven seconds (configurable) to go to sleep.
 
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.

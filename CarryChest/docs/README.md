@@ -1,5 +1,5 @@
-﻿**Carry Chest** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you move chests
-around, even if they have things in them.
+﻿**Carry Chest** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you pick up chests
+even if they're not empty.
 
 ![](screenshot.png)
 

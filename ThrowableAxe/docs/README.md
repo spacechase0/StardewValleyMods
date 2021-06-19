@@ -1,5 +1,5 @@
-﻿**Throwable Axe** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you throw axes at
-monsters to damage them.
+﻿**Throwable Axe** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you throw your
+axe at monsters to damage them.
 
 ![](screenshot.gif)
 

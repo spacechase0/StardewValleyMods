@@ -21,7 +21,7 @@ Changes are live after saving, no need to restart the game.
 * **For C# mods:** you can use [SMAPI's mod API feature](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Integrations#Mod-provided_APIs)
   to add a config UI. Your mod will still work even if players don't have Generic Mod Config Menu
   installed (they just won't see the config UI). See [example usage](https://gist.github.com/spacechase0/2d8d4dbffe5f2ce9457d2c891a8b99e3)
-  (with the API at the bottom).
+  with the API at the bottom.
 
 * **For Content Patcher packs:** you don't need to do anything! Content Patcher will add the config
   UI automatically for you.

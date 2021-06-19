@@ -1,5 +1,5 @@
-﻿**Statue of Generosity** is a [Stardew Valley](http://stardewvalley.net/) mod that adds the
-eponymous statue, which produces loved gifts each morning.
+﻿**Statue of Generosity** is a [Stardew Valley](http://stardewvalley.net/) mod that adds a statue
+which produces loved gifts each morning.
 
 ![](screenshot.png)
 

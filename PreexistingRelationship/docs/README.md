@@ -11,9 +11,9 @@ start the game already married to an NPC.
 3. Run the game using SMAPI.
 
 ## Use
-Start a new save, and on the first day you'll see a menu asking who you're married to. You'll start
-with the first house upgrade (so they have their spouse room), and heart events will still trigger
-like usual.
+Start a new save (or load an unmarried save), and when the day starts you'll see a menu asking who
+you're married to. You'll start with the first house upgrade (so they have their spouse room), and
+heart events will still trigger like usual.
 
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.

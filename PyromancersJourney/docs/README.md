@@ -19,7 +19,7 @@ Dungeon](https://stardewvalleywiki.com/Volcano_Dungeon) shop:
 Press `W`/`S`/`Q`/`E` to move, `A`/`D` to turn, `space` to charge your staff and release to shoot.
 Beat the game to win a prize!
 
-You can also start the game by runing the `pyrojourney` command in the SMAPI console.
+You can also start the game by running the `pyrojourney` command in the SMAPI console.
 
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
