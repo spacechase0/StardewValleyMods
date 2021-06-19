@@ -2,6 +2,7 @@
     "Name": "Hybrid Crop Engine",
     "Author": "spacechase0",
     "Version": "1.0.2",
+    "MinimumApiVersion": "3.9.5",
     "Description": "Lets content packs add hybrid crops, which have a chance of appearing between two fully-grown parent crops.",
     "UniqueID": "spacechase0.HybridCropEngine",
     "EntryDll": "HybridCropEngine.dll",

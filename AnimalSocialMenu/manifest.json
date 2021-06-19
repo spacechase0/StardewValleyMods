@@ -2,6 +2,7 @@
     "Name": "Animal Social Menu",
     "Author": "spacechase0",
     "Version": "1.0.3",
+    "MinimumApiVersion": "3.9.5",
     "Description": "Adds a social menu for your animals. Check your animals' friendship values and if they need petting.",
     "UniqueID": "spacechase0.AnimalSocialMenu",
     "EntryDll": "AnimalSocialMenu.dll",

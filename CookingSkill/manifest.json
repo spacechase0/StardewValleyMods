@@ -2,6 +2,7 @@
     "Name": "Cooking Skill",
     "Author": "spacechase0",
     "Version": "1.2.0",
+    "MinimumApiVersion": "3.9.5",
     "Description": "Adds a cooking skill.",
     "UniqueID": "spacechase0.CookingSkill",
     "EntryDll": "CookingSkill.dll",
