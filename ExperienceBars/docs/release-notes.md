@@ -1,6 +1,10 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Merged the `X` and `Y` config options into `Position`.  
+  _If you previously customized the position, you'll need to set it again._
+
 ## 1.2.2
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

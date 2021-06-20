@@ -48,9 +48,9 @@ namespace ExperienceBars
             if (capi != null)
             {
                 capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "UI X", "The X position of the UI on-screen.", () => Mod.Config.X, (int val) => Mod.Config.X = val);
-                capi.RegisterSimpleOption(this.ModManifest, "UI Y", "The Y position of the UI on-screen.", () => Mod.Config.Y, (int val) => Mod.Config.Y = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "Press this key to toggle the display.\nHolding Shift lets you move the display as well. ", () => Mod.Config.ToggleBars, (SButton val) => Mod.Config.ToggleBars = val);
+                capi.RegisterSimpleOption(this.ModManifest, "X position", "The pixel X position at which to draw the experience bars, relative to the top-left corner of the screen.", () => Mod.Config.Position.X, (int val) => Mod.Config.Position = new(val, Mod.Config.Position.Y));
+                capi.RegisterSimpleOption(this.ModManifest, "Y position", "The pixel Y position at which to draw the experience bars, relative to the top-left corner of the screen.", () => Mod.Config.Position.Y, (int val) => Mod.Config.Position = new(Mod.Config.Position.X, val));
+                capi.RegisterSimpleOption(this.ModManifest, "Toggle Button", "The button which shows or hides the experience bars display. Press Shift and this button to move the display.", () => Mod.Config.ToggleBars, (SButton val) => Mod.Config.ToggleBars = val);
             }
         }
 
@@ -63,8 +63,10 @@ namespace ExperienceBars
             {
                 if (Mod.Show && (Game1.GetKeyboardState().IsKeyDown(Keys.LeftShift) || Game1.GetKeyboardState().IsKeyDown(Keys.RightShift)))
                 {
-                    Mod.Config.X = (int)e.Cursor.ScreenPixels.X;
-                    Mod.Config.Y = (int)e.Cursor.ScreenPixels.Y;
+                    Mod.Config.Position = new Point(
+                        (int)e.Cursor.ScreenPixels.X,
+                        (int)e.Cursor.ScreenPixels.Y
+                    );
                     this.Helper.WriteConfig(Mod.Config);
                 }
                 else
@@ -120,10 +122,9 @@ namespace ExperienceBars
                 }
             }
 
-            int x = Mod.Config.X;
-            int y = Mod.Config.Y;
-            if (Game1.player.currentLocation != null && Game1.player.currentLocation is MineShaft &&
-                x <= 25 && y <= 75)
+            int x = Mod.Config.Position.X;
+            int y = Mod.Config.Position.Y;
+            if (Game1.player.currentLocation is MineShaft && x <= 25 && y <= 75)
                 y += 75;
             for (int i = 0; i < (Mod.RenderLuck ? 6 : 5); ++i)
             {
