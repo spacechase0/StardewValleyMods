@@ -21,12 +21,19 @@ namespace ExperienceBars
         public static readonly int[] ExpNeededForLevel = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
 
         public static Configuration Config;
+        private static readonly Color DefaultBarForeground = new(150, 150, 150);
 
         public static bool RenderLuck = false;
         public static int ExpBottom;
         public static bool Show = true;
         private static bool StopLevelExtenderCompat;
 
+        private const int BarWidth = 102;
+        private const int BarHeight = 10;
+        private static Texture2D SkillBackground;
+        private static Texture2D SkillForeground;
+
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
             Log.Monitor = this.Monitor;
@@ -161,105 +168,92 @@ namespace ExperienceBars
 
         private Rectangle GetSkillRect(int skill)
         {
-            switch (skill)
+            return skill switch
             {
-                case 0: return new Rectangle(0, 0, 16, 16);
-                case 1: return new Rectangle(16, 0, 16, 16);
-                case 2: return new Rectangle(80, 0, 16, 16);
-                case 3: return new Rectangle(32, 0, 16, 16);
-                case 4: return new Rectangle(128, 16, 16, 16);
-                case 5: return new Rectangle(64, 0, 16, 16);
-            }
-
-            return new Rectangle(32, 16, 16, 16); // The eye thing
+                0 => new Rectangle(0, 0, 16, 16),
+                1 => new Rectangle(16, 0, 16, 16),
+                2 => new Rectangle(80, 0, 16, 16),
+                3 => new Rectangle(32, 0, 16, 16),
+                4 => new Rectangle(128, 16, 16, 16),
+                5 => new Rectangle(64, 0, 16, 16),
+                _ => new Rectangle(32, 16, 16, 16) // The eye thing
+            };
         }
 
-        private Color[] SkillColors;
         private Color GetSkillColor(int skill)
         {
-            if (this.SkillColors != null)
-                return this.SkillColors[skill];
-
-            // Taken from the icons
-            this.SkillColors = new Color[]
+            var colors = Mod.Config.SkillColors;
+            return skill switch
             {
-                new(115, 255, 56),
-                new(117, 225, 255),
-                new(0xCD, 0x7F, 0x32),//new Color(78, 183, 0),
-                new(247, 31, 0),
-                new(178, 255, 211),
-                new(255, 255, 84),
+                Farmer.combatSkill => colors.Combat,
+                Farmer.farmingSkill => colors.Farming,
+                Farmer.fishingSkill => colors.Fishing,
+                Farmer.foragingSkill => colors.Foraging,
+                Farmer.luckSkill => colors.Luck,
+                Farmer.miningSkill => colors.Mining,
+                _ => Mod.DefaultBarForeground
             };
-
-            return this.SkillColors[skill];
         }
-
-        private const int BarWidth = 102;
-        private const int BarHeight = 10;
-        private static readonly Color BarBorder = Color.DarkGoldenrod;
-        private static readonly Color BarBg = Color.Black;
-        private static readonly Color BarFg = new(150, 150, 150);
-        private static readonly Color BarBgTick = new(50, 50, 50);
-        private static readonly Color BarFgTick = new(120, 120, 120);
-        private static Texture2D SkillBg, SkillFg;
 
         public static void RenderSkillBar(int x, int y, Texture2D iconTex, Rectangle icon, int level, float progress, Color skillCol)
         {
-            if (!Mod.Show) return;
-            if (Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree) return;
+            if (!Mod.Show || Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree)
+                return;
 
             var b = Game1.spriteBatch;
 
-            if (Mod.SkillBg == null || Mod.SkillFg == null)
+            if (Mod.SkillBackground == null || Mod.SkillForeground == null)
                 Mod.SetupExpBars();
 
             b.Draw(iconTex, new Rectangle(x, y, 32, 32), icon, Color.White);
 
             int extra = 0;
-            if (level > 9) extra += 16;
-            if (level > 99) extra += 20;
+            if (level > 9)
+                extra += 16;
+            if (level > 99)
+                extra += 20;
+
             NumberSprite.draw(level, b, new Vector2(x + 32 + 4 + 16 + extra, y + 16), Color.White, 0.75f, 0, 1, 0);
 
-            if (progress < 0 || progress > 100)
+            if (progress is < 0 or > 100)
                 return;
 
             Rectangle barRect = new Rectangle(x + 32 + 4 + 32 + extra + 4, y + (32 - Mod.BarHeight) / 2 - 1, Mod.BarWidth * 2, Mod.BarHeight * 2);
-            b.Draw(Mod.SkillBg, barRect, new Rectangle(0, 0, Mod.BarWidth, Mod.BarHeight), Color.White);
+            b.Draw(Mod.SkillBackground, barRect, new Rectangle(0, 0, Mod.BarWidth, Mod.BarHeight), Color.White);
             barRect.Width = (int)(barRect.Width * progress);
-            b.Draw(Mod.SkillFg, barRect, new Rectangle(0, 0, barRect.Width / 2, Mod.BarHeight), skillCol);
+            b.Draw(Mod.SkillForeground, barRect, new Rectangle(0, 0, barRect.Width / 2, Mod.BarHeight), skillCol);
         }
 
         private static void SetupExpBars()
         {
-            Mod.SkillBg = new Texture2D(Game1.graphics.GraphicsDevice, Mod.BarWidth, Mod.BarHeight);
-            Mod.SkillFg = new Texture2D(Game1.graphics.GraphicsDevice, Mod.BarWidth, Mod.BarHeight);
+            var colors = Mod.Config.BaseColors;
+
+            Mod.SkillBackground = new Texture2D(Game1.graphics.GraphicsDevice, Mod.BarWidth, Mod.BarHeight);
+            Mod.SkillForeground = new Texture2D(Game1.graphics.GraphicsDevice, Mod.BarWidth, Mod.BarHeight);
             Color[] emptyColors = new Color[Mod.BarWidth * Mod.BarHeight];
             Color[] fillColors = new Color[Mod.BarWidth * Mod.BarHeight];
-            for (int ix = 0; ix < Mod.BarWidth; ++ix)
+            for (int x = 0; x < Mod.BarWidth; ++x)
             {
-                for (int iy = 0; iy < Mod.BarHeight; ++iy)
+                for (int y = 0; y < Mod.BarHeight; ++y)
                 {
-                    Color e = Mod.BarBg;
-                    Color f = Mod.BarFg;
-                    if (ix == 0 || iy == 0 || ix == Mod.BarWidth - 1 || iy == Mod.BarHeight - 1)
+                    Color background = colors.BarBackground;
+                    Color foreground = Mod.DefaultBarForeground;
+                    if (x == 0 || y == 0 || x == Mod.BarWidth - 1 || y == Mod.BarHeight - 1)
                     {
-                        e = Mod.BarBorder;
-                        f = Color.Transparent;
+                        background = colors.BarBorder;
+                        foreground = Color.Transparent;
 
                         // Corners
-                        if (ix == 0 && iy == 0 || ix == Mod.BarWidth - 1 && iy == 0 ||
-                             ix == 0 && iy == Mod.BarHeight - 1 || ix == Mod.BarWidth - 1 && iy == Mod.BarHeight - 1)
-                        {
-                            e = Color.Transparent;
-                        }
+                        if (x == 0 && y == 0 || x == Mod.BarWidth - 1 && y == 0 || x == 0 && y == Mod.BarHeight - 1 || x == Mod.BarWidth - 1 && y == Mod.BarHeight - 1)
+                            background = Color.Transparent;
                     }
-                    else if ((ix - 1) % 10 == 0)
+                    else if ((x - 1) % 10 == 0)
                     {
-                        e = Mod.BarBgTick;
-                        f = Mod.BarFgTick;
+                        background = colors.BarBackgroundTick;
+                        foreground = colors.BarForegroundTick;
                     }
 
-                    float s = iy switch
+                    float colorMultiply = y switch
                     {
                         1 => 1.3f,
                         2 => 1.7f,
@@ -272,17 +266,17 @@ namespace ExperienceBars
                         9 => 0.4f,
                         _ => 1
                     };
-                    e = Color.Multiply(e, s);
-                    f = Color.Multiply(f, s);
+                    background = Color.Multiply(background, colorMultiply);
+                    foreground = Color.Multiply(foreground, colorMultiply);
 
 
 
-                    emptyColors[ix + iy * Mod.BarWidth] = e;
-                    fillColors[ix + iy * Mod.BarWidth] = f;
+                    emptyColors[x + y * Mod.BarWidth] = background;
+                    fillColors[x + y * Mod.BarWidth] = foreground;
                 }
             }
-            Mod.SkillBg.SetData(emptyColors);
-            Mod.SkillFg.SetData(fillColors);
+            Mod.SkillBackground.SetData(emptyColors);
+            Mod.SkillForeground.SetData(fillColors);
         }
     }
 }

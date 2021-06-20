@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* You can now configure the UI colors in `config.json`.
 * Merged the `X` and `Y` config options into `Position`.  
   _If you previously customized the position, you'll need to set it again._
 
