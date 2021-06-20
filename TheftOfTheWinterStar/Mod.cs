@@ -11,6 +11,7 @@ using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Monsters;
 using StardewValley.Objects;
@@ -237,7 +238,7 @@ namespace TheftOfTheWinterStar
             int seasonalDelimiter = Mod.Ja.GetBigCraftableId("Tempus Globe");
             foreach (var loc in Game1.locations)
             {
-                if (loc.IsFarm)
+                if (loc.IsFarm || loc is IslandWest)
                 {
                     foreach (var pair in loc.Objects.Pairs)
                     {
