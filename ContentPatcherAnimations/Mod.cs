@@ -186,6 +186,9 @@ namespace ContentPatcherAnimations
             foreach (var pack in this.ContentPatcher.Helper.ContentPacks.GetOwned())
             {
                 var patches = pack.ReadJsonFile<PatchList>("content.json");
+                if (patches?.Changes == null)
+                    continue;
+
                 foreach (var patch in patches.Changes)
                 {
                     if (patch.AnimationFrameTime > 0 && patch.AnimationFrameCount > 0)
