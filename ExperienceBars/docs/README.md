@@ -11,6 +11,26 @@ for your skill levels, so you can see how far you are from leveling.
 ## Use
 Press `X` to toggle the display. Move the display with `Shift` + `X`.
 
+## Configure
+### In-game settings
+If you have [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098) installed,
+you can click the cog button (⚙) on the title screen to configure the mod. Hover the cursor over a
+field for details, or see the next section.
+
+![](generic-mod-config-menu.png)
+
+### `config.json` file
+The mod creates a `config.json` file in its mod folder the first time you run it. You can open that
+file in a text editor to configure the mod. If you make a mistake, you can delete the `config.json`
+and it'll recreate a default one.
+
+Here's what you can change:
+
+field | description
+----- | -----------
+`ToggleBars` | The button which shows or hides the experience bars display.
+`Position` | The x and Y pixel position at which to draw the experience bars, relative to the top-left corner of the screen.
+
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
