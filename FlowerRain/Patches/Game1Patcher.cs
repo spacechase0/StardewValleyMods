@@ -77,11 +77,11 @@ namespace FlowerRain.Patches
         {
             // get location
             GameLocation location = Game1.currentLocation;
-            if (!Game1.isRaining || !location.IsOutdoors || (location.Name.Equals("Desert") || location is Summit))
+            if (location?.IsOutdoors != true || location is Desert || !Game1.IsRainingHere(location))
                 return;
 
             // get flower data
-            string season = Game1.currentSeason;
+            string season = Game1.GetSeasonForLocation(location);
             var curFlowers = Game1Patcher.FlowerData[season];
             if (curFlowers.Count == 0)
                 return;
