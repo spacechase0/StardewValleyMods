@@ -264,7 +264,7 @@ namespace SpaceCore.Patches
             return SpaceCore.ModTypes.SingleOrDefault(t => t.GetCustomAttribute<XmlTypeAttribute>().TypeName == xmlType);
         }
 
-        /// <summary>Recursively detect find and restore custom mod types in the save XML.</summary>
+        /// <summary>Recursively restore custom mod types in the save XML.</summary>
         /// <param name="doc">The XML document to scan.</param>
         /// <param name="node">The subtree node from which to scan.</param>
         /// <param name="modNodes">The custom mod elements to insert.</param>

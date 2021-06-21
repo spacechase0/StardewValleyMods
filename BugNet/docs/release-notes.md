@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Updated translations. Thanks to martin66789 (updated Hungarian)!
+
 ## 1.3.0
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

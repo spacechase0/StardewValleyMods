@@ -7,19 +7,19 @@ use the right translations.
 
 (❑ = untranslated, ↻ = partly translated, ✓ = fully translated)
 
-&nbsp;     | Bug Net     | Capstone Professions | Displays   | Magic                   | Preexisting Relationships
----------- | :---------- | :------------------- | :--------- | :---------------------- | :-------------------------
-Chinese    | ❑ missing  | ❑ missing            | ❑ missing | [✓](Magic/i18n/zh.json) | ❑ missing
-French     | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
-German     | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
-Hungarian  | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
-Italian    | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
-Japanese   | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
-Korean     | ❑ missing  | ❑ missing            | ❑ missing | [✓](Magic/i18n/ko.json) | ❑ missing
-Portuguese | ❑ missing  | ❑ missing            | ❑ missing | [✓](Magic/i18n/pt.json) | ❑ missing
-Russian    | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
-Spanish    | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
-Turkish    | ❑ missing  | ❑ missing            | ❑ missing | ❑ missing               | ❑ missing
+&nbsp;     | Bug Net                   | Capstone Professions | Displays   | Magic                    | Preexisting Relationships
+---------- | :------------------------ | :------------------- | :--------- | :----------------------- | :-------------------------
+Chinese    | ❑ missing                | ❑ missing           | ❑ missing | [✓](Magic/i18n/zh.json) | ❑ missing
+French     | ❑ missing                | ❑ missing           | ❑ missing | ❑ missing               | ❑ missing
+German     | ❑ missing                | ❑ missing           | ❑ missing | ❑ missing               | ❑ missing
+Hungarian  | [✓](BugNet/i18n/hu.json) | ❑ missing           | ❑ missing | ❑ missing               | ❑ missing
+Italian    | ❑ missing                | ❑ missing           | ❑ missing | ❑ missing               | ❑ missing
+Japanese   | ❑ missing                | ❑ missing           | ❑ missing | ❑ missing               | ❑ missing
+Korean     | ❑ missing                | ❑ missing           | ❑ missing | [✓](Magic/i18n/ko.json) | ❑ missing
+Portuguese | ❑ missing                | ❑ missing           | ❑ missing | [✓](Magic/i18n/pt.json) | ❑ missing
+Russian    | ❑ missing                | ❑ missing           | ❑ missing | ❑ missing               | ❑ missing
+Spanish    | ❑ missing                | ❑ missing           | ❑ missing | ❑ missing               | ❑ missing
+Turkish    | ❑ missing                | ❑ missing           | ❑ missing | ❑ missing               | ❑ missing
 
 
 Contributions are welcome! See [Modding:Translations](https://stardewvalleywiki.com/Modding:Translations)
