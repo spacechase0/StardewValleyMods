@@ -92,22 +92,22 @@ namespace LuckSkill.Patches
         {
             switch (whichProfession)
             {
-                case Mod.ProfessionDailyLuck:
+                case Mod.FortunateProfessionId:
                     __result = "LUCK_A";
                     break;
-                case Mod.ProfessionMoreQuests:
+                case Mod.PopularHelperProfessionId:
                     __result = "LUCK_B";
                     break;
-                case Mod.ProfessionChanceMaxLuck:
+                case Mod.LuckyProfessionId:
                     __result = "LUCK_A1";
                     break;
-                case Mod.ProfessionNoBadLuck:
+                case Mod.UnUnluckyProfessionId:
                     __result = "LUCK_A2";
                     break;
-                case Mod.ProfessionNightlyEvents:
+                case Mod.ShootingStarProfessionId:
                     __result = "LUCK_B1";
                     break;
-                case Mod.ProfessionJunimoHelp:
+                case Mod.SpiritChildProfessionId:
                     __result = "LUCK_B2";
                     break;
             }

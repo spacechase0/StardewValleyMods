@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Added [mod-provided API](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Integrations) to get Luck profession info.
+
 ## 1.0.3
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
