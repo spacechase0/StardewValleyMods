@@ -56,14 +56,35 @@ namespace GenericModConfigMenu
             return new Api();
         }
 
-        /// <summary>Open the config UI for a mod.</summary>
-        /// <param name="mod">The mod whose config menu to display.</param>
-        public void OpenMenu(IManifest mod)
+        /// <summary>Open the menu which shows a list of configurable mods.</summary>
+        public void OpenListMenu()
         {
             if (Game1.activeClickableMenu is TitleMenu)
-                TitleMenu.subMenu = new SpecificModConfigMenu(mod, inGame: false, scrollSpeed: this.Config.ScrollSpeed);
+                TitleMenu.subMenu = new ModConfigMenu(false, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod));
             else
-                Game1.activeClickableMenu = new SpecificModConfigMenu(mod, inGame: false, scrollSpeed: this.Config.ScrollSpeed);
+                Game1.activeClickableMenu = new ModConfigMenu(true, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod));
+        }
+
+        /// <summary>Open the config UI for a specific mod.</summary>
+        /// <param name="mod">The mod whose config menu to display.</param>
+        /// <param name="page">The page to display within the mod's config menu.</param>
+        public void OpenModMenu(IManifest mod, string page = null)
+        {
+            bool inGame = Game1.activeClickableMenu is not TitleMenu;
+
+            var menu = new SpecificModConfigMenu(
+                modManifest: mod,
+                inGame: inGame,
+                scrollSpeed: this.Config.ScrollSpeed,
+                page: page,
+                openPage: newPage => this.OpenModMenu(mod, newPage),
+                returnToList: this.OpenListMenu
+            );
+
+            if (inGame)
+                Game1.activeClickableMenu = menu;
+            else
+                TitleMenu.subMenu = menu;
         }
 
 
@@ -81,7 +102,7 @@ namespace GenericModConfigMenu
                 Callback = _ =>
                 {
                     Game1.playSound("newArtifact");
-                    TitleMenu.subMenu = new ModConfigMenu(false, this.Config.ScrollSpeed);
+                    this.OpenListMenu();
                 }
             };
 
@@ -122,9 +143,7 @@ namespace GenericModConfigMenu
             if (e.NewMenu is GameMenu menu)
             {
                 OptionsPage page = (OptionsPage)menu.pages[GameMenu.optionsTab];
-                page.options.Add(new OptionsButton("Mod Options", () =>
-                    Game1.activeClickableMenu = new ModConfigMenu(true, this.Config.ScrollSpeed)
-                ));
+                page.options.Add(new OptionsButton("Mod Options", this.OpenListMenu));
             }
         }
 

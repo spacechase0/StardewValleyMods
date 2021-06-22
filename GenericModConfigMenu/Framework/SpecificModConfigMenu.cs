@@ -18,10 +18,13 @@ namespace GenericModConfigMenu.Framework
     {
         private readonly IManifest Manifest;
         private readonly bool InGame;
+        private readonly Action<string> OpenPage;
+        private readonly Action ReturnToList;
 
         private readonly ModConfig ModConfig;
         private readonly string CurrPage;
         private readonly int ScrollSpeed;
+        private bool IsSubPage => !string.IsNullOrEmpty(this.CurrPage);
 
         private RootElement Ui = new();
         private readonly Table Table;
@@ -58,14 +61,16 @@ namespace GenericModConfigMenu.Framework
             }
         }
 
-        public SpecificModConfigMenu(IManifest modManifest, bool inGame, int scrollSpeed, string page = "")
+        public SpecificModConfigMenu(IManifest modManifest, bool inGame, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
         {
             this.Manifest = modManifest;
             this.InGame = inGame;
             this.ScrollSpeed = scrollSpeed;
+            this.OpenPage = openPage;
+            this.ReturnToList = returnToList;
 
             this.ModConfig = Mod.Instance.Configs[this.Manifest];
-            this.CurrPage = page;
+            this.CurrPage = page ?? "";
 
             Mod.Instance.Configs[this.Manifest].ActiveDisplayPage = this.ModConfig.Options[this.CurrPage];
 
@@ -75,7 +80,7 @@ namespace GenericModConfigMenu.Framework
                 Size = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116)
             };
             this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
-            foreach (var opt in this.ModConfig.Options[page].Options)
+            foreach (var opt in this.ModConfig.Options[this.CurrPage].Options)
             {
                 opt.SyncToMod();
                 if (this.InGame && !opt.AvailableInGame)
@@ -248,13 +253,7 @@ namespace GenericModConfigMenu.Framework
 
                     case PageLabelModOption option:
                         label.Bold = true;
-                        label.Callback = e =>
-                        {
-                            if (TitleMenu.subMenu == this)
-                                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.ScrollSpeed, option.NewPage);
-                            else if (Game1.activeClickableMenu == this)
-                                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.ScrollSpeed, option.NewPage);
-                        };
+                        label.Callback = _ => this.OpenPage(option.NewPage);
                         other = null;
                         break;
 
@@ -517,10 +516,7 @@ namespace GenericModConfigMenu.Framework
                     opt.SyncToMod();
             this.ModConfig.SaveToFile.Invoke();
 
-            if (TitleMenu.subMenu == this)
-                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.ScrollSpeed, this.CurrPage);
-            else if (Game1.activeClickableMenu == this)
-                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.ScrollSpeed, this.CurrPage);
+            this.OpenPage(this.CurrPage);
         }
 
         private void Save()
@@ -534,13 +530,9 @@ namespace GenericModConfigMenu.Framework
 
         private void Close()
         {
-            if (TitleMenu.subMenu == this)
-                TitleMenu.subMenu = new ModConfigMenu(this.InGame, this.ScrollSpeed);
-            else if (!this.InGame && Game1.activeClickableMenu == this)
-                Game1.activeClickableMenu = null;
-            else
-                Game1.activeClickableMenu = new ModConfigMenu(this.InGame, this.ScrollSpeed);
             Mod.Instance.Helper.Content.AssetEditors.Remove(this);
+
+            this.ReturnToList();
         }
 
         private void Cancel()

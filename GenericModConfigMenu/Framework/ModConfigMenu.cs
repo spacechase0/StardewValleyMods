@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using GenericModConfigMenu.Framework.UI;
 using Microsoft.Xna.Framework;
@@ -16,11 +17,13 @@ namespace GenericModConfigMenu.Framework
         public static IClickableMenu ActiveConfigMenu;
         private readonly bool InGame;
         private readonly int ScrollSpeed;
+        private readonly Action<IManifest> OpenModMenu;
 
-        public ModConfigMenu(bool inGame, int scrollSpeed)
+        public ModConfigMenu(bool inGame, int scrollSpeed, Action<IManifest> openModMenu)
         {
             this.InGame = inGame;
             this.ScrollSpeed = scrollSpeed;
+            this.OpenModMenu = openModMenu;
 
             this.Ui = new RootElement();
 
@@ -100,10 +103,8 @@ namespace GenericModConfigMenu.Framework
         {
             Log.Trace("Changing to mod config page for mod " + modManifest.UniqueID);
             Game1.playSound("bigSelect");
-            if (!this.InGame)
-                TitleMenu.subMenu = new SpecificModConfigMenu(modManifest, this.InGame, this.ScrollSpeed);
-            else
-                Game1.activeClickableMenu = new SpecificModConfigMenu(modManifest, this.InGame, this.ScrollSpeed);
+
+            this.OpenModMenu(modManifest);
         }
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)

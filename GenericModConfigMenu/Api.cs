@@ -317,7 +317,7 @@ namespace GenericModConfigMenu
         {
             this.AssertNotNull(mod, nameof(mod));
 
-            Mod.Instance.OpenMenu(mod);
+            Mod.Instance.OpenModMenu(mod);
         }
 
 
