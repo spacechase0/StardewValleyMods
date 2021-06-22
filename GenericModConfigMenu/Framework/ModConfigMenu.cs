@@ -16,10 +16,11 @@ namespace GenericModConfigMenu.Framework
         public static IClickableMenu ActiveConfigMenu;
         private readonly bool InGame;
         private readonly int ScrollSpeed;
-        public ModConfigMenu(bool inGame)
+
+        public ModConfigMenu(bool inGame, int scrollSpeed)
         {
             this.InGame = inGame;
-            this.ScrollSpeed = Mod.Config.ScrollSpeed;
+            this.ScrollSpeed = scrollSpeed;
 
             this.Ui = new RootElement();
 
@@ -74,7 +75,7 @@ namespace GenericModConfigMenu.Framework
         public void ReceiveScrollWheelActionSmapi(int direction)
         {
             if (TitleMenu.subMenu == this || this.InGame)
-                this.Table.Scrollbar.ScrollBy(direction / -(this.ScrollSpeed));
+                this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
             else
                 ModConfigMenu.ActiveConfigMenu = null;
         }
@@ -100,9 +101,9 @@ namespace GenericModConfigMenu.Framework
             Log.Trace("Changing to mod config page for mod " + modManifest.UniqueID);
             Game1.playSound("bigSelect");
             if (!this.InGame)
-                TitleMenu.subMenu = new SpecificModConfigMenu(modManifest, this.InGame);
+                TitleMenu.subMenu = new SpecificModConfigMenu(modManifest, this.InGame, this.ScrollSpeed);
             else
-                Game1.activeClickableMenu = new SpecificModConfigMenu(modManifest, this.InGame);
+                Game1.activeClickableMenu = new SpecificModConfigMenu(modManifest, this.InGame, this.ScrollSpeed);
         }
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)

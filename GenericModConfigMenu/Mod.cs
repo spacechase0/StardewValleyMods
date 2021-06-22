@@ -1,39 +1,42 @@
-using System;
 using System.Collections.Generic;
 using GenericModConfigMenu.Framework;
 using GenericModConfigMenu.Framework.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 
 namespace GenericModConfigMenu
 {
-    public class GMCMConfig
-        {
-        public int ScrollSpeed { get; set; } = 120;
-        }
-
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod Instance;
-        public static GMCMConfig Config;
-
+        /*********
+        ** Fields
+        *********/
+        private OwnModConfig Config;
         private RootElement Ui;
         private Button ConfigButton;
+
+
+        /*********
+        ** Accessors
+        *********/
+        public static Mod Instance;
         internal Dictionary<IManifest, ModConfig> Configs = new();
 
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
-            this.Monitor.Log($"GMCM version {ModManifest.Version} loading...", LogLevel.Info);
             Mod.Instance = this;
-            Mod.Config = helper.ReadConfig<GMCMConfig>();
             Log.Monitor = this.Monitor;
+            this.Config = helper.ReadConfig<OwnModConfig>();
 
             this.SetupTitleMenuButton();
 
@@ -45,37 +48,47 @@ namespace GenericModConfigMenu
             helper.Events.Input.MouseWheelScrolled += this.OnMouseWheelScrolled;
         }
 
-
+        /// <inheritdoc />
         public override object GetApi()
         {
             return new Api();
         }
 
-        public class RandomColorWidgetState
+        /// <summary>Open the config UI for a mod.</summary>
+        /// <param name="mod">The mod whose config menu to display.</param>
+        public void OpenMenu(IManifest mod)
         {
-            public Color Color;
+            if (Game1.activeClickableMenu is TitleMenu)
+                TitleMenu.subMenu = new SpecificModConfigMenu(mod, inGame: false, scrollSpeed: this.Config.ScrollSpeed);
+            else
+                Game1.activeClickableMenu = new SpecificModConfigMenu(mod, inGame: false, scrollSpeed: this.Config.ScrollSpeed);
         }
 
-        private void SetupTitleMenuButton() {
+
+        /*********
+        ** Private methods
+        *********/
+        private void SetupTitleMenuButton()
+        {
             this.Ui = new RootElement();
 
             Texture2D tex = this.Helper.Content.Load<Texture2D>("assets/config-button.png");
-            this.ConfigButton = new Button(tex) {
+            this.ConfigButton = new Button(tex)
+            {
                 LocalPosition = new Vector2(36, Game1.viewport.Height - 100),
-                Callback = e => {
+                Callback = _ =>
+                {
                     Game1.playSound("newArtifact");
-                    TitleMenu.subMenu = new ModConfigMenu(false);
+                    TitleMenu.subMenu = new ModConfigMenu(false, this.Config.ScrollSpeed);
                 }
-                };
+            };
 
             this.Ui.AddChild(this.ConfigButton);
-            }
+        }
 
         private bool IsTitleMenuInteractable()
         {
-            if (!(Game1.activeClickableMenu is TitleMenu tm))
-                return false;
-            if (TitleMenu.subMenu != null)
+            if (Game1.activeClickableMenu is not TitleMenu tm || TitleMenu.subMenu != null)
                 return false;
 
             var method = this.Helper.Reflection.GetMethod(tm, "ShouldAllowInteraction", false);
@@ -104,12 +117,12 @@ namespace GenericModConfigMenu
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (e.NewMenu is GameMenu gm)
+            if (e.NewMenu is GameMenu menu)
             {
-                (gm.pages[GameMenu.optionsTab] as OptionsPage).options.Add(new OptionsButton("Mod Options", () =>
-                {
-                    Game1.activeClickableMenu = new ModConfigMenu(true);
-                }));
+                OptionsPage page = (OptionsPage)menu.pages[GameMenu.optionsTab];
+                page.options.Add(new OptionsButton("Mod Options", () =>
+                    Game1.activeClickableMenu = new ModConfigMenu(true, this.Config.ScrollSpeed)
+                ));
             }
         }
 

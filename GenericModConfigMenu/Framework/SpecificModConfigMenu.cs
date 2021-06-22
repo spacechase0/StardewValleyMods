@@ -54,11 +54,11 @@ namespace GenericModConfigMenu.Framework
             }
         }
 
-        public SpecificModConfigMenu(IManifest modManifest, bool inGame, string page = "")
+        public SpecificModConfigMenu(IManifest modManifest, bool inGame, int scrollSpeed, string page = "")
         {
             this.Manifest = modManifest;
             this.InGame = inGame;
-            this.ScrollSpeed = Mod.Config.ScrollSpeed;
+            this.ScrollSpeed = scrollSpeed;
 
             this.ModConfig = Mod.Instance.Configs[this.Manifest];
             this.CurrPage = page;
@@ -249,9 +249,9 @@ namespace GenericModConfigMenu.Framework
                             // Gonna transition to a new menu, let go of current Escape detector
                             this.Esc.Deactivate();
                             if (TitleMenu.subMenu == this)
-                                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, option.NewPage);
+                                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.ScrollSpeed, option.NewPage);
                             else if (Game1.activeClickableMenu == this)
-                                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, option.NewPage);
+                                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.ScrollSpeed, option.NewPage);
                         };
                         other = null;
                         break;
@@ -409,7 +409,7 @@ namespace GenericModConfigMenu.Framework
             if (TitleMenu.subMenu == this || Game1.activeClickableMenu == this)
             {
                 if (Dropdown.ActiveDropdown == null)
-                    this.Table.Scrollbar.ScrollBy(direction / -(this.ScrollSpeed));
+                    this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
             }
             else
                 SpecificModConfigMenu.ActiveConfigMenu = null;
@@ -436,7 +436,8 @@ namespace GenericModConfigMenu.Framework
                 }
             }
 
-            if (this.Esc.Requested) this.Cancel();
+            if (this.Esc.Requested)
+                this.Cancel();
         }
 
         public override void draw(SpriteBatch b)
@@ -508,12 +509,12 @@ namespace GenericModConfigMenu.Framework
                     opt.SyncToMod();
             this.ModConfig.SaveToFile.Invoke();
 
-            // Gonna transition to a new menu, let go of current Escape detector
-            this.Esc.Deactivate();
+            this.Esc.Deactivate(); // release escape detector before transition to new menu
+
             if (TitleMenu.subMenu == this)
-                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.CurrPage);
+                TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.ScrollSpeed, this.CurrPage);
             else if (Game1.activeClickableMenu == this)
-                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.CurrPage);
+                Game1.activeClickableMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.ScrollSpeed, this.CurrPage);
         }
 
         private void Save()
@@ -529,11 +530,11 @@ namespace GenericModConfigMenu.Framework
         {
             this.Esc.Deactivate();
             if (TitleMenu.subMenu == this)
-                TitleMenu.subMenu = new ModConfigMenu(this.InGame);
+                TitleMenu.subMenu = new ModConfigMenu(this.InGame, this.ScrollSpeed);
             else if (!this.InGame && Game1.activeClickableMenu == this)
                 Game1.activeClickableMenu = null;
             else
-                Game1.activeClickableMenu = new ModConfigMenu(this.InGame);
+                Game1.activeClickableMenu = new ModConfigMenu(this.InGame, this.ScrollSpeed);
             Mod.Instance.Helper.Content.AssetEditors.Remove(this);
         }
 

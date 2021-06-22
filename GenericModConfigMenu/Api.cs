@@ -6,8 +6,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
-using StardewValley;
-using StardewValley.Menus;
 
 namespace GenericModConfigMenu
 {
@@ -319,10 +317,7 @@ namespace GenericModConfigMenu
         {
             this.AssertNotNull(mod, nameof(mod));
 
-            if (Game1.activeClickableMenu is TitleMenu)
-                TitleMenu.subMenu = new SpecificModConfigMenu(mod, false);
-            else
-                Game1.activeClickableMenu = new SpecificModConfigMenu(mod, false);
+            Mod.Instance.OpenMenu(mod);
         }
 
 
