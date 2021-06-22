@@ -532,7 +532,10 @@ namespace GenericModConfigMenu.Framework
         {
             Mod.Instance.Helper.Content.AssetEditors.Remove(this);
 
-            this.ReturnToList();
+            if (this.IsSubPage)
+                this.OpenPage(null);
+            else
+                this.ReturnToList();
         }
 
         private void Cancel()
