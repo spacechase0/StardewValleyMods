@@ -5,7 +5,7 @@ using GenericModConfigMenu.Framework.UI;
 using GenericModConfigMenu.ModOption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SpaceShared;
+using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -31,7 +31,11 @@ namespace GenericModConfigMenu.Framework
         private readonly Dictionary<string, List<Image>> Textures = new();
         private readonly Queue<string> PendingTexChanges = new();
 
-        private readonly EscapeChecker Esc = new(Mod.Instance, invoker: nameof(SpecificModConfigMenu));
+        /// <summary>Whether the user hit escape.</summary>
+        private bool ExitOnNextUpdate;
+
+        /// <summary>Whether a keybinding UI is open.</summary>
+        private bool IsBindingKey => this.KeybindingOpt != null || this.Keybinding2Opt != null;
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
@@ -246,8 +250,6 @@ namespace GenericModConfigMenu.Framework
                         label.Bold = true;
                         label.Callback = e =>
                         {
-                            // Gonna transition to a new menu, let go of current Escape detector
-                            this.Esc.Deactivate();
                             if (TitleMenu.subMenu == this)
                                 TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.ScrollSpeed, option.NewPage);
                             else if (Game1.activeClickableMenu == this)
@@ -345,11 +347,17 @@ namespace GenericModConfigMenu.Framework
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
 
-            this.Esc.Activate();
-
             SpecificModConfigMenu.ActiveConfigMenu = this;
             Mod.Instance.Helper.Content.AssetEditors.Add(this);
         }
+
+        /// <inheritdoc />
+        public override void receiveKeyPress(Keys key)
+        {
+            if (key == Keys.Escape && !this.IsBindingKey)
+                this.ExitOnNextUpdate = true;
+        }
+
 
         private void AddDefaultLabels(IManifest modManifest)
         {
@@ -436,7 +444,7 @@ namespace GenericModConfigMenu.Framework
                 }
             }
 
-            if (this.Esc.Requested)
+            if (this.ExitOnNextUpdate)
                 this.Cancel();
         }
 
@@ -509,8 +517,6 @@ namespace GenericModConfigMenu.Framework
                     opt.SyncToMod();
             this.ModConfig.SaveToFile.Invoke();
 
-            this.Esc.Deactivate(); // release escape detector before transition to new menu
-
             if (TitleMenu.subMenu == this)
                 TitleMenu.subMenu = new SpecificModConfigMenu(this.Manifest, this.InGame, this.ScrollSpeed, this.CurrPage);
             else if (Game1.activeClickableMenu == this)
@@ -528,7 +534,6 @@ namespace GenericModConfigMenu.Framework
 
         private void Close()
         {
-            this.Esc.Deactivate();
             if (TitleMenu.subMenu == this)
                 TitleMenu.subMenu = new ModConfigMenu(this.InGame, this.ScrollSpeed);
             else if (!this.InGame && Game1.activeClickableMenu == this)
@@ -549,16 +554,15 @@ namespace GenericModConfigMenu.Framework
         private Label KeybindingLabel;
         private void DoKeybindingFor(SimpleModOption<SButton> opt, Label label)
         {
-            this.Esc.Deactivate();
             Game1.playSound("breathin");
             this.KeybindingOpt = opt;
             this.KeybindingLabel = label;
             this.Ui.Obscured = true;
             Mod.Instance.Helper.Events.Input.ButtonPressed += this.AssignKeybinding;
         }
+
         private void DoKeybinding2For(SimpleModOption<KeybindList> opt, Label label)
         {
-            this.Esc.Deactivate();
             Game1.playSound("breathin");
             this.Keybinding2Opt = opt;
             this.KeybindingLabel = label;
@@ -585,8 +589,6 @@ namespace GenericModConfigMenu.Framework
             this.KeybindingOpt = null;
             this.KeybindingLabel = null;
             this.Ui.Obscured = false;
-            if (Constants.TargetPlatform != GamePlatform.Android)
-                this.Esc.Activate();
         }
 
         private void AssignKeybinding2(object sender, ButtonsChangedEventArgs e)

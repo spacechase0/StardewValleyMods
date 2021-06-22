@@ -3,6 +3,7 @@ using GenericModConfigMenu.Framework;
 using GenericModConfigMenu.Framework.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -46,6 +47,7 @@ namespace GenericModConfigMenu
             helper.Events.Display.Rendered += this.OnRendered;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
             helper.Events.Input.MouseWheelScrolled += this.OnMouseWheelScrolled;
+            helper.Events.Input.ButtonPressed += this.OnButtonPressed;
         }
 
         /// <inheritdoc />
@@ -126,13 +128,21 @@ namespace GenericModConfigMenu
             }
         }
 
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        {
+            if (SpecificModConfigMenu.ActiveConfigMenu is SpecificModConfigMenu menu && e.Button.TryGetKeyboard(out Keys key))
+                menu.receiveKeyPress(key);
+        }
+
         private void OnMouseWheelScrolled(object sender, MouseWheelScrolledEventArgs e)
         {
             Dropdown.ActiveDropdown?.ReceiveScrollWheelAction(e.Delta);
-            if (ModConfigMenu.ActiveConfigMenu is ModConfigMenu mcm)
-                mcm.ReceiveScrollWheelActionSmapi(e.Delta);
-            if (SpecificModConfigMenu.ActiveConfigMenu is SpecificModConfigMenu smcm)
-                smcm.ReceiveScrollWheelActionSmapi(e.Delta);
+
+            if (ModConfigMenu.ActiveConfigMenu is ModConfigMenu modConfigMenu)
+                modConfigMenu.ReceiveScrollWheelActionSmapi(e.Delta);
+
+            if (SpecificModConfigMenu.ActiveConfigMenu is SpecificModConfigMenu specificConfigMenu)
+                specificConfigMenu.ReceiveScrollWheelActionSmapi(e.Delta);
         }
     }
 }
