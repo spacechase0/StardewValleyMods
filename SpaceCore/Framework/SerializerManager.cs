@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 using SpaceCore.Patches;
@@ -113,13 +112,11 @@ namespace SpaceCore.Framework
 
         public XmlSerializer InitializeSerializer(Type baseType, Type[] extra = null)
         {
-            List<Type> types = new List<Type>();
+            var types = extra?.Length > 0
+                ? extra.Concat(SpaceCore.ModTypes)
+                : SpaceCore.ModTypes;
 
-            if (extra != null)
-                types.AddRange(extra);
-            types.AddRange(SpaceCore.ModTypes);
-
-            return new XmlSerializer(baseType, types.ToArray());
+            return new(baseType, types.ToArray());
         }
 
 
