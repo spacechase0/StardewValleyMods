@@ -296,40 +296,31 @@ namespace TheftOfTheWinterStar
             }
 
             // prevent crops from withering
-            int seasonalDelimiter = Mod.Ja.GetBigCraftableId("Tempus Globe");
+            int tempusGlobeId = Mod.Ja.GetBigCraftableId("Tempus Globe");
             foreach (var loc in Game1.locations.Where(this.IsFarm))
             {
                 // find Tempus Globes coverage
-                int w = loc.map.Layers[0].LayerWidth, h = loc.map.Layers[0].LayerHeight;
-                bool[,] valid = new bool[w, h];
-
+                HashSet<Vector2> covered = new();
                 foreach (var pair in loc.Objects.Pairs)
                 {
                     var obj = pair.Value;
-                    if (obj.bigCraftable.Value && obj.ParentSheetIndex == seasonalDelimiter)
+                    if (obj.bigCraftable.Value && obj.ParentSheetIndex == tempusGlobeId)
                     {
                         for (int ix = -2; ix <= 2; ++ix)
                         {
                             for (int iy = -2; iy <= 2; ++iy)
-                                valid[(int)pair.Key.X + ix, (int)pair.Key.Y + iy] = true;
+                                covered.Add(new Vector2(pair.Key.X + ix, pair.Key.Y + iy));
                         }
                     }
                 }
 
                 // prevent crop withering
-                foreach (var pair in loc.terrainFeatures.Pairs)
+                if (covered.Any())
                 {
-                    var tf = pair.Value;
-                    if (tf is HoeDirt hd)
+                    foreach (var pair in loc.terrainFeatures.Pairs)
                     {
-                        if (hd.crop == null)
-                            continue;
-
-                        if (valid[(int)pair.Key.X, (int)pair.Key.Y])
-                        {
-                            if (!hd.crop.seasonsToGrowIn.Contains(Game1.currentSeason))
-                                hd.crop.seasonsToGrowIn.Add(Game1.currentSeason);
-                        }
+                        if (pair.Value is HoeDirt dirt && dirt.crop != null && covered.Contains(pair.Key) && dirt.crop.seasonsToGrowIn.Count < 4)
+                            dirt.crop.seasonsToGrowIn.Set(new[] { "spring", "summer", "fall", "winter" });
                         /*
                         else
                         {

@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Fixed Tempus Globes not working on the Ginger Island farm.
+* Fixed Tempus Globes not protecting out-of-season crops on season change in some cases.
 
 ## 1.0.2
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
