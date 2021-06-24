@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -44,6 +45,9 @@ namespace TheftOfTheWinterStar
 
         private Texture2D BossBarBg, BossBarFg;
 
+        /// <summary>The unique key in <see cref="TerrainFeature.modData"/> which contains the original crop data for the Tempus Globe logic.</summary>
+        private string PrevCropDataKey;
+
         private static readonly string[] Locs = new[]
         {
             "Entrance",
@@ -69,6 +73,7 @@ namespace TheftOfTheWinterStar
 
             this.BossBarBg = this.Helper.Content.Load<Texture2D>("assets/bossbar-bg.png");
             this.BossBarFg = this.Helper.Content.Load<Texture2D>("assets/bossbar-fg.png");
+            this.PrevCropDataKey = $"{this.ModManifest.UniqueID}/prev-data";
 
             this.Helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.SaveCreated += this.OnCreated;
@@ -319,23 +324,19 @@ namespace TheftOfTheWinterStar
                 {
                     foreach (var pair in loc.terrainFeatures.Pairs)
                     {
-                        if (pair.Value is HoeDirt dirt && dirt.crop != null && covered.Contains(pair.Key) && dirt.crop.seasonsToGrowIn.Count < 4)
-                            dirt.crop.seasonsToGrowIn.Set(new[] { "spring", "summer", "fall", "winter" });
-                        /*
-                        else
+                        if (pair.Value is not HoeDirt dirt)
+                            continue;
+
+                        if (dirt.crop != null && covered.Contains(pair.Key))
                         {
-                            var cropData = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
-                            if ( !cropData.ContainsKey(hd.crop.netSeedIndex.Value))
+                            if (dirt.crop.seasonsToGrowIn.Count < 4)
                             {
-                                if ( hd.crop.netSeedIndex.Value != -1 )
-                                    Log.warn("no crop " + hd.crop.netSeedIndex.Value + "? ");
-                                continue;
+                                this.SaveCropData(dirt);
+                                dirt.crop.seasonsToGrowIn.Set(new[] { "spring", "summer", "fall", "winter" });
                             }
-                            string[] seasons = cropData[hd.crop.netSeedIndex.Value].Split('/')[1].Split(' ');
-                            hd.crop.seasonsToGrowIn.Clear();
-                            hd.crop.seasonsToGrowIn.AddRange(seasons);
                         }
-                        */
+                        else
+                            this.RestoreCropDataIfNeeded(dirt);
                     }
                 }
             }
@@ -348,6 +349,31 @@ namespace TheftOfTheWinterStar
             return
                 location.IsFarm
                 || location is Farm or IslandWest;
+        }
+
+        /// <summary>Back up the original crop data before it's changed by a Tempus Globe.</summary>
+        /// <param name="dirt">The dirt whose crop data to save.</param>
+        private void SaveCropData(HoeDirt dirt)
+        {
+            if (dirt.crop != null)
+                dirt.modData[this.PrevCropDataKey] = dirt.crop.indexOfHarvest.Value.ToString(CultureInfo.InvariantCulture) + "," + string.Join(",", dirt.crop.seasonsToGrowIn);
+            else
+                dirt.modData.Remove(this.PrevCropDataKey);
+        }
+
+        /// <summary>Restore the original crop data when a Tempus Globe no longer applies, if possible.</summary>
+        /// <param name="dirt">The dirt whose crop data to save.</param>
+        private void RestoreCropDataIfNeeded(HoeDirt dirt)
+        {
+            if (dirt.crop != null && dirt.modData.TryGetValue(this.PrevCropDataKey, out string prevData))
+            {
+                string[] parts = prevData.Split(',');
+
+                if (dirt.crop.indexOfHarvest.Value.ToString(CultureInfo.InvariantCulture) == parts[0])
+                    dirt.crop.seasonsToGrowIn.Set(parts.Skip(1).ToArray());
+            }
+
+            dirt.modData.Remove(this.PrevCropDataKey);
         }
 
         private void OnIdsFixed(object sender, EventArgs e)
