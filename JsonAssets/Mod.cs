@@ -78,6 +78,7 @@ namespace JsonAssets
                 new ForgeMenuPatcher(),
                 new Game1Patcher(),
                 new GiantCropPatcher(),
+                new HoeDirtPatcher(),
                 new ItemPatcher(),
                 new ObjectPatcher(),
                 new RingPatcher()
@@ -1659,7 +1660,7 @@ namespace JsonAssets
                                 return true;
                         }
                         else if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.OrigBigCraftables))
-                                return true;
+                            return true;
                     }
 
                     if (obj.heldObject.Value != null)

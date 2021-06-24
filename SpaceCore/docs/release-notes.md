@@ -3,6 +3,9 @@
 # Release notes
 ## Upcoming release
 * Optimized performance/memory impact when saving or loading a save.
+* SpaceCore no longer disables crop withering on day update.  
+  _This should have no effect on players, since crops wither separately if needed. This was to
+  support Json Assets, which now applies the change itself._
 
 ## 1.5.7
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.

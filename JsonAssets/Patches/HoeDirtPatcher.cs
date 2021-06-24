@@ -8,7 +8,7 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewValley.TerrainFeatures;
 
-namespace SpaceCore.Patches
+namespace JsonAssets.Patches
 {
     /// <summary>Applies Harmony patches to <see cref="HoeDirt"/>.</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
@@ -31,6 +31,7 @@ namespace SpaceCore.Patches
         ** Private methods
         *********/
         /// <summary>The method which transpiles <see cref="HoeDirt.dayUpdate"/> to remove the <see cref="HoeDirt.destroyCrop"/> call.</summary>
+        /// <remarks>Withering isn't needed here since crops will wither separately if needed, so this simplifies Json Assets' winter crop logic elsewhere.</remarks>
         private static IEnumerable<CodeInstruction> Transpile_DayUpdate(IEnumerable<CodeInstruction> insns)
         {
             bool happened = false;

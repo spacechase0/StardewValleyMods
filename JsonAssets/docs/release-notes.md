@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming changes
+* Updated for Json Assets 1.5.8.
+
 ## 1.7.7
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

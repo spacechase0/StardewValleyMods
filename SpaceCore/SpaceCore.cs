@@ -55,7 +55,6 @@ namespace SpaceCore
                 new GameLocationPatcher(),
                 new GameMenuPatcher(),
                 new GameServerPatcher(),
-                new HoeDirtPatcher(),
                 new LoadGameMenuPatcher(serializerManager),
                 new MeleeWeaponPatcher(),
                 new MultiplayerPatcher(),
