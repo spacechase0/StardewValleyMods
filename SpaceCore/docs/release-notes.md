@@ -2,7 +2,7 @@
 
 # Release notes
 ## Upcoming release
-* Optimized how SpaceCore restores mod content when loading a save file.
+* Optimized performance/memory impact when saving or loading a save.
 
 ## 1.5.7
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.

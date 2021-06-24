@@ -344,7 +344,7 @@ namespace SpaceCore.Patches
                     var child = node.ChildNodes[i];
                     if (SaveGamePatcher.FindAndRemoveModNodes(child, modNodes, $"{currPath}/{i}"))
                     {
-                        modNodes.Insert(0, new KeyValuePair<string, string>($"{currPath}/{i}", child.OuterXml));
+                        modNodes.Add(new KeyValuePair<string, string>($"{currPath}/{i}", child.OuterXml));
                         node.RemoveChild(child);
                     }
                 }
