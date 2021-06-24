@@ -41,7 +41,6 @@ namespace GenericModConfigMenu
 
             this.SetupTitleMenuButton();
 
-            // helper.Events.GameLoop.GameLaunched += this.OnLaunched;
             helper.Events.GameLoop.UpdateTicking += this.OnUpdate;
             helper.Events.Display.WindowResized += this.OnWindowResized;
             helper.Events.Display.Rendered += this.OnRendered;

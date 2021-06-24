@@ -1,6 +1,13 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* You can now press `Escape` to exit a mod config menu (thanks to pepoluan!).
+* Improved API validation (in collaboration with pepoluan).
+* Removed example mod config (thanks to pepoluan!).
+* Fixed UI scale not handled correctly (thanks to pepoluan!).
+* Fixed cancel from a subpage returning to the mod list instead of the parent menu.
+
 ## 1.3.4
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
