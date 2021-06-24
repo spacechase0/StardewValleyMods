@@ -19,5 +19,11 @@
         "CanPurchase": true,
         "PurchaseFrom": "Dwarf",
         "PurchasePrice": 1000
+    },
+    "NameLocalization": {
+        "hu": "Minőség növelő gyűrű"
+    },
+    "DescriptionLocalization": {
+        "hu": "Esély a jobb minőségű terméshozamra."
     }
 }

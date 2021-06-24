@@ -21,11 +21,11 @@
         "PurchasePrice": 10000
     },
     "NameLocalization": {
-
-        "zh": "再生之戒" //Chinese (Simplified)
+        "hu": "Regeneráló gyűrű",
+        "zh": "再生之戒"
     },
     "DescriptionLocalization": {
-
-        "zh": "戴上它，能感觉到身体在缓慢愈合。" //Chinese (Simplified)
+        "hu": "Idővel lassan gyógyulni fogsz.",
+        "zh": "戴上它，能感觉到身体在缓慢愈合。"
     }
 }

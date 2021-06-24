@@ -21,11 +21,11 @@
         "PurchasePrice": 1000
     },
     "NameLocalization": {
-
-        "zh": "钻石酒戒" //Chinese (Simplified)
+        "hu": "Gyémánt borgyűrű",
+        "zh": "钻石酒戒"
     },
     "DescriptionLocalization": {
-
-        "zh": "抵消了轻度酒精的微醺效果。" //Chinese (Simplified)
+        "hu": "Ellensúlyozza az enyhe alkohol hatását.",
+        "zh": "抵消了轻度酒精的微醺效果。"
     }
 }

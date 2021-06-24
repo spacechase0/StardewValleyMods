@@ -19,5 +19,11 @@
         "CanPurchase": true,
         "PurchaseFrom": "Dwarf",
         "PurchasePrice": 12500
+    },
+    "NameLocalization": {
+        "hu": "Igaz látás gyűrűje"
+    },
+    "DescriptionLocalization": {
+        "hu": "Láss túl azon, mint amit láthatsz."
     }
 }

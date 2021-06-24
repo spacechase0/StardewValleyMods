@@ -19,5 +19,11 @@
         "CanPurchase": true,
         "PurchaseFrom": "Dwarf",
         "PurchasePrice": 25000
+    },
+    "NameLocalization": {
+        "hu": "Messzire érő gyűrű"
+    },
+    "DescriptionLocalization": {
+        "hu": "Szerszámokat használhatsz távolról."
     }
 }

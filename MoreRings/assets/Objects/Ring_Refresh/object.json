@@ -21,11 +21,11 @@
         "PurchasePrice": 25000
     },
     "NameLocalization": {
-
-        "zh": "醒灵之戒" //Chinese (Simplified)
+        "hu": "Felfrissítő gyűrű",
+        "zh": "醒灵之戒"
     },
     "DescriptionLocalization": {
-
-        "zh": "我想知道它是干什么的。" //Chinese (Simplified)
+        "hu": "Vajon mit csinál.",
+        "zh": "我想知道它是干什么的。"
     }
 }

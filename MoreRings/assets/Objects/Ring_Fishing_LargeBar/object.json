@@ -24,11 +24,11 @@
         ]
     },
     "NameLocalization": {
-
-        "zh": "猎网指环" //Chinese (Simplified)
+        "hu": "Széles háló gyűrű",
+        "zh": "猎网指环"
     },
     "DescriptionLocalization": {
-
-        "zh": "增加钓竿50%捕获区域。" //Chinese (Simplified)
+        "hu": "50%-kal megnöveli a horgászbot kapási területét.",
+        "zh": "增加钓竿50%捕获区域。"
     }
 }
