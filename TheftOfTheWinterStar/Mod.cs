@@ -236,36 +236,34 @@ namespace TheftOfTheWinterStar
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             int seasonalDelimiter = Mod.Ja.GetBigCraftableId("Tempus Globe");
-            foreach (var loc in Game1.locations)
+            foreach (var loc in Game1.locations.Where(this.IsFarm))
             {
-                if (loc.IsFarm || loc is IslandWest)
+                foreach (var pair in loc.Objects.Pairs)
                 {
-                    foreach (var pair in loc.Objects.Pairs)
+                    var obj = pair.Value;
+                    if (obj.bigCraftable.Value && obj.ParentSheetIndex == seasonalDelimiter)
                     {
-                        var obj = pair.Value;
-                        if (obj.bigCraftable.Value && obj.ParentSheetIndex == seasonalDelimiter)
+                        for (int ix = -2; ix <= 2; ++ix)
                         {
-                            for (int ix = -2; ix <= 2; ++ix)
+                            for (int iy = -2; iy <= 2; ++iy)
                             {
-                                for (int iy = -2; iy <= 2; ++iy)
+                                var key = new Vector2(pair.Key.X + ix, pair.Key.Y + iy);
+                                if (!loc.terrainFeatures.TryGetValue(key, out TerrainFeature feature))
+                                    continue;
+                                if (feature is HoeDirt dirt)
                                 {
-                                    var key = new Vector2(pair.Key.X + ix, pair.Key.Y + iy);
-                                    if (!loc.terrainFeatures.TryGetValue(key, out TerrainFeature feature))
-                                        continue;
-                                    if (feature is HoeDirt dirt)
-                                    {
-                                        dirt.state.Value = HoeDirt.watered;
-                                        dirt.updateNeighbors(loc, key);
-                                    }
+                                    dirt.state.Value = HoeDirt.watered;
+                                    dirt.updateNeighbors(loc, key);
                                 }
                             }
-                            loc.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 2176, 320, 320), 60f, 4, 100, pair.Key * 64f + new Vector2(sbyte.MinValue, sbyte.MinValue), false, false)
-                            {
-                                color = Color.White * 0.4f,
-                                delayBeforeAnimationStart = Game1.random.Next(1000),
-                                id = pair.Key.X * 4000f + pair.Key.Y
-                            });
                         }
+
+                        loc.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 2176, 320, 320), 60f, 4, 100, pair.Key * 64f + new Vector2(sbyte.MinValue, sbyte.MinValue), false, false)
+                        {
+                            color = Color.White * 0.4f,
+                            delayBeforeAnimationStart = Game1.random.Next(1000),
+                            id = pair.Key.X * 4000f + pair.Key.Y
+                        });
                     }
                 }
             }
@@ -273,6 +271,7 @@ namespace TheftOfTheWinterStar
 
         private void OnDayEnding(object sender, DayEndingEventArgs e)
         {
+            // save dungeon progress
             if (this.SaveData != null)
             {
                 this.SaveData.ArenaStage = this.SaveData.ArenaStage switch
@@ -283,67 +282,81 @@ namespace TheftOfTheWinterStar
                 };
             }
 
-            var arena = Game1.getLocationFromName("FrostDungeon.Arena");
-            arena.characters.Clear();
-            var bossArea = Game1.getLocationFromName("FrostDungeon.Boss");
-            if (!this.SaveData.BeatBoss)
+            // clear custom data from dungeon
             {
-                bossArea.characters.Clear();
-                bossArea.netObjects.Clear();
-                this.StartedBoss = false;
+                var arena = Game1.getLocationFromName("FrostDungeon.Arena");
+                arena.characters.Clear();
+                var bossArea = Game1.getLocationFromName("FrostDungeon.Boss");
+                if (!this.SaveData.BeatBoss)
+                {
+                    bossArea.characters.Clear();
+                    bossArea.netObjects.Clear();
+                    this.StartedBoss = false;
+                }
             }
 
+            // prevent crops from withering
             int seasonalDelimiter = Mod.Ja.GetBigCraftableId("Tempus Globe");
-            foreach (var loc in Game1.locations)
+            foreach (var loc in Game1.locations.Where(this.IsFarm))
             {
-                if (loc.IsFarm)
+                // find Tempus Globes coverage
+                int w = loc.map.Layers[0].LayerWidth, h = loc.map.Layers[0].LayerHeight;
+                bool[,] valid = new bool[w, h];
+
+                foreach (var pair in loc.Objects.Pairs)
                 {
-                    int w = loc.map.Layers[0].LayerWidth, h = loc.map.Layers[0].LayerHeight;
-                    bool[,] valid = new bool[w, h];
-
-                    foreach (var pair in loc.Objects.Pairs)
+                    var obj = pair.Value;
+                    if (obj.bigCraftable.Value && obj.ParentSheetIndex == seasonalDelimiter)
                     {
-                        var obj = pair.Value;
-                        if (obj.bigCraftable.Value && obj.ParentSheetIndex == seasonalDelimiter)
+                        for (int ix = -2; ix <= 2; ++ix)
                         {
-                            for (int ix = -2; ix <= 2; ++ix)
-                                for (int iy = -2; iy <= 2; ++iy)
-                                    valid[(int)pair.Key.X + ix, (int)pair.Key.Y + iy] = true;
-                        }
-                    }
-
-                    foreach (var pair in loc.terrainFeatures.Pairs)
-                    {
-                        var tf = pair.Value;
-                        if (tf is HoeDirt hd)
-                        {
-                            if (hd.crop == null)
-                                continue;
-
-                            if (valid[(int)pair.Key.X, (int)pair.Key.Y])
-                            {
-                                if (!hd.crop.seasonsToGrowIn.Contains(Game1.currentSeason))
-                                    hd.crop.seasonsToGrowIn.Add(Game1.currentSeason);
-                            }
-                            /*
-                            else
-                            {
-                                var cropData = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
-                                if ( !cropData.ContainsKey(hd.crop.netSeedIndex.Value))
-                                {
-                                    if ( hd.crop.netSeedIndex.Value != -1 )
-                                        Log.warn("no crop " + hd.crop.netSeedIndex.Value + "? ");
-                                    continue;
-                                }
-                                string[] seasons = cropData[hd.crop.netSeedIndex.Value].Split('/')[1].Split(' ');
-                                hd.crop.seasonsToGrowIn.Clear();
-                                hd.crop.seasonsToGrowIn.AddRange(seasons);
-                            }
-                            */
+                            for (int iy = -2; iy <= 2; ++iy)
+                                valid[(int)pair.Key.X + ix, (int)pair.Key.Y + iy] = true;
                         }
                     }
                 }
+
+                // prevent crop withering
+                foreach (var pair in loc.terrainFeatures.Pairs)
+                {
+                    var tf = pair.Value;
+                    if (tf is HoeDirt hd)
+                    {
+                        if (hd.crop == null)
+                            continue;
+
+                        if (valid[(int)pair.Key.X, (int)pair.Key.Y])
+                        {
+                            if (!hd.crop.seasonsToGrowIn.Contains(Game1.currentSeason))
+                                hd.crop.seasonsToGrowIn.Add(Game1.currentSeason);
+                        }
+                        /*
+                        else
+                        {
+                            var cropData = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
+                            if ( !cropData.ContainsKey(hd.crop.netSeedIndex.Value))
+                            {
+                                if ( hd.crop.netSeedIndex.Value != -1 )
+                                    Log.warn("no crop " + hd.crop.netSeedIndex.Value + "? ");
+                                continue;
+                            }
+                            string[] seasons = cropData[hd.crop.netSeedIndex.Value].Split('/')[1].Split(' ');
+                            hd.crop.seasonsToGrowIn.Clear();
+                            hd.crop.seasonsToGrowIn.AddRange(seasons);
+                        }
+                        */
+                    }
+                }
             }
+        }
+
+        /// <summary>Get whether a location is farmable.</summary>
+        /// <param name="location">The location to check.</param>
+        private bool IsFarm(GameLocation location)
+        {
+            return
+                location.IsFarm
+                || location is Farm or IslandWest;
         }
 
         private void OnIdsFixed(object sender, EventArgs e)
