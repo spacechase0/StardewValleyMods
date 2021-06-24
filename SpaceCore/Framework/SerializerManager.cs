@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using SpaceCore.Patches;
 using SpaceShared;
@@ -97,7 +98,7 @@ namespace SpaceCore.Framework
         *********/
         public void InitializeSerializers()
         {
-            if (this.InitializedSerializers)
+            if (this.InitializedSerializers || !SpaceCore.ModTypes.Any())
                 return;
             this.InitializedSerializers = true;
 
