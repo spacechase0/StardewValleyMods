@@ -13,8 +13,8 @@ The mod affects two shops:
 
 * In Clint's shop, you can choose from three tool upgrade option: normal (three days), one
   day (1.5× cost), and immediate (2× cost).
-* In Robin's shop, you can start a building construction normally and then talk to her again for
-  the option to speed up construction for an extra 50% of the base price.
+* In Robin's shop, you can start a building construction normally. After placing the building,
+  you'll be given the option to speed up construction for an extra 50% of the base price per day.
 
 The prices can be configured by editing the `config.json` file.
 
