@@ -21,7 +21,7 @@ namespace JsonAssets.Framework
             Func<string, string> normalize = Mod.instance.Helper.Content.NormalizeAssetName;
 
             //normalize with 
-            this.Files = new Dictionary<string, Injector>()
+            this.Files = new Dictionary<string, Injector>
             {
                 {normalize("Data\\ObjectInformation"), this.InjectDataObjectInformation},
                 {normalize("Data\\ObjectContextTags"), this.InjectDataObjectContextTags},

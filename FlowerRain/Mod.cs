@@ -131,7 +131,7 @@ namespace FlowerRain
 
                 foreach (var col in cols)
                 {
-                    FlowerData fd = new FlowerData()
+                    FlowerData fd = new FlowerData
                     {
                         Index = product,
                         Color = col,

@@ -363,7 +363,7 @@ namespace SpaceCore.Patches
         {
             //Log.trace( "Start serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
             using var ms = new MemoryStream();
-            using var writer = XmlWriter.Create(ms, new XmlWriterSettings() { CloseOutput = false });
+            using var writer = XmlWriter.Create(ms, new XmlWriterSettings { CloseOutput = false });
 
             serializer.Serialize(writer, obj);
             XmlDocument doc = new XmlDocument();

@@ -531,7 +531,7 @@ namespace SurfingFestival
                     state.ShouldUseItem = false;
                     if (racer == Game1.player)
                     {
-                        var msg = new UseItemMessage() { ItemUsed = state.CurrentItem.Value };
+                        var msg = new UseItemMessage { ItemUsed = state.CurrentItem.Value };
                         this.Helper.Multiplayer.SendMessage(msg, UseItemMessage.Type, new[] { this.ModManifest.UniqueID });
                     }
                     switch (state.CurrentItem.Value)
@@ -559,7 +559,7 @@ namespace SurfingFestival
 
                             state.CurrentItem = null;
                             TemporaryAnimatedSprite tas = new TemporaryAnimatedSprite(128, 0, 0, 0, new Vector2(), false, false);
-                            Mod.Obstacles.Add(new Obstacle()
+                            Mod.Obstacles.Add(new Obstacle
                             {
                                 Type = ObstacleType.HomingProjectile,
                                 Position = new Vector2(racer.GetBoundingBox().Center.X, racer.GetBoundingBox().Center.Y),
@@ -572,7 +572,7 @@ namespace SurfingFestival
                             break;
                         case Item.FirstPlaceProjectile:
                             state.CurrentItem = null;
-                            Mod.Obstacles.Add(new Obstacle()
+                            Mod.Obstacles.Add(new Obstacle
                             {
                                 Type = ObstacleType.FirstPlaceProjectile,
                                 Position = new Vector2(racer.GetBoundingBox().Center.X, racer.GetBoundingBox().Center.Y),
@@ -1058,19 +1058,19 @@ namespace SurfingFestival
                 {
                     var tile = obstaclesLayer.Tiles[ix, iy];
                     if (tile?.TileIndex == 3)
-                        Mod.Obstacles.Add(new Obstacle()
+                        Mod.Obstacles.Add(new Obstacle
                         {
                             Type = ObstacleType.Item,
                             Position = new Vector2(ix * Game1.tileSize, iy * Game1.tileSize)
                         });
                     else if (tile?.TileIndex == 64)
-                        Mod.Obstacles.Add(new Obstacle()
+                        Mod.Obstacles.Add(new Obstacle
                         {
                             Type = ObstacleType.Net,
                             Position = new Vector2(ix * Game1.tileSize, iy * Game1.tileSize)
                         });
                     else if (tile?.TileIndex == 32)
-                        Mod.Obstacles.Add(new Obstacle()
+                        Mod.Obstacles.Add(new Obstacle
                         {
                             Type = ObstacleType.Rock,
                             Position = new Vector2(ix * Game1.tileSize, iy * Game1.tileSize)
@@ -1106,7 +1106,7 @@ namespace SurfingFestival
             Mod.RacerState.Clear();
             foreach (string racerName in Mod.Racers)
             {
-                Mod.RacerState.Add(racerName, new RacerState()
+                Mod.RacerState.Add(racerName, new RacerState
                 {
                     Surfboard = r.Next(6),
                 });

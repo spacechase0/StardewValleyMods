@@ -383,7 +383,7 @@ namespace BuildableLocationsFramework.Patches
                         switch (__instance.FacingDirection)
                         {
                             case 0:
-                                __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>()
+                                __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>
                                 {
                                     new(9, 250),
                                     new(11, 250),
@@ -394,7 +394,7 @@ namespace BuildableLocationsFramework.Patches
                                 });
                                 break;
                             case 1:
-                                __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>()
+                                __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>
                                 {
                                     new(5, 250),
                                     new(7, 250),
@@ -405,7 +405,7 @@ namespace BuildableLocationsFramework.Patches
                                 });
                                 break;
                             case 2:
-                                __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>()
+                                __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>
                                 {
                                     new(1, 250),
                                     new(3, 250),
@@ -416,7 +416,7 @@ namespace BuildableLocationsFramework.Patches
                                 });
                                 break;
                             case 3:
-                                __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>()
+                                __instance.Sprite.setCurrentAnimation(new List<FarmerSprite.AnimationFrame>
                                 {
                                     new(5, 250, false, true),
                                     new(7, 250, false, true),

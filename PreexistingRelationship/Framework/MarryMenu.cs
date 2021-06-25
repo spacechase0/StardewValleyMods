@@ -40,12 +40,12 @@ namespace PreexistingRelationship.Framework
             }
             */
 
-            this.Ui = new RootElement()
+            this.Ui = new RootElement
             {
                 LocalPosition = new Vector2(this.xPositionOnScreen, this.yPositionOnScreen),
             };
 
-            var title = new Label()
+            var title = new Label
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.title"),
                 Bold = true,
@@ -53,7 +53,7 @@ namespace PreexistingRelationship.Framework
             title.LocalPosition = new Vector2((800 - title.Measure().X) / 2, 10);
             this.Ui.AddChild(title);
 
-            this.Ui.AddChild(new Label()
+            this.Ui.AddChild(new Label
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.text").ToString().Replace("\\n", "\n"),
                 LocalPosition = new Vector2(50, 75),
@@ -61,7 +61,7 @@ namespace PreexistingRelationship.Framework
                 NonBoldShadow = false,
             });
 
-            this.Table = new Table()
+            this.Table = new Table
             {
                 RowHeight = 200,
                 Size = new Vector2(700, 500),
@@ -75,7 +75,7 @@ namespace PreexistingRelationship.Framework
                     if (n >= valid.Count)
                         continue;
 
-                    var cont = new StaticContainer()
+                    var cont = new StaticContainer
                     {
                         Size = new Vector2(115 * 2, 97 * 2),
                         LocalPosition = new Vector2(250 * (n - i * 3) - 10, 0),
@@ -92,7 +92,7 @@ namespace PreexistingRelationship.Framework
                         Log.Trace("Selected " + this.SelectedNpc);
                     }
 
-                    cont.AddChild(new Image()
+                    cont.AddChild(new Image
                     {
                         Texture = Game1.mouseCursors,
                         TextureRect = new Rectangle(583, 411, 115, 97),
@@ -100,14 +100,14 @@ namespace PreexistingRelationship.Framework
                         LocalPosition = new Vector2(0, 0),
                         Callback = SelCallback,
                     });
-                    cont.AddChild(new Image()
+                    cont.AddChild(new Image
                     {
                         Texture = valid[n].Portrait,
                         TextureRect = new Rectangle(0, 128, 64, 64),
                         Scale = 2,
                         LocalPosition = new Vector2(50, 16),
                     });
-                    var name = new Label()
+                    var name = new Label
                     {
                         String = valid[n].displayName,
                         NonBoldScale = 0.5f,
@@ -122,13 +122,13 @@ namespace PreexistingRelationship.Framework
             }
             this.Ui.AddChild(this.Table);
 
-            this.Ui.AddChild(new Label()
+            this.Ui.AddChild(new Label
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.button.cancel"),
                 LocalPosition = new Vector2(175, 650),
                 Callback = (e) => Game1.exitActiveMenu(),
             });
-            this.Ui.AddChild(new Label()
+            this.Ui.AddChild(new Label
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.button.accept"),
                 LocalPosition = new Vector2(500, 650),
@@ -176,7 +176,7 @@ namespace PreexistingRelationship.Framework
 
             if (!Game1.IsMasterGame)
             {
-                Mod.Instance.Helper.Multiplayer.SendMessage(new DoMarriageMessage() { NpcName = this.SelectedNpc }, nameof(DoMarriageMessage), new[] { Mod.Instance.ModManifest.UniqueID }/*, new long[] { Game1.MasterPlayer.UniqueMultiplayerID }*/ );
+                Mod.Instance.Helper.Multiplayer.SendMessage(new DoMarriageMessage { NpcName = this.SelectedNpc }, nameof(DoMarriageMessage), new[] { Mod.Instance.ModManifest.UniqueID }/*, new long[] { Game1.MasterPlayer.UniqueMultiplayerID }*/ );
             }
 
             Mod.DoMarriage(Game1.player, this.SelectedNpc, true);
