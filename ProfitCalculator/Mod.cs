@@ -93,7 +93,7 @@ namespace ProfitCalculator
                 var data = new ProfitData
                 {
                     Profit = profit,
-                    Crop = name,
+                    Crop = name
                 };
                 profits.Add(data);
             }

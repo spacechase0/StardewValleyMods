@@ -5,13 +5,13 @@ namespace PyromancersJourney.Framework
     internal enum FloorTile
     {
         Stone,
-        Lava,
+        Lava
     }
 
     internal enum WallTile
     {
         Empty,
-        Stone,
+        Stone
     }
 
     internal class Map

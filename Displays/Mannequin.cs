@@ -19,12 +19,12 @@ namespace Displays
         public enum MannequinType
         {
             Plain,
-            Magic,
+            Magic
         }
         public enum MannequinGender
         {
             Male,
-            Female,
+            Female
         }
 
         public readonly NetEnum<MannequinType> MannType = new(MannequinType.Plain);

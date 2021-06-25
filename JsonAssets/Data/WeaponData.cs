@@ -17,7 +17,7 @@ namespace JsonAssets.Data
         {
             Dagger = MeleeWeapon.dagger,
             Club = MeleeWeapon.club,
-            Sword = MeleeWeapon.defenseSword,
+            Sword = MeleeWeapon.defenseSword
         }
 
         public string Description { get; set; }

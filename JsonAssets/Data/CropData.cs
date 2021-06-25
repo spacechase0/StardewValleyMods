@@ -22,7 +22,7 @@ namespace JsonAssets.Data
         {
             Normal,
             IndoorsOnly,
-            Paddy,
+            Paddy
         }
         public CropType_ CropType { get; set; } = CropType_.Normal;
 

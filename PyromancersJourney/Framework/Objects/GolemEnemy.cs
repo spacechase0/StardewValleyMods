@@ -18,7 +18,7 @@ namespace PyromancersJourney.Framework.Objects
             Glow,
             Shoot,
             Immune,
-            Summon,
+            Summon
         }
         private AnimState State = AnimState.Glow;
         private int Frame;

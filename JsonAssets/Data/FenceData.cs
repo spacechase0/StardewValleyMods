@@ -19,7 +19,7 @@ namespace JsonAssets.Data
         public enum ToolType
         {
             Axe,
-            Pickaxe,
+            Pickaxe
         }
 
         public class Recipe_

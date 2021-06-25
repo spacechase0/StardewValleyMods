@@ -15,7 +15,7 @@ namespace JsonAssets.Framework
         {
             this.Files = new List<string>(new[]
             {
-                "Data\\NPCGiftTastes",
+                "Data\\NPCGiftTastes"
             });
         }
 

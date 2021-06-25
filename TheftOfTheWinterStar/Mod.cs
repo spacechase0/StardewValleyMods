@@ -31,7 +31,7 @@ namespace TheftOfTheWinterStar
         Stage1,
         Finished1,
         Stage2,
-        Finished2,
+        Finished2
     }
 
     internal class Mod : StardewModdingAPI.Mod, IAssetEditor
@@ -63,7 +63,7 @@ namespace TheftOfTheWinterStar
             "Bonus3",
             "Maze",
             "Bonus4",
-            "Boss",
+            "Boss"
         };
 
         public override void Entry(IModHelper helper)
@@ -749,7 +749,7 @@ namespace TheftOfTheWinterStar
                 {
                     240, 241, 242, 243,
                     256, 257, 258, 259, 260,
-                    272, 273, 274, 275, 276,
+                    272, 273, 274, 275, 276
                 };
                 int target = 243;
 

@@ -42,13 +42,13 @@ namespace PreexistingRelationship.Framework
 
             this.Ui = new RootElement
             {
-                LocalPosition = new Vector2(this.xPositionOnScreen, this.yPositionOnScreen),
+                LocalPosition = new Vector2(this.xPositionOnScreen, this.yPositionOnScreen)
             };
 
             var title = new Label
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.title"),
-                Bold = true,
+                Bold = true
             };
             title.LocalPosition = new Vector2((800 - title.Measure().X) / 2, 10);
             this.Ui.AddChild(title);
@@ -58,14 +58,14 @@ namespace PreexistingRelationship.Framework
                 String = Mod.Instance.Helper.Translation.Get("menu.text").ToString().Replace("\\n", "\n"),
                 LocalPosition = new Vector2(50, 75),
                 NonBoldScale = 0.75f,
-                NonBoldShadow = false,
+                NonBoldShadow = false
             });
 
             this.Table = new Table
             {
                 RowHeight = 200,
                 Size = new Vector2(700, 500),
-                LocalPosition = new Vector2(50, 225),
+                LocalPosition = new Vector2(50, 225)
             };
             for (int i = 0; i < (valid.Count + 2) / 3; ++i)
             {
@@ -78,7 +78,7 @@ namespace PreexistingRelationship.Framework
                     var cont = new StaticContainer
                     {
                         Size = new Vector2(115 * 2, 97 * 2),
-                        LocalPosition = new Vector2(250 * (n - i * 3) - 10, 0),
+                        LocalPosition = new Vector2(250 * (n - i * 3) - 10, 0)
                     };
                     // Note: This is being called 4 times for some reason
                     // Probably a UI framework bug.
@@ -98,20 +98,20 @@ namespace PreexistingRelationship.Framework
                         TextureRect = new Rectangle(583, 411, 115, 97),
                         Scale = 2,
                         LocalPosition = new Vector2(0, 0),
-                        Callback = SelCallback,
+                        Callback = SelCallback
                     });
                     cont.AddChild(new Image
                     {
                         Texture = valid[n].Portrait,
                         TextureRect = new Rectangle(0, 128, 64, 64),
                         Scale = 2,
-                        LocalPosition = new Vector2(50, 16),
+                        LocalPosition = new Vector2(50, 16)
                     });
                     var name = new Label
                     {
                         String = valid[n].displayName,
                         NonBoldScale = 0.5f,
-                        NonBoldShadow = false,
+                        NonBoldShadow = false
                     };
                     name.LocalPosition = new Vector2(115 - name.Measure().X / 2, 160);
                     cont.AddChild(name);
@@ -126,7 +126,7 @@ namespace PreexistingRelationship.Framework
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.button.cancel"),
                 LocalPosition = new Vector2(175, 650),
-                Callback = (e) => Game1.exitActiveMenu(),
+                Callback = (e) => Game1.exitActiveMenu()
             });
             this.Ui.AddChild(new Label
             {

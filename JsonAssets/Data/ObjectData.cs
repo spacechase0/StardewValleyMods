@@ -40,7 +40,7 @@ namespace JsonAssets.Data
             Ring = SObject.ringCategory,
             AnimalGoods = SObject.sellAtPierresAndMarnies,
             Greens = SObject.GreensCategory,
-            Artifact = int.MinValue, // Special case
+            Artifact = int.MinValue // Special case
         }
 
         public class Recipe_

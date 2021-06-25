@@ -99,7 +99,7 @@ namespace BugNet
             {
                 Texture = new TextureTarget { Texture = tex, SourceRect = texRect },
                 Name = getLocalizedName,
-                MakeFunction = makeFunc,
+                MakeFunction = makeFunc
             });
 
             var texData = new Color[16 * 16];
@@ -116,7 +116,7 @@ namespace BugNet
                 CategoryTextOverride = "Critter",
                 Price = critterId.Contains("Butterfly") ? 50 : 100,
                 ContextTags = new List<string>(new[] { "critter" }),
-                HideFromShippingCollection = true,
+                HideFromShippingCollection = true
             });
         }
 

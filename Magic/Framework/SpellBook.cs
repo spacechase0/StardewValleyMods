@@ -74,7 +74,7 @@ namespace Magic.Framework
         public Dictionary<string, int> KnownSpells = new();
         public PreparedSpell[][] Prepared = {
             new PreparedSpell[] { null, null, null, null, null },
-            new PreparedSpell[] { null, null, null, null, null },
+            new PreparedSpell[] { null, null, null, null, null }
         };
         public int SelectedPrepared;
 

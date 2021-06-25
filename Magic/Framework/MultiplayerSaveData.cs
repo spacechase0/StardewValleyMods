@@ -21,7 +21,7 @@ namespace Magic.Framework
         internal static JsonSerializerSettings NetworkSerializerSettings { get; } = new()
         {
             Formatting = Formatting.None,
-            ObjectCreationHandling = ObjectCreationHandling.Replace,
+            ObjectCreationHandling = ObjectCreationHandling.Replace
         };
 
         internal void SyncMineFull()

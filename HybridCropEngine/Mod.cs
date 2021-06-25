@@ -145,7 +145,7 @@ namespace HybridCropEngine
                     {
                         GetHoeDirt(-1, -1), GetHoeDirt(0, -1), GetHoeDirt(1, -1),
                         GetHoeDirt(-1, 0), GetHoeDirt(0, 0), GetHoeDirt(1, 0),
-                        GetHoeDirt(-1, 1), GetHoeDirt(0, 1), GetHoeDirt(1, 1),
+                        GetHoeDirt(-1, 1), GetHoeDirt(0, 1), GetHoeDirt(1, 1)
                     };
 
                     if (dirts[4] == null || dirts[4].crop != null)

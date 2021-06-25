@@ -25,7 +25,7 @@ namespace SurfingFestival
         Boost,
         HomingProjectile,
         FirstPlaceProjectile,
-        Invincibility,
+        Invincibility
     }
 
     internal enum ObstacleType
@@ -34,14 +34,14 @@ namespace SurfingFestival
         Net,
         Rock,
         HomingProjectile,
-        FirstPlaceProjectile,
+        FirstPlaceProjectile
     }
 
     internal enum BonfireState
     {
         NotDone,
         Normal,
-        Shorts,
+        Shorts
     }
 
     internal class Obstacle
@@ -262,7 +262,7 @@ namespace SurfingFestival
                     new(10, 66),
                     new(9, 67),
                     new(8, 68),
-                    new(7, 69),
+                    new(7, 69)
                 },
                 new Vector2[]
                 {
@@ -275,7 +275,7 @@ namespace SurfingFestival
                     new(10, 52),
                     new(9, 51),
                     new(8, 50),
-                    new(7, 49),
+                    new(7, 49)
                 },
                 new Vector2[]
                 {
@@ -288,7 +288,7 @@ namespace SurfingFestival
                     new(139, 52),
                     new(140, 51),
                     new(141, 50),
-                    new(142, 49),
+                    new(142, 49)
                 },
                 new Vector2[]
                 {
@@ -301,8 +301,8 @@ namespace SurfingFestival
                     new(139, 66),
                     new(140, 67),
                     new(141, 68),
-                    new(142, 69),
-                },
+                    new(142, 69)
+                }
             };
 
             foreach (string racerName in Mod.Racers)
@@ -564,7 +564,7 @@ namespace SurfingFestival
                                 Type = ObstacleType.HomingProjectile,
                                 Position = new Vector2(racer.GetBoundingBox().Center.X, racer.GetBoundingBox().Center.Y),
                                 HomingTarget = target,
-                                UnderwaterSprite = tas,
+                                UnderwaterSprite = tas
                             });
                             Game1.CurrentEvent.underwaterSprites ??= new List<TemporaryAnimatedSprite>();
                             Game1.CurrentEvent.underwaterSprites.Add(tas);
@@ -576,7 +576,7 @@ namespace SurfingFestival
                             {
                                 Type = ObstacleType.FirstPlaceProjectile,
                                 Position = new Vector2(racer.GetBoundingBox().Center.X, racer.GetBoundingBox().Center.Y),
-                                HomingTarget = Mod.GetRacePlacement()[Mod.GetRacePlacement().Count - 1],
+                                HomingTarget = Mod.GetRacePlacement()[Mod.GetRacePlacement().Count - 1]
                             });
                             Game1.playSound("fishEscape");
                             break;
@@ -922,7 +922,7 @@ namespace SurfingFestival
                 var answers = new Response[]
                 {
                     new("MakeOffering", this.Helper.Translation.Get("secret.yes")),
-                    new("Leave", this.Helper.Translation.Get("secret.no")),
+                    new("Leave", this.Helper.Translation.Get("secret.no"))
                 };
 
                 void AfterQuestion(Farmer who, string choice)
@@ -1108,7 +1108,7 @@ namespace SurfingFestival
             {
                 Mod.RacerState.Add(racerName, new RacerState
                 {
-                    Surfboard = r.Next(6),
+                    Surfboard = r.Next(6)
                 });
 
                 // NPCs get a buff since they're dumb

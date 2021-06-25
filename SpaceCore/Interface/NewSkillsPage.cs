@@ -105,7 +105,7 @@ namespace SpaceCore.Interface
                     new("Objects:DarkTalisman", Game1.player.hasDarkTalisman),
                     new("Objects:MagicInk", Game1.player.hasMagicInk),
                     new("Objects:BearPaw", Game1.player.eventsSeen.Contains(2120303)),
-                    new("Objects:SpringOnionBugs", Game1.player.eventsSeen.Contains(3910979)),
+                    new("Objects:SpringOnionBugs", Game1.player.eventsSeen.Contains(3910979))
                 };
 
                 const int padTop = 16;

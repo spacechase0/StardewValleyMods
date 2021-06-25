@@ -134,7 +134,7 @@ namespace FlowerRain
                     FlowerData fd = new FlowerData
                     {
                         Index = product,
-                        Color = col,
+                        Color = col
                     };
 
                     foreach (string season in seasons)
