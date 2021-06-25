@@ -43,7 +43,7 @@ namespace HybridCropEngine
             if (gmcm != null)
             {
                 gmcm.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                gmcm.RegisterSimpleOption(this.ModManifest, "Scan Everywhere", "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.", () => Mod.Config.ScanEverywhere, (b) => Mod.Config.ScanEverywhere = b);
+                gmcm.RegisterSimpleOption(this.ModManifest, "Scan Everywhere", "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.", () => Mod.Config.ScanEverywhere, b => Mod.Config.ScanEverywhere = b);
             }
         }
 

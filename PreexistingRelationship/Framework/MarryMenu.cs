@@ -126,13 +126,13 @@ namespace PreexistingRelationship.Framework
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.button.cancel"),
                 LocalPosition = new Vector2(175, 650),
-                Callback = (e) => Game1.exitActiveMenu()
+                Callback = e => Game1.exitActiveMenu()
             });
             this.Ui.AddChild(new Label
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.button.accept"),
                 LocalPosition = new Vector2(500, 650),
-                Callback = (e) => { this.DoMarriage(); }
+                Callback = e => this.DoMarriage()
             });
         }
 
