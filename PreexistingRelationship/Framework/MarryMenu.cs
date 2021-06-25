@@ -67,28 +67,30 @@ namespace PreexistingRelationship.Framework
                 Size = new Vector2(700, 500),
                 LocalPosition = new Vector2(50, 225)
             };
-            for (int i = 0; i < (valid.Count + 2) / 3; ++i)
+            for (int row = 0; row < (valid.Count + 2) / 3; ++row)
             {
-                var row = new StaticContainer();
-                for (int n = i * 3; n < (i + 1) * 3; ++n)
+                var rowContainer = new StaticContainer();
+                for (int col = row * 3; col < (row + 1) * 3; ++col)
                 {
-                    if (n >= valid.Count)
+                    if (col >= valid.Count)
                         continue;
 
                     var cont = new StaticContainer
                     {
                         Size = new Vector2(115 * 2, 97 * 2),
-                        LocalPosition = new Vector2(250 * (n - i * 3) - 10, 0)
+                        LocalPosition = new Vector2(250 * (col - row * 3) - 10, 0)
                     };
+
                     // Note: This is being called 4 times for some reason
                     // Probably a UI framework bug.
+                    string curNpcName = valid[col].Name; // avoid capturing the loop variable in the callback, since it'll change value
                     void SelCallback(Element e)
                     {
                         if (this.SelectedContainer != null)
                             this.SelectedContainer.OutlineColor = null;
                         this.SelectedContainer = cont;
                         this.SelectedContainer.OutlineColor = Color.Green;
-                        this.SelectedNpc = valid[n].Name;
+                        this.SelectedNpc = curNpcName;
                         Log.Trace("Selected " + this.SelectedNpc);
                     }
 
@@ -102,23 +104,23 @@ namespace PreexistingRelationship.Framework
                     });
                     cont.AddChild(new Image
                     {
-                        Texture = valid[n].Portrait,
+                        Texture = valid[col].Portrait,
                         TextureRect = new Rectangle(0, 128, 64, 64),
                         Scale = 2,
                         LocalPosition = new Vector2(50, 16)
                     });
                     var name = new Label
                     {
-                        String = valid[n].displayName,
+                        String = valid[col].displayName,
                         NonBoldScale = 0.5f,
                         NonBoldShadow = false
                     };
                     name.LocalPosition = new Vector2(115 - name.Measure().X / 2, 160);
                     cont.AddChild(name);
 
-                    row.AddChild(cont);
+                    rowContainer.AddChild(cont);
                 }
-                this.Table.AddRow(new Element[] { row });
+                this.Table.AddRow(new Element[] { rowContainer });
             }
             this.Ui.AddChild(this.Table);
 
