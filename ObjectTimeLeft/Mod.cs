@@ -1,10 +1,12 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ObjectTimeLeft.Framework;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using SObject = StardewValley.Object;
 
 namespace ObjectTimeLeft
 {
@@ -13,7 +15,7 @@ namespace ObjectTimeLeft
         public static Mod Instance;
         public static Configuration Config;
 
-        private bool Showing = true;
+        private bool Showing;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -22,6 +24,7 @@ namespace ObjectTimeLeft
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
+            this.Showing = Mod.Config.ShowOnStart;
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.Display.RenderingHud += this.OnRenderingHud;
@@ -34,7 +37,9 @@ namespace ObjectTimeLeft
             if (capi != null)
             {
                 capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Mod.Config.ToggleKey, (SButton val) => Mod.Config.ToggleKey = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Show on Start", "Whether to start the game with time left already showing.", () => Mod.Config.ShowOnStart, val => Mod.Config.ShowOnStart = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Mod.Config.ToggleKey, val => Mod.Config.ToggleKey = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Text Scale", "Scale of text that will superimpose the objects.", () => Mod.Config.TextScale, val => Mod.Config.TextScale = val);
             }
         }
 
@@ -55,31 +60,89 @@ namespace ObjectTimeLeft
             if (!this.Showing || !Context.IsPlayerFree)
                 return;
 
-            var sb = e.SpriteBatch;
-            foreach (var entryKey in Game1.currentLocation.netObjects.Keys)
+            Color shadowColor = Color.Black * 0.5f;
+            float zoomLevel = this.GetZoomLevel();
+            float scale = zoomLevel * Mod.Config.TextScale;
+
+            void DrawString(string str, Vector2 position, Color color)
             {
-                var obj = Game1.currentLocation.netObjects[entryKey];
-                if (obj.MinutesUntilReady <= 0 || obj.MinutesUntilReady == 999999 || obj.Name == "Stone")
+                e.SpriteBatch.DrawString(
+                    spriteFont: Game1.dialogueFont,
+                    text: str,
+                    position: position,
+                    color: color,
+                    rotation: 0.0f,
+                    origin: Vector2.Zero,
+                    scale: scale,
+                    effects: SpriteEffects.None,
+                    layerDepth: 0.0f
+                );
+            }
+
+            foreach (var pair in Game1.currentLocation.Objects.Pairs)
+            {
+                SObject obj = pair.Value;
+                if (obj.MinutesUntilReady is <= 0 or 999999 || obj.Name == "Stone")
                     continue;
 
-                //float num = (float)(4.0 * Math.Round(Math.Sin(DateTime.Now.TimeOfDay.TotalMilliseconds / 250.0), 2));
-                float x = entryKey.X;
-                float y = entryKey.Y;
-                Vector2 pos = Game1.GlobalToLocal(Game1.viewport, new Vector2(x * Game1.tileSize, y * Game1.tileSize));
-                x = pos.X;
-                y = pos.Y;
-                string str = "" + obj.MinutesUntilReady / 10;
-                float w = Game1.dialogueFont.MeasureString(str).X;
-                x += (Game1.tileSize - w) / 2;
+                string text = (obj.MinutesUntilReady / 10).ToString();
+                Vector2 pos = this.GetTimeLeftPosition(pair.Key, text);
 
-                sb.DrawString(Game1.dialogueFont, str, new Vector2(x + 0, y + 3), (Color.Black) * 0.5f);
-                sb.DrawString(Game1.dialogueFont, str, new Vector2(x + 3, y + 0), (Color.Black) * 0.5f);
-                sb.DrawString(Game1.dialogueFont, str, new Vector2(x + 0, y - 3), (Color.Black) * 0.5f);
-                sb.DrawString(Game1.dialogueFont, str, new Vector2(x - 3, y - 0), (Color.Black) * 0.5f);
-                sb.DrawString(Game1.dialogueFont, str, new Vector2(x, y), Color.White);
-                //sb.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2((float)(x * Game1.tileSize - 8), (float)(y * Game1.tileSize - Game1.tileSize * 3 / 2 - 16) + num)), new Microsoft.Xna.Framework.Rectangle?(new Microsoft.Xna.Framework.Rectangle(141, 465, 20, 24)), Color.White * 0.75f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, (float)((double)((y + 1) * Game1.tileSize) / 10000.0 + 9.99999997475243E-07 + (double)obj.tileLocation.X / 10000.0 + (obj.parentSheetIndex == 105 ? 0.00150000001303852 : 0.0)));
-                //StardewValley.BellsAndWhistles.SpriteText.drawString(sb, "" + obj.minutesUntilReady, (int)pos.X, (int)pos.Y);
+                // draw text outline for contrast
+                void DrawOutline(int offsetX, int offsetY)
+                {
+                    Vector2 offset = this.ModifyCoordinatesForUiScale(new Vector2(offsetX, offsetY));
+                    DrawString(text, pos + offset, shadowColor);
+                }
+                DrawOutline(0, 3);
+                DrawOutline(3, 0);
+                DrawOutline(0, -3);
+                DrawOutline(-3, 0);
+
+                // draw text
+                DrawString(text, pos, Color.White);
             }
+        }
+
+        /// <summary>Get the position at which to draw the given text for a machine.</summary>
+        /// <param name="tile">The tile position containing the machine.</param>
+        /// <param name="text">The text to draw over the machine.</param>
+        private Vector2 GetTimeLeftPosition(Vector2 tile, string text)
+        {
+            // get screen pixel position
+            Vector2 pos = Game1.GlobalToLocal(
+                Game1.uiViewport,
+                new Vector2(x: tile.X * Game1.tileSize, y: tile.Y * Game1.tileSize)
+            );
+
+            // center text over tile
+            float textWidth = Game1.dialogueFont.MeasureString(text).X;
+            pos.X += (Game1.tileSize - textWidth) / 2;
+
+            // apply zoom level
+            return this.ModifyCoordinatesForUiScale(pos);
+        }
+
+        /// <summary>Apply zoom and UI scaling to a set of coordinates.</summary>
+        /// <param name="coordinates">The coordinates to adjust.</param>
+        private Vector2 ModifyCoordinatesForUiScale(Vector2 coordinates)
+        {
+            if (Constants.TargetPlatform == GamePlatform.Android)
+                return coordinates * this.GetZoomLevel();
+
+            return Utility.ModifyCoordinatesForUIScale(coordinates);
+        }
+
+        /// <summary>Get the game's current zoom level.</summary>
+        private float GetZoomLevel()
+        {
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                var options = this.Helper.Reflection.GetField<Options>(typeof(Game1), nameof(Game1.options)).GetValue();
+                return options.zoomLevel;
+            }
+
+            return Game1.options.zoomLevel;
         }
     }
 }
