@@ -1,12 +1,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
 using ObjectTimeLeft.Framework;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using SObject = StardewValley.Object;
 
 namespace ObjectTimeLeft
 {
@@ -37,9 +37,9 @@ namespace ObjectTimeLeft
             if (capi != null)
             {
                 capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Show on Start", "Whether to start the game with time left already showing.", () => Mod.Config.ShowOnStart, (bool val) => Mod.Config.ShowOnStart = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Mod.Config.ToggleKey, (SButton val) => Mod.Config.ToggleKey = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Text Scale", "Scale of text that will superimpose the objects.", () => Mod.Config.TextScale, (float val) => Mod.Config.TextScale = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Show on Start", "Whether to start the game with time left already showing.", () => Mod.Config.ShowOnStart, val => Mod.Config.ShowOnStart = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Mod.Config.ToggleKey, val => Mod.Config.ToggleKey = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Text Scale", "Scale of text that will superimpose the objects.", () => Mod.Config.TextScale, val => Mod.Config.TextScale = val);
             }
         }
 
@@ -60,68 +60,76 @@ namespace ObjectTimeLeft
             if (!this.Showing || !Context.IsPlayerFree)
                 return;
 
-            var sb = e.SpriteBatch;
-            Color half_blk = Color.Black * 0.5f;
+            Color shadowColor = Color.Black * 0.5f;
             float zoom = this.GetOptions().zoomLevel;
-            float text_scale = zoom * Mod.Config.TextScale;
+            float scale = zoom * Mod.Config.TextScale;
 
-            void DrawString(string str, Vector2 vec, Color clr)
+            void DrawString(string str, Vector2 position, Color color)
             {
-                sb.DrawString(
+                e.SpriteBatch.DrawString(
                     spriteFont: Game1.dialogueFont,
                     text: str,
-                    position: vec,
-                    color: clr,
+                    position: position,
+                    color: color,
                     rotation: 0.0f,
                     origin: Vector2.Zero,
-                    scale: text_scale,
+                    scale: scale,
                     effects: SpriteEffects.None,
                     layerDepth: 0.0f
-                    );
+                );
             }
 
-            Vector2 Adjust(Vector2 vec, float dx, float dy)
+            foreach (var pair in Game1.currentLocation.Objects.Pairs)
             {
-                return new Vector2(vec.X + (dx * zoom), vec.Y + (dy * zoom));
-            }
-
-            foreach (var entryKey in Game1.currentLocation.netObjects.Keys)
-            {
-                var obj = Game1.currentLocation.netObjects[entryKey];
-                if (obj.MinutesUntilReady <= 0 || obj.MinutesUntilReady == 999999 || obj.Name == "Stone")
+                SObject obj = pair.Value;
+                if (obj.MinutesUntilReady is <= 0 or 999999 || obj.Name == "Stone")
                     continue;
 
-                float x = entryKey.X * Game1.tileSize;
-                float y = entryKey.Y * Game1.tileSize;
-                Vector2 pos = Game1.GlobalToLocal(Game1.viewport, new Vector2(x, y));
-                x = pos.X;
-                y = pos.Y;
-                string str = (obj.MinutesUntilReady / 10).ToString();
-                float w = Game1.dialogueFont.MeasureString(str).X;
-                x += (Game1.tileSize - w) / 2;
+                string text = (obj.MinutesUntilReady / 10).ToString();
+                Vector2 pos = this.GetTimeLeftPosition(pair.Key, text, zoom);
 
-                Vector2 vec_xy = new Vector2(x, y) * zoom;
-
-                // Outline/shadow to make text contrasting
-                DrawString(str, Adjust(vec_xy,  0,  3), half_blk);
-                DrawString(str, Adjust(vec_xy,  3,  0), half_blk);
-                DrawString(str, Adjust(vec_xy,  0, -3), half_blk);
-                DrawString(str, Adjust(vec_xy, -3,  0), half_blk);
-                // Actual text itself
-                DrawString(str, vec_xy, Color.White);
+                // draw text outline for contrast
+                void DrawOutline(int offsetX, int offsetY)
+                {
+                    Vector2 shadowPos = new(pos.X + (offsetX * zoom), pos.Y + (offsetY * zoom));
+                    DrawString(text, shadowPos, shadowColor);
                 }
-            }
+                DrawOutline(0, 3);
+                DrawOutline(3, 0);
+                DrawOutline(0, -3);
+                DrawOutline(-3, 0);
 
+                // draw text
+                DrawString(text, pos, Color.White);
+            }
+        }
+
+        /// <summary>Get the position at which to draw the given text for a machine.</summary>
+        /// <param name="tile">The tile position containing the machine.</param>
+        /// <param name="text">The text to draw over the machine.</param>
+        /// <param name="zoom">The UI zoom to apply.</param>
+        private Vector2 GetTimeLeftPosition(Vector2 tile, string text, float zoom)
+        {
+            // get screen pixel position
+            Vector2 pos = Game1.GlobalToLocal(
+                Game1.viewport,
+                new Vector2(x: tile.X * Game1.tileSize, y: tile.Y * Game1.tileSize)
+            );
+
+            // center text over tile
+            float textWidth = Game1.dialogueFont.MeasureString(text).X;
+            pos.X += (Game1.tileSize - textWidth) / 2;
+
+            // apply zoom level
+            return pos * zoom;
+        }
+
+        /// <summary>Get the <see cref="Game1.options"/> property.</summary>
         private Options GetOptions()
         {
-            if (Constants.TargetPlatform == GamePlatform.Android)
-            {
-                return this.Helper.Reflection.GetField<Options>(typeof(Game1), "options").GetValue();
-            }
-            else
-            {
-                return Game1.game1.instanceOptions;  // using .game1.instanceOptions for split-screen-friendly (??)
-            }
+            return Constants.TargetPlatform == GamePlatform.Android
+                ? this.Helper.Reflection.GetField<Options>(typeof(Game1), "options").GetValue()
+                : Game1.options;
         }
     }
 }
