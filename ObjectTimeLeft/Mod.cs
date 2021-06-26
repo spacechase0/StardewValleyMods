@@ -60,8 +60,10 @@ namespace ObjectTimeLeft
             var sb = e.SpriteBatch;
             Color half_blk = Color.Black * 0.5f;
             float zoom = this.GetOptions().zoomLevel;
+            float text_scale = zoom * Mod.Config.TextScale;
 
-            void DrawString(string str, Vector2 vec, Color clr) {
+            void DrawString(string str, Vector2 vec, Color clr)
+            {
                 sb.DrawString(
                     spriteFont: Game1.dialogueFont,
                     text: str,
@@ -69,11 +71,11 @@ namespace ObjectTimeLeft
                     color: clr,
                     rotation: 0.0f,
                     origin: Vector2.Zero,
-                    scale: zoom,
+                    scale: text_scale,
                     effects: SpriteEffects.None,
                     layerDepth: 0.0f
                     );
-                }
+            }
 
             Vector2 Adjust(Vector2 vec, float dx, float dy)
             {
