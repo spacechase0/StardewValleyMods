@@ -59,9 +59,7 @@ namespace ObjectTimeLeft
 
             var sb = e.SpriteBatch;
             Color half_blk = Color.Black * 0.5f;
-            float zoom = Constants.TargetPlatform != GamePlatform.Android
-                ? Game1.game1.instanceOptions.zoomLevel  // this is for splitscreen (??)
-                : Game1.options.zoomLevel;
+            float zoom = this.GetOptions().zoomLevel;
 
             void DrawString(string str, Vector2 vec, Color clr) {
                 sb.DrawString(
@@ -77,13 +75,17 @@ namespace ObjectTimeLeft
                     );
                 }
 
+            Vector2 Adjust(Vector2 vec, float dx, float dy)
+            {
+                return new Vector2(vec.X + (dx * zoom), vec.Y + (dy * zoom));
+            }
+
             foreach (var entryKey in Game1.currentLocation.netObjects.Keys)
             {
                 var obj = Game1.currentLocation.netObjects[entryKey];
                 if (obj.MinutesUntilReady <= 0 || obj.MinutesUntilReady == 999999 || obj.Name == "Stone")
                     continue;
 
-                //float num = (float)(4.0 * Math.Round(Math.Sin(DateTime.Now.TimeOfDay.TotalMilliseconds / 250.0), 2));
                 float x = entryKey.X * Game1.tileSize;
                 float y = entryKey.Y * Game1.tileSize;
                 Vector2 pos = Game1.GlobalToLocal(Game1.viewport, new Vector2(x, y));
@@ -95,22 +97,26 @@ namespace ObjectTimeLeft
 
                 Vector2 vec_xy = new Vector2(x, y) * zoom;
 
-                DrawString(str, vec_xy.Adjust( 0,  3), half_blk);
-                DrawString(str, vec_xy.Adjust( 3,  0), half_blk);
-                DrawString(str, vec_xy.Adjust( 0, -3), half_blk);
-                DrawString(str, vec_xy.Adjust(-3,  0), half_blk);
+                // Outline/shadow to make text contrasting
+                DrawString(str, Adjust(vec_xy,  0,  3), half_blk);
+                DrawString(str, Adjust(vec_xy,  3,  0), half_blk);
+                DrawString(str, Adjust(vec_xy,  0, -3), half_blk);
+                DrawString(str, Adjust(vec_xy, -3,  0), half_blk);
+                // Actual text itself
                 DrawString(str, vec_xy, Color.White);
-                //sb.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2((float)(x * Game1.tileSize - 8), (float)(y * Game1.tileSize - Game1.tileSize * 3 / 2 - 16) + num)), new Microsoft.Xna.Framework.Rectangle?(new Microsoft.Xna.Framework.Rectangle(141, 465, 20, 24)), Color.White * 0.75f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, (float)((double)((y + 1) * Game1.tileSize) / 10000.0 + 9.99999997475243E-07 + (double)obj.tileLocation.X / 10000.0 + (obj.parentSheetIndex == 105 ? 0.00150000001303852 : 0.0)));
-                //StardewValley.BellsAndWhistles.SpriteText.drawString(sb, "" + obj.minutesUntilReady, (int)pos.X, (int)pos.Y);
                 }
             }
-    }
 
-    internal static class Vector2Extensions
-    {
-        internal static Vector2 Adjust(this Vector2 vec, float dx, float dy)
+        private Options GetOptions()
         {
-            return new Vector2(vec.X + (dx * Game1.options.zoomLevel), vec.Y + (dy * Game1.options.zoomLevel));
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                return this.Helper.Reflection.GetField<Options>(typeof(Game1), "options").GetValue();
+            }
+            else
+            {
+                return Game1.game1.instanceOptions;  // using .game1.instanceOptions for split-screen-friendly (??)
+            }
         }
     }
 }
