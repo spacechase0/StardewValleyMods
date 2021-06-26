@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Added new options (thanks to pepoluan!):
+  * change the label size;
+  * hide the labels by default.
+* Fixed labels misaligned with non-default zoom and UI scaling options (in collaboration with pepoluan).
+
 ## 1.0.5
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
