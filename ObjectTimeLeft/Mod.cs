@@ -37,6 +37,7 @@ namespace ObjectTimeLeft
             {
                 capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
                 capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Mod.Config.ToggleKey, (SButton val) => Mod.Config.ToggleKey = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Text Scale", "Scale of text that will superimpose the objects.", () => Mod.Config.TextScale, (float val) => Mod.Config.TextScale = val);
             }
         }
 
