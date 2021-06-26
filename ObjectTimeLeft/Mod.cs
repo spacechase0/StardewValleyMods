@@ -59,7 +59,9 @@ namespace ObjectTimeLeft
 
             var sb = e.SpriteBatch;
             Color half_blk = Color.Black * 0.5f;
-            float zoom = Game1.game1.instanceOptions.zoomLevel;
+            float zoom = Constants.TargetPlatform != GamePlatform.Android
+                ? Game1.game1.instanceOptions.zoomLevel  // this is for splitscreen (??)
+                : Game1.options.zoomLevel;
 
             void DrawString(string str, Vector2 vec, Color clr) {
                 sb.DrawString(
