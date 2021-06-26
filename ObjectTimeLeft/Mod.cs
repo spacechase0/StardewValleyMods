@@ -63,12 +63,12 @@ namespace ObjectTimeLeft
                     continue;
 
                 //float num = (float)(4.0 * Math.Round(Math.Sin(DateTime.Now.TimeOfDay.TotalMilliseconds / 250.0), 2));
-                float x = entryKey.X;
-                float y = entryKey.Y;
-                Vector2 pos = Game1.GlobalToLocal(Game1.viewport, new Vector2(x * Game1.tileSize, y * Game1.tileSize));
+                float x = entryKey.X * Game1.tileSize;
+                float y = entryKey.Y * Game1.tileSize;
+                Vector2 pos = Game1.GlobalToLocal(Game1.viewport, new Vector2(x, y));
                 x = pos.X;
                 y = pos.Y;
-                string str = "" + obj.MinutesUntilReady / 10;
+                string str = (obj.MinutesUntilReady / 10).ToString();
                 float w = Game1.dialogueFont.MeasureString(str).X;
                 x += (Game1.tileSize - w) / 2;
 
