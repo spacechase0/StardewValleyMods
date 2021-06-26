@@ -61,8 +61,8 @@ namespace ObjectTimeLeft
                 return;
 
             Color shadowColor = Color.Black * 0.5f;
-            float zoom = this.GetOptions().zoomLevel;
-            float scale = zoom * Mod.Config.TextScale;
+            float zoomLevel = this.GetZoomLevel();
+            float scale = zoomLevel * Mod.Config.TextScale;
 
             void DrawString(string str, Vector2 position, Color color)
             {
@@ -86,13 +86,13 @@ namespace ObjectTimeLeft
                     continue;
 
                 string text = (obj.MinutesUntilReady / 10).ToString();
-                Vector2 pos = this.GetTimeLeftPosition(pair.Key, text, zoom);
+                Vector2 pos = this.GetTimeLeftPosition(pair.Key, text);
 
                 // draw text outline for contrast
                 void DrawOutline(int offsetX, int offsetY)
                 {
-                    Vector2 shadowPos = new(pos.X + (offsetX * zoom), pos.Y + (offsetY * zoom));
-                    DrawString(text, shadowPos, shadowColor);
+                    Vector2 offset = this.ModifyCoordinatesForUiScale(new Vector2(offsetX, offsetY));
+                    DrawString(text, pos + offset, shadowColor);
                 }
                 DrawOutline(0, 3);
                 DrawOutline(3, 0);
@@ -107,12 +107,11 @@ namespace ObjectTimeLeft
         /// <summary>Get the position at which to draw the given text for a machine.</summary>
         /// <param name="tile">The tile position containing the machine.</param>
         /// <param name="text">The text to draw over the machine.</param>
-        /// <param name="zoom">The UI zoom to apply.</param>
-        private Vector2 GetTimeLeftPosition(Vector2 tile, string text, float zoom)
+        private Vector2 GetTimeLeftPosition(Vector2 tile, string text)
         {
             // get screen pixel position
             Vector2 pos = Game1.GlobalToLocal(
-                Game1.viewport,
+                Game1.uiViewport,
                 new Vector2(x: tile.X * Game1.tileSize, y: tile.Y * Game1.tileSize)
             );
 
@@ -121,15 +120,29 @@ namespace ObjectTimeLeft
             pos.X += (Game1.tileSize - textWidth) / 2;
 
             // apply zoom level
-            return pos * zoom;
+            return this.ModifyCoordinatesForUiScale(pos);
         }
 
-        /// <summary>Get the <see cref="Game1.options"/> property.</summary>
-        private Options GetOptions()
+        /// <summary>Apply zoom and UI scaling to a set of coordinates.</summary>
+        /// <param name="coordinates">The coordinates to adjust.</param>
+        private Vector2 ModifyCoordinatesForUiScale(Vector2 coordinates)
         {
-            return Constants.TargetPlatform == GamePlatform.Android
-                ? this.Helper.Reflection.GetField<Options>(typeof(Game1), "options").GetValue()
-                : Game1.options;
+            if (Constants.TargetPlatform == GamePlatform.Android)
+                return coordinates * this.GetZoomLevel();
+
+            return Utility.ModifyCoordinatesForUIScale(coordinates);
+        }
+
+        /// <summary>Get the game's current zoom level.</summary>
+        private float GetZoomLevel()
+        {
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                var options = this.Helper.Reflection.GetField<Options>(typeof(Game1), nameof(Game1.options)).GetValue();
+                return options.zoomLevel;
+            }
+
+            return Game1.options.zoomLevel;
         }
     }
 }
