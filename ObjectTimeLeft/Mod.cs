@@ -56,6 +56,7 @@ namespace ObjectTimeLeft
                 return;
 
             var sb = e.SpriteBatch;
+            Color half_blk = Color.Black * 0.5f;
             foreach (var entryKey in Game1.currentLocation.netObjects.Keys)
             {
                 var obj = Game1.currentLocation.netObjects[entryKey];
@@ -72,14 +73,24 @@ namespace ObjectTimeLeft
                 float w = Game1.dialogueFont.MeasureString(str).X;
                 x += (Game1.tileSize - w) / 2;
 
-                sb.DrawString(Game1.dialogueFont, str, new Vector2(x + 0, y + 3), (Color.Black) * 0.5f);
-                sb.DrawString(Game1.dialogueFont, str, new Vector2(x + 3, y + 0), (Color.Black) * 0.5f);
-                sb.DrawString(Game1.dialogueFont, str, new Vector2(x + 0, y - 3), (Color.Black) * 0.5f);
-                sb.DrawString(Game1.dialogueFont, str, new Vector2(x - 3, y - 0), (Color.Black) * 0.5f);
-                sb.DrawString(Game1.dialogueFont, str, new Vector2(x, y), Color.White);
+                Vector2 vec_xy = new Vector2(x, y) * Game1.options.zoomLevel;
+
+                sb.DrawString(Game1.dialogueFont, str, vec_xy.Adjust( 0,  3), half_blk);
+                sb.DrawString(Game1.dialogueFont, str, vec_xy.Adjust( 3,  0), half_blk);
+                sb.DrawString(Game1.dialogueFont, str, vec_xy.Adjust( 0, -3), half_blk);
+                sb.DrawString(Game1.dialogueFont, str, vec_xy.Adjust(-3,  0), half_blk);
+                sb.DrawString(Game1.dialogueFont, str, vec_xy, Color.White);
                 //sb.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2((float)(x * Game1.tileSize - 8), (float)(y * Game1.tileSize - Game1.tileSize * 3 / 2 - 16) + num)), new Microsoft.Xna.Framework.Rectangle?(new Microsoft.Xna.Framework.Rectangle(141, 465, 20, 24)), Color.White * 0.75f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, (float)((double)((y + 1) * Game1.tileSize) / 10000.0 + 9.99999997475243E-07 + (double)obj.tileLocation.X / 10000.0 + (obj.parentSheetIndex == 105 ? 0.00150000001303852 : 0.0)));
                 //StardewValley.BellsAndWhistles.SpriteText.drawString(sb, "" + obj.minutesUntilReady, (int)pos.X, (int)pos.Y);
+                }
             }
+    }
+
+    internal static class Vector2Extensions
+    {
+        internal static Vector2 Adjust(this Vector2 vec, float dx, float dy)
+        {
+            return new Vector2(vec.X + (dx * Game1.options.zoomLevel), vec.Y + (dy * Game1.options.zoomLevel));
         }
     }
 }
