@@ -15,7 +15,7 @@ namespace ObjectTimeLeft
         public static Mod Instance;
         public static Configuration Config;
 
-        private bool Showing = true;
+        private bool Showing;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -24,6 +24,7 @@ namespace ObjectTimeLeft
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
+            this.Showing = Mod.Config.ShowOnStart;
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.Display.RenderingHud += this.OnRenderingHud;
@@ -36,6 +37,7 @@ namespace ObjectTimeLeft
             if (capi != null)
             {
                 capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
+                capi.RegisterSimpleOption(this.ModManifest, "Show on Start", "Whether to start the game with time left already showing.", () => Mod.Config.ShowOnStart, (bool val) => Mod.Config.ShowOnStart = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Mod.Config.ToggleKey, (SButton val) => Mod.Config.ToggleKey = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Text Scale", "Scale of text that will superimpose the objects.", () => Mod.Config.TextScale, (float val) => Mod.Config.TextScale = val);
             }
