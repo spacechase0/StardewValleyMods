@@ -142,7 +142,11 @@ namespace Magic.Framework
 
         public override void DoLevelPerk(int level)
         {
-            Game1.player.SetMaxMana(Game1.player.GetMaxMana() + 100);
+            int curMana = Game1.player.GetMaxMana();
+
+            if (level > 1 || curMana < Magic.ManaPointsPerLevel) // skip increasing mana for first level, since we did it on learning the skill
+                Game1.player.SetMaxMana(curMana + Magic.ManaPointsPerLevel);
+
             Game1.player.UseSpellPoints(-1);
         }
     }

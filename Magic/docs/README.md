@@ -16,10 +16,9 @@ the game.
 ## Use
 This is an early release. It may be unbalanced and/or buggy.
 
-To unlock magic, visit the wizard with three hearts or more. Then visit the
-[altar](screenshot-altar.png) in Pierre's shop and equip some spells by dragging a spell onto the
-hotbar along the right side of the menu. After you sleep overnight, the magic UI will appear in the
-bottom-left corner.
+To unlock magic, visit the wizard with three hearts or more. The magic UI should appear in the
+bottom-left corner right after the event. Then visit the [altar](screenshot-altar.png) in Pierre's
+shop and equip some spells by dragging a spell onto the hotbar along the right side of the menu.
 
 To cast a spell, hold `Q` and press a number key (`1` through `4`) corresponding to the spell's
 position in the hotbar. Press `Tab` to swap between spell sets.

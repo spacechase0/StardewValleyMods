@@ -35,6 +35,9 @@ namespace Magic.Framework
         /// <summary>The ID of the event in which the player learns magic from the Wizard.</summary>
         private const int LearnedMagicEventId = 90001;
 
+        /// <summary>The number of mana points gained per magic level.</summary>
+        private const int ManaPointsPerLevel = 100;
+
         /// <summary>The active effects, spells, or projectiles which should be updated or drawn.</summary>
         private static readonly IList<IActiveEffect> ActiveEffects = new List<IActiveEffect>();
 
@@ -480,6 +483,7 @@ namespace Magic.Framework
                 Game1.player.showNotCarrying();
 
                 Game1.player.AddCustomSkillExperience(Magic.Skill, Magic.Skill.ExperienceCurve[0]);
+                Game1.player.SetMaxMana(Magic.ManaPointsPerLevel); // let player start using magic immediately
                 Game1.player.AddMana(Game1.player.GetMaxMana());
                 Game1.player.LearnSpell("arcane:analyze", 0, true);
                 Game1.player.LearnSpell("arcane:magicmissle", 0, true);
