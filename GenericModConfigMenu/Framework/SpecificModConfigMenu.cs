@@ -16,13 +16,13 @@ namespace GenericModConfigMenu.Framework
 {
     internal class SpecificModConfigMenu : IClickableMenu, IAssetEditor
     {
-        private readonly IManifest Manifest;
+        internal readonly IManifest Manifest;
         private readonly bool InGame;
         private readonly Action<string> OpenPage;
         private readonly Action ReturnToList;
 
         private readonly ModConfig ModConfig;
-        private readonly string CurrPage;
+        internal readonly string CurrPage;
         private readonly int ScrollSpeed;
         private bool IsSubPage => !string.IsNullOrEmpty(this.CurrPage);
 

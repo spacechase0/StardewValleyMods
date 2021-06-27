@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 
+using StardewValley;
+
 namespace GenericModConfigMenu
 {
     public class Api : IGenericModConfigMenuApi
@@ -279,6 +281,16 @@ namespace GenericModConfigMenu
             this.AssertNotNull(mod, nameof(mod));
 
             Mod.Instance.OpenModMenu(mod);
+        }
+
+        public bool TryGetCurrentMenu(out IManifest mod, out string page)
+        {
+            mod = null;
+            page = null;
+            if (!(Game1.activeClickableMenu is SpecificModConfigMenu menu)) return false;
+            mod = menu.Manifest;
+            page = menu.CurrPage;
+            return true;
         }
 
 

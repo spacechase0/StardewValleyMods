@@ -45,6 +45,12 @@ namespace GenericModConfigMenu
         void SubscribeToChange(IManifest mod, Action<string, string> changeHandler);
 
         void OpenModMenu(IManifest mod);
+
+        /// <summary>Try to get some data of the currently-shown SpecificModConfig menu.</summary>
+        /// <param name="mod">Will contain ModManifest of currently-shown menu, or null if no SpecificModConfig is being shown.</param>
+        /// <param name="page">Will contain page title (if any) of currently-shown menu. Might be null even if a SpecificModConfig is being shown.</param>
+        /// <returns><c>true</c> if successful, <c>false</c> if not (i.e., no SpecificModConfig menu is being shown.)</returns>
+        bool TryGetCurrentMenu(out IManifest mod, out string page);
         }
 
     }
