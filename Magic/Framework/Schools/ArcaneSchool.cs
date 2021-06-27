@@ -9,17 +9,17 @@ namespace Magic.Framework.Schools
 
         public override Spell[] GetSpellsTier1()
         {
-            return new[] { SpellBook.Get("arcane:analyze"), SpellBook.Get("arcane:magicmissle") };
+            return new[] { SpellManager.Get("arcane:analyze"), SpellManager.Get("arcane:magicmissle") };
         }
 
         public override Spell[] GetSpellsTier2()
         {
-            return new[] { SpellBook.Get("arcane:disenchant"), SpellBook.Get("arcane:enchant") };
+            return new[] { SpellManager.Get("arcane:disenchant"), SpellManager.Get("arcane:enchant") };
         }
 
         public override Spell[] GetSpellsTier3()
         {
-            return new[] { SpellBook.Get("arcane:rewind") };
+            return new[] { SpellManager.Get("arcane:rewind") };
         }
     }
 }

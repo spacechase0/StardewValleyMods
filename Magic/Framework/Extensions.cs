@@ -122,7 +122,7 @@ namespace Magic.Framework
 
         public static IActiveEffect CastSpell(this Farmer player, string spellId, int level, int x = int.MinValue, int y = int.MinValue)
         {
-            return player.CastSpell(SpellBook.Get(spellId), level, x, y);
+            return player.CastSpell(SpellManager.Get(spellId), level, x, y);
         }
 
         public static IActiveEffect CastSpell(this Farmer player, Spell spell, int level, int x = int.MinValue, int y = int.MinValue)

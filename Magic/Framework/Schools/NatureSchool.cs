@@ -9,17 +9,17 @@ namespace Magic.Framework.Schools
 
         public override Spell[] GetSpellsTier1()
         {
-            return new[] { SpellBook.Get("nature:lantern"), SpellBook.Get("nature:tendrils") };
+            return new[] { SpellManager.Get("nature:lantern"), SpellManager.Get("nature:tendrils") };
         }
 
         public override Spell[] GetSpellsTier2()
         {
-            return new[] { SpellBook.Get("nature:shockwave") };
+            return new[] { SpellManager.Get("nature:shockwave") };
         }
 
         public override Spell[] GetSpellsTier3()
         {
-            return new[] { SpellBook.Get("nature:photosynthesis") };
+            return new[] { SpellManager.Get("nature:photosynthesis") };
         }
     }
 }

@@ -50,7 +50,7 @@ namespace Magic.Framework
 
             Magic.LoadAssets();
 
-            SpellBook.Init(getNewId);
+            SpellManager.Init(getNewId);
 
             events.GameLoop.SaveLoaded += Magic.OnSaveLoaded;
             events.GameLoop.UpdateTicked += Magic.OnUpdateTicked;
@@ -165,7 +165,7 @@ namespace Magic.Framework
                     Log.Debug("Player learnt spell: " + spell);
                     farmer.LearnSpell(spell, 0, true);
                     //Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") }));
-                    Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("spell.learn", new { spellName = SpellBook.Get(spell).GetTranslatedName() })));
+                    Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("spell.learn", new { spellName = SpellManager.Get(spell).GetTranslatedName() })));
                 }
             }
 
@@ -350,7 +350,7 @@ namespace Magic.Framework
                 if (prep == null)
                     continue;
 
-                Spell spell = SpellBook.Get(prep.SpellId);
+                Spell spell = SpellManager.Get(prep.SpellId);
                 if (spell == null || spell.Icons.Length <= prep.Level || spell.Icons[prep.Level] == null)
                     continue;
 
@@ -407,7 +407,7 @@ namespace Magic.Framework
                     return;
                 PreparedSpell prep = prepared[slot];
 
-                Spell toCast = SpellBook.Get(prep.SpellId);
+                Spell toCast = SpellManager.Get(prep.SpellId);
                 if (toCast == null)
                     return;
 
@@ -588,8 +588,8 @@ namespace Magic.Framework
         {
             if (args.Length == 1 && args[0] == "all")
             {
-                foreach (string spellName in SpellBook.GetAll())
-                    Game1.player.LearnSpell(SpellBook.Get(spellName), SpellBook.Get(spellName).GetMaxCastingLevel(), true);
+                foreach (string spellName in SpellManager.GetAll())
+                    Game1.player.LearnSpell(SpellManager.Get(spellName), SpellManager.Get(spellName).GetMaxCastingLevel(), true);
                 return;
             }
 
@@ -599,7 +599,7 @@ namespace Magic.Framework
                 return;
             }
 
-            Spell spell = SpellBook.Get(args[0]);
+            Spell spell = SpellManager.Get(args[0]);
             if (spell == null)
             {
                 Log.Error($"Spell '{args[0]}' does not exist.");

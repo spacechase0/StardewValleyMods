@@ -187,7 +187,7 @@ namespace Magic.Framework.Game.Interface
 
                         if (prep != null)
                         {
-                            Spell spell = SpellBook.Get(prep.SpellId);
+                            Spell spell = SpellManager.Get(prep.SpellId);
                             Texture2D[] icons = spell?.Icons;
                             if (icons != null && icons.Length > prep.Level && icons[prep.Level] != null)
                             {
@@ -212,7 +212,7 @@ namespace Magic.Framework.Game.Interface
             base.draw(b);
             if (this.Dragging != null)
             {
-                Spell spell = SpellBook.Get(this.Dragging.SpellId);
+                Spell spell = SpellManager.Get(this.Dragging.SpellId);
                 Texture2D[] icons = spell?.Icons;
                 if (icons != null && icons.Length > this.Dragging.Level && icons[this.Dragging.Level] != null)
                 {
