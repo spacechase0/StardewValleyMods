@@ -3,6 +3,8 @@
 # Release notes
 ## Upcoming release
 * Added API methods to support Skill Prestige.
+* The Wizard event is now skippable.
+* Fixed Wizard event broken if another mod changes the location in an incompatible way.
 
 ## 0.3.3
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
