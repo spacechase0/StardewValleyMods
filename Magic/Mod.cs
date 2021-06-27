@@ -131,11 +131,8 @@ namespace Magic
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             // fix player's mana pool if needed
-            if (Game1.player.GetMaxMana() <= Framework.Magic.ManaPointsPerLevel && Game1.player.eventsSeen.Contains(Framework.Magic.LearnedMagicEventId))
-            {
-                Game1.player.SetMaxMana(Framework.Magic.ManaPointsPerLevel);
-                Game1.player.AddMana(Framework.Magic.ManaPointsPerLevel);
-            }
+            if (Game1.player.eventsSeen.Contains(Framework.Magic.LearnedMagicEventId))
+                Framework.Magic.FixManaPoolIfNeeded(Game1.player);
         }
 
         /// <inheritdoc cref="IGameLoopEvents.Saving"/>

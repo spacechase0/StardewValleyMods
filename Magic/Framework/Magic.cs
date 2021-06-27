@@ -483,8 +483,7 @@ namespace Magic.Framework
                 Game1.player.showNotCarrying();
 
                 Game1.player.AddCustomSkillExperience(Magic.Skill, Magic.Skill.ExperienceCurve[0]);
-                Game1.player.SetMaxMana(Magic.ManaPointsPerLevel); // let player start using magic immediately
-                Game1.player.AddMana(Game1.player.GetMaxMana());
+                Magic.FixManaPoolIfNeeded(Game1.player, overrideMagicLevel: 1); // let player start using magic immediately
                 Game1.player.LearnSpell("arcane:analyze", 0, true);
                 Game1.player.LearnSpell("arcane:magicmissle", 0, true);
                 Game1.player.LearnSpell("arcane:enchant", 0, true);
@@ -570,6 +569,21 @@ namespace Magic.Framework
             loc.setTileProperty(x + 2, y + 1, "Buildings", "Action", "MagicAltar");
         }
 
+        /// <summary>Fix the player's mana pool to match their skill level if needed.</summary>
+        /// <param name="player">The player to fix.</param>
+        /// <param name="overrideMagicLevel">The magic skill level, or <c>null</c> to get it from the player.</param>
+        public static void FixManaPoolIfNeeded(Farmer player, int? overrideMagicLevel = null)
+        {
+            int magicLevel = overrideMagicLevel ?? Game1.player.GetCustomSkillLevel(Skill.MagicSkillId);
+            int expectedPoints = magicLevel * Magic.ManaPointsPerLevel;
+
+            if (Game1.player.GetMaxMana() < expectedPoints)
+            {
+                Game1.player.SetMaxMana(expectedPoints);
+                Game1.player.AddMana(expectedPoints);
+            }
+        }
+
         private static void LearnSpellCommand(string[] args)
         {
             if (args.Length == 1 && args[0] == "all")
@@ -600,6 +614,7 @@ namespace Magic.Framework
 
             Game1.player.LearnSpell(spell, level, true);
         }
+
         private static void MagicMenuCommand(string[] args)
         {
             Game1.activeClickableMenu = new MagicMenu();

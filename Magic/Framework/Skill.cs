@@ -6,6 +6,9 @@ namespace Magic.Framework
 {
     internal class Skill : SpaceCore.Skills.Skill
     {
+        /// <summary>The unique ID for the magic skill.</summary>
+        public static readonly string MagicSkillId = "spacechase0.Magic";
+
         public class GenericProfession : Profession
         {
             public GenericProfession(Skill skill, string theId)
@@ -55,7 +58,7 @@ namespace Magic.Framework
         public static GenericProfession ProfessionManaCap;
 
         public Skill()
-            : base("spacechase0.Magic")
+            : base(Skill.MagicSkillId)
         {
             this.Icon = Mod.Instance.Helper.Content.Load<Texture2D>("assets/interface/magicexpicon.png");
             this.SkillsPageIcon = null; // TODO: Make an icon for this
@@ -142,8 +145,11 @@ namespace Magic.Framework
 
         public override void DoLevelPerk(int level)
         {
-            int curMana = Game1.player.GetMaxMana();
+            // fix mana pool if invalid
+            Magic.FixManaPoolIfNeeded(Game1.player, level - 1);
 
+            // add level perk
+            int curMana = Game1.player.GetMaxMana();
             if (level > 1 || curMana < Magic.ManaPointsPerLevel) // skip increasing mana for first level, since we did it on learning the skill
                 Game1.player.SetMaxMana(curMana + Magic.ManaPointsPerLevel);
 
