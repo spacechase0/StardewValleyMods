@@ -31,6 +31,7 @@ namespace Magic
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.GameLoop.Saving += this.OnSaving;
 
             Framework.Magic.Init(helper.Events, helper.Input, helper.Multiplayer.GetNewID);
@@ -41,7 +42,7 @@ namespace Magic
             return this.Api ??= new Api();
         }
 
-        /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -81,7 +82,7 @@ namespace Magic
             api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
         }
 
-        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <inheritdoc cref="IGameLoopEvents.SaveLoaded"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
@@ -124,7 +125,20 @@ namespace Magic
             }
         }
 
-        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
+        /// <inheritdoc cref="IGameLoopEvents.DayStarted"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
+        {
+            // fix player's mana pool if needed
+            if (Game1.player.GetMaxMana() <= Framework.Magic.ManaPointsPerLevel && Game1.player.eventsSeen.Contains(Framework.Magic.LearnedMagicEventId))
+            {
+                Game1.player.SetMaxMana(Framework.Magic.ManaPointsPerLevel);
+                Game1.player.AddMana(Framework.Magic.ManaPointsPerLevel);
+            }
+        }
+
+        /// <inheritdoc cref="IGameLoopEvents.Saving"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnSaving(object sender, SavingEventArgs e)

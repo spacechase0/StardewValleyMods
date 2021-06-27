@@ -33,10 +33,10 @@ namespace Magic.Framework
         private static Texture2D ManaFg;
 
         /// <summary>The ID of the event in which the player learns magic from the Wizard.</summary>
-        private const int LearnedMagicEventId = 90001;
+        public const int LearnedMagicEventId = 90001;
 
         /// <summary>The number of mana points gained per magic level.</summary>
-        private const int ManaPointsPerLevel = 100;
+        public const int ManaPointsPerLevel = 100;
 
         /// <summary>The active effects, spells, or projectiles which should be updated or drawn.</summary>
         private static readonly IList<IActiveEffect> ActiveEffects = new List<IActiveEffect>();
