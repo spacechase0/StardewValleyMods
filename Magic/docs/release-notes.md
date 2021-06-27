@@ -5,6 +5,7 @@
 * Added API methods to support Skill Prestige.
 * The Wizard event is now skippable.
 * Fixed Wizard event broken if another mod changes the location in an incompatible way.
+* Fixed magic UI rendered before learning magic if another mod added mana points.
 
 ## 0.3.3
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.

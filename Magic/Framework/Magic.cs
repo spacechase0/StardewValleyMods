@@ -293,7 +293,7 @@ namespace Magic.Framework
         /// <param name="e">The event arguments.</param>
         public static void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (Game1.activeClickableMenu != null || Game1.eventUp || Game1.player.GetMaxMana() == 0)
+            if (Game1.activeClickableMenu != null || Game1.eventUp || !Game1.player.eventsSeen.Contains(Magic.LearnedMagicEventId))
                 return;
 
             SpriteBatch b = e.SpriteBatch;
