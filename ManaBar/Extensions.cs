@@ -4,40 +4,41 @@ using StardewValley;
 
 namespace ManaBar
 {
+    /// <summary>Provides extensions on <see cref="Farmer"/> for managing mana points.</summary>
     public static class Extensions
     {
-        private static void DataCheck(Farmer player)
-        {
-            if (!Mod.Data.Players.ContainsKey(player.UniqueMultiplayerID))
-                Mod.Data.Players.Add(player.UniqueMultiplayerID, new MultiplayerSaveData.PlayerData());
-        }
-
+        /// <summary>Get the player's current mana points.</summary>
+        /// <param name="player">The player to check.</param>
         public static int GetCurrentMana(this Farmer player)
         {
-            Extensions.DataCheck(player);
-            return Mod.Data.Players[player.UniqueMultiplayerID].Mana;
+            return ModDataManager.GetCurrentMana(player);
         }
 
+        /// <summary>Add points to the player's mana pool.</summary>
+        /// <param name="player">The player to check.</param>
+        /// <param name="amt">The number of mana points to add.</param>
         public static void AddMana(this Farmer player, int amt)
         {
-            Extensions.DataCheck(player);
-            Mod.Data.Players[player.UniqueMultiplayerID].Mana = Math.Max(0, Math.Min(player.GetCurrentMana() + amt, player.GetMaxMana()));
-            if (player == Game1.player)
-                Mod.Data.SyncMineMini();
+            int mana = player.GetCurrentMana() + amt;
+            ModDataManager.SetCurrentMana(
+                player,
+                Math.Max(0, Math.Min(player.GetMaxMana(), mana))
+            );
         }
 
+        /// <summary>Get the player's max mana points.</summary>
+        /// <param name="player">The player to check.</param>
         public static int GetMaxMana(this Farmer player)
         {
-            Extensions.DataCheck(player);
-            return Mod.Data.Players[player.UniqueMultiplayerID].ManaCap;
+            return ModDataManager.GetMaxMana(player);
         }
 
+        /// <summary>Set the player's max mana points.</summary>
+        /// <param name="player">The player to check.</param>
+        /// <param name="newCap">The value to set.</param>
         public static void SetMaxMana(this Farmer player, int newCap)
         {
-            Extensions.DataCheck(player);
-            Mod.Data.Players[player.UniqueMultiplayerID].ManaCap = newCap;
-            if (player == Game1.player)
-                Mod.Data.SyncMineMini();
+            ModDataManager.SetMaxMana(player, Math.Max(0, newCap));
         }
     }
 }

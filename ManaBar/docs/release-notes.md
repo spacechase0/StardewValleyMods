@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Migrated player data into the `Farmer.modData` field to simplify synchronization and reduce edge cases.
+
 ## 1.0.1
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

@@ -1,42 +1,36 @@
 using System;
-using System.IO;
 using ManaBar.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-using SpaceCore.Events;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Network;
 
 namespace ManaBar
 {
     internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
-        public static MultiplayerSaveData Data { get; private set; } = new();
 
         private static Texture2D ManaBg;
         private static Texture2D ManaFg;
+
+        /// <summary>Handles migrating legacy data for a save file.</summary>
+        private LegacyDataMigrator LegayDataMigrator;
 
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
+            this.LegayDataMigrator = new(helper.Data, this.Monitor);
 
             Command.Register("player_addmana", Mod.AddManaCommand);
             Command.Register("player_setmaxmana", Mod.SetMaxManaCommand);
 
             helper.Events.GameLoop.DayStarted += Mod.OnDayStarted;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
-            helper.Events.GameLoop.Saved += this.OnSaved;
             helper.Events.Display.RenderedHud += Mod.OnRenderedHud;
-
-            SpaceCore.Networking.RegisterMessageHandler(MultiplayerSaveData.MsgData, Mod.OnNetworkData);
-            SpaceCore.Networking.RegisterMessageHandler(MultiplayerSaveData.MsgMinidata, Mod.OnNetworkMiniData);
-            SpaceEvents.ServerGotClient += Mod.OnClientConnected;
 
             Mod.ManaBg = helper.Content.Load<Texture2D>("assets/manabg.png");
 
@@ -58,37 +52,6 @@ namespace ManaBar
         public override object GetApi()
         {
             return this.Api ??= new Api();
-        }
-
-        private static void OnNetworkData(IncomingMessage msg)
-        {
-            int count = msg.Reader.ReadInt32();
-            for (int i = 0; i < count; ++i)
-            {
-                Mod.Data.Players[msg.Reader.ReadInt64()] = JsonConvert.DeserializeObject<MultiplayerSaveData.PlayerData>(msg.Reader.ReadString());
-            }
-        }
-
-        private static void OnNetworkMiniData(IncomingMessage msg)
-        {
-            Mod.Data.Players[msg.FarmerID].Mana = msg.Reader.ReadInt32();
-            Mod.Data.Players[msg.FarmerID].ManaCap = msg.Reader.ReadInt32();
-        }
-
-        private static void OnClientConnected(object sender, EventArgsServerGotClient args)
-        {
-            if (!Mod.Data.Players.ContainsKey(args.FarmerID))
-                Mod.Data.Players[args.FarmerID] = new MultiplayerSaveData.PlayerData();
-
-            using var stream = new MemoryStream();
-            using var writer = new BinaryWriter(stream);
-            writer.Write(Mod.Data.Players.Count);
-            foreach (var entry in Mod.Data.Players)
-            {
-                writer.Write(entry.Key);
-                writer.Write(JsonConvert.SerializeObject(entry.Value, MultiplayerSaveData.NetworkSerializerSettings));
-            }
-            SpaceCore.Networking.BroadcastMessage(MultiplayerSaveData.MsgData, stream.ToArray());
         }
 
         public static void OnRenderedHud(object sender, RenderedHudEventArgs e)
@@ -136,38 +99,11 @@ namespace ManaBar
         {
             try
             {
-                if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-                {
-                    Log.Info($"Loading save data");
-                    Mod.Data = this.Helper.Data.ReadSaveData<MultiplayerSaveData>(MultiplayerSaveData.SaveKey);
-                    if (Mod.Data == null)
-                    {
-                        if (File.Exists(MultiplayerSaveData.OldFilePath))
-                        {
-                            Mod.Data = JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.OldFilePath));
-                        }
-                    }
-                    Mod.Data ??= new MultiplayerSaveData();
-
-                    if (!Mod.Data.Players.ContainsKey(Game1.player.UniqueMultiplayerID))
-                        Mod.Data.Players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
-                }
+                this.LegayDataMigrator.OnSaveLoaded();
             }
             catch (Exception ex)
             {
-                Log.Warn($"Exception loading save data: {ex}");
-            }
-        }
-
-        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnSaved(object sender, SavedEventArgs e)
-        {
-            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-            {
-                Log.Info($"Saving save data...");
-                this.Helper.Data.WriteSaveData(MultiplayerSaveData.SaveKey, Mod.Data);
+                Log.Warn($"Exception migrating legacy save data: {ex}");
             }
         }
     }
