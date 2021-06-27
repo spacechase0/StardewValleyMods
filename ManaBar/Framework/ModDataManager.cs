@@ -26,7 +26,7 @@ namespace ManaBar.Framework
         /// <param name="player">The player to check.</param>
         public static int GetCurrentMana(Farmer player)
         {
-            return player.modData.TryGetValue(ModDataManager.CurrentManaKey, out string raw) && int.TryParse(raw, out int mana)
+            return player.modData.TryGetValue(ModDataManager.CurrentManaKey, out string raw) && int.TryParse(raw, out int mana) && mana > 0
                 ? mana
                 : 0;
         }
@@ -46,7 +46,7 @@ namespace ManaBar.Framework
         /// <param name="player">The player to check.</param>
         public static int GetMaxMana(Farmer player)
         {
-            return player.modData.TryGetValue(ModDataManager.MaxManaKey, out string raw) && int.TryParse(raw, out int mana)
+            return player.modData.TryGetValue(ModDataManager.MaxManaKey, out string raw) && int.TryParse(raw, out int mana) && mana > 0
                 ? mana
                 : 0;
         }
