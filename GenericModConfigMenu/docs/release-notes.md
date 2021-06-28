@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * You can now press `Escape` to exit a mod config menu (thanks to pepoluan!).
+* Added API method to get info about the currently displayed mod config menu (thanks to pepoluan!).
 * Improved API validation (in collaboration with pepoluan).
 * Removed example mod config (thanks to pepoluan!).
 * Fixed UI scale not handled correctly (thanks to pepoluan!).
