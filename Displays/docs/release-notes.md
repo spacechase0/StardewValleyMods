@@ -2,9 +2,10 @@
 
 # Release notes
 ## Upcoming release
-* Fixed boots not always swapped.
-* Fixed player's boots not visually unequipped when putting them on a display.
 * Fixed player effects not updated when boots or rings are swapped with a display.
+* Fixed boots not always swapped.
+* Fixed removing boots from a player/display not updating the player/display appearance.
+* Fixed removing a shirt from a display not updating the display appearance.
 
 ## 1.0.2
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.

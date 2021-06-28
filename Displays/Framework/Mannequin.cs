@@ -19,7 +19,9 @@ namespace Displays.Framework
         private static readonly Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-base.png");
         private static readonly Texture2D TexM = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-male.png");
         private static readonly Texture2D TexF = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-female.png");
-        private Farmer FarmerForRendering;
+
+        /// <summary>The backing field for <see cref="GetFarmerForRendering"/>.</summary>
+        private Farmer FarmerForRenderingCache;
 
 
         /*********
@@ -242,10 +244,9 @@ namespace Displays.Framework
             this.draw(spriteBatch, xNonTile: x * Game1.tileSize, yNonTile: y * Game1.tileSize - Game1.tileSize, layerDepth: drawLayer, alpha: alpha);
 
             // draw overlay
-            if (this.FarmerForRendering == null)
-                this.CacheFarmerSprite();
-            this.FarmerForRendering.position.Value = new Vector2(x * 64, y * 64 + 12);
-            this.FarmerForRendering.FarmerRenderer.draw(spriteBatch, this.FarmerForRendering.FarmerSprite, this.FarmerForRendering.FarmerSprite.sourceRect, this.FarmerForRendering.getLocalPosition(Game1.viewport), new Vector2(0, this.FarmerForRendering.GetBoundingBox().Height), drawLayer + 0.001f, Color.White, 0, this.FarmerForRendering);
+            Farmer farmerForRendering = this.GetFarmerForRendering();
+            farmerForRendering.position.Value = new Vector2(x * 64, y * 64 + 12);
+            farmerForRendering.FarmerRenderer.draw(spriteBatch, farmerForRendering.FarmerSprite, farmerForRendering.FarmerSprite.sourceRect, farmerForRendering.getLocalPosition(Game1.viewport), new Vector2(0, farmerForRendering.GetBoundingBox().Height), drawLayer + 0.001f, Color.White, 0, farmerForRendering);
         }
 
 
@@ -274,40 +275,52 @@ namespace Displays.Framework
 
         private void OnNetFieldChanged<TNetField, TValue>(TNetField field, TValue oldValue, TValue newValue)
         {
-            this.CacheFarmerSprite();
+            this.FarmerForRenderingCache = null;
         }
 
-        private void CacheFarmerSprite()
+        /// <summary>Get the internal farmer instance used to render equipment on the mannequin, recreating it if needed.</summary>
+        private Farmer GetFarmerForRendering()
         {
-            this.FarmerForRendering ??= new Farmer();
-            this.FarmerForRendering.changeGender(this.MannGender.Value == MannequinGender.Male);
-            if (this.MannGender.Value == MannequinGender.Female)
-                this.FarmerForRendering.changeHairStyle(16);
-            this.FarmerForRendering.faceDirection(this.Facing.Value);
-            this.FarmerForRendering.hat.Value = this.Hat.Value;
-            this.FarmerForRendering.shirtItem.Value = this.Shirt.Value;
-            if (this.Shirt.Value != null)
+            Farmer CreateInstance()
             {
-                this.FarmerForRendering.shirt.Value = this.MannGender.Value == MannequinGender.Male ? this.Shirt.Value.indexInTileSheetMale.Value : this.Shirt.Value.indexInTileSheetFemale.Value;
+                Farmer farmer = new();
+
+                // base info
+                farmer.changeGender(this.MannGender.Value == MannequinGender.Male);
+                if (this.MannGender.Value == MannequinGender.Female)
+                    farmer.changeHairStyle(16);
+                farmer.faceDirection(this.Facing.Value);
+                if (this.MannType.Value == MannequinType.Plain)
+                {
+                    farmer.changeHairColor(Color.Transparent);
+                    farmer.FarmerRenderer.textureName.Value = "Characters\\Farmer\\farmer_transparent";
+                }
+
+                // hat
+                farmer.hat.Value = this.Hat.Value;
+
+                // shirt
+                farmer.shirtItem.Value = this.Shirt.Value;
+                if (this.Shirt.Value != null)
+                    farmer.shirt.Value = this.MannGender.Value == MannequinGender.Male ? this.Shirt.Value.indexInTileSheetMale.Value : this.Shirt.Value.indexInTileSheetFemale.Value;
+
+                // paints
+                farmer.pantsItem.Value = this.Pants.Value;
+                if (this.Pants.Value != null)
+                {
+                    farmer.pants.Value = this.MannGender.Value == MannequinGender.Male ? this.Pants.Value.indexInTileSheetMale.Value : this.Pants.Value.indexInTileSheetFemale.Value;
+                    farmer.pantsColor.Value = this.Pants.Value.clothesColor.Value;
+                }
+
+                // boots
+                farmer.boots.Value = this.Boots.Value;
+                if (this.Boots.Value != null)
+                    farmer.changeShoeColor(this.Boots.Value.indexInColorSheet.Value);
+
+                return farmer;
             }
 
-            this.FarmerForRendering.pantsItem.Value = this.Pants.Value;
-            if (this.Pants.Value != null)
-            {
-                this.FarmerForRendering.pants.Value = this.MannGender.Value == MannequinGender.Male ? this.Pants.Value.indexInTileSheetMale.Value : this.Pants.Value.indexInTileSheetFemale.Value;
-                this.FarmerForRendering.pantsColor.Value = this.Pants.Value.clothesColor.Value;
-            }
-
-            this.FarmerForRendering.boots.Value = this.Boots.Value;
-            if (this.Boots.Value != null)
-            {
-                this.FarmerForRendering.changeShoeColor(this.Boots.Value.indexInColorSheet.Value);
-            }
-            if (this.MannType.Value == MannequinType.Plain)
-            {
-                this.FarmerForRendering.changeHairColor(Color.Transparent);
-                this.FarmerForRendering.FarmerRenderer.textureName.Value = "Characters\\Farmer\\farmer_transparent";
-            }
+            return this.FarmerForRenderingCache ??= CreateInstance();
         }
 
         /// <summary>Get the main mannequin texture to render.</summary>
@@ -338,59 +351,53 @@ namespace Displays.Framework
         private void Swap<T>(NetRef<T> onDisplay, NetRef<T> onPlayer, Farmer player)
             where T : class, INetObject<INetSerializable>
         {
-            T wasOnDisplay = this.OnUnEquip(this.FarmerForRendering, onDisplay.Value);
-            T wasOnPlayer = this.OnUnEquip(player, onPlayer.Value);
+            T wasOnDisplay = onDisplay.Value;
+            T wasOnPlayer = onPlayer.Value;
 
-            onPlayer.Value = this.OnEquip(player, wasOnDisplay);
-            onDisplay.Value = this.OnEquip(this.FarmerForRendering, wasOnPlayer);
+            onDisplay.Value = wasOnPlayer;
+            onPlayer.Value = wasOnDisplay;
+
+            this.OnUnEquipPlayer(player, wasOnPlayer);
+            this.OnEquipPlayer(player, wasOnDisplay);
+            this.FarmerForRenderingCache = null;
         }
 
-        /// <summary>Perform any logic needed after un-equipping an item on a player or display.</summary>
+        /// <summary>Perform any logic needed after un-equipping an item on a player.</summary>
         /// <typeparam name="T">The item type.</typeparam>
-        /// <param name="farmer">The player or display who un-equipped the item.</param>
+        /// <param name="player">The player or display who un-equipped the item.</param>
         /// <param name="item">The item that was equipped.</param>
         /// <remarks>Derived from <see cref="InventoryPage.receiveLeftClick"/>.</remarks>
-        private T OnUnEquip<T>(Farmer farmer, T item)
+        private void OnUnEquipPlayer<T>(Farmer player, T item)
         {
             switch (item)
             {
                 case Boots boots:
-                    if (object.ReferenceEquals(farmer, this.FarmerForRendering))
-                        farmer.changeShoeColor(12);
-                    else
-                        boots.onUnequip();
+                    boots.onUnequip();
                     break;
 
                 case Ring ring:
-                    ring.onUnequip(farmer, farmer.currentLocation);
+                    ring.onUnequip(player, player.currentLocation);
                     break;
             }
-
-            return item;
         }
 
-        /// <summary>Perform any logic needed after equipping an item on a player or display.</summary>
+        /// <summary>Perform any logic needed after equipping an item on a player.</summary>
         /// <typeparam name="T">The item type.</typeparam>
-        /// <param name="farmer">The player or display who equipped the item.</param>
+        /// <param name="player">The player or display who equipped the item.</param>
         /// <param name="item">The item that was equipped.</param>
         /// <remarks>Derived from <see cref="InventoryPage.receiveLeftClick"/>.</remarks>
-        private T OnEquip<T>(Farmer farmer, T item)
+        private void OnEquipPlayer<T>(Farmer player, T item)
         {
             switch (item)
             {
                 case Boots boots:
-                    if (object.ReferenceEquals(farmer, this.FarmerForRendering))
-                        farmer.changeShoeColor(boots.indexInColorSheet.Value);
-                    else
-                        boots.onEquip();
+                    boots.onEquip();
                     break;
 
                 case Ring ring:
-                    ring.onEquip(farmer, farmer.currentLocation);
+                    ring.onEquip(player, player.currentLocation);
                     break;
             }
-
-            return item;
         }
     }
 }
