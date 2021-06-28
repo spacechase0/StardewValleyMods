@@ -16,20 +16,17 @@ namespace GenericModConfigMenu.Framework
 {
     internal class SpecificModConfigMenu : IClickableMenu, IAssetEditor
     {
-        internal readonly IManifest Manifest;
         private readonly bool InGame;
         private readonly Action<string> OpenPage;
         private readonly Action ReturnToList;
 
         private readonly ModConfig ModConfig;
-        internal readonly string CurrPage;
         private readonly int ScrollSpeed;
         private bool IsSubPage => !string.IsNullOrEmpty(this.CurrPage);
 
         private RootElement Ui = new();
         private readonly Table Table;
         private readonly List<Label> OptHovers = new();
-        public static IClickableMenu ActiveConfigMenu;
 
         private readonly Dictionary<string, List<Image>> Textures = new();
         private readonly Queue<string> PendingTexChanges = new();
@@ -39,6 +36,10 @@ namespace GenericModConfigMenu.Framework
 
         /// <summary>Whether a keybinding UI is open.</summary>
         private bool IsBindingKey => this.KeybindingOpt != null || this.Keybinding2Opt != null;
+
+        public readonly IManifest Manifest;
+        public readonly string CurrPage;
+        public static IClickableMenu ActiveConfigMenu;
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
@@ -356,7 +357,6 @@ namespace GenericModConfigMenu.Framework
             if (key == Keys.Escape && !this.IsBindingKey)
                 this.ExitOnNextUpdate = true;
         }
-
 
         private void AddDefaultLabels(IManifest modManifest)
         {

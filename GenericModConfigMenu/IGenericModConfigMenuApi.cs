@@ -1,15 +1,13 @@
 using System;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 
 namespace GenericModConfigMenu
-    {
+{
     public interface IGenericModConfigMenuApi
-        {
+    {
         void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile);
         void UnregisterModConfig(IManifest mod);
 
@@ -46,11 +44,10 @@ namespace GenericModConfigMenu
 
         void OpenModMenu(IManifest mod);
 
-        /// <summary>Try to get some data of the currently-shown SpecificModConfig menu.</summary>
-        /// <param name="mod">Will contain ModManifest of currently-shown menu, or null if no SpecificModConfig is being shown.</param>
-        /// <param name="page">Will contain page title (if any) of currently-shown menu. Might be null even if a SpecificModConfig is being shown.</param>
-        /// <returns><c>true</c> if successful, <c>false</c> if not (i.e., no SpecificModConfig menu is being shown.)</returns>
+        /// <summary>Get the currently-displayed mod config menu, if any.</summary>
+        /// <param name="mod">The manifest of the mod whose config menu is being shown, or <c>null</c> if not applicable.</param>
+        /// <param name="page">The page ID being shown for the current config menu, or <c>null</c> if not applicable. This may be <c>null</c> even if a mod config menu is shown (e.g. because the mod doesn't have pages).</param>
+        /// <returns>Returns whether a mod config menu is being shown.</returns>
         bool TryGetCurrentMenu(out IManifest mod, out string page);
-        }
-
     }
+}

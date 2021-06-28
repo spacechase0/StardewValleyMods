@@ -1,15 +1,13 @@
 using System;
 using System.Linq;
-using GenericModConfigMenu.Framework;
 using GenericModConfigMenu.ModOption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
-
 using StardewValley;
 
-namespace GenericModConfigMenu
+namespace GenericModConfigMenu.Framework
 {
     public class Api : IGenericModConfigMenuApi
     {
@@ -283,14 +281,15 @@ namespace GenericModConfigMenu
             Mod.Instance.OpenModMenu(mod);
         }
 
+        /// <inheritdoc />
         public bool TryGetCurrentMenu(out IManifest mod, out string page)
         {
-            mod = null;
-            page = null;
-            if (!(Game1.activeClickableMenu is SpecificModConfigMenu menu)) return false;
-            mod = menu.Manifest;
-            page = menu.CurrPage;
-            return true;
+            if (Game1.activeClickableMenu is not SpecificModConfigMenu menu)
+                menu = null;
+
+            mod = menu?.Manifest;
+            page = menu?.CurrPage;
+            return menu is not null;
         }
 
 
