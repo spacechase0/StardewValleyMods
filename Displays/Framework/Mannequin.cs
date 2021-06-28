@@ -50,7 +50,6 @@ namespace Displays.Framework
         {
             this.MannType.Value = type;
             this.MannGender.Value = gender;
-            //ParentSheetIndex = MODID;
             this.name = this.loadDisplayName();
             this.DisplayName = this.loadDisplayName();
             this.bigCraftable.Value = true;
@@ -67,11 +66,10 @@ namespace Displays.Framework
 
         public override bool canStackWith(ISalable other)
         {
-            if (other is Mannequin m)
-            {
-                return m.MannType.Value == this.MannType.Value && m.MannGender.Value == this.MannGender.Value;
-            }
-            return false;
+            return
+                other is Mannequin m
+                && m.MannType.Value == this.MannType.Value
+                && m.MannGender.Value == this.MannGender.Value;
         }
 
         public override Item getOne()
@@ -110,22 +108,22 @@ namespace Displays.Framework
                 {
                     if (this.Hat.Value != null)
                     {
-                        location.debris.Add(new Debris(this.Hat.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        this.DropItem(location, this.Hat.Value);
                         this.Hat.Value = null;
                     }
                     else if (this.Shirt.Value != null)
                     {
-                        location.debris.Add(new Debris(this.Shirt.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        this.DropItem(location, this.Shirt.Value);
                         this.Shirt.Value = null;
                     }
                     else if (this.Pants.Value != null)
                     {
-                        location.debris.Add(new Debris(this.Pants.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        this.DropItem(location, this.Pants.Value);
                         this.Pants.Value = null;
                     }
                     else if (this.Boots.Value != null)
                     {
-                        location.debris.Add(new Debris(this.Boots.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        this.DropItem(location, this.Boots.Value);
                         this.Boots.Value = null;
                     }
                     location.playSound("hammer");
@@ -133,7 +131,7 @@ namespace Displays.Framework
                     return false;
                 }
                 location.objects.Remove(this.TileLocation);
-                location.debris.Add(new Debris(new Mannequin(this.MannType.Value, this.MannGender.Value, Vector2.Zero), new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                this.DropItem(location, new Mannequin(this.MannType.Value, this.MannGender.Value, Vector2.Zero));
                 return false;
             }
 
@@ -167,7 +165,7 @@ namespace Displays.Framework
             {
                 case Hat hat:
                     if (this.Hat.Value != null)
-                        who.currentLocation.debris.Add(new Debris(this.Hat.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        this.DropItem(who.currentLocation, this.Hat.Value);
                     this.Hat.Value = hat;
                     return true;
 
@@ -176,13 +174,13 @@ namespace Displays.Framework
                     {
                         case (int)Clothing.ClothesType.SHIRT:
                             if (this.Shirt.Value != null)
-                                who.currentLocation.debris.Add(new Debris(this.Shirt.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                                this.DropItem(who.currentLocation, this.Shirt.Value);
                             this.Shirt.Value = clothing;
                             return true;
 
                         case (int)Clothing.ClothesType.PANTS:
                             if (this.Pants.Value != null)
-                                who.currentLocation.debris.Add(new Debris(this.Pants.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                                this.DropItem(who.currentLocation, this.Pants.Value);
                             this.Pants.Value = clothing;
                             return true;
 
@@ -192,7 +190,7 @@ namespace Displays.Framework
 
                 case Boots boots:
                     if (this.Boots.Value != null)
-                        who.currentLocation.debris.Add(new Debris(this.Boots.Value, new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize)));
+                        this.DropItem(who.currentLocation, this.Boots.Value);
                     this.Boots.Value = boots;
                     return true;
 
@@ -203,12 +201,7 @@ namespace Displays.Framework
 
         public override void drawWhenHeld(SpriteBatch spriteBatch, Vector2 objectPosition, Farmer f)
         {
-            var tex = this.MannGender.Value switch
-            {
-                MannequinGender.Male => Mannequin.TexM,
-                MannequinGender.Female => Mannequin.TexF,
-                _ => Mannequin.Tex
-            };
+            var tex = this.GetMainTexture();
 
             spriteBatch.Draw(tex, objectPosition, null, Color.White, 0, Vector2.Zero, 4f, SpriteEffects.None, Math.Max(0f, (f.getStandingY() + 3) / 10000f));
         }
@@ -217,12 +210,7 @@ namespace Displays.Framework
         {
             bool shouldDrawStackNumber = ((drawStackNumber == StackDrawType.Draw && this.maximumStackSize() > 1 && this.Stack > 1) || drawStackNumber == StackDrawType.Draw_OneInclusive) && scaleSize > 0.3 && this.Stack != int.MaxValue;
 
-            var tex = this.MannGender.Value switch
-            {
-                MannequinGender.Male => Mannequin.TexM,
-                MannequinGender.Female => Mannequin.TexF,
-                _ => Mannequin.Tex
-            };
+            var tex = this.GetMainTexture();
 
             spriteBatch.Draw(tex, location + new Vector2(32f, 32f), null, color * transparency, 0f, new Vector2(8f, 16f), 4f * (((double)scaleSize < 0.2) ? scaleSize : (scaleSize / 2f)), SpriteEffects.None, layerDepth);
             if (shouldDrawStackNumber)
@@ -233,12 +221,7 @@ namespace Displays.Framework
 
         public override void draw(SpriteBatch spriteBatch, int xNonTile, int yNonTile, float layerDepth, float alpha = 1)
         {
-            var tex = this.MannGender.Value switch
-            {
-                MannequinGender.Male => Mannequin.TexM,
-                MannequinGender.Female => Mannequin.TexF,
-                _ => Mannequin.Tex
-            };
+            var tex = this.GetMainTexture();
 
             Vector2 scaleFactor = this.getScale();
             scaleFactor *= 4f;
@@ -249,12 +232,7 @@ namespace Displays.Framework
 
         public override void draw(SpriteBatch spriteBatch, int x, int y, float alpha = 1)
         {
-            var tex = this.MannGender.Value switch
-            {
-                MannequinGender.Male => Mannequin.TexM,
-                MannequinGender.Female => Mannequin.TexF,
-                _ => Mannequin.Tex
-            };
+            var tex = this.GetMainTexture();
 
             Vector2 scaleFactor = this.getScale();
             scaleFactor *= 4f;
@@ -265,7 +243,6 @@ namespace Displays.Framework
 
             if (this.FarmerForRendering == null)
                 this.CacheFarmerSprite();
-            //SpaceShared.Log.trace( "meow!? " + farmerForRendering.shirtItem.Value + " " + farmerForRendering.pantsItem.Value + " " + farmerForRendering.hat.Value );
             this.FarmerForRendering.position.Value = new Vector2(x * 64, y * 64 + 12);
             this.FarmerForRendering.FarmerRenderer.draw(spriteBatch, this.FarmerForRendering.FarmerSprite, this.FarmerForRendering.FarmerSprite.sourceRect, this.FarmerForRendering.getLocalPosition(Game1.viewport), new Vector2(0, this.FarmerForRendering.GetBoundingBox().Height), drawLayer + 0.001f, Color.White, 0, this.FarmerForRendering);
         }
@@ -330,6 +307,26 @@ namespace Displays.Framework
                 this.FarmerForRendering.changeHairColor(Color.Transparent);
                 this.FarmerForRendering.FarmerRenderer.textureName.Value = "Characters\\Farmer\\farmer_transparent";
             }
+        }
+
+        /// <summary>Get the main mannequin texture to render.</summary>
+        private Texture2D GetMainTexture()
+        {
+            return this.MannGender.Value switch
+            {
+                MannequinGender.Male => Mannequin.TexM,
+                MannequinGender.Female => Mannequin.TexF,
+                _ => Mannequin.Tex
+            };
+        }
+
+        /// <summary>Drop an item onto the ground near the mannequin.</summary>
+        /// <param name="location">The location containing the mannequin.</param>
+        /// <param name="item">The item to drop.</param>
+        private void DropItem(GameLocation location, Item item)
+        {
+            var position = new Vector2((this.TileLocation.X + 0.5f) * Game1.tileSize, (this.TileLocation.Y + 0.5f) * Game1.tileSize);
+            location.debris.Add(new Debris(item, position));
         }
 
         /// <summary>Swap an equipment slot between the display and a player.</summary>
