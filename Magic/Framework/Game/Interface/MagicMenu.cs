@@ -35,7 +35,7 @@ namespace Magic.Framework.Game.Interface
 
         public override void draw(SpriteBatch b)
         {
-            var spellbook = Game1.player.GetSpellBook();
+            var spellBook = Game1.player.GetSpellBook();
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
             int hotbarH = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
@@ -85,7 +85,7 @@ namespace Magic.Framework.Game.Interface
                         int x = this.xPositionOnScreen + (MagicMenu.WindowWidth / 2 - 24) / sx * (s + 1);
 
                         var spell = spells[t][s];
-                        if (!Game1.player.KnowsSpell(spell, 0))
+                        if (!spellBook.KnowsSpell(spell, 0))
                             continue;
                         if (this.JustLeftClicked && new Rectangle(x - MagicMenu.SpellIconSize / 2, y - MagicMenu.SpellIconSize / 2, MagicMenu.SpellIconSize, MagicMenu.SpellIconSize).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                         {
@@ -133,9 +133,9 @@ namespace Magic.Framework.Game.Interface
                     int y = this.yPositionOnScreen + MagicMenu.WindowHeight - 12 - MagicMenu.SpellIconSize - 32 - 40;
 
                     Color stateCol = Color.Gray;
-                    if (Game1.player.KnowsSpell(this.Sel, i))
+                    if (spellBook.KnowsSpell(this.Sel, i))
                         stateCol = Color.Green;
-                    else if (i == 0 || Game1.player.KnowsSpell(this.Sel, i - 1))
+                    else if (i == 0 || spellBook.KnowsSpell(this.Sel, i - 1))
                         stateCol = Color.White;
 
                     var r = new Rectangle(x - MagicMenu.SpellIconSize / 2, y, MagicMenu.SpellIconSize, MagicMenu.SpellIconSize);
@@ -144,40 +144,40 @@ namespace Magic.Framework.Game.Interface
                         b.Draw(this.Sel.Icons[i], r, Color.White);
                     if (r.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                     {
-                        if (this.JustLeftClicked && Game1.player.KnowsSpell(this.Sel, i))
+                        if (this.JustLeftClicked && spellBook.KnowsSpell(this.Sel, i))
                         {
                             this.Dragging = new PreparedSpell(this.Sel.FullId, i);
                             this.JustLeftClicked = false;
                         }
-                        else if (i == 0 || Game1.player.KnowsSpell(this.Sel, i - 1))
+                        else if (i == 0 || spellBook.KnowsSpell(this.Sel, i - 1))
                         {
                             if (this.JustLeftClicked)
-                                Game1.player.LearnSpell(this.Sel, i);
+                                spellBook.LearnSpell(this.Sel, i);
                             else if (this.JustRightClicked && i != 0)
-                                Game1.player.ForgetSpell(this.Sel, i);
+                                spellBook.ForgetSpell(this.Sel, i);
                         }
                     }
                 }
 
-                b.DrawString(Game1.dialogueFont, "Free points: " + Game1.player.GetFreeSpellPoints(), new Vector2(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + 12 + 24, this.yPositionOnScreen + MagicMenu.WindowHeight - 12 - 32 - 20), Color.Black);
+                b.DrawString(Game1.dialogueFont, "Free points: " + spellBook.FreePoints, new Vector2(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + 12 + 24, this.yPositionOnScreen + MagicMenu.WindowHeight - 12 - 32 - 20), Color.Black);
             }
             //*
             {
                 int y = this.yPositionOnScreen + gap + 12 + (hasFifthSpellSlot ? -32 : 0);
-                foreach (var preps in spellbook.Prepared)
+                foreach (var spellBar in spellBook.Prepared)
                 {
                     for (int i = 0; i < (hasFifthSpellSlot ? 5 : 4); ++i)
                     {
-                        var prep = preps[i];
+                        var prep = spellBar.GetSlot(i);
 
                         var r = new Rectangle(this.xPositionOnScreen + MagicMenu.WindowWidth + 12, y, MagicMenu.HotbarIconSize, MagicMenu.HotbarIconSize);
                         if (r.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                         {
                             if (this.JustRightClicked)
-                                preps[i] = prep = null;
+                                spellBar.SetSlot(i, prep = null);
                             else if (this.JustLeftClicked)
                             {
-                                preps[i] = prep = this.Dragging;
+                                spellBar.SetSlot(i, prep = this.Dragging);
                                 this.Dragging = null;
                                 this.JustLeftClicked = false;
                             }

@@ -35,7 +35,7 @@ namespace Magic.Framework
 
             public override void DoImmediateProfessionPerk()
             {
-                Game1.player.UseSpellPoints(-2);
+                Game1.player.GetSpellBook().UseSpellPoints(-2);
             }
         }
 
@@ -153,7 +153,7 @@ namespace Magic.Framework
             if (level > 1 || curMana < Magic.ManaPointsPerLevel) // skip increasing mana for first level, since we did it on learning the skill
                 Game1.player.SetMaxMana(curMana + Magic.ManaPointsPerLevel);
 
-            Game1.player.UseSpellPoints(-1);
+            Game1.player.GetSpellBook().UseSpellPoints(-1);
         }
     }
 }

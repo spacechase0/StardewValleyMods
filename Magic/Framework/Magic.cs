@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Magic.Framework.Game.Interface;
 using Magic.Framework.Schools;
 using Magic.Framework.Spells;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 using SpaceCore;
 using SpaceCore.Events;
 using SpaceShared;
@@ -41,8 +39,11 @@ namespace Magic.Framework
         /// <summary>The active effects, spells, or projectiles which should be updated or drawn.</summary>
         private static readonly IList<IActiveEffect> ActiveEffects = new List<IActiveEffect>();
 
-        public const string MsgData = "spacechase0.Magic.Data";
         public const string MsgCast = "spacechase0.Magic.Cast";
+
+        /// <summary>The self-updating views of magic metadata for each player.</summary>
+        /// <remarks>This should only be accessed through <see cref="GetSpellBook"/> or <see cref="Extensions.GetSpellBook"/> to make sure an updated instance is retrieved.</remarks>
+        private static readonly IDictionary<long, SpellBook> SpellBookCache = new Dictionary<long, SpellBook>();
 
         internal static void Init(IModEvents events, IInputHelper inputHelper, Func<long> getNewId)
         {
@@ -52,7 +53,6 @@ namespace Magic.Framework
 
             SpellManager.Init(getNewId);
 
-            events.GameLoop.SaveLoaded += Magic.OnSaveLoaded;
             events.GameLoop.UpdateTicked += Magic.OnUpdateTicked;
 
             events.Input.ButtonPressed += Magic.OnButtonPressed;
@@ -64,9 +64,7 @@ namespace Magic.Framework
             SpaceEvents.OnBlankSave += Magic.OnBlankSave;
             SpaceEvents.OnItemEaten += Magic.OnItemEaten;
             SpaceEvents.ActionActivated += Magic.ActionTriggered;
-            Networking.RegisterMessageHandler(Magic.MsgData, Magic.OnNetworkData);
             Networking.RegisterMessageHandler(Magic.MsgCast, Magic.OnNetworkCast);
-            SpaceEvents.ServerGotClient += Magic.OnClientConnected;
 
             events.Display.RenderingHud += Magic.OnRenderingHud;
             events.Display.RenderedHud += Magic.OnRenderedHud;
@@ -85,11 +83,23 @@ namespace Magic.Framework
             PyTK.CustomTV.CustomTVMod.addChannel("magic", Mod.Instance.Helper.Translation.Get("tv.analyzehints.name"), Magic.OnTvChannelSelected);
         }
 
+        /// <summary>Get a self-updating view of a player's magic metadata.</summary>
+        /// <param name="player">The player whose spell book to get.</param>
+        public static SpellBook GetSpellBook(Farmer player)
+        {
+            if (!Magic.SpellBookCache.TryGetValue(player.UniqueMultiplayerID, out SpellBook book) || !object.ReferenceEquals(player, book.Player))
+                Magic.SpellBookCache[player.UniqueMultiplayerID] = book = new SpellBook(player);
+
+            return book;
+        }
+
         private static void OnAnalyze(object sender, AnalyzeEventArgs e)
         {
             var farmer = sender as Farmer;
             if (farmer != Game1.player)
                 return;
+
+            SpellBook spellBook = farmer.GetSpellBook();
 
             List<string> spellsLearnt = new List<string>();
             if (farmer.CurrentItem != null)
@@ -155,7 +165,7 @@ namespace Magic.Framework
                 spellsLearnt.Add("eldritch:bloodmana");
 
             for (int i = spellsLearnt.Count - 1; i >= 0; --i)
-                if (farmer.KnowsSpell(spellsLearnt[i], 0))
+                if (spellBook.KnowsSpell(spellsLearnt[i], 0))
                     spellsLearnt.RemoveAt(i);
             if (spellsLearnt.Count > 0)
             {
@@ -163,7 +173,7 @@ namespace Magic.Framework
                 foreach (string spell in spellsLearnt)
                 {
                     Log.Debug("Player learnt spell: " + spell);
-                    farmer.LearnSpell(spell, 0, true);
+                    spellBook.LearnSpell(spell, 0, true);
                     //Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") }));
                     Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("spell.learn", new { spellName = SpellManager.Get(spell).GetTranslatedName() })));
                 }
@@ -178,7 +188,7 @@ namespace Magic.Framework
                 bool knowsAllSchool = true;
                 foreach (var spell in school.GetSpellsTier1())
                 {
-                    if (!farmer.KnowsSpell(spell, 0))
+                    if (!spellBook.KnowsSpell(spell, 0))
                     {
                         knowsAll = knowsAllSchool = false;
                         break;
@@ -186,7 +196,7 @@ namespace Magic.Framework
                 }
                 foreach (var spell in school.GetSpellsTier2())
                 {
-                    if (!farmer.KnowsSpell(spell, 0))
+                    if (!spellBook.KnowsSpell(spell, 0))
                     {
                         knowsAll = knowsAllSchool = false;
                         break;
@@ -198,73 +208,37 @@ namespace Magic.Framework
                     continue;
 
                 var ancientSpell = school.GetSpellsTier3()[0];
-                if (knowsAllSchool && !farmer.KnowsSpell(ancientSpell, 0))
+                if (knowsAllSchool && !spellBook.KnowsSpell(ancientSpell, 0))
                 {
                     Log.Debug("Player learnt ancient spell: " + ancientSpell);
-                    farmer.LearnSpell(ancientSpell, 0, true);
+                    spellBook.LearnSpell(ancientSpell, 0, true);
                     Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = ancientSpell.GetTranslatedName() })));
                 }
             }
 
             var rewindSpell = School.GetSchool(SchoolId.Arcane).GetSpellsTier3()[0];
-            if (knowsAll && !farmer.KnowsSpell(rewindSpell, 0))
+            if (knowsAll && !spellBook.KnowsSpell(rewindSpell, 0))
             {
                 Log.Debug("Player learnt ancient spell: " + rewindSpell);
-                farmer.LearnSpell(rewindSpell, 0, true);
+                spellBook.LearnSpell(rewindSpell, 0, true);
                 Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = rewindSpell.GetTranslatedName() })));
-            }
-        }
-
-        private static void OnNetworkData(IncomingMessage msg)
-        {
-            int count = msg.Reader.ReadInt32();
-            for (int i = 0; i < count; ++i)
-            {
-                Mod.Data.Players[msg.Reader.ReadInt64()] = JsonConvert.DeserializeObject<MultiplayerSaveData.PlayerData>(msg.Reader.ReadString());
             }
         }
 
         private static void OnNetworkCast(IncomingMessage msg)
         {
-            IActiveEffect effect = Game1.getFarmer(msg.FarmerID).CastSpell(msg.Reader.ReadString(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32());
+            Farmer player = Game1.getFarmer(msg.FarmerID);
+            if (player == null)
+                return;
+
+            IActiveEffect effect = player.GetSpellBook().CastSpell(msg.Reader.ReadString(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32());
             if (effect != null)
                 Magic.ActiveEffects.Add(effect);
-        }
-
-        private static void OnClientConnected(object sender, EventArgsServerGotClient args)
-        {
-            if (!Mod.Data.Players.ContainsKey(args.FarmerID))
-                Mod.Data.Players[args.FarmerID] = new MultiplayerSaveData.PlayerData();
-
-            using var stream = new MemoryStream();
-            using var writer = new BinaryWriter(stream);
-            writer.Write(Mod.Data.Players.Count);
-            foreach (var entry in Mod.Data.Players)
-            {
-                writer.Write(entry.Key);
-                writer.Write(JsonConvert.SerializeObject(entry.Value, MultiplayerSaveData.NetworkSerializerSettings));
-            }
-            Networking.BroadcastMessage(Magic.MsgData, stream.ToArray());
         }
 
         private static void OnBlankSave(object sender, EventArgs args)
         {
             Magic.PlaceAltar(Mod.Config.AltarLocation, Mod.Config.AltarX, Mod.Config.AltarY, 54 * 4);
-        }
-
-        /// <summary>Raised after the player loads a save slot.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        public static void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
-        {
-            Mod.Data.Players[Game1.player.UniqueMultiplayerID].SpellBook.Owner = Game1.player;
-            foreach (var farmer in Game1.otherFarmers)
-            {
-                if (!Mod.Data.Players.ContainsKey(farmer.Key))
-                    continue;
-
-                Mod.Data.Players[farmer.Key].SpellBook.Owner = farmer.Value;
-            }
         }
 
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
@@ -309,13 +283,6 @@ namespace Magic.Framework
             if (hasFifthSpellSlot)
                 spotYAffector = 0;
             Point[] spots =
-            new Point[5]/*
-            {
-                new Point((int)manaPos.X + manaBg.Width * 4 + 20 + 40, Game1.viewport.Height - 20 - 50 - 30 - 50 - 25),
-                new Point((int)manaPos.X + manaBg.Width * 4 + 20 + 50 + 30, Game1.viewport.Height - 20 - 50 - 40 - 25),
-                new Point((int)manaPos.X + manaBg.Width * 4 + 20 + 40, Game1.viewport.Height - 20 - 50 - 25 ),
-                new Point((int)manaPos.X + manaBg.Width * 4 + 20, Game1.viewport.Height - 20 - 50 - 40 - 25 ),
-            };*/
             {
                 new((int)manaPos.X + Magic.ManaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 4 + spotYAffector )),
                 new((int)manaPos.X + Magic.ManaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 3 + spotYAffector )),
@@ -324,29 +291,28 @@ namespace Magic.Framework
                 new((int)manaPos.X + Magic.ManaBg.Width * 4 + 20 + 60 * 0, Game1.uiViewport.Height - 20 - 50 - 60 * ( 0 + spotYAffector ))
             };
 
-            SpellBook book = Game1.player.GetSpellBook();
-            if (book == null || book.SelectedPrepared >= book.Prepared.Length)
+            // read spell info
+            SpellBook spellBook = Game1.player.GetSpellBook();
+            PreparedSpellBar prepared = spellBook.GetPreparedSpells();
+            if (prepared == null)
                 return;
-            PreparedSpell[] prepared = book.GetPreparedSpells();
 
+            // render empty spell slots
             for (int i = 0; i < (hasFifthSpellSlot ? 5 : 4); ++i)
-            {
                 b.Draw(Magic.SpellBg, new Rectangle(spots[i].X, spots[i].Y, 50, 50), Color.White);
-            }
 
-            string prepStr = (book.SelectedPrepared + 1) + "/" + book.Prepared.Length;
+            // render spell bar count
+            string prepStr = (spellBook.SelectedPrepared + 1) + "/" + spellBook.Prepared.Count;
             b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 + 2, spots[Game1.up].Y - 35 + 0), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
             b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 - 2, spots[Game1.up].Y - 35 + 0), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
             b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 + 0, spots[Game1.up].Y - 35 + 2), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
             b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25 + 0, spots[Game1.up].Y - 35 - 2), Color.Black, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
             b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25, spots[Game1.up].Y - 35), Color.White, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
 
-            for (int i = 0; i < (hasFifthSpellSlot ? 5 : 4); ++i)
+            // render spell bar
+            for (int i = 0; i < (hasFifthSpellSlot ? 5 : 4) && i < prepared.Spells.Count; ++i)
             {
-                if (i >= prepared.Length)
-                    break;
-
-                PreparedSpell prep = prepared[i];
+                PreparedSpell prep = prepared.GetSlot(i);
                 if (prep == null)
                     continue;
 
@@ -354,7 +320,7 @@ namespace Magic.Framework
                 if (spell == null || spell.Icons.Length <= prep.Level || spell.Icons[prep.Level] == null)
                     continue;
 
-                b.Draw(spell.Icons[prep.Level], new Rectangle(spots[i].X, spots[i].Y, 50, 50), Game1.player.CanCastSpell(spell, prep.Level) ? Color.White : new Color(128, 128, 128));
+                b.Draw(spell.Icons[prep.Level], new Rectangle(spots[i].X, spots[i].Y, 50, 50), spellBook.CanCastSpell(spell, prep.Level) ? Color.White : new Color(128, 128, 128));
             }
         }
 
@@ -378,11 +344,11 @@ namespace Magic.Framework
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
             if (e.Button == Mod.Config.Key_Cast)
-            {
                 Magic.CastPressed = true;
-            }
 
-            if (Mod.Data == null || Game1.activeClickableMenu != null) return;
+            if (Game1.activeClickableMenu != null)
+                return;
+
             if (e.Button == Mod.Config.Key_SwapSpells)
             {
                 Game1.player.GetSpellBook().SwapPreparedSet();
@@ -392,34 +358,34 @@ namespace Magic.Framework
                       e.Button == Mod.Config.Key_Spell3 || e.Button == Mod.Config.Key_Spell4 ||
                       (e.Button == Mod.Config.Key_Spell5 && hasFifthSpellSlot)))
             {
-                int slot = 0;
-                if (e.Button == Mod.Config.Key_Spell1) slot = 0;
-                else if (e.Button == Mod.Config.Key_Spell2) slot = 1;
-                else if (e.Button == Mod.Config.Key_Spell3) slot = 2;
-                else if (e.Button == Mod.Config.Key_Spell4) slot = 3;
-                else if (e.Button == Mod.Config.Key_Spell5) slot = 4;
+                int slotIndex = 0;
+                if (e.Button == Mod.Config.Key_Spell1) slotIndex = 0;
+                else if (e.Button == Mod.Config.Key_Spell2) slotIndex = 1;
+                else if (e.Button == Mod.Config.Key_Spell3) slotIndex = 2;
+                else if (e.Button == Mod.Config.Key_Spell4) slotIndex = 3;
+                else if (e.Button == Mod.Config.Key_Spell5) slotIndex = 4;
 
                 Magic.InputHelper.Suppress(e.Button);
 
-                SpellBook book = Game1.player.GetSpellBook();
-                PreparedSpell[] prepared = book.GetPreparedSpells();
-                if (prepared[slot] == null)
-                    return;
-                PreparedSpell prep = prepared[slot];
+                SpellBook spellBook = Game1.player.GetSpellBook();
 
-                Spell toCast = SpellManager.Get(prep.SpellId);
-                if (toCast == null)
+                PreparedSpellBar prepared = spellBook.GetPreparedSpells();
+                PreparedSpell slot = prepared?.GetSlot(slotIndex);
+                if (slot == null)
                     return;
 
-                //Log.trace("MEOW " + prep.SpellId + " " + prep.Level + " " + Game1.player.canCastSpell(toCast, prep.Level));
-                if (Game1.player.CanCastSpell(toCast, prep.Level))
+                Spell spell = SpellManager.Get(slot.SpellId);
+                if (spell == null)
+                    return;
+
+                if (spellBook.CanCastSpell(spell, slot.Level))
                 {
-                    Log.Trace("Casting " + prep.SpellId);
+                    Log.Trace("Casting " + slot.SpellId);
 
-                    IActiveEffect effect = Game1.player.CastSpell(toCast, prep.Level);
+                    IActiveEffect effect = spellBook.CastSpell(spell, slot.Level);
                     if (effect != null)
                         Magic.ActiveEffects.Add(effect);
-                    Game1.player.AddMana(-toCast.GetManaCost(Game1.player, prep.Level));
+                    Game1.player.AddMana(-spell.GetManaCost(Game1.player, slot.Level));
                 }
             }
         }
@@ -484,10 +450,13 @@ namespace Magic.Framework
 
                 Game1.player.AddCustomSkillExperience(Magic.Skill, Magic.Skill.ExperienceCurve[0]);
                 Magic.FixManaPoolIfNeeded(Game1.player, overrideMagicLevel: 1); // let player start using magic immediately
-                Game1.player.LearnSpell("arcane:analyze", 0, true);
-                Game1.player.LearnSpell("arcane:magicmissle", 0, true);
-                Game1.player.LearnSpell("arcane:enchant", 0, true);
-                Game1.player.LearnSpell("arcane:disenchant", 0, true);
+
+                SpellBook spellBook = Game1.player.GetSpellBook();
+                spellBook.LearnSpell("arcane:analyze", 0, true);
+                spellBook.LearnSpell("arcane:magicmissle", 0, true);
+                spellBook.LearnSpell("arcane:enchant", 0, true);
+                spellBook.LearnSpell("arcane:disenchant", 0, true);
+
                 Game1.player.eventsSeen.Add(Magic.LearnedMagicEventId);
             }
         }
@@ -586,10 +555,16 @@ namespace Magic.Framework
 
         private static void LearnSpellCommand(string[] args)
         {
+            SpellBook spellBook = Game1.player.GetSpellBook();
+
             if (args.Length == 1 && args[0] == "all")
             {
                 foreach (string spellName in SpellManager.GetAll())
-                    Game1.player.LearnSpell(SpellManager.Get(spellName), SpellManager.Get(spellName).GetMaxCastingLevel(), true);
+                {
+                    var curSpell = SpellManager.Get(spellName);
+                    spellBook.LearnSpell(curSpell, curSpell.GetMaxCastingLevel(), true);
+                }
+
                 return;
             }
 
@@ -612,7 +587,7 @@ namespace Magic.Framework
                 return;
             }
 
-            Game1.player.LearnSpell(spell, level, true);
+            spellBook.LearnSpell(spell, level, true);
         }
 
         private static void MagicMenuCommand(string[] args)

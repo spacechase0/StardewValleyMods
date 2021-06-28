@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using Magic.Framework;
 using Magic.Framework.Apis;
-using Newtonsoft.Json;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
@@ -14,7 +13,6 @@ namespace Magic
     internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
-        public static MultiplayerSaveData Data { get; private set; } = new();
         public static Configuration Config { get; private set; }
 
         internal static JsonAssetsApi Ja;
@@ -22,12 +20,17 @@ namespace Magic
 
         internal Api Api;
 
+        /// <summary>Handles migrating legacy data for a save file.</summary>
+        private LegacyDataMigrator LegacyDataMigrator;
+
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             Mod.Config = this.Helper.ReadConfig<Configuration>();
+
+            this.LegacyDataMigrator = new(this.Monitor);
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
@@ -87,41 +90,16 @@ namespace Magic
         /// <param name="e">The event arguments.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
+            if (!Context.IsMainPlayer)
+                return;
+
             try
             {
-                if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-                {
-                    Log.Info($"Loading save data (\"{MultiplayerSaveData.FilePath}\")...");
-                    Mod.Data = File.Exists(MultiplayerSaveData.FilePath)
-                        ? JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.FilePath))
-                        : new MultiplayerSaveData();
-
-                    foreach (var magic in Mod.Data.Players)
-                    {
-                        if (magic.Value.SpellBook.Prepared[0].Length == 4)
-                        {
-                            var newSpells = new PreparedSpell[5];
-                            for (int i = 0; i < 4; ++i)
-                                newSpells[i] = magic.Value.SpellBook.Prepared[0][i];
-                            magic.Value.SpellBook.Prepared[0] = newSpells;
-                        }
-
-                        if (magic.Value.SpellBook.Prepared[1].Length == 4)
-                        {
-                            var newSpells = new PreparedSpell[5];
-                            for (int i = 0; i < 4; ++i)
-                                newSpells[i] = magic.Value.SpellBook.Prepared[1][i];
-                            magic.Value.SpellBook.Prepared[1] = newSpells;
-                        }
-                    }
-
-                    if (!Mod.Data.Players.ContainsKey(Game1.player.UniqueMultiplayerID))
-                        Mod.Data.Players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
-                }
+                this.LegacyDataMigrator.OnSaveLoaded();
             }
             catch (Exception ex)
             {
-                Log.Warn($"Exception loading save data: {ex}");
+                Log.Warn($"Exception migrating legacy save data: {ex}");
             }
         }
 
@@ -140,11 +118,10 @@ namespace Magic
         /// <param name="e">The event arguments.</param>
         private void OnSaving(object sender, SavingEventArgs e)
         {
-            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-            {
-                Log.Info($"Saving save data (\"{MultiplayerSaveData.FilePath}\")...");
-                File.WriteAllText(MultiplayerSaveData.FilePath, JsonConvert.SerializeObject(Mod.Data));
-            }
+            if (!Context.IsMainPlayer)
+                return;
+
+            this.LegacyDataMigrator.OnSaved();
         }
     }
 }

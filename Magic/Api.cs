@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using Magic.Framework;
 using SpaceShared;
 using StardewModdingAPI;
@@ -28,13 +28,13 @@ namespace Magic
 
             Mod.Instance.Monitor.Log($"{manifest.Name} reset the current player's magic progress.", LogLevel.Info);
 
-            SpellBook spells = Game1.player.GetSpellBook();
-            foreach (var spell in new Dictionary<string, int>(spells.KnownSpells))
+            SpellBook book = Game1.player.GetSpellBook();
+            foreach (var spell in book.KnownSpells.Values.ToArray())
             {
-                if (spell.Value > 0)
-                    Game1.player.ForgetSpell(spell.Key, 1, sync: false);
+                if (spell.Level > 0)
+                    book.ForgetSpell(spell.SpellId, 1);
             }
-            Game1.player.UseSpellPoints(10, sync: true);
+            book.UseSpellPoints(book.FreePoints);
         }
 
         /// <inheritdoc />
@@ -45,7 +45,8 @@ namespace Magic
 
             Mod.Instance.Monitor.Log($"{manifest.Name} {(count < 0 ? "restored" : "used")} {count} spell points on behalf of the current player.");
 
-            Game1.player.UseSpellPoints(-count);
+            SpellBook book = Game1.player.GetSpellBook();
+            book.UseSpellPoints(-count);
         }
 
 

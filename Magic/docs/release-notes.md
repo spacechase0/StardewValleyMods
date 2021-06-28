@@ -4,7 +4,8 @@
 ## Upcoming release
 * Added API methods to support Skill Prestige.
 * You now get 100 mana points immediately after the Wizard event, so you can start using magic on the same day.
-* The Wizard event is now skippable.
+* Made Wizard event skippable.
+* Migrated player data into the `Farmer.modData` field to simplify synchronization and reduce edge cases.
 * Fixed Wizard event broken if another mod changes the location in an incompatible way.
 * Fixed magic UI rendered before learning magic if another mod added mana points.
 * Fixed players sometimes having no mana points despite learning magic.
