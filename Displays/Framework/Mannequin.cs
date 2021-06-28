@@ -8,26 +8,23 @@ using StardewValley.Menus;
 using StardewValley.Objects;
 using StardewValley.Tools;
 
-namespace Displays
+namespace Displays.Framework
 {
     [XmlType("Mods_spacechase0_Mannequin")]
-    public class Mannequin : StardewValley.Object
+    public class Mannequin : StardewValley.Object // must be public for the XML serializer
     {
-        public static Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-base.png");
-        public static Texture2D TexM = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-male.png");
-        public static Texture2D TexF = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-female.png");
+        /*********
+        ** Fields
+        *********/
+        private static readonly Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-base.png");
+        private static readonly Texture2D TexM = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-male.png");
+        private static readonly Texture2D TexF = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-female.png");
+        private Farmer FarmerForRendering;
 
-        public enum MannequinType
-        {
-            Plain,
-            Magic
-        }
-        public enum MannequinGender
-        {
-            Male,
-            Female
-        }
 
+        /*********
+        ** Accessors
+        *********/
         public readonly NetEnum<MannequinType> MannType = new(MannequinType.Plain);
         public readonly NetEnum<MannequinGender> MannGender = new(MannequinGender.Male);
         public readonly NetInt Facing = new(Game1.down);
@@ -37,17 +34,16 @@ namespace Displays
         public readonly NetRef<Clothing> Pants = new();
         public readonly NetRef<Boots> Boots = new();
 
-        // TODO: Magic properties (skin color, eye color, hair stuff, accessories)
-
-        [XmlIgnore]
-        private Farmer FarmerForRendering;
-
         public override string DisplayName
         {
             get => this.name;
             set { }
         }
 
+
+        /*********
+        ** Public methods
+        *********/
         public Mannequin() { }
 
         public Mannequin(MannequinType type, MannequinGender gender, Vector2 placement)
@@ -62,59 +58,6 @@ namespace Displays
 
             this.TileLocation = placement;
             this.boundingBox.Value = new Rectangle((int)placement.X * 64, (int)placement.Y * 64, 64, 64);
-        }
-
-        protected override void initNetFields()
-        {
-            base.initNetFields();
-            this.NetFields.AddFields(this.MannType, this.MannGender, this.Facing, this.Hat, this.Shirt, this.Pants, this.Boots);
-
-            this.MannType.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
-            this.Facing.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
-            this.Hat.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
-            this.Shirt.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
-            this.Pants.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
-            this.Boots.fieldChangeEvent += (field, oldVal, newVal) => this.CacheFarmerSprite();
-        }
-
-        private void CacheFarmerSprite()
-        {
-            this.FarmerForRendering ??= new Farmer();
-            this.FarmerForRendering.changeGender(this.MannGender.Value == MannequinGender.Male);
-            if (this.MannGender.Value == MannequinGender.Female)
-                this.FarmerForRendering.changeHairStyle(16);
-            this.FarmerForRendering.faceDirection(this.Facing.Value);
-            this.FarmerForRendering.hat.Value = this.Hat.Value;
-            this.FarmerForRendering.shirtItem.Value = this.Shirt.Value;
-            if (this.Shirt.Value != null)
-            {
-                this.FarmerForRendering.shirt.Value = this.MannGender.Value == MannequinGender.Male ? this.Shirt.Value.indexInTileSheetMale.Value : this.Shirt.Value.indexInTileSheetFemale.Value;
-            }
-
-            this.FarmerForRendering.pantsItem.Value = this.Pants.Value;
-            if (this.Pants.Value != null)
-            {
-                this.FarmerForRendering.pants.Value = this.MannGender.Value == MannequinGender.Male ? this.Pants.Value.indexInTileSheetMale.Value : this.Pants.Value.indexInTileSheetFemale.Value;
-                this.FarmerForRendering.pantsColor.Value = this.Pants.Value.clothesColor.Value;
-            }
-
-            this.FarmerForRendering.boots.Value = this.Boots.Value;
-            if (this.Boots.Value != null)
-            {
-                this.FarmerForRendering.changeShoeColor(this.Boots.Value.indexInColorSheet.Value);
-            }
-            if (this.MannType.Value == MannequinType.Plain)
-            {
-                this.FarmerForRendering.changeHairColor(Color.Transparent);
-                this.FarmerForRendering.FarmerRenderer.textureName.Value = "Characters\\Farmer\\farmer_transparent";
-            }
-        }
-
-        protected override string loadDisplayName()
-        {
-            string type = Mod.Instance.Helper.Translation.Get($"mannequin.type.{this.MannType.Value}");
-            string gender = Mod.Instance.Helper.Translation.Get($"mannequin.gender.{this.MannGender.Value}");
-            return Mod.Instance.Helper.Translation.Get("mannequin.name", new { type, gender });
         }
 
         public override string getDescription()
@@ -325,6 +268,68 @@ namespace Displays
             //SpaceShared.Log.trace( "meow!? " + farmerForRendering.shirtItem.Value + " " + farmerForRendering.pantsItem.Value + " " + farmerForRendering.hat.Value );
             this.FarmerForRendering.position.Value = new Vector2(x * 64, y * 64 + 12);
             this.FarmerForRendering.FarmerRenderer.draw(spriteBatch, this.FarmerForRendering.FarmerSprite, this.FarmerForRendering.FarmerSprite.sourceRect, this.FarmerForRendering.getLocalPosition(Game1.viewport), new Vector2(0, this.FarmerForRendering.GetBoundingBox().Height), drawLayer + 0.001f, Color.White, 0, this.FarmerForRendering);
+        }
+
+
+        /*********
+        ** Protected methods
+        *********/
+        protected override void initNetFields()
+        {
+            base.initNetFields();
+            this.NetFields.AddFields(this.MannType, this.MannGender, this.Facing, this.Hat, this.Shirt, this.Pants, this.Boots);
+
+            this.MannType.fieldChangeEvent += this.OnNetFieldChanged;
+            this.Facing.fieldChangeEvent += this.OnNetFieldChanged;
+            this.Hat.fieldChangeEvent += this.OnNetFieldChanged;
+            this.Shirt.fieldChangeEvent += this.OnNetFieldChanged;
+            this.Pants.fieldChangeEvent += this.OnNetFieldChanged;
+            this.Boots.fieldChangeEvent += this.OnNetFieldChanged;
+        }
+
+        protected override string loadDisplayName()
+        {
+            string type = Mod.Instance.Helper.Translation.Get($"mannequin.type.{this.MannType.Value}");
+            string gender = Mod.Instance.Helper.Translation.Get($"mannequin.gender.{this.MannGender.Value}");
+            return Mod.Instance.Helper.Translation.Get("mannequin.name", new { type, gender });
+        }
+
+        private void OnNetFieldChanged<TNetField, TValue>(TNetField field, TValue oldValue, TValue newValue)
+        {
+            this.CacheFarmerSprite();
+        }
+
+        private void CacheFarmerSprite()
+        {
+            this.FarmerForRendering ??= new Farmer();
+            this.FarmerForRendering.changeGender(this.MannGender.Value == MannequinGender.Male);
+            if (this.MannGender.Value == MannequinGender.Female)
+                this.FarmerForRendering.changeHairStyle(16);
+            this.FarmerForRendering.faceDirection(this.Facing.Value);
+            this.FarmerForRendering.hat.Value = this.Hat.Value;
+            this.FarmerForRendering.shirtItem.Value = this.Shirt.Value;
+            if (this.Shirt.Value != null)
+            {
+                this.FarmerForRendering.shirt.Value = this.MannGender.Value == MannequinGender.Male ? this.Shirt.Value.indexInTileSheetMale.Value : this.Shirt.Value.indexInTileSheetFemale.Value;
+            }
+
+            this.FarmerForRendering.pantsItem.Value = this.Pants.Value;
+            if (this.Pants.Value != null)
+            {
+                this.FarmerForRendering.pants.Value = this.MannGender.Value == MannequinGender.Male ? this.Pants.Value.indexInTileSheetMale.Value : this.Pants.Value.indexInTileSheetFemale.Value;
+                this.FarmerForRendering.pantsColor.Value = this.Pants.Value.clothesColor.Value;
+            }
+
+            this.FarmerForRendering.boots.Value = this.Boots.Value;
+            if (this.Boots.Value != null)
+            {
+                this.FarmerForRendering.changeShoeColor(this.Boots.Value.indexInColorSheet.Value);
+            }
+            if (this.MannType.Value == MannequinType.Plain)
+            {
+                this.FarmerForRendering.changeHairColor(Color.Transparent);
+                this.FarmerForRendering.FarmerRenderer.textureName.Value = "Characters\\Farmer\\farmer_transparent";
+            }
         }
 
         /// <summary>Swap an equipment slot between the display and a player.</summary>
