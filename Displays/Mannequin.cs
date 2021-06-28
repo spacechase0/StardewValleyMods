@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewValley;
+using StardewValley.Menus;
 using StardewValley.Objects;
 using StardewValley.Tools;
 
@@ -48,6 +49,7 @@ namespace Displays
         }
 
         public Mannequin() { }
+
         public Mannequin(MannequinType type, MannequinGender gender, Vector2 placement)
         {
             this.MannType.Value = type;
@@ -110,9 +112,9 @@ namespace Displays
 
         protected override string loadDisplayName()
         {
-            string type = Mod.Instance.Helper.Translation.Get("mannequin.type." + this.MannType.Value.ToString());
-            string gender = Mod.Instance.Helper.Translation.Get("mannequin.gender." + this.MannGender.Value.ToString());
-            return Mod.Instance.Helper.Translation.Get("mannequin.name", new { type = type, gender = gender });
+            string type = Mod.Instance.Helper.Translation.Get($"mannequin.type.{this.MannType.Value}");
+            string gender = Mod.Instance.Helper.Translation.Get($"mannequin.gender.{this.MannGender.Value}");
+            return Mod.Instance.Helper.Translation.Get("mannequin.name", new { type, gender });
         }
 
         public override string getDescription()
@@ -147,10 +149,8 @@ namespace Displays
 
         public override bool placementAction(GameLocation location, int x, int y, Farmer who = null)
         {
-            Vector2 placementTile = new Vector2(x / 64, y / 64);
+            Vector2 placementTile = new Vector2(x / Game1.tileSize, y / Game1.tileSize);
             var m = new Mannequin(this.MannType.Value, this.MannGender.Value, placementTile);
-            //if (who != null)
-            //    m.facing.Value = who.FacingDirection;
             location.Objects.Add(placementTile, m);
             location.playSound("woodyStep");
             return true;
@@ -204,35 +204,15 @@ namespace Displays
                 if (justCheckingForActivity)
                     return true;
 
-                //if ( who.hat.Value != null )
-                {
-                    var tmp = this.Hat.Value;
-                    this.Hat.Value = who.hat.Value;
-                    who.hat.Value = tmp;
-                }
-                //if ( who.shirtItem.Value != null )
-                {
-                    var tmp = this.Shirt.Value;
-                    this.Shirt.Value = who.shirtItem.Value;
-                    who.shirtItem.Value = tmp;
-                }
-                //if ( who.pantsItem.Value != null )
-                {
-                    var tmp = this.Pants.Value;
-                    this.Pants.Value = who.pantsItem.Value;
-                    who.pantsItem.Value = tmp;
-                }
-                if (who.boots.Value != null)
-                {
-                    var tmp = this.Boots.Value;
-                    this.Boots.Value = who.boots.Value;
-                    who.boots.Value = tmp;
-                }
+                this.Swap(this.Hat, who.hat, who);
+                this.Swap(this.Shirt, who.shirtItem, who);
+                this.Swap(this.Pants, who.pantsItem, who);
+                this.Swap(this.Boots, who.boots, who);
+
                 return true;
             }
 
             return false;
-
         }
 
         public override bool performObjectDropInAction(Item dropInItem, bool probe, Farmer who)
@@ -345,6 +325,69 @@ namespace Displays
             //SpaceShared.Log.trace( "meow!? " + farmerForRendering.shirtItem.Value + " " + farmerForRendering.pantsItem.Value + " " + farmerForRendering.hat.Value );
             this.FarmerForRendering.position.Value = new Vector2(x * 64, y * 64 + 12);
             this.FarmerForRendering.FarmerRenderer.draw(spriteBatch, this.FarmerForRendering.FarmerSprite, this.FarmerForRendering.FarmerSprite.sourceRect, this.FarmerForRendering.getLocalPosition(Game1.viewport), new Vector2(0, this.FarmerForRendering.GetBoundingBox().Height), drawLayer + 0.001f, Color.White, 0, this.FarmerForRendering);
+        }
+
+        /// <summary>Swap an equipment slot between the display and a player.</summary>
+        /// <typeparam name="T">The underlying type for the net reference.</typeparam>
+        /// <param name="onDisplay">The field on the display.</param>
+        /// <param name="onPlayer">The field on the player.</param>
+        /// <param name="player">The player instance.</param>
+        private void Swap<T>(NetRef<T> onDisplay, NetRef<T> onPlayer, Farmer player)
+            where T : class, INetObject<INetSerializable>
+        {
+            T wasOnDisplay = this.OnUnEquip(this.FarmerForRendering, onDisplay.Value);
+            T wasOnPlayer = this.OnUnEquip(player, onPlayer.Value);
+
+            onPlayer.Value = this.OnEquip(player, wasOnDisplay);
+            onDisplay.Value = this.OnEquip(this.FarmerForRendering, wasOnPlayer);
+        }
+
+        /// <summary>Perform any logic needed after un-equipping an item on a player or display.</summary>
+        /// <typeparam name="T">The item type.</typeparam>
+        /// <param name="farmer">The player or display who un-equipped the item.</param>
+        /// <param name="item">The item that was equipped.</param>
+        /// <remarks>Derived from <see cref="InventoryPage.receiveLeftClick"/>.</remarks>
+        private T OnUnEquip<T>(Farmer farmer, T item)
+        {
+            switch (item)
+            {
+                case Boots boots:
+                    if (object.ReferenceEquals(farmer, this.FarmerForRendering))
+                        farmer.changeShoeColor(12);
+                    else
+                        boots.onUnequip();
+                    break;
+
+                case Ring ring:
+                    ring.onUnequip(farmer, farmer.currentLocation);
+                    break;
+            }
+
+            return item;
+        }
+
+        /// <summary>Perform any logic needed after equipping an item on a player or display.</summary>
+        /// <typeparam name="T">The item type.</typeparam>
+        /// <param name="farmer">The player or display who equipped the item.</param>
+        /// <param name="item">The item that was equipped.</param>
+        /// <remarks>Derived from <see cref="InventoryPage.receiveLeftClick"/>.</remarks>
+        private T OnEquip<T>(Farmer farmer, T item)
+        {
+            switch (item)
+            {
+                case Boots boots:
+                    if (object.ReferenceEquals(farmer, this.FarmerForRendering))
+                        farmer.changeShoeColor(boots.indexInColorSheet.Value);
+                    else
+                        boots.onEquip();
+                    break;
+
+                case Ring ring:
+                    ring.onEquip(farmer, farmer.currentLocation);
+                    break;
+            }
+
+            return item;
         }
     }
 }
