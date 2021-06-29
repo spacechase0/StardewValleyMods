@@ -62,6 +62,7 @@ namespace ManaBar
         /// <inheritdoc cref="IDisplayEvents.RenderedHud"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
+        [EventPriority(EventPriority.Low)]
         public static void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             // skip if not applicable
