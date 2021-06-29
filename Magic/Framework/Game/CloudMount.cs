@@ -62,7 +62,7 @@ namespace Magic.Framework.Game
             {
                 this.rider.yJumpVelocity = 6f;
                 this.rider.yJumpOffset = -1;
-                Game1.playSound("dwop");
+                this.rider.LocalSound("dwop");
                 this.rider.freezePause = 5000;
                 this.rider.Halt();
                 this.rider.xOffset = 0.0f;

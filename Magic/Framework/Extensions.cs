@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using StardewValley;
 
 namespace Magic.Framework
@@ -28,6 +29,30 @@ namespace Magic.Framework
         public static SpellBook GetSpellBook(this Farmer player)
         {
             return Magic.GetSpellBook(player);
+        }
+
+        /// <summary>Play a local sound in a location at the given pixel position.</summary>
+        /// <param name="location">The location containing the sound.</param>
+        /// <param name="audioName">The audio cue name to play.</param>
+        /// <param name="pixelPosition">The absolute pixel position of the sound within the location, relative to the top-left corner of the map.</param>
+        public static void LocalSoundAtPixel(this GameLocation location, string audioName, Vector2 pixelPosition)
+        {
+            if (location == null)
+                return;
+
+            Vector2 tile = new(
+                x: (int)(pixelPosition.X / Game1.tileSize),
+                y: (int)(pixelPosition.Y / Game1.tileSize)
+            );
+            location.localSoundAt(audioName, tile);
+        }
+
+        /// <summary>Play a local sound centered on the given player.</summary>
+        /// <param name="player">The player on which to center the sound.</param>
+        /// <param name="audioName">The audio cue name to play.</param>
+        public static void LocalSound(this Farmer player, string audioName)
+        {
+            player?.currentLocation.LocalSoundAtPixel(audioName, player.Position);
         }
     }
 }

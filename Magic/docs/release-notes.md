@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Added API methods to support Skill Prestige.
+* Magic sounds are now localized, so only nearby players in multiplayer will hear them.
 * You now get 100 mana points immediately after the Wizard event, so you can start using magic on the same day.
 * Made Wizard event skippable.
 * Migrated player data into the `Farmer.modData` field to simplify synchronization and reduce edge cases.

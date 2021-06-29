@@ -68,12 +68,14 @@ namespace Magic.Framework.Spells
 
             // trigger explosion
             {
-                Game1.playSound("explosion");
+                this.Loc.LocalSoundAtPixel("explosion", this.Position);
                 for (int i = 0; i < 10; ++i)
                 {
-                    for (int ix = -i; ix <= i; ++ix)
-                        for (int iy = -i; iy <= i; ++iy)
-                            Game1.createRadialDebris(this.Loc, Game1.objectSpriteSheetName, new Rectangle(352, 400, 32, 32), 4, (int)this.Position.X + ix * 20, (int)this.Position.Y + iy * 20, 15 - 14 + Meteor.Rand.Next(15 - 14), (int)(this.Position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 255), 4.0f);
+                    for (int x = -i; x <= i; ++x)
+                    {
+                        for (int y = -i; y <= i; ++y)
+                            Game1.createRadialDebris(this.Loc, Game1.objectSpriteSheetName, new Rectangle(352, 400, 32, 32), 4, (int)this.Position.X + x * 20, (int)this.Position.Y + y * 20, 15 - 14 + Meteor.Rand.Next(15 - 14), (int)(this.Position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 255), 4.0f);
+                    }
                 }
                 foreach (var npc in this.Source.currentLocation.characters)
                 {

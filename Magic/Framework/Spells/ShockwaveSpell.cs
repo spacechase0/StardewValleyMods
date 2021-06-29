@@ -73,11 +73,14 @@ namespace Magic.Framework.Spells
                     int spotsForCurrRadius = 1 + this.CurrRad * 7;
                     for (int i = 0; i < spotsForCurrRadius; ++i)
                     {
-                        Game1.playSound("hoeHit");
-                        float ix = this.LandX + (float)Math.Cos(Math.PI * 2 / spotsForCurrRadius * i) * this.CurrRad * Game1.tileSize;
-                        float iy = this.LandY + (float)Math.Sin(Math.PI * 2 / spotsForCurrRadius * i) * this.CurrRad * Game1.tileSize;
-                        this.Player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(ix, iy), Color.White, 8, Game1.random.NextDouble() < 0.5, 30));
-                        this.Player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(ix, iy), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f));
+                        Vector2 pixelPos = new(
+                            x: this.LandX + (float)Math.Cos(Math.PI * 2 / spotsForCurrRadius * i) * this.CurrRad * Game1.tileSize,
+                            y: this.LandY + (float)Math.Sin(Math.PI * 2 / spotsForCurrRadius * i) * this.CurrRad * Game1.tileSize
+                        );
+
+                        this.Player.currentLocation.LocalSoundAtPixel("hoeHit", pixelPos);
+                        this.Player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, pixelPos, Color.White, 8, Game1.random.NextDouble() < 0.5, 30));
+                        this.Player.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(12, pixelPos, Color.White, 8, Game1.random.NextDouble() < 0.5, 50f));
                     }
                     ++this.CurrRad;
 
