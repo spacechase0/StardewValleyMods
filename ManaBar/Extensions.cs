@@ -7,6 +7,9 @@ namespace ManaBar
     /// <summary>Provides extensions on <see cref="Farmer"/> for managing mana points.</summary>
     public static class Extensions
     {
+        /*********
+        ** Public methods
+        *********/
         /// <summary>Get the player's current mana points.</summary>
         /// <param name="player">The player to check.</param>
         public static int GetCurrentMana(this Farmer player)

@@ -9,24 +9,38 @@ using StardewValley;
 
 namespace ManaBar
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod Instance;
-
+        /*********
+        ** Fields
+        *********/
         private static Texture2D ManaBg;
         private static Texture2D ManaFg;
+        private IApi Api;
 
         /// <summary>Handles migrating legacy data for a save file.</summary>
         private LegacyDataMigrator LegayDataMigrator;
 
+
+        /*********
+        ** Accessors
+        *********/
+        public static Mod Instance;
+
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             this.LegayDataMigrator = new(helper.Data, this.Monitor);
 
-            Command.Register("player_addmana", Mod.AddManaCommand);
-            Command.Register("player_setmaxmana", Mod.SetMaxManaCommand);
+            Command.Register("player_addmana", Mod.HandleAddManaCommand);
+            Command.Register("player_setmaxmana", Mod.HandleSetMaxManaCommand);
 
             helper.Events.GameLoop.DayStarted += Mod.OnDayStarted;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
@@ -39,21 +53,15 @@ namespace ManaBar
             Mod.ManaFg.SetData(new[] { manaCol });
         }
 
-        private static void AddManaCommand(string[] args)
-        {
-            Game1.player.AddMana(int.Parse(args[0]));
-        }
-        private static void SetMaxManaCommand(string[] args)
-        {
-            Game1.player.SetMaxMana(int.Parse(args[0]));
-        }
-
-        private IApi Api;
+        /// <inheritdoc />
         public override object GetApi()
         {
             return this.Api ??= new Api();
         }
 
+        /// <inheritdoc cref="IDisplayEvents.RenderedHud"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         public static void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
             if (Game1.activeClickableMenu != null || Game1.eventUp || Game1.player.GetMaxMana() == 0)
@@ -84,7 +92,20 @@ namespace ManaBar
             }
         }
 
-        /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
+        /*********
+        ** Private methods
+        *********/
+        private static void HandleAddManaCommand(string[] args)
+        {
+            Game1.player.AddMana(int.Parse(args[0]));
+        }
+
+        private static void HandleSetMaxManaCommand(string[] args)
+        {
+            Game1.player.SetMaxMana(int.Parse(args[0]));
+        }
+
+        /// <inheritdoc cref="IGameLoopEvents.DayStarted"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private static void OnDayStarted(object sender, DayStartedEventArgs e)
@@ -92,7 +113,7 @@ namespace ManaBar
             Game1.player.AddMana(Game1.player.GetMaxMana());
         }
 
-        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <inheritdoc cref="IGameLoopEvents.SaveLoaded"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
