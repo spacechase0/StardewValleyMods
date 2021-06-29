@@ -51,61 +51,66 @@ namespace CookingSkill.Patches
             CraftingRecipePatcher.LastUsedItems.Clear();
             var recipe = __instance;
 
-            Dictionary<int, int> recipeList = recipe.recipeList;
-            for (int index1 = recipeList.Count - 1; index1 >= 0; --index1)
+            for (int recipeIndex = recipe.recipeList.Count - 1; recipeIndex >= 0; --recipeIndex)
             {
-                int recipe1 = recipeList[recipeList.Keys.ElementAt<int>(index1)];
-                bool flag = false;
-                for (int index2 = Game1.player.Items.Count - 1; index2 >= 0; --index2)
+                int requiredCount = recipe.recipeList[recipe.recipeList.Keys.ElementAt<int>(recipeIndex)];
+                bool foundInBackpack = false;
+                for (int itemIndex = Game1.player.Items.Count - 1; itemIndex >= 0; --itemIndex)
                 {
-                    if (Game1.player.Items[index2] is SObject obj && !obj.bigCraftable.Value && (obj.ParentSheetIndex == recipeList.Keys.ElementAt<int>(index1) || obj.Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule(obj, recipeList.Keys.ElementAt<int>(index1))))
+                    if (Game1.player.Items[itemIndex] is SObject obj && !obj.bigCraftable.Value && (obj.ParentSheetIndex == recipe.recipeList.Keys.ElementAt<int>(recipeIndex) || obj.Category == recipe.recipeList.Keys.ElementAt<int>(recipeIndex) || CraftingRecipe.isThereSpecialIngredientRule(obj, recipe.recipeList.Keys.ElementAt<int>(recipeIndex))))
                     {
-                        int recipe2 = recipeList[recipeList.Keys.ElementAt<int>(index1)];
-                        recipe1 -= obj.Stack;
+                        int toRemove = recipe.recipeList[recipe.recipeList.Keys.ElementAt<int>(recipeIndex)];
+                        requiredCount -= obj.Stack;
 
                         // custom code begins
                         CraftingRecipePatcher.LastUsedItems.Add(new ConsumedItem(obj));
                         if (CraftingRecipePatcher.ShouldConsumeItems)
                         {
                             // custom code ends
-                            obj.Stack -= recipe2;
+                            obj.Stack -= toRemove;
                             if (obj.Stack <= 0)
-                                Game1.player.Items[index2] = null;
+                                Game1.player.Items[itemIndex] = null;
                         }
-                        if (recipe1 <= 0)
+                        if (requiredCount <= 0)
                         {
-                            flag = true;
+                            foundInBackpack = true;
                             break;
                         }
                     }
                 }
-                if (additional_materials != null && !flag)
+                if (additional_materials != null && !foundInBackpack)
                 {
-                    foreach (Chest additionalMaterial in additional_materials)
+                    foreach (Chest chest in additional_materials)
                     {
-                        if (additionalMaterial == null)
+                        if (chest == null)
                             continue;
 
-                        for (int index3 = additionalMaterial.items.Count - 1; index3 >= 0; --index3)
+                        bool removedItem = false;
+                        for (int materialIndex = chest.items.Count - 1; materialIndex >= 0; --materialIndex)
                         {
-                            if (additionalMaterial.items[index3] != null && additionalMaterial.items[index3] is SObject && (additionalMaterial.items[index3].ParentSheetIndex == recipeList.Keys.ElementAt<int>(index1) || additionalMaterial.items[index3].Category == recipeList.Keys.ElementAt<int>(index1) || CraftingRecipe.isThereSpecialIngredientRule((SObject)additionalMaterial.items[index3], recipeList.Keys.ElementAt<int>(index1))))
+                            if (chest.items[materialIndex] != null && chest.items[materialIndex] is SObject && (chest.items[materialIndex].ParentSheetIndex == recipe.recipeList.Keys.ElementAt<int>(recipeIndex) || chest.items[materialIndex].Category == recipe.recipeList.Keys.ElementAt<int>(recipeIndex) || CraftingRecipe.isThereSpecialIngredientRule((SObject)chest.items[materialIndex], recipe.recipeList.Keys.ElementAt<int>(recipeIndex))))
                             {
-                                int num = Math.Min(recipe1, additionalMaterial.items[index3].Stack);
-                                recipe1 -= num;
+                                int removedCount = Math.Min(requiredCount, chest.items[materialIndex].Stack);
+                                requiredCount -= removedCount;
                                 // custom code begins
-                                CraftingRecipePatcher.LastUsedItems.Add(new ConsumedItem(additionalMaterial.items[index3] as SObject));
+                                CraftingRecipePatcher.LastUsedItems.Add(new ConsumedItem(chest.items[materialIndex] as SObject));
                                 if (CraftingRecipePatcher.ShouldConsumeItems)
                                 {
                                     // custom code ends
-                                    additionalMaterial.items[index3].Stack -= num;
-                                    if (additionalMaterial.items[index3].Stack <= 0)
-                                        additionalMaterial.items[index3] = null;
+                                    chest.items[materialIndex].Stack -= removedCount;
+                                    if (chest.items[materialIndex].Stack <= 0)
+                                    {
+                                        chest.items[materialIndex] = null;
+                                        removedItem = true;
+                                    }
                                 }
-                                if (recipe1 <= 0)
+                                if (requiredCount <= 0)
                                     break;
                             }
                         }
-                        if (recipe1 <= 0)
+                        if (removedItem)
+                            chest.clearNulls();
+                        if (requiredCount <= 0)
                             break;
                     }
                 }

@@ -35,17 +35,21 @@ namespace CookingSkill.Patches
         /// <remarks>This is copied verbatim from the original method with some changes (marked with comments).</remarks>
         public static bool Before_ClickCraftingRecipe(CraftingPage __instance, ClickableTextureComponent c, bool playSound, ref int ___currentCraftingPage, ref Item ___heldItem, ref bool ___cooking)
         {
+            // TODO:
+            // - handle Qi seasoning
+            // - compare with latest game code to see if anything else changed
+
             CraftingPage menu = __instance;
 
-            Item obj = menu.pagesOfCraftingRecipes[___currentCraftingPage][c].createItem();
+            Item crafted = menu.pagesOfCraftingRecipes[___currentCraftingPage][c].createItem();
 
             // custom code begins
-            bool consume = Mod.OnCook(menu.pagesOfCraftingRecipes[___currentCraftingPage][c], obj, menu._materialContainers);
-            SObject itemObj = obj as SObject;
+            bool consume = Mod.OnCook(menu.pagesOfCraftingRecipes[___currentCraftingPage][c], crafted, menu._materialContainers);
+            SObject itemObj = crafted as SObject;
             bool didCraft = false;
             // custom code ends
 
-            Game1.player.checkForQuestComplete(null, -1, -1, obj, null, 2);
+            Game1.player.checkForQuestComplete(null, -1, -1, crafted, null, 2);
             if (___heldItem == null)
             {
                 // custom code begins
@@ -54,11 +58,11 @@ namespace CookingSkill.Patches
                 didCraft = true;
                 // custom code ends
 
-                ___heldItem = obj;
+                ___heldItem = crafted;
                 if (playSound)
                     Game1.playSound("coin");
             }
-            else if (___heldItem.Name.Equals(obj.Name) && ___heldItem.Stack + menu.pagesOfCraftingRecipes[___currentCraftingPage][c].numberProducedPerCraft - 1 < ___heldItem.maximumStackSize())
+            else if (___heldItem.Name.Equals(crafted.Name) && ___heldItem.Stack + menu.pagesOfCraftingRecipes[___currentCraftingPage][c].numberProducedPerCraft - 1 < ___heldItem.maximumStackSize())
             {
                 ___heldItem.Stack += menu.pagesOfCraftingRecipes[___currentCraftingPage][c].numberProducedPerCraft;
 
