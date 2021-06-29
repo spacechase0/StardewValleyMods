@@ -64,33 +64,50 @@ namespace ManaBar
         /// <param name="e">The event arguments.</param>
         public static void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (Game1.activeClickableMenu != null || Game1.eventUp || Game1.player.GetMaxMana() == 0)
+            // skip if not applicable
+            if (Game1.activeClickableMenu != null || Game1.eventUp)
                 return;
 
-            SpriteBatch b = e.SpriteBatch;
+            // fetch info
+            SpriteBatch spriteBatch = e.SpriteBatch;
+            int currentMana = Math.Max(0, Game1.player.GetCurrentMana());
+            int maxMana = Game1.player.GetMaxMana();
 
-            Vector2 manaPos = new Vector2(20, Game1.uiViewport.Height - Mod.ManaBg.Height * 4 - 20);
-            b.Draw(Mod.ManaBg, manaPos, new Rectangle(0, 0, Mod.ManaBg.Width, Mod.ManaBg.Height), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1);
-            if (Game1.player.GetCurrentMana() > 0)
+            // skip if no mana to draw
+            if (maxMana <= 0)
+                return;
+
+            // draw UI background
+            Rectangle manaArea = new(
+                x: 5 * Game1.pixelZoom,
+                y: Game1.uiViewport.Height - ((Mod.ManaBg.Height + 5) * Game1.pixelZoom),
+                width: Mod.ManaBg.Width * Game1.pixelZoom,
+                height: Mod.ManaBg.Height * Game1.pixelZoom
+            );
+            spriteBatch.Draw(Mod.ManaBg, new Vector2(manaArea.X, manaArea.Y), new Rectangle(0, 0, Mod.ManaBg.Width, Mod.ManaBg.Height), Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
+
+            // draw current-mana bar
+            if (currentMana > 0)
             {
-                Rectangle targetArea = new Rectangle(3, 13, 6, 41);
-                float perc = Game1.player.GetCurrentMana() / (float)Game1.player.GetMaxMana();
-                int h = (int)(targetArea.Height * perc);
-                targetArea.Y += targetArea.Height - h;
-                targetArea.Height = h;
+                float filledPercent = currentMana / (float)maxMana;
+                const int maxHeight = 41;
+                int filledHeight = (int)(maxHeight * filledPercent);
+                Rectangle filledArea = new Rectangle(
+                    x: manaArea.X + 3 * Game1.pixelZoom,
+                    y: (manaArea.Y + (13 + maxHeight - filledHeight) * Game1.pixelZoom),
+                    width: 6 * Game1.pixelZoom,
+                    height: filledHeight * Game1.pixelZoom
+                );
 
-                targetArea.X *= 4;
-                targetArea.Y *= 4;
-                targetArea.Width *= 4;
-                targetArea.Height *= 4;
-                targetArea.X += (int)manaPos.X;
-                targetArea.Y += (int)manaPos.Y;
-                b.Draw(Mod.ManaFg, targetArea, new Rectangle(0, 0, 1, 1), Color.White);
-
-                if (Game1.getOldMouseX() >= (double)targetArea.X && Game1.getOldMouseY() >= (double)targetArea.Y && Game1.getOldMouseX() < (double)targetArea.X + targetArea.Width && Game1.getOldMouseY() < targetArea.Y + targetArea.Height)
-                    Game1.drawWithBorder(Math.Max(0, Game1.player.GetCurrentMana()).ToString() + "/" + Game1.player.GetMaxMana(), Color.Black * 0.0f, Color.White, new Vector2(Game1.getOldMouseX(), Game1.getOldMouseY() - 32));
+                spriteBatch.Draw(Mod.ManaFg, filledArea, new Rectangle(0, 0, 1, 1), Color.White);
             }
+
+            // draw tooltip
+            var mousePos = Game1.getMousePosition();
+            if (manaArea.Contains(mousePos))
+                Game1.drawWithBorder($"{currentMana}/{maxMana}", Color.Black * 0.0f, Color.White, new Vector2(mousePos.X, mousePos.Y - 32));
         }
+
 
         /*********
         ** Private methods

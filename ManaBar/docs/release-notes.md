@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* You can now see your current mana points by hovering over any part of the mana bar, not just the filled area.
 * Migrated player data into the `Farmer.modData` field to simplify synchronization and reduce edge cases.
 
 ## 1.0.1
