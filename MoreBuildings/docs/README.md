@@ -14,10 +14,12 @@ buildings with special effects.
 ## Use
 You can buy the new buildings from Robin's construction menu. The available buildings are...
 
-* Spooky Shed: place a mob drop in the crystal, and mobs will spawn when you enter the building.
-* Mini Spa: a place to relax and gain stamina.
-* Fishing Shack: lets you catch any fish again, including legendaries.
-* Big Shed: an upgrade for the normal shed.
+building      | effects
+------------- | -------
+Spooky Shed   | Place a mob drop in the crystal, and mobs will spawn when you enter the building. This currently works with Bat Wing (spawns bats), Solar Essence (spawns squid kids), Void Essence (spawns shadow brutes), and Bug Meat (spawns flies).
+Mini Spa      | A place to relax and gain stamina.
+Fishing Shack | Lets you catch any fish again, including legendaries.
+Big Shed      | An upgrade for the normal shed.
 
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
