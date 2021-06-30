@@ -1,4 +1,4 @@
-using System.Globalization;
+using SpaceShared;
 using StardewValley;
 
 namespace ManaBar.Framework
@@ -26,9 +26,7 @@ namespace ManaBar.Framework
         /// <param name="player">The player to check.</param>
         public static int GetCurrentMana(Farmer player)
         {
-            return player.modData.TryGetValue(ModDataManager.CurrentManaKey, out string raw) && int.TryParse(raw, out int mana) && mana > 0
-                ? mana
-                : 0;
+            return player.modData.GetInt(ModDataManager.CurrentManaKey, min: 0);
         }
 
         /// <summary>Set a player's current mana points.</summary>
@@ -36,19 +34,14 @@ namespace ManaBar.Framework
         /// <param name="mana">The value to set.</param>
         public static void SetCurrentMana(Farmer player, int mana)
         {
-            if (mana <= 0)
-                player.modData.Remove(ModDataManager.CurrentManaKey);
-            else
-                player.modData[ModDataManager.CurrentManaKey] = mana.ToString(CultureInfo.InvariantCulture);
+            player.modData.SetInt(ModDataManager.CurrentManaKey, mana, min: 0);
         }
 
         /// <summary>Get a player's max mana points.</summary>
         /// <param name="player">The player to check.</param>
         public static int GetMaxMana(Farmer player)
         {
-            return player.modData.TryGetValue(ModDataManager.MaxManaKey, out string raw) && int.TryParse(raw, out int mana) && mana > 0
-                ? mana
-                : 0;
+            return player.modData.GetInt(ModDataManager.MaxManaKey, min: 0);
         }
 
         /// <summary>Set a player's max mana points.</summary>
@@ -56,10 +49,7 @@ namespace ManaBar.Framework
         /// <param name="mana">The value to set.</param>
         public static void SetMaxMana(Farmer player, int mana)
         {
-            if (mana <= 0)
-                player.modData.Remove(ModDataManager.MaxManaKey);
-            else
-                player.modData[ModDataManager.MaxManaKey] = mana.ToString(CultureInfo.InvariantCulture);
+            player.modData.SetInt(ModDataManager.MaxManaKey, mana, min: 0);
         }
     }
 }

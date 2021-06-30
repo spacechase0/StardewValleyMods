@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using SpaceShared;
 using StardewValley;
 
 namespace Magic.Framework
@@ -28,6 +28,9 @@ namespace Magic.Framework
 
         /// <summary>The data key for the player's selected bar of prepared spells.</summary>
         private const string SelectedBarKey = SpellBookData.Prefix + "/SelectedBar";
+
+        /// <summary>The player's mod data.</summary>
+        private ModDataDictionary Data => this.Player.modData;
 
 
         /*********
@@ -65,14 +68,14 @@ namespace Magic.Framework
         /// <summary>Rebuild the cached metadata from the player's <see cref="Character.modData"/> field if needed.</summary>
         public void UpdateIfNeeded()
         {
-            int updatedTick = this.GetOrDefault(SpellBookData.UpdatedKey, int.Parse);
+            int updatedTick = this.Data.GetInt(SpellBookData.UpdatedKey);
 
             if (this.UpdatedTick != updatedTick)
             {
-                this.FreePoints = Math.Max(0, this.GetOrDefault(SpellBookData.FreePointsKey, int.Parse));
-                this.KnownSpells = this.GetOrDefault(SpellBookData.KnownSpellsKey, this.ParseKnownSpells, suppressError: false) ?? new Dictionary<string, PreparedSpell>();
-                this.Prepared = this.GetOrDefault(SpellBookData.PreparedSpellsKey, this.ParsePreparedSpells, suppressError: false) ?? new List<PreparedSpellBar>();
-                this.SelectedPrepared = Math.Max(0, this.GetOrDefault(SpellBookData.SelectedBarKey, int.Parse));
+                this.FreePoints = this.Data.GetInt(SpellBookData.FreePointsKey, min: 0);
+                this.KnownSpells = this.Data.GetCustom(SpellBookData.KnownSpellsKey, parse: this.ParseKnownSpells, suppressError: false) ?? new Dictionary<string, PreparedSpell>();
+                this.Prepared = this.Data.GetCustom(SpellBookData.PreparedSpellsKey, parse: this.ParsePreparedSpells, suppressError: false) ?? new List<PreparedSpellBar>();
+                this.SelectedPrepared = this.Data.GetInt(SpellBookData.SelectedBarKey, min: 0);
                 this.UpdatedTick = updatedTick;
             }
         }
@@ -80,11 +83,11 @@ namespace Magic.Framework
         /// <summary>Save the cached metadata to the player's <see cref="Character.modData"/> field.</summary>
         public void Save()
         {
-            this.SetOrRemove(SpellBookData.FreePointsKey, this.FreePoints, remove: val => val <= 0);
-            this.SetOrRemove(SpellBookData.KnownSpellsKey, this.SerializeSpells(this.KnownSpells.Values), remove: string.IsNullOrWhiteSpace);
-            this.SetOrRemove(SpellBookData.PreparedSpellsKey, this.SerializeSpellBars(this.Prepared), remove: string.IsNullOrWhiteSpace);
-            this.SetOrRemove(SpellBookData.SelectedBarKey, this.SelectedPrepared, remove: val => val <= 0);
-            this.SetOrRemove(SpellBookData.UpdatedKey, Game1.ticks, remove: val => val == 0);
+            this.Data.SetInt(SpellBookData.FreePointsKey, this.FreePoints, min: 0);
+            this.Data.SetCustom(SpellBookData.KnownSpellsKey, this.KnownSpells.Values, serialize: this.SerializeSpells);
+            this.Data.SetCustom(SpellBookData.PreparedSpellsKey, this.Prepared, serialize: this.SerializeSpellBars);
+            this.Data.SetInt(SpellBookData.SelectedBarKey, this.SelectedPrepared, min: 0);
+            this.Data.SetInt(SpellBookData.UpdatedKey, Game1.ticks);
         }
 
 
@@ -109,41 +112,6 @@ namespace Magic.Framework
                 .Split('|')
                 .Select(rawBar => new PreparedSpellBar { Spells = this.ParseSpells(rawBar) })
                 .ToList();
-        }
-
-        /// <summary>Get the current value of a <see cref="Character.modData"/> field if it exists and can be parsed, else get the default value.</summary>
-        /// <typeparam name="T">The value type.</typeparam>
-        /// <param name="key">The field key.</param>
-        /// <param name="parse">Parse the raw value.</param>
-        /// <param name="suppressError">Whether to return the default value if <paramref name="parse"/> throws an exception; else rethrow it.</param>
-        private T GetOrDefault<T>(string key, Func<string, T> parse, bool suppressError = true)
-        {
-            if (!this.Player.modData.TryGetValue(key, out string raw))
-                return default;
-
-            try
-            {
-                return parse(raw);
-            }
-            catch
-            {
-                if (suppressError)
-                    return default;
-                throw;
-            }
-        }
-
-        /// <summary>Set the value of a <see cref="Character.modData"/> field, or remove it if <paramref name="remove"/> is true.</summary>
-        /// <typeparam name="T">The value type.</typeparam>
-        /// <param name="key">The field key.</param>
-        /// <param name="value">The value to save.</param>
-        /// <param name="remove">Whether to remove the field instead.</param>
-        private void SetOrRemove<T>(string key, T value, Func<T, bool> remove)
-        {
-            if (remove(value))
-                this.Player.modData.Remove(key);
-            else
-                this.Player.modData[key] = value?.ToString();
         }
 
         /// <summary>Parse a serialized known-spells list.</summary>

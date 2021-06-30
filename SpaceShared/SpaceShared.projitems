@@ -23,6 +23,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CancelableEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DiagnosticMessages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModDataHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Checkbox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Container.cs" />
