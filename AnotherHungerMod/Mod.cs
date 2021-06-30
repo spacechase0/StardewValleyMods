@@ -15,11 +15,11 @@ namespace AnotherHungerMod
     {
         public static Mod Instance;
         public static Configuration Config;
-        internal static SaveData Data;
-
-        public const string MsgHungerData = "HungerData";
 
         private Texture2D HungerBar;
+
+        /// <summary>Handles migrating legacy data for a save file.</summary>
+        private LegacyDataMigrator LegacyDataMigrator;
 
         public override void Entry(IModHelper helper)
         {
@@ -28,6 +28,7 @@ namespace AnotherHungerMod
 
             Mod.Config = helper.ReadConfig<Configuration>();
             this.HungerBar = helper.Content.Load<Texture2D>("assets/hungerbar.png");
+            this.LegacyDataMigrator = new LegacyDataMigrator(helper.Data, this.Monitor);
 
             helper.ConsoleCommands.Add("player_addfullness", "Add to your fullness", this.Commands);
 
@@ -39,8 +40,6 @@ namespace AnotherHungerMod
             helper.Events.GameLoop.UpdateTicked += this.AfterTick;
             helper.Events.GameLoop.TimeChanged += this.TimeChanged;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
-            helper.Events.Multiplayer.PeerContextReceived += this.OnPeerContextReceived;
-            helper.Events.Multiplayer.ModMessageReceived += this.OnModMessageReceived;
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -68,7 +67,7 @@ namespace AnotherHungerMod
                 if (args.Length != 1)
                     Log.Info("Usage: player_addfullness <amt>");
                 else
-                    Game1.player.UseFullness(-double.Parse(args[0]));
+                    Game1.player.UseFullness(-float.Parse(args[0]));
             }
         }
 
@@ -206,34 +205,10 @@ namespace AnotherHungerMod
 
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            if (Context.IsMainPlayer)
-            {
-                Mod.Data = this.Helper.Data.ReadSaveData<SaveData>($"spacechase0.AnotherHungerMod.{Game1.player.UniqueMultiplayerID}") ?? new SaveData();
-            }
-        }
-
-        private void OnPeerContextReceived(object sender, PeerContextReceivedEventArgs e)
-        {
-            if (!Game1.IsServer)
+            if (!Context.IsMainPlayer)
                 return;
-            //Log.debug($"Sending hunger data to {e.Peer.PlayerID}");
-            var data = this.Helper.Data.ReadSaveData<SaveData>($"spacechase0.AnotherHungerMod.{e.Peer.PlayerID}") ?? new SaveData();
-            this.Helper.Multiplayer.SendMessage(data, Mod.MsgHungerData, null, new[] { e.Peer.PlayerID });
-        }
 
-        private void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e)
-        {
-            if (e.FromModID == this.ModManifest.UniqueID && e.Type == Mod.MsgHungerData)
-            {
-                //Log.debug($"Got hunger data from {e.FromPlayerID}");
-                var data = e.ReadAs<SaveData>();
-                if (Context.IsMainPlayer)
-                {
-                    this.Helper.Data.WriteSaveData<SaveData>($"spacechase0.AnotherHungerMod.{e.FromPlayerID}", data);
-                }
-                else
-                    Mod.Data = data;
-            }
+            this.LegacyDataMigrator.OnSaveLoaded();
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using StardewValley;
 
@@ -10,6 +11,9 @@ namespace SpaceShared
         /*********
         ** Public methods
         *********/
+        /****
+        ** Bool
+        ****/
         /// <summary>Read a boolean value from the mod data if it exists and is valid, else get the default value.</summary>
         /// <param name="data">The mod data dictionary.</param>
         /// <param name="key">The data key within the <paramref name="data"/>.</param>
@@ -34,6 +38,39 @@ namespace SpaceShared
                 data[key] = value.ToString(CultureInfo.InvariantCulture);
         }
 
+        /****
+        ** Float
+        ****/
+        /// <summary>Read a float value from the mod data if it exists and is valid, else get the default value.</summary>
+        /// <param name="data">The mod data dictionary.</param>
+        /// <param name="key">The data key within the <paramref name="data"/>.</param>
+        /// <param name="default">The default value if the field is missing or invalid.</param>
+        /// <param name="min">The minimum value to consider valid, or <c>null</c> to allow any value.</param>
+        public static float GetFloat(this ModDataDictionary data, string key, float @default = 0, float? min = null)
+        {
+            return data.TryGetValue(key, out string raw) && float.TryParse(raw, out float value) && value >= min
+                ? value
+                : @default;
+        }
+
+        /// <summary>Write a float value into the mod data, or remove it if it matches the <paramref name="default"/>.</summary>
+        /// <param name="data">The mod data dictionary.</param>
+        /// <param name="key">The data key within the <paramref name="data"/>.</param>
+        /// <param name="value">The value to write.</param>
+        /// <param name="default">The default value if the field is missing or invalid. If the value matches the default, it won't be written to the data to avoid unneeded serialization and network sync.</param>
+        /// <param name="min">The minimum value to consider valid, or <c>null</c> to allow any value.</param>
+        [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator", Justification = "We're comparing to a marker value, so precision loss isn't an issue.")]
+        public static void SetFloat(this ModDataDictionary data, string key, float value, float @default = 0, float? min = null)
+        {
+            if (value == @default || value <= min)
+                data.Remove(key);
+            else
+                data[key] = value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        /****
+        ** Int
+        ****/
         /// <summary>Read an integer value from the mod data if it exists and is valid, else get the default value.</summary>
         /// <param name="data">The mod data dictionary.</param>
         /// <param name="key">The data key within the <paramref name="data"/>.</param>
@@ -60,6 +97,9 @@ namespace SpaceShared
                 data[key] = value.ToString(CultureInfo.InvariantCulture);
         }
         
+        /****
+        ** Custom
+        ****/
         /// <summary>Read a value from the mod data with custom parsing if it exists and can be parsed, else get the default value.</summary>
         /// <typeparam name="T">The value type.</typeparam>
         /// <param name="data">The mod data dictionary.</param>
