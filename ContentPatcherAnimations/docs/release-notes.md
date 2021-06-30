@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Improved performance a bit.
 * Fixed error if a content pack has no `Changes` field (e.g. Stardew Valley Expanded's Grampleton Fields).
 
 ## 1.1.10
