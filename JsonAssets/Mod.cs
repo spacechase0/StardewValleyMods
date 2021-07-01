@@ -440,7 +440,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(tree.Sapling.Id, 1, true, tree.Sapling.PurchasePrice)
+                            Object = () => new StardewValley.Object(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
                         });
                     }
                 }
