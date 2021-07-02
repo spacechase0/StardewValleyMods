@@ -1,0 +1,10 @@
+﻿{
+   "Name": "Paritee's Core Mod",
+   "Author": "Paritee",
+   "Version": "3.2.3-unofficial.kelvinrosa-mouseypounds-elbe",
+   "Description": "Core mod used by BFAV",
+   "UniqueID": "Paritee.PariteeCore",
+   "EntryDll": "Paritee.StardewValley.Core.dll",
+   "MinimumApiVersion": "3.0.0",
+   "UpdateKeys": [ "Nexus:3296" ]
+}

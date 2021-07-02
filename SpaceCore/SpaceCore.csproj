@@ -12,10 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Tiled.Net\Tiled.Net\Tiled.Net.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="TiledNet" Version="2.0.0" />
   </ItemGroup>
 </Project>

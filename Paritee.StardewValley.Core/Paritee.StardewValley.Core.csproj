@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\Mods\Paritee's Better Farm Animal Variety\Paritee.StardewValley.Core.dll-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{754197C8-DEAB-4CE1-947D-138321581F4C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Paritee.StardewValley.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <ApplicationVersion>2.0.1.0</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>Paritee.StardewValley.Core</RootNamespace>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Netcode">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Stardew Valley\Netcode.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Stardew Valley">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Stardew Valley\Stardew Valley.exe</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="xTile">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Stardew Valley\xTile.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Objects\Object.cs" />
+    <Compile Include="Objects\Blueprint.cs" />
+    <Compile Include="Menus\Menu.cs" />
+    <Compile Include="Menus\PurchaseAnimals.cs" />
+    <Compile Include="Utilities\BellsAndWhistles.cs" />
+    <Compile Include="Utilities\Content.cs" />
+    <Compile Include="Utilities\Dialogue.cs" />
+    <Compile Include="Utilities\Game.cs" />
+    <Compile Include="Utilities\Mod.cs" />
+    <Compile Include="Utilities\Currency.cs" />
+    <Compile Include="Utilities\Random.cs" />
+    <Compile Include="Utilities\Reflection.cs" />
+    <Compile Include="Utilities\PropertyConstant.cs" />
+    <Compile Include="Locations\AnimalHouse.cs" />
+    <Compile Include="Locations\AnimalShop.cs" />
+    <Compile Include="Locations\Event.cs" />
+    <Compile Include="Locations\Location.cs" />
+    <Compile Include="Locations\Season.cs" />
+    <Compile Include="Locations\Weather.cs" />
+    <Compile Include="Characters\Animal.cs" />
+    <Compile Include="Characters\FarmAnimal.cs" />
+    <Compile Include="Characters\Farmer.cs" />
+    <Compile Include="Characters\Mount.cs" />
+    <Compile Include="Characters\LivestockCategory.cs" />
+    <Compile Include="Characters\Livestock.cs" />
+    <Compile Include="Characters\Pet.cs" />
+    <Compile Include="Characters\LivestockAnimalShop.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="manifest.json" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Pathoschild.Stardew.ModBuildConfig.3.3.0\build\Pathoschild.Stardew.ModBuildConfig.targets" Condition="Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.3.3.0\build\Pathoschild.Stardew.ModBuildConfig.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.3.3.0\build\Pathoschild.Stardew.ModBuildConfig.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Pathoschild.Stardew.ModBuildConfig.3.3.0\build\Pathoschild.Stardew.ModBuildConfig.targets'))" />
+  </Target>
+</Project>
