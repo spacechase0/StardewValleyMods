@@ -12,10 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Platonymous.PyTK" Version="1.12.40" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="PyTK" HintPath="$(GameModsPath)\PyTK\PyTK.dll" Private="False" />
   </ItemGroup>
 </Project>
