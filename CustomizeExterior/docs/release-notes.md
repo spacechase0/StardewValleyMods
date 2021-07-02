@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Updated for greenhouse/farmhouse changes in Stardew Valley 1.5.
+
 ## 1.0.8
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
