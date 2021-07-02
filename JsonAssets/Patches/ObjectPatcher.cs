@@ -286,7 +286,7 @@ namespace JsonAssets.Patches
 
             if (__instance.Category == SObject.CraftingCategory && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
             {
-                if (!Mod.instance.Fences.Any(f => f.correspondingObject.Id == __instance.ParentSheetIndex))
+                if (Mod.instance.Fences.All(f => f.correspondingObject.Id != __instance.ParentSheetIndex))
                 {
                     __result = false;
                     return false;

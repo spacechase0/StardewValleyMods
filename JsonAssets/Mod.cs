@@ -1244,13 +1244,13 @@ namespace JsonAssets
             // uses the ID fixing API before ID fixing happens everywhere.
             // Doing this here prevents some NREs (that don't show up unless you're
             // debugging for some reason????)
-            this.OrigObjects = this.CloneIdDictAndRemoveOurs(Game1.objectInformation, this.ObjectIds);
-            this.OrigCrops = this.CloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\Crops"), this.CropIds);
-            this.OrigFruitTrees = this.CloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\fruitTrees"), this.FruitTreeIds);
-            this.OrigBigCraftables = this.CloneIdDictAndRemoveOurs(Game1.bigCraftablesInformation, this.BigCraftableIds);
-            this.OrigHats = this.CloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\hats"), this.HatIds);
-            this.OrigWeapons = this.CloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\weapons"), this.WeaponIds);
-            this.OrigClothing = this.CloneIdDictAndRemoveOurs(Game1.content.Load<Dictionary<int, string>>("Data\\ClothingInformation"), this.ClothingIds);
+            this.VanillaObjectIds = this.GetVanillaIds(Game1.objectInformation, this.ObjectIds);
+            this.VanillaCropIds = this.GetVanillaIds(Game1.content.Load<Dictionary<int, string>>("Data\\Crops"), this.CropIds);
+            this.VanillaFruitTreeIds = this.GetVanillaIds(Game1.content.Load<Dictionary<int, string>>("Data\\fruitTrees"), this.FruitTreeIds);
+            this.VanillaBigCraftableIds = this.GetVanillaIds(Game1.bigCraftablesInformation, this.BigCraftableIds);
+            this.VanillaHatIds = this.GetVanillaIds(Game1.content.Load<Dictionary<int, string>>("Data\\hats"), this.HatIds);
+            this.VanillaWeaponIds = this.GetVanillaIds(Game1.content.Load<Dictionary<int, string>>("Data\\weapons"), this.WeaponIds);
+            this.VanillaClothingIds = this.GetVanillaIds(Game1.content.Load<Dictionary<int, string>>("Data\\ClothingInformation"), this.ClothingIds);
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
@@ -1367,29 +1367,29 @@ namespace JsonAssets
         /// <summary>The custom boots' previously assigned IDs from the save data, indexed by item name.</summary>
         internal IDictionary<string, int> OldBootsIds;
 
-        /// <summary>The vanilla objects' IDs, indexed by item name.</summary>
-        internal IDictionary<int, string> OrigObjects;
+        /// <summary>The vanilla object IDs.</summary>
+        internal ISet<int> VanillaObjectIds;
 
-        /// <summary>The vanilla objects' IDs, indexed by item name.</summary>
-        internal IDictionary<int, string> OrigCrops;
+        /// <summary>The vanilla crop IDs.</summary>
+        internal ISet<int> VanillaCropIds;
 
-        /// <summary>The vanilla fruit trees' IDs, indexed by item name.</summary>
-        internal IDictionary<int, string> OrigFruitTrees;
+        /// <summary>The vanilla fruit tree IDs.</summary>
+        internal ISet<int> VanillaFruitTreeIds;
 
-        /// <summary>The vanilla big craftables' IDs, indexed by item name.</summary>
-        internal IDictionary<int, string> OrigBigCraftables;
+        /// <summary>The vanilla big craftable IDs.</summary>
+        internal ISet<int> VanillaBigCraftableIds;
 
-        /// <summary>The vanilla hats' IDs, indexed by item name.</summary>
-        internal IDictionary<int, string> OrigHats;
+        /// <summary>The vanilla hat IDs.</summary>
+        internal ISet<int> VanillaHatIds;
 
-        /// <summary>The vanilla weapons' IDs, indexed by item name.</summary>
-        internal IDictionary<int, string> OrigWeapons;
+        /// <summary>The vanilla weapon IDs.</summary>
+        internal ISet<int> VanillaWeaponIds;
 
-        /// <summary>The vanilla clothing's IDs, indexed by item name.</summary>
-        internal IDictionary<int, string> OrigClothing;
+        /// <summary>The vanilla clothing IDs.</summary>
+        internal ISet<int> VanillaClothingIds;
 
-        /// <summary>The vanilla boots' IDs, indexed by item name.</summary>
-        internal IDictionary<int, string> OrigBoots;
+        /// <summary>The vanilla boot IDs.</summary>
+        internal ISet<int> VanillaBootIds;
 
         public int ResolveObjectId(object data)
         {
@@ -1491,12 +1491,14 @@ namespace JsonAssets
             }
         }
 
-        private IDictionary<int, string> CloneIdDictAndRemoveOurs(IDictionary<int, string> full, IDictionary<string, int> ours)
+        /// <summary>Get the vanilla IDs from the game data.</summary>
+        /// <param name="full">The full list of items, including both vanilla and custom IDs.</param>
+        /// <param name="customIds">The custom IDs.</param>
+        private ISet<int> GetVanillaIds(IDictionary<int, string> full, IDictionary<string, int> customIds)
         {
-            var ret = new Dictionary<int, string>(full);
-            foreach (var obj in ours)
-                ret.Remove(obj.Value);
-            return ret;
+            return new HashSet<int>(
+                full.Keys.Except(customIds.Values)
+            );
         }
 
         private bool ReverseFixing;
@@ -1546,7 +1548,7 @@ namespace JsonAssets
                     int oldId = int.Parse(toks1[1]);
                     if (oldId != -1)
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.OrigObjects))
+                        if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
                         {
                             Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
                             oldId = -1;
@@ -1562,7 +1564,7 @@ namespace JsonAssets
                     int oldId = int.Parse(toks1[1]);
                     if (oldId != -1)
                     {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, ref oldId, this.OrigBigCraftables))
+                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, ref oldId, this.VanillaBigCraftableIds))
                         {
                             Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
                             oldId = -1;
@@ -1580,7 +1582,7 @@ namespace JsonAssets
                     int oldId = int.Parse(toks2[i]);
                     if (oldId != -1)
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.OrigObjects))
+                        if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
                         {
                             Log.Warn($"Bundle item missing ({entry.Key}, {oldId})! Probably broken now!");
                             oldId = -1;
@@ -1612,28 +1614,28 @@ namespace JsonAssets
             switch (item)
             {
                 case Hat hat:
-                    return this.FixId(this.OldHatIds, this.HatIds, hat.which, this.OrigHats);
+                    return this.FixId(this.OldHatIds, this.HatIds, hat.which, this.VanillaHatIds);
 
                 case MeleeWeapon weapon:
                     return
-                        this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.initialParentTileIndex, this.OrigWeapons)
-                        || this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.OrigWeapons)
-                        || this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.indexOfMenuItemView, this.OrigWeapons);
+                        this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.initialParentTileIndex, this.VanillaWeaponIds)
+                        || this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.VanillaWeaponIds)
+                        || this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.indexOfMenuItemView, this.VanillaWeaponIds);
 
                 case Ring ring:
                     return this.FixRing(ring);
 
                 case Clothing clothing:
-                    return this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.OrigClothing);
+                    return this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.VanillaClothingIds);
 
                 case Boots boots:
-                    return this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.OrigObjects);
+                    return this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.VanillaObjectIds);
 
 
                 case SObject obj:
                     if (obj is Chest chest)
                     {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, chest.parentSheetIndex, this.OrigBigCraftables))
+                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, chest.parentSheetIndex, this.VanillaBigCraftableIds))
                             chest.ParentSheetIndex = 130;
                         else
                             chest.startingLidFrame.Value = chest.ParentSheetIndex + 1;
@@ -1646,7 +1648,7 @@ namespace JsonAssets
                     }
                     else if (obj is Fence fence)
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, fence.whichType, this.OrigObjects))
+                        if (this.FixId(this.OldObjectIds, this.ObjectIds, fence.whichType, this.VanillaObjectIds))
                             return true;
                         fence.ParentSheetIndex = -fence.whichType.Value;
                     }
@@ -1654,18 +1656,18 @@ namespace JsonAssets
                     {
                         if (!obj.bigCraftable.Value)
                         {
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.OrigObjects))
+                            if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
                                 obj.preservedParentSheetIndex.Value = -1;
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.OrigObjects))
+                            if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
                                 return true;
                         }
-                        else if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.OrigBigCraftables))
+                        else if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
                             return true;
                     }
 
                     if (obj.heldObject.Value != null)
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.OrigObjects))
+                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
                             obj.heldObject.Value = null;
 
                         if (obj.heldObject.Value is Chest innerChest)
@@ -1685,12 +1687,12 @@ namespace JsonAssets
             switch (character)
             {
                 case Horse horse:
-                    if (this.FixId(this.OldHatIds, this.HatIds, horse.hat.Value?.which, this.OrigHats))
+                    if (this.FixId(this.OldHatIds, this.HatIds, horse.hat.Value?.which, this.VanillaHatIds))
                         horse.hat.Value = null;
                     break;
 
                 case Child child:
-                    if (this.FixId(this.OldHatIds, this.HatIds, child.hat.Value?.which, this.OrigHats))
+                    if (this.FixId(this.OldHatIds, this.HatIds, child.hat.Value?.which, this.VanillaHatIds))
                         child.hat.Value = null;
                     break;
 
@@ -1700,13 +1702,13 @@ namespace JsonAssets
                         player.leftRing.Value = null;
                     if (this.FixRing(player.rightRing.Value))
                         player.rightRing.Value = null;
-                    if (this.FixId(this.OldHatIds, this.HatIds, player.hat.Value?.which, this.OrigHats))
+                    if (this.FixId(this.OldHatIds, this.HatIds, player.hat.Value?.which, this.VanillaHatIds))
                         player.hat.Value = null;
-                    if (this.FixId(this.OldClothingIds, this.ClothingIds, player.shirtItem.Value?.parentSheetIndex, this.OrigClothing))
+                    if (this.FixId(this.OldClothingIds, this.ClothingIds, player.shirtItem.Value?.parentSheetIndex, this.VanillaClothingIds))
                         player.shirtItem.Value = null;
-                    if (this.FixId(this.OldClothingIds, this.ClothingIds, player.pantsItem.Value?.parentSheetIndex, this.OrigClothing))
+                    if (this.FixId(this.OldClothingIds, this.ClothingIds, player.pantsItem.Value?.parentSheetIndex, this.VanillaClothingIds))
                         player.pantsItem.Value = null;
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, player.boots.Value?.indexInTileSheet, this.OrigObjects))
+                    if (this.FixId(this.OldObjectIds, this.ObjectIds, player.boots.Value?.indexInTileSheet, this.VanillaObjectIds))
                         player.boots.Value = null;
                     break;
             }
@@ -1721,7 +1723,7 @@ namespace JsonAssets
                 return false;
 
             // main ring
-            if (this.FixId(this.OldObjectIds, this.ObjectIds, ring.indexInTileSheet, this.OrigObjects))
+            if (this.FixId(this.OldObjectIds, this.ObjectIds, ring.indexInTileSheet, this.VanillaObjectIds))
                 return true;
 
             // inner rings
@@ -1802,17 +1804,17 @@ namespace JsonAssets
                 {
                     if (!obj.bigCraftable.Value)
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.OrigObjects))
+                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
                             toRemove.Add(pair.Key);
                     }
                     else
                     {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.OrigBigCraftables))
+                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
                             toRemove.Add(pair.Key);
                         else if (obj.ParentSheetIndex == 126 && obj.Quality != 0) // Alien rarecrow stores what ID is it is wearing here
                         {
                             obj.Quality--;
-                            if (this.FixId(this.OldHatIds, this.HatIds, obj.quality, this.OrigHats))
+                            if (this.FixId(this.OldHatIds, this.HatIds, obj.quality, this.VanillaHatIds))
                                 obj.Quality = 0;
                             else obj.Quality++;
                         }
@@ -1821,7 +1823,7 @@ namespace JsonAssets
 
                 if (obj.heldObject.Value != null)
                 {
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.OrigObjects))
+                    if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
                         obj.heldObject.Value = null;
 
                     if (obj.heldObject.Value is Chest chest2)
@@ -1844,12 +1846,12 @@ namespace JsonAssets
                 {
                     if (!furniture.heldObject.Value.bigCraftable.Value)
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, furniture.heldObject.Value.parentSheetIndex, this.OrigObjects))
+                        if (this.FixId(this.OldObjectIds, this.ObjectIds, furniture.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
                             furniture.heldObject.Value = null;
                     }
                     else
                     {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, furniture.heldObject.Value.parentSheetIndex, this.OrigBigCraftables))
+                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, furniture.heldObject.Value.parentSheetIndex, this.VanillaBigCraftableIds))
                             furniture.heldObject.Value = null;
                     }
                 }
@@ -1891,18 +1893,18 @@ namespace JsonAssets
                         break;
                     }
 
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.fishType, this.OrigObjects))
+                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.fishType, this.VanillaObjectIds))
                     {
                         pond.fishType.Value = -1;
                         pond.currentOccupants.Value = 0;
                         pond.maxOccupants.Value = 0;
                         this.Helper.Reflection.GetField<SObject>(pond, "_fishObject").SetValue(null);
                     }
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.sign.Value?.parentSheetIndex, this.OrigObjects))
+                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.sign.Value?.parentSheetIndex, this.VanillaObjectIds))
                         pond.sign.Value = null;
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.output.Value?.parentSheetIndex, this.OrigObjects))
+                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.output.Value?.parentSheetIndex, this.VanillaObjectIds))
                         pond.output.Value = null;
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.neededItem.Value?.parentSheetIndex, this.OrigObjects))
+                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.neededItem.Value?.parentSheetIndex, this.VanillaObjectIds))
                         pond.neededItem.Value = null;
                     break;
             }
@@ -1917,7 +1919,7 @@ namespace JsonAssets
                 return false;
 
             // fix crop
-            if (this.FixId(this.OldCropIds, this.CropIds, crop.rowInSpriteSheet, this.OrigCrops))
+            if (this.FixId(this.OldCropIds, this.CropIds, crop.rowInSpriteSheet, this.VanillaCropIds))
                 return true;
 
             // fix index of harvest
@@ -1927,7 +1929,7 @@ namespace JsonAssets
             {
                 Log.Verbose($"Fixing crop product: From {crop.indexOfHarvest.Value} to {cropData.Product}={this.ResolveObjectId(cropData.Product)}");
                 crop.indexOfHarvest.Value = this.ResolveObjectId(cropData.Product);
-                this.FixId(this.OldObjectIds, this.ObjectIds, crop.netSeedIndex, this.OrigObjects);
+                this.FixId(this.OldObjectIds, this.ObjectIds, crop.netSeedIndex, this.VanillaObjectIds);
             }
 
             return false;
@@ -1941,7 +1943,7 @@ namespace JsonAssets
             {
                 if (id.Value != -1)
                 {
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, id, this.OrigObjects))
+                    if (this.FixId(this.OldObjectIds, this.ObjectIds, id, this.VanillaObjectIds))
                         id.Value = -1;
                 }
             }
@@ -1952,7 +1954,7 @@ namespace JsonAssets
         /// <returns>Returns whether the item should be removed.</returns>
         private bool FixResourceClump(ResourceClump clump)
         {
-            return this.FixId(this.OldObjectIds, this.ObjectIds, clump.parentSheetIndex, this.OrigObjects);
+            return this.FixId(this.OldObjectIds, this.ObjectIds, clump.parentSheetIndex, this.VanillaObjectIds);
         }
 
         /// <summary>Fix item IDs contained by a terrain feature, including the terrain feature itself.</summary>
@@ -1969,7 +1971,7 @@ namespace JsonAssets
 
                 case FruitTree tree:
                     {
-                        if (this.FixId(this.OldFruitTreeIds, this.FruitTreeIds, tree.treeType, this.OrigFruitTrees))
+                        if (this.FixId(this.OldFruitTreeIds, this.FruitTreeIds, tree.treeType, this.VanillaFruitTreeIds))
                             return true;
 
                         string key = this.FruitTreeIds.FirstOrDefault(x => x.Value == tree.treeType.Value).Key;
@@ -2004,18 +2006,18 @@ namespace JsonAssets
                     var obj = item as SObject;
                     if (!obj.bigCraftable.Value)
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.OrigObjects))
+                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
                             items[i] = null;
                     }
                     else
                     {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.OrigBigCraftables))
+                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
                             items[i] = null;
                     }
                 }
                 else if (item is Hat hat)
                 {
-                    if (this.FixId(this.OldHatIds, this.HatIds, hat.which, this.OrigHats))
+                    if (this.FixId(this.OldHatIds, this.HatIds, hat.which, this.VanillaHatIds))
                         items[i] = null;
                 }
                 else if (item is Tool tool)
@@ -2032,7 +2034,7 @@ namespace JsonAssets
                         }
                         else
                         {
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, attached.parentSheetIndex, this.OrigObjects))
+                            if (this.FixId(this.OldObjectIds, this.ObjectIds, attached.parentSheetIndex, this.VanillaObjectIds))
                             {
                                 tool.attachments[a] = null;
                             }
@@ -2040,11 +2042,11 @@ namespace JsonAssets
                     }
                     if (item is MeleeWeapon weapon)
                     {
-                        if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.initialParentTileIndex, this.OrigWeapons))
+                        if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.initialParentTileIndex, this.VanillaWeaponIds))
                             items[i] = null;
-                        else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.OrigWeapons))
+                        else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.VanillaWeaponIds))
                             items[i] = null;
-                        else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.OrigWeapons))
+                        else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.VanillaWeaponIds))
                             items[i] = null;
                     }
                 }
@@ -2055,12 +2057,12 @@ namespace JsonAssets
                 }
                 else if (item is Clothing clothing)
                 {
-                    if (this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.OrigClothing))
+                    if (this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.VanillaClothingIds))
                         items[i] = null;
                 }
                 else if (item is Boots boots)
                 {
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.OrigObjects))
+                    if (this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.VanillaObjectIds))
                         items[i] = null;
                     /*else
                         boots.reloadData();*/
@@ -2074,7 +2076,7 @@ namespace JsonAssets
             var toAdd = new Dictionary<int, int>();
             foreach (int entry in dict.Keys)
             {
-                if (this.OrigObjects.ContainsKey(entry))
+                if (this.VanillaObjectIds.Contains(entry))
                     continue;
 
                 if (this.OldObjectIds.Values.Contains(entry))
@@ -2112,7 +2114,7 @@ namespace JsonAssets
             var toAdd = new Dictionary<int, int[]>();
             foreach (int entry in dict.Keys)
             {
-                if (this.OrigObjects.ContainsKey(entry))
+                if (this.VanillaObjectIds.Contains(entry))
                     continue;
 
                 if (this.OldObjectIds.Values.Contains(entry))
@@ -2134,14 +2136,14 @@ namespace JsonAssets
         /// <param name="oldIds">The custom items' previously assigned IDs from the save data, indexed by item name.</param>
         /// <param name="newIds">The custom items' currently assigned IDs, indexed by item name.</param>
         /// <param name="id">The current item ID.</param>
-        /// <param name="origData">The vanilla items' IDs, indexed by item name.</param>
+        /// <param name="vanillaIds">The vanilla items' IDs, indexed by item name.</param>
         /// <returns>Returns whether the item should be removed. Items should only be removed if they no longer exist in the new data.</returns>
-        private bool FixId(IDictionary<string, int> oldIds, IDictionary<string, int> newIds, NetInt id, IDictionary<int, string> origData)
+        private bool FixId(IDictionary<string, int> oldIds, IDictionary<string, int> newIds, NetInt id, ISet<int> vanillaIds)
         {
             if (id is null)
                 return false;
 
-            if (origData.ContainsKey(id.Value))
+            if (vanillaIds.Contains(id.Value))
                 return false;
 
             if (this.ReverseFixing)
@@ -2190,9 +2192,9 @@ namespace JsonAssets
 
         // Return true if the item should be deleted, false otherwise.
         // Only remove something if old has it but not new
-        private bool FixId(IDictionary<string, int> oldIds, IDictionary<string, int> newIds, ref int id, IDictionary<int, string> origData)
+        private bool FixId(IDictionary<string, int> oldIds, IDictionary<string, int> newIds, ref int id, ISet<int> vanillaIds)
         {
-            if (origData.ContainsKey(id))
+            if (vanillaIds.Contains(id))
                 return false;
 
             if (this.ReverseFixing)
