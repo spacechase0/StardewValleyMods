@@ -31,7 +31,7 @@ namespace CookingSkill.Patches
         ** Private methods
         *********/
         /// <summary>The method to call before <see cref="CraftingPage.clickCraftingRecipe"/>.</summary>
-        /// <returns>Returns whether to skip the original method.</returns>
+        /// <returns>Returns whether to run the original method.</returns>
         /// <remarks>This is copied verbatim from the original method with some changes (marked with comments).</remarks>
         public static bool Before_ClickCraftingRecipe(CraftingPage __instance, ClickableTextureComponent c, bool playSound, ref int ___currentCraftingPage, ref Item ___heldItem, ref bool ___cooking)
         {

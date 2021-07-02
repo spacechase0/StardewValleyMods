@@ -44,7 +44,7 @@ namespace CookingSkill.Patches
         ** Private methods
         *********/
         /// <summary>The method to call before <see cref="CraftingRecipe.consumeIngredients"/>.</summary>
-        /// <returns>Returns whether to skip the original method.</returns>
+        /// <returns>Returns whether to run the original method.</returns>
         /// <remarks>This is copied verbatim from the original method with some changes (marked with comments).</remarks>
         public static bool Before_ConsumeIngredients(ref CraftingRecipe __instance, List<Chest> additional_materials)
         {
