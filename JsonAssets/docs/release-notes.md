@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming changes
 * Updated for Json Assets 1.5.8.
+* Fixed `AdditionalData` for saplings adding recipe instead of sapling to the shop (thanks to lshtech!).
 
 ## 1.7.7
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
