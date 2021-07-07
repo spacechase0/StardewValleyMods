@@ -4,7 +4,9 @@
 ## Upcoming release
 * Added API methods to support Skill Prestige.
 * Magic sounds are now localized, so only nearby players in multiplayer will hear them.
-* You now get 100 mana points immediately after the Wizard event, so you can start using magic on the same day.
+* Balance changes:
+  * You now get 100 mana points immediately after the Wizard event, so you can start using magic on the same day.
+  * The _clear debris_ spell no longer clears non-debris objects.
 * Made Wizard event skippable.
 * Migrated player data into the `Farmer.modData` field to simplify synchronization and reduce edge cases.
 * Fixed Wizard event broken if another mod changes the location in an incompatible way.

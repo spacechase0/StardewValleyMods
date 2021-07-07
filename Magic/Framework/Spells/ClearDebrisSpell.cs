@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using SpaceCore;
 using StardewValley;
 using StardewValley.Locations;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using SObject = StardewValley.Object;
@@ -26,11 +27,17 @@ namespace Magic.Framework.Spells
             targetX /= Game1.tileSize;
             targetY /= Game1.tileSize;
 
-            Tool dummyAxe = new Axe(); dummyAxe.UpgradeLevel = level;
-            Tool dummyPick = new Pickaxe(); dummyPick.UpgradeLevel = level;
-            Mod.Instance.Helper.Reflection.GetField<Farmer>(dummyAxe, "lastUser").SetValue(player);
-            Mod.Instance.Helper.Reflection.GetField<Farmer>(dummyPick, "lastUser").SetValue(player);
+            // create fake tools
+            Axe dummyAxe = new();
+            Pickaxe dummyPick = new();
+            foreach (var tool in new Tool[] { dummyAxe, dummyPick })
+            {
+                tool.UpgradeLevel = level;
+                tool.IsEfficient = true; // don't drain stamina
+                Mod.Instance.Helper.Reflection.GetField<Farmer>(tool, "lastUser").SetValue(player);
+            }
 
+            // scan location
             GameLocation loc = player.currentLocation;
             for (int tileX = targetX - level; tileX <= targetX + level; ++tileX)
             {
@@ -39,35 +46,26 @@ namespace Magic.Framework.Spells
                     if (player.GetCurrentMana() <= 0)
                         return null;
 
-                    Vector2 tile = new Vector2(tileX, tileY);
+                    Vector2 tile = new(tileX, tileY);
 
-                    if (loc.objects.TryGetValue(tile, out SObject obj))
+                    if (loc.objects.TryGetValue(tile, out SObject obj) && this.IsDebris(loc, obj))
                     {
                         if (obj.performToolAction(dummyAxe, loc))
                         {
-                            if (obj.Type == "Crafting" && obj.Fragility != 2)
-                            {
-                                loc.debris.Add(new Debris(obj.bigCraftable.Value ? -obj.ParentSheetIndex : obj.ParentSheetIndex, tile, tile));
-                            }
                             obj.performRemoveAction(tile, loc);
                             loc.objects.Remove(tile);
-                            player.AddMana(-3);
-                            player.AddCustomSkillExperience(Magic.Skill, 1);
                         }
                         else
-                        {
-                            float oldStam = player.stamina;
                             dummyPick.DoFunction(loc, tileX * Game1.tileSize, tileY * Game1.tileSize, 0, player);
-                            player.stamina = oldStam;
-                            player.AddMana(-3);
-                            player.AddCustomSkillExperience(Magic.Skill, 1);
-                        }
+
+                        player.AddMana(-3);
+                        player.AddCustomSkillExperience(Magic.Skill, 1);
                     }
 
                     // Trees
                     if (level >= 2)
                     {
-                        if (loc.terrainFeatures.TryGetValue(tile, out TerrainFeature feature) && !(feature is HoeDirt))
+                        if (loc.terrainFeatures.TryGetValue(tile, out TerrainFeature feature) && feature is not HoeDirt or Flooring)
                         {
                             if (feature is Tree)
                             {
@@ -121,6 +119,29 @@ namespace Magic.Framework.Spells
             }
 
             return null;
+        }
+
+        /// <summary>Get whether a given object counts as debris.</summary>
+        /// <param name="location">The location containing the object.</param>
+        /// <param name="obj">The world object.</param>
+        private bool IsDebris(GameLocation location, SObject obj)
+        {
+            if (obj is Chest or null)
+                return false;
+
+            // twig
+            if (obj.ParentSheetIndex is 294 or 295)
+                return true;
+
+            // weeds/stones
+            if (obj.Name is "Weeds" or "Stone")
+                return true;
+
+            // spawned mine objects
+            if (location is MineShaft && obj.IsSpawnedObject)
+                return true;
+
+            return false;
         }
     }
 }
