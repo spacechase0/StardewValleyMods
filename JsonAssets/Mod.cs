@@ -1440,22 +1440,33 @@ namespace JsonAssets
             {
                 if (d.Id == -1)
                 {
-                    Log.Verbose($"New ID: {d.Name} = {currId}");
-                    int id = currId++;
-                    if (type == "big-craftables")
+                    // handle name conflict
+                    if (ids.TryGetValue(d.Name, out int prevId))
                     {
-                        while (bigSkip.Contains(id))
-                        {
-                            id = currId++;
-                        }
+                        Log.Warn($"Found ID conflict: there are two custom '{type}' items with the name '{d.Name}'. This may have unintended consequences.");
+                        d.Id = prevId;
                     }
 
-                    ids.Add(d.Name, id);
-                    if (type == "objects" && d is ObjectData { IsColored: true })
-                        ++currId;
-                    else if (type == "big-craftables" && ((BigCraftableData)d).ReserveExtraIndexCount > 0)
-                        currId += ((BigCraftableData)d).ReserveExtraIndexCount;
-                    d.Id = ids[d.Name];
+                    // else assign new ID
+                    else
+                    {
+                        Log.Verbose($"New ID: {d.Name} = {currId}");
+                        int id = currId++;
+                        if (type == "big-craftables")
+                        {
+                            while (bigSkip.Contains(id))
+                            {
+                                id = currId++;
+                            }
+                        }
+
+                        ids.Add(d.Name, id);
+                        if (type == "objects" && d is ObjectData { IsColored: true })
+                            ++currId;
+                        else if (type == "big-craftables" && ((BigCraftableData)d).ReserveExtraIndexCount > 0)
+                            currId += ((BigCraftableData)d).ReserveExtraIndexCount;
+                        d.Id = ids[d.Name];
+                    }
                 }
             }
 
