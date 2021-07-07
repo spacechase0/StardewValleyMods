@@ -28,9 +28,9 @@ namespace Magic.Framework.Spells
             targetY /= Game1.tileSize;
 
             // create fake tools
-            Axe dummyAxe = new();
-            Pickaxe dummyPick = new();
-            foreach (var tool in new Tool[] { dummyAxe, dummyPick })
+            Axe axe = new();
+            Pickaxe pickaxe = new();
+            foreach (var tool in new Tool[] { axe, pickaxe })
             {
                 tool.UpgradeLevel = level;
                 tool.IsEfficient = true; // don't drain stamina
@@ -47,19 +47,28 @@ namespace Magic.Framework.Spells
                         return null;
 
                     Vector2 tile = new(tileX, tileY);
+                    Vector2 toolPixel = (tile * Game1.tileSize) + new Vector2(Game1.tileSize / 2f); // center of tile
 
-                    if (loc.objects.TryGetValue(tile, out SObject obj) && this.IsDebris(loc, obj))
+                    if (loc.objects.TryGetValue(tile, out SObject obj))
                     {
-                        if (obj.performToolAction(dummyAxe, loc))
-                        {
-                            obj.performRemoveAction(tile, loc);
-                            loc.objects.Remove(tile);
-                        }
-                        else
-                            dummyPick.DoFunction(loc, tileX * Game1.tileSize, tileY * Game1.tileSize, 0, player);
+                        // select tool
+                        Tool tool = null;
+                        if (this.IsAxeDebris(loc, obj))
+                            tool = axe;
+                        else if (this.IsPickaxeDebris(loc, obj))
+                            tool = pickaxe;
 
-                        player.AddMana(-3);
-                        player.AddCustomSkillExperience(Magic.Skill, 1);
+                        // apply
+                        if (tool == null)
+                            continue;
+                        player.lastClick = toolPixel;
+                        tool.DoFunction(loc, (int)toolPixel.X, (int)toolPixel.Y, 0, player);
+
+                        if (!loc.objects.ContainsKey(tile))
+                        {
+                            player.AddMana(-3);
+                            player.AddCustomSkillExperience(Magic.Skill, 1);
+                        }
                     }
 
                     // Trees
@@ -71,7 +80,7 @@ namespace Magic.Framework.Spells
                             {
                                 player.AddMana(-3);
                             }
-                            if (feature.performToolAction(dummyAxe, 0, tile, loc) || feature is Grass || (feature is Tree && feature.performToolAction(dummyAxe, 0, tile, loc)))
+                            if (feature.performToolAction(axe, 0, tile, loc) || feature is Grass || (feature is Tree && feature.performToolAction(axe, 0, tile, loc)))
                             {
                                 if (feature is Tree)
                                     player.AddCustomSkillExperience(Magic.Skill, 5);
@@ -105,7 +114,7 @@ namespace Magic.Framework.Spells
                                 if (new Rectangle((int)rc.tile.X, (int)rc.tile.Y, rc.width.Value, rc.height.Value).Contains(tileX, tileY))
                                 {
                                     player.AddMana(-3);
-                                    if (rc.performToolAction(dummyAxe, 1, tile, loc) || rc.performToolAction(dummyPick, 1, tile, loc))
+                                    if (rc.performToolAction(axe, 1, tile, loc) || rc.performToolAction(pickaxe, 1, tile, loc))
                                     {
                                         clumps.Remove(rc);
                                         player.AddCustomSkillExperience(Magic.Skill, 10);
@@ -121,25 +130,44 @@ namespace Magic.Framework.Spells
             return null;
         }
 
-        /// <summary>Get whether a given object counts as debris.</summary>
+        /// <summary>Get whether a given object is debris which can be cleared with a pickaxe.</summary>
         /// <param name="location">The location containing the object.</param>
         /// <param name="obj">The world object.</param>
-        private bool IsDebris(GameLocation location, SObject obj)
+        private bool IsPickaxeDebris(GameLocation location, SObject obj)
         {
-            if (obj is Chest or null)
-                return false;
+            if (obj is not Chest or null)
+            {
+                // stones
+                if (obj.Name is "Weeds" or "Stone")
+                    return true;
 
-            // twig
-            if (obj.ParentSheetIndex is 294 or 295)
-                return true;
+                // spawned mine objects
+                if (location is MineShaft && obj.IsSpawnedObject)
+                    return true;
+            }
 
-            // weeds/stones
-            if (obj.Name is "Weeds" or "Stone")
-                return true;
+            return false;
+        }
 
-            // spawned mine objects
-            if (location is MineShaft && obj.IsSpawnedObject)
-                return true;
+        /// <summary>Get whether a given object is debris which can be cleared with an axe.</summary>
+        /// <param name="location">The location containing the object.</param>
+        /// <param name="obj">The world object.</param>
+        private bool IsAxeDebris(GameLocation location, SObject obj)
+        {
+            if (obj is not Chest or null)
+            {
+                // twig
+                if (obj.ParentSheetIndex is 294 or 295)
+                    return true;
+
+                // weeds
+                if (obj.Name is "Weeds")
+                    return true;
+
+                // spawned mine objects
+                if (location is MineShaft && obj.IsSpawnedObject)
+                    return true;
+            }
 
             return false;
         }

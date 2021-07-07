@@ -12,6 +12,7 @@
 * Fixed Wizard event broken if another mod changes the location in an incompatible way.
 * Fixed magic UI rendered before learning magic if another mod added mana points.
 * Fixed players sometimes having no mana points despite learning magic.
+* Fixed multiplayer issues with _clear debris_ spell.
 
 ## 0.3.3
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
