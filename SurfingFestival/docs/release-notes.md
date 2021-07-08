@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Fixed typos.
 * Updated translations. Thanks to martin66789 (added Hungarian)!
 
 ## 1.0.6
