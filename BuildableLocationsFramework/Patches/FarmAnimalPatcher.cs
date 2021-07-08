@@ -207,39 +207,25 @@ namespace BuildableLocationsFramework.Patches
                         __instance.uniqueFrameAccumulator = 0;
                         if (__instance.buildingTypeILiveIn.Contains("Coop"))
                         {
-                            switch (__instance.FacingDirection)
+                            __instance.Sprite.currentFrame = __instance.FacingDirection switch
                             {
-                                case 0:
-                                    __instance.Sprite.currentFrame = 20;
-                                    break;
-                                case 1:
-                                    __instance.Sprite.currentFrame = 18;
-                                    break;
-                                case 2:
-                                    __instance.Sprite.currentFrame = 16;
-                                    break;
-                                case 3:
-                                    __instance.Sprite.currentFrame = 22;
-                                    break;
-                            }
+                                0 => 20,
+                                1 => 18,
+                                2 => 16,
+                                3 => 22,
+                                _ => __instance.Sprite.currentFrame
+                            };
                         }
                         else if (__instance.buildingTypeILiveIn.Contains("Barn"))
                         {
-                            switch (__instance.FacingDirection)
+                            __instance.Sprite.currentFrame = __instance.FacingDirection switch
                             {
-                                case 0:
-                                    __instance.Sprite.currentFrame = 15;
-                                    break;
-                                case 1:
-                                    __instance.Sprite.currentFrame = 14;
-                                    break;
-                                case 2:
-                                    __instance.Sprite.currentFrame = 13;
-                                    break;
-                                case 3:
-                                    __instance.Sprite.currentFrame = 14;
-                                    break;
-                            }
+                                0 => 15,
+                                1 => 14,
+                                2 => 13,
+                                3 => 14,
+                                _ => __instance.Sprite.currentFrame
+                            };
                         }
                     }
                     __instance.Sprite.UpdateSourceRect();
@@ -257,21 +243,14 @@ namespace BuildableLocationsFramework.Patches
                         }
                         else
                         {
-                            switch (__instance.FacingDirection)
+                            __instance.Sprite.currentFrame = __instance.FacingDirection switch
                             {
-                                case 0:
-                                    __instance.Sprite.currentFrame = 15;
-                                    break;
-                                case 1:
-                                    __instance.Sprite.currentFrame = 14;
-                                    break;
-                                case 2:
-                                    __instance.Sprite.currentFrame = 13;
-                                    break;
-                                case 3:
-                                    __instance.Sprite.currentFrame = 14;
-                                    break;
-                            }
+                                0 => 15,
+                                1 => 14,
+                                2 => 13,
+                                3 => 14,
+                                _ => __instance.Sprite.currentFrame
+                            };
                         }
                         __instance.uniqueFrameAccumulator = 0;
                         if (Game1.random.NextDouble() < 0.4)

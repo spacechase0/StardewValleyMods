@@ -1026,17 +1026,16 @@ namespace JsonAssets
                         bool unlockedByLevel = false;
                         if (obj.Recipe.SkillUnlockName?.Length > 0 && obj.Recipe.SkillUnlockLevel > 0)
                         {
-                            int level = 0;
-                            switch (obj.Recipe.SkillUnlockName)
+                            int level = obj.Recipe.SkillUnlockName switch
                             {
-                                case "Farming": level = Game1.player.farmingLevel.Value; break;
-                                case "Fishing": level = Game1.player.fishingLevel.Value; break;
-                                case "Foraging": level = Game1.player.foragingLevel.Value; break;
-                                case "Mining": level = Game1.player.miningLevel.Value; break;
-                                case "Combat": level = Game1.player.combatLevel.Value; break;
-                                case "Luck": level = Game1.player.luckLevel.Value; break;
-                                default: level = Game1.player.GetCustomSkillLevel(obj.Recipe.SkillUnlockName); break;
-                            }
+                                "Farming" => Game1.player.farmingLevel.Value,
+                                "Fishing" => Game1.player.fishingLevel.Value,
+                                "Foraging" => Game1.player.foragingLevel.Value,
+                                "Mining" => Game1.player.miningLevel.Value,
+                                "Combat" => Game1.player.combatLevel.Value,
+                                "Luck" => Game1.player.luckLevel.Value,
+                                _ => Game1.player.GetCustomSkillLevel(obj.Recipe.SkillUnlockName)
+                            };
 
                             if (level >= obj.Recipe.SkillUnlockLevel)
                             {
@@ -1063,17 +1062,16 @@ namespace JsonAssets
                         bool unlockedByLevel = false;
                         if (big.Recipe.SkillUnlockName?.Length > 0 && big.Recipe.SkillUnlockLevel > 0)
                         {
-                            int level = 0;
-                            switch (big.Recipe.SkillUnlockName)
+                            int level = big.Recipe.SkillUnlockName switch
                             {
-                                case "Farming": level = Game1.player.farmingLevel.Value; break;
-                                case "Fishing": level = Game1.player.fishingLevel.Value; break;
-                                case "Foraging": level = Game1.player.foragingLevel.Value; break;
-                                case "Mining": level = Game1.player.miningLevel.Value; break;
-                                case "Combat": level = Game1.player.combatLevel.Value; break;
-                                case "Luck": level = Game1.player.luckLevel.Value; break;
-                                default: level = Game1.player.GetCustomSkillLevel(big.Recipe.SkillUnlockName); break;
-                            }
+                                "Farming" => Game1.player.farmingLevel.Value,
+                                "Fishing" => Game1.player.fishingLevel.Value,
+                                "Foraging" => Game1.player.foragingLevel.Value,
+                                "Mining" => Game1.player.miningLevel.Value,
+                                "Combat" => Game1.player.combatLevel.Value,
+                                "Luck" => Game1.player.luckLevel.Value,
+                                _ => Game1.player.GetCustomSkillLevel(big.Recipe.SkillUnlockName)
+                            };
 
                             if (level >= big.Recipe.SkillUnlockLevel)
                             {

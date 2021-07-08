@@ -90,27 +90,16 @@ namespace LuckSkill.Patches
         /// <summary>The method to call after <see cref="LevelUpMenu.getProfessionName"/>.</summary>
         private static void After_GetProfessionName(int whichProfession, ref string __result)
         {
-            switch (whichProfession)
+            __result = whichProfession switch
             {
-                case Mod.FortunateProfessionId:
-                    __result = "LUCK_A";
-                    break;
-                case Mod.PopularHelperProfessionId:
-                    __result = "LUCK_B";
-                    break;
-                case Mod.LuckyProfessionId:
-                    __result = "LUCK_A1";
-                    break;
-                case Mod.UnUnluckyProfessionId:
-                    __result = "LUCK_A2";
-                    break;
-                case Mod.ShootingStarProfessionId:
-                    __result = "LUCK_B1";
-                    break;
-                case Mod.SpiritChildProfessionId:
-                    __result = "LUCK_B2";
-                    break;
-            }
+                Mod.FortunateProfessionId => "LUCK_A",
+                Mod.PopularHelperProfessionId => "LUCK_B",
+                Mod.LuckyProfessionId => "LUCK_A1",
+                Mod.UnUnluckyProfessionId => "LUCK_A2",
+                Mod.ShootingStarProfessionId => "LUCK_B1",
+                Mod.SpiritChildProfessionId => "LUCK_B2",
+                _ => __result
+            };
         }
 
         /// <summary>The method which transpiles <see cref="LevelUpMenu.AddMissedProfessionChoices"/> and <see cref="LevelUpMenu.AddMissedLevelRecipes"/>.</summary>

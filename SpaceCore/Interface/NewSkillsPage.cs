@@ -324,16 +324,12 @@ namespace SpaceCore.Interface
             for (int skillIndex = 0; skillIndex < gameSkillCount; ++skillIndex)
             {
                 // actualIndex fetches skill data from the internal (actual skill index) sequence rather than the display sequence (skill index)
-                int actualSkillIndex = skillIndex;
-                switch (actualSkillIndex)
+                int actualSkillIndex = skillIndex switch
                 {
-                    case 1:
-                        actualSkillIndex = 3;
-                        break;
-                    case 3:
-                        actualSkillIndex = 1;
-                        break;
-                }
+                    1 => 3,
+                    3 => 1,
+                    _ => skillIndex
+                };
                 string hoverText = "";
                 switch (actualSkillIndex)
                 {
