@@ -10,6 +10,7 @@
 * Made Wizard event skippable.
 * Migrated player data into the `Farmer.modData` field to simplify synchronization and reduce edge cases.
 * Fixed Wizard event broken if another mod changes the location in an incompatible way.
+* Fixed Wizard event needing 3.004 instead of 3 hearts (which mainly affected players using CJB Cheats Menu to set the relationship).
 * Fixed magic UI rendered before learning magic if another mod added mana points.
 * Fixed players sometimes having no mana points despite learning magic.
 * Fixed multiplayer issues with _clear debris_ spell.
