@@ -287,7 +287,7 @@ namespace JsonAssets
             }
 
             // save ring
-            if (obj.Category == ObjectData.Category_.Ring)
+            if (obj.Category == ObjectCategory.Ring)
                 this.MyRings.Add(obj);
 
             // Duplicate check
@@ -311,7 +311,7 @@ namespace JsonAssets
                 texture = seedTex,
                 Name = crop.SeedName,
                 Description = crop.SeedDescription,
-                Category = ObjectData.Category_.Seeds,
+                Category = ObjectCategory.Seeds,
                 Price = crop.SeedSellPrice == -1 ? crop.SeedPurchasePrice : crop.SeedSellPrice,
                 CanPurchase = crop.SeedPurchasePrice > 0,
                 PurchaseFrom = crop.SeedPurchaseFrom,
@@ -410,7 +410,7 @@ namespace JsonAssets
                 texture = saplingTex,
                 Name = tree.SaplingName,
                 Description = tree.SaplingDescription,
-                Category = ObjectData.Category_.Seeds,
+                Category = ObjectCategory.Seeds,
                 Price = tree.SaplingPurchasePrice,
                 CanPurchase = true,
                 PurchaseRequirements = tree.SaplingPurchaseRequirements,
@@ -668,10 +668,10 @@ namespace JsonAssets
         {
             this.Fences.Add(fence);
 
-            IList<ObjectData.Recipe_.Ingredient> ConvertIngredients(IList<FenceData.Recipe_.Ingredient> ingredients)
+            IList<ObjectIngredient> ConvertIngredients(IList<FenceIngredient> ingredients)
             {
                 return ingredients
-                    .Select(ingredient => new ObjectData.Recipe_.Ingredient { Object = ingredient.Object, Count = ingredient.Count })
+                    .Select(ingredient => new ObjectIngredient { Object = ingredient.Object, Count = ingredient.Count })
                     .ToList();
             }
 
@@ -680,9 +680,9 @@ namespace JsonAssets
                 texture = fence.objectTexture,
                 Name = fence.Name,
                 Description = fence.Description,
-                Category = ObjectData.Category_.Crafting,
+                Category = ObjectCategory.Crafting,
                 Price = fence.Price,
-                Recipe = fence.Recipe == null ? null : new ObjectData.Recipe_
+                Recipe = fence.Recipe == null ? null : new ObjectRecipe
                 {
                     SkillUnlockName = fence.Recipe.SkillUnlockName,
                     SkillUnlockLevel = fence.Recipe.SkillUnlockLevel,
@@ -1044,7 +1044,7 @@ namespace JsonAssets
                         }
                         if ((obj.Recipe.IsDefault || unlockedByLevel) && !Game1.player.knowsRecipe(obj.Name))
                         {
-                            if (obj.Category == ObjectData.Category_.Cooking)
+                            if (obj.Category == ObjectCategory.Cooking)
                             {
                                 Game1.player.cookingRecipes.Add(obj.Name, 0);
                             }

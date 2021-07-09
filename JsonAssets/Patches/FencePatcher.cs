@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using JsonAssets.Data;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Harmony;
 using SpaceShared;
@@ -122,8 +123,8 @@ namespace JsonAssets.Patches
                 {
                     __result = false;
 
-                    if (fence.BreakTool == Data.FenceData.ToolType.Pickaxe && t is Pickaxe ||
-                         fence.BreakTool == Data.FenceData.ToolType.Axe && t is Axe)
+                    if (fence.BreakTool == FenceBreakToolType.Pickaxe && t is Pickaxe ||
+                         fence.BreakTool == FenceBreakToolType.Axe && t is Axe)
                     {
                     }
                     else return false;

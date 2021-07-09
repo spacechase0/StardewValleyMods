@@ -1,10 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using SpaceShared;
 using StardewValley;
-using StardewValley.Tools;
 
 namespace JsonAssets.Data
 {
@@ -12,16 +9,8 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class WeaponData : DataNeedsIdWithTexture
     {
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum Type_
-        {
-            Dagger = MeleeWeapon.dagger,
-            Club = MeleeWeapon.club,
-            Sword = MeleeWeapon.defenseSword
-        }
-
         public string Description { get; set; }
-        public Type_ Type { get; set; }
+        public WeaponType Type { get; set; }
 
         public int MinimumDamage { get; set; }
         public int MaximumDamage { get; set; }

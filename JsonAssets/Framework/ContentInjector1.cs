@@ -140,7 +140,7 @@ namespace JsonAssets.Framework
                 {
                     if (obj.Recipe == null)
                         continue;
-                    if (obj.Category != ObjectData.Category_.Cooking)
+                    if (obj.Category != ObjectCategory.Cooking)
                         continue;
                     Log.Verbose($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
                     data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
@@ -160,7 +160,7 @@ namespace JsonAssets.Framework
                 {
                     if (obj.Recipe == null)
                         continue;
-                    if (obj.Category == ObjectData.Category_.Cooking)
+                    if (obj.Category == ObjectCategory.Cooking)
                         continue;
                     Log.Verbose($"Injecting to crafting recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
                     data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
