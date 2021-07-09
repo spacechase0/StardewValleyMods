@@ -8,6 +8,10 @@
 * Removed example mod config (thanks to pepoluan!).
 * Fixed UI scale not handled correctly (thanks to pepoluan!).
 * Fixed cancel from a subpage returning to the mod list instead of the parent menu.
+* Fixed paragraph rendering:
+  * fixed quirky line wrapping;
+  * fixed duplicated paragraph text;
+  * fixed paragraph break after every second line.
 
 ## 1.3.4
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.

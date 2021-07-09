@@ -260,38 +260,48 @@ namespace GenericModConfigMenu.Framework
 
                     case ParagraphModOption option:
                         {
-                            label.NonBoldScale = 0.75f;
-                            label.NonBoldShadow = false;
+                            label = null;
                             other = null;
 
-                            string[] text = option.Name.Split(' ');
-                            label.String = text[0] + " ";
-                            for (int it = 1; it < text.Length; ++it)
+                            List<string> lines = new();
                             {
-                                string oldStr = label.String;
-                                label.String += text[it];
-                                if (label.Measure().X >= this.Table.Size.X)
+                                string nextLine = "";
+                                foreach (string word in option.Name.Split(' '))
                                 {
-                                    label.String = oldStr + "\n" + text[it];
+                                    // always add at least one word
+                                    if (nextLine == "")
+                                    {
+                                        nextLine = word;
+                                        continue;
+                                    }
+
+                                    // else append if it fits
+                                    string possibleLine = $"{nextLine} {word}".Trim();
+                                    if (Label.MeasureString(possibleLine).X <= this.Table.Size.X)
+                                    {
+                                        nextLine = possibleLine;
+                                        continue;
+                                    }
+
+                                    // else start new line
+                                    lines.Add(nextLine);
+                                    nextLine = word;
                                 }
-                                if (it < text.Length - 1)
-                                    label.String += " ";
+
+                                if (nextLine != "")
+                                    lines.Add(nextLine);
                             }
 
-                            string[] lines = label.String.Split('\n');
-                            for (int il = 0; il < lines.Length; il += 2)
+                            this.Table.AddRow(new Element[]
                             {
-                                this.Table.AddRow(new Element[]
+                                new Label
                                 {
-                                    new Label
-                                    {
-                                        UserData = opt.Description,
-                                        NonBoldScale = 0.75f,
-                                        NonBoldShadow = false,
-                                        String = lines[ il + 0 ] + "\n" + (il + 1 >= lines.Length ? "" : lines[ il + 1 ])
-                                    }
-                                });
-                            }
+                                    UserData = opt.Description,
+                                    NonBoldScale = 0.75f,
+                                    NonBoldShadow = false,
+                                    String = string.Join("\n", lines)
+                                }
+                            });
                             break;
                         }
 
