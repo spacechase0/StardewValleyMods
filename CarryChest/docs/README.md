@@ -9,7 +9,8 @@ even if they're not empty.
 3. Run the game using SMAPI.
 
 ## Use
-Just pick up a chest like normal, even if it's not empty!
+Just pick up a chest like normal, even if it's not empty! (To pick up a chest, interact with it
+when your toolbar has an empty slot selected.)
 
 **Caution:** placing a non-empty chest without the mod installed will lose its contents.
 
