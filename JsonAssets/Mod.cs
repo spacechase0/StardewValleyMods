@@ -246,7 +246,7 @@ namespace JsonAssets
                     PurchaseFrom = obj.Recipe.PurchaseFrom,
                     Price = obj.Recipe.PurchasePrice,
                     PurchaseRequirements = obj.Recipe.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", obj.Recipe.PurchaseRequirements?.ToArray()) },
-                    Object = () => new StardewValley.Object(obj.Id, 1, true, obj.Recipe.PurchasePrice)
+                    Object = () => new SObject(obj.Id, 1, true, obj.Recipe.PurchasePrice)
                 });
                 if (obj.Recipe.AdditionalPurchaseData != null)
                 {
@@ -257,7 +257,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(obj.Id, 1, true, entry.PurchasePrice)
+                            Object = () => new SObject(obj.Id, 1, true, entry.PurchasePrice)
                         });
                     }
                 }
@@ -269,7 +269,7 @@ namespace JsonAssets
                     PurchaseFrom = obj.PurchaseFrom,
                     Price = obj.PurchasePrice,
                     PurchaseRequirements = obj.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", obj.PurchaseRequirements?.ToArray()) },
-                    Object = () => new StardewValley.Object(obj.Id, int.MaxValue, false, obj.PurchasePrice)
+                    Object = () => new SObject(obj.Id, int.MaxValue, false, obj.PurchasePrice)
                 });
                 if (obj.AdditionalPurchaseData != null)
                 {
@@ -280,7 +280,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(obj.Id, int.MaxValue, false, entry.PurchasePrice)
+                            Object = () => new SObject(obj.Id, int.MaxValue, false, entry.PurchasePrice)
                         });
                     }
                 }
@@ -335,7 +335,7 @@ namespace JsonAssets
             if (str != "")
             {
                 string strtrimstart = str.TrimStart(new[] { '/' });
-                if (crop.SeedPurchaseRequirements != null && crop.SeedPurchaseRequirements.Count > 0)
+                if (crop.SeedPurchaseRequirements?.Count > 0)
                 {
                     for (int index = 0; index < crop.SeedPurchaseRequirements.Count; index++)
                     {
@@ -365,7 +365,7 @@ namespace JsonAssets
                     PurchaseFrom = crop.seed.PurchaseFrom,
                     Price = crop.seed.PurchasePrice,
                     PurchaseRequirements = crop.seed.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", crop.seed.PurchaseRequirements?.ToArray()) },
-                    Object = () => new StardewValley.Object(crop.seed.Id, int.MaxValue, false, crop.seed.PurchasePrice),
+                    Object = () => new SObject(crop.seed.Id, int.MaxValue, false, crop.seed.PurchasePrice),
                     ShowWithStocklist = true
                 });
                 if (crop.seed.AdditionalPurchaseData != null)
@@ -377,7 +377,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(crop.seed.Id, int.MaxValue, false, entry.PurchasePrice)
+                            Object = () => new SObject(crop.seed.Id, int.MaxValue, false, entry.PurchasePrice)
                         });
                     }
                 }
@@ -429,7 +429,7 @@ namespace JsonAssets
                     PurchaseFrom = tree.Sapling.PurchaseFrom,
                     Price = tree.Sapling.PurchasePrice,
                     PurchaseRequirements = tree.Sapling.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", tree.Sapling.PurchaseRequirements?.ToArray()) },
-                    Object = () => new StardewValley.Object(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
+                    Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
                 });
                 if (tree.Sapling.AdditionalPurchaseData != null)
                 {
@@ -440,7 +440,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
+                            Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
                         });
                     }
                 }
@@ -461,14 +461,14 @@ namespace JsonAssets
         {
             this.BigCraftables.Add(craftable);
 
-            if (craftable.Recipe != null && craftable.Recipe.CanPurchase)
+            if (craftable.Recipe?.CanPurchase == true)
             {
                 this.shopData.Add(new ShopDataEntry
                 {
                     PurchaseFrom = craftable.Recipe.PurchaseFrom,
                     Price = craftable.Recipe.PurchasePrice,
                     PurchaseRequirements = craftable.Recipe.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", craftable.Recipe.PurchaseRequirements?.ToArray()) },
-                    Object = () => new StardewValley.Object(Vector2.Zero, craftable.Id, true)
+                    Object = () => new SObject(Vector2.Zero, craftable.Id, true)
                 });
                 if (craftable.Recipe.AdditionalPurchaseData != null)
                 {
@@ -479,7 +479,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(Vector2.Zero, craftable.Id, true)
+                            Object = () => new SObject(Vector2.Zero, craftable.Id, true)
                         });
                     }
                 }
@@ -491,7 +491,7 @@ namespace JsonAssets
                     PurchaseFrom = craftable.PurchaseFrom,
                     Price = craftable.PurchasePrice,
                     PurchaseRequirements = craftable.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", craftable.PurchaseRequirements?.ToArray()) },
-                    Object = () => new StardewValley.Object(Vector2.Zero, craftable.Id)
+                    Object = () => new SObject(Vector2.Zero, craftable.Id)
                 });
                 if (craftable.AdditionalPurchaseData != null)
                 {
@@ -502,7 +502,7 @@ namespace JsonAssets
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new StardewValley.Object(Vector2.Zero, craftable.Id)
+                            Object = () => new SObject(Vector2.Zero, craftable.Id)
                         });
                     }
                 }
@@ -1133,7 +1133,7 @@ namespace JsonAssets
                     continue;
 
                 bool normalCond = true;
-                if (entry.PurchaseRequirements != null && entry.PurchaseRequirements.Length > 0 && entry.PurchaseRequirements[0] != "")
+                if (entry.PurchaseRequirements?.Length > 0 && entry.PurchaseRequirements[0] != "")
                 {
                     normalCond = this.Epu.CheckConditions(entry.PurchaseRequirements);
                 }

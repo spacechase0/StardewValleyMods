@@ -575,7 +575,7 @@ namespace SpaceCore.Interface
             // Shoulder buttons navigate between skills and wallet
             if (b == Buttons.LeftShoulder || b == Buttons.RightShoulder)
             {
-                if (this.currentlySnappedComponent != null && this.currentlySnappedComponent.myID < NewSkillsPage.WalletRegionStartId && this.CanNavigateToWallet)
+                if (this.currentlySnappedComponent?.myID < NewSkillsPage.WalletRegionStartId && this.CanNavigateToWallet)
                 {
                     this.setCurrentlySnappedComponentTo(NewSkillsPage.WalletRegionStartId);
                 }

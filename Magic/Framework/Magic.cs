@@ -144,12 +144,12 @@ namespace Magic.Framework
                 }
             }
             var tilePos = new Vector2(e.TargetX / Game1.tileSize, e.TargetY / Game1.tileSize);
-            if (farmer.currentLocation.terrainFeatures.TryGetValue(tilePos, out TerrainFeature feature) && feature is HoeDirt dirt && dirt.crop != null)
+            if (farmer.currentLocation.terrainFeatures.TryGetValue(tilePos, out TerrainFeature feature) && (feature as HoeDirt)?.crop != null)
                 spellsLearnt.Add("nature:tendrils");
 
             // TODO: Add proper tilesheet check
             var tile = farmer.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y];
-            if (tile != null && tile.TileIndex == 173)
+            if (tile?.TileIndex == 173)
                 spellsLearnt.Add("elemental:descend");
             if (farmer.currentLocation is Farm farm)
             {

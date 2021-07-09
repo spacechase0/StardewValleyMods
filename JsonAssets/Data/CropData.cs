@@ -73,7 +73,7 @@ namespace JsonAssets.Data
                 str += $"true {this.Bonus.MinimumPerHarvest} {this.Bonus.MaximumPerHarvest} {this.Bonus.MaxIncreasePerFarmLevel} {this.Bonus.ExtraChance}/";
             else str += "false/";
             str += (this.TrellisCrop ? "true" : "false") + "/";
-            if (this.Colors != null && this.Colors.Count > 0)
+            if (this.Colors?.Count > 0)
             {
                 str += "true";
                 foreach (var color in this.Colors)

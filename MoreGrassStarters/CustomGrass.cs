@@ -6,6 +6,7 @@ using PyTK.CustomElementHandler;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
+using SObject = StardewValley.Object;
 
 namespace MoreGrassStarters
 {
@@ -105,7 +106,7 @@ namespace MoreGrassStarters
                             layerDepth = (float)(1.0 - Game1.random.Next(100) / 10000.0),
                             delayBeforeAnimationStart = Game1.random.Next(350)
                         });
-                        Game1.addHUDMessage(new HUDMessage("Hay", 1, true, Color.LightGoldenrodYellow, new StardewValley.Object(178, 1)));
+                        Game1.addHUDMessage(new HUDMessage("Hay", 1, true, Color.LightGoldenrodYellow, new SObject(178, 1)));
                     }
                     return true;
                 }

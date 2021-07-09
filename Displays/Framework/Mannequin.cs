@@ -7,11 +7,12 @@ using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Objects;
 using StardewValley.Tools;
+using SObject = StardewValley.Object;
 
 namespace Displays.Framework
 {
     [XmlType("Mods_spacechase0_Mannequin")]
-    public class Mannequin : StardewValley.Object // must be public for the XML serializer
+    public class Mannequin : SObject // must be public for the XML serializer
     {
         /*********
         ** Fields
@@ -214,7 +215,7 @@ namespace Displays.Framework
 
             var tex = this.GetMainTexture();
 
-            spriteBatch.Draw(tex, location + new Vector2(32f, 32f), null, color * transparency, 0f, new Vector2(8f, 16f), 4f * (((double)scaleSize < 0.2) ? scaleSize : (scaleSize / 2f)), SpriteEffects.None, layerDepth);
+            spriteBatch.Draw(tex, location + new Vector2(32f, 32f), null, color * transparency, 0f, new Vector2(8f, 16f), 4f * (scaleSize < 0.2 ? scaleSize : (scaleSize / 2f)), SpriteEffects.None, layerDepth);
             if (shouldDrawStackNumber)
             {
                 Utility.drawTinyDigits(this.Stack, spriteBatch, location + new Vector2(64 - Utility.getWidthOfTinyDigitString(this.Stack, 3f * scaleSize) + 3f * scaleSize, 64f - 18f * scaleSize + 2f), 3f * scaleSize, 1f, color);

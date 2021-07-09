@@ -65,7 +65,7 @@ namespace SpaceCore
             {
                 Content.AddTiledPropertiesToXTile(tTile.Properties, xtileSheet.TileIndexProperties[tTile.Id]);
 
-                if (tTile.Animation != null && tTile.Animation.Count > 0)
+                if (tTile.Animation?.Count > 0)
                 {
                     List<int> tAnimFrames = new List<int>();
                     foreach (var tTileAnim in tTile.Animation)

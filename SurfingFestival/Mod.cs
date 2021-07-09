@@ -17,6 +17,7 @@ using SurfingFestival.Patches;
 using xTile;
 using xTile.Layers;
 using xTile.Tiles;
+using SObject = StardewValley.Object;
 
 namespace SurfingFestival
 {
@@ -879,7 +880,7 @@ namespace SurfingFestival
 
             if (e.Action == "SurfingBonfire" && Mod.PlayerDidBonfire == BonfireState.NotDone)
             {
-                bool Highlight(StardewValley.Item item) => (item is StardewValley.Object obj && !obj.bigCraftable.Value && ((obj.ParentSheetIndex == 388 && obj.Stack >= 50) || obj.ParentSheetIndex == 71 || obj.ParentSheetIndex == 789));
+                bool Highlight(StardewValley.Item item) => (item is SObject obj && !obj.bigCraftable.Value && ((obj.ParentSheetIndex == 388 && obj.Stack >= 50) || obj.ParentSheetIndex == 71 || obj.ParentSheetIndex == 789));
                 void BehaviorOnSelect(StardewValley.Item item, Farmer farmer)
                 {
                     if (item == null)
@@ -1185,7 +1186,7 @@ namespace SurfingFestival
                 if (!Game1.player.mailReceived.Contains("SurfingFestivalWinner"))
                 {
                     Game1.player.mailReceived.Add("SurfingFestivalWinner");
-                    Game1.player.addItemByMenuIfNecessary(new StardewValley.Object(Vector2.Zero, Mod.Ja.GetBigCraftableId("Surfing Trophy")));
+                    Game1.player.addItemByMenuIfNecessary(new SObject(Vector2.Zero, Mod.Ja.GetBigCraftableId("Surfing Trophy")));
                 }
 
                 Game1.playSound("money");

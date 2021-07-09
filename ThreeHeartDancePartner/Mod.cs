@@ -63,7 +63,7 @@ namespace ThreeHeartDancePartner
 
                 foreach (NPC actor in festival.actors)
                 {
-                    if (actor.CurrentDialogue != null && actor.CurrentDialogue.Count > 0 && actor.CurrentDialogue.Peek().getCurrentDialogue().Equals("..."))
+                    if (actor.CurrentDialogue?.Count > 0 && actor.CurrentDialogue.Peek().getCurrentDialogue().Equals("..."))
                         actor.CurrentDialogue.Clear();
                 }
 

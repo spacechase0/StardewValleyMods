@@ -19,6 +19,7 @@ using StardewValley.Menus;
 using StardewValley.Objects;
 using StardewValley.Quests;
 using StardewValley.TerrainFeatures;
+using SObject = StardewValley.Object;
 
 namespace LuckSkill
 {
@@ -266,7 +267,7 @@ namespace LuckSkill
                         Game1.showGlobalMessage("The junimos grew your grass and repaired your fences!");
                     }
 
-                    if (r.Next() <= 0.05 && Game1.player.addItemToInventoryBool(new StardewValley.Object(StardewValley.Object.prismaticShardIndex, 1)))
+                    if (r.Next() <= 0.05 && Game1.player.addItemToInventoryBool(new SObject(SObject.prismaticShardIndex, 1)))
                     {
                         Game1.showGlobalMessage("The junimos gave you a prismatic shard!");
                         continue;

@@ -10,6 +10,7 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
+using SObject = StardewValley.Object;
 
 namespace CustomBuildings.Patches
 {
@@ -92,7 +93,7 @@ namespace CustomBuildings.Patches
                 return;
 
             __instance.indoors.Value.objects.Remove(new Vector2(3, 3));
-            StardewValley.Object @object = new StardewValley.Object(new Vector2(buildingData.FeedHopperX, buildingData.FeedHopperY), 99)
+            SObject @object = new(new Vector2(buildingData.FeedHopperX, buildingData.FeedHopperY), 99)
             {
                 Fragility = 2
             };
@@ -124,7 +125,7 @@ namespace CustomBuildings.Patches
                     {
                         if (__instance.indoors.Value.doesTileHaveProperty(ix, iy, "Trough", "Back") != null)
                         {
-                            __instance.indoors.Value.objects.Add(new Vector2(ix, iy), new StardewValley.Object(178, 1));
+                            __instance.indoors.Value.objects.Add(new Vector2(ix, iy), new SObject(178, 1));
                             --num;
                         }
                     }
@@ -141,7 +142,7 @@ namespace CustomBuildings.Patches
             animalHouse.animalLimit.Value = buildingData.MaxOccupants;
             if (buildingData.IncubatorX != -1)
             {
-                StardewValley.Object @object = new StardewValley.Object(new Vector2(buildingData.IncubatorX, buildingData.IncubatorY), 104)
+                SObject @object = new(new Vector2(buildingData.IncubatorX, buildingData.IncubatorY), 104)
                 {
                     Fragility = 2
                 };

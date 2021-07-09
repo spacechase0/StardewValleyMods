@@ -122,7 +122,7 @@ namespace BuildableLocationsFramework.Patches
             __instance.update(time, location, __instance.myID.Value, false);
             if (Game1.IsMasterGame && Mod.Instance.Helper.Reflection.GetMethod(__instance, "behaviors").Invoke<bool>(time, location) || __instance.Sprite.CurrentAnimation != null)
                 return false;
-            if (__instance.controller != null && __instance.controller.timerSinceLastCheckPoint > 10000)
+            if (__instance.controller?.timerSinceLastCheckPoint > 10000)
             {
                 __instance.controller = null;
                 __instance.Halt();

@@ -268,7 +268,7 @@ namespace JsonAssets.Patches
                 if (!__instance.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
                 {
                     var obj = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == __instance.ParentSheetIndex);
-                    if (obj != null && !obj.CanBeGifted)
+                    if (obj?.CanBeGifted == false)
                         __result = false;
                 }
             }

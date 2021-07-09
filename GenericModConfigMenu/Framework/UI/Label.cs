@@ -17,18 +17,25 @@ namespace GenericModConfigMenu.Framework.UI
 
         public Action<Element> Callback { get; set; }
 
+        /// <inheritdoc />
         public override int Width => (int)this.Measure().X;
+
+        /// <inheritdoc />
         public override int Height => (int)this.Measure().Y;
+
+        /// <inheritdoc />
         public override string HoveredSound => (this.Callback != null) ? "shiny4" : null;
 
+        /// <inheritdoc />
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
 
             if (this.Clicked)
-                Callback?.Invoke(this);
+                this.Callback?.Invoke(this);
         }
 
+        /// <summary>Measure the label's rendered dialogue text size.</summary>
         public Vector2 Measure()
         {
             if (this.Bold)
@@ -37,6 +44,7 @@ namespace GenericModConfigMenu.Framework.UI
                 return Game1.dialogueFont.MeasureString(this.String) * this.NonBoldScale;
         }
 
+        /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
             bool altColor = this.Hover && this.Callback != null;

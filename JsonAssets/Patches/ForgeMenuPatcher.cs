@@ -114,14 +114,11 @@ namespace JsonAssets.Patches
             var newInsns = new List<CodeInstruction>();
             foreach (var insn in insns)
             {
-                if (insn.opcode == OpCodes.Callvirt && insn.operand is MethodInfo meth)
+                if (insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo)?.Name == "GetForgeCost")
                 {
-                    if (meth.Name == "GetForgeCost")
-                    {
-                        newInsns.Add(insn);
-                        newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<ForgeMenuPatcher>(nameof(DrawCost))));
-                        continue;
-                    }
+                    newInsns.Add(insn);
+                    newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<ForgeMenuPatcher>(nameof(DrawCost))));
+                    continue;
                 }
                 newInsns.Add(insn);
             }

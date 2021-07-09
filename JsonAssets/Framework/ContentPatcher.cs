@@ -143,7 +143,7 @@ namespace JsonAssets.Framework
 
         public override bool IsReady()
         {
-            return base.IsReady() && this.Tilesheets != null && this.Tilesheets.Count > 0 && !string.IsNullOrEmpty(this.Tilesheets.First().Value);
+            return base.IsReady() && this.Tilesheets?.Count > 0 && !string.IsNullOrEmpty(this.Tilesheets.First().Value);
         }
 
         public override IEnumerable<string> GetValues(string input)

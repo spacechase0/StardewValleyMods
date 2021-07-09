@@ -8,6 +8,7 @@ using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using SObject = StardewValley.Object;
 
 namespace AnotherHungerMod
 {
@@ -51,8 +52,8 @@ namespace AnotherHungerMod
                 capi.RegisterSimpleOption(this.ModManifest, "Fullness UI (X)", "The X position of the fullness UI.", () => Mod.Config.FullnessUiX, (int val) => Mod.Config.FullnessUiX = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Fullness UI (Y)", "The Y position of the fullness UI.", () => Mod.Config.FullnessUiY, (int val) => Mod.Config.FullnessUiY = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Max Fullness", "Maximum amount of fullness you can have.", () => Mod.Config.MaxFullness, (int val) => Mod.Config.MaxFullness = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Edibility Multiplier", "A multiplier for the amount of fullness you get, based on the food's edibility.", () => (float)Mod.Config.EdibilityMultiplier, (float val) => Mod.Config.EdibilityMultiplier = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Fullness Drain", "The amount of fullness to drain every 10 minutes in-game.", () => (float)Mod.Config.DrainPer10Min, (float val) => Mod.Config.DrainPer10Min = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Edibility Multiplier", "A multiplier for the amount of fullness you get, based on the food's edibility.", () => Mod.Config.EdibilityMultiplier, (float val) => Mod.Config.EdibilityMultiplier = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Fullness Drain", "The amount of fullness to drain every 10 minutes in-game.", () => Mod.Config.DrainPer10Min, (float val) => Mod.Config.DrainPer10Min = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Positive Buff Threshold", "The amount of fullness you need for positive buffs to apply.", () => Mod.Config.PositiveBuffThreshold, (int val) => Mod.Config.PositiveBuffThreshold = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Negative Buff Threshold", "The amount of fullness you need before negative buffs apply.", () => Mod.Config.NegativeBuffThreshold, (int val) => Mod.Config.NegativeBuffThreshold = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Starvation Damage", "The amount of starvation damage taken every 10 minutes when you have no fullness.", () => Mod.Config.StarvationDamagePer10Min, (int val) => Mod.Config.StarvationDamagePer10Min = val);
@@ -83,7 +84,7 @@ namespace AnotherHungerMod
             if (Game1.player.GetFullness() > 0)
             {
                 Rectangle targetArea = new Rectangle(3, 13, 6, 41);
-                float perc = (float)(Game1.player.GetFullness() / Game1.player.GetMaxFullness());
+                float perc = Game1.player.GetFullness() / Game1.player.GetMaxFullness();
                 int h = (int)(targetArea.Height * perc);
                 targetArea.Y += targetArea.Height - h;
                 targetArea.Height = h;
@@ -108,7 +109,7 @@ namespace AnotherHungerMod
             if (sender != Game1.player)
                 return;
 
-            int foodVal = (int)((Game1.player.itemToEat as StardewValley.Object).Edibility * Mod.Config.EdibilityMultiplier);
+            int foodVal = (int)((Game1.player.itemToEat as SObject).Edibility * Mod.Config.EdibilityMultiplier);
             Log.Trace("Player ate food for " + foodVal + " fullness");
             Game1.player.UseFullness(-foodVal);
         }
@@ -120,7 +121,7 @@ namespace AnotherHungerMod
 
             if (e.Npc == Game1.player.getSpouse())
             {
-                if (e.Gift.Category == StardewValley.Object.CookingCategory)
+                if (e.Gift.Category == SObject.CookingCategory)
                 {
                     Log.Trace("Player gave spouse a meal");
                     Game1.player.SetFedSpouse(true);

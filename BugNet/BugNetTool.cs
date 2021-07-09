@@ -7,6 +7,7 @@ using SpaceCore;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Tools;
+using SObject = StardewValley.Object;
 
 namespace BugNet
 {
@@ -17,7 +18,7 @@ namespace BugNet
 
         public BugNetTool()
         {
-            this.Category = StardewValley.Object.toolCategory;
+            this.Category = SObject.toolCategory;
             this.Name = "Bug Net";
             this.ParentSheetIndex = MeleeWeapon.scythe; // Gets us out of annoying stuff
 
@@ -87,7 +88,7 @@ namespace BugNet
                         string critterId = Mod.GetCritterIdFrom(critter);
                         int objId = Mod.Ja.GetObjectId($"Critter Cage: {Mod.GetCritterName(critterId)}");
                         Log.Trace("Spawning a " + critterId + " with ID " + objId);
-                        who.currentLocation.debris.Add(new Debris(new StardewValley.Object(objId, 1), critter.position));
+                        who.currentLocation.debris.Add(new Debris(new SObject(objId, 1), critter.position));
                     }
                 }
             }

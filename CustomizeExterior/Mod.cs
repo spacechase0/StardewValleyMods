@@ -18,8 +18,14 @@ using StardewValley.Network;
 
 namespace CustomizeExterior
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
+
+        private DateTime RecentClickTime;
+        private string RecentClickTarget;
+        private string RecentTarget;
+
         public const string SeasonalIndicator = "%";
 
         private readonly TimeSpan ClickWindow = TimeSpan.FromMilliseconds(250);
@@ -295,8 +301,6 @@ namespace CustomizeExterior
             }
         }
 
-        private DateTime RecentClickTime;
-        private string RecentClickTarget;
         private bool CheckBuildingClick(string target, string type)
         {
             if (Game1.activeClickableMenu != null)
@@ -336,7 +340,6 @@ namespace CustomizeExterior
             return true;
         }
 
-        private string RecentTarget;
         private void OnExteriorSelected(string type, string choice) { this.OnExteriorSelected(type, choice, true); }
         private void OnExteriorSelected(string type, string choice, bool updateChosen)
         {

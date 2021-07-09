@@ -22,6 +22,7 @@ using StardewValley.Tools;
 using TheftOfTheWinterStar.Framework;
 using TheftOfTheWinterStar.Patches;
 using xTile.Tiles;
+using SObject = StardewValley.Object;
 
 namespace TheftOfTheWinterStar
 {
@@ -168,7 +169,7 @@ namespace TheftOfTheWinterStar
                         this.SaveData.ArenaStage = ArenaStage.Finished1;
                         int key = Mod.Ja.GetObjectId("Festive Key");
                         var pos = new Vector2(6, 13);
-                        var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(key, 1) }), pos);
+                        var chest = new Chest(0, new List<Item>(new Item[] { new SObject(key, 1) }), pos);
                         Game1.currentLocation.overlayObjects[pos] = chest;
                         Game1.playSound("questcomplete");
                     }
@@ -177,7 +178,7 @@ namespace TheftOfTheWinterStar
                         this.SaveData.ArenaStage = ArenaStage.Finished2;
                         int stardropPiece = Mod.Ja.GetObjectId("Frosty Stardrop Piece");
                         var pos = new Vector2(13, 13);
-                        var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(stardropPiece, 1) }), pos);
+                        var chest = new Chest(0, new List<Item>(new Item[] { new SObject(stardropPiece, 1) }), pos);
                         Game1.currentLocation.overlayObjects[pos] = chest;
                         Game1.playSound("questcomplete");
                     }
@@ -202,7 +203,7 @@ namespace TheftOfTheWinterStar
                             {
                                 int stardropPiece = Mod.Ja.GetObjectId("Frosty Stardrop Piece");
                                 var pos = new Vector2(9, 13);
-                                var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(stardropPiece, 1) }), pos);
+                                var chest = new Chest(0, new List<Item>(new Item[] { new SObject(stardropPiece, 1) }), pos);
                                 Game1.currentLocation.overlayObjects[pos] = chest;
                                 this.SaveData.DidProjectilePuzzle = true;
                                 break;
@@ -406,7 +407,7 @@ namespace TheftOfTheWinterStar
                     {
                         pos.X = 13;
                     }
-                    var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(stardropPiece, 1) }), pos);
+                    var chest = new Chest(0, new List<Item>(new Item[] { new SObject(stardropPiece, 1) }), pos);
                     loc.overlayObjects[pos] = chest;
                 }
                 else if (locName == "WeaponRoom")
@@ -418,13 +419,13 @@ namespace TheftOfTheWinterStar
                 else if (locName == "KeyRoom")
                 {
                     var pos = new Vector2(13, 9);
-                    var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(key, 1) }), pos);
+                    var chest = new Chest(0, new List<Item>(new Item[] { new SObject(key, 1) }), pos);
                     loc.overlayObjects[pos] = chest;
                 }
                 else if (locName == "Maze")
                 {
                     var pos = new Vector2(20, 26);
-                    var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(keyHalfB, 1) }), pos);
+                    var chest = new Chest(0, new List<Item>(new Item[] { new SObject(keyHalfB, 1) }), pos);
                     loc.overlayObjects[pos] = chest;
                 }
                 else if (locName == "Branch2")
@@ -570,7 +571,7 @@ namespace TheftOfTheWinterStar
             if (!e.Player.knowsRecipe("Frosty Stardrop"))
             {
                 foreach (var item in e.Added)
-                    if (item is StardewValley.Object obj && obj.ParentSheetIndex == Mod.Ja.GetObjectId("Frosty Stardrop Piece"))
+                    if (item is SObject obj && obj.ParentSheetIndex == Mod.Ja.GetObjectId("Frosty Stardrop Piece"))
                         e.Player.craftingRecipes.Add("Frosty Stardrop", 0);
             }
         }
@@ -779,7 +780,7 @@ namespace TheftOfTheWinterStar
                     var back = farmer.currentLocation.Map.GetLayer("Back");
                     back.Tiles[tx, ty] = new StaticTile(back, farmer.currentLocation.Map.TileSheets[0], BlendMode.Additive, 257);
                     var pos = new Vector2(14, 13);
-                    var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(Mod.Ja.GetObjectId("Festive Big Key (B)"), 1) }), pos);
+                    var chest = new Chest(0, new List<Item>(new Item[] { new SObject(Mod.Ja.GetObjectId("Festive Big Key (B)"), 1) }), pos);
                     farmer.currentLocation.overlayObjects[pos] = chest;
                     Game1.playSound("secret1");
 

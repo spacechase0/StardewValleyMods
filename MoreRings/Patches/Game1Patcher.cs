@@ -41,15 +41,12 @@ namespace MoreRings.Patches
             var newInsns = new List<CodeInstruction>();
             foreach (var insn in insns)
             {
-                if (insn.opcode == OpCodes.Call && insn.operand is MethodInfo meth)
+                if (insn.opcode == OpCodes.Call && (insn.operand as MethodInfo)?.Name == "withinRadiusOfPlayer")
                 {
-                    if (meth.Name == "withinRadiusOfPlayer")
+                    if (utilWithinRadiusCount++ == 1)
                     {
-                        if (utilWithinRadiusCount++ == 1)
-                        {
-                            Log.Trace("Found second Utility.withinRadiusOfPlayer call, replacing i-2 with our hook function");
-                            newInsns[newInsns.Count - 2] = new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<Game1Patcher>(nameof(toolRangeHook)));
-                        }
+                        Log.Trace("Found second Utility.withinRadiusOfPlayer call, replacing i-2 with our hook function");
+                        newInsns[newInsns.Count - 2] = new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<Game1Patcher>(nameof(toolRangeHook)));
                     }
                 }
                 newInsns.Add(insn);

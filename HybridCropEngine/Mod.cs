@@ -120,7 +120,7 @@ namespace HybridCropEngine
             var crops = Game1.content.Load<Dictionary<int, string>>("Data/Crops");
             foreach (var crop in crops)
             {
-                if (crop.Key >= 495 && crop.Key <= 498)
+                if (crop.Key is >= 495 and <= 498)
                     continue;
 
                 string[] fields = crop.Value.Split('/');
