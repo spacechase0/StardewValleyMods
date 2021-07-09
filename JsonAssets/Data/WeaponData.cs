@@ -9,6 +9,9 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class WeaponData : DataNeedsIdWithTexture
     {
+        /*********
+        ** Accessors
+        *********/
         public string Description { get; set; }
         public WeaponType Type { get; set; }
 
@@ -32,9 +35,13 @@ namespace JsonAssets.Data
 
         public bool CanTrash { get; set; } = true;
 
-        public Dictionary<string, string> NameLocalization = new();
-        public Dictionary<string, string> DescriptionLocalization = new();
+        public Dictionary<string, string> NameLocalization { get; set; } = new();
+        public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
+
+        /*********
+        ** Public methods
+        *********/
         public string LocalizedName()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
@@ -51,7 +58,10 @@ namespace JsonAssets.Data
                 : this.Description;
         }
 
-        public int GetWeaponId() { return this.Id; }
+        public int GetWeaponId()
+        {
+            return this.Id;
+        }
 
         internal string GetWeaponInformation()
         {

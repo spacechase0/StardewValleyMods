@@ -5,6 +5,9 @@ namespace JsonAssets.Data
 {
     public class BigCraftableRecipe
     {
+        /*********
+        ** Accessors
+        *********/
         public string SkillUnlockName { get; set; } = null;
         public int SkillUnlockLevel { get; set; } = -1;
 
@@ -18,6 +21,10 @@ namespace JsonAssets.Data
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
         public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
+
+        /*********
+        ** Public methods
+        *********/
         internal string GetRecipeString(BigCraftableData parent)
         {
             string str = "";

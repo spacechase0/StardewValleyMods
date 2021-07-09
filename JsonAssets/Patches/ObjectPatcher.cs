@@ -286,7 +286,7 @@ namespace JsonAssets.Patches
 
             if (__instance.Category == SObject.CraftingCategory && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
             {
-                if (Mod.instance.Fences.All(f => f.correspondingObject.Id != __instance.ParentSheetIndex))
+                if (Mod.instance.Fences.All(f => f.CorrespondingObject.Id != __instance.ParentSheetIndex))
                 {
                     __result = false;
                     return false;
@@ -304,14 +304,14 @@ namespace JsonAssets.Patches
             {
                 foreach (var fence in Mod.instance.Fences)
                 {
-                    if (__instance.ParentSheetIndex == fence.correspondingObject.GetObjectId())
+                    if (__instance.ParentSheetIndex == fence.CorrespondingObject.GetObjectId())
                     {
                         if (location.objects.ContainsKey(pos))
                         {
                             __result = false;
                             return false;
                         }
-                        location.objects.Add(pos, new Fence(pos, fence.correspondingObject.GetObjectId(), false));
+                        location.objects.Add(pos, new Fence(pos, fence.CorrespondingObject.GetObjectId(), false));
                         location.playSound(fence.PlacementSound);
                         __result = true;
                         return false;

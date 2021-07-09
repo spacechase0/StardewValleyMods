@@ -11,11 +11,14 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class BootsData : DataSeparateTextureIndex
     {
+        /*********
+        ** Accessors
+        *********/
         [JsonIgnore]
-        public Texture2D texture;
+        public Texture2D Texture { get; set; }
 
         [JsonIgnore]
-        public Texture2D textureColor;
+        public Texture2D TextureColor { get; set; }
 
         public string Description { get; set; }
 
@@ -27,12 +30,16 @@ namespace JsonAssets.Data
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
         public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-        public Dictionary<string, string> NameLocalization = new();
-        public Dictionary<string, string> DescriptionLocalization = new();
+        public Dictionary<string, string> NameLocalization { get; set; } = new();
+        public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
         public int Defense { get; set; }
         public int Immunity { get; set; }
 
+
+        /*********
+        ** Public methods
+        *********/
         public string LocalizedName()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
@@ -49,12 +56,19 @@ namespace JsonAssets.Data
                 : this.Description;
         }
 
-        public int GetObjectId() { return this.Id; }
-        public int GetTextureIndex() { return this.textureIndex; }
+        public int GetObjectId()
+        {
+            return this.Id;
+        }
+
+        public int GetTextureIndex()
+        {
+            return this.TextureIndex;
+        }
 
         internal string GetBootsInformation()
         {
-            return $"{this.Name}/{this.LocalizedDescription()}/{this.Price}/{this.Defense}/{this.Immunity}/{this.textureIndex}/{this.LocalizedName()}";
+            return $"{this.Name}/{this.LocalizedDescription()}/{this.Price}/{this.Defense}/{this.Immunity}/{this.TextureIndex}/{this.LocalizedName()}";
         }
     }
 }

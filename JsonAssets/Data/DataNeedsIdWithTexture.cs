@@ -9,18 +9,21 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public abstract class DataNeedsIdWithTexture : DataNeedsId
     {
+        /*********
+        ** Accessors
+        *********/
         [JsonIgnore]
-        public Texture2D texture;
+        public Texture2D Texture { get; set; }
 
         // The following is mainly data for the Content Patcher integration.
 
         [JsonIgnore]
-        public string tilesheet;
+        public string Tilesheet { get; set; }
 
         [JsonIgnore]
-        public int tilesheetX;
+        public int TilesheetX { get; set; }
 
         [JsonIgnore]
-        public int tilesheetY;
+        public int TilesheetY { get; set; }
     }
 }

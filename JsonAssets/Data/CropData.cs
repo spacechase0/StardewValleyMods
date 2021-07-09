@@ -11,8 +11,11 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class CropData : DataNeedsIdWithTexture
     {
+        /*********
+        ** Accessors
+        *********/
         [JsonIgnore]
-        public Texture2D giantTex;
+        public Texture2D GiantTexture { get; set; }
 
         public object Product { get; set; }
         public string SeedName { get; set; }
@@ -34,12 +37,25 @@ namespace JsonAssets.Data
         public string SeedPurchaseFrom { get; set; } = "Pierre";
         public IList<PurchaseData> SeedAdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-        public Dictionary<string, string> SeedNameLocalization = new();
-        public Dictionary<string, string> SeedDescriptionLocalization = new();
+        public Dictionary<string, string> SeedNameLocalization { get; set; } = new();
+        public Dictionary<string, string> SeedDescriptionLocalization { get; set; } = new();
 
-        internal ObjectData seed;
-        public int GetSeedId() { return this.seed.Id; }
-        public int GetCropSpriteIndex() { return this.Id; }
+        internal ObjectData Seed { get; set; }
+
+
+        /*********
+        ** Public methods
+        *********/
+        public int GetSeedId()
+        {
+            return this.Seed.Id;
+        }
+
+        public int GetCropSpriteIndex()
+        {
+            return this.Id;
+        }
+
         internal string GetCropInformation()
         {
             string str = "";

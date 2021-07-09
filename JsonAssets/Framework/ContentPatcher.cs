@@ -169,7 +169,7 @@ namespace JsonAssets.Framework
                 return false;
 
             var obj = objs[0];
-            if (!string.IsNullOrEmpty(obj.tilesheet) && this.Tilesheets.Count > 0 && string.IsNullOrEmpty(this.Tilesheets.First().Value))
+            if (!string.IsNullOrEmpty(obj.Tilesheet) && this.Tilesheets.Count > 0 && string.IsNullOrEmpty(this.Tilesheets.First().Value))
             {
                 this.UpdateContextImpl();
                 return true;
@@ -184,7 +184,7 @@ namespace JsonAssets.Framework
             var objs = this.ObjsFunc();
             foreach (var obj in objs)
             {
-                dict.Add(obj.Name, obj.tilesheet);
+                dict.Add(obj.Name, obj.Tilesheet);
             }
             this.Tilesheets = dict;
         }
@@ -249,7 +249,7 @@ namespace JsonAssets.Framework
                 return false;
 
             var obj = objs[0];
-            if (!string.IsNullOrEmpty(obj.tilesheet) && this.Coordinates.Count > 0 && this.Coordinates.First().Value == 0)
+            if (!string.IsNullOrEmpty(obj.Tilesheet) && this.Coordinates.Count > 0 && this.Coordinates.First().Value == 0)
             {
                 this.UpdateContextImpl();
                 return true;
@@ -264,7 +264,7 @@ namespace JsonAssets.Framework
             var objs = this.ObjsFunc();
             foreach (var obj in objs)
             {
-                dict.Add(obj.Name, this.CoordinateIsX ? obj.tilesheetX : obj.tilesheetY);
+                dict.Add(obj.Name, this.CoordinateIsX ? obj.TilesheetX : obj.TilesheetY);
             }
             this.Coordinates = dict;
         }

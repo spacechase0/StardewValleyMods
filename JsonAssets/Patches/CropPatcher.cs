@@ -156,7 +156,7 @@ namespace JsonAssets.Patches
         {
             int cropRow = cropRow_.Value;
             var cropData = Mod.instance.Crops.FirstOrDefault(c => c.GetCropSpriteIndex() == cropRow);
-            return cropData?.giantTex != null;
+            return cropData?.GiantTexture != null;
         }
     }
 }

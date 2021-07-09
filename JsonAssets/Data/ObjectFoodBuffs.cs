@@ -2,6 +2,9 @@ namespace JsonAssets.Data
 {
     public class ObjectFoodBuffs
     {
+        /*********
+        ** Accessors
+        *********/
         public int Farming { get; set; } = 0;
         public int Fishing { get; set; } = 0;
         public int Mining { get; set; } = 0;

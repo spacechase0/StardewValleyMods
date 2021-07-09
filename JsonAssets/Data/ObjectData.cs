@@ -13,8 +13,11 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class ObjectData : DataNeedsIdWithTexture
     {
+        /*********
+        ** Accessors
+        *********/
         [JsonIgnore]
-        public Texture2D textureColor;
+        public Texture2D TextureColor { get; set; }
 
         public string Description { get; set; }
         public ObjectCategory Category { get; set; }
@@ -34,7 +37,7 @@ namespace JsonAssets.Data
 
         public int Edibility { get; set; } = SObject.inedible;
         public bool EdibleIsDrink { get; set; } = false;
-        public ObjectFoodBuffs EdibleBuffs = new();
+        public ObjectFoodBuffs EdibleBuffs { get; set; } = new();
 
         public bool CanPurchase { get; set; } = false;
         public int PurchasePrice { get; set; }
@@ -42,13 +45,17 @@ namespace JsonAssets.Data
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
         public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-        public ObjectGiftTastes GiftTastes;
+        public ObjectGiftTastes GiftTastes { get; set; }
 
-        public Dictionary<string, string> NameLocalization = new();
-        public Dictionary<string, string> DescriptionLocalization = new();
+        public Dictionary<string, string> NameLocalization { get; set; } = new();
+        public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
-        public List<string> ContextTags = new();
+        public List<string> ContextTags { get; set; } = new();
 
+
+        /*********
+        ** Public methods
+        *********/
         public string LocalizedName()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
@@ -65,7 +72,10 @@ namespace JsonAssets.Data
                 : this.Description;
         }
 
-        public int GetObjectId() { return this.Id; }
+        public int GetObjectId()
+        {
+            return this.Id;
+        }
 
         internal string GetObjectInformation()
         {

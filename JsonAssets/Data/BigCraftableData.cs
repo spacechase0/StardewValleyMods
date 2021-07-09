@@ -11,8 +11,11 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class BigCraftableData : DataNeedsIdWithTexture
     {
+        /*********
+        ** Accessors
+        *********/
         [JsonIgnore]
-        public Texture2D[] extraTextures;
+        public Texture2D[] ExtraTextures { get; set; }
 
         public bool ReserveNextIndex { get; set; } = false; // Deprecated
         public int ReserveExtraIndexCount { get; set; } = 0;
@@ -31,9 +34,13 @@ namespace JsonAssets.Data
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
         public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-        public Dictionary<string, string> NameLocalization = new();
-        public Dictionary<string, string> DescriptionLocalization = new();
+        public Dictionary<string, string> NameLocalization { get; set; } = new();
+        public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
+
+        /*********
+        ** Public methods
+        *********/
         public string LocalizedName()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
@@ -50,7 +57,10 @@ namespace JsonAssets.Data
                 : this.Description;
         }
 
-        public int GetCraftableId() { return this.Id; }
+        public int GetCraftableId()
+        {
+            return this.Id;
+        }
 
         internal string GetCraftableInformation()
         {

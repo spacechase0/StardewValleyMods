@@ -10,11 +10,14 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class FenceData : DataNeedsIdWithTexture
     {
+        /*********
+        ** Accessors
+        *********/
         [JsonIgnore]
-        public Texture2D objectTexture;
+        public Texture2D ObjectTexture { get; set; }
 
         [JsonIgnore]
-        internal ObjectData correspondingObject;
+        internal ObjectData CorrespondingObject { get; set; }
 
         public string Description { get; set; }
 
@@ -33,9 +36,16 @@ namespace JsonAssets.Data
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
         public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-        public Dictionary<string, string> NameLocalization = new();
-        public Dictionary<string, string> DescriptionLocalization = new();
+        public Dictionary<string, string> NameLocalization { get; set; } = new();
+        public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
-        public int GetObjectId() { return this.Id; }
+
+        /*********
+        ** Public methods
+        *********/
+        public int GetObjectId()
+        {
+            return this.Id;
+        }
     }
 }

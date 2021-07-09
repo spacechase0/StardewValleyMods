@@ -306,9 +306,9 @@ namespace JsonAssets
             this.Crops.Add(crop);
 
             // save seeds
-            crop.seed = new ObjectData
+            crop.Seed = new ObjectData
             {
-                texture = seedTex,
+                Texture = seedTex,
                 Name = crop.SeedName,
                 Description = crop.SeedDescription,
                 Category = ObjectCategory.Seeds,
@@ -348,36 +348,36 @@ namespace JsonAssets
                     if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart('/')))
                     {
                         Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
-                        crop.seed.PurchaseRequirements.Add(strtrimstart);
+                        crop.Seed.PurchaseRequirements.Add(strtrimstart);
                     }
                 }
                 else
                 {
                     Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
-                    crop.seed.PurchaseRequirements.Add(strtrimstart);
+                    crop.Seed.PurchaseRequirements.Add(strtrimstart);
                 }
             }
 
-            if (crop.seed.CanPurchase)
+            if (crop.Seed.CanPurchase)
             {
                 this.shopData.Add(new ShopDataEntry
                 {
-                    PurchaseFrom = crop.seed.PurchaseFrom,
-                    Price = crop.seed.PurchasePrice,
-                    PurchaseRequirements = crop.seed.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", crop.seed.PurchaseRequirements?.ToArray()) },
-                    Object = () => new SObject(crop.seed.Id, int.MaxValue, false, crop.seed.PurchasePrice),
+                    PurchaseFrom = crop.Seed.PurchaseFrom,
+                    Price = crop.Seed.PurchasePrice,
+                    PurchaseRequirements = crop.Seed.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", crop.Seed.PurchaseRequirements?.ToArray()) },
+                    Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, crop.Seed.PurchasePrice),
                     ShowWithStocklist = true
                 });
-                if (crop.seed.AdditionalPurchaseData != null)
+                if (crop.Seed.AdditionalPurchaseData != null)
                 {
-                    foreach (var entry in crop.seed.AdditionalPurchaseData)
+                    foreach (var entry in crop.Seed.AdditionalPurchaseData)
                     {
                         this.shopData.Add(new ShopDataEntry
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
                             PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
-                            Object = () => new SObject(crop.seed.Id, int.MaxValue, false, entry.PurchasePrice)
+                            Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, entry.PurchasePrice)
                         });
                     }
                 }
@@ -389,7 +389,7 @@ namespace JsonAssets
             else
                 this.DupCrops[crop.Name] = source;
 
-            this.Objects.Add(crop.seed);
+            this.Objects.Add(crop.Seed);
 
             if (!this.CropsByContentPack.TryGetValue(source, out List<string> addedCrops))
                 addedCrops = this.CropsByContentPack[source] = new();
@@ -397,7 +397,7 @@ namespace JsonAssets
 
             if (!this.ObjectsByContentPack.TryGetValue(source, out List<string> addedSeeds))
                 addedSeeds = this.ObjectsByContentPack[source] = new();
-            addedSeeds.Add(crop.seed.Name);
+            addedSeeds.Add(crop.Seed.Name);
         }
 
         public void RegisterFruitTree(IManifest source, FruitTreeData tree, Texture2D saplingTex)
@@ -407,7 +407,7 @@ namespace JsonAssets
             // save seed
             tree.Sapling = new ObjectData
             {
-                texture = saplingTex,
+                Texture = saplingTex,
                 Name = tree.SaplingName,
                 Description = tree.SaplingDescription,
                 Category = ObjectCategory.Seeds,
@@ -675,9 +675,9 @@ namespace JsonAssets
                     .ToList();
             }
 
-            this.RegisterObject(source, fence.correspondingObject = new ObjectData
+            this.RegisterObject(source, fence.CorrespondingObject = new ObjectData
             {
-                texture = fence.objectTexture,
+                Texture = fence.ObjectTexture,
                 Name = fence.Name,
                 Description = fence.Description,
                 Category = ObjectCategory.Crafting,
@@ -734,9 +734,9 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    obj.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
+                    obj.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
                     if (obj.IsColored)
-                        obj.textureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
+                        obj.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
 
                     this.RegisterObject(contentPack.Manifest, obj);
                 }
@@ -756,9 +756,9 @@ namespace JsonAssets
                         continue;
 
                     // save crop
-                    crop.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/crop.png");
+                    crop.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/crop.png");
                     if (contentPack.HasFile($"{relativePath}/giant.png"))
-                        crop.giantTex = contentPack.LoadAsset<Texture2D>($"{relativePath}/giant.png");
+                        crop.GiantTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/giant.png");
 
                     this.RegisterCrop(contentPack.Manifest, crop, contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"));
                 }
@@ -778,7 +778,7 @@ namespace JsonAssets
                         continue;
 
                     // save fruit tree
-                    tree.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/tree.png");
+                    tree.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/tree.png");
                     this.RegisterFruitTree(contentPack.Manifest, tree, contentPack.LoadAsset<Texture2D>($"{relativePath}/sapling.png"));
                 }
             }
@@ -797,14 +797,14 @@ namespace JsonAssets
                         continue;
 
                     // save craftable
-                    craftable.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable.png");
+                    craftable.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable.png");
                     if (craftable.ReserveNextIndex && craftable.ReserveExtraIndexCount == 0)
                         craftable.ReserveExtraIndexCount = 1;
                     if (craftable.ReserveExtraIndexCount > 0)
                     {
-                        craftable.extraTextures = new Texture2D[craftable.ReserveExtraIndexCount];
+                        craftable.ExtraTextures = new Texture2D[craftable.ReserveExtraIndexCount];
                         for (int i = 0; i < craftable.ReserveExtraIndexCount; ++i)
-                            craftable.extraTextures[i] = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable-{i + 2}.png");
+                            craftable.ExtraTextures[i] = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable-{i + 2}.png");
                     }
                     this.RegisterBigCraftable(contentPack.Manifest, craftable);
                 }
@@ -824,7 +824,7 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    hat.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/hat.png");
+                    hat.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/hat.png");
                     this.RegisterHat(contentPack.Manifest, hat);
                 }
             }
@@ -843,7 +843,7 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    weapon.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/weapon.png");
+                    weapon.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/weapon.png");
                     this.RegisterWeapon(contentPack.Manifest, weapon);
                 }
             }
@@ -862,14 +862,14 @@ namespace JsonAssets
                         continue;
 
                     // save shirt
-                    shirt.textureMale = contentPack.LoadAsset<Texture2D>($"{relativePath}/male.png");
+                    shirt.TextureMale = contentPack.LoadAsset<Texture2D>($"{relativePath}/male.png");
                     if (shirt.Dyeable)
-                        shirt.textureMaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/male-color.png");
+                        shirt.TextureMaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/male-color.png");
                     if (shirt.HasFemaleVariant)
                     {
-                        shirt.textureFemale = contentPack.LoadAsset<Texture2D>($"{relativePath}/female.png");
+                        shirt.TextureFemale = contentPack.LoadAsset<Texture2D>($"{relativePath}/female.png");
                         if (shirt.Dyeable)
-                            shirt.textureFemaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/female-color.png");
+                            shirt.TextureFemaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/female-color.png");
                     }
                     this.RegisterShirt(contentPack.Manifest, shirt);
                 }
@@ -889,7 +889,7 @@ namespace JsonAssets
                         continue;
 
                     // save pants
-                    pants.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/pants.png");
+                    pants.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/pants.png");
                     this.RegisterPants(contentPack.Manifest, pants);
                 }
             }
@@ -924,8 +924,8 @@ namespace JsonAssets
                     if (boots == null || (boots.DisableWithMod != null && this.Helper.ModRegistry.IsLoaded(boots.DisableWithMod)) || (boots.EnableWithMod != null && !this.Helper.ModRegistry.IsLoaded(boots.EnableWithMod)))
                         continue;
 
-                    boots.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/boots.png");
-                    boots.textureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
+                    boots.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/boots.png");
+                    boots.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
                     this.RegisterBoots(contentPack.Manifest, boots);
                 }
             }
@@ -943,8 +943,8 @@ namespace JsonAssets
                     if (fence == null || (fence.DisableWithMod != null && this.Helper.ModRegistry.IsLoaded(fence.DisableWithMod)) || (fence.EnableWithMod != null && !this.Helper.ModRegistry.IsLoaded(fence.EnableWithMod)))
                         continue;
 
-                    fence.texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/fence.png");
-                    fence.objectTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
+                    fence.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/fence.png");
+                    fence.ObjectTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
                     this.RegisterFence(contentPack.Manifest, fence);
                 }
             }
@@ -1480,13 +1480,13 @@ namespace JsonAssets
             int currIdx = starting;
             foreach (var d in data)
             {
-                if (d.textureIndex == -1)
+                if (d.TextureIndex == -1)
                 {
                     Log.Verbose($"New texture index: {d.Name} = {currIdx}");
                     idxs.Add(d.Name, currIdx++);
                     if (type == "shirts" && ((ClothingData)d).HasFemaleVariant)
                         ++currIdx;
-                    d.textureIndex = idxs[d.Name];
+                    d.TextureIndex = idxs[d.Name];
                 }
             }
         }

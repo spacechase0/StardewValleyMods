@@ -9,6 +9,9 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class HatData : DataNeedsIdWithTexture
     {
+        /*********
+        ** Accessors
+        *********/
         public string Description { get; set; }
         public int PurchasePrice { get; set; }
         public bool ShowHair { get; set; }
@@ -18,9 +21,13 @@ namespace JsonAssets.Data
 
         public string Metadata { get; set; } = "";
 
-        public Dictionary<string, string> NameLocalization = new();
-        public Dictionary<string, string> DescriptionLocalization = new();
+        public Dictionary<string, string> NameLocalization { get; set; } = new();
+        public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
+
+        /*********
+        ** Public methods
+        *********/
         public string LocalizedName()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
@@ -37,7 +44,10 @@ namespace JsonAssets.Data
                 : this.Description;
         }
 
-        public int GetHatId() { return this.Id; }
+        public int GetHatId()
+        {
+            return this.Id;
+        }
 
         internal string GetHatInformation()
         {

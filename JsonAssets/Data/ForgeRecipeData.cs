@@ -2,6 +2,9 @@ namespace JsonAssets.Data
 {
     public class ForgeRecipeData
     {
+        /*********
+        ** Accessors
+        *********/
         public string EnableWithMod { get; set; }
         public string DisableWithMod { get; set; }
 

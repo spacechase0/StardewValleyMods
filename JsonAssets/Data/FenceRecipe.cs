@@ -4,6 +4,9 @@ namespace JsonAssets.Data
 {
     public class FenceRecipe
     {
+        /*********
+        ** Accessors
+        *********/
         public string SkillUnlockName { get; set; } = null;
         public int SkillUnlockLevel { get; set; } = -1;
 

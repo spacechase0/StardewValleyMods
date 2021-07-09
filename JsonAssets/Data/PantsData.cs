@@ -12,8 +12,11 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class PantsData : DataSeparateTextureIndex
     {
+        /*********
+        ** Accessors
+        *********/
         [JsonIgnore]
-        public Texture2D texture;
+        public Texture2D Texture { get; set; }
 
         public string Description { get; set; }
 
@@ -24,9 +27,13 @@ namespace JsonAssets.Data
 
         public string Metadata { get; set; } = "";
 
-        public Dictionary<string, string> NameLocalization = new();
-        public Dictionary<string, string> DescriptionLocalization = new();
+        public Dictionary<string, string> NameLocalization { get; set; } = new();
+        public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
+
+        /*********
+        ** Public methods
+        *********/
         public string LocalizedName()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
@@ -43,8 +50,15 @@ namespace JsonAssets.Data
                 : this.Description;
         }
 
-        public int GetClothingId() { return this.Id; }
-        public int GetTextureIndex() { return this.textureIndex; }
+        public int GetClothingId()
+        {
+            return this.Id;
+        }
+
+        public int GetTextureIndex()
+        {
+            return this.TextureIndex;
+        }
 
         internal string GetClothingInformation()
         {

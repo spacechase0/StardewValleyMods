@@ -6,6 +6,9 @@ namespace JsonAssets.Data
 {
     public class TailoringRecipeData
     {
+        /*********
+        ** Accessors
+        *********/
         public string EnableWithMod { get; set; }
         public string DisableWithMod { get; set; }
 
@@ -17,6 +20,10 @@ namespace JsonAssets.Data
         public IList<object> CraftedItems { get; set; }
         public Color CraftedItemColor { get; set; } = Color.White;
 
+
+        /*********
+        ** Public methods
+        *********/
         public TailorItemRecipe ToGameData()
         {
             var recipe = new TailorItemRecipe
