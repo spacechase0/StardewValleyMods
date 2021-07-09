@@ -245,7 +245,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = obj.Recipe.PurchaseFrom,
                     Price = obj.Recipe.PurchasePrice,
-                    PurchaseRequirements = obj.Recipe.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", obj.Recipe.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = ShopDataEntry.FormatRequirements(obj.Recipe.PurchaseRequirements),
                     Object = () => new SObject(obj.Id, 1, true, obj.Recipe.PurchasePrice)
                 });
                 if (obj.Recipe.AdditionalPurchaseData != null)
@@ -256,7 +256,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
                             Object = () => new SObject(obj.Id, 1, true, entry.PurchasePrice)
                         });
                     }
@@ -268,7 +268,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = obj.PurchaseFrom,
                     Price = obj.PurchasePrice,
-                    PurchaseRequirements = obj.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", obj.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = ShopDataEntry.FormatRequirements(obj.PurchaseRequirements),
                     Object = () => new SObject(obj.Id, int.MaxValue, false, obj.PurchasePrice)
                 });
                 if (obj.AdditionalPurchaseData != null)
@@ -279,7 +279,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
                             Object = () => new SObject(obj.Id, int.MaxValue, false, entry.PurchasePrice)
                         });
                     }
@@ -364,7 +364,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = crop.Seed.PurchaseFrom,
                     Price = crop.Seed.PurchasePrice,
-                    PurchaseRequirements = crop.Seed.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", crop.Seed.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = ShopDataEntry.FormatRequirements(crop.Seed.PurchaseRequirements),
                     Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, crop.Seed.PurchasePrice),
                     ShowWithStocklist = true
                 });
@@ -376,7 +376,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
                             Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, entry.PurchasePrice)
                         });
                     }
@@ -428,7 +428,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = tree.Sapling.PurchaseFrom,
                     Price = tree.Sapling.PurchasePrice,
-                    PurchaseRequirements = tree.Sapling.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", tree.Sapling.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = ShopDataEntry.FormatRequirements(tree.Sapling.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
                 });
                 if (tree.Sapling.AdditionalPurchaseData != null)
@@ -439,7 +439,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
                             Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
                         });
                     }
@@ -467,7 +467,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = craftable.Recipe.PurchaseFrom,
                     Price = craftable.Recipe.PurchasePrice,
-                    PurchaseRequirements = craftable.Recipe.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", craftable.Recipe.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = ShopDataEntry.FormatRequirements(craftable.Recipe.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, craftable.Id, true)
                 });
                 if (craftable.Recipe.AdditionalPurchaseData != null)
@@ -478,7 +478,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
                             Object = () => new SObject(Vector2.Zero, craftable.Id, true)
                         });
                     }
@@ -490,7 +490,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = craftable.PurchaseFrom,
                     Price = craftable.PurchasePrice,
-                    PurchaseRequirements = craftable.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", craftable.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = ShopDataEntry.FormatRequirements(craftable.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, craftable.Id)
                 });
                 if (craftable.AdditionalPurchaseData != null)
@@ -501,7 +501,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
                             Object = () => new SObject(Vector2.Zero, craftable.Id)
                         });
                     }
@@ -555,7 +555,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = weapon.PurchaseFrom,
                     Price = weapon.PurchasePrice,
-                    PurchaseRequirements = weapon.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", weapon.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = ShopDataEntry.FormatRequirements(weapon.PurchaseRequirements),
                     Object = () => new MeleeWeapon(weapon.Id)
                 });
                 if (weapon.AdditionalPurchaseData != null)
@@ -566,7 +566,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
                             Object = () => new MeleeWeapon(weapon.Id)
                         });
                     }
@@ -629,7 +629,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = boots.PurchaseFrom,
                     Price = boots.PurchasePrice,
-                    PurchaseRequirements = boots.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", boots.PurchaseRequirements?.ToArray()) },
+                    PurchaseRequirements = ShopDataEntry.FormatRequirements(boots.PurchaseRequirements),
                     Object = () => new Boots(boots.Id)
                 });
 
@@ -641,7 +641,7 @@ namespace JsonAssets
                         {
                             PurchaseFrom = entry.PurchaseFrom,
                             Price = entry.PurchasePrice,
-                            PurchaseRequirements = entry.PurchaseRequirements == null ? new string[0] : new[] { string.Join("/", entry.PurchaseRequirements?.ToArray()) },
+                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
                             Object = () => new Boots(boots.Id)
                         });
                     }
