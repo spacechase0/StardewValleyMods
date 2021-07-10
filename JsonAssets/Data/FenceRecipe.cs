@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace JsonAssets.Data
 {
@@ -19,5 +20,19 @@ namespace JsonAssets.Data
         public string PurchaseFrom { get; set; } = "Robin";
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
         public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.Ingredients ??= new List<FenceIngredient>();
+            this.PurchaseRequirements ??= new List<string>();
+            this.AdditionalPurchaseData ??= new List<PurchaseData>();
+        }
     }
 }

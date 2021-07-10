@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using SpaceShared;
@@ -46,6 +47,21 @@ namespace JsonAssets.Data
         public int GetObjectId()
         {
             return this.Id;
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.PurchaseRequirements ??= new List<string>();
+            this.AdditionalPurchaseData ??= new List<PurchaseData>();
+            this.NameLocalization ??= new();
+            this.DescriptionLocalization ??= new();
         }
     }
 }

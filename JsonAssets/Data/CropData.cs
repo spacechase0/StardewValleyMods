@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -76,7 +78,7 @@ namespace JsonAssets.Data
                 str += $"true {this.Bonus.MinimumPerHarvest} {this.Bonus.MaximumPerHarvest} {this.Bonus.MaxIncreasePerFarmLevel} {this.Bonus.ExtraChance}/";
             else str += "false/";
             str += (this.TrellisCrop ? "true" : "false") + "/";
-            if (this.Colors?.Count > 0)
+            if (this.Colors.Any())
             {
                 str += "true";
                 foreach (var color in this.Colors)
@@ -85,6 +87,24 @@ namespace JsonAssets.Data
             else
                 str += "false";
             return str;
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.Seasons ??= new List<string>();
+            this.Phases ??= new List<int>();
+            this.Colors ??= new List<Color>();
+            this.SeedPurchaseRequirements ??= new List<string>();
+            this.SeedAdditionalPurchaseData ??= new List<PurchaseData>();
+            this.SeedNameLocalization ??= new();
+            this.SeedDescriptionLocalization ??= new();
         }
     }
 }

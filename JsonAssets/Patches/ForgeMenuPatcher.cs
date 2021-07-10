@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
@@ -56,9 +57,12 @@ namespace JsonAssets.Patches
 
             foreach (var recipe in Mod.instance.Forge)
             {
-                if (left_item.Name == recipe.BaseItemName &&
-                    right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
-                    Mod.instance.Epu.CheckConditions(recipe.AbleToForgeConditions))
+                bool isMatch =
+                    left_item.Name == recipe.BaseItemName
+                    && right_item.GetContextTags().Contains(recipe.IngredientContextTag)
+                    && (!recipe.AbleToForgeConditions.Any() || Mod.instance.Epu.CheckConditions(recipe.AbleToForgeConditions));
+
+                if (isMatch)
                 {
                     __result = true;
                     return false;
@@ -76,9 +80,12 @@ namespace JsonAssets.Patches
 
             foreach (var recipe in Mod.instance.Forge)
             {
-                if (left_item.Name == recipe.BaseItemName &&
-                    right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
-                    Mod.instance.Epu.CheckConditions(recipe.AbleToForgeConditions))
+                bool isMatch =
+                    left_item.Name == recipe.BaseItemName
+                    && right_item.GetContextTags().Contains(recipe.IngredientContextTag)
+                    && (!recipe.AbleToForgeConditions.Any() || Mod.instance.Epu.CheckConditions(recipe.AbleToForgeConditions));
+
+                if (isMatch)
                 {
                     __result = Utility.fuzzyItemSearch(recipe.ResultItemName);
                     return false;
@@ -96,9 +103,12 @@ namespace JsonAssets.Patches
 
             foreach (var recipe in Mod.instance.Forge)
             {
-                if (left_item.Name == recipe.BaseItemName &&
-                    right_item.GetContextTags().Contains(recipe.IngredientContextTag) &&
-                    Mod.instance.Epu.CheckConditions(recipe.AbleToForgeConditions))
+                bool isMatch =
+                    left_item.Name == recipe.BaseItemName
+                    && right_item.GetContextTags().Contains(recipe.IngredientContextTag)
+                    && (!recipe.AbleToForgeConditions.Any() || Mod.instance.Epu.CheckConditions(recipe.AbleToForgeConditions));
+
+                if (isMatch)
                 {
                     __result = recipe.CinderShardCost;
                     return false;

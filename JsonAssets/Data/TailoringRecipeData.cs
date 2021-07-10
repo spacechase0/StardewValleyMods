@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using StardewValley.GameData.Crafting;
 
@@ -13,11 +14,11 @@ namespace JsonAssets.Data
         public string DisableWithMod { get; set; }
 
         public IList<string> FirstItemTags { get; set; } = new List<string>(new[] { "item_cloth" });
-        public IList<string> SecondItemTags { get; set; }
+        public IList<string> SecondItemTags { get; set; } = new List<string>();
 
         public bool ConsumeSecondItem { get; set; } = true;
 
-        public IList<object> CraftedItems { get; set; }
+        public IList<object> CraftedItems { get; set; } = new List<object>();
         public Color CraftedItemColor { get; set; } = Color.White;
 
 
@@ -38,12 +39,26 @@ namespace JsonAssets.Data
             {
                 recipe.CraftedItemIDs = new List<string>();
                 foreach (object entry in this.CraftedItems)
-                    recipe.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(this.CraftedItems[0]).ToString());
+                    recipe.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(this.CraftedItems[0]).ToString()); // TODO: always uses first crafted item?
             }
             else
                 recipe.CraftedItemID = Mod.instance.ResolveClothingId(this.CraftedItems[0]);
 
             return recipe;
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.FirstItemTags ??= new List<string>();
+            this.SecondItemTags ??= new List<string>();
+            this.CraftedItems ??= new List<object>();
         }
     }
 }

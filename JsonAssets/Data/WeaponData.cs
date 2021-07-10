@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using SpaceShared;
 using StardewValley;
 
@@ -45,7 +46,7 @@ namespace JsonAssets.Data
         public string LocalizedName()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.NameLocalization != null && this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
+            return this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
                 ? localization
                 : this.Name;
         }
@@ -53,7 +54,7 @@ namespace JsonAssets.Data
         public string LocalizedDescription()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.DescriptionLocalization != null && this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
+            return this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
                 ? localization
                 : this.Description;
         }
@@ -66,6 +67,21 @@ namespace JsonAssets.Data
         internal string GetWeaponInformation()
         {
             return $"{this.Name}/{this.LocalizedDescription()}/{this.MinimumDamage}/{this.MaximumDamage}/{this.Knockback}/{this.Speed}/{this.Accuracy}/{this.Defense}/{(int)this.Type}/{this.MineDropVar}/{this.MineDropMinimumLevel}/{this.ExtraSwingArea}/{this.CritChance}/{this.CritMultiplier}/{this.LocalizedName()}";
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.PurchaseRequirements ??= new List<string>();
+            this.AdditionalPurchaseData ??= new List<PurchaseData>();
+            this.NameLocalization ??= new();
+            this.DescriptionLocalization ??= new();
         }
     }
 }

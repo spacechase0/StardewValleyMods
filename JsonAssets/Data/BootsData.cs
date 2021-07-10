@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using SpaceShared;
@@ -43,7 +44,7 @@ namespace JsonAssets.Data
         public string LocalizedName()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.NameLocalization != null && this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
+            return this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
                 ? localization
                 : this.Name;
         }
@@ -51,7 +52,7 @@ namespace JsonAssets.Data
         public string LocalizedDescription()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.DescriptionLocalization != null && this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
+            return this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
                 ? localization
                 : this.Description;
         }
@@ -69,6 +70,21 @@ namespace JsonAssets.Data
         internal string GetBootsInformation()
         {
             return $"{this.Name}/{this.LocalizedDescription()}/{this.Price}/{this.Defense}/{this.Immunity}/{this.TextureIndex}/{this.LocalizedName()}";
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.PurchaseRequirements ??= new List<string>();
+            this.AdditionalPurchaseData ??= new List<PurchaseData>();
+            this.NameLocalization ??= new();
+            this.DescriptionLocalization ??= new();
         }
     }
 }

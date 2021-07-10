@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using StardewValley;
 
 namespace JsonAssets.Data
@@ -41,6 +42,20 @@ namespace JsonAssets.Data
             if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
                 str += "/" + parent.LocalizedName();
             return str;
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.Ingredients ??= new List<ObjectIngredient>();
+            this.PurchaseRequirements ??= new List<string>();
+            this.AdditionalPurchaseData ??= new List<PurchaseData>();
         }
     }
 }

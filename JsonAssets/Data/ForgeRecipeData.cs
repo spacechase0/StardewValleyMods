@@ -1,3 +1,5 @@
+using System.Runtime.Serialization;
+
 namespace JsonAssets.Data
 {
     public class ForgeRecipeData
@@ -15,5 +17,17 @@ namespace JsonAssets.Data
         public string ResultItemName { get; set; } // Uses Utility.fuzzyItemSearch, so go nuts
 
         public string[] AbleToForgeConditions { get; set; }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.AbleToForgeConditions ??= new string[0];
+        }
     }
 }

@@ -5,6 +5,7 @@
 * Updated for Json Assets 1.5.8.
 * Fixed `AdditionalData` for saplings adding recipe instead of sapling to the shop (thanks to lshtech!).
 * Fixed crash in some cases when two custom items have the same name and type.
+* Fixed various `NullReferenceException` errors.
 * Internal refactoring.
 
 ## 1.7.7

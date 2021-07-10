@@ -237,6 +237,8 @@ namespace JsonAssets
 
         public void RegisterObject(IManifest source, ObjectData obj)
         {
+            obj.InvokeOnDeserialized();
+
             this.Objects.Add(obj);
 
             if (obj.Recipe is { CanPurchase: true })
@@ -271,18 +273,15 @@ namespace JsonAssets
                     PurchaseRequirements = ShopDataEntry.FormatRequirements(obj.PurchaseRequirements),
                     Object = () => new SObject(obj.Id, int.MaxValue, false, obj.PurchasePrice)
                 });
-                if (obj.AdditionalPurchaseData != null)
+                foreach (var entry in obj.AdditionalPurchaseData)
                 {
-                    foreach (var entry in obj.AdditionalPurchaseData)
+                    this.shopData.Add(new ShopDataEntry
                     {
-                        this.shopData.Add(new ShopDataEntry
-                        {
-                            PurchaseFrom = entry.PurchaseFrom,
-                            Price = entry.PurchasePrice,
-                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
-                            Object = () => new SObject(obj.Id, int.MaxValue, false, entry.PurchasePrice)
-                        });
-                    }
+                        PurchaseFrom = entry.PurchaseFrom,
+                        Price = entry.PurchasePrice,
+                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        Object = () => new SObject(obj.Id, int.MaxValue, false, entry.PurchasePrice)
+                    });
                 }
             }
 
@@ -303,6 +302,7 @@ namespace JsonAssets
 
         public void RegisterCrop(IManifest source, CropData crop, Texture2D seedTex)
         {
+            crop.InvokeOnDeserialized();
             this.Crops.Add(crop);
 
             // save seeds
@@ -316,8 +316,8 @@ namespace JsonAssets
                 CanPurchase = crop.SeedPurchasePrice > 0,
                 PurchaseFrom = crop.SeedPurchaseFrom,
                 PurchasePrice = crop.SeedPurchasePrice,
-                PurchaseRequirements = crop.SeedPurchaseRequirements ?? new List<string>(),
-                AdditionalPurchaseData = crop.SeedAdditionalPurchaseData ?? new List<PurchaseData>(),
+                PurchaseRequirements = crop.SeedPurchaseRequirements,
+                AdditionalPurchaseData = crop.SeedAdditionalPurchaseData,
                 NameLocalization = crop.SeedNameLocalization,
                 DescriptionLocalization = crop.SeedDescriptionLocalization
             };
@@ -335,7 +335,7 @@ namespace JsonAssets
             if (str != "")
             {
                 string strtrimstart = str.TrimStart(new[] { '/' });
-                if (crop.SeedPurchaseRequirements?.Count > 0)
+                if (crop.SeedPurchaseRequirements.Any())
                 {
                     for (int index = 0; index < crop.SeedPurchaseRequirements.Count; index++)
                     {
@@ -368,18 +368,15 @@ namespace JsonAssets
                     Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, crop.Seed.PurchasePrice),
                     ShowWithStocklist = true
                 });
-                if (crop.Seed.AdditionalPurchaseData != null)
+                foreach (var entry in crop.Seed.AdditionalPurchaseData)
                 {
-                    foreach (var entry in crop.Seed.AdditionalPurchaseData)
+                    this.shopData.Add(new ShopDataEntry
                     {
-                        this.shopData.Add(new ShopDataEntry
-                        {
-                            PurchaseFrom = entry.PurchaseFrom,
-                            Price = entry.PurchasePrice,
-                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
-                            Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, entry.PurchasePrice)
-                        });
-                    }
+                        PurchaseFrom = entry.PurchaseFrom,
+                        Price = entry.PurchasePrice,
+                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, entry.PurchasePrice)
+                    });
                 }
             }
 
@@ -402,6 +399,7 @@ namespace JsonAssets
 
         public void RegisterFruitTree(IManifest source, FruitTreeData tree, Texture2D saplingTex)
         {
+            tree.InvokeOnDeserialized();
             this.FruitTrees.Add(tree);
 
             // save seed
@@ -431,18 +429,15 @@ namespace JsonAssets
                     PurchaseRequirements = ShopDataEntry.FormatRequirements(tree.Sapling.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
                 });
-                if (tree.Sapling.AdditionalPurchaseData != null)
+                foreach (var entry in tree.Sapling.AdditionalPurchaseData)
                 {
-                    foreach (var entry in tree.Sapling.AdditionalPurchaseData)
+                    this.shopData.Add(new ShopDataEntry
                     {
-                        this.shopData.Add(new ShopDataEntry
-                        {
-                            PurchaseFrom = entry.PurchaseFrom,
-                            Price = entry.PurchasePrice,
-                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
-                            Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
-                        });
-                    }
+                        PurchaseFrom = entry.PurchaseFrom,
+                        Price = entry.PurchasePrice,
+                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
+                    });
                 }
             }
 
@@ -459,6 +454,8 @@ namespace JsonAssets
 
         public void RegisterBigCraftable(IManifest source, BigCraftableData craftable)
         {
+            craftable.InvokeOnDeserialized();
+
             this.BigCraftables.Add(craftable);
 
             if (craftable.Recipe?.CanPurchase == true)
@@ -470,18 +467,15 @@ namespace JsonAssets
                     PurchaseRequirements = ShopDataEntry.FormatRequirements(craftable.Recipe.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, craftable.Id, true)
                 });
-                if (craftable.Recipe.AdditionalPurchaseData != null)
+                foreach (var entry in craftable.Recipe.AdditionalPurchaseData)
                 {
-                    foreach (var entry in craftable.Recipe.AdditionalPurchaseData)
+                    this.shopData.Add(new ShopDataEntry
                     {
-                        this.shopData.Add(new ShopDataEntry
-                        {
-                            PurchaseFrom = entry.PurchaseFrom,
-                            Price = entry.PurchasePrice,
-                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
-                            Object = () => new SObject(Vector2.Zero, craftable.Id, true)
-                        });
-                    }
+                        PurchaseFrom = entry.PurchaseFrom,
+                        Price = entry.PurchasePrice,
+                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        Object = () => new SObject(Vector2.Zero, craftable.Id, true)
+                    });
                 }
             }
             if (craftable.CanPurchase)
@@ -493,18 +487,15 @@ namespace JsonAssets
                     PurchaseRequirements = ShopDataEntry.FormatRequirements(craftable.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, craftable.Id)
                 });
-                if (craftable.AdditionalPurchaseData != null)
+                foreach (var entry in craftable.AdditionalPurchaseData)
                 {
-                    foreach (var entry in craftable.AdditionalPurchaseData)
+                    this.shopData.Add(new ShopDataEntry
                     {
-                        this.shopData.Add(new ShopDataEntry
-                        {
-                            PurchaseFrom = entry.PurchaseFrom,
-                            Price = entry.PurchasePrice,
-                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
-                            Object = () => new SObject(Vector2.Zero, craftable.Id)
-                        });
-                    }
+                        PurchaseFrom = entry.PurchaseFrom,
+                        Price = entry.PurchasePrice,
+                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        Object = () => new SObject(Vector2.Zero, craftable.Id)
+                    });
                 }
             }
 
@@ -521,6 +512,8 @@ namespace JsonAssets
 
         public void RegisterHat(IManifest source, HatData hat)
         {
+            hat.InvokeOnDeserialized();
+
             this.Hats.Add(hat);
 
             if (hat.CanPurchase)
@@ -547,6 +540,8 @@ namespace JsonAssets
 
         public void RegisterWeapon(IManifest source, WeaponData weapon)
         {
+            weapon.InvokeOnDeserialized();
+
             this.Weapons.Add(weapon);
 
             if (weapon.CanPurchase)
@@ -558,18 +553,15 @@ namespace JsonAssets
                     PurchaseRequirements = ShopDataEntry.FormatRequirements(weapon.PurchaseRequirements),
                     Object = () => new MeleeWeapon(weapon.Id)
                 });
-                if (weapon.AdditionalPurchaseData != null)
+                foreach (var entry in weapon.AdditionalPurchaseData)
                 {
-                    foreach (var entry in weapon.AdditionalPurchaseData)
+                    this.shopData.Add(new ShopDataEntry
                     {
-                        this.shopData.Add(new ShopDataEntry
-                        {
-                            PurchaseFrom = entry.PurchaseFrom,
-                            Price = entry.PurchasePrice,
-                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
-                            Object = () => new MeleeWeapon(weapon.Id)
-                        });
-                    }
+                        PurchaseFrom = entry.PurchaseFrom,
+                        Price = entry.PurchasePrice,
+                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        Object = () => new MeleeWeapon(weapon.Id)
+                    });
                 }
             }
 
@@ -586,6 +578,8 @@ namespace JsonAssets
 
         public void RegisterShirt(IManifest source, ShirtData shirt)
         {
+            shirt.InvokeOnDeserialized();
+
             this.Shirts.Add(shirt);
 
             // Duplicate check
@@ -601,6 +595,8 @@ namespace JsonAssets
 
         public void RegisterPants(IManifest source, PantsData pants)
         {
+            pants.InvokeOnDeserialized();
+
             this.Pants.Add(pants);
 
             // Duplicate check
@@ -616,11 +612,15 @@ namespace JsonAssets
 
         public void RegisterTailoringRecipe(IManifest source, TailoringRecipeData recipe)
         {
+            recipe.InvokeOnDeserialized();
+
             this.Tailoring.Add(recipe);
         }
 
         public void RegisterBoots(IManifest source, BootsData boots)
         {
+            boots.InvokeOnDeserialized();
+
             this.Boots.Add(boots);
 
             if (boots.CanPurchase)
@@ -633,18 +633,15 @@ namespace JsonAssets
                     Object = () => new Boots(boots.Id)
                 });
 
-                if (boots.AdditionalPurchaseData != null)
+                foreach (var entry in boots.AdditionalPurchaseData)
                 {
-                    foreach (var entry in boots.AdditionalPurchaseData)
+                    this.shopData.Add(new ShopDataEntry
                     {
-                        this.shopData.Add(new ShopDataEntry
-                        {
-                            PurchaseFrom = entry.PurchaseFrom,
-                            Price = entry.PurchasePrice,
-                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
-                            Object = () => new Boots(boots.Id)
-                        });
-                    }
+                        PurchaseFrom = entry.PurchaseFrom,
+                        Price = entry.PurchasePrice,
+                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        Object = () => new Boots(boots.Id)
+                    });
                 }
             }
 
@@ -661,11 +658,15 @@ namespace JsonAssets
 
         public void RegisterForgeRecipe(IManifest source, ForgeRecipeData recipe)
         {
+            recipe.InvokeOnDeserialized();
+
             this.Forge.Add(recipe);
         }
 
         public void RegisterFence(IManifest source, FenceData fence)
         {
+            fence.InvokeOnDeserialized();
+
             this.Fences.Add(fence);
 
             IList<ObjectIngredient> ConvertIngredients(IList<FenceIngredient> ingredients)

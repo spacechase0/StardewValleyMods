@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -41,7 +42,7 @@ namespace JsonAssets.Data
         public string LocalizedName()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.NameLocalization != null && this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
+            return this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
                 ? localization
                 : this.Name;
         }
@@ -49,7 +50,7 @@ namespace JsonAssets.Data
         public string LocalizedDescription()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.DescriptionLocalization != null && this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
+            return this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
                 ? localization
                 : this.Description;
         }
@@ -74,6 +75,19 @@ namespace JsonAssets.Data
         internal string GetClothingInformation()
         {
             return $"{this.Name}/{this.LocalizedName()}/{this.LocalizedDescription()}/{this.GetMaleIndex()}/{this.GetFemaleIndex()}/{this.Price}/{this.DefaultColor.R} {this.DefaultColor.G} {this.DefaultColor.B}/{this.Dyeable}/Shirt/{this.Metadata}";
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.NameLocalization ??= new();
+            this.DescriptionLocalization ??= new();
         }
     }
 }

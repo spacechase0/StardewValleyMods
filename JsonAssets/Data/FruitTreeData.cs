@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace JsonAssets.Data
 {
@@ -40,6 +41,21 @@ namespace JsonAssets.Data
         internal string GetFruitTreeInformation()
         {
             return $"{this.GetFruitTreeIndex()}/{this.Season}/{Mod.instance.ResolveObjectId(this.Product)}/what goes here?";
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.SaplingPurchaseRequirements ??= new List<string>();
+            this.SaplingAdditionalPurchaseData ??= new List<PurchaseData>();
+            this.SaplingNameLocalization ??= new();
+            this.SaplingDescriptionLocalization ??= new();
         }
     }
 }
