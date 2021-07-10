@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using JsonAssets.Framework;
 using Microsoft.Xna.Framework;
 using StardewValley.GameData.Crafting;
 
@@ -59,6 +60,10 @@ namespace JsonAssets.Data
             this.FirstItemTags ??= new List<string>();
             this.SecondItemTags ??= new List<string>();
             this.CraftedItems ??= new List<object>();
+
+            this.FirstItemTags.FilterNulls();
+            this.SecondItemTags.FilterNulls();
+            this.CraftedItems.FilterNulls();
         }
     }
 }

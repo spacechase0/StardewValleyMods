@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using JsonAssets.Framework;
 
 namespace JsonAssets.Data
 {
@@ -33,6 +34,10 @@ namespace JsonAssets.Data
             this.Ingredients ??= new List<FenceIngredient>();
             this.PurchaseRequirements ??= new List<string>();
             this.AdditionalPurchaseData ??= new List<PurchaseData>();
+
+            this.Ingredients.FilterNulls();
+            this.PurchaseRequirements.FilterNulls();
+            this.AdditionalPurchaseData.FilterNulls();
         }
     }
 }

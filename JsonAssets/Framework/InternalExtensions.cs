@@ -52,5 +52,24 @@ namespace JsonAssets.Framework
 
             RecursivelyNormalizeImpl(parent, new());
         }
+
+        /// <summary>Remove null values from the list.</summary>
+        /// <typeparam name="T">The list value type.</typeparam>
+        /// <param name="values">The list to filter.</param>
+        /// <remarks>This is mainly useful for normalizing models deserialized from JSON, since a double-comma will add a null value.</remarks>
+        public static void FilterNulls<T>(this IList<T> values)
+            where T : class
+        {
+            if (values is List<T> list)
+                list.RemoveAll(p => p == null);
+            else
+            {
+                for (int i = values.Count - 1; i >= 0; i--)
+                {
+                    if (values[i] == null)
+                        values.RemoveAt(i);
+                }
+            }
+        }
     }
 }

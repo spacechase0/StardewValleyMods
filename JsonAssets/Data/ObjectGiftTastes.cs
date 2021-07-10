@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using JsonAssets.Framework;
 
 namespace JsonAssets.Data
 {
@@ -28,6 +29,9 @@ namespace JsonAssets.Data
             this.Neutral ??= new List<string>();
             this.Dislike ??= new List<string>();
             this.Hate ??= new List<string>();
+
+            foreach (var list in new[] { this.Love, this.Like, this.Neutral, this.Dislike, this.Hate })
+                list.FilterNulls();
         }
     }
 }

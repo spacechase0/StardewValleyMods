@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using JsonAssets.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using SpaceShared;
@@ -62,6 +63,9 @@ namespace JsonAssets.Data
             this.AdditionalPurchaseData ??= new List<PurchaseData>();
             this.NameLocalization ??= new();
             this.DescriptionLocalization ??= new();
+
+            this.PurchaseRequirements.FilterNulls();
+            this.AdditionalPurchaseData.FilterNulls();
         }
     }
 }

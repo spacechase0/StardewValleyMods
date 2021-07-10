@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using JsonAssets.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -111,6 +112,10 @@ namespace JsonAssets.Data
             this.NameLocalization ??= new();
             this.DescriptionLocalization ??= new();
             this.ContextTags ??= new();
+
+            this.PurchaseRequirements.FilterNulls();
+            this.AdditionalPurchaseData.FilterNulls();
+            this.ContextTags.FilterNulls();
         }
     }
 }

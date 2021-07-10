@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using JsonAssets.Framework;
 
 namespace JsonAssets.Data
 {
@@ -56,6 +57,9 @@ namespace JsonAssets.Data
             this.SaplingAdditionalPurchaseData ??= new List<PurchaseData>();
             this.SaplingNameLocalization ??= new();
             this.SaplingDescriptionLocalization ??= new();
+
+            this.SaplingPurchaseRequirements.FilterNulls();
+            this.SaplingAdditionalPurchaseData.FilterNulls();
         }
     }
 }

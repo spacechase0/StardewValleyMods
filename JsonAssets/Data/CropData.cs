@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
+using JsonAssets.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -105,6 +106,10 @@ namespace JsonAssets.Data
             this.SeedAdditionalPurchaseData ??= new List<PurchaseData>();
             this.SeedNameLocalization ??= new();
             this.SeedDescriptionLocalization ??= new();
+
+            this.Seasons.FilterNulls();
+            this.SeedPurchaseRequirements.FilterNulls();
+            this.SeedAdditionalPurchaseData.FilterNulls();
         }
     }
 }

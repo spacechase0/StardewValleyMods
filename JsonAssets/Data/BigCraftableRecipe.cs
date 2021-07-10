@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using JsonAssets.Framework;
 using StardewValley;
 
 namespace JsonAssets.Data
@@ -54,6 +55,10 @@ namespace JsonAssets.Data
             this.Ingredients ??= new List<BigCraftableIngredient>();
             this.PurchaseRequirements ??= new List<string>();
             this.AdditionalPurchaseData ??= new List<PurchaseData>();
+
+            this.Ingredients.FilterNulls();
+            this.PurchaseRequirements.FilterNulls();
+            this.AdditionalPurchaseData.FilterNulls();
         }
     }
 }

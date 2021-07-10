@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using JsonAssets.Framework;
 using SpaceShared;
 using StardewValley;
 
@@ -82,6 +83,9 @@ namespace JsonAssets.Data
             this.AdditionalPurchaseData ??= new List<PurchaseData>();
             this.NameLocalization ??= new();
             this.DescriptionLocalization ??= new();
+
+            this.PurchaseRequirements.FilterNulls();
+            this.AdditionalPurchaseData.FilterNulls();
         }
     }
 }
