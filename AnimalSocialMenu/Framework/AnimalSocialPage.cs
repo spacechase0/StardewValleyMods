@@ -192,9 +192,9 @@ namespace AnimalSocialMenu.Framework
             b.DrawString(Game1.dialogueFont, name, new Vector2(this.xPositionOnScreen + IClickableMenu.borderWidth * 3 / 2 + 64 - 20 + 96 - Game1.dialogueFont.MeasureString(name).X / 2f, (float)(this.Sprites[i].bounds.Y + 48 + (double)num - 20.0)), Game1.textColor);
             for (int index = 0; index < 5; ++index)
             {
-                b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + 320 - 8 + index * 32, this.Sprites[i].bounds.Y - n + 64 - 28), new Rectangle?(new Rectangle(211 + (loveLevel * 1000.0 <= ((index + 1) * 195) ? 7 : 0), 428, 7, 6)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.89f);
+                b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + 320 - 8 + index * 32, this.Sprites[i].bounds.Y - n + 64 - 28), new Rectangle(211 + (loveLevel * 1000.0 <= ((index + 1) * 195) ? 7 : 0), 428, 7, 6), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.89f);
                 if (num3 == index)
-                    b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + 320 - 8 + index * 32, this.Sprites[i].bounds.Y - n + 64 - 28), new Rectangle?(new Rectangle(211, 428, 4, 6)), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.891f);
+                    b.Draw(Game1.mouseCursors, new Vector2(this.xPositionOnScreen + 320 - 8 + index * 32, this.Sprites[i].bounds.Y - n + 64 - 28), new Rectangle(211, 428, 4, 6), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.891f);
             }
 
             if (!animal.wasPet.Value)

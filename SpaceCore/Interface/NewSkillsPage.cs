@@ -781,18 +781,18 @@ namespace SpaceCore.Interface
                     if (skillTitle.Length > 0)
                     {
                         b.DrawString(Game1.smallFont, skillTitle, new Vector2((float)(x - Game1.smallFont.MeasureString(skillTitle).X + 4.0 - 64.0), y + 4 + skillIndex * 56), Game1.textColor);
-                        b.Draw(Game1.mouseCursors, new Vector2(x - 56, y + skillIndex * 56), new Rectangle?(iconSource), Color.Black * 0.3f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
-                        b.Draw(Game1.mouseCursors, new Vector2(x - 52, y - 4 + skillIndex * 56), new Rectangle?(iconSource), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(x - 56, y + skillIndex * 56), iconSource, Color.Black * 0.3f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
+                        b.Draw(Game1.mouseCursors, new Vector2(x - 52, y - 4 + skillIndex * 56), iconSource, Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
                     }
                     if (!drawRed && (levelIndex + 1) % 5 == 0)
                     {
-                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + skillIndex * 56), new Rectangle?(new Rectangle(145, 338, 14, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
-                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + skillIndex * 56), new Rectangle?(new Rectangle(145 + (drawRed ? 14 : 0), 338, 14, 9)), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + skillIndex * 56), new Rectangle(145, 338, 14, 9), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + skillIndex * 56), new Rectangle(145 + (drawRed ? 14 : 0), 338, 14, 9), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
                     }
                     else if ((levelIndex + 1) % 5 != 0)
                     {
-                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + skillIndex * 56), new Rectangle?(new Rectangle(129, 338, 8, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
-                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + skillIndex * 56), new Rectangle?(new Rectangle(129 + (drawRed ? 8 : 0), 338, 8, 9)), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + skillIndex * 56), new Rectangle(129, 338, 8, 9), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + skillIndex * 56), new Rectangle(129 + (drawRed ? 8 : 0), 338, 8, 9), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
                     }
                     if (levelIndex == 9)
                     {
@@ -839,13 +839,13 @@ namespace SpaceCore.Interface
                     }
                     if (!drawRed && (levelIndex + 1) % 5 == 0)
                     {
-                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + indexWithLuckSkill * 56), new Rectangle?(new Rectangle(145, 338, 14, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
-                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + indexWithLuckSkill * 56), new Rectangle?(new Rectangle(145 + (drawRed ? 14 : 0), 338, 14, 9)), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + indexWithLuckSkill * 56), new Rectangle(145, 338, 14, 9), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + indexWithLuckSkill * 56), new Rectangle(145 + (drawRed ? 14 : 0), 338, 14, 9), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
                     }
                     else if ((levelIndex + 1) % 5 != 0)
                     {
-                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + indexWithLuckSkill * 56), new Rectangle?(new Rectangle(129, 338, 8, 9)), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
-                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + indexWithLuckSkill * 56), new Rectangle?(new Rectangle(129 + (drawRed ? 8 : 0), 338, 8, 9)), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x - 4 + levelIndex * 36, y + indexWithLuckSkill * 56), new Rectangle(129, 338, 8, 9), Color.Black * 0.35f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.85f);
+                        b.Draw(Game1.mouseCursors, new Vector2(xOffset + x + levelIndex * 36, y - 4 + indexWithLuckSkill * 56), new Rectangle(129 + (drawRed ? 8 : 0), 338, 8, 9), Color.White * (drawRed ? 1f : 0.65f), 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f);
                     }
                     if (levelIndex == 9)
                     {

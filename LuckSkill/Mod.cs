@@ -410,18 +410,18 @@ namespace LuckSkill
                 if (!text.Equals(""))
                 {
                     b.DrawString(Game1.smallFont, text, new Vector2(num - Game1.smallFont.MeasureString(text).X - Game1.pixelZoom * 4 - Game1.tileSize, num2 + Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), Game1.textColor);
-                    b.Draw(Game1.mouseCursors, new Vector2(num - Game1.pixelZoom * 16, num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(empty), Color.Black * 0.3f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.85f);
-                    b.Draw(Game1.mouseCursors, new Vector2(num - Game1.pixelZoom * 15, num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(empty), Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    b.Draw(Game1.mouseCursors, new Vector2(num - Game1.pixelZoom * 16, num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), empty, Color.Black * 0.3f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.85f);
+                    b.Draw(Game1.mouseCursors, new Vector2(num - Game1.pixelZoom * 15, num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), empty, Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
                 }
                 if (!flag && (i + 1) % 5 == 0)
                 {
-                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(new Rectangle(145, 338, 14, 9)), Color.Black * 0.35f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
-                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(new Rectangle(145 + (flag ? 14 : 0), 338, 14, 9)), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(145, 338, 14, 9), Color.Black * 0.35f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(145 + (flag ? 14 : 0), 338, 14, 9), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
                 }
                 else if ((i + 1) % 5 != 0)
                 {
-                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(new Rectangle(129, 338, 8, 9)), Color.Black * 0.35f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.85f);
-                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle?(new Rectangle(129 + (flag ? 8 : 0), 338, 8, 9)), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(129, 338, 8, 9), Color.Black * 0.35f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.85f);
+                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(129 + (flag ? 8 : 0), 338, 8, 9), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
                 }
                 if (i == 9)
                 {
