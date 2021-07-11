@@ -16,7 +16,7 @@ namespace Magic.Framework.Commands
         *********/
         /// <summary>Construct an instance.</summary>
         public OpenMenuCommand()
-            : base("magicmenu", "TO BE IMPLEMENTED") { }
+            : base("magicmenu", "Opens the magic menu to choose or upgrade your spells.\n\nUsage:\n    magicmenu") { }
 
         /// <summary>Handle the command.</summary>
         /// <param name="monitor">Writes messages to the console and log file.</param>

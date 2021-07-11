@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Magic.Framework.Spells;
 using SpaceShared;
 using SpaceShared.ConsoleCommands;
@@ -16,7 +18,7 @@ namespace Magic.Framework.Commands
         *********/
         /// <summary>Construct an instance.</summary>
         public LearnSpellCommand()
-            : base("player_learnspell", "TO BE IMPLEMENTED") { }
+            : base("player_learnspell", LearnSpellCommand.BuildDescription()) { }
 
         /// <summary>Handle the command.</summary>
         /// <param name="monitor">Writes messages to the console and log file.</param>
@@ -57,6 +59,21 @@ namespace Magic.Framework.Commands
             }
 
             spellBook.LearnSpell(spell, level, true);
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        private static string BuildDescription()
+        {
+            string[] spellIds = SpellManager.GetAll().OrderBy(p => p, StringComparer.OrdinalIgnoreCase).ToArray();
+            return
+                "Immediately learn a spell or spell level without using any spell points.\n\n"
+                + "Usage:\n"
+                + "    player_learnspell <spell> <level>\n"
+                + $"    - spell: the spell to learn. This must be an internal ID like '{string.Join("', '", spellIds)}'.\n"
+                + $"    - level: the spell level to learn, usually a number between 1 and 3.";
         }
     }
 }

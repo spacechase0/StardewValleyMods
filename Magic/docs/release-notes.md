@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Added `help` documentation for console commands.
 * Fixed upgrading spells in Magic 0.4.0.
 
 ## 0.4.0
