@@ -159,6 +159,7 @@ namespace Magic.Framework
             {
                 if (!free)
                     data.FreePoints = Math.Max(0, data.FreePoints - diff);
+                data.KnownSpells[spellId].Level = level;
 
                 Log.Debug($"Learned spell {spellId}, level {level + 1}");
             }
