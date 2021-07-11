@@ -4,7 +4,8 @@
 ## Upcoming release
 * Added `help` documentation for console commands.
 * Fixed upgrading spells in Magic 0.4.0.
-* Fixed `NullReferenceException` with multiplayer projectiles in some cases.
+* Fixed error when pressing the swap key when no spell bars are prepared.
+* Fixed error with multiplayer projectiles in some cases.
 
 ## 0.4.0
 Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
