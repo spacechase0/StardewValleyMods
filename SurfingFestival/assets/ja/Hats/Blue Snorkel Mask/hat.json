@@ -3,5 +3,33 @@
     "Description": "A snorkel mask - serves no other purpose than decorative.",
     "PurchasePrice": 500,
     "ShowHair": true,
-    "IgnoreHairstyleOffset": true
+    "IgnoreHairstyleOffset": true,
+	"NameLocalization":
+    {
+        //"es": "",
+		"ko": "블루 스노클 마스크",
+        //"de": "",
+        //"fr": "",
+        //"hu": "",
+        //"it": "",
+        //"ja": "",
+        //"pt": "",
+        //"ru": "",
+        //"tr": "",
+        //"zh": "",
+    },
+    "DescriptionLocalization":
+    {
+        //"es": "",
+		"ko": "스노클 마스크 - 장식 용.",
+        //"de": "",
+        //"fr": "",
+        //"hu": "",
+        //"it": "",
+        //"ja": "",
+        //"pt": "",
+        //"ru": "",
+        //"tr": "",
+        //"zh": "",
+    },
 }
