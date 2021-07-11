@@ -1,7 +1,10 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.3.1
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* Updated for Json Assets 1.7.8.
 * Updated translations. Thanks to martin66789 (updated Hungarian)!
 
 ## 1.3.0

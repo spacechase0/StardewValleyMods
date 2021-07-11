@@ -1,7 +1,7 @@
 ﻿{
     "Name": "Mana Bar",
     "Author": "spacechase0",
-    "Version": "1.0.1",
+    "Version": "1.1.0",
     "MinimumApiVersion": "3.9.5",
     "Description": "Adds a mana bar and provides an API for other mods to use it.",
     "UniqueID": "spacechase0.ManaBar",
@@ -10,7 +10,7 @@
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore",
-            "MinimumVersion": "1.5.7"
+            "MinimumVersion": "1.5.8"
         }
     ]
 }

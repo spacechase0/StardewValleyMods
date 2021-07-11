@@ -1,16 +1,18 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 0.4.0
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Added API methods to support Skill Prestige.
 * Magic sounds are now localized, so only nearby players in multiplayer will hear them.
 * Balance changes:
-  * You now get 100 mana points immediately after the Wizard event, so you can start using magic on the same day.
+  * You now get the initial 100 mana points immediately after the Wizard event, so you can start using magic on the same day.
   * The _clear debris_ spell no longer clears non-debris objects.
-* Made Wizard event skippable.
-* Migrated player data into the `Farmer.modData` field to simplify synchronization and reduce edge cases.
+* Reworked how player data is stored to simplify multiplayer sync and reduce edge cases.
+* Fixed Wizard event not being skippable.
 * Fixed Wizard event broken if another mod changes the location in an incompatible way.
-* Fixed Wizard event needing 3.004 instead of 3 hearts (which mainly affected players using CJB Cheats Menu to set the relationship).
+* Fixed Wizard event needing 3.004 hearts instead of 3 (which mainly affected players using CJB Cheats Menu to set the relationship).
 * Fixed magic UI rendered before learning magic if another mod added mana points.
 * Fixed players sometimes having no mana points despite learning magic.
 * Fixed multiplayer issues with _clear debris_ spell.

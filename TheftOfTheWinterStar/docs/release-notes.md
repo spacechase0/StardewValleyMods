@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.0.3
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Fixed Tempus Globes...
   * not working on the Ginger Island farm;
   * not protecting crops on season change in some cases;

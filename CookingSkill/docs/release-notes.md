@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.3.0
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * The mod no longer replaces the entire `CookingPage` menu, for better compatibility with other mods or future game versions.
 * Fixed semi-transparent menu issue.
 * Fixed some gamepad improvements in Stardew Valley 1.5 not applied to cooking menu.

@@ -3,7 +3,7 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.1.10</Version>
+    <Version>1.1.11</Version>
     <TargetFramework>net452</TargetFramework>
   </PropertyGroup>
 

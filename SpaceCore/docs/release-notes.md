@@ -1,8 +1,10 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
-* Optimized performance/memory impact when saving or loading a save.
+## 1.5.8
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* Improved performance and reduced memory usage when read/writing saves.
 * SpaceCore no longer disables crop withering on day update.  
   _This should have no effect on players, since crops wither separately if needed. This was to
   support Json Assets, which now applies the change itself._

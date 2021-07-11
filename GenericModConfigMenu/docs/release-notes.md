@@ -1,8 +1,10 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
-* You can now press `Escape` to exit a mod config menu (thanks to pepoluan!).
+## 1.4.0
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* You can now press `ESC` to exit a mod config menu (thanks to pepoluan!).
 * Added API method to get info about the currently displayed mod config menu (thanks to pepoluan!).
 * Improved API validation (in collaboration with pepoluan).
 * Removed example mod config (thanks to pepoluan!).

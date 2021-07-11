@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.1.0
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Added new options (thanks to pepoluan!):
   * change the label size;
   * hide the labels by default.
