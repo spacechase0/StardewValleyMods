@@ -4,6 +4,7 @@ using Magic.Framework;
 using Magic.Framework.Apis;
 using SpaceShared;
 using SpaceShared.APIs;
+using SpaceShared.ConsoleCommands;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -38,6 +39,7 @@ namespace Magic
             helper.Events.GameLoop.Saving += this.OnSaving;
 
             Framework.Magic.Init(helper.Events, helper.Input, helper.Multiplayer.GetNewID);
+            ConsoleCommandHelper.RegisterCommandsInAssembly(this);
         }
 
         public override object GetApi()

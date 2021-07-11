@@ -77,9 +77,6 @@ namespace Magic.Framework
 
             Skills.RegisterSkill(Magic.Skill = new Skill());
 
-            Command.Register("player_learnspell", Magic.LearnSpellCommand);
-            Command.Register("magicmenu", Magic.MagicMenuCommand);
-
             PyTK.CustomTV.CustomTVMod.addChannel("magic", Mod.Instance.Helper.Translation.Get("tv.analyzehints.name"), Magic.OnTvChannelSelected);
         }
 
@@ -551,48 +548,6 @@ namespace Magic.Framework
                 Game1.player.SetMaxMana(expectedPoints);
                 Game1.player.AddMana(expectedPoints);
             }
-        }
-
-        private static void LearnSpellCommand(string[] args)
-        {
-            SpellBook spellBook = Game1.player.GetSpellBook();
-
-            if (args.Length == 1 && args[0] == "all")
-            {
-                foreach (string spellName in SpellManager.GetAll())
-                {
-                    var curSpell = SpellManager.Get(spellName);
-                    spellBook.LearnSpell(curSpell, curSpell.GetMaxCastingLevel(), true);
-                }
-
-                return;
-            }
-
-            if (args.Length != 2 || (args.Length > 1 && (args[0] == "" || args[1] == "")))
-            {
-                Log.Info("Usage: player_learnspell <spell> <level>");
-                return;
-            }
-
-            Spell spell = SpellManager.Get(args[0]);
-            if (spell == null)
-            {
-                Log.Error($"Spell '{args[0]}' does not exist.");
-                return;
-            }
-
-            if (!int.TryParse(args[1], out int level))
-            {
-                Log.Error($"That spell only casts up to level {spell.GetMaxCastingLevel()}.");
-                return;
-            }
-
-            spellBook.LearnSpell(spell, level, true);
-        }
-
-        private static void MagicMenuCommand(string[] args)
-        {
-            Game1.activeClickableMenu = new MagicMenu();
         }
     }
 }
