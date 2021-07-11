@@ -7,6 +7,7 @@
 * Fixed upgrading spells in Magic 0.4.0.
 * Fixed error when pressing the swap key when no spell bars are prepared.
 * Fixed error with multiplayer projectiles in some cases.
+* Fixed typo in Magic Missile spell name.
 
 ## 0.4.0
 Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
