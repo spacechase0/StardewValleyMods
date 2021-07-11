@@ -173,14 +173,7 @@ namespace CookingSkill
                         newTime = (int)(newTime * 1.25);
                     }
 
-                    Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4])
-                    {
-                        millisecondsDuration = newTime / 10 * 7000
-                    };
-                    // ^ The vanilla code decreases the duration based on the time of day.
-                    // This is fine normally, since it ends as the day ends.
-                    // However if you have something like TimeSpeed it just means it won't
-                    // last as long later if eaten later in the day.
+                    Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4]);
 
                     if (info[6] == "drink")
                     {
@@ -226,10 +219,7 @@ namespace CookingSkill
 
                     int newTime = 120 + obj.Edibility / 10 * 30;
 
-                    Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4])
-                    {
-                        millisecondsDuration = newTime / 10 * 7000
-                    };
+                    Buff newBuff = new Buff(newAttr[0], newAttr[1], newAttr[2], newAttr[3], newAttr[4], newAttr[5], newAttr[6], newAttr[7], newAttr[8], newAttr[9], newAttr[10], newAttr[11], newTime, info[0], info[4]);
 
                     if (info[6] == "drink")
                     {
