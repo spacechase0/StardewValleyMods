@@ -293,7 +293,7 @@ namespace TheftOfTheWinterStar
                 var arena = Game1.getLocationFromName("FrostDungeon.Arena");
                 arena.characters.Clear();
                 var bossArea = Game1.getLocationFromName("FrostDungeon.Boss");
-                if (!this.SaveData.BeatBoss)
+                if (this.SaveData?.BeatBoss != true)
                 {
                     bossArea.characters.Clear();
                     bossArea.netObjects.Clear();

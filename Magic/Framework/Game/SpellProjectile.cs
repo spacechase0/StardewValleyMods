@@ -33,7 +33,6 @@ namespace Magic.Framework.Game
         public SpellProjectile(Farmer source, ProjectileSpell spell, int damage, float direction, float velocity, bool isSeeking)
             : this()
         {
-
             this.Source = source;
             this.Spell = spell;
             this.Damage.Value = damage;
@@ -50,8 +49,8 @@ namespace Magic.Framework.Game
             this.yVelocity.Value = (float)Math.Sin(this.Direction.Value) * this.Velocity.Value;
             this.damagesMonsters.Value = true;
 
-            this.Tex = Content.LoadTexture("magic/" + this.Spell.ParentSchoolId + "/" + this.Spell.Id + "/projectile.png");
-            this.TexId.Value = Content.LoadTextureKey("magic/" + this.Spell.ParentSchoolId + "/" + this.Spell.Id + "/projectile.png");
+            this.Tex = Content.LoadTexture($"magic/{this.Spell.ParentSchoolId}/{this.Spell.Id}/projectile.png");
+            this.TexId.Value = Content.LoadTextureKey($"magic/{this.Spell.ParentSchoolId}/{this.Spell.Id}/projectile.png");
 
             if (this.IsSeeking.Value)
             {
@@ -172,8 +171,9 @@ namespace Magic.Framework.Game
         private static readonly Random Rand = new();
         private void Disappear(GameLocation loc)
         {
-            if (this.Spell.SoundHit != null)
+            if (this.Spell?.SoundHit != null)
                 loc.LocalSoundAtPixel(this.Spell.SoundHit, this.position.Value);
+
             //Game1.createRadialDebris(loc, 22 + rand.Next( 2 ), ( int ) position.X / Game1.tileSize, ( int ) position.Y / Game1.tileSize, 3 + rand.Next(5), false);
             Game1.createRadialDebris(loc, this.TexId.Value, Game1.getSourceRectForStandardTileSheet(Projectile.projectileSheet, 0), 4, (int)this.position.X, (int)this.position.Y, 6 + SpellProjectile.Rand.Next(10), (int)(this.position.Y / (double)Game1.tileSize) + 1, new Color(255, 255, 255, 8 + SpellProjectile.Rand.Next(64)), 2.0f);
             //Game1.createRadialDebris(loc, tex, new Rectangle(0, 0, tex.Width, tex.Height), 0, ( int ) position.X, ( int ) position.Y, 3 + rand.Next(5), ( int ) position.Y / Game1.tileSize, Color.White, 5.0f);

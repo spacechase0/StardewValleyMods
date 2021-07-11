@@ -52,7 +52,7 @@ namespace AnotherHungerMod.Framework
                         if (!player.HasFedSpouse())
                             player.SetFedSpouse(data.FedSpouseMeal);
                         if (player.GetFullness() == 0)
-                            ModDataManager.SetFullness(player, (float)data.Fullness);
+                            ModDataManager.SetFullness(player, (float)data.Fullness, maxValue: Mod.Config.MaxFullness);
                     }
                 }
 

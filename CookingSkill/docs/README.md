@@ -27,9 +27,6 @@ Available professions:
   * Level 10: Intense Flavors (Food buffs are one level stronger once eaten).
   * Level 10: Secret Spices (Provides a few random buffs when eating unbuffed food).
 
-This also fixes food buff duration decreasing as the day goes in. (This doesn't matter for vanilla
-play, but can become noticeable if playing with something like TimeSpeed.)
-
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
