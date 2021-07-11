@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed `NullReferenceException` error when ending the day in some cases.
+
 ## 1.0.3
 Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
