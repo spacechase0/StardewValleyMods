@@ -1,7 +1,7 @@
 ﻿{
     "Name": "Statue of Generosity",
     "Author": "spacechase0, ParadigmNomad (sprites)",
-    "Version": "1.0.1",
+    "Version": "1.0.2",
     "MinimumApiVersion": "3.9.5",
     "Description": "Purchase a statue which produces loved gifts each morning.",
     "UniqueID": "spacechase0.StatueOfGenerosity",
@@ -10,7 +10,7 @@
     "Dependencies": [
         {
             "UniqueID": "spacechase0.JsonAssets",
-            "MinimumVersion": "1.7.7"
+            "MinimumVersion": "1.7.8"
         }
     ]
 }

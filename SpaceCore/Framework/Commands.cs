@@ -5,19 +5,6 @@ using StardewValley;
 
 namespace SpaceCore.Framework
 {
-    /*
-    [XmlType( "Mods_Test" )]
-    public class TestObject : StardewValley.Object
-    {
-        public TestObject()
-            : base(74, 1)
-        {
-            this.Quality = 4;
-        }
-        public override string DisplayName { get => "Test Custom Object"; }
-    }
-    //*/
-
     internal static class Commands
     {
         internal static void Register()

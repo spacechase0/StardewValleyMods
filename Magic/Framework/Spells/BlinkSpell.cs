@@ -23,7 +23,7 @@ namespace Magic.Framework.Spells
         {
             player.position.X = targetX - player.GetBoundingBox().Width / 2;
             player.position.Y = targetY - player.GetBoundingBox().Height / 2;
-            Game1.playSound("powerup");
+            player.LocalSound("powerup");
             player.AddCustomSkillExperience(Magic.Skill, 4);
 
             return null;

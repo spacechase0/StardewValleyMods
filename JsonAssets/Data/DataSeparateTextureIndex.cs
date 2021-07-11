@@ -8,18 +8,21 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public abstract class DataSeparateTextureIndex : DataNeedsId
     {
+        /*********
+        ** Accessors
+        *********/
         [JsonIgnore]
-        internal int textureIndex = -1;
+        internal int TextureIndex { get; set; } = -1;
 
         // The following is mainly data for the Content Patcher integration.
 
         [JsonIgnore]
-        public string tilesheet;
+        public string Tilesheet { get; set; }
 
         [JsonIgnore]
-        public int tilesheetX;
+        public int TilesheetX { get; set; }
 
         [JsonIgnore]
-        public int tilesheetY;
+        public int TilesheetY { get; set; }
     }
 }

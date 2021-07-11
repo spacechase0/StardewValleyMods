@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Runtime.Serialization;
+using JsonAssets.Framework;
 using SpaceShared;
 using StardewValley;
-using StardewValley.Tools;
 
 namespace JsonAssets.Data
 {
@@ -12,16 +11,11 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class WeaponData : DataNeedsIdWithTexture
     {
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum Type_
-        {
-            Dagger = MeleeWeapon.dagger,
-            Club = MeleeWeapon.club,
-            Sword = MeleeWeapon.defenseSword,
-        }
-
+        /*********
+        ** Accessors
+        *********/
         public string Description { get; set; }
-        public Type_ Type { get; set; }
+        public WeaponType Type { get; set; }
 
         public int MinimumDamage { get; set; }
         public int MaximumDamage { get; set; }
@@ -43,13 +37,17 @@ namespace JsonAssets.Data
 
         public bool CanTrash { get; set; } = true;
 
-        public Dictionary<string, string> NameLocalization = new();
-        public Dictionary<string, string> DescriptionLocalization = new();
+        public Dictionary<string, string> NameLocalization { get; set; } = new();
+        public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
+
+        /*********
+        ** Public methods
+        *********/
         public string LocalizedName()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.NameLocalization != null && this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
+            return this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
                 ? localization
                 : this.Name;
         }
@@ -57,16 +55,37 @@ namespace JsonAssets.Data
         public string LocalizedDescription()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.DescriptionLocalization != null && this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
+            return this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
                 ? localization
                 : this.Description;
         }
 
-        public int GetWeaponId() { return this.Id; }
+        public int GetWeaponId()
+        {
+            return this.Id;
+        }
 
         internal string GetWeaponInformation()
         {
             return $"{this.Name}/{this.LocalizedDescription()}/{this.MinimumDamage}/{this.MaximumDamage}/{this.Knockback}/{this.Speed}/{this.Accuracy}/{this.Defense}/{(int)this.Type}/{this.MineDropVar}/{this.MineDropMinimumLevel}/{this.ExtraSwingArea}/{this.CritChance}/{this.CritMultiplier}/{this.LocalizedName()}";
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.PurchaseRequirements ??= new List<string>();
+            this.AdditionalPurchaseData ??= new List<PurchaseData>();
+            this.NameLocalization ??= new();
+            this.DescriptionLocalization ??= new();
+
+            this.PurchaseRequirements.FilterNulls();
+            this.AdditionalPurchaseData.FilterNulls();
         }
     }
 }

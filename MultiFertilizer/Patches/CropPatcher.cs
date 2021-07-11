@@ -36,13 +36,13 @@ namespace MultiFertilizer.Patches
             if (!soil.modData.TryGetValue(Mod.KeyFert, out string fertilizerData))
                 return;
 
-            int index = 0;
-            switch (int.Parse(fertilizerData))
+            int index = int.Parse(fertilizerData) switch
             {
-                case 1: index = 368; break;
-                case 2: index = 369; break;
-                case 3: index = 919; break;
-            }
+                1 => 368,
+                2 => 369,
+                3 => 919,
+                _ => 0
+            };
 
             soil.fertilizer.Value = index;
         }

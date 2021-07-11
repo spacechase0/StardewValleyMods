@@ -83,30 +83,17 @@ namespace CapstoneProfessions.Framework
             this.informationUp = true;
             this.title = Mod.Instance.Helper.Translation.Get("menu.title");
             this.extraInfoForLevel = this.getExtraInfoForLevel();
-            switch (Game1.whichFarm)
+            this.sourceRectForLevelIcon = Game1.whichFarm switch
             {
-                case Farm.default_layout:
-                    this.sourceRectForLevelIcon = new Rectangle(0, 324, 22, 20);
-                    break;
-                case Farm.riverlands_layout:
-                    this.sourceRectForLevelIcon = new Rectangle(22, 324, 22, 20);
-                    break;
-                case Farm.forest_layout:
-                    this.sourceRectForLevelIcon = new Rectangle(44, 324, 22, 20);
-                    break;
-                case Farm.mountains_layout:
-                    this.sourceRectForLevelIcon = new Rectangle(66, 324, 22, 20);
-                    break;
-                case Farm.combat_layout:
-                    this.sourceRectForLevelIcon = new Rectangle(88, 324, 22, 20);
-                    break;
-                case Farm.fourCorners_layout:
-                    this.sourceRectForLevelIcon = new Rectangle(0, 344, 22, 20);
-                    break;
-                case Farm.beach_layout:
-                    this.sourceRectForLevelIcon = new Rectangle(22, 344, 22, 20);
-                    break;
-            }
+                Farm.default_layout => new Rectangle(0, 324, 22, 20),
+                Farm.riverlands_layout => new Rectangle(22, 324, 22, 20),
+                Farm.forest_layout => new Rectangle(44, 324, 22, 20),
+                Farm.mountains_layout => new Rectangle(66, 324, 22, 20),
+                Farm.combat_layout => new Rectangle(88, 324, 22, 20),
+                Farm.fourCorners_layout => new Rectangle(0, 344, 22, 20),
+                Farm.beach_layout => new Rectangle(22, 344, 22, 20),
+                _ => Rectangle.Empty
+            };
             int newHeight = 0;
             this.height = newHeight + 256 + this.extraInfoForLevel.Count * 64 * 3 / 4;
             Game1.player.freezePause = 100;

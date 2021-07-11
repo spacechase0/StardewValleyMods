@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CookingSkill.Framework;
+using CookingSkill.Patches;
+using Spacechase.Shared.Harmony;
 using SpaceCore;
 using SpaceCore.Events;
 using SpaceShared;
 using StardewModdingAPI;
-using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Menus;
 using StardewValley.Objects;
 using SObject = StardewValley.Object;
 
@@ -57,22 +57,31 @@ namespace CookingSkill
                     obj.Quality = 1;
                 }
 
-                var used = new List<NewCraftingPage.ConsumedItem>();
-                NewCraftingPage.myConsumeIngredients(recipe, additionalItems, false, used);
+                ConsumedItem[] used;
+                try
+                {
+                    CraftingRecipePatcher.ShouldConsumeItems = false;
+                    recipe.consumeIngredients(additionalItems);
+                    used = CraftingRecipePatcher.LastUsedItems.ToArray();
+                }
+                finally
+                {
+                    CraftingRecipePatcher.ShouldConsumeItems = true;
+                }
 
                 int total = 0;
-                foreach (NewCraftingPage.ConsumedItem ingr in used)
-                    total += ingr.amt;
+                foreach (ConsumedItem ingr in used)
+                    total += ingr.Amount;
 
                 for (int iq = 1; iq <= SObject.bestQuality; ++iq)
                 {
                     if (iq == 3) continue; // Not a real quality
 
                     double chance = 0;
-                    foreach (NewCraftingPage.ConsumedItem ingr in used)
+                    foreach (ConsumedItem ingr in used)
                     {
-                        if (ingr.item.Quality >= iq)
-                            chance += (1.0 / total) * ingr.amt;
+                        if (ingr.Item.Quality >= iq)
+                            chance += (1.0 / total) * ingr.Amount;
                     }
 
                     if (rand.NextDouble() < chance)
@@ -92,10 +101,14 @@ namespace CookingSkill
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.Events.Display.MenuChanged += this.OnMenuChanged;
             SpaceEvents.OnItemEaten += this.OnItemEaten;
 
             Skills.RegisterSkill(Mod.Skill = new Skill());
+
+            HarmonyPatcher.Apply(this,
+                new CraftingPagePatcher(),
+                new CraftingRecipePatcher()
+            );
         }
 
         public override object GetApi()
@@ -233,20 +246,6 @@ namespace CookingSkill
                     }
                     Game1.buffsDisplay.syncIcons();
                 }
-            }
-        }
-
-        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
-        {
-            if (e.NewMenu is CraftingPage menu)
-            {
-                bool cooking = this.Helper.Reflection.GetField<bool>(e.NewMenu, "cooking").GetValue();
-                bool standaloneMenu = this.Helper.Reflection.GetField<bool>(e.NewMenu, "_standaloneMenu").GetValue();
-                List<Chest> containers = menu._materialContainers;
-                Game1.activeClickableMenu = new NewCraftingPage(menu.xPositionOnScreen, menu.yPositionOnScreen, menu.width, menu.height, cooking, standaloneMenu, containers)
-                {
-                    exitFunction = Game1.activeClickableMenu.exitFunction
-                };
             }
         }
     }

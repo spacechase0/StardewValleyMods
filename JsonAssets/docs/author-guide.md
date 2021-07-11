@@ -68,12 +68,11 @@ Examples of how to set up all types of objects can be found in the [PPJA Resourc
 * [Korea Blossom](https://www.nexusmods.com/stardewvalley/mods/6064) contains examples of custom giant crops added via JA.
 * [More Fences](https://forums.stardewvalley.net/index.php?threads/more-fences.2105/) contains examples of fences.
 
-### Things to Note Before You Start
-
+### Things to note before you start
 * `SkillUnlockName` & `SkillUnlockLevel` are valid but it is not recommended to use them. This adds the recipe to the level up menu, which only can handle a very small number of new recipes before the player cannot click to the next day screen. SDV 1.5 should have somewhat resolved this issue. Use and test at your own risk. If you want your recipe to unlock via a skill/level up it is recommended to send the recipe via mail using [Mail Framework Mod](https://www.nexusmods.com/stardewvalley/mods/1536) instead.
 * Example packs are listed above and should be used as a reference. If you're unsure of how something works it is recommended that you check out a preexisting pack. Every feature for JA more or less has an example floating around somewhere.
 
-### Companion Mods
+### Companion mods
 Json Assets is a great tool if you want to add one of the above objects, but there are other frameworks out there that pair well with Json Assets:
 
  * [Producer Framework Mod](https://www.nexusmods.com/stardewvalley/mods/4970) to add machines.
@@ -88,9 +87,8 @@ Json Assets is a great tool if you want to add one of the above objects, but the
 
  This list is not meant to be comprehensive as many mods support JA objects. If you're unsure if a mod supports JA objects it's recommended to read the mod description, release notes, or ask the creator.
 
-## Basic Features
+## Basic features
 ### Overview
-
 There are nine main folders you are likely to see when downloading Json Asset content packs:
 
 * BigCraftables
@@ -108,8 +106,7 @@ There are nine main folders you are likely to see when downloading Json Asset co
 You will also see a `manifest.json` for SMAPI to read (see [content packs](https://stardewvalleywiki.com/Modding:SMAPI_APIs#Manifest) on the wiki).
 Each of these folders contains subfolders that at minimum contains a `json` and a `png`.
 
-### BigCraftables
-
+### Big craftables
 Big craftables are objects like scarecrows that are 16x32.
 
 A big craftable subfolder is a folder with these files:
@@ -134,6 +131,7 @@ field                    | purpose
 `PurchaseFrom`           | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
 `PurchasePrice`          | How much you can purchase the recipe for.
 `PurchaseRequirements`   | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
+`AdditionalPurchaseData` | Extra shops where the item can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
 `SkillUnlockName`        | _(optional)_ The name of the [skill](https://stardewvalleywiki.com/Skills) required for unlock.
 `SkillUnlockLevel`       | _(optional)_ The level, 1 - 9, required to unlock. Level 10 does not currently work for BigCraftables.
 `ReserveNextIndex`       | _(optional)_ Used for animations with PFM. Set to `true` or `false`. Reserves 1 index. Useful for machines that work like the Charcoal Kiln. Cannot be used with `ReserveExtraIndexCount`.
@@ -143,8 +141,7 @@ field                    | purpose
 
 Big Craftables do not support gift tastes.
 
-#### Machine Animations
-
+#### Machine animations
 `ReserveExtraIndexCount` is used primarily for big-craftable machines. It may also be useful for a SMPAI mod that utilizes chest animation. Unlike CFR, each frame of the machine will need to be it's own image. Starting with `big-craftble`, `big-craftable-2` `big-craftable-3` and so on. `big-craftable` (no numbers) is considered to be 0 in the index. So for our example of the Alembic, there is the starting frame and then 7 additional frames afterwards for the animation.
 
 Here is a preview of the folder contents
@@ -182,7 +179,7 @@ Example:
 If you want an image to constantly animate you will need to use the [Content Patcher API](#content-patcher-api).
 
 <details>
-  <summary> <b>Expand for more information on PFM useage </b> </summary>
+  <summary> <b>Expand for more information on PFM usage </b> </summary>
 
 When using with PFM in the `ProducersConfig.json` this information would translate to:
 
@@ -208,7 +205,6 @@ This is mentioned because JA & PFM indexs are one off of each other. `big-crafta
 </details>
 
 ### Crops
-
 A crop subfolder is a folder with these files:
 
 * a `crop.json`;
@@ -240,16 +236,16 @@ field                      | purpose
 `SeedPurchasePrice`        | How much you can purchase seeds for.
 `SeedPurchaseFrom`         | Who you can purchase seeds from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Pierre` is the default vendor.
 `SeedPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SeedPurchaseRequirements` set this to `null`.
+`SeedAdditionalPurchaseData` | Extra shops where the seed can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
 `EnableWithMod`            | _(optional)_ Enables the crop when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 `DisableWithMod`           | _(optional)_ Disables the crop when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
-**Facts about Custom Crops**:
+**Facts about custom crops:**
 * Sprites are 32px tall and there are 2 per row. Vanilla `Tilesheets\crops` is 256 x 672 px.
 * The first two frames on each `crop.png` are reserved for seed sprites.
 * JA starts numbering crops at ID 100, and the first sprites are placed at 0,1600.
 
-#### Giant Crops
-
+#### Giant crops
 Giant crops work the same way as vanilla giant crops. It is not recommended to make regrowable crops have a giant variant as once they become giant and are harvested they will not replant themselves. This is not a bug and is intended behavior. Mods that include giant regrowable crops should include a disclaimer so users are aware that they may lose their regrowing crops. Below is a sample disclaimer created by SpringsSong:
 
 "Giant Crops were never meant to be regrown, they were meant to be a one-off of the crop when the proper conditions were met. If you use the regrowing crops variant of these giant crops, you will lose your crops when you harvest them. This is intentional, not a bug, and will not be fixed."
@@ -258,8 +254,7 @@ Giant crops are 48x64. Custom giant crops need to be placed inside the correspon
 
 If you're looking to expand the vanilla giant crop offering you'll need to use [More Giant Crops](https://www.nexusmods.com/stardewvalley/mods/5263).
 
-### FruitTrees
-
+### Fruit trees
 A fruit trees subfolder is a folder with these files:
 
 * a `tree.json`;
@@ -277,15 +272,15 @@ field                         | purpose
 `SaplingPurchasePrice`        | Determines how much the sapling can be purchased for.
 `SaplingPurchaseFrom`         | Who you can purchase saplings from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor.`Pierre` is the default vendor.
 `SaplingPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SaplingPurchaseRequirements` set this to `null`.
+`SaplingAdditionalPurchaseData` | Extra shops where the sapling can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
 `EnableWithMod`               | _(optional)_ Enables the fruit tree when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 `DisableWithMod`              | _(optional)_ Disables the fruit tree when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
-**Facts about Custom Trees**:
+**Facts about custom trees:**
 * Sprites are 80px tall and there is only 1 tree per row. Vanilla `Tilesheets\fruitTrees` has partial sprites for a 7th tree and is 432 x 560 px.
 * JA starts numbering its trees at ID 10, and the first sprites are placed at 0,800.
 
 ### Objects
-
 Objects (16x16) can be added via Json Assets through the `Objects` folder. Unless your crop or fruit tree is producing a vanilla item, it will need to have a corresponding folder in `Objects`
 
 An object subfolder for a recipe is a folder that contains these files:
@@ -316,13 +311,13 @@ field                  | purpose
 `PurchaseFrom`         | Who you can purchase the recipe from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Pierre` is the default vendor.
 `PurchasePrice`        | How much you can purchase the recipe for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
+`AdditionalPurchaseData` | Extra shops where the item can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
 `SkillUnlockName`      | _(optional)_ The name of the [skill](https://stardewvalleywiki.com/Skills) required for unlock.
 `SkillUnlockLevel`     | _(optional)_ The level, 1 - 10, required to unlock.
 `EnableWithMod`        | _(optional)_ Enables the recipe when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 `DisableWithMod`       | _(optional)_ Disables the recipe when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
 ### Hats
-
 Hats are 20x80 and can be added through a `Hats` folder. All hats are purchaseable through [hat mouse](https://stardewvalleywiki.com/Abandoned_House). There is a limit of 87 custom hats.
 
 A hats subfolder for a hat is a folder that contains these files:
@@ -345,7 +340,6 @@ field                  | purpose
 Hats do not support gift tastes.
 
 ### Weapons
-
 Weapons are 16x16 and can be added via Json Assets through the `Weapons` folder.
 
 A weapon subfolder is a folder that contains these files:
@@ -373,19 +367,19 @@ field                  | purpose
 `PurchaseFrom`         | Who you can purchase the weapon from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Pierre` is the default vendor. For weapons, `Marlon` is recommended.
 `PurchasePrice`        | How much you can purchase the weapon for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
+`AdditionalPurchaseData` | Extra shops where the item can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
 `EnableWithMod`        | _(optional)_ Enables the weapon when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 `DisableWithMod`       | _(optional)_ Disables the weapon when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
 Weapons do not support gift taste.
 
-**Facts about Weapons**
+**Facts about weapons:**
 * A galaxy swords minimum damage is 60 and maximum damage is 80. Keep this in mind if you want your weapons to be balanced.
 * Kockback has no maximum number but no vanilla weapon exceeds 2.
 * Most vanilla weapons have a `CritChance` of between 0 and .04 which is a very small percentage with `Infinity Needle` having the most at .1.
 * Most vanilla weapons have an `ExtraSwingArea` between 0 and 2.
 
-### Shirts and Pants
-
+### Shirts and pants
 "Shirts and pants simply exist right now without recipes." {spacechase0) As of JA v1.4, shirts & pants added will have to be spawned in using [CJB Item Spawner](https://www.nexusmods.com/stardewvalley/mods/93). You can use [Shop Tile Framework](https://www.nexusmods.com/stardewvalley/mods/5005) or [TMXLoader](https://www.nexusmods.com/stardewvalley/mods/1820) to create a custom shop to sell clothing.
 
 #### Shirts
@@ -415,7 +409,6 @@ field                  | purpose
 Shirts do not support gift tastes. Shirts do not support context tags. Shirts added this way will also not show up in the character creation screen.
 
 #### Pants
-
 Pants are 192x688 and can be added via Json Assets through the `Pants` folder.
 
 The left portion of the image (96x672) is for male characters. The right portion of the image (96x672) is for female characters. You will need both filled out even if it is the same for both male and female.
@@ -439,7 +432,6 @@ field                  | purpose
 Pants to do not support gift tastes. Pants do not support context tags. Pants added this way will also not show up in the character creation screen. If you have some pants not showing up make sure you're using the latest version of Spacecore.
 
 ### Boots
-
 Boots are 16x16 and can be added via Json Assets through the `Boots` folder.
 
 A boots subfolder is a folder that contains these files:
@@ -460,13 +452,13 @@ field                  | purpose
 `PurchaseFrom`         | _(optional)_ Who you can purchase the weapon from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Marlon` is the default vendor.
 `PurchasePrice`        | _(optional)_ How much you can purchase the boots for.
 `PurchaseRequirements` | _(optional)_ See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
+`AdditionalPurchaseData` | Extra shops where the item can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
 `EnableWithMod`        | _(optional)_ Enables the boots when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 `DisableWithMod`       | _(optional)_ Disables the boots when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
 Boots do not support gift tastes.
 
 ### Tailoring
-
 Tailoring is the recipe used to craft (tailor) a shirt or pants.
 
 A tailoring subfolder is a folder that contains these files:
@@ -488,7 +480,6 @@ Below is a bit more about item tag names from Mr. Podunkian.
 "It's `item_itemname` where `itemname` is the item's name in all lowercase, with spaces replaced with \_'s and ' (apostrophe) removed. So mermaid's pendant would be `item_mermaids_pendant`. They have an alternative id, which is `id_(o for normal objects)_(id number)`. Typing in `debug listtags` into SMAPI [will] print out all of the context tags for that item. You need to use the alt ID for any items that might have name collisions."
 
 ### Fences
-
 Fences are 48x352 and can be added via Json Assets through the `Fences` folder.
 
 A fences subfolder is a folder that contains these files;
@@ -517,14 +508,14 @@ field                  | purpose
 `PurchaseFrom`         | Who you can purchase the recipe from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Pierre` is the default vendor.
 `PurchasePrice`        | How much you can purchase the recipe for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
+`AdditionalPurchaseData` | Extra shops where the item can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
 `SkillUnlockName`      | The name of the [skill](https://stardewvalleywiki.com/Skills) required for unlock.
 `SkillUnlockLevel`     | The level, 1 - 10, required to unlock.
 `EnableWithMod`        | _(optional)_ Enables the recipe when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 `DisableWithMod`       | _(optional)_ Disables the recipe when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
 
-### Forge Recipes
-
+### Forge recipes
 Recipes for the Forge added in Vanilla 1.5 update can be added via Json Assets through the `Forge` folder.
 
 An object subfolder for a recipe is a folder that contains these files:
@@ -535,13 +526,12 @@ field                  | purpose
 ---------------------- | -------
 `BaseItemName`         | (string) The name of the Item that is to be put on the left slot for the recipe.
 `IngredientContextTag` | (string) The item for the right slot must have this ContextTag for the Forge recipe to Work. (See Context Tags Section)
-`CinderShardCost`          | (int) The amount of Cinder Shard required for the receipe.
-`ResultItemName`             | (string) The name of the output item
+`CinderShardCost`      | (int) The amount of Cinder Shard required for the receipe.
+`ResultItemName`       | (string) The name of the output item
 
 Custom ContextTags can be added to vanilla items using ContentPatcher.
 
-## Gift Tastes
-
+## Gift tastes
 You can add gift taste support to any pre-existing content pack by adding the following to the respective `.json` file. It does not matter where you put it. I tend to place it at the bottom of the `.json` but it is personal preferance. 
 
 If it can be gifted to an NPC it has gift taste support built in. This means `hats`, `big-craftables`, `weapons`, `shirts`, `pants`, `boots`, `tailoring` and `fences` do not have gift taste support. If you exclude an NPC from the gift taste, their reaction will their default reaction to that item's category. This applies to custom NPCs as well if they are not specified.
@@ -558,8 +548,7 @@ If it can be gifted to an NPC it has gift taste support built in. This means `ha
 ```
 An example of a filled out gift taste can be found [here](https://gist.github.com/paradigmnomad/df8686af71ff35428dc37a7db65213bf#gift-tastes). You can delete unused fields within `GiftTastes`.
 
-## Context Tags
-
+## Context tags
 "Context tags are an array in the item "ContextTags", injected into Data\ObjectContextTags". It allows mods like [Better Shop Menu](https://www.nexusmods.com/stardewvalley/mods/2012) to categorize your items better. This is an optional feature and not required for a content pack to work.
 
 Example:
@@ -580,7 +569,6 @@ Common information in context tags are: season, main color, what produces the it
 You can see a list of context tags under `Content/Data/ObjectInformation` An alternative way to check a pre-exisiting items context tags is "Typing in `debug listtags` into SMAPI [will] print out all of the context tags for that item." (Mr. Podunkian) You aren't limited to those context tags, but it gives you an idea of the vanilla context tags.
 
 ## Localization
-
 JsonAssets supports name localization without the need for a seperate or different download. These lines can be added to the bottom of their respective `json` files. Most localization is the same except "Crops have their localization fields prefixed with `Seed`, fruit trees prefixed with `Sapling`."
 
 Examples:
@@ -606,7 +594,6 @@ For Saplings:
 PPJA has put together some [translation templates](https://github.com/paradigmnomad/PPJA/wiki/Submitting-a-Translation#translation-guide) that we strongly encourage users to use as a way to standardize how translations are done.
 
 ## Content Patcher API
-
 As of [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915) 1.12 we can now target assets created by JA. Currently supported categories are:
 
 * Object;
@@ -639,8 +626,7 @@ field                  | purpose
 `AnimationFrameTime`   | _(optional)_ Frames per second. For machine animations, 1-3 appears to work the best.
 `AnimationFrameCount`  | _(optional)_ How many frames the image had.
 
-## Tokens in Fields
-
+## Tokens in fields
 [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915) can use Json Assets as tokens. An example of this would be sending an `object` through a mail. Note: You cannot send cooking recipes via Content Patcher. You will need to use the [Mail Framework Mod](https://www.nexusmods.com/stardewvalley/mods/1536) to send cooking recipes. Mail Framework Mod is recommended if you're sending multiple types of objects as users will only have to install one additional dependency.
 
 Example:
@@ -676,7 +662,6 @@ info. Suggestions:
 2. When editing the Nexus page, add Json Assets under 'Requirements'. Besides reminding players to install it first, it'll also add your content pack to the list on the Json Asset page.
 
 ### Manifest
-
 Here's an example of a JsonAssets manifest. You can find more information about manifest in general [here](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Manifest).
 
 ```
@@ -694,10 +679,9 @@ Here's an example of a JsonAssets manifest. You can find more information about 
 ```
 
 ## Troubleshooting
-
 There are some common errors with easy solutions. Your error may look slightly different but the general principal is the same. For a more in depth FAQ visit [this](https://github.com/paradigmnomad/PPJA/wiki/Troubleshooting) link. FAQ is a work in progress.
 
-### Target Out of Range
+### Target out of range
 ```
    Exception injecting crop sprite for Blue_Mist: System.ArgumentOutOfRangeException: The target area is outside the bounds of the target texture.
    Parameter name: targetArea
@@ -706,7 +690,7 @@ There are some common errors with easy solutions. Your error may look slightly d
 ```
 Solution: The sprite is too big. Double check what size the image needs to be for that specific type of item and crop your image accordingly.
 
-### Exception Injecting Given Key
+### Exception injecting given key
 ```
    Exception injecting cooking recipe for Bulgogi: System.Collections.Generic.KeyNotFoundException: The given key was not present in the dictionary.
    at System.Collections.Generic.Dictionary`2.get_Item(TKey key)
@@ -716,7 +700,7 @@ Solution: The sprite is too big. Double check what size the image needs to be fo
  ```
 Solution: There is something missing from the recipe. This is caused by not installing a dependency or typing in an item ID/Name wrong. Install the dependencies (often listed on the download page) or open up the `.json` file and see if you typed something wrong.
 
-### Exception Injecting Duplicate Key
+### Exception injecting duplicate key
 ```
    Exception injecting cooking recipe for Bacon: System.ArgumentException: An item with the same key has already been added.
    at System.ThrowHelper.ThrowArgumentException(ExceptionResource resource)
@@ -741,14 +725,12 @@ Technical details: Invalid property identifier character: [. Path 'Seasons', lin
 
 Solution: There is something wrong with the JSON. You can see which one is causing the error at the end of the filepath. In this example it's the Berries crop.json on line 8. Correcting these errors will resolve the issue. JA will only show one invalid JSON at a time. You may have to load the game and check the SMAPI log multiple times to remove all invalid JSON errors if you have multiple.
 
-### Previous Clothing Items Gone
-
+### Previous clothing items gone
 Solution: If you have previously used clothing added via Content Patcher it will show as a blank object. Opening and closing the menu can solve this issue.
 
 It is recommended you remove any Content Patcher mods that are now being handled by Json Assets before adding in the Json Assets version to avoid this.
 
-## See Also
-
+## See also
 * [Nexus Page](https://www.nexusmods.com/stardewvalley/mods/1720)
 * [FAQ](https://github.com/paradigmnomad/PPJA/wiki/Troubleshooting)
 * [PPJA Resource Collection](https://www.nexusmods.com/stardewvalley/mods/4590)

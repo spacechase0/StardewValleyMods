@@ -95,11 +95,11 @@ namespace BugNet
 
         private void RegisterCritter(string critterId, Texture2D tex, Rectangle texRect, Func<string> getLocalizedName, Func<int, int, Critter> makeFunc)
         {
-            Mod.CrittersData.Add(critterId, new CritterData()
+            Mod.CrittersData.Add(critterId, new CritterData
             {
-                Texture = new TextureTarget() { Texture = tex, SourceRect = texRect },
+                Texture = new TextureTarget { Texture = tex, SourceRect = texRect },
                 Name = getLocalizedName,
-                MakeFunction = makeFunc,
+                MakeFunction = makeFunc
             });
 
             var texData = new Color[16 * 16];
@@ -107,16 +107,16 @@ namespace BugNet
             var jaTex = new Texture2D(Game1.graphics.GraphicsDevice, 16, 16);
             jaTex.SetData(texData);
 
-            JsonAssets.Mod.instance.RegisterObject(this.ModManifest, new JsonAssets.Data.ObjectData()
+            JsonAssets.Mod.instance.RegisterObject(this.ModManifest, new JsonAssets.Data.ObjectData
             {
                 Name = $"Critter Cage: {getLocalizedName()}",
                 Description = "It's a critter! In a cage!",
-                texture = jaTex,
-                Category = JsonAssets.Data.ObjectData.Category_.MonsterLoot,
+                Texture = jaTex,
+                Category = JsonAssets.Data.ObjectCategory.MonsterLoot,
                 CategoryTextOverride = "Critter",
                 Price = critterId.Contains("Butterfly") ? 50 : 100,
                 ContextTags = new List<string>(new[] { "critter" }),
-                HideFromShippingCollection = true,
+                HideFromShippingCollection = true
             });
         }
 

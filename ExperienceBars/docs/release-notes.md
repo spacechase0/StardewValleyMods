@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.3.0
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* You can now configure the UI colors in `config.json`.
+* Merged the `X` and `Y` config options into `Position`. (If you previously customized the position, you'll need to set it again.)
+
 ## 1.2.2
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

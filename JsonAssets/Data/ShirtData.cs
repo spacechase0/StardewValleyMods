@@ -9,9 +9,13 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class ShirtData : ClothingData
     {
+        /*********
+        ** Accessors
+        *********/
         [JsonIgnore]
-        public Texture2D textureMaleColor;
+        public Texture2D TextureMaleColor { get; set; }
+
         [JsonIgnore]
-        public Texture2D textureFemaleColor;
+        public Texture2D TextureFemaleColor { get; set; }
     }
 }

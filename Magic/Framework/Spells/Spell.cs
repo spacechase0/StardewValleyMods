@@ -34,7 +34,9 @@ namespace Magic.Framework.Spells
 
         public virtual bool CanCast(Farmer player, int level)
         {
-            return player.KnowsSpell(this.FullId, level) && player.GetCurrentMana() >= this.GetManaCost(player, level);
+            return
+                Game1.player.GetSpellBook().KnowsSpell(this.FullId, level)
+                && player.GetCurrentMana() >= this.GetManaCost(player, level);
         }
 
         public virtual string GetTranslatedName()

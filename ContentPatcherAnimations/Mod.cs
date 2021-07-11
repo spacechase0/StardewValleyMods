@@ -41,14 +41,11 @@ namespace ContentPatcherAnimations
     {
         public static Mod Instance;
 
-        public const BindingFlags PublicI = BindingFlags.Public | BindingFlags.Instance;
-        public const BindingFlags PublicS = BindingFlags.Public | BindingFlags.Static;
-        public const BindingFlags PrivateI = BindingFlags.NonPublic | BindingFlags.Instance;
-        public const BindingFlags PrivateS = BindingFlags.NonPublic | BindingFlags.Static;
-
         private StardewModdingAPI.Mod ContentPatcher;
         private readonly PerScreen<ScreenState> ScreenStateImpl = new();
         internal ScreenState ScreenState => this.ScreenStateImpl.Value;
+
+        private IReflectionHelper Reflection => this.Helper.Reflection;
 
         public override void Entry(IModHelper helper)
         {
@@ -85,17 +82,17 @@ namespace ContentPatcherAnimations
             if (this.ContentPatcher == null)
             {
                 var modData = this.Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
-                this.ContentPatcher = (StardewModdingAPI.Mod)modData.GetType().GetProperty("Mod", Mod.PrivateI | Mod.PublicI).GetValue(modData);
+                this.ContentPatcher = this.GetPropertyValueManually<StardewModdingAPI.Mod>(modData, "Mod");
             }
 
             this.ScreenStateImpl.Value ??= new ScreenState();
 
             if (this.ScreenState.CpPatches == null)
             {
-                object screenManagerPerScreen = this.ContentPatcher.GetType().GetField("ScreenManager", Mod.PrivateI).GetValue(this.ContentPatcher);
-                object screenManager = screenManagerPerScreen.GetType().GetProperty("Value").GetValue(screenManagerPerScreen);
-                object patchManager = screenManager.GetType().GetProperty("PatchManager").GetValue(screenManager);
-                this.ScreenStateImpl.Value.CpPatches = (IEnumerable)patchManager.GetType().GetField("Patches", Mod.PrivateI).GetValue(patchManager);
+                object screenManagerPerScreen = this.Reflection.GetField<object>(this.ContentPatcher, "ScreenManager").GetValue();
+                object screenManager = this.GetPropertyValueManually<object>(screenManagerPerScreen, "Value");
+                object patchManager = this.Reflection.GetProperty<object>(screenManager, "PatchManager").GetValue();
+                this.ScreenStateImpl.Value.CpPatches = this.Reflection.GetField<IEnumerable>(patchManager, "Patches").GetValue();
 
                 this.CollectPatches();
             }
@@ -186,6 +183,9 @@ namespace ContentPatcherAnimations
             foreach (var pack in this.ContentPatcher.Helper.ContentPacks.GetOwned())
             {
                 var patches = pack.ReadJsonFile<PatchList>("content.json");
+                if (patches?.Changes == null)
+                    continue;
+
                 foreach (var patch in patches.Changes)
                 {
                     if (patch.AnimationFrameTime > 0 && patch.AnimationFrameCount > 0)
@@ -202,7 +202,7 @@ namespace ContentPatcherAnimations
                         object targetPatch = null;
                         foreach (object cpPatch in this.ScreenState.CpPatches)
                         {
-                            object path = cpPatch.GetType().GetProperty("Path", Mod.PublicI).GetValue(cpPatch);
+                            object path = this.Reflection.GetProperty<object>(cpPatch, "Path").GetValue();
                             if (path.ToString() == pack.Manifest.Name + " > " + patch.LogName)
                             {
                                 targetPatch = cpPatch;
@@ -214,16 +214,20 @@ namespace ContentPatcherAnimations
                             Log.Error("Failed to find patch with name \"" + patch.LogName + "\"!?!?");
                             continue;
                         }
-                        var appliedProp = targetPatch.GetType().GetProperty("IsApplied", Mod.PublicI);
-                        var sourceProp = targetPatch.GetType().GetProperty("FromAsset", Mod.PublicI);
-                        var targetProp = targetPatch.GetType().GetProperty("TargetAsset", Mod.PublicI);
+                        var appliedProp = this.Reflection.GetProperty<bool>(targetPatch, "IsApplied");
+                        var sourceProp = this.Reflection.GetProperty<string>(targetPatch, "FromAsset");
+                        var targetProp = this.Reflection.GetProperty<string>(targetPatch, "TargetAsset");
 
                         data.PatchObj = targetPatch;
-                        data.IsActive = () => (bool)appliedProp.GetValue(targetPatch);
-                        data.SourceFunc = () => pack.LoadAsset<Texture2D>((string)sourceProp.GetValue(targetPatch));
-                        data.TargetFunc = () => this.FindTargetTexture((string)targetProp.GetValue(targetPatch));
+                        data.IsActive = () => appliedProp.GetValue();
+                        data.SourceFunc = () => pack.LoadAsset<Texture2D>(sourceProp.GetValue());
+                        data.TargetFunc = () => this.FindTargetTexture(targetProp.GetValue());
                         data.FromAreaFunc = () => this.GetRectangleFromPatch(targetPatch, "FromArea");
-                        data.ToAreaFunc = () => this.GetRectangleFromPatch(targetPatch, "ToArea", new Rectangle(0, 0, data.FromAreaFunc().Width, data.FromAreaFunc().Height));
+                        data.ToAreaFunc = () =>
+                        {
+                            var fromArea = data.FromAreaFunc();
+                            return this.GetRectangleFromPatch(targetPatch, "ToArea", new Rectangle(0, 0, fromArea.Width, fromArea.Height));
+                        };
 
                         this.ScreenState.AnimatedPatches.Add(patch, data);
                     }
@@ -234,34 +238,54 @@ namespace ContentPatcherAnimations
         private Texture2D FindTargetTexture(string target)
         {
             if (this.Helper.Content.NormalizeAssetName(target) == this.Helper.Content.NormalizeAssetName("TileSheets\\tools"))
-            {
-                return this.Helper.Reflection.GetField<Texture2D>(typeof(Game1), "_toolSpriteSheet").GetValue();
-            }
+                return this.Reflection.GetField<Texture2D>(typeof(Game1), "_toolSpriteSheet").GetValue();
+
             var tex = Game1.content.Load<Texture2D>(target);
             if (tex.GetType().Name == "ScaledTexture2D")
             {
                 Log.Trace("Found ScaledTexture2D from PyTK: " + target);
-                tex = this.Helper.Reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
+                tex = this.Reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
             }
             return tex;
         }
 
         private Rectangle GetRectangleFromPatch(object targetPatch, string rectName, Rectangle defaultTo = default)
         {
-            object rect = targetPatch.GetType().GetField(rectName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(targetPatch);
-            if (rect == null)
-            {
+            object tokenRect = this.Reflection.GetField<object>(targetPatch, rectName).GetValue();
+            if (tokenRect == null)
                 return defaultTo;
-            }
-            var tryGetRectValue = rect.GetType().GetMethod("TryGetRectangle");
 
-            object[] args = new object[] { null, null };
-            if (!((bool)tryGetRectValue.Invoke(rect, args)))
+            object[] args = { null, null }; // out Rectangle rectangle, out string error
+            return this.Reflection.GetMethod(tokenRect, "TryGetRectangle").Invoke<bool>(args)
+                ? (Rectangle)args[0]
+                : Rectangle.Empty;
+        }
+
+        /// <summary>Manually get the value of a property using reflection.</summary>
+        /// <typeparam name="T">The property type.</typeparam>
+        /// <param name="obj">The parent object whose property to get.</param>
+        /// <param name="name">The property name.</param>
+        /// <remarks>This is only needed when reflecting into SMAPI itself; otherwise we should use the more efficient <see cref="Reflection"/> helper.</remarks>
+        private T GetPropertyValueManually<T>(object obj, string name)
+        {
+            try
             {
-                return Rectangle.Empty;
-            }
+                // validate parent
+                if (obj is null)
+                    throw new InvalidOperationException($"Can't get the '{name}' property on a null object.");
 
-            return (Rectangle)args[0];
+                // get property
+                PropertyInfo property = obj.GetType().GetProperty(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                if (property == null)
+                    throw new InvalidOperationException($"Can't find the '{name}' property on the {obj.GetType().FullName} type.");
+
+                // get & cast value
+                return (T)property.GetValue(obj);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed retrieving the '{name}' property from the {obj?.GetType().FullName} type.", ex);
+            }
         }
     }
 }

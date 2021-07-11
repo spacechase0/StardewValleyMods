@@ -33,7 +33,7 @@ namespace JunimosAcceptCash
             if (gmcm != null)
             {
                 gmcm.RegisterModConfig(this.ModManifest, () => this.Config = new Configuration(), () => this.Helper.WriteConfig(this.Config));
-                gmcm.RegisterSimpleOption(this.ModManifest, "Cost Multiplier", "The multiplier for the cost of the items to charge.", () => this.Config.CostMultiplier, (i) => this.Config.CostMultiplier = i);
+                gmcm.RegisterSimpleOption(this.ModManifest, "Cost Multiplier", "The multiplier for the cost of the items to charge.", () => this.Config.CostMultiplier, i => this.Config.CostMultiplier = i);
             }
         }
 

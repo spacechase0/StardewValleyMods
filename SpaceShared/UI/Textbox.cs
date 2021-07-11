@@ -59,7 +59,7 @@ namespace SpaceShared.UI
             // Copied from game code - caret
             string text = this.String;
             Vector2 vector2;
-            for (vector2 = this.Font.MeasureString(text); (double)vector2.X > (double)192; vector2 = this.Font.MeasureString(text))
+            for (vector2 = this.Font.MeasureString(text); vector2.X > 192f; vector2 = this.Font.MeasureString(text))
                 text = text.Substring(1);
             if (DateTime.UtcNow.Millisecond % 1000 >= 500 && this.Selected)
                 b.Draw(Game1.staminaRect, new Rectangle((int)this.Position.X + 16 + (int)vector2.X + 2, (int)this.Position.Y + 8, 4, 32), Game1.textColor);

@@ -11,6 +11,6 @@ namespace Terraforming.Framework
         Water,
         DeepWater,
 
-        Count,
+        Count
     }
 }

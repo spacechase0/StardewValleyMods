@@ -84,7 +84,7 @@ namespace BugNet.Framework
         {
             return new OverheadParrot(new Vector2(x, y))
             {
-                sourceRect = new Rectangle(0, (Game1.random.Next(2) + (blue ? 2 : 0)) * 24, 24, 24),
+                sourceRect = new Rectangle(0, (Game1.random.Next(2) + (blue ? 2 : 0)) * 24, 24, 24)
             };
         }
     }

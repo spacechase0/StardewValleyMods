@@ -9,6 +9,7 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
+using SObject = StardewValley.Object;
 
 namespace BiggerCraftables.Patches
 {
@@ -35,7 +36,7 @@ namespace BiggerCraftables.Patches
         /// <summary>The method to call before <see cref="Utility.playerCanPlaceItemHere"/>.</summary>
         private static bool Before_PlayersCanPlaceItemHere(GameLocation location, Item item, int x, int y, Farmer f, ref bool __result)
         {
-            if (!(item is StardewValley.Object obj && obj.bigCraftable.Value))
+            if (!(item is SObject obj && obj.bigCraftable.Value))
                 return true;
             var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == obj.Name);
             if (entry == null)
@@ -69,7 +70,7 @@ namespace BiggerCraftables.Patches
             {
                 if (item.canBePlacedHere(location, tileLocation))
                 {
-                    if (!((StardewValley.Object)item).isPassable())
+                    if (!((SObject)item).isPassable())
                     {
                         foreach (Farmer farmer in location.farmers)
                         {

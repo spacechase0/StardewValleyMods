@@ -1,19 +1,10 @@
-using System.IO;
-using Magic.Framework.Spells;
 using Microsoft.Xna.Framework;
-using SpaceShared;
 using StardewValley;
 
 namespace Magic.Framework
 {
     internal static class Extensions
     {
-        private static void DataCheck(Farmer player)
-        {
-            if (!Mod.Data.Players.ContainsKey(player.UniqueMultiplayerID))
-                Mod.Data.Players.Add(player.UniqueMultiplayerID, new MultiplayerSaveData.PlayerData());
-        }
-
         public static int GetCurrentMana(this Farmer player)
         {
             return Mod.Mana.GetMana(player);
@@ -34,114 +25,34 @@ namespace Magic.Framework
             Mod.Mana.SetMaxMana(player, newCap);
         }
 
-        public static int GetFreeSpellPoints(this Farmer player)
-        {
-            Extensions.DataCheck(player);
-            return Mod.Data.Players[player.UniqueMultiplayerID].FreePoints;
-        }
-
-        public static void UseSpellPoints(this Farmer player, int amt, bool sync = true)
-        {
-            Extensions.DataCheck(player);
-            Mod.Data.Players[player.UniqueMultiplayerID].FreePoints -= amt;
-            if (player == Game1.player)
-                Mod.Data.SyncMineFull();
-        }
-
+        /// <summary>Get a self-updating cached view of the player's magic metadata.</summary>
         public static SpellBook GetSpellBook(this Farmer player)
         {
-            Extensions.DataCheck(player);
-            return Mod.Data.Players[player.UniqueMultiplayerID].SpellBook;
+            return Magic.GetSpellBook(player);
         }
 
-        public static bool KnowsSpell(this Farmer player, string spellId, int level)
+        /// <summary>Play a local sound in a location at the given pixel position.</summary>
+        /// <param name="location">The location containing the sound.</param>
+        /// <param name="audioName">The audio cue name to play.</param>
+        /// <param name="pixelPosition">The absolute pixel position of the sound within the location, relative to the top-left corner of the map.</param>
+        public static void LocalSoundAtPixel(this GameLocation location, string audioName, Vector2 pixelPosition)
         {
-            int curLevel = player.KnowsSpellLevel(spellId);
-            return curLevel > -1 && curLevel >= level;
-        }
-
-        public static bool KnowsSpell(this Farmer player, Spell spell, int level)
-        {
-            return player.KnowsSpell(spell.FullId, level);
-        }
-
-        public static int KnowsSpellLevel(this Farmer player, string spellId)
-        {
-            return player == Game1.player && Mod.Data != null && player.GetSpellBook().KnownSpells.TryGetValue(spellId, out int level)
-                ? level
-                : -1;
-        }
-
-        public static void LearnSpell(this Farmer player, string spellId, int level, bool free = false)
-        {
-            int known = player.KnowsSpellLevel(spellId);
-            int diff = level - known;
-
-            if (diff <= 0 || player.GetFreeSpellPoints() < diff && !free)
+            if (location == null)
                 return;
 
-            Log.Debug($"Learning spell {spellId}, level {level + 1}");
-            if (!free)
-                player.UseSpellPoints(diff, false);
-            player.GetSpellBook().KnownSpells[spellId] = level;
-
-            Mod.Data.SyncMineFull();
+            Vector2 tile = new(
+                x: (int)(pixelPosition.X / Game1.tileSize),
+                y: (int)(pixelPosition.Y / Game1.tileSize)
+            );
+            location.localSoundAt(audioName, tile);
         }
 
-        public static void LearnSpell(this Farmer player, Spell spell, int level, bool free = false)
+        /// <summary>Play a local sound centered on the given player.</summary>
+        /// <param name="player">The player on which to center the sound.</param>
+        /// <param name="audioName">The audio cue name to play.</param>
+        public static void LocalSound(this Farmer player, string audioName)
         {
-            player.LearnSpell(spell.FullId, level, free);
-        }
-
-        public static void ForgetSpell(this Farmer player, string spellId, int level, bool sync = true)
-        {
-            int known = player.KnowsSpellLevel(spellId);
-            if (level > known)
-                return;
-            int diff = (known + 1) - level;
-
-            Log.Debug($"Forgetting spell {spellId}, level {level + 1}");
-            if (level == 0)
-                Game1.player.GetSpellBook().KnownSpells.Remove(spellId);
-            else if (Game1.player.GetSpellBook().KnownSpells[spellId] >= level)
-                Game1.player.GetSpellBook().KnownSpells[spellId] = level - 1;
-            player.UseSpellPoints(-diff, false);
-
-            Mod.Data.SyncMineFull();
-        }
-
-        public static void ForgetSpell(this Farmer player, Spell spell, int level, bool sync = true)
-        {
-            player.ForgetSpell(spell.FullId, level, sync);
-        }
-
-        public static bool CanCastSpell(this Farmer player, Spell spell, int level)
-        {
-            return spell.CanCast(player, level);
-        }
-
-        public static IActiveEffect CastSpell(this Farmer player, string spellId, int level, int x = int.MinValue, int y = int.MinValue)
-        {
-            return player.CastSpell(SpellBook.Get(spellId), level, x, y);
-        }
-
-        public static IActiveEffect CastSpell(this Farmer player, Spell spell, int level, int x = int.MinValue, int y = int.MinValue)
-        {
-            if (player == Game1.player)
-            {
-                using var stream = new MemoryStream();
-                using var writer = new BinaryWriter(stream);
-                writer.Write(spell.FullId);
-                writer.Write(level);
-                writer.Write(Game1.getMouseX() + Game1.viewport.X);
-                writer.Write(Game1.getMouseY() + Game1.viewport.Y);
-                SpaceCore.Networking.BroadcastMessage(Magic.MsgCast, stream.ToArray());
-            }
-            Point pos = new Point(x, y);
-            if (x == int.MinValue && y == int.MinValue)
-                pos = new Point(Game1.getMouseX() + Game1.viewport.X, Game1.getMouseY() + Game1.viewport.Y);
-
-            return spell.OnCast(player, level, pos.X, pos.Y);
+            player?.currentLocation.LocalSoundAtPixel(audioName, player.Position);
         }
     }
 }

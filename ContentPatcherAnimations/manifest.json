@@ -1,7 +1,7 @@
 ﻿{
     "Name": "Content Patcher Animations",
     "Author": "spacechase0",
-    "Version": "1.1.10",
+    "Version": "1.1.11",
     "MinimumApiVersion": "3.9.5",
     "Description": "Lets Content Patcher packs animate textures.",
     "UniqueID": "spacechase0.ContentPatcherAnimations",

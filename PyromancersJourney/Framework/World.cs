@@ -119,7 +119,7 @@ namespace PyromancersJourney.Framework
             var oldTargets = device.GetRenderTargets();
             device.SetRenderTarget(this.Target);
             var oldDepth = device.DepthStencilState;
-            device.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
+            device.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
             device.Clear(this.Map.Sky);
 
             var oldRast = device.RasterizerState;

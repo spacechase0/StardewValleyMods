@@ -6,16 +6,27 @@ namespace ManaBar.Framework
 {
     internal static class Command
     {
+        /*********
+        ** Fields
+        *********/
         private static readonly Dictionary<string, Action<string[]>> Commands = new();
 
-        internal static void Register(string name, Action<string[]> callback)
+
+        /*********
+        ** Public methods
+        *********/
+        public static void Register(string name, Action<string[]> callback)
         {
             // TODO: Load documentation from a file.
-            Mod.Instance.Helper.ConsoleCommands.Add(name, "TO BE IMPLEMENTED", Command.DoCommand);
+            Mod.Instance.Helper.ConsoleCommands.Add(name, "TO BE IMPLEMENTED", Command.HandleCommand);
             Command.Commands.Add(name, callback);
         }
 
-        private static void DoCommand(string cmd, string[] args)
+
+        /*********
+        ** Private methods
+        *********/
+        private static void HandleCommand(string cmd, string[] args)
         {
             try
             {

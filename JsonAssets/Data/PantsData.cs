@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -12,8 +13,11 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class PantsData : DataSeparateTextureIndex
     {
+        /*********
+        ** Accessors
+        *********/
         [JsonIgnore]
-        public Texture2D texture;
+        public Texture2D Texture { get; set; }
 
         public string Description { get; set; }
 
@@ -24,13 +28,17 @@ namespace JsonAssets.Data
 
         public string Metadata { get; set; } = "";
 
-        public Dictionary<string, string> NameLocalization = new();
-        public Dictionary<string, string> DescriptionLocalization = new();
+        public Dictionary<string, string> NameLocalization { get; set; } = new();
+        public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
+
+        /*********
+        ** Public methods
+        *********/
         public string LocalizedName()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.NameLocalization != null && this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
+            return this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
                 ? localization
                 : this.Name;
         }
@@ -38,17 +46,37 @@ namespace JsonAssets.Data
         public string LocalizedDescription()
         {
             var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.DescriptionLocalization != null && this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
+            return this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
                 ? localization
                 : this.Description;
         }
 
-        public int GetClothingId() { return this.Id; }
-        public int GetTextureIndex() { return this.textureIndex; }
+        public int GetClothingId()
+        {
+            return this.Id;
+        }
+
+        public int GetTextureIndex()
+        {
+            return this.TextureIndex;
+        }
 
         internal string GetClothingInformation()
         {
             return $"{this.Name}/{this.LocalizedName()}/{this.LocalizedDescription()}/{this.GetTextureIndex()}/-1/{this.Price}/{this.DefaultColor.R} {this.DefaultColor.G} {this.DefaultColor.B}/{this.Dyeable}/Pants/{this.Metadata}";
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.NameLocalization ??= new();
+            this.DescriptionLocalization ??= new();
         }
     }
 }

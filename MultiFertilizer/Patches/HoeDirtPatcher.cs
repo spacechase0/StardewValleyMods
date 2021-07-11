@@ -142,13 +142,13 @@ namespace MultiFertilizer.Patches
             if (!__instance.modData.TryGetValue(Mod.KeySpeed, out string rawValue))
                 return;
 
-            int index = 0;
-            switch (int.Parse(rawValue))
+            int index = int.Parse(rawValue) switch
             {
-                case 1: index = 465; break;
-                case 2: index = 466; break;
-                case 3: index = 918; break;
-            }
+                1 => 465,
+                2 => 466,
+                3 => 918,
+                _ => 0
+            };
 
             __instance.fertilizer.Value = index;
         }
@@ -190,13 +190,13 @@ namespace MultiFertilizer.Patches
             if (!__instance.modData.TryGetValue(Mod.KeyRetain, out string rawValue))
                 return;
 
-            int index = 0;
-            switch (int.Parse(rawValue))
+            int index = int.Parse(rawValue) switch
             {
-                case 1: index = 370; break;
-                case 2: index = 371; break;
-                case 3: index = 920; break;
-            }
+                1 => 370,
+                2 => 371,
+                3 => 920,
+                _ => 0
+            };
 
             __instance.fertilizer.Value = index;
         }
@@ -224,39 +224,39 @@ namespace MultiFertilizer.Patches
             if (__instance.modData.TryGetValue(Mod.KeyFert, out string rawFertValue))
             {
                 int level = int.Parse(rawFertValue);
-                int index = 0;
-                switch (level)
+                int index = level switch
                 {
-                    case 1: index = 368; break;
-                    case 2: index = 369; break;
-                    case 3: index = 919; break;
-                }
+                    1 => 368,
+                    2 => 369,
+                    3 => 919,
+                    _ => 0
+                };
                 if (index != 0)
                     fertilizers.Add(index);
             }
             if (__instance.modData.TryGetValue(Mod.KeyRetain, out string rawRetainerValue))
             {
                 int level = int.Parse(rawRetainerValue);
-                int index = 0;
-                switch (level)
+                int index = level switch
                 {
-                    case 1: index = 370; break;
-                    case 2: index = 371; break;
-                    case 3: index = 920; break;
-                }
+                    1 => 370,
+                    2 => 371,
+                    3 => 920,
+                    _ => 0
+                };
                 if (index != 0)
                     fertilizers.Add(index);
             }
             if (__instance.modData.TryGetValue(Mod.KeySpeed, out string rawSpeedValue))
             {
                 int level = int.Parse(rawSpeedValue);
-                int index = 0;
-                switch (level)
+                int index = level switch
                 {
-                    case 1: index = 465; break;
-                    case 2: index = 466; break;
-                    case 3: index = 918; break;
-                }
+                    1 => 465,
+                    2 => 466,
+                    3 => 918,
+                    _ => 0
+                };
                 if (index != 0)
                     fertilizers.Add(index);
             }
@@ -264,34 +264,18 @@ namespace MultiFertilizer.Patches
             {
                 if (fertilizer != 0)
                 {
-                    int fertilizerIndex = 0;
-                    switch (fertilizer)
+                    int fertilizerIndex = fertilizer switch
                     {
-                        case 369:
-                            fertilizerIndex = 1;
-                            break;
-                        case 370:
-                            fertilizerIndex = 3;
-                            break;
-                        case 371:
-                            fertilizerIndex = 4;
-                            break;
-                        case 920:
-                            fertilizerIndex = 5;
-                            break;
-                        case 465:
-                            fertilizerIndex = 6;
-                            break;
-                        case 466:
-                            fertilizerIndex = 7;
-                            break;
-                        case 918:
-                            fertilizerIndex = 8;
-                            break;
-                        case 919:
-                            fertilizerIndex = 2;
-                            break;
-                    }
+                        369 => 1,
+                        370 => 3,
+                        371 => 4,
+                        920 => 5,
+                        465 => 6,
+                        466 => 7,
+                        918 => 8,
+                        919 => 2,
+                        _ => 0
+                    };
                     spriteBatch.Draw(Game1.mouseCursors, pos, new Rectangle(173 + fertilizerIndex / 3 * 16, 462 + fertilizerIndex % 3 * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1.9E-08f);
                 }
             }

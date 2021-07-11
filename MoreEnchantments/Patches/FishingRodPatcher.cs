@@ -11,6 +11,7 @@ using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
 using StardewValley.Tools;
+using SObject = StardewValley.Object;
 
 namespace MoreEnchantments.Patches
 {
@@ -102,11 +103,11 @@ namespace MoreEnchantments.Patches
         }
 
         /// <summary>The method to call before <see cref="FishingRod.attach"/>.</summary>
-        private static bool Before_Attach(FishingRod __instance, StardewValley.Object o, ref StardewValley.Object __result)
+        private static bool Before_Attach(FishingRod __instance, SObject o, ref SObject __result)
         {
-            if (o != null && o.Category == -21 && __instance.UpgradeLevel > 1)
+            if (o?.Category == -21 && __instance.UpgradeLevel > 1)
             {
-                StardewValley.Object tmp = __instance.attachments[0];
+                SObject tmp = __instance.attachments[0];
                 if (tmp != null && tmp.canStackWith(o))
                 {
                     tmp.Stack = o.addToStack(tmp);
@@ -120,7 +121,7 @@ namespace MoreEnchantments.Patches
                 __result = tmp;
                 return false;
             }
-            if (o != null && o.Category == -22 && __instance.UpgradeLevel > 2)
+            if (o?.Category == -22 && __instance.UpgradeLevel > 2)
             {
                 // Rewrote this portion
                 bool hasEnchant = __instance.hasEnchantmentOfType<MoreLuresEnchantment>();
@@ -149,7 +150,7 @@ namespace MoreEnchantments.Patches
             {
                 if (__instance.attachments[0] != null)
                 {
-                    StardewValley.Object result2 = __instance.attachments[0];
+                    SObject result2 = __instance.attachments[0];
                     __instance.attachments[0] = null;
                     Game1.playSound("dwop");
                     __result = result2;
@@ -157,7 +158,7 @@ namespace MoreEnchantments.Patches
                 }
                 if (__instance.attachments[2] != null)
                 {
-                    StardewValley.Object result3 = __instance.attachments[2];
+                    SObject result3 = __instance.attachments[2];
                     __instance.attachments[2] = null;
                     Game1.playSound("dwop");
                     __result = result3;
@@ -165,7 +166,7 @@ namespace MoreEnchantments.Patches
                 }
                 if (__instance.attachments[1] != null)
                 {
-                    StardewValley.Object result3 = __instance.attachments[1];
+                    SObject result3 = __instance.attachments[1];
                     __instance.attachments[1] = null;
                     Game1.playSound("dwop");
                     __result = result3;

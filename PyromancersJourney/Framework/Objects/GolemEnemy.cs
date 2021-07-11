@@ -18,7 +18,7 @@ namespace PyromancersJourney.Framework.Objects
             Glow,
             Shoot,
             Immune,
-            Summon,
+            Summon
         }
         private AnimState State = AnimState.Glow;
         private int Frame;
@@ -56,7 +56,7 @@ namespace PyromancersJourney.Framework.Objects
 
         public override void Hurt(int amt)
         {
-            if (this.State == AnimState.Immune && this.Frame > 3 && this.Frame < 11)
+            if (this.State == AnimState.Immune && this.Frame is > 3 and < 11)
             {
                 Game1.playSound("crit");
                 return;

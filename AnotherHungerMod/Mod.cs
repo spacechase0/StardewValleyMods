@@ -8,6 +8,7 @@ using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using SObject = StardewValley.Object;
 
 namespace AnotherHungerMod
 {
@@ -15,11 +16,11 @@ namespace AnotherHungerMod
     {
         public static Mod Instance;
         public static Configuration Config;
-        internal static SaveData Data;
-
-        public const string MsgHungerData = "HungerData";
 
         private Texture2D HungerBar;
+
+        /// <summary>Handles migrating legacy data for a save file.</summary>
+        private LegacyDataMigrator LegacyDataMigrator;
 
         public override void Entry(IModHelper helper)
         {
@@ -28,6 +29,7 @@ namespace AnotherHungerMod
 
             Mod.Config = helper.ReadConfig<Configuration>();
             this.HungerBar = helper.Content.Load<Texture2D>("assets/hungerbar.png");
+            this.LegacyDataMigrator = new LegacyDataMigrator(helper.Data, this.Monitor);
 
             helper.ConsoleCommands.Add("player_addfullness", "Add to your fullness", this.Commands);
 
@@ -39,8 +41,6 @@ namespace AnotherHungerMod
             helper.Events.GameLoop.UpdateTicked += this.AfterTick;
             helper.Events.GameLoop.TimeChanged += this.TimeChanged;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
-            helper.Events.Multiplayer.PeerContextReceived += this.OnPeerContextReceived;
-            helper.Events.Multiplayer.ModMessageReceived += this.OnModMessageReceived;
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -52,8 +52,8 @@ namespace AnotherHungerMod
                 capi.RegisterSimpleOption(this.ModManifest, "Fullness UI (X)", "The X position of the fullness UI.", () => Mod.Config.FullnessUiX, (int val) => Mod.Config.FullnessUiX = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Fullness UI (Y)", "The Y position of the fullness UI.", () => Mod.Config.FullnessUiY, (int val) => Mod.Config.FullnessUiY = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Max Fullness", "Maximum amount of fullness you can have.", () => Mod.Config.MaxFullness, (int val) => Mod.Config.MaxFullness = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Edibility Multiplier", "A multiplier for the amount of fullness you get, based on the food's edibility.", () => (float)Mod.Config.EdibilityMultiplier, (float val) => Mod.Config.EdibilityMultiplier = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Fullness Drain", "The amount of fullness to drain every 10 minutes in-game.", () => (float)Mod.Config.DrainPer10Min, (float val) => Mod.Config.DrainPer10Min = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Edibility Multiplier", "A multiplier for the amount of fullness you get, based on the food's edibility.", () => Mod.Config.EdibilityMultiplier, (float val) => Mod.Config.EdibilityMultiplier = val);
+                capi.RegisterSimpleOption(this.ModManifest, "Fullness Drain", "The amount of fullness to drain every 10 minutes in-game.", () => Mod.Config.DrainPer10Min, (float val) => Mod.Config.DrainPer10Min = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Positive Buff Threshold", "The amount of fullness you need for positive buffs to apply.", () => Mod.Config.PositiveBuffThreshold, (int val) => Mod.Config.PositiveBuffThreshold = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Negative Buff Threshold", "The amount of fullness you need before negative buffs apply.", () => Mod.Config.NegativeBuffThreshold, (int val) => Mod.Config.NegativeBuffThreshold = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Starvation Damage", "The amount of starvation damage taken every 10 minutes when you have no fullness.", () => Mod.Config.StarvationDamagePer10Min, (int val) => Mod.Config.StarvationDamagePer10Min = val);
@@ -68,7 +68,7 @@ namespace AnotherHungerMod
                 if (args.Length != 1)
                     Log.Info("Usage: player_addfullness <amt>");
                 else
-                    Game1.player.UseFullness(-double.Parse(args[0]));
+                    Game1.player.UseFullness(-float.Parse(args[0]));
             }
         }
 
@@ -84,7 +84,7 @@ namespace AnotherHungerMod
             if (Game1.player.GetFullness() > 0)
             {
                 Rectangle targetArea = new Rectangle(3, 13, 6, 41);
-                float perc = (float)(Game1.player.GetFullness() / Game1.player.GetMaxFullness());
+                float perc = Game1.player.GetFullness() / Game1.player.GetMaxFullness();
                 int h = (int)(targetArea.Height * perc);
                 targetArea.Y += targetArea.Height - h;
                 targetArea.Height = h;
@@ -109,7 +109,7 @@ namespace AnotherHungerMod
             if (sender != Game1.player)
                 return;
 
-            int foodVal = (int)((Game1.player.itemToEat as StardewValley.Object).Edibility * Mod.Config.EdibilityMultiplier);
+            int foodVal = (int)((Game1.player.itemToEat as SObject).Edibility * Mod.Config.EdibilityMultiplier);
             Log.Trace("Player ate food for " + foodVal + " fullness");
             Game1.player.UseFullness(-foodVal);
         }
@@ -121,7 +121,7 @@ namespace AnotherHungerMod
 
             if (e.Npc == Game1.player.getSpouse())
             {
-                if (e.Gift.Category == StardewValley.Object.CookingCategory)
+                if (e.Gift.Category == SObject.CookingCategory)
                 {
                     Log.Trace("Player gave spouse a meal");
                     Game1.player.SetFedSpouse(true);
@@ -206,34 +206,10 @@ namespace AnotherHungerMod
 
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            if (Context.IsMainPlayer)
-            {
-                Mod.Data = this.Helper.Data.ReadSaveData<SaveData>($"spacechase0.AnotherHungerMod.{Game1.player.UniqueMultiplayerID}") ?? new SaveData();
-            }
-        }
-
-        private void OnPeerContextReceived(object sender, PeerContextReceivedEventArgs e)
-        {
-            if (!Game1.IsServer)
+            if (!Context.IsMainPlayer)
                 return;
-            //Log.debug($"Sending hunger data to {e.Peer.PlayerID}");
-            var data = this.Helper.Data.ReadSaveData<SaveData>($"spacechase0.AnotherHungerMod.{e.Peer.PlayerID}") ?? new SaveData();
-            this.Helper.Multiplayer.SendMessage(data, Mod.MsgHungerData, null, new[] { e.Peer.PlayerID });
-        }
 
-        private void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e)
-        {
-            if (e.FromModID == this.ModManifest.UniqueID && e.Type == Mod.MsgHungerData)
-            {
-                //Log.debug($"Got hunger data from {e.FromPlayerID}");
-                var data = e.ReadAs<SaveData>();
-                if (Context.IsMainPlayer)
-                {
-                    this.Helper.Data.WriteSaveData<SaveData>($"spacechase0.AnotherHungerMod.{e.FromPlayerID}", data);
-                }
-                else
-                    Mod.Data = data;
-            }
+            this.LegacyDataMigrator.OnSaveLoaded();
         }
     }
 }

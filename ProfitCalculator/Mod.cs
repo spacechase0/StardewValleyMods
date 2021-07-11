@@ -90,10 +90,10 @@ namespace ProfitCalculator
                     profit = (value * harvests * avgPerHarvest) - cost;
                 }
 
-                var data = new ProfitData()
+                var data = new ProfitData
                 {
                     Profit = profit,
-                    Crop = name,
+                    Crop = name
                 };
                 profits.Add(data);
             }

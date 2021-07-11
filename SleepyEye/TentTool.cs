@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using PyTK.CustomElementHandler;
 using StardewModdingAPI;
 using StardewValley;
-using SFarmer = StardewValley.Farmer;
+using SObject = StardewValley.Object;
 
 namespace SleepyEye
 {
@@ -64,7 +64,7 @@ namespace SleepyEye
         }
 
         /// <inheritdoc />
-        public override bool beginUsing(GameLocation location, int x, int y, SFarmer who)
+        public override bool beginUsing(GameLocation location, int x, int y, Farmer who)
         {
             if (!this.IsSaving)
             {
@@ -77,7 +77,7 @@ namespace SleepyEye
         }
 
         /// <inheritdoc />
-        public override bool onRelease(GameLocation location, int x, int y, SFarmer who)
+        public override bool onRelease(GameLocation location, int x, int y, Farmer who)
         {
             if (this.IsUsing && !this.IsSaving)
                 this.CancelUse(who);
@@ -85,7 +85,7 @@ namespace SleepyEye
             return true;
         }
 
-        public override void tickUpdate(GameTime time, SFarmer who)
+        public override void tickUpdate(GameTime time, Farmer who)
         {
             // cancel save mode
             if (this.IsSaving)
@@ -200,7 +200,7 @@ namespace SleepyEye
         /// <inheritdoc />
         public object getReplacement()
         {
-            return new StardewValley.Object();
+            return new SObject();
         }
 
         public Dictionary<string, string> getAdditionalSaveData()

@@ -1,24 +1,24 @@
-using System;
 using StardewValley;
 
 namespace AnotherHungerMod.Framework
 {
     internal static class Extensions
     {
-        public static double GetFullness(this Farmer player)
+        public static float GetFullness(this Farmer player)
         {
             if (player != Game1.player)
                 return -1;
-            return Mod.Data.Fullness;
+
+            return ModDataManager.GetFullness(player);
         }
 
-        public static void UseFullness(this Farmer player, double amt)
+        public static void UseFullness(this Farmer player, float amt)
         {
             if (player != Game1.player)
                 return;
 
-            Mod.Data.Fullness = Math.Max(0, Math.Min(Mod.Data.Fullness - amt, player.GetMaxFullness()));
-            Mod.Data.SyncToHost();
+            float fullness = ModDataManager.GetFullness(player);
+            ModDataManager.SetFullness(player, fullness - amt);
         }
 
         public static int GetMaxFullness(this Farmer player)
@@ -28,13 +28,12 @@ namespace AnotherHungerMod.Framework
 
         public static bool HasFedSpouse(this Farmer player)
         {
-            return Mod.Data.FedSpouseMeal;
+            return ModDataManager.GetHasFedSpouse(player);
         }
 
         public static void SetFedSpouse(this Farmer player, bool fed)
         {
-            Mod.Data.FedSpouseMeal = fed;
-            Mod.Data.SyncToHost();
+            ModDataManager.SetHasFedSpouse(player, fed);
         }
     }
 }

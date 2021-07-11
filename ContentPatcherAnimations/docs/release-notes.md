@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.1.11
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* Improved performance.
+* Fixed error if a content pack has no `Changes` field (e.g. Stardew Valley Expanded's Grampleton Fields).
+
 ## 1.1.10
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

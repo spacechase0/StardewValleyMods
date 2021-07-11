@@ -9,17 +9,17 @@ namespace Magic.Framework.Schools
 
         public override Spell[] GetSpellsTier1()
         {
-            return new[] { SpellBook.Get("toil:cleardebris"), SpellBook.Get("toil:till") };
+            return new[] { SpellManager.Get("toil:cleardebris"), SpellManager.Get("toil:till") };
         }
 
         public override Spell[] GetSpellsTier2()
         {
-            return new[] { SpellBook.Get("toil:water") };
+            return new[] { SpellManager.Get("toil:water") };
         }
 
         public override Spell[] GetSpellsTier3()
         {
-            return new[] { SpellBook.Get("toil:blink") };
+            return new[] { SpellManager.Get("toil:blink") };
         }
     }
 }

@@ -99,26 +99,26 @@ namespace LuckSkill.Patches
 
             if (skillLevel == 5)
             {
-                if (__instance.professions.Contains(Mod.ProfessionDailyLuck))
-                    __result = Mod.ProfessionDailyLuck;
-                else if (__instance.professions.Contains(Mod.ProfessionMoreQuests))
-                    __result = Mod.ProfessionMoreQuests;
+                if (__instance.professions.Contains(Mod.FortunateProfessionId))
+                    __result = Mod.FortunateProfessionId;
+                else if (__instance.professions.Contains(Mod.PopularHelperProfessionId))
+                    __result = Mod.PopularHelperProfessionId;
             }
             else if (skillLevel == 10)
             {
-                if (__instance.professions.Contains(Mod.ProfessionDailyLuck))
+                if (__instance.professions.Contains(Mod.FortunateProfessionId))
                 {
-                    if (__instance.professions.Contains(Mod.ProfessionChanceMaxLuck))
-                        __result = Mod.ProfessionChanceMaxLuck;
-                    else if (__instance.professions.Contains(Mod.ProfessionNoBadLuck))
-                        __result = Mod.ProfessionNoBadLuck;
+                    if (__instance.professions.Contains(Mod.LuckyProfessionId))
+                        __result = Mod.LuckyProfessionId;
+                    else if (__instance.professions.Contains(Mod.UnUnluckyProfessionId))
+                        __result = Mod.UnUnluckyProfessionId;
                 }
-                else if (__instance.professions.Contains(Mod.ProfessionMoreQuests))
+                else if (__instance.professions.Contains(Mod.PopularHelperProfessionId))
                 {
-                    if (__instance.professions.Contains(Mod.ProfessionNightlyEvents))
-                        __result = Mod.ProfessionNightlyEvents;
-                    else if (__instance.professions.Contains(Mod.ProfessionJunimoHelp))
-                        __result = Mod.ProfessionJunimoHelp;
+                    if (__instance.professions.Contains(Mod.ShootingStarProfessionId))
+                        __result = Mod.ShootingStarProfessionId;
+                    else if (__instance.professions.Contains(Mod.SpiritChildProfessionId))
+                        __result = Mod.SpiritChildProfessionId;
                 }
             }
         }

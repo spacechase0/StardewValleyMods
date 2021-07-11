@@ -8,6 +8,7 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
+using SObject = StardewValley.Object;
 
 namespace JsonAssets.Patches
 {
@@ -41,12 +42,12 @@ namespace JsonAssets.Patches
         {
             try
             {
-                if (__instance is StardewValley.Object obj)
+                if (__instance is SObject obj)
                 {
                     if (!obj.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(obj.ParentSheetIndex))
                     {
                         var objData = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == obj.ParentSheetIndex);
-                        if (objData != null && !objData.CanTrash)
+                        if (objData?.CanTrash == false)
                             __result = false;
                     }
                 }
@@ -62,12 +63,12 @@ namespace JsonAssets.Patches
         {
             try
             {
-                if (__instance is StardewValley.Object obj)
+                if (__instance is SObject obj)
                 {
                     if (!obj.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(obj.ParentSheetIndex))
                     {
                         var objData = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == obj.ParentSheetIndex);
-                        if (objData != null && !objData.CanTrash)
+                        if (objData?.CanTrash == false)
                             __result = false;
                     }
                 }
@@ -76,7 +77,7 @@ namespace JsonAssets.Patches
                     if (Mod.instance.WeaponIds.Values.Contains(weapon.ParentSheetIndex))
                     {
                         var weaponData = new List<WeaponData>(Mod.instance.Weapons).Find(wd => wd.GetWeaponId() == weapon.ParentSheetIndex);
-                        if (weaponData != null && !weaponData.CanTrash)
+                        if (weaponData?.CanTrash == false)
                             __result = false;
                     }
                 }

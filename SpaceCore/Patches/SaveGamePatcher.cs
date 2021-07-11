@@ -11,6 +11,7 @@ using Harmony;
 using Newtonsoft.Json;
 using Spacechase.Shared.Harmony;
 using SpaceCore.Framework;
+using SpaceCore.Framework.Serialization;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
@@ -263,43 +264,43 @@ namespace SpaceCore.Patches
             return SpaceCore.ModTypes.SingleOrDefault(t => t.GetCustomAttribute<XmlTypeAttribute>().TypeName == xmlType);
         }
 
-        private static void RestoreModNodes(XmlDocument doc, XmlNode node, List<KeyValuePair<string, string>> modNodes, string currPath = "")
+        /// <summary>Recursively restore custom mod types in the save XML.</summary>
+        /// <param name="doc">The XML document to scan.</param>
+        /// <param name="node">The subtree node from which to scan.</param>
+        /// <param name="modNodes">The custom mod elements to insert.</param>
+        /// <param name="curPath">The <see cref="OptimizedModNode.Path"/> value for the current subtree root.</param>
+        private static void RestoreModNodes(XmlDocument doc, XmlNode node, OptimizedModNodeList modNodes, string curPath)
         {
-            var processed = new List<KeyValuePair<string, string>>();
-            foreach (var modNode in modNodes)
+            // skip subtree if it doesn't contain any mod nodes
+            if (!modNodes.AncestorPaths.Contains(curPath))
+                return;
+
+            // insert elements into this node
+            if (modNodes.ModNodesByParent.TryGetValue(curPath, out OptimizedModNode[] nodes))
             {
-                if (!modNode.Key.StartsWith($"{currPath}/"))
-                    continue;
-
-                string idxStr = modNode.Key.Substring(currPath.Length + 1);
-                if (!idxStr.Contains('/'))
+                foreach (OptimizedModNode modNode in nodes)
                 {
+                    // load XML element to insert
                     var newDoc = new XmlDocument();
-                    newDoc.LoadXml(modNode.Value);
+                    newDoc.LoadXml(modNode.XmlNode);
 
-                    var attr = newDoc.DocumentElement.Attributes["xsi:type"];
+                    // skip if the mod isn't installed
+                    XmlAttribute attr = newDoc.DocumentElement.Attributes["xsi:type"];
                     if (attr == null || SaveGamePatcher.FindModType(attr.Value) == null)
                         continue;
 
+                    // insert mod node
                     var newNode = doc.ImportNode(newDoc.DocumentElement, true);
-
-                    int idx = int.Parse(idxStr);
-                    if (idx == 0)
+                    if (modNode.Index == 0)
                         node.PrependChild(newNode);
                     else
-                        node.InsertAfter(newNode, node.ChildNodes[idx - 1]);
-
-                    processed.Add(modNode);
+                        node.InsertAfter(newNode, node.ChildNodes[modNode.Index - 1]);
                 }
             }
-            foreach (var p in processed)
-                modNodes.Remove(p);
 
+            // scan children
             for (int i = 0; i < node.ChildNodes.Count; ++i)
-            {
-                //Log.trace( "child " + i + "/" + node.ChildNodes.Count );
-                SaveGamePatcher.RestoreModNodes(doc, node.ChildNodes[i] as XmlNode, modNodes, $"{currPath}/{i}");
-            }
+                SaveGamePatcher.RestoreModNodes(doc: doc, node: node.ChildNodes[i], modNodes: modNodes, curPath: $"{curPath}/{i}");
         }
 
         private static object DeserializeProxy(XmlSerializer serializer, Stream stream, string farmerPath, bool fromSaveGame)
@@ -322,12 +323,9 @@ namespace SpaceCore.Patches
                 filePath = Path.Combine(Path.GetDirectoryName(farmerPath), SaveGamePatcher.SerializerManager.FarmerFilename);
 
             // restore mod nodes
-            if (File.Exists(filePath))
-            {
-                var modNodes = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(File.ReadAllText(filePath));
-                if (modNodes != null)
-                    SaveGamePatcher.RestoreModNodes(doc, doc, modNodes, "/1"); // <?xml ... ?> is 1
-            }
+            OptimizedModNodeList modNodes = OptimizedModNodeList.LoadFromFile(filePath);
+            if (modNodes.ModNodes.Any())
+                SaveGamePatcher.RestoreModNodes(doc, doc, modNodes, "/1"); // <?xml ... ?> is 1
 
             // deserialize XML
             using var reader = new XmlTextReader(new StringReader(doc.OuterXml));
@@ -346,7 +344,7 @@ namespace SpaceCore.Patches
                     var child = node.ChildNodes[i];
                     if (SaveGamePatcher.FindAndRemoveModNodes(child, modNodes, $"{currPath}/{i}"))
                     {
-                        modNodes.Insert(0, new KeyValuePair<string, string>($"{currPath}/{i}", child.OuterXml));
+                        modNodes.Add(new KeyValuePair<string, string>($"{currPath}/{i}", child.OuterXml));
                         node.RemoveChild(child);
                     }
                 }
@@ -365,7 +363,7 @@ namespace SpaceCore.Patches
         {
             //Log.trace( "Start serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
             using var ms = new MemoryStream();
-            using var writer = XmlWriter.Create(ms, new XmlWriterSettings() { CloseOutput = false });
+            using var writer = XmlWriter.Create(ms, new XmlWriterSettings { CloseOutput = false });
 
             serializer.Serialize(writer, obj);
             XmlDocument doc = new XmlDocument();

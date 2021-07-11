@@ -6,6 +6,7 @@ using PyTK.CustomElementHandler;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
+using SObject = StardewValley.Object;
 
 namespace MoreGrassStarters
 {
@@ -64,20 +65,13 @@ namespace MoreGrassStarters
                 switch (this.grassType.Value)
                 {
                     case 1:
-                        switch (Game1.currentSeason)
+                        color = Game1.currentSeason switch
                         {
-                            case "spring":
-                                color = new Color(60, 180, 58);
-                                break;
-
-                            case "summer":
-                                color = new Color(110, 190, 24);
-                                break;
-
-                            case "fall":
-                                color = new Color(219, 102, 58);
-                                break;
-                        }
+                            "spring" => new Color(60, 180, 58),
+                            "summer" => new Color(110, 190, 24),
+                            "fall" => new Color(219, 102, 58),
+                            _ => color
+                        };
                         break;
                     case 2:
                         color = new Color(148, 146, 71);
@@ -112,7 +106,7 @@ namespace MoreGrassStarters
                             layerDepth = (float)(1.0 - Game1.random.Next(100) / 10000.0),
                             delayBeforeAnimationStart = Game1.random.Next(350)
                         });
-                        Game1.addHUDMessage(new HUDMessage("Hay", 1, true, Color.LightGoldenrodYellow, new StardewValley.Object(178, 1)));
+                        Game1.addHUDMessage(new HUDMessage("Hay", 1, true, Color.LightGoldenrodYellow, new SObject(178, 1)));
                     }
                     return true;
                 }

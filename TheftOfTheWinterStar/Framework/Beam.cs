@@ -95,7 +95,7 @@ namespace TheftOfTheWinterStar.Framework
                 new(109, 180, 181),
                 new(194, 238, 229),
                 new(232, 255, 244),
-                Color.White,
+                Color.White
             };
 
             int minW = 2, maxW = 12;

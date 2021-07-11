@@ -295,30 +295,17 @@ namespace MoreRings.Framework
             }
             if (who.professions.Contains(19) && r.NextDouble() < 0.5)
             {
-                switch (indexOfStone)
+                ret = indexOfStone switch
                 {
-                    case 2:
-                        ret = 72;
-                        break;
-                    case 4:
-                        ret = 64;
-                        break;
-                    case 6:
-                        ret = 70;
-                        break;
-                    case 8:
-                        ret = 66;
-                        break;
-                    case 10:
-                        ret = 68;
-                        break;
-                    case 12:
-                        ret = 60;
-                        break;
-                    case 14:
-                        ret = 62;
-                        break;
-                }
+                    2 => 72,
+                    4 => 64,
+                    6 => 70,
+                    8 => 66,
+                    10 => 68,
+                    12 => 60,
+                    14 => 62,
+                    _ => ret
+                };
             }
             if (indexOfStone == 46)
             {

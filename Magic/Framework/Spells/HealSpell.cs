@@ -27,7 +27,7 @@ namespace Magic.Framework.Spells
             if (player.health >= player.maxHealth)
                 player.health = player.maxHealth;
             player.currentLocation.debris.Add(new Debris(health, new Vector2(Game1.player.getStandingX() + 8, Game1.player.getStandingY()), Color.Green, 1f, Game1.player));
-            Game1.playSound("healSound");
+            player.LocalSound("healSound");
             player.AddCustomSkillExperience(Magic.Skill, health / 2);
 
             return null;

@@ -21,7 +21,7 @@ namespace JsonAssets.Framework
             Func<string, string> normalize = Mod.instance.Helper.Content.NormalizeAssetName;
 
             //normalize with 
-            this.Files = new Dictionary<string, Injector>()
+            this.Files = new Dictionary<string, Injector>
             {
                 {normalize("Data\\ObjectInformation"), this.InjectDataObjectInformation},
                 {normalize("Data\\ObjectContextTags"), this.InjectDataObjectContextTags},
@@ -140,7 +140,7 @@ namespace JsonAssets.Framework
                 {
                     if (obj.Recipe == null)
                         continue;
-                    if (obj.Category != ObjectData.Category_.Cooking)
+                    if (obj.Category != ObjectCategory.Cooking)
                         continue;
                     Log.Verbose($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
                     data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
@@ -160,7 +160,7 @@ namespace JsonAssets.Framework
                 {
                     if (obj.Recipe == null)
                         continue;
-                    if (obj.Category == ObjectData.Category_.Cooking)
+                    if (obj.Category == ObjectCategory.Cooking)
                         continue;
                     Log.Verbose($"Injecting to crafting recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
                     data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
@@ -306,19 +306,19 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting {obj.Name} sprites @ {ContentInjector1.ObjectRect(obj.GetObjectId())}");
-                    asset.AsImage().PatchExtendedTileSheet(obj.texture, null, ContentInjector1.ObjectRect(obj.GetObjectId()));
+                    asset.AsImage().PatchExtendedTileSheet(obj.Texture, null, ContentInjector1.ObjectRect(obj.GetObjectId()));
                     if (obj.IsColored)
                     {
                         Log.Verbose($"Injecting {obj.Name} color sprites @ {ContentInjector1.ObjectRect(obj.GetObjectId() + 1)}");
-                        asset.AsImage().PatchExtendedTileSheet(obj.textureColor, null, ContentInjector1.ObjectRect(obj.GetObjectId() + 1));
+                        asset.AsImage().PatchExtendedTileSheet(obj.TextureColor, null, ContentInjector1.ObjectRect(obj.GetObjectId() + 1));
                     }
 
                     var rect = ContentInjector1.ObjectRect(obj.GetObjectId());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
-                    obj.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
-                    obj.tilesheetX = rect.X;
-                    obj.tilesheetY = target.Y;
+                    obj.Tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                    obj.TilesheetX = rect.X;
+                    obj.TilesheetY = target.Y;
                 }
                 catch (Exception e)
                 {
@@ -331,14 +331,14 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.ObjectRect(boots.GetObjectId())}");
-                    asset.AsImage().PatchExtendedTileSheet(boots.texture, null, ContentInjector1.ObjectRect(boots.GetObjectId()));
+                    asset.AsImage().PatchExtendedTileSheet(boots.Texture, null, ContentInjector1.ObjectRect(boots.GetObjectId()));
 
                     var rect = ContentInjector1.ObjectRect(boots.GetObjectId());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
-                    boots.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
-                    boots.tilesheetX = rect.X;
-                    boots.tilesheetY = target.Y;
+                    boots.Tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                    boots.TilesheetX = rect.X;
+                    boots.TilesheetY = target.Y;
                 }
                 catch (Exception e)
                 {
@@ -360,14 +360,14 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting {crop.Name} crop images @ {ContentInjector1.CropRect(crop.GetCropSpriteIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(crop.texture, null, ContentInjector1.CropRect(crop.GetCropSpriteIndex()));
+                    asset.AsImage().PatchExtendedTileSheet(crop.Texture, null, ContentInjector1.CropRect(crop.GetCropSpriteIndex()));
 
                     var rect = ContentInjector1.CropRect(crop.GetCropSpriteIndex());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
-                    crop.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
-                    crop.tilesheetX = rect.X;
-                    crop.tilesheetY = target.Y;
+                    crop.Tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                    crop.TilesheetX = rect.X;
+                    crop.TilesheetY = target.Y;
                 }
                 catch (Exception e)
                 {
@@ -389,14 +389,14 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting {fruitTree.Name} fruit tree images @ {ContentInjector1.FruitTreeRect(fruitTree.GetFruitTreeIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(fruitTree.texture, null, ContentInjector1.FruitTreeRect(fruitTree.GetFruitTreeIndex()));
+                    asset.AsImage().PatchExtendedTileSheet(fruitTree.Texture, null, ContentInjector1.FruitTreeRect(fruitTree.GetFruitTreeIndex()));
 
                     var rect = ContentInjector1.FruitTreeRect(fruitTree.GetFruitTreeIndex());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
-                    fruitTree.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
-                    fruitTree.tilesheetX = rect.X;
-                    fruitTree.tilesheetY = target.Y;
+                    fruitTree.Tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                    fruitTree.TilesheetX = rect.X;
+                    fruitTree.TilesheetY = target.Y;
                 }
                 catch (Exception e)
                 {
@@ -419,21 +419,21 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting {big.Name} sprites @ {ContentInjector1.BigCraftableRect(big.GetCraftableId())}");
-                    asset.AsImage().PatchExtendedTileSheet(big.texture, null, ContentInjector1.BigCraftableRect(big.GetCraftableId()));
+                    asset.AsImage().PatchExtendedTileSheet(big.Texture, null, ContentInjector1.BigCraftableRect(big.GetCraftableId()));
                     if (big.ReserveExtraIndexCount > 0)
                     {
                         for (int i = 0; i < big.ReserveExtraIndexCount; ++i)
                         {
                             Log.Verbose($"Injecting {big.Name} reserved extra sprite {i + 1} @ {ContentInjector1.BigCraftableRect(big.GetCraftableId() + i + 1)}");
-                            asset.AsImage().PatchExtendedTileSheet(big.extraTextures[i], null, ContentInjector1.BigCraftableRect(big.GetCraftableId() + i + 1));
+                            asset.AsImage().PatchExtendedTileSheet(big.ExtraTextures[i], null, ContentInjector1.BigCraftableRect(big.GetCraftableId() + i + 1));
                         }
                     }
 
                     var rect = ContentInjector1.BigCraftableRect(big.GetCraftableId());
                     int ts = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
-                    big.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
-                    big.tilesheetX = rect.X;
-                    big.tilesheetY = rect.Y;
+                    big.Tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                    big.TilesheetX = rect.X;
+                    big.TilesheetY = rect.Y;
                 }
                 catch (Exception e)
                 {
@@ -456,14 +456,14 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting {hat.Name} sprites @ {ContentInjector1.HatRect(hat.GetHatId())}");
-                    asset.AsImage().PatchExtendedTileSheet(hat.texture, null, ContentInjector1.HatRect(hat.GetHatId()));
+                    asset.AsImage().PatchExtendedTileSheet(hat.Texture, null, ContentInjector1.HatRect(hat.GetHatId()));
 
                     var rect = ContentInjector1.HatRect(hat.GetHatId());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
-                    hat.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
-                    hat.tilesheetX = rect.X;
-                    hat.tilesheetY = target.Y;
+                    hat.Tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                    hat.TilesheetX = rect.X;
+                    hat.TilesheetY = target.Y;
                 }
                 catch (Exception e)
                 {
@@ -486,13 +486,13 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting {weapon.Name} sprites @ {ContentInjector1.WeaponRect(weapon.GetWeaponId())}");
-                    asset.AsImage().PatchImage(weapon.texture, null, ContentInjector1.WeaponRect(weapon.GetWeaponId()));
+                    asset.AsImage().PatchImage(weapon.Texture, null, ContentInjector1.WeaponRect(weapon.GetWeaponId()));
 
                     var rect = ContentInjector1.WeaponRect(weapon.GetWeaponId());
                     int ts = 0;// TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect).TileSheet;
-                    weapon.tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
-                    weapon.tilesheetX = rect.X;
-                    weapon.tilesheetY = rect.Y;
+                    weapon.Tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                    weapon.TilesheetX = rect.X;
+                    weapon.TilesheetY = rect.Y;
                 }
                 catch (Exception e)
                 {
@@ -521,14 +521,14 @@ namespace JsonAssets.Framework
                     }
 
                     Log.Verbose($"Injecting {shirt.Name} sprites @ {rects}");
-                    asset.AsImage().PatchExtendedTileSheet(shirt.textureMale, null, ContentInjector1.ShirtRectPlain(shirt.GetMaleIndex()));
+                    asset.AsImage().PatchExtendedTileSheet(shirt.TextureMale, null, ContentInjector1.ShirtRectPlain(shirt.GetMaleIndex()));
                     if (shirt.Dyeable)
-                        asset.AsImage().PatchExtendedTileSheet(shirt.textureMaleColor, null, ContentInjector1.ShirtRectDye(shirt.GetMaleIndex()));
+                        asset.AsImage().PatchExtendedTileSheet(shirt.TextureMaleColor, null, ContentInjector1.ShirtRectDye(shirt.GetMaleIndex()));
                     if (shirt.HasFemaleVariant)
                     {
-                        asset.AsImage().PatchExtendedTileSheet(shirt.textureFemale, null, ContentInjector1.ShirtRectPlain(shirt.GetFemaleIndex()));
+                        asset.AsImage().PatchExtendedTileSheet(shirt.TextureFemale, null, ContentInjector1.ShirtRectPlain(shirt.GetFemaleIndex()));
                         if (shirt.Dyeable)
-                            asset.AsImage().PatchExtendedTileSheet(shirt.textureFemaleColor, null, ContentInjector1.ShirtRectDye(shirt.GetFemaleIndex()));
+                            asset.AsImage().PatchExtendedTileSheet(shirt.TextureFemaleColor, null, ContentInjector1.ShirtRectDye(shirt.GetFemaleIndex()));
                     }
                 }
                 catch (Exception e)
@@ -552,7 +552,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting {pants.Name} sprites @ {ContentInjector1.PantsRect(pants.GetTextureIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(pants.texture, null, ContentInjector1.PantsRect(pants.GetTextureIndex()));
+                    asset.AsImage().PatchExtendedTileSheet(pants.Texture, null, ContentInjector1.PantsRect(pants.GetTextureIndex()));
                 }
                 catch (Exception e)
                 {
@@ -575,7 +575,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting {boots.Name} sprites @ {ContentInjector1.BootsRect(boots.GetTextureIndex())}");
-                    asset.AsImage().PatchExtendedTileSheet(boots.textureColor, null, ContentInjector1.BootsRect(boots.GetTextureIndex()));
+                    asset.AsImage().PatchExtendedTileSheet(boots.TextureColor, null, ContentInjector1.BootsRect(boots.GetTextureIndex()));
                 }
                 catch (Exception e)
                 {
@@ -630,7 +630,7 @@ namespace JsonAssets.Framework
         {
             foreach (var fence in Mod.instance.Fences)
             {
-                if (asset.AssetNameEquals("LooseSprites\\Fence" + fence.correspondingObject?.GetObjectId()))
+                if (asset.AssetNameEquals("LooseSprites\\Fence" + fence.CorrespondingObject?.GetObjectId()))
                     return true;
             }
             return false;
@@ -640,8 +640,8 @@ namespace JsonAssets.Framework
         {
             foreach (var fence in Mod.instance.Fences)
             {
-                if (asset.AssetNameEquals("LooseSprites\\Fence" + fence.correspondingObject?.GetObjectId()))
-                    return (T)(object)fence.texture;
+                if (asset.AssetNameEquals("LooseSprites\\Fence" + fence.CorrespondingObject?.GetObjectId()))
+                    return (T)(object)fence.Texture;
             }
             return default(T);
         }

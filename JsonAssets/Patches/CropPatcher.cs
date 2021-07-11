@@ -48,7 +48,7 @@ namespace JsonAssets.Patches
                 if (cropData == null)
                     return true;
 
-                if (cropData.CropType == CropData.CropType_.Paddy)
+                if (cropData.CropType == CropType.Paddy)
                 {
                     __result = true;
                     return false;
@@ -149,14 +149,14 @@ namespace JsonAssets.Patches
             var cropData = Mod.instance.Crops.FirstOrDefault(c => c.GetCropSpriteIndex() == cropRow);
             if (cropData == null)
                 return false;
-            return cropData.CropType == CropData.CropType_.IndoorsOnly;
+            return cropData.CropType == CropType.IndoorsOnly;
         }
 
         private static bool CheckCanBeGiant(NetInt cropRow_)
         {
             int cropRow = cropRow_.Value;
             var cropData = Mod.instance.Crops.FirstOrDefault(c => c.GetCropSpriteIndex() == cropRow);
-            return cropData?.giantTex != null;
+            return cropData?.GiantTexture != null;
         }
     }
 }

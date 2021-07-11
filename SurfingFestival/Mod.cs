@@ -17,6 +17,7 @@ using SurfingFestival.Patches;
 using xTile;
 using xTile.Layers;
 using xTile.Tiles;
+using SObject = StardewValley.Object;
 
 namespace SurfingFestival
 {
@@ -25,7 +26,7 @@ namespace SurfingFestival
         Boost,
         HomingProjectile,
         FirstPlaceProjectile,
-        Invincibility,
+        Invincibility
     }
 
     internal enum ObstacleType
@@ -34,14 +35,14 @@ namespace SurfingFestival
         Net,
         Rock,
         HomingProjectile,
-        FirstPlaceProjectile,
+        FirstPlaceProjectile
     }
 
     internal enum BonfireState
     {
         NotDone,
         Normal,
-        Shorts,
+        Shorts
     }
 
     internal class Obstacle
@@ -262,7 +263,7 @@ namespace SurfingFestival
                     new(10, 66),
                     new(9, 67),
                     new(8, 68),
-                    new(7, 69),
+                    new(7, 69)
                 },
                 new Vector2[]
                 {
@@ -275,7 +276,7 @@ namespace SurfingFestival
                     new(10, 52),
                     new(9, 51),
                     new(8, 50),
-                    new(7, 49),
+                    new(7, 49)
                 },
                 new Vector2[]
                 {
@@ -288,7 +289,7 @@ namespace SurfingFestival
                     new(139, 52),
                     new(140, 51),
                     new(141, 50),
-                    new(142, 49),
+                    new(142, 49)
                 },
                 new Vector2[]
                 {
@@ -301,8 +302,8 @@ namespace SurfingFestival
                     new(139, 66),
                     new(140, 67),
                     new(141, 68),
-                    new(142, 69),
-                },
+                    new(142, 69)
+                }
             };
 
             foreach (string racerName in Mod.Racers)
@@ -425,14 +426,14 @@ namespace SurfingFestival
                 {
                     if (racer == Game1.player)
                     {
-                        int opposite = 0;
-                        switch (state.Facing)
+                        int opposite = state.Facing switch
                         {
-                            case Game1.up: opposite = Game1.down; break;
-                            case Game1.down: opposite = Game1.up; break;
-                            case Game1.left: opposite = Game1.right; break;
-                            case Game1.right: opposite = Game1.left; break;
-                        }
+                            Game1.up => Game1.down,
+                            Game1.down => Game1.up,
+                            Game1.left => Game1.right,
+                            Game1.right => Game1.left,
+                            _ => 0
+                        };
 
                         if (Game1.player.FacingDirection != state.Facing && Game1.player.FacingDirection != opposite)
                         {
@@ -531,7 +532,7 @@ namespace SurfingFestival
                     state.ShouldUseItem = false;
                     if (racer == Game1.player)
                     {
-                        var msg = new UseItemMessage() { ItemUsed = state.CurrentItem.Value };
+                        var msg = new UseItemMessage { ItemUsed = state.CurrentItem.Value };
                         this.Helper.Multiplayer.SendMessage(msg, UseItemMessage.Type, new[] { this.ModManifest.UniqueID });
                     }
                     switch (state.CurrentItem.Value)
@@ -559,12 +560,12 @@ namespace SurfingFestival
 
                             state.CurrentItem = null;
                             TemporaryAnimatedSprite tas = new TemporaryAnimatedSprite(128, 0, 0, 0, new Vector2(), false, false);
-                            Mod.Obstacles.Add(new Obstacle()
+                            Mod.Obstacles.Add(new Obstacle
                             {
                                 Type = ObstacleType.HomingProjectile,
                                 Position = new Vector2(racer.GetBoundingBox().Center.X, racer.GetBoundingBox().Center.Y),
                                 HomingTarget = target,
-                                UnderwaterSprite = tas,
+                                UnderwaterSprite = tas
                             });
                             Game1.CurrentEvent.underwaterSprites ??= new List<TemporaryAnimatedSprite>();
                             Game1.CurrentEvent.underwaterSprites.Add(tas);
@@ -572,11 +573,11 @@ namespace SurfingFestival
                             break;
                         case Item.FirstPlaceProjectile:
                             state.CurrentItem = null;
-                            Mod.Obstacles.Add(new Obstacle()
+                            Mod.Obstacles.Add(new Obstacle
                             {
                                 Type = ObstacleType.FirstPlaceProjectile,
                                 Position = new Vector2(racer.GetBoundingBox().Center.X, racer.GetBoundingBox().Center.Y),
-                                HomingTarget = Mod.GetRacePlacement()[Mod.GetRacePlacement().Count - 1],
+                                HomingTarget = Mod.GetRacePlacement()[Mod.GetRacePlacement().Count - 1]
                             });
                             Game1.playSound("fishEscape");
                             break;
@@ -879,7 +880,7 @@ namespace SurfingFestival
 
             if (e.Action == "SurfingBonfire" && Mod.PlayerDidBonfire == BonfireState.NotDone)
             {
-                bool Highlight(StardewValley.Item item) => (item is StardewValley.Object obj && !obj.bigCraftable.Value && ((obj.ParentSheetIndex == 388 && obj.Stack >= 50) || obj.ParentSheetIndex == 71 || obj.ParentSheetIndex == 789));
+                bool Highlight(StardewValley.Item item) => (item is SObject obj && !obj.bigCraftable.Value && ((obj.ParentSheetIndex == 388 && obj.Stack >= 50) || obj.ParentSheetIndex == 71 || obj.ParentSheetIndex == 789));
                 void BehaviorOnSelect(StardewValley.Item item, Farmer farmer)
                 {
                     if (item == null)
@@ -922,7 +923,7 @@ namespace SurfingFestival
                 var answers = new Response[]
                 {
                     new("MakeOffering", this.Helper.Translation.Get("secret.yes")),
-                    new("Leave", this.Helper.Translation.Get("secret.no")),
+                    new("Leave", this.Helper.Translation.Get("secret.no"))
                 };
 
                 void AfterQuestion(Farmer who, string choice)
@@ -1058,19 +1059,19 @@ namespace SurfingFestival
                 {
                     var tile = obstaclesLayer.Tiles[ix, iy];
                     if (tile?.TileIndex == 3)
-                        Mod.Obstacles.Add(new Obstacle()
+                        Mod.Obstacles.Add(new Obstacle
                         {
                             Type = ObstacleType.Item,
                             Position = new Vector2(ix * Game1.tileSize, iy * Game1.tileSize)
                         });
                     else if (tile?.TileIndex == 64)
-                        Mod.Obstacles.Add(new Obstacle()
+                        Mod.Obstacles.Add(new Obstacle
                         {
                             Type = ObstacleType.Net,
                             Position = new Vector2(ix * Game1.tileSize, iy * Game1.tileSize)
                         });
                     else if (tile?.TileIndex == 32)
-                        Mod.Obstacles.Add(new Obstacle()
+                        Mod.Obstacles.Add(new Obstacle
                         {
                             Type = ObstacleType.Rock,
                             Position = new Vector2(ix * Game1.tileSize, iy * Game1.tileSize)
@@ -1106,9 +1107,9 @@ namespace SurfingFestival
             Mod.RacerState.Clear();
             foreach (string racerName in Mod.Racers)
             {
-                Mod.RacerState.Add(racerName, new RacerState()
+                Mod.RacerState.Add(racerName, new RacerState
                 {
-                    Surfboard = r.Next(6),
+                    Surfboard = r.Next(6)
                 });
 
                 // NPCs get a buff since they're dumb
@@ -1185,7 +1186,7 @@ namespace SurfingFestival
                 if (!Game1.player.mailReceived.Contains("SurfingFestivalWinner"))
                 {
                     Game1.player.mailReceived.Add("SurfingFestivalWinner");
-                    Game1.player.addItemByMenuIfNecessary(new StardewValley.Object(Vector2.Zero, Mod.Ja.GetBigCraftableId("Surfing Trophy")));
+                    Game1.player.addItemByMenuIfNecessary(new SObject(Vector2.Zero, Mod.Ja.GetBigCraftableId("Surfing Trophy")));
                 }
 
                 Game1.playSound("money");
@@ -1223,26 +1224,26 @@ namespace SurfingFestival
 
             private int DirectionToProgress(int dir)
             {
-                switch (dir)
+                return dir switch
                 {
-                    case Game1.up: return 3;
-                    case Game1.down: return 1;
-                    case Game1.left: return 2;
-                    case Game1.right: return 0;
-                }
-                throw new ArgumentException("Bad facing direction");
+                    Game1.up => 3,
+                    Game1.down => 1,
+                    Game1.left => 2,
+                    Game1.right => 0,
+                    _ => throw new ArgumentException("Bad facing direction")
+                };
             }
 
             private float GetProgressCoordinate(string racerName)
             {
-                switch (Mod.RacerState[racerName].Facing)
+                return Mod.RacerState[racerName].Facing switch
                 {
-                    case Game1.up: return -Game1.CurrentEvent.getCharacterByName(racerName).Position.Y;
-                    case Game1.down: return Game1.CurrentEvent.getCharacterByName(racerName).Position.Y;
-                    case Game1.left: return -Game1.CurrentEvent.getCharacterByName(racerName).Position.X;
-                    case Game1.right: return Game1.CurrentEvent.getCharacterByName(racerName).Position.X;
-                }
-                throw new ArgumentException("Bad facing direction");
+                    Game1.up => -Game1.CurrentEvent.getCharacterByName(racerName).Position.Y,
+                    Game1.down => Game1.CurrentEvent.getCharacterByName(racerName).Position.Y,
+                    Game1.left => -Game1.CurrentEvent.getCharacterByName(racerName).Position.X,
+                    Game1.right => Game1.CurrentEvent.getCharacterByName(racerName).Position.X,
+                    _ => throw new ArgumentException("Bad facing direction")
+                };
             }
         };
 

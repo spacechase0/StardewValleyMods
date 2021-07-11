@@ -6,8 +6,8 @@ namespace AnotherHungerMod.Framework
         public int FullnessUiY = 350;
 
         public int MaxFullness = 100;
-        public double EdibilityMultiplier = 1;
-        public double DrainPer10Min = 0.8;
+        public float EdibilityMultiplier = 1;
+        public float DrainPer10Min = 0.8f;
 
         public int PositiveBuffThreshold = 80;
         public int NegativeBuffThreshold = 25;

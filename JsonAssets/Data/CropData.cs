@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Runtime.Serialization;
+using JsonAssets.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -11,20 +14,17 @@ namespace JsonAssets.Data
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
     public class CropData : DataNeedsIdWithTexture
     {
+        /*********
+        ** Accessors
+        *********/
         [JsonIgnore]
-        public Texture2D giantTex;
+        public Texture2D GiantTexture { get; set; }
 
         public object Product { get; set; }
         public string SeedName { get; set; }
         public string SeedDescription { get; set; }
 
-        public enum CropType_
-        {
-            Normal,
-            IndoorsOnly,
-            Paddy,
-        }
-        public CropType_ CropType { get; set; } = CropType_.Normal;
+        public CropType CropType { get; set; } = CropType.Normal;
 
         public IList<string> Seasons { get; set; } = new List<string>();
         public IList<int> Phases { get; set; } = new List<int>();
@@ -32,14 +32,7 @@ namespace JsonAssets.Data
         public bool HarvestWithScythe { get; set; } = false;
         public bool TrellisCrop { get; set; } = false;
         public IList<Color> Colors { get; set; } = new List<Color>();
-        public class Bonus_
-        {
-            public int MinimumPerHarvest { get; set; }
-            public int MaximumPerHarvest { get; set; }
-            public int MaxIncreasePerFarmLevel { get; set; }
-            public double ExtraChance { get; set; }
-        }
-        public Bonus_ Bonus { get; set; } = null;
+        public CropBonus Bonus { get; set; } = null;
 
         public IList<string> SeedPurchaseRequirements { get; set; } = new List<string>();
         public int SeedPurchasePrice { get; set; }
@@ -47,12 +40,25 @@ namespace JsonAssets.Data
         public string SeedPurchaseFrom { get; set; } = "Pierre";
         public IList<PurchaseData> SeedAdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
-        public Dictionary<string, string> SeedNameLocalization = new();
-        public Dictionary<string, string> SeedDescriptionLocalization = new();
+        public Dictionary<string, string> SeedNameLocalization { get; set; } = new();
+        public Dictionary<string, string> SeedDescriptionLocalization { get; set; } = new();
 
-        internal ObjectData seed;
-        public int GetSeedId() { return this.seed.Id; }
-        public int GetCropSpriteIndex() { return this.Id; }
+        internal ObjectData Seed { get; set; }
+
+
+        /*********
+        ** Public methods
+        *********/
+        public int GetSeedId()
+        {
+            return this.Seed.Id;
+        }
+
+        public int GetCropSpriteIndex()
+        {
+            return this.Id;
+        }
+
         internal string GetCropInformation()
         {
             string str = "";
@@ -73,7 +79,7 @@ namespace JsonAssets.Data
                 str += $"true {this.Bonus.MinimumPerHarvest} {this.Bonus.MaximumPerHarvest} {this.Bonus.MaxIncreasePerFarmLevel} {this.Bonus.ExtraChance}/";
             else str += "false/";
             str += (this.TrellisCrop ? "true" : "false") + "/";
-            if (this.Colors != null && this.Colors.Count > 0)
+            if (this.Colors.Any())
             {
                 str += "true";
                 foreach (var color in this.Colors)
@@ -82,6 +88,28 @@ namespace JsonAssets.Data
             else
                 str += "false";
             return str;
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Normalize the model after it's deserialized.</summary>
+        /// <param name="context">The deserialization context.</param>
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            this.Seasons ??= new List<string>();
+            this.Phases ??= new List<int>();
+            this.Colors ??= new List<Color>();
+            this.SeedPurchaseRequirements ??= new List<string>();
+            this.SeedAdditionalPurchaseData ??= new List<PurchaseData>();
+            this.SeedNameLocalization ??= new();
+            this.SeedDescriptionLocalization ??= new();
+
+            this.Seasons.FilterNulls();
+            this.SeedPurchaseRequirements.FilterNulls();
+            this.SeedAdditionalPurchaseData.FilterNulls();
         }
     }
 }

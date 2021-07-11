@@ -133,7 +133,7 @@ namespace PyromancersJourney.Framework.Objects
                         {
                             Position = new Vector3(this.Position.X, 0, this.Position.Z),
                             Speed = new Vector2(speed.X, speed.Z),
-                            Level = tier - 1,
+                            Level = tier - 1
                         };
                         this.World.Projectiles.Add(proj);
                         Game1.playSound("fireball");

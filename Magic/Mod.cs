@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using Magic.Framework;
 using Magic.Framework.Apis;
-using Newtonsoft.Json;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
@@ -14,13 +13,15 @@ namespace Magic
     internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
-        public static MultiplayerSaveData Data { get; private set; } = new();
         public static Configuration Config { get; private set; }
 
         internal static JsonAssetsApi Ja;
         internal static IManaBarApi Mana;
 
         internal Api Api;
+
+        /// <summary>Handles migrating legacy data for a save file.</summary>
+        private LegacyDataMigrator LegacyDataMigrator;
 
         public override void Entry(IModHelper helper)
         {
@@ -29,8 +30,11 @@ namespace Magic
 
             Mod.Config = this.Helper.ReadConfig<Configuration>();
 
+            this.LegacyDataMigrator = new(this.Monitor);
+
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.GameLoop.Saving += this.OnSaving;
 
             Framework.Magic.Init(helper.Events, helper.Input, helper.Multiplayer.GetNewID);
@@ -41,7 +45,7 @@ namespace Magic
             return this.Api ??= new Api();
         }
 
-        /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -81,59 +85,43 @@ namespace Magic
             api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
         }
 
-        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <inheritdoc cref="IGameLoopEvents.SaveLoaded"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
+            if (!Context.IsMainPlayer)
+                return;
+
             try
             {
-                if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-                {
-                    Log.Info($"Loading save data (\"{MultiplayerSaveData.FilePath}\")...");
-                    Mod.Data = File.Exists(MultiplayerSaveData.FilePath)
-                        ? JsonConvert.DeserializeObject<MultiplayerSaveData>(File.ReadAllText(MultiplayerSaveData.FilePath))
-                        : new MultiplayerSaveData();
-
-                    foreach (var magic in Mod.Data.Players)
-                    {
-                        if (magic.Value.SpellBook.Prepared[0].Length == 4)
-                        {
-                            var newSpells = new PreparedSpell[5];
-                            for (int i = 0; i < 4; ++i)
-                                newSpells[i] = magic.Value.SpellBook.Prepared[0][i];
-                            magic.Value.SpellBook.Prepared[0] = newSpells;
-                        }
-
-                        if (magic.Value.SpellBook.Prepared[1].Length == 4)
-                        {
-                            var newSpells = new PreparedSpell[5];
-                            for (int i = 0; i < 4; ++i)
-                                newSpells[i] = magic.Value.SpellBook.Prepared[1][i];
-                            magic.Value.SpellBook.Prepared[1] = newSpells;
-                        }
-                    }
-
-                    if (!Mod.Data.Players.ContainsKey(Game1.player.UniqueMultiplayerID))
-                        Mod.Data.Players[Game1.player.UniqueMultiplayerID] = new MultiplayerSaveData.PlayerData();
-                }
+                this.LegacyDataMigrator.OnSaveLoaded();
             }
             catch (Exception ex)
             {
-                Log.Warn($"Exception loading save data: {ex}");
+                Log.Warn($"Exception migrating legacy save data: {ex}");
             }
         }
 
-        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
+        /// <inheritdoc cref="IGameLoopEvents.DayStarted"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
+        {
+            // fix player's mana pool if needed
+            if (Game1.player.eventsSeen.Contains(Framework.Magic.LearnedMagicEventId))
+                Framework.Magic.FixManaPoolIfNeeded(Game1.player);
+        }
+
+        /// <inheritdoc cref="IGameLoopEvents.Saving"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnSaving(object sender, SavingEventArgs e)
         {
-            if (!Game1.IsMultiplayer || Game1.IsMasterGame)
-            {
-                Log.Info($"Saving save data (\"{MultiplayerSaveData.FilePath}\")...");
-                File.WriteAllText(MultiplayerSaveData.FilePath, JsonConvert.SerializeObject(Mod.Data));
-            }
+            if (!Context.IsMainPlayer)
+                return;
+
+            this.LegacyDataMigrator.OnSaved();
         }
     }
 }

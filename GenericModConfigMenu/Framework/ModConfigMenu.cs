@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using GenericModConfigMenu.Framework.UI;
 using Microsoft.Xna.Framework;
@@ -15,18 +16,22 @@ namespace GenericModConfigMenu.Framework
         public Table Table;
         public static IClickableMenu ActiveConfigMenu;
         private readonly bool InGame;
+        private readonly int ScrollSpeed;
+        private readonly Action<IManifest> OpenModMenu;
 
-        public ModConfigMenu(bool inGame)
+        public ModConfigMenu(bool inGame, int scrollSpeed, Action<IManifest> openModMenu)
         {
             this.InGame = inGame;
+            this.ScrollSpeed = scrollSpeed;
+            this.OpenModMenu = openModMenu;
 
             this.Ui = new RootElement();
 
             this.Table = new Table
             {
                 RowHeight = 50,
-                LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64),
-                Size = new Vector2(800, Game1.viewport.Height - 128)
+                LocalPosition = new Vector2((Game1.uiViewport.Width - 800) / 2, 64),
+                Size = new Vector2(800, Game1.uiViewport.Height - 128)
             };
 
             var heading = new Label
@@ -51,8 +56,10 @@ namespace GenericModConfigMenu.Framework
 
             this.Ui.AddChild(this.Table);
 
-            if (this.InGame || Constants.TargetPlatform == GamePlatform.Android)
+            if (Constants.TargetPlatform == GamePlatform.Android)
                 this.initializeUpperRightCloseButton();
+            else
+                this.upperRightCloseButton = null;
 
             ModConfigMenu.ActiveConfigMenu = this;
         }
@@ -71,7 +78,7 @@ namespace GenericModConfigMenu.Framework
         public void ReceiveScrollWheelActionSmapi(int direction)
         {
             if (TitleMenu.subMenu == this || this.InGame)
-                this.Table.Scrollbar.ScrollBy(direction / -120);
+                this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
             else
                 ModConfigMenu.ActiveConfigMenu = null;
         }
@@ -85,7 +92,7 @@ namespace GenericModConfigMenu.Framework
         public override void draw(SpriteBatch b)
         {
             base.draw(b);
-            b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.viewport.Width, Game1.viewport.Height), new Color(0, 0, 0, 192));
+            b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
             this.Ui.Draw(b);
             this.upperRightCloseButton?.draw(b); // bring it above the backdrop
             if (this.InGame)
@@ -96,18 +103,16 @@ namespace GenericModConfigMenu.Framework
         {
             Log.Trace("Changing to mod config page for mod " + modManifest.UniqueID);
             Game1.playSound("bigSelect");
-            if (!this.InGame)
-                TitleMenu.subMenu = new SpecificModConfigMenu(modManifest, this.InGame);
-            else
-                Game1.activeClickableMenu = new SpecificModConfigMenu(modManifest, this.InGame);
+
+            this.OpenModMenu(modManifest);
         }
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
         {
             this.Ui = new RootElement();
 
-            Vector2 newSize = new Vector2(800, Game1.viewport.Height - 128);
-            this.Table.LocalPosition = new Vector2((Game1.viewport.Width - 800) / 2, 64);
+            Vector2 newSize = new Vector2(800, Game1.uiViewport.Height - 128);
+            this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - 800) / 2, 64);
             foreach (Element opt in this.Table.Children)
                 opt.LocalPosition = new Vector2(newSize.X / (this.Table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
 

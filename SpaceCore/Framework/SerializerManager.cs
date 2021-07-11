@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using SpaceCore.Patches;
 using SpaceShared;
@@ -97,7 +97,7 @@ namespace SpaceCore.Framework
         *********/
         public void InitializeSerializers()
         {
-            if (this.InitializedSerializers)
+            if (this.InitializedSerializers || !SpaceCore.ModTypes.Any())
                 return;
             this.InitializedSerializers = true;
 
@@ -107,32 +107,27 @@ namespace SpaceCore.Framework
             SaveGame.farmerSerializer = this.InitializeSerializer(typeof(Farmer), this.VanillaFarmerTypes);
             SaveGame.locationSerializer = this.InitializeSerializer(typeof(GameLocation), this.VanillaGameLocationTypes);
 
-            if (SpaceCore.Instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
-            {
-                //Log.trace( "Letting PyTK know we changed the serializers..." );
-                try
-                {
-                    var pytk = Type.GetType("PyTK.PyTKMod, PyTK");
-                    pytk.GetMethod("SerializersReinitialized").Invoke(null, new object[] { null });
-                }
-                catch (Exception e)
-                {
-                    Log.Trace("Exception, probably because PyTK hasn't released yet: " + e);
-                }
-            }
+            this.NotifyPyTk();
         }
 
         public XmlSerializer InitializeSerializer(Type baseType, Type[] extra = null)
         {
-            List<Type> types = new List<Type>();
-            if (extra != null)
-                types.AddRange(extra);
-            types.AddRange(SpaceCore.ModTypes);
-            var s = new XmlSerializer(baseType, types.ToArray());
+            var types = extra?.Length > 0
+                ? extra.Concat(SpaceCore.ModTypes)
+                : SpaceCore.ModTypes;
 
+            return new(baseType, types.ToArray());
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Notify PyTK that the serializers were changed, if it's installed.</summary>
+        private void NotifyPyTk()
+        {
             if (SpaceCore.Instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
             {
-                //Log.trace( "Letting PyTK know we changed the serializers..." );
                 try
                 {
                     var pytk = Type.GetType("PyTK.PyTKMod, PyTK");
@@ -143,8 +138,6 @@ namespace SpaceCore.Framework
                     Log.Trace("Exception, probably because PyTK hasn't released yet: " + e);
                 }
             }
-
-            return s;
         }
     }
 }

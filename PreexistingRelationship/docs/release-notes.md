@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.0.2
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* Fixed marriage menu using the wrong NPC in some cases.
+
 ## 1.0.1
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

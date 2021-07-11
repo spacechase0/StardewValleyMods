@@ -53,7 +53,7 @@ namespace PyromancersJourney.Framework.Objects
                 Alpha = 1,
                 VertexColorEnabled = true,
                 LightingEnabled = false,
-                AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f),
+                AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f)
             };
         }
     }

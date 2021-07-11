@@ -45,16 +45,12 @@ namespace ThreeHeartDancePartner
             // The original stuff, only the relationship point check is modified. (1000 -> 750)
             if (!npc.HasPartnerForDance && Game1.player.getFriendshipLevelForNPC(npc.Name) >= 750)
             {
-                string s = "";
-                switch (npc.Gender)
+                string s = npc.Gender switch
                 {
-                    case NPC.male:
-                        s = Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1633");
-                        break;
-                    case NPC.female:
-                        s = Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1634");
-                        break;
-                }
+                    NPC.male => Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1633"),
+                    NPC.female => Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1634"),
+                    _ => ""
+                };
                 try
                 {
                     Game1.player.changeFriendship(250, Game1.getCharacterFromName(npc.Name));
@@ -67,7 +63,7 @@ namespace ThreeHeartDancePartner
 
                 foreach (NPC actor in festival.actors)
                 {
-                    if (actor.CurrentDialogue != null && actor.CurrentDialogue.Count > 0 && actor.CurrentDialogue.Peek().getCurrentDialogue().Equals("..."))
+                    if (actor.CurrentDialogue?.Count > 0 && actor.CurrentDialogue.Peek().getCurrentDialogue().Equals("..."))
                         actor.CurrentDialogue.Clear();
                 }
 

@@ -1,0 +1,17 @@
+﻿{
+    "ui.laps": "Kör: {{laps}}/2",
+    "ui.ranking": "Rangsor",
+    "ui.wood": "Rakj fát a máglyára",
+    "dialog.wood": "50 fát tettél a máglyára.",
+    "dialog.shorts": "...Ez fura. Miért lett lila a tűz?",
+    "dialog.prizemoney": "1500g-t kaptál.",
+    "item.boost": "Csillaghulló lendület",
+    "item.homingprojectile": "Gömbhal lövedék",
+    "item.firstplaceprojectile": "Villámfelhő",
+    "item.invincibility": "Junimo erő",
+    "secret.text": "A táblán ez áll: Szeretne most és a jövőben is sikeres lenni? Tegyen ajánlatot.",
+    "secret.yes": "Szeretnél 100.000g-t tenni a dobozba?",
+    "secret.no": "Mégsem.",
+    "secret.broke": "Ezt nem engedheted meg magadnak.",
+    "secret.purchased": "Valmi furcsát érzel."
+}

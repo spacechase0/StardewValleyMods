@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.2.0
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* Reworked how player data is stored to simplify multiplayer sync and reduce edge cases.
+
 ## 1.1.1
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

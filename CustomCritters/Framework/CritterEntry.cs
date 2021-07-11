@@ -62,12 +62,13 @@ namespace CustomCritters.Framework
                         if (childCheck)
                             ++totalMet;
 
-                        switch (this.ChildrenCombine)
+                        ret = this.ChildrenCombine switch
                         {
-                            case "and": ret = ret && childCheck; break;
-                            case "or": ret = ret || childCheck; break;
-                            case "xor": ret = ret ^ childCheck; break;
-                        }
+                            "and" => ret && childCheck,
+                            "or" => ret || childCheck,
+                            "xor" => ret ^ childCheck,
+                            _ => ret
+                        };
                     }
 
                     if (this.ChildrenCombine.StartsWith("atleast"))
@@ -156,12 +157,13 @@ namespace CustomCritters.Framework
                             if (childCheck)
                                 ++totalMet;
 
-                            switch (this.ChildrenCombine)
+                            ret = this.ChildrenCombine switch
                             {
-                                case "and": ret = ret && childCheck; break;
-                                case "or": ret = ret || childCheck; break;
-                                case "xor": ret = ret ^ childCheck; break;
-                            }
+                                "and" => ret && childCheck,
+                                "or" => ret || childCheck,
+                                "xor" => ret ^ childCheck,
+                                _ => ret
+                            };
                         }
 
                         if (this.ChildrenCombine.StartsWith("atleast"))

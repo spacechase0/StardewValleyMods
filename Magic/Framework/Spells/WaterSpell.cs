@@ -25,16 +25,16 @@ namespace Magic.Framework.Spells
             int num = 0;
 
             GameLocation loc = player.currentLocation;
-            for (int ix = targetX - level; ix <= targetX + level; ++ix)
+            for (int tileX = targetX - level; tileX <= targetX + level; ++tileX)
             {
-                for (int iy = targetY - level; iy <= targetY + level; ++iy)
+                for (int tileY = targetY - level; tileY <= targetY + level; ++tileY)
                 {
                     if (player.GetCurrentMana() <= 3)
                         return null;
 
-                    Vector2 pos = new Vector2(ix, iy);
+                    Vector2 tile = new Vector2(tileX, tileY);
 
-                    if (!loc.terrainFeatures.TryGetValue(pos, out TerrainFeature feature) || feature is not HoeDirt dirt)
+                    if (!loc.terrainFeatures.TryGetValue(tile, out TerrainFeature feature) || feature is not HoeDirt dirt)
                         continue;
 
                     if (dirt.state.Value != HoeDirt.dry)
@@ -42,7 +42,7 @@ namespace Magic.Framework.Spells
 
                     dirt.state.Value = HoeDirt.watered;
 
-                    loc.temporarySprites.Add(new TemporaryAnimatedSprite(13, new Vector2(ix * (float)Game1.tileSize, iy * (float)Game1.tileSize), Color.White, 10, Game1.random.NextDouble() < 0.5, 70f, 0, Game1.tileSize, (float)((iy * (double)Game1.tileSize + Game1.tileSize / 2) / 10000.0 - 0.00999999977648258))
+                    loc.temporarySprites.Add(new TemporaryAnimatedSprite(13, new Vector2(tileX * (float)Game1.tileSize, tileY * (float)Game1.tileSize), Color.White, 10, Game1.random.NextDouble() < 0.5, 70f, 0, Game1.tileSize, (float)((tileY * (double)Game1.tileSize + Game1.tileSize / 2) / 10000.0 - 0.00999999977648258))
                     {
                         delayBeforeAnimationStart = num * 10
                     });
@@ -50,7 +50,7 @@ namespace Magic.Framework.Spells
 
                     player.AddMana(-4);
                     player.AddCustomSkillExperience(Magic.Skill, 1);
-                    Game1.playSound("wateringCan");
+                    loc.localSoundAt("wateringCan", tile);
                 }
             }
 

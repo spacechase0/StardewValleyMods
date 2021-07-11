@@ -38,7 +38,7 @@ namespace Magic.Framework.Spells
             float dir = (float)-Math.Atan2(player.getStandingY() - targetY, targetX - player.getStandingX());
             player.currentLocation.projectiles.Add(new SpellProjectile(player, this, dmg, dir, 4f + 3 * level, this.Seeking));
             if (this.Sound != null)
-                Game1.playSound(this.Sound);
+                player.LocalSound(this.Sound);
 
             return null;
         }

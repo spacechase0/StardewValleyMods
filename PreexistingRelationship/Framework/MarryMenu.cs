@@ -40,99 +40,101 @@ namespace PreexistingRelationship.Framework
             }
             */
 
-            this.Ui = new RootElement()
+            this.Ui = new RootElement
             {
-                LocalPosition = new Vector2(this.xPositionOnScreen, this.yPositionOnScreen),
+                LocalPosition = new Vector2(this.xPositionOnScreen, this.yPositionOnScreen)
             };
 
-            var title = new Label()
+            var title = new Label
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.title"),
-                Bold = true,
+                Bold = true
             };
             title.LocalPosition = new Vector2((800 - title.Measure().X) / 2, 10);
             this.Ui.AddChild(title);
 
-            this.Ui.AddChild(new Label()
+            this.Ui.AddChild(new Label
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.text").ToString().Replace("\\n", "\n"),
                 LocalPosition = new Vector2(50, 75),
                 NonBoldScale = 0.75f,
-                NonBoldShadow = false,
+                NonBoldShadow = false
             });
 
-            this.Table = new Table()
+            this.Table = new Table
             {
                 RowHeight = 200,
                 Size = new Vector2(700, 500),
-                LocalPosition = new Vector2(50, 225),
+                LocalPosition = new Vector2(50, 225)
             };
-            for (int i = 0; i < (valid.Count + 2) / 3; ++i)
+            for (int row = 0; row < (valid.Count + 2) / 3; ++row)
             {
-                var row = new StaticContainer();
-                for (int n = i * 3; n < (i + 1) * 3; ++n)
+                var rowContainer = new StaticContainer();
+                for (int col = row * 3; col < (row + 1) * 3; ++col)
                 {
-                    if (n >= valid.Count)
+                    if (col >= valid.Count)
                         continue;
 
-                    var cont = new StaticContainer()
+                    var cont = new StaticContainer
                     {
                         Size = new Vector2(115 * 2, 97 * 2),
-                        LocalPosition = new Vector2(250 * (n - i * 3) - 10, 0),
+                        LocalPosition = new Vector2(250 * (col - row * 3) - 10, 0)
                     };
+
                     // Note: This is being called 4 times for some reason
                     // Probably a UI framework bug.
+                    string curNpcName = valid[col].Name; // avoid capturing the loop variable in the callback, since it'll change value
                     void SelCallback(Element e)
                     {
                         if (this.SelectedContainer != null)
                             this.SelectedContainer.OutlineColor = null;
                         this.SelectedContainer = cont;
                         this.SelectedContainer.OutlineColor = Color.Green;
-                        this.SelectedNpc = valid[n].Name;
+                        this.SelectedNpc = curNpcName;
                         Log.Trace("Selected " + this.SelectedNpc);
                     }
 
-                    cont.AddChild(new Image()
+                    cont.AddChild(new Image
                     {
                         Texture = Game1.mouseCursors,
                         TextureRect = new Rectangle(583, 411, 115, 97),
                         Scale = 2,
                         LocalPosition = new Vector2(0, 0),
-                        Callback = SelCallback,
+                        Callback = SelCallback
                     });
-                    cont.AddChild(new Image()
+                    cont.AddChild(new Image
                     {
-                        Texture = valid[n].Portrait,
+                        Texture = valid[col].Portrait,
                         TextureRect = new Rectangle(0, 128, 64, 64),
                         Scale = 2,
-                        LocalPosition = new Vector2(50, 16),
+                        LocalPosition = new Vector2(50, 16)
                     });
-                    var name = new Label()
+                    var name = new Label
                     {
-                        String = valid[n].displayName,
+                        String = valid[col].displayName,
                         NonBoldScale = 0.5f,
-                        NonBoldShadow = false,
+                        NonBoldShadow = false
                     };
                     name.LocalPosition = new Vector2(115 - name.Measure().X / 2, 160);
                     cont.AddChild(name);
 
-                    row.AddChild(cont);
+                    rowContainer.AddChild(cont);
                 }
-                this.Table.AddRow(new Element[] { row });
+                this.Table.AddRow(new Element[] { rowContainer });
             }
             this.Ui.AddChild(this.Table);
 
-            this.Ui.AddChild(new Label()
+            this.Ui.AddChild(new Label
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.button.cancel"),
                 LocalPosition = new Vector2(175, 650),
-                Callback = (e) => Game1.exitActiveMenu(),
+                Callback = e => Game1.exitActiveMenu()
             });
-            this.Ui.AddChild(new Label()
+            this.Ui.AddChild(new Label
             {
                 String = Mod.Instance.Helper.Translation.Get("menu.button.accept"),
                 LocalPosition = new Vector2(500, 650),
-                Callback = (e) => { this.DoMarriage(); }
+                Callback = e => this.DoMarriage()
             });
         }
 
@@ -176,7 +178,7 @@ namespace PreexistingRelationship.Framework
 
             if (!Game1.IsMasterGame)
             {
-                Mod.Instance.Helper.Multiplayer.SendMessage(new DoMarriageMessage() { NpcName = this.SelectedNpc }, nameof(DoMarriageMessage), new[] { Mod.Instance.ModManifest.UniqueID }/*, new long[] { Game1.MasterPlayer.UniqueMultiplayerID }*/ );
+                Mod.Instance.Helper.Multiplayer.SendMessage(new DoMarriageMessage { NpcName = this.SelectedNpc }, nameof(DoMarriageMessage), new[] { Mod.Instance.ModManifest.UniqueID }/*, new long[] { Game1.MasterPlayer.UniqueMultiplayerID }*/ );
             }
 
             Mod.DoMarriage(Game1.player, this.SelectedNpc, true);

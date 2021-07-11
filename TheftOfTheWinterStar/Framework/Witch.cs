@@ -6,6 +6,7 @@ using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Monsters;
 using StardewValley.Projectiles;
+using SObject = StardewValley.Object;
 
 namespace TheftOfTheWinterStar.Framework
 {
@@ -121,7 +122,7 @@ namespace TheftOfTheWinterStar.Framework
 
                     int rock = Game1.random.Next(47, 54);
                     rock = rock + rock % 2;
-                    var obj = new StardewValley.Object(spot, rock, "Stone", true, false, false, false)
+                    var obj = new SObject(spot, rock, "Stone", true, false, false, false)
                     {
                         MinutesUntilReady = 3
                     };

@@ -1,3 +1,4 @@
+using Displays.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
@@ -9,10 +10,19 @@ using StardewValley.Menus;
 
 namespace Displays
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod, IAssetLoader
     {
+        /*********
+        ** Accessors
+        *********/
         public static Mod Instance;
 
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;
@@ -21,16 +31,35 @@ namespace Displays
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
-            helper.ConsoleCommands.Add("player_adddisplay", "mannequin", this.DoCommand);
+            helper.ConsoleCommands.Add("player_adddisplay", "mannequin", this.HandleCommand);
         }
 
-        public void OnGameLaunched(object sender, GameLaunchedEventArgs args)
+        /// <inheritdoc />
+        public bool CanLoad<T>(IAssetInfo asset)
+        {
+            return asset.AssetNameEquals("Characters\\Farmer\\farmer_transparent");
+        }
+
+        /// <inheritdoc />
+        public T Load<T>(IAssetInfo asset)
+        {
+            return (T)(object)this.Helper.Content.Load<Texture2D>("assets/farmer_transparent.png");
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var sc = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
             sc.RegisterSerializerType(typeof(Mannequin));
         }
 
-        public void DoCommand(string cmd, string[] args)
+        private void HandleCommand(string cmd, string[] args)
         {
             if (!Context.IsPlayerFree)
                 return;
@@ -44,17 +73,17 @@ namespace Displays
             Item item = null;
             if (args[0] == "mannequin")
             {
-                var mannType = Mannequin.MannequinType.Plain;
-                var mannGender = Mannequin.MannequinGender.Male;
+                var mannType = MannequinType.Plain;
+                var mannGender = MannequinGender.Male;
                 if (args.Length >= 2)
                 {
                     switch (args[1].ToLower())
                     {
                         case "male":
-                            mannGender = Mannequin.MannequinGender.Male;
+                            mannGender = MannequinGender.Male;
                             break;
                         case "female":
-                            mannGender = Mannequin.MannequinGender.Female;
+                            mannGender = MannequinGender.Female;
                             break;
                         default:
                             Log.Error("Unknown mannequin type. Choices are: male, female");
@@ -78,30 +107,23 @@ namespace Displays
             Game1.player.addItemByMenuIfNecessary(item);
         }
 
+        /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is ShopMenu shop)
             {
                 if (shop.portraitPerson?.Name == "Robin")
                 {
-                    var mm = new Mannequin(Mannequin.MannequinType.Plain, Mannequin.MannequinGender.Male, Vector2.Zero);
-                    var mf = new Mannequin(Mannequin.MannequinType.Plain, Mannequin.MannequinGender.Female, Vector2.Zero);
+                    var mm = new Mannequin(MannequinType.Plain, MannequinGender.Male, Vector2.Zero);
+                    var mf = new Mannequin(MannequinType.Plain, MannequinGender.Female, Vector2.Zero);
                     shop.forSale.Add(mm);
                     shop.forSale.Add(mf);
                     shop.itemPriceAndStock.Add(mm, new[] { 100, int.MaxValue });
                     shop.itemPriceAndStock.Add(mf, new[] { 100, int.MaxValue });
                 }
             }
-        }
-
-        public bool CanLoad<T>(IAssetInfo asset)
-        {
-            return asset.AssetNameEquals("Characters\\Farmer\\farmer_transparent");
-        }
-
-        public T Load<T>(IAssetInfo asset)
-        {
-            return (T)(object)this.Helper.Content.Load<Texture2D>("assets/farmer_transparent.png");
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -11,6 +12,7 @@ using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Monsters;
 using StardewValley.Objects;
@@ -20,6 +22,7 @@ using StardewValley.Tools;
 using TheftOfTheWinterStar.Framework;
 using TheftOfTheWinterStar.Patches;
 using xTile.Tiles;
+using SObject = StardewValley.Object;
 
 namespace TheftOfTheWinterStar
 {
@@ -29,7 +32,7 @@ namespace TheftOfTheWinterStar
         Stage1,
         Finished1,
         Stage2,
-        Finished2,
+        Finished2
     }
 
     internal class Mod : StardewModdingAPI.Mod, IAssetEditor
@@ -42,6 +45,9 @@ namespace TheftOfTheWinterStar
         private SaveData SaveData;
 
         private Texture2D BossBarBg, BossBarFg;
+
+        /// <summary>The unique key in <see cref="TerrainFeature.modData"/> which contains the original crop data for the Tempus Globe logic.</summary>
+        private string PrevCropDataKey;
 
         private static readonly string[] Locs = new[]
         {
@@ -58,7 +64,7 @@ namespace TheftOfTheWinterStar
             "Bonus3",
             "Maze",
             "Bonus4",
-            "Boss",
+            "Boss"
         };
 
         public override void Entry(IModHelper helper)
@@ -68,6 +74,7 @@ namespace TheftOfTheWinterStar
 
             this.BossBarBg = this.Helper.Content.Load<Texture2D>("assets/bossbar-bg.png");
             this.BossBarFg = this.Helper.Content.Load<Texture2D>("assets/bossbar-fg.png");
+            this.PrevCropDataKey = $"{this.ModManifest.UniqueID}/prev-data";
 
             this.Helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.SaveCreated += this.OnCreated;
@@ -162,7 +169,7 @@ namespace TheftOfTheWinterStar
                         this.SaveData.ArenaStage = ArenaStage.Finished1;
                         int key = Mod.Ja.GetObjectId("Festive Key");
                         var pos = new Vector2(6, 13);
-                        var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(key, 1) }), pos);
+                        var chest = new Chest(0, new List<Item>(new Item[] { new SObject(key, 1) }), pos);
                         Game1.currentLocation.overlayObjects[pos] = chest;
                         Game1.playSound("questcomplete");
                     }
@@ -171,7 +178,7 @@ namespace TheftOfTheWinterStar
                         this.SaveData.ArenaStage = ArenaStage.Finished2;
                         int stardropPiece = Mod.Ja.GetObjectId("Frosty Stardrop Piece");
                         var pos = new Vector2(13, 13);
-                        var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(stardropPiece, 1) }), pos);
+                        var chest = new Chest(0, new List<Item>(new Item[] { new SObject(stardropPiece, 1) }), pos);
                         Game1.currentLocation.overlayObjects[pos] = chest;
                         Game1.playSound("questcomplete");
                     }
@@ -196,7 +203,7 @@ namespace TheftOfTheWinterStar
                             {
                                 int stardropPiece = Mod.Ja.GetObjectId("Frosty Stardrop Piece");
                                 var pos = new Vector2(9, 13);
-                                var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(stardropPiece, 1) }), pos);
+                                var chest = new Chest(0, new List<Item>(new Item[] { new SObject(stardropPiece, 1) }), pos);
                                 Game1.currentLocation.overlayObjects[pos] = chest;
                                 this.SaveData.DidProjectilePuzzle = true;
                                 break;
@@ -235,36 +242,34 @@ namespace TheftOfTheWinterStar
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             int seasonalDelimiter = Mod.Ja.GetBigCraftableId("Tempus Globe");
-            foreach (var loc in Game1.locations)
+            foreach (var loc in Game1.locations.Where(this.IsFarm))
             {
-                if (loc.IsFarm)
+                foreach (var pair in loc.Objects.Pairs)
                 {
-                    foreach (var pair in loc.Objects.Pairs)
+                    var obj = pair.Value;
+                    if (obj.bigCraftable.Value && obj.ParentSheetIndex == seasonalDelimiter)
                     {
-                        var obj = pair.Value;
-                        if (obj.bigCraftable.Value && obj.ParentSheetIndex == seasonalDelimiter)
+                        for (int ix = -2; ix <= 2; ++ix)
                         {
-                            for (int ix = -2; ix <= 2; ++ix)
+                            for (int iy = -2; iy <= 2; ++iy)
                             {
-                                for (int iy = -2; iy <= 2; ++iy)
+                                var key = new Vector2(pair.Key.X + ix, pair.Key.Y + iy);
+                                if (!loc.terrainFeatures.TryGetValue(key, out TerrainFeature feature))
+                                    continue;
+                                if (feature is HoeDirt dirt)
                                 {
-                                    var key = new Vector2(pair.Key.X + ix, pair.Key.Y + iy);
-                                    if (!loc.terrainFeatures.TryGetValue(key, out TerrainFeature feature))
-                                        continue;
-                                    if (feature is HoeDirt dirt)
-                                    {
-                                        dirt.state.Value = HoeDirt.watered;
-                                        dirt.updateNeighbors(loc, key);
-                                    }
+                                    dirt.state.Value = HoeDirt.watered;
+                                    dirt.updateNeighbors(loc, key);
                                 }
                             }
-                            loc.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 2176, 320, 320), 60f, 4, 100, pair.Key * 64f + new Vector2(sbyte.MinValue, sbyte.MinValue), false, false)
-                            {
-                                color = Color.White * 0.4f,
-                                delayBeforeAnimationStart = Game1.random.Next(1000),
-                                id = pair.Key.X * 4000f + pair.Key.Y
-                            });
                         }
+
+                        loc.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 2176, 320, 320), 60f, 4, 100, pair.Key * 64f + new Vector2(sbyte.MinValue, sbyte.MinValue), false, false)
+                        {
+                            color = Color.White * 0.4f,
+                            delayBeforeAnimationStart = Game1.random.Next(1000),
+                            id = pair.Key.X * 4000f + pair.Key.Y
+                        });
                     }
                 }
             }
@@ -272,6 +277,7 @@ namespace TheftOfTheWinterStar
 
         private void OnDayEnding(object sender, DayEndingEventArgs e)
         {
+            // save dungeon progress
             if (this.SaveData != null)
             {
                 this.SaveData.ArenaStage = this.SaveData.ArenaStage switch
@@ -282,67 +288,93 @@ namespace TheftOfTheWinterStar
                 };
             }
 
-            var arena = Game1.getLocationFromName("FrostDungeon.Arena");
-            arena.characters.Clear();
-            var bossArea = Game1.getLocationFromName("FrostDungeon.Boss");
-            if (!this.SaveData.BeatBoss)
+            // clear custom data from dungeon
             {
-                bossArea.characters.Clear();
-                bossArea.netObjects.Clear();
-                this.StartedBoss = false;
+                var arena = Game1.getLocationFromName("FrostDungeon.Arena");
+                arena.characters.Clear();
+                var bossArea = Game1.getLocationFromName("FrostDungeon.Boss");
+                if (!this.SaveData.BeatBoss)
+                {
+                    bossArea.characters.Clear();
+                    bossArea.netObjects.Clear();
+                    this.StartedBoss = false;
+                }
             }
 
-            int seasonalDelimiter = Mod.Ja.GetBigCraftableId("Tempus Globe");
-            foreach (var loc in Game1.locations)
+            // prevent crops from withering
+            int tempusGlobeId = Mod.Ja.GetBigCraftableId("Tempus Globe");
+            foreach (var loc in Game1.locations.Where(this.IsFarm))
             {
-                if (loc.IsFarm)
+                // find Tempus Globes coverage
+                HashSet<Vector2> covered = new();
+                foreach (var pair in loc.Objects.Pairs)
                 {
-                    int w = loc.map.Layers[0].LayerWidth, h = loc.map.Layers[0].LayerHeight;
-                    bool[,] valid = new bool[w, h];
-
-                    foreach (var pair in loc.Objects.Pairs)
+                    var obj = pair.Value;
+                    if (obj.bigCraftable.Value && obj.ParentSheetIndex == tempusGlobeId)
                     {
-                        var obj = pair.Value;
-                        if (obj.bigCraftable.Value && obj.ParentSheetIndex == seasonalDelimiter)
+                        for (int ix = -2; ix <= 2; ++ix)
                         {
-                            for (int ix = -2; ix <= 2; ++ix)
-                                for (int iy = -2; iy <= 2; ++iy)
-                                    valid[(int)pair.Key.X + ix, (int)pair.Key.Y + iy] = true;
-                        }
-                    }
-
-                    foreach (var pair in loc.terrainFeatures.Pairs)
-                    {
-                        var tf = pair.Value;
-                        if (tf is HoeDirt hd)
-                        {
-                            if (hd.crop == null)
-                                continue;
-
-                            if (valid[(int)pair.Key.X, (int)pair.Key.Y])
-                            {
-                                if (!hd.crop.seasonsToGrowIn.Contains(Game1.currentSeason))
-                                    hd.crop.seasonsToGrowIn.Add(Game1.currentSeason);
-                            }
-                            /*
-                            else
-                            {
-                                var cropData = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
-                                if ( !cropData.ContainsKey(hd.crop.netSeedIndex.Value))
-                                {
-                                    if ( hd.crop.netSeedIndex.Value != -1 )
-                                        Log.warn("no crop " + hd.crop.netSeedIndex.Value + "? ");
-                                    continue;
-                                }
-                                string[] seasons = cropData[hd.crop.netSeedIndex.Value].Split('/')[1].Split(' ');
-                                hd.crop.seasonsToGrowIn.Clear();
-                                hd.crop.seasonsToGrowIn.AddRange(seasons);
-                            }
-                            */
+                            for (int iy = -2; iy <= 2; ++iy)
+                                covered.Add(new Vector2(pair.Key.X + ix, pair.Key.Y + iy));
                         }
                     }
                 }
+
+                // prevent crop withering
+                if (covered.Any())
+                {
+                    foreach (var pair in loc.terrainFeatures.Pairs)
+                    {
+                        if (pair.Value is not HoeDirt dirt)
+                            continue;
+
+                        if (dirt.crop != null && covered.Contains(pair.Key))
+                        {
+                            if (dirt.crop.seasonsToGrowIn.Count < 4)
+                            {
+                                this.SaveCropData(dirt);
+                                dirt.crop.seasonsToGrowIn.Set(new[] { "spring", "summer", "fall", "winter" });
+                            }
+                        }
+                        else
+                            this.RestoreCropDataIfNeeded(dirt);
+                    }
+                }
             }
+        }
+
+        /// <summary>Get whether a location is farmable.</summary>
+        /// <param name="location">The location to check.</param>
+        private bool IsFarm(GameLocation location)
+        {
+            return
+                location.IsFarm
+                || location is Farm or IslandWest;
+        }
+
+        /// <summary>Back up the original crop data before it's changed by a Tempus Globe.</summary>
+        /// <param name="dirt">The dirt whose crop data to save.</param>
+        private void SaveCropData(HoeDirt dirt)
+        {
+            if (dirt.crop != null)
+                dirt.modData[this.PrevCropDataKey] = dirt.crop.indexOfHarvest.Value.ToString(CultureInfo.InvariantCulture) + "," + string.Join(",", dirt.crop.seasonsToGrowIn);
+            else
+                dirt.modData.Remove(this.PrevCropDataKey);
+        }
+
+        /// <summary>Restore the original crop data when a Tempus Globe no longer applies, if possible.</summary>
+        /// <param name="dirt">The dirt whose crop data to save.</param>
+        private void RestoreCropDataIfNeeded(HoeDirt dirt)
+        {
+            if (dirt.crop != null && dirt.modData.TryGetValue(this.PrevCropDataKey, out string prevData))
+            {
+                string[] parts = prevData.Split(',');
+
+                if (dirt.crop.indexOfHarvest.Value.ToString(CultureInfo.InvariantCulture) == parts[0])
+                    dirt.crop.seasonsToGrowIn.Set(parts.Skip(1).ToArray());
+            }
+
+            dirt.modData.Remove(this.PrevCropDataKey);
         }
 
         private void OnIdsFixed(object sender, EventArgs e)
@@ -375,7 +407,7 @@ namespace TheftOfTheWinterStar
                     {
                         pos.X = 13;
                     }
-                    var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(stardropPiece, 1) }), pos);
+                    var chest = new Chest(0, new List<Item>(new Item[] { new SObject(stardropPiece, 1) }), pos);
                     loc.overlayObjects[pos] = chest;
                 }
                 else if (locName == "WeaponRoom")
@@ -387,13 +419,13 @@ namespace TheftOfTheWinterStar
                 else if (locName == "KeyRoom")
                 {
                     var pos = new Vector2(13, 9);
-                    var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(key, 1) }), pos);
+                    var chest = new Chest(0, new List<Item>(new Item[] { new SObject(key, 1) }), pos);
                     loc.overlayObjects[pos] = chest;
                 }
                 else if (locName == "Maze")
                 {
                     var pos = new Vector2(20, 26);
-                    var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(keyHalfB, 1) }), pos);
+                    var chest = new Chest(0, new List<Item>(new Item[] { new SObject(keyHalfB, 1) }), pos);
                     loc.overlayObjects[pos] = chest;
                 }
                 else if (locName == "Branch2")
@@ -539,7 +571,7 @@ namespace TheftOfTheWinterStar
             if (!e.Player.knowsRecipe("Frosty Stardrop"))
             {
                 foreach (var item in e.Added)
-                    if (item is StardewValley.Object obj && obj.ParentSheetIndex == Mod.Ja.GetObjectId("Frosty Stardrop Piece"))
+                    if (item is SObject obj && obj.ParentSheetIndex == Mod.Ja.GetObjectId("Frosty Stardrop Piece"))
                         e.Player.craftingRecipes.Add("Frosty Stardrop", 0);
             }
         }
@@ -718,7 +750,7 @@ namespace TheftOfTheWinterStar
                 {
                     240, 241, 242, 243,
                     256, 257, 258, 259, 260,
-                    272, 273, 274, 275, 276,
+                    272, 273, 274, 275, 276
                 };
                 int target = 243;
 
@@ -748,7 +780,7 @@ namespace TheftOfTheWinterStar
                     var back = farmer.currentLocation.Map.GetLayer("Back");
                     back.Tiles[tx, ty] = new StaticTile(back, farmer.currentLocation.Map.TileSheets[0], BlendMode.Additive, 257);
                     var pos = new Vector2(14, 13);
-                    var chest = new Chest(0, new List<Item>(new Item[] { new StardewValley.Object(Mod.Ja.GetObjectId("Festive Big Key (B)"), 1) }), pos);
+                    var chest = new Chest(0, new List<Item>(new Item[] { new SObject(Mod.Ja.GetObjectId("Festive Big Key (B)"), 1) }), pos);
                     farmer.currentLocation.overlayObjects[pos] = chest;
                     Game1.playSound("secret1");
 

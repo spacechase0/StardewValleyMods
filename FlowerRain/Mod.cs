@@ -11,6 +11,7 @@ using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using SObject = StardewValley.Object;
 
 namespace FlowerRain
 {
@@ -111,7 +112,7 @@ namespace FlowerRain
 
                 int category = int.Parse(objData[product].Split('/')[3].Split(' ')[1]);
 
-                if (category != StardewValley.Object.flowersCategory || useWhitelist && !whitelist.Contains(product))
+                if (category != SObject.flowersCategory || useWhitelist && !whitelist.Contains(product))
                     continue;
 
                 List<Color> cols = new List<Color>(new[] { Color.White });
@@ -131,10 +132,10 @@ namespace FlowerRain
 
                 foreach (var col in cols)
                 {
-                    FlowerData fd = new FlowerData()
+                    FlowerData fd = new FlowerData
                     {
                         Index = product,
-                        Color = col,
+                        Color = col
                     };
 
                     foreach (string season in seasons)

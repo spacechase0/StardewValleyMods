@@ -1,6 +1,15 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.7.8
+Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* Updated for SpaceCore 1.5.8.
+* Fixed `AdditionalData` for saplings adding recipe instead of sapling to the shop (thanks to lshtech!).
+* Fixed crash in some cases when two custom items have the same name and type.
+* Fixed many cases that would cause `NullReferenceException` errors or crashes.
+* Internal refactoring.
+
 ## 1.7.7
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
