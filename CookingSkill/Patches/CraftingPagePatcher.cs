@@ -78,7 +78,7 @@ namespace CookingSkill.Patches
 
             // custom code begins
             if (!didCraft)
-                return true;
+                return false;
             // custom code ends
 
             if (!___cooking && Game1.player.craftingRecipes.ContainsKey(menu.pagesOfCraftingRecipes[___currentCraftingPage][c].name))
@@ -96,11 +96,11 @@ namespace CookingSkill.Patches
             else
                 Game1.stats.checkForCookingAchievements();
             if (!Game1.options.gamepadControls || ___heldItem == null || !Game1.player.couldInventoryAcceptThisItem(___heldItem))
-                return true;
+                return false;
             Game1.player.addItemToInventoryBool(___heldItem);
             ___heldItem = null;
 
-            return true;
+            return false;
         }
     }
 }

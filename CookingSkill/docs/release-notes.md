@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.3.1
+* Fixed multiplied recipes in Cooking SKill 1.3.0.
+
 ## 1.3.0
 Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

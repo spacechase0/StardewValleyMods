@@ -53,13 +53,13 @@ namespace CookingSkill.Patches
 
             for (int recipeIndex = recipe.recipeList.Count - 1; recipeIndex >= 0; --recipeIndex)
             {
-                int requiredCount = recipe.recipeList[recipe.recipeList.Keys.ElementAt<int>(recipeIndex)];
+                int requiredCount = recipe.recipeList[recipe.recipeList.Keys.ElementAt(recipeIndex)];
                 bool foundInBackpack = false;
                 for (int itemIndex = Game1.player.Items.Count - 1; itemIndex >= 0; --itemIndex)
                 {
-                    if (Game1.player.Items[itemIndex] is SObject obj && !obj.bigCraftable.Value && (obj.ParentSheetIndex == recipe.recipeList.Keys.ElementAt<int>(recipeIndex) || obj.Category == recipe.recipeList.Keys.ElementAt<int>(recipeIndex) || CraftingRecipe.isThereSpecialIngredientRule(obj, recipe.recipeList.Keys.ElementAt<int>(recipeIndex))))
+                    if (Game1.player.Items[itemIndex] is SObject obj && !obj.bigCraftable.Value && (obj.ParentSheetIndex == recipe.recipeList.Keys.ElementAt(recipeIndex) || obj.Category == recipe.recipeList.Keys.ElementAt(recipeIndex) || CraftingRecipe.isThereSpecialIngredientRule(obj, recipe.recipeList.Keys.ElementAt(recipeIndex))))
                     {
-                        int toRemove = recipe.recipeList[recipe.recipeList.Keys.ElementAt<int>(recipeIndex)];
+                        int toRemove = recipe.recipeList[recipe.recipeList.Keys.ElementAt(recipeIndex)];
                         requiredCount -= obj.Stack;
 
                         // custom code begins
@@ -88,7 +88,7 @@ namespace CookingSkill.Patches
                         bool removedItem = false;
                         for (int materialIndex = chest.items.Count - 1; materialIndex >= 0; --materialIndex)
                         {
-                            if (chest.items[materialIndex] != null && chest.items[materialIndex] is SObject && (chest.items[materialIndex].ParentSheetIndex == recipe.recipeList.Keys.ElementAt<int>(recipeIndex) || chest.items[materialIndex].Category == recipe.recipeList.Keys.ElementAt<int>(recipeIndex) || CraftingRecipe.isThereSpecialIngredientRule((SObject)chest.items[materialIndex], recipe.recipeList.Keys.ElementAt<int>(recipeIndex))))
+                            if (chest.items[materialIndex] != null && chest.items[materialIndex] is SObject && (chest.items[materialIndex].ParentSheetIndex == recipe.recipeList.Keys.ElementAt(recipeIndex) || chest.items[materialIndex].Category == recipe.recipeList.Keys.ElementAt(recipeIndex) || CraftingRecipe.isThereSpecialIngredientRule((SObject)chest.items[materialIndex], recipe.recipeList.Keys.ElementAt(recipeIndex))))
                             {
                                 int removedCount = Math.Min(requiredCount, chest.items[materialIndex].Stack);
                                 requiredCount -= removedCount;
@@ -116,7 +116,7 @@ namespace CookingSkill.Patches
                 }
             }
 
-            return true;
+            return false;
         }
     }
 }
