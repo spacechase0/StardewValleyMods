@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Added `magic_summary` console command to show troubleshooting info.
 * Added `help` documentation for console commands.
 * Fixed upgrading spells in Magic 0.4.0.
 * Fixed error when pressing the swap key when no spell bars are prepared.
