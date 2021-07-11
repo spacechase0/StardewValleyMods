@@ -23,5 +23,16 @@ namespace SpaceShared
             value = array[index];
             return true;
         }
+
+        /// <summary>Get a value from an array if it's in range, else get the default value.</summary>
+        /// <typeparam name="T">The value type.</typeparam>
+        /// <param name="array">The array to search.</param>
+        /// <param name="index">The index of the value within the array to find.</param>
+        public static T GetOrDefault<T>(this T[] array, int index)
+        {
+            return array.TryGetIndex(index, out T value)
+                ? value
+                : default;
+        }
     }
 }

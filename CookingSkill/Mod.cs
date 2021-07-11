@@ -116,10 +116,10 @@ namespace CookingSkill
         private void OnItemEaten(object sender, EventArgs e)
         {
             // get object eaten
-            if (Game1.player.itemToEat is not SObject { Category: SObject.CookingCategory } obj)
+            if (Game1.player.itemToEat is not SObject { Category: SObject.CookingCategory } obj || !Game1.objectInformation.TryGetValue(obj.ParentSheetIndex, out string rawObjData))
                 return;
-            string[] objFields = Game1.objectInformation[obj.ParentSheetIndex].Split('/');
-            bool isDrink = objFields[SObject.objectInfoMiscIndex] == "drink";
+            string[] objFields = rawObjData.Split('/');
+            bool isDrink = objFields.GetOrDefault(SObject.objectInfoMiscIndex) == "drink";
 
             // get buff data
             Buff oldBuff = isDrink ? Game1.buffsDisplay.drink : Game1.buffsDisplay.food;
@@ -193,21 +193,21 @@ namespace CookingSkill
         private Buff CreateBuff(int[] attr, int minutesDuration, string[] objectFields)
         {
             return new(
-                farming: attr[Buff.farming],
-                fishing: attr[Buff.fishing],
-                mining: attr[Buff.mining],
-                digging: attr[3],
-                luck: attr[Buff.luck],
-                foraging: attr[Buff.foraging],
-                crafting: attr[Buff.crafting],
-                maxStamina: attr[Buff.maxStamina],
-                magneticRadius: attr[Buff.magneticRadius],
-                speed: attr[Buff.speed],
-                defense: attr[Buff.defense],
-                attack: attr[Buff.attack],
+                farming: attr.GetOrDefault(Buff.farming),
+                fishing: attr.GetOrDefault(Buff.fishing),
+                mining: attr.GetOrDefault(Buff.mining),
+                digging: attr.GetOrDefault(3),
+                luck: attr.GetOrDefault(Buff.luck),
+                foraging: attr.GetOrDefault(Buff.foraging),
+                crafting: attr.GetOrDefault(Buff.crafting),
+                maxStamina: attr.GetOrDefault(Buff.maxStamina),
+                magneticRadius: attr.GetOrDefault(Buff.magneticRadius),
+                speed: attr.GetOrDefault(Buff.speed),
+                defense: attr.GetOrDefault(Buff.defense),
+                attack: attr.GetOrDefault(Buff.attack),
                 minutesDuration: minutesDuration,
-                source: objectFields[SObject.objectInfoNameIndex],
-                displaySource: objectFields[SObject.objectInfoDisplayNameIndex]
+                source: objectFields.GetOrDefault(SObject.objectInfoNameIndex),
+                displaySource: objectFields.GetOrDefault(SObject.objectInfoDisplayNameIndex)
             );
         }
 
@@ -216,9 +216,9 @@ namespace CookingSkill
         private Buff CreateBuffFromObjectField(string[] fields)
         {
             // get object info
-            int edibility = Convert.ToInt32(fields[SObject.objectInfoEdibilityIndex]);
-            string name = fields[SObject.objectInfoNameIndex];
-            string displayName = fields[SObject.objectInfoDisplayNameIndex];
+            int edibility = Convert.ToInt32(fields.GetOrDefault(SObject.objectInfoEdibilityIndex));
+            string name = fields.GetOrDefault(SObject.objectInfoNameIndex);
+            string displayName = fields.GetOrDefault(SObject.objectInfoDisplayNameIndex);
 
             // ignore if item doesn't provide a buff
             if (edibility < 0 || fields.Length <= SObject.objectInfoBuffTypesIndex)
@@ -234,7 +234,7 @@ namespace CookingSkill
                 return null;
 
             // parse buff
-            int GetAttr(int index) => attr.TryGetIndex(index, out string raw) && int.TryParse(attr[index], out int value) ? value : 0;
+            int GetAttr(int index) => attr.TryGetIndex(index, out string raw) && int.TryParse(raw, out int value) ? value : 0;
             return new Buff(
                 farming: GetAttr(Buff.farming),
                 fishing: GetAttr(Buff.fishing),
