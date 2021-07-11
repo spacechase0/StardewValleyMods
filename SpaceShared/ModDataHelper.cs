@@ -59,9 +59,13 @@ namespace SpaceShared
         /// <param name="value">The value to write.</param>
         /// <param name="default">The default value if the field is missing or invalid. If the value matches the default, it won't be written to the data to avoid unneeded serialization and network sync.</param>
         /// <param name="min">The minimum value to consider valid, or <c>null</c> to allow any value.</param>
+        /// <param name="max">The maximum value to consider valid, or <c>null</c> to allow any value.</param>
         [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator", Justification = "We're comparing to a marker value, so precision loss isn't an issue.")]
-        public static void SetFloat(this ModDataDictionary data, string key, float value, float @default = 0, float? min = null)
+        public static void SetFloat(this ModDataDictionary data, string key, float value, float @default = 0, float? min = null, float? max = null)
         {
+            if (value > max)
+                value = max.Value;
+
             if (value == @default || value <= min)
                 data.Remove(key);
             else
