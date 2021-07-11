@@ -219,7 +219,6 @@ namespace CookingSkill
             int edibility = Convert.ToInt32(fields[SObject.objectInfoEdibilityIndex]);
             string name = fields[SObject.objectInfoNameIndex];
             string displayName = fields[SObject.objectInfoDisplayNameIndex];
-            bool isDrink = fields[SObject.objectInfoMiscIndex] == "drink";
 
             // ignore if item doesn't provide a buff
             if (edibility < 0 || fields.Length <= SObject.objectInfoBuffTypesIndex)
@@ -248,7 +247,7 @@ namespace CookingSkill
                 magneticRadius: GetAttr(Buff.magneticRadius),
                 speed: GetAttr(Buff.speed),
                 defense: GetAttr(Buff.defense),
-                attack: GetAttr(isDrink ? Buff.defense : Buff.attack), // ???
+                attack: GetAttr(Buff.attack),
                 minutesDuration: minutesDuration,
                 source: name,
                 displaySource: displayName

@@ -4,6 +4,7 @@
 ## 1.3.1
 * Fixed multiplied recipes in Cooking SKill 1.3.0.
 * Fixed Secret Spices profession always replacing drink buffs.
+* Fixed Intense Flavors profession applying drink defense bonus to attack.
 * Internal refactoring.
 
 ## 1.3.0
