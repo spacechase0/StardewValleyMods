@@ -8,30 +8,32 @@
     "HideFromShippingCollection": true,
     "IsColored": false,
     "Recipe": null,
-    "NameLocalization": {
-        // "es": "",
-        // "ko": "",
-        // "de": "",
-        // "fr": "",
+	"NameLocalization":
+    {
+        //"es": "",
+		"ko": "값싼 부적?",
+        //"de": "",
+        //"fr": "",
         //"hu": "",
         //"it": "",
-        // "ja": "",
-        // "pt": "",
-        // "ru": "",
+        //"ja": "",
+        //"pt": "",
+        //"ru": "",
         //"tr": "",
-        // "zh": ""
+        //"zh": "",
     },
-    "DescriptionLocalization": {
-        // "es": "",
-        // "ko": "",
-        // "de": "",
-        // "fr": "",
+    "DescriptionLocalization":
+    {
+        //"es": "",
+		"ko": "이 부적에 문제가 있는 것 같습니다. 왜 이렇게 싼지 궁금하네요.",
+        //"de": "",
+        //"fr": "",
         //"hu": "",
         //"it": "",
-        // "ja": "",
-        // "pt": "",
-        // "ru": "",
+        //"ja": "",
+        //"pt": "",
+        //"ru": "",
         //"tr": "",
-        // "zh": ""
-    }
+        //"zh": "",
+    },
 }
