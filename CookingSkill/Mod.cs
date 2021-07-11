@@ -269,9 +269,9 @@ namespace CookingSkill
             }
             else
             {
-                Game1.buffsDisplay.drink?.removeBuff();
-                Game1.buffsDisplay.drink = newBuff;
-                Game1.buffsDisplay.drink.addBuff();
+                Game1.buffsDisplay.food?.removeBuff();
+                Game1.buffsDisplay.food = newBuff;
+                Game1.buffsDisplay.food.addBuff();
             }
 
             Game1.buffsDisplay.syncIcons();

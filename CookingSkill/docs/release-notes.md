@@ -3,6 +3,7 @@
 # Release notes
 ## 1.3.1
 * Fixed multiplied recipes in Cooking SKill 1.3.0.
+* Fixed Secret Spices profession always replacing drink buffs.
 * Internal refactoring.
 
 ## 1.3.0
