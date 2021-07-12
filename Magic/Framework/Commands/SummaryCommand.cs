@@ -156,9 +156,9 @@ namespace Magic.Framework.Commands
             public SpellInfo(Spell spell, int? knownLevel)
             {
                 this.Spell = spell;
-                this.KnownLevel = knownLevel + 1;
+                this.KnownLevel = knownLevel + 1; // zero-indexed
                 this.Name = spell.GetTranslatedName();
-                this.MaxLevel = spell.GetMaxCastingLevel() + 1;
+                this.MaxLevel = spell.GetMaxCastingLevel(); // one-indexed
             }
         }
     }
