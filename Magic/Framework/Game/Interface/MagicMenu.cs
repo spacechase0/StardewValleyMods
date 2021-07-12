@@ -1,3 +1,4 @@
+using System.Linq;
 using Magic.Framework.Schools;
 using Magic.Framework.Spells;
 using Microsoft.Xna.Framework;
@@ -36,6 +37,15 @@ namespace Magic.Framework.Game.Interface
         public override void draw(SpriteBatch b)
         {
             var spellBook = Game1.player.GetSpellBook();
+            if (!spellBook.Prepared.Any())
+            {
+                spellBook.Mutate(data =>
+                {
+                    data.Prepared.Add(new PreparedSpellBar());
+                    data.SelectedPrepared = 0;
+                });
+            }
+
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
 
             int hotbarH = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
