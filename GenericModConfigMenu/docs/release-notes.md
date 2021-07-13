@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Improved mod manifest validation.
+* Fixed intermittent error when Custom Music registers its config.
 
 ## 1.4.0
 Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.

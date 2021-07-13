@@ -27,18 +27,24 @@ namespace GenericModConfigMenu.Framework
         {
             this.AssertManifest(manifest);
 
-            if (this.Configs.TryGetValue(manifest.UniqueID, out ModConfig value))
-                return value;
+            lock (this.Configs)
+            {
+                if (this.Configs.TryGetValue(manifest.UniqueID, out ModConfig value))
+                    return value;
 
-            return assert
-                ? throw new KeyNotFoundException($"The '{manifest.Name}' mod hasn't registered a config menu.")
-                : null;
+                return assert
+                    ? throw new KeyNotFoundException($"The '{manifest.Name}' mod hasn't registered a config menu.")
+                    : null;
+            }
         }
 
         /// <summary>Get all registered config menus.</summary>
         public IEnumerable<ModConfig> GetAll()
         {
-            return this.Configs.Values;
+            lock (this.Configs)
+            {
+                return this.Configs.Values;
+            }
         }
 
         /// <summary>Set the config menu metadata for a mod.</summary>
@@ -48,9 +54,12 @@ namespace GenericModConfigMenu.Framework
         /// <exception cref="ArgumentException">The manifest is missing required fields.</exception>
         public void Set(IManifest manifest, ModConfig config)
         {
-            this.AssertManifest(manifest);
+            lock (this.Configs)
+            {
+                this.AssertManifest(manifest);
 
-            this.Configs[manifest.UniqueID] = config ?? throw new ArgumentNullException(nameof(config));
+                this.Configs[manifest.UniqueID] = config ?? throw new ArgumentNullException(nameof(config));
+            }
         }
 
         /// <summary>Remove the config menu metadata for a mod.</summary>
@@ -59,9 +68,12 @@ namespace GenericModConfigMenu.Framework
         /// <exception cref="ArgumentException">The manifest is missing required fields.</exception>
         public void Remove(IManifest manifest)
         {
-            this.AssertManifest(manifest);
+            lock (this.Configs)
+            {
+                this.AssertManifest(manifest);
 
-            this.Configs.Remove(manifest.UniqueID);
+                this.Configs.Remove(manifest.UniqueID);
+            }
         }
 
 
