@@ -4,32 +4,10 @@
     "PurchasePrice": 500,
     "ShowHair": true,
     "IgnoreHairstyleOffset": true,
-	"NameLocalization":
-    {
-        //"es": "",
-		"ko": "오렌지색 스노클 마스크",
-        //"de": "",
-        //"fr": "",
-        //"hu": "",
-        //"it": "",
-        //"ja": "",
-        //"pt": "",
-        //"ru": "",
-        //"tr": "",
-        //"zh": "",
+    "NameLocalization": {
+        "ko": "오렌지색 스노클 마스크"
     },
-    "DescriptionLocalization":
-    {
-        //"es": "",
-		"ko": "스노클 마스크 - 장식 용.",
-        //"de": "",
-        //"fr": "",
-        //"hu": "",
-        //"it": "",
-        //"ja": "",
-        //"pt": "",
-        //"ru": "",
-        //"tr": "",
-        //"zh": "",
-    },
+    "DescriptionLocalization": {
+        "ko": "스노클 마스크 - 장식 용."
+    }
 }
