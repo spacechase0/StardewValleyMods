@@ -5,9 +5,11 @@
     "ShowHair": true,
     "IgnoreHairstyleOffset": true,
     "NameLocalization": {
+        "hu": "Piros búvármaszk",
         "ko": "레드 스노클 마스크"
     },
     "DescriptionLocalization": {
+        "hu": "Csak dekoráció.",
         "ko": "스노클 마스크 - 장식 용."
     }
 }

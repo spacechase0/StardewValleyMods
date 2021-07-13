@@ -5,9 +5,11 @@
     "ShowHair": true,
     "IgnoreHairstyleOffset": true,
     "NameLocalization": {
+        "hu": "Fekete búvármaszk",
         "ko": "블랙 스노클 마스크"
     },
     "DescriptionLocalization": {
+        "hu": "Csak dekoráció.",
         "ko": "스노클 마스크 - 장식 용."
     }
 }

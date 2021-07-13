@@ -2,9 +2,11 @@
     "Name": "Surfing Trophy",
     "Description": "A trophy for winning the surfing festival.",
     "NameLocalization": {
+        "hu": "Szörf trófea",
         "ko": "서핑 트로피"
     },
     "DescriptionLocalization": {
+        "hu": "A Szörf fesztivál megnyeréséért járó trófea.",
         "ko": "서핑 페스티벌 우승 트로피."
     }
 }
