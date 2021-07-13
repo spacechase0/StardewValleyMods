@@ -1,4 +1,32 @@
 ﻿{
     "Name": "Surfing Trophy",
-    "Description": "A trophy for winning the surfing festival."
+    "Description": "A trophy for winning the surfing festival.",
+	"NameLocalization":
+    {
+        //"es": "",
+		"ko": "서핑 트로피",
+        //"de": "",
+        //"fr": "",
+        //"hu": "",
+        //"it": "",
+        //"ja": "",
+        //"pt": "",
+        //"ru": "",
+        //"tr": "",
+        //"zh": "",
+    },
+    "DescriptionLocalization":
+    {
+        //"es": "",
+		"ko": "서핑 페스티벌 우승 트로피.",
+        //"de": "",
+        //"fr": "",
+        //"hu": "",
+        //"it": "",
+        //"ja": "",
+        //"pt": "",
+        //"ru": "",
+        //"tr": "",
+        //"zh": "",
+    },
 }
