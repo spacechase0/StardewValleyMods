@@ -19,7 +19,7 @@ namespace GenericModConfigMenu.Framework
         private readonly int ScrollSpeed;
         private readonly Action<IManifest> OpenModMenu;
 
-        public ModConfigMenu(bool inGame, int scrollSpeed, Action<IManifest> openModMenu)
+        public ModConfigMenu(bool inGame, int scrollSpeed, Action<IManifest> openModMenu, ModConfigManager configs)
         {
             this.InGame = inGame;
             this.ScrollSpeed = scrollSpeed;
@@ -42,14 +42,14 @@ namespace GenericModConfigMenu.Framework
             heading.LocalPosition = new Vector2((800 - heading.Measure().X) / 2, heading.LocalPosition.Y);
             this.Table.AddRow(new Element[] { heading });
 
-            foreach (var modConfigEntry in Mod.Instance.Configs.OrderBy(pair => pair.Key.Name))
+            foreach (var entry in configs.GetAll().OrderBy(entry => entry.ModName))
             {
-                if (this.InGame && !modConfigEntry.Value.HasAnyInGame)
+                if (this.InGame && !entry.HasAnyInGame)
                     continue;
                 var label = new Label
                 {
-                    String = modConfigEntry.Key.Name,
-                    Callback = _ => this.ChangeToModPage(modConfigEntry.Key)
+                    String = entry.ModName,
+                    Callback = _ => this.ChangeToModPage(entry.ModManifest)
                 };
                 this.Table.AddRow(new Element[] { label });
             }

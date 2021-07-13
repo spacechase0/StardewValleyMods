@@ -1,4 +1,4 @@
-using StardewModdingAPI;
+using GenericModConfigMenu.Framework;
 
 namespace GenericModConfigMenu.ModOption
 {
@@ -11,12 +11,12 @@ namespace GenericModConfigMenu.ModOption
 
         public bool AvailableInGame { get; set; } = false;
 
-        public IManifest Owner { get; }
+        public ModConfig Owner { get; }
 
         public abstract void SyncToMod();
         public abstract void Save();
 
-        protected BaseModOption(string name, string desc, string id, IManifest mod)
+        protected BaseModOption(string name, string desc, string id, ModConfig mod)
         {
             this.Name = name;
             this.Description = desc;

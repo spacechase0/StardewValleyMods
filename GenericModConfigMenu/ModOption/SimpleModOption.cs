@@ -1,5 +1,5 @@
 using System;
-using StardewModdingAPI;
+using GenericModConfigMenu.Framework;
 
 namespace GenericModConfigMenu.ModOption
 {
@@ -16,7 +16,7 @@ namespace GenericModConfigMenu.ModOption
             set
             {
                 if (!this.State.Equals(value))
-                    Mod.Instance.Configs[this.Owner].Options[Mod.Instance.Configs[this.Owner].ActiveDisplayPage.Name].ChangeHandler.ForEach(c => c.Invoke(this.Id, value));
+                    this.Owner.Options[this.Owner.ActiveDisplayPage.Name].ChangeHandler.ForEach(c => c.Invoke(this.Id, value));
 
                 this.State = value;
             }
@@ -33,7 +33,7 @@ namespace GenericModConfigMenu.ModOption
             this.Setter.Invoke(this.State);
         }
 
-        public SimpleModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, string id, IManifest mod)
+        public SimpleModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, string id, ModConfig mod)
             : base(name, desc, id, mod)
         {
             this.Type = type;

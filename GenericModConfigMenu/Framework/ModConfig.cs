@@ -21,6 +21,10 @@ namespace GenericModConfigMenu.Framework
             }
         }
 
+        /// <summary>The name of the mod which registered the mod configuration.</summary>
+        public string ModName => this.ModManifest.Name;
+
+        /// <summary>The manifest for the mod which registered the mod configuration.</summary>
         public IManifest ModManifest { get; }
         public Action RevertToDefault { get; }
         public Action SaveToFile { get; }
