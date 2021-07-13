@@ -46,7 +46,7 @@ namespace Magic.Framework.Game.Interface
                 });
             }
 
-            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
+            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.MemoryProfession);
 
             int hotbarH = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
             int gap = (MagicMenu.WindowHeight - hotbarH * 2) / 3 + (hasFifthSpellSlot ? 25 : 0);

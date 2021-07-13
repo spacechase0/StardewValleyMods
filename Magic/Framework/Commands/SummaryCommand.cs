@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Magic.Framework.Spells;
+using SpaceCore;
 using SpaceShared;
 using SpaceShared.ConsoleCommands;
 using StardewModdingAPI;
@@ -44,6 +45,24 @@ namespace Magic.Framework.Commands
             report.AppendLine($"   Learned magic: {player.eventsSeen.Contains(Magic.LearnedMagicEventId)}");
             report.AppendLine($"   Current mana:  {player.GetCurrentMana()} / {player.GetMaxMana()}");
             report.AppendLine($"   Unused points: {spellBook.FreePoints}");
+            report.AppendLine();
+
+            // professions
+            report.AppendLine("Professions:");
+            {
+                void PrintProfession(Skills.Skill.Profession profession, bool indent)
+                {
+                    bool hasProfession = Game1.player.HasCustomProfession(profession);
+                    report.AppendLine($"   {(indent ? "   " : "")}[{(hasProfession ? "X" : " ")}] {profession.GetName()} ({profession.GetDescription()})");
+                }
+
+                foreach (var group in Magic.Skill.ProfessionsForLevels.Where(p => p.Requires != null))
+                {
+                    PrintProfession(group.Requires, indent: false);
+                    PrintProfession(group.First, indent: true);
+                    PrintProfession(group.Second, indent: true);
+                }
+            }
             report.AppendLine();
 
             // known spells

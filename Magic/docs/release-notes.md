@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Added professions to the `magic_summary` console command output.
 * Fixed spell selection UI not showing hotbar in some cases.
 * Fixed `magic_summary` showing max spell levels one higher than they are.
 
