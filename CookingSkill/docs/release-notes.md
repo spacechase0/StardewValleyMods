@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.3.2
+Released 12 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* Fixed non-cooking recipes no longer consuming ingredients.
+
 ## 1.3.1
 Released 11 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

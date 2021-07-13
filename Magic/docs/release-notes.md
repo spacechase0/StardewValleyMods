@@ -1,6 +1,13 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 0.5.1
+Released 12 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* Added professions to the `magic_summary` console command output.
+* Fixed spell selection UI not showing hotbar in some cases.
+* Fixed `magic_summary` showing max spell levels one higher than they are.
+
 ## 0.5.0
 Released 11 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

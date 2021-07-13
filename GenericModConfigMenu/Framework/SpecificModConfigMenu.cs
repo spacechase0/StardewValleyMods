@@ -37,7 +37,7 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Whether a keybinding UI is open.</summary>
         private bool IsBindingKey => this.KeybindingOpt != null || this.Keybinding2Opt != null;
 
-        public readonly IManifest Manifest;
+        public IManifest Manifest => this.ModConfig.ModManifest;
         public readonly string CurrPage;
         public static IClickableMenu ActiveConfigMenu;
 
@@ -62,18 +62,17 @@ namespace GenericModConfigMenu.Framework
             }
         }
 
-        public SpecificModConfigMenu(IManifest modManifest, bool inGame, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
+        public SpecificModConfigMenu(ModConfig config, bool inGame, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
         {
-            this.Manifest = modManifest;
+            this.ModConfig = config;
             this.InGame = inGame;
             this.ScrollSpeed = scrollSpeed;
             this.OpenPage = openPage;
             this.ReturnToList = returnToList;
 
-            this.ModConfig = Mod.Instance.Configs[this.Manifest];
             this.CurrPage = page ?? "";
 
-            Mod.Instance.Configs[this.Manifest].ActiveDisplayPage = this.ModConfig.Options[this.CurrPage];
+            this.ModConfig.ActiveDisplayPage = this.ModConfig.Options[this.CurrPage];
 
             this.Table = new Table
             {
@@ -352,7 +351,7 @@ namespace GenericModConfigMenu.Framework
                 this.Table.AddRow(new[] { label, other, other2 }.Where(p => p != null).ToArray());
             }
             this.Ui.AddChild(this.Table);
-            this.AddDefaultLabels(modManifest);
+            this.AddDefaultLabels(this.Manifest);
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();

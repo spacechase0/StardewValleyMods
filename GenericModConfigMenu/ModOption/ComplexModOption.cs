@@ -1,7 +1,7 @@
 using System;
+using GenericModConfigMenu.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewModdingAPI;
 
 namespace GenericModConfigMenu.ModOption
 {
@@ -12,7 +12,7 @@ namespace GenericModConfigMenu.ModOption
         private readonly Func<SpriteBatch, Vector2, object, object> DrawFunc;
         private readonly Action<object> SaveFunc;
 
-        public ComplexModOption(string name, string desc, Func<Vector2, object, object> update, Func<SpriteBatch, Vector2, object, object> draw, Action<object> save, IManifest mod)
+        public ComplexModOption(string name, string desc, Func<Vector2, object, object> update, Func<SpriteBatch, Vector2, object, object> draw, Action<object> save, ModConfig mod)
             : base(name, desc, name, mod)
         {
             this.UpdateFunc = update;

@@ -40,6 +40,8 @@ namespace CookingSkill.Patches
             // - compare with latest game code to see if anything else changed
 
             CraftingPage menu = __instance;
+            if (!menu.pagesOfCraftingRecipes[___currentCraftingPage][c].isCookingRecipe)
+                return true;
 
             Item crafted = menu.pagesOfCraftingRecipes[___currentCraftingPage][c].createItem();
 

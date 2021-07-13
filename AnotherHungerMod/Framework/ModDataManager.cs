@@ -26,16 +26,15 @@ namespace AnotherHungerMod.Framework
         /// <param name="player">The player to check.</param>
         public static float GetFullness(Farmer player)
         {
-            return player.modData.GetFloat(ModDataManager.FullnessKey, min: 0);
+            return player.modData.GetFloat(ModDataManager.FullnessKey, min: 0, @default: Mod.Config.MaxFullness);
         }
 
         /// <summary>Set a player's current fullness points.</summary>
         /// <param name="player">The player to update.</param>
         /// <param name="value">The value to set.</param>
-        /// <param name="maxValue">The maximum allowed fullness.</param>
-        public static void SetFullness(Farmer player, float value, float maxValue)
+        public static void SetFullness(Farmer player, float value)
         {
-            player.modData.SetFloat(ModDataManager.FullnessKey, value, min: 0, max: maxValue);
+            player.modData.SetFloat(ModDataManager.FullnessKey, value, min: 0, max: Mod.Config.MaxFullness, @default: Mod.Config.MaxFullness);
         }
 
         /// <summary>Get whether the player has fed their spouse.</summary>

@@ -19,7 +19,7 @@ namespace AnotherHungerMod.Framework
                 return;
 
             float fullness = ModDataManager.GetFullness(player);
-            ModDataManager.SetFullness(player, fullness - amt, maxValue: Mod.Config.MaxFullness);
+            ModDataManager.SetFullness(player, fullness - amt);
         }
 
         public static int GetMaxFullness(this Farmer _)

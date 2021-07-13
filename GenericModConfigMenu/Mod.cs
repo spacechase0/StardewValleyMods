@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using GenericModConfigMenu.Framework;
 using GenericModConfigMenu.Framework.UI;
 using Microsoft.Xna.Framework;
@@ -21,12 +20,13 @@ namespace GenericModConfigMenu
         private RootElement Ui;
         private Button ConfigButton;
 
+        /// <summary>The registered mod config menus.</summary>
+        private readonly ModConfigManager Configs = new();
 
         /*********
         ** Accessors
         *********/
         public static Mod Instance;
-        internal Dictionary<IManifest, ModConfig> Configs = new();
 
 
         /*********
@@ -52,16 +52,16 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override object GetApi()
         {
-            return new Api();
+            return new Api(this.Configs);
         }
 
         /// <summary>Open the menu which shows a list of configurable mods.</summary>
         public void OpenListMenu()
         {
             if (Game1.activeClickableMenu is TitleMenu)
-                TitleMenu.subMenu = new ModConfigMenu(false, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod));
+                TitleMenu.subMenu = new ModConfigMenu(false, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.Configs);
             else
-                Game1.activeClickableMenu = new ModConfigMenu(true, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod));
+                Game1.activeClickableMenu = new ModConfigMenu(true, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.Configs);
         }
 
         /// <summary>Open the config UI for a specific mod.</summary>
@@ -70,9 +70,10 @@ namespace GenericModConfigMenu
         public void OpenModMenu(IManifest mod, string page = null)
         {
             bool inGame = Game1.activeClickableMenu is not TitleMenu;
+            ModConfig config = this.Configs.Get(mod, assert: true);
 
             var menu = new SpecificModConfigMenu(
-                modManifest: mod,
+                config: config,
                 inGame: inGame,
                 scrollSpeed: this.Config.ScrollSpeed,
                 page: page,

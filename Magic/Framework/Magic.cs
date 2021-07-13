@@ -274,7 +274,7 @@ namespace Magic.Framework
 
             Vector2 manaPos = new Vector2(20, Game1.uiViewport.Height - 56 * 4 - 20);
 
-            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
+            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.MemoryProfession);
 
             int spotYAffector = -1;
             if (hasFifthSpellSlot)
@@ -338,7 +338,7 @@ namespace Magic.Framework
         /// <param name="e">The event arguments.</param>
         private static void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.ProfessionFifthSpellSlot);
+            bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.MemoryProfession);
 
             if (e.Button == Mod.Config.Key_Cast)
                 Magic.CastPressed = true;
@@ -402,9 +402,9 @@ namespace Magic.Framework
         private static void OnTimeChanged(object sender, TimeChangedEventArgs e)
         {
             float manaRegen = Game1.player.GetCustomSkillLevel(Magic.Skill) / 2 + Magic.CarryoverManaRegen;
-            if (Game1.player.HasCustomProfession(Skill.ProfessionManaRegen2))
+            if (Game1.player.HasCustomProfession(Skill.ManaRegen2Profession))
                 manaRegen *= 3;
-            else if (Game1.player.HasCustomProfession(Skill.ProfessionManaRegen1))
+            else if (Game1.player.HasCustomProfession(Skill.ManaRegen1Profession))
                 manaRegen *= 2;
 
             Game1.player.AddMana((int)manaRegen);

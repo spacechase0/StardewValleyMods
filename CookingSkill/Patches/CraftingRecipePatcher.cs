@@ -21,7 +21,7 @@ namespace CookingSkill.Patches
         ** Accessors
         *********/
         /// <summary>Whether to actually consume items for the current recipe.</summary>
-        public static bool ShouldConsumeItems { get; set; }
+        public static bool ShouldConsumeItems { get; set; } = true;
 
         /// <summary>The items consumed by the last recipe, if any.</summary>
         public static IList<ConsumedItem> LastUsedItems { get; } = new List<ConsumedItem>();
@@ -50,6 +50,8 @@ namespace CookingSkill.Patches
         {
             CraftingRecipePatcher.LastUsedItems.Clear();
             var recipe = __instance;
+            if (!recipe.isCookingRecipe)
+                return true;
 
             for (int recipeIndex = recipe.recipeList.Count - 1; recipeIndex >= 0; --recipeIndex)
             {

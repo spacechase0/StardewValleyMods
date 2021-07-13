@@ -50,12 +50,23 @@ namespace Magic.Framework
             }
         }
 
-        public static GenericProfession ProfessionUpgradePoint1;
-        public static GenericProfession ProfessionUpgradePoint2;
-        public static GenericProfession ProfessionFifthSpellSlot;
-        public static GenericProfession ProfessionManaRegen1;
-        public static GenericProfession ProfessionManaRegen2;
-        public static GenericProfession ProfessionManaCap;
+        /// <summary>The level 5 'potential' profession.</summary>
+        public static GenericProfession PotentialProfession;
+
+        /// <summary>The level 10 'prodigy' profession.</summary>
+        public static GenericProfession ProdigyProfession;
+
+        /// <summary>The level 10 'memory' profession.</summary>
+        public static GenericProfession MemoryProfession;
+
+        /// <summary>The level 5 'Mana Regen I' profession.</summary>
+        public static GenericProfession ManaRegen1Profession;
+
+        /// <summary>The level 10 'Mana Regen II' profession.</summary>
+        public static GenericProfession ManaRegen2Profession;
+
+        /// <summary>The level 10 'Mana Reserve' profession.</summary>
+        public static GenericProfession ManaReserveProfession;
 
         public Skill()
             : base(Skill.MagicSkillId)
@@ -68,61 +79,61 @@ namespace Magic.Framework
             this.ExperienceBarColor = new Microsoft.Xna.Framework.Color(0, 66, 255);
 
             // Level 5
-            Skill.ProfessionUpgradePoint1 = new UpgradePointProfession(this, "UpgradePoints1")
+            Skill.PotentialProfession = new UpgradePointProfession(this, "UpgradePoints1")
             {
                 Icon = null, // TODO
                 Name = "Potential",
                 Description = "+2 spell upgrade points"
             };
-            this.Professions.Add(Skill.ProfessionUpgradePoint1);
+            this.Professions.Add(Skill.PotentialProfession);
 
-            Skill.ProfessionManaRegen1 = new GenericProfession(this, "ManaRegen1")
+            Skill.ManaRegen1Profession = new GenericProfession(this, "ManaRegen1")
             {
                 Icon = null, // TODO
                 Name = "Mana Regen I",
                 Description = "+0.5 mana regen per level"
             };
-            this.Professions.Add(Skill.ProfessionManaRegen1);
+            this.Professions.Add(Skill.ManaRegen1Profession);
 
-            this.ProfessionsForLevels.Add(new ProfessionPair(5, Skill.ProfessionUpgradePoint1, Skill.ProfessionManaRegen1));
+            this.ProfessionsForLevels.Add(new ProfessionPair(5, Skill.PotentialProfession, Skill.ManaRegen1Profession));
 
             // Level 10 - track A
-            Skill.ProfessionUpgradePoint2 = new UpgradePointProfession(this, "UpgradePoints2")
+            Skill.ProdigyProfession = new UpgradePointProfession(this, "UpgradePoints2")
             {
                 Icon = null, // TODO
                 Name = "Prodigy",
                 Description = "+2 spell upgrade points"
             };
-            this.Professions.Add(Skill.ProfessionUpgradePoint2);
+            this.Professions.Add(Skill.ProdigyProfession);
 
-            Skill.ProfessionFifthSpellSlot = new GenericProfession(this, "FifthSpellSlot")
+            Skill.MemoryProfession = new GenericProfession(this, "FifthSpellSlot")
             {
                 Icon = null, // TODO
                 Name = "Memory",
                 Description = "Adds a fifth spell per spell set."
             };
-            this.Professions.Add(Skill.ProfessionFifthSpellSlot);
+            this.Professions.Add(Skill.MemoryProfession);
 
-            this.ProfessionsForLevels.Add(new ProfessionPair(10, Skill.ProfessionUpgradePoint2, Skill.ProfessionFifthSpellSlot, Skill.ProfessionUpgradePoint1));
+            this.ProfessionsForLevels.Add(new ProfessionPair(10, Skill.ProdigyProfession, Skill.MemoryProfession, Skill.PotentialProfession));
 
             // Level 10 - track B
-            Skill.ProfessionManaRegen2 = new GenericProfession(this, "ManaRegen2")
+            Skill.ManaRegen2Profession = new GenericProfession(this, "ManaRegen2")
             {
                 Icon = null, // TODO
                 Name = "Mana Regen II",
                 Description = "+1 mana regen per level"
             };
-            this.Professions.Add(Skill.ProfessionManaRegen2);
+            this.Professions.Add(Skill.ManaRegen2Profession);
 
-            Skill.ProfessionManaCap = new ManaCapProfession(this, "ManaCap")
+            Skill.ManaReserveProfession = new ManaCapProfession(this, "ManaCap")
             {
                 Icon = null, // TODO
                 Name = "Mana Reserve",
                 Description = "+500 max mana"
             };
-            this.Professions.Add(Skill.ProfessionManaCap);
+            this.Professions.Add(Skill.ManaReserveProfession);
 
-            this.ProfessionsForLevels.Add(new ProfessionPair(10, Skill.ProfessionManaRegen2, Skill.ProfessionManaCap, Skill.ProfessionManaRegen1));
+            this.ProfessionsForLevels.Add(new ProfessionPair(10, Skill.ManaRegen2Profession, Skill.ManaReserveProfession, Skill.ManaRegen1Profession));
         }
 
         public override string GetName()
