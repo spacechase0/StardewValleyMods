@@ -1,9 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.4.1
+Released 12 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Improved mod manifest validation.
-* Fixed intermittent error when Custom Music registers its config.
+* Fixed intermittent error with Custom Music.
 
 ## 1.4.0
 Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
