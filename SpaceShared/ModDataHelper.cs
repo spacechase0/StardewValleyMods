@@ -63,10 +63,12 @@ namespace SpaceShared
         [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator", Justification = "We're comparing to a marker value, so precision loss isn't an issue.")]
         public static void SetFloat(this ModDataDictionary data, string key, float value, float @default = 0, float? min = null, float? max = null)
         {
+            if (value < min)
+                value = min.Value;
             if (value > max)
                 value = max.Value;
 
-            if (value == @default || value <= min)
+            if (value == @default)
                 data.Remove(key);
             else
                 data[key] = value.ToString(CultureInfo.InvariantCulture);

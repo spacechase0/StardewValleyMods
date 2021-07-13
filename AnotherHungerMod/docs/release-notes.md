@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed fullness starting at zero in new saves.
+
 ## 1.2.1
 Released 11 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
