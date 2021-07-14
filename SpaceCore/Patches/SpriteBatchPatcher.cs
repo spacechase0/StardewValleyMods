@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 

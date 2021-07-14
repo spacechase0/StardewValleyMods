@@ -3,10 +3,10 @@
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>e4ddde92-6b61-48d6-944b-39c52ef6cffb</SharedGUID>
+    <SharedGUID>a87f5d49-6246-4b14-8363-114dc9335c2c</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>SpaceSharedHarmony</Import_RootNamespace>
+    <Import_RootNamespace>SpaceSharedPatching</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BasePatcher.cs" />

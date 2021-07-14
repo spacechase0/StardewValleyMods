@@ -3,7 +3,7 @@ using System.Reflection;
 using Harmony;
 using StardewModdingAPI;
 
-namespace Spacechase.Shared.Harmony
+namespace Spacechase.Shared.Patching
 {
     /// <summary>Provides base implementation logic for <see cref="IPatcher"/> instances.</summary>
     internal abstract class BasePatcher : IPatcher

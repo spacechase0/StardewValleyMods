@@ -5,7 +5,7 @@ using FlowerRain.Framework;
 using FlowerRain.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;

@@ -9,7 +9,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Harmony;
 using Newtonsoft.Json;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceCore.Framework;
 using SpaceCore.Framework.Serialization;
 using SpaceShared;

@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text;
 using Harmony;
 
-namespace Spacechase.Shared.Harmony
+namespace Spacechase.Shared.Patching
 {
     /// <summary>Provides utility methods for patching game code with Harmony.</summary>
     internal static class PatchHelper

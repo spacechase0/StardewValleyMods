@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using MoreRings.Framework;
 using MoreRings.Patches;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceShared;
 using SpaceShared.APIs;

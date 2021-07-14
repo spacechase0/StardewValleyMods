@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BuildableLocationsFramework.Framework;
 using BuildableLocationsFramework.Patches;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;

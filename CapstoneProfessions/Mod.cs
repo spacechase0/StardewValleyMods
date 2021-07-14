@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using CapstoneProfessions.Framework;
 using CapstoneProfessions.Patches;
 using Microsoft.Xna.Framework.Graphics;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceShared;
 using StardewModdingAPI;

@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceShared;
 using SpaceShared.APIs;

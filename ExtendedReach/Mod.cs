@@ -1,6 +1,6 @@
 using ExtendedReach.Framework;
 using ExtendedReach.Patches;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;

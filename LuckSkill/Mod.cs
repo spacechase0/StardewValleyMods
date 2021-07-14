@@ -6,7 +6,7 @@ using LuckSkill.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceShared;
 using SpaceShared.APIs;

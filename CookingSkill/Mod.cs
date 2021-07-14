@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CookingSkill.Framework;
 using CookingSkill.Patches;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceCore;
 using SpaceCore.Events;
 using SpaceShared;
