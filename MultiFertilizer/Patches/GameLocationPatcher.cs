@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Microsoft.Xna.Framework;
+using MultiFertilizer.Framework;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
@@ -41,7 +42,7 @@ namespace MultiFertilizer.Patches
             bool stopCaring = false;
             bool foundFertCategory = false;
 
-            // When we find -19, after the next instruction:
+            // When we find SObject.fertilizerCategory, after the next instruction:
             // Place our patched section function call. If it returns true, return from the function true.
 
             var newInsns = new List<CodeInstruction>();
@@ -53,7 +54,7 @@ namespace MultiFertilizer.Patches
                     continue;
                 }
 
-                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == -19)
+                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == SObject.fertilizerCategory)
                 {
                     newInsns.Add(insn);
                     foundFertCategory = true;
@@ -89,29 +90,11 @@ namespace MultiFertilizer.Patches
 
         private static bool IsTileOccupiedForPlacementLogic(GameLocation __instance, Vector2 tileLocation, SObject toPlace)
         {
-            if (toPlace.Category == -19 && __instance.terrainFeatures.TryGetValue(tileLocation, out TerrainFeature feature) && feature is HoeDirt hoe_dirt)
-            {
-                string key = toPlace.ParentSheetIndex switch
-                {
-                    368 => Mod.KeyFert,
-                    369 => Mod.KeyFert,
-                    919 => Mod.KeyFert,
-                    370 => Mod.KeyRetain,
-                    371 => Mod.KeyRetain,
-                    920 => Mod.KeyRetain,
-                    465 => Mod.KeySpeed,
-                    466 => Mod.KeySpeed,
-                    918 => Mod.KeySpeed,
-                    _ => ""
-                };
-
-                if (hoe_dirt.modData.ContainsKey(key))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return
+                toPlace.Category == SObject.fertilizerCategory
+                && __instance.TryGetDirt(tileLocation, out HoeDirt dirt, includePots: false)
+                && DirtHelper.TryGetFertilizer(toPlace.ParentSheetIndex, out FertilizerData fertilizer)
+                && dirt.HasFertilizer(fertilizer);
         }
     }
 }

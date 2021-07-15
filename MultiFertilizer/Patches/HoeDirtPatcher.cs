@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MultiFertilizer.Framework;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
@@ -63,32 +64,17 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="HoeDirt.plant"/>.</summary>
         private static bool Before_Plant(HoeDirt __instance, int index, int tileX, int tileY, Farmer who, bool isFertilizer, GameLocation location)
         {
-            if (isFertilizer)
+            if (isFertilizer && DirtHelper.TryGetFertilizer(index, out FertilizerData fertilizer))
             {
                 if (__instance.crop != null && __instance.crop.currentPhase.Value != 0)
                     return false;
 
-                int level = 0;
-                string key = "";
-                switch (index)
-                {
-                    case 368: level = 1; key = Mod.KeyFert; break;
-                    case 369: level = 2; key = Mod.KeyFert; break;
-                    case 919: level = 3; key = Mod.KeyFert; break;
-                    case 370: level = 1; key = Mod.KeyRetain; break;
-                    case 371: level = 2; key = Mod.KeyRetain; break;
-                    case 920: level = 3; key = Mod.KeyRetain; break;
-                    case 465: level = 1; key = Mod.KeySpeed; break;
-                    case 466: level = 2; key = Mod.KeySpeed; break;
-                    case 918: level = 3; key = Mod.KeySpeed; break;
-                }
-
-                if (__instance.modData.ContainsKey(key))
+                if (__instance.HasFertilizer(fertilizer))
                     return false;
                 else
                 {
-                    __instance.modData[key] = level.ToString();
-                    if (key == Mod.KeySpeed)
+                    __instance.modData[fertilizer.Key] = fertilizer.Level.ToString();
+                    if (fertilizer.Key == Mod.KeySpeed)
                         Mod.Instance.Helper.Reflection.GetMethod(__instance, "applySpeedIncreases").Invoke(who);
                     location.playSound("dirtyHit");
                     return true;
@@ -139,18 +125,8 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="HoeDirt.applySpeedIncreases"/>.</summary>
         private static void Before_ApplySpeedIncreases(HoeDirt __instance, Farmer who)
         {
-            if (!__instance.modData.TryGetValue(Mod.KeySpeed, out string rawValue))
-                return;
-
-            int index = int.Parse(rawValue) switch
-            {
-                1 => 465,
-                2 => 466,
-                3 => 918,
-                _ => 0
-            };
-
-            __instance.fertilizer.Value = index;
+            if (__instance.TryGetFertilizer(Mod.KeySpeed, out FertilizerData fertilizer))
+                __instance.fertilizer.Value = fertilizer.Id;
         }
 
         /// <summary>The method to call after <see cref="HoeDirt.applySpeedIncreases"/>.</summary>
@@ -162,23 +138,9 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="HoeDirt.canPlantThisSeedHere"/>.</summary>
         private static bool Before_CanPlantThisSeedHere(HoeDirt __instance, int objectIndex, int tileX, int tileY, bool isFertilizer, ref bool __result)
         {
-            if (isFertilizer)
+            if (isFertilizer && DirtHelper.TryGetFertilizer(objectIndex, out FertilizerData fertilizer))
             {
-                string key = objectIndex switch
-                {
-                    368 => Mod.KeyFert,
-                    369 => Mod.KeyFert,
-                    919 => Mod.KeyFert,
-                    370 => Mod.KeyRetain,
-                    371 => Mod.KeyRetain,
-                    920 => Mod.KeyRetain,
-                    465 => Mod.KeySpeed,
-                    466 => Mod.KeySpeed,
-                    918 => Mod.KeySpeed,
-                    _ => ""
-                };
-
-                __result = !__instance.modData.ContainsKey(key);
+                __result = !__instance.HasFertilizer(fertilizer);
                 return false;
             }
             return true;
@@ -187,18 +149,8 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="HoeDirt.dayUpdate"/>.</summary>
         private static void Before_DayUpdate(HoeDirt __instance, GameLocation environment, Vector2 tileLocation)
         {
-            if (!__instance.modData.TryGetValue(Mod.KeyRetain, out string rawValue))
-                return;
-
-            int index = int.Parse(rawValue) switch
-            {
-                1 => 370,
-                2 => 371,
-                3 => 920,
-                _ => 0
-            };
-
-            __instance.fertilizer.Value = index;
+            if (__instance.TryGetFertilizer(Mod.KeyRetain, out FertilizerData fertilizer))
+                __instance.fertilizer.Value = fertilizer.Id;
         }
 
         /// <summary>The method to call after <see cref="HoeDirt.dayUpdate"/>.</summary>
@@ -212,73 +164,23 @@ namespace MultiFertilizer.Patches
         {
             if (!onLoad && (__instance.crop == null || __instance.crop.dead.Value || !__instance.crop.seasonsToGrowIn.Contains(Game1.currentLocation.GetSeasonForLocation())))
             {
-                __instance.modData.Remove(Mod.KeyFert);
-                __instance.modData.Remove(Mod.KeyRetain);
-                __instance.modData.Remove(Mod.KeySpeed);
+                foreach (string key in DirtHelper.GetFertilizerTypes())
+                    __instance.modData.Remove(key);
             }
         }
 
         private static void DrawMultiFertilizer(SpriteBatch spriteBatch, Texture2D tex, Vector2 pos, Rectangle? sourceRect, Color col, float rot, Vector2 origin, float scale, SpriteEffects fx, float depth, HoeDirt __instance)
         {
-            List<int> fertilizers = new List<int>();
-            if (__instance.modData.TryGetValue(Mod.KeyFert, out string rawFertValue))
+            List<FertilizerData> fertilizers = new List<FertilizerData>();
+
+            foreach (string type in DirtHelper.GetFertilizerTypes())
             {
-                int level = int.Parse(rawFertValue);
-                int index = level switch
-                {
-                    1 => 368,
-                    2 => 369,
-                    3 => 919,
-                    _ => 0
-                };
-                if (index != 0)
-                    fertilizers.Add(index);
+                if (__instance.TryGetFertilizer(type, out FertilizerData fertilizer))
+                    fertilizers.Add(fertilizer);
             }
-            if (__instance.modData.TryGetValue(Mod.KeyRetain, out string rawRetainerValue))
-            {
-                int level = int.Parse(rawRetainerValue);
-                int index = level switch
-                {
-                    1 => 370,
-                    2 => 371,
-                    3 => 920,
-                    _ => 0
-                };
-                if (index != 0)
-                    fertilizers.Add(index);
-            }
-            if (__instance.modData.TryGetValue(Mod.KeySpeed, out string rawSpeedValue))
-            {
-                int level = int.Parse(rawSpeedValue);
-                int index = level switch
-                {
-                    1 => 465,
-                    2 => 466,
-                    3 => 918,
-                    _ => 0
-                };
-                if (index != 0)
-                    fertilizers.Add(index);
-            }
-            foreach (int fertilizer in fertilizers)
-            {
-                if (fertilizer != 0)
-                {
-                    int fertilizerIndex = fertilizer switch
-                    {
-                        369 => 1,
-                        370 => 3,
-                        371 => 4,
-                        920 => 5,
-                        465 => 6,
-                        466 => 7,
-                        918 => 8,
-                        919 => 2,
-                        _ => 0
-                    };
-                    spriteBatch.Draw(Game1.mouseCursors, pos, new Rectangle(173 + fertilizerIndex / 3 * 16, 462 + fertilizerIndex % 3 * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1.9E-08f);
-                }
-            }
+
+            foreach (FertilizerData fertilizer in fertilizers)
+                spriteBatch.Draw(Game1.mouseCursors, pos, new Rectangle(173 + fertilizer.SpriteIndex / 3 * 16, 462 + fertilizer.SpriteIndex % 3 * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1.9E-08f);
         }
     }
 }

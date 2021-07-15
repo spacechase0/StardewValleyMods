@@ -4,11 +4,11 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Microsoft.Xna.Framework;
+using MultiFertilizer.Framework;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using SObject = StardewValley.Object;
 
@@ -42,7 +42,7 @@ namespace MultiFertilizer.Patches
             bool stopCaring = false;
             int fertCategoryCounter = 0;
 
-            // When we find the second -19, after the next instruction:
+            // When we find the second SObject.fertilizerCategory, after the next instruction:
             // Place our patched section function call. If it returns true, return from the function false.
 
             var newInsns = new List<CodeInstruction>();
@@ -54,7 +54,7 @@ namespace MultiFertilizer.Patches
                     continue;
                 }
 
-                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == -19)
+                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == SObject.fertilizerCategory)
                 {
                     newInsns.Add(insn);
                     fertCategoryCounter++;
@@ -92,32 +92,11 @@ namespace MultiFertilizer.Patches
         {
             if (l.isTileHoeDirt(tile))
             {
-                string key = __instance.ParentSheetIndex switch
-                {
-                    368 => Mod.KeyFert,
-                    369 => Mod.KeyFert,
-                    919 => Mod.KeyFert,
-                    370 => Mod.KeyRetain,
-                    371 => Mod.KeyRetain,
-                    920 => Mod.KeyRetain,
-                    465 => Mod.KeySpeed,
-                    466 => Mod.KeySpeed,
-                    918 => Mod.KeySpeed,
-                    _ => ""
-                };
-
                 if (__instance.ParentSheetIndex == 805)
-                {
                     return true;
-                }
-                if (l.terrainFeatures.TryGetValue(tile, out TerrainFeature feature) && feature is HoeDirt dirt && dirt.modData.ContainsKey(key))
-                {
+
+                if (DirtHelper.TryGetFertilizer(__instance.ParentSheetIndex, out FertilizerData fertilizer) && l.TryGetDirt(tile, out HoeDirt dirt) && dirt.HasFertilizer(fertilizer))
                     return true;
-                }
-                if (l.objects.TryGetValue(tile, out SObject obj) && obj is IndoorPot pot && pot.hoeDirt.Value.modData.ContainsKey(key))
-                {
-                    return true;
-                }
             }
             return false;
         }
