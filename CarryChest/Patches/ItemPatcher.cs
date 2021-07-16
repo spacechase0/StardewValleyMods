@@ -21,7 +21,7 @@ namespace CarryChest.Patches
         {
             harmony.Patch(
                 original: this.RequireMethod<Item>(nameof(Item.canStackWith)),
-                prefix: this.GetHarmonyMethod(nameof(Before_CanStackWith))
+                postfix: this.GetHarmonyMethod(nameof(ItemPatcher.After_CanStackWith))
             );
         }
 
@@ -29,19 +29,22 @@ namespace CarryChest.Patches
         /*********
         ** Private methods
         *********/
-        /// <summary>The method to call before <see cref="Item.canStackWith"/>.</summary>
-        public static bool Before_CanStackWith(Item __instance, ISalable other, ref bool __result)
+        /// <summary>The method to call after <see cref="Item.canStackWith"/>.</summary>
+        private static void After_CanStackWith(Item __instance, ISalable other, ref bool __result)
         {
-            if (ChestHelper.IsSupported(__instance) && ChestHelper.IsSupported(other) && __instance.ParentSheetIndex == ((Item)other).ParentSheetIndex)
-            {
-                if (__instance is Chest left && left.items.Count != 0 || other is Chest right && right.items.Count != 0)
-                {
-                    __result = false;
-                    return false;
-                }
-            }
+            // prevent stacking chests that contain items
+            if (__result)
+                __result = !ItemPatcher.ShouldPreventStacking(__instance) && !ItemPatcher.ShouldPreventStacking(other);
+        }
 
-            return true;
+        /// <summary>Get whether to prevent stacking the given item.</summary>
+        /// <param name="item">The item to check.</param>
+        private static bool ShouldPreventStacking(ISalable item)
+        {
+            return
+                ChestHelper.IsSupported(item)
+                && item is Chest chest
+                && chest.items.Count != 0;
         }
     }
 }
