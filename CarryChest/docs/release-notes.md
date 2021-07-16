@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed mod partially handling unsupported chest types.
+
 ## 1.3.2
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

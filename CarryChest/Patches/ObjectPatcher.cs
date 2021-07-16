@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using CarryChest.Framework;
 using Harmony;
 using Spacechase.Shared.Patching;
 using SpaceShared;
@@ -31,7 +32,7 @@ namespace CarryChest.Patches
         /// <summary>The method to call before <see cref="SObject.getDescription"/>.</summary>
         private static void After_GetDescription(SObject __instance, ref string __result)
         {
-            if (__instance.ParentSheetIndex == 130)
+            if (ChestHelper.IsSupported(__instance))
             {
                 var chest = __instance as Chest;
                 __result += "\n" + $"Contains {chest?.items?.Count ?? 0} items.";
