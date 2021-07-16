@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Fixed support for Stone Chests in Stardew Valley 1.5.
 * Fixed mod partially handling unsupported chest types.
 
 ## 1.3.2

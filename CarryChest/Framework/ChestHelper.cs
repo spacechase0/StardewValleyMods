@@ -19,7 +19,7 @@ namespace CarryChest.Framework
             return
                 item is SObject obj
                 && obj.bigCraftable.Value
-                && obj.ParentSheetIndex == 130
+                && (obj.ParentSheetIndex is 130 or 232) // chest or stone chest
                 && (obj is not Chest chest || chest.playerChest.Value);
         }
     }
