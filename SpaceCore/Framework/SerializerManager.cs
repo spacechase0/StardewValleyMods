@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using SpaceCore.Patches;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Monsters;
@@ -106,8 +107,6 @@ namespace SpaceCore.Framework
             SaveGame.serializer = this.InitializeSerializer(typeof(SaveGame), this.VanillaMainTypes);
             SaveGame.farmerSerializer = this.InitializeSerializer(typeof(Farmer), this.VanillaFarmerTypes);
             SaveGame.locationSerializer = this.InitializeSerializer(typeof(GameLocation), this.VanillaGameLocationTypes);
-
-            this.NotifyPyTk();
         }
 
         public XmlSerializer InitializeSerializer(Type baseType, Type[] extra = null)
@@ -116,7 +115,9 @@ namespace SpaceCore.Framework
                 ? extra.Concat(SpaceCore.ModTypes)
                 : SpaceCore.ModTypes;
 
-            return new(baseType, types.ToArray());
+            XmlSerializer serializer = new(baseType, types.ToArray());
+            this.NotifyPyTk(serializer);
+            return serializer;
         }
 
 
@@ -124,7 +125,8 @@ namespace SpaceCore.Framework
         ** Private methods
         *********/
         /// <summary>Notify PyTK that the serializers were changed, if it's installed.</summary>
-        private void NotifyPyTk()
+        /// <param name="serializer">The XML serializer which changed.</param>
+        private void NotifyPyTk(XmlSerializer serializer)
         {
             if (!SpaceCore.Instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
                 return;
@@ -150,7 +152,7 @@ namespace SpaceCore.Framework
                 }
 
                 // notify
-                method.Invoke(null, new object[] { null });
+                method.Invoke(null, new object[] { serializer });
             }
             catch (Exception ex)
             {
