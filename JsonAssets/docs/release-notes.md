@@ -1,6 +1,10 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed "couldn't find destroyCrop call in the HoeDirt.dayUpdate method" error for some players.
+* Internal refactoring.
+
 ## 1.7.8
 Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

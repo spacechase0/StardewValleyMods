@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using Harmony;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -119,26 +117,17 @@ namespace JsonAssets.Patches
         }
 
         /// <summary>The method which transpiles <see cref="ForgeMenu.draw(SpriteBatch)"/>.</summary>
-        private static IEnumerable<CodeInstruction> Transpile_Draw(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        private static IEnumerable<CodeInstruction> Transpile_Draw(IEnumerable<CodeInstruction> instructions)
         {
-            var newInsns = new List<CodeInstruction>();
-            foreach (var insn in insns)
-            {
-                if (insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo)?.Name == "GetForgeCost")
-                {
-                    newInsns.Add(insn);
-                    newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<ForgeMenuPatcher>(nameof(DrawCost))));
-                    continue;
-                }
-                newInsns.Add(insn);
-            }
-
-            return newInsns;
+            return instructions.MethodReplacer(
+                from: PatchHelper.RequireMethod<ForgeMenu>(nameof(ForgeMenu.GetForgeCost)),
+                to: PatchHelper.RequireMethod<ForgeMenuPatcher>(nameof(DrawCost))
+            );
         }
 
-        private static void DrawCost()
+        private static void DrawCost(Item left_item, Item right_item)
         {
-            var forgeMenu = Game1.activeClickableMenu as ForgeMenu;
+            var forgeMenu = (ForgeMenu)Game1.activeClickableMenu;
             int cost = forgeMenu.GetForgeCost(forgeMenu.leftIngredientSpot.item, forgeMenu.rightIngredientSpot.item);
 
             if (cost != 10 && cost != 15 && cost != 20)
