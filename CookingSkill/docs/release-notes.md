@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed Intense Flavors profession not applied for foods which also have a food quality bonus.
+
 ## 1.3.2
 Released 12 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
