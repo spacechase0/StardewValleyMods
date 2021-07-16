@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Fixed applying multiple fertilizers to a planted crop.
 * Internal refactoring.
 
 ## 1.0.1

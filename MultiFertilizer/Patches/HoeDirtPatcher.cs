@@ -66,19 +66,19 @@ namespace MultiFertilizer.Patches
         {
             if (isFertilizer && DirtHelper.TryGetFertilizer(index, out FertilizerData fertilizer))
             {
-                if (__instance.crop != null && __instance.crop.currentPhase.Value != 0)
+                // vanilla logic: basic/quality fertilizer must be applied before seed sprouts
+                if (index is 368 or 369 && __instance.crop?.currentPhase.Value > 0)
                     return false;
 
+                // custom logic: allow placing fertilizer unless already present
                 if (__instance.HasFertilizer(fertilizer))
                     return false;
-                else
-                {
-                    __instance.modData[fertilizer.Key] = fertilizer.Level.ToString();
-                    if (fertilizer.Key == Mod.KeySpeed)
-                        Mod.Instance.Helper.Reflection.GetMethod(__instance, "applySpeedIncreases").Invoke(who);
-                    location.playSound("dirtyHit");
-                    return true;
-                }
+
+                __instance.modData[fertilizer.Key] = fertilizer.Level.ToString();
+                if (fertilizer.Key == Mod.KeySpeed)
+                    Mod.Instance.Helper.Reflection.GetMethod(__instance, "applySpeedIncreases").Invoke(who);
+                location.playSound("dirtyHit");
+                return true;
             }
             return true;
         }

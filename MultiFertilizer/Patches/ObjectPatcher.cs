@@ -90,12 +90,12 @@ namespace MultiFertilizer.Patches
 
         private static bool CanBePlacedHereLogic(SObject __instance, GameLocation l, Vector2 tile)
         {
-            if (l.isTileHoeDirt(tile))
+            if (l.TryGetDirt(tile, out HoeDirt dirt))
             {
                 if (__instance.ParentSheetIndex == 805)
                     return true;
 
-                if (DirtHelper.TryGetFertilizer(__instance.ParentSheetIndex, out FertilizerData fertilizer) && l.TryGetDirt(tile, out HoeDirt dirt) && dirt.HasFertilizer(fertilizer))
+                if (DirtHelper.TryGetFertilizer(__instance.ParentSheetIndex, out FertilizerData fertilizer) && dirt.HasFertilizer(fertilizer))
                     return true;
             }
             return false;
