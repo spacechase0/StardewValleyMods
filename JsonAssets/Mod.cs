@@ -1118,11 +1118,13 @@ namespace JsonAssets
             // handle shop menu
             if (e.NewMenu is ShopMenu menu)
             {
-                ISet<string> shopIds = new HashSet<string>(this.GetShopIds(menu), StringComparer.OrdinalIgnoreCase);
+                ISet<string> shopIds = this.GetShopIds(menu);
                 if (!shopIds.Any())
+                {
+                    Log.Trace("Ignored shop with no ID.");
                     return;
-
-                Log.Trace($"Adding objects to shop: {string.Join(", ", shopIds)}");
+                }
+                Log.Trace($"Adding objects for shop IDs '{string.Join("', '", shopIds)}'.");
 
                 bool isPierre = shopIds.Contains("Pierre");
                 bool isQiGemShop = shopIds.Contains("QiGemShop");
@@ -1169,26 +1171,31 @@ namespace JsonAssets
 
         /// <summary>Get the valid shop IDs recognized for a given shop menu.</summary>
         /// <param name="menu">The shop menu to check.</param>
-        private IEnumerable<string> GetShopIds(ShopMenu menu)
+        private ISet<string> GetShopIds(ShopMenu menu)
         {
-            if (menu == null)
-                yield break;
+            IEnumerable<string> GetAll()
+            {
+                if (menu == null)
+                    yield break;
 
-            // shop context
-            string context = !string.IsNullOrWhiteSpace(menu.storeContext) ? menu.storeContext : null;
-            if (context == "QiGemShop")
-                yield return context;
+                // shop context
+                string context = !string.IsNullOrWhiteSpace(menu.storeContext) ? menu.storeContext : null;
+                if (context == "QiGemShop")
+                    yield return context;
 
-            // NPC portrait name
-            string portraitName = !string.IsNullOrWhiteSpace(menu.portraitPerson?.Name) ? menu.portraitPerson.Name : null;
-            if (portraitName != null)
-                yield return portraitName;
+                // NPC portrait name
+                string portraitName = !string.IsNullOrWhiteSpace(menu.portraitPerson?.Name) ? menu.portraitPerson.Name : null;
+                if (portraitName != null)
+                    yield return portraitName;
 
-            // special cases
-            if (portraitName == null && Game1.currentLocation?.Name == "Hospital")
-                yield return "Harvey";
-            if (menu.potraitPersonDialogue?.Replace("\n", "") == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, 304).Replace("\n", ""))
-                yield return "HatMouse";
+                // special cases
+                if (portraitName == null && Game1.currentLocation?.Name == "Hospital")
+                    yield return "Harvey";
+                if (menu.potraitPersonDialogue?.Replace("\n", "") == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, 304).Replace("\n", ""))
+                    yield return "HatMouse";
+            }
+
+            return new HashSet<string>(GetAll(), StringComparer.OrdinalIgnoreCase);
         }
 
         internal bool DidInit;
