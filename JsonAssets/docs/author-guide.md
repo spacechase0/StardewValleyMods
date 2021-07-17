@@ -564,9 +564,7 @@ id         | shop
 `Robin`    | Robin's carpentry items shop.
 `Sandy`    | Sandy's shop in the desert.
 `Willy`    | Willy's fishing shop.
-
-If a custom NPC has a shop and their portrait is shown in the shop UI, you can use that NPC's
-default (non-translated) name as the shop ID.
+_custom NPCs_ | If a custom NPC has a shop and their portrait is shown in the shop UI, you can use that NPC's default (non-translated) name as the shop ID.
 
 Other values won't work currently.
 
