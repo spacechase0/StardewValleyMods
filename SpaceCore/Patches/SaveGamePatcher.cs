@@ -278,7 +278,7 @@ namespace SpaceCore.Patches
             // insert elements into this node
             if (modNodes.ModNodesByParent.TryGetValue(curPath, out OptimizedModNode[] nodes))
             {
-                foreach (OptimizedModNode modNode in nodes)
+                foreach (OptimizedModNode modNode in nodes.OrderBy(p => p.Index))
                 {
                     // load XML element to insert
                     var newDoc = new XmlDocument();
