@@ -6,29 +6,23 @@ This document helps mod authors create a content pack for Json Assets.
 
 ## Contents
 * [Introduction](#introduction)
-  * [Things to Note](#things-to-note-before-you-start)
-* [Basic Features](#basic-features)
+* [Supported content](#basic-features)
   * [Overview](#overview)
-  * [Big Craftables](#bigcraftables)
-    * [Machine Animations](#machine-animations)
+  * [Big Craftables](#big-craftables)
   * [Crops](#crops)
-    * [Giant Crops](#giant-crops)
   * [Fruit Trees](#fruittrees)
   * [Objects](#objects)
-    * [Crop and Fruit Tree Objects](#crop-and-fruit-tree-objects)
-    * [Recipes](#recipes)
   * [Hats](#hats)
   * [Weapons](#weapons)
   * [Shirts & Pants](#shirts-and-pants)
-    * [Shirts](#shirts)
-    * [Pants](#pants)
   * [Boots](#boots)
   * [Tailoring](#tailoring)
   * [Fences](#fences)
   * [Forge Recipes](#forge-recipes)
-* [Gift Tastes](#gift-tastes)
-* [Context Tags](#context-tags)
-* [Localization](#localization)
+* [Common features](#common-features)
+  * [Gift Tastes](#gift-tastes)
+  * [Context Tags](#context-tags)
+  * [Localization](#localization)
 * [Content Patcher API](#content-patcher-api)
 * [Tokens in Fields](#tokens-in-fields)
 * [Converting From Legacy Format](#converting-from-legacy-format)
@@ -87,7 +81,7 @@ Json Assets is a great tool if you want to add one of the above objects, but the
 
  This list is not meant to be comprehensive as many mods support JA objects. If you're unsure if a mod supports JA objects it's recommended to read the mod description, release notes, or ask the creator.
 
-## Basic features
+## Supported content
 ### Overview
 There are nine main folders you are likely to see when downloading Json Asset content packs:
 
@@ -531,10 +525,13 @@ field                  | purpose
 
 Custom ContextTags can be added to vanilla items using ContentPatcher.
 
-## Gift tastes
+## Common features
+### Gift tastes
+Supported for: objects.
+
 You can add gift taste support to any pre-existing content pack by adding the following to the respective `.json` file. It does not matter where you put it. I tend to place it at the bottom of the `.json` but it is personal preferance. 
 
-If it can be gifted to an NPC it has gift taste support built in. This means `hats`, `big-craftables`, `weapons`, `shirts`, `pants`, `boots`, `tailoring` and `fences` do not have gift taste support. If you exclude an NPC from the gift taste, their reaction will their default reaction to that item's category. This applies to custom NPCs as well if they are not specified.
+If it can be gifted to an NPC it has gift taste support built in. This means `big-craftables`, `hats`, `weapons`, `shirts`, `pants`, `boots`, `tailoring` and `fences` do not have gift taste support. If you exclude an NPC from the gift taste, their reaction will their default reaction to that item's category. This applies to custom NPCs as well if they are not specified.
 
 ```
  "GiftTastes":
@@ -548,8 +545,10 @@ If it can be gifted to an NPC it has gift taste support built in. This means `ha
 ```
 An example of a filled out gift taste can be found [here](https://gist.github.com/paradigmnomad/df8686af71ff35428dc37a7db65213bf#gift-tastes). You can delete unused fields within `GiftTastes`.
 
-## Context tags
-"Context tags are an array in the item "ContextTags", injected into Data\ObjectContextTags". It allows mods like [Better Shop Menu](https://www.nexusmods.com/stardewvalley/mods/2012) to categorize your items better. This is an optional feature and not required for a content pack to work.
+### Context tags
+Supported for: objects.
+
+Context tags are an array in the item "ContextTags", injected into `Data\ObjectContextTags`. It allows mods like [Better Shop Menu](https://www.nexusmods.com/stardewvalley/mods/2012) to categorize your items better. This is an optional feature and not required for a content pack to work.
 
 Example:
 
@@ -568,7 +567,9 @@ Common information in context tags are: season, main color, what produces the it
 
 You can see a list of context tags under `Content/Data/ObjectInformation` An alternative way to check a pre-exisiting items context tags is "Typing in `debug listtags` into SMAPI [will] print out all of the context tags for that item." (Mr. Podunkian) You aren't limited to those context tags, but it gives you an idea of the vanilla context tags.
 
-## Localization
+### Localization
+Supported for: all content types.
+
 JsonAssets supports name localization without the need for a seperate or different download. These lines can be added to the bottom of their respective `json` files. Most localization is the same except "Crops have their localization fields prefixed with `Seed`, fruit trees prefixed with `Sapling`."
 
 Examples:
