@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Shop IDs for `PurchaseFrom` fields are no longer case-sensitive.
 * Fixed "couldn't find destroyCrop call in the HoeDirt.dayUpdate method" error for some players.
 * Internal refactoring.
 

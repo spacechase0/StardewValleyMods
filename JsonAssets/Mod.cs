@@ -1118,7 +1118,7 @@ namespace JsonAssets
             // handle shop menu
             if (e.NewMenu is ShopMenu menu)
             {
-                ISet<string> shopIds = new HashSet<string>(this.GetShopIds(menu));
+                ISet<string> shopIds = new HashSet<string>(this.GetShopIds(menu), StringComparer.OrdinalIgnoreCase);
                 if (!shopIds.Any())
                     return;
 
