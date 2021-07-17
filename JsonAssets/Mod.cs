@@ -81,7 +81,8 @@ namespace JsonAssets
                 new HoeDirtPatcher(),
                 new ItemPatcher(),
                 new ObjectPatcher(),
-                new RingPatcher()
+                new RingPatcher(),
+                new ShopMenuPatcher()
             );
         }
 
@@ -1191,7 +1192,7 @@ namespace JsonAssets
                 // special cases
                 if (portraitName == null && Game1.currentLocation?.Name == "Hospital")
                     yield return "Harvey";
-                if (menu.potraitPersonDialogue?.Replace("\n", "") == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, 304).Replace("\n", ""))
+                if (ShopMenuPatcher.LastShopOwner == "HatMouse")
                     yield return "HatMouse";
             }
 
