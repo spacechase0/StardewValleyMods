@@ -548,25 +548,46 @@ An example of a filled out gift taste can be found [here](https://gist.github.co
 ### Shops
 Supported for: all content types.
 
-Each content type supports one or more `PurchaseFrom` fields, which indicates which shop the item
-can be bought from. The valid shop IDs are:
+The `PurchaseFrom` field lets you add items to shops for the player to buy. You can specify **one**
+shop ID in each `PurchaseFrom` (either the context or NPC). For example, for Pierre's shop you'd
+use `"PurchaseFrom": "Pierre"` _or_ `"PurchaseFrom": "SeedShop"`. Usually the NPC ID is better if
+available, since two shops in the same location might have the same context. Shop IDs are not
+case-sensitive.
 
-id         | shop
----------- | ----------------------------------------
-`Clint`    | Clint's blacksmithing shop.
-`Dwarf`    | The dwarf's shop in the mine entrance.
-`Harvey`   | Harvey's shop in the hospital.
-`HatMouse` | The hat mouse shop in the forest.
-`Krobus`   | Krobus' shop in the sewers.
-`Marlon`   | Marlon's shop in the adventurer's guild.
-`Pierre`   | Pierre's general shop.
-`QiGemShop`| The Qi gem shop on the Ginger Island.
-`Robin`    | Robin's carpentry items shop.
-`Sandy`    | Sandy's shop in the desert.
-`Willy`    | Willy's fishing shop.
-_custom NPCs_ | If a custom NPC has a shop and their portrait is shown in the shop UI, you can use that NPC's default (non-translated) name as the shop ID.
+Here are the vanilla shop IDs:
 
-Other values won't work currently.
+shop                                                                | context ID    | NPC ID
+------------------------------------------------------------------- | ------------- | ---------------
+[Casino](https://stardewvalleywiki.com/Casino)                      | `Club`        |
+[Clint](https://stardewvalleywiki.com/Blacksmith)                   | `Blacksmith`  | `Clint`
+[Desert trader](https://stardewvalleywiki.com/Desert_Trader)        | `Desert`      | `DesertTrader`¹
+[Dwarf](https://stardewvalleywiki.com/Dwarf)                        | `Mine`        | `Dwarf`
+[Harvey](https://stardewvalleywiki.com/Harvey%27s_Clinic)           | `Hospital`    | `Harvey`¹
+[Hat mouse](https://stardewvalleywiki.com/Abandoned_House)          | `Forest`      | `HatMouse`¹
+[Ice Cream Stand](https://stardewvalleywiki.com/Ice_Cream_Stand)    | `Town`        |
+[Island Trader](https://stardewvalleywiki.com/Island_Trader)        | `IslandNorth` | `IslandTrader`¹
+[JojaMart](https://stardewvalleywiki.com/JojaMart)                  | `JojaMart`    |
+[Krobus](https://stardewvalleywiki.com/Krobus)                      | `Sewer`       | `Krobus`
+[Marlon](https://stardewvalleywiki.com/Adventurer%27s_Guild)        | `AdventureGuild` | `Marlon`
+[Marnie (supplies)](https://stardewvalleywiki.com/Marnie%27s_Ranch) | `AnimalShop`  | `Marnie`
+[Pierre](https://stardewvalleywiki.com/Pierre%27s_General_Store)    | `SeedShop`    | `Pierre`
+[Qi walnut room](https://stardewvalleywiki.com/Qi%27s_Walnut_Room)  | `QiGemShop`   |
+[Robin](https://stardewvalleywiki.com/Carpenter%27s_Shop)           | `ScienceHouse`| `Robin`
+[Saloon](https://stardewvalleywiki.com/The_Stardrop_Saloon)         | `Saloon`      | `Gus`
+[Sandy](https://stardewvalleywiki.com/Oasis)                        | `SandyHouse`  | `Sandy`
+[Traveling cart](https://stardewvalleywiki.com/Traveling_Cart)      | `Forest`      | `TravelingCart`¹
+[Volcano shop](https://stardewvalleywiki.com/Volcano_Dungeon#Shop)  | `VolcanoShop` |
+[Willy](https://stardewvalleywiki.com/Fish_Shop)                    | `FishShop`    | `Willy`
+
+For custom shops, here's how to find the ID:
+
+1. Install the _SMAPI for developers_ version of [SMAPI](https://smapi.io/) (to show more info in
+   the SMAPI console).
+2. Load the game and open the shop.
+3. The SMAPI console will show a `TRACE` message like this:
+   > [Json Assets] Adding objects for shop IDs 'SeedShop', 'Pierre'.
+
+<sub>¹ These are IDs created by Json Assets, so they'll only work in Json Assets content packs.</sub>
 
 ### Context tags
 Supported for: objects.

@@ -2,7 +2,9 @@
 
 # Release notes
 ## Upcoming release
-* Shop IDs for `PurchaseFrom` fields are no longer case-sensitive.
+* Improved `PurchaseFrom` shop fields:
+  * You can now add items to any shop in the game, including custom shops. See [_shops_ in the author guide](author-guide.md#shops).
+  * Shop IDs for `PurchaseFrom` fields are no longer case-sensitive.
 * Fixed "couldn't find destroyCrop call in the HoeDirt.dayUpdate method" error for some players.
 * Internal refactoring.
 
