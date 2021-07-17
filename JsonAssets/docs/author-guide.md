@@ -6,11 +6,11 @@ This document helps mod authors create a content pack for Json Assets.
 
 ## Contents
 * [Introduction](#introduction)
-* [Supported content](#basic-features)
+* [Supported content](#supported-content)
   * [Overview](#overview)
   * [Big Craftables](#big-craftables)
   * [Crops](#crops)
-  * [Fruit Trees](#fruittrees)
+  * [Fruit Trees](#fruit-trees)
   * [Objects](#objects)
   * [Hats](#hats)
   * [Weapons](#weapons)
@@ -26,7 +26,6 @@ This document helps mod authors create a content pack for Json Assets.
   * [Localization](#localization)
 * [Content Patcher API](#content-patcher-api)
 * [Tokens in Fields](#tokens-in-fields)
-* [Converting From Legacy Format](#converting-from-legacy-format)
 * [Releasing A Content Pack](#releasing-a-content-pack)
   * [Manifest](#manifest)
 * [Troubleshooting](#troubleshooting)
@@ -212,7 +211,7 @@ field                      | purpose
 `Name`                     | The name you would like your object to have. This does not need to be identical to the folder but it is recommend to keep names consistant.
 `Price`                    | How much your item sells for.
 `Product`                  | Determines what the crop produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the objects ID number and not include a corresponding `Objects` folder.
-`SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter. Do not put `Sapling` at the end of the seed name or it will not function properly. If you're trying to make a fruit tree see [FruitTrees](#fruittrees).
+`SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter. Do not put `Sapling` at the end of the seed name or it will not function properly. If you're trying to make a fruit tree, see [fruit trees](#fruit-trees).
 `SeedDescription`          | Describe what season you plant these in. Also note if it continues to grow after first harvest and how many days it takes to regrow.
 `Type`                     | Vanilla types are `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, `AnimalGoods`, `Greens`, and `Seeds`.
 `SeedSellPrice`            | How much the seeds sell for. *Not to be confused with `SeedPurchasePrice`.*
