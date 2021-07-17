@@ -548,36 +548,39 @@ An example of a filled out gift taste can be found [here](https://gist.github.co
 ### Shops
 Supported for: all content types.
 
-The `PurchaseFrom` field lets you add items to shops for the player to buy. You can specify **one**
-shop ID in each `PurchaseFrom` (either the context or NPC). For example, for Pierre's shop you'd
-use `"PurchaseFrom": "Pierre"` _or_ `"PurchaseFrom": "SeedShop"`. Usually the NPC ID is better if
-available, since two shops in the same location might have the same context. Shop IDs are not
-case-sensitive.
+The `PurchaseFrom` field lets you add items to shops for the player to buy. Each shop has up to
+three IDs you can use, in order of preference:
+1. **owner ID:** a unique value used to create the shop.
+2. **portrait ID:** the default name of the NPC whose portrait is shown in the shop UI.
+3. **context ID:** the location containing the shop (not necessarily unique).
 
-Here are the vanilla shop IDs:
+You can use any ID to identify the shop, but should avoid the context ID if possible since multiple
+shops in the same location will have the same context ID.
 
-shop                                                                | context ID    | NPC ID
-------------------------------------------------------------------- | ------------- | ---------------
-[Casino](https://stardewvalleywiki.com/Casino)                      | `Club`        |
-[Clint](https://stardewvalleywiki.com/Blacksmith)                   | `Blacksmith`  | `Clint`
-[Desert trader](https://stardewvalleywiki.com/Desert_Trader)        | `Desert`      | `DesertTrader`¹
-[Dwarf](https://stardewvalleywiki.com/Dwarf)                        | `Mine`        | `Dwarf`
-[Harvey](https://stardewvalleywiki.com/Harvey%27s_Clinic)           | `Hospital`    | `Harvey`¹
-[Hat mouse](https://stardewvalleywiki.com/Abandoned_House)          | `Forest`      | `HatMouse`¹
-[Ice Cream Stand](https://stardewvalleywiki.com/Ice_Cream_Stand)    | `Town`        |
-[Island Trader](https://stardewvalleywiki.com/Island_Trader)        | `IslandNorth` | `IslandTrader`¹
-[JojaMart](https://stardewvalleywiki.com/JojaMart)                  | `JojaMart`    |
-[Krobus](https://stardewvalleywiki.com/Krobus)                      | `Sewer`       | `Krobus`
-[Marlon](https://stardewvalleywiki.com/Adventurer%27s_Guild)        | `AdventureGuild` | `Marlon`
-[Marnie (supplies)](https://stardewvalleywiki.com/Marnie%27s_Ranch) | `AnimalShop`  | `Marnie`
-[Pierre](https://stardewvalleywiki.com/Pierre%27s_General_Store)    | `SeedShop`    | `Pierre`
-[Qi walnut room](https://stardewvalleywiki.com/Qi%27s_Walnut_Room)  | `QiGemShop`   |
-[Robin](https://stardewvalleywiki.com/Carpenter%27s_Shop)           | `ScienceHouse`| `Robin`
-[Saloon](https://stardewvalleywiki.com/The_Stardrop_Saloon)         | `Saloon`      | `Gus`
-[Sandy](https://stardewvalleywiki.com/Oasis)                        | `SandyHouse`  | `Sandy`
-[Traveling cart](https://stardewvalleywiki.com/Traveling_Cart)      | `Forest`      | `TravelingCart`¹
-[Volcano shop](https://stardewvalleywiki.com/Volcano_Dungeon#Shop)  | `VolcanoShop` |
-[Willy](https://stardewvalleywiki.com/Fish_Shop)                    | `FishShop`    | `Willy`
+Here are the IDs for vanilla shops:
+
+shop                                                                | owner ID      | portrait ID     | context ID
+------------------------------------------------------------------- | ------------- | --------------- | ----------
+[Casino](https://stardewvalleywiki.com/Casino)                      |               |                 | `Club`
+[Clint](https://stardewvalleywiki.com/Blacksmith)                   | `Clint`       | `Clint`         | `Blacksmith`
+[Desert trader](https://stardewvalleywiki.com/Desert_Trader)        | `DesertTrade` |                 | `Desert`
+[Dwarf](https://stardewvalleywiki.com/Dwarf)                        | `Dwarf`       | `Dwarf`         | `Mine`
+[Harvey](https://stardewvalleywiki.com/Harvey%27s_Clinic)           |               | `Harvey`        | `Hospital`
+[Hat mouse](https://stardewvalleywiki.com/Abandoned_House)          | `HatMouse`    |                 | `Forest`
+[Ice Cream Stand](https://stardewvalleywiki.com/Ice_Cream_Stand)    |               |                 | `Town`
+[Island Trader](https://stardewvalleywiki.com/Island_Trader)        | `IslandTrade` |                 | `IslandNorth`
+[JojaMart](https://stardewvalleywiki.com/JojaMart)                  |               |                 | `JojaMart`
+[Krobus](https://stardewvalleywiki.com/Krobus)                      | `Krobus`      | `Krobus`        | `Sewer`
+[Marlon](https://stardewvalleywiki.com/Adventurer%27s_Guild)        | `Marlon`      | `Marlon`        | `AdventureGuild`
+[Marnie (supplies)](https://stardewvalleywiki.com/Marnie%27s_Ranch) | `Marnie`      | `Marnie`        | `AnimalShop`
+[Pierre](https://stardewvalleywiki.com/Pierre%27s_General_Store)    | `Pierre`      | `Pierre`        | `SeedShop`
+[Qi walnut room](https://stardewvalleywiki.com/Qi%27s_Walnut_Room)  |               |                 | `QiGemShop`
+[Robin](https://stardewvalleywiki.com/Carpenter%27s_Shop)           | `Robin`       | `Robin`         | `ScienceHouse`
+[Saloon](https://stardewvalleywiki.com/The_Stardrop_Saloon)         | `Gus`         | `Gus`           | `Saloon`
+[Sandy](https://stardewvalleywiki.com/Oasis)                        | `Sandy`       | `Sandy`         | `SandyHouse`
+[Traveling cart](https://stardewvalleywiki.com/Traveling_Cart)      | `Traveler`    |                 | `Forest`
+[Volcano shop](https://stardewvalleywiki.com/Volcano_Dungeon#Shop)  | `VolcanoShop` |                 | `VolcanoShop`
+[Willy](https://stardewvalleywiki.com/Fish_Shop)                    | `Willy`       | `Willy`         | `FishShop`
 
 For custom shops, here's how to find the ID:
 
@@ -586,8 +589,6 @@ For custom shops, here's how to find the ID:
 2. Load the game and open the shop.
 3. The SMAPI console will show a `TRACE` message like this:
    > [Json Assets] Adding objects for shop IDs 'SeedShop', 'Pierre'.
-
-<sub>¹ These are IDs created by Json Assets, so they'll only work in Json Assets content packs.</sub>
 
 ### Context tags
 Supported for: objects.

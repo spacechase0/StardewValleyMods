@@ -1176,37 +1176,23 @@ namespace JsonAssets
         {
             IEnumerable<string> GetAll()
             {
+                // owner ID
+                if (!string.IsNullOrWhiteSpace(ShopMenuPatcher.LastShopOwner))
+                    yield return ShopMenuPatcher.LastShopOwner;
+
+                // portrait name
+                string portraitName = !string.IsNullOrWhiteSpace(menu.portraitPerson?.Name) ? menu.portraitPerson.Name : null;
+                if (portraitName != null)
+                    yield return portraitName;
+
                 // shop context
                 string context = !string.IsNullOrWhiteSpace(menu.storeContext) ? menu.storeContext : null;
                 if (context != null)
                     yield return context;
 
-                // NPC portrait name
-                string portraitName = !string.IsNullOrWhiteSpace(menu.portraitPerson?.Name) ? menu.portraitPerson.Name : null;
-                if (portraitName != null)
-                    yield return portraitName;
-
-                // special cases which aren't uniquely identified by the context/NPC
-                switch (ShopMenuPatcher.LastShopOwner)
-                {
-                    case "DesertTrader":
-                    case "HatMouse":
-                        yield return ShopMenuPatcher.LastShopOwner;
-                        break;
-
-                    case "IslandTrade":
-                        yield return "IslandTrader";
-                        break;
-
-                    case "Traveler":
-                        yield return "TravelingCart";
-                        break;
-
-                    case null:
-                        if (portraitName == null && Game1.currentLocation?.Name == "Hospital")
-                            yield return "Harvey";
-                        break;
-                }
+                // special cases
+                if (ShopMenuPatcher.LastShopOwner == null && portraitName == null && context == "Hospital")
+                    yield return "Harvey";
             }
 
             return new HashSet<string>(GetAll(), StringComparer.OrdinalIgnoreCase);
