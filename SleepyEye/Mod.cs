@@ -99,7 +99,7 @@ namespace SleepyEye
         /// <param name="e">The event arguments.</param>
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (e.NewMenu is not ShopMenu menu || menu.portraitPerson.Name != "Pierre")
+            if (e.NewMenu is not ShopMenu menu || menu.portraitPerson?.Name != "Pierre")
                 return;
 
             Log.Debug("Adding tent to shop");

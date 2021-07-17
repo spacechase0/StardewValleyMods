@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed error when opening some shops.
+
 ## 1.1.0
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
