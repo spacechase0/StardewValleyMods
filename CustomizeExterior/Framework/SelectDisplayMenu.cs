@@ -14,7 +14,7 @@ namespace CustomizeExterior.Framework
         private const int PaddingInner = 50;
         private const int PaddingIn = 20;
 
-        public Action<string, string> OnSelected = null;
+        public Action<string> OnSelected = null;
 
         private readonly string Type;
         private string Active;
@@ -26,16 +26,14 @@ namespace CustomizeExterior.Framework
 
         private int Scroll;
 
-        public SelectDisplayMenu(string theType, string theActive)
+        public SelectDisplayMenu(string theType, string theActive, IEnumerable<string> choices, Func<string, string, Texture2D> getBuildingTexture)
         {
             this.Type = theType;
-            this.Active = theActive;
+            this.Active = theActive ?? "/";
 
             this.Choices.Add("/", null);
-            foreach (string choice in Mod.Choices[this.Type])
-            {
-                this.Choices.Add(choice, Mod.GetTextureForChoice(this.Type, choice));
-            }
+            foreach (string choice in choices)
+                this.Choices.Add(choice, getBuildingTexture(this.Type, choice));
 
             this.Size = Game1.viewport.Size.Height - SelectDisplayMenu.PaddingOuter * 2;
             this.X = (Game1.viewport.Size.Width - this.Size) / 2;
@@ -54,7 +52,7 @@ namespace CustomizeExterior.Framework
                 if (new Rectangle(ix, iy, this.EntrySize, this.EntrySize).Contains(x, y))
                 {
                     this.Active = entry.Key;
-                    this.OnSelected?.Invoke(this.Type, this.Active);
+                    this.OnSelected?.Invoke(this.Active);
                     Game1.exitActiveMenu();
                 }
 

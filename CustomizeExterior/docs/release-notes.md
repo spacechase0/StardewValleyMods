@@ -2,7 +2,10 @@
 
 # Release notes
 ## Upcoming release
-* Further updated for greenhouse changes in Stardew Valley 1.5.
+* Reworked how player data is stored to simplify multiplayer sync and reduce edge cases.
+* Fixed some buildings not saving the selected exterior.
+* Fixed more greenhouse issues in Stardew Valley 1.5.
+* Fixed edge cases where a building texture wouldn't load correctly.
 * Internal refactoring.
 
 ## 1.0.9
