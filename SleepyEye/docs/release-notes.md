@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed error saving with tent tool.
+
 ## 1.1.1
 Released 17 July 2021. Updated by Pathoschild.
 
