@@ -1,13 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Reflection.Emit;
 using Harmony;
+using Microsoft.Xna.Framework;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
+using SObject = StardewValley.Object;
 
 namespace MoreRings.Patches
 {
@@ -15,6 +14,13 @@ namespace MoreRings.Patches
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class CropPatcher : BasePatcher
     {
+        /*********
+        ** Fields
+        *********/
+        /// <summary>The last item modified by <see cref="ModifyCropQuality"/>.</summary>
+        private static Item LastItem;
+
+
         /*********
         ** Public methods
         *********/
@@ -32,56 +38,55 @@ namespace MoreRings.Patches
         ** Private methods
         *********/
         /// <summary>The method which transpiles <see cref="Crop.harvest"/>.</summary>
-        private static IEnumerable<CodeInstruction> Transpile_Harvest(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        private static IEnumerable<CodeInstruction> Transpile_Harvest(IEnumerable<CodeInstruction> instructions)
         {
-            // TODO: Learn how to use ILGenerator
+            return instructions
+                .MethodReplacer(
+                    from: PatchHelper.RequireMethod<Game1>(nameof(Game1.createItemDebris)),
+                    to: PatchHelper.RequireMethod<CropPatcher>(nameof(CropPatcher.Game_CreateItemDebris))
+                )
+                .MethodReplacer(
+                    from: PatchHelper.RequireMethod<Farmer>(nameof(Farmer.addItemToInventoryBool)),
+                    to: PatchHelper.RequireMethod<CropPatcher>(nameof(CropPatcher.Farmer_AddItemToInventoryBool))
+                );
 
-            var newInsns = new List<CodeInstruction>();
-            LocalBuilder randVar = null;
-            Label pendingLabel = default(Label);
-            foreach (var insn in insns)
-            {
-                if (insn.operand is LocalBuilder { LocalIndex: 9 } lb)
-                {
-                    randVar = lb;
-                }
-                if (insn.opcode == OpCodes.Stloc_S && ((LocalBuilder)insn.operand).LocalIndex == 7 /* cropQuality, TODO: Check somehow */ )
-                {
-                    var prevInsn = newInsns[newInsns.Count - 1];
-                    var prev2Insn = newInsns[newInsns.Count - 2];
-                    if (prevInsn.opcode == OpCodes.Ldc_I4_1 && prev2Insn.opcode == OpCodes.Bge_Un)
-                    {
-                        pendingLabel = (Label)prev2Insn.operand;
-                        newInsns.Add(insn);
-
-                        newInsns.Add(new CodeInstruction(OpCodes.Ldloc_S, randVar)
-                        { labels = new List<Label>(new[] { pendingLabel }) });
-                        newInsns.Add(new CodeInstruction(OpCodes.Ldloca_S, insn.operand));
-                        newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CropPatcher>(nameof(ModifyCropQuality))));
-                        continue;
-                    }
-                }
-                if (insn.labels.Contains(pendingLabel))
-                {
-                    Log.Trace("taking label");
-                    insn.labels.Remove(pendingLabel);
-                    pendingLabel = default(Label);
-                }
-                newInsns.Add(insn);
-            }
-
-            return newInsns;
         }
 
-        private static void ModifyCropQuality(Random rand, ref int quality)
+        /// <summary>Call <see cref="Game1.createItemDebris"/> after adjusting the item quality.</summary>
+        public static Debris Game_CreateItemDebris(Item item, Vector2 origin, int direction, GameLocation location, int groundLevel)
         {
-            if (rand.NextDouble() < Mod.Instance.HasRingEquipped(Mod.Instance.RingQuality) * 0.125)
+            CropPatcher.ModifyCropQuality(item);
+
+            return Game1.createItemDebris(item, origin, direction, location, groundLevel);
+        }
+
+
+        /// <summary>Call <see cref="Farmer.addItemToInventoryBool"/> after adjusting the item quality.</summary>
+        public static bool Farmer_AddItemToInventoryBool(Farmer farmer, Item item, bool makeActiveObject)
+        {
+            CropPatcher.ModifyCropQuality(item);
+
+            return farmer.addItemToInventoryBool(item, makeActiveObject);
+        }
+
+        /// <summary>Increase the harvested crop quality if the player has the <see cref="Mod.RingQuality"/> ring equipped.</summary>
+        /// <param name="item">The item to modify.</param>
+        private static void ModifyCropQuality(Item item)
+        {
+            if (item is not SObject obj || object.ReferenceEquals(item, CropPatcher.LastItem))
+                return;
+
+            CropPatcher.LastItem = item;
+            if (Game1.random.NextDouble() < Mod.Instance.HasRingEquipped(Mod.Instance.RingQuality) * 0.125)
             {
-                if (++quality == 3)
-                    ++quality;
+                obj.Quality = obj.Quality switch
+                {
+                    SObject.lowQuality => SObject.medQuality,
+                    SObject.medQuality => SObject.highQuality,
+                    SObject.highQuality => SObject.bestQuality,
+                    _ => obj.Quality
+                };
             }
-            if (quality > 4)
-                quality = 4;
         }
     }
 }
