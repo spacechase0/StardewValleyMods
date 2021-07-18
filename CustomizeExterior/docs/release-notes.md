@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Further updated for greenhouse changes in Stardew Valley 1.5.
 * Internal refactoring.
 
 ## 1.0.9

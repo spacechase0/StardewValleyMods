@@ -23,7 +23,7 @@ namespace CustomizeExterior
     {
         /// <summary>The building identifier and time which the player last clicked, if any.</summary>
         /// <remarks>This should only be used via <see cref="IsOpenMenuClick(string)"/>.</remarks>
-        private Tuple<string, DateTime> LastRightClick = null;
+        private Tuple<string, DateTime> LastRightClick;
 
         private string RecentTarget;
 
@@ -204,7 +204,6 @@ namespace CustomizeExterior
 
                         if (this.IsOpenMenuClick(nameof(FarmHouse)))
                             this.TryOpenCustomizationMenu("FarmHouse", "houses");
-                        return;
                     }
                 }
             }
@@ -376,11 +375,8 @@ namespace CustomizeExterior
                 }
             }
 
-            if (this.RecentTarget == "FarmHouse" || this.RecentTarget == "Greenhouse")
-            {
-                Mod.HousesHybrid = null;
-                typeof(Farm).GetField(nameof(Farm.houseTextures)).SetValue(null, Mod.GetHousesTexture());
-            }
+            if (this.RecentTarget == "FarmHouse")
+                typeof(Farm).GetField(nameof(Farm.houseTextures)).SetValue(null, tex);
             else
             {
                 foreach (Building building in Game1.getFarm().buildings)
@@ -402,10 +398,8 @@ namespace CustomizeExterior
                 Log.Trace("Saved choice: " + choice.Key + " " + choice.Value);
 
                 string type = null;
-                if (this.RecentTarget == "FarmHouse" || this.RecentTarget == "Greenhouse")
-                {
+                if (this.RecentTarget == "FarmHouse")
                     type = "houses";
-                }
                 else
                 {
                     foreach (Building building in Game1.getFarm().buildings)
@@ -455,38 +449,6 @@ namespace CustomizeExterior
             Texture2D tex = Texture2D.FromStream(Game1.graphics.GraphicsDevice, fs);
             fs.Dispose();
             return tex;
-        }
-
-        private static Texture2D HousesHybrid;
-        private static Texture2D GetHousesTexture()
-        {
-            if (Mod.HousesHybrid != null)
-                return Mod.HousesHybrid;
-
-            Log.Trace("Creating hybrid farmhouse/greenhouse texture");
-
-            Texture2D baseTex = Farm.houseTextures;
-            Rectangle houseRect = new Rectangle(0, 0, 160, baseTex.Height);// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "houseSource");
-            Rectangle greenhouseRect = new Rectangle(160, 0, 112, baseTex.Height);// instance.Helper.Reflection.GetPrivateValue<Rectangle>(farm, "greenhouseSource");
-
-            GraphicsDevice dev = Game1.graphics.GraphicsDevice;
-            RenderTarget2D ret = new RenderTarget2D(dev, baseTex.Width, baseTex.Height)
-            {
-                Name = Mod.Instance.ModManifest.UniqueID + ".houses"
-            };
-            SpriteBatch b = Game1.spriteBatch;
-            dev.SetRenderTarget(ret);
-            {
-                dev.Clear(Color.Transparent);
-                b.Begin();
-                b.Draw(Mod.GetTextureForChoice("houses", Mod.GetChosenTexture("FarmHouse")), houseRect, houseRect, Color.White);
-                b.Draw(Mod.GetTextureForChoice("houses", Mod.GetChosenTexture("Greenhouse")), greenhouseRect, greenhouseRect, Color.White);
-                b.End();
-            }
-            dev.SetRenderTarget(null);
-
-            Mod.HousesHybrid = ret;
-            return ret;
         }
     }
 }
