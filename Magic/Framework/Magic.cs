@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Magic.Framework.Game.Interface;
+using Magic.Framework.Integrations;
 using Magic.Framework.Schools;
 using Magic.Framework.Spells;
 using Microsoft.Xna.Framework;
@@ -45,7 +46,7 @@ namespace Magic.Framework
         /// <remarks>This should only be accessed through <see cref="GetSpellBook"/> or <see cref="Extensions.GetSpellBook"/> to make sure an updated instance is retrieved.</remarks>
         private static readonly IDictionary<long, SpellBook> SpellBookCache = new Dictionary<long, SpellBook>();
 
-        internal static void Init(IModEvents events, IInputHelper inputHelper, Func<long> getNewId)
+        internal static void Init(IModEvents events, IInputHelper inputHelper, IModRegistry modRegistry, Func<long> getNewId)
         {
             Magic.InputHelper = inputHelper;
 
@@ -77,7 +78,8 @@ namespace Magic.Framework
 
             Skills.RegisterSkill(Magic.Skill = new Skill());
 
-            PyTK.CustomTV.CustomTVMod.addChannel("magic", Mod.Instance.Helper.Translation.Get("tv.analyzehints.name"), Magic.OnTvChannelSelected);
+            // add TV channel
+            new PyTkChannelManager(modRegistry).AddTvChannel();
         }
 
         /// <summary>Get a self-updating view of a player's magic metadata.</summary>
@@ -483,18 +485,6 @@ namespace Magic.Framework
             }
             if (Game1.player.itemToEat.ParentSheetIndex == Mod.Ja.GetObjectId("Magic Elixir"))
                 Game1.player.AddMana(Game1.player.GetMaxMana());
-        }
-
-        private static void OnTvChannelSelected(TV tv, TemporaryAnimatedSprite sprite, Farmer farmer, string answer)
-        {
-            TemporaryAnimatedSprite tas = new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(540, 305, 42, 28), 150f, 2, 999999, tv.getScreenPosition(), false, false, (float)((tv.boundingBox.Bottom - 1) / 10000.0 + 9.99999974737875E-06), 0.0f, Color.White, tv.getScreenSizeModifier(), 0.0f, 0.0f, 0.0f);
-
-            string transKey = "tv.analyzehints.notmagical";
-            Random r = new Random((int)Game1.stats.DaysPlayed + (int)(Game1.uniqueIDForThisGame / 2));
-            if (Game1.player.GetMaxMana() > 0)
-                transKey = "tv.analyzehints." + (r.Next(12) + 1);
-
-            PyTK.CustomTV.CustomTVMod.showProgram(tas, Mod.Instance.Helper.Translation.Get(transKey));
         }
 
         public static void PlaceAltar(string locName, int x, int y, int baseAltarIndex)

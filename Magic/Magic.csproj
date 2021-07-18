@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="PyTK" HintPath="$(GameModsPath)\PyTK\PyTK.dll" Private="False" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="False" />
   </ItemGroup>
 </Project>

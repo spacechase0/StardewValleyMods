@@ -8,7 +8,7 @@ the game.
    * [SMAPI](https://smapi.io);
    * [Json Assets](https://www.nexusmods.com/stardewvalley/mods/1720);
    * [Mana Bar](https://www.nexusmods.com/stardewvalley/mods/7831);
-   * [PyTK](https://www.nexusmods.com/stardewvalley/mods/1726);
+   * [PyTK](https://www.nexusmods.com/stardewvalley/mods/1726) (optional, enables TV channel);
    * and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
 2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/2007).
 3. Run the game using SMAPI.
@@ -23,7 +23,8 @@ shop and equip some spells by dragging a spell onto the hotbar along the right s
 
 To get the mana potion recipe, visit the adventurer's guild.
 
-Hints on using the Analyze spell to unlock more spells appear on the TV.
+If you have PyTK installed, a new TV channel will give a random hint each day about where you can
+use the Analyze spell to learn new spells.
 
 ### Use magic
 To cast a spell, hold `Q` and press a number key (`1` through `4`) corresponding to the spell's

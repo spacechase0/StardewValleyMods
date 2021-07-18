@@ -38,7 +38,7 @@ namespace Magic
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.GameLoop.Saving += this.OnSaving;
 
-            Framework.Magic.Init(helper.Events, helper.Input, helper.Multiplayer.GetNewID);
+            Framework.Magic.Init(helper.Events, helper.Input, helper.ModRegistry, helper.Multiplayer.GetNewID);
             ConsoleCommandHelper.RegisterCommandsInAssembly(this);
         }
 
