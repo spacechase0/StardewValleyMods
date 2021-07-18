@@ -6,8 +6,4 @@
     <Version>1.1.0</Version>
     <TargetFramework>net452</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Reference Include="PyTK" HintPath="$(GameModsPath)\PyTK\PyTK.dll" Private="False" />
-  </ItemGroup>
 </Project>

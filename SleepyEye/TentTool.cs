@@ -1,15 +1,14 @@
 using System;
-using System.Collections.Generic;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using PyTK.CustomElementHandler;
 using StardewModdingAPI;
 using StardewValley;
-using SObject = StardewValley.Object;
 
 namespace SleepyEye
 {
-    public class TentTool : Tool, ISaveElement
+    [XmlType("Mods_spacechase0_SleepyEye")]
+    public class TentTool : Tool
     {
         /*********
         ** Fields
@@ -195,26 +194,6 @@ namespace SleepyEye
         public override Item getOne()
         {
             return new TentTool();
-        }
-
-        /// <inheritdoc />
-        public object getReplacement()
-        {
-            return new SObject();
-        }
-
-        public Dictionary<string, string> getAdditionalSaveData()
-        {
-            return new();
-        }
-
-        public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
-        {
-            this.Name = "Tent";
-            this.description = this.loadDescription();
-
-            this.numAttachmentSlots.Value = 0;
-            this.IndexOfMenuItemView = 0;
         }
 
 
