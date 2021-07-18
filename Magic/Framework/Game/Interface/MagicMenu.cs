@@ -162,9 +162,9 @@ namespace Magic.Framework.Game.Interface
                         else if (i == 0 || spellBook.KnowsSpell(this.Sel, i - 1))
                         {
                             if (this.JustLeftClicked)
-                                spellBook.LearnSpell(this.Sel, i);
+                                spellBook.Mutate(_ => spellBook.LearnSpell(this.Sel, i));
                             else if (this.JustRightClicked && i != 0)
-                                spellBook.ForgetSpell(this.Sel, i);
+                                spellBook.Mutate(_ => spellBook.ForgetSpell(this.Sel, i));
                         }
                     }
                 }
@@ -184,10 +184,10 @@ namespace Magic.Framework.Game.Interface
                         if (r.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                         {
                             if (this.JustRightClicked)
-                                spellBar.SetSlot(i, prep = null);
+                                spellBook.Mutate(_ => spellBar.SetSlot(i, prep = null));
                             else if (this.JustLeftClicked)
                             {
-                                spellBar.SetSlot(i, prep = this.Dragging);
+                                spellBook.Mutate(_ => spellBar.SetSlot(i, prep = this.Dragging));
                                 this.Dragging = null;
                                 this.JustLeftClicked = false;
                             }
