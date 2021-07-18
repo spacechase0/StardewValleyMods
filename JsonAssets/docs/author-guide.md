@@ -590,6 +590,10 @@ For custom shops, here's how to find the ID:
 3. The SMAPI console will show a `TRACE` message like this:
    > [Json Assets] Adding objects for shop IDs 'SeedShop', 'Pierre'.
 
+**For custom shop mod authors:** when creating a custom shop, you can set the `string who` argument
+in the `ShopMenu` constructor to give it an owner ID. Prefixing the value with your mod ID (like
+`your-mod-id/shop-key`) is recommended to avoid conflicts with other mods.
+
 ### Context tags
 Supported for: objects.
 

@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.3.3
+Released 17 July 2021. Updated by Pathoschild.
+
 * Fixed Intense Flavors profession not applied for foods which also have a food quality bonus.
 
 ## 1.3.2

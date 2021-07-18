@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.0.8
+Released 17 July 2021. Updated by Pathoschild.
+
 * Updated translations. Thanks to martin66789 (updated Hungarian) and wally232 (added Korean)!
 
 ## 1.0.7

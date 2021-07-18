@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.0.2
+Released 17 July 2021. Updated by Pathoschild.
+
 * Fixed applying multiple fertilizers to a planted crop.
 * Internal refactoring.
 

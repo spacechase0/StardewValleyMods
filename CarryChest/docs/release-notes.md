@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.3.3
+Released 17 July 2021. Updated by Pathoschild.
+
 * Fixed support for Stone Chests in Stardew Valley 1.5.
 * Fixed mod partially handling unsupported chest types.
 

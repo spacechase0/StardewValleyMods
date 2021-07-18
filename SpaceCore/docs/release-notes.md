@@ -1,10 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
-* Fixed PyTK compatibility issue items in 1.5.8.
+## 1.5.9
+Released 17 July 2021. Updated by Pathoschild.
+
 * Fixed serialization API in 1.5.8...
-  * not correctly restoring custom items within custom items;
+  * not fully compatible with PyTK;
+  * not restoring custom items within custom items;
   * reordering custom items when there are several in the same list.
 
 ## 1.5.8
