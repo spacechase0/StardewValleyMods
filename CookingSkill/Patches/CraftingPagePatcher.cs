@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceCore;
 using SpaceShared;
 using StardewModdingAPI;

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using SpaceCore.Patches;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Monsters;
@@ -21,7 +22,7 @@ namespace SpaceCore.Framework
         private bool InitializedSerializers;
 
         // Update these each game update
-        private readonly Type[] VanillaMainTypes = new Type[25]
+        private readonly Type[] VanillaMainTypes =
         {
             typeof(Tool),
             typeof(GameLocation),
@@ -49,11 +50,11 @@ namespace SpaceCore.Framework
             typeof(JunimoHarvester),
             typeof(TerrainFeature)
         };
-        private readonly Type[] VanillaFarmerTypes = new Type[1]
+        private readonly Type[] VanillaFarmerTypes =
         {
             typeof(Tool)
         };
-        private readonly Type[] VanillaGameLocationTypes = new Type[24]
+        private readonly Type[] VanillaGameLocationTypes =
         {
             typeof(Tool),
             typeof(Duggy),
@@ -106,8 +107,6 @@ namespace SpaceCore.Framework
             SaveGame.serializer = this.InitializeSerializer(typeof(SaveGame), this.VanillaMainTypes);
             SaveGame.farmerSerializer = this.InitializeSerializer(typeof(Farmer), this.VanillaFarmerTypes);
             SaveGame.locationSerializer = this.InitializeSerializer(typeof(GameLocation), this.VanillaGameLocationTypes);
-
-            this.NotifyPyTk();
         }
 
         public XmlSerializer InitializeSerializer(Type baseType, Type[] extra = null)
@@ -116,7 +115,9 @@ namespace SpaceCore.Framework
                 ? extra.Concat(SpaceCore.ModTypes)
                 : SpaceCore.ModTypes;
 
-            return new(baseType, types.ToArray());
+            XmlSerializer serializer = new(baseType, types.ToArray());
+            this.NotifyPyTk(serializer);
+            return serializer;
         }
 
 
@@ -124,19 +125,38 @@ namespace SpaceCore.Framework
         ** Private methods
         *********/
         /// <summary>Notify PyTK that the serializers were changed, if it's installed.</summary>
-        private void NotifyPyTk()
+        /// <param name="serializer">The XML serializer which changed.</param>
+        private void NotifyPyTk(XmlSerializer serializer)
         {
-            if (SpaceCore.Instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
+            if (!SpaceCore.Instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
+                return;
+
+            const string errorPrefix = "PyTK is installed, but we couldn't notify it about serializer changes. PyTK serialization might not work correctly.\nTechnical details:";
+            try
             {
-                try
+                // fetch PyTK mod
+                var mod = Type.GetType("PyTK.PyTKMod, PyTK");
+                if (mod == null)
                 {
-                    var pytk = Type.GetType("PyTK.PyTKMod, PyTK");
-                    pytk.GetMethod("SerializersReinitialized").Invoke(null, new object[] { null });
+                    Log.Monitor.LogOnce($"{errorPrefix} couldn't fetch its mod instance.");
+                    return;
                 }
-                catch (Exception e)
+
+                // fetch notify method
+                const string methodName = "SerializersReinitialized";
+                var method = mod.GetMethod(methodName);
+                if (method == null)
                 {
-                    Log.Trace("Exception, probably because PyTK hasn't released yet: " + e);
+                    Log.Monitor.LogOnce($"{errorPrefix} couldn't fetch its '{methodName}' method.");
+                    return;
                 }
+
+                // notify
+                method.Invoke(null, new object[] { serializer });
+            }
+            catch (Exception ex)
+            {
+                Log.Monitor.LogOnce($"{errorPrefix} {ex}", LogLevel.Warn);
             }
         }
     }

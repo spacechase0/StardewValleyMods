@@ -1,0 +1,17 @@
+﻿{
+    "ui.laps": "구간: {{laps}}/2",
+    "ui.ranking": "순위",
+    "ui.wood": "모닥불에 약간의 나무를 추가하십시오",
+    "dialog.wood": "모닥불 위에 나무 50개를 놓았습니다.",
+    "dialog.shorts": "...이상하군요. 왜 불이 보라색으로 변했을까요?",
+    "dialog.prizemoney": "1500 골드를 받았습니다.",
+    "item.boost": "스타드롭 부스터",
+    "item.homingprojectile": "복어 폭탄",
+    "item.firstplaceprojectile": "번개 구름",
+    "item.invincibility": "주니모 파워",
+    "secret.text": "표지판 내용: 현재와 미래에 모두 성공하고 싶습니까? 거래를 하십시오.",
+    "secret.yes": "상자에 100,000 골드를 넣을까요?",
+    "secret.no": "닫기",
+    "secret.broke": "당신은 그것을 감당할 수 없습니다.",
+    "secret.purchased": "뭔가 이상한 느낌이 듭니다."
+}

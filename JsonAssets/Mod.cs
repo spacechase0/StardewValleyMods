@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using Newtonsoft.Json;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceCore;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -81,7 +81,8 @@ namespace JsonAssets
                 new HoeDirtPatcher(),
                 new ItemPatcher(),
                 new ObjectPatcher(),
-                new RingPatcher()
+                new RingPatcher(),
+                new ShopMenuPatcher()
             );
         }
 
@@ -1108,59 +1109,93 @@ namespace JsonAssets
             if (e.NewMenu == null)
                 return;
 
+            // handle return to title
             if (e.NewMenu is TitleMenu)
             {
                 this.ResetAtTitle();
                 return;
             }
 
-            var menu = e.NewMenu as ShopMenu;
-            bool hatMouse = menu != null && menu?.potraitPersonDialogue?.Replace("\n", "") == Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11494"), Game1.dialogueFont, 304).Replace("\n", "");
-            bool qiGemShop = menu?.storeContext == "QiGemShop";
-            string portraitPerson = menu?.portraitPerson?.Name;
-            if (portraitPerson == null && Game1.currentLocation?.Name == "Hospital")
-                portraitPerson = "Harvey";
-            if (menu == null || string.IsNullOrEmpty(portraitPerson) && !hatMouse && !qiGemShop)
-                return;
-            bool doAllSeeds = Game1.player.hasOrWillReceiveMail("PierreStocklist");
-
-            Log.Trace($"Adding objects to {portraitPerson}'s shop");
-            var forSale = menu.forSale;
-            var itemPriceAndStock = menu.itemPriceAndStock;
-
-            foreach (var entry in this.shopData)
+            // handle shop menu
+            if (e.NewMenu is ShopMenu { source: not StorageFurniture } menu)
             {
-                if (!(entry.PurchaseFrom == portraitPerson || (entry.PurchaseFrom == "HatMouse" && hatMouse) || (entry.PurchaseFrom == "QiGemShop" && qiGemShop)))
-                    continue;
-
-                bool normalCond = true;
-                if (entry.PurchaseRequirements?.Length > 0 && entry.PurchaseRequirements[0] != "")
+                ISet<string> shopIds = this.GetShopIds(menu);
+                if (!shopIds.Any())
                 {
-                    normalCond = this.Epu.CheckConditions(entry.PurchaseRequirements);
+                    Log.Trace("Ignored shop with no ID.");
+                    return;
                 }
-                if (entry.Price == 0 || !normalCond && !(doAllSeeds && entry.ShowWithStocklist && portraitPerson == "Pierre"))
-                    continue;
+                Log.Trace($"Adding objects for shop IDs '{string.Join("', '", shopIds)}'.");
 
-                var item = entry.Object();
-                int price = entry.Price;
-                if (!normalCond)
-                    price = (int)(price * 1.5);
-                if (item is SObject { Category: SObject.SeedsCategory })
+                bool isPierre = shopIds.Contains("Pierre");
+                bool isQiGemShop = shopIds.Contains("QiGemShop");
+
+                bool doAllSeeds = Game1.player.hasOrWillReceiveMail("PierreStocklist");
+                var forSale = menu.forSale;
+                var itemPriceAndStock = menu.itemPriceAndStock;
+
+                foreach (var entry in this.shopData)
                 {
-                    price = (int)(price * Game1.MasterPlayer.difficultyModifier);
-                }
-                if (item is SObject { IsRecipe: true } obj2 && Game1.player.knowsRecipe(obj2.Name))
-                    continue;
-                forSale.Add(item);
+                    if (!shopIds.Contains(entry.PurchaseFrom))
+                        continue;
 
-                bool isRecipe = (item as SObject)?.IsRecipe == true;
-                int[] values = qiGemShop
-                    ? new[] { 0, isRecipe ? 1 : int.MaxValue, 858, price }
-                    : new[] { price, isRecipe ? 1 : int.MaxValue };
-                itemPriceAndStock.Add(item, values);
+                    bool normalCond = true;
+                    if (entry.PurchaseRequirements?.Length > 0 && entry.PurchaseRequirements[0] != "")
+                    {
+                        normalCond = this.Epu.CheckConditions(entry.PurchaseRequirements);
+                    }
+                    if (entry.Price == 0 || !normalCond && !(doAllSeeds && entry.ShowWithStocklist && isPierre))
+                        continue;
+
+                    var item = entry.Object();
+                    int price = entry.Price;
+                    if (!normalCond)
+                        price = (int)(price * 1.5);
+                    if (item is SObject { Category: SObject.SeedsCategory })
+                    {
+                        price = (int)(price * Game1.MasterPlayer.difficultyModifier);
+                    }
+                    if (item is SObject { IsRecipe: true } obj2 && Game1.player.knowsRecipe(obj2.Name))
+                        continue;
+                    forSale.Add(item);
+
+                    bool isRecipe = (item as SObject)?.IsRecipe == true;
+                    int[] values = isQiGemShop
+                        ? new[] { 0, isRecipe ? 1 : int.MaxValue, 858, price }
+                        : new[] { price, isRecipe ? 1 : int.MaxValue };
+                    itemPriceAndStock.Add(item, values);
+                }
+
+                this.Api.InvokeAddedItemsToShop();
+            }
+        }
+
+        /// <summary>Get the valid shop IDs recognized for a given shop menu.</summary>
+        /// <param name="menu">The shop menu to check.</param>
+        private ISet<string> GetShopIds(ShopMenu menu)
+        {
+            IEnumerable<string> GetAll()
+            {
+                // owner ID
+                if (!string.IsNullOrWhiteSpace(ShopMenuPatcher.LastShopOwner))
+                    yield return ShopMenuPatcher.LastShopOwner;
+
+                // portrait name
+                string portraitName = !string.IsNullOrWhiteSpace(menu.portraitPerson?.Name) ? menu.portraitPerson.Name : null;
+                if (portraitName != null)
+                    yield return portraitName;
+
+                // shop context
+                string context = !string.IsNullOrWhiteSpace(menu.storeContext) ? menu.storeContext : null;
+                if (context != null)
+                    yield return context;
+
+                // special cases
+                if (ShopMenuPatcher.LastShopOwner == null && portraitName == null && context == "Hospital")
+                    yield return "Harvey";
             }
 
-            this.Api.InvokeAddedItemsToShop();
+            return new HashSet<string>(GetAll(), StringComparer.OrdinalIgnoreCase);
         }
 
         internal bool DidInit;

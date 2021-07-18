@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Reflection.Emit;
+using System.Linq;
 using Harmony;
 using Microsoft.Xna.Framework;
-using Spacechase.Shared.Harmony;
+using MultiFertilizer.Framework;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
@@ -25,7 +24,7 @@ namespace MultiFertilizer.Patches
         {
             harmony.Patch(
                 original: this.RequireMethod<GameLocation>(nameof(GameLocation.isTileOccupiedForPlacement)),
-                transpiler: this.GetHarmonyMethod(nameof(Transpile_isTileOccupiedForPlacement))
+                postfix: this.GetHarmonyMethod(nameof(After_isTileOccupiedForPlacement))
             );
         }
 
@@ -33,85 +32,28 @@ namespace MultiFertilizer.Patches
         /*********
         ** Private methods
         *********/
-        /// <summary>The method which transpiles <see cref="GameLocation.isTileOccupiedForPlacement"/>.</summary>
-        private static IEnumerable<CodeInstruction> Transpile_isTileOccupiedForPlacement(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /// <summary>The method to call after <see cref="GameLocation.isTileOccupiedForPlacement"/>.</summary>
+        private static void After_isTileOccupiedForPlacement(ref GameLocation __instance, ref bool __result, Vector2 tileLocation, Object toPlace = null)
         {
-            // TODO: Learn how to use ILGenerator
+            if (!__result)
+                return;
 
-            bool stopCaring = false;
-            bool foundFertCategory = false;
+            // get fertilizer
+            if (toPlace?.Category != SObject.fertilizerCategory || !DirtHelper.TryGetFertilizer(toPlace.ParentSheetIndex, out FertilizerData fertilizer))
+                return;
 
-            // When we find -19, after the next instruction:
-            // Place our patched section function call. If it returns true, return from the function true.
+            // check if we can apply it
+            if (!__instance.TryGetDirt(tileLocation, out HoeDirt dirt, includePots: false) || dirt.HasFertilizer(fertilizer))
+                return;
 
-            var newInsns = new List<CodeInstruction>();
-            foreach (var insn in insns)
-            {
-                if (stopCaring)
-                {
-                    newInsns.Add(insn);
-                    continue;
-                }
+            // recheck vanilla conditions that would block fertilizer placement
+            Rectangle tileRect = new Rectangle((int)tileLocation.X * Game1.tileSize, (int)tileLocation.Y * Game1.tileSize, Game1.tileSize, Game1.tileSize);
+            bool isBlocked = __instance.isTileOccupiedByFarmer(tileLocation) != null || __instance.characters.Any(p => p.GetBoundingBox().Intersects(tileRect));
+            if (isBlocked)
+                return;
 
-                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == -19)
-                {
-                    newInsns.Add(insn);
-                    foundFertCategory = true;
-                }
-                else if (foundFertCategory)
-                {
-                    newInsns.Add(insn);
-
-                    var branchPastOld = new CodeInstruction(OpCodes.Br, insn.operand);
-                    branchPastOld.labels.Add(gen.DefineLabel());
-
-                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_0));
-                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_1));
-                    newInsns.Add(new CodeInstruction(OpCodes.Ldarg_2));
-                    newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<GameLocationPatcher>(nameof(IsTileOccupiedForPlacementLogic))));
-
-                    newInsns.Add(new CodeInstruction(OpCodes.Brfalse, branchPastOld.labels[0]));
-
-                    newInsns.Add(new CodeInstruction(OpCodes.Ldc_I4_1));
-                    newInsns.Add(new CodeInstruction(OpCodes.Ret));
-
-                    newInsns.Add(branchPastOld);
-
-                    foundFertCategory = false;
-                    stopCaring = true;
-                }
-                else
-                    newInsns.Add(insn);
-            }
-
-            return newInsns;
-        }
-
-        private static bool IsTileOccupiedForPlacementLogic(GameLocation __instance, Vector2 tileLocation, SObject toPlace)
-        {
-            if (toPlace.Category == -19 && __instance.terrainFeatures.TryGetValue(tileLocation, out TerrainFeature feature) && feature is HoeDirt hoe_dirt)
-            {
-                string key = toPlace.ParentSheetIndex switch
-                {
-                    368 => Mod.KeyFert,
-                    369 => Mod.KeyFert,
-                    919 => Mod.KeyFert,
-                    370 => Mod.KeyRetain,
-                    371 => Mod.KeyRetain,
-                    920 => Mod.KeyRetain,
-                    465 => Mod.KeySpeed,
-                    466 => Mod.KeySpeed,
-                    918 => Mod.KeySpeed,
-                    _ => ""
-                };
-
-                if (hoe_dirt.modData.ContainsKey(key))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            // mark tile unoccupied to allow placing fertilizer
+            __result = false;
         }
     }
 }

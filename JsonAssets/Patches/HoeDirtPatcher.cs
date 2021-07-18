@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Reflection.Emit;
 using Harmony;
-using Spacechase.Shared.Harmony;
+using Microsoft.Xna.Framework;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
+using StardewValley;
 using StardewValley.TerrainFeatures;
 
 namespace JsonAssets.Patches
@@ -32,26 +32,16 @@ namespace JsonAssets.Patches
         *********/
         /// <summary>The method which transpiles <see cref="HoeDirt.dayUpdate"/> to remove the <see cref="HoeDirt.destroyCrop"/> call.</summary>
         /// <remarks>Withering isn't needed here since crops will wither separately if needed, so this simplifies Json Assets' winter crop logic elsewhere.</remarks>
-        private static IEnumerable<CodeInstruction> Transpile_DayUpdate(IEnumerable<CodeInstruction> insns)
+        private static IEnumerable<CodeInstruction> Transpile_DayUpdate(IEnumerable<CodeInstruction> instructions)
         {
-            bool happened = false;
-            var newInsns = new List<CodeInstruction>();
-            foreach (var instr in insns)
-            {
-                if ((instr.opcode == OpCodes.Call || instr.opcode == OpCodes.Callvirt) && (instr.operand as MethodInfo)?.Name == nameof(HoeDirt.destroyCrop))
-                {
-                    for (int i = 0; i < 4; i++) // remove the four args to the destroyCrop method
-                        newInsns.Add(new CodeInstruction(OpCodes.Pop));
-                    happened = true;
-                    continue;
-                }
-                newInsns.Add(instr);
-            }
-
-            if (!happened)
-                Log.Error($"{nameof(Transpile_DayUpdate)} patching failed: couldn't find {nameof(HoeDirt.destroyCrop)} call in the {nameof(HoeDirt)}.{nameof(HoeDirt.dayUpdate)} method.");
-
-            return newInsns;
+            return instructions.MethodReplacer(
+                from: PatchHelper.RequireMethod<HoeDirt>(nameof(HoeDirt.destroyCrop)),
+                to: PatchHelper.RequireMethod<HoeDirtPatcher>(nameof(HoeDirtPatcher.destroyCrop))
+            );
         }
+
+        /// <summary>An implementation of <see cref="HoeDirt.destroyCrop"/> that does nothing.</summary>
+        public void destroyCrop(Vector2 tileLocation, bool showAnimation, GameLocation location) { }
+
     }
 }

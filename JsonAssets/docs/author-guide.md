@@ -6,32 +6,26 @@ This document helps mod authors create a content pack for Json Assets.
 
 ## Contents
 * [Introduction](#introduction)
-  * [Things to Note](#things-to-note-before-you-start)
-* [Basic Features](#basic-features)
+* [Supported content](#supported-content)
   * [Overview](#overview)
-  * [Big Craftables](#bigcraftables)
-    * [Machine Animations](#machine-animations)
+  * [Big Craftables](#big-craftables)
   * [Crops](#crops)
-    * [Giant Crops](#giant-crops)
-  * [Fruit Trees](#fruittrees)
+  * [Fruit Trees](#fruit-trees)
   * [Objects](#objects)
-    * [Crop and Fruit Tree Objects](#crop-and-fruit-tree-objects)
-    * [Recipes](#recipes)
   * [Hats](#hats)
   * [Weapons](#weapons)
   * [Shirts & Pants](#shirts-and-pants)
-    * [Shirts](#shirts)
-    * [Pants](#pants)
   * [Boots](#boots)
   * [Tailoring](#tailoring)
   * [Fences](#fences)
   * [Forge Recipes](#forge-recipes)
-* [Gift Tastes](#gift-tastes)
-* [Context Tags](#context-tags)
-* [Localization](#localization)
+* [Common features](#common-features)
+  * [Gift Tastes](#gift-tastes)
+  * [Shops](#shops)
+  * [Context Tags](#context-tags)
+  * [Localization](#localization)
 * [Content Patcher API](#content-patcher-api)
 * [Tokens in Fields](#tokens-in-fields)
-* [Converting From Legacy Format](#converting-from-legacy-format)
 * [Releasing A Content Pack](#releasing-a-content-pack)
   * [Manifest](#manifest)
 * [Troubleshooting](#troubleshooting)
@@ -87,7 +81,7 @@ Json Assets is a great tool if you want to add one of the above objects, but the
 
  This list is not meant to be comprehensive as many mods support JA objects. If you're unsure if a mod supports JA objects it's recommended to read the mod description, release notes, or ask the creator.
 
-## Basic features
+## Supported content
 ### Overview
 There are nine main folders you are likely to see when downloading Json Asset content packs:
 
@@ -128,7 +122,7 @@ field                    | purpose
 `Object` & `Count`       | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. You can use either the item ID or the name of the object. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used. You cannot use context tags for this field.
 `IsDefault`              | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe.
 `CanPurchase`            | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
-`PurchaseFrom`           | Who you can purchase the recipe from. Valid entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. If an NPC isn't listed here they can't be used. `Pierre` is the default vendor.
+`PurchaseFrom`           | Who you can purchase the recipe from. See [a list of valid shop IDs](#shops). `Pierre` is the default vendor.
 `PurchasePrice`          | How much you can purchase the recipe for.
 `PurchaseRequirements`   | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 `AdditionalPurchaseData` | Extra shops where the item can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
@@ -217,7 +211,7 @@ field                      | purpose
 `Name`                     | The name you would like your object to have. This does not need to be identical to the folder but it is recommend to keep names consistant.
 `Price`                    | How much your item sells for.
 `Product`                  | Determines what the crop produces. This will correspond to a folder with the same name in `Objects` (ex. Both folders will be named "Honeysuckle"). _(optional)_ You can produce vanilla items. Instead of a named object you will use the objects ID number and not include a corresponding `Objects` folder.
-`SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter. Do not put `Sapling` at the end of the seed name or it will not function properly. If you're trying to make a fruit tree see [FruitTrees](#fruittrees).
+`SeedName`                 | The seed name of the crop. Typically crop name + seeds or starter. Do not put `Sapling` at the end of the seed name or it will not function properly. If you're trying to make a fruit tree, see [fruit trees](#fruit-trees).
 `SeedDescription`          | Describe what season you plant these in. Also note if it continues to grow after first harvest and how many days it takes to regrow.
 `Type`                     | Vanilla types are `Flower`, `Fruit`, `Vegetable`, `Gem`, `Fish`, `Egg`, `Milk`, `Cooking`, `Crafting`, `Mineral`, `Meat`, `Metal`, `Junk`, `Syrup`, `MonsterLoot`, `ArtisanGoods`, `AnimalGoods`, `Greens`, and `Seeds`.
 `SeedSellPrice`            | How much the seeds sell for. *Not to be confused with `SeedPurchasePrice`.*
@@ -234,7 +228,7 @@ field                      | purpose
 `MaxIncreasePerFarmLevel`  | How many farming skill experience points you get from harvesting.
 `ExtraChance`              | Value between 0 and 1.
 `SeedPurchasePrice`        | How much you can purchase seeds for.
-`SeedPurchaseFrom`         | Who you can purchase seeds from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Pierre` is the default vendor.
+`SeedPurchaseFrom`         | Who you can purchase seeds from. See [a list of valid shop IDs](#shops). `Pierre` is the default vendor.
 `SeedPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SeedPurchaseRequirements` set this to `null`.
 `SeedAdditionalPurchaseData` | Extra shops where the seed can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
 `EnableWithMod`            | _(optional)_ Enables the crop when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
@@ -270,7 +264,7 @@ field                         | purpose
 `SaplingDescription`          | The description of the sapling, often sticks to vanilla format: Takes 28 days to produce a mature `product` tree. Bears `type` in the summer. Only grows if the 8 surrounding \"tiles\" are empty.
 `Season`                      | Season must be in lowercase and in quotation marks. Fruit trees can support only one season.
 `SaplingPurchasePrice`        | Determines how much the sapling can be purchased for.
-`SaplingPurchaseFrom`         | Who you can purchase saplings from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor.`Pierre` is the default vendor.
+`SaplingPurchaseFrom`         | Who you can purchase saplings from. See [a list of valid shop IDs](#shops). `Pierre` is the default vendor.
 `SaplingPurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `SaplingPurchaseRequirements` set this to `null`.
 `SaplingAdditionalPurchaseData` | Extra shops where the sapling can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
 `EnableWithMod`               | _(optional)_ Enables the fruit tree when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
@@ -308,7 +302,7 @@ field                  | purpose
 `Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. You can use either the item ID or the name of the object. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used. You cannot use context tags for this field.
 `IsDefault`            | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe.
 `CanPurchase`          | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
-`PurchaseFrom`         | Who you can purchase the recipe from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Pierre` is the default vendor.
+`PurchaseFrom`         | Who you can purchase the recipe from. See [a list of valid shop IDs](#shops). `Pierre` is the default vendor.
 `PurchasePrice`        | How much you can purchase the recipe for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 `AdditionalPurchaseData` | Extra shops where the item can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
@@ -333,7 +327,7 @@ field                  | purpose
 `ShowHair`             | Set this to `true` or `false` depending on if you want the players' hair to be visible or not. Setting this to `false` is a good idea for masks.
 `IgnoreHairstyleOffset`| Set this to `true` or `false`. When set to `true` the hat will ignore any hairstyle offset.
 `CanPurchase`          | Set this to `true` or `false`.
-`PurchaseFrom`         | Who you can purchase the hat from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. Hat Mouse is the default vendor.
+`PurchaseFrom`         | Who you can purchase the hat from. See [a list of valid shop IDs](#shops). Hat Mouse is the default vendor.
 `EnableWithMod`        | _(optional)_ Enables the hat when a specific mod is installed. Example: `"EnableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 `DisableWithMod`       | _(optional)_ Disables the hat when a specific mod is installed. Example: `"DisableWithMod": "ppja.moretrees"`. Does not support multiple uniqueIDs.
 
@@ -364,7 +358,7 @@ field                  | purpose
 `CritChance`           | The percentage chance the weapon will land a critical hit. This is a number between 0 and 1.
 `CritMultiplier`       | Damage multiplied by this number is how much damage a critical hit does. This number must be greater than 0.
 `CanSell`              | If you can sell the weapon or not. Set to `true` or `false`. Default is `true`. Normal weapon selling rules apply.
-`PurchaseFrom`         | Who you can purchase the weapon from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Pierre` is the default vendor. For weapons, `Marlon` is recommended.
+`PurchaseFrom`         | Who you can purchase the weapon from. See [a list of valid shop IDs](#shops). `Pierre` is the default vendor. For weapons, `Marlon` is recommended.
 `PurchasePrice`        | How much you can purchase the weapon for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 `AdditionalPurchaseData` | Extra shops where the item can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
@@ -449,7 +443,7 @@ field                  | purpose
 `Price`                | How much the item sells for.
 `Defense`              | How much resistance the boots provide.
 `Immunity`             | How much immunity the boots provide.
-`PurchaseFrom`         | _(optional)_ Who you can purchase the weapon from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Marlon` is the default vendor.
+`PurchaseFrom`         | _(optional)_ Who you can purchase the weapon from. See [a list of valid shop IDs](#shops). `Marlon` is the default vendor.
 `PurchasePrice`        | _(optional)_ How much you can purchase the boots for.
 `PurchaseRequirements` | _(optional)_ See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 `AdditionalPurchaseData` | Extra shops where the item can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
@@ -505,7 +499,7 @@ field                  | purpose
 `Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used.
 `IsDefault`            | _(optional)_ Setting this to `true` will have the recipe already unlocked. Setting this to `false` (or excluding this field) will require additional fields specifiying how to obtain the recipe:
 `CanPurchase`          | Set this to `true` if `IsDefault` is set to `false` or excluded from the `json`.
-`PurchaseFrom`         | Who you can purchase the recipe from. Valid vanilla entries are: `Willy`, `Pierre`, `Robin`, `Sandy`, `Krobus`, `Clint`, `Harvey`, `Marlon`, and `Dwarf`. You can also use a custom NPC as a vendor. `Pierre` is the default vendor.
+`PurchaseFrom`         | Who you can purchase the recipe from. See [a list of valid shop IDs](#shops). `Pierre` is the default vendor.
 `PurchasePrice`        | How much you can purchase the recipe for.
 `PurchaseRequirements` | See [Event Preconditions](https://stardewvalleywiki.com/Modding:Event_data#Event_preconditions). If you do not want to have any `PurchaseRequirements` set this to `null`.
 `AdditionalPurchaseData` | Extra shops where the item can be purchased from. This is a list of entries with `PurchasePrice`, `PurchaseFrom`, and `PurchaseRequirements` equivalent to the above fields.
@@ -531,10 +525,13 @@ field                  | purpose
 
 Custom ContextTags can be added to vanilla items using ContentPatcher.
 
-## Gift tastes
+## Common features
+### Gift tastes
+Supported for: objects.
+
 You can add gift taste support to any pre-existing content pack by adding the following to the respective `.json` file. It does not matter where you put it. I tend to place it at the bottom of the `.json` but it is personal preferance. 
 
-If it can be gifted to an NPC it has gift taste support built in. This means `hats`, `big-craftables`, `weapons`, `shirts`, `pants`, `boots`, `tailoring` and `fences` do not have gift taste support. If you exclude an NPC from the gift taste, their reaction will their default reaction to that item's category. This applies to custom NPCs as well if they are not specified.
+If it can be gifted to an NPC it has gift taste support built in. This means `big-craftables`, `hats`, `weapons`, `shirts`, `pants`, `boots`, `tailoring` and `fences` do not have gift taste support. If you exclude an NPC from the gift taste, their reaction will their default reaction to that item's category. This applies to custom NPCs as well if they are not specified.
 
 ```
  "GiftTastes":
@@ -548,8 +545,59 @@ If it can be gifted to an NPC it has gift taste support built in. This means `ha
 ```
 An example of a filled out gift taste can be found [here](https://gist.github.com/paradigmnomad/df8686af71ff35428dc37a7db65213bf#gift-tastes). You can delete unused fields within `GiftTastes`.
 
-## Context tags
-"Context tags are an array in the item "ContextTags", injected into Data\ObjectContextTags". It allows mods like [Better Shop Menu](https://www.nexusmods.com/stardewvalley/mods/2012) to categorize your items better. This is an optional feature and not required for a content pack to work.
+### Shops
+Supported for: all content types.
+
+The `PurchaseFrom` field lets you add items to shops for the player to buy. Each shop has up to
+three IDs you can use, in order of preference:
+1. **owner ID:** a unique value used to create the shop.
+2. **portrait ID:** the default name of the NPC whose portrait is shown in the shop UI.
+3. **context ID:** the location containing the shop (not necessarily unique).
+
+You can use any ID to identify the shop, but should avoid the context ID if possible since multiple
+shops in the same location will have the same context ID.
+
+Here are the IDs for vanilla shops:
+
+shop                                                                | owner ID      | portrait ID     | context ID
+------------------------------------------------------------------- | ------------- | --------------- | ----------
+[Casino](https://stardewvalleywiki.com/Casino)                      |               |                 | `Club`
+[Clint](https://stardewvalleywiki.com/Blacksmith)                   | `Clint`       | `Clint`         | `Blacksmith`
+[Desert trader](https://stardewvalleywiki.com/Desert_Trader)        | `DesertTrade` |                 | `Desert`
+[Dwarf](https://stardewvalleywiki.com/Dwarf)                        | `Dwarf`       | `Dwarf`         | `Mine`
+[Harvey](https://stardewvalleywiki.com/Harvey%27s_Clinic)           |               | `Harvey`        | `Hospital`
+[Hat mouse](https://stardewvalleywiki.com/Abandoned_House)          | `HatMouse`    |                 | `Forest`
+[Ice Cream Stand](https://stardewvalleywiki.com/Ice_Cream_Stand)    |               |                 | `Town`
+[Island Trader](https://stardewvalleywiki.com/Island_Trader)        | `IslandTrade` |                 | `IslandNorth`
+[JojaMart](https://stardewvalleywiki.com/JojaMart)                  |               |                 | `JojaMart`
+[Krobus](https://stardewvalleywiki.com/Krobus)                      | `Krobus`      | `Krobus`        | `Sewer`
+[Marlon](https://stardewvalleywiki.com/Adventurer%27s_Guild)        | `Marlon`      | `Marlon`        | `AdventureGuild`
+[Marnie (supplies)](https://stardewvalleywiki.com/Marnie%27s_Ranch) | `Marnie`      | `Marnie`        | `AnimalShop`
+[Pierre](https://stardewvalleywiki.com/Pierre%27s_General_Store)    | `Pierre`      | `Pierre`        | `SeedShop`
+[Qi walnut room](https://stardewvalleywiki.com/Qi%27s_Walnut_Room)  |               |                 | `QiGemShop`
+[Robin](https://stardewvalleywiki.com/Carpenter%27s_Shop)           | `Robin`       | `Robin`         | `ScienceHouse`
+[Saloon](https://stardewvalleywiki.com/The_Stardrop_Saloon)         | `Gus`         | `Gus`           | `Saloon`
+[Sandy](https://stardewvalleywiki.com/Oasis)                        | `Sandy`       | `Sandy`         | `SandyHouse`
+[Traveling cart](https://stardewvalleywiki.com/Traveling_Cart)      | `Traveler`    |                 | `Forest`
+[Volcano shop](https://stardewvalleywiki.com/Volcano_Dungeon#Shop)  | `VolcanoShop` |                 | `VolcanoShop`
+[Willy](https://stardewvalleywiki.com/Fish_Shop)                    | `Willy`       | `Willy`         | `FishShop`
+
+For custom shops, here's how to find the ID:
+
+1. Install the _SMAPI for developers_ version of [SMAPI](https://smapi.io/) (to show more info in
+   the SMAPI console).
+2. Load the game and open the shop.
+3. The SMAPI console will show a `TRACE` message like this:
+   > [Json Assets] Adding objects for shop IDs 'SeedShop', 'Pierre'.
+
+**For custom shop mod authors:** when creating a custom shop, you can set the `string who` argument
+in the `ShopMenu` constructor to give it an owner ID. Prefixing the value with your mod ID (like
+`your-mod-id/shop-key`) is recommended to avoid conflicts with other mods.
+
+### Context tags
+Supported for: objects.
+
+Context tags are an array in the item "ContextTags", injected into `Data\ObjectContextTags`. It allows mods like [Better Shop Menu](https://www.nexusmods.com/stardewvalley/mods/2012) to categorize your items better. This is an optional feature and not required for a content pack to work.
 
 Example:
 
@@ -568,7 +616,9 @@ Common information in context tags are: season, main color, what produces the it
 
 You can see a list of context tags under `Content/Data/ObjectInformation` An alternative way to check a pre-exisiting items context tags is "Typing in `debug listtags` into SMAPI [will] print out all of the context tags for that item." (Mr. Podunkian) You aren't limited to those context tags, but it gives you an idea of the vanilla context tags.
 
-## Localization
+### Localization
+Supported for: all content types.
+
 JsonAssets supports name localization without the need for a seperate or different download. These lines can be added to the bottom of their respective `json` files. Most localization is the same except "Crops have their localization fields prefixed with `Seed`, fruit trees prefixed with `Sapling`."
 
 Examples:

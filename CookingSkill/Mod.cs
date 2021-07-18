@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CookingSkill.Framework;
 using CookingSkill.Patches;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceCore;
 using SpaceCore.Events;
 using SpaceShared;
@@ -123,7 +123,7 @@ namespace CookingSkill
 
             // get buff data
             Buff oldBuff = isDrink ? Game1.buffsDisplay.drink : Game1.buffsDisplay.food;
-            Buff curBuff = this.CreateBuffFromObjectField(objFields);
+            Buff curBuff = this.CreateBuffFromObject(obj, objFields);
             if (oldBuff != null && curBuff != null && oldBuff.buffAttributes.SequenceEqual(curBuff.buffAttributes) && oldBuff != this.LastDrink)
             {
                 // Now that we know that this is the original buff, we can buff the buff.
@@ -211,9 +211,10 @@ namespace CookingSkill
             );
         }
 
-        /// <summary>Create a buff instance from the raw buff data in a <see cref="Game1.objectInformation"/> entry, if valid.</summary>
-        /// <param name="fields">The object fields.</param>
-        private Buff CreateBuffFromObjectField(string[] fields)
+        /// <summary>Create a buff instance for an object, if valid.</summary>
+        /// <param name="obj">The object instance.</param>
+        /// <param name="fields">The raw object fields from <see cref="Game1.objectInformation"/>.</param>
+        private Buff CreateBuffFromObject(SObject obj, string[] fields)
         {
             // get object info
             int edibility = Convert.ToInt32(fields.GetOrDefault(SObject.objectInfoEdibilityIndex));
@@ -230,6 +231,7 @@ namespace CookingSkill
 
             // get buff fields
             string[] attr = fields[SObject.objectInfoBuffTypesIndex].Split(' ');
+            obj.ModifyItemBuffs(attr);
             if (attr.All(val => val == "0"))
                 return null;
 

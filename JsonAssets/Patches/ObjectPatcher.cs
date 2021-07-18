@@ -5,7 +5,7 @@ using System.Linq;
 using Harmony;
 using JsonAssets.Data;
 using Microsoft.Xna.Framework;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;

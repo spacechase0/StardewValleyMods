@@ -4,11 +4,13 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Microsoft.Xna.Framework;
-using Spacechase.Shared.Harmony;
+using MultiFertilizer.Framework;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.TerrainFeatures;
+using SObject = StardewValley.Object;
 
 namespace MultiFertilizer.Patches
 {
@@ -40,7 +42,7 @@ namespace MultiFertilizer.Patches
             bool stopCaring = false;
             int fertCategoryCounter = 0;
 
-            // When we find the -19, after the next instruction:
+            // When we find the SObject.fertilizerCategory, after the next instruction:
             // Place our patched section function call. If it returns true, return from the function false.
             // Then skip the old section
 
@@ -53,7 +55,7 @@ namespace MultiFertilizer.Patches
                     continue;
                 }
 
-                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == -19)
+                if (insn.opcode == OpCodes.Ldc_I4_S && (sbyte)insn.operand == SObject.fertilizerCategory)
                 {
                     newInsns.Add(insn);
                     fertCategoryCounter++;
@@ -90,30 +92,16 @@ namespace MultiFertilizer.Patches
 
         private static bool TryToPlaceItemLogic(GameLocation location, Item item, int x, int y)
         {
-            string key = item.ParentSheetIndex switch
-            {
-                368 => Mod.KeyFert,
-                369 => Mod.KeyFert,
-                919 => Mod.KeyFert,
-                370 => Mod.KeyRetain,
-                371 => Mod.KeyRetain,
-                920 => Mod.KeyRetain,
-                465 => Mod.KeySpeed,
-                466 => Mod.KeySpeed,
-                918 => Mod.KeySpeed,
-                _ => ""
-            };
+            DirtHelper.TryGetFertilizer(item.ParentSheetIndex, out FertilizerData fertilizer);
 
             Vector2 tileLocation = new Vector2(x / 64, y / 64);
-            if (!location.terrainFeatures.TryGetValue(tileLocation, out TerrainFeature feature) || feature is not HoeDirt dirt)
+            if (!location.TryGetDirt(tileLocation, out HoeDirt dirt, includePots: false))
                 return true;
 
             if (dirt.fertilizer.Value != 0)
             {
-                if (dirt.modData.ContainsKey(key))
-                {
+                if (dirt.HasFertilizer(fertilizer))
                     Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HoeDirt.cs.13916-2"));
-                }
                 return true;
             }
             return false;

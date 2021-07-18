@@ -1,7 +1,8 @@
 using System.Linq;
+using CarryChest.Framework;
 using CarryChest.Patches;
 using Microsoft.Xna.Framework;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -60,7 +61,7 @@ namespace CarryChest
             {
                 GameLocation location = Game1.currentLocation;
                 Vector2 tile = e.Cursor.Tile;
-                if (location.objects.TryGetValue(tile, out SObject obj) && obj is Chest chest && chest.playerChest.Value && Game1.player.addItemToInventoryBool(obj, true))
+                if (location.objects.TryGetValue(tile, out SObject obj) && ChestHelper.IsSupported(obj) && Game1.player.addItemToInventoryBool(obj, true))
                 {
                     location.objects.Remove(tile);
                     this.Helper.Input.Suppress(e.Button);

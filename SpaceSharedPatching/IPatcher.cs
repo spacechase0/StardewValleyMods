@@ -1,7 +1,7 @@
 using Harmony;
 using StardewModdingAPI;
 
-namespace Spacechase.Shared.Harmony
+namespace Spacechase.Shared.Patching
 {
     /// <summary>A set of Harmony patches to apply.</summary>
     internal interface IPatcher

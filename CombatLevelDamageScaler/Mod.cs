@@ -1,6 +1,6 @@
 using CombatLevelDamageScaler.Framework;
 using CombatLevelDamageScaler.Patches;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;

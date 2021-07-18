@@ -1,6 +1,17 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.1.1
+Released 17 July 2021. Updated by Pathoschild.
+
+* Migrated from PyTK to SpaceCore.
+* Fixed error when opening some shops.
+
+**Update note:**  
+You no longer need PyTK to use Sleepy Eye. Existing tent items in your save should be migrated
+automatically. If you find a broken item named `PyTK|Item|SleepyEye.TentTool,  SleepyEye|`, you can
+fix it by moving it into your inventory, then saving and reloading the save to migrate it.
+
 ## 1.1.0
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

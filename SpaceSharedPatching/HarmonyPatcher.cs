@@ -2,7 +2,7 @@ using System;
 using Harmony;
 using StardewModdingAPI;
 
-namespace Spacechase.Shared.Harmony
+namespace Spacechase.Shared.Patching
 {
     /// <summary>Simplifies applying <see cref="IPatcher"/> instances to the game.</summary>
     internal static class HarmonyPatcher

@@ -9,29 +9,11 @@
     "IsColored": false,
     "Recipe": null,
     "NameLocalization": {
-        // "es": "",
-        // "ko": "",
-        // "de": "",
-        // "fr": "",
-        //"hu": "",
-        //"it": "",
-        // "ja": "",
-        // "pt": "",
-        // "ru": "",
-        //"tr": "",
-        // "zh": ""
+        "hu": "Olcsó amulett?",
+        "ko": "값싼 부적?"
     },
     "DescriptionLocalization": {
-        // "es": "",
-        // "ko": "",
-        // "de": "",
-        // "fr": "",
-        //"hu": "",
-        //"it": "",
-        // "ja": "",
-        // "pt": "",
-        // "ru": "",
-        //"tr": "",
-        // "zh": ""
+        "hu": "Valami nem stimmel ezzel az amulettel. Vajon miért olyan olcsó?",
+        "ko": "이 부적에 문제가 있는 것 같습니다. 왜 이렇게 싼지 궁금하네요."
     }
 }

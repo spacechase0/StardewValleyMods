@@ -1,5 +1,5 @@
 using MultiFertilizer.Patches;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 

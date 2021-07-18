@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 0.5.2
+Released 17 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* PyTK is now optional. If it's not installed, the Magic TV channel won't be added in-game.
+
 ## 0.5.1
 Released 12 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

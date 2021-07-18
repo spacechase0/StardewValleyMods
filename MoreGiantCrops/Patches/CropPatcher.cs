@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Netcode;
-using Spacechase.Shared.Harmony;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
