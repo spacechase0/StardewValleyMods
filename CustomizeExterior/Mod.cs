@@ -21,9 +21,10 @@ namespace CustomizeExterior
     /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
+        /// <summary>The building identifier and time which the player last clicked, if any.</summary>
+        /// <remarks>This should only be used via <see cref="IsOpenMenuClick(string)"/>.</remarks>
+        private Tuple<string, DateTime> LastRightClick = null;
 
-        private DateTime RecentClickTime;
-        private string RecentClickTarget;
         private string RecentTarget;
 
         public const string SeasonalIndicator = "%";
@@ -187,8 +188,9 @@ namespace CustomizeExterior
 
                             Log.Trace($"Right clicked a building (id: {id}, texture: {textureName})");
 
-                            if (this.CheckBuildingClick(id, textureName))
-                                return;
+                            if (this.IsOpenMenuClick(building))
+                                this.TryOpenCustomizationMenu(id, textureName);
+                            return;
                         }
                     }
                 }
@@ -199,7 +201,10 @@ namespace CustomizeExterior
                     if (house.Contains(tile))
                     {
                         Log.Trace("Right clicked the house.");
-                        this.CheckBuildingClick("FarmHouse", "houses");
+
+                        if (this.IsOpenMenuClick(nameof(FarmHouse)))
+                            this.TryOpenCustomizationMenu("FarmHouse", "houses");
+                        return;
                     }
                 }
             }
@@ -301,25 +306,28 @@ namespace CustomizeExterior
             }
         }
 
-        private bool CheckBuildingClick(string target, string type)
+        /// <summary>Get whether the player just double-right-clicked a given building.</summary>
+        /// <param name="building">The building instance.</param>
+        private bool IsOpenMenuClick(Building building)
         {
-            if (Game1.activeClickableMenu != null)
+            return this.IsOpenMenuClick($"{building.buildingType.Value}|{building.tileX.Value}|{building.tileY.Value}");
+        }
+
+        /// <summary>Get whether the player just double-right-clicked a given building.</summary>
+        /// <param name="target">A unique identifier for the building.</param>
+        private bool IsOpenMenuClick(string target)
+        {
+            if (!Context.IsPlayerFree)
                 return false;
 
-            if (this.RecentClickTarget != target)
-            {
-                this.RecentClickTarget = target;
-                this.RecentClickTime = DateTime.Now;
-            }
-            else
-            {
-                if (DateTime.Now - this.RecentClickTime < this.ClickWindow)
-                    return this.TryOpenCustomizationMenu(target, type);
-                else
-                    this.RecentClickTime = DateTime.Now;
-            }
+            bool shouldOpen =
+                this.LastRightClick != null
+                && this.LastRightClick.Item1 == target
+                && DateTime.Now - this.LastRightClick.Item2 < this.ClickWindow;
 
-            return false;
+            this.LastRightClick = new(target, DateTime.Now);
+
+            return shouldOpen;
         }
 
         private bool TryOpenCustomizationMenu(string target, string type)
