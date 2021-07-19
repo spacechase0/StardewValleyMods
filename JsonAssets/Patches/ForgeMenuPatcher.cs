@@ -121,19 +121,18 @@ namespace JsonAssets.Patches
         {
             return instructions.MethodReplacer(
                 from: PatchHelper.RequireMethod<ForgeMenu>(nameof(ForgeMenu.GetForgeCost)),
-                to: PatchHelper.RequireMethod<ForgeMenuPatcher>(nameof(DrawCost))
+                to: PatchHelper.RequireMethod<ForgeMenuPatcher>(nameof(ForgeMenuPatcher.GetAndDrawCost))
             );
         }
 
-        private static void DrawCost(Item left_item, Item right_item)
+        private static int GetAndDrawCost(ForgeMenu forgeMenu, Item leftItem, Item rightItem)
         {
-            var forgeMenu = (ForgeMenu)Game1.activeClickableMenu;
             int cost = forgeMenu.GetForgeCost(forgeMenu.leftIngredientSpot.item, forgeMenu.rightIngredientSpot.item);
 
-            if (cost != 10 && cost != 15 && cost != 20)
-            {
+            if (cost is not (10 or 15 or 20))
                 Game1.spriteBatch.DrawString(Game1.dialogueFont, "x" + cost, new Vector2(forgeMenu.xPositionOnScreen + 345, forgeMenu.yPositionOnScreen + 320), new Color(226, 124, 65));
-            }
+
+            return cost;
         }
     }
 }

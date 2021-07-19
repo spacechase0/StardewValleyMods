@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed error patching the forge menu.
+
 ## 1.8.0
 Released 17 July 2021. Updated by Pathoschild.
 
