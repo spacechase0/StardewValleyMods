@@ -4,6 +4,7 @@
 ## Upcoming release
 * Fixed some changes through the altar not persisted when you save and reload.
 * Fixed teleport spell opening the menu for all players.
+* Fixed error using buff spell in multiplayer (possibly).
 * Fixed typos.
 
 ## 0.5.2
