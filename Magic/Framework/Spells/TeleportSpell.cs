@@ -26,7 +26,9 @@ namespace Magic.Framework.Spells
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
-            Game1.activeClickableMenu = new TeleportMenu();
+            if (player.IsLocalPlayer)
+                Game1.activeClickableMenu = new TeleportMenu();
+
             return null;
         }
     }

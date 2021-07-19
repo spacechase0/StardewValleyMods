@@ -105,7 +105,7 @@ namespace Magic.Framework
             {
                 if (farmer.CurrentTool != null)
                 {
-                    if (farmer.CurrentTool is StardewValley.Tools.Axe || farmer.CurrentTool is StardewValley.Tools.Pickaxe)
+                    if (farmer.CurrentTool is StardewValley.Tools.Axe or StardewValley.Tools.Pickaxe)
                         spellsLearnt.Add("toil:cleardebris");
                     else if (farmer.CurrentTool is StardewValley.Tools.Hoe)
                         spellsLearnt.Add("toil:till");
@@ -152,10 +152,13 @@ namespace Magic.Framework
                 spellsLearnt.Add("elemental:descend");
             if (farmer.currentLocation is Farm farm)
             {
-                foreach (var clump in farm.resourceClumps)
+                foreach (ResourceClump clump in farm.resourceClumps)
                 {
-                    if (clump.parentSheetIndex.Value == 622 && new Rectangle((int)clump.tile.Value.X, (int)clump.tile.Value.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
+                    if (clump.parentSheetIndex.Value == ResourceClump.meteoriteIndex && new Rectangle((int)clump.tile.Value.X, (int)clump.tile.Value.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
+                    {
                         spellsLearnt.Add("eldritch:meteor");
+                        break;
+                    }
                 }
             }
             if (farmer.currentLocation.doesTileHaveProperty((int)tilePos.X, (int)tilePos.Y, "Action", "Buildings") == "EvilShrineLeft")

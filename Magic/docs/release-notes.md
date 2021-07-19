@@ -1,6 +1,14 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 0.5.3
+Released 18 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* Fixed some changes through the altar not persisted when you save and reload.
+* Fixed teleport spell opening the menu for all players.
+* Fixed error using buff spell in multiplayer (possibly).
+* Fixed typos.
+
 ## 0.5.2
 Released 17 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

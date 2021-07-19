@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.1.2
+Released 18 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
+* Fixed error with Harmony 2.x in the upcoming SMAPI 3.12.0.
+
 ## 1.1.1
 Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
