@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.1.0
+Released 18 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Reworked how player data is stored to simplify multiplayer sync and reduce edge cases.
 * Fixed some buildings not saving the selected exterior.
 * Fixed more greenhouse issues in Stardew Valley 1.5.

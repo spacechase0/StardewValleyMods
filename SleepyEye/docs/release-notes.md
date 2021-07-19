@@ -1,11 +1,13 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.1.2
+Released 18 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Fixed error saving with tent tool.
 
 ## 1.1.1
-Released 17 July 2021. Updated by Pathoschild.
+Released 17 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
 * Migrated from PyTK to SpaceCore.
 * Fixed error when opening some shops.

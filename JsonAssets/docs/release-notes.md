@@ -1,11 +1,13 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.8.1
+Released 18 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Fixed error patching the forge menu.
 
 ## 1.8.0
-Released 17 July 2021. Updated by Pathoschild.
+Released 17 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
 * You can now add items to any shop in the game, including custom shops. See [_shops_ in the author guide](author-guide.md#shops).
 * Shop IDs for `PurchaseFrom` fields are no longer case-sensitive.
