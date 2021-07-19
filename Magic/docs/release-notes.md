@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Fixed some changes through the altar not persisted when you save and reload.
+* Fixed teleport spell opening the menu for all players.
 
 ## 0.5.2
 Released 17 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
