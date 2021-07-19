@@ -44,6 +44,8 @@ professions:
 ### Spell list
 **This section contains spoilers!** The spells are meant to be discovered in-game.
 
+<details>
+<summary>Click to expand</summary>
 <table>
 <tr>
   <th>school</th>
@@ -208,6 +210,7 @@ professions:
   <td>Water soil around the targeted area. Higher levels water larger areas.</td>
 </tr>
 </table>
+</details>
 
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
