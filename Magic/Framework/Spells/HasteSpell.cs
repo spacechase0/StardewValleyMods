@@ -6,6 +6,9 @@ namespace Magic.Framework.Spells
 {
     internal class HasteSpell : Spell
     {
+        /*********
+        ** Public methods
+        *********/
         public HasteSpell()
             : base(SchoolId.Life, "haste") { }
 

@@ -11,8 +11,19 @@ using StardewValley;
 
 namespace Magic
 {
+    /// <summary>The mod entry class.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
+        /*********
+        ** Fields
+        *********/
+        /// <summary>Handles migrating legacy data for a save file.</summary>
+        private LegacyDataMigrator LegacyDataMigrator;
+
+
+        /*********
+        ** Accessors
+        *********/
         public static Mod Instance;
         public static Configuration Config { get; private set; }
 
@@ -21,9 +32,12 @@ namespace Magic
 
         internal Api Api;
 
-        /// <summary>Handles migrating legacy data for a save file.</summary>
-        private LegacyDataMigrator LegacyDataMigrator;
 
+        /*********
+        ** Public methods
+        *********/
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;
@@ -42,6 +56,7 @@ namespace Magic
             ConsoleCommandHelper.RegisterCommandsInAssembly(this);
         }
 
+        /// <summary>Get an API that other mods can access. This is always called after <see cref="M:StardewModdingAPI.Mod.Entry(StardewModdingAPI.IModHelper)" />.</summary>
         public override object GetApi()
         {
             return this.Api ??= new Api();

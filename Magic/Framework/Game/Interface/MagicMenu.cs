@@ -1,4 +1,5 @@
 using Magic.Framework.Schools;
+using Magic.Framework.Skills;
 using Magic.Framework.Spells;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,13 +11,16 @@ namespace Magic.Framework.Game.Interface
 {
     internal class MagicMenu : IClickableMenu
     {
-        public const int WindowWidth = 800;
-        public const int WindowHeight = 600;
-        public const int SchoolIconSize = 32;
-        public const int SpellIconSize = 64;
-        public const int SelIconSize = 192;
-        public const int HotbarIconSize = 48;
-
+        /*********
+        ** Fields
+        *********/
+        private const int WindowWidth = 800;
+        private const int WindowHeight = 600;
+        private const int SchoolIconSize = 32;
+        private const int SpellIconSize = 64;
+        private const int SelIconSize = 192;
+        private const int HotbarIconSize = 48;
+        
         private readonly School School;
         private School Active;
         private Spell Sel;
@@ -25,6 +29,10 @@ namespace Magic.Framework.Game.Interface
         private bool JustLeftClicked;
         private bool JustRightClicked;
 
+
+        /*********
+        ** Public methods
+        *********/
         public MagicMenu(School school = null)
             : base((Game1.viewport.Size.Width - MagicMenu.WindowWidth) / 2, (Game1.viewport.Size.Height - MagicMenu.WindowHeight) / 2, MagicMenu.WindowWidth, MagicMenu.WindowHeight, true)
         {
@@ -235,6 +243,10 @@ namespace Magic.Framework.Game.Interface
             this.JustRightClicked = true;
         }
 
+
+        /*********
+        ** Private methods
+        *********/
         // https://gist.github.com/Sankra/5585584
         // TODO: A better version that handles me doing newlines correctly
         private string WrapText(string text, int maxLineWidth)

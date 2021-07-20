@@ -8,6 +8,9 @@ namespace Magic.Framework.Spells
 {
     internal class WaterSpell : Spell
     {
+        /*********
+        ** Public methods
+        *********/
         public WaterSpell()
             : base(SchoolId.Toil, "water") { }
 

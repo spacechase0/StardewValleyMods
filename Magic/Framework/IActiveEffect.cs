@@ -6,6 +6,9 @@ namespace Magic.Framework
     /// <summary>An active spell, projectile, or effect which should be updated or drawn.</summary>
     internal interface IActiveEffect
     {
+        /*********
+        ** Methods
+        *********/
         /// <summary>Update the effect state if needed.</summary>
         /// <param name="e">The update tick event args.</param>
         /// <returns>Returns true if the effect is still active, or false if it can be discarded.</returns>

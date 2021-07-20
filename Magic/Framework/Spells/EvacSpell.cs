@@ -6,6 +6,16 @@ namespace Magic.Framework.Spells
 {
     internal class EvacSpell : Spell
     {
+        /*********
+        ** Fields
+        *********/
+        private static float EnterX;
+        private static float EnterY;
+
+
+        /*********
+        ** Public methods
+        *********/
         public EvacSpell()
             : base(SchoolId.Life, "evac") { }
 
@@ -27,7 +37,6 @@ namespace Magic.Framework.Spells
             return null;
         }
 
-        private static float EnterX, EnterY;
         internal static void OnLocationChanged()
         {
             EvacSpell.EnterX = Game1.player.position.X;

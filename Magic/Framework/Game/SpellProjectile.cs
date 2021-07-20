@@ -13,6 +13,9 @@ namespace Magic.Framework.Game
 {
     internal class SpellProjectile : Projectile
     {
+        /*********
+        ** Fields
+        *********/
         private readonly Farmer Source;
         private readonly ProjectileSpell Spell;
         private readonly NetInt Damage = new();
@@ -22,9 +25,14 @@ namespace Magic.Framework.Game
 
         private Texture2D Tex;
         private readonly NetString TexId = new();
-
         private readonly Monster SeekTarget;
 
+        private static readonly Random Rand = new();
+
+
+        /*********
+        ** Public methods
+        *********/
         public SpellProjectile()
         {
             this.NetFields.AddFields(this.Damage, this.Direction, this.Velocity, this.IsSeeking, this.TexId);
@@ -168,7 +176,10 @@ namespace Magic.Framework.Game
             //b.Draw(Mod.instance.manaFg, new Rectangle((int)bdp.X, (int)bdp.Y, getBoundingBox().Width, getBoundingBox().Height), Color.White);
         }
 
-        private static readonly Random Rand = new();
+
+        /*********
+        ** Private methods
+        *********/
         private void Disappear(GameLocation loc)
         {
             if (this.Spell?.SoundHit != null)

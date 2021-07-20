@@ -2,6 +2,9 @@ namespace Magic.Framework.Schools
 {
     internal static class SchoolId
     {
+        /*********
+        ** Accessors
+        *********/
         public static string Arcane = "arcane";
         public static string Toil = "toil";
         public static string Nature = "nature";

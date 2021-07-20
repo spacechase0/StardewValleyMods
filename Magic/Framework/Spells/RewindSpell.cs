@@ -6,6 +6,9 @@ namespace Magic.Framework.Spells
 {
     internal class RewindSpell : Spell
     {
+        /*********
+        ** Public methods
+        *********/
         public RewindSpell()
             : base(SchoolId.Arcane, "rewind") { }
 

@@ -6,6 +6,9 @@ namespace Magic.Framework.Spells
 {
     internal class BlinkSpell : Spell
     {
+        /*********
+        ** Public methods
+        *********/
         public BlinkSpell()
             : base(SchoolId.Toil, "blink") { }
 
