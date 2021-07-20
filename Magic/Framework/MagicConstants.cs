@@ -6,6 +6,9 @@ namespace Magic.Framework
         /*********
         ** Accessors
         *********/
+        /// <summary>The number of spell bar which players are expected to have.</summary>
+        public static int SpellBarCount { get; } = 2;
+
         /// <summary>The ID of the event in which the player learns magic from the Wizard.</summary>
         public static int LearnedMagicEventId { get; } = 90001;
 

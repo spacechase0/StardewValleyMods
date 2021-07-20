@@ -112,7 +112,7 @@ namespace Magic
         {
             // fix player's mana pool if needed
             if (Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
-                Framework.Magic.FixManaPoolIfNeeded(Game1.player);
+                Framework.Magic.FixMagicIfNeeded(Game1.player);
         }
 
         /// <inheritdoc cref="IGameLoopEvents.Saving"/>

@@ -157,7 +157,7 @@ namespace Magic.Framework
         public override void DoLevelPerk(int level)
         {
             // fix mana pool if invalid
-            Magic.FixManaPoolIfNeeded(Game1.player, level - 1);
+            Magic.FixMagicIfNeeded(Game1.player, level - 1);
 
             // add level perk
             int curMana = Game1.player.GetMaxMana();

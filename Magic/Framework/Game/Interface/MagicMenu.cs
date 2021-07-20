@@ -1,4 +1,3 @@
-using System.Linq;
 using Magic.Framework.Schools;
 using Magic.Framework.Spells;
 using Microsoft.Xna.Framework;
@@ -26,25 +25,16 @@ namespace Magic.Framework.Game.Interface
         private bool JustLeftClicked;
         private bool JustRightClicked;
 
-        public MagicMenu(School theSchool = null)
+        public MagicMenu(School school = null)
             : base((Game1.viewport.Size.Width - MagicMenu.WindowWidth) / 2, (Game1.viewport.Size.Height - MagicMenu.WindowHeight) / 2, MagicMenu.WindowWidth, MagicMenu.WindowHeight, true)
         {
-            this.School = theSchool;
-            if (this.School != null)
-                this.Active = this.School;
+            this.School = school;
+            this.Active = school;
         }
 
         public override void draw(SpriteBatch b)
         {
             var spellBook = Game1.player.GetSpellBook();
-            if (!spellBook.Prepared.Any())
-            {
-                spellBook.Mutate(data =>
-                {
-                    data.Prepared.Add(new PreparedSpellBar());
-                    data.SelectedPrepared = 0;
-                });
-            }
 
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.MemoryProfession);
 

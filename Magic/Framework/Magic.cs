@@ -445,7 +445,7 @@ namespace Magic.Framework
                 Game1.player.showNotCarrying();
 
                 Game1.player.AddCustomSkillExperience(Magic.Skill, Magic.Skill.ExperienceCurve[0]);
-                Magic.FixManaPoolIfNeeded(Game1.player, overrideMagicLevel: 1); // let player start using magic immediately
+                Magic.FixMagicIfNeeded(Game1.player, overrideMagicLevel: 1); // let player start using magic immediately
 
                 SpellBook spellBook = Game1.player.GetSpellBook();
                 spellBook.LearnSpell("arcane:analyze", 0, true);
@@ -522,18 +522,33 @@ namespace Magic.Framework
             loc.setTileProperty(x + 2, y + 1, "Buildings", "Action", "MagicAltar");
         }
 
-        /// <summary>Fix the player's mana pool to match their skill level if needed.</summary>
+        /// <summary>Fix the player's magic spells and mana pool to match their skill level if needed.</summary>
         /// <param name="player">The player to fix.</param>
         /// <param name="overrideMagicLevel">The magic skill level, or <c>null</c> to get it from the player.</param>
-        public static void FixManaPoolIfNeeded(Farmer player, int? overrideMagicLevel = null)
+        public static void FixMagicIfNeeded(Farmer player, int? overrideMagicLevel = null)
         {
-            int magicLevel = overrideMagicLevel ?? player.GetCustomSkillLevel(Skill.MagicSkillId);
-            int expectedPoints = magicLevel * MagicConstants.ManaPointsPerLevel;
-
-            if (player.GetMaxMana() < expectedPoints)
+            // fix mana pool
             {
-                player.SetMaxMana(expectedPoints);
-                player.AddMana(expectedPoints);
+                int magicLevel = overrideMagicLevel ?? player.GetCustomSkillLevel(Skill.MagicSkillId);
+                int expectedPoints = magicLevel * MagicConstants.ManaPointsPerLevel;
+                if (player.GetMaxMana() < expectedPoints)
+                {
+                    player.SetMaxMana(expectedPoints);
+                    player.AddMana(expectedPoints);
+                }
+            }
+
+            // fix spell bars
+            {
+                SpellBook spellBook = player.GetSpellBook();
+                if (spellBook.Prepared.Count < MagicConstants.SpellBarCount)
+                {
+                    spellBook.Mutate(data =>
+                    {
+                        while (spellBook.Prepared.Count < MagicConstants.SpellBarCount)
+                            data.Prepared.Add(new PreparedSpellBar());
+                    });
+                }
             }
         }
     }
