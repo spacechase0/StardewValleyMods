@@ -31,12 +31,6 @@ namespace Magic.Framework
         private static Texture2D ManaBg;
         private static Texture2D ManaFg;
 
-        /// <summary>The ID of the event in which the player learns magic from the Wizard.</summary>
-        public const int LearnedMagicEventId = 90001;
-
-        /// <summary>The number of mana points gained per magic level.</summary>
-        public const int ManaPointsPerLevel = 100;
-
         /// <summary>The active effects, spells, or projectiles which should be updated or drawn.</summary>
         private static readonly IList<IActiveEffect> ActiveEffects = new List<IActiveEffect>();
 
@@ -272,7 +266,7 @@ namespace Magic.Framework
         /// <param name="e">The event arguments.</param>
         public static void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (Game1.activeClickableMenu != null || Game1.eventUp || !Game1.player.eventsSeen.Contains(Magic.LearnedMagicEventId))
+            if (Game1.activeClickableMenu != null || Game1.eventUp || !Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
                 return;
 
             SpriteBatch b = e.SpriteBatch;
@@ -428,7 +422,7 @@ namespace Magic.Framework
             EvacSpell.OnLocationChanged();
 
             // check events
-            if (e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains(Magic.LearnedMagicEventId) && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= 750)
+            if (e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId) && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= 750)
             {
                 string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/skippable/ignoreCollisions farmer/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{9}\"/pause 750/fade 750/end";
                 eventStr = string.Format(
@@ -444,7 +438,7 @@ namespace Magic.Framework
                     Mod.Instance.Helper.Translation.Get("event.wizard.9"),
                     Mod.Instance.Helper.Translation.Get("event.wizard.abovehead")
                 );
-                e.NewLocation.currentEvent = new Event(eventStr, Magic.LearnedMagicEventId);
+                e.NewLocation.currentEvent = new Event(eventStr, MagicConstants.LearnedMagicEventId);
                 Game1.eventUp = true;
                 Game1.displayHUD = false;
                 Game1.player.CanMove = false;
@@ -459,7 +453,7 @@ namespace Magic.Framework
                 spellBook.LearnSpell("arcane:enchant", 0, true);
                 spellBook.LearnSpell("arcane:disenchant", 0, true);
 
-                Game1.player.eventsSeen.Add(Magic.LearnedMagicEventId);
+                Game1.player.eventsSeen.Add(MagicConstants.LearnedMagicEventId);
             }
         }
 
@@ -467,7 +461,7 @@ namespace Magic.Framework
         {
             if (args.Action == "MagicAltar")
             {
-                if (!Game1.player.eventsSeen.Contains(Magic.LearnedMagicEventId))
+                if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
                 {
                     Game1.drawObjectDialogue(Mod.Instance.Helper.Translation.Get("altar.glow"));
                 }
@@ -533,13 +527,13 @@ namespace Magic.Framework
         /// <param name="overrideMagicLevel">The magic skill level, or <c>null</c> to get it from the player.</param>
         public static void FixManaPoolIfNeeded(Farmer player, int? overrideMagicLevel = null)
         {
-            int magicLevel = overrideMagicLevel ?? Game1.player.GetCustomSkillLevel(Skill.MagicSkillId);
-            int expectedPoints = magicLevel * Magic.ManaPointsPerLevel;
+            int magicLevel = overrideMagicLevel ?? player.GetCustomSkillLevel(Skill.MagicSkillId);
+            int expectedPoints = magicLevel * MagicConstants.ManaPointsPerLevel;
 
-            if (Game1.player.GetMaxMana() < expectedPoints)
+            if (player.GetMaxMana() < expectedPoints)
             {
-                Game1.player.SetMaxMana(expectedPoints);
-                Game1.player.AddMana(expectedPoints);
+                player.SetMaxMana(expectedPoints);
+                player.AddMana(expectedPoints);
             }
         }
     }
