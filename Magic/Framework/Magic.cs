@@ -67,7 +67,6 @@ namespace Magic.Framework
             events.GameLoop.TimeChanged += Magic.OnTimeChanged;
             events.Player.Warped += Magic.OnWarped;
 
-            SpaceEvents.OnBlankSave += Magic.OnBlankSave;
             SpaceEvents.OnItemEaten += Magic.OnItemEaten;
             SpaceEvents.ActionActivated += Magic.ActionTriggered;
             Networking.RegisterMessageHandler(Magic.MsgCast, Magic.OnNetworkCast);
@@ -275,11 +274,6 @@ namespace Magic.Framework
             IActiveEffect effect = player.GetSpellBook().CastSpell(msg.Reader.ReadString(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32(), msg.Reader.ReadInt32());
             if (effect != null)
                 Magic.ActiveEffects.Add(effect);
-        }
-
-        private static void OnBlankSave(object sender, EventArgs args)
-        {
-            Magic.PlaceAltar(Mod.Config.AltarLocation, Mod.Config.AltarX, Mod.Config.AltarY, 54 * 4);
         }
 
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
@@ -524,44 +518,6 @@ namespace Magic.Framework
             }
             if (Game1.player.itemToEat.ParentSheetIndex == Mod.Ja.GetObjectId("Magic Elixir"))
                 Game1.player.AddMana(Game1.player.GetMaxMana());
-        }
-
-        public static void PlaceAltar(string locName, int x, int y, int baseAltarIndex)
-        {
-            Log.Debug($"Placing altar @ {locName}({x}, {y})");
-
-            // AddTileSheet sorts the tilesheets by ID after adding them.
-            // The game sometimes refers to tilesheets by their index (such as in Beach.fixBridge)
-            // Prepending this to the ID should ensure that this tilesheet is added to the end,
-            // which preserves the normal indices of the tilesheets.
-            char comeLast = '\u03a9'; // Omega
-
-            GameLocation loc = Game1.getLocationFromName(locName);
-
-            var tileSheet = Content.LoadTilesheet("altarsobjects", loc.Map, out Dictionary<int, SpaceCore.Content.TileAnimation> anims);
-            tileSheet.Id = comeLast + tileSheet.Id;
-            loc.map.AddTileSheet(tileSheet);
-            if (Game1.currentLocation == loc)
-                loc.map.LoadTileSheets(Game1.mapDisplayDevice);
-
-            var front = loc.Map.GetLayer("Front");
-            var buildings = loc.Map.GetLayer("Buildings");
-
-            front.Tiles[x + 0, y - 1] = anims[baseAltarIndex + 0 + 0 * 18].MakeTile(tileSheet, front);
-            front.Tiles[x + 1, y - 1] = anims[baseAltarIndex + 1 + 0 * 18].MakeTile(tileSheet, front);
-            front.Tiles[x + 2, y - 1] = anims[baseAltarIndex + 2 + 0 * 18].MakeTile(tileSheet, front);
-            buildings.Tiles[x + 0, y + 0] = anims[baseAltarIndex + 0 + 1 * 18].MakeTile(tileSheet, buildings);
-            buildings.Tiles[x + 1, y + 0] = anims[baseAltarIndex + 1 + 1 * 18].MakeTile(tileSheet, buildings);
-            buildings.Tiles[x + 2, y + 0] = anims[baseAltarIndex + 2 + 1 * 18].MakeTile(tileSheet, buildings);
-            buildings.Tiles[x + 0, y + 1] = anims[baseAltarIndex + 0 + 2 * 18].MakeTile(tileSheet, buildings);
-            buildings.Tiles[x + 1, y + 1] = anims[baseAltarIndex + 1 + 2 * 18].MakeTile(tileSheet, buildings);
-            buildings.Tiles[x + 2, y + 1] = anims[baseAltarIndex + 2 + 2 * 18].MakeTile(tileSheet, buildings);
-            loc.setTileProperty(x + 0, y + 0, "Buildings", "Action", "MagicAltar");
-            loc.setTileProperty(x + 1, y + 0, "Buildings", "Action", "MagicAltar");
-            loc.setTileProperty(x + 2, y + 0, "Buildings", "Action", "MagicAltar");
-            loc.setTileProperty(x + 0, y + 1, "Buildings", "Action", "MagicAltar");
-            loc.setTileProperty(x + 1, y + 1, "Buildings", "Action", "MagicAltar");
-            loc.setTileProperty(x + 2, y + 1, "Buildings", "Action", "MagicAltar");
         }
     }
 }

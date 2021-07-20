@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Fixed altar broken when other mods edit Pierre's shop map.
 * Fixed players having one spellbar instead of two.
 
 ## 0.5.3
