@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed items added to Krobus' shop not added when he's not there.
+
 ## 1.8.1
 Released 18 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

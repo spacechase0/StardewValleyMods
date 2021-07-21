@@ -1193,6 +1193,8 @@ namespace JsonAssets
                 // special cases
                 if (ShopMenuPatcher.LastShopOwner == null && portraitName == null && context == "Hospital")
                     yield return "Harvey";
+                if (ShopMenuPatcher.LastShopOwner == "KrobusGone")
+                    yield return "Krobus";
             }
 
             return new HashSet<string>(GetAll(), StringComparer.OrdinalIgnoreCase);
