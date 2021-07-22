@@ -19,8 +19,13 @@ namespace Magic.Framework
         public SButton Key_Spell4 { get; set; } = SButton.D4;
         public SButton Key_Spell5 { get; set; } = SButton.D5;
 
+        /// <summary>The name of the map asset in which to add the alter.</summary>
         public string AltarLocation { get; set; } = "SeedShop";
+
+        /// <summary>The X tile position for the top-left corner of the altar.</summary>
         public int AltarX { get; set; } = 36;
+
+        /// <summary>The Y tile position for the top-left corner of the altar.</summary>
         public int AltarY { get; set; } = 16;
     }
 }
