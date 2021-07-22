@@ -2,7 +2,7 @@
 
 # Release notes
 ## Upcoming release
-* Improved translations. Thanks to wally232 (updated Korean)!
+* Improved translations. Thanks to 6squad (added Russian) and wally232 (updated Korean)!
 
 ## 1.0.8
 Released 17 July 2021. Updated by Pathoschild.

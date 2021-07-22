@@ -12,10 +12,12 @@
     ],
     "NameLocalization": {
         "hu": "Menő szörfdeszka (Madárijesztő)",
-        "ko": "멋진 서핑보드 (허수아비)"
+        "ko": "멋진 서핑보드 (허수아비)",
+        "ru": "Классная доска для сёрфинга (пугало)"
     },
     "DescriptionLocalization": {
         "hu": "Menő élénkzöld mintás szörfdeszka. Madárijesztőként is használható.",
-        "ko": "허수아비 역할도 하는 시원하고 밝은 녹색 무늬가 새겨진 서핑보드."
+        "ko": "허수아비 역할도 하는 시원하고 밝은 녹색 무늬가 새겨진 서핑보드.",
+        "ru": "Доска для сёрфинга с классным ярко-зелёным рисунком. Также выполняет роль пугала."
     }
 }

@@ -10,10 +10,12 @@
     "Recipe": null,
     "NameLocalization": {
         "hu": "Olcsó amulett?",
-        "ko": "값싼 부적?"
+        "ko": "값싼 부적?",
+        "ru": "Дешевый амулет"
     },
     "DescriptionLocalization": {
         "hu": "Valami nem stimmel ezzel az amulettel. Vajon miért olyan olcsó?",
-        "ko": "이 부적에 문제가 있는 것 같습니다. 왜 이렇게 싼지 궁금하네요."
+        "ko": "이 부적에 문제가 있는 것 같습니다. 왜 이렇게 싼지 궁금하네요.",
+        "ru": "Что-то не так с этим амулетом. Интересно, почему он такой дешевый?"
     }
 }

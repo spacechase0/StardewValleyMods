@@ -12,10 +12,12 @@
     ],
     "NameLocalization": {
         "hu": "Fehér szörfdeszka (Madárijesztő)",
-        "ko": "화이트 서핑보드 (허수아비)"
+        "ko": "화이트 서핑보드 (허수아비)",
+        "ru": "Белая доска для сёрфинга (пугало)"
     },
     "DescriptionLocalization": {
         "hu": "Fehér szörfdeszka. Madárijesztőként is használható.",
-        "ko": "허수아비 역할도 하는 흰색 서핑보드."
+        "ko": "허수아비 역할도 하는 흰색 서핑보드.",
+        "ru": "Белая доска для сёрфинга. Также выполняет роль пугала."
     }
 }
