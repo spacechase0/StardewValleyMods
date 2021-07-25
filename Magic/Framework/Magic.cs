@@ -382,9 +382,10 @@ namespace Magic.Framework
             if (Game1.activeClickableMenu != null)
                 return;
 
-            if (e.Button == Mod.Config.Key_SwapSpells)
+            if (Magic.CastPressed && e.Button == Mod.Config.Key_SwapSpells)
             {
                 Game1.player.GetSpellBook().SwapPreparedSet();
+                Magic.InputHelper.Suppress(e.Button);
             }
             else if (Magic.CastPressed &&
                      (e.Button == Mod.Config.Key_Spell1 || e.Button == Mod.Config.Key_Spell2 ||
