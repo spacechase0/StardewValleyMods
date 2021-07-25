@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="3" height="3" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="33">
+ <tileset firstgid="1" source="altarsobjects.tsx"/>
+ <layer id="2" name="Buildings" width="3" height="3">
+  <data encoding="csv">
+0,0,0,
+235,236,237,
+253,254,255
+</data>
+ </layer>
+ <layer id="3" name="Front" width="3" height="3">
+  <data encoding="csv">
+217,218,219,
+0,0,0,
+0,0,0
+</data>
+ </layer>
+ <objectgroup id="6" name="Buildings">
+  <object id="18" name="TileData" x="0" y="32" width="16" height="16">
+   <properties>
+    <property name="Action" value="MagicAltar"/>
+   </properties>
+  </object>
+  <object id="19" name="TileData" x="16" y="32" width="16" height="16">
+   <properties>
+    <property name="Action" value="MagicAltar"/>
+   </properties>
+  </object>
+  <object id="20" name="TileData" x="32" y="32" width="16" height="16">
+   <properties>
+    <property name="Action" value="MagicAltar"/>
+   </properties>
+  </object>
+  <object id="27" name="TileData" x="0" y="0" width="16" height="16">
+   <properties>
+    <property name="Action" value="MagicAltar"/>
+   </properties>
+  </object>
+  <object id="28" name="TileData" x="16" y="0" width="16" height="16">
+   <properties>
+    <property name="Action" value="MagicAltar"/>
+   </properties>
+  </object>
+  <object id="29" name="TileData" x="32" y="0" width="16" height="16">
+   <properties>
+    <property name="Action" value="MagicAltar"/>
+   </properties>
+  </object>
+  <object id="30" name="TileData" x="0" y="16" width="16" height="16">
+   <properties>
+    <property name="Action" value="MagicAltar"/>
+   </properties>
+  </object>
+  <object id="31" name="TileData" x="16" y="16" width="16" height="16">
+   <properties>
+    <property name="Action" value="MagicAltar"/>
+   </properties>
+  </object>
+  <object id="32" name="TileData" x="32" y="16" width="16" height="16">
+   <properties>
+    <property name="Action" value="MagicAltar"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="7" name="Front"/>
+</map>

@@ -5,6 +5,9 @@ namespace Magic.Framework
 {
     internal static class Extensions
     {
+        /*********
+        ** Public methods
+        *********/
         public static int GetCurrentMana(this Farmer player)
         {
             return Mod.Mana.GetMana(player);

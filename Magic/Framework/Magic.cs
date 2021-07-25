@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Magic.Framework.Game.Interface;
 using Magic.Framework.Integrations;
 using Magic.Framework.Schools;
+using Magic.Framework.Skills;
 using Magic.Framework.Spells;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,32 +22,36 @@ namespace Magic.Framework
     // TODO: Refactor this mess
     internal static class Magic
     {
-        public static Skill Skill;
-
-        public static EventHandler<AnalyzeEventArgs> OnAnalyzeCast;
-
-        private static IInputHelper InputHelper;
-
+        /*********
+        ** Fields
+        *********/
         private static Texture2D SpellBg;
         private static Texture2D ManaBg;
         private static Texture2D ManaFg;
-
-        /// <summary>The ID of the event in which the player learns magic from the Wizard.</summary>
-        public const int LearnedMagicEventId = 90001;
-
-        /// <summary>The number of mana points gained per magic level.</summary>
-        public const int ManaPointsPerLevel = 100;
+        private static IInputHelper InputHelper;
+        private static bool CastPressed;
+        private static float CarryoverManaRegen;
 
         /// <summary>The active effects, spells, or projectiles which should be updated or drawn.</summary>
         private static readonly IList<IActiveEffect> ActiveEffects = new List<IActiveEffect>();
-
-        public const string MsgCast = "spacechase0.Magic.Cast";
 
         /// <summary>The self-updating views of magic metadata for each player.</summary>
         /// <remarks>This should only be accessed through <see cref="GetSpellBook"/> or <see cref="Extensions.GetSpellBook"/> to make sure an updated instance is retrieved.</remarks>
         private static readonly IDictionary<long, SpellBook> SpellBookCache = new Dictionary<long, SpellBook>();
 
-        internal static void Init(IModEvents events, IInputHelper inputHelper, IModRegistry modRegistry, Func<long> getNewId)
+
+        /*********
+        ** Accessors
+        *********/
+        public static Skill Skill;
+        public static EventHandler<AnalyzeEventArgs> OnAnalyzeCast;
+        public const string MsgCast = "spacechase0.Magic.Cast";
+
+
+        /*********
+        ** Public methods
+        *********/
+        public static void Init(IModEvents events, IInputHelper inputHelper, IModRegistry modRegistry, Func<long> getNewId)
         {
             Magic.InputHelper = inputHelper;
 
@@ -62,7 +67,6 @@ namespace Magic.Framework
             events.GameLoop.TimeChanged += Magic.OnTimeChanged;
             events.Player.Warped += Magic.OnWarped;
 
-            SpaceEvents.OnBlankSave += Magic.OnBlankSave;
             SpaceEvents.OnItemEaten += Magic.OnItemEaten;
             SpaceEvents.ActionActivated += Magic.ActionTriggered;
             Networking.RegisterMessageHandler(Magic.MsgCast, Magic.OnNetworkCast);
@@ -76,7 +80,7 @@ namespace Magic.Framework
                 Mod.Instance.Api.InvokeOnAnalyzeCast(sender as Farmer);
             };
 
-            Skills.RegisterSkill(Magic.Skill = new Skill());
+            SpaceCore.Skills.RegisterSkill(Magic.Skill = new Skill());
 
             // add TV channel
             new PyTkChannelManager(modRegistry).AddTvChannel();
@@ -92,6 +96,40 @@ namespace Magic.Framework
             return book;
         }
 
+        /// <summary>Fix the player's magic spells and mana pool to match their skill level if needed.</summary>
+        /// <param name="player">The player to fix.</param>
+        /// <param name="overrideMagicLevel">The magic skill level, or <c>null</c> to get it from the player.</param>
+        public static void FixMagicIfNeeded(Farmer player, int? overrideMagicLevel = null)
+        {
+            // fix mana pool
+            {
+                int magicLevel = overrideMagicLevel ?? player.GetCustomSkillLevel(Skill.MagicSkillId);
+                int expectedPoints = magicLevel * MagicConstants.ManaPointsPerLevel;
+                if (player.GetMaxMana() < expectedPoints)
+                {
+                    player.SetMaxMana(expectedPoints);
+                    player.AddMana(expectedPoints);
+                }
+            }
+
+            // fix spell bars
+            {
+                SpellBook spellBook = player.GetSpellBook();
+                if (spellBook.Prepared.Count < MagicConstants.SpellBarCount)
+                {
+                    spellBook.Mutate(data =>
+                    {
+                        while (spellBook.Prepared.Count < MagicConstants.SpellBarCount)
+                            data.Prepared.Add(new PreparedSpellBar());
+                    });
+                }
+            }
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
         private static void OnAnalyze(object sender, AnalyzeEventArgs e)
         {
             var farmer = sender as Farmer;
@@ -238,11 +276,6 @@ namespace Magic.Framework
                 Magic.ActiveEffects.Add(effect);
         }
 
-        private static void OnBlankSave(object sender, EventArgs args)
-        {
-            Magic.PlaceAltar(Mod.Config.AltarLocation, Mod.Config.AltarX, Mod.Config.AltarY, 54 * 4);
-        }
-
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
@@ -270,9 +303,9 @@ namespace Magic.Framework
         /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        public static void OnRenderedHud(object sender, RenderedHudEventArgs e)
+        private static void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (Game1.activeClickableMenu != null || Game1.eventUp || !Game1.player.eventsSeen.Contains(Magic.LearnedMagicEventId))
+            if (Game1.activeClickableMenu != null || Game1.eventUp || !Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
                 return;
 
             SpriteBatch b = e.SpriteBatch;
@@ -335,8 +368,6 @@ namespace Magic.Framework
             Magic.ManaFg = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
             Magic.ManaFg.SetData(new[] { manaCol });
         }
-
-        private static bool CastPressed;
 
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
         /// <param name="sender">The event sender.</param>
@@ -403,7 +434,6 @@ namespace Magic.Framework
             }
         }
 
-        private static float CarryoverManaRegen;
         private static void OnTimeChanged(object sender, TimeChangedEventArgs e)
         {
             float manaRegen = Game1.player.GetCustomSkillLevel(Magic.Skill) / 2 + Magic.CarryoverManaRegen;
@@ -428,7 +458,7 @@ namespace Magic.Framework
             EvacSpell.OnLocationChanged();
 
             // check events
-            if (e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains(Magic.LearnedMagicEventId) && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= 750)
+            if (e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId) && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= 750)
             {
                 string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/skippable/ignoreCollisions farmer/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{9}\"/pause 750/fade 750/end";
                 eventStr = string.Format(
@@ -444,14 +474,14 @@ namespace Magic.Framework
                     Mod.Instance.Helper.Translation.Get("event.wizard.9"),
                     Mod.Instance.Helper.Translation.Get("event.wizard.abovehead")
                 );
-                e.NewLocation.currentEvent = new Event(eventStr, Magic.LearnedMagicEventId);
+                e.NewLocation.currentEvent = new Event(eventStr, MagicConstants.LearnedMagicEventId);
                 Game1.eventUp = true;
                 Game1.displayHUD = false;
                 Game1.player.CanMove = false;
                 Game1.player.showNotCarrying();
 
                 Game1.player.AddCustomSkillExperience(Magic.Skill, Magic.Skill.ExperienceCurve[0]);
-                Magic.FixManaPoolIfNeeded(Game1.player, overrideMagicLevel: 1); // let player start using magic immediately
+                Magic.FixMagicIfNeeded(Game1.player, overrideMagicLevel: 1); // let player start using magic immediately
 
                 SpellBook spellBook = Game1.player.GetSpellBook();
                 spellBook.LearnSpell("arcane:analyze", 0, true);
@@ -459,7 +489,7 @@ namespace Magic.Framework
                 spellBook.LearnSpell("arcane:enchant", 0, true);
                 spellBook.LearnSpell("arcane:disenchant", 0, true);
 
-                Game1.player.eventsSeen.Add(Magic.LearnedMagicEventId);
+                Game1.player.eventsSeen.Add(MagicConstants.LearnedMagicEventId);
             }
         }
 
@@ -467,7 +497,7 @@ namespace Magic.Framework
         {
             if (args.Action == "MagicAltar")
             {
-                if (!Game1.player.eventsSeen.Contains(Magic.LearnedMagicEventId))
+                if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
                 {
                     Game1.drawObjectDialogue(Mod.Instance.Helper.Translation.Get("altar.glow"));
                 }
@@ -488,59 +518,6 @@ namespace Magic.Framework
             }
             if (Game1.player.itemToEat.ParentSheetIndex == Mod.Ja.GetObjectId("Magic Elixir"))
                 Game1.player.AddMana(Game1.player.GetMaxMana());
-        }
-
-        public static void PlaceAltar(string locName, int x, int y, int baseAltarIndex)
-        {
-            Log.Debug($"Placing altar @ {locName}({x}, {y})");
-
-            // AddTileSheet sorts the tilesheets by ID after adding them.
-            // The game sometimes refers to tilesheets by their index (such as in Beach.fixBridge)
-            // Prepending this to the ID should ensure that this tilesheet is added to the end,
-            // which preserves the normal indices of the tilesheets.
-            char comeLast = '\u03a9'; // Omega
-
-            GameLocation loc = Game1.getLocationFromName(locName);
-
-            var tileSheet = Content.LoadTilesheet("altarsobjects", loc.Map, out Dictionary<int, SpaceCore.Content.TileAnimation> anims);
-            tileSheet.Id = comeLast + tileSheet.Id;
-            loc.map.AddTileSheet(tileSheet);
-            if (Game1.currentLocation == loc)
-                loc.map.LoadTileSheets(Game1.mapDisplayDevice);
-
-            var front = loc.Map.GetLayer("Front");
-            var buildings = loc.Map.GetLayer("Buildings");
-
-            front.Tiles[x + 0, y - 1] = anims[baseAltarIndex + 0 + 0 * 18].MakeTile(tileSheet, front);
-            front.Tiles[x + 1, y - 1] = anims[baseAltarIndex + 1 + 0 * 18].MakeTile(tileSheet, front);
-            front.Tiles[x + 2, y - 1] = anims[baseAltarIndex + 2 + 0 * 18].MakeTile(tileSheet, front);
-            buildings.Tiles[x + 0, y + 0] = anims[baseAltarIndex + 0 + 1 * 18].MakeTile(tileSheet, buildings);
-            buildings.Tiles[x + 1, y + 0] = anims[baseAltarIndex + 1 + 1 * 18].MakeTile(tileSheet, buildings);
-            buildings.Tiles[x + 2, y + 0] = anims[baseAltarIndex + 2 + 1 * 18].MakeTile(tileSheet, buildings);
-            buildings.Tiles[x + 0, y + 1] = anims[baseAltarIndex + 0 + 2 * 18].MakeTile(tileSheet, buildings);
-            buildings.Tiles[x + 1, y + 1] = anims[baseAltarIndex + 1 + 2 * 18].MakeTile(tileSheet, buildings);
-            buildings.Tiles[x + 2, y + 1] = anims[baseAltarIndex + 2 + 2 * 18].MakeTile(tileSheet, buildings);
-            loc.setTileProperty(x + 0, y + 0, "Buildings", "Action", "MagicAltar");
-            loc.setTileProperty(x + 1, y + 0, "Buildings", "Action", "MagicAltar");
-            loc.setTileProperty(x + 2, y + 0, "Buildings", "Action", "MagicAltar");
-            loc.setTileProperty(x + 0, y + 1, "Buildings", "Action", "MagicAltar");
-            loc.setTileProperty(x + 1, y + 1, "Buildings", "Action", "MagicAltar");
-            loc.setTileProperty(x + 2, y + 1, "Buildings", "Action", "MagicAltar");
-        }
-
-        /// <summary>Fix the player's mana pool to match their skill level if needed.</summary>
-        /// <param name="player">The player to fix.</param>
-        /// <param name="overrideMagicLevel">The magic skill level, or <c>null</c> to get it from the player.</param>
-        public static void FixManaPoolIfNeeded(Farmer player, int? overrideMagicLevel = null)
-        {
-            int magicLevel = overrideMagicLevel ?? Game1.player.GetCustomSkillLevel(Skill.MagicSkillId);
-            int expectedPoints = magicLevel * Magic.ManaPointsPerLevel;
-
-            if (Game1.player.GetMaxMana() < expectedPoints)
-            {
-                Game1.player.SetMaxMana(expectedPoints);
-                Game1.player.AddMana(expectedPoints);
-            }
         }
     }
 }

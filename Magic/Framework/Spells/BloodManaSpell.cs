@@ -6,9 +6,16 @@ namespace Magic.Framework.Spells
 {
     internal class BloodManaSpell : Spell
     {
-        public const float ManaRatioBase = 0.30f;
-        public const float ManaRatioIncr = 0.05f;
+        /*********
+        ** Fields
+        *********/
+        private const float ManaRatioBase = 0.30f;
+        private const float ManaRatioIncr = 0.05f;
 
+
+        /*********
+        ** Public methods
+        *********/
         public BloodManaSpell()
             : base(SchoolId.Eldritch, "bloodmana") { }
 

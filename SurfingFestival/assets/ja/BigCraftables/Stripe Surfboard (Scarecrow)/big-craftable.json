@@ -12,10 +12,12 @@
     ],
     "NameLocalization": {
         "hu": "Csíkos szörfdeszka (Madárijesztő)",
-        "ko": "스트라이프 서핑보드 (허수아비)"
+        "ko": "스트라이프 서핑보드 (허수아비)",
+        "ru": "Полосатая доска для сёрфинга (пугало)"
     },
     "DescriptionLocalization": {
         "hu": "Kék csíkos szörfdeszka. Madárijesztőként is használható.",
-        "ko": "허수아비 역할도 하는 파란색 줄무늬 서핑보드."
+        "ko": "허수아비 역할도 하는 파란색 줄무늬 서핑보드.",
+        "ru": "Бело-голубая доска для сёрфинга. Также выполняет роль пугала."
     }
 }

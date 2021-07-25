@@ -6,6 +6,9 @@ namespace Magic.Framework.Spells
 {
     internal class BuffSpell : Spell
     {
+        /*********
+        ** Public methods
+        *********/
         public BuffSpell()
             : base(SchoolId.Life, "buff") { }
 

@@ -10,6 +10,9 @@ namespace Magic.Framework.Spells
 {
     internal class TillSpell : Spell
     {
+        /*********
+        ** Public methods
+        *********/
         public TillSpell()
             : base(SchoolId.Toil, "till") { }
 

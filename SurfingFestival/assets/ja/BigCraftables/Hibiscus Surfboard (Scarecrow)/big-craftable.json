@@ -12,10 +12,12 @@
     ],
     "NameLocalization": {
         "hu": "Hibiszkusz szörfdeszka (Madárijesztő)",
-        "ko": "히비스커스 서핑보드 (허수아비)"
+        "ko": "히비스커스 서핑보드 (허수아비)",
+        "ru": "Доска для сёрфинга с гибискусом (пугало)"
     },
     "DescriptionLocalization": {
         "hu": "Rózsaszín és sárga hibiszkusszal díszített szörfdeszka. Madárijesztőként is használható.",
-        "ko": "허수아비 역할도 하는 히비스커스가 그려진 분홍색과 노란색 서핑보드."
+        "ko": "허수아비 역할도 하는 히비스커스가 그려진 분홍색과 노란색 서핑보드.",
+        "ru": "Розово-жёлтая доска для сёрфинга с цветами гибискуса. Также выполняет роль пугала."
     }
 }

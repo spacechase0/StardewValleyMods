@@ -7,6 +7,9 @@ namespace Magic.Framework.Spells
 {
     internal class HealSpell : Spell
     {
+        /*********
+        ** Public methods
+        *********/
         public HealSpell()
             : base(SchoolId.Life, "heal") { }
 

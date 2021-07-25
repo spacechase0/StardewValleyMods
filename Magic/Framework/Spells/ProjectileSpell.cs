@@ -6,6 +6,9 @@ namespace Magic.Framework.Spells
 {
     internal class ProjectileSpell : Spell
     {
+        /*********
+        ** Accessors
+        *********/
         public int ManaBase { get; }
         public int DamageBase { get; }
         public int DamageIncr { get; }
@@ -13,6 +16,10 @@ namespace Magic.Framework.Spells
         public string SoundHit { get; }
         public bool Seeking { get; }
 
+
+        /*********
+        ** Public methods
+        *********/
         public ProjectileSpell(string school, string id, int manaBase, int dmgBase, int dmgIncr)
             : this(school, id, manaBase, dmgBase, dmgIncr, null, null) { }
 

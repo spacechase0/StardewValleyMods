@@ -9,6 +9,9 @@ namespace Magic.Framework.Spells
 {
     internal class PhotosynthesisSpell : Spell
     {
+        /*********
+        ** Public methods
+        *********/
         public PhotosynthesisSpell()
             : base(SchoolId.Nature, "photosynthesis") { }
 

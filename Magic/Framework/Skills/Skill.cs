@@ -2,53 +2,15 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 
-namespace Magic.Framework
+namespace Magic.Framework.Skills
 {
     internal class Skill : SpaceCore.Skills.Skill
     {
+        /*********
+        ** Accessors
+        *********/
         /// <summary>The unique ID for the magic skill.</summary>
         public static readonly string MagicSkillId = "spacechase0.Magic";
-
-        public class GenericProfession : Profession
-        {
-            public GenericProfession(Skill skill, string theId)
-                : base(skill, theId) { }
-
-            internal string Name { get; set; }
-            internal string Description { get; set; }
-
-            public override string GetName()
-            {
-                return this.Name;
-            }
-
-            public override string GetDescription()
-            {
-                return this.Description;
-            }
-        }
-
-        public class UpgradePointProfession : GenericProfession
-        {
-            public UpgradePointProfession(Skill skill, string theId)
-                : base(skill, theId) { }
-
-            public override void DoImmediateProfessionPerk()
-            {
-                Game1.player.GetSpellBook().UseSpellPoints(-2);
-            }
-        }
-
-        public class ManaCapProfession : GenericProfession
-        {
-            public ManaCapProfession(Skill skill, string theId)
-                : base(skill, theId) { }
-
-            public override void DoImmediateProfessionPerk()
-            {
-                Game1.player.SetMaxMana(Game1.player.GetMaxMana() + 500);
-            }
-        }
 
         /// <summary>The level 5 'potential' profession.</summary>
         public static GenericProfession PotentialProfession;
@@ -68,6 +30,10 @@ namespace Magic.Framework
         /// <summary>The level 10 'Mana Reserve' profession.</summary>
         public static GenericProfession ManaReserveProfession;
 
+
+        /*********
+        ** Public methods
+        *********/
         public Skill()
             : base(Skill.MagicSkillId)
         {
@@ -157,12 +123,12 @@ namespace Magic.Framework
         public override void DoLevelPerk(int level)
         {
             // fix mana pool if invalid
-            Magic.FixManaPoolIfNeeded(Game1.player, level - 1);
+            Magic.FixMagicIfNeeded(Game1.player, level - 1);
 
             // add level perk
             int curMana = Game1.player.GetMaxMana();
-            if (level > 1 || curMana < Magic.ManaPointsPerLevel) // skip increasing mana for first level, since we did it on learning the skill
-                Game1.player.SetMaxMana(curMana + Magic.ManaPointsPerLevel);
+            if (level > 1 || curMana < MagicConstants.ManaPointsPerLevel) // skip increasing mana for first level, since we did it on learning the skill
+                Game1.player.SetMaxMana(curMana + MagicConstants.ManaPointsPerLevel);
 
             Game1.player.GetSpellBook().UseSpellPoints(-1);
         }

@@ -6,6 +6,9 @@ namespace Magic.Framework.Spells
 {
     internal class TeleportSpell : Spell
     {
+        /*********
+        ** Public methods
+        *********/
         public TeleportSpell()
             : base(SchoolId.Elemental, "teleport") { }
 

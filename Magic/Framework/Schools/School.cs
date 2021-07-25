@@ -5,18 +5,25 @@ namespace Magic.Framework.Schools
 {
     internal class School
     {
+        /*********
+        ** Fields
+        *********/
+        private static Dictionary<string, School> Schools;
+
+
+        /*********
+        ** Accessors
+        *********/
         public string Id { get; }
 
+
+        /*********
+        ** Public methods
+        *********/
         public virtual Spell[] GetSpellsTier1() { return new Spell[0]; }
         public virtual Spell[] GetSpellsTier2() { return new Spell[0]; }
         public virtual Spell[] GetSpellsTier3() { return new Spell[0]; }
 
-        protected School(string id)
-        {
-            this.Id = id;
-        }
-
-        private static Dictionary<string, School> Schools;
         public static void RegisterSchool(School school)
         {
             if (School.Schools == null)
@@ -39,6 +46,15 @@ namespace Magic.Framework.Schools
                 School.Init();
 
             return School.Schools.Keys;
+        }
+
+
+        /*********
+        ** Protected methods
+        *********/
+        protected School(string id)
+        {
+            this.Id = id;
         }
 
         private static void Init()

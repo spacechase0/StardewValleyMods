@@ -6,10 +6,12 @@
     "IgnoreHairstyleOffset": true,
     "NameLocalization": {
         "hu": "Narancssárga búvármaszk",
-        "ko": "오렌지색 스노클 마스크"
+        "ko": "오렌지색 스노클 마스크",
+        "ru": "Оранжевая маска для подводного плавания"
     },
     "DescriptionLocalization": {
         "hu": "Csak dekoráció.",
-        "ko": "스노클 마스크 - 장식 용."
+        "ko": "스노클 마스크 - 장식 용.",
+        "ru": "Маска для подводного плавания. Ныряйте с осторожностью, она декоративная."
     }
 }

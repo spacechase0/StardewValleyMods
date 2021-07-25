@@ -12,10 +12,12 @@
     ],
     "NameLocalization": {
         "hu": "Piros szörfdeszka (Madárijesztő)",
-        "ko": "레드 서핑보드 (허수아비)"
+        "ko": "레드 서핑보드 (허수아비)",
+        "ru": "Красная доска для сёрфинга (пугало)"
     },
     "DescriptionLocalization": {
         "hu": "Piros szörfdeszka. Madárijesztőként is használható.",
-        "ko": "허수아비 역할도 하는 빨간색 서핑보드."
+        "ko": "허수아비 역할도 하는 빨간색 서핑보드.",
+        "ru": "Красная доска для сёрфинга. Также выполняет роль пугала."
     }
 }

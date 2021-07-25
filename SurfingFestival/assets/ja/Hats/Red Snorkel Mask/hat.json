@@ -6,10 +6,12 @@
     "IgnoreHairstyleOffset": true,
     "NameLocalization": {
         "hu": "Piros búvármaszk",
-        "ko": "레드 스노클 마스크"
+        "ko": "레드 스노클 마스크",
+        "ru": "Красная маска для подводного плавания"
     },
     "DescriptionLocalization": {
         "hu": "Csak dekoráció.",
-        "ko": "스노클 마스크 - 장식 용."
+        "ko": "스노클 마스크 - 장식 용.",
+        "ru": "Маска для подводного плавания. Ныряйте с осторожностью, она декоративная."
     }
 }

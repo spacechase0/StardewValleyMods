@@ -7,14 +7,20 @@ namespace Magic.Framework.Game
 {
     internal class CloudMount : Horse
     {
+        /*********
+        ** Fields
+        *********/
         private readonly Texture2D Tex = Content.LoadTexture("entities/cloud.png");
 
+
+        /*********
+        ** Public methods
+        *********/
         public CloudMount()
         {
             this.Name = this.displayName = "";
         }
 
-        //private bool dismountedOnce = false;
         public override void update(GameTime time, GameLocation location)
         {
             base.update(time, location);

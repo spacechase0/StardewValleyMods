@@ -6,6 +6,9 @@ namespace Magic.Framework.Spells
 {
     internal class AnalyzeSpell : Spell
     {
+        /*********
+        ** Public methods
+        *********/
         public AnalyzeSpell()
             : base(SchoolId.Arcane, "analyze") { }
 

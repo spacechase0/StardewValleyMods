@@ -17,7 +17,7 @@ Italian    | ❑ missing                | ❑ missing                           
 Japanese   | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
 Korean     | ❑ missing                | ❑ missing                             | ❑ missing | [✓](Magic/i18n/ko.json) | ❑ missing  | ❑ missing                 | ✓
 Portuguese | ❑ missing                | ❑ missing                             | ❑ missing | [✓](Magic/i18n/pt.json) | ❑ missing  | ❑ missing                 | ❑ missing
-Russian    | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
+Russian    | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ✓
 Spanish    | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
 Turkish    | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
 

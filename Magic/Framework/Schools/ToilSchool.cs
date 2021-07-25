@@ -4,6 +4,9 @@ namespace Magic.Framework.Schools
 {
     internal class ToilSchool : School
     {
+        /*********
+        ** Public methods
+        *********/
         public ToilSchool()
             : base(SchoolId.Toil) { }
 

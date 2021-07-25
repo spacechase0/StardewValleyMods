@@ -1,7 +1,7 @@
 ﻿{
     "Name": "Surfing Festival for MFM",
     "Author": "spacechase0 & paradigmnomad",
-    "Version": "1.0.8",
+    "Version": "1.0.9",
     "Description": "Adds a letter to announce the upcoming festival",
     "UniqueID": "spacechase0.SurfingFestival.MFM",
     "ContentPackFor": {

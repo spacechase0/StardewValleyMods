@@ -13,6 +13,9 @@ namespace Magic.Framework.Spells
 {
     internal class ClearDebrisSpell : Spell
     {
+        /*********
+        ** Public methods
+        *********/
         public ClearDebrisSpell()
             : base(SchoolId.Toil, "cleardebris") { }
 
@@ -130,6 +133,10 @@ namespace Magic.Framework.Spells
             return null;
         }
 
+
+        /*********
+        ** Private methods
+        *********/
         /// <summary>Get whether a given object is debris which can be cleared with a pickaxe.</summary>
         /// <param name="location">The location containing the object.</param>
         /// <param name="obj">The world object.</param>

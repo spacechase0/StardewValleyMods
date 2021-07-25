@@ -32,6 +32,9 @@ namespace Magic.Framework
         /// <summary>The player's mod data.</summary>
         private ModDataDictionary Data => this.Player.modData;
 
+        /// <summary>The mod data version for which the fields were cached.</summary>
+        private int? UpdatedTick;
+
 
         /*********
         ** Accessors
@@ -50,9 +53,6 @@ namespace Magic.Framework
 
         /// <summary>The currently selected hotbar, as an index in the <see cref="Prepared"/> list.</summary>
         public int SelectedPrepared { get; set; }
-
-        /// <summary>The mod data version for which the fields were cached.</summary>
-        private int? UpdatedTick;
 
 
         /*********
@@ -106,7 +106,7 @@ namespace Magic.Framework
 
         /// <summary>Parse serialized prepared spells.</summary>
         /// <param name="raw">The raw serialized string.</param>
-        public List<PreparedSpellBar> ParsePreparedSpells(string raw)
+        private List<PreparedSpellBar> ParsePreparedSpells(string raw)
         {
             return (raw ?? "")
                 .Split('|')
