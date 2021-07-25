@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 0.5.4
+Released 24 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+
 * Fixed altar broken when other mods edit Pierre's shop map.
 * Fixed players having one spellbar instead of two.
 
