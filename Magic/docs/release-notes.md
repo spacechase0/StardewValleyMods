@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed initial spells not learned if you bypass the learn-magic event.
+
 ## 0.5.4
 Released 24 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
