@@ -1,4 +1,4 @@
-using Harmony;
+using HarmonyLib;
 using StardewModdingAPI;
 
 namespace Spacechase.Shared.Patching
@@ -12,6 +12,6 @@ namespace Spacechase.Shared.Patching
         /// <summary>Apply the Harmony patches for this instance.</summary>
         /// <param name="harmony">The Harmony instance.</param>
         /// <param name="monitor">The monitor with which to log any errors.</param>
-        public void Apply(HarmonyInstance harmony, IMonitor monitor);
+        public void Apply(Harmony harmony, IMonitor monitor);
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Harmony;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
@@ -20,7 +20,7 @@ namespace JsonAssets.Patches
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
                 original: this.RequireMethod<GiantCrop>(nameof(GiantCrop.draw)),

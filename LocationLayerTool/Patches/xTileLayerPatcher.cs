@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Harmony;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -34,7 +34,7 @@ namespace LocationLayerTool.Patches
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
                 original: this.RequireMethod<Layer>(nameof(Layer.Draw)),

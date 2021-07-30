@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using CustomBuildings.Framework;
-using Harmony;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
@@ -22,7 +22,7 @@ namespace CustomBuildings.Patches
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
                 original: this.RequireMethod<Coop>("getIndoors"),

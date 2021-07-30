@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Harmony;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
@@ -16,7 +16,7 @@ namespace SpaceCore.Patches
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
                 original: this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Rectangle), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(SpriteEffects), typeof(float) }),

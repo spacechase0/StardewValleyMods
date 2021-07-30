@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using CarryChest.Framework;
-using Harmony;
+using HarmonyLib;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
@@ -17,7 +17,7 @@ namespace CarryChest.Patches
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
                 original: this.RequireMethod<Item>(nameof(Item.canStackWith)),

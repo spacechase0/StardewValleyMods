@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Updated for Harmony upgrade in SMAPI 3.12.0.
+
 ## 1.0.2
 Released 17 July 2021. Updated by Pathoschild.
 

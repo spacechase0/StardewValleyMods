@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Harmony;
+using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
 using SpaceCore.Framework;
@@ -19,7 +19,7 @@ namespace SpaceCore
         public Configuration Config { get; set; }
         internal static SpaceCore Instance;
         internal static IReflectionHelper Reflection;
-        private HarmonyInstance Harmony;
+        private Harmony Harmony;
 
         /// <summary>Whether the current update tick is the first one raised by SMAPI.</summary>
         private bool IsFirstTick;

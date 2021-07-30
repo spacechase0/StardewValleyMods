@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Harmony;
+using HarmonyLib;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
@@ -15,7 +15,7 @@ namespace MoreBuildings.Patches
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
                 original: this.RequireMethod<Shed>(nameof(Shed.updateLayout)),
