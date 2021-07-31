@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Switching spell bar now requires holding the cast key, and no longer rotates your toolbar too (thanks to AWolters-ru!).
 * Fixed initial spells not learned if you bypass the learn-magic event.
 
 ## 0.5.4
