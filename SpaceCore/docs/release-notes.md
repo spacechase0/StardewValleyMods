@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed conflict with PyTK items if no custom SpaceCore items are registered.
+
 ## 1.5.10
 Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
 
