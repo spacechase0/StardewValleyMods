@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 0.5.5
+Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
+
 * Switching spell bar now requires holding the cast key, and no longer rotates your toolbar too (thanks to AWolters-ru!).
 * Fixed initial spells not learned if you bypass the learn-magic event.
 

@@ -1,7 +1,7 @@
 ﻿{
     "Name": "Surfing Festival for STF",
     "Author": "spacechase0, ParadigmNomad",
-    "Version": "1.0.9",
+    "Version": "1.0.10",
     "Description": "Adds the vendor data for the Surfing Festival",
     "UniqueID": "spacechase0.SurfingFestival.STF",
     "ContentPackFor": {
