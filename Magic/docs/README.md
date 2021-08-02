@@ -28,7 +28,7 @@ use the Analyze spell to learn new spells.
 
 ### Use magic
 To cast a spell, hold `Q` and press a number key (`1` through `4`) corresponding to the spell's
-position in the hotbar. Press `Tab` to swap between spell sets.
+position in the hotbar. Press `Q` + `Tab` to swap between spell sets.
 
 ### Professions
 You gain magic XP by casting spells. Leveling up increases your mana regen rate, and unlocks some

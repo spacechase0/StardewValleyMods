@@ -1,8 +1,8 @@
 ﻿{
     "Name": "Luck Skill",
     "Author": "spacechase0",
-    "Version": "1.1.0",
-    "MinimumApiVersion": "3.9.5",
+    "Version": "1.1.1",
+    "MinimumApiVersion": "3.12.0",
     "Description": "Reimplements the game's unimplemented luck skill and adds professions for it.",
     "UniqueID": "spacechase0.LuckSkill",
     "EntryDll": "LuckSkill.dll",
@@ -10,7 +10,7 @@
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore",
-            "MinimumVersion": "1.5.8"
+            "MinimumVersion": "1.5.10"
         }
     ]
 }

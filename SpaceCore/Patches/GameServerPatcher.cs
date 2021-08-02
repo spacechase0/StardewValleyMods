@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Harmony;
+using HarmonyLib;
 using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceShared;
@@ -16,7 +16,7 @@ namespace SpaceCore.Patches
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
                 original: this.RequireMethod<GameServer>(nameof(GameServer.sendServerIntroduction)),

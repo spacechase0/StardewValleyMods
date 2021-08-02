@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.8.3
+Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
+
+* Updated for Harmony upgrade in SMAPI 3.12.0.
+* Fixed duplicate items added to shop menu when it's hidden and restored by mods like Lookup Anything.
+
 ## 1.8.2
 Released 24 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

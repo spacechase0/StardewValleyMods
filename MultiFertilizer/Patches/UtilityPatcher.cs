@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
-using Harmony;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using MultiFertilizer.Framework;
 using Spacechase.Shared.Patching;
@@ -22,7 +22,7 @@ namespace MultiFertilizer.Patches
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
                 original: this.RequireMethod<Utility>(nameof(Utility.tryToPlaceItem)),

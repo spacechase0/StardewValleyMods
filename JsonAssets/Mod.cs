@@ -42,6 +42,10 @@ namespace JsonAssets
         private ContentInjector2 Content2;
         internal IExpandedPreconditionsUtilityApi Epu;
 
+        /// <summary>The last shop menu Json Assets added items to.</summary>
+        /// <remarks>This is used to avoid adding items again if the menu was stashed and restored (e.g. by Lookup Anything).</remarks>
+        private ShopMenu LastShopMenu;
+
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
@@ -1117,8 +1121,10 @@ namespace JsonAssets
             }
 
             // handle shop menu
-            if (e.NewMenu is ShopMenu { source: not StorageFurniture } menu)
+            if (e.NewMenu is ShopMenu { source: not StorageFurniture } menu && !object.ReferenceEquals(e.NewMenu, this.LastShopMenu))
             {
+                this.LastShopMenu = menu;
+
                 ISet<string> shopIds = this.GetShopIds(menu);
                 if (!shopIds.Any())
                 {

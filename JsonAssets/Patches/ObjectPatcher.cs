@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Harmony;
+using HarmonyLib;
 using JsonAssets.Data;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Patching;
@@ -22,7 +22,7 @@ namespace JsonAssets.Patches
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
                 original: this.RequireMethod<SObject>(nameof(SObject.canBePlacedHere)),

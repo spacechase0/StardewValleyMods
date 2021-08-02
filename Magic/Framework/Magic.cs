@@ -113,16 +113,21 @@ namespace Magic.Framework
             }
 
             // fix spell bars
+            SpellBook spellBook = Game1.player.GetSpellBook();
+            if (spellBook.Prepared.Count < MagicConstants.SpellBarCount)
             {
-                SpellBook spellBook = player.GetSpellBook();
-                if (spellBook.Prepared.Count < MagicConstants.SpellBarCount)
+                spellBook.Mutate(data =>
                 {
-                    spellBook.Mutate(data =>
-                    {
-                        while (spellBook.Prepared.Count < MagicConstants.SpellBarCount)
-                            data.Prepared.Add(new PreparedSpellBar());
-                    });
-                }
+                    while (spellBook.Prepared.Count < MagicConstants.SpellBarCount)
+                        data.Prepared.Add(new PreparedSpellBar());
+                });
+            }
+
+            // fix learned spells
+            if (Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
+            {
+                foreach (string spellId in new[] { "arcane:analyze", "arcane:magicmissle", "arcane:enchant", "arcane:disenchant" })
+                    spellBook.LearnSpell(spellId, 0, true);
             }
         }
 
@@ -382,9 +387,10 @@ namespace Magic.Framework
             if (Game1.activeClickableMenu != null)
                 return;
 
-            if (e.Button == Mod.Config.Key_SwapSpells)
+            if (Magic.CastPressed && e.Button == Mod.Config.Key_SwapSpells)
             {
                 Game1.player.GetSpellBook().SwapPreparedSet();
+                Magic.InputHelper.Suppress(e.Button);
             }
             else if (Magic.CastPressed &&
                      (e.Button == Mod.Config.Key_Spell1 || e.Button == Mod.Config.Key_Spell2 ||
@@ -482,13 +488,6 @@ namespace Magic.Framework
 
                 Game1.player.AddCustomSkillExperience(Magic.Skill, Magic.Skill.ExperienceCurve[0]);
                 Magic.FixMagicIfNeeded(Game1.player, overrideMagicLevel: 1); // let player start using magic immediately
-
-                SpellBook spellBook = Game1.player.GetSpellBook();
-                spellBook.LearnSpell("arcane:analyze", 0, true);
-                spellBook.LearnSpell("arcane:magicmissle", 0, true);
-                spellBook.LearnSpell("arcane:enchant", 0, true);
-                spellBook.LearnSpell("arcane:disenchant", 0, true);
-
                 Game1.player.eventsSeen.Add(MagicConstants.LearnedMagicEventId);
             }
         }

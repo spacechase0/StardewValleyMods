@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Xml;
 using System.Xml.Serialization;
-using Harmony;
+using HarmonyLib;
 using Newtonsoft.Json;
 using Spacechase.Shared.Patching;
 using SpaceCore.Framework;
@@ -41,7 +41,7 @@ namespace SpaceCore.Patches
         }
 
         /// <inheritdoc />
-        public override void Apply(HarmonyInstance harmony, IMonitor monitor)
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
                 original: this.RequireMethod<SaveGame>(nameof(SaveGame.GetSerializer)),
