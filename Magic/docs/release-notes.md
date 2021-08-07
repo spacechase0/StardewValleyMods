@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed initial spells no longer learned immediately.
+
 ## 0.5.5
 Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
 

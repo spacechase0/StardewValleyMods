@@ -140,9 +140,8 @@ namespace Magic
         /// <param name="e">The event arguments.</param>
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
-            // fix player's mana pool if needed
-            if (Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
-                Framework.Magic.FixMagicIfNeeded(Game1.player);
+            // fix player's magic info if needed
+            Framework.Magic.FixMagicIfNeeded(Game1.player);
         }
 
         /// <inheritdoc cref="IGameLoopEvents.Saving"/>

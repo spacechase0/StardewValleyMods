@@ -101,9 +101,16 @@ namespace Magic.Framework
         /// <param name="overrideMagicLevel">The magic skill level, or <c>null</c> to get it from the player.</param>
         public static void FixMagicIfNeeded(Farmer player, int? overrideMagicLevel = null)
         {
+            // skip if player hasn't learned magic
+            if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId) && overrideMagicLevel is not > 0)
+                return;
+
+            // get magic info
+            int magicLevel = overrideMagicLevel ?? player.GetCustomSkillLevel(Skill.MagicSkillId);
+            SpellBook spellBook = Game1.player.GetSpellBook();
+
             // fix mana pool
             {
-                int magicLevel = overrideMagicLevel ?? player.GetCustomSkillLevel(Skill.MagicSkillId);
                 int expectedPoints = magicLevel * MagicConstants.ManaPointsPerLevel;
                 if (player.GetMaxMana() < expectedPoints)
                 {
@@ -113,7 +120,6 @@ namespace Magic.Framework
             }
 
             // fix spell bars
-            SpellBook spellBook = Game1.player.GetSpellBook();
             if (spellBook.Prepared.Count < MagicConstants.SpellBarCount)
             {
                 spellBook.Mutate(data =>
@@ -124,11 +130,8 @@ namespace Magic.Framework
             }
 
             // fix learned spells
-            if (Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
-            {
-                foreach (string spellId in new[] { "arcane:analyze", "arcane:magicmissle", "arcane:enchant", "arcane:disenchant" })
-                    spellBook.LearnSpell(spellId, 0, true);
-            }
+            foreach (string spellId in new[] { "arcane:analyze", "arcane:magicmissle", "arcane:enchant", "arcane:disenchant" })
+                spellBook.LearnSpell(spellId, 0, true);
         }
 
 
