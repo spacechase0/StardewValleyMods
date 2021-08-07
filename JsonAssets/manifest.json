@@ -17,7 +17,8 @@
             "MinimumVersion": "1.5.10"
         },
         {
-            "UniqueID": "Cherry.ExpandedPreconditionsUtility"
+            "UniqueID": "Cherry.ExpandedPreconditionsUtility",
+            "IsRequired": false
         }
     ]
 }

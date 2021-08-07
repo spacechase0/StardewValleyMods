@@ -40,11 +40,24 @@ namespace JsonAssets
 
         private ContentInjector1 Content1;
         private ContentInjector2 Content2;
-        internal IExpandedPreconditionsUtilityApi Epu;
+
+        /// <summary>The Expanded Preconditions Utility API, if that mod is loaded.</summary>
+        private IExpandedPreconditionsUtilityApi ExpandedPreconditionsUtility;
 
         /// <summary>The last shop menu Json Assets added items to.</summary>
         /// <remarks>This is used to avoid adding items again if the menu was stashed and restored (e.g. by Lookup Anything).</remarks>
         private ShopMenu LastShopMenu;
+
+        private readonly Dictionary<string, IManifest> DupObjects = new();
+        private readonly Dictionary<string, IManifest> DupCrops = new();
+        private readonly Dictionary<string, IManifest> DupFruitTrees = new();
+        private readonly Dictionary<string, IManifest> DupBigCraftables = new();
+        private readonly Dictionary<string, IManifest> DupHats = new();
+        private readonly Dictionary<string, IManifest> DupWeapons = new();
+        private readonly Dictionary<string, IManifest> DupShirts = new();
+        private readonly Dictionary<string, IManifest> DupPants = new();
+        private readonly Dictionary<string, IManifest> DupBoots = new();
+        private readonly Regex SeasonLimiter = new("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -170,8 +183,8 @@ namespace JsonAssets
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            this.Epu = this.Helper.ModRegistry.GetApi<IExpandedPreconditionsUtilityApi>("Cherry.ExpandedPreconditionsUtility");
-            this.Epu.Initialize(false, this.ModManifest.UniqueID);
+            this.ExpandedPreconditionsUtility = this.Helper.ModRegistry.GetApi<IExpandedPreconditionsUtilityApi>("Cherry.ExpandedPreconditionsUtility");
+            this.ExpandedPreconditionsUtility?.Initialize(false, this.ModManifest.UniqueID);
 
             ContentPatcherIntegration.Initialize();
         }
@@ -242,31 +255,30 @@ namespace JsonAssets
 
         public void RegisterObject(IManifest source, ObjectData obj)
         {
+            // normalize content
             obj.InvokeOnDeserialized();
 
+            // add content
             this.Objects.Add(obj);
-
             if (obj.Recipe is { CanPurchase: true })
             {
                 this.shopData.Add(new ShopDataEntry
                 {
                     PurchaseFrom = obj.Recipe.PurchaseFrom,
                     Price = obj.Recipe.PurchasePrice,
-                    PurchaseRequirements = ShopDataEntry.FormatRequirements(obj.Recipe.PurchaseRequirements),
+                    PurchaseRequirements = this.FormatAndValidateRequirements(source, obj.Recipe.PurchaseRequirements),
                     Object = () => new SObject(obj.Id, 1, true, obj.Recipe.PurchasePrice)
                 });
-                if (obj.Recipe.AdditionalPurchaseData != null)
+
+                foreach (var entry in obj.Recipe.AdditionalPurchaseData)
                 {
-                    foreach (var entry in obj.Recipe.AdditionalPurchaseData)
+                    this.shopData.Add(new ShopDataEntry
                     {
-                        this.shopData.Add(new ShopDataEntry
-                        {
-                            PurchaseFrom = entry.PurchaseFrom,
-                            Price = entry.PurchasePrice,
-                            PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
-                            Object = () => new SObject(obj.Id, 1, true, entry.PurchasePrice)
-                        });
-                    }
+                        PurchaseFrom = entry.PurchaseFrom,
+                        Price = entry.PurchasePrice,
+                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
+                        Object = () => new SObject(obj.Id, 1, true, entry.PurchasePrice)
+                    });
                 }
             }
             if (obj.CanPurchase)
@@ -275,7 +287,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = obj.PurchaseFrom,
                     Price = obj.PurchasePrice,
-                    PurchaseRequirements = ShopDataEntry.FormatRequirements(obj.PurchaseRequirements),
+                    PurchaseRequirements = this.FormatAndValidateRequirements(source, obj.PurchaseRequirements),
                     Object = () => new SObject(obj.Id, int.MaxValue, false, obj.PurchasePrice)
                 });
                 foreach (var entry in obj.AdditionalPurchaseData)
@@ -284,7 +296,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new SObject(obj.Id, int.MaxValue, false, entry.PurchasePrice)
                     });
                 }
@@ -300,6 +312,7 @@ namespace JsonAssets
             else
                 this.DupObjects[obj.Name] = source;
 
+            // track added
             if (!this.ObjectsByContentPack.TryGetValue(source, out List<string> addedNames))
                 addedNames = this.ObjectsByContentPack[source] = new();
             addedNames.Add(obj.Name);
@@ -330,36 +343,31 @@ namespace JsonAssets
             // TODO: Clean up this chunk
             // I copy/pasted it from the unofficial update decompiled
             string str = "";
-            string[] array = new[] { "spring", "summer", "fall", "winter" }
-                .Except(crop.Seasons)
-                .ToArray();
-            foreach (string season in array)
-            {
+            foreach (string season in new[] { "spring", "summer", "fall", "winter" }.Except(crop.Seasons))
                 str += $"/z {season}";
-            }
             if (str != "")
             {
-                string strtrimstart = str.TrimStart(new[] { '/' });
+                str = str.TrimStart('/');
                 if (crop.SeedPurchaseRequirements.Any())
                 {
                     for (int index = 0; index < crop.SeedPurchaseRequirements.Count; index++)
                     {
                         if (this.SeasonLimiter.IsMatch(crop.SeedPurchaseRequirements[index]))
                         {
-                            crop.SeedPurchaseRequirements[index] = strtrimstart;
+                            crop.SeedPurchaseRequirements[index] = str;
                             Log.Warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
                         }
                     }
-                    if (!crop.SeedPurchaseRequirements.Contains(str.TrimStart('/')))
+                    if (!crop.SeedPurchaseRequirements.Contains(str))
                     {
-                        Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
-                        crop.Seed.PurchaseRequirements.Add(strtrimstart);
+                        Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {str}");
+                        crop.Seed.PurchaseRequirements.Add(str);
                     }
                 }
                 else
                 {
-                    Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {strtrimstart}");
-                    crop.Seed.PurchaseRequirements.Add(strtrimstart);
+                    Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {str}");
+                    crop.Seed.PurchaseRequirements.Add(str);
                 }
             }
 
@@ -369,7 +377,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = crop.Seed.PurchaseFrom,
                     Price = crop.Seed.PurchasePrice,
-                    PurchaseRequirements = ShopDataEntry.FormatRequirements(crop.Seed.PurchaseRequirements),
+                    PurchaseRequirements = this.FormatAndValidateRequirements(source, crop.Seed.PurchaseRequirements),
                     Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, crop.Seed.PurchasePrice),
                     ShowWithStocklist = true
                 });
@@ -379,7 +387,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, entry.PurchasePrice)
                     });
                 }
@@ -431,7 +439,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = tree.Sapling.PurchaseFrom,
                     Price = tree.Sapling.PurchasePrice,
-                    PurchaseRequirements = ShopDataEntry.FormatRequirements(tree.Sapling.PurchaseRequirements),
+                    PurchaseRequirements = this.FormatAndValidateRequirements(source, tree.Sapling.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
                 });
                 foreach (var entry in tree.Sapling.AdditionalPurchaseData)
@@ -440,7 +448,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
                     });
                 }
@@ -469,7 +477,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = craftable.Recipe.PurchaseFrom,
                     Price = craftable.Recipe.PurchasePrice,
-                    PurchaseRequirements = ShopDataEntry.FormatRequirements(craftable.Recipe.PurchaseRequirements),
+                    PurchaseRequirements = this.FormatAndValidateRequirements(source, craftable.Recipe.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, craftable.Id, true)
                 });
                 foreach (var entry in craftable.Recipe.AdditionalPurchaseData)
@@ -478,7 +486,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new SObject(Vector2.Zero, craftable.Id, true)
                     });
                 }
@@ -489,7 +497,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = craftable.PurchaseFrom,
                     Price = craftable.PurchasePrice,
-                    PurchaseRequirements = ShopDataEntry.FormatRequirements(craftable.PurchaseRequirements),
+                    PurchaseRequirements = this.FormatAndValidateRequirements(source, craftable.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, craftable.Id)
                 });
                 foreach (var entry in craftable.AdditionalPurchaseData)
@@ -498,7 +506,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new SObject(Vector2.Zero, craftable.Id)
                     });
                 }
@@ -555,7 +563,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = weapon.PurchaseFrom,
                     Price = weapon.PurchasePrice,
-                    PurchaseRequirements = ShopDataEntry.FormatRequirements(weapon.PurchaseRequirements),
+                    PurchaseRequirements = this.FormatAndValidateRequirements(source, weapon.PurchaseRequirements),
                     Object = () => new MeleeWeapon(weapon.Id)
                 });
                 foreach (var entry in weapon.AdditionalPurchaseData)
@@ -564,7 +572,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new MeleeWeapon(weapon.Id)
                     });
                 }
@@ -634,7 +642,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = boots.PurchaseFrom,
                     Price = boots.PurchasePrice,
-                    PurchaseRequirements = ShopDataEntry.FormatRequirements(boots.PurchaseRequirements),
+                    PurchaseRequirements = this.FormatAndValidateRequirements(source, boots.PurchaseRequirements),
                     Object = () => new Boots(boots.Id)
                 });
 
@@ -644,7 +652,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = ShopDataEntry.FormatRequirements(entry.PurchaseRequirements),
+                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new Boots(boots.Id)
                     });
                 }
@@ -711,17 +719,37 @@ namespace JsonAssets
             });
         }
 
-        private readonly Dictionary<string, IManifest> DupObjects = new();
-        private readonly Dictionary<string, IManifest> DupCrops = new();
-        private readonly Dictionary<string, IManifest> DupFruitTrees = new();
-        private readonly Dictionary<string, IManifest> DupBigCraftables = new();
-        private readonly Dictionary<string, IManifest> DupHats = new();
-        private readonly Dictionary<string, IManifest> DupWeapons = new();
-        private readonly Dictionary<string, IManifest> DupShirts = new();
-        private readonly Dictionary<string, IManifest> DupPants = new();
-        private readonly Dictionary<string, IManifest> DupBoots = new();
+        /// <summary>Get whether conditions in the Expanded Preconditions Utility (EPU) format match the current context.</summary>
+        /// <param name="conditions">The EPU conditions to check.</param>
+        /// <returns>This always returns false if EPU isn't installed.</returns>
+        internal bool CheckEpuCondition(string[] conditions)
+        {
+            // not conditional
+            if (conditions?.Any() != true)
+                return true;
 
-        private readonly Regex SeasonLimiter = new("(z(?: spring| summer| fall| winter){2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            // If EPU isn't installed, all EPU conditions automatically fail.
+            // Json Assets will show a separate error/warning about this.
+            if (this.ExpandedPreconditionsUtility == null)
+                return false;
+
+            // check conditions
+            return this.ExpandedPreconditionsUtility.CheckConditions(conditions);
+        }
+
+        /// <summary>Format individual requirements for the <see cref="ShopDataEntry.PurchaseRequirements"/> property, and log an error if Expanded Preconditions Utility is required but missing.</summary>
+        /// <param name="source">The mod registering the content.</param>
+        /// <param name="requirementFields">The purchase requirements.</param>
+        private string[] FormatAndValidateRequirements(IManifest source, IList<string> requirementFields)
+        {
+            string[] formatted = ShopDataEntry.FormatRequirements(requirementFields);
+
+            if (formatted.Any() && this.ExpandedPreconditionsUtility == null)
+                this.Monitor.LogOnce($"{source.Name} uses conditions from Expanded Preconditions Utility, but you don't have that mod installed. Some of its content might not work correctly.", LogLevel.Error);
+
+            return formatted;
+        }
+
         private void LoadData(IContentPack contentPack)
         {
             Log.Info($"\t{contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author} - {contentPack.Manifest.Description}");
@@ -1145,11 +1173,7 @@ namespace JsonAssets
                     if (!shopIds.Contains(entry.PurchaseFrom))
                         continue;
 
-                    bool normalCond = true;
-                    if (entry.PurchaseRequirements?.Length > 0 && entry.PurchaseRequirements[0] != "")
-                    {
-                        normalCond = this.Epu.CheckConditions(entry.PurchaseRequirements);
-                    }
+                    bool normalCond = this.CheckEpuCondition(entry.PurchaseRequirements);
                     if (entry.Price == 0 || !normalCond && !(doAllSeeds && entry.ShowWithStocklist && isPierre))
                         continue;
 
