@@ -24,9 +24,8 @@ This document helps mod authors create a content pack for Json Assets.
   * [Shops](#shops)
   * [Context Tags](#context-tags)
   * [Localization](#localization)
-* [Content Patcher API](#content-patcher-api)
-* [Tokens in Fields](#tokens-in-fields)
-* [Releasing A Content Pack](#releasing-a-content-pack)
+* [Integration with Content Patcher](#integration-with-content-patcher)
+* [Releasing a Content Pack](#releasing-a-content-pack)
   * [Manifest](#manifest)
 * [Troubleshooting](#troubleshooting)
   * [Target Out of Range](#target-out-of-range)
@@ -643,57 +642,76 @@ For Saplings:
 
 PPJA has put together some [translation templates](https://github.com/paradigmnomad/PPJA/wiki/Submitting-a-Translation#translation-guide) that we strongly encourage users to use as a way to standardize how translations are done.
 
-## Content Patcher API
-As of [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915) 1.12 we can now target assets created by JA. Currently supported categories are:
+## Integration with Content Patcher
+Json Assets adds several custom tokens to [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915),
+so you can use Json Assets data in your Content Patcher packs.
 
-* Object;
-* Crop;
-* FruitTree;
-* BigCraftable;
-* Hat;
-* Weapon;
-
-These tokens will now have a `___SpriteTilesheet` and `___Sprite(X|Y)`. "You should always use the `__SpriteTilesheet` tokens for `Target` because of the expanded tilesheet stuff.
-
-Example:
-```
-        {
-            "LogName": "Test JA rectangle tokens",
-            "Action": "EditImage",
-            "Target": "{{spacechase0.JsonAssets/CropSpriteTilesheet:Honeysuckle}}",
-            "FromFile": "Penny_Spring_Indoor.png",
-            "FromArea": { "X": "0", "Y": "0", "Width": "16", "Height": "32" },
-            "ToArea": { "X": "{{spacechase0.JsonAssets/CropSpriteX:Honeysuckle}}", "Y": "{{spacechase0.JsonAssets/CropSpriteY:Honeysuckle}}", "Width": "16", "Height": "32" },
-            "AnimationFrameTime": 4,
-            "AnimationFrameCount": 4
-        },
+To enable the tokens, add Json Assets as a dependency to your content pack's `manifest.json`:
+```js
+"Dependencies": [
+    {
+        "UniqueID": "spacechase0.JsonAssets"
+    }
+]
 ```
 
-Below is some more information on the newly added fields. These require users to have [Content Patcher Animations](https://www.nexusmods.com/stardewvalley/mods/3853) installed.
-
-field                  | purpose
----------------------- | -------
-`AnimationFrameTime`   | _(optional)_ Frames per second. For machine animations, 1-3 appears to work the best.
-`AnimationFrameCount`  | _(optional)_ How many frames the image had.
-
-## Tokens in fields
-[Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915) can use Json Assets as tokens. An example of this would be sending an `object` through a mail. Note: You cannot send cooking recipes via Content Patcher. You will need to use the [Mail Framework Mod](https://www.nexusmods.com/stardewvalley/mods/1536) to send cooking recipes. Mail Framework Mod is recommended if you're sending multiple types of objects as users will only have to install one additional dependency.
-
-Example:
-
-```
-        {
-            "LogName": "Letters - Mizu's Flowers",
-            "Action": "EditData",
-            "Target": "Data/Mail",
-            "Entries":
-            {
-                    "[{{UNIQUEID}}]": "Dear @,^^ Here's some seeds from the little garden I keep out back. You probably already have some of these but they make a great tea.^^  -Caroline %item object {{spacechase0.JsonAssets/ObjectId:[{{OBJECT NAME}}] [{{QUANTITY}}] %%",
-            },
-        },
+Then you can use the tokens directly in your `content.json` just like any other token:
+```js
+{
+    "Action": "EditImage",
+    "Target": "{{spacechase0.JsonAssets/CropSpriteTilesheet: Honeysuckle}}",
+    "FromFile": "Honeysuckle.png",
+    "ToArea": {
+        "X": "{{spacechase0.JsonAssets/CropSpriteX: Honeysuckle}}",
+        "Y": "{{spacechase0.JsonAssets/CropSpriteY: Honeysuckle}}",
+        "Width": "16",
+        "Height": "32"
+    }
+},
 ```
 
-Make sure to list the Json Assets pack as a dependency in your `manifest`.
+The tokens below are defined for each of these categories: `Object`, `BigCraftable`, `Crop`,
+`FruitTree`, `Hat`, and `Weapon`. Shirts and pants are not currently supported.
+
+The available tokens (all prefixed with `spacechase0.JsonAssets/`):
+
+<table>
+<tr>
+<th>token</th>
+<th>usage</th>
+</tr>
+<tr>
+<td><code>{category}Id</code></td>
+<td>
+
+Get the ID for the custom item with the given name. This ID is assigned dynamically when the save is
+loaded.
+
+For example, `{{spacechase0.JsonAssets/ObjectId: Honeysuckle}}` gets the ID for the custom
+honeysuckle item.
+
+</td>
+</tr>
+<tr>
+<td><code>{category}SpriteTilesheet</code></td>
+<td>
+
+The tilesheet which contains the sprite for the named custom item, suitable for use in Content
+Patcher's `Target` field. This is needed because custom items aren't necessarily in the vanilla
+tilesheets.
+
+</td>
+</tr>
+<tr>
+<td><code>{category}SpriteX</code><br /><code>{category}SpriteY</code></td>
+<td>
+
+The sprite's X and Y pixel positions in the tilesheet for the named custom item, suitable for use
+in Content Patcher's `FromArea` and `ToArea` fields.
+
+</td>
+</tr>
+</table>
 
 ## Releasing a content pack
 See [content packs](https://stardewvalleywiki.com/Modding:Content_packs) on the wiki for general
