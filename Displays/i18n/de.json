@@ -1,0 +1,8 @@
+﻿{
+    "mannequin.name": "{{type}} {{gender}}",
+    "mannequin.desc": "Setze Hüte, Klamotten und Schuhe zur Austellung aus.",
+    "mannequin.type.Plain": "Normal",
+    "mannequin.type.Magic": "Magie",
+    "mannequin.gender.Male": "Schaufensterpuppe (m)",
+    "mannequin.gender.Female": "Schaufensterpuppe (w)"
+}
