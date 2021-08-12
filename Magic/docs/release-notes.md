@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Fixed initial spells no longer learned immediately.
+* Fixed PyTK still marked as a requirement in the manifest.
 
 ## 0.5.5
 Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
