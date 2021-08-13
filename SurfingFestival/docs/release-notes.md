@@ -1,6 +1,10 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed typo in Abigail's dialogue (thanks to mcBegins2Snow!).
+* Improved translations. Thanks to mcBegins2Snow (added Chinese)!
+
 ## 1.0.10
 Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
 
