@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <Version>0.5.5</Version>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 
     <IgnoreModFilePatterns>\.psd$</IgnoreModFilePatterns>
   </PropertyGroup>
