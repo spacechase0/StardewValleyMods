@@ -22,10 +22,10 @@
     },
     "NameLocalization": {
         "hu": "Messzire érő gyűrű",
-		"zh": "长臂戒指"
+        "zh": "长臂戒指"
     },
     "DescriptionLocalization": {
         "hu": "Szerszámokat használhatsz távolról.",
-		"zh": "在远处使用工具。"
+        "zh": "在远处使用工具。"
     }
 }
