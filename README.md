@@ -7,19 +7,19 @@ use the right translations.
 
 (❑ = untranslated, ↻ = partly translated, ✓ = fully translated)
 
-&nbsp;     | Bug Net                  | Capstone Professions                  | Displays  | Magic                   | More Rings | Preexisting Relationships | Surfing Festival
----------- | :----------------------- | :------------------------------------ | :-------- | :---------------------- | ---------- | :------------------------ | ----------------
-Chinese    | ❑ missing                | ❑ missing                             | ❑ missing | [✓](Magic/i18n/zh.json) | ↻ partial  | ❑ missing                 | ❑ missing
-French     | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
-German     | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
-Hungarian  | [✓](BugNet/i18n/hu.json) | [✓](CapstoneProfessions/i18n/hu.json) | ❑ missing | ❑ missing               | ✓          | ❑ missing                 | ✓
-Italian    | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
-Japanese   | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
-Korean     | ❑ missing                | ❑ missing                             | ❑ missing | [✓](Magic/i18n/ko.json) | ❑ missing  | ❑ missing                 | ✓
-Portuguese | ❑ missing                | ❑ missing                             | ❑ missing | [✓](Magic/i18n/pt.json) | ❑ missing  | ❑ missing                 | ❑ missing
-Russian    | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ✓
-Spanish    | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
-Turkish    | ❑ missing                | ❑ missing                             | ❑ missing | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
+&nbsp;     | Bug Net                  | Capstone Professions                  | Displays                   | Magic                   | More Rings | Preexisting Relationships | Surfing Festival
+---------- | :----------------------- | :------------------------------------ | :------------------------- | :---------------------- | ---------- | :------------------------ | ----------------
+Chinese    | ❑ missing                | [✓](CapstoneProfessions/i18n/zh.json) | ❑ missing                  | [✓](Magic/i18n/zh.json) | ↻ partial  | ❑ missing                 | ❑ missing
+French     | ❑ missing                | ❑ missing                             | ❑ missing                  | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
+German     | ❑ missing                | ❑ missing                             | [✓](Displays/i18n/de.json) | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
+Hungarian  | [✓](BugNet/i18n/hu.json) | [✓](CapstoneProfessions/i18n/hu.json) | ❑ missing                  | ❑ missing               | ✓          | ❑ missing                 | ✓
+Italian    | ❑ missing                | ❑ missing                             | ❑ missing                  | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
+Japanese   | ❑ missing                | ❑ missing                             | ❑ missing                  | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
+Korean     | ❑ missing                | ❑ missing                             | ❑ missing                  | [✓](Magic/i18n/ko.json) | ❑ missing  | ❑ missing                 | ✓
+Portuguese | ❑ missing                | ❑ missing                             | ❑ missing                  | [✓](Magic/i18n/pt.json) | ❑ missing  | ❑ missing                 | ❑ missing
+Russian    | ❑ missing                | ❑ missing                             | ❑ missing                  | ❑ missing               | ❑ missing  | ❑ missing                 | ✓
+Spanish    | ❑ missing                | ❑ missing                             | ❑ missing                  | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
+Turkish    | ❑ missing                | ❑ missing                             | ❑ missing                  | ❑ missing               | ❑ missing  | ❑ missing                 | ❑ missing
 
 Contributions are welcome! See [Modding:Translations](https://stardewvalleywiki.com/Modding:Translations)
 on the wiki for help contributing translations.

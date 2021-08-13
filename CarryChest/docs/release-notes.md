@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Placing a chest now transfers attached mod data like Chests Anywhere settings (thanks to ImJustMatt!).
+
 ## 1.3.4
 Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
 
