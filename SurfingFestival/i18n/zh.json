@@ -1,0 +1,17 @@
+﻿{
+    "ui.laps": "圈数：{{laps}}/2",
+    "ui.ranking": "排名",
+    "ui.wood": "在篝火中添加一些木头",
+    "dialog.wood": "你在篝火上放了 50 根木头。",
+    "dialog.shorts": "…这很奇怪，为什么火焰变紫了？",
+    "dialog.prizemoney": "你收到了 1500 金。",
+    "item.boost": "星之果实提升",
+    "item.homingprojectile": "河豚炮弹",
+    "item.firstplaceprojectile": "寻觅之云",
+    "item.invincibility": "祝尼魔之力",
+    "secret.text": "牌子上写着：想在现在和将来取得成功吗？开个价。",
+    "secret.yes": "往盒子里扔 100,000 金？",
+    "secret.no": "离开",
+    "secret.broke": "你买不起。",
+    "secret.purchased": "不知怎的，你感觉不一样。"
+}
