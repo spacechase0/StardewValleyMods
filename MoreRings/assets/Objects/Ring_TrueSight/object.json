@@ -21,9 +21,11 @@
         "PurchasePrice": 12500
     },
     "NameLocalization": {
-        "hu": "Igaz látás gyűrűje"
+        "hu": "Igaz látás gyűrűje",
+        "zh": "真视戒指"
     },
     "DescriptionLocalization": {
-        "hu": "Láss túl azon, mint amit láthatsz."
+        "hu": "Láss túl azon, mint amit láthatsz.",
+        "zh": "超越你所能看到的。"
     }
 }

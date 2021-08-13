@@ -1,0 +1,8 @@
+﻿{
+    "mannequin.name": "{{type}}{{gender}}",
+    "mannequin.desc": "把衣服、帽子或靴子放在上面。",
+    "mannequin.type.Plain": "普通",
+    "mannequin.type.Magic": "魔法",
+    "mannequin.gender.Male": "男性人体模型",
+    "mannequin.gender.Female": "女性人体模型"
+}
