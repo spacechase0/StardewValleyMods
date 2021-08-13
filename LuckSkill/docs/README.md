@@ -15,10 +15,10 @@ fortune teller TV channel mentions), when you fish up treasure, and when you cra
 
 ### Available professions
 * Level 5: Fortunate (better daily luck).
-  * Level 10: Shooting Star (Nightly events occur twice as often).
   * Level 10: Lucky (20% chance for max daily luck).
-* Level 5: Un-unlucky (Never have bad luck).
-  * Level 10: Popular Helper (Daily quests occur three times as often).
+  * Level 10: Un-unlucky (Never have bad luck).
+* Level 5: Popular Helper (Daily quests occur three times as often).
+  * Level 10: Shooting Star (Nightly events occur twice as often).
   * Level 10: Spirit Child (Giving gifts makes Junimos happy; 15% chance for some form of farm advancement).
 
 ### Effects
