@@ -15,19 +15,6 @@ namespace BugNet
 {
     internal class Mod : StardewModdingAPI.Mod
     {
-        public class TextureTarget
-        {
-            public Texture2D Texture { get; set; }
-            public Rectangle SourceRect { get; set; }
-        }
-
-        public class CritterData
-        {
-            public TextureTarget Texture { get; set; }
-            public Func<string> Name { get; set; }
-            public Func<int, int, Critter> MakeFunction { get; set; }
-        }
-
         public static Mod Instance;
         internal static IJsonAssetsApi Ja;
         private static readonly Dictionary<string, CritterData> CrittersData = new();
