@@ -54,9 +54,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuckSkill", "LuckSkill\LuckSkill.csproj", "{B0EF91AB-2DD6-4240-98D9-E965ACF79F7C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Magic", "Magic\Magic.csproj", "{E05A01C6-1543-4334-98DC-48E4D54AFC90}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3AEB49FD-D27F-410A-8483-8BB6FC8E51C6} = {3AEB49FD-D27F-410A-8483-8BB6FC8E51C6}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoreBuildings", "MoreBuildings\MoreBuildings.csproj", "{06FA9172-30EF-41F6-95BC-175F61C8C669}"
 EndProject
@@ -72,7 +69,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RushOrders", "RushOrders\Ru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SleepyEye", "SleepyEye\SleepyEye.csproj", "{6E9BA154-07EB-43C8-8E5A-94247FF28556}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceCore", "SpaceCore\SpaceCore.csproj", "{BA657CB4-93ED-4C3A-A66E-86954BEB4CE6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceCore", "SpaceCore\SpaceCore.csproj", "{BA657CB4-93ED-4C3A-A66E-86954BEB4CE6}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SpaceShared", "SpaceShared\SpaceShared.shproj", "{061610A4-7D02-4F52-A921-F59ED123C2A9}"
 EndProject
@@ -135,6 +132,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "internal", "internal", "{DED81BB3-A571-46E2-91C2-6A8B7890C7EA}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SpaceSharedPatching", "SpaceSharedPatching\SpaceSharedPatching.shproj", "{A87F5D49-6246-4B14-8363-114DC9335C2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicGameAssets", "DynamicGameAssets\DynamicGameAssets.csproj", "{100B0E56-6FF4-48EA-97B6-6102CB68931E}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -448,6 +447,10 @@ Global
 		{03BE86D2-DAD8-4F43-AA94-9E27B654F449}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03BE86D2-DAD8-4F43-AA94-9E27B654F449}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03BE86D2-DAD8-4F43-AA94-9E27B654F449}.Release|Any CPU.Build.0 = Release|Any CPU
+		{100B0E56-6FF4-48EA-97B6-6102CB68931E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{100B0E56-6FF4-48EA-97B6-6102CB68931E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{100B0E56-6FF4-48EA-97B6-6102CB68931E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{100B0E56-6FF4-48EA-97B6-6102CB68931E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
