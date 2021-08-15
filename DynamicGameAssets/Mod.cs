@@ -92,7 +92,6 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType( typeof( CustomObject ) );
             spacecore.RegisterSerializerType(typeof(CustomCraftingRecipe));
 
-            Log.Warn("objinfo:"+Game1.objectInformation);
             foreach ( var pack in contentPacks )
             {
                 foreach (var recipe in pack.Value.items.Values.OfType<CraftingPackData>())

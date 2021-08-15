@@ -17,14 +17,18 @@ namespace DynamicGameAssets
 
         public void AddToShop( ShopMenu shop )
         {
-            Item.Stack = Quantity;
+            int qty = Quantity;
+            if (Item is StardewValley.Object obj && obj.IsRecipe)
+                qty = 1;
+
+            Item.Stack = qty;
             shop.forSale.Add( Item );
             if ( Currency == null )
             {
                 shop.itemPriceAndStock.Add( Item, new int[]
                 {
                     Currency == null ? Price : 0,
-                    Quantity
+                    qty
                 } );
             }
             else
@@ -32,7 +36,7 @@ namespace DynamicGameAssets
                 shop.itemPriceAndStock.Add( Item, new int[]
                 {
                     0,
-                    Quantity,
+                    qty,
                     Currency.GetHashCode(), // Black magic
                     Price,
                 } );
@@ -41,13 +45,17 @@ namespace DynamicGameAssets
 
         public void AddToShopStock( Dictionary<ISalable, int[]> stock )
         {
-            Item.Stack = Quantity;
+            int qty = Quantity;
+            if (Item is StardewValley.Object obj && obj.IsRecipe)
+                qty = 1;
+
+            Item.Stack = qty;
             if ( Currency == null )
             {
                 stock.Add( Item, new int[]
                 {
                     Currency == null ? Price : 0,
-                    Quantity
+                    qty
                 } );
             }
             else
@@ -55,7 +63,7 @@ namespace DynamicGameAssets
                 stock.Add( Item, new int[]
                 {
                     0,
-                    Quantity,
+                    qty,
                     Currency.GetHashCode(), // Black magic
                     Price,
                 } );

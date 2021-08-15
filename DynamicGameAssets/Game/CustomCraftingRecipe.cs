@@ -41,6 +41,8 @@ namespace DynamicGameAssets.Game
             type.Value = "Basic";
             if (data.IsCooking)
                 category.Value = StardewValley.Object.CookingCategory;
+
+            IsRecipe = true;
         }
 
         protected override void initNetFields()
@@ -88,10 +90,7 @@ namespace DynamicGameAssets.Game
 
         public override bool canStackWith(ISalable other)
         {
-            if (!(other is CustomObject obj))
-                return false;
-
-            return obj.FullId == FullId && base.canStackWith(other);
+            return false;
         }
 
         public override string getDescription()
