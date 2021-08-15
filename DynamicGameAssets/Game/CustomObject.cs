@@ -13,8 +13,8 @@ using System.Xml.Serialization;
 
 namespace DynamicGameAssets.Game
 {
-    [XmlType( "Mods_JAObject" )]
-    public class CustomObject : StardewValley.Object
+    [XmlType( "Mods_DGAObject" )]
+    public class CustomObject : StardewValley.Object, IDGAItem
     {
         public readonly NetString _sourcePack = new NetString();
         public readonly NetString _id = new NetString();
@@ -31,19 +31,19 @@ namespace DynamicGameAssets.Game
         public override string DisplayName { get => loadDisplayName(); set { } }
 
         public CustomObject() { }
-        public CustomObject( ObjectPackData obj )
+        public CustomObject( ObjectPackData data )
         {
-            _sourcePack.Value = obj.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = obj.ID;
+            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
+            _id.Value = data.ID;
 
             ParentSheetIndex = Mod.BaseFakeObjectId;
-            name = obj.ID;
-            if ( obj.SellPrice.HasValue )
-                price.Value = obj.SellPrice.Value;
-            edibility.Value = obj.Edibility;
+            name = data.ID;
+            if ( data.SellPrice.HasValue )
+                price.Value = data.SellPrice.Value;
+            edibility.Value = data.Edibility;
             type.Value = "Basic";
-            category.Value = (int) obj.Category;
-            price.Value = obj.SellPrice ?? 0;
+            category.Value = (int) data.Category;
+            price.Value = data.SellPrice ?? 0;
             fragility.Value = fragility_Removable;
 
             canBeSetDown.Value = true;

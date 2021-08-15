@@ -50,6 +50,7 @@ namespace SpaceCore
 
             this.Harmony = HarmonyPatcher.Apply(this,
                 new EventPatcher(),
+                new CraftingRecipePatcher(),
                 new FarmerPatcher(),
                 new Game1Patcher(),
                 new GameLocationPatcher(),

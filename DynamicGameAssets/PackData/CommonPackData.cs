@@ -30,5 +30,11 @@ namespace DynamicGameAssets.PackData
         /// </summary>
         /// <returns>The item as a Stardew Valley Item.</returns>
         public abstract Item ToItem();
+
+        /// <summary>
+        /// Returns the primary texture, if any. Used mainly for recipe drawing.
+        /// </summary>
+        /// <returns>The primary texture.</returns>
+        public abstract TexturedRect GetTexture();
     }
 }

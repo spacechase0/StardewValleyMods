@@ -125,6 +125,11 @@ namespace DynamicGameAssets.PackData
             return new CustomObject( this );
         }
 
+        public override TexturedRect GetTexture()
+        {
+            return parent.GetTexture(Texture, 16, 16);
+        }
+
         internal string GetFakeData()
         {
             if ( Edibility != StardewValley.Object.inedible )

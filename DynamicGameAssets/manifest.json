@@ -10,7 +10,7 @@
     "Dependencies": [
         {
             "UniqueID": "Pathoschild.ContentPatcher",
-            "MinimumVersion": "1.22.0-alpha.20210411"
+            "MinimumVersion": "1.22.0"
         },
         {
             "UniqueID": "spacechase0.SpaceCore"

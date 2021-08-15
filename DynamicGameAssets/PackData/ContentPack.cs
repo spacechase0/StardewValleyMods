@@ -23,8 +23,9 @@ namespace DynamicGameAssets.PackData
         public ContentPack( IContentPack pack )
         {
             smapiPack = pack;
-            conditionVersion = new SemanticVersion( pack.Manifest.ExtraFields[ "JAConditionsFormatVersion" ].ToString() );
+            conditionVersion = new SemanticVersion( pack.Manifest.ExtraFields[ "DGAConditionsFormatVersion" ].ToString() );
             LoadAndValidateItems<ObjectPackData>( "objects.json" );
+            LoadAndValidateItems<CraftingPackData>("crafting.json");
             LoadOthers<ShopPackData>( "shop-entries.json" );
         }
 
@@ -35,6 +36,9 @@ namespace DynamicGameAssets.PackData
 
         private void LoadAndValidateItems< T >( string json ) where T : CommonPackData
         {
+            if (!smapiPack.HasFile(json))
+                return;
+
             var data = smapiPack.LoadAsset<List<T>>( json ) ?? new List<T>();
             foreach ( var d in data )
             {
@@ -45,11 +49,15 @@ namespace DynamicGameAssets.PackData
                 d.parent = this;
                 d.original = ( T ) d.Clone();
                 d.original.original = d.original;
+                d.PostLoad();
             }
         }
 
         private void LoadOthers<T>( string json ) where T : BasePackData
         {
+            if (!smapiPack.HasFile(json))
+                return;
+
             var data = smapiPack.LoadAsset<List<T>>( json ) ?? new List<T>();
             foreach ( var d in data )
             {
@@ -57,6 +65,7 @@ namespace DynamicGameAssets.PackData
                 d.parent = this;
                 d.original = ( T ) d.Clone();
                 d.original.original = d.original;
+                d.PostLoad();
             }
         }
 

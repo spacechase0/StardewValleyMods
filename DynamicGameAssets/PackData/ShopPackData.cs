@@ -37,7 +37,7 @@ namespace DynamicGameAssets.PackData
         */
         public string ShopId { get; set; }
 
-        public string Item { get; set; }
+        public ItemAbstraction Item { get; set; }
         public int MaxSold { get; set; } = int.MaxValue;
 
         public int Cost { get; set; }

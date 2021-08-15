@@ -33,6 +33,8 @@ namespace DynamicGameAssets.PackData
         /// </summary>
         public DynamicFieldData[] DynamicFields { get; set; }
 
+        public virtual void PostLoad() { }
+
         public void ApplyDynamicFields()
         {
             if ( DynamicFields == null )

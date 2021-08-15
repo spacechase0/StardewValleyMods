@@ -44,6 +44,8 @@ namespace DynamicGameAssets
 
         internal static Dictionary<int, string> itemLookup = new Dictionary<int, string>();
 
+        internal static List<DGACustomRecipe> customRecipes = new List<DGACustomRecipe>();
+
         private static readonly PerScreen<StateData> _state = new PerScreen<StateData>( () => new StateData() );
         internal static StateData State => _state.Value;
 
@@ -64,7 +66,7 @@ namespace DynamicGameAssets
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             helper.Events.Display.MenuChanged += OnMenuChanged;
 
-            helper.ConsoleCommands.Add( "list_ja", "...", OnListCommand );
+            helper.ConsoleCommands.Add( "list_dga", "...", OnListCommand );
             helper.ConsoleCommands.Add( "player_adddga", "...", OnAddCommand );
             helper.ConsoleCommands.Add( "dga_force", "Do not use", OnForceCommand );
 
@@ -88,8 +90,20 @@ namespace DynamicGameAssets
 
             var spacecore = Helper.ModRegistry.GetApi<ISpaceCoreApi>( "spacechase0.SpaceCore" );
             spacecore.RegisterSerializerType( typeof( CustomObject ) );
-        }
+            spacecore.RegisterSerializerType(typeof(CustomCraftingRecipe));
 
+            Log.Warn("objinfo:"+Game1.objectInformation);
+            foreach ( var pack in contentPacks )
+            {
+                foreach (var recipe in pack.Value.items.Values.OfType<CraftingPackData>())
+                {
+                    var crecipe = new DGACustomRecipe(recipe);
+                    customRecipes.Add(crecipe);
+                    (recipe.IsCooking ? CustomRecipe.CookingRecipes : CustomRecipe.CraftingRecipes).Add(recipe.CraftingDataKey, crecipe);
+                }
+            }
+        }
+        
         private void OnDayStarted( object sender, DayStartedEventArgs e )
         {
             // Enabled/disabled
@@ -151,6 +165,9 @@ namespace DynamicGameAssets
             {
                 RefreshSpritebatchCache();
             }
+
+            Helper.Content.InvalidateCache("Data\\CraftingRecipes");
+            Helper.Content.InvalidateCache("Data\\CookingRecipes");
         }
 
         private void OnMenuChanged( object sender, MenuChangedEventArgs e )
@@ -220,16 +237,16 @@ namespace DynamicGameAssets
             {
                 Log.Debug( $"Loading content pack \"{cp.Manifest.Name}\"..." );
                 if ( cp.Manifest.ExtraFields == null ||
-                     !cp.Manifest.ExtraFields.ContainsKey( "GDAFormatVersion" ) ||
-                     !int.TryParse( cp.Manifest.ExtraFields[ "GDAFormatVersion" ].ToString(), out int ver ) )
+                     !cp.Manifest.ExtraFields.ContainsKey( "DGAFormatVersion" ) ||
+                     !int.TryParse( cp.Manifest.ExtraFields[ "DGAFormatVersion" ].ToString(), out int ver ) )
                 {
-                    Log.Error("Must specify a GDAFormatVersion as an integer! (See documentation.)");
+                    Log.Error("Must specify a DGAFormatVersion as an integer! (See documentation.)");
                     continue;
                 }
-                if ( !cp.Manifest.ExtraFields.ContainsKey( "GDAConditionsFormatVersion" ) ||
-                    !SemanticVersion.TryParse( cp.Manifest.ExtraFields[ "GDAConditionsFormatVersion" ].ToString(), out ISemanticVersion condVer ) )
+                if ( !cp.Manifest.ExtraFields.ContainsKey( "DGAConditionsFormatVersion" ) ||
+                    !SemanticVersion.TryParse( cp.Manifest.ExtraFields[ "DGAConditionsFormatVersion" ].ToString(), out ISemanticVersion condVer ) )
                 {
-                    Log.Error( "Must specify a GDAConditionsFormatVersion as a semantic version! (See documentation.)" );
+                    Log.Error( "Must specify a DGAConditionsFormatVersion as a semantic version! (See documentation.)" );
                     continue;
                 }
                 var pack = new ContentPack( cp );
@@ -239,14 +256,52 @@ namespace DynamicGameAssets
 
         public bool CanEdit<T>( IAssetInfo asset )
         {
-            return asset.AssetNameEquals( "Data\\ObjectInformation" );
+            if (asset.AssetNameEquals("Data\\CookingRecipes"))
+                return true;
+            if (asset.AssetNameEquals("Data\\CraftingRecipes"))
+                return true;
+            if (asset.AssetNameEquals("Data\\ObjectInformation"))
+                return true;
+            return false;
         }
 
         public void Edit<T>( IAssetData asset )
         {
-            asset.AsDictionary<int, string>().Data.Add( BaseFakeObjectId, "JA Dummy Object/0/0/Basic -20/JA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0" );
+            if (asset.AssetNameEquals("Data\\CookingRecipes"))
+            {
+                var dict = asset.AsDictionary<string, string>().Data;
+                int i = 0;
+                foreach (var crecipe in customRecipes)
+                {
+                    if (crecipe.data.Enabled && crecipe.data.IsCooking)
+                    {
+                        dict.Add(crecipe.data.CraftingDataKey, crecipe.data.CraftingDataValue);
+                        ++i;
+                    }
+                }
+                Log.Trace("Added " + i + "/" + customRecipes.Count + " entries to cooking recipes");
+            }
+            else if (asset.AssetNameEquals("Data\\CraftingRecipes"))
+            {
+                var dict = asset.AsDictionary<string, string>().Data;
+                int i = 0;
+                foreach (var crecipe in customRecipes)
+                {
+                    if (crecipe.data.Enabled && !crecipe.data.IsCooking)
+                    {
+                        dict.Add(crecipe.data.CraftingDataKey, crecipe.data.CraftingDataValue);
+                        ++i;
+                    }
+                }
+                Log.Trace("Added " + i + "/" + customRecipes.Count + " entries to crafting recipes");
+            }
+            else if (asset.AssetNameEquals("Data\\ObjectInformation"))
+            {
+                asset.AsDictionary<int, string>().Data.Add(BaseFakeObjectId, "DGA Dummy Object/0/0/Basic -20/DGA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0");
+            }
         }
 
+        /*
         private Item MakeItemFrom( string name, ContentPack context = null )
         {
             if ( context != null )
@@ -286,6 +341,7 @@ namespace DynamicGameAssets
             }
             return ret;
         }
+        */
 
         private void RefreshShopEntries()
         {
@@ -300,7 +356,7 @@ namespace DynamicGameAssets
                             State.TodaysShopEntries.Add( shopEntry.ShopId, new List<ShopEntry>() );
                         State.TodaysShopEntries[ shopEntry.ShopId ].Add( new ShopEntry()
                         {
-                            Item = MakeItemFrom( shopEntry.Item, cp.Value ),
+                            Item = shopEntry.Item.Create(),//MakeItemFrom( shopEntry.Item, cp.Value ),
                             Quantity = shopEntry.MaxSold,
                             Price = shopEntry.Cost,
                             Currency = shopEntry.Currency == null ? null : (shopEntry.Currency.Contains( '/' ) ? shopEntry.Currency : $"{cp.Key}/{shopEntry.Currency}")
