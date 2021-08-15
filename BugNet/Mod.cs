@@ -111,17 +111,12 @@ namespace BugNet
             ));
 
             // register cage with Json Assets
-            var texData = new Color[16 * 16];
-            texture.GetData(0, textureArea, texData, 0, texData.Length);
-            var jaTex = new Texture2D(Game1.graphics.GraphicsDevice, 16, 16);
-            jaTex.SetData(texData);
-
             JsonAssets.Mod.instance.RegisterObject(this.ModManifest, new JsonAssets.Data.ObjectData
             {
                 Name = defaultCageName,
                 NameLocalization = cageNameTranslations,
                 Description = "It's a critter! In a cage!",
-                Texture = jaTex,
+                Texture = this.CloneTextureArea(texture, textureArea),
                 Category = JsonAssets.Data.ObjectCategory.MonsterLoot,
                 CategoryTextOverride = "Critter",
                 Price = critterId.Contains("Butterfly") ? 50 : 100,
@@ -248,6 +243,19 @@ namespace BugNet
             if (!translations.TryGetValue("default", out defaultText))
                 defaultText = null;
             translations.Remove("default");
+        }
+
+        /// <summary>Copy an area in a texture into a new texture.</summary>
+        /// <param name="texture">The texture to copy.</param>
+        /// <param name="textureArea">The pixel area within the <paramref name="texture"/> to copy.</param>
+        private Texture2D CloneTextureArea(Texture2D texture, Rectangle textureArea)
+        {
+            var data = new Color[16 * 16];
+            texture.GetData(0, textureArea, data, 0, data.Length);
+            Texture2D newTexture = new Texture2D(Game1.graphics.GraphicsDevice, 16, 16);
+            newTexture.SetData(data);
+
+            return newTexture;
         }
     }
 }
