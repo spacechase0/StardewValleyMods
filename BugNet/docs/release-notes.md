@@ -1,7 +1,8 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-# Upcoming release
+## Upcoming release
+* Updated for Stardew Valley 1.5.5.
 * Added [a mod-provided API to let other mods register critter instances](README.md#for-mod-authors).
 * Fixed error items when not playing in English.
 * Fixed error items when catching an unsupported critter. (Unsupported critters will be ignored instead.)

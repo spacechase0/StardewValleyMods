@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Updated for Stardew Valley 1.5.5.
 * Expanded Preconditions Utility (EPU) is no longer required.  
   _Json Assets now loads fine without EPU installed. If a content pack uses EPU conditions and you
   don't have it installed, Json Assets will log an error and treat those conditions as always failed._

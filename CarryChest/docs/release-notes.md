@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Updated for Stardew Valley 1.5.5.
 * Placing a chest now transfers attached mod data like Chests Anywhere settings (thanks to ImJustMatt!).
 
 ## 1.3.4

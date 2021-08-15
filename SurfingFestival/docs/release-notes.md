@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Updated for Stardew Valley 1.5.5.
 * Fixed typo in Abigail's dialogue (thanks to mcBegins2Snow!).
 * Improved translations. Thanks to mcBegins2Snow (added Chinese)!
 

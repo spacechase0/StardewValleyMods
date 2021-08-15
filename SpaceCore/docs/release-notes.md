@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Updated for Stardew Valley 1.5.5.
 * Fixed conflict with PyTK items if no custom SpaceCore items are registered.
 
 ## 1.5.10
