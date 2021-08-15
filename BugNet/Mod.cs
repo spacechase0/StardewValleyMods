@@ -37,40 +37,40 @@ namespace BugNet
             {
                 this.RegisterCritter(name, tilesheet, new Rectangle(index % 4 * 16, index / 4 * 16, 16, 16), $"critter.{name}", releaseFunc);
             }
-            Register("SummerButterflyBlue", 0, (x, y) => Critters.MakeButterfly(x, y, 128));
-            Register("SummerButterflyGreen", 1, (x, y) => Critters.MakeButterfly(x, y, 148));
-            Register("SummerButterflyRed", 2, (x, y) => Critters.MakeButterfly(x, y, 132));
-            Register("SummerButterflyPink", 3, (x, y) => Critters.MakeButterfly(x, y, 152));
-            Register("SummerButterflyYellow", 4, (x, y) => Critters.MakeButterfly(x, y, 136));
-            Register("SummerButterflyOrange", 5, (x, y) => Critters.MakeButterfly(x, y, 156));
-            Register("SpringButterflyPalePink", 6, (x, y) => Critters.MakeButterfly(x, y, 160));
-            Register("SpringButterflyMagenta", 7, (x, y) => Critters.MakeButterfly(x, y, 180));
-            Register("SpringButterflyWhite", 8, (x, y) => Critters.MakeButterfly(x, y, 163));
-            Register("SpringButterflyYellow", 9, (x, y) => Critters.MakeButterfly(x, y, 183));
-            Register("SpringButterflyPurple", 10, (x, y) => Critters.MakeButterfly(x, y, 166));
-            Register("SpringButterflyPink", 11, (x, y) => Critters.MakeButterfly(x, y, 186));
-            Register("BrownBird", 12, (x, y) => Critters.MakeBird(x, y, Birdie.brownBird));
-            Register("BlueBird", 13, (x, y) => Critters.MakeBird(x, y, Birdie.blueBird));
-            Register("GreenFrog", 14, (x, y) => Critters.MakeFrog(x, y, false));
-            Register("OliveFrog", 15, (x, y) => Critters.MakeFrog(x, y, false));
-            Register("Firefly", 16, Critters.MakeFirefly);
-            Register("Squirrel", 17, Critters.MakeSquirrel);
-            Register("GrayRabbit", 18, (x, y) => Critters.MakeRabbit(x, y, false));
-            Register("WhiteRabbit", 19, (x, y) => Critters.MakeRabbit(x, y, true));
-            Register("WoodPecker", 20, Critters.MakeWoodpecker);
-            Register("Seagull", 21, Critters.MakeSeagull);
-            Register("Owl", 22, Critters.MakeOwl);
-            Register("Crow", 23, Critters.MakeCrow);
-            Register("Cloud", 24, Critters.MakeCloud);
-            Register("BlueParrot", 25, (x, y) => Critters.MakeParrot(x, y, false));
-            Register("GreenParrot", 26, (x, y) => Critters.MakeParrot(x, y, true));
-            Register("Monkey", 27, Critters.MakeMonkey);
-            Register("OrangeIslandButterfly", 28, (x, y) => Critters.MakeButterfly(x, y, 364, true));
-            Register("PinkIslandButterfly", 29, (x, y) => Critters.MakeButterfly(x, y, 368, true));
-            Register("PurpleBird", 30, (x, y) => Critters.MakeBird(x, y, 115/*Birdie.greenBird*/));
-            Register("RedBird", 31, (x, y) => Critters.MakeBird(x, y, 120/*Birdie.redBird*/));
-            Register("SunsetTropicalButterfly", 32, (x, y) => Critters.MakeButterfly(x, y, 372, true));
-            Register("TropicalButterfly", 33, (x, y) => Critters.MakeButterfly(x, y, 376, true));
+            Register("SummerButterflyBlue", 0, (x, y) => CritterBuilder.MakeButterfly(x, y, 128));
+            Register("SummerButterflyGreen", 1, (x, y) => CritterBuilder.MakeButterfly(x, y, 148));
+            Register("SummerButterflyRed", 2, (x, y) => CritterBuilder.MakeButterfly(x, y, 132));
+            Register("SummerButterflyPink", 3, (x, y) => CritterBuilder.MakeButterfly(x, y, 152));
+            Register("SummerButterflyYellow", 4, (x, y) => CritterBuilder.MakeButterfly(x, y, 136));
+            Register("SummerButterflyOrange", 5, (x, y) => CritterBuilder.MakeButterfly(x, y, 156));
+            Register("SpringButterflyPalePink", 6, (x, y) => CritterBuilder.MakeButterfly(x, y, 160));
+            Register("SpringButterflyMagenta", 7, (x, y) => CritterBuilder.MakeButterfly(x, y, 180));
+            Register("SpringButterflyWhite", 8, (x, y) => CritterBuilder.MakeButterfly(x, y, 163));
+            Register("SpringButterflyYellow", 9, (x, y) => CritterBuilder.MakeButterfly(x, y, 183));
+            Register("SpringButterflyPurple", 10, (x, y) => CritterBuilder.MakeButterfly(x, y, 166));
+            Register("SpringButterflyPink", 11, (x, y) => CritterBuilder.MakeButterfly(x, y, 186));
+            Register("BrownBird", 12, (x, y) => CritterBuilder.MakeBird(x, y, Birdie.brownBird));
+            Register("BlueBird", 13, (x, y) => CritterBuilder.MakeBird(x, y, Birdie.blueBird));
+            Register("GreenFrog", 14, (x, y) => CritterBuilder.MakeFrog(x, y, false));
+            Register("OliveFrog", 15, (x, y) => CritterBuilder.MakeFrog(x, y, false));
+            Register("Firefly", 16, CritterBuilder.MakeFirefly);
+            Register("Squirrel", 17, CritterBuilder.MakeSquirrel);
+            Register("GrayRabbit", 18, (x, y) => CritterBuilder.MakeRabbit(x, y, false));
+            Register("WhiteRabbit", 19, (x, y) => CritterBuilder.MakeRabbit(x, y, true));
+            Register("WoodPecker", 20, CritterBuilder.MakeWoodpecker);
+            Register("Seagull", 21, CritterBuilder.MakeSeagull);
+            Register("Owl", 22, CritterBuilder.MakeOwl);
+            Register("Crow", 23, CritterBuilder.MakeCrow);
+            Register("Cloud", 24, CritterBuilder.MakeCloud);
+            Register("BlueParrot", 25, (x, y) => CritterBuilder.MakeParrot(x, y, false));
+            Register("GreenParrot", 26, (x, y) => CritterBuilder.MakeParrot(x, y, true));
+            Register("Monkey", 27, CritterBuilder.MakeMonkey);
+            Register("OrangeIslandButterfly", 28, (x, y) => CritterBuilder.MakeButterfly(x, y, 364, true));
+            Register("PinkIslandButterfly", 29, (x, y) => CritterBuilder.MakeButterfly(x, y, 368, true));
+            Register("PurpleBird", 30, (x, y) => CritterBuilder.MakeBird(x, y, 115/*Birdie.greenBird*/));
+            Register("RedBird", 31, (x, y) => CritterBuilder.MakeBird(x, y, 120/*Birdie.redBird*/));
+            Register("SunsetTropicalButterfly", 32, (x, y) => CritterBuilder.MakeButterfly(x, y, 372, true));
+            Register("TropicalButterfly", 33, (x, y) => CritterBuilder.MakeButterfly(x, y, 376, true));
             //register("Marsupial", 34, (x, y) => Critters.MakeMarsupial(x, y));
         }
 
@@ -81,7 +81,13 @@ namespace BugNet
             spaceCore.RegisterSerializerType(typeof(BugNetTool));
         }
 
-        private void RegisterCritter(string critterId, Texture2D tex, Rectangle texRect, string translationKey, Func<int, int, Critter> makeFunc)
+        /// <summary>Add a new critter which can be caught.</summary>
+        /// <param name="critterId">The unique critter ID.</param>
+        /// <param name="texture">The texture to show in the critter cage.</param>
+        /// <param name="textureArea">The pixel area within the <paramref name="texture"/> to show in the critter cage.</param>
+        /// <param name="translationKey">The translation key for the critter name.</param>
+        /// <param name="makeCritter">Create a critter instance at the given X and Y tile position.</param>
+        private void RegisterCritter(string critterId, Texture2D texture, Rectangle textureArea, string translationKey, Func<int, int, Critter> makeCritter)
         {
             // get translations
             this.GetTranslationsInAllLocales(
@@ -97,17 +103,16 @@ namespace BugNet
             );
 
             // save critter data
-            Mod.CrittersData.Add(critterId, new CritterData
-            {
-                DefaultName = defaultCritterName,
-                Texture = new TextureTarget { Texture = tex, SourceRect = texRect },
-                TranslatedName = () => this.Helper.Translation.Get(translationKey),
-                MakeFunction = makeFunc
-            });
+            Mod.CrittersData.Add(critterId, new CritterData(
+                defaultName: defaultCritterName,
+                translatedName: () => this.Helper.Translation.Get(translationKey),
+                texture: new TextureTarget(texture, textureArea),
+                makeCritter: makeCritter
+            ));
 
             // register cage with Json Assets
             var texData = new Color[16 * 16];
-            tex.GetData(0, texRect, texData, 0, texData.Length);
+            texture.GetData(0, textureArea, texData, 0, texData.Length);
             var jaTex = new Texture2D(Game1.graphics.GraphicsDevice, 16, 16);
             jaTex.SetData(texData);
 
@@ -159,7 +164,7 @@ namespace BugNet
 
                 // Spawn the critter
                 int x = (int)e.Cursor.GrabTile.X + 1, y = (int)e.Cursor.GrabTile.Y + 1;
-                var critter = activeCritter.MakeFunction(x, y);
+                var critter = activeCritter.MakeCritter(x, y);
                 Game1.player.currentLocation.addCritter(critter);
 
                 Game1.player.reduceActiveItemByOne();
@@ -177,7 +182,7 @@ namespace BugNet
 
         internal static string GetCritterIdFrom(Critter critter)
         {
-            int bframe = critter switch
+            int baseFrame = critter switch
             {
                 Cloud => -2,
                 Frog frog => Mod.Instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4,
@@ -186,7 +191,7 @@ namespace BugNet
                 _ => critter.baseFrame
             };
 
-            return bframe switch
+            return baseFrame switch
             {
                 -10 or -34 => "GreenParrot",
                 -58 or -82 => "BlueParrot",
