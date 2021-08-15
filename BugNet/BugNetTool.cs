@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
 using System.Xml.Serialization;
+using BugNet.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
 using SpaceShared;
 using StardewValley;
+using StardewValley.BellsAndWhistles;
 using StardewValley.Tools;
 using SObject = StardewValley.Object;
 
@@ -79,15 +81,16 @@ namespace BugNet
                 if (critters == null)
                     return;
 
-                foreach (var critter in critters.ToList())
+                foreach (Critter critter in critters.ToList())
                 {
                     if (critter.getBoundingBox(0, 0).Intersects(area))
                     {
-                        critters.Remove(critter);
+                        if (!Mod.TryGetCritter(critter, out CritterData data))
+                            continue; // not a supported critter
 
-                        string critterId = Mod.GetCritterIdFrom(critter);
-                        int objId = Mod.Ja.GetObjectId($"Critter Cage: {Mod.GetCritterDefaultName(critterId)}");
-                        Log.Trace("Spawning a " + critterId + " with ID " + objId);
+                        critters.Remove(critter);
+                        int objId = Mod.Ja.GetObjectId($"Critter Cage: {data.DefaultName}");
+                        Log.Trace($"Spawning a '{data.DefaultName}' critter cage with item ID {objId}");
                         who.currentLocation.debris.Add(new Debris(new SObject(objId, 1), critter.position));
                     }
                 }

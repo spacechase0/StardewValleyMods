@@ -1,140 +1,185 @@
+using System;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
+using StardewValley.TerrainFeatures;
 
 namespace BugNet.Framework
 {
-    /// <summary>Builds vanilla critter instances.</summary>
+    /// <summary>Builds a vanilla critter instance.</summary>
     internal class CritterBuilder
     {
         /*********
+        ** Accessors
+        *********/
+        /// <summary>Create a critter instance at the given X and Y tile position.</summary>
+        public Func<int, int, Critter> MakeCritter;
+
+        /// <summary>Get whether a given critter instance matches this critter.</summary>
+        public Func<Critter, bool> IsThisCritter;
+
+
+        /*********
         ** Public methods
         *********/
+        /// <summary>Construct an instance.</summary>
+        /// <param name="makeCritter">Create a critter instance at the given X and Y tile position.</param>
+        /// <param name="isThisCritter">Get whether a given critter instance matches this critter.</param>
+        public CritterBuilder(Func<int, int, Critter> makeCritter, Func<Critter, bool> isThisCritter)
+        {
+            this.MakeCritter = makeCritter;
+            this.IsThisCritter = isThisCritter;
+        }
+
         /// <summary>Create a butterfly.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
         /// <param name="baseFrame">The base frame in the critter tilesheet.</param>
         /// <param name="island">Whether to create an island butterfly.</param>
-        public static Critter MakeButterfly(int x, int y, int baseFrame, bool island = false)
+        public static CritterBuilder ForButterfly(int baseFrame, bool island = false)
         {
-            var butterfly = new Butterfly(new Vector2(x, y))
-            {
-                baseFrame = baseFrame,
-                sprite =
+            return new(
+                makeCritter: (x, y) =>
                 {
-                    CurrentFrame = baseFrame
-                }
-            };
-            if (island)
-                Mod.Instance.Helper.Reflection.GetField<bool>(butterfly, "islandButterfly").SetValue(true);
-
-            return butterfly;
+                    Butterfly butterfly = new Butterfly(new Vector2(x, y))
+                    {
+                        baseFrame = baseFrame,
+                        sprite = { CurrentFrame = baseFrame }
+                    };
+                    if (island)
+                        Mod.Instance.Helper.Reflection.GetField<bool>(butterfly, "islandButterfly").SetValue(true);
+                    return butterfly;
+                },
+                isThisCritter: critter =>
+                    critter is Butterfly butterfly
+                    && butterfly.baseFrame == baseFrame
+                    && island == Mod.Instance.Helper.Reflection.GetField<bool>(critter, "islandButterfly").GetValue()
+            );
         }
 
         /// <summary>Create a bird.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
-        /// <param name="frame">The base frame in the critter tilesheet.</param>
-        public static Critter MakeBird(int x, int y, int frame)
+        /// <param name="baseFrame">The base frame in the critter tilesheet.</param>
+        public static CritterBuilder ForBird(int baseFrame)
         {
-            return new Birdie(x, y, frame);
+            return new(
+                makeCritter: (x, y) => new Birdie(x, y, baseFrame),
+                isThisCritter: critter => critter is Birdie birdie && birdie.baseFrame == baseFrame
+            );
         }
 
         /// <summary>Create a cloud.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
-        public static Critter MakeCloud(int x, int y)
+        public static CritterBuilder ForCloud()
         {
-            return new Cloud(new Vector2(x, y));
+            return new(
+                makeCritter: (x, y) => new Cloud(new Vector2(x, y)),
+                isThisCritter: critter => critter is Cloud
+            );
         }
 
         /// <summary>Create a crow.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
-        public static Critter MakeCrow(int x, int y)
+        public static CritterBuilder ForCrow()
         {
-            return new Crow(x, y);
+            return new(
+                makeCritter: (x, y) => new Crow(x, y),
+                isThisCritter: critter => critter is Crow
+            );
         }
 
         /// <summary>Create a firefly.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
-        public static Critter MakeFirefly(int x, int y)
+        public static CritterBuilder ForFirefly()
         {
-            return new Firefly(new Vector2(x, y));
+            return new(
+                makeCritter: (x, y) => new Firefly(new Vector2(x, y)),
+                isThisCritter: critter => critter is Firefly
+            );
         }
 
         /// <summary>Create a frog.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
-        /// <param name="olive">Whether to create an olive frog, similar to the one Sebastian's fourteen-heart event.</param>
-        public static Critter MakeFrog(int x, int y, bool olive)
+        /// <param name="olive">Whether to create an olive frog.</param>
+        public static CritterBuilder ForFrog(bool olive)
         {
-            return new Frog(new Vector2(x, y), olive);
+            return new(
+                makeCritter: (x, y) => new Frog(new Vector2(x, y), waterLeaper: olive),
+                isThisCritter: critter => critter is Frog frog && Mod.Instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() == olive
+            );
         }
 
         /// <summary>Create an owl.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
-        public static Critter MakeOwl(int x, int y)
+        public static CritterBuilder ForOwl()
         {
-            return new Owl(new Vector2(x * Game1.tileSize, y * Game1.tileSize));
+            return new(
+                makeCritter: (x, y) => new Owl(new Vector2(x * Game1.tileSize, y * Game1.tileSize)),
+                isThisCritter: critter => critter is Owl
+            );
         }
 
         /// <summary>Create a rabbit.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
         /// <param name="white">Whether to create a white rabbit.</param>
-        public static Critter MakeRabbit(int x, int y, bool white)
+        public static CritterBuilder ForRabbit(bool white)
         {
-            return new Rabbit(new Vector2(x, y), false)
-            {
-                baseFrame = white ? 74 : 54
-            };
+            int baseFrame = white ? 74 : 54;
+
+            return new(
+                makeCritter: (x, y) => new Rabbit(new Vector2(x, y), false)
+                {
+                    baseFrame = baseFrame
+                },
+                isThisCritter: critter => critter is Rabbit && critter.baseFrame == baseFrame
+            );
         }
 
         /// <summary>Create a seagull.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
-        public static Critter MakeSeagull(int x, int y)
+        public static CritterBuilder ForSeagull()
         {
-            return new Seagull(new Vector2(x * Game1.tileSize, y * Game1.tileSize), Seagull.stopped);
+            return new(
+                makeCritter: (x, y) => new Seagull(new Vector2(x * Game1.tileSize, y * Game1.tileSize), Seagull.stopped),
+                isThisCritter: critter => critter is Seagull
+            );
         }
 
         /// <summary>Create a squirrel.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
-        public static Critter MakeSquirrel(int x, int y)
+        public static CritterBuilder ForSquirrel()
         {
-            return new Squirrel(new Vector2(x, y), false);
+            return new(
+                makeCritter: (x, y) => new Squirrel(new Vector2(x, y), false),
+                isThisCritter: critter => critter is Squirrel
+            );
         }
 
         /// <summary>Create a woodpecker.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
-        public static Critter MakeWoodpecker(int x, int y)
+        public static CritterBuilder ForWoodpecker()
         {
-            return new Woodpecker(new StardewValley.TerrainFeatures.Tree(), new Vector2(x, y));
+            return new(
+                makeCritter: (x, y) => new Woodpecker(new Tree(), new Vector2(x, y)),
+                isThisCritter: critter => critter is Woodpecker
+            );
         }
 
         /// <summary>Create a monkey.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
-        public static Critter MakeMonkey(int x, int y)
+        public static CritterBuilder ForMonkey()
         {
-            return new CalderaMonkey(new Vector2(x, y));
+            return new(
+                makeCritter: (x, y) => new CalderaMonkey(new Vector2(x, y)),
+                isThisCritter: critter => critter is CalderaMonkey
+            );
         }
 
         /// <summary>Create a parrot.</summary>
-        /// <param name="x">The tile X position.</param>
-        /// <param name="y">the tile Y position.</param>
-        /// <param name="blue">Whether to create a blue parrot.</param>
-        public static Critter MakeParrot(int x, int y, bool blue)
+        /// <param name="green">Whether to create a green parrot.</param>
+        public static CritterBuilder ForParrot(bool green)
         {
-            return new OverheadParrot(new Vector2(x, y))
-            {
-                sourceRect = new Rectangle(0, (Game1.random.Next(2) + (blue ? 2 : 0)) * 24, 24, 24)
-            };
+            int index = green ? 2 : 0;
+            int minYOffset = index * 24;
+            int maxYOffset = (index + 1) * 24;
+
+            return new(
+                makeCritter: (x, y) => new OverheadParrot(new Vector2(x, y))
+                {
+                    sourceRect = new Rectangle(0, Game1.random.Next(minYOffset, maxYOffset + 1), 24, 24)
+                },
+                isThisCritter: critter =>
+                    critter is OverheadParrot parrot
+                    && parrot.sourceRect.Y >= minYOffset
+                    && parrot.sourceRect.Y <= maxYOffset
+            );
         }
     }
 }
