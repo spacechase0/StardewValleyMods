@@ -2,6 +2,7 @@
 
 # Release notes
 # Upcoming release
+* Added [a mod-provided API to let other mods register critter instances](README.md#for-mod-authors).
 * Fixed error items when not playing in English.
 * Fixed error items when catching an unsupported critter. (Unsupported critters will be ignored instead.)
 * Internal refactoring.

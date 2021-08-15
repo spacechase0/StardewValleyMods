@@ -9,6 +9,7 @@
     <Import_RootNamespace>SpaceShared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IBugNetApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ICookingSkillApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IExpandedPreconditionsUtilityApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IEntoaroxFrameworkApi.cs" />

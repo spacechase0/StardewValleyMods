@@ -23,6 +23,9 @@ namespace BugNet
         internal static IJsonAssetsApi Ja;
         private static readonly Dictionary<string, CritterData> CrittersData = new();
 
+        /// <summary>The placeholder texture for custom critter cages.</summary>
+        private TextureTarget PlaceholderSprite;
+
 
         /*********
         ** Accessors
@@ -47,17 +50,24 @@ namespace BugNet
 
             var tilesheet = helper.Content.Load<Texture2D>("assets/critters.png");
 
+            Rectangle GetTilesheetArea(int index)
+            {
+                return new Rectangle(index % 4 * 16, index / 4 * 16, 16, 16);
+            }
             void Register(string name, int index, CritterBuilder critterBuilder)
             {
                 this.RegisterCritter(
                     critterId: name,
                     texture: tilesheet,
-                    textureArea: new Rectangle(index % 4 * 16, index / 4 * 16, 16, 16),
+                    textureArea: GetTilesheetArea(index),
                     translationKey: $"critter.{name}",
                     isThisCritter: critterBuilder.IsThisCritter,
                     makeCritter: critterBuilder.MakeCritter
                 );
             }
+
+            this.PlaceholderSprite = new TextureTarget(tilesheet, GetTilesheetArea(24)); // empty jar sprite
+
             Register("SummerButterflyBlue", 0, CritterBuilder.ForButterfly(128));
             Register("SummerButterflyGreen", 1, CritterBuilder.ForButterfly(148));
             Register("SummerButterflyRed", 2, CritterBuilder.ForButterfly(132));
@@ -93,6 +103,13 @@ namespace BugNet
             Register("SunsetTropicalButterfly", 32, CritterBuilder.ForButterfly(372, island: true));
             Register("TropicalButterfly", 33, CritterBuilder.ForButterfly(376, island: true));
         }
+
+        /// <inheritdoc />
+        public override object GetApi()
+        {
+            return new BugNetApi(this.RegisterCritter, this.PlaceholderSprite, this.Monitor);
+        }
+
 
         /*********
         ** Private methods
