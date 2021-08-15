@@ -2,21 +2,35 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using CustomCritters.Framework;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 
 namespace CustomCritters
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
+        /*********
+        ** Accessors
+        *********/
         public static Mod Instance;
+
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.Player.Warped += this.OnWarped;
 
             // load content packs
@@ -39,7 +53,38 @@ namespace CustomCritters
             }
         }
 
-        /// <summary>Raised after a player warps to a new location.</summary>
+
+        /*********
+        ** Private methods
+        *********/
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            // register critters with BugNet
+            var bugNet = this.Helper.ModRegistry.GetApi<IBugNetApi>("spacechase0.BugNet");
+            if (bugNet is not null)
+            {
+                foreach (CritterEntry critter in CritterEntry.Critters.Values)
+                {
+                    Texture2D texture = CustomCritter.LoadCritterTexture(critter.Id);
+
+                    bugNet.RegisterCritter(
+                        manifest: this.ModManifest,
+                        critterId: $"{this.ModManifest.UniqueID}/{critter.Id}",
+                        texture: texture,
+                        textureArea: new Rectangle(0, 0, texture.Width, texture.Height),
+                        defaultCritterName: critter.Id, // TODO: add name fields to critter.json
+                        translatedCritterNames: new Dictionary<string, string>(),
+                        makeCritter: (x, y) => critter.MakeCritter(new Vector2(x, y)),
+                        isThisCritter: instance => (instance as CustomCritter)?.Data.Id == critter.Id
+                    );
+                }
+            }
+        }
+
+        /// <inheritdoc cref="IPlayerEvents.Warped"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnWarped(object sender, WarpedEventArgs e)
