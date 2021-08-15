@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BugNet.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -34,7 +35,7 @@ namespace BugNet
 
             void Register(string name, int index, Func<int, int, Critter> releaseFunc)
             {
-                this.RegisterCritter(name, tilesheet, new Rectangle(index % 4 * 16, index / 4 * 16, 16, 16), () => helper.Translation.Get("critter." + name), releaseFunc);
+                this.RegisterCritter(name, tilesheet, new Rectangle(index % 4 * 16, index / 4 * 16, 16, 16), $"critter.{name}", releaseFunc);
             }
             Register("SummerButterflyBlue", 0, (x, y) => Critters.MakeButterfly(x, y, 128));
             Register("SummerButterflyGreen", 1, (x, y) => Critters.MakeButterfly(x, y, 148));
@@ -80,15 +81,31 @@ namespace BugNet
             spaceCore.RegisterSerializerType(typeof(BugNetTool));
         }
 
-        private void RegisterCritter(string critterId, Texture2D tex, Rectangle texRect, Func<string> getLocalizedName, Func<int, int, Critter> makeFunc)
+        private void RegisterCritter(string critterId, Texture2D tex, Rectangle texRect, string translationKey, Func<int, int, Critter> makeFunc)
         {
+            // get translations
+            this.GetTranslationsInAllLocales(
+                translationKey,
+                out string defaultCritterName,
+                out Dictionary<string, string> critterNameTranslations
+            );
+            this.GetTranslationsInAllLocales(
+                "critter.cage",
+                out string defaultCageName,
+                out Dictionary<string, string> cageNameTranslations,
+                format: (locale, translation) => translation.Tokens(new { critterName = locale == "default" ? defaultCritterName : critterNameTranslations[locale] }).ToString()
+            );
+
+            // save critter data
             Mod.CrittersData.Add(critterId, new CritterData
             {
+                DefaultName = defaultCritterName,
                 Texture = new TextureTarget { Texture = tex, SourceRect = texRect },
-                Name = getLocalizedName,
+                TranslatedName = () => this.Helper.Translation.Get(translationKey),
                 MakeFunction = makeFunc
             });
 
+            // register cage with Json Assets
             var texData = new Color[16 * 16];
             tex.GetData(0, texRect, texData, 0, texData.Length);
             var jaTex = new Texture2D(Game1.graphics.GraphicsDevice, 16, 16);
@@ -96,7 +113,8 @@ namespace BugNet
 
             JsonAssets.Mod.instance.RegisterObject(this.ModManifest, new JsonAssets.Data.ObjectData
             {
-                Name = $"Critter Cage: {getLocalizedName()}",
+                Name = defaultCageName,
+                NameLocalization = cageNameTranslations,
                 Description = "It's a critter! In a cage!",
                 Texture = jaTex,
                 Category = JsonAssets.Data.ObjectCategory.MonsterLoot,
@@ -109,10 +127,10 @@ namespace BugNet
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson?.Name != "Pierre")
+            if (e.NewMenu is not ShopMenu { portraitPerson: { Name: "Pierre" } } menu)
                 return;
 
-            Log.Debug($"Adding bug net to Pierre's shop.");
+            Log.Debug("Adding bug net to Pierre's shop.");
 
             var forSale = menu.forSale;
             var itemPriceAndStock = menu.itemPriceAndStock;
@@ -131,7 +149,7 @@ namespace BugNet
                 CritterData activeCritter = null;
                 foreach (var critterData in Mod.CrittersData)
                 {
-                    int check = Mod.Ja.GetObjectId("Critter Cage: " + critterData.Value.Name());
+                    int check = Mod.Ja.GetObjectId($"Critter Cage: {critterData.Value.DefaultName}");
                     if (check == Game1.player.ActiveObject.ParentSheetIndex)
                     {
                         activeCritter = critterData.Value;
@@ -150,10 +168,10 @@ namespace BugNet
             }
         }
 
-        internal static string GetCritterName(string critter)
+        internal static string GetCritterDefaultName(string critter)
         {
             return Mod.CrittersData.TryGetValue(critter, out CritterData critterData)
-                ? critterData.Name()
+                ? critterData.DefaultName
                 : "???";
         }
 
@@ -168,49 +186,63 @@ namespace BugNet
                 _ => critter.baseFrame
             };
 
-            switch (bframe)
+            return bframe switch
             {
-                case -10:
-                case -34:
-                    return "GreenParrot";
-                case -58:
-                case -82:
-                    return "BlueParrot";
-                case -100: return "Monkey";
-                case -3: return "GreenFrog";
-                case -4: return "OliveFrog";
-                case -2: return "Cloud";
-                case -1: return "Firefly";
-                case 0: return "Seagull";
-                case 14: return "Crow";
-                case 25: return "BrownBird";
-                case 45: return "BlueBird";
-                case 54: return "GrayRabbit";
-                case 74: return "WhiteRabbit";
-                case 60: return "Squirrel";
-                case 83: return "Owl";
-                case 115: return "PurpleBird";
-                case 125: return "RedBird";
-                case 160: return "SpringButterflyPalePink";
-                case 163: return "SpringButterflyWhite";
-                case 166: return "SpringButterflyPurple";
-                case 180: return "SpringButterflyMagenta";
-                case 183: return "SpringButterflyYellow";
-                case 186: return "SpringButterflyPink";
-                case 128: return "SummerButterflyBlue";
-                case 132: return "SummerButterflyRed";
-                case 136: return "SummerButterflyYellow";
-                case 148: return "SummerButterflyGreen";
-                case 152: return "SummerButterflyPink";
-                case 156: return "SummerButterflyOrange";
-                case 320: return "WoodPecker";
-                case 364: return "OrangeIslandButterfly";
-                case 368: return "PinkIslandButterfly";
-                case 372: return "SunsetTropicalButterfly";
-                case 376: return "TropicalButterfly";
-            }
+                -10 or -34 => "GreenParrot",
+                -58 or -82 => "BlueParrot",
+                -100 => "Monkey",
+                -3 => "GreenFrog",
+                -4 => "OliveFrog",
+                -2 => "Cloud",
+                -1 => "Firefly",
+                0 => "Seagull",
+                14 => "Crow",
+                25 => "BrownBird",
+                45 => "BlueBird",
+                54 => "GrayRabbit",
+                74 => "WhiteRabbit",
+                60 => "Squirrel",
+                83 => "Owl",
+                115 => "PurpleBird",
+                125 => "RedBird",
+                160 => "SpringButterflyPalePink",
+                163 => "SpringButterflyWhite",
+                166 => "SpringButterflyPurple",
+                180 => "SpringButterflyMagenta",
+                183 => "SpringButterflyYellow",
+                186 => "SpringButterflyPink",
+                128 => "SummerButterflyBlue",
+                132 => "SummerButterflyRed",
+                136 => "SummerButterflyYellow",
+                148 => "SummerButterflyGreen",
+                152 => "SummerButterflyPink",
+                156 => "SummerButterflyOrange",
+                320 => "WoodPecker",
+                364 => "OrangeIslandButterfly",
+                368 => "PinkIslandButterfly",
+                372 => "SunsetTropicalButterfly",
+                376 => "TropicalButterfly",
+                _ => "???"
+            };
+        }
 
-            return "???";
+        /// <summary>Get the translations in all available locales for a given translation key.</summary>
+        /// <param name="key">The translation key.</param>
+        /// <param name="defaultText">The default text.</param>
+        /// <param name="translations">The translation text in each locale.</param>
+        /// <param name="format">Format a translation.</param>
+        private void GetTranslationsInAllLocales(string key, out string defaultText, out Dictionary<string, string> translations, Func<string, Translation, string> format = null)
+        {
+            translations = this.Helper.Translation
+                .GetInAllLocales(key, withFallback: true)
+                .ToDictionary(
+                    localeSet => localeSet.Key,
+                    localeSet => format?.Invoke(localeSet.Key, localeSet.Value) ?? localeSet.Value.ToString()
+                );
+
+            if (!translations.TryGetValue("default", out defaultText))
+                defaultText = null;
+            translations.Remove("default");
         }
     }
 }

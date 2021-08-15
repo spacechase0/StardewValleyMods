@@ -86,7 +86,7 @@ namespace BugNet
                         critters.Remove(critter);
 
                         string critterId = Mod.GetCritterIdFrom(critter);
-                        int objId = Mod.Ja.GetObjectId($"Critter Cage: {Mod.GetCritterName(critterId)}");
+                        int objId = Mod.Ja.GetObjectId($"Critter Cage: {Mod.GetCritterDefaultName(critterId)}");
                         Log.Trace("Spawning a " + critterId + " with ID " + objId);
                         who.currentLocation.debris.Add(new Debris(new SObject(objId, 1), critter.position));
                     }
