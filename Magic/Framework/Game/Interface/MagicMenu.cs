@@ -159,7 +159,7 @@ namespace Magic.Framework.Game.Interface
                         }
                         else if (i == 0 || spellBook.KnowsSpell(this.Sel, i - 1))
                         {
-                            if (this.JustLeftClicked)
+                            if (this.JustLeftClicked && spellBook.FreePoints > 0)
                                 spellBook.Mutate(_ => spellBook.LearnSpell(this.Sel, i));
                             else if (this.JustRightClicked && i != 0)
                                 spellBook.Mutate(_ => spellBook.ForgetSpell(this.Sel, i));
