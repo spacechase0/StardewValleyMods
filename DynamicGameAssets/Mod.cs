@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -67,7 +67,7 @@ namespace DynamicGameAssets
             helper.Events.Display.MenuChanged += OnMenuChanged;
 
             helper.ConsoleCommands.Add( "list_dga", "...", OnListCommand );
-            helper.ConsoleCommands.Add( "player_adddga", "...", OnAddCommand );
+            helper.ConsoleCommands.Add( "player_adddga", "...", OnAddCommand, AddCommandAutoComplete );
             helper.ConsoleCommands.Add( "dga_force", "Do not use", OnForceCommand );
 
             harmony = new Harmony( ModManifest.UniqueID );
@@ -92,6 +92,7 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType( typeof( CustomObject ) );
             spacecore.RegisterSerializerType(typeof(CustomCraftingRecipe));
             spacecore.RegisterSerializerType(typeof(CustomBasicFurniture));
+            spacecore.RegisterSerializerType(typeof(CustomBedFurniture));
 
             foreach ( var pack in contentPacks )
             {
@@ -224,6 +225,41 @@ namespace DynamicGameAssets
             }
 
             Game1.player.addItemByMenuIfNecessary( item );
+        }
+
+        private string[] AddCommandAutoComplete( string cmd, string input )
+        {
+            if ( input.Contains( ' ' ) )
+                return null;
+
+            var ret = new List<string>();
+
+            int slash = input.IndexOf( '/' );
+            if ( slash == -1 )
+            {
+                foreach ( string packId in contentPacks.Keys )
+                {
+                    if ( packId.StartsWith( input ) )
+                        ret.Add( packId );
+                }
+            }
+            else
+            {
+                string packId = input.Substring( 0, slash );
+                string itemInPack = input.Substring( slash + 1 );
+
+                if ( !contentPacks.ContainsKey( packId ) )
+                    return null;
+
+                var pack = contentPacks[ packId ];
+                foreach ( string itemId in pack.items.Keys )
+                {
+                    if ( itemId.StartsWith( itemInPack ) )
+                        ret.Add( packId + "/" + itemId.Replace( " ", "\" \"" ) );
+                }
+            }
+
+            return ret.ToArray();
         }
 
         private void OnForceCommand( string cmd, string[] args )

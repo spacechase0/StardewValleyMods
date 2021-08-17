@@ -44,6 +44,7 @@ namespace DynamicGameAssets.PackData
         }
 
         public FurnitureType Type { get; set; }
+        public BedFurniture.BedType BedType { get; set; } = BedFurniture.BedType.Single;
 
         public List<FurnitureConfiguration> Configurations { get; set; } = new List<FurnitureConfiguration>();
 
@@ -69,7 +70,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return parent.GetTexture(Configurations[0].Texture, (int) Configurations[0].DisplaySize.X, (int) Configurations[0].DisplaySize.Y);
+            return parent.GetTexture(Configurations[0].Texture, (int) Configurations[0].DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int) Configurations[0].DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
         }
 
         public override void OnDisabled()
@@ -87,8 +88,13 @@ namespace DynamicGameAssets.PackData
 
         public override Item ToItem()
         {
-            // todo - per-type
-            return new CustomBasicFurniture( this );
+            switch ( Type )
+            {
+                case FurnitureType.Bed:
+                    return new CustomBedFurniture( this );
+                default:
+                    return new CustomBasicFurniture( this );
+            }
         }
     }
 }
