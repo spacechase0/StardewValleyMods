@@ -95,6 +95,7 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomBedFurniture));
             spacecore.RegisterSerializerType(typeof(CustomTVFurniture));
             spacecore.RegisterSerializerType(typeof(CustomFishTankFurniture));
+            spacecore.RegisterSerializerType(typeof(CustomStorageFurniture));
 
             foreach ( var pack in contentPacks )
             {

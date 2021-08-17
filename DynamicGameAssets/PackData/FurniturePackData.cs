@@ -109,6 +109,8 @@ namespace DynamicGameAssets.PackData
                     return new CustomTVFurniture( this );
                 case FurnitureType.FishTank:
                     return new CustomFishTankFurniture( this );
+                case FurnitureType.Dresser:
+                    return new CustomStorageFurniture( this );
                 default:
                     return new CustomBasicFurniture( this );
             }
