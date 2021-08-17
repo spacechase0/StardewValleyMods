@@ -91,6 +91,7 @@ namespace DynamicGameAssets
             var spacecore = Helper.ModRegistry.GetApi<ISpaceCoreApi>( "spacechase0.SpaceCore" );
             spacecore.RegisterSerializerType( typeof( CustomObject ) );
             spacecore.RegisterSerializerType(typeof(CustomCraftingRecipe));
+            spacecore.RegisterSerializerType(typeof(CustomBasicFurniture));
 
             foreach ( var pack in contentPacks )
             {

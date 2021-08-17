@@ -26,6 +26,7 @@ namespace DynamicGameAssets.PackData
             conditionVersion = new SemanticVersion( pack.Manifest.ExtraFields[ "DGAConditionsFormatVersion" ].ToString() );
             LoadAndValidateItems<ObjectPackData>( "objects.json" );
             LoadAndValidateItems<CraftingPackData>("crafting.json");
+            LoadAndValidateItems<FurniturePackData>("furniture.json");
             LoadOthers<ShopPackData>( "shop-entries.json" );
         }
 
@@ -72,6 +73,8 @@ namespace DynamicGameAssets.PackData
         internal TexturedRect GetTexture( string path, int xSize, int ySize )
         {
             int colon = path.IndexOf( ':' );
+            if (colon == -1 && !smapiPack.HasFile(path) || colon != -1 && !smapiPack.HasFile(path.Substring(0, colon)))
+                throw new ArgumentException("No such file \"" + path + "\"!");
             if ( colon == -1 )
                 return new TexturedRect() { Texture = smapiPack.LoadAsset< Texture2D >( path ), Rect = null };
             var tex = smapiPack.LoadAsset< Texture2D >( path.Substring( 0, colon ) );

@@ -1,4 +1,4 @@
-﻿using DynamicGameAssets.Game;
+using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -113,7 +113,7 @@ namespace DynamicGameAssets.PackData
             {
                 foreach ( var farmer in Game1.getAllFarmers() )
                 {
-                    var fakeId = $"{parent.smapiPack.Manifest.UniqueID}/{ID}".GetHashCode();
+                    int fakeId = $"{parent.smapiPack.Manifest.UniqueID}/{ID}".GetHashCode();
                     if ( farmer.basicShipped.ContainsKey( fakeId ) )
                         farmer.basicShipped.Remove( fakeId );
                 }
@@ -135,7 +135,7 @@ namespace DynamicGameAssets.PackData
             if ( Edibility != StardewValley.Object.inedible )
             {
                 int itype = ( int ) Category;
-                var str = $"{ID}/{SellPrice}/{Edibility}/Basic {itype}/{Name}/{Description}/";
+                string str = $"{ID}/{SellPrice}/{Edibility}/Basic {itype}/{Name}/{Description}/";
                 str += ( EdibleIsDrink ? "drink" : "food" ) + "/";
                 if ( EdibleBuffs == null )
                     EdibleBuffs = new FoodBuffsData();

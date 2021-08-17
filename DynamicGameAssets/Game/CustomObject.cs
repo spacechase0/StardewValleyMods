@@ -1,4 +1,4 @@
-﻿using DynamicGameAssets.PackData;
+using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
@@ -332,7 +332,7 @@ namespace DynamicGameAssets.Game
         protected override void _PopulateContextTags( HashSet<string> tags )
         {
             base._PopulateContextTags( tags );
-            foreach ( var tag in Data.ContextTags )
+            foreach ( string tag in Data.ContextTags )
                 tags.Add( tag );
         }
     }
