@@ -1,7 +1,7 @@
 ﻿{
     "mannequin.desc": "Put clothing, hats, or boots on it.",
-    "mannequin.plain.Male": "Normal Mannequin",
-    "mannequin.plain.Female": "Normal Womannequin",
-    "mannequin.magic.Male": "Magic Mannequin",
-    "mannequin.magic.Female": "Magic Womannequin"
+    "mannequin.name.plain-male": "Normal Mannequin",
+    "mannequin.name.plain-female": "Normal Womannequin",
+    "mannequin.name.magic-male": "Magic Mannequin",
+    "mannequin.name.magic-female": "Magic Womannequin"
 }

@@ -269,18 +269,7 @@ namespace Displays.Framework
 
         protected override string loadDisplayName()
         {
-            switch (this.MannType.Value)
-            {
-                case MannequinType.Plain when this.MannGender.Value == MannequinGender.Male:
-                    return Mod.Instance.Helper.Translation.Get("mannequin.plain.Male");
-                case MannequinType.Plain when this.MannGender.Value == MannequinGender.Female:
-                    return Mod.Instance.Helper.Translation.Get("mannequin.plain.Female");
-                case MannequinType.Magic when this.MannGender.Value == MannequinGender.Male:
-                    return Mod.Instance.Helper.Translation.Get("mannequin.magic.Male");
-                case MannequinType.Magic when this.MannGender.Value == MannequinGender.Female:
-                    return Mod.Instance.Helper.Translation.Get("mannequin.magic.Female");
-            }
-            return "{unknown mannequin display name}";
+            return Mod.Instance.Helper.Translation.Get($"mannequin.name.{this.MannType.Value}-{this.MannGender.Value}");
         }
 
         private void OnNetFieldChanged<TNetField, TValue>(TNetField field, TValue oldValue, TValue newValue)

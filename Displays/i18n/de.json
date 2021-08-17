@@ -1,7 +1,7 @@
 ﻿{
     "mannequin.desc": "Setze Hüte, Klamotten und Schuhe zur Austellung aus.",
-    "mannequin.plain.Male": "Schaufensterpuppe (m)",
-    "mannequin.plain.Female": "Schaufensterpuppe (w)",
-    "mannequin.magic.Male": "Zauber Schaufensterpuppe (m)",
-    "mannequin.magic.Female": "Zauber Schaufensterpuppe (w)"
+    "mannequin.name.plain-male": "Schaufensterpuppe (m)",
+    "mannequin.name.plain-female": "Schaufensterpuppe (w)",
+    "mannequin.name.magic-male": "Zauber Schaufensterpuppe (m)",
+    "mannequin.name.magic-female": "Zauber Schaufensterpuppe (w)"
 }
