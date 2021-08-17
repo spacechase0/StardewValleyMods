@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 // TODO: Light?
 // TODO: Deconstructor output patch?
 // TODO: Fish tank display?
+// TODO: Stuff on tables
 
 namespace DynamicGameAssets.PackData
 {

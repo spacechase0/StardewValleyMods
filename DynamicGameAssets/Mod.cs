@@ -66,9 +66,10 @@ namespace DynamicGameAssets
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             helper.Events.Display.MenuChanged += OnMenuChanged;
 
-            helper.ConsoleCommands.Add( "list_dga", "...", OnListCommand );
-            helper.ConsoleCommands.Add( "player_adddga", "...", OnAddCommand, AddCommandAutoComplete );
+            helper.ConsoleCommands.Add( "dga_list", "...", OnListCommand );
+            helper.ConsoleCommands.Add( "dga_add", "...", OnAddCommand, AddCommandAutoComplete );
             helper.ConsoleCommands.Add( "dga_force", "Do not use", OnForceCommand );
+            helper.ConsoleCommands.Add( "dga_reload", "...", OnReloadCommand, ReloadCommandAutoComplete );
 
             harmony = new Harmony( ModManifest.UniqueID );
             harmony.PatchAll();
@@ -205,7 +206,7 @@ namespace DynamicGameAssets
         {
             if ( args.Length < 1 )
             {
-                Log.Info( "Usage: player_adddga <mod.id/ItemId> [amount]" );
+                Log.Info( "Usage: dga_add <mod.id/ItemId> [amount]" );
                 return;
             }
 
@@ -270,6 +271,35 @@ namespace DynamicGameAssets
             OnDayStarted( this, null );
         }
 
+        private void OnReloadCommand( string cmd, string[] args )
+        {
+            contentPacks.Clear();
+            itemLookup.Clear();
+            customRecipes.Clear();
+            foreach ( var state in _state.GetActiveValues() )
+            {
+                state.Value.TodaysShopEntries.Clear();
+            }
+            LoadContentPacks();
+            OnDayStarted( this, null );
+        }
+
+        private string[] ReloadCommandAutoComplete( string cmd, string input )
+        {
+            if ( input.Contains( ' ' ) )
+                return null;
+
+            var ret = new List<string>();
+
+            foreach ( string packId in contentPacks.Keys )
+            {
+                if ( packId.StartsWith( input ) )
+                    ret.Add( packId );
+            }
+
+            return ret.ToArray();
+        }
+
         private void LoadContentPacks()
         {
             foreach ( var cp in Helper.ContentPacks.GetOwned() )
@@ -282,6 +312,11 @@ namespace DynamicGameAssets
                     Log.Error("Must specify a DGAFormatVersion as an integer! (See documentation.)");
                     continue;
                 }
+                if ( ver != 1 )
+                {
+                    Log.Error( "Unsupported format version!" );
+                    continue;
+                }   
                 if ( !cp.Manifest.ExtraFields.ContainsKey( "DGAConditionsFormatVersion" ) ||
                     !SemanticVersion.TryParse( cp.Manifest.ExtraFields[ "DGAConditionsFormatVersion" ].ToString(), out ISemanticVersion condVer ) )
                 {
