@@ -41,10 +41,13 @@ namespace DynamicGameAssets.PackData
             Bed,
             Painting,
             Fireplace,
+            TV,
         }
 
         public FurnitureType Type { get; set; }
         public BedFurniture.BedType BedType { get; set; } = BedFurniture.BedType.Single;
+        public Vector2 ScreenPosition { get; set; }
+        public int ScreenSize { get; set; }
 
         public List<FurnitureConfiguration> Configurations { get; set; } = new List<FurnitureConfiguration>();
 
@@ -63,6 +66,7 @@ namespace DynamicGameAssets.PackData
                 case FurnitureType.Bed: return Furniture.bed;
                 case FurnitureType.Painting: return Furniture.painting;
                 case FurnitureType.Fireplace: return Furniture.fireplace;
+                case FurnitureType.TV: return Furniture.decor;
             }
 
             return Furniture.other;
@@ -92,6 +96,8 @@ namespace DynamicGameAssets.PackData
             {
                 case FurnitureType.Bed:
                     return new CustomBedFurniture( this );
+                case FurnitureType.TV:
+                    return new CustomTVFurniture( this );
                 default:
                     return new CustomBasicFurniture( this );
             }
