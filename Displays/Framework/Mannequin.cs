@@ -269,9 +269,7 @@ namespace Displays.Framework
 
         protected override string loadDisplayName()
         {
-            string type = Mod.Instance.Helper.Translation.Get($"mannequin.type.{this.MannType.Value}");
-            string gender = Mod.Instance.Helper.Translation.Get($"mannequin.gender.{this.MannGender.Value}");
-            return Mod.Instance.Helper.Translation.Get("mannequin.name", new { type, gender });
+            return Mod.Instance.Helper.Translation.Get($"mannequin.name.{this.MannType.Value}-{this.MannGender.Value}");
         }
 
         private void OnNetFieldChanged<TNetField, TValue>(TNetField field, TValue oldValue, TValue newValue)
