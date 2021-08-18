@@ -69,7 +69,7 @@
     "spell.life:heal.name": "Curar",
     "spell.life:heal.desc": "Restaura tu salud .\nLos niveles más áltos curan más con una mejor relación de costes.",
     "spell.life:haste.name": "Prisa",
-    "spell.life:haste.desc": "Muévete tan rápido como el viento.\nLos niveles más áltos hacen que te muevas más rápido durante más tiempo."
+    "spell.life:haste.desc": "Muévete tan rápido como el viento.\nLos niveles más áltos hacen que te muevas más rápido durante más tiempo.",
     "spell.life:buff.name": "Buff",
     "spell.life:buff.desc": "Mejora todas las facetas de tu ser.\nLos niveles más áltos mejoran más durante más tiempo.",
     "spell.life:evac.name": "Evacuación",
