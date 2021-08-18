@@ -14,12 +14,14 @@
         "hu": "Piros szörfdeszka (Madárijesztő)",
         "ko": "레드 서핑보드 (허수아비)",
         "ru": "Красная доска для сёрфинга (пугало)",
-        "zh": "红色冲浪板（稻草人）"
+        "zh": "红色冲浪板（稻草人）",
+        "es": "Tabla De Surf Roja (Espantapájaros)"
     },
     "DescriptionLocalization": {
         "hu": "Piros szörfdeszka. Madárijesztőként is használható.",
         "ko": "허수아비 역할도 하는 빨간색 서핑보드.",
         "ru": "Красная доска для сёрфинга. Также выполняет роль пугала.",
-        "zh": "红色的冲浪板，也可以起到稻草人的作用。"
+        "zh": "红色的冲浪板，也可以起到稻草人的作用。",
+        "es": "Una tabla de surf roja que también funciona como espantapájaros."
     }
 }
