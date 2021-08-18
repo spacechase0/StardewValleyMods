@@ -8,12 +8,14 @@
         "hu": "Rózsaszín búvármaszk",
         "ko": "핑크 스노클 마스크",
         "ru": "Розовая маска для подводного плавания",
-        "zh": "粉红色潜水面罩"
+        "zh": "粉红色潜水面罩",
+        "es": "Máscara De Esnórquel Rosa"
     },
     "DescriptionLocalization": {
         "hu": "Csak dekoráció.",
         "ko": "스노클 마스크 - 장식 용.",
         "ru": "Маска для подводного плавания. Ныряйте с осторожностью, она декоративная.",
-        "zh": "潜水面罩——除了装饰之外，没有其他用途。"
+        "zh": "潜水面罩——除了装饰之外，没有其他用途。",
+        "es": "Una máscara de esnórquel: no sirve más que para decorar."
     }
 }
