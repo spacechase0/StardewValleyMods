@@ -82,7 +82,7 @@
     "spell.elemental:descend.name": "Descender",
     "spell.elemental:descend.desc": "Desciende en las minas.\nLos niveles más áltos aumentan los pisos superados, sin coste adicional de maná.",
     "spell.elemental:teleport.name": "Teletransporte",
-    "spell.elemental:teleport.desc": "Catalyst: Núcleo de viaje\n\nCuando estás en el exterior, se teletransporta a cualquier lugar al aire libre.",
+    "spell.elemental:teleport.desc": "Catalizador: Núcleo de teletransportes\n\nCuando estás en el exterior, se teletransporta a cualquier lugar al aire libre.",
 
     "spell.eldritch:meteor.name": "Meteoro",
     "spell.eldritch:meteor.desc": "Catalizador: Mena De Iridio",
