@@ -14,12 +14,14 @@
         "hu": "Menő szörfdeszka (Madárijesztő)",
         "ko": "멋진 서핑보드 (허수아비)",
         "ru": "Классная доска для сёрфинга (пугало)",
-        "zh": "炫酷冲浪板（稻草人）"
+        "zh": "炫酷冲浪板（稻草人）",
+        "es": "Tabla De Surf Genial (Espantapájaros)"
     },
     "DescriptionLocalization": {
         "hu": "Menő élénkzöld mintás szörfdeszka. Madárijesztőként is használható.",
         "ko": "허수아비 역할도 하는 시원하고 밝은 녹색 무늬가 새겨진 서핑보드.",
         "ru": "Доска для сёрфинга с классным ярко-зелёным рисунком. Также выполняет роль пугала.",
-        "zh": "上面有很酷的亮绿色图案的冲浪板，也可以起到稻草人的作用。"
+        "zh": "上面有很酷的亮绿色图案的冲浪板，也可以起到稻草人的作用。",
+        "es": "Una tabla de surf con un diseño verde brillante que también funciona como espantapájaros."
     }
 }
