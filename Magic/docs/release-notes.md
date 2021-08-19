@@ -6,6 +6,7 @@
 * Fixed able to level up spells with zero free points.
 * Fixed initial spells no longer learned immediately.
 * Fixed PyTK still marked as a requirement in the manifest.
+* Improved translations. Thanks to Evelyon (added Spanish)!
 
 ## 0.5.5
 Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.

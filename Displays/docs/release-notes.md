@@ -3,7 +3,7 @@
 # Release notes
 ## Upcoming release
 * Updated for Stardew Valley 1.5.5.
-* Improved translations. Thanks to Deflaktor (added German) and mcBegins2Snow (added Chinese)!
+* Improved translations. Thanks to Deflaktor (added German), Evelyon (added Spanish), and mcBegins2Snow (added Chinese)!
 
 ## 1.0.3
 Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
