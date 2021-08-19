@@ -1,0 +1,17 @@
+﻿{
+    "ui.laps": "Voltas: {{laps}}/2",
+    "ui.ranking": "Ranking",
+    "ui.wood": "Coloque algumas madeiras na fogueira.",
+    "dialog.wood": "Você colocou 50 madeiras na fogueira.",
+    "dialog.shorts": "...Isso é estranho! Porque a fogueira ficou cor roxa?",
+    "dialog.prizemoney": "Você recebeu 1500g.",
+    "item.boost": "Impulso Stardrop",
+    "item.homingprojectile": "Projétil Pufferfish",
+    "item.firstplaceprojectile": "Nuvem Pertinácia",
+    "item.invincibility": "Poder Junimo",
+    "secret.text": "Uma placa diz: Quer progredir, agora e no futuro? Fazer uma oferta.",
+    "secret.yes": "Pagar 100,000g?",
+    "secret.no": "Sair",
+    "secret.broke": "Você não pode pagar por isso.",
+    "secret.purchased": "Você se sente diferente de alguma forma."
+}
