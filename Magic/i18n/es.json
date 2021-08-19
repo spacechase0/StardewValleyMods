@@ -14,7 +14,7 @@
     "tv.analyzehints.notmagical": "*estático*",
     "tv.analyzehints.1": "¿Quieres usar tu magia para trabajar en la granja? Intenta analizar tus herramientas.",
     "tv.analyzehints.2": "¿Necesitas una escapada rápida? Me pregunto si unas botas te darán algo de inspiración.",
-    "tv.analyzehints.3": "La luz del sol es bastante agradable, pero no siempre está disponible. Me pregunto si se pueden recrear luces artificiales",
+    "tv.analyzehints.3": "La luz del sol es bastante agradable, pero no siempre está disponible. Me pregunto si se pueden recrear luces artificiales.",
     "tv.analyzehints.4": "Algunos minerales básicos parecen contener alguna energía mágica.",
     "tv.analyzehints.5": "El otro día cayó un meteorito en mi patio. Parecía realmente misterioso.",
     "tv.analyzehints.6": "El café es delicioso. ¿Por qué no recrear sus efectos con un hechizo?",
@@ -23,7 +23,7 @@
     "tv.analyzehints.9": "El otro día vi un altar oscuro en la casa de alguien. Bueno, digo 'casa'. Era más bien una cabaña.",
     "tv.analyzehints.10": "Las pociones de salud son incómodas de llevar. ¿Tal vez podamos curarnos con magia?",
     "tv.analyzehints.11": "La mayoría de la gente usa escaleras para descender bajo tierra, pero vi a una persona lanzar un hechizo y atravesar el suelo.",
-    "tv.analyzehints.12": "Vi a alguien lanzar un hechizo para recuperar maná. Parecía que dolía. Se rumorea que aprendieron esta técnica mientras pescaban anguilas de lava",
+    "tv.analyzehints.12": "Vi a alguien lanzar un hechizo para recuperar maná. Parecía que dolía. Se rumorea que aprendieron esta técnica mientras pescaban anguilas de lava.",
 
     "spell.learn": "Has aprendido un hechizo: {{spellName}}",
     "spell.learn.ancient": "Has aprendido un hechizo antiguo: {{spellName}}",
