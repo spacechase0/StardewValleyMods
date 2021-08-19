@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 // TODO: Deconstructor output patch?
 // TODO: Fish tank display?
 // TODO: Stuff on tables
+// TODO: Preserve overrides?
 
 namespace DynamicGameAssets.PackData
 {
