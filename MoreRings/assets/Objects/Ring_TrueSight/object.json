@@ -22,10 +22,12 @@
     },
     "NameLocalization": {
         "hu": "Igaz látás gyűrűje",
-        "zh": "真视戒指"
+        "zh": "真视戒指",
+        "es": "Anillo de la vista verdadera"
     },
     "DescriptionLocalization": {
         "hu": "Láss túl azon, mint amit láthatsz.",
-        "zh": "超越你所能看到的。"
+        "zh": "超越你所能看到的。",
+        "es": "Ve más allá de lo que puedes ver."
     }
 }
