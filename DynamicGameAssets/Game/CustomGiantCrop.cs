@@ -102,9 +102,7 @@ namespace DynamicGameAssets.Game
                 }
                 foreach ( var drop in Data.GiantDrops )
                 {
-                    SpaceShared.Log.Debug( "meow! " + drop.MininumHarvestedQuantity + " " + drop.MaximumHarvestedQuantity );
                     int numChunks =  r.Next( drop.MininumHarvestedQuantity, drop.MaximumHarvestedQuantity + 1 );
-                    SpaceShared.Log.Debug( "numchunks " + numChunks );
                     while ( r.NextDouble() <= Math.Min( 0.9, drop.ExtraQuantityChance ) )
                         ++numChunks;
                     if ( Game1.IsMultiplayer )

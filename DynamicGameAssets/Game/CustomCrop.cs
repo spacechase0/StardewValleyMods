@@ -70,7 +70,8 @@ namespace DynamicGameAssets.Game
                 return false;
             }
             bool success = false;
-            if ( ( bool ) this.forageCrop )
+            Random r = new Random(xTile * 7 + yTile * 11 + (int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame);
+            /*if ( ( bool ) this.forageCrop )
             {
                 StardewValley.Object o = null;
                 int experience2 = 3;
@@ -119,18 +120,18 @@ namespace DynamicGameAssets.Game
                 }
                 Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:Crop.cs.588" ) );
             }
-            else if ( currPhase.HarvestedDrops.Count > 0 )
+            else*/
+            if ( currPhase.HarvestedDrops.Count > 0 )
             {
                 foreach ( var drop in currPhase.HarvestedDrops )
                 {
                     int numToHarvest = 1;
                     int cropQuality = 0;
                     int fertilizerQualityLevel = 0;
-                    if ( false && ( int ) this.indexOfHarvest == 0 ) // Our stuff will always have that since we don't use the index
+                    /*if ( ( int ) this.indexOfHarvest == 0 )
                     {
                         return true;
-                    }
-                    Random r = new Random(xTile * 7 + yTile * 11 + (int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame);
+                    }*/
                     switch ( ( int ) soil.fertilizer )
                     {
                         case 368:
@@ -173,10 +174,10 @@ namespace DynamicGameAssets.Game
                             numToHarvest++;
                         }
                     }
-                    if ( ( int ) this.indexOfHarvest == 771 || ( int ) this.indexOfHarvest == 889 )
+                    /*if ( ( int ) this.indexOfHarvest == 771 || ( int ) this.indexOfHarvest == 889 )
                     {
                         cropQuality = 0;
-                    }
+                    }*/
                     Item harvestedItem = drop.Item.Create();
                     if ( harvestedItem is StardewValley.Object obj )
                         obj.Quality = cropQuality;
@@ -207,13 +208,12 @@ namespace DynamicGameAssets.Game
                     }
                     else
                     {
-                        int left = numToHarvest;
                         if ( junimoHarvester == null )
                         {
-                            for ( ; Game1.player.addItemToInventoryBool( harvestedItem.getOne() ); --left ) ;
+                            for ( ; numToHarvest > 0 && Game1.player.addItemToInventoryBool( harvestedItem.getOne() ); --numToHarvest ) ;
                         }
 
-                        if ( junimoHarvester != null || left > 0 )
+                        if ( junimoHarvester != null || numToHarvest == 0 )
                         {
                             Vector2 initialTile = new Vector2(xTile, yTile);
                             if ( junimoHarvester == null )
@@ -223,7 +223,8 @@ namespace DynamicGameAssets.Game
                             }
                             else
                             {
-                                junimoHarvester.tryToAddItemToHut( harvestedItem.getOne() );
+                                for ( int i = 0; i < numToHarvest; ++i )
+                                    junimoHarvester.tryToAddItemToHut( harvestedItem.getOne() );
                             }
                             if ( r.NextDouble() < Game1.player.team.AverageLuckLevel() / 1500.0 + Game1.player.team.AverageDailyLuck() / 1200.0 + 9.9999997473787516E-05 )
                             {
@@ -263,77 +264,81 @@ namespace DynamicGameAssets.Game
                             }
                             success = true;
                         }
-                        else
+                        else if ( numToHarvest > 0 )
                         {
                             Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:Crop.cs.588" ) );
                         }
                     }
-                    if ( success )
+                }
+
+                if ( success )
+                {
+                    /*int numToHarvest = 0;
+                    if ( ( int ) this.indexOfHarvest == 421 )
                     {
-                        if ( ( int ) this.indexOfHarvest == 421 )
-                        {
-                            this.indexOfHarvest.Value = 431;
-                            numToHarvest = r.Next( 1, 4 );
-                        }
-                        //int price = Convert.ToInt32(Game1.objectInformation[this.indexOfHarvest].Split('/')[1]);
-                        //harvestedItem = ( this.programColored ? new ColoredObject( this.indexOfHarvest, 1, this.tintColor ) : new StardewValley.Object( this.indexOfHarvest, 1 ) );
-                        float experience = currPhase.HarvestedExperience; // (float)(16.0 * Math.Log(0.018 * (double)price + 1.0, Math.E));
+                        this.indexOfHarvest.Value = 431;
+                        numToHarvest = r.Next( 1, 4 );
+                    }*/
+                    //int price = Convert.ToInt32(Game1.objectInformation[this.indexOfHarvest].Split('/')[1]);
+                    //harvestedItem = ( this.programColored ? new ColoredObject( this.indexOfHarvest, 1, this.tintColor ) : new StardewValley.Object( this.indexOfHarvest, 1 ) );
+                    float experience = currPhase.HarvestedExperience; // (float)(16.0 * Math.Log(0.018 * (double)price + 1.0, Math.E));
+                    if ( junimoHarvester == null )
+                    {
+                        Game1.player.gainExperience( 0, ( int ) Math.Round( experience ) );
+                    }
+                    /*for ( int i = 0; i < numToHarvest - 1; i++ )
+                    {
                         if ( junimoHarvester == null )
                         {
-                            Game1.player.gainExperience( 0, ( int ) Math.Round( experience ) );
+                            Game1.createItemDebris( harvestedItem.getOne(), new Vector2( xTile * 64 + 32, yTile * 64 + 32 ), -1 );
                         }
-                        for ( int i = 0; i < numToHarvest - 1; i++ )
+                        else
                         {
-                            if ( junimoHarvester == null )
-                            {
-                                Game1.createItemDebris( harvestedItem.getOne(), new Vector2( xTile * 64 + 32, yTile * 64 + 32 ), -1 );
-                            }
-                            else
-                            {
-                                junimoHarvester.tryToAddItemToHut( harvestedItem.getOne() );
-                            }
+                            junimoHarvester.tryToAddItemToHut( harvestedItem.getOne() );
                         }
-                        if ( ( int ) this.indexOfHarvest == 262 && r.NextDouble() < 0.4 )
+                    }*/
+                    /*
+                    if ( ( int ) this.indexOfHarvest == 262 && r.NextDouble() < 0.4 )
+                    {
+                        StardewValley.Object hay_item = new StardewValley.Object(178, 1);
+                        if ( junimoHarvester == null )
                         {
-                            StardewValley.Object hay_item = new StardewValley.Object(178, 1);
-                            if ( junimoHarvester == null )
-                            {
-                                Game1.createItemDebris( hay_item.getOne(), new Vector2( xTile * 64 + 32, yTile * 64 + 32 ), -1 );
-                            }
-                            else
-                            {
-                                junimoHarvester.tryToAddItemToHut( hay_item.getOne() );
-                            }
+                            Game1.createItemDebris( hay_item.getOne(), new Vector2( xTile * 64 + 32, yTile * 64 + 32 ), -1 );
                         }
-                        else if ( ( int ) this.indexOfHarvest == 771 )
+                        else
                         {
-                            Game1.player.currentLocation.playSound( "cut" );
-                            if ( r.NextDouble() < 0.1 )
-                            {
-                                StardewValley.Object mixedSeeds_item = new StardewValley.Object(770, 1);
-                                if ( junimoHarvester == null )
-                                {
-                                    Game1.createItemDebris( mixedSeeds_item.getOne(), new Vector2( xTile * 64 + 32, yTile * 64 + 32 ), -1 );
-                                }
-                                else
-                                {
-                                    junimoHarvester.tryToAddItemToHut( mixedSeeds_item.getOne() );
-                                }
-                            }
+                            junimoHarvester.tryToAddItemToHut( hay_item.getOne() );
                         }
-                        if ( currPhase.HarvestedNewPhase == -1 )
-                        {
-                            return true;
-                        }
-                        //this.fullyGrown.Value = true;
-                        this.currentPhase.Value = currPhase.HarvestedNewPhase;
-                        this.dayOfCurrentPhase.Value = 0;
-                        //if ( this.dayOfCurrentPhase.Value == ( int ) this.regrowAfterHarvest )
-                        {
-                            this.updateDrawMath( this_tilePosition );
-                        }
-                        //this.dayOfCurrentPhase.Value = this.regrowAfterHarvest;
                     }
+                    else if ( ( int ) this.indexOfHarvest == 771 )
+                    {
+                        Game1.player.currentLocation.playSound( "cut" );
+                        if ( r.NextDouble() < 0.1 )
+                        {
+                            StardewValley.Object mixedSeeds_item = new StardewValley.Object(770, 1);
+                            if ( junimoHarvester == null )
+                            {
+                                Game1.createItemDebris( mixedSeeds_item.getOne(), new Vector2( xTile * 64 + 32, yTile * 64 + 32 ), -1 );
+                            }
+                            else
+                            {
+                                junimoHarvester.tryToAddItemToHut( mixedSeeds_item.getOne() );
+                            }
+                        }
+                    }
+                    */
+                    if ( currPhase.HarvestedNewPhase == -1 )
+                    {
+                        return true;
+                    }
+                    //this.fullyGrown.Value = true;
+                    this.currentPhase.Value = currPhase.HarvestedNewPhase;
+                    this.dayOfCurrentPhase.Value = 0;
+                    //if ( this.dayOfCurrentPhase.Value == ( int ) this.regrowAfterHarvest )
+                    {
+                        this.updateDrawMath( this_tilePosition );
+                    }
+                    //this.dayOfCurrentPhase.Value = this.regrowAfterHarvest;
                 }
             }
             return false;
