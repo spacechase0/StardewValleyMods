@@ -30,6 +30,41 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using SObject = StardewValley.Object;
 
+// Working on: Crops. Need CustomGiantCrop (uncomment references to it), HoeDirt patches, potentially other patches
+
+// TODO: Objects: Light?
+// TODO: Objects (or general): Deconstructor output patch?
+// TODO: Objects: Fish tank display?
+// TODO: Objects: Stuff on tables
+// TODO: Objects: Preserve overrides?
+// TODO: Objects: warp totems?
+// TODO: Objects&Crops&ItemAbstraction: colors?
+// TODO: Crops: Forage crops?
+// TODO: Crops: getRandomWildCropForSeason support?
+// TODO: General validation, not crashing when an item is missing, etc.
+// TODO: Look into Gourmand requests?
+/* TODO:
+ * Big craftables
+ * Boots
+ * Clothing (pants, shirt)
+ * Fences
+ * Forge recipes
+ * Fruit trees
+ * Hats
+ * weapons
+ * ? walls/floors
+ * Custom Ore Nodes & Custom Resource Clumps
+ * Basic machine recipes
+ * ? paths
+ * ? buildings
+ * NOT farm animals
+ * NOT NPCs (covered by CP)
+ * farm types????
+ * NOT critters (needs AI stuff, can be its own mod)
+ * NOT quests
+ * NOT mail (MFM)
+ */
+
 namespace DynamicGameAssets
 {
     public class Mod : StardewModdingAPI.Mod, IAssetEditor
@@ -62,6 +97,7 @@ namespace DynamicGameAssets
             instance = this;
             Log.Monitor = Monitor;
 
+            helper.Events.GameLoop.UpdateTicked += ( s, e ) => State.AnimationFrames++;
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             helper.Events.Display.MenuChanged += OnMenuChanged;
@@ -97,6 +133,8 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomTVFurniture));
             spacecore.RegisterSerializerType(typeof(CustomFishTankFurniture));
             spacecore.RegisterSerializerType(typeof(CustomStorageFurniture));
+            spacecore.RegisterSerializerType(typeof(CustomCrop));
+            //spacecore.RegisterSerializerType(typeof(CustomGiantCrop));
 
             foreach ( var pack in contentPacks )
             {
@@ -306,10 +344,10 @@ namespace DynamicGameAssets
             {
                 Log.Debug( $"Loading content pack \"{cp.Manifest.Name}\"..." );
                 if ( cp.Manifest.ExtraFields == null ||
-                     !cp.Manifest.ExtraFields.ContainsKey( "DGAFormatVersion" ) ||
-                     !int.TryParse( cp.Manifest.ExtraFields[ "DGAFormatVersion" ].ToString(), out int ver ) )
+                     !cp.Manifest.ExtraFields.ContainsKey( "DGA.FormatVersion" ) ||
+                     !int.TryParse( cp.Manifest.ExtraFields[ "DGA.FormatVersion" ].ToString(), out int ver ) )
                 {
-                    Log.Error("Must specify a DGAFormatVersion as an integer! (See documentation.)");
+                    Log.Error("Must specify a DGA.FormatVersion as an integer! (See documentation.)");
                     continue;
                 }
                 if ( ver != 1 )
@@ -317,10 +355,10 @@ namespace DynamicGameAssets
                     Log.Error( "Unsupported format version!" );
                     continue;
                 }   
-                if ( !cp.Manifest.ExtraFields.ContainsKey( "DGAConditionsFormatVersion" ) ||
-                    !SemanticVersion.TryParse( cp.Manifest.ExtraFields[ "DGAConditionsFormatVersion" ].ToString(), out ISemanticVersion condVer ) )
+                if ( !cp.Manifest.ExtraFields.ContainsKey( "DGA.ConditionsFormatVersion" ) ||
+                    !SemanticVersion.TryParse( cp.Manifest.ExtraFields[ "DGA.ConditionsFormatVersion" ].ToString(), out ISemanticVersion condVer ) )
                 {
-                    Log.Error( "Must specify a DGAConditionsFormatVersion as a semantic version! (See documentation.)" );
+                    Log.Error( "Must specify a DGA.ConditionsFormatVersion as a semantic version! (See documentation.)" );
                     continue;
                 }
                 var pack = new ContentPack( cp );

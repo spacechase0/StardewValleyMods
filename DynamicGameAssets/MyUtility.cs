@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Characters;
 using StardewValley.Locations;
 using StardewValley.Objects;
+using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,48 @@ namespace DynamicGameAssets
 {
     class MyUtility
     {
+        public static void iterateAllTerrainFeatures( Func<TerrainFeature, TerrainFeature> action )
+        {
+            foreach ( GameLocation location in Game1.locations )
+            {
+                MyUtility._recursiveIterateLocation( location, action );
+            }
+        }
+        protected static void _recursiveIterateLocation( GameLocation l, Func<TerrainFeature, TerrainFeature> action )
+        {
+            if ( l is BuildableGameLocation )
+            {
+                foreach ( Building b in ( l as BuildableGameLocation ).buildings )
+                {
+                    if ( b.indoors.Value != null )
+                    {
+                        MyUtility._recursiveIterateLocation( b.indoors.Value, action );
+                    }
+                }
+            }
+
+            foreach ( var key in l.objects.Keys )
+            {
+                var obj = l.objects[ key ];
+                if ( obj is IndoorPot pot )
+                {
+                    pot.hoeDirt.Value = ( HoeDirt ) action( pot.hoeDirt.Value );
+                }
+            }
+
+            var toRemove = new List<Vector2>();
+            foreach ( var key in l.terrainFeatures.Keys )
+            {
+                var ret = action( l.terrainFeatures[ key ] );
+                if ( ret == null )
+                    toRemove.Add( key );
+                else
+                    l.terrainFeatures[ key ] = ret;
+            }
+            foreach ( var r in toRemove )
+                l.terrainFeatures.Remove( r );
+        }
+
         public static void iterateAllItems( Func<Item, Item> action )
         {
             foreach ( GameLocation location in Game1.locations )
@@ -78,12 +121,11 @@ namespace DynamicGameAssets
             {
                 return;
             }
-            if ( l != null )
             {
                 IList<Furniture> list = l.furniture;
                 for ( int i = 0; i < list.Count; ++i )
                 {
-                    list[i] = (Furniture) MyUtility._recursiveIterateItem( list[i], action );
+                    list[ i ] = ( Furniture ) MyUtility._recursiveIterateItem( list[ i ], action );
                 }
             }
             if ( l is IslandFarmHouse )

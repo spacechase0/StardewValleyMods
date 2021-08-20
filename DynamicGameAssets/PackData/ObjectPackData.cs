@@ -10,12 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// TODO: Light?
-// TODO: Deconstructor output patch?
-// TODO: Fish tank display?
-// TODO: Stuff on tables
-// TODO: Preserve overrides?
-
 namespace DynamicGameAssets.PackData
 {
     public class ObjectPackData : CommonPackData

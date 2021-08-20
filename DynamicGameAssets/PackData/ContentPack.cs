@@ -1,5 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace DynamicGameAssets.PackData
 
         internal Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
+        internal Dictionary<string, int[]> animInfo = new Dictionary<string, int[]>(); // Index is full animation descriptor (items16.png:1@333/items16.png:2@333/items16.png:3@334), value is [frameDur1, frameDur2, frameDur3, ..., totalFrameDur]
+
         internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
 
         internal List<BasePackData> others = new List<BasePackData>();
@@ -23,10 +26,11 @@ namespace DynamicGameAssets.PackData
         public ContentPack( IContentPack pack )
         {
             smapiPack = pack;
-            conditionVersion = new SemanticVersion( pack.Manifest.ExtraFields[ "DGAConditionsFormatVersion" ].ToString() );
+            conditionVersion = new SemanticVersion( pack.Manifest.ExtraFields[ "DGA.ConditionsFormatVersion" ].ToString() );
             LoadAndValidateItems<ObjectPackData>( "objects.json" );
             LoadAndValidateItems<CraftingPackData>("crafting.json");
             LoadAndValidateItems<FurniturePackData>("furniture.json");
+            LoadAndValidateItems<CropPackData>( "crops.json" );
             LoadOthers<ShopPackData>( "shop-entries.json" );
         }
 
@@ -72,19 +76,60 @@ namespace DynamicGameAssets.PackData
 
         internal TexturedRect GetTexture( string path, int xSize, int ySize )
         {
-            int colon = path.IndexOf( ':' );
-            if (colon == -1 && !smapiPack.HasFile(path) || colon != -1 && !smapiPack.HasFile(path.Substring(0, colon)))
-                throw new ArgumentException("No such file \"" + path + "\"!");
-            if ( colon == -1 )
-                return new TexturedRect() { Texture = smapiPack.LoadAsset< Texture2D >( path ), Rect = null };
-            var tex = smapiPack.LoadAsset< Texture2D >( path.Substring( 0, colon ) );
-            int sections = tex.Width / xSize;
-            int ind = int.Parse( path.Substring( colon + 1 ) );
-            return new TexturedRect()
+            if ( path.Contains( ',' ) )
             {
-                Texture = tex,
-                Rect = new Microsoft.Xna.Framework.Rectangle( ind % sections * xSize, ind / sections * ySize, xSize, ySize )
-            };
+                string[] frames = path.Split( ',' );
+                int[] frameDurs = null;
+                if ( animInfo.ContainsKey( path ) )
+                    frameDurs = animInfo[ path ];
+                else
+                {
+                    int total = 0;
+                    var frameData = new List<int>();
+                    for ( int i = 0; i < frames.Length; ++i )
+                    {
+                        int dur = 1;
+                        int at = frames[ i ].IndexOf( '@' );
+                        if ( at != -1 )
+                            dur = int.Parse( frames[ i ].Substring( at + 1 ).Trim() );
+
+                        frameData.Add( dur );
+                        total += dur;
+                    }
+                    frameData.Add( total );
+                    animInfo.Add( path, frameDurs = frameData.ToArray() );
+                }
+
+                int spot = Mod.State.AnimationFrames % frameDurs[ frames.Length ];
+                for ( int i = 0; i < frames.Length; ++i )
+                {
+                    spot -= frameDurs[ i ];
+                    if ( spot < 0 )
+                        return GetTexture( frames[ i ].Trim(), xSize, ySize );
+                }
+
+                throw new Exception( "This should never happen (" + path + ")" );
+            }
+            else
+            {
+                int at = path.IndexOf( '@' );
+                if ( at != -1 )
+                    path = path.Substring( 0, at );
+
+                int colon = path.IndexOf( ':' );
+                if ( colon == -1 && !smapiPack.HasFile( path ) || colon != -1 && !smapiPack.HasFile( path.Substring( 0, colon ) ) )
+                    throw new ArgumentException( "No such file \"" + path + "\"!" );
+                if ( colon == -1 )
+                    return new TexturedRect() { Texture = smapiPack.LoadAsset<Texture2D>( path ), Rect = null };
+                var tex = smapiPack.LoadAsset< Texture2D >( path.Substring( 0, colon ) );
+                int sections = tex.Width / xSize;
+                int ind = int.Parse( path.Substring( colon + 1 ) );
+                return new TexturedRect()
+                {
+                    Texture = tex,
+                    Rect = new Microsoft.Xna.Framework.Rectangle( ind % sections * xSize, ind / sections * ySize, xSize, ySize )
+                };
+            }
         }
     }
 }

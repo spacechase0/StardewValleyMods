@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +8,8 @@ namespace DynamicGameAssets
 {
     internal class StateData
     {
-        public Dictionary<string, List<ShopEntry>> TodaysShopEntries = new Dictionary<string, List<ShopEntry>>();
+        public Dictionary<string, List<ShopEntry>> TodaysShopEntries { get; set; } = new Dictionary<string, List<ShopEntry>>();
+
+        public int AnimationFrames { get; set; } = 0;
     }
 }
