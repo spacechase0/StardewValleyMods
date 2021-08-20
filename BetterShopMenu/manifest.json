@@ -1,8 +1,8 @@
 ﻿{
     "Name": "Better Shop Menu",
     "Author": "spacechase0",
-    "Version": "1.2.0",
-    "MinimumApiVersion": "3.9.5",
+    "Version": "1.2.1-beta.20210819",
+    "MinimumApiVersion": "3.13.0-beta",
     "Description": "Changes the shop menu into a grid, and adds buttons to filter by category and sort by price/name.",
     "UniqueID": "spacechase0.BetterShopMenu",
     "EntryDll": "BetterShopMenu.dll",

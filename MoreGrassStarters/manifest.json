@@ -1,8 +1,8 @@
 ﻿{
     "Name": "More Grass Starters",
     "Author": "spacechase0, eemie",
-    "Version": "1.0.5",
-    "MinimumApiVersion": "3.9.5",
+    "Version": "1.0.6-beta.20210819",
+    "MinimumApiVersion": "3.13.0-beta",
     "Description": "Adds nine new grass types for decorative purposes.",
     "UniqueID": "spacechase0.MoreGrassStarters",
     "EntryDll": "MoreGrassStarters.dll",

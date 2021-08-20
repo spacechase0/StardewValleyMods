@@ -1,8 +1,8 @@
 ﻿{
     "Name": "Junimos Accept Cash",
     "Author": "spacechase0",
-    "Version": "1.0.1",
-    "MinimumApiVersion": "3.9.5",
+    "Version": "1.0.2-beta.20210819",
+    "MinimumApiVersion": "3.13.0-beta",
     "Description": "Purchase community center bundles with gold.",
     "UniqueID": "spacechase0.JunimosAcceptCash",
     "EntryDll": "JunimosAcceptCash.dll",

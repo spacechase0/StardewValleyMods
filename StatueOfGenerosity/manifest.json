@@ -1,16 +1,15 @@
 ﻿{
     "Name": "Statue of Generosity",
     "Author": "spacechase0, ParadigmNomad (sprites)",
-    "Version": "1.0.3",
-    "MinimumApiVersion": "3.12.0",
+    "Version": "1.0.4-beta.20210819",
+    "MinimumApiVersion": "3.13.0-beta",
     "Description": "Purchase a statue which produces loved gifts each morning.",
     "UniqueID": "spacechase0.StatueOfGenerosity",
     "EntryDll": "StatueOfGenerosity.dll",
     "UpdateKeys": [ "Nexus:7532" ],
     "Dependencies": [
         {
-            "UniqueID": "spacechase0.JsonAssets",
-            "MinimumVersion": "1.8.3"
+            "UniqueID": "spacechase0.JsonAssets"
         }
     ]
 }

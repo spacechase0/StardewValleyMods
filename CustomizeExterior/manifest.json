@@ -1,16 +1,15 @@
 ﻿{
     "Name": "Customize Exterior",
     "Author": "spacechase0",
-    "Version": "1.1.0",
-    "MinimumApiVersion": "3.9.5",
+    "Version": "1.1.1-beta.20210819",
+    "MinimumApiVersion": "3.13.0-beta",
     "Description": "Lets you change the exterior of your buildings individually.",
     "UniqueID": "spacechase0.CustomizeExterior",
     "EntryDll": "CustomizeExterior.dll",
     "UpdateKeys": [ "Nexus:1099" ],
     "Dependencies": [
         {
-            "UniqueID": "spacechase0.SpaceCore",
-            "MinimumVersion": "1.5.9"
+            "UniqueID": "spacechase0.SpaceCore"
         },
         {
             "UniqueID": "Entoarox.SeasonalImmersion",

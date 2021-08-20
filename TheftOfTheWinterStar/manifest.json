@@ -1,19 +1,17 @@
 ﻿{
     "Name": "Theft of the Winter Star",
     "Author": "spacechase0, ParadigmNomad",
-    "Version": "1.0.5",
-    "MinimumApiVersion": "3.12.0",
+    "Version": "1.0.6-beta.20210819",
+    "MinimumApiVersion": "3.13.0-beta",
     "Description": "Adds a new dungeon area before the Feast of the Winter Star festival, and a new late-game farming equipment if you beat it.",
     "UniqueID": "spacechase0.TheftOfTheWinterStar",
     "EntryDll": "TheftOfTheWinterStar.dll",
     "Dependencies": [
         {
-            "UniqueID": "spacechase0.SpaceCore",
-            "MinimumVersion": "1.5.10"
+            "UniqueID": "spacechase0.SpaceCore"
         },
         {
-            "UniqueID": "spacechase0.JsonAssets",
-            "MinimumVersion": "1.8.3"
+            "UniqueID": "spacechase0.JsonAssets"
         }
     ],
     "UpdateKeys": [ "Nexus:5062" ]

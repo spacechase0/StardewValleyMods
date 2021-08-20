@@ -1,16 +1,15 @@
 ﻿{
     "Name": "Preexisting Relationship",
     "Author": "spacechase0",
-    "Version": "1.0.2",
-    "MinimumApiVersion": "3.9.5",
+    "Version": "1.0.3-beta.20210819",
+    "MinimumApiVersion": "3.13.0-beta",
     "Description": "Start the game already married to an NPC.",
     "UniqueID": "spacechase0.PreexistingRelationship",
     "EntryDll": "PreexistingRelationship.dll",
     "UpdateKeys": [ "Nexus:7684" ],
     "Dependencies": [
         {
-            "UniqueID": "spacechase0.SpaceCore",
-            "MinimumVersion": "1.5.8"
+            "UniqueID": "spacechase0.SpaceCore"
         }
     ]
 }
