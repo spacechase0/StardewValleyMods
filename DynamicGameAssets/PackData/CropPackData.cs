@@ -15,7 +15,6 @@ namespace DynamicGameAssets.PackData
 {
     public class CropPackData : CommonPackData
     {
-
         public enum CropType
         {
             Normal,
@@ -23,8 +22,6 @@ namespace DynamicGameAssets.PackData
             Paddy,
         }
         public CropType Type { get; set; }
-        public bool Scythable { get; set; }
-        public bool Trellis { get; set; }
 
         public bool CanGrowNow { get; set; } = true; // must be controlled using dynamic fields
 
@@ -46,14 +43,16 @@ namespace DynamicGameAssets.PackData
 
         public class PhaseData : ICloneable
         {
-            public string Texture { get; set; }
+            public string[] TextureChoices { get; set; }
             // TODO: Color texture
             public int Length { get; set; }
+
+            public bool Scythable { get; set; }
+            public bool Trellis { get; set; }
 
             public List<HarvestedDropData> HarvestedDrops { get; set; } = new List<HarvestedDropData>();
             public int HarvestedExperience { get; set; } = 0;
             public int HarvestedNewPhase { get; set; } = -1;
-            public string PostHarvestTexture { get; set; }
             // TODO: Color texture
 
             public object Clone()
@@ -68,7 +67,7 @@ namespace DynamicGameAssets.PackData
         public List<PhaseData> Phases { get; set; } = new List<PhaseData>();
 
         public float GiantChance { get; set; } = 0.01f;
-        public string GiantTexture { get; set; }
+        public string[] GiantTextureChoices { get; set; }
         public List<HarvestedDropData> GiantDrops { get; set; } = new List<HarvestedDropData>();
 
         public override void OnDisabled()
@@ -80,11 +79,11 @@ namespace DynamicGameAssets.PackData
                     if ( ccrop.SourcePack == parent.smapiPack.Manifest.UniqueID && ccrop.Id == ID )
                         hd.crop = null;
                 }
-                /*else if ( tf is CustomGiantCrop cgc )
+                else if ( tf is CustomGiantCrop cgc )
                 {
                     if ( cgc.SourcePack == parent.smapiPack.Manifest.UniqueID && cgc.Id == ID )
                         return null;
-                }*/
+                }
                 return tf;
             } );
         }
@@ -96,7 +95,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return parent.GetTexture( Phases[ ^1 ].Texture, 16, 32 );
+            return parent.GetMultiTexture( Phases[ ^1 ].TextureChoices, 0, 16, 32 );
         }
 
         public override object Clone()

@@ -74,6 +74,11 @@ namespace DynamicGameAssets.PackData
             }
         }
 
+        internal TexturedRect GetMultiTexture( string[] paths, int decider, int xSize, int ySize )
+        {
+            return GetTexture( paths[ decider % paths.Length ], xSize, ySize );
+        }
+
         internal TexturedRect GetTexture( string path, int xSize, int ySize )
         {
             if ( path.Contains( ',' ) )

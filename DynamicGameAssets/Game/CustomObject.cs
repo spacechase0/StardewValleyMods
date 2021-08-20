@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewValley;
+using StardewValley.Objects;
+using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
@@ -265,7 +267,7 @@ namespace DynamicGameAssets.Game
 
         public override bool isPlaceable()
         {
-            return Data.Placeable;
+            return Data.Placeable || !string.IsNullOrEmpty( Data.PlantsCrop );
         }
 
         public override bool performToolAction( Tool t, GameLocation location )
@@ -281,6 +283,68 @@ namespace DynamicGameAssets.Game
             }
 
             return false;
+        }
+
+        public override bool placementAction( GameLocation location, int x, int y, Farmer who = null )
+        {
+            Vector2 placementTile = new Vector2(x / 64, y / 64);
+
+            if ( !string.IsNullOrEmpty( Data.PlantsCrop ) )
+            {
+                if ( location.terrainFeatures.ContainsKey( placementTile ) && location.terrainFeatures[ placementTile ] is HoeDirt )
+                {
+                    if ( CanPlantThisSeedHere( ( ( HoeDirt ) location.terrainFeatures[ placementTile ] ), ( int ) placementTile.X, ( int ) placementTile.Y, who.ActiveObject.Category == -19 ) )
+                    {
+                        if ( Plant( ( ( HoeDirt ) location.terrainFeatures[ placementTile ] ), ( int ) placementTile.X, ( int ) placementTile.Y, who, who.ActiveObject.Category == -19, location ) && who.IsLocalPlayer )
+                        {
+                            if ( base.Category == -74 )
+                            {
+                                foreach ( StardewValley.Object o in location.Objects.Values )
+                                {
+                                    if ( !o.IsSprinkler() || o.heldObject.Value == null || o.heldObject.Value.ParentSheetIndex != 913 || !o.IsInSprinklerRangeBroadphase( placementTile ) || !o.GetSprinklerTiles().Contains( placementTile ) )
+                                    {
+                                        continue;
+                                    }
+                                    Chest chest2 = o.heldObject.Value.heldObject.Value as Chest;
+                                    if ( chest2 == null || chest2.items.Count <= 0 || chest2.items[ 0 ] == null || chest2.GetMutex().IsLocked() )
+                                    {
+                                        continue;
+                                    }
+                                    chest2.GetMutex().RequestLock( delegate
+                                    {
+                                        if ( chest2.items.Count > 0 && chest2.items[ 0 ] != null )
+                                        {
+                                            Item item = chest2.items[0];
+                                            if ( item.Category == -19 && ( ( HoeDirt ) location.terrainFeatures[ placementTile ] ).plant( item.ParentSheetIndex, ( int ) placementTile.X, ( int ) placementTile.Y, who, isFertilizer: true, location ) )
+                                            {
+                                                item.Stack--;
+                                                if ( item.Stack <= 0 )
+                                                {
+                                                    chest2.items[ 0 ] = null;
+                                                }
+                                            }
+                                        }
+                                        chest2.GetMutex().ReleaseLock();
+                                    } );
+                                    break;
+                                }
+                            }
+                            Game1.haltAfterCheck = false;
+                            return true;
+                        }
+                        return false;
+                    }
+                    return false;
+                }
+                return false;
+            }
+
+            return base.placementAction( location, x, y, who );
+        }
+
+        public override bool IsSprinkler()
+        {
+            return Data.SprinklerTiles != null && Data.SprinklerTiles.Count > 0;
         }
 
         public override int GetBaseRadiusForSprinkler()
@@ -327,6 +391,106 @@ namespace DynamicGameAssets.Game
                 price = Math.Max( 1, price * Game1.MasterPlayer.difficultyModifier );
 
             return ( int ) price;
+        }
+
+        public bool CanPlantThisSeedHere( HoeDirt this_, int tileX, int tileY, bool isFertilizer = false )
+        {
+            /*if ( isFertilizer )
+            {
+                if ( ( int ) this.fertilizer == 0 )
+                {
+                    return true;
+                }
+            }
+            else */if ( this_.crop == null )
+            {
+                CustomCrop c = new CustomCrop(Mod.Find( Data.PlantsCrop ) as CropPackData, tileX, tileY);
+                /*if ( c.seasonsToGrowIn.Count == 0 )
+                {
+                    return false;
+                }*/
+                if ( !Game1.currentLocation.IsOutdoors || Game1.currentLocation.IsGreenhouse || Game1.currentLocation.SeedsIgnoreSeasonsHere() || c.Data.CanGrowNow /*c.seasonsToGrowIn.Contains( Game1.currentLocation.GetSeasonForLocation() )*/ )
+                {
+                    if ( ( bool ) c.raisedSeeds && Utility.doesRectangleIntersectTile( Game1.player.GetBoundingBox(), tileX, tileY ) )
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+                /*
+                if ( objectIndex == 309 || objectIndex == 310 || objectIndex == 311 )
+                {
+                    return true;
+                }
+                */
+                if ( Game1.didPlayerJustClickAtAll() && !Game1.doesHUDMessageExist( Game1.content.LoadString( "Strings\\StringsFromCSFiles:HoeDirt.cs.13924" ) ) )
+                {
+                    Game1.playSound( "cancel" );
+                    Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:HoeDirt.cs.13924" ) );
+                }
+            }
+            return false;
+        }
+
+        public bool Plant( HoeDirt this_, int tileX, int tileY, Farmer who, bool isFertilizer, GameLocation location )
+        {
+            var this_applySpeedIncreases = Mod.instance.Helper.Reflection.GetMethod( this_, "applySpeedIncreases" );
+            /*
+            if ( isFertilizer )
+            {
+                if ( this.crop != null && ( int ) this.crop.currentPhase != 0 && ( index == 368 || index == 369 ) )
+                {
+                    return false;
+                }
+                if ( ( int ) this.fertilizer != 0 )
+                {
+                    return false;
+                }
+                this.fertilizer.Value = index;
+                this.applySpeedIncreases( who );
+                location.playSound( "dirtyHit" );
+                return true;
+            }*/
+            CustomCrop c = new CustomCrop(Mod.Find( Data.PlantsCrop ) as CropPackData, tileX, tileY);
+            /*if ( c.seasonsToGrowIn.Count == 0 )
+            {
+                return false;
+            }
+            */
+            if ( !who.currentLocation.isFarm && !who.currentLocation.IsGreenhouse && !who.currentLocation.CanPlantSeedsHere( FullId.GetHashCode(), tileX, tileY ) && who.currentLocation.IsOutdoors )
+            {
+                Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:HoeDirt.cs.13919" ) );
+                return false;
+            }
+            if ( !who.currentLocation.isOutdoors || who.currentLocation.IsGreenhouse || c.Data.CanGrowNow/*c.seasonsToGrowIn.Contains( location.GetSeasonForLocation() )*/ || who.currentLocation.SeedsIgnoreSeasonsHere() )
+            {
+                this_.crop = c;
+                if ( ( bool ) c.raisedSeeds )
+                {
+                    location.playSound( "stoneStep" );
+                }
+                location.playSound( "dirtyHit" );
+                Game1.stats.SeedsSown++;
+
+                this_applySpeedIncreases.Invoke( who );
+                this_.nearWaterForPaddy.Value = -1;
+                if ( this_.hasPaddyCrop() && this_.paddyWaterCheck( location, new Vector2( tileX, tileY ) ) )
+                {
+                    this_.state.Value = 1;
+                    this_.updateNeighbors( location, new Vector2( tileX, tileY ) );
+                }
+                return true;
+            }
+            //if ( c.seasonsToGrowIn.Count > 0 && !c.seasonsToGrowIn.Contains( location.GetSeasonForLocation() ) )
+            if ( c.Data.CanGrowNow )
+            {
+                Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:HoeDirt.cs.13924" ) );
+            }
+            else
+            {
+                Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:HoeDirt.cs.13925" ) );
+            }
+            return false;
         }
 
         protected override void _PopulateContextTags( HashSet<string> tags )

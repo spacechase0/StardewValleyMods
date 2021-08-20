@@ -28,6 +28,21 @@ namespace DynamicGameAssets.Patches
         }
     }
 
+    [HarmonyPatch( typeof( Crop ), nameof( Crop.newDay ) )]
+    public static class CropNewDayPatch
+    {
+        public static bool Prefix( Crop __instance, int state, int fertilizer, int xTile, int yTile, GameLocation environment )
+        {
+            if ( __instance is CustomCrop cc )
+            {
+                cc.NewDay( state, fertilizer, xTile, yTile, environment );
+                return false;
+            }
+
+            return true;
+        }
+    }
+
     [HarmonyPatch( typeof( Crop ), nameof( Crop.harvest ) )]
     public static class CropHarvestPatch
     {

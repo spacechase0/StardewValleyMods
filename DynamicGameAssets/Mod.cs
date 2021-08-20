@@ -30,15 +30,15 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using SObject = StardewValley.Object;
 
-// Working on: Crops. Need CustomGiantCrop (uncomment references to it), HoeDirt patches, potentially other patches
-
 // TODO: Objects: Light?
 // TODO: Objects (or general): Deconstructor output patch?
 // TODO: Objects: Fish tank display?
 // TODO: Objects: Stuff on tables
 // TODO: Objects: Preserve overrides?
 // TODO: Objects: warp totems?
-// TODO: Objects&Crops&ItemAbstraction: colors?
+// TODO: Objects&Crops&GiantCrops(?)&ItemAbstraction: colors?
+// TODO: Crops: Can grow in IndoorPot
+// TODO: Crops: Can grow in greenhouse?
 // TODO: Crops: Forage crops?
 // TODO: Crops: getRandomWildCropForSeason support?
 // TODO: General validation, not crashing when an item is missing, etc.
@@ -57,12 +57,14 @@ using SObject = StardewValley.Object;
  * Basic machine recipes
  * ? paths
  * ? buildings
- * NOT farm animals
+ * NOT farm animals (FAVR)
  * NOT NPCs (covered by CP)
  * farm types????
  * NOT critters (needs AI stuff, can be its own mod)
  * NOT quests
  * NOT mail (MFM)
+ * secret notes?
+ * NOT trees (BURT)
  */
 
 namespace DynamicGameAssets
@@ -134,7 +136,7 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomFishTankFurniture));
             spacecore.RegisterSerializerType(typeof(CustomStorageFurniture));
             spacecore.RegisterSerializerType(typeof(CustomCrop));
-            //spacecore.RegisterSerializerType(typeof(CustomGiantCrop));
+            spacecore.RegisterSerializerType(typeof(CustomGiantCrop));
 
             foreach ( var pack in contentPacks )
             {
