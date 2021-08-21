@@ -109,7 +109,7 @@ namespace DynamicGameAssets
             helper.ConsoleCommands.Add( "dga_list", "...", OnListCommand );
             helper.ConsoleCommands.Add( "dga_add", "...", OnAddCommand, AddCommandAutoComplete );
             helper.ConsoleCommands.Add( "dga_force", "Do not use", OnForceCommand );
-            helper.ConsoleCommands.Add( "dga_reload", "...", OnReloadCommand, ReloadCommandAutoComplete );
+            helper.ConsoleCommands.Add( "dga_reload", "...", OnReloadCommand/*, ReloadCommandAutoComplete*/ );
 
             harmony = new Harmony( ModManifest.UniqueID );
             harmony.PatchAll();
@@ -325,7 +325,7 @@ namespace DynamicGameAssets
             LoadContentPacks();
             OnDayStarted( this, null );
         }
-
+        /*
         private string[] ReloadCommandAutoComplete( string cmd, string input )
         {
             if ( input.Contains( ' ' ) )
@@ -340,7 +340,7 @@ namespace DynamicGameAssets
             }
 
             return ret.ToArray();
-        }
+        }*/
 
         private void LoadContentPacks()
         {

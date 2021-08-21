@@ -15,9 +15,9 @@ namespace DynamicGameAssets.PackData
 
         internal SemanticVersion conditionVersion;
 
-        internal Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+        private Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
-        internal Dictionary<string, int[]> animInfo = new Dictionary<string, int[]>(); // Index is full animation descriptor (items16.png:1@333/items16.png:2@333/items16.png:3@334), value is [frameDur1, frameDur2, frameDur3, ..., totalFrameDur]
+        private Dictionary<string, int[]> animInfo = new Dictionary<string, int[]>(); // Index is full animation descriptor (items16.png:1@333/items16.png:2@333/items16.png:3@334), value is [frameDur1, frameDur2, frameDur3, ..., totalFrameDur]
 
         internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
 
@@ -126,7 +126,10 @@ namespace DynamicGameAssets.PackData
                     throw new ArgumentException( "No such file \"" + path + "\"!" );
                 if ( colon == -1 )
                     return new TexturedRect() { Texture = smapiPack.LoadAsset<Texture2D>( path ), Rect = null };
-                var tex = smapiPack.LoadAsset< Texture2D >( path.Substring( 0, colon ) );
+                string texPath = path.Substring( 0, colon );
+                var tex = textures.ContainsKey( texPath ) ? textures[ texPath] : smapiPack.LoadAsset< Texture2D >( texPath );
+                if ( !textures.ContainsKey( texPath ) )
+                    textures.Add( texPath, tex );
                 int sections = tex.Width / xSize;
                 int ind = int.Parse( path.Substring( colon + 1 ) );
                 return new TexturedRect()
