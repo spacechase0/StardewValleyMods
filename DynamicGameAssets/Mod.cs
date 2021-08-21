@@ -39,7 +39,7 @@ using SObject = StardewValley.Object;
 // TODO: Objects&Crops&GiantCrops(?)&ItemAbstraction: colors?
 // TODO: Crops: Can grow in IndoorPot field
 // TODO: Crops: Can grow in greenhouse?
-// TODO: Crops: Forage crops?
+// TODO: Crops: Forage crops? - can change ObjectPackData.PlantsCrop to List<Weighted<string>>
 // TODO: Crops: getRandomWildCropForSeason support?
 // TODO: ItemAbstraction: Random choice by changing everything to [{weight,itemabstraction},{weight,itemabstraction},...] (w/ item converter so you can still only specify one)
 // TODO: General validation, not crashing when an item is missing, etc.
