@@ -45,5 +45,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Table.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Textbox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Weighted.cs" />
   </ItemGroup>
 </Project>

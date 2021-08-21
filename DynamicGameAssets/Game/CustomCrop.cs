@@ -9,6 +9,7 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Objects;
@@ -178,7 +179,7 @@ namespace DynamicGameAssets.Game
                     {
                         cropQuality = 0;
                     }*/
-                    Item harvestedItem = drop.Item.Create();
+                    Item harvestedItem = drop.Item.Choose( r ).Create();
                     if ( harvestedItem is StardewValley.Object obj )
                         obj.Quality = cropQuality;
                     if ( ( int ) this.harvestMethod == 1 )
@@ -350,8 +351,6 @@ namespace DynamicGameAssets.Game
             var OneTimeRandom_GetDouble = Mod.instance.Helper.Reflection.GetMethod( AccessTools.TypeByName( "StardewValley.OneTimeRandom" ), "GetDouble" );
 
             ResetPhaseDays();
-            this.harvestMethod.Value = Data.Phases[ this.currentPhase.Value ].Scythable ? Crop.sickleHarvest : Crop.grabHarvest;
-            this.raisedSeeds.Value = Data.Phases[ this.currentPhase.Value ].Trellis;
 
             if ( ( bool ) environment.isOutdoors && ( ( bool ) this.dead || !Data.CanGrowNow || Data.Type == CropPackData.CropType.Indoors /*( !environment.SeedsIgnoreSeasonsHere() && !this.seasonsToGrowIn.Contains( environment.GetSeasonForLocation() ) ) || ( !environment.SeedsIgnoreSeasonsHere() && ( int ) this.indexOfHarvest == 90 )*/ ) )
             {
@@ -381,6 +380,10 @@ namespace DynamicGameAssets.Game
                 {
                     this.phaseToShow.Value = Game1.random.Next( 1, 7 );
                 }
+
+                this.harvestMethod.Value = Data.Phases[ this.currentPhase.Value ].Scythable ? Crop.sickleHarvest : Crop.grabHarvest;
+                this.raisedSeeds.Value = Data.Phases[ this.currentPhase.Value ].Trellis;
+
                 if ( Data.GiantTextureChoices != null && environment is Farm && ( int ) this.currentPhase == this.phaseDays.Count - 1 /*&& ( ( int ) this.indexOfHarvest == 276 || ( int ) this.indexOfHarvest == 190 || ( int ) this.indexOfHarvest == 254 )*/ && OneTimeRandom_GetDouble.Invoke< double >( Game1.uniqueIDForThisGame, Game1.stats.DaysPlayed, ( ulong ) xTile, ( ulong ) yTile ) < Data.GiantChance )
                 {
                     for ( int x2 = xTile - 1; x2 <= xTile + 1; x2++ )

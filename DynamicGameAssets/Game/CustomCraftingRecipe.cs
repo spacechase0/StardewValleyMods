@@ -1,4 +1,4 @@
-﻿using DynamicGameAssets.PackData;
+using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
@@ -49,7 +49,7 @@ namespace DynamicGameAssets.Game
         {
             base.initNetFields();
             NetFields.AddFields( _sourcePack, _id );
-            _id.fieldChangeEvent += (f, ov, nv) => { craftedCache = Data.Result.Create(); };
+            _id.fieldChangeEvent += (f, ov, nv) => { craftedCache = Data.Result[ 0 ].Value.Create(); };
         }
 
         public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )

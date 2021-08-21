@@ -2,6 +2,7 @@ using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.TerrainFeatures;
@@ -31,12 +32,15 @@ namespace DynamicGameAssets.PackData
             public int MaximumHarvestedQuantity { get; set; } = 1;
             public float ExtraQuantityChance { get; set; }
 
-            public ItemAbstraction Item { get; set; }
+            [JsonConverter( typeof( ItemAbstractionWeightedListConverter ) )]
+            public List<Weighted<ItemAbstraction>> Item { get; set; }
 
             public object Clone()
             {
                 var ret = ( HarvestedDropData ) this.MemberwiseClone();
-                ret.Item = ( ItemAbstraction ) this.Item.Clone();
+                ret.Item = new List<Weighted<ItemAbstraction>>();
+                foreach ( var choice in Item )
+                    ret.Item.Add( (Weighted<ItemAbstraction>) choice.Clone() );
                 return ret;
             }
         }

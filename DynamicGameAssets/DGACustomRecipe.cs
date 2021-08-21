@@ -4,6 +4,7 @@ using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -120,8 +121,8 @@ namespace DynamicGameAssets
 
         public void Refresh()
         {
-            cacheIconTex = data.Result.Icon;
-            cacheIconRect = data.Result.IconSubrect;
+            cacheIconTex = data.Result[ 0 ].Value.Icon;
+            cacheIconRect = data.Result[ 0 ].Value.IconSubrect;
 
             var ingreds = new List<IngredientMatcher>();
             foreach (var ingred in data.Ingredients)
@@ -139,7 +140,8 @@ namespace DynamicGameAssets
 
         public override Item CreateResult()
         {
-            return data.Result.Create();
+            // TODO: Random based on game seed and day
+            return data.Result.Choose().Create();
         }
     }
 }

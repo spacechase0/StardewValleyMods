@@ -37,11 +37,13 @@ using SObject = StardewValley.Object;
 // TODO: Objects: Preserve overrides?
 // TODO: Objects: warp totems?
 // TODO: Objects&Crops&GiantCrops(?)&ItemAbstraction: colors?
-// TODO: Crops: Can grow in IndoorPot
+// TODO: Crops: Can grow in IndoorPot field
 // TODO: Crops: Can grow in greenhouse?
 // TODO: Crops: Forage crops?
 // TODO: Crops: getRandomWildCropForSeason support?
+// TODO: ItemAbstraction: Random choice by changing everything to [{weight,itemabstraction},{weight,itemabstraction},...] (w/ item converter so you can still only specify one)
 // TODO: General validation, not crashing when an item is missing, etc.
+// TODO: General: Extension data
 // TODO: Look into Gourmand requests?
 /* TODO:
  * Big craftables
@@ -58,7 +60,7 @@ using SObject = StardewValley.Object;
  * ? paths
  * ? buildings
  * NOT farm animals (FAVR)
- * NOT NPCs (covered by CP)
+ * NOT NPCs (covered by CP indirectly)
  * farm types????
  * NOT critters (needs AI stuff, can be its own mod)
  * NOT quests

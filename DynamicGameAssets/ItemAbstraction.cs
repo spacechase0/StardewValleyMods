@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
@@ -289,5 +291,30 @@ namespace DynamicGameAssets
         }
 
         public virtual object Clone() => this.MemberwiseClone();
+    }
+
+    public class ItemAbstractionWeightedListConverter : JsonConverter< List< Weighted< ItemAbstraction > > >
+    {
+        public override bool CanRead => true;
+        public override bool CanWrite => false;
+
+        public override List<Weighted<ItemAbstraction>> ReadJson( JsonReader reader, Type objectType, [AllowNull] List<Weighted<ItemAbstraction>> existingValue, bool hasExistingValue, JsonSerializer serializer )
+        {
+            var ret = new List<Weighted<ItemAbstraction>>();
+            if ( reader.TokenType == JsonToken.StartObject )
+            {
+                ret.Add( new Weighted<ItemAbstraction>( 1.0, serializer.Deserialize<ItemAbstraction>( reader ) ) );
+            }
+            else
+            {
+                ret = serializer.Deserialize<List<Weighted<ItemAbstraction>>>( reader );
+            }
+            return ret;
+        }
+
+        public override void WriteJson( JsonWriter writer, [AllowNull] List<Weighted<ItemAbstraction>> value, JsonSerializer serializer )
+        {
+            throw new NotImplementedException();
+        }
     }
 }

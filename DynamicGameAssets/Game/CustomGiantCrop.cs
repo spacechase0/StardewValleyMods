@@ -8,6 +8,7 @@ using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using SpaceShared;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
@@ -67,7 +68,7 @@ namespace DynamicGameAssets.Game
             {
                 if ( t is Axe && t.hasEnchantmentOfType<ShavingEnchantment>() && Game1.random.NextDouble() <= ( double ) ( ( float ) power / 5f ) )
                 {
-                    var item = drop.Item.Create();
+                    var item = drop.Item.Choose( Game1.random ).Create();
                     Debris d = new Debris(item, new Vector2(tileLocation.X * 64f + 96f, (tileLocation.Y + 0.5f) * 64f), new Vector2(Game1.player.getStandingX(), Game1.player.getStandingY()));
                     d.Chunks[ 0 ].xVelocity.Value += ( float ) Game1.random.Next( -10, 11 ) / 10f;
                     d.chunkFinalYLevel = ( int ) ( tileLocation.Y * 64f + 128f );
@@ -108,12 +109,12 @@ namespace DynamicGameAssets.Game
                     if ( Game1.IsMultiplayer )
                     {
                         for ( int i = 0; i < numChunks; ++i )
-                            location.debris.Add( new Debris( drop.Item.Create(), new Vector2( (tileLocation.X + 1) * 64 + 32, ( tileLocation.Y + 1 ) * 64 + 32 ), Game1.getFarmer( t.getLastFarmerToUse().UniqueMultiplayerID ).getStandingPosition() ) );
+                            location.debris.Add( new Debris( drop.Item.Choose( r ).Create(), new Vector2( (tileLocation.X + 1) * 64 + 32, ( tileLocation.Y + 1 ) * 64 + 32 ), Game1.getFarmer( t.getLastFarmerToUse().UniqueMultiplayerID ).getStandingPosition() ) );
                         //Game1.createMultipleObjectDebris( base.parentSheetIndex, ( int ) tileLocation.X + 1, ( int ) tileLocation.Y + 1, numChunks, t.getLastFarmerToUse().UniqueMultiplayerID, location );
                     }
                     else
                     {
-                        Game1_createRadialDebris( location, drop.Item.Create(), ( int ) tileLocation.X, ( int ) tileLocation.Y, numChunks, resource: false, -1, item: true );
+                        Game1_createRadialDebris( location, drop.Item.Choose( r ).Create(), ( int ) tileLocation.X, ( int ) tileLocation.Y, numChunks, resource: false, -1, item: true );
                     }
                 }
                 //Object tmp = new Object(Vector2.Zero, base.parentSheetIndex, 1);
