@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using DynamicGameAssets.Game;
 using StardewValley;
 using System;

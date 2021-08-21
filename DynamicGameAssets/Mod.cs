@@ -39,10 +39,8 @@ using SObject = StardewValley.Object;
 // TODO: Objects&Crops&GiantCrops(?)&ItemAbstraction: colors?
 // TODO: Crops: Can grow in IndoorPot field
 // TODO: Crops: Can grow in greenhouse?
-// TODO: Crops: Forage crops? - can change ObjectPackData.PlantsCrop to List<Weighted<string>>
 // TODO: Crops: getRandomWildCropForSeason support?
-// TODO: ItemAbstraction: Random choice by changing everything to [{weight,itemabstraction},{weight,itemabstraction},...] (w/ item converter so you can still only specify one)
-// TODO: General validation, not crashing when an item is missing, etc.
+// TODO: General validation, optimization (cache Data in IDGAItem's)not crashing when an item is missing, etc.
 // TODO: General: Extension data
 // TODO: Look into Gourmand requests?
 /* TODO:
@@ -53,7 +51,6 @@ using SObject = StardewValley.Object;
  * Forge recipes
  * Fruit trees
  * Hats
- * weapons
  * ? walls/floors
  * Custom Ore Nodes & Custom Resource Clumps
  * Basic machine recipes
@@ -68,6 +65,8 @@ using SObject = StardewValley.Object;
  * secret notes?
  * NOT trees (BURT)
  */
+// TODO: API
+// Stretch: In-game editor
 
 namespace DynamicGameAssets
 {
@@ -139,6 +138,7 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomStorageFurniture));
             spacecore.RegisterSerializerType(typeof(CustomCrop));
             spacecore.RegisterSerializerType(typeof(CustomGiantCrop));
+            spacecore.RegisterSerializerType(typeof(CustomMeleeWeapon));
 
             foreach ( var pack in contentPacks )
             {
@@ -487,14 +487,14 @@ namespace DynamicGameAssets
             if ( Game1.objectSpriteSheet == null )
                 Game1.objectSpriteSheet = Game1.content.Load< Texture2D >( "Maps\\springobjects" );
 
-            SpriteBatchTileSheetAdjustments.overrides.Clear();
+            SpriteBatchTileSheetAdjustments.objectOverrides.Clear();
             foreach ( var cp in contentPacks )
             {
                 foreach ( var obj in cp.Value.items.Values.OfType<ObjectPackData>() )
                 {
                     var tex = cp.Value.GetTexture( obj.Texture, 16, 16 );
                     string fullId = $"{cp.Key}/{obj.ID}";
-                    SpriteBatchTileSheetAdjustments.overrides.Add( Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, fullId.GetHashCode(), 16, 16 ), tex );
+                    SpriteBatchTileSheetAdjustments.objectOverrides.Add( Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, fullId.GetHashCode(), 16, 16 ), tex );
                 }
             }
         }

@@ -31,6 +31,7 @@ namespace DynamicGameAssets.PackData
             LoadAndValidateItems<CraftingPackData>("crafting.json");
             LoadAndValidateItems<FurniturePackData>("furniture.json");
             LoadAndValidateItems<CropPackData>( "crops.json" );
+            LoadAndValidateItems<MeleeWeaponPackData>( "melee-weapons.json" );
             LoadOthers<ShopPackData>( "shop-entries.json" );
         }
 
