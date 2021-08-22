@@ -40,8 +40,6 @@ namespace DynamicGameAssets.Game
 
             ParentSheetIndex = Mod.BaseFakeObjectId;
             name = data.ID;
-            if ( data.SellPrice.HasValue )
-                price.Value = data.SellPrice.Value;
             edibility.Value = data.Edibility;
             type.Value = "Basic";
             category.Value = (int) data.Category;

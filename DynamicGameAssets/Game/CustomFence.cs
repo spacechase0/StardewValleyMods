@@ -195,5 +195,13 @@ namespace DynamicGameAssets.Game
             ret._GetOneFrom( this );
             return ret;
         }
+
+        public override bool canStackWith( ISalable other )
+        {
+            if ( !( other is CustomFence fence ) )
+                return false;
+
+            return fence.FullId == FullId && base.canStackWith( fence );
+        }
     }
 }

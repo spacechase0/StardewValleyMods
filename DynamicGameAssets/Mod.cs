@@ -51,7 +51,7 @@ using System.Runtime.CompilerServices;
  * Fruit trees
  * ? walls/floors
  * Custom Ore Nodes & Custom Resource Clumps
- * Basic machine recipes
+ * Basic machine recipes? (PFM)
  * ? paths
  * ? buildings
  * NOT farm animals (FAVR)
@@ -84,6 +84,7 @@ namespace DynamicGameAssets
 
         internal static List<DGACustomCraftingRecipe> customCraftingRecipes = new List<DGACustomCraftingRecipe>();
         internal static List<DGACustomForgeRecipe> customForgeRecipes = new List<DGACustomForgeRecipe>();
+        internal static Dictionary<string, List<MachineRecipePackData>> customMachineRecipes = new Dictionary<string, List<MachineRecipePackData>>();
 
         private static readonly PerScreen<StateData> _state = new PerScreen<StateData>( () => new StateData() );
         internal static StateData State => _state.Value;
@@ -139,6 +140,7 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomBoots));
             spacecore.RegisterSerializerType(typeof(CustomHat));
             spacecore.RegisterSerializerType(typeof(CustomFence));
+            spacecore.RegisterSerializerType(typeof(CustomBigCraftable));
 
             LoadContentPacks();
 
@@ -198,6 +200,8 @@ namespace DynamicGameAssets
                 }
             }
 
+            customMachineRecipes.Clear();
+
             // Dynamic fields
             foreach ( var cp in contentPacks )
             {
@@ -216,6 +220,13 @@ namespace DynamicGameAssets
                     var newOther = ( BasePackData ) data.original.Clone();
                     newOther.ApplyDynamicFields();
                     newOthers.Add( newOther );
+
+                    if ( newOther is MachineRecipePackData machineRecipe )
+                    {
+                        if ( !customMachineRecipes.ContainsKey( machineRecipe.MachineId ) )
+                            customMachineRecipes.Add( machineRecipe.MachineId, new List<MachineRecipePackData>() );
+                        customMachineRecipes[ machineRecipe.MachineId ].Add( machineRecipe );
+                    }
                 }
                 cp.Value.others = newOthers;
             }
@@ -332,6 +343,8 @@ namespace DynamicGameAssets
         {
             contentPacks.Clear();
             itemLookup.Clear();
+            foreach ( var recipe in customCraftingRecipes )
+                ( recipe.data.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Remove( recipe.data.CraftingDataKey );
             customCraftingRecipes.Clear();
             customForgeRecipes.Clear();
             foreach ( var state in _state.GetActiveValues() )

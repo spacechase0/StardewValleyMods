@@ -35,8 +35,10 @@ namespace DynamicGameAssets.PackData
             LoadAndValidateItems<BootsPackData>( "boots.json" );
             LoadAndValidateItems<HatPackData>( "hats.json" );
             LoadAndValidateItems<FencePackData>( "fences.json" );
+            LoadAndValidateItems<BigCraftablePackData>( "big-craftables.json" );
             LoadOthers<ShopEntryPackData>( "shop-entries.json" );
             LoadOthers<ForgeRecipePackData>( "forge-recipes.json" );
+            LoadOthers<MachineRecipePackData>( "machine-recipes.json" );
         }
 
         public CommonPackData Find( string item )
@@ -135,7 +137,7 @@ namespace DynamicGameAssets.PackData
                 if ( colon == -1 && !smapiPack.HasFile( path ) || colon != -1 && !smapiPack.HasFile( path.Substring( 0, colon ) ) )
                     throw new ArgumentException( "No such file \"" + path + "\"!" );
                 if ( colon == -1 )
-                    return new TexturedRect() { Texture = smapiPack.LoadAsset<Texture2D>( path ), Rect = null };
+                    return new TexturedRect() { Texture = textures.ContainsKey( path ) ? textures[ path ] : smapiPack.LoadAsset<Texture2D>( path ), Rect = null };
                 string texPath = path.Substring( 0, colon );
                 var tex = textures.ContainsKey( texPath ) ? textures[ texPath] : smapiPack.LoadAsset< Texture2D >( texPath );
                 if ( !textures.ContainsKey( texPath ) )
