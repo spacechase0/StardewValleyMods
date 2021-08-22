@@ -34,6 +34,7 @@ namespace DynamicGameAssets.PackData
             LoadAndValidateItems<MeleeWeaponPackData>( "melee-weapons.json" );
             LoadAndValidateItems<BootsPackData>( "boots.json" );
             LoadAndValidateItems<HatPackData>( "hats.json" );
+            LoadAndValidateItems<FencePackData>( "fences.json" );
             LoadOthers<ShopEntryPackData>( "shop-entries.json" );
             LoadOthers<ForgeRecipePackData>( "forge-recipes.json" );
         }

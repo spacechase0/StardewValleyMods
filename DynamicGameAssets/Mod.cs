@@ -31,6 +31,7 @@ using StardewValley.Tools;
 using SObject = StardewValley.Object;
 using System.Runtime.CompilerServices;
 
+// TODO: Objects: Donatable to museum?
 // TODO: Objects: Light?
 // TODO: Objects (or general): Deconstructor output patch?
 // TODO: Objects: Fish tank display?
@@ -47,7 +48,6 @@ using System.Runtime.CompilerServices;
 /* TODO:
  * Big craftables
  * Clothing (pants, shirt)
- * Fences
  * Fruit trees
  * ? walls/floors
  * Custom Ore Nodes & Custom Resource Clumps
@@ -56,12 +56,13 @@ using System.Runtime.CompilerServices;
  * ? buildings
  * NOT farm animals (FAVR)
  * NOT NPCs (covered by CP indirectly)
- * farm types????
+ * ????farm types????
  * NOT critters (needs AI stuff, can be its own mod)
  * NOT quests
  * NOT mail (MFM)
  * secret notes?
  * NOT trees (BURT)
+ * grass + grass starters?
  */
 // TODO: API
 // TODO: Converter (packs) and converter (items)
@@ -137,6 +138,7 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomMeleeWeapon));
             spacecore.RegisterSerializerType(typeof(CustomBoots));
             spacecore.RegisterSerializerType(typeof(CustomHat));
+            spacecore.RegisterSerializerType(typeof(CustomFence));
 
             LoadContentPacks();
 

@@ -369,7 +369,7 @@ namespace DynamicGameAssets.Game
 
         public override bool needsToBeDonated()
         {
-            return false; // TODO: Implement as future feature?
+            return false;
         }
 
         public override string getDescription()
