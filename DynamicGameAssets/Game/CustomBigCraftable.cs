@@ -117,6 +117,14 @@ namespace DynamicGameAssets.Game
             // TODO: This could be optimized I'm pretty sure
             foreach ( var recipe in Mod.customMachineRecipes[ FullId ] )
             {
+                /*
+                if ( recipe.liveConditionsObj != null )
+                {
+                    recipe.liveConditionsObj.UpdateContext();
+                    if ( !recipe.liveConditionsObj.IsMatch )
+                        continue;
+                }
+                */
                 if ( !recipe.Ingredients[ 0 ].Matches( dropInItem ) )
                     continue;
 

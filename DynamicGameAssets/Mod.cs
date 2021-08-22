@@ -46,12 +46,10 @@ using System.Runtime.CompilerServices;
 // TODO: General: Extension data
 // TODO: Look into Gourmand requests?
 /* TODO:
- * Big craftables
  * Clothing (pants, shirt)
  * Fruit trees
  * ? walls/floors
  * Custom Ore Nodes & Custom Resource Clumps
- * Basic machine recipes? (PFM)
  * ? paths
  * ? buildings
  * NOT farm animals (FAVR)

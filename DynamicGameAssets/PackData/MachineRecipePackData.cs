@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using ContentPatcher;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,6 +16,8 @@ namespace DynamicGameAssets.PackData
 {
     public class MachineRecipePackData : BasePackData
     {
+        //internal IManagedConditions liveConditionsObj;
+
         public string MachineId { get; set; }
 
         [JsonConverter( typeof( ItemAbstractionWeightedListConverter ) )]
@@ -22,10 +25,27 @@ namespace DynamicGameAssets.PackData
         public List<ItemAbstraction> Ingredients { get; set; }
         public int MinutesToProcess { get; set; }
 
+        /*private Dictionary<string, string> _liveConditions = new Dictionary<string, string>();
+        public Dictionary<string, string> LiveConditions // TODO: Better name
+        {
+            get { return _liveConditions; }
+            set
+            {
+                _liveConditions = value;
+                if ( parent != null )
+                    liveConditionsObj = Mod.instance.cp.ParseConditions( parent.smapiPack.Manifest, LiveConditions, parent.conditionVersion );
+            }
+        }*/
+
         public string StartWorkingSound { get; set; } = "furnace";
         public bool? WorkingLightOverride { get; set; }
         public string MachineWorkingTextureOverride { get; set; }
         public string MachineFinishedTextureOverride { get; set; }
+
+        public override void PostLoad()
+        {
+            //LiveConditions = LiveConditions;
+        }
 
         public override object Clone()
         {
