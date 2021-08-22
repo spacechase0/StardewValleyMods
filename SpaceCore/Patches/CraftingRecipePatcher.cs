@@ -42,14 +42,13 @@ namespace SpaceCore.Patches
 
         public static CraftingRecipe RedirectedCreateRecipe(string name, bool isCooking)
         {
-            var container = CustomRecipe.CraftingRecipes;
+            var container = CustomCraftingRecipe.CraftingRecipes;
             if (isCooking)
-                container = CustomRecipe.CookingRecipes;
+                container = CustomCraftingRecipe.CookingRecipes;
 
             if (container.ContainsKey(name))
             {
-                Log.Trace("Created custom recipe: " + name);
-                return new CustomCraftingRecipe(name, isCooking, container[name]);
+                return new Framework.CustomCraftingRecipe(name, isCooking, container[name]);
             }
 
             return new CraftingRecipe(name, isCooking);
@@ -57,7 +56,7 @@ namespace SpaceCore.Patches
 
         public static ClickableTextureComponent RedirectedCTCCreation(ClickableTextureComponent ctc, CraftingRecipe recipe )
         {
-            if ( recipe is CustomCraftingRecipe ccr )
+            if ( recipe is Framework.CustomCraftingRecipe ccr )
             {
                 ctc.texture = ccr.recipe.IconTexture;
                 ctc.sourceRect = ccr.recipe.IconSubrect ?? new Microsoft.Xna.Framework.Rectangle(0, 0, ctc.texture.Width, ctc.texture.Height);
@@ -71,7 +70,7 @@ namespace SpaceCore.Patches
         *********/
         private static bool Before_ConsumeIngredients(CraftingRecipe __instance, List<Chest> additional_materials)
         {
-            if ( __instance is CustomCraftingRecipe ccr )
+            if ( __instance is Framework.CustomCraftingRecipe ccr )
             {
                 foreach ( var ingred in ccr.recipe.Ingredients )
                 {

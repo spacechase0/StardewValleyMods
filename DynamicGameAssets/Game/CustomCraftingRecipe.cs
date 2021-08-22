@@ -28,10 +28,10 @@ namespace DynamicGameAssets.Game
         [XmlIgnore]
         public string FullId => $"{SourcePack}/{Id}";
         [XmlIgnore]
-        public CraftingPackData Data => Mod.Find( FullId ) as CraftingPackData;
+        public CraftingRecipePackData Data => Mod.Find( FullId ) as CraftingRecipePackData;
 
         public CustomCraftingRecipe() { }
-        public CustomCraftingRecipe( CraftingPackData data )
+        public CustomCraftingRecipe( CraftingRecipePackData data )
         {
             _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
             _id.Value = data.ID;

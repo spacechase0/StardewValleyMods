@@ -5,6 +5,7 @@ using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
 using SpaceCore.Framework;
+using SpaceCore.Interface;
 using SpaceCore.Patches;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -41,6 +42,7 @@ namespace SpaceCore
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
             Commands.Register();
             Skills.Init(helper.Events);
@@ -52,6 +54,7 @@ namespace SpaceCore
                 new EventPatcher(),
                 new CraftingRecipePatcher(),
                 new FarmerPatcher(),
+                new ForgeMenuPatcher(),
                 new Game1Patcher(),
                 new GameLocationPatcher(),
                 new GameMenuPatcher(),
@@ -147,6 +150,12 @@ namespace SpaceCore
                 if (legacyFile.Exists)
                     legacyFile.Delete();
             }
+        }
+
+        private void OnMenuChanged( object sender, MenuChangedEventArgs e )
+        {
+            if ( e.NewMenu is StardewValley.Menus.ForgeMenu )
+                Game1.activeClickableMenu = new NewForgeMenu();
         }
     }
 }

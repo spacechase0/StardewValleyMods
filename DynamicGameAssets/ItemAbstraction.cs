@@ -25,7 +25,7 @@ namespace DynamicGameAssets
             VanillaClothing,
             VanillaBoots,
             VanillaFurniture,
-            ContextTag,
+            ContextTag, // recipes only
             // Missing anything?
         }
 
@@ -217,7 +217,7 @@ namespace DynamicGameAssets
                 case ItemType.DGAItem:
                     return Mod.Find(Value).ToItem();
                 case ItemType.DGARecipe:
-                    return new CustomCraftingRecipe(Mod.Find( Value ) as CraftingPackData);
+                    return new CustomCraftingRecipe(Mod.Find( Value ) as CraftingRecipePackData);
                 case ItemType.VanillaObject:
                     if (valAsInt.HasValue)
                         return new StardewValley.Object(valAsInt.Value, Quantity);

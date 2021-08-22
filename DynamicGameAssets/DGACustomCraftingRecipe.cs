@@ -10,17 +10,17 @@ using StardewValley.Objects;
 
 namespace DynamicGameAssets
 {
-    public class DGACustomRecipe : CustomRecipe
+    public class DGACustomCraftingRecipe : CustomCraftingRecipe
     {
         private class DGAIngredientMatcher : IngredientMatcher
         {
-            private CraftingPackData.IngredientAbstraction ingred;
+            private CraftingRecipePackData.IngredientAbstraction ingred;
 
             private string cacheName;
             private Texture2D cacheIconTex;
             private Rectangle cacheIconRect;
 
-            public DGAIngredientMatcher(CraftingPackData.IngredientAbstraction theIngred )
+            public DGAIngredientMatcher(CraftingRecipePackData.IngredientAbstraction theIngred )
             {
                 ingred = theIngred;
                 cacheName = ingred.NameOverride ?? ingred.Create().DisplayName;
@@ -107,13 +107,13 @@ namespace DynamicGameAssets
             }
         }
 
-        internal CraftingPackData data;
+        internal CraftingRecipePackData data;
 
         private Texture2D cacheIconTex;
         private Rectangle cacheIconRect;
         private IngredientMatcher[] cacheIngreds;
 
-        public DGACustomRecipe( CraftingPackData theData )
+        public DGACustomCraftingRecipe( CraftingRecipePackData theData )
         {
             data = theData;
             Refresh();

@@ -11,9 +11,9 @@ namespace SpaceCore.Framework
 {
     public class CustomCraftingRecipe : CraftingRecipe
     {
-        internal readonly CustomRecipe recipe;
+        internal readonly global::SpaceCore.CustomCraftingRecipe recipe;
 
-        public CustomCraftingRecipe( string name, bool isCooking, CustomRecipe recipeOverride )
+        public CustomCraftingRecipe( string name, bool isCooking, global::SpaceCore.CustomCraftingRecipe recipeOverride )
         :   base( name, isCooking )
         {
             recipe = recipeOverride;

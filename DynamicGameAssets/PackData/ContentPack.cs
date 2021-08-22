@@ -28,12 +28,13 @@ namespace DynamicGameAssets.PackData
             smapiPack = pack;
             conditionVersion = new SemanticVersion( pack.Manifest.ExtraFields[ "DGA.ConditionsFormatVersion" ].ToString() );
             LoadAndValidateItems<ObjectPackData>( "objects.json" );
-            LoadAndValidateItems<CraftingPackData>("crafting.json");
+            LoadAndValidateItems<CraftingRecipePackData>("crafting-recipes.json");
             LoadAndValidateItems<FurniturePackData>("furniture.json");
             LoadAndValidateItems<CropPackData>( "crops.json" );
             LoadAndValidateItems<MeleeWeaponPackData>( "melee-weapons.json" );
             LoadAndValidateItems<BootsPackData>( "boots.json" );
-            LoadOthers<ShopPackData>( "shop-entries.json" );
+            LoadOthers<ShopEntryPackData>( "shop-entries.json" );
+            LoadOthers<ForgeRecipePackData>( "forge-recipes.json" );
         }
 
         public CommonPackData Find( string item )

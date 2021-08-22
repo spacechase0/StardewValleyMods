@@ -7,12 +7,12 @@ using StardewValley.Objects;
 
 namespace SpaceCore
 {
-    public abstract class CustomRecipe
+    public abstract class CustomCraftingRecipe
     {
         // Note: Custom recipes still need to have a fake entry in their corresponding data file.
         // Example for normal crafting recipe: ("Test Recipe", "0 1//0 1/false//Test Recipe")
-        public static readonly Dictionary<string, CustomRecipe> CraftingRecipes = new Dictionary<string, CustomRecipe>();
-        public static readonly Dictionary<string, CustomRecipe> CookingRecipes = new Dictionary<string, CustomRecipe>();
+        public static readonly Dictionary<string, CustomCraftingRecipe> CraftingRecipes = new Dictionary<string, CustomCraftingRecipe>();
+        public static readonly Dictionary<string, CustomCraftingRecipe> CookingRecipes = new Dictionary<string, CustomCraftingRecipe>();
 
         public abstract class IngredientMatcher
         {
@@ -160,4 +160,22 @@ namespace SpaceCore
 
         public abstract Item CreateResult();
     }
-}
+
+    public abstract class CustomForgeRecipe
+    {
+        public abstract class IngredientMatcher
+        {
+            public abstract bool HasEnoughFor( Item item );
+
+            public abstract void Consume( ref Item item );
+        }
+
+        public static List<CustomForgeRecipe> Recipes { get; set; } = new List<CustomForgeRecipe>();
+
+        public abstract IngredientMatcher BaseItem { get; }
+        public abstract IngredientMatcher IngredientItem { get; }
+        public abstract int CinderShardCost { get; }
+
+        public abstract Item CreateResult( Item baseItem, Item ingredItem );
+    }
+ }

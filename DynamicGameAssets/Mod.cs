@@ -31,6 +31,8 @@ using StardewValley.Tools;
 using SObject = StardewValley.Object;
 using System.Runtime.CompilerServices;
 
+// WIP: Forge menu - might need more patches or replace menu
+
 // TODO: Objects: Light?
 // TODO: Objects (or general): Deconstructor output patch?
 // TODO: Objects: Fish tank display?
@@ -48,7 +50,6 @@ using System.Runtime.CompilerServices;
  * Big craftables
  * Clothing (pants, shirt)
  * Fences
- * Forge recipes
  * Fruit trees
  * Hats
  * ? walls/floors
@@ -83,7 +84,8 @@ namespace DynamicGameAssets
 
         internal static Dictionary<int, string> itemLookup = new Dictionary<int, string>();
 
-        internal static List<DGACustomRecipe> customRecipes = new List<DGACustomRecipe>();
+        internal static List<DGACustomCraftingRecipe> customCraftingRecipes = new List<DGACustomCraftingRecipe>();
+        internal static List<DGACustomForgeRecipe> customForgeRecipes = new List<DGACustomForgeRecipe>();
 
         private static readonly PerScreen<StateData> _state = new PerScreen<StateData>( () => new StateData() );
         internal static StateData State => _state.Value;
@@ -119,10 +121,6 @@ namespace DynamicGameAssets
             harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix3 ) ) ) );
             harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( float ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix4 ) ) ) );
             harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix5 ) ) ) );
-
-            LoadContentPacks();
-
-            RefreshSpritebatchCache();
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -131,7 +129,7 @@ namespace DynamicGameAssets
 
             var spacecore = Helper.ModRegistry.GetApi<ISpaceCoreApi>( "spacechase0.SpaceCore" );
             spacecore.RegisterSerializerType( typeof( CustomObject ) );
-            spacecore.RegisterSerializerType(typeof(CustomCraftingRecipe));
+            spacecore.RegisterSerializerType(typeof( Game.CustomCraftingRecipe));
             spacecore.RegisterSerializerType(typeof(CustomBasicFurniture));
             spacecore.RegisterSerializerType(typeof(CustomBedFurniture));
             spacecore.RegisterSerializerType(typeof(CustomTVFurniture));
@@ -142,15 +140,9 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomMeleeWeapon));
             spacecore.RegisterSerializerType(typeof(CustomBoots));
 
-            foreach ( var pack in contentPacks )
-            {
-                foreach (var recipe in pack.Value.items.Values.OfType<CraftingPackData>())
-                {
-                    var crecipe = new DGACustomRecipe(recipe);
-                    customRecipes.Add(crecipe);
-                    (recipe.IsCooking ? CustomRecipe.CookingRecipes : CustomRecipe.CraftingRecipes).Add(recipe.CraftingDataKey, crecipe);
-                }
-            }
+            LoadContentPacks();
+
+            RefreshSpritebatchCache();
         }
 
         private ConditionalWeakTable< Farmer, Holder< string > > prevBootsFrame = new ConditionalWeakTable< Farmer, Holder< string > >();
@@ -228,6 +220,7 @@ namespace DynamicGameAssets
                 cp.Value.others = newOthers;
             }
 
+            RefreshRecipes();
             RefreshShopEntries();
 
             if ( Context.ScreenId == 0 )
@@ -339,7 +332,8 @@ namespace DynamicGameAssets
         {
             contentPacks.Clear();
             itemLookup.Clear();
-            customRecipes.Clear();
+            customCraftingRecipes.Clear();
+            customForgeRecipes.Clear();
             foreach ( var state in _state.GetActiveValues() )
             {
                 state.Value.TodaysShopEntries.Clear();
@@ -389,6 +383,20 @@ namespace DynamicGameAssets
                 }
                 var pack = new ContentPack( cp );
                 contentPacks.Add( cp.Manifest.UniqueID, pack );
+
+                foreach ( var recipe in pack.items.Values.OfType<CraftingRecipePackData>() )
+                {
+                    var crecipe = new DGACustomCraftingRecipe(recipe);
+                    customCraftingRecipes.Add( crecipe );
+                    ( recipe.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Add( recipe.CraftingDataKey, crecipe );
+                }
+
+                foreach ( var recipe in pack.others.OfType<ForgeRecipePackData>() )
+                {
+                    var crecipe = new DGACustomForgeRecipe(recipe);
+                    customForgeRecipes.Add( crecipe );
+                    CustomForgeRecipe.Recipes.Add( crecipe );
+                }
             }
         }
 
@@ -409,7 +417,7 @@ namespace DynamicGameAssets
             {
                 var dict = asset.AsDictionary<string, string>().Data;
                 int i = 0;
-                foreach (var crecipe in customRecipes)
+                foreach (var crecipe in customCraftingRecipes)
                 {
                     if (crecipe.data.Enabled && crecipe.data.IsCooking)
                     {
@@ -417,13 +425,13 @@ namespace DynamicGameAssets
                         ++i;
                     }
                 }
-                Log.Trace("Added " + i + "/" + customRecipes.Count + " entries to cooking recipes");
+                Log.Trace("Added " + i + "/" + customCraftingRecipes.Count + " entries to cooking recipes");
             }
             else if (asset.AssetNameEquals("Data\\CraftingRecipes"))
             {
                 var dict = asset.AsDictionary<string, string>().Data;
                 int i = 0;
-                foreach (var crecipe in customRecipes)
+                foreach (var crecipe in customCraftingRecipes)
                 {
                     if (crecipe.data.Enabled && !crecipe.data.IsCooking)
                     {
@@ -431,7 +439,7 @@ namespace DynamicGameAssets
                         ++i;
                     }
                 }
-                Log.Trace("Added " + i + "/" + customRecipes.Count + " entries to crafting recipes");
+                Log.Trace("Added " + i + "/" + customCraftingRecipes.Count + " entries to crafting recipes");
             }
             else if (asset.AssetNameEquals("Data\\ObjectInformation"))
             {
@@ -481,12 +489,20 @@ namespace DynamicGameAssets
         }
         */
 
+        private void RefreshRecipes()
+        {
+            foreach ( var recipe in customCraftingRecipes )
+                recipe.Refresh();
+            foreach ( var recipe in customForgeRecipes )
+                recipe.Refresh();
+        }
+
         private void RefreshShopEntries()
         {
             State.TodaysShopEntries.Clear();
             foreach ( var cp in contentPacks )
             {
-                foreach ( var shopEntry in cp.Value.others.OfType< ShopPackData >() )
+                foreach ( var shopEntry in cp.Value.others.OfType< ShopEntryPackData >() )
                 {
                     if ( shopEntry.Enabled )
                     {

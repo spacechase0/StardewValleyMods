@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DynamicGameAssets.PackData
 {
-    public class ShopPackData : BasePackData
+    public class ShopEntryPackData : BasePackData
     {
         /*
         BlueBoat

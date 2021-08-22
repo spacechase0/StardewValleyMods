@@ -14,7 +14,7 @@ using StardewValley;
 namespace DynamicGameAssets.PackData
 {
     // Note: Unlike other things, these need to have a globally-unique ID, not pack-unique.
-    public class CraftingPackData : CommonPackData
+    public class CraftingRecipePackData : CommonPackData
     {
         public string Name => parent.smapiPack.Translation.Get($"crafting.{ID}.name");
         public string Description => parent.smapiPack.Translation.Get($"crafting.{ID}.description");
@@ -24,7 +24,7 @@ namespace DynamicGameAssets.PackData
         public class IngredientAbstraction : ItemAbstraction
         {
             [XmlIgnore]
-            public CraftingPackData parent;
+            public CraftingRecipePackData parent;
 
             public string NameOverride { get; set; }
             public string IconOverride { get; set; }
@@ -76,7 +76,7 @@ namespace DynamicGameAssets.PackData
 
         public override object Clone()
         {
-            var ret = ( CraftingPackData ) base.Clone();
+            var ret = ( CraftingRecipePackData ) base.Clone();
             ret.Result = new List<Weighted<ItemAbstraction>>();
             foreach ( var choice in Result )
                 ret.Result.Add( (Weighted<ItemAbstraction>) choice.Clone() );
