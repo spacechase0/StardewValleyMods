@@ -32,6 +32,7 @@ namespace DynamicGameAssets.PackData
             LoadAndValidateItems<FurniturePackData>("furniture.json");
             LoadAndValidateItems<CropPackData>( "crops.json" );
             LoadAndValidateItems<MeleeWeaponPackData>( "melee-weapons.json" );
+            LoadAndValidateItems<BootsPackData>( "boots.json" );
             LoadOthers<ShopPackData>( "shop-entries.json" );
         }
 
@@ -75,6 +76,41 @@ namespace DynamicGameAssets.PackData
             }
         }
 
+        internal string GetTextureFrame( string path )
+        {
+            string[] frames = path.Split( ',' );
+            int[] frameDurs = null;
+            if ( animInfo.ContainsKey( path ) )
+                frameDurs = animInfo[ path ];
+            else
+            {
+                int total = 0;
+                var frameData = new List<int>();
+                for ( int i = 0; i < frames.Length; ++i )
+                {
+                    int dur = 1;
+                    int at = frames[ i ].IndexOf( '@' );
+                    if ( at != -1 )
+                        dur = int.Parse( frames[ i ].Substring( at + 1 ).Trim() );
+
+                    frameData.Add( dur );
+                    total += dur;
+                }
+                frameData.Add( total );
+                animInfo.Add( path, frameDurs = frameData.ToArray() );
+            }
+
+            int spot = Mod.State.AnimationFrames % frameDurs[ frames.Length ];
+            for ( int i = 0; i < frames.Length; ++i )
+            {
+                spot -= frameDurs[ i ];
+                if ( spot < 0 )
+                    return frames[ i ].Trim();
+            }
+
+            throw new Exception( "This should never happen (" + path + ")" );
+        }
+
         internal TexturedRect GetMultiTexture( string[] paths, int decider, int xSize, int ySize )
         {
             return GetTexture( paths[ decider % paths.Length ], xSize, ySize );
@@ -84,37 +120,7 @@ namespace DynamicGameAssets.PackData
         {
             if ( path.Contains( ',' ) )
             {
-                string[] frames = path.Split( ',' );
-                int[] frameDurs = null;
-                if ( animInfo.ContainsKey( path ) )
-                    frameDurs = animInfo[ path ];
-                else
-                {
-                    int total = 0;
-                    var frameData = new List<int>();
-                    for ( int i = 0; i < frames.Length; ++i )
-                    {
-                        int dur = 1;
-                        int at = frames[ i ].IndexOf( '@' );
-                        if ( at != -1 )
-                            dur = int.Parse( frames[ i ].Substring( at + 1 ).Trim() );
-
-                        frameData.Add( dur );
-                        total += dur;
-                    }
-                    frameData.Add( total );
-                    animInfo.Add( path, frameDurs = frameData.ToArray() );
-                }
-
-                int spot = Mod.State.AnimationFrames % frameDurs[ frames.Length ];
-                for ( int i = 0; i < frames.Length; ++i )
-                {
-                    spot -= frameDurs[ i ];
-                    if ( spot < 0 )
-                        return GetTexture( frames[ i ].Trim(), xSize, ySize );
-                }
-
-                throw new Exception( "This should never happen (" + path + ")" );
+                return GetTexture( GetTextureFrame( path ), xSize, ySize );
             }
             else
             {

@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\ConsoleCommandHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\IConsoleCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DiagnosticMessages.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Holder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModDataHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Button.cs" />

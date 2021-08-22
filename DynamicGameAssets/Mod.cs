@@ -29,6 +29,7 @@ using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using SObject = StardewValley.Object;
+using System.Runtime.CompilerServices;
 
 // TODO: Objects: Light?
 // TODO: Objects (or general): Deconstructor output patch?
@@ -40,12 +41,11 @@ using SObject = StardewValley.Object;
 // TODO: Crops: Can grow in IndoorPot field
 // TODO: Crops: Can grow in greenhouse?
 // TODO: Crops: getRandomWildCropForSeason support?
-// TODO: General validation, optimization (cache Data in IDGAItem's)not crashing when an item is missing, etc.
+// TODO: General validation, optimization (cache Data in IDGAItem's), not crashing when an item is missing, etc.
 // TODO: General: Extension data
 // TODO: Look into Gourmand requests?
 /* TODO:
  * Big craftables
- * Boots
  * Clothing (pants, shirt)
  * Fences
  * Forge recipes
@@ -66,6 +66,7 @@ using SObject = StardewValley.Object;
  * NOT trees (BURT)
  */
 // TODO: API
+// TODO: Converter (packs) and converter (items)
 // Stretch: In-game editor
 
 namespace DynamicGameAssets
@@ -100,7 +101,7 @@ namespace DynamicGameAssets
             instance = this;
             Log.Monitor = Monitor;
 
-            helper.Events.GameLoop.UpdateTicked += ( s, e ) => State.AnimationFrames++;
+            helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             helper.Events.Display.MenuChanged += OnMenuChanged;
@@ -139,6 +140,7 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomCrop));
             spacecore.RegisterSerializerType(typeof(CustomGiantCrop));
             spacecore.RegisterSerializerType(typeof(CustomMeleeWeapon));
+            spacecore.RegisterSerializerType(typeof(CustomBoots));
 
             foreach ( var pack in contentPacks )
             {
@@ -147,6 +149,26 @@ namespace DynamicGameAssets
                     var crecipe = new DGACustomRecipe(recipe);
                     customRecipes.Add(crecipe);
                     (recipe.IsCooking ? CustomRecipe.CookingRecipes : CustomRecipe.CraftingRecipes).Add(recipe.CraftingDataKey, crecipe);
+                }
+            }
+        }
+
+        private ConditionalWeakTable< Farmer, Holder< string > > prevBootsFrame = new ConditionalWeakTable< Farmer, Holder< string > >();
+        private void OnUpdateTicked( object sender, UpdateTickedEventArgs e )
+        {
+            State.AnimationFrames++;
+
+            // Support animated boots colors
+            foreach ( var farmer in Game1.getAllFarmers() )
+            {
+                if ( farmer.boots.Value is CustomBoots cboots )
+                {
+                    string frame = cboots.Data.parent.GetTextureFrame( cboots.Data.FarmerColors );
+                    if ( prevBootsFrame.GetOrCreateValue( farmer ).Value != frame )
+                    {
+                        prevBootsFrame.AddOrUpdate( farmer, new Holder<string>(frame) );
+                        farmer.FarmerRenderer.MarkSpriteDirty();
+                    }
                 }
             }
         }
@@ -488,13 +510,23 @@ namespace DynamicGameAssets
                 Game1.objectSpriteSheet = Game1.content.Load< Texture2D >( "Maps\\springobjects" );
 
             SpriteBatchTileSheetAdjustments.objectOverrides.Clear();
+            SpriteBatchTileSheetAdjustments.weaponOverrides.Clear();
             foreach ( var cp in contentPacks )
             {
-                foreach ( var obj in cp.Value.items.Values.OfType<ObjectPackData>() )
+                foreach ( var item in cp.Value.items.Values )
                 {
-                    var tex = cp.Value.GetTexture( obj.Texture, 16, 16 );
-                    string fullId = $"{cp.Key}/{obj.ID}";
-                    SpriteBatchTileSheetAdjustments.objectOverrides.Add( Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, fullId.GetHashCode(), 16, 16 ), tex );
+                    if ( item is ObjectPackData obj )
+                    {
+                        var tex = cp.Value.GetTexture( obj.Texture, 16, 16 );
+                        string fullId = $"{cp.Key}/{obj.ID}";
+                        SpriteBatchTileSheetAdjustments.objectOverrides.Add( Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, fullId.GetHashCode(), 16, 16 ), tex );
+                    }
+                    else if ( item is MeleeWeaponPackData weapon )
+                    {
+                        var tex = cp.Value.GetTexture( weapon.Texture, 16, 16 );
+                        string fullId = $"{cp.Key}/{weapon.ID}";
+                        SpriteBatchTileSheetAdjustments.weaponOverrides.Add( Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, fullId.GetHashCode(), 16, 16 ), tex );
+                    }
                 }
             }
         }

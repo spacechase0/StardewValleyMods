@@ -35,6 +35,7 @@ namespace DynamicGameAssets.Game
         }
 
         public CustomMeleeWeapon( MeleeWeaponPackData data )
+        : this()
         {
             _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
             _id.Value = data.ID;
