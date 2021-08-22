@@ -13,6 +13,7 @@ namespace DynamicGameAssets.Patches
     {
         internal static Dictionary< Rectangle, TexturedRect > objectOverrides = new Dictionary<Rectangle, TexturedRect>();
         internal static Dictionary< Rectangle, TexturedRect > weaponOverrides = new Dictionary<Rectangle, TexturedRect>();
+        internal static Dictionary< Rectangle, TexturedRect > hatOverrides = new Dictionary<Rectangle, TexturedRect>();
 
         public static void Prefix1( SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, SpriteEffects effects, float layerDepth )
         {
@@ -73,6 +74,12 @@ namespace DynamicGameAssets.Patches
             else if ( tex == Tool.weaponsTexture && weaponOverrides.ContainsKey( sourceRect ) )
             {
                 var texRect = weaponOverrides[ sourceRect ];
+                tex = texRect.Texture;
+                sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle( 0, 0, tex.Width, tex.Height );
+            }
+            else if ( tex == FarmerRenderer.hatsTexture && hatOverrides.ContainsKey( sourceRect ) )
+            {
+                var texRect = hatOverrides[ sourceRect ];
                 tex = texRect.Texture;
                 sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle( 0, 0, tex.Width, tex.Height );
             }

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SpaceShared;
 using System;
@@ -46,7 +46,7 @@ namespace DynamicGameAssets.PackData
                 PropertyInfo lastProp = null;
                 object lastInd = null;
                 int fCount = 0;
-                foreach ( var field_ in fields )
+                foreach ( string field_ in fields )
                 {
                     string field = field_;
 

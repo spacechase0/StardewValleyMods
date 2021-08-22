@@ -31,12 +31,10 @@ using StardewValley.Tools;
 using SObject = StardewValley.Object;
 using System.Runtime.CompilerServices;
 
-// WIP: Forge menu - might need more patches or replace menu
-
 // TODO: Objects: Light?
 // TODO: Objects (or general): Deconstructor output patch?
 // TODO: Objects: Fish tank display?
-// TODO: Objects: Stuff on tables
+// TODO: Objects: Stuff on tables, while eating?
 // TODO: Objects: Preserve overrides?
 // TODO: Objects: warp totems?
 // TODO: Objects&Crops&GiantCrops(?)&ItemAbstraction: colors?
@@ -51,7 +49,6 @@ using System.Runtime.CompilerServices;
  * Clothing (pants, shirt)
  * Fences
  * Fruit trees
- * Hats
  * ? walls/floors
  * Custom Ore Nodes & Custom Resource Clumps
  * Basic machine recipes
@@ -116,11 +113,11 @@ namespace DynamicGameAssets
             harmony = new Harmony( ModManifest.UniqueID );
             harmony.PatchAll();
             harmony.Patch( typeof( IClickableMenu ).GetMethod( "drawHoverText", new[] { typeof( SpriteBatch ), typeof( StringBuilder ), typeof( SpriteFont ), typeof( int ), typeof( int ), typeof( int ), typeof( string ), typeof( int ), typeof( string[] ), typeof( Item ), typeof( int ), typeof( int ), typeof( int ), typeof( int ), typeof( int ), typeof( int ),typeof( CraftingRecipe ), typeof( IList<Item> ) } ), transpiler: new HarmonyMethod( typeof( DrawHoverTextPatch ).GetMethod( "Transpiler" ) ) );
-            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix1 ) ) ) );
-            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix2 ) ) ) );
-            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix3 ) ) ) );
-            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( float ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix4 ) ) ) );
-            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix5 ) ) ) );
+            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix1 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
+            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix2 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
+            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix3 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
+            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( float ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix4 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
+            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix5 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -139,6 +136,7 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomGiantCrop));
             spacecore.RegisterSerializerType(typeof(CustomMeleeWeapon));
             spacecore.RegisterSerializerType(typeof(CustomBoots));
+            spacecore.RegisterSerializerType(typeof(CustomHat));
 
             LoadContentPacks();
 
@@ -527,6 +525,7 @@ namespace DynamicGameAssets
 
             SpriteBatchTileSheetAdjustments.objectOverrides.Clear();
             SpriteBatchTileSheetAdjustments.weaponOverrides.Clear();
+            SpriteBatchTileSheetAdjustments.hatOverrides.Clear();
             foreach ( var cp in contentPacks )
             {
                 foreach ( var item in cp.Value.items.Values )
@@ -541,7 +540,25 @@ namespace DynamicGameAssets
                     {
                         var tex = cp.Value.GetTexture( weapon.Texture, 16, 16 );
                         string fullId = $"{cp.Key}/{weapon.ID}";
-                        SpriteBatchTileSheetAdjustments.weaponOverrides.Add( Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, fullId.GetHashCode(), 16, 16 ), tex );
+                        SpriteBatchTileSheetAdjustments.weaponOverrides.Add( Game1.getSourceRectForStandardTileSheet( Tool.weaponsTexture, fullId.GetHashCode(), 16, 16 ), tex );
+                    }
+                    else if ( item is HatPackData hat )
+                    {
+                        var tex = hat.GetTexture();
+                        if ( !tex.Rect.HasValue )
+                            tex.Rect = new Rectangle( 0, 0, tex.Texture.Width, tex.Texture.Height );
+
+                        string fullId = $"{cp.Key}/{hat.ID}";
+                        int which = fullId.GetHashCode();
+
+                        var rect = new Rectangle(20 * (int)which % FarmerRenderer.hatsTexture.Width, 20 * (int)which / FarmerRenderer.hatsTexture.Width * 20 * 4, 20, 20); ;
+                        SpriteBatchTileSheetAdjustments.hatOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                        rect.Offset( 0, 20 );
+                        SpriteBatchTileSheetAdjustments.hatOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                        rect.Offset( 0, 20 );
+                        SpriteBatchTileSheetAdjustments.hatOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                        rect.Offset( 0, 20 );
+                        SpriteBatchTileSheetAdjustments.hatOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
                     }
                 }
             }
