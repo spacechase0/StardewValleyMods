@@ -36,6 +36,7 @@ namespace DynamicGameAssets.PackData
             LoadAndValidateItems<HatPackData>( "hats.json" );
             LoadAndValidateItems<FencePackData>( "fences.json" );
             LoadAndValidateItems<BigCraftablePackData>( "big-craftables.json" );
+            LoadAndValidateItems<FruitTreePackData>( "fruit-trees.json" );
             LoadOthers<ShopEntryPackData>( "shop-entries.json" );
             LoadOthers<ForgeRecipePackData>( "forge-recipes.json" );
             LoadOthers<MachineRecipePackData>( "machine-recipes.json" );

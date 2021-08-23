@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
@@ -265,7 +266,7 @@ namespace DynamicGameAssets.Game
 
         public override bool isPlaceable()
         {
-            return Data.Placeable || !string.IsNullOrEmpty( Data.PlantsCrop );
+            return Data.Placeable || !string.IsNullOrEmpty( Data.Plants );
         }
 
         public override bool performToolAction( Tool t, GameLocation location )
@@ -287,9 +288,10 @@ namespace DynamicGameAssets.Game
         {
             Vector2 placementTile = new Vector2(x / 64, y / 64);
 
-            if ( !string.IsNullOrEmpty( Data.PlantsCrop ) )
+            if ( !string.IsNullOrEmpty( Data.Plants ) )
             {
-                if ( location.terrainFeatures.ContainsKey( placementTile ) && location.terrainFeatures[ placementTile ] is HoeDirt )
+                var data = Mod.Find( Data.Plants );
+                if ( data is CropPackData cropData && location.terrainFeatures.ContainsKey( placementTile ) && location.terrainFeatures[ placementTile ] is HoeDirt )
                 {
                     if ( CanPlantThisSeedHere( ( ( HoeDirt ) location.terrainFeatures[ placementTile ] ), ( int ) placementTile.X, ( int ) placementTile.Y, who.ActiveObject.Category == -19 ) )
                     {
@@ -332,6 +334,51 @@ namespace DynamicGameAssets.Game
                         }
                         return false;
                     }
+                    return false;
+                }
+                else if ( data is FruitTreePackData ftreeData && !location.terrainFeatures.ContainsKey( placementTile ) )
+                {
+                    Vector2 v2 = default(Vector2);
+                    for ( int i = x / 64 - 2; i <= x / 64 + 2; i++ )
+                    {
+                        for ( int k = y / 64 - 2; k <= y / 64 + 2; k++ )
+                        {
+                            v2.X = i;
+                            v2.Y = k;
+                            if ( location.terrainFeatures.ContainsKey( v2 ) && ( location.terrainFeatures[ v2 ] is Tree || location.terrainFeatures[ v2 ] is FruitTree ) )
+                            {
+                                Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:Object.cs.13060" ) );
+                                return false;
+                            }
+                        }
+                    }
+
+                    if ( FruitTree.IsGrowthBlocked( new Vector2( x / 64, y / 64 ), location ) )
+                    {
+                        Game1.showRedMessage( Game1.content.LoadString( "Strings\\UI:FruitTree_PlacementWarning", this.DisplayName ) );
+                        return false;
+                    }
+                    if ( location.terrainFeatures.ContainsKey( placementTile ) )
+                    {
+                        if ( !( location.terrainFeatures[ placementTile ] is HoeDirt ) || ( location.terrainFeatures[ placementTile ] as HoeDirt ).crop != null )
+                        {
+                            return false;
+                        }
+                        location.terrainFeatures.Remove( placementTile );
+                    }
+                    if ( ( location is Farm && ( location.doesTileHaveProperty( ( int ) placementTile.X, ( int ) placementTile.Y, "Diggable", "Back" ) != null || location.doesTileHavePropertyNoNull( ( int ) placementTile.X, ( int ) placementTile.Y, "Type", "Back" ).Equals( "Grass" ) || location.doesTileHavePropertyNoNull( ( int ) placementTile.X, ( int ) placementTile.Y, "Type", "Back" ).Equals( "Dirt" ) ) && !location.doesTileHavePropertyNoNull( ( int ) placementTile.X, ( int ) placementTile.Y, "NoSpawn", "Back" ).Equals( "Tree" ) ) || ( location.CanPlantTreesHere( base.parentSheetIndex, ( int ) placementTile.X, ( int ) placementTile.Y ) && ( location.doesTileHaveProperty( ( int ) placementTile.X, ( int ) placementTile.Y, "Diggable", "Back" ) != null || location.doesTileHavePropertyNoNull( ( int ) placementTile.X, ( int ) placementTile.Y, "Type", "Back" ).Equals( "Stone" ) ) ) )
+                    {
+                        location.playSound( "dirtyHit" );
+                        DelayedAction.playSoundAfterDelay( "coin", 100 );
+                        bool actAsGreenhouse = location.IsGreenhouse || (((int)base.parentSheetIndex == 69 || (int)base.parentSheetIndex == 835) && location is IslandWest);
+                        location.terrainFeatures.Add( placementTile, new CustomFruitTree( ftreeData )
+                        {
+                            GreenHouseTree = actAsGreenhouse,
+                            GreenHouseTileTree = location.doesTileHavePropertyNoNull( ( int ) placementTile.X, ( int ) placementTile.Y, "Type", "Back" ).Equals( "Stone" )
+                        } );
+                        return true;
+                    }
+                    Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:Object.cs.13068" ) );
                     return false;
                 }
                 return false;
@@ -402,7 +449,7 @@ namespace DynamicGameAssets.Game
             }
             else */if ( this_.crop == null )
             {
-                CustomCrop c = new CustomCrop(Mod.Find( Data.PlantsCrop ) as CropPackData, tileX, tileY);
+                CustomCrop c = new CustomCrop(Mod.Find( Data.Plants ) as CropPackData, tileX, tileY);
                 /*if ( c.seasonsToGrowIn.Count == 0 )
                 {
                     return false;
@@ -449,7 +496,7 @@ namespace DynamicGameAssets.Game
                 location.playSound( "dirtyHit" );
                 return true;
             }*/
-            CustomCrop c = new CustomCrop(Mod.Find( Data.PlantsCrop ) as CropPackData, tileX, tileY);
+            CustomCrop c = new CustomCrop(Mod.Find( Data.Plants ) as CropPackData, tileX, tileY);
             /*if ( c.seasonsToGrowIn.Count == 0 )
             {
                 return false;

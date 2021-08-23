@@ -17,7 +17,7 @@ namespace DynamicGameAssets.Patches
     {
         public static bool Prefix( IndoorPot __instance, Item dropInItem, bool probe, Farmer who, ref bool __result )
         {
-            if ( dropInItem is CustomObject cobj && !string.IsNullOrEmpty( cobj.Data.PlantsCrop ) )
+            if ( dropInItem is CustomObject cobj && !string.IsNullOrEmpty( cobj.Data.Plants ) )
             {
                 __result = Impl( __instance, cobj, probe, who );
                 return false;

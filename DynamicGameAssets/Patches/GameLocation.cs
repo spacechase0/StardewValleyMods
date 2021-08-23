@@ -18,7 +18,7 @@ namespace DynamicGameAssets.Patches
     {
         public static bool isTileOccupiedForPlacement( GameLocation __instance, Vector2 tileLocation, StardewValley.Object toPlace, ref bool __result )
         {
-            if ( toPlace is CustomObject cobj && !string.IsNullOrEmpty( cobj.Data.PlantsCrop ) )
+            if ( toPlace is CustomObject cobj && !string.IsNullOrEmpty( cobj.Data.Plants ) )
             {
                 __result = Impl( __instance, tileLocation, cobj );
                 return false;

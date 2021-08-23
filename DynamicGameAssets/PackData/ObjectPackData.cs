@@ -19,7 +19,7 @@ namespace DynamicGameAssets.PackData
         public string Name => parent.smapiPack.Translation.Get( $"object.{ID}.name" );
         public string Description => parent.smapiPack.Translation.Get( $"object.{ID}.description" );
 
-        public string PlantsCrop { get; set; }
+        public string Plants { get; set; }
 
         [JsonConverter( typeof( StringEnumConverter ) )]
         public enum VanillaCategory

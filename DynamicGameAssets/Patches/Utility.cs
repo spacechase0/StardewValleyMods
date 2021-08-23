@@ -17,7 +17,7 @@ namespace DynamicGameAssets.Patches
     {
         public static bool Prefix( GameLocation location, Vector2 tileLocation, Item item, ref bool __result)
         {
-            if ( item is CustomObject cobj && !string.IsNullOrEmpty( cobj.Data.PlantsCrop ) )
+            if ( item is CustomObject cobj && !string.IsNullOrEmpty( cobj.Data.Plants ) )
             {
                 __result = Impl( location, tileLocation, cobj );
                 return false;

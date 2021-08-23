@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using System;
@@ -34,6 +34,25 @@ namespace DynamicGameAssets.Patches
                 var data = Mod.Find( Mod.itemLookup[ index ] ) as ObjectPackData;
                 __result = !data.HideFromShippingCollection;
                 return false;
+            }
+
+            return true;
+        }
+    }
+
+    [HarmonyPatch( typeof( StardewValley.Object ), nameof( StardewValley.Object.isSapling ) )]
+    public static class ObjectIsSaplingPatch
+    {
+        public static bool Prefix( StardewValley.Object __instance, ref bool __result )
+        {
+            if ( __instance is CustomObject cobj && !string.IsNullOrEmpty( cobj.Data.Plants ) )
+            {
+                var data = Mod.Find( cobj.Data.Plants );
+                if ( data is FruitTreePackData )
+                {
+                    __result = true;
+                    return false;
+                }
             }
 
             return true;

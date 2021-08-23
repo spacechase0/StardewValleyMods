@@ -47,7 +47,6 @@ using System.Runtime.CompilerServices;
 // TODO: Look into Gourmand requests?
 /* TODO:
  * Clothing (pants, shirt)
- * Fruit trees
  * ? walls/floors
  * Custom Ore Nodes & Custom Resource Clumps
  * ? paths
@@ -139,6 +138,7 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomHat));
             spacecore.RegisterSerializerType(typeof(CustomFence));
             spacecore.RegisterSerializerType(typeof(CustomBigCraftable));
+            spacecore.RegisterSerializerType(typeof(CustomFruitTree));
 
             LoadContentPacks();
 
