@@ -31,6 +31,8 @@ using StardewValley.Tools;
 using SObject = StardewValley.Object;
 using System.Runtime.CompilerServices;
 
+// TODO: Clothes don't work properly if JA is installed? (Might look funny, might make you run out of GPU memory thannks to SpaceCore tilesheet extensions)
+
 // TODO: Objects: Donatable to museum?
 // TODO: Objects: Light?
 // TODO: Objects (or general): Deconstructor output patch?
@@ -47,6 +49,7 @@ using System.Runtime.CompilerServices;
 // TODO: Look into Gourmand requests?
 /* TODO:
  * Clothing (pants, shirt)
+ * tailoring recipes
  * ? walls/floors
  * Custom Ore Nodes & Custom Resource Clumps
  * ? paths
@@ -139,6 +142,8 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomFence));
             spacecore.RegisterSerializerType(typeof(CustomBigCraftable));
             spacecore.RegisterSerializerType(typeof(CustomFruitTree));
+            spacecore.RegisterSerializerType(typeof(CustomShirt));
+            spacecore.RegisterSerializerType(typeof(CustomPants));
 
             LoadContentPacks();
 
@@ -539,6 +544,8 @@ namespace DynamicGameAssets
             SpriteBatchTileSheetAdjustments.objectOverrides.Clear();
             SpriteBatchTileSheetAdjustments.weaponOverrides.Clear();
             SpriteBatchTileSheetAdjustments.hatOverrides.Clear();
+            SpriteBatchTileSheetAdjustments.shirtOverrides.Clear();
+            SpriteBatchTileSheetAdjustments.pantsOverrides.Clear();
             foreach ( var cp in contentPacks )
             {
                 foreach ( var item in cp.Value.items.Values )
@@ -564,7 +571,7 @@ namespace DynamicGameAssets
                         string fullId = $"{cp.Key}/{hat.ID}";
                         int which = fullId.GetHashCode();
 
-                        var rect = new Rectangle(20 * (int)which % FarmerRenderer.hatsTexture.Width, 20 * (int)which / FarmerRenderer.hatsTexture.Width * 20 * 4, 20, 20); ;
+                        var rect = new Rectangle(20 * (int)which % FarmerRenderer.hatsTexture.Width, 20 * (int)which / FarmerRenderer.hatsTexture.Width * 20 * 4, 20, 20);
                         SpriteBatchTileSheetAdjustments.hatOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
                         rect.Offset( 0, 20 );
                         SpriteBatchTileSheetAdjustments.hatOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
@@ -572,6 +579,76 @@ namespace DynamicGameAssets
                         SpriteBatchTileSheetAdjustments.hatOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
                         rect.Offset( 0, 20 );
                         SpriteBatchTileSheetAdjustments.hatOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                    }
+                    else if ( item is ShirtPackData shirt )
+                    {
+                        string fullId = $"{cp.Key}/{shirt.ID}";
+                        int which = fullId.GetHashCode();
+
+                        var tex = cp.Value.GetTexture( shirt.TextureMale, 8, 32 );
+                        if ( !tex.Rect.HasValue )
+                            tex.Rect = new Rectangle( 0, 0, tex.Texture.Width, tex.Texture.Height );
+                        var rect = new Rectangle( which * 8 % 128, which * 8 / 128 * 32, 8, 8);
+                        SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                        rect.Offset( 0, 8 );
+                        SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                        rect.Offset( 0, 8 );
+                        SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                        rect.Offset( 0, 8 );
+                        SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+
+                        if ( shirt.TextureMaleColor != null )
+                        {
+                            tex = cp.Value.GetTexture( shirt.TextureMaleColor, 8, 32 );
+                            if ( !tex.Rect.HasValue )
+                                tex.Rect = new Rectangle( 0, 0, tex.Texture.Width, tex.Texture.Height );
+                            rect.Offset( 128, -24 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                            rect.Offset( 0, 8 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                            rect.Offset( 0, 8 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                            rect.Offset( 0, 8 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                        }
+
+                        if ( shirt.TextureFemale != null )
+                        {
+                            tex = cp.Value.GetTexture( shirt.TextureFemale, 8, 32 );
+                            if ( !tex.Rect.HasValue )
+                                tex.Rect = new Rectangle( 0, 0, tex.Texture.Width, tex.Texture.Height );
+                            which += 1;
+                            rect = new Rectangle( which * 8 % 128, which * 8 / 128 * 32, 8, 8 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                            rect.Offset( 0, 8 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                            rect.Offset( 0, 8 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                            rect.Offset( 0, 8 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                        }
+
+                        if ( shirt.TextureFemaleColor != null )
+                        {
+                            tex = cp.Value.GetTexture( shirt.TextureFemaleColor, 8, 32 );
+                            if ( !tex.Rect.HasValue )
+                                tex.Rect = new Rectangle( 0, 0, tex.Texture.Width, tex.Texture.Height );
+                            rect.Offset( 128, -24 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                            rect.Offset( 0, 8 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                            rect.Offset( 0, 8 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                            rect.Offset( 0, 8 );
+                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
+                        }
+                    }
+                    else if ( item is PantsPackData pants )
+                    {
+                        var tex = cp.Value.GetTexture( pants.Texture, 192, 688 );
+                        string fullId = $"{cp.Key}/{pants.ID}";
+                        int which = fullId.GetHashCode();
+                        SpriteBatchTileSheetAdjustments.pantsOverrides.Add( new Rectangle( which % 10 * 192, which / 10 * 688, 192, 688 ), tex );
                     }
                 }
             }

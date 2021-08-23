@@ -14,6 +14,8 @@ namespace DynamicGameAssets.Patches
         internal static Dictionary< Rectangle, TexturedRect > objectOverrides = new Dictionary<Rectangle, TexturedRect>();
         internal static Dictionary< Rectangle, TexturedRect > weaponOverrides = new Dictionary<Rectangle, TexturedRect>();
         internal static Dictionary< Rectangle, TexturedRect > hatOverrides = new Dictionary<Rectangle, TexturedRect>();
+        internal static Dictionary< Rectangle, TexturedRect > shirtOverrides = new Dictionary<Rectangle, TexturedRect>();
+        internal static Dictionary< Rectangle, TexturedRect > pantsOverrides = new Dictionary<Rectangle, TexturedRect>();
 
         public static void Prefix1( SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, SpriteEffects effects, float layerDepth )
         {
@@ -82,6 +84,32 @@ namespace DynamicGameAssets.Patches
                 var texRect = hatOverrides[ sourceRect ];
                 tex = texRect.Texture;
                 sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle( 0, 0, tex.Width, tex.Height );
+            }
+            else if ( tex == FarmerRenderer.shirtsTexture && shirtOverrides.ContainsKey( sourceRect ) )
+            {
+                var texRect = shirtOverrides[ sourceRect ];
+                tex = texRect.Texture;
+                sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle( 0, 0, tex.Width, tex.Height );
+            }
+            else if ( tex == FarmerRenderer.pantsTexture )
+            {
+                foreach ( var pants in pantsOverrides )
+                {
+                    if ( pants.Key.Contains( sourceRect ) )
+                    {
+                        tex = pants.Value.Texture;
+                        var oldSource = sourceRect;
+                        sourceRect = pants.Value.Rect.HasValue ? pants.Value.Rect.Value : new Rectangle( 0, 0, tex.Width, tex.Height );
+                        int localX = oldSource.X - pants.Key.X;
+                        int localY = oldSource.Y - pants.Key.Y;
+                        sourceRect = new Rectangle( sourceRect.X + localX, sourceRect.Y + localY, oldSource.Width, oldSource.Height );
+                        if ( sourceRect.X < 0 )
+                            sourceRect.X += 192;
+                        if ( sourceRect.Y < 0 )
+                            sourceRect.Y += 688;
+                        return;
+                    }
+                }
             }
         }
     }

@@ -37,6 +37,8 @@ namespace DynamicGameAssets.PackData
             LoadAndValidateItems<FencePackData>( "fences.json" );
             LoadAndValidateItems<BigCraftablePackData>( "big-craftables.json" );
             LoadAndValidateItems<FruitTreePackData>( "fruit-trees.json" );
+            LoadAndValidateItems<ShirtPackData>( "shirts.json" );
+            LoadAndValidateItems<PantsPackData>( "pants.json" );
             LoadOthers<ShopEntryPackData>( "shop-entries.json" );
             LoadOthers<ForgeRecipePackData>( "forge-recipes.json" );
             LoadOthers<MachineRecipePackData>( "machine-recipes.json" );
@@ -59,7 +61,9 @@ namespace DynamicGameAssets.PackData
                     throw new ArgumentException( "Duplicate found! " + d.ID );
                 items.Add( d.ID, d );
                 Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetHashCode(), $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
-                d.parent = this;
+                /*if ( d is ShirtPackData )
+                    Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetHashCode() + 1, $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
+                */d.parent = this;
                 d.original = ( T ) d.Clone();
                 d.original.original = d.original;
                 d.PostLoad();
@@ -138,7 +142,11 @@ namespace DynamicGameAssets.PackData
                 if ( colon == -1 && !smapiPack.HasFile( path ) || colon != -1 && !smapiPack.HasFile( path.Substring( 0, colon ) ) )
                     throw new ArgumentException( "No such file \"" + path + "\"!" );
                 if ( colon == -1 )
-                    return new TexturedRect() { Texture = textures.ContainsKey( path ) ? textures[ path ] : smapiPack.LoadAsset<Texture2D>( path ), Rect = null };
+                {
+                    if ( !textures.ContainsKey( path ) )
+                        textures.Add( path, smapiPack.LoadAsset<Texture2D>( path ) );
+                    return new TexturedRect() { Texture = textures[ path ], Rect = null };
+                }
                 string texPath = path.Substring( 0, colon );
                 var tex = textures.ContainsKey( texPath ) ? textures[ texPath] : smapiPack.LoadAsset< Texture2D >( texPath );
                 if ( !textures.ContainsKey( texPath ) )
