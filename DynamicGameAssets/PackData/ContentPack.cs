@@ -43,11 +43,14 @@ namespace DynamicGameAssets.PackData
             LoadOthers<ShopEntryPackData>( "shop-entries.json" );
             LoadOthers<ForgeRecipePackData>( "forge-recipes.json" );
             LoadOthers<MachineRecipePackData>( "machine-recipes.json" );
+            LoadOthers<TailoringRecipePackData>( "tailoring-recipes.json" );
         }
 
         public CommonPackData Find( string item )
         {
-            return items.ContainsKey( item ) ? items[ item ] : null;
+            if ( items.ContainsKey( item ) && items[ item ].Enabled )
+                return items[ item ];
+            return null;
         }
 
         private void LoadAndValidateItems< T >( string json ) where T : CommonPackData

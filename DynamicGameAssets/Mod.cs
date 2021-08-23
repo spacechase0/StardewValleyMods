@@ -48,7 +48,6 @@ using System.Runtime.CompilerServices;
 // TODO: General: Extension data
 // TODO: Look into Gourmand requests?
 /* TODO:
- * Clothing (pants, shirt)
  * tailoring recipes
  * ? walls/floors
  * Custom Ore Nodes & Custom Resource Clumps
@@ -85,6 +84,7 @@ namespace DynamicGameAssets
         internal static List<DGACustomCraftingRecipe> customCraftingRecipes = new List<DGACustomCraftingRecipe>();
         internal static List<DGACustomForgeRecipe> customForgeRecipes = new List<DGACustomForgeRecipe>();
         internal static Dictionary<string, List<MachineRecipePackData>> customMachineRecipes = new Dictionary<string, List<MachineRecipePackData>>();
+        internal static List<TailoringRecipePackData> customTailoringRecipes = new List<TailoringRecipePackData>();
 
         private static readonly PerScreen<StateData> _state = new PerScreen<StateData>( () => new StateData() );
         internal static StateData State => _state.Value;
@@ -204,6 +204,7 @@ namespace DynamicGameAssets
             }
 
             customMachineRecipes.Clear();
+            customTailoringRecipes.Clear();
 
             // Dynamic fields
             foreach ( var cp in contentPacks )
@@ -228,7 +229,13 @@ namespace DynamicGameAssets
                     {
                         if ( !customMachineRecipes.ContainsKey( machineRecipe.MachineId ) )
                             customMachineRecipes.Add( machineRecipe.MachineId, new List<MachineRecipePackData>() );
-                        customMachineRecipes[ machineRecipe.MachineId ].Add( machineRecipe );
+                        if ( machineRecipe.Enabled )
+                            customMachineRecipes[ machineRecipe.MachineId ].Add( machineRecipe );
+                    }
+                    else if ( newOther is TailoringRecipePackData tailoringRecipe )
+                    {
+                        if ( tailoringRecipe.Enabled )
+                            customTailoringRecipes.Add( tailoringRecipe );
                     }
                 }
                 cp.Value.others = newOthers;
