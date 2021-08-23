@@ -1,4 +1,5 @@
-﻿using StardewValley;
+using SpaceShared;
+using StardewValley;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace DynamicGameAssets
                 {
                     0,
                     qty,
-                    Currency.GetHashCode(), // Black magic
+                    Currency.GetDeterministicHashCode(), // Black magic
                     Price,
                 } );
             }
@@ -64,7 +65,7 @@ namespace DynamicGameAssets
                 {
                     0,
                     qty,
-                    Currency.GetHashCode(), // Black magic
+                    Currency.GetDeterministicHashCode(), // Black magic
                     Price,
                 } );
             }

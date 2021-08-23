@@ -2,6 +2,7 @@ using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -112,7 +113,7 @@ namespace DynamicGameAssets.PackData
             {
                 foreach ( var farmer in Game1.getAllFarmers() )
                 {
-                    int fakeId = $"{parent.smapiPack.Manifest.UniqueID}/{ID}".GetHashCode();
+                    int fakeId = $"{parent.smapiPack.Manifest.UniqueID}/{ID}".GetDeterministicHashCode();
                     if ( farmer.basicShipped.ContainsKey( fakeId ) )
                         farmer.basicShipped.Remove( fakeId );
                 }

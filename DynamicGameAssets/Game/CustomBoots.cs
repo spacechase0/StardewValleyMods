@@ -8,6 +8,7 @@ using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Objects;
@@ -61,7 +62,7 @@ namespace DynamicGameAssets.Game
             this.price.Value = Data.SellPrice;
             this.defenseBonus.Value = Data.Defense;
             this.immunityBonus.Value = Data.Immunity;
-            this.indexInColorSheet.Value = FullId.GetHashCode();
+            this.indexInColorSheet.Value = FullId.GetDeterministicHashCode();
         }
         public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
         {

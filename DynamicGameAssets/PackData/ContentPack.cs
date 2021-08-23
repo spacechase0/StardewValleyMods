@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -60,9 +61,9 @@ namespace DynamicGameAssets.PackData
                 if ( items.ContainsKey( d.ID ) )
                     throw new ArgumentException( "Duplicate found! " + d.ID );
                 items.Add( d.ID, d );
-                Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetHashCode(), $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
+                Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetDeterministicHashCode(), $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
                 /*if ( d is ShirtPackData )
-                    Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetHashCode() + 1, $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
+                    Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetDeterministicHashCode() + 1, $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
                 */d.parent = this;
                 d.original = ( T ) d.Clone();
                 d.original.original = d.original;

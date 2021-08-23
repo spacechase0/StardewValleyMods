@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using SpaceShared;
 
 namespace DynamicGameAssets.Patches
 {
@@ -22,7 +23,7 @@ namespace DynamicGameAssets.Patches
                 for ( int i = 0; i < list.Count; ++i )
                 {
                     var item = list[ i ];
-                    if ( item != null && item is CustomObject obj && obj.FullId.GetHashCode() == item_index )
+                    if ( item != null && item is CustomObject obj && obj.FullId.GetDeterministicHashCode() == item_index )
                         __result += obj.Stack;
                 }
 
@@ -44,7 +45,7 @@ namespace DynamicGameAssets.Patches
                     for ( int i = 0; i < __instance.items.Count; ++i )
                     {
                         var item = __instance.items[ i ];
-                        if ( !( item is CustomObject obj ) || obj.FullId.GetHashCode() != index )
+                        if ( !( item is CustomObject obj ) || obj.FullId.GetDeterministicHashCode() != index )
                             continue;
 
                         if ( item.Stack > stack )

@@ -8,6 +8,7 @@ using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -40,7 +41,7 @@ namespace DynamicGameAssets.Game
             _id.Value = data.ID;
 
             this.Name = Id;
-            this.which.Value = FullId.GetHashCode();
+            this.which.Value = FullId.GetDeterministicHashCode();
 
             this.hairDrawType.Value = ( int ) data.HairStyle;
             this.ignoreHairstyleOffset.Value = data.IgnoreHairstyleOffset;

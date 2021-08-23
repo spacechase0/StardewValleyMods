@@ -63,7 +63,7 @@ namespace DynamicGameAssets.Patches
         {
             if ( obj is CustomObject cobj )
             {
-                return cobj.FullId.GetHashCode();
+                return cobj.FullId.GetDeterministicHashCode();
             }
             return obj.ParentSheetIndex;
         }
@@ -77,7 +77,7 @@ namespace DynamicGameAssets.Patches
                 {
                     if ( data.Value is ObjectPackData objData )
                     {
-                        ret.Add( $"{cp.Key}/{data.Key}".GetHashCode(), objData.GetFakeData() );
+                        ret.Add( $"{cp.Key}/{data.Key}".GetDeterministicHashCode(), objData.GetFakeData() );
                     }
                 }
             }

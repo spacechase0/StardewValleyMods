@@ -8,6 +8,7 @@ using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Tools;
@@ -53,7 +54,7 @@ namespace DynamicGameAssets.Game
             this.critChance.Value = ( float ) data.CritChance;
             this.critMultiplier.Value = ( float ) data.CritMultiplier;
 
-            this.CurrentParentTileIndex = FullId.GetHashCode();
+            this.CurrentParentTileIndex = FullId.GetDeterministicHashCode();
         }
 
         protected override string loadDisplayName()

@@ -8,6 +8,7 @@ using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -44,8 +45,8 @@ namespace DynamicGameAssets.Game
             this.clothesColor.Value = data.DefaultColor;
 
 
-            SpaceShared.Log.Debug( "test:" + FullId + FullId.GetHashCode() );
-            this.indexInTileSheetMale.Value = FullId.GetHashCode();
+            SpaceShared.Log.Debug( "test:" + FullId + FullId.GetDeterministicHashCode() );
+            this.indexInTileSheetMale.Value = FullId.GetDeterministicHashCode();
         }
 
         public override string DisplayName { get => Data.Name; set { } }

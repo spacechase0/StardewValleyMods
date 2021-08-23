@@ -2,6 +2,7 @@ using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
@@ -502,7 +503,7 @@ namespace DynamicGameAssets.Game
                 return false;
             }
             */
-            if ( !who.currentLocation.isFarm && !who.currentLocation.IsGreenhouse && !who.currentLocation.CanPlantSeedsHere( FullId.GetHashCode(), tileX, tileY ) && who.currentLocation.IsOutdoors )
+            if ( !who.currentLocation.isFarm && !who.currentLocation.IsGreenhouse && !who.currentLocation.CanPlantSeedsHere( FullId.GetDeterministicHashCode(), tileX, tileY ) && who.currentLocation.IsOutdoors )
             {
                 Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:HoeDirt.cs.13919" ) );
                 return false;

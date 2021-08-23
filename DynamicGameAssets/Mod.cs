@@ -554,13 +554,13 @@ namespace DynamicGameAssets
                     {
                         var tex = cp.Value.GetTexture( obj.Texture, 16, 16 );
                         string fullId = $"{cp.Key}/{obj.ID}";
-                        SpriteBatchTileSheetAdjustments.objectOverrides.Add( Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, fullId.GetHashCode(), 16, 16 ), tex );
+                        SpriteBatchTileSheetAdjustments.objectOverrides.Add( Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, fullId.GetDeterministicHashCode(), 16, 16 ), tex );
                     }
                     else if ( item is MeleeWeaponPackData weapon )
                     {
                         var tex = cp.Value.GetTexture( weapon.Texture, 16, 16 );
                         string fullId = $"{cp.Key}/{weapon.ID}";
-                        SpriteBatchTileSheetAdjustments.weaponOverrides.Add( Game1.getSourceRectForStandardTileSheet( Tool.weaponsTexture, fullId.GetHashCode(), 16, 16 ), tex );
+                        SpriteBatchTileSheetAdjustments.weaponOverrides.Add( Game1.getSourceRectForStandardTileSheet( Tool.weaponsTexture, fullId.GetDeterministicHashCode(), 16, 16 ), tex );
                     }
                     else if ( item is HatPackData hat )
                     {
@@ -569,7 +569,7 @@ namespace DynamicGameAssets
                             tex.Rect = new Rectangle( 0, 0, tex.Texture.Width, tex.Texture.Height );
 
                         string fullId = $"{cp.Key}/{hat.ID}";
-                        int which = fullId.GetHashCode();
+                        int which = fullId.GetDeterministicHashCode();
 
                         var rect = new Rectangle(20 * (int)which % FarmerRenderer.hatsTexture.Width, 20 * (int)which / FarmerRenderer.hatsTexture.Width * 20 * 4, 20, 20);
                         SpriteBatchTileSheetAdjustments.hatOverrides.Add( rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle( tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4 ) } );
@@ -583,7 +583,7 @@ namespace DynamicGameAssets
                     else if ( item is ShirtPackData shirt )
                     {
                         string fullId = $"{cp.Key}/{shirt.ID}";
-                        int which = fullId.GetHashCode();
+                        int which = fullId.GetDeterministicHashCode();
 
                         var tex = cp.Value.GetTexture( shirt.TextureMale, 8, 32 );
                         if ( !tex.Rect.HasValue )
@@ -647,7 +647,7 @@ namespace DynamicGameAssets
                     {
                         var tex = cp.Value.GetTexture( pants.Texture, 192, 688 );
                         string fullId = $"{cp.Key}/{pants.ID}";
-                        int which = fullId.GetHashCode();
+                        int which = fullId.GetDeterministicHashCode();
                         SpriteBatchTileSheetAdjustments.pantsOverrides.Add( new Rectangle( which % 10 * 192, which / 10 * 688, 192, 688 ), tex );
                     }
                 }

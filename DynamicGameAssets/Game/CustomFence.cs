@@ -41,7 +41,7 @@ namespace DynamicGameAssets.Game
             _id.Value = data.ID;
 
             this.Name = Id;
-            this.whichType.Value = FullId.GetHashCode();
+            this.whichType.Value = FullId.GetDeterministicHashCode();
             this.ResetHealth( 0 );
 
             this.CanBeSetDown = true;
