@@ -19,6 +19,7 @@ namespace DynamicGameAssets
             DGAItem,
             DGARecipe,
             VanillaObject,
+            VanillaObjectColored,
             VanillaBigCraftable,
             VanillaWeapon,
             VanillaHat,
@@ -32,6 +33,7 @@ namespace DynamicGameAssets
         public ItemType Type { get; set; } = ItemType.DGAItem;
         public string Value { get; set; }
         public int Quantity { get; set; } = 1;
+        public Color ObjectColor { get; set; }
 
         public virtual Texture2D Icon
         {
@@ -47,7 +49,9 @@ namespace DynamicGameAssets
                     case ItemType.DGARecipe:
                         Log.Error("Crafting recipes don't have an icon texture");
                         return null;
-                    case ItemType.VanillaObject: return Game1.objectSpriteSheet;
+                    case ItemType.VanillaObject:
+                    case ItemType.VanillaObjectColored:
+                        return Game1.objectSpriteSheet;
                     case ItemType.VanillaBigCraftable: return Game1.bigCraftableSpriteSheet;
                     case ItemType.VanillaWeapon: return Tool.weaponsTexture;
                     case ItemType.VanillaHat: return FarmerRenderer.hatsTexture;
@@ -88,6 +92,7 @@ namespace DynamicGameAssets
                         Log.Error("Recipes don't have an icon subrect.");
                         return default(Rectangle);
                     case ItemType.VanillaObject:
+                    case ItemType.VanillaObjectColored:
                         if (valAsInt.HasValue)
                             return Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, valAsInt.Value, 16, 16);
                         foreach (var info in Game1.objectInformation)
@@ -186,6 +191,8 @@ namespace DynamicGameAssets
                     return false;
                 case ItemType.VanillaObject:
                     return (item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.Name == Value || (valAsInt.HasValue && (valAsInt.Value == obj.ParentSheetIndex || valAsInt.Value == obj.Category))));
+                case ItemType.VanillaObjectColored:
+                    return ( item is ColoredObject cobj && cobj.color.Value == ObjectColor && ( cobj.Name == Value || ( valAsInt.HasValue && ( valAsInt.Value == cobj.ParentSheetIndex || valAsInt.Value == cobj.Category ) ) ) );
                 case ItemType.VanillaBigCraftable:
                     return (item is StardewValley.Object bobj && bobj.bigCraftable.Value && (bobj.Name == Value || (valAsInt.HasValue && valAsInt.Value == bobj.ParentSheetIndex)));
                 case ItemType.VanillaWeapon:
@@ -215,7 +222,12 @@ namespace DynamicGameAssets
             switch ( Type )
             {
                 case ItemType.DGAItem:
-                    return Mod.Find(Value).ToItem();
+                    {
+                        var ret = Mod.Find( Value ).ToItem();
+                        if ( ret is CustomObject obj && ObjectColor.A > 0 )
+                            obj.ObjectColor = ObjectColor;
+                        return ret;
+                    }
                 case ItemType.DGARecipe:
                     return new CustomCraftingRecipe(Mod.Find( Value ) as CraftingRecipePackData);
                 case ItemType.VanillaObject:
@@ -225,6 +237,15 @@ namespace DynamicGameAssets
                     {
                         if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == Value)
                             return new StardewValley.Object(info.Key, Quantity);
+                    }
+                    break;
+                case ItemType.VanillaObjectColored:
+                    if ( valAsInt.HasValue )
+                        return new ColoredObject( valAsInt.Value, Quantity, ObjectColor );
+                    foreach ( var info in Game1.objectInformation )
+                    {
+                        if ( info.Value.Split( '/' )[ StardewValley.Object.objectInfoNameIndex ] == Value )
+                            return new ColoredObject( info.Key, Quantity, ObjectColor );
                     }
                     break;
                 case ItemType.VanillaBigCraftable:

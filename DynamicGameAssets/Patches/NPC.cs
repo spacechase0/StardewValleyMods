@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using StardewValley;
@@ -104,7 +104,7 @@ namespace DynamicGameAssets.Patches
                     response = data.parent.smapiPack.Translation.Get( overrideEntry.NormalTextTranslationKey ).ToString();
                 if ( response == null )
                 {
-                    var reactions = Game1.NPCGiftTastes[ npc.Name ].Split( '/' );
+                    string[] reactions = Game1.NPCGiftTastes[ npc.Name ].Split( '/' );
                     response = reactions[ giftTaste ];
                 }
             }

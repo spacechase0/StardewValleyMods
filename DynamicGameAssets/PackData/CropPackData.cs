@@ -24,7 +24,7 @@ namespace DynamicGameAssets.PackData
         }
         public CropType Type { get; set; }
 
-        public bool CanGrowNow { get; set; } = true; // must be controlled using dynamic fields
+        public bool CanGrowNow { get; set; } = false; // must be controlled using dynamic fields
 
         public class HarvestedDropData : ICloneable
         {

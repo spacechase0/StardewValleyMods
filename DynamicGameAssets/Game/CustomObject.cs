@@ -23,12 +23,35 @@ namespace DynamicGameAssets.Game
         public readonly NetString _sourcePack = new NetString();
         public readonly NetString _id = new NetString();
 
+        public readonly NetBool _hasColor = new NetBool();
+        public readonly NetColor _color = new NetColor();
+
         [XmlIgnore]
         public string SourcePack => _sourcePack.Value;
         [XmlIgnore]
         public string Id => _id.Value;
         [XmlIgnore]
         public string FullId => $"{SourcePack}/{Id}";
+        [XmlIgnore]
+        public Color? ObjectColor
+        {
+            get
+            {
+                if ( !_hasColor.Value )
+                    return null;
+                return _color.Value;
+            }
+            set
+            {
+                if ( value == null )
+                    _hasColor.Value = false;
+                else
+                {
+                    _hasColor.Value = true;
+                    _color.Value = value.Value;
+                }
+            }
+        }
         [XmlIgnore]
         public ObjectPackData Data => Mod.Find( FullId ) as ObjectPackData;
 
@@ -153,6 +176,11 @@ namespace DynamicGameAssets.Game
         {
             var tex = Data.parent.GetTexture( Data.Texture, 16, 16 );
             spriteBatch.Draw( tex.Texture, objectPosition, tex.Rect, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, Math.Max( 0f, ( float ) ( f.getStandingY() + 3 ) / 10000f ) );
+            if ( _hasColor.Value )
+            {
+                var colorTex = Data.parent.GetTexture( Data.TextureColor, 16, 16 );
+                spriteBatch.Draw( colorTex.Texture, objectPosition, colorTex.Rect, ObjectColor.Value, 0f, Vector2.Zero, 4f, SpriteEffects.None, Math.Max( 0f, ( float ) ( f.getStandingY() + 3 ) / 10000f + 2e-05f ) );
+            }
         }
 
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
@@ -170,6 +198,11 @@ namespace DynamicGameAssets.Game
             }
             var tex = Data.parent.GetTexture( Data.Texture, 16, 16 );
             spriteBatch.Draw( tex.Texture, location + new Vector2( ( int ) ( 32f * scaleSize ), ( int ) ( 32f * scaleSize ) ), tex.Rect, color * transparency, 0f, new Vector2( 8f, 8f ) * scaleSize, 4f * scaleSize, SpriteEffects.None, layerDepth );
+            if ( _hasColor.Value )
+            {
+                var colorTex = Data.parent.GetTexture( Data.TextureColor, 16, 16 );
+                spriteBatch.Draw( colorTex.Texture, location + new Vector2( ( int ) ( 32f * scaleSize ), ( int ) ( 32f * scaleSize ) ), colorTex.Rect, ObjectColor.Value * transparency, 0f, new Vector2( 8f, 8f ) * scaleSize, 4f * scaleSize, SpriteEffects.None, layerDepth + 2e-05f );
+            }
             if ( shouldDrawStackNumber )
             {
                 Utility.drawTinyDigits( this.stack, spriteBatch, location + new Vector2( ( float ) ( 64 - Utility.getWidthOfTinyDigitString( this.stack, 3f * scaleSize ) ) + 3f * scaleSize, 64f - 18f * scaleSize + 1f ), 3f * scaleSize, 1f, color );
@@ -201,6 +234,11 @@ namespace DynamicGameAssets.Game
             Vector2 origin = new Vector2(8f, 8f);
             _ = this.scale;
             b.Draw(objectSpriteSheet, position2, sourceRectangle, white, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)this.getBoundingBox(new Vector2(x, y)).Bottom / 10000f);
+            if ( _hasColor.Value )
+            {
+                var colorTex = Data.parent.GetTexture( Data.TextureColor, 16, 16 );
+                b.Draw( colorTex.Texture, position2, colorTex.Rect, ObjectColor.Value, 0f, origin, ( this.scale.Y > 1f ) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ( float ) this.getBoundingBox( new Vector2( x, y ) ).Bottom / 10000f + 2e-05f );
+            }
         }
 
         public override void draw( SpriteBatch spriteBatch, int x, int y, float alpha = 1 )
@@ -219,6 +257,11 @@ namespace DynamicGameAssets.Game
                 Vector2 origin2 = new Vector2(8f, 8f);
                 _ = this.scale;
                 spriteBatch.Draw(objectSpriteSheet, position3, sourceRectangle2, color2, 0f, origin2, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.isPassable() ? this.getBoundingBox(new Vector2(x, y)).Top : this.getBoundingBox(new Vector2(x, y)).Bottom) / 10000f);
+                if ( _hasColor.Value )
+                {
+                    var colorTex = Data.parent.GetTexture( Data.TextureColor, 16, 16 );
+                    spriteBatch.Draw( colorTex.Texture, position3, colorTex.Rect, ObjectColor.Value, 0f, origin2, ( this.scale.Y > 1f ) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ( float ) ( this.isPassable() ? this.getBoundingBox( new Vector2( x, y ) ).Top : this.getBoundingBox( new Vector2( x, y ) ).Bottom ) / 10000f + 2e-05f );
+                }
             }
         }
 
@@ -238,6 +281,11 @@ namespace DynamicGameAssets.Game
                 Vector2 origin = new Vector2(8f, 8f);
                 _ = this.scale;
                 spriteBatch.Draw(objectSpriteSheet, position2, sourceRectangle, color, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
+                if ( _hasColor.Value )
+                {
+                    var colorTex = Data.parent.GetTexture( Data.TextureColor, 16, 16 );
+                    spriteBatch.Draw( colorTex.Texture, position2, colorTex.Rect, ObjectColor.Value, 0f, origin, ( this.scale.Y > 1f ) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth + 2e-05f );
+                }
             }
         }
 
@@ -248,6 +296,7 @@ namespace DynamicGameAssets.Game
             ret.Quality = Quality;
             ret.Stack = 1;
             ret.Price = Price;
+            ret.ObjectColor = ObjectColor;
             ret._GetOneFrom( this );
             return ret;
         }

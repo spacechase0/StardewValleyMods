@@ -16,6 +16,7 @@ namespace DynamicGameAssets.PackData
     public class ObjectPackData : CommonPackData
     {
         public string Texture { get; set; }
+        public string TextureColor { get; set; }
 
         public string Name => parent.smapiPack.Translation.Get( $"object.{ID}.name" );
         public string Description => parent.smapiPack.Translation.Get( $"object.{ID}.description" );

@@ -14,7 +14,7 @@ namespace DynamicGameAssets
         public ISalable Item;
         public int Quantity;
         public int Price;
-        public string Currency;
+        public int? CurrencyId;
 
         public void AddToShop( ShopMenu shop )
         {
@@ -24,11 +24,11 @@ namespace DynamicGameAssets
 
             Item.Stack = qty;
             shop.forSale.Add( Item );
-            if ( Currency == null )
+            if ( CurrencyId == null )
             {
                 shop.itemPriceAndStock.Add( Item, new int[]
                 {
-                    Currency == null ? Price : 0,
+                    CurrencyId == null ? Price : 0,
                     qty
                 } );
             }
@@ -38,7 +38,7 @@ namespace DynamicGameAssets
                 {
                     0,
                     qty,
-                    Currency.GetDeterministicHashCode(), // Black magic
+                    CurrencyId.Value, // Black magic
                     Price,
                 } );
             }
@@ -51,11 +51,11 @@ namespace DynamicGameAssets
                 qty = 1;
 
             Item.Stack = qty;
-            if ( Currency == null )
+            if ( CurrencyId == null )
             {
                 stock.Add( Item, new int[]
                 {
-                    Currency == null ? Price : 0,
+                    CurrencyId == null ? Price : 0,
                     qty
                 } );
             }
@@ -65,7 +65,7 @@ namespace DynamicGameAssets
                 {
                     0,
                     qty,
-                    Currency.GetDeterministicHashCode(), // Black magic
+                    CurrencyId.Value, // Black magic
                     Price,
                 } );
             }

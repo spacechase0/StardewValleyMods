@@ -31,16 +31,16 @@ using StardewValley.Tools;
 using SObject = StardewValley.Object;
 using System.Runtime.CompilerServices;
 
-// TODO: Clothes don't work properly if JA is installed? (Might look funny, might make you run out of GPU memory thannks to SpaceCore tilesheet extensions)
+// TODO: Shirts don't work properly if JA is installed? (Might look funny, might make you run out of GPU memory thanks to SpaceCore tilesheet extensions)
 
+// TODO: Converter & Migration
+//  TODO: Objects&Crops&GiantCrops(?)&ItemAbstraction: colors?
 // TODO: Objects: Donatable to museum?
-// TODO: Objects: Light?
 // TODO: Objects (or general): Deconstructor output patch?
 // TODO: Objects: Fish tank display?
 // TODO: Objects: Stuff on tables, while eating?
 // TODO: Objects: Preserve overrides?
 // TODO: Objects: warp totems?
-// TODO: Objects&Crops&GiantCrops(?)&ItemAbstraction: colors?
 // TODO: Crops: Can grow in IndoorPot field
 // TODO: Crops: Can grow in greenhouse?
 // TODO: Crops: getRandomWildCropForSeason support?
@@ -48,11 +48,13 @@ using System.Runtime.CompilerServices;
 // TODO: General: Extension data
 // TODO: Look into Gourmand requests?
 /* TODO:
- * tailoring recipes
+ * ? bundles
+ * ? quests
+ * fishing
  * ? walls/floors
- * Custom Ore Nodes & Custom Resource Clumps
+ * Custom Ore Nodes & Custom Resource Clumps (with permission from aedenthorn)
  * ? paths
- * ? buildings
+ * ? buildings (I have a working unreleased framework for this already)
  * NOT farm animals (FAVR)
  * NOT NPCs (covered by CP indirectly)
  * ????farm types????
@@ -61,7 +63,7 @@ using System.Runtime.CompilerServices;
  * NOT mail (MFM)
  * secret notes?
  * NOT trees (BURT)
- * grass + grass starters?
+ * ??? grass + grass starters?
  */
 // TODO: API
 // TODO: Converter (packs) and converter (items)
@@ -536,7 +538,7 @@ namespace DynamicGameAssets
                             Item = shopEntry.Item.Create(),//MakeItemFrom( shopEntry.Item, cp.Value ),
                             Quantity = shopEntry.MaxSold,
                             Price = shopEntry.Cost,
-                            Currency = shopEntry.Currency == null ? null : (shopEntry.Currency.Contains( '/' ) ? shopEntry.Currency : $"{cp.Key}/{shopEntry.Currency}")
+                            CurrencyId = shopEntry.Currency == null ? null : (int.TryParse( shopEntry.Currency, out int intCurr ) ? intCurr : $"{cp.Key}/{shopEntry.Currency}".GetDeterministicHashCode())
                         } );
                     }
                 }
