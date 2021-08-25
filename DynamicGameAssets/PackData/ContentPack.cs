@@ -130,8 +130,9 @@ namespace DynamicGameAssets.PackData
             return GetTexture( paths[ decider % paths.Length ], xSize, ySize );
         }
 
-        internal TexturedRect GetTexture( string path, int xSize, int ySize )
+        internal TexturedRect GetTexture( string path_, int xSize, int ySize )
         {
+            string path = path_;
             if ( path.Contains( ',' ) )
             {
                 return GetTexture( GetTextureFrame( path ), xSize, ySize );
@@ -143,25 +144,39 @@ namespace DynamicGameAssets.PackData
                     path = path.Substring( 0, at );
 
                 int colon = path.IndexOf( ':' );
-                if ( colon == -1 && !smapiPack.HasFile( path ) || colon != -1 && !smapiPack.HasFile( path.Substring( 0, colon ) ) )
-                    throw new ArgumentException( "No such file \"" + path + "\"!" );
-                if ( colon == -1 )
+                string pathItself = colon == -1 ? path : path.Substring( 0, colon );
+                if ( textures.ContainsKey( pathItself ) )
                 {
-                    if ( !textures.ContainsKey( path ) )
-                        textures.Add( path, smapiPack.LoadAsset<Texture2D>( path ) );
-                    return new TexturedRect() { Texture = textures[ path ], Rect = null };
+                    if ( colon == -1 )
+                        return new TexturedRect() { Texture = textures[ pathItself ], Rect = null };
+                    else
+                    {
+                        int sections = textures[ pathItself ].Width / xSize;
+                        int ind = int.Parse( path.Substring( colon + 1 ) );
+
+                        return new TexturedRect()
+                        {
+                            Texture = textures[ pathItself ],
+                            Rect = new Microsoft.Xna.Framework.Rectangle( ind % sections * xSize, ind / sections * ySize, xSize, ySize )
+                        };
+                    }
                 }
-                string texPath = path.Substring( 0, colon );
-                var tex = textures.ContainsKey( texPath ) ? textures[ texPath] : smapiPack.LoadAsset< Texture2D >( texPath );
-                if ( !textures.ContainsKey( texPath ) )
-                    textures.Add( texPath, tex );
-                int sections = tex.Width / xSize;
-                int ind = int.Parse( path.Substring( colon + 1 ) );
-                return new TexturedRect()
+
+                if ( !smapiPack.HasFile( pathItself ) )
+                    Log.Warn( "No such \"" + pathItself + "\" in " + smapiPack.Manifest.Name + " (" + smapiPack.Manifest.UniqueID + ")!" );
+
+                Texture2D t;
+                try
                 {
-                    Texture = tex,
-                    Rect = new Microsoft.Xna.Framework.Rectangle( ind % sections * xSize, ind / sections * ySize, xSize, ySize )
-                };
+                    t = smapiPack.LoadAsset<Texture2D>( pathItself );
+                }
+                catch ( Exception e )
+                {
+                    t = Game1.staminaRect;
+                }
+                textures.Add( pathItself, t );
+
+                return GetTexture( path_, xSize, ySize );
             }
         }
     }

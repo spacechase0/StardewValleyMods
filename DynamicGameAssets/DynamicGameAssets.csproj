@@ -13,7 +13,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" />
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj">
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Remove="ContentPatcher" />

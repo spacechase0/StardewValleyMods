@@ -4,6 +4,7 @@ using System.ComponentModel;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -31,6 +32,7 @@ namespace DynamicGameAssets.PackData
             public bool Flipped { get; set; }
             public List<Vector2> Seats { get; set; } = new List<Vector2>();
             [DefaultValue( SeatDirection.Any )]
+            [JsonConverter( typeof( StringEnumConverter ) )]
             public SeatDirection SittingDirection { get; set; }
 
             public bool ShouldSerializeSeats() { return Seats.Count > 0; }
@@ -54,9 +56,11 @@ namespace DynamicGameAssets.PackData
         }
 
         [DefaultValue( FurnitureType.Decoration )]
+        [JsonConverter( typeof( StringEnumConverter ) )]
         public FurnitureType Type { get; set; }
 
         // Bed specific
+        [JsonConverter( typeof( StringEnumConverter ) )]
         public BedFurniture.BedType BedType { get; set; } = BedFurniture.BedType.Single;
 
         public bool ShouldSerializeBedType() { return Type == FurnitureType.Bed; }

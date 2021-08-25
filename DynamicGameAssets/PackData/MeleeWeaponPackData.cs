@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using StardewValley;
 using StardewValley.Tools;
 
@@ -27,6 +28,7 @@ namespace DynamicGameAssets.PackData
 
         public string Texture { get; set; }
 
+        [JsonConverter( typeof( StringEnumConverter ) )]
         public WeaponType Type { get; set; }
         public int MinimumDamage { get; set; }
         public int MaximumDamage { get; set; }

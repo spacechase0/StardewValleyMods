@@ -52,6 +52,7 @@ namespace DynamicGameAssets.PackData
             AnimalGoods = StardewValley.Object.sellAtPierresAndMarnies,
             Greens = StardewValley.Object.GreensCategory,
         }
+        [JsonConverter( typeof( StringEnumConverter ) )]
         public VanillaCategory Category { get; set; } = VanillaCategory.Junk;
         [JsonIgnore]
         public string CategoryTextOverride => parent.smapiPack.Translation.Get( $"object.{ID}.category" ).UsePlaceholder( false ).ToString();

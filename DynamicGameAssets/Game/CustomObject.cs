@@ -168,7 +168,8 @@ namespace DynamicGameAssets.Game
         {
             var ret = base.getExtraSpaceNeededForTooltipSpecialIcons(font, minWidth, horizontalBuffer, startingHeight, descriptionText, boldTitleText, moneyAmountToDisplayAtBottom );
             ret.Y = startingHeight;
-            ret.Y += 48;
+            string str = "Mod: " + Data.parent.smapiPack.Manifest.Name;
+            ret.Y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
             return ret;
         }
 
@@ -469,7 +470,7 @@ namespace DynamicGameAssets.Game
 
         public override string getDescription()
         {
-            return Data.Description;
+            return Game1.parseText( Data.Description, Game1.smallFont, getDescriptionWidth() );
         }
 
         public override int salePrice()

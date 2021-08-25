@@ -24,6 +24,7 @@ namespace DynamicGameAssets.PackData
             Paddy,
         }
         [DefaultValue( CropType.Normal )]
+        [JsonConverter( typeof( StringEnumConverter ) )]
         public CropType Type { get; set; }
 
         [DefaultValue( false )]
@@ -70,6 +71,8 @@ namespace DynamicGameAssets.PackData
             public int HarvestedExperience { get; set; } = 0;
             [DefaultValue( -1 )]
             public int HarvestedNewPhase { get; set; } = -1;
+
+            public bool ShouldSerializeHarvestedDrops() { return HarvestedDrops.Count > 0; }
 
             public object Clone()
             {

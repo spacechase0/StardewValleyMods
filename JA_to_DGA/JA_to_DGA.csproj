@@ -13,9 +13,17 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj" />
+    <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj">
+      <Private>false</Private>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <ExcludeAssets></ExcludeAssets>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JsonAssets\JsonAssets.csproj" />
+    <ProjectReference Include="..\JsonAssets\JsonAssets.csproj">
+      <Private>false</Private>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <ExcludeAssets></ExcludeAssets>
+    </ProjectReference>
   </ItemGroup>
 </Project>

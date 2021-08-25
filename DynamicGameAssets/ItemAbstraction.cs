@@ -7,6 +7,7 @@ using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
@@ -15,6 +16,7 @@ namespace DynamicGameAssets
 {
     public class ItemAbstraction : ICloneable
     {
+        [JsonConverter( typeof( StringEnumConverter ) )]
         public enum ItemType
         {
             DGAItem,
@@ -315,11 +317,11 @@ namespace DynamicGameAssets
                     break;
                 case ItemType.ContextTag:
                     Log.Error("Context tag ItemAbstraction instances cannot be created!");
-                    return null;
+                    return new StardewValley.Object( 1720, 1 );
             }
 
             Log.Error($"Unknown item {Type} {Value} x {Quantity}");
-            return null;
+            return new StardewValley.Object( 1720, 1 );
         }
 
         public virtual object Clone() => this.MemberwiseClone();

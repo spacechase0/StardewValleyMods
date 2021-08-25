@@ -180,6 +180,7 @@ namespace DynamicGameAssets
             {
                 foreach ( var data in cp.Value.items )
                 {
+                    Log.Debug( "doing " + cp.Key + " " + data.Key );
                     if ( data.Value.EnableConditionsObject == null )
                         data.Value.EnableConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
                                                                                              data.Value.EnableConditions,
@@ -196,6 +197,7 @@ namespace DynamicGameAssets
                 }
                 foreach ( var data in cp.Value.others )
                 {
+                    Log.Debug( "doing " + cp.Key + " " + data );
                     if ( data.EnableConditionsObject == null )
                         data.EnableConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
                                                                                        data.EnableConditions,

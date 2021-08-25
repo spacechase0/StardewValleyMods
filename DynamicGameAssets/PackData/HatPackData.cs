@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using StardewValley;
 
 namespace DynamicGameAssets.PackData
@@ -27,6 +28,7 @@ namespace DynamicGameAssets.PackData
 
         public string Texture { get; set; }
         [DefaultValue( HairStyleType.Full )]
+        [JsonConverter( typeof( StringEnumConverter ) )]
         public HairStyleType HairStyle { get; set; }
         [DefaultValue( false )]
         public bool IgnoreHairstyleOffset { get; set; }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using StardewValley;
 
 namespace DynamicGameAssets.PackData
@@ -30,6 +31,7 @@ namespace DynamicGameAssets.PackData
         public ItemAbstraction RepairMaterial { get; set; }
 
         [DefaultValue( ToolType.Axe )]
+        [JsonConverter( typeof( StringEnumConverter ) )]
         public ToolType BreakTool { get; set; }
 
         public string PlacementSound { get; set; }
