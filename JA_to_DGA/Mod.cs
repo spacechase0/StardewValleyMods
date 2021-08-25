@@ -52,6 +52,8 @@ namespace JA_to_DGA
                     Log.Error( "Not a content pack" );
                     return;
                 }
+
+                Convert( cp, args[ 1 ] );
             }
         }
 
@@ -59,8 +61,15 @@ namespace JA_to_DGA
         {
             string jaPath = ( string ) AccessTools.Property( cp.GetType(), "DirectoryPath" ).GetMethod.Invoke( cp, null );
             string dgaPath = Path.Combine( Path.GetDirectoryName( Helper.DirectoryPath ), "[DGA] " + newModId );
-            Directory.CreateDirectory( dgaPath );
             Log.Info( "Path: " + jaPath + " -> " + dgaPath );
+
+            if ( Directory.Exists( dgaPath ) )
+            {
+                Log.Error( "Already converted!" );
+                return;
+            }
+
+            Directory.CreateDirectory( dgaPath );
 
             var i18n = new Dictionary<string, Dictionary<string, string>>();
             var objs = new List<DynamicGameAssets.PackData.ObjectPackData>();

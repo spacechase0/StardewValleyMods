@@ -46,7 +46,6 @@ using System.Runtime.CompilerServices;
 // TODO: Crops: Can grow in greenhouse?
 // TODO: Crops: getRandomWildCropForSeason support?
 // TODO: General validation, optimization (cache Data in IDGAItem's), not crashing when an item is missing, etc.
-// TODO: General: Extension data
 // TODO: Look into Gourmand requests?
 /* TODO:
  * ? bundles
