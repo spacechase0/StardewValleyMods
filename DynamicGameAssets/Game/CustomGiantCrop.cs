@@ -16,34 +16,23 @@ using StardewValley.Tools;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGAGiantCrop" )]
-    public class CustomGiantCrop : ResourceClump, IDGAItem
+    [Mixin( typeof( CustomItemMixin<CropPackData> ) )]
+    public partial class CustomGiantCrop : ResourceClump
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public CropPackData Data => Mod.Find( FullId ) as CropPackData;
-
-        public CustomGiantCrop()
+        partial void DoInit()
         {
             base.NetFields.AddFields( this._sourcePack, this._id );
         }
-
-        public CustomGiantCrop( CropPackData data, Vector2 tile )
+        partial void DoInit( CropPackData data )
         {
-            this._sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            this._id.Value = data.ID;
-
-            base.tile.Value = tile;
             base.width.Value = 3;
             base.height.Value = 3;
             base.health.Value = 3;
+        }
+        public CustomGiantCrop( CropPackData data, Vector2 tile )
+        :   this( data )
+        {
+            base.tile.Value = tile;
         }
         public override void draw( SpriteBatch spriteBatch, Vector2 tileLocation )
         {

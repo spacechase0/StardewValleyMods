@@ -16,31 +16,16 @@ using StardewValley.Tools;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGAMeleeWeapon" )]
-    public class CustomMeleeWeapon : MeleeWeapon, IDGAItem
+    [Mixin( typeof( CustomItemMixin<MeleeWeaponPackData> ) )]
+    public partial class CustomMeleeWeapon : MeleeWeapon
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public MeleeWeaponPackData Data => Mod.Find( FullId ) as MeleeWeaponPackData;
-
-        public CustomMeleeWeapon()
+        partial void DoInit()
         {
             this.NetFields.AddFields( _sourcePack, _id );
         }
 
-        public CustomMeleeWeapon( MeleeWeaponPackData data )
-        : this()
+        partial void DoInit( MeleeWeaponPackData data )
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
             this.Name = Id;
 
             this.type.Value = ( int ) data.Type;

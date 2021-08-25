@@ -135,6 +135,10 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SpaceSharedPatching", "Spac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DynamicGameAssets", "DynamicGameAssets\DynamicGameAssets.csproj", "{100B0E56-6FF4-48EA-97B6-6102CB68931E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JA_to_DGA", "JA_to_DGA\JA_to_DGA.csproj", "{E3CDA243-4E11-493B-96D8-35466ABC5AC4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceSharedGen", "SpaceSharedGen\SpaceSharedGen.csproj", "{9C795242-9BC1-4269-8660-4DBADFE17FF2}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SpaceShared\SpaceShared.projitems*{061610a4-7d02-4f52-a921-f59ed123c2a9}*SharedItemsImports = 13
@@ -143,6 +147,11 @@ Global
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{a87f5d49-6246-4b14-8363-114dc9335c2c}*SharedItemsImports = 13
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{ba657cb4-93ed-4c3a-a66e-86954beb4ce6}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{ba657cb4-93ed-4c3a-a66e-86954beb4ce6}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{c3d5972f-cb65-4c85-8e1c-55c78a99940a}*SharedItemsImports = 5
+		SpaceSharedPatching\SpaceSharedPatching.projitems*{e3cda243-4e11-493b-96d8-35466abc5ac4}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{e3cda243-4e11-493b-96d8-35466abc5ac4}*SharedItemsImports = 5
+		SpaceSharedPatching\SpaceSharedPatching.projitems*{eef5d802-f0a2-43b4-bd27-16b8262c4de4}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{eef5d802-f0a2-43b4-bd27-16b8262c4de4}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{f918b9a5-24ce-44f7-bcbb-0b6ffebc1f0a}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -378,6 +387,14 @@ Global
 		{100B0E56-6FF4-48EA-97B6-6102CB68931E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{100B0E56-6FF4-48EA-97B6-6102CB68931E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{100B0E56-6FF4-48EA-97B6-6102CB68931E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3CDA243-4E11-493B-96D8-35466ABC5AC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3CDA243-4E11-493B-96D8-35466ABC5AC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3CDA243-4E11-493B-96D8-35466ABC5AC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3CDA243-4E11-493B-96D8-35466ABC5AC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C795242-9BC1-4269-8660-4DBADFE17FF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C795242-9BC1-4269-8660-4DBADFE17FF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C795242-9BC1-4269-8660-4DBADFE17FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C795242-9BC1-4269-8660-4DBADFE17FF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -395,6 +412,7 @@ Global
 		{5AD9A1BF-DC0C-4177-B362-DE4706C99780} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{41BBD68D-B674-4DDC-B0A4-7E189F13873A} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{A87F5D49-6246-4B14-8363-114DC9335C2C} = {DED81BB3-A571-46E2-91C2-6A8B7890C7EA}
+		{9C795242-9BC1-4269-8660-4DBADFE17FF2} = {DED81BB3-A571-46E2-91C2-6A8B7890C7EA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}

@@ -15,31 +15,15 @@ using StardewValley.Objects;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGAHat" )]
-    public class CustomHat : Hat, IDGAItem
+    [Mixin( typeof( CustomItemMixin<HatPackData> ) )]
+    public partial class CustomHat : Hat
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public HatPackData Data => Mod.Find( FullId ) as HatPackData;
-
-        public CustomHat()
+        partial void DoInit()
         {
             base.NetFields.AddFields( _sourcePack, _id );
         }
-
-        public CustomHat( HatPackData data )
-        :   this()
+        partial void DoInit( HatPackData data )
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
             this.Name = Id;
             this.which.Value = FullId.GetDeterministicHashCode();
 

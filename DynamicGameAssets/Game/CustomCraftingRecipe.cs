@@ -2,6 +2,7 @@ using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Tools;
 using System;
@@ -14,28 +15,13 @@ using System.Xml.Serialization;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGACraftingRecipe" )] // Shouldn't ever exist inside an inventory, but just in case
-    public class CustomCraftingRecipe : StardewValley.Object, IDGAItem
+    [Mixin( typeof( CustomItemMixin<CraftingRecipePackData> ) )]
+    public partial class CustomCraftingRecipe : StardewValley.Object
     {
         private Item craftedCache = null;
 
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public CraftingRecipePackData Data => Mod.Find( FullId ) as CraftingRecipePackData;
-
-        public CustomCraftingRecipe() { }
-        public CustomCraftingRecipe( CraftingRecipePackData data )
+        partial void DoInit( CraftingRecipePackData data )
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
             ParentSheetIndex = Mod.BaseFakeObjectId;
             name = data.ID + " Recipe";
             type.Value = "Basic";

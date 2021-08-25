@@ -18,20 +18,12 @@ using System.Xml.Serialization;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGAObject" )]
-    public class CustomObject : StardewValley.Object, IDGAItem
+    [Mixin( typeof( CustomItemMixin<ObjectPackData> ) )]
+    public partial class CustomObject : StardewValley.Object
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
         public readonly NetBool _hasColor = new NetBool();
         public readonly NetColor _color = new NetColor();
 
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
         [XmlIgnore]
         public Color? ObjectColor
         {
@@ -52,22 +44,16 @@ namespace DynamicGameAssets.Game
                 }
             }
         }
-        [XmlIgnore]
-        public ObjectPackData Data => Mod.Find( FullId ) as ObjectPackData;
 
         public override string DisplayName { get => loadDisplayName(); set { } }
 
-        public CustomObject() { }
-        public CustomObject( ObjectPackData data )
+        partial void DoInit( ObjectPackData data )
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
             ParentSheetIndex = Mod.BaseFakeObjectId;
             name = data.ID;
             edibility.Value = data.Edibility;
             type.Value = "Basic";
-            category.Value = (int) data.Category;
+            category.Value = ( int ) data.Category;
             price.Value = data.SellPrice ?? 0;
             fragility.Value = fragility_Removable;
 
@@ -82,6 +68,7 @@ namespace DynamicGameAssets.Game
         {
             base.initNetFields();
             NetFields.AddFields( _sourcePack, _id );
+            NetFields.AddFields( _hasColor, _color );
         }
 
         protected override string loadDisplayName()

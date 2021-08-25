@@ -17,31 +17,16 @@ using StardewValley.Tools;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGABoots" )]
-    public class CustomBoots : Boots, IDGAItem
+    [Mixin( typeof( CustomItemMixin<BootsPackData> ) )]
+    public partial class CustomBoots : Boots
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public BootsPackData Data => Mod.Find( FullId ) as BootsPackData;
-
-        public CustomBoots()
+        partial void DoInit()
         {
             this.NetFields.AddFields( _sourcePack, _id );
         }
 
-        public CustomBoots( BootsPackData data )
-        :   this()
+        partial void DoInit( BootsPackData data )
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
             this.Name = Id;
             reloadData();
         }

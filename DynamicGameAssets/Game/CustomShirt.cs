@@ -15,31 +15,16 @@ using StardewValley.Objects;
 namespace DynamicGameAssets.Game
 {
     [XmlType("Mods_DGAShirt")]
-    public class CustomShirt : Clothing, IDGAItem
+    [Mixin( typeof( CustomItemMixin<ShirtPackData> ) )]
+    public partial class CustomShirt : Clothing
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public ShirtPackData Data => Mod.Find( FullId ) as ShirtPackData;
-
-        public CustomShirt()
+        partial void DoInit()
         {
             base.NetFields.AddFields( _sourcePack, _id );
         }
 
-        public CustomShirt( ShirtPackData data )
-        :   this()
+        partial void DoInit( ShirtPackData data )
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
             this.dyeable.Value = data.Dyeable;
             this.clothesType.Value = ( int ) ClothesType.SHIRT;
             if ( data.Sleeveless )

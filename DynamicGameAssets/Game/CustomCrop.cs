@@ -18,30 +18,15 @@ using StardewValley.TerrainFeatures;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGACrop" )]
-    public class CustomCrop : Crop, IDGAItem
+    [Mixin( typeof( CustomItemMixin<CropPackData> ) )]
+    public partial class CustomCrop : Crop
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public CropPackData Data => Mod.Find( FullId ) as CropPackData;
-
-        public CustomCrop()
+        partial void DoInit()
         {
             this.NetFields.AddFields( _sourcePack, _id );
         }
-        public CustomCrop( CropPackData data, int tileX, int tileY )
-        :   this()
+        partial void DoInit( CropPackData data )
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
             if ( ( data.Colors?.Count ?? 0 ) > 0 )
             {
                 tintColor.Value = data.Colors[ Game1.random.Next( data.Colors.Count ) ];
@@ -50,7 +35,10 @@ namespace DynamicGameAssets.Game
             ResetPhaseDays();
             this.harvestMethod.Value = Data.Phases[ 0 ].Scythable ? Crop.sickleHarvest : Crop.grabHarvest;
             this.raisedSeeds.Value = Data.Phases[ 0 ].Trellis;
-
+        }
+        public CustomCrop( CropPackData data, int tileX, int tileY )
+        :   this( data )
+        {
             this.updateDrawMath( new Vector2( tileX, tileY ) );
         }
 

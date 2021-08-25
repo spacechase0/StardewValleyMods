@@ -13,30 +13,16 @@ namespace DynamicGameAssets.Game
 {
     // Literally a copy+paste of CustomBasicFurniture subclassing from a different type (with small storage-specific changes)
     [XmlType( "Mods_DGAStorageFurniture" )]
-    public class CustomStorageFurniture : StorageFurniture, IDGAItem, ISittable
+    [Mixin( typeof( CustomItemMixin<FurniturePackData> ) )]
+    public partial class CustomStorageFurniture : StorageFurniture, ISittable
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public FurniturePackData Data => Mod.Find(FullId) as FurniturePackData;
-
-        public CustomStorageFurniture()
+        partial void DoInit()
         {
             Mod.instance.Helper.Reflection.GetField<int>( this, "_placementRestriction" ).SetValue( 2 );
         }
 
-        public CustomStorageFurniture( FurniturePackData data)
+        partial void DoInit( FurniturePackData data )
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
             name = FullId;
             furniture_type.Value = data.GetVanillaFurnitureType();
             defaultSourceRect.Value = sourceRect.Value = data.GetTexture().Rect ?? new Rectangle( 0, 0, data.GetTexture().Texture.Width, data.GetTexture().Texture.Height );

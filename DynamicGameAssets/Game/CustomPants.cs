@@ -15,37 +15,20 @@ using StardewValley.Objects;
 namespace DynamicGameAssets.Game
 {
     [XmlType("Mods_DGAPants")]
-    public class CustomPants : Clothing, IDGAItem
+    [Mixin( typeof( CustomItemMixin<PantsPackData> ) )]
+    public partial class CustomPants : Clothing
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public PantsPackData Data => Mod.Find( FullId ) as PantsPackData;
-
-        public CustomPants()
+        partial void DoInit()
         {
             base.NetFields.AddFields( _sourcePack, _id );
         }
 
-        public CustomPants( PantsPackData data )
-        :   this()
+        partial void DoInit( PantsPackData data )
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
             this.dyeable.Value = data.Dyeable;
             this.clothesType.Value = ( int ) ClothesType.PANTS;
             this.clothesColor.Value = data.DefaultColor;
 
-
-            SpaceShared.Log.Debug( "test:" + FullId + FullId.GetDeterministicHashCode() );
             this.indexInTileSheetMale.Value = FullId.GetDeterministicHashCode();
         }
 

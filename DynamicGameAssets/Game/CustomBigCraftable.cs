@@ -17,31 +17,22 @@ using System.Xml.Serialization;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGABigCraftable" )]
-    public class CustomBigCraftable : StardewValley.Object, IDGAItem
+    [Mixin( typeof( CustomItemMixin<BigCraftablePackData> ) )]
+    public partial class CustomBigCraftable : StardewValley.Object
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public BigCraftablePackData Data => Mod.Find( FullId ) as BigCraftablePackData;
-
         public string TextureOverride { get; set; } = null;
         public string PendingTextureOverride { get; set; } = null; // Triggers when recipe finished
 
         public override string DisplayName { get => loadDisplayName(); set { } }
 
-        public CustomBigCraftable() { }
         public CustomBigCraftable( BigCraftablePackData data, Vector2 tileLocation )
+        :   this( data )
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
+            this.tileLocation.Value = tileLocation;
+            boundingBox.Value = new Rectangle( ( int ) tileLocation.X * Game1.tileSize, ( int ) tileLocation.X * Game1.tileSize, Game1.tileSize, Game1.tileSize );
+        }
+        partial void DoInit( BigCraftablePackData data )
+        {
             name = data.ID;
 
             canBeSetDown.Value = true;
@@ -54,7 +45,6 @@ namespace DynamicGameAssets.Game
             setOutdoors.Value = setIndoors.Value = true;
             fragility.Value = StardewValley.Object.fragility_Removable;
             isLamp.Value = data.ProvidesLight;
-            boundingBox.Value = new Rectangle( ( int ) tileLocation.X * Game1.tileSize,( int ) tileLocation.X * Game1.tileSize, Game1.tileSize, Game1.tileSize );
         }
 
         protected override void initNetFields()

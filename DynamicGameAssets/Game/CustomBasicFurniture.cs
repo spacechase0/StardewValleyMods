@@ -12,35 +12,20 @@ using StardewValley.Objects;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGABasicFurniture" )]
-    public class CustomBasicFurniture : Furniture, IDGAItem, ISittable
+    [Mixin( typeof( CustomItemMixin<FurniturePackData> ) )]
+    public partial class CustomBasicFurniture : Furniture, ISittable
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public FurniturePackData Data => Mod.Find(FullId) as FurniturePackData;
-
-        public CustomBasicFurniture()
+        partial void DoInit()
         {
             Mod.instance.Helper.Reflection.GetField<int>( this, "_placementRestriction" ).SetValue( 2 );
         }
 
-        public CustomBasicFurniture(FurniturePackData data)
+        partial void DoInit(FurniturePackData data)
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
             name = FullId;
             furniture_type.Value = data.GetVanillaFurnitureType();
             defaultSourceRect.Value = sourceRect.Value = data.GetTexture().Rect ?? new Rectangle( 0, 0, data.GetTexture().Texture.Width, data.GetTexture().Texture.Height );
             boundingBox.Value = new Rectangle( 0, (int)(data.Configurations[0].DisplaySize.Y - data.Configurations[0].CollisionHeight) * Game1.tileSize, ( int ) data.Configurations[0].DisplaySize.X * Game1.tileSize, ( int ) data.Configurations[0].CollisionHeight * Game1.tileSize );
-            Mod.instance.Helper.Reflection.GetField<int>(this, "_placementRestriction").SetValue(2);
             rotations.Value = data.Configurations.Count;
             UpdateRotation();
         }

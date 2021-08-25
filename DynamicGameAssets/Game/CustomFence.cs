@@ -15,31 +15,16 @@ using StardewValley.Tools;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGAFence" )]
-    public class CustomFence : Fence, IDGAItem
+    [Mixin( typeof( CustomItemMixin<FencePackData> ) )]
+    public partial class CustomFence : Fence
     {
-        public readonly NetString _sourcePack = new NetString();
-        public readonly NetString _id = new NetString();
-
-        [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
-        [XmlIgnore]
-        public string Id => _id.Value;
-        [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
-        [XmlIgnore]
-        public FencePackData Data => Mod.Find( FullId ) as FencePackData;
-
-        public CustomFence()
+        partial void DoInit()
         {
             this.fenceTexture = new Lazy<Texture2D>( () => Data.parent.GetTexture( Data.PlacedTilesheet, 48, 325 ).Texture );
         }
 
-        public CustomFence( FencePackData data )
-        :   this()
+        partial void DoInit( FencePackData data )
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
-
             this.Name = Id;
             this.whichType.Value = FullId.GetDeterministicHashCode();
             this.ResetHealth( 0 );
