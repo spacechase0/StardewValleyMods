@@ -151,7 +151,7 @@ namespace JA_to_DGA
             shops.Add( entry );
         }
 
-        public static DynamicGameAssets.PackData.ObjectPackData Convert( this JsonAssets.Data.ObjectData data, string packId, Dictionary<string, Dictionary<string, string>> i18n, List<DynamicGameAssets.PackData.ObjectPackData> objs, List<DynamicGameAssets.PackData.CraftingRecipePackData> crafting, List<DynamicGameAssets.PackData.ShopEntryPackData> shops )
+        public static DynamicGameAssets.PackData.ObjectPackData ConvertObject( this JsonAssets.Data.ObjectData data, string packId, Dictionary<string, Dictionary<string, string>> i18n, List<DynamicGameAssets.PackData.ObjectPackData> objs, List<DynamicGameAssets.PackData.CraftingRecipePackData> crafting, List<DynamicGameAssets.PackData.ShopEntryPackData> shops )
         {
             var item = new DynamicGameAssets.PackData.ObjectPackData();
             item.ExtensionData.Add( "JsonAssetsName", JToken.FromObject( data.Name ) );
@@ -168,52 +168,7 @@ namespace JA_to_DGA
             item.CanTrash = data.CanTrash;
             item.IsGiftable = data.CanBeGifted;
             item.HideFromShippingCollection = data.HideFromShippingCollection;
-            if ( data.Recipe != null )
-            {
-                var recipe = new DynamicGameAssets.PackData.CraftingRecipePackData();
-                recipe.ID = data.Name + " Recipe";
-                i18n.AddI18n( "en", $"crafting.{data.Name}.name", data.Name );
-                i18n.AddI18n( "en", $"crafting.{data.Name}.description", data.Description );
-                recipe.IsCooking = item.Category == DynamicGameAssets.PackData.ObjectPackData.VanillaCategory.Cooking;
-                recipe.SkillUnlockName = data.Recipe.SkillUnlockName;
-                recipe.SkillUnlockLevel = data.Recipe.SkillUnlockLevel;
-                recipe.KnownByDefault = data.Recipe.IsDefault;
-                recipe.Result = new List<DynamicGameAssets.Weighted<DynamicGameAssets.ItemAbstraction>>()
-                {
-                    new DynamicGameAssets.Weighted<DynamicGameAssets.ItemAbstraction>( 1, new DynamicGameAssets.ItemAbstraction()
-                    {
-                        Value = $"{packId}/{item.ID}",
-                        Type = DynamicGameAssets.ItemAbstraction.ItemType.DGAItem,
-                    } )
-                };
-                recipe.Ingredients = new List<DynamicGameAssets.PackData.CraftingRecipePackData.IngredientAbstraction>();
-                foreach ( var ingred in data.Recipe.Ingredients )
-                {
-                    var productObj = objs.FirstOrDefault( o => o.ID == ingred.ToString() );
-                    var newIngred = new DynamicGameAssets.PackData.CraftingRecipePackData.IngredientAbstraction()
-                    {
-                        Value = productObj != null ? $"{packId}/{productObj.ID}" : ingred.ToString(),
-                        Type = productObj != null ? DynamicGameAssets.ItemAbstraction.ItemType.DGAItem : DynamicGameAssets.ItemAbstraction.ItemType.VanillaObject,
-                        Quantity = ingred.Count,
-                    };
-                    recipe.Ingredients.Add( newIngred );
-                }
-                crafting.Add( recipe );
-
-                if ( data.Recipe.CanPurchase )
-                {
-                    DoShopEntry( shops, packId, recipe.ID, new JsonAssets.PurchaseData()
-                    {
-                        PurchasePrice = data.Recipe.PurchasePrice,
-                        PurchaseFrom = data.Recipe.PurchaseFrom,
-                        PurchaseRequirements = data.Recipe.PurchaseRequirements,
-                    } );
-                    foreach ( var entry in data.AdditionalPurchaseData )
-                    {
-                        DoShopEntry( shops, packId, recipe.ID, entry );
-                    }
-                }
-            }
+            // recipe done elsewhere
             item.Edibility = data.Edibility;
             item.EdibleIsDrink = data.EdibleIsDrink;
             if ( data.EdibleBuffs != null )
@@ -308,7 +263,61 @@ namespace JA_to_DGA
             return item;
         }
 
-        public static DynamicGameAssets.PackData.CropPackData Convert( this JsonAssets.Data.CropData data, string packId, Dictionary<string, Dictionary<string, string>> i18n, List<DynamicGameAssets.PackData.CropPackData> crops, List<DynamicGameAssets.PackData.ObjectPackData> objs, List<DynamicGameAssets.PackData.ShopEntryPackData> shops )
+        public static DynamicGameAssets.PackData.CraftingRecipePackData ConvertCrafting( this JsonAssets.Data.ObjectData data, string packId, Dictionary<string, Dictionary<string, string>> i18n, List<DynamicGameAssets.PackData.ObjectPackData> objs, List<DynamicGameAssets.PackData.CraftingRecipePackData> crafting, List<DynamicGameAssets.PackData.ShopEntryPackData> shops )
+        {
+            if ( data.Recipe != null )
+            {
+                var recipe = new DynamicGameAssets.PackData.CraftingRecipePackData();
+                recipe.ID = "Converted_" + data.Name + " Recipe";
+                i18n.AddI18n( "en", $"crafting.Converted_{data.Name} Recipe.name", data.Name );
+                i18n.AddI18n( "en", $"crafting.Converted_{data.Name} Recipe.description", data.Description );
+                recipe.IsCooking = data.Category == JsonAssets.Data.ObjectCategory.Cooking;
+                recipe.SkillUnlockName = data.Recipe.SkillUnlockName;
+                recipe.SkillUnlockLevel = data.Recipe.SkillUnlockLevel;
+                recipe.KnownByDefault = data.Recipe.IsDefault;
+                recipe.Result = new List<DynamicGameAssets.Weighted<DynamicGameAssets.ItemAbstraction>>()
+                {
+                    new DynamicGameAssets.Weighted<DynamicGameAssets.ItemAbstraction>( 1, new DynamicGameAssets.ItemAbstraction()
+                    {
+                        Value = $"{packId}/{data.Name}",
+                        Type = DynamicGameAssets.ItemAbstraction.ItemType.DGAItem,
+                    } )
+                };
+                recipe.Ingredients = new List<DynamicGameAssets.PackData.CraftingRecipePackData.IngredientAbstraction>();
+                foreach ( var ingred in data.Recipe.Ingredients )
+                {
+                    var productObj = objs.FirstOrDefault( o => o.ID == ingred.ToString() );
+                    var newIngred = new DynamicGameAssets.PackData.CraftingRecipePackData.IngredientAbstraction()
+                    {
+                        Value = productObj != null ? $"{packId}/{productObj.ID}" : ingred.ToString(),
+                        Type = productObj != null ? DynamicGameAssets.ItemAbstraction.ItemType.DGAItem : DynamicGameAssets.ItemAbstraction.ItemType.VanillaObject,
+                        Quantity = ingred.Count,
+                    };
+                    recipe.Ingredients.Add( newIngred );
+                }
+                crafting.Add( recipe );
+
+                if ( data.Recipe.CanPurchase )
+                {
+                    DoShopEntry( shops, packId, recipe.ID, new JsonAssets.PurchaseData()
+                    {
+                        PurchasePrice = data.Recipe.PurchasePrice,
+                        PurchaseFrom = data.Recipe.PurchaseFrom,
+                        PurchaseRequirements = data.Recipe.PurchaseRequirements,
+                    } );
+                    foreach ( var entry in data.AdditionalPurchaseData )
+                    {
+                        DoShopEntry( shops, packId, recipe.ID, entry );
+                    }
+                }
+
+                return recipe;
+            }
+
+            return null;
+        }
+
+        public static DynamicGameAssets.PackData.CropPackData ConvertCrop( this JsonAssets.Data.CropData data, string packId, Dictionary<string, Dictionary<string, string>> i18n, List<DynamicGameAssets.PackData.CropPackData> crops, List<DynamicGameAssets.PackData.ObjectPackData> objs, List<DynamicGameAssets.PackData.ShopEntryPackData> shops )
         {
             var item = new DynamicGameAssets.PackData.CropPackData();
             item.ExtensionData.Add( "JsonAssetsName", JToken.FromObject( data.Name ) );
@@ -422,6 +431,123 @@ namespace JA_to_DGA
             {
                 DoShopEntry( shops, packId, data.Name, entry );
             }
+
+            return item;
+        }
+
+        public static DynamicGameAssets.PackData.FruitTreePackData ConvertFruitTree( this JsonAssets.Data.FruitTreeData data, string packId, Dictionary<string, Dictionary<string, string>> i18n, List<DynamicGameAssets.PackData.FruitTreePackData> fruitTrees, List<DynamicGameAssets.PackData.ObjectPackData> objs, List<DynamicGameAssets.PackData.ShopEntryPackData> shops )
+        {
+            var item = new DynamicGameAssets.PackData.FruitTreePackData();
+            item.ExtensionData.Add( "JsonAssetsName", JToken.FromObject( data.Name ) );
+            item.ID = data.Name;
+            item.Texture = Path.Combine( "assets", "fruit-trees", data.Name + ".png" );
+            var productObj = objs.FirstOrDefault( o => o.ID == data.Product.ToString() );
+            item.Product = new List<DynamicGameAssets.Weighted<DynamicGameAssets.ItemAbstraction>>( new DynamicGameAssets.Weighted<DynamicGameAssets.ItemAbstraction>[]
+            {
+                new DynamicGameAssets.Weighted<DynamicGameAssets.ItemAbstraction>( 1, new DynamicGameAssets.ItemAbstraction()
+                {
+                    Value = productObj != null ? $"{packId}/{productObj.ID}" : data.Product.ToString(),
+                    Type = productObj != null ? DynamicGameAssets.ItemAbstraction.ItemType.DGAItem : DynamicGameAssets.ItemAbstraction.ItemType.VanillaObject
+                } )
+            } );
+            var dynFields = new List<DynamicGameAssets.PackData.DynamicFieldData>();
+            {
+                var dynField = new DynamicGameAssets.PackData.DynamicFieldData();
+                dynField.Conditions.Add( "Season", string.Join( ", ", data.Season ) );
+                dynField.Fields.Add( "CanGrowNow", JToken.FromObject( true ) );
+                dynFields.Add( dynField );
+            }
+            item.DynamicFields = dynFields.ToArray();
+
+            fruitTrees.Add( item );
+
+            var saplingItem = new DynamicGameAssets.PackData.ObjectPackData();
+            i18n.AddI18n( "en", $"object.{data.SaplingName}.name", data.SaplingName );
+            i18n.AddI18n( "en", $"object.{data.SaplingDescription}.description", data.SaplingDescription );
+            saplingItem.ID = data.SaplingName;
+            saplingItem.Texture = Path.Combine( "assets", "objects", data.Name + "_seeds.png" );
+            saplingItem.Category = DynamicGameAssets.PackData.ObjectPackData.VanillaCategory.Seeds;
+            saplingItem.Plants = $"{packId}/{item.ID}";
+            foreach ( var loc in data.SaplingNameLocalization )
+                i18n.AddI18n( loc.Key, $"object.{data.SaplingName}.name", loc.Value );
+            foreach ( var loc in data.SaplingDescriptionLocalization )
+                i18n.AddI18n( loc.Key, $"object.{data.SaplingName}.description", loc.Value );
+            objs.Add( saplingItem );
+
+            DoShopEntry( shops, packId, data.Name, new JsonAssets.PurchaseData()
+            {
+                PurchasePrice = data.SaplingPurchasePrice,
+                PurchaseFrom = data.SaplingPurchaseFrom,
+                PurchaseRequirements = data.SaplingPurchaseRequirements,
+            } );
+            foreach ( var entry in data.SaplingAdditionalPurchaseData )
+            {
+                DoShopEntry( shops, packId, data.Name, entry );
+            }
+
+            return item;
+        }
+
+        public static DynamicGameAssets.PackData.BigCraftablePackData ConvertBigCraftable( this JsonAssets.Data.BigCraftableData data, string packId, Dictionary<string, Dictionary<string, string>> i18n, List<DynamicGameAssets.PackData.BigCraftablePackData> bigCraftables, List<DynamicGameAssets.PackData.ObjectPackData> objs, List<DynamicGameAssets.PackData.CraftingRecipePackData> crafting, List<DynamicGameAssets.PackData.ShopEntryPackData> shops )
+        {
+            var item = new DynamicGameAssets.PackData.BigCraftablePackData();
+            item.ExtensionData.Add( "JsonAssetsName", JToken.FromObject( data.Name ) );
+            item.ID = data.Name;
+            item.Texture = Path.Combine( "assets", "big-craftables", data.Name + ".png" );
+            i18n.AddI18n( "en", $"big-craftable.{data.Name}.name", data.Name );
+            i18n.AddI18n( "en", $"big-craftable.{data.Name}.description", data.Description );
+            item.SellPrice = data.Price;
+            item.ProvidesLight = data.ProvidesLight;
+            if ( data.Recipe != null )
+            {
+                var recipe = new DynamicGameAssets.PackData.CraftingRecipePackData();
+                recipe.ID = "Converted_" + data.Name + " Recipe";
+                i18n.AddI18n( "en", $"crafting.Converted_{data.Name} Recipe.name", data.Name );
+                i18n.AddI18n( "en", $"crafting.Converted_{data.Name} Recipe.description", data.Description );
+                recipe.SkillUnlockName = data.Recipe.SkillUnlockName;
+                recipe.SkillUnlockLevel = data.Recipe.SkillUnlockLevel;
+                recipe.KnownByDefault = data.Recipe.IsDefault;
+                recipe.Result = new List<DynamicGameAssets.Weighted<DynamicGameAssets.ItemAbstraction>>()
+                {
+                    new DynamicGameAssets.Weighted<DynamicGameAssets.ItemAbstraction>( 1, new DynamicGameAssets.ItemAbstraction()
+                    {
+                        Value = $"{packId}/{item.ID}",
+                        Type = DynamicGameAssets.ItemAbstraction.ItemType.DGAItem,
+                    } )
+                };
+                recipe.Ingredients = new List<DynamicGameAssets.PackData.CraftingRecipePackData.IngredientAbstraction>();
+                foreach ( var ingred in data.Recipe.Ingredients )
+                {
+                    var productObj = objs.FirstOrDefault( o => o.ID == ingred.ToString() );
+                    var newIngred = new DynamicGameAssets.PackData.CraftingRecipePackData.IngredientAbstraction()
+                    {
+                        Value = productObj != null ? $"{packId}/{productObj.ID}" : ingred.ToString(),
+                        Type = productObj != null ? DynamicGameAssets.ItemAbstraction.ItemType.DGAItem : DynamicGameAssets.ItemAbstraction.ItemType.VanillaObject,
+                        Quantity = ingred.Count,
+                    };
+                    recipe.Ingredients.Add( newIngred );
+                }
+                crafting.Add( recipe );
+
+                if ( data.Recipe.CanPurchase )
+                {
+                    DoShopEntry( shops, packId, recipe.ID, new JsonAssets.PurchaseData()
+                    {
+                        PurchasePrice = data.Recipe.PurchasePrice,
+                        PurchaseFrom = data.Recipe.PurchaseFrom,
+                        PurchaseRequirements = data.Recipe.PurchaseRequirements,
+                    } );
+                    foreach ( var entry in data.AdditionalPurchaseData )
+                    {
+                        DoShopEntry( shops, packId, recipe.ID, entry );
+                    }
+                }
+            }
+            foreach ( var loc in data.NameLocalization )
+                i18n.AddI18n( loc.Key, $"big-craftable.{data.Name}.name", loc.Value );
+            foreach ( var loc in data.DescriptionLocalization )
+                i18n.AddI18n( loc.Key, $"big-craftable.{data.Name}.description", loc.Value );
+            bigCraftables.Add( item );
 
             return item;
         }

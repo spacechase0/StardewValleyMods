@@ -47,7 +47,7 @@ namespace JA_to_DGA
             }
 
             string jaPath = ( string ) AccessTools.Property( cp.GetType(), "DirectoryPath" ).GetMethod.Invoke( cp, null );
-            string dgaPath = Path.Combine( Path.GetDirectoryName( Helper.DirectoryPath ), args[ 1 ] );
+            string dgaPath = Path.Combine( Path.GetDirectoryName( Helper.DirectoryPath ), "[DGA] " + args[ 1 ] );
             Directory.CreateDirectory( dgaPath );
             Log.Info( "Path: " + jaPath + " -> " + dgaPath );
 
@@ -79,10 +79,22 @@ namespace JA_to_DGA
                         continue;
                     Log.Info( "Converting object " + dir + "..." );
                     var data = cp.ReadJsonFile< ObjectData >( Path.Combine( "Objects", dir, "object.json" ) );
-                    var packData = data.Convert( args[ 1 ], i18n, objs, crafting, shops );
+                    var packData = data.ConvertObject( args[ 1 ], i18n, objs, crafting, shops );
                     File.Copy( Path.Combine( jaPath, "Objects", dir, "object.png" ), Path.Combine( dgaPath, "assets", "objects", dir + ".png" ) );
                     if ( File.Exists( Path.Combine( jaPath, "Objects", dir, "color.png" ) ) )
                         File.Copy( Path.Combine( jaPath, "Objects", dir, "color.png" ), Path.Combine( dgaPath, "assets", "objects", dir + "_color.png" ) );
+                }
+
+                // pass 2 - crafting recipes
+                // this is necessary because an object could use a later object in its recipe
+                foreach ( string dir_ in Directory.GetDirectories( Path.Combine( jaPath, "Objects" ) ) )
+                {
+                    string dir = Path.GetFileName( dir_ );
+                    if ( !File.Exists( Path.Combine( jaPath, "Objects", dir, "object.json" ) ) )
+                        continue;
+                    Log.Info( "Converting object crafting recipe" + dir + " (if it exists)..." );
+                    var data = cp.ReadJsonFile< ObjectData >( Path.Combine( "Objects", dir, "object.json" ) );
+                    var packData = data.ConvertCrafting( args[ 1 ], i18n, objs, crafting, shops );
                 }
             }
 
@@ -96,7 +108,7 @@ namespace JA_to_DGA
                         continue;
                     Log.Info( "Converting crop " + dir + "..." );
                     var data = cp.ReadJsonFile< CropData >( Path.Combine( "Crops", dir, "crop.json" ) );
-                    var packData = data.Convert( args[ 1 ], i18n, crops, objs, shops );
+                    var packData = data.ConvertCrop( args[ 1 ], i18n, crops, objs, shops );
                     File.Copy( Path.Combine( jaPath, "Crops", dir, "crop.png" ), Path.Combine( dgaPath, "assets", "crops", dir + ".png" ) );
                     if ( File.Exists( Path.Combine( jaPath, "Crops", dir, "giant.png" ) ) )
                     {
@@ -108,9 +120,10 @@ namespace JA_to_DGA
                         File.Copy( Path.Combine( jaPath, "Crops", dir, "seeds.png" ), Path.Combine( dgaPath, "assets", "objects", dir + "_seeds.png" ) );
                 }
             }
-            /*
+
             if ( Directory.Exists( Path.Combine( jaPath, "FruitTrees" ) ) )
             {
+                Directory.CreateDirectory( Path.Combine( dgaPath, "assets", "fruit-trees" ) );
                 foreach ( string dir_ in Directory.GetDirectories( Path.Combine( jaPath, "FruitTrees" ) ) )
                 {
                     string dir = Path.GetFileName( dir_ );
@@ -118,7 +131,7 @@ namespace JA_to_DGA
                         continue;
                     Log.Info( "Converting fruit tree " + dir + "..." );
                     var data = cp.ReadJsonFile< FruitTreeData >( Path.Combine( "FruitTrees", dir, "tree.json" ) );
-                    var packData = data.Convert( args[ 1 ], i18n, fruitTrees, objs, shops );
+                    var packData = data.ConvertFruitTree( args[ 1 ], i18n, fruitTrees, objs, shops );
                     File.Copy( Path.Combine( jaPath, "FruitTrees", dir, "tree.png" ), Path.Combine( dgaPath, "assets", "fruit-trees", dir + ".png" ) );
                     if ( File.Exists( Path.Combine( jaPath, "FruitTrees", dir, "sapling.png" ) ) )
                         File.Copy( Path.Combine( jaPath, "FruitTrees", dir, "sapling.png" ), Path.Combine( dgaPath, "assets", "objects", dir + "_sapling.png" ) );
@@ -127,6 +140,7 @@ namespace JA_to_DGA
 
             if ( Directory.Exists( Path.Combine( jaPath, "BigCraftables" ) ) )
             {
+                Directory.CreateDirectory( Path.Combine( dgaPath, "assets", "big-craftables" ) );
                 foreach ( string dir_ in Directory.GetDirectories( Path.Combine( jaPath, "BigCraftables" ) ) )
                 {
                     string dir = Path.GetFileName( dir_ );
@@ -136,12 +150,12 @@ namespace JA_to_DGA
                     var data = cp.ReadJsonFile< BigCraftableData >( Path.Combine( "BigCraftables", dir, "big-craftable.json" ) );
                     if ( data.ReserveNextIndex && data.ReserveExtraIndexCount == 0 )
                         data.ReserveExtraIndexCount = 1;
-                    var packData = data.Convert( args[ 1 ], i18n, bigs, crafting, shops );
+                    var packData = data.ConvertBigCraftable( args[ 1 ], i18n, bigs, objs, crafting, shops );
                     File.Copy( Path.Combine( jaPath, "BigCraftables", dir, "big-craftable.png" ), Path.Combine( dgaPath, "assets", "big-craftables", dir + "0.png" ) );
                     for ( int i = 0; i < data.ReserveExtraIndexCount; ++i )
                         File.Copy( Path.Combine( jaPath, "BigCraftables", dir, $"big-craftable-{i+2}.png" ), Path.Combine( dgaPath, "assets", "big-craftables", dir + (i+1 ) + ".png" ) );
                 }
-            }*/
+            }
 
             var serializeSettings = new JsonSerializerSettings()
             {
@@ -164,7 +178,30 @@ namespace JA_to_DGA
             if ( crafting.Count > 0 ) File.WriteAllText( Path.Combine( dgaPath, "crafting-recipes.json" ), JsonConvert.SerializeObject( crafting, serializeSettings ) );
             if ( shops.Count > 0 ) File.WriteAllText( Path.Combine( dgaPath, "shop-entries.json" ), JsonConvert.SerializeObject( shops, serializeSettings ) );
 
+            Directory.CreateDirectory( Path.Combine( dgaPath, "i18n" ) );
+            foreach ( var entry in i18n )
+            {
+                File.WriteAllText( Path.Combine( dgaPath, "i18n", entry.Key + ".json" ), JsonConvert.SerializeObject( entry.Value, serializeSettings ) );
+            }
+
+            var manifest = new Manifest();
+            manifest.Name = cp.Manifest.Name + " (DGA version)";
+            manifest.Description = cp.Manifest.Description;
+            manifest.Author = cp.Manifest.Author;
+            manifest.Version = cp.Manifest.Version;
+            manifest.MinimumApiVersion = cp.Manifest.MinimumApiVersion;
+            manifest.UniqueID = cp.Manifest.UniqueID + ".DGA";
+            manifest.ContentPackFor = new ManifestContentPackFor()
+            {
+                UniqueID = "spacechase0.DynamicGameAssets"
+            };
+            manifest.Dependencies = cp.Manifest.Dependencies;
+            manifest.UpdateKeys = cp.Manifest.UpdateKeys;
+            manifest.ExtraFields = cp.Manifest.ExtraFields;
+            File.WriteAllText( Path.Combine( dgaPath, "manifest.json" ), JsonConvert.SerializeObject( manifest, serializeSettings ) );
+
             Log.Info( "Done!" );
+            Log.Info( "Note: You need to restart the game to use the new content pack (including for migrations)." );
         }
     }
 }
