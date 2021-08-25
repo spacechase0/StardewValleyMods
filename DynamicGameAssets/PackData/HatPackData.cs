@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DynamicGameAssets.Game;
+using Newtonsoft.Json;
 using StardewValley;
 
 namespace DynamicGameAssets.PackData
@@ -17,12 +19,16 @@ namespace DynamicGameAssets.PackData
             Hide = 2,
         }
 
+        [JsonIgnore]
         public string Name => parent.smapiPack.Translation.Get( $"hat.{ID}.name" );
+        [JsonIgnore]
         public string Description => parent.smapiPack.Translation.Get( $"hat.{ID}.description" );
 
 
         public string Texture { get; set; }
+        [DefaultValue( HairStyleType.Full )]
         public HairStyleType HairStyle { get; set; }
+        [DefaultValue( false )]
         public bool IgnoreHairstyleOffset { get; set; }
 
         public override TexturedRect GetTexture()

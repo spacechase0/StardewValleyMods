@@ -12,12 +12,12 @@ namespace DynamicGameAssets.PackData
 {
     public class DynamicFieldData
     {
-        public Dictionary<string, string> Conditions;
+        public Dictionary<string, string> Conditions { get; set; } = new Dictionary<string, string>();
 
         internal ContentPatcher.IManagedConditions ConditionsObject;
 
         [JsonExtensionData]
-        public Dictionary<string, JToken> Fields;
+        public Dictionary<string, JToken> Fields { get; set; } = new Dictionary<string, JToken>();
 
         public bool Check( BasePackData parent )
         {

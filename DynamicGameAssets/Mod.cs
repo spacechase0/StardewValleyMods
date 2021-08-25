@@ -33,8 +33,9 @@ using System.Runtime.CompilerServices;
 
 // TODO: Shirts don't work properly if JA is installed? (Might look funny, might make you run out of GPU memory thanks to SpaceCore tilesheet extensions)
 
+// TODO: Test a cooking recipe
+
 // TODO: Converter & Migration
-//  TODO: Objects&Crops&GiantCrops(?)&ItemAbstraction: colors?
 // TODO: Objects: Donatable to museum?
 // TODO: Objects (or general): Deconstructor output patch?
 // TODO: Objects: Fish tank display?
@@ -241,6 +242,41 @@ namespace DynamicGameAssets
                     }
                 }
                 cp.Value.others = newOthers;
+            }
+
+            foreach ( var player in Game1.getAllFarmers() )
+            {
+                foreach ( var recipe in customCraftingRecipes )
+                {
+                    bool learn = false;
+                    if ( recipe.data.KnownByDefault )
+                        learn = true;
+                    if ( recipe.data.SkillUnlockName != null && recipe.data.SkillUnlockLevel > 0 )
+                    {
+                        int level = 0;
+                        switch ( recipe.data.SkillUnlockName )
+                        {
+                            case "Farming": level = Game1.player.farmingLevel.Value; break;
+                            case "Fishing": level = Game1.player.fishingLevel.Value; break;
+                            case "Foraging": level = Game1.player.foragingLevel.Value; break;
+                            case "Mining": level = Game1.player.miningLevel.Value; break;
+                            case "Combat": level = Game1.player.combatLevel.Value; break;
+                            case "Luck": level = Game1.player.luckLevel.Value; break;
+                            default: level = Game1.player.GetCustomSkillLevel( recipe.data.SkillUnlockName ); break;
+                        }
+
+                        if ( level >= recipe.data.SkillUnlockLevel )
+                            learn = true;
+                    }
+
+                    if ( learn )
+                    {
+                        if ( !recipe.data.IsCooking && !player.craftingRecipes.Keys.Contains( recipe.data.CraftingDataKey ) )
+                            player.craftingRecipes.Add( recipe.data.CraftingDataKey, 0 );
+                        else if ( !recipe.data.IsCooking && !player.cookingRecipes.Keys.Contains( recipe.data.CraftingDataKey ) )
+                            player.cookingRecipes.Add( recipe.data.CraftingDataKey, 0 );
+                    }
+                }
             }
 
             RefreshRecipes();

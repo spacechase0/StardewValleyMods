@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,17 +17,29 @@ namespace DynamicGameAssets.PackData
     // Note: Unlike other things, these need to have a globally-unique ID, not pack-unique.
     public class CraftingRecipePackData : CommonPackData
     {
+        [JsonIgnore]
         public string Name => parent.smapiPack.Translation.Get($"crafting.{ID}.name");
+        [JsonIgnore]
         public string Description => parent.smapiPack.Translation.Get($"crafting.{ID}.description");
 
+        [DefaultValue( false )]
         public bool IsCooking { get; set; } = false;
+
+        [DefaultValue( false )]
+        public bool KnownByDefault { get; set; } = false;
+        [DefaultValue( null )]
+        public string SkillUnlockName { get; set; }
+        [DefaultValue( 0 )]
+        public int SkillUnlockLevel { get; set; }
 
         public class IngredientAbstraction : ItemAbstraction
         {
             [XmlIgnore]
             public CraftingRecipePackData parent;
 
+            [DefaultValue( null )]
             public string NameOverride { get; set; }
+            [DefaultValue( null )]
             public string IconOverride { get; set; }
 
             public override Texture2D Icon => IconOverride == null ? base.Icon : parent.parent.GetTexture(IconOverride, 16, 16).Texture;
@@ -37,8 +50,10 @@ namespace DynamicGameAssets.PackData
         public List<Weighted<ItemAbstraction>> Result { get; set; }
         public List<IngredientAbstraction> Ingredients { get; set; }
 
+        [JsonIgnore]
         public string CraftingDataKey => this.ID;
-        public string CraftingDataValue => "0 1//0 1/false//" + Name;
+        [JsonIgnore]
+        public string CraftingDataValue => "0 1/meow/0 1/" + ( this.IsCooking ? "false/" : "" ) + $"/{SkillUnlockName} {SkillUnlockLevel}/{Name}";
 
         public override void PostLoad()
         {
@@ -52,14 +67,7 @@ namespace DynamicGameAssets.PackData
             {
                 foreach (var farmer in Game1.getAllFarmers())
                 {
-                    if ( IsCooking )
-                    {
-                        Log.Warn("TODO - cooking recipe ondisabled w/ removealltraces");
-                    }
-                    else
-                    {
-                        farmer.craftingRecipes.Remove( CraftingDataKey );
-                    }
+                    ( IsCooking ? farmer.cookingRecipes : farmer.craftingRecipes ).Remove( CraftingDataKey );
                 }
             }
         }

@@ -8,6 +8,7 @@ using StardewValley;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace DynamicGameAssets.PackData
     {
         public string Texture { get; set; }
 
+        [DefaultValue( false )]
         public bool CanGrowNow { get; set; } = false; // must be controlled using dynamic fields
 
         [JsonConverter( typeof( ItemAbstractionWeightedListConverter ) )]

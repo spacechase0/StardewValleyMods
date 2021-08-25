@@ -8,6 +8,7 @@ using StardewValley;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,15 +23,20 @@ namespace DynamicGameAssets.PackData
             Indoors,
             Paddy,
         }
+        [DefaultValue( CropType.Normal )]
         public CropType Type { get; set; }
 
+        [DefaultValue( false )]
         public bool CanGrowNow { get; set; } = false; // must be controlled using dynamic fields
 
         public class HarvestedDropData : ICloneable
         {
+            [DefaultValue( 1 )]
             public int MininumHarvestedQuantity { get; set; } = 1;
+            [DefaultValue( 1 )]
             public int MaximumHarvestedQuantity { get; set; } = 1;
-            public float ExtraQuantityChance { get; set; }
+            [DefaultValue( 0 )]
+            public double ExtraQuantityChance { get; set; }
 
             [JsonConverter( typeof( ItemAbstractionWeightedListConverter ) )]
             public List<Weighted<ItemAbstraction>> Item { get; set; }
@@ -45,19 +51,25 @@ namespace DynamicGameAssets.PackData
             }
         }
 
+        [DefaultValue( null )]
+        public List<Color> Colors { get; set; }
+
         public class PhaseData : ICloneable
         {
             public string[] TextureChoices { get; set; }
-            // TODO: Color texture
+            [DefaultValue( null )]
+            public string[] TextureColorChoices { get; set; }
             public int Length { get; set; }
 
+            [DefaultValue( false )]
             public bool Scythable { get; set; }
+            [DefaultValue( false )]
             public bool Trellis { get; set; }
 
             public List<HarvestedDropData> HarvestedDrops { get; set; } = new List<HarvestedDropData>();
             public int HarvestedExperience { get; set; } = 0;
+            [DefaultValue( -1 )]
             public int HarvestedNewPhase { get; set; } = -1;
-            // TODO: Color texture
 
             public object Clone()
             {
@@ -70,9 +82,13 @@ namespace DynamicGameAssets.PackData
         }
         public List<PhaseData> Phases { get; set; } = new List<PhaseData>();
 
+        [DefaultValue( 0.01f )]
         public float GiantChance { get; set; } = 0.01f;
+        [DefaultValue( null )]
         public string[] GiantTextureChoices { get; set; }
         public List<HarvestedDropData> GiantDrops { get; set; } = new List<HarvestedDropData>();
+
+        public bool ShouldSerializeGiantDrops() { return GiantDrops.Count > 0; }
 
         public override void OnDisabled()
         {
@@ -105,6 +121,12 @@ namespace DynamicGameAssets.PackData
         public override object Clone()
         {
             var ret = ( CropPackData ) base.Clone();
+            if ( ret.Colors != null )
+            {
+                ret.Colors = new List<Color>();
+                foreach ( var color in this.Colors )
+                    ret.Colors.Add( color );
+            }
             ret.Phases = new List<PhaseData>();
             foreach ( var drop in this.Phases )
                 ret.Phases.Add( ( PhaseData ) drop.Clone() );

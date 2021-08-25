@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -21,14 +23,21 @@ namespace DynamicGameAssets.PackData
             }
 
             public string Texture { get; set; }
+            [DefaultValue( null )]
             public string FrontTexture { get; set; } // for seats, beds, fish tanks
             public Vector2 DisplaySize { get; set; }
             public int CollisionHeight { get; set; }
+            [DefaultValue( false )]
             public bool Flipped { get; set; }
             public List<Vector2> Seats { get; set; } = new List<Vector2>();
+            [DefaultValue( SeatDirection.Any )]
             public SeatDirection SittingDirection { get; set; }
 
+            public bool ShouldSerializeSeats() { return Seats.Count > 0; }
+
             public Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>> TileProperties { get; set; } = new Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>>();
+
+            public bool ShouldSerializeTileProperties() { return TileProperties.Count > 0; }
         }
 
         public enum FurnitureType
@@ -44,23 +53,35 @@ namespace DynamicGameAssets.PackData
             TV,
         }
 
+        [DefaultValue( FurnitureType.Decoration )]
         public FurnitureType Type { get; set; }
 
         // Bed specific
         public BedFurniture.BedType BedType { get; set; } = BedFurniture.BedType.Single;
 
+        public bool ShouldSerializeBedType() { return Type == FurnitureType.Bed; }
+
         // TV specific
         public Vector2 ScreenPosition { get; set; }
         public int ScreenSize { get; set; }
+
+        public bool ShouldSerializeScreenPositione() { return Type == FurnitureType.TV; }
+        public bool ShouldSerializeScreenSize() { return Type == FurnitureType.TV; }
 
         // Fish tank specific
         public int TankSwimmingCapacity { get; set; } = -1;
         public int TankGroundCapacity { get; set; } = -1;
         public int TankDecorationCapacity { get; set; } = -1;
 
+        public bool ShouldSerializeTankSwimmingCapacity() { return Type == FurnitureType.FishTank; }
+        public bool ShouldSerializeTankGroundCapacity() { return Type == FurnitureType.FishTank; }
+        public bool ShouldSerializeTankDecorationCapacity() { return Type == FurnitureType.FishTank; }
+
         public List<FurnitureConfiguration> Configurations { get; set; } = new List<FurnitureConfiguration>();
 
+        [JsonIgnore]
         public string Name => parent.smapiPack.Translation.Get($"furniture.{ID}.name");
+        [JsonIgnore]
         public string Description => parent.smapiPack.Translation.Get($"furniture.{ID}.description");
 
         public int GetVanillaFurnitureType()

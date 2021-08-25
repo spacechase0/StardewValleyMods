@@ -1,6 +1,7 @@
-﻿using StardewValley;
+using StardewValley;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace DynamicGameAssets.PackData
         /// Remove all traces of the item when disabled.
         /// For example, if a recipe is known, or the friendship level of an NPC (if JA supported NPCs).
         /// </summary>
+        [DefaultValue( true )]
         public bool RemoveAllTracesWhenDisabled { get; set; } = true;
 
         /// <summary>

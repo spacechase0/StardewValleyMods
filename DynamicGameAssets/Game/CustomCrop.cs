@@ -42,6 +42,11 @@ namespace DynamicGameAssets.Game
             _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
             _id.Value = data.ID;
 
+            if ( ( data.Colors?.Count ?? 0 ) > 0 )
+            {
+                tintColor.Value = data.Colors[ Game1.random.Next( data.Colors.Count ) ];
+            }
+
             ResetPhaseDays();
             this.harvestMethod.Value = Data.Phases[ 0 ].Scythable ? Crop.sickleHarvest : Crop.grabHarvest;
             this.raisedSeeds.Value = Data.Phases[ 0 ].Trellis;
@@ -182,6 +187,13 @@ namespace DynamicGameAssets.Game
                     Item harvestedItem = drop.Item.Choose( r ).Create();
                     if ( harvestedItem is StardewValley.Object obj )
                         obj.Quality = cropQuality;
+                    if ( Data.Colors != null )
+                    {
+                        if ( harvestedItem is StardewValley.Objects.ColoredObject colObj )
+                            colObj.color.Value = this.tintColor.Value;
+                        else if ( harvestedItem is CustomObject cobj )
+                            cobj.ObjectColor = this.tintColor.Value;
+                    }
                     if ( ( int ) this.harvestMethod == 1 )
                     {
                         if ( junimoHarvester != null )
@@ -464,6 +476,7 @@ namespace DynamicGameAssets.Game
         {
             var this_drawPosition = Mod.instance.Helper.Reflection.GetField< Vector2 >( this, "drawPosition" ).GetValue();
             float this_layerDepth = Mod.instance.Helper.Reflection.GetField< float >( this, "layerDepth" ).GetValue();
+            float this_coloredLayerDepth = Mod.instance.Helper.Reflection.GetField< float >( this, "coloredLayerDepth" ).GetValue();
 
             var currTex = Data.parent.GetMultiTexture( Data.Phases[ this.currentPhase.Value ].TextureChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 );
 
@@ -494,10 +507,10 @@ namespace DynamicGameAssets.Game
 
             b.Draw( currTex.Texture, position, currTex.Rect, toTint, rotation, /*Crop.origin*/new Vector2( 8f, 24f ), 4f, effect, this_layerDepth );
             Color tintColor = this.tintColor.Value;
-            if ( !tintColor.Equals( Color.White ) && ( int ) this.currentPhase == this.phaseDays.Count - 1 && !this.dead )
+            if ( Data.Phases[ currentPhase.Value ].TextureColorChoices != null )
             {
-                // TODO: Colored
-                //b.Draw( Game1.cropSpriteSheet, position, this.coloredSourceRect, tintColor, rotation, Crop.origin, 4f, effect, this.coloredLayerDepth );
+                var colorTex = Data.parent.GetMultiTexture( Data.Phases[ this.currentPhase.Value ].TextureColorChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 ); ;
+                b.Draw( colorTex.Texture, position, colorTex.Rect, tintColor, rotation, new Vector2( 8f, 24f ), 4f, effect, this_coloredLayerDepth );
             }
         }
 

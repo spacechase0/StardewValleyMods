@@ -5,6 +5,7 @@ This documentation is for making mods; for using Dynamic Game Assets as a user, 
 ## Differences from Json Assets
 This is a list of differences *as pertains to making content packs*. For a full list of differences, see the (Nexus)[#] page.
 
+* Shop entries are calculated at the beginning of the day instead of when the shop is opened. This means certain conditions (such as time based ones) might not work, or behave oddly.
 * Crops and fruit trees do not have seeds/saplings created automatically; instead, create an object with specify the crop/fruit tree using the `Plants` field.
 * Crops and fruit trees do not have a `"Season"` field anymore; instead the `"CanGrowNow"` field must be set using dynamic fields. An example is shown in the (Crop)[#] section.
 * Crops can have as many phases are you want.
@@ -109,6 +110,7 @@ Here is the full list of supported `Type` values:
 | `DGAItem` | A custom item from any content pack for Dynamic Game Assets. | Specify the content pack's ID, followed by a `/`, followed by the item ID, ie. `mod.id/YourItemID` |
 | `DGARecipe` | A custom recipe from any content pack for Dynamic Game Assets. | Specify the content pack's ID, followed by a `/`, followed by the item ID, ie. `mod.id/YourCraftingRecipeID` |
 | `VanillaObject` | A vanilla game object, from `Data/ObjectInformation`. | Either the object numeric ID, or the object name. |
+| `VanillaObjectColored` | A vanilla game object, from `Data/ObjectInformation`. This should be used instead of `VanillaObject` for objects that use a color texture overlay as well, such as flowers. | Either the object numeric ID, or the object name. |
 | `VanillaBigCraftable` | A vanilla game big craftable, from `Data/BigCraftablesInformation`. | Either the big craftable numeric ID, or the big craftable name. |
 | `VanillaWeapon` | A vanilla melee weapon, from `Data/weapons`. | Either the weapon numeric ID, or the weapon name. |
 | `VanillaHat` | A vanilla hat, from `Data/hats`. | Either the hat numeric ID, or the hat name. |
@@ -116,6 +118,8 @@ Here is the full list of supported `Type` values:
 | `VanillaBoots` | A vanilla boots item, from `Data/Boots`. | Either the boots numeric ID, or the boots name. |
 | `VanillaFurniture` | A vanilla furniture item, from `Data/Furniture`. | Either the furniture numeric ID, or the furniture name. |
 | `ContextTag` | Items matching a context tag. This is only usable in recipe ingredients; Using it as something to be actually created will result in an error. | The context tag. |
+
+If an object has a color overlay, such as a DGA Object with a `TextureColor` set, or a `VanillaObjectColored`, you can set the `Color` field in the format of `"R, G, B, A"`.Sure
 
 Note 1: While most of the fields say "Vanilla" , they will detect anything from their corresponding data file, such as from Json Assets.
 Note 2: The default value for `Type` is `DGAItem`. So, if you are specifying that for your item type, you can omit it.
@@ -203,6 +207,9 @@ If `RemoveAllTraceswhenDisabled` is set, then the player will not remember the r
 | --- | --- | --- | --- | --- |
 | `ID` | `string` | Required | The ID of these boots. | `false` |
 | `IsCooking` | `bool` | Required | Whether this is a cooking or crafting recipe. | (unknown, untested) |
+| `KnownByDefault` | `bool` | Default: `false` | Whether or not this is known by default. If not known, added at the beginning of the day. | `true` |
+| `SkillUnlockName` | `string` | Default: `null` | What skill will unlock this recipe. If past the level in the skill, added at the beginning of the day. | `true` |
+| `SkillUnlockLevel` | `string` | Default: `null` | What skill level will unlock this recipe. If past the level in the skill, added at the beginning of the day. | `true` |
 | `Ingredients` | `Ingredient[]` | Required | The ingredients for this crafting recipe. | (unknown, untested) |
 | `Result` | `WeightedItem[]` | Required | The result of this crafting recipe. If multiple are listed, the first will be shown for the icon/name. | (unknown, untested) |
 
@@ -240,6 +247,7 @@ Crafting recipes live in `crops.json`.
 | `ID` | `string` | Required | The ID of this crop. | `false` |
 | `Type` | `Enum[Normal, Indoors, Paddy]` | Default: `"Normal"` | The crop type: a "normal" one, one that must be indoors, or one that grows faster near water. | `true` |
 | `CanGrowNow` | `bool` | Default: `false` | Whether or not the crop can grow. Use with (Dynamic Fields)[#] to make a crop that doesn't either always or never grow. | `true` |
+| `Colors` | `Color[]` | Default: `null` | The potential colors for the color layer of a phase to use. Harvested products will also use this color if they have a color layer. | (unknown, untested) |
 | `Phases` | `Phase[]` | Required | The phases for this crop. | (unknown, untested) |
 | `GiantChance` | `float` | Default: `0.01` | The chance for a giant crop to grow, if `GiantTextureChoices` is set. | `true` |
 | `GiantTexturesChoices` | `MultiTexture[48, 63]` | Default: `null` | If set, enables giant crop growth. This will determine the texture for it. | (unknown, untested) |
@@ -263,7 +271,8 @@ These are special types relating to just crops, used in the above table.
 This should be an array of an an object called `Phase`. A `Phase` is as follows:
 
 | Field | Type | Required or Default value | Description |
-| `TextureChoices` | `MultiTexture` | Required | The minimum amount of this item to drop. |
+| `TextureChoices` | `MultiTexture[16, 32]` | Required | The choices between textures. A texture is chosen based on the tile location of the crop. |
+| `TextureColorChoices` | `MultiTexture[16, 32]` | Default: null | The choices between textures for the color layer. A texture is chosen based on the tile location of the crop. |
 | `Length` | `int` | Required | The length of this phase, in days. |
 | `Scythable` | `bool` | Default: `false` | If the crop is scythable this phase, assuming it can be harvested. |
 | `Trellis` | `bool` | Default: `false` | If the crop is solid this phase. |

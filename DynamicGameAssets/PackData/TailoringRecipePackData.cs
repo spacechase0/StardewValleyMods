@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace DynamicGameAssets.PackData
         public List<string> FirstItemTags { get; set; } = new List<string>( new string[] { "item_cloth" } );
         public List<string> SecondItemTags { get; set; }
 
+        [DefaultValue( true )]
         public bool ConsumeSecondItem { get; set; } = true;
 
         [JsonConverter( typeof( ItemAbstractionWeightedListConverter ) )]

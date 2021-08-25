@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DynamicGameAssets.Game;
+using Newtonsoft.Json;
 using StardewValley;
 using StardewValley.Tools;
 
@@ -11,15 +13,20 @@ namespace DynamicGameAssets.PackData
 {
     public class BootsPackData : CommonPackData
     {
+        [JsonIgnore]
         public string Name => parent.smapiPack.Translation.Get( $"boots.{ID}.name" );
+        [JsonIgnore]
         public string Description => parent.smapiPack.Translation.Get( $"boots.{ID}.description" );
 
         public string Texture { get; set; }
         public string FarmerColors { get; set; }
 
+        [DefaultValue( 0 )]
         public int Defense { get; set; }
+        [DefaultValue( 0 )]
         public int Immunity { get; set; }
 
+        [DefaultValue(0)]
         public int SellPrice { get; set; }
 
 

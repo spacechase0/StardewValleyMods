@@ -1,23 +1,30 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using StardewValley;
 
 namespace DynamicGameAssets.PackData
 {
     public class PantsPackData : CommonPackData
     {
+        [JsonIgnore]
         public string Name => parent.smapiPack.Translation.Get( $"pants.{ID}.name" );
+        [JsonIgnore]
         public string Description => parent.smapiPack.Translation.Get( $"pants.{ID}.description" );
 
         public string Texture { get; set; }
 
         public Color DefaultColor { get; set; } = Color.White;
+        [DefaultValue( false )]
         public bool Dyeable { get; set; } = false;
+
+        public bool ShouldSerializeDefaultColor() { return DefaultColor != Color.White; }
 
         public override void OnDisabled()
         {

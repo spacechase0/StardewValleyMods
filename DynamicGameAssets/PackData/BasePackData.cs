@@ -1,6 +1,9 @@
-﻿using SpaceShared;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using SpaceShared;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +22,7 @@ namespace DynamicGameAssets.PackData
         /// This is checked at the beginning of each day.
         /// These are Content Patcher conditions.
         /// </summary>
+        [DefaultValue(null)]
         public Dictionary<string, string> EnableConditions { get; set; }
 
         internal ContentPatcher.IManagedConditions EnableConditionsObject;
@@ -26,12 +30,17 @@ namespace DynamicGameAssets.PackData
         /// <summary>
         /// If the current pack data is currently enabled or not.
         /// </summary>
+        [DefaultValue(true)]
         public bool Enabled { get; set; } = true;
 
         /// <summary>
         /// At the beginning of each day, these are checked and applied to each pack data.
         /// </summary>
+        [DefaultValue(null)]
         public DynamicFieldData[] DynamicFields { get; set; }
+
+        [JsonExtensionData]
+        public Dictionary<string, JToken> ExtensionData { get; set; } = new Dictionary<string, JToken>();
 
         public virtual void PostLoad() { }
 

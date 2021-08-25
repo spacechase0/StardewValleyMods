@@ -6,6 +6,7 @@ using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,11 +17,16 @@ namespace DynamicGameAssets.PackData
     {
         public string Texture { get; set; }
 
+        [JsonIgnore]
         public string Name => parent.smapiPack.Translation.Get( $"big-craftable.{ID}.name" );
+        [JsonIgnore]
         public string Description => parent.smapiPack.Translation.Get( $"big-craftable.{ID}.description" );
 
+        [DefaultValue(null)]
         public int? SellPrice { get; set; }
+        [DefaultValue(false)]
         public bool ForcePriceOnAllInstances { get; set; }
+        [DefaultValue(false)]
         public bool ProvidesLight { get; set; }
 
         public override void OnDisabled()

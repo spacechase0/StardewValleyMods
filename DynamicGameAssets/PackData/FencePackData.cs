@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DynamicGameAssets.Game;
+using Newtonsoft.Json;
 using StardewValley;
 
 namespace DynamicGameAssets.PackData
@@ -16,7 +18,9 @@ namespace DynamicGameAssets.PackData
             Pickaxe,
         }
 
+        [JsonIgnore]
         public string Name => parent.smapiPack.Translation.Get( $"fence.{ID}.name" );
+        [JsonIgnore]
         public string Description => parent.smapiPack.Translation.Get( $"fence.{ID}.description" );
 
         public string ObjectTexture { get; set; }
@@ -25,6 +29,7 @@ namespace DynamicGameAssets.PackData
         public int MaxHealth { get; set; }
         public ItemAbstraction RepairMaterial { get; set; }
 
+        [DefaultValue( ToolType.Axe )]
         public ToolType BreakTool { get; set; }
 
         public string PlacementSound { get; set; }

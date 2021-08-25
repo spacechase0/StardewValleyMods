@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
@@ -30,11 +31,16 @@ namespace DynamicGameAssets
             // Missing anything?
         }
 
+        [DefaultValue(ItemType.DGAItem)]
         public ItemType Type { get; set; } = ItemType.DGAItem;
         public string Value { get; set; }
+        [DefaultValue(1)]
         public int Quantity { get; set; } = 1;
         public Color ObjectColor { get; set; }
 
+        public bool ShouldSerializeObjectColor() { return ObjectColor != default( Color ); }
+
+        [JsonIgnore]
         public virtual Texture2D Icon
         {
             get
@@ -75,6 +81,8 @@ namespace DynamicGameAssets
                 return null;
             }
         }
+
+        [JsonIgnore]
         public virtual Rectangle IconSubrect
         {
             get
@@ -94,7 +102,10 @@ namespace DynamicGameAssets
                     case ItemType.VanillaObject:
                     case ItemType.VanillaObjectColored:
                         if (valAsInt.HasValue)
-                            return Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, valAsInt.Value, 16, 16);
+                        {
+                            var dummy = new CraftingRecipe("Torch");
+                            return Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, dummy.getSpriteIndexFromRawIndex(valAsInt.Value), 16, 16);
+                        }
                         foreach (var info in Game1.objectInformation)
                         {
                             if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == Value)
@@ -335,7 +346,7 @@ namespace DynamicGameAssets
 
         public override void WriteJson( JsonWriter writer, [AllowNull] List<Weighted<ItemAbstraction>> value, JsonSerializer serializer )
         {
-            throw new NotImplementedException();
+            serializer.Serialize( writer, value );
         }
     }
 }

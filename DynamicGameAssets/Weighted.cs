@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SpaceShared
+namespace DynamicGameAssets
 {
     public class Weighted<T> : ICloneable where T : ICloneable
     {

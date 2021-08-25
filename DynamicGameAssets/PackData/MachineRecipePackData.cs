@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,9 +38,13 @@ namespace DynamicGameAssets.PackData
             }
         }*/
 
+        [DefaultValue( "furnace" )]
         public string StartWorkingSound { get; set; } = "furnace";
+        [DefaultValue( null )]
         public bool? WorkingLightOverride { get; set; }
+        [DefaultValue( null )]
         public string MachineWorkingTextureOverride { get; set; }
+        [DefaultValue( null )]
         public string MachineFinishedTextureOverride { get; set; }
 
         public override void PostLoad()
