@@ -9,7 +9,7 @@ using Netcode;
 
 namespace DynamicGameAssets.Game
 {
-    public partial class CustomItemMixin<TPackData> : IDGAItem where TPackData : CommonPackData
+    public partial class CustomItemMixin<TPackData> : IDGAItem where TPackData : CommonPackData, new()
     {
         public readonly NetString _sourcePack = new NetString();
         public readonly NetString _id = new NetString();
@@ -21,7 +21,7 @@ namespace DynamicGameAssets.Game
         [XmlIgnore]
         public string FullId => $"{SourcePack}/{Id}";
         [XmlIgnore]
-        public TPackData Data => Mod.Find( FullId ) as TPackData;
+        public TPackData Data => Mod.Find( FullId ) as TPackData ?? new TPackData() { parent = Mod.DummyContentPack };
 
         public CustomItemMixin()
         {

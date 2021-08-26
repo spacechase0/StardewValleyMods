@@ -32,8 +32,7 @@ using SObject = StardewValley.Object;
 using System.Runtime.CompilerServices;
 
 // TODO: Shirts don't work properly if JA is installed? (Might look funny, might make you run out of GPU memory thanks to SpaceCore tilesheet extensions)
-
-// TODO: Test a cooking recipe
+// TODO: Cooking recipes show when crafting, but not in the collection.
 
 // TODO: Converter & Migration
 // TODO: Objects: Donatable to museum?
@@ -78,6 +77,7 @@ namespace DynamicGameAssets
         private Harmony harmony;
 
         public static readonly int BaseFakeObjectId = 1720;
+        public static ContentPack DummyContentPack;
 
         internal static Dictionary<string, ContentPack> contentPacks = new Dictionary<string, ContentPack>();
 
@@ -104,15 +104,20 @@ namespace DynamicGameAssets
             instance = this;
             Log.Monitor = Monitor;
 
+            //nullPack.Manifest.ExtraFields.Add( "DGA.FormatVersion", -1 );
+            //nullPack.Manifest.ExtraFields.Add( "DGA.ConditionsVersion", "1.0.0" );
+            DummyContentPack = new ContentPack( new NullContentPack() );
+
             helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             helper.Events.Display.MenuChanged += OnMenuChanged;
 
-            helper.ConsoleCommands.Add( "dga_list", "...", OnListCommand );
-            helper.ConsoleCommands.Add( "dga_add", "...", OnAddCommand, AddCommandAutoComplete );
+            helper.ConsoleCommands.Add( "dga_list", "List all items.", OnListCommand );
+            helper.ConsoleCommands.Add( "dga_add", "`dga_add <mod.id/ItemId> [amount] - Add an item to your inventory.", OnAddCommand, AddCommandAutoComplete );
             helper.ConsoleCommands.Add( "dga_force", "Do not use", OnForceCommand );
-            helper.ConsoleCommands.Add( "dga_reload", "...", OnReloadCommand/*, ReloadCommandAutoComplete*/ );
+            helper.ConsoleCommands.Add( "dga_reload", "Reload all content packs.", OnReloadCommand/*, ReloadCommandAutoComplete*/ );
+            helper.ConsoleCommands.Add( "dga_clean", "Remove all invalid items from the currently loaded save.", OnCleanCommand );
 
             harmony = new Harmony( ModManifest.UniqueID );
             harmony.PatchAll();
@@ -179,7 +184,6 @@ namespace DynamicGameAssets
             {
                 foreach ( var data in cp.Value.items )
                 {
-                    Log.Debug( "doing " + cp.Key + " " + data.Key );
                     if ( data.Value.EnableConditionsObject == null )
                         data.Value.EnableConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
                                                                                              data.Value.EnableConditions,
@@ -196,7 +200,6 @@ namespace DynamicGameAssets
                 }
                 foreach ( var data in cp.Value.others )
                 {
-                    Log.Debug( "doing " + cp.Key + " " + data );
                     if ( data.EnableConditionsObject == null )
                         data.EnableConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
                                                                                        data.EnableConditions,
@@ -419,6 +422,30 @@ namespace DynamicGameAssets
 
             return ret.ToArray();
         }*/
+
+        public void OnCleanCommand( string cmd, string[] args )
+        {
+            MyUtility.iterateAllItems( ( item ) =>
+            {
+                if ( item is IDGAItem citem && Mod.Find( citem.FullId ) == null )
+                {
+                    return null;
+                }
+                return item;
+            } );
+            MyUtility.iterateAllTerrainFeatures( ( tf ) =>
+            {
+                if ( tf is IDGAItem citem && Mod.Find( citem.FullId ) == null )
+                {
+                    return null;
+                }
+                else if ( tf is HoeDirt hd && hd.crop is IDGAItem citem2 && Mod.Find( citem2.FullId ) == null )
+                {
+                    hd.crop = null;
+                }
+                return tf;
+            } );
+        }
 
         private void LoadContentPacks()
         {

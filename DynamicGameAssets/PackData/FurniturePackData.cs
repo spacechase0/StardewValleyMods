@@ -108,6 +108,9 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
+            if ( Configurations.Count == 0 )
+                return parent.GetTexture( null, 16, 16 );
+
             return parent.GetTexture(Configurations[0].Texture, (int) Configurations[0].DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int) Configurations[0].DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
         }
 

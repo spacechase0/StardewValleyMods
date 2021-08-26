@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewModdingAPI;
@@ -27,23 +28,26 @@ namespace DynamicGameAssets.PackData
         public ContentPack( IContentPack pack )
         {
             smapiPack = pack;
-            conditionVersion = new SemanticVersion( pack.Manifest.ExtraFields[ "DGA.ConditionsFormatVersion" ].ToString() );
-            LoadAndValidateItems<ObjectPackData>( "objects.json" );
-            LoadAndValidateItems<CraftingRecipePackData>("crafting-recipes.json");
-            LoadAndValidateItems<FurniturePackData>("furniture.json");
-            LoadAndValidateItems<CropPackData>( "crops.json" );
-            LoadAndValidateItems<MeleeWeaponPackData>( "melee-weapons.json" );
-            LoadAndValidateItems<BootsPackData>( "boots.json" );
-            LoadAndValidateItems<HatPackData>( "hats.json" );
-            LoadAndValidateItems<FencePackData>( "fences.json" );
-            LoadAndValidateItems<BigCraftablePackData>( "big-craftables.json" );
-            LoadAndValidateItems<FruitTreePackData>( "fruit-trees.json" );
-            LoadAndValidateItems<ShirtPackData>( "shirts.json" );
-            LoadAndValidateItems<PantsPackData>( "pants.json" );
-            LoadOthers<ShopEntryPackData>( "shop-entries.json" );
-            LoadOthers<ForgeRecipePackData>( "forge-recipes.json" );
-            LoadOthers<MachineRecipePackData>( "machine-recipes.json" );
-            LoadOthers<TailoringRecipePackData>( "tailoring-recipes.json" );
+            if ( pack.Manifest.UniqueID != "null" )
+            {
+                conditionVersion = new SemanticVersion( pack.Manifest.ExtraFields[ "DGA.ConditionsFormatVersion" ].ToString() );
+                LoadAndValidateItems<ObjectPackData>( "objects.json" );
+                LoadAndValidateItems<CraftingRecipePackData>( "crafting-recipes.json" );
+                LoadAndValidateItems<FurniturePackData>( "furniture.json" );
+                LoadAndValidateItems<CropPackData>( "crops.json" );
+                LoadAndValidateItems<MeleeWeaponPackData>( "melee-weapons.json" );
+                LoadAndValidateItems<BootsPackData>( "boots.json" );
+                LoadAndValidateItems<HatPackData>( "hats.json" );
+                LoadAndValidateItems<FencePackData>( "fences.json" );
+                LoadAndValidateItems<BigCraftablePackData>( "big-craftables.json" );
+                LoadAndValidateItems<FruitTreePackData>( "fruit-trees.json" );
+                LoadAndValidateItems<ShirtPackData>( "shirts.json" );
+                LoadAndValidateItems<PantsPackData>( "pants.json" );
+                LoadOthers<ShopEntryPackData>( "shop-entries.json" );
+                LoadOthers<ForgeRecipePackData>( "forge-recipes.json" );
+                LoadOthers<MachineRecipePackData>( "machine-recipes.json" );
+                LoadOthers<TailoringRecipePackData>( "tailoring-recipes.json" );
+            }
         }
 
         public CommonPackData Find( string item )
@@ -127,11 +131,17 @@ namespace DynamicGameAssets.PackData
 
         internal TexturedRect GetMultiTexture( string[] paths, int decider, int xSize, int ySize )
         {
+            if ( paths == null )
+                return new TexturedRect() { Texture = Game1.staminaRect, Rect = null };
+
             return GetTexture( paths[ decider % paths.Length ], xSize, ySize );
         }
 
         internal TexturedRect GetTexture( string path_, int xSize, int ySize )
         {
+            if ( path_ == null )
+                return new TexturedRect() { Texture = Game1.staminaRect, Rect = null };
+
             string path = path_;
             if ( path.Contains( ',' ) )
             {
@@ -157,7 +167,7 @@ namespace DynamicGameAssets.PackData
                         return new TexturedRect()
                         {
                             Texture = textures[ pathItself ],
-                            Rect = new Microsoft.Xna.Framework.Rectangle( ind % sections * xSize, ind / sections * ySize, xSize, ySize )
+                            Rect = new Rectangle( ind % sections * xSize, ind / sections * ySize, xSize, ySize )
                         };
                     }
                 }

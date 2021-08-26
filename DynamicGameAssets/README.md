@@ -19,7 +19,7 @@ This is a list of differences *as pertains to making content packs*. For a full 
 * Maybe more I forgot.
 
 ## Useful commands
-* `dga_list` - List the items in all commands.
+* `dga_list` - List the items in all content packs.
 * `dga_add <mod.id/ItemId> [quantity]` - Add the specified item to your inventory (in the specified amount, if possible for the given item type).
 * `dga_reload` - Reload all content packs.
 
@@ -51,7 +51,7 @@ DGA uses the standard SMAPI localization format. That is, in the `i18n` folder, 
 }
 ```
 
-## Field types
+## Common Field Types
 (Note: `bool` means `true` or `false`.)
 (Note: `Vector2` is an `X` and `Y` coordinate, or `"X, Y"`.)
 

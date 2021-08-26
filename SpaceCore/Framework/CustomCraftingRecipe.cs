@@ -21,7 +21,9 @@ namespace SpaceCore.Framework
 
         public override Item createItem()
         {
-            return recipe.CreateResult();
+            var ret = recipe.CreateResult();
+            numberProducedPerCraft = ret.Stack;
+            return ret;
         }
 
         public override bool doesFarmerHaveIngredientsInInventory(IList<Item> extraToCheck = null)

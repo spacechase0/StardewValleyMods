@@ -76,7 +76,7 @@ namespace DynamicGameAssets.Game
                 TextureOverride = null;
                 if ( this.lightSource != null )
                 {
-                    if ( !( Data.original as BigCraftablePackData ).ProvidesLight )
+                    if ( !Data.ProvidesLight )
                     {
                         environment.removeLightSource( this.lightSource.identifier );
                         this.lightSource = null;

@@ -55,6 +55,15 @@ namespace DynamicGameAssets
             }
             foreach ( var r in toRemove )
                 l.terrainFeatures.Remove( r );
+
+            for ( int i = l.resourceClumps.Count - 1; i >= 0; --i )
+            {
+                var ret = ( ResourceClump ) action( l.resourceClumps[ i ] );
+                if ( ret == null )
+                    l.resourceClumps.RemoveAt( i );
+                else
+                    l.resourceClumps[ i ] = ret;
+            }
         }
 
         public static void iterateAllItems( Func<Item, Item> action )
@@ -78,38 +87,46 @@ namespace DynamicGameAssets
                 farmer.leftRing.Value = ( Ring ) MyUtility._recursiveIterateItem( farmer.leftRing.Value, action );
                 farmer.rightRing.Value = ( Ring ) MyUtility._recursiveIterateItem( farmer.rightRing.Value, action );
                 list = farmer.itemsLostLastDeath;
-                for ( int i = 0; i < list.Count; ++i )
+                for ( int i = list.Count - 1; i >= 0; --i )
                 {
                     list[ i ] = MyUtility._recursiveIterateItem( list[ i ], action );
+                    if ( list[ i ] == null )
+                        list.RemoveAt( i );
                 }
                 //farmer.itemsLostLastDeath.CopyFrom( list );
             }
             IList<Item> list2 = Game1.player.team.returnedDonations;
-            for ( int i = 0; i < list2.Count; ++i )
+            for ( int i = list2.Count - 1; i >= 0; --i )
             {
                 if ( list2[ i ] != null )
                 {
                     list2[ i ] = action( list2[ i ] );
+                    if ( list2[ i ] == null )
+                        list2.RemoveAt( i );
                 }
             }
             //Game1.player.team.returnedDonations.Set( list2 );
             list2 = Game1.player.team.junimoChest;
-            for ( int i = 0; i < list2.Count; ++i )
+            for ( int i = list2.Count - 1; i >= 0; --i )
             {
                 if ( list2[ i ] != null )
                 {
                     list2[ i ] = action( list2[ i ] );
+                    if ( list2[ i ] == null )
+                        list2.RemoveAt( i );
                 }
             }
             //Game1.player.team.junimoChest.CopyFrom( list2 );
             foreach ( SpecialOrder specialOrder in Game1.player.team.specialOrders )
             {
                 list2 = specialOrder.donatedItems;
-                for ( int i = 0; i < list2.Count; ++i )
+                for ( int i = list2.Count - 1; i >= 0; --i )
                 {
                     if ( list2[ i ] != null )
                     {
                         list2[ i ] = action( list2[ i ] );
+                        if ( list2[ i ] == null )
+                            list2.RemoveAt( i );
                     }
                 }
                 //specialOrder.donatedItems.CopyFrom( list2 );
@@ -123,10 +140,16 @@ namespace DynamicGameAssets
             }
             {
                 IList<Furniture> list = l.furniture;
-                for ( int i = 0; i < list.Count; ++i )
+                for ( int i = list.Count - 1; i >= 0; --i )
                 {
-                    list[ i ] = ( Furniture ) MyUtility._recursiveIterateItem( list[ i ], action );
+                    // this one acts funny when returning null
+                    var v = ( Furniture ) MyUtility._recursiveIterateItem( list[ i ], action );
+                    if ( v == null )
+                        list.RemoveAt( i );
+                    else
+                        list[ i ] = v;
                 }
+
             }
             if ( l is IslandFarmHouse )
             {
@@ -138,6 +161,7 @@ namespace DynamicGameAssets
                         list[ i ] = MyUtility._recursiveIterateItem( list[ i ], action );
                     }
                 }
+                ( l as IslandFarmHouse ).fridge.Value.clearNulls();
             }
             if ( l is FarmHouse )
             {
@@ -148,6 +172,7 @@ namespace DynamicGameAssets
                     {
                         list[ i ] = MyUtility._recursiveIterateItem( list[ i ], action );
                     }
+                    ( l as FarmHouse ).fridge.Value.clearNulls();
                 }
             }
             foreach ( NPC character in l.characters )
@@ -208,13 +233,19 @@ namespace DynamicGameAssets
             }
             foreach ( var r in toRemove )
                 l.objects.Remove( r );
+
+            var toRemove2 = new List<Debris>();
             foreach ( Debris d in l.debris )
             {
                 if ( d.item != null )
                 {
                     d.item = MyUtility._recursiveIterateItem( d.item, action );
+                    if ( d.item == null )
+                        toRemove2.Add( d );
                 }
             }
+            foreach ( var r in toRemove2 )
+                l.debris.Remove( r );
         }
         private static Item _recursiveIterateItem( Item i, Func<Item, Item> action )
         {
@@ -246,6 +277,7 @@ namespace DynamicGameAssets
                             list[ ii ] = MyUtility._recursiveIterateItem( list[ ii ], action );
                         }
                     }
+                    ( o as Chest ).clearNulls();
                 }
                 if ( o.heldObject.Value != null )
                 {

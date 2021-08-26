@@ -15,6 +15,11 @@ namespace DynamicGameAssets.Game
     [Mixin( typeof( CustomItemMixin<FurniturePackData> ) )]
     public partial class CustomBasicFurniture : Furniture, ISittable
     {
+        private FurniturePackData.FurnitureConfiguration GetCurrentConfiguration()
+        {
+            return Data.Configurations.Count > this.currentRotation.Value ? Data.Configurations[ this.currentRotation.Value ] : new FurniturePackData.FurnitureConfiguration();
+        }
+
         partial void DoInit()
         {
             Mod.instance.Helper.Reflection.GetField<int>( this, "_placementRestriction" ).SetValue( 2 );
@@ -40,7 +45,7 @@ namespace DynamicGameAssets.Game
         {
             flipped.Value = false;
 
-            var newConf = Data.Configurations[ this.currentRotation.Value ];
+            var newConf = GetCurrentConfiguration();
             var newTex = Data.parent.GetTexture( newConf.Texture, ( int ) newConf.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, ( int ) newConf.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
 
             boundingBox.Width = ( int ) newConf.DisplaySize.X * Game1.tileSize;
@@ -77,7 +82,7 @@ namespace DynamicGameAssets.Game
                 return;
             }
 
-            var currConfig = Data.Configurations[this.currentRotation.Value];
+            var currConfig = GetCurrentConfiguration();
             var currTex = Data.parent.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
             var frontTex = currConfig.FrontTexture != null ? Data.parent.GetTexture(currConfig.FrontTexture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom) : null;
 
@@ -126,7 +131,7 @@ namespace DynamicGameAssets.Game
 
         public void drawAtNonTileSpot(SpriteBatch spriteBatch, Vector2 location, float layerDepth, float alpha = 1f)
         {
-            var currConfig = Data.Configurations[this.currentRotation.Value];
+            var currConfig = GetCurrentConfiguration();
             var currTex = Data.parent.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
 
             spriteBatch.Draw(currTex.Texture, location, currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, base.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
@@ -134,7 +139,7 @@ namespace DynamicGameAssets.Game
 
         public override bool DoesTileHaveProperty(int tile_x, int tile_y, string property_name, string layer_name, ref string property_value)
         {
-            var currConfig = Data.Configurations[this.currentRotation.Value];
+            var currConfig = GetCurrentConfiguration();
             Vector2 key = new Vector2((int)(tile_x - tileLocation.X), (int)(tile_y - tileLocation.Y));
             if ( currConfig.TileProperties.ContainsKey( key ) && currConfig.TileProperties[ key ].ContainsKey( layer_name ) )
             {
@@ -149,14 +154,14 @@ namespace DynamicGameAssets.Game
 
         public override int GetSeatCapacity()
         {
-            return Data.Configurations[ currentRotation.Value ].Seats.Count;
+            return GetCurrentConfiguration().Seats.Count;
         }
 
         public override List<Vector2> GetSeatPositions( bool ignore_offsets = false )
         {
             var ret = new List<Vector2>();
 
-            foreach ( var seat in Data.Configurations[ currentRotation.Value ].Seats )
+            foreach ( var seat in GetCurrentConfiguration().Seats )
             {
                 ret.Add( TileLocation + seat );
             }
@@ -166,8 +171,8 @@ namespace DynamicGameAssets.Game
 
         public int GetSittingDirection()
         {
-            return Data.Configurations[ currentRotation.Value ].SittingDirection == FurniturePackData.FurnitureConfiguration.SeatDirection.Any ?
-                   Game1.player.FacingDirection : ( int ) Data.Configurations[ currentRotation.Value ].SittingDirection;
+            return GetCurrentConfiguration().SittingDirection == FurniturePackData.FurnitureConfiguration.SeatDirection.Any ?
+                   Game1.player.FacingDirection : ( int ) GetCurrentConfiguration().SittingDirection;
         }
 
         public override Item getOne()

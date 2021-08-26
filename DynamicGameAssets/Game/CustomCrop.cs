@@ -21,6 +21,11 @@ namespace DynamicGameAssets.Game
     [Mixin( typeof( CustomItemMixin<CropPackData> ) )]
     public partial class CustomCrop : Crop
     {
+        private CropPackData.PhaseData GetCurrentPhase()
+        {
+            return Data.Phases.Count > this.currentPhase.Value ? Data.Phases[ this.currentPhase.Value ] : new CropPackData.PhaseData();
+        }
+
         partial void DoInit()
         {
             this.NetFields.AddFields( _sourcePack, _id );
@@ -53,7 +58,7 @@ namespace DynamicGameAssets.Game
             var Game1_multiplayer = ( Multiplayer ) typeof( Game1 ).GetField( "multiplayer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static ).GetValue( null );
             var this_tilePosition = Mod.instance.Helper.Reflection.GetField< Vector2 >( this, "tilePosition" ).GetValue();
 
-            var currPhase = Data.Phases[ this.currentPhase.Value ];
+            var currPhase = GetCurrentPhase();
 
             if ( ( bool ) this.dead )
             {
@@ -381,8 +386,8 @@ namespace DynamicGameAssets.Game
                     this.phaseToShow.Value = Game1.random.Next( 1, 7 );
                 }
 
-                this.harvestMethod.Value = Data.Phases[ this.currentPhase.Value ].Scythable ? Crop.sickleHarvest : Crop.grabHarvest;
-                this.raisedSeeds.Value = Data.Phases[ this.currentPhase.Value ].Trellis;
+                this.harvestMethod.Value = GetCurrentPhase().Scythable ? Crop.sickleHarvest : Crop.grabHarvest;
+                this.raisedSeeds.Value = GetCurrentPhase().Trellis;
 
                 if ( Data.GiantTextureChoices != null && environment is Farm && ( int ) this.currentPhase == this.phaseDays.Count - 1 /*&& ( ( int ) this.indexOfHarvest == 276 || ( int ) this.indexOfHarvest == 190 || ( int ) this.indexOfHarvest == 254 )*/ && OneTimeRandom_GetDouble.Invoke< double >( Game1.uniqueIDForThisGame, Game1.stats.DaysPlayed, ( ulong ) xTile, ( ulong ) yTile ) < Data.GiantChance )
                 {
@@ -466,7 +471,7 @@ namespace DynamicGameAssets.Game
             float this_layerDepth = Mod.instance.Helper.Reflection.GetField< float >( this, "layerDepth" ).GetValue();
             float this_coloredLayerDepth = Mod.instance.Helper.Reflection.GetField< float >( this, "coloredLayerDepth" ).GetValue();
 
-            var currTex = Data.parent.GetMultiTexture( Data.Phases[ this.currentPhase.Value ].TextureChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 );
+            var currTex = Data.parent.GetMultiTexture( GetCurrentPhase().TextureChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 );
 
             Vector2 position = Game1.GlobalToLocal(Game1.viewport, this_drawPosition);
             /*
@@ -495,9 +500,9 @@ namespace DynamicGameAssets.Game
 
             b.Draw( currTex.Texture, position, currTex.Rect, toTint, rotation, /*Crop.origin*/new Vector2( 8f, 24f ), 4f, effect, this_layerDepth );
             Color tintColor = this.tintColor.Value;
-            if ( Data.Phases[ currentPhase.Value ].TextureColorChoices != null )
+            if ( GetCurrentPhase().TextureColorChoices != null )
             {
-                var colorTex = Data.parent.GetMultiTexture( Data.Phases[ this.currentPhase.Value ].TextureColorChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 ); ;
+                var colorTex = Data.parent.GetMultiTexture( GetCurrentPhase().TextureColorChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 ); ;
                 b.Draw( colorTex.Texture, position, colorTex.Rect, tintColor, rotation, new Vector2( 8f, 24f ), 4f, effect, this_coloredLayerDepth );
             }
         }
