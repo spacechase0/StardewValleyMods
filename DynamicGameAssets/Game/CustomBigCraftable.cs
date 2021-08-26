@@ -20,8 +20,25 @@ namespace DynamicGameAssets.Game
     [Mixin( typeof( CustomItemMixin<BigCraftablePackData> ) )]
     public partial class CustomBigCraftable : StardewValley.Object
     {
-        public string TextureOverride { get; set; } = null;
-        public string PendingTextureOverride { get; set; } = null; // Triggers when recipe finished
+        private readonly NetString _textureOverride = new();
+        private readonly NetString _pendingTextureOverride = new();
+        private readonly NetBool _pulseIfWorking = new();
+
+        public string TextureOverride
+        {
+            get { return _textureOverride.Value; }
+            set { _textureOverride.Value = value; }
+        }
+        public string PendingTextureOverride // Triggers when recipe is finished
+        {
+            get { return _pendingTextureOverride.Value; }
+            set { _pendingTextureOverride.Value = value; }
+        }
+        public bool PulseIfWorking
+        {
+            get { return _pulseIfWorking.Value; }
+            set { _pulseIfWorking.Value = value; }
+        }
 
         public override string DisplayName { get => loadDisplayName(); set { } }
 
@@ -51,6 +68,7 @@ namespace DynamicGameAssets.Game
         {
             base.initNetFields();
             NetFields.AddFields( _sourcePack, _id );
+            NetFields.AddFields( _textureOverride, _pendingTextureOverride, _pulseIfWorking );
         }
 
         protected override string loadDisplayName()
@@ -170,6 +188,7 @@ namespace DynamicGameAssets.Game
 
                         TextureOverride = recipe.MachineWorkingTextureOverride;
                         PendingTextureOverride = recipe.MachineFinishedTextureOverride;
+                        PulseIfWorking = recipe.MachinePulseWhileWorking;
 
                         heldObject.Value = ( StardewValley.Object ) recipe.Result.Choose().Create();
 
@@ -279,7 +298,7 @@ namespace DynamicGameAssets.Game
             int y = (int)this.tileLocation.Y;
 
             var tex = Data.parent.GetTexture( GetCurrentTexture(), 16, 32 );
-            Vector2 scaleFactor = this.getScale();
+            Vector2 scaleFactor = this.PulseIfWorking ? this.getScale() : Vector2.One;
             scaleFactor *= 4f;
             Vector2 position = Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, y * 64 - 64));
             b.Draw( destinationRectangle: new Microsoft.Xna.Framework.Rectangle( ( int ) ( position.X - scaleFactor.X / 2f ), ( int ) ( position.Y - scaleFactor.Y / 2f ), ( int ) ( 64f + scaleFactor.X ), ( int ) ( 128f + scaleFactor.Y / 2f ) ), texture: tex.Texture, sourceRectangle: tex.Rect, color: Color.White, rotation: 0f, origin: Vector2.Zero, effects: SpriteEffects.None, layerDepth: Math.Max( 0f, ( float ) ( ( y + 1 ) * 64 - 1 ) / 10000f ) + ( ( ( int ) base.parentSheetIndex == 105 || ( int ) base.parentSheetIndex == 264 ) ? 0.0015f : 0f ) );
@@ -292,7 +311,7 @@ namespace DynamicGameAssets.Game
 
             var tex = Data.parent.GetTexture( GetCurrentTexture(), 16, 32 );
 
-            Vector2 scaleFactor = this.getScale();
+            Vector2 scaleFactor = this.PulseIfWorking ? this.getScale() : Vector2.One;
             scaleFactor *= 4f;
             Vector2 position = Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, y * 64 - 64));
             Microsoft.Xna.Framework.Rectangle destination = new Microsoft.Xna.Framework.Rectangle((int)(position.X - scaleFactor.X / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(position.Y - scaleFactor.Y / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(64f + scaleFactor.X), (int)(128f + scaleFactor.Y / 2f));
@@ -327,7 +346,7 @@ namespace DynamicGameAssets.Game
 
             var tex = Data.parent.GetTexture( GetCurrentTexture(), 16, 32 );
 
-            Vector2 scaleFactor = this.getScale();
+            Vector2 scaleFactor = this.PulseIfWorking ? this.getScale() : Vector2.One;
             scaleFactor *= 4f;
             Vector2 position = Game1.GlobalToLocal(Game1.viewport, new Vector2(xNonTile, yNonTile));
             Microsoft.Xna.Framework.Rectangle destination = new Microsoft.Xna.Framework.Rectangle((int)(position.X - scaleFactor.X / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(position.Y - scaleFactor.Y / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(64f + scaleFactor.X), (int)(128f + scaleFactor.Y / 2f));

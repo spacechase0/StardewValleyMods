@@ -451,6 +451,7 @@ Machine recipes live in `machine-recipes.json`. Only basic machine recipes are s
 | `WorkingLightOverride` | `bool?` | Default: `null` | An override for if the machine provides light. | (unknown, untested) |
 | `MachineWorkingTextureOverride` | `Texture[16, 32]` | Default: `null` | An override for the texture while the machine is working. This texture must be in the machine's content pack. | `true` |
 | `MachineFinishedTextureOverride` | `Texture[16, 32]` | Default: `null` | An override for the texture when the machine is finished. This texture must be in the machine's content pack. | `true` |
+| `MachinePulseWhileworking` | `bool` | Default: `true` | Should the machine pulse (scale up and down) while it is working? | `true` |
 
 Note that the first ingredient must be being held for the recipe to activate.
 

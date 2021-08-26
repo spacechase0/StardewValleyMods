@@ -130,6 +130,7 @@ namespace DynamicGameAssets
             cacheIngreds = ingreds.ToArray();
         }
 
+        public override string Name => data.Name;
         public override string Description => data.Description + "\n\nMod: " + data.parent.smapiPack.Manifest.Name;
 
         public override Texture2D IconTexture => cacheIconTex;

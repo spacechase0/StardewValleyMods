@@ -219,7 +219,7 @@ namespace JA_to_DGA
                     if ( taste == "Universal" )
                         item.UniversalGiftTaste = 80;
                     else
-                        item.GiftTasteOverride.Add( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
+                        item.GiftTasteOverride.TryAdd( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
                         {
                             Amount = 80
                         } );
@@ -229,7 +229,7 @@ namespace JA_to_DGA
                     if ( taste == "Universal" )
                         item.UniversalGiftTaste = 45;
                     else
-                        item.GiftTasteOverride.Add( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
+                        item.GiftTasteOverride.TryAdd( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
                         {
                             Amount = 45
                         } );
@@ -239,7 +239,7 @@ namespace JA_to_DGA
                     if ( taste == "Universal" )
                         item.UniversalGiftTaste = 20;
                     else
-                        item.GiftTasteOverride.Add( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
+                        item.GiftTasteOverride.TryAdd( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
                         {
                             Amount = 20
                         } );
@@ -249,7 +249,7 @@ namespace JA_to_DGA
                     if ( taste == "Universal" )
                         item.UniversalGiftTaste = -20;
                     else
-                        item.GiftTasteOverride.Add( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
+                        item.GiftTasteOverride.TryAdd( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
                         {
                             Amount = -20
                         } );
@@ -259,7 +259,7 @@ namespace JA_to_DGA
                     if ( taste == "Universal" )
                         item.UniversalGiftTaste = -40;
                     else
-                        item.GiftTasteOverride.Add( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
+                        item.GiftTasteOverride.TryAdd( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
                         {
                             Amount = -40
                         } );

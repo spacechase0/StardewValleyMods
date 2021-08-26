@@ -151,6 +151,7 @@ namespace SpaceCore
             }
         }
 
+        public virtual string Name { get; } = null;
         public abstract string Description { get; }
 
         public abstract Texture2D IconTexture { get; }

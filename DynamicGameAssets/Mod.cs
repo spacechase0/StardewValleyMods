@@ -41,7 +41,7 @@ using System.Runtime.CompilerServices;
 // TODO: Objects: Stuff on tables, while eating?
 // TODO: Objects: Preserve overrides?
 // TODO: Objects: warp totems?
-// TODO: Crops: Can grow in IndoorPot field
+// TODO: Crops: Can grow in IndoorPot field (like ancient seeds)
 // TODO: Crops: Can grow in greenhouse?
 // TODO: Crops: getRandomWildCropForSeason support?
 // TODO: General validation, optimization (cache Data in IDGAItem's), not crashing when an item is missing, etc.

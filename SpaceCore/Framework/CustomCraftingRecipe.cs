@@ -17,6 +17,8 @@ namespace SpaceCore.Framework
         :   base( name, isCooking )
         {
             recipe = recipeOverride;
+            if ( recipe.Name != null )
+                DisplayName = recipe.Name;
         }
 
         public override Item createItem()

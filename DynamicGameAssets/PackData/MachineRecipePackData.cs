@@ -46,6 +46,8 @@ namespace DynamicGameAssets.PackData
         public string MachineWorkingTextureOverride { get; set; }
         [DefaultValue( null )]
         public string MachineFinishedTextureOverride { get; set; }
+        [DefaultValue( true )]
+        public bool MachinePulseWhileWorking { get; set; } = true;
 
         public override void PostLoad()
         {
