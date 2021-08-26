@@ -381,9 +381,9 @@ namespace SpaceCore.Patches
             {
                 Log.Warn("Ran out of memory while SpaceCore was attempting to save; trying again...");
 
-                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+                GC.Collect(GC.MaxGeneration);
                 GC.WaitForPendingFinalizers();
-                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+                GC.Collect(GC.MaxGeneration);
 
                 // If this fails again, let it do so.
                 doc.WriteContentTo(origWriter);
