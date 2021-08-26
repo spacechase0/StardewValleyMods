@@ -373,7 +373,23 @@ namespace SpaceCore.Patches
             var modNodes = new List<KeyValuePair<string, string>>();
             SaveGamePatcher.FindAndRemoveModNodes(doc, modNodes, "/1"); // <?xml ... ?> is /0
 
-            doc.WriteContentTo(origWriter);
+            try
+            {
+                doc.WriteContentTo(origWriter);
+            }
+            catch (OutOfMemoryException)
+            {
+                // Attempt to clear unused memory and try again
+                Log.Warn("Ran out of memory while SpaceCore was attempting to save; trying again...");
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+
+                // If this fails again, let it do so.
+                doc.WriteContentTo(origWriter);
+            }
+
             string filename = serializer == SaveGame.farmerSerializer
                 ? SaveGamePatcher.SerializerManager.FarmerFilename
                 : SaveGamePatcher.SerializerManager.Filename;
