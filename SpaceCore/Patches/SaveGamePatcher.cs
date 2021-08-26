@@ -379,7 +379,6 @@ namespace SpaceCore.Patches
             }
             catch (OutOfMemoryException)
             {
-                // Attempt to clear unused memory and try again
                 Log.Warn("Ran out of memory while SpaceCore was attempting to save; trying again...");
 
                 GC.Collect();
