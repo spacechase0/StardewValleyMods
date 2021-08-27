@@ -558,28 +558,28 @@ shops in the same location will have the same context ID.
 
 Here are the IDs for vanilla shops:
 
-shop                                                                | owner ID      | portrait ID     | context ID
-------------------------------------------------------------------- | ------------- | --------------- | ----------
-[Casino](https://stardewvalleywiki.com/Casino)                      |               |                 | `Club`
-[Clint](https://stardewvalleywiki.com/Blacksmith)                   | `Clint`       | `Clint`         | `Blacksmith`
-[Desert trader](https://stardewvalleywiki.com/Desert_Trader)        | `DesertTrade` |                 | `Desert`
-[Dwarf](https://stardewvalleywiki.com/Dwarf)                        | `Dwarf`       | `Dwarf`         | `Mine`
-[Harvey](https://stardewvalleywiki.com/Harvey%27s_Clinic)           |               | `Harvey`        | `Hospital`
-[Hat mouse](https://stardewvalleywiki.com/Abandoned_House)          | `HatMouse`    |                 | `Forest`
-[Ice Cream Stand](https://stardewvalleywiki.com/Ice_Cream_Stand)    |               |                 | `Town`
-[Island Trader](https://stardewvalleywiki.com/Island_Trader)        | `IslandTrade` |                 | `IslandNorth`
-[JojaMart](https://stardewvalleywiki.com/JojaMart)                  |               |                 | `JojaMart`
-[Krobus](https://stardewvalleywiki.com/Krobus)                      | `Krobus`      | `Krobus`        | `Sewer`
-[Marlon](https://stardewvalleywiki.com/Adventurer%27s_Guild)        | `Marlon`      | `Marlon`        | `AdventureGuild`
-[Marnie (supplies)](https://stardewvalleywiki.com/Marnie%27s_Ranch) | `Marnie`      | `Marnie`        | `AnimalShop`
-[Pierre](https://stardewvalleywiki.com/Pierre%27s_General_Store)    | `Pierre`      | `Pierre`        | `SeedShop`
-[Qi walnut room](https://stardewvalleywiki.com/Qi%27s_Walnut_Room)  |               |                 | `QiGemShop`
-[Robin](https://stardewvalleywiki.com/Carpenter%27s_Shop)           | `Robin`       | `Robin`         | `ScienceHouse`
-[Saloon](https://stardewvalleywiki.com/The_Stardrop_Saloon)         | `Gus`         | `Gus`           | `Saloon`
-[Sandy](https://stardewvalleywiki.com/Oasis)                        | `Sandy`       | `Sandy`         | `SandyHouse`
-[Traveling cart](https://stardewvalleywiki.com/Traveling_Cart)      | `Traveler`    |                 | `Forest`
-[Volcano shop](https://stardewvalleywiki.com/Volcano_Dungeon#Shop)  | `VolcanoShop` |                 | `VolcanoShop`
-[Willy](https://stardewvalleywiki.com/Fish_Shop)                    | `Willy`       | `Willy`         | `FishShop`
+world area | shop                                                                | owner ID      | portrait ID     | context ID
+---------- | ------------------------------------------------------------------- | ------------- | --------------- | ----------
+Beach      | [Willy](https://stardewvalleywiki.com/Fish_Shop)                    | `Willy`       | `Willy`         | `FishShop`
+Desert     | [Casino](https://stardewvalleywiki.com/Casino)                      |               |                 | `Club`
+Desert     | [Desert trader](https://stardewvalleywiki.com/Desert_Trader)        | `DesertTrade` |                 | `Desert`
+Desert     | [Sandy](https://stardewvalleywiki.com/Oasis)                        | `Sandy`       | `Sandy`         | `SandyHouse`
+Forest     | [Hat mouse](https://stardewvalleywiki.com/Abandoned_House)          | `HatMouse`    |                 | `Forest`
+Forest     | [Marnie (supplies)](https://stardewvalleywiki.com/Marnie%27s_Ranch) | `Marnie`      | `Marnie`        | `AnimalShop`
+Forest     | [Traveling cart](https://stardewvalleywiki.com/Traveling_Cart)      | `Traveler`    |                 | `Forest`
+Island     | [Island Trader](https://stardewvalleywiki.com/Island_Trader)        | `IslandTrade` |                 | `IslandNorth`
+Island     | [Qi walnut room](https://stardewvalleywiki.com/Qi%27s_Walnut_Room)  |               |                 | `QiGemShop`
+Island     | [Volcano shop](https://stardewvalleywiki.com/Volcano_Dungeon#Shop)  | `VolcanoShop` |                 | `VolcanoShop`
+Mountain   | [Dwarf](https://stardewvalleywiki.com/Dwarf)                        | `Dwarf`       | `Dwarf`         | `Mine`
+Mountain   | [Marlon](https://stardewvalleywiki.com/Adventurer%27s_Guild)        | `Marlon`      | `Marlon`        | `AdventureGuild`
+Mountain   | [Robin](https://stardewvalleywiki.com/Carpenter%27s_Shop)           | `Robin`       | `Robin`         | `ScienceHouse`
+Town       | [Clint](https://stardewvalleywiki.com/Blacksmith)                   | `Clint`       | `Clint`         | `Blacksmith`
+Town       | [Harvey](https://stardewvalleywiki.com/Harvey%27s_Clinic)           |               | `Harvey`        | `Hospital`
+Town       | [Ice Cream Stand](https://stardewvalleywiki.com/Ice_Cream_Stand)    |               |                 | `Town`
+Town       | [JojaMart](https://stardewvalleywiki.com/JojaMart)                  |               |                 | `JojaMart`
+Town       | [Krobus](https://stardewvalleywiki.com/Krobus)                      | `Krobus`      | `Krobus`        | `Sewer`
+Town       | [Pierre](https://stardewvalleywiki.com/Pierre%27s_General_Store)    | `Pierre`      | `Pierre`        | `SeedShop`
+Town       | [Saloon](https://stardewvalleywiki.com/The_Stardrop_Saloon)         | `Gus`         | `Gus`           | `Saloon`
 
 For custom shops, here's how to find the ID:
 
