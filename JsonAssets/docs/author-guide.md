@@ -549,14 +549,14 @@ Supported for: all content types.
 
 The `PurchaseFrom` field lets you add items to shops for the player to buy. Each shop has up to
 three IDs you can use, in order of preference:
-1. **owner ID:** a unique value used to create the shop.
+1. **owner ID:** a (usually) unique value used to create the shop.
 2. **portrait ID:** the default name of the NPC whose portrait is shown in the shop UI.
 3. **context ID:** the location containing the shop (not necessarily unique).
 
 You can use any ID to identify the shop, but should avoid the context ID if possible since multiple
 shops in the same location will have the same context ID.
 
-Here are the IDs for vanilla shops:
+Here are the IDs for vanilla shops (crossed out IDs match multiple vanilla shops):
 
 world area | shop                                                                | owner ID      | portrait ID     | context ID
 ---------- | ------------------------------------------------------------------- | ------------- | --------------- | ----------
@@ -564,11 +564,12 @@ Beach      | [Willy](https://stardewvalleywiki.com/Fish_Shop)                   
 Desert     | [Casino](https://stardewvalleywiki.com/Casino)                      |               |                 | `Club`
 Desert     | [Desert trader](https://stardewvalleywiki.com/Desert_Trader)        | `DesertTrade` |                 | `Desert`
 Desert     | [Sandy](https://stardewvalleywiki.com/Oasis)                        | `Sandy`       | `Sandy`         | `SandyHouse`
-Forest     | [Hat mouse](https://stardewvalleywiki.com/Abandoned_House)          | `HatMouse`    |                 | `Forest`
+Forest     | [Hat mouse](https://stardewvalleywiki.com/Abandoned_House)          | `HatMouse`    |                 | ~~`Forest`~~
 Forest     | [Marnie (supplies)](https://stardewvalleywiki.com/Marnie%27s_Ranch) | `Marnie`      | `Marnie`        | `AnimalShop`
-Forest     | [Traveling cart](https://stardewvalleywiki.com/Traveling_Cart)      | `Traveler`    |                 | `Forest`
+Forest     | [Traveling cart](https://stardewvalleywiki.com/Traveling_Cart)      | `Traveler`    |                 | ~~`Forest`~~
 Island     | [Island Trader](https://stardewvalleywiki.com/Island_Trader)        | `IslandTrade` |                 | `IslandNorth`
 Island     | [Qi walnut room](https://stardewvalleywiki.com/Qi%27s_Walnut_Room)  |               |                 | `QiGemShop`
+Island     | [Resort bar](https://stardewvalleywiki.com/Ginger_Island#Beach_Resort) | ~~`Gus`~~  | ~~`Gus`~~       | `ResortBar`
 Island     | [Volcano shop](https://stardewvalleywiki.com/Volcano_Dungeon#Shop)  | `VolcanoShop` |                 | `VolcanoShop`
 Mountain   | [Dwarf](https://stardewvalleywiki.com/Dwarf)                        | `Dwarf`       | `Dwarf`         | `Mine`
 Mountain   | [Marlon](https://stardewvalleywiki.com/Adventurer%27s_Guild)        | `Marlon`      | `Marlon`        | `AdventureGuild`
@@ -579,7 +580,7 @@ Town       | [Ice Cream Stand](https://stardewvalleywiki.com/Ice_Cream_Stand)   
 Town       | [JojaMart](https://stardewvalleywiki.com/JojaMart)                  |               |                 | `JojaMart`
 Town       | [Krobus](https://stardewvalleywiki.com/Krobus)                      | `Krobus`      | `Krobus`        | `Sewer`
 Town       | [Pierre](https://stardewvalleywiki.com/Pierre%27s_General_Store)    | `Pierre`      | `Pierre`        | `SeedShop`
-Town       | [Saloon](https://stardewvalleywiki.com/The_Stardrop_Saloon)         | `Gus`         | `Gus`           | `Saloon`
+Town       | [Saloon](https://stardewvalleywiki.com/The_Stardrop_Saloon)         | ~~`Gus`~~     | ~~`Gus`~~       | `Saloon`
 
 For custom shops, here's how to find the ID:
 
