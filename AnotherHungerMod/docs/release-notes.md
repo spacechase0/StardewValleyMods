@@ -3,6 +3,12 @@
 # Release notes
 ## Upcoming release
 * Updated for Stardew Valley 1.5.5.
+* The hunger drain and starvation damage are now configurable per-minute instead of per-10-minutes.
+* Added compatibility with Casual Life and other mods which change the clock at non-10-minute intervals.
+
+**Update note:**  
+If you edited the hunger drain and starvation damage in `config.json`, you'll need to reconfigure them
+with the new per-minute fields.
 
 ## 1.2.2
 Released 12 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
