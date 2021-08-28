@@ -120,7 +120,7 @@ Optionally, you can also specify animations in any `Texture` field. The frames a
 "objects.png:0@5, objects.png:1@10, objects.png:2@5"
 ```
 
-This will specify three animation frames, with the first and last lasting 5 in-game frames, and the second lasting 10.
+This will specify three animation frames, with the first and last lasting 5 in-game frames, and the second lasting 10. (The game runs at 60 frames per second.)
 
 ### MultiTexture
 Sometimes, you can specify multiple textures instead of one. This will change which texture is used based on in-game conditions. An example of this being used in the vanilla game is with the seed phase of crops; they all have two seed sprites, but only one is used on each tile, depending on where the crop is.

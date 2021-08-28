@@ -70,7 +70,7 @@ using System.Runtime.CompilerServices;
 
 namespace DynamicGameAssets
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetEditor
+    public class Mod : StardewModdingAPI.Mod, IAssetLoader, IAssetEditor
     {
         public static Mod instance;
         internal ContentPatcher.IContentPatcherAPI cp;
@@ -519,6 +519,27 @@ namespace DynamicGameAssets
                     CustomForgeRecipe.Recipes.Add( crecipe );
                 }
             }
+        }
+        public bool CanLoad<T>( IAssetInfo asset )
+        {
+            foreach ( var pack in contentPacks )
+            {
+                if ( pack.Value.CanLoad<T>( asset ) )
+                    return true;
+            }
+
+            return false;
+        }
+
+        public T Load<T>( IAssetInfo asset )
+        {
+            foreach ( var pack in contentPacks )
+            {
+                if ( pack.Value.CanLoad<T>( asset ) )
+                    return pack.Value.Load< T >( asset );
+            }
+
+            return default( T );
         }
 
         public bool CanEdit<T>( IAssetInfo asset )

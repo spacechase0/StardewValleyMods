@@ -21,11 +21,31 @@ namespace DynamicGameAssets.PackData
 
         public bool Check( BasePackData parent )
         {
-            if ( ConditionsObject == null )
+            //if ( ConditionsObject == null )
+            {
+                var conds = new Dictionary<string, string>();
+                foreach ( var cond in Conditions )
+                {
+                    string key = cond.Key, value = cond.Value;
+                    foreach ( var opt in parent.parent.configIndex )
+                    {
+                        string val = parent.parent.currConfig.Values[ opt.Key ].ToString();
+                        if ( parent.parent.configIndex[ opt.Key ].ValueType == ConfigPackData.ConfigValueType.String )
+                            val = "'" + val + "'";
+
+                        key = key.Replace( "{{" + opt.Key + "}}", val );
+                        value = value.Replace( "{{" + opt.Key + "}}", val );
+                    }
+                    Log.Debug( "cond:" + key + " " + value );
+                    conds.Add( key, value );
+                }
+
                 ConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
-                                                                    Conditions,
+                                                                    conds,
                                                                     parent.parent.conditionVersion,
-                                                                    parent.parent.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[0] );
+                                                                    parent.parent.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[ 0 ] );
+            }
+            Log.Debug( "match:" + ConditionsObject.IsMatch + " " +ConditionsObject.ValidationError );
             if ( ConditionsObject.IsMatch )
                 return true;
             return false;

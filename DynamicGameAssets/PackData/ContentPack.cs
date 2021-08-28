@@ -1,18 +1,28 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DynamicGameAssets.PackData
 {
-    public class ContentPack
+    public class ContentPack : IAssetLoader
     {
+        internal class ConfigModel
+        {
+            [JsonExtensionData]
+            public Dictionary<string, JToken> Values = new();
+        }
+
         internal IContentPack smapiPack;
 
         internal ISemanticVersion conditionVersion;
@@ -24,6 +34,10 @@ namespace DynamicGameAssets.PackData
         internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
 
         internal List<BasePackData> others = new List<BasePackData>();
+
+        private List<ConfigPackData> configs = new();
+        internal Dictionary<string, ConfigPackData> configIndex = new();
+        internal ConfigModel currConfig = new();
         
         public ContentPack( IContentPack pack, ISemanticVersion condVer )
         {
@@ -47,6 +61,8 @@ namespace DynamicGameAssets.PackData
                 LoadOthers<ForgeRecipePackData>( "forge-recipes.json" );
                 LoadOthers<MachineRecipePackData>( "machine-recipes.json" );
                 LoadOthers<TailoringRecipePackData>( "tailoring-recipes.json" );
+
+                LoadConfig();
             }
         }
         public ContentPack( IContentPack pack )
@@ -64,6 +80,24 @@ namespace DynamicGameAssets.PackData
             if ( items.ContainsKey( item ) && items[ item ].Enabled )
                 return items[ item ];
             return null;
+        }
+
+        public bool CanLoad<T>( IAssetInfo asset )
+        {
+            string path = asset.AssetName.Replace( '\\', '/' );
+            string start = "DGA/" + smapiPack.Manifest.UniqueID + "/";
+            if ( !path.StartsWith( start ) || !path.EndsWith( ".png" ) )
+                return false;
+            return smapiPack.HasFile( path.Substring( start.Length ) );
+        }
+
+        public T Load<T>( IAssetInfo asset )
+        {
+            string path = asset.AssetName.Replace( '\\', '/' );
+            string start = "DGA/" + smapiPack.Manifest.UniqueID + "/";
+            if ( !path.StartsWith( start ) || !path.EndsWith( ".png" ) )
+                return default( T );
+            return ( T ) ( object ) smapiPack.LoadAsset<Texture2D>( path.Substring( start.Length ) );
         }
 
         private void LoadAndValidateItems< T >( string json ) where T : CommonPackData
@@ -102,6 +136,111 @@ namespace DynamicGameAssets.PackData
                 d.original = ( T ) d.Clone();
                 d.original.original = d.original;
                 d.PostLoad();
+            }
+        }
+
+        private void LoadConfig()
+        {
+            if ( !smapiPack.HasFile( "config-schema.json" ) )
+                return;
+
+            var gmcm = Mod.instance.Helper.ModRegistry.GetApi< IGenericModConfigMenuApi >( "spacechase0.GenericModConfigMenu" );
+            gmcm.UnregisterModConfig( smapiPack.Manifest );
+            gmcm.RegisterModConfig( smapiPack.Manifest, this.ResetToDefaultConfig, () => smapiPack.WriteJsonFile( "config.json", currConfig ) );
+            gmcm.SetDefaultIngameOptinValue( smapiPack.Manifest, true );
+            gmcm.RegisterParagraph( smapiPack.Manifest, "Note: If in-game, config values may not take effect until the next in-game day." );
+
+            var readConfig = smapiPack.ReadJsonFile< ConfigModel >( "config.json" );
+            bool writeConfig = false;
+            if ( readConfig == null )
+            {
+                readConfig = new ConfigModel();
+                writeConfig = true;
+            }
+
+            var data = smapiPack.LoadAsset<List<ConfigPackData>>( "config-schema.json" ) ?? new List<ConfigPackData>();
+            foreach ( var d in data )
+            {
+                Log.Trace( $"Loading config entry {d.Name}..." );
+                configs.Add( d );
+
+                gmcm.SetDefaultIngameOptinValue( smapiPack.Manifest, d.VisibleInGame );
+                gmcm.StartNewPage( smapiPack.Manifest, d.OnPage );
+                switch ( d.ElementType )
+                {
+                    case ConfigPackData.ConfigElementType.Label:
+                        gmcm.RegisterLabel( smapiPack.Manifest, d.Name, d.Description );
+                        break;
+
+                    case ConfigPackData.ConfigElementType.PageLabel:
+                        gmcm.RegisterPageLabel( smapiPack.Manifest, d.Name, d.Description, d.PageToGoTo );
+                        break;
+
+                    case ConfigPackData.ConfigElementType.Paragraph:
+                        gmcm.RegisterParagraph( smapiPack.Manifest, d.Name );
+                        break;
+
+                    case ConfigPackData.ConfigElementType.Image:
+                        gmcm.RegisterImage( smapiPack.Manifest, Path.Combine( "DGA", smapiPack.Manifest.UniqueID, d.ImagePath ), d.ImageRect, d.ImageScale );
+                        break;
+
+                    case ConfigPackData.ConfigElementType.ConfigOption:
+                        string key = d.Name;
+                        if ( !string.IsNullOrEmpty( d.OnPage ) )
+                            key = d.OnPage + "/" + key;
+                        configIndex.Add( key, d );
+                        currConfig.Values.Add( key, readConfig.Values.ContainsKey( key ) ? readConfig.Values[ key ] : d.DefaultValue );
+
+                        string[] valid = d.ValidValues?.Split( ',' )?.Select( s => s.Trim() )?.ToArray();
+                        switch ( d.ValueType )
+                        {
+                            case ConfigPackData.ConfigValueType.Bool:
+                                gmcm.RegisterSimpleOption( smapiPack.Manifest, d.Name, d.Description, () => currConfig.Values[ key ].ToString() == "true" ? true : false, ( v ) => currConfig.Values[ key ] = v ? "true" : "false" );
+                                break;
+
+                            case ConfigPackData.ConfigValueType.Integer:
+                                if ( valid?.Length == 2 )
+                                    gmcm.RegisterClampedOption( smapiPack.Manifest, d.Name, d.Description, () => int.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString(), int.Parse( valid[ 0 ] ), int.Parse( valid[ 1 ] ) );
+                                else if ( valid?.Length == 3 )
+                                    gmcm.RegisterClampedOption( smapiPack.Manifest, d.Name, d.Description, () => int.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString(), int.Parse( valid[ 0 ] ), int.Parse( valid[ 1 ] ), int.Parse( valid[ 2 ] ) );
+                                else
+                                    gmcm.RegisterSimpleOption( smapiPack.Manifest, d.Name, d.Description, () => int.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString() );
+                                break;
+
+                            case ConfigPackData.ConfigValueType.Float:
+                                if ( valid?.Length == 2 )
+                                    gmcm.RegisterClampedOption( smapiPack.Manifest, d.Name, d.Description, () => float.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString(), float.Parse( valid[ 0 ] ), float.Parse( valid[ 1 ] ) );
+                                else if ( valid?.Length == 3 )
+                                    gmcm.RegisterClampedOption( smapiPack.Manifest, d.Name, d.Description, () => float.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString(), float.Parse( valid[ 0 ] ), float.Parse( valid[ 1 ] ), float.Parse( valid[ 2 ] ) );
+                                else
+                                    gmcm.RegisterSimpleOption( smapiPack.Manifest, d.Name, d.Description, () => float.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString() );
+                                break;
+
+                            case ConfigPackData.ConfigValueType.String:
+                                if ( valid?.Length > 1 )
+                                    gmcm.RegisterChoiceOption( smapiPack.Manifest, d.Name, d.Description, () => currConfig.Values[ key ].ToString(), ( v ) => currConfig.Values[ key ] = v, valid );
+                                else
+                                    gmcm.RegisterSimpleOption( smapiPack.Manifest, d.Name, d.Description, () => currConfig.Values[ key ].ToString(), ( v ) => currConfig.Values[ key ] = v );
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            if ( writeConfig )
+            {
+                smapiPack.WriteJsonFile( "config.json", currConfig );
+            }
+        }
+
+        private void ResetToDefaultConfig()
+        {
+            foreach ( var config in configs )
+            {
+                if ( !currConfig.Values.ContainsKey( config.Name ) )
+                    currConfig.Values.Add( config.Name, config.DefaultValue );
+                else
+                    currConfig.Values[ config.Name ] = config.DefaultValue;
             }
         }
 
