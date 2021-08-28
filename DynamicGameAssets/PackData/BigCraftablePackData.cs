@@ -2,6 +2,7 @@ using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -31,7 +32,7 @@ namespace DynamicGameAssets.PackData
 
         public override void OnDisabled()
         {
-            MyUtility.iterateAllItems( ( item ) =>
+            SpaceUtility.iterateAllItems( ( item ) =>
             {
                 if ( item is CustomBigCraftable cbc )
                 {

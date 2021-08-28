@@ -2,9 +2,55 @@
 
 This documentation is for making mods; for using Dynamic Game Assets as a user, please check the (Nexus)[https://www.nexusmods.com/stardewvalley/mods/9365] page.
 
+Contents
+* [Differences from Json Assets](#differences-from-json-assets)
+* [Useful Commands](#useful-commands)
+* [manifest.json](#manifest.json)
+* [Localization](#localization)
+* [Common Field Types](#common-field-types)
+    * [Texture](#texture)
+        * [Animations](#animations)
+    * [MultiTexture](#multitexture)
+    * [Item](#item)
+    * [WeightedItem](#weighteditem)
+    * [DynamicField](#dynamicfield)
+* [Pack Data](#pack-data)
+    * [Common](#common)
+    * [Big Craftables](#big-craftables)
+    * [Boots](#boots)
+    * [Crafting Recipes](#crafting-recipes)
+        * [Special Types](#special-types)
+            * [Ingredient](#ingredient)
+    * [Crops](#crops)
+        * [Special Types](#special-types)
+            * [Phase](#phase)
+            * [HarvestedDrop](#harvesteddrop)
+    * [Fences](#fences)
+    * [Forge Recipe](#forge-recipe)
+    * [Fruit Trees](#fruit-trees)
+    * [Furniture](#furniture)
+        * [Special Types](#special-types)
+            * [FurnitureConfiguration](#furnitureconfiguration)
+    * [Hats](#hats)
+    * [Machine Recipes](#machine-recipes)
+    * [Melee Weapons](#melee-weapons)
+    * [Objects](#objects)
+        * [Special Types](#special-types)
+            * [FoodBuffs](#foodbuffs)
+            * [GiftTasteOverride](#gifttasteoverride)
+    * [Pants](#pants)
+    * [Shirts](#shirts)
+    * [Shop Entries](#shop-entires)
+    * [Tailoring Recipes](#tailoring-recipes)
+    * [Extra Information]
+        * [Vaild Shop IDs for Vanilla](#valid-shop-ids-for-vanilla)
+* [Dynamic Fields](#dynamic-fields)
+* [Additional Resources](#additional-resources)
+
 ## Differences from Json Assets
 This is a list of differences *as pertains to making content packs*. For a full list of differences, see the (Nexus)[#] page.
 
+* JA crops that regrow work on the amount of days until they can be harvested (yes, really, I just double-checked and tested). However, in DGA, you can only revert to a different phase. Because of this, the converter will only revert regrow crops to their previous phase. You can reconfigure this to a different phase if you want.
 * Shop entries are calculated at the beginning of the day instead of when the shop is opened. This means certain conditions (such as time based ones) might not work, or behave oddly.
 * Crops and fruit trees do not have seeds/saplings created automatically; instead, create an object with specify the crop/fruit tree using the `Plants` field.
 * Crops and fruit trees do not have a `"Season"` field anymore; instead the `"CanGrowNow"` field must be set using dynamic fields. An example is shown in the (Crop)[#] section.
@@ -370,7 +416,7 @@ Example `DynamicFields` for a spring-only `CanGrowNow`:
 ]
 ```
 
-# Furniture
+## Furniture
 Furniture lives in `furniture.json`.
 
 Furniture can be localized in the following keys: `"furniture.YourFurniture.name"` and `"furniture.YourFurniture.description"`.
@@ -384,6 +430,7 @@ Furniture can be localized in the following keys: `"furniture.YourFurniture.name
 Certain furniture types have additional fields:
 
 | Applicable for | Field | Type | Required or Default value | Description | Dynamic |
+| --- | --- | --- | --- | --- | --- |
 | `Bed` | `BedType` | `Enum[Single, Double, Child]` | `"Single"` | The bed type. | (unknown, untested) |
 | `TV` | `ScreenPosition` | `Vector2` | Default: `"0, 0"` | The offset for the screen to render, in pixels, from the texture. | (unknown, untested) |
 | `TV` | `ScreenSize` | `int` | Required | A multiplier for the screen size, in relation to the size of the graphics in the game files. | `true` |
@@ -398,6 +445,7 @@ These are special types relating to just furniture, used in the above tables.
 This should be an array of an an object called `FurnitureConfiguration`. A `FurnitureConfiguration` is as follows:
 
 | Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
 | `Texture` | `Texture` | Required | The texture for this configuration. |
 | `FrontTexture` | `Texture` | Required* | (* Only required for beds/fish tanks, and if this has seats.) The texture for this configuration to render on top. |
 | `DisplaySize` | `Vector2` | Required | The display size of this furniture, in tiles. |
@@ -514,6 +562,7 @@ These are special types relating to just objects, used in the above table.
 A `FoodBuffs` is as follows. (All fields are `int` and default to `0`.)
 
 | Field | Description |
+| --- | --- |
 | `Farming` | The farming level buff amount. |
 | `Fishing` | The fishing level buff amount. |
 | `Mining` | The mining level buff amount. |
@@ -539,6 +588,7 @@ Here is an example `FoodBuffs` inside an object:
 A `GiftTasteOverride` is as follows.
 
 | Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
 | `Amount` | `int` | Required | The amount of friendship points to give or take. |
 | `NormalTexTranslationKey` | `string` | Default: `null` | The translation key of the text normally shown for this NPC when they receive this object. |
 | `BirthdayTexTranslationKey` | `string` | Default: `null` | The translation key of the text for this NPC when they receive this object on their birthday. |
@@ -607,7 +657,10 @@ Tailoring Recipes live in `talioring-recipes.json`
 | `ConsumeSecondItem` | `bool` | Default: `true` | Whether or not the second item should be consumed. | `true` |
 | `CraftedItem` | `WeightedItem[]` | Required | The item to craft. | (unknown, untested) |
 
-Valid shop IDs for vanilla:
+
+
+## ExtraInformation
+### Valid Shop IDs for Vanilla
 
 * BlueBoat
 * TravelingMerchant

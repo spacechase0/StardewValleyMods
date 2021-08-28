@@ -98,6 +98,11 @@ namespace DynamicGameAssets
             string item = fullId.Substring( slash + 1 );
             return contentPacks.ContainsKey( pack ) ? contentPacks[ pack ].Find( item ) : null;
         }
+
+        public static List<ContentPack> GetPacks()
+        {
+            return new List<ContentPack>( contentPacks.Values );
+        }
         
         public override void Entry(IModHelper helper)
         {
@@ -425,7 +430,7 @@ namespace DynamicGameAssets
 
         public void OnCleanCommand( string cmd, string[] args )
         {
-            MyUtility.iterateAllItems( ( item ) =>
+            SpaceUtility.iterateAllItems( ( item ) =>
             {
                 if ( item is IDGAItem citem && Mod.Find( citem.FullId ) == null )
                 {
@@ -433,7 +438,7 @@ namespace DynamicGameAssets
                 }
                 return item;
             } );
-            MyUtility.iterateAllTerrainFeatures( ( tf ) =>
+            SpaceUtility.iterateAllTerrainFeatures( ( tf ) =>
             {
                 if ( tf is IDGAItem citem && Mod.Find( citem.FullId ) == null )
                 {
@@ -445,6 +450,33 @@ namespace DynamicGameAssets
                 }
                 return tf;
             } );
+        }
+
+        public static void AddContentPack( IManifest manifest, string dir )
+        {
+            Log.Debug( $"Loading fake content pack for \"{manifest.Name}\"..." );
+            if ( manifest.ExtraFields == null ||
+                 !manifest.ExtraFields.ContainsKey( "DGA.FormatVersion" ) ||
+                 !int.TryParse( manifest.ExtraFields[ "DGA.FormatVersion" ].ToString(), out int ver ) )
+            {
+                Log.Error( "Must specify a DGA.FormatVersion as an integer! (See documentation.)" );
+                return;
+            }
+            if ( ver != 1 )
+            {
+                Log.Error( "Unsupported format version!" );
+                return;
+            }
+            if ( !manifest.ExtraFields.ContainsKey( "DGA.ConditionsFormatVersion" ) ||
+                 !SemanticVersion.TryParse( manifest.ExtraFields[ "DGA.ConditionsFormatVersion" ].ToString(), out ISemanticVersion condVer ) )
+            {
+                Log.Error( "Must specify a DGA.ConditionsFormatVersion as a semantic version! (See documentation.)" );
+                return;
+            }
+
+            var cp = Mod.instance.Helper.ContentPacks.CreateTemporary( dir, manifest.UniqueID, manifest.Name, manifest.Description, manifest.Author, manifest.Version );
+            var pack = new ContentPack( cp, condVer );
+            contentPacks.Add( manifest.UniqueID, pack );
         }
 
         private void LoadContentPacks()
@@ -463,9 +495,9 @@ namespace DynamicGameAssets
                 {
                     Log.Error( "Unsupported format version!" );
                     continue;
-                }   
+                }
                 if ( !cp.Manifest.ExtraFields.ContainsKey( "DGA.ConditionsFormatVersion" ) ||
-                    !SemanticVersion.TryParse( cp.Manifest.ExtraFields[ "DGA.ConditionsFormatVersion" ].ToString(), out ISemanticVersion condVer ) )
+                     !SemanticVersion.TryParse( cp.Manifest.ExtraFields[ "DGA.ConditionsFormatVersion" ].ToString(), out ISemanticVersion condVer ) )
                 {
                     Log.Error( "Must specify a DGA.ConditionsFormatVersion as a semantic version! (See documentation.)" );
                     continue;

@@ -95,7 +95,7 @@ namespace DynamicGameAssets.PackData
 
         public override void OnDisabled()
         {
-            MyUtility.iterateAllTerrainFeatures( ( tf ) =>
+            SpaceUtility.iterateAllTerrainFeatures( ( tf ) =>
             {
                 if ( tf is HoeDirt hd && hd.crop is CustomCrop ccrop )
                 {

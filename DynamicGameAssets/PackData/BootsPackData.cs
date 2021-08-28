@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Newtonsoft.Json;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Tools;
 
@@ -37,7 +38,7 @@ namespace DynamicGameAssets.PackData
 
         public override void OnDisabled()
         {
-            MyUtility.iterateAllItems( ( item ) =>
+            SpaceUtility.iterateAllItems( ( item ) =>
             {
                 if ( item is CustomBoots cboots )
                 {

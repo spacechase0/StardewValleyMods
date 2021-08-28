@@ -15,7 +15,7 @@ namespace DynamicGameAssets.PackData
     {
         internal IContentPack smapiPack;
 
-        internal SemanticVersion conditionVersion;
+        internal ISemanticVersion conditionVersion;
 
         private Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
@@ -24,13 +24,13 @@ namespace DynamicGameAssets.PackData
         internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
 
         internal List<BasePackData> others = new List<BasePackData>();
-
-        public ContentPack( IContentPack pack )
+        
+        public ContentPack( IContentPack pack, ISemanticVersion condVer )
         {
             smapiPack = pack;
             if ( pack.Manifest.UniqueID != "null" )
             {
-                conditionVersion = new SemanticVersion( pack.Manifest.ExtraFields[ "DGA.ConditionsFormatVersion" ].ToString() );
+                conditionVersion = condVer;
                 LoadAndValidateItems<ObjectPackData>( "objects.json" );
                 LoadAndValidateItems<CraftingRecipePackData>( "crafting-recipes.json" );
                 LoadAndValidateItems<FurniturePackData>( "furniture.json" );
@@ -48,6 +48,15 @@ namespace DynamicGameAssets.PackData
                 LoadOthers<MachineRecipePackData>( "machine-recipes.json" );
                 LoadOthers<TailoringRecipePackData>( "tailoring-recipes.json" );
             }
+        }
+        public ContentPack( IContentPack pack )
+        :   this( pack, pack.Manifest.UniqueID == "null" ? null : new SemanticVersion( pack.Manifest.ExtraFields[ "DGA.ConditionsFormatVersion" ].ToString() ) )
+        {
+        }
+
+        public List<CommonPackData> GetItems()
+        {
+            return new List<CommonPackData>( items.Values );
         }
 
         public CommonPackData Find( string item )
@@ -67,6 +76,7 @@ namespace DynamicGameAssets.PackData
             {
                 if ( items.ContainsKey( d.ID ) )
                     throw new ArgumentException( "Duplicate found! " + d.ID );
+                Log.Trace( "Loading data<" + typeof( T ) + ">: " + d.ID );
                 items.Add( d.ID, d );
                 Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetDeterministicHashCode(), $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
                 /*if ( d is ShirtPackData )
@@ -86,6 +96,7 @@ namespace DynamicGameAssets.PackData
             var data = smapiPack.LoadAsset<List<T>>( json ) ?? new List<T>();
             foreach ( var d in data )
             {
+                Log.Trace( "Loading data<" + typeof( T ) + ">..." );
                 others.Add( d );
                 d.parent = this;
                 d.original = ( T ) d.Clone();

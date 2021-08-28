@@ -182,6 +182,7 @@ namespace JA_to_DGA
             // recipe done elsewhere
             item.Edibility = data.Edibility;
             item.EdibleIsDrink = data.EdibleIsDrink;
+            item.ContextTags = data.ContextTags;
             if ( data.EdibleBuffs != null )
             {
                 item.EdibleBuffs = new DynamicGameAssets.PackData.ObjectPackData.FoodBuffsData()
@@ -354,7 +355,11 @@ namespace JA_to_DGA
                         phase.TextureColorChoices = new string[] { $"{texPathBase}:{i + 3}" };
 
                     phase.Scythable = data.HarvestWithScythe;
-                    phase.HarvestedNewPhase = data.RegrowthPhase;
+                    if ( data.RegrowthPhase != -1 )
+                    {
+                        Log.Warn( "Regrowth phase adjusted for " + data.Name + "; see documentation for details." );
+                        phase.HarvestedNewPhase = data.Phases.Count - 2;
+                    }
 
                     var productObj = objs.FirstOrDefault( o => o.ID == data.Product.ToString() );
                     int productObjPrice = 0;

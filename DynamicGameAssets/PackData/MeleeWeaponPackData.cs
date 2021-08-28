@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Tools;
 
@@ -58,7 +59,7 @@ namespace DynamicGameAssets.PackData
 
         public override void OnDisabled()
         {
-            MyUtility.iterateAllItems( ( item ) =>
+            SpaceUtility.iterateAllItems( ( item ) =>
             {
                 if ( item is CustomMeleeWeapon cweapon )
                 {

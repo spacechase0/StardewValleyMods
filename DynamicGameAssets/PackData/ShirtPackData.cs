@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using SpaceShared;
 using StardewValley;
 
 namespace DynamicGameAssets.PackData
@@ -37,7 +38,7 @@ namespace DynamicGameAssets.PackData
 
         public override void OnDisabled()
         {
-            MyUtility.iterateAllItems( ( item ) =>
+            SpaceUtility.iterateAllItems( ( item ) =>
             {
                 if ( item is CustomShirt cshirt )
                 {

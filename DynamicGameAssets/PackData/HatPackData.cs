@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SpaceShared;
 using StardewValley;
 
 namespace DynamicGameAssets.PackData
@@ -40,7 +41,7 @@ namespace DynamicGameAssets.PackData
 
         public override void OnDisabled()
         {
-            MyUtility.iterateAllItems( ( item ) =>
+            SpaceUtility.iterateAllItems( ( item ) =>
             {
                 if ( item is CustomHat chat )
                 {

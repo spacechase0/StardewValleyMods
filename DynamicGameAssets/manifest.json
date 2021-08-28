@@ -15,5 +15,6 @@
         {
             "UniqueID": "spacechase0.SpaceCore"
         }
-    ]
+    ],
+    "RequiredForEveryone": true
 }

@@ -225,6 +225,7 @@ namespace JA_to_DGA
             Log.Info( "Done!" );
             Log.Info( "Note: You need to restart the game to use the new content pack (including for migrations)." );
             Log.Info( "Please do not upload converted packs for mods that you don't have permission to do!" );
+            Log.Info( "NOTE: Regrowing crops work differently in DGA than in JA! See the making content packs documentation for detail." );
         }
     }
 }

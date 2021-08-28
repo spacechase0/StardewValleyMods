@@ -11,15 +11,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DynamicGameAssets
+namespace SpaceShared
 {
-    class MyUtility
+    class SpaceUtility
     {
         public static void iterateAllTerrainFeatures( Func<TerrainFeature, TerrainFeature> action )
         {
             foreach ( GameLocation location in Game1.locations )
             {
-                MyUtility._recursiveIterateLocation( location, action );
+                SpaceUtility._recursiveIterateLocation( location, action );
             }
         }
         protected static void _recursiveIterateLocation( GameLocation l, Func<TerrainFeature, TerrainFeature> action )
@@ -30,7 +30,7 @@ namespace DynamicGameAssets
                 {
                     if ( b.indoors.Value != null )
                     {
-                        MyUtility._recursiveIterateLocation( b.indoors.Value, action );
+                        SpaceUtility._recursiveIterateLocation( b.indoors.Value, action );
                     }
                 }
             }
@@ -70,26 +70,26 @@ namespace DynamicGameAssets
         {
             foreach ( GameLocation location in Game1.locations )
             {
-                MyUtility._recursiveIterateLocation( location, action );
+                SpaceUtility._recursiveIterateLocation( location, action );
             }
             foreach ( Farmer farmer in Game1.getAllFarmers() )
             {
                 IList<Item> list = farmer.Items;
                 for ( int i = 0; i < list.Count; ++i )
                 {
-                    list[ i ] = MyUtility._recursiveIterateItem( list[ i ], action );
+                    list[ i ] = SpaceUtility._recursiveIterateItem( list[ i ], action );
                 }
                 //farmer.Items = list;
-                farmer.shirtItem.Value = ( Clothing ) MyUtility._recursiveIterateItem( farmer.shirtItem.Value, action );
-                farmer.pantsItem.Value = ( Clothing ) MyUtility._recursiveIterateItem( farmer.pantsItem.Value, action );
-                farmer.boots.Value = ( Boots ) MyUtility._recursiveIterateItem( farmer.boots.Value, action );
-                farmer.hat.Value = ( Hat ) MyUtility._recursiveIterateItem( farmer.hat.Value, action );
-                farmer.leftRing.Value = ( Ring ) MyUtility._recursiveIterateItem( farmer.leftRing.Value, action );
-                farmer.rightRing.Value = ( Ring ) MyUtility._recursiveIterateItem( farmer.rightRing.Value, action );
+                farmer.shirtItem.Value = ( Clothing ) SpaceUtility._recursiveIterateItem( farmer.shirtItem.Value, action );
+                farmer.pantsItem.Value = ( Clothing ) SpaceUtility._recursiveIterateItem( farmer.pantsItem.Value, action );
+                farmer.boots.Value = ( Boots ) SpaceUtility._recursiveIterateItem( farmer.boots.Value, action );
+                farmer.hat.Value = ( Hat ) SpaceUtility._recursiveIterateItem( farmer.hat.Value, action );
+                farmer.leftRing.Value = ( Ring ) SpaceUtility._recursiveIterateItem( farmer.leftRing.Value, action );
+                farmer.rightRing.Value = ( Ring ) SpaceUtility._recursiveIterateItem( farmer.rightRing.Value, action );
                 list = farmer.itemsLostLastDeath;
                 for ( int i = list.Count - 1; i >= 0; --i )
                 {
-                    list[ i ] = MyUtility._recursiveIterateItem( list[ i ], action );
+                    list[ i ] = SpaceUtility._recursiveIterateItem( list[ i ], action );
                     if ( list[ i ] == null )
                         list.RemoveAt( i );
                 }
@@ -143,7 +143,7 @@ namespace DynamicGameAssets
                 for ( int i = list.Count - 1; i >= 0; --i )
                 {
                     // this one acts funny when returning null
-                    var v = ( Furniture ) MyUtility._recursiveIterateItem( list[ i ], action );
+                    var v = ( Furniture ) SpaceUtility._recursiveIterateItem( list[ i ], action );
                     if ( v == null )
                         list.RemoveAt( i );
                     else
@@ -158,7 +158,7 @@ namespace DynamicGameAssets
                 {
                     if ( list[ i ] != null )
                     {
-                        list[ i ] = MyUtility._recursiveIterateItem( list[ i ], action );
+                        list[ i ] = SpaceUtility._recursiveIterateItem( list[ i ], action );
                     }
                 }
                 ( l as IslandFarmHouse ).fridge.Value.clearNulls();
@@ -170,7 +170,7 @@ namespace DynamicGameAssets
                 {
                     if ( list[ i ] != null )
                     {
-                        list[ i ] = MyUtility._recursiveIterateItem( list[ i ], action );
+                        list[ i ] = SpaceUtility._recursiveIterateItem( list[ i ], action );
                     }
                     ( l as FarmHouse ).fridge.Value.clearNulls();
                 }
@@ -179,11 +179,11 @@ namespace DynamicGameAssets
             {
                 if ( character is Child && ( character as Child ).hat.Value != null )
                 {
-                    ( character as Child ).hat.Value = ( Hat ) MyUtility._recursiveIterateItem( ( character as Child ).hat.Value, action );
+                    ( character as Child ).hat.Value = ( Hat ) SpaceUtility._recursiveIterateItem( ( character as Child ).hat.Value, action );
                 }
                 if ( character is Horse && ( character as Horse ).hat.Value != null )
                 {
-                    ( character as Horse ).hat.Value = ( Hat ) MyUtility._recursiveIterateItem( ( character as Horse ).hat.Value, action );
+                    ( character as Horse ).hat.Value = ( Hat ) SpaceUtility._recursiveIterateItem( ( character as Horse ).hat.Value, action );
                 }
             }
             if ( l is BuildableGameLocation )
@@ -192,7 +192,7 @@ namespace DynamicGameAssets
                 {
                     if ( b.indoors.Value != null )
                     {
-                        MyUtility._recursiveIterateLocation( b.indoors.Value, action );
+                        SpaceUtility._recursiveIterateLocation( b.indoors.Value, action );
                     }
                     if ( b is Mill )
                     {
@@ -201,7 +201,7 @@ namespace DynamicGameAssets
                         {
                             if ( list[ i ] != null )
                             {
-                                list[ i ] = MyUtility._recursiveIterateItem( list[ i ], action );
+                                list[ i ] = SpaceUtility._recursiveIterateItem( list[ i ], action );
                             }
                         }
                     }
@@ -216,7 +216,7 @@ namespace DynamicGameAssets
                         {
                             if ( list[ i ] != null )
                             {
-                                list[ i ] = MyUtility._recursiveIterateItem( list[ i ], action );
+                                list[ i ] = SpaceUtility._recursiveIterateItem( list[ i ], action );
                             }
                         }
                     }
@@ -225,7 +225,7 @@ namespace DynamicGameAssets
             var toRemove = new List<Vector2>();
             foreach ( var key in l.objects.Keys )
             {
-                var ret = (StardewValley.Object ) MyUtility._recursiveIterateItem( l.objects[ key ], action );
+                var ret = (StardewValley.Object ) SpaceUtility._recursiveIterateItem( l.objects[ key ], action );
                 if ( ret == null )
                     toRemove.Add( key );
                 else
@@ -239,7 +239,7 @@ namespace DynamicGameAssets
             {
                 if ( d.item != null )
                 {
-                    d.item = MyUtility._recursiveIterateItem( d.item, action );
+                    d.item = SpaceUtility._recursiveIterateItem( d.item, action );
                     if ( d.item == null )
                         toRemove2.Add( d );
                 }
@@ -263,7 +263,7 @@ namespace DynamicGameAssets
                     {
                         if ( list[ ii ] != null )
                         {
-                            list[ ii ] = MyUtility._recursiveIterateItem( list[ ii ], action );
+                            list[ ii ] = SpaceUtility._recursiveIterateItem( list[ ii ], action );
                         }
                     }
                 }
@@ -274,14 +274,14 @@ namespace DynamicGameAssets
                     {
                         if ( list[ ii ] != null )
                         {
-                            list[ ii ] = MyUtility._recursiveIterateItem( list[ ii ], action );
+                            list[ ii ] = SpaceUtility._recursiveIterateItem( list[ ii ], action );
                         }
                     }
                     ( o as Chest ).clearNulls();
                 }
                 if ( o.heldObject.Value != null )
                 {
-                    o.heldObject.Value = ( StardewValley.Object ) MyUtility._recursiveIterateItem( o.heldObject.Value, action );
+                    o.heldObject.Value = ( StardewValley.Object ) SpaceUtility._recursiveIterateItem( o.heldObject.Value, action );
                 }
             }
             if ( i is Tool t )
@@ -291,7 +291,7 @@ namespace DynamicGameAssets
                 {
                     if ( list[ ii ] != null )
                     {
-                        list[ ii ] = (StardewValley.Object) MyUtility._recursiveIterateItem( list[ ii ], action );
+                        list[ ii ] = (StardewValley.Object) SpaceUtility._recursiveIterateItem( list[ ii ], action );
                     }
                 }
             }

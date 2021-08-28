@@ -5,6 +5,7 @@ using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -116,7 +117,7 @@ namespace DynamicGameAssets.PackData
 
         public override void OnDisabled()
         {
-            MyUtility.iterateAllItems((item) =>
+            SpaceUtility.iterateAllItems((item) =>
             {
                 if (item is IDGAItem jfurn)
                 {
