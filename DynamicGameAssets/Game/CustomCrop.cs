@@ -177,15 +177,18 @@ namespace DynamicGameAssets.Game
                     {
                         cropQuality = 0;
                     }*/
-                    Item harvestedItem = drop.Item.Choose( r ).Create();
-                    if ( harvestedItem is StardewValley.Object obj )
-                        obj.Quality = cropQuality;
-                    if ( Data.Colors != null )
+                    Item harvestedItem = drop.Item.Choose( r )?.Create();
+                    if ( harvestedItem != null )
                     {
-                        if ( harvestedItem is StardewValley.Objects.ColoredObject colObj )
-                            colObj.color.Value = this.tintColor.Value;
-                        else if ( harvestedItem is CustomObject cobj )
-                            cobj.ObjectColor = this.tintColor.Value;
+                        if ( harvestedItem is StardewValley.Object obj )
+                            obj.Quality = cropQuality;
+                        if ( Data.Colors != null )
+                        {
+                            if ( harvestedItem is StardewValley.Objects.ColoredObject colObj )
+                                colObj.color.Value = this.tintColor.Value;
+                            else if ( harvestedItem is CustomObject cobj )
+                                cobj.ObjectColor = this.tintColor.Value;
+                        }
                     }
                     if ( ( int ) this.harvestMethod == 1 )
                     {
@@ -201,22 +204,28 @@ namespace DynamicGameAssets.Game
                         {
                             DelayedAction.playSoundAfterDelay( "coin", 260, junimoHarvester.currentLocation );
                         }
-                        if ( junimoHarvester != null )
+                        if ( harvestedItem != null )
                         {
-                            junimoHarvester.tryToAddItemToHut( harvestedItem.getOne() );
-                        }
-                        else
-                        {
-                            for ( int i = 0; i < numToHarvest; ++i )
-                                Game1.createItemDebris( harvestedItem.getOne(), new Vector2( xTile * 64 + 32, yTile * 64 + 32 ), -1 );
+                            if ( junimoHarvester != null )
+                            {
+                                junimoHarvester.tryToAddItemToHut( harvestedItem.getOne() );
+                            }
+                            else
+                            {
+                                for ( int i = 0; i < numToHarvest; ++i )
+                                    Game1.createItemDebris( harvestedItem.getOne(), new Vector2( xTile * 64 + 32, yTile * 64 + 32 ), -1 );
+                            }
                         }
                         success = true;
                     }
                     else
                     {
-                        if ( junimoHarvester == null )
+                        if ( harvestedItem != null )
                         {
-                            for ( ; numToHarvest > 0 && Game1.player.addItemToInventoryBool( harvestedItem.getOne() ); --numToHarvest ) ;
+                            if ( junimoHarvester == null )
+                            {
+                                for ( ; numToHarvest > 0 && Game1.player.addItemToInventoryBool( harvestedItem.getOne() ); --numToHarvest ) ;
+                            }
                         }
 
                         if ( junimoHarvester != null || numToHarvest == 0 )
@@ -229,8 +238,11 @@ namespace DynamicGameAssets.Game
                             }
                             else
                             {
-                                for ( int i = 0; i < numToHarvest; ++i )
-                                    junimoHarvester.tryToAddItemToHut( harvestedItem.getOne() );
+                                if ( harvestedItem != null )
+                                {
+                                    for ( int i = 0; i < numToHarvest; ++i )
+                                        junimoHarvester.tryToAddItemToHut( harvestedItem.getOne() );
+                                }
                             }
                             if ( r.NextDouble() < Game1.player.team.AverageLuckLevel() / 1500.0 + Game1.player.team.AverageDailyLuck() / 1200.0 + 9.9999997473787516E-05 )
                             {
