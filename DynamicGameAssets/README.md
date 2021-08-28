@@ -342,7 +342,7 @@ This should be an array of an an object called `HarvestedDrop`. A `HarvestedDrop
 | `MininumHarvestedQuantity` | `int` | Default: `1` | The minimum amount of this item to drop. |
 | `MaximumHarvestedQuantity` | `int` | Default: `1` | The maximum amount of this item to drop. |
 | `ExtraQuantityChance` | `float` | Default: `0` | A chance (between `0` and `0.9`, with `0.5` being 50%) for the quantity to increase. If increased, the check will run again, and again, until the check fails. |
-| `Item` | `WeightedItem[]` | Required | The items to choose between for when dropping this. |
+| `Item` | `WeightedItem[]` | Required | The items to choose between for when dropping this. NOTE: The item value for a WeightedItem can be null in this case, which means nothing will drop. This can be used to make a chance to drop something, or nothing at all. |
 
 Example:
 
