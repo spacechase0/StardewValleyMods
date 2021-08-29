@@ -33,6 +33,7 @@ using System.Runtime.CompilerServices;
 
 // TODO: Shirts don't work properly if JA is installed? (Might look funny, might make you run out of GPU memory thanks to SpaceCore tilesheet extensions)
 // TODO: Cooking recipes show when crafting, but not in the collection.
+// TODO: Recipes in stores don't show the correct ingredients
 
 // TODO: Converter & Migration
 // TODO: Objects: Donatable to museum? Then need to do museum rewards...
@@ -124,6 +125,7 @@ namespace DynamicGameAssets
             helper.ConsoleCommands.Add( "dga_force", "Do not use", OnForceCommand );
             helper.ConsoleCommands.Add( "dga_reload", "Reload all content packs.", OnReloadCommand/*, ReloadCommandAutoComplete*/ );
             helper.ConsoleCommands.Add( "dga_clean", "Remove all invalid items from the currently loaded save.", OnCleanCommand );
+            helper.ConsoleCommands.Add( "dga_store", "`dga_store [mod.id] - Get a store containing everything for free (optionally from a specific content pack).", OnStoreCommand );
 
             harmony = new Harmony( ModManifest.UniqueID );
             harmony.PatchAll();
@@ -460,6 +462,47 @@ namespace DynamicGameAssets
             } );
         }
 
+        private void OnStoreCommand( string cmd, string[] args )
+        {
+            if ( args.Length > 1 )
+            {
+                Log.Error( "Too many arguments" );
+                return;
+            }
+            if ( args.Length == 0 )
+            {
+                Dictionary<ISalable, int[]> stuff = new();
+                foreach ( var pack in contentPacks )
+                {
+                    foreach ( var data in pack.Value.items.Values )
+                    {
+                        var item = data.ToItem();
+                        if ( item != null )
+                            stuff.Add( item, new int[] { 0, item is DynamicGameAssets.Game.CustomCraftingRecipe ? 1 : int.MaxValue } );
+                    }
+                }
+                Game1.activeClickableMenu = new ShopMenu( stuff );
+            }
+            else
+            {
+                if ( !contentPacks.ContainsKey( args[ 0 ] ) )
+                {
+                    Log.Error( "Invalid pack ID" );
+                    return;
+                }
+                var pack = contentPacks[ args[ 0 ] ];
+
+                Dictionary<ISalable, int[]> stuff = new();
+                foreach ( var data in pack.items.Values )
+                {
+                    var item = data.ToItem();
+                    if ( item != null )
+                        stuff.Add( item, new int[] { 0, item is DynamicGameAssets.Game.CustomCraftingRecipe ? 1 : int.MaxValue } );
+                }
+                Game1.activeClickableMenu = new ShopMenu( stuff );
+            }
+        }
+
         public static void AddContentPack( ContentPack pack )
         {
             contentPacks.Add( pack.smapiPack.Manifest.UniqueID, pack );
@@ -522,16 +565,30 @@ namespace DynamicGameAssets
 
                     foreach ( var recipe in pack.items.Values.OfType<CraftingRecipePackData>() )
                     {
-                        var crecipe = new DGACustomCraftingRecipe(recipe);
-                        customCraftingRecipes.Add( crecipe );
-                        ( recipe.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Add( recipe.CraftingDataKey, crecipe );
+                        try
+                        {
+                            var crecipe = new DGACustomCraftingRecipe(recipe);
+                            customCraftingRecipes.Add( crecipe );
+                            ( recipe.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Add( recipe.CraftingDataKey, crecipe );
+                        }
+                        catch ( Exception e )
+                        {
+                            Log.Error( "Failed when creating crafting recipe implementation for " + recipe.ID + "! " + e );
+                        }
                     }
 
                     foreach ( var recipe in pack.others.OfType<ForgeRecipePackData>() )
                     {
-                        var crecipe = new DGACustomForgeRecipe(recipe);
-                        customForgeRecipes.Add( crecipe );
-                        CustomForgeRecipe.Recipes.Add( crecipe );
+                        try
+                        {
+                            var crecipe = new DGACustomForgeRecipe(recipe);
+                            customForgeRecipes.Add( crecipe );
+                            CustomForgeRecipe.Recipes.Add( crecipe );
+                        }
+                        catch ( Exception e )
+                        {
+                            Log.Error( "Failed when creating forge recipe implementation! " + e );
+                        }
                     }
                 }
                 catch ( Exception e )
@@ -666,17 +723,24 @@ namespace DynamicGameAssets
             {
                 foreach ( var shopEntry in cp.Value.others.OfType< ShopEntryPackData >() )
                 {
-                    if ( shopEntry.Enabled )
+                    try
                     {
-                        if ( !State.TodaysShopEntries.ContainsKey( shopEntry.ShopId ) )
-                            State.TodaysShopEntries.Add( shopEntry.ShopId, new List<ShopEntry>() );
-                        State.TodaysShopEntries[ shopEntry.ShopId ].Add( new ShopEntry()
+                        if ( shopEntry.Enabled )
                         {
-                            Item = shopEntry.Item.Create(),//MakeItemFrom( shopEntry.Item, cp.Value ),
-                            Quantity = shopEntry.MaxSold,
-                            Price = shopEntry.Cost,
-                            CurrencyId = shopEntry.Currency == null ? null : (int.TryParse( shopEntry.Currency, out int intCurr ) ? intCurr : $"{cp.Key}/{shopEntry.Currency}".GetDeterministicHashCode())
-                        } );
+                            if ( !State.TodaysShopEntries.ContainsKey( shopEntry.ShopId ) )
+                                State.TodaysShopEntries.Add( shopEntry.ShopId, new List<ShopEntry>() );
+                            State.TodaysShopEntries[ shopEntry.ShopId ].Add( new ShopEntry()
+                            {
+                                Item = shopEntry.Item.Create(),//MakeItemFrom( shopEntry.Item, cp.Value ),
+                                Quantity = shopEntry.MaxSold,
+                                Price = shopEntry.Cost,
+                                CurrencyId = shopEntry.Currency == null ? null : ( int.TryParse( shopEntry.Currency, out int intCurr ) ? intCurr : $"{cp.Key}/{shopEntry.Currency}".GetDeterministicHashCode() )
+                            } );
+                        }
+                    }
+                    catch ( Exception e )
+                    {
+                        Log.Error( "Error making shop entry from " + cp.Value.smapiPack.Manifest.Name + ": " + e );
                     }
                 }
             }

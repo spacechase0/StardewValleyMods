@@ -226,7 +226,7 @@ namespace DynamicGameAssets.Game
 
         public override Item getOne()
         {
-            var ret = new CustomBasicFurniture(Data);
+            var ret = new CustomFishTankFurniture(Data);
             ret._GetOneFrom(this);
             return ret;
         }

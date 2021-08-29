@@ -433,6 +433,13 @@ namespace DynamicGameAssets.Game
                     break;
             }
         }
+        public override Item getOne()
+        {
+            var ret = new CustomMeleeWeapon( Data );
+            // TODO: the field from tailoring boots over another?
+            ret._GetOneFrom( this );
+            return ret;
+        }
 
         public void RecalculateAppliedForges( bool force = false )
         {

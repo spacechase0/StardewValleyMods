@@ -183,7 +183,7 @@ namespace DynamicGameAssets.Game
 
         public override Item getOne()
         {
-            var ret = new CustomBasicFurniture(Data);
+            var ret = new CustomStorageFurniture(Data);
             ret._GetOneFrom(this);
             return ret;
         }

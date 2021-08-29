@@ -79,6 +79,8 @@ namespace DynamicGameAssets.Game
             return false;
         }
 
+        public override string DisplayName { get => Data.Name; set { } }
+
         public override string getDescription()
         {
             return Data.Description;

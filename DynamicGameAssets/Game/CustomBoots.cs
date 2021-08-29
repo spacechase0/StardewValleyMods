@@ -70,5 +70,12 @@ namespace DynamicGameAssets.Game
             var tex = Data.parent.GetTexture( Data.Texture, 16, 16 );
             spriteBatch.Draw( tex.Texture, location + new Vector2( ( int ) ( 32f * scaleSize ), ( int ) ( 32f * scaleSize ) ), tex.Rect, color * transparency, 0f, new Vector2( 8f, 8f ) * scaleSize, 4f * scaleSize, SpriteEffects.None, layerDepth );
         }
+        public override Item getOne()
+        {
+            var ret = new CustomBoots( Data );
+            // TODO: the field from tailoring boots over another?
+            ret._GetOneFrom( this );
+            return ret;
+        }
     }
 }

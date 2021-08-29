@@ -170,6 +170,8 @@ namespace DynamicGameAssets.PackData
                     }
                     else if ( !lastProp.PropertyType.IsPrimitive && Data == null )
                         lastProp.SetValue( lastObj, null );
+                    else if ( !lastProp.PropertyType.IsPrimitive && lastProp.PropertyType.IsArray )
+                        lastProp.SetValue( lastObj, ( Data as JArray ).ToObject( lastProp.PropertyType ) );
                     else if ( !lastProp.PropertyType.IsPrimitive )
                         lastProp.SetValue( lastObj, ( Data as JObject ).ToObject( lastProp.PropertyType ) );
                     else

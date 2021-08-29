@@ -751,6 +751,8 @@ These were implemented for a more optimal solution than Content Patcher Animatio
 
 NOTE: These can be a little tricky, since `TargetRect` needs to be the exact rectangle the game uses to draw it. Overlapping rectangles, like drawing half the target area, will not be animated. For some cases, such as the tools tilesheet, you may need to look (or get someone else to look) in the game's source code to figure out what to use for `TargetRect`.
 
+You don't need to use these to animate DGA objects from your pack; you can just use the corresponding item's `Texture` property to animate it directly.
+
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
 | `TargetTexture` | `string` | Required | The target asset path of the texture to override. If you are overriding another DGA pack, then prefix it with `DGA/{MOD_ID}/` (with `{MOD_ID}` being the mod ID of the mod whose texture you want to override). | (unknown, untested) |
@@ -804,10 +806,11 @@ This is done in the following order:
  Here is an example with an Object:
 
  ```json
-   {
+  {
     "ID": "Mysterious Circle",
     "Category": "Vegetable",
     "Texture": "items16.png:1@20, items16.png:2@20, items16.png:3@20",
+    "TextureColor": "items16.png:4",
     "Edibility": 9,
     "EdibileIsDrink": true,
     "EdibleBuffs": {
@@ -826,7 +829,6 @@ This is done in the following order:
     },
     "DynamicFields": [
       {
-        // These will apply when it is NOT spring
         "Conditions": { "Season |contains=spring": false },
         "SellPrice": 500,
         "Texture": "items16.png:0",
@@ -837,6 +839,11 @@ This is done in the following order:
           "Amount": -250,
           "NormalTextTranslationKey": "object.Mysterious Circle.gift.Pam.spring"
         }
+      },
+      {
+        // No `Conditions` means always true. We just want to use our config values
+        "UniversalGiftTaste": "{{Actual Settings/Mysterious Circle Universal Gift Taste}}",
+        "DummyField": false // Test for extension data, you can ignore this
       },
       {
         "Conditions": { "Query: {{Actual Settings/Animated Mysterious Circle}} = false and {{Actual Settings/Static Mysterious Circle Color}} = 'White'": true },

@@ -141,7 +141,7 @@ namespace DynamicGameAssets
 
         public override Item CreateResult()
         {
-            // TODO: Random based on game seed and day
+            // TODO: Random based on game seed and day?
             return data.Result.Choose().Create();
         }
     }
