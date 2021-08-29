@@ -36,7 +36,6 @@ namespace DynamicGameAssets.PackData
                         key = key.Replace( "{{" + opt.Key + "}}", val );
                         value = value.Replace( "{{" + opt.Key + "}}", val );
                     }
-                    Log.Debug( "cond:" + key + " " + value );
                     conds.Add( key, value );
                 }
 
@@ -45,7 +44,13 @@ namespace DynamicGameAssets.PackData
                                                                     parent.parent.conditionVersion,
                                                                     parent.parent.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[ 0 ] );
             }
-            Log.Debug( "match:" + ConditionsObject.IsMatch + " " +ConditionsObject.ValidationError );
+            if ( !ConditionsObject.IsValid )
+            {
+                string id = parent.ToString();
+                if ( parent is CommonPackData cpd )
+                    id += $"[{cpd.ID}]";
+                Log.Error( "Invalid conditions object for " + id + "! Error from CP: " + ConditionsObject.ValidationError );
+            }
             if ( ConditionsObject.IsMatch )
                 return true;
             return false;

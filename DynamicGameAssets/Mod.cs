@@ -35,7 +35,7 @@ using System.Runtime.CompilerServices;
 // TODO: Cooking recipes show when crafting, but not in the collection.
 
 // TODO: Converter & Migration
-// TODO: Objects: Donatable to museum?
+// TODO: Objects: Donatable to museum? Then need to do museum rewards...
 // TODO: Objects (or general): Deconstructor output patch?
 // TODO: Objects: Fish tank display?
 // TODO: Objects: Stuff on tables, while eating?
