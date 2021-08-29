@@ -126,7 +126,7 @@ namespace JA_to_DGA
                         break;
                     // no idea how to do !f - maybe with query?
                     default:
-                        Log.Warn( "Unhandled event precondition: " + toks[ 0 ] );
+                        Log.Warn( "Unhandled event precondition: " + req );
                         break;
                 }
             }

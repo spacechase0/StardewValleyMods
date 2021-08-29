@@ -61,6 +61,7 @@ namespace DynamicGameAssets.PackData
                 LoadOthers<ForgeRecipePackData>( "forge-recipes.json" );
                 LoadOthers<MachineRecipePackData>( "machine-recipes.json" );
                 LoadOthers<TailoringRecipePackData>( "tailoring-recipes.json" );
+                LoadOthers<TextureOverridePackData>( "texture-overrides.json" );
 
                 LoadConfig();
             }
@@ -164,16 +165,14 @@ namespace DynamicGameAssets.PackData
                 Log.Trace( $"Loading config entry {d.Name}..." );
                 configs.Add( d );
 
-                gmcm.SetDefaultIngameOptinValue( smapiPack.Manifest, d.VisibleInGame );
                 gmcm.StartNewPage( smapiPack.Manifest, d.OnPage );
                 switch ( d.ElementType )
                 {
                     case ConfigPackData.ConfigElementType.Label:
-                        gmcm.RegisterLabel( smapiPack.Manifest, d.Name, d.Description );
-                        break;
-
-                    case ConfigPackData.ConfigElementType.PageLabel:
-                        gmcm.RegisterPageLabel( smapiPack.Manifest, d.Name, d.Description, d.PageToGoTo );
+                        if ( d.PageToGoTo != null )
+                            gmcm.RegisterPageLabel( smapiPack.Manifest, d.Name, d.Description, d.PageToGoTo );
+                        else
+                            gmcm.RegisterLabel( smapiPack.Manifest, d.Name, d.Description );
                         break;
 
                     case ConfigPackData.ConfigElementType.Paragraph:
@@ -194,7 +193,7 @@ namespace DynamicGameAssets.PackData
                         string[] valid = d.ValidValues?.Split( ',' )?.Select( s => s.Trim() )?.ToArray();
                         switch ( d.ValueType )
                         {
-                            case ConfigPackData.ConfigValueType.Bool:
+                            case ConfigPackData.ConfigValueType.Boolean:
                                 gmcm.RegisterSimpleOption( smapiPack.Manifest, d.Name, d.Description, () => currConfig.Values[ key ].ToString() == "true" ? true : false, ( v ) => currConfig.Values[ key ] = v ? "true" : "false" );
                                 break;
 
@@ -329,6 +328,7 @@ namespace DynamicGameAssets.PackData
                 try
                 {
                     t = smapiPack.LoadAsset<Texture2D>( pathItself );
+                    t.Name = Path.Combine( "DGA", smapiPack.Manifest.UniqueID, pathItself ).Replace( '\\', '/' );
                 }
                 catch ( Exception e )
                 {

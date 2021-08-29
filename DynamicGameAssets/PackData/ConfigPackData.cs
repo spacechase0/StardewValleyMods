@@ -12,7 +12,6 @@ namespace DynamicGameAssets.PackData
         public enum ConfigElementType
         {
             Label,
-            PageLabel,
             Paragraph,
             Image,
             ConfigOption,
@@ -20,13 +19,12 @@ namespace DynamicGameAssets.PackData
 
         public enum ConfigValueType
         {
-            Bool,
+            Boolean,
             Integer,
             Float,
             String,
         }
 
-        public bool VisibleInGame { get; set; } = true;
         public string OnPage { get; set; } = "";
         public ConfigElementType ElementType { get; set; } = ConfigElementType.ConfigOption;
 

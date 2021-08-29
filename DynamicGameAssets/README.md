@@ -16,6 +16,11 @@ Contents
     * [DynamicField](#dynamicfield)
 * [Pack Data](#pack-data)
     * [Common](#common)
+    * [Config Schema](#config-schema)
+        * [Label](#label)
+        * [Paragraph](#paragraph)
+        * [Image](#image)
+        * [Config Option](#config-option)
     * [Big Craftables](#big-craftables)
     * [Boots](#boots)
     * [Crafting Recipes](#crafting-recipes)
@@ -42,7 +47,8 @@ Contents
     * [Shirts](#shirts)
     * [Shop Entries](#shop-entires)
     * [Tailoring Recipes](#tailoring-recipes)
-    * [Extra Information]
+    * [Texture Overrides](#texture-overrides)
+    * [Extra Information](#extra-information)
         * [Vaild Shop IDs for Vanilla](#valid-shop-ids-for-vanilla)
 * [Dynamic Fields](#dynamic-fields)
 * [Additional Resources](#additional-resources)
@@ -212,6 +218,87 @@ These fields are common to every type of pack data.
 | `Enabled` | `bool` | Default: `true` | Whether or not the item is currently enabled. Useful with dynamic fields. | `true` |
 | `EnableConditions` | `Dictionary<string, string>` | Default: `null` | Checked at the beginning of each day, these can changed the `Enabled` field dynamically. If disabled, instances of this item will be removed from the game world. Some data might linger; if a pack data type has a "Traces" section, it will describe what will linger. These can be removed, too, by setting `RemoveAllTracesWhenDisabled` to `true` for those pack data types. | `false` |
 | `DynamicFields` | `DynamicField[]` | Default: `null` | See the (Dynamic Fields)[#] section. | `false` |
+
+### Config Schema entries
+DGA supports custom config files for packs, integrated with GMCM. You make a list of entries to show in Generic Mod Config Menu (GMCM) (or in the config file, although labels, paragraphcs, images, and pages don't work there), and it works automatically. Everything shows up in the order they show in the config schema.
+
+Config fields are usable in dynamic field conditions. (Remember, dynamic fields are only applied at the beginning of each day.) They are very useful with Content Patcher's (Query token)[https://github.com/Pathoschild/StardewMods/blob/stable/ContentPatcher/docs/author-tokens-guide.md#query-expressions]. To learn how to use config options in your dynamic fields, see the [Dynamic Fields](#dynamic-fields) section.
+
+Every config schema entry has two fields, plus more depending on the type.
+| Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
+| `OnPage` | `string` | Default: `""` (the main page) | The page that this entry will show up on. |
+| `ElementType` | `ConfigElementType` | Defeault: `"ConfigOption"` | The type of element this is. | 
+
+There are four `ConfigElementType`s for config schema entries. Each one has a section below.
+
+#### Label
+A label is a large piece of text that shows up on the page, and can have a tooltip when hovered. This shows up in GMCM only.
+
+| Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
+| `Name` | `string` | Required | The text for this label. |
+| `Description` | `string` | Default: `""` (no tooltip) | The tooltip for this label. |
+| `PageToGoTo` | `string` | Default: `null` (doesn't go anywhere) | The name of the page to go when this label is clicked. |
+
+#### Paragraph
+A paragraph is a block of text that shows on the page. This shows up in GMCM only.
+
+| Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
+| `Name` | `string` | Required | The text for this paragraph. |
+
+#### Image
+An image entry is just a centered image. This shows up in GMCM only.
+
+| Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
+| `ImagePath` | `string` | Required | The path to the image in your content pack. NOTE: This is not a `Texture`, meaning it does not support indexing or animations. This is just a file path, to display a full image (unless you specify `ImageRect`, see below). |
+| `ImageRect` | `Rectangle` | Default: `null` (show full image) | The subrect of the image to show. |
+| `ImageScale` | `int` | Default: `4` (matches vanilla image scale) | How scaled up the image should be. |
+
+#### ConfigOption
+A config option is an actual configurable option for the user. This showsi n both config.json and GMCM.
+
+Every config schema entry has three fields, plus more depending on the type.
+| Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
+| `Name` | `string` | Required | The name for this config option. |
+| `Description` | `string` | Default: `""` (no tooltip) | The tooltip for this config option. |
+| `ValueType` | `ConfigValueType` | Defeault: `"ConfigOption"` | The type of element this is. | 
+
+There are four `ConfigValueType`s for config option entries. Each one has a section below.
+
+##### Boolean
+A boolean is just a true or false value. In GMCM, this is a checkbox.
+
+| Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
+| `DefaultValue` | `bool` | Required | The default value for this option. |
+
+##### Integer
+An integer is a whole number. In GMCM, this is a slider if `ValidValues` is specified; otherwise, it is a textbox.
+
+| Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
+| `DefaultValue` | `int` | Required | The default value for this option. |
+| `ValidValues` | `int, int[, int]` | Default: `null` (anything is valid) | The valid values for this option. If specified, this creates a slider in GMCM. The first integer is the minimum value, and the second integer is the maximum value. The third, if specified, is the "step size" of the slider (the increments in which the value changes). |
+
+##### Float
+An float is a number that can have a value after the decimal point. In GMCM, this is a slider if `ValidValues` is specified; otherwise, it is a textbox.
+
+| Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
+| `DefaultValue` | `int` | Required | The default value for this option. |
+| `ValidValues` | `int, int[, int]` | Default: `null` (anything is valid) | The valid values for this option. If specified, this creates a slider in GMCM. The first float is the minimum value, and the second float is the maximum value. The third, if specified, is the "step size" of the slider (the increments in which the value changes). |
+
+##### String
+An string is just some text. In GMCM, this is a dropdown if `ValidValues` is specified; otherwise, it is a textbox.
+
+| Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
+| `DefaultValue` | `string` | Required | The default value for this option. |
+| `ValidValues` | `string, string[, string[, string...]]` | Default: `null` (anything is valid) | The valid values for this option. If specified, this creates a dropdown in GMCM. The valid values must be comma separated. |
 
 ### Big Craftables
 Big craftables live in `big-craftables.json`.
@@ -657,9 +744,21 @@ Tailoring Recipes live in `talioring-recipes.json`
 | `ConsumeSecondItem` | `bool` | Default: `true` | Whether or not the second item should be consumed. | `true` |
 | `CraftedItem` | `WeightedItem[]` | Required | The item to craft. | (unknown, untested) |
 
+### Texture Overrides
+Texture overrides live in `texture-overrides.json`.
 
+These were implemented for a more optimal solution than Content Patcher Animations for some cases. (There's a chance it works better with mods like SpriteMaster, too.')
+
+NOTE: These can be a little tricky, since `TargetRect` needs to be the exact rectangle the game uses to draw it. Overlapping rectangles, like drawing half the target area, will not be animated. For some cases, such as the tools tilesheet, you may need to look (or get someone else to look) in the game's source code to figure out what to use for `TargetRect`.
+
+| Field | Type | Required or Default value | Description | Dynamic |
+| --- | --- | --- | --- | --- |
+| `TargetTexture` | `string` | Required | The target asset path of the texture to override. If you are overriding another DGA pack, then prefix it with `DGA/{MOD_ID}/` (with `{MOD_ID}` being the mod ID of the mod whose texture you want to override). | (unknown, untested) |
+| `TargetRect` | `Rectangle` | Required | The target rectangle on `TargetTexture` to override. See the note above this table. | (unknown, untested) |
+| `SourceTexture` | `Texture` | Required | The source texture from your pack to use. This supports texture indexing (such as `texture.png:5`, with 5 being the index) and animations as well, just like other fields of type `Texture`. For the case of indexing, the size of the tilesheet's squares should be the same as `TargetRect`. | `true` |
 
 ## ExtraInformation
+
 ### Valid Shop IDs for Vanilla
 
 * BlueBoat
@@ -689,7 +788,9 @@ Tailoring Recipes live in `talioring-recipes.json`
 * Dwarf
 
 ## Dynamic Fields
-Dynamic fields let you change a field of an item at the beginning of the day based on Content Patcher conditions.
+Dynamic fields let you change a field of an item at the beginning of the day based on Content Patcher conditions, as well as values from config.json (if you have a config schema).
+
+Values from the config file are specified in the format of `{{My Option}}`, or `{{My Page/My Option}}` if the option was on another page.
 
 First, you specify the conditions in a "Conditions" field, in the standard Content Patcher format. Then, the rest of the fields specified will override fields in the item.
 
@@ -736,6 +837,22 @@ This is done in the following order:
           "Amount": -250,
           "NormalTextTranslationKey": "object.Mysterious Circle.gift.Pam.spring"
         }
+      },
+      {
+        "Conditions": { "Query: {{Actual Settings/Animated Mysterious Circle}} = false and {{Actual Settings/Static Mysterious Circle Color}} = 'White'": true },
+        "Texture": "items16.png:0"
+      },
+      {
+        "Conditions": { "Query: {{Actual Settings/Animated Mysterious Circle}} = false and {{Actual Settings/Static Mysterious Circle Color}} = 'Red'": true },
+        "Texture": "items16.png:1"
+      },
+      {
+        "Conditions": { "Query: {{Actual Settings/Animated Mysterious Circle}} = false and {{Actual Settings/Static Mysterious Circle Color}} = 'Green'": true },
+        "Texture": "items16.png:2"
+      },
+      {
+        "Conditions": { "Query: {{Actual Settings/Animated Mysterious Circle}} = false and {{Actual Settings/Static Mysterious Circle Color}} = 'Blue'": true },
+        "Texture": "items16.png:3"
       }
     ]
   },

@@ -51,12 +51,22 @@ namespace DynamicGameAssets.PackData
             return false;
         }
 
-        public void Apply( object obj_ )
+        public void Apply( BasePackData obj_ )
         {
             foreach ( var singleField in Fields )
             {
                 string Field = singleField.Key;
                 JToken Data = singleField.Value;
+                if ( Data.ToString().Contains( "{{" ) )
+                {
+                    string strData = Data.ToString();
+                    foreach ( var opt in obj_.parent.configIndex )
+                    {
+                        string val = obj_.parent.currConfig.Values[ opt.Key ].ToString();
+                        strData = strData.Replace( "{{" + opt.Key + "}}", val );
+                    }
+                    Data = JToken.Parse( strData );
+                }
                 object obj = obj_;
 
                 string[] fields = Field.Split( '.' );
@@ -70,6 +80,7 @@ namespace DynamicGameAssets.PackData
                 {
                     string field = field_;
 
+                    loopBeginning:
                     // Prepare index value
                     object ind = null;
                     if ( field.Contains( '[' ) )
@@ -88,11 +99,23 @@ namespace DynamicGameAssets.PackData
                     // Get the property the field refers to
                     var prop = obj.GetType().GetProperty( field );
                     if ( prop == null )
+                    {
+                        // This hack is to let you use dynamic fields on extension data fields (such as the PortraitFor field in PicturePortraits).
+                        if ( fCount == 0 )
+                        {
+                            field = $"ExtensionData[{field}]";
+                            goto loopBeginning; // Evil, I know. Whatever
+                        }
+
                         throw new ArgumentException( $"No such property '{field}' on {obj}" );
+                    }
+                    else
+                    {
+                        lastObj = obj;
+                        obj = prop.GetValue( obj );
+                    }
 
                     // Direct indices to next field
-                    lastObj = obj;
-                    obj = prop.GetValue( obj );
                     if ( ind is int indI && obj is Array arr )
                     {
                         if ( arr.Length <= indI )
@@ -124,19 +147,19 @@ namespace DynamicGameAssets.PackData
                 if ( lastInd == null )
                 {
                     if ( lastProp.PropertyType == typeof( int ) )
-                        lastProp.SetValue( lastObj, ( int ) ( long ) Data );
+                        lastProp.SetValue( lastObj, int.Parse( ( string ) Data ) );
                     else if ( lastProp.PropertyType == typeof( float ) )
-                        lastProp.SetValue( lastObj, ( float ) ( double ) Data );
+                        lastProp.SetValue( lastObj, float.Parse( ( string ) Data ) );
                     else if ( lastProp.PropertyType == typeof( bool ) )
-                        lastProp.SetValue( lastObj, ( bool ) Data );
+                        lastProp.SetValue( lastObj, bool.Parse( ( string ) Data ) );
                     else if ( lastProp.PropertyType == typeof( string ) )
                         lastProp.SetValue( lastObj, ( string ) Data );
                     else if ( Nullable.GetUnderlyingType( lastProp.PropertyType ) != null )
                     {
                         if ( lastProp.PropertyType == typeof( int? ) )
-                            lastProp.SetValue( lastObj, ( int ) ( long ) Data );
+                            lastProp.SetValue( lastObj, int.Parse( ( string ) Data ) );
                         else if ( lastProp.PropertyType == typeof( float? ) )
-                            lastProp.SetValue( lastObj, ( float ) ( double ) Data );
+                            lastProp.SetValue( lastObj, float.Parse( ( string ) Data ) );
                         else
                             lastProp.SetValue( lastObj, Data );
                     }
@@ -150,12 +173,14 @@ namespace DynamicGameAssets.PackData
                 else
                 {
                     object setVal = null;
-                    if ( Data is long )
-                        setVal = ( int ) ( long ) Data;
-                    else if ( Data is double )
-                        setVal = ( float ) ( double ) Data;
-                    else if ( Data is bool || Data is string )
-                        setVal = Data;
+                    if ( Data.Type == JTokenType.Integer )
+                        setVal = int.Parse( ( string ) Data );
+                    else if ( Data.Type == JTokenType.Float )
+                        setVal = float.Parse( ( string ) Data );
+                    else if ( Data.Type == JTokenType.Boolean )
+                        setVal = bool.Parse( ( string ) Data );
+                    else if ( Data.Type == JTokenType.String )
+                        setVal = ( string ) Data;
                     else
                     {
                         Type t = null;

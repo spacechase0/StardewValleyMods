@@ -217,6 +217,7 @@ namespace DynamicGameAssets
 
             customMachineRecipes.Clear();
             customTailoringRecipes.Clear();
+            SpriteBatchTileSheetAdjustments.packOverrides.Clear();
 
             // Dynamic fields
             foreach ( var cp in contentPacks )
@@ -248,6 +249,12 @@ namespace DynamicGameAssets
                     {
                         if ( tailoringRecipe.Enabled )
                             customTailoringRecipes.Add( tailoringRecipe );
+                    }
+                    else if ( newOther is TextureOverridePackData textureOverride )
+                    {
+                        if ( !SpriteBatchTileSheetAdjustments.packOverrides.ContainsKey( textureOverride.TargetTexture ) )
+                            SpriteBatchTileSheetAdjustments.packOverrides.Add( textureOverride.TargetTexture, new() );
+                        SpriteBatchTileSheetAdjustments.packOverrides[ textureOverride.TargetTexture ].Add( textureOverride.TargetRect, textureOverride );
                     }
                 }
                 cp.Value.others = newOthers;

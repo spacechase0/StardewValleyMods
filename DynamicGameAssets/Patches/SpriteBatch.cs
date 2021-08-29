@@ -1,3 +1,4 @@
+using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
@@ -16,6 +17,8 @@ namespace DynamicGameAssets.Patches
         internal static Dictionary< Rectangle, TexturedRect > hatOverrides = new Dictionary<Rectangle, TexturedRect>();
         internal static Dictionary< Rectangle, TexturedRect > shirtOverrides = new Dictionary<Rectangle, TexturedRect>();
         internal static Dictionary< Rectangle, TexturedRect > pantsOverrides = new Dictionary<Rectangle, TexturedRect>();
+
+        internal static Dictionary<string, Dictionary<Rectangle, TextureOverridePackData>> packOverrides = new();
 
         public static void Prefix1( SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, SpriteEffects effects, float layerDepth )
         {
@@ -109,6 +112,18 @@ namespace DynamicGameAssets.Patches
                             sourceRect.Y += 688;
                         return;
                     }
+                }
+            }
+
+            if ( tex.Name == null )
+                return;
+            if ( packOverrides.ContainsKey( tex.Name ) )
+            {
+                if ( packOverrides[ tex.Name ].ContainsKey( sourceRect ) )
+                {
+                    var texRect = packOverrides[ tex.Name ][ sourceRect ].GetCurrentTexture();
+                    tex = texRect.Texture;
+                    sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle( 0, 0, tex.Width, tex.Height );
                 }
             }
         }
