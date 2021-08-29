@@ -6,6 +6,7 @@
 * Fixed able to level up spells with zero free points.
 * Fixed initial spells no longer learned immediately.
 * Fixed PyTK still marked as a requirement in the manifest.
+* Fixed unable to learn spell from meteors outside the farm.
 * Improved translations. Thanks to Evelyon (added Spanish)!
 
 ## 0.5.5

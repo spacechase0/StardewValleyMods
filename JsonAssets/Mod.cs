@@ -1940,10 +1940,10 @@ namespace JsonAssets
             {
                 foreach (var animal in farm.Animals.Values)
                     this.FixFarmAnimal(animal);
-
-                foreach (var clump in farm.resourceClumps.Where(this.FixResourceClump).ToArray())
-                    farm.resourceClumps.Remove(clump);
             }
+
+            foreach (var clump in loc.resourceClumps.Where(this.FixResourceClump).ToArray())
+                loc.resourceClumps.Remove(clump);
         }
 
         /// <summary>Fix item IDs contained by a building.</summary>
