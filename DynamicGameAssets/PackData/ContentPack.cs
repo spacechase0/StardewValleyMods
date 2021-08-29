@@ -106,20 +106,38 @@ namespace DynamicGameAssets.PackData
             if (!smapiPack.HasFile(json))
                 return;
 
-            var data = smapiPack.LoadAsset<List<T>>( json ) ?? new List<T>();
-            foreach ( var d in data )
+            try
             {
-                if ( items.ContainsKey( d.ID ) )
-                    throw new ArgumentException( "Duplicate found! " + d.ID );
-                Log.Trace( "Loading data<" + typeof( T ) + ">: " + d.ID );
-                items.Add( d.ID, d );
-                Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetDeterministicHashCode(), $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
-                /*if ( d is ShirtPackData )
-                    Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetDeterministicHashCode() + 1, $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
-                */d.parent = this;
-                d.original = ( T ) d.Clone();
-                d.original.original = d.original;
-                d.PostLoad();
+                var data = smapiPack.LoadAsset<List<T>>( json ) ?? new List<T>();
+                foreach ( var d in data )
+                {
+                    if ( items.ContainsKey( d.ID ) )
+                    {
+                        Log.Error( "Duplicate found! " + d.ID );
+                        continue;
+                    }
+                    try
+                    {
+                        Log.Trace( "Loading data<" + typeof( T ) + ">: " + d.ID );
+                        items.Add( d.ID, d );
+                        Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetDeterministicHashCode(), $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
+                        /*if ( d is ShirtPackData )
+                            Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetDeterministicHashCode() + 1, $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
+                        */
+                        d.parent = this;
+                        d.original = ( T ) d.Clone();
+                        d.original.original = d.original;
+                        d.PostLoad();
+                    }
+                    catch ( Exception e )
+                    {
+                        Log.Error( "Exception loading item \"" + d.ID + "\": " + e );
+                    }
+                }
+            }
+            catch ( Exception e )
+            {
+                Log.Error( "Exception loading data of type " + typeof( T ) + ": " + e );
             }
         }
 
@@ -128,15 +146,31 @@ namespace DynamicGameAssets.PackData
             if (!smapiPack.HasFile(json))
                 return;
 
-            var data = smapiPack.LoadAsset<List<T>>( json ) ?? new List<T>();
-            foreach ( var d in data )
+            try
             {
-                Log.Trace( "Loading data<" + typeof( T ) + ">..." );
-                others.Add( d );
-                d.parent = this;
-                d.original = ( T ) d.Clone();
-                d.original.original = d.original;
-                d.PostLoad();
+                var data = smapiPack.LoadAsset<List<T>>( json ) ?? new List<T>();
+                int i = 0;
+                foreach ( var d in data )
+                {
+                    Log.Trace( "Loading data<" + typeof( T ) + ">..." );
+                    try
+                    {
+                        others.Add( d );
+                        d.parent = this;
+                        d.original = ( T ) d.Clone();
+                        d.original.original = d.original;
+                        d.PostLoad();
+                        ++i;
+                    }
+                    catch ( Exception e )
+                    {
+                        Log.Debug( $"Exception loading item entry {i} from {json}: " + e );
+                    }
+                }
+            }
+            catch ( Exception e )
+            {
+                Log.Error( "Exception loading data of type " + typeof( T ) + ": " + e );
             }
         }
 
@@ -146,6 +180,9 @@ namespace DynamicGameAssets.PackData
                 return;
 
             var gmcm = Mod.instance.Helper.ModRegistry.GetApi< IGenericModConfigMenuApi >( "spacechase0.GenericModConfigMenu" );
+            if ( gmcm == null )
+                return;
+
             gmcm.UnregisterModConfig( smapiPack.Manifest );
             gmcm.RegisterModConfig( smapiPack.Manifest, this.ResetToDefaultConfig, () => smapiPack.WriteJsonFile( "config.json", currConfig ) );
             gmcm.SetDefaultIngameOptinValue( smapiPack.Manifest, true );
@@ -187,6 +224,11 @@ namespace DynamicGameAssets.PackData
                         string key = d.Name;
                         if ( !string.IsNullOrEmpty( d.OnPage ) )
                             key = d.OnPage + "/" + key;
+                        if ( configIndex.ContainsKey( key ) )
+                        {
+                            Log.Error( "Duplicate config key: " + key );
+                            continue;
+                        }
                         configIndex.Add( key, d );
                         currConfig.Values.Add( key, readConfig.Values.ContainsKey( key ) ? readConfig.Values[ key ] : d.DefaultValue );
 

@@ -515,21 +515,28 @@ namespace DynamicGameAssets
                     Log.Error( "Must specify a DGA.ConditionsFormatVersion as a semantic version! (See documentation.)" );
                     continue;
                 }
-                var pack = new ContentPack( cp );
-                contentPacks.Add( cp.Manifest.UniqueID, pack );
-
-                foreach ( var recipe in pack.items.Values.OfType<CraftingRecipePackData>() )
+                try
                 {
-                    var crecipe = new DGACustomCraftingRecipe(recipe);
-                    customCraftingRecipes.Add( crecipe );
-                    ( recipe.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Add( recipe.CraftingDataKey, crecipe );
+                    var pack = new ContentPack( cp );
+                    contentPacks.Add( cp.Manifest.UniqueID, pack );
+
+                    foreach ( var recipe in pack.items.Values.OfType<CraftingRecipePackData>() )
+                    {
+                        var crecipe = new DGACustomCraftingRecipe(recipe);
+                        customCraftingRecipes.Add( crecipe );
+                        ( recipe.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Add( recipe.CraftingDataKey, crecipe );
+                    }
+
+                    foreach ( var recipe in pack.others.OfType<ForgeRecipePackData>() )
+                    {
+                        var crecipe = new DGACustomForgeRecipe(recipe);
+                        customForgeRecipes.Add( crecipe );
+                        CustomForgeRecipe.Recipes.Add( crecipe );
+                    }
                 }
-
-                foreach ( var recipe in pack.others.OfType<ForgeRecipePackData>() )
+                catch ( Exception e )
                 {
-                    var crecipe = new DGACustomForgeRecipe(recipe);
-                    customForgeRecipes.Add( crecipe );
-                    CustomForgeRecipe.Recipes.Add( crecipe );
+                    Log.Error( "Exception loading content pack \"" + cp.Manifest.Name + "\": " + e );
                 }
             }
         }
