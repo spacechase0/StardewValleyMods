@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ICookingSkillApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IDynamicGameAssetsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IExpandedPreconditionsUtilityApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IEntoaroxFrameworkApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IManaBarApi.cs" />

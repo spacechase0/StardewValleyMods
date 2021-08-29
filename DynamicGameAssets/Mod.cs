@@ -83,6 +83,7 @@ namespace DynamicGameAssets
 
         internal static Dictionary<int, string> itemLookup = new Dictionary<int, string>();
 
+        // TODO: Should these and SpriteBatchTileSheetAdjustments.packOverrides (and similar overrides) go into State? For splitscreen
         internal static List<DGACustomCraftingRecipe> customCraftingRecipes = new List<DGACustomCraftingRecipe>();
         internal static List<DGACustomForgeRecipe> customForgeRecipes = new List<DGACustomForgeRecipe>();
         internal static Dictionary<string, List<MachineRecipePackData>> customMachineRecipes = new Dictionary<string, List<MachineRecipePackData>>();
@@ -132,6 +133,11 @@ namespace DynamicGameAssets
             harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix3 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
             harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( float ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix4 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
             harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix5 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
+        }
+
+        public override object GetApi()
+        {
+            return new Api();
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -249,12 +255,6 @@ namespace DynamicGameAssets
                     {
                         if ( tailoringRecipe.Enabled )
                             customTailoringRecipes.Add( tailoringRecipe );
-                    }
-                    else if ( newOther is TextureOverridePackData textureOverride )
-                    {
-                        if ( !SpriteBatchTileSheetAdjustments.packOverrides.ContainsKey( textureOverride.TargetTexture ) )
-                            SpriteBatchTileSheetAdjustments.packOverrides.Add( textureOverride.TargetTexture, new() );
-                        SpriteBatchTileSheetAdjustments.packOverrides[ textureOverride.TargetTexture ].Add( textureOverride.TargetRect, textureOverride );
                     }
                 }
                 cp.Value.others = newOthers;
@@ -411,6 +411,7 @@ namespace DynamicGameAssets
                 ( recipe.data.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Remove( recipe.data.CraftingDataKey );
             customCraftingRecipes.Clear();
             customForgeRecipes.Clear();
+            SpriteBatchTileSheetAdjustments.packOverrides.Clear();
             foreach ( var state in _state.GetActiveValues() )
             {
                 state.Value.TodaysShopEntries.Clear();
@@ -459,9 +460,14 @@ namespace DynamicGameAssets
             } );
         }
 
-        public static void AddContentPack( IManifest manifest, string dir )
+        public static void AddContentPack( ContentPack pack )
         {
-            Log.Debug( $"Loading fake content pack for \"{manifest.Name}\"..." );
+            contentPacks.Add( pack.smapiPack.Manifest.UniqueID, pack );
+        }
+
+        internal static void AddEmbeddedContentPack( IManifest manifest, string dir )
+        {
+            Log.Debug( $"Loading embedded content pack for \"{manifest.Name}\"..." );
             if ( manifest.ExtraFields == null ||
                  !manifest.ExtraFields.ContainsKey( "DGA.FormatVersion" ) ||
                  !int.TryParse( manifest.ExtraFields[ "DGA.FormatVersion" ].ToString(), out int ver ) )
@@ -679,6 +685,7 @@ namespace DynamicGameAssets
             SpriteBatchTileSheetAdjustments.hatOverrides.Clear();
             SpriteBatchTileSheetAdjustments.shirtOverrides.Clear();
             SpriteBatchTileSheetAdjustments.pantsOverrides.Clear();
+            SpriteBatchTileSheetAdjustments.packOverrides.Clear();
             foreach ( var cp in contentPacks )
             {
                 foreach ( var item in cp.Value.items.Values )
@@ -782,6 +789,15 @@ namespace DynamicGameAssets
                         string fullId = $"{cp.Key}/{pants.ID}";
                         int which = fullId.GetDeterministicHashCode();
                         SpriteBatchTileSheetAdjustments.pantsOverrides.Add( new Rectangle( which % 10 * 192, which / 10 * 688, 192, 688 ), tex );
+                    }
+                }
+                foreach ( var other in cp.Value.others )
+                {
+                    if ( other is TextureOverridePackData textureOverride )
+                    {
+                        if ( !SpriteBatchTileSheetAdjustments.packOverrides.ContainsKey( textureOverride.TargetTexture ) )
+                            SpriteBatchTileSheetAdjustments.packOverrides.Add( textureOverride.TargetTexture, new() );
+                        SpriteBatchTileSheetAdjustments.packOverrides[ textureOverride.TargetTexture ].Add( textureOverride.TargetRect, textureOverride );
                     }
                 }
             }

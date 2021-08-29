@@ -31,9 +31,9 @@ namespace DynamicGameAssets.PackData
 
         private Dictionary<string, int[]> animInfo = new Dictionary<string, int[]>(); // Index is full animation descriptor (items16.png:1@333/items16.png:2@333/items16.png:3@334), value is [frameDur1, frameDur2, frameDur3, ..., totalFrameDur]
 
-        internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
+        protected internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
 
-        internal List<BasePackData> others = new List<BasePackData>();
+        protected internal List<BasePackData> others = new List<BasePackData>();
 
         private List<ConfigPackData> configs = new();
         internal Dictionary<string, ConfigPackData> configIndex = new();
