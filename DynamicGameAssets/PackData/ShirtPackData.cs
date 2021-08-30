@@ -15,9 +15,9 @@ namespace DynamicGameAssets.PackData
     public class ShirtPackData : CommonPackData
     {
         [JsonIgnore]
-        public string Name => parent.smapiPack.Translation.Get( $"shirt.{ID}.name" );
+        public string Name => pack.smapiPack.Translation.Get( $"shirt.{ID}.name" );
         [JsonIgnore]
-        public string Description => parent.smapiPack.Translation.Get( $"shirt.{ID}.description" );
+        public string Description => pack.smapiPack.Translation.Get( $"shirt.{ID}.description" );
 
         public string TextureMale { get; set; }
         [DefaultValue( null )]
@@ -42,7 +42,7 @@ namespace DynamicGameAssets.PackData
             {
                 if ( item is CustomShirt cshirt )
                 {
-                    if ( cshirt.SourcePack == parent.smapiPack.Manifest.UniqueID && cshirt.Id == ID )
+                    if ( cshirt.SourcePack == pack.smapiPack.Manifest.UniqueID && cshirt.Id == ID )
                         return null;
                 }
                 return item;
@@ -56,7 +56,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return parent.GetTexture( TextureMale, 8, 32 );
+            return pack.GetTexture( TextureMale, 8, 32 );
         }
     }
 }

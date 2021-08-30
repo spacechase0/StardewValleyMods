@@ -12,8 +12,8 @@ namespace DynamicGameAssets.PackData
 {
     public abstract class BasePackData : ICloneable
     {
-        internal ContentPack parent;
-
+        internal ContentPack pack;
+        internal ContentIndexPackData parent;
         internal BasePackData original;
 
         /// <summary>

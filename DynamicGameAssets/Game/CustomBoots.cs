@@ -52,7 +52,7 @@ namespace DynamicGameAssets.Game
         public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
         {
             base.drawTooltip( spriteBatch, ref x, ref y, font, alpha, overrideText );
-            string str = "Mod: " + Data.parent.smapiPack.Manifest.Name;
+            string str = "Mod: " + Data.pack.smapiPack.Manifest.Name;
             Utility.drawTextWithShadow( spriteBatch, Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ), font, new Vector2( x + 16, y + 16 + 4 ), new Color( 100, 100, 100 ) );
             y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
         }
@@ -67,7 +67,7 @@ namespace DynamicGameAssets.Game
 
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
         {
-            var tex = Data.parent.GetTexture( Data.Texture, 16, 16 );
+            var tex = Data.pack.GetTexture( Data.Texture, 16, 16 );
             spriteBatch.Draw( tex.Texture, location + new Vector2( ( int ) ( 32f * scaleSize ), ( int ) ( 32f * scaleSize ) ), tex.Rect, color * transparency, 0f, new Vector2( 8f, 8f ) * scaleSize, 4f * scaleSize, SpriteEffects.None, layerDepth );
         }
         public override Item getOne()

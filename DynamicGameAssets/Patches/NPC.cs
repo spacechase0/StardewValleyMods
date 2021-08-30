@@ -75,7 +75,7 @@ namespace DynamicGameAssets.Patches
                 friendshipChangeMultiplier = 8;
 
                 if ( overrideEntry != null )
-                    response = data.parent.smapiPack.Translation.Get( overrideEntry.BirthdayTextTranslationKey ).ToString();
+                    response = data.pack.smapiPack.Translation.Get( overrideEntry.BirthdayTextTranslationKey ).ToString();
                 if ( response == null )
                 {
                     switch ( giftTaste )
@@ -101,7 +101,7 @@ namespace DynamicGameAssets.Patches
             else
             {
                 if ( overrideEntry != null )
-                    response = data.parent.smapiPack.Translation.Get( overrideEntry.NormalTextTranslationKey ).ToString();
+                    response = data.pack.smapiPack.Translation.Get( overrideEntry.NormalTextTranslationKey ).ToString();
                 if ( response == null )
                 {
                     string[] reactions = Game1.NPCGiftTastes[ npc.Name ].Split( '/' );

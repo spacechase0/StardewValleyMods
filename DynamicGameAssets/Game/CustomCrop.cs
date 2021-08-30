@@ -483,7 +483,7 @@ namespace DynamicGameAssets.Game
             float this_layerDepth = Mod.instance.Helper.Reflection.GetField< float >( this, "layerDepth" ).GetValue();
             float this_coloredLayerDepth = Mod.instance.Helper.Reflection.GetField< float >( this, "coloredLayerDepth" ).GetValue();
 
-            var currTex = Data.parent.GetMultiTexture( GetCurrentPhase().TextureChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 );
+            var currTex = Data.pack.GetMultiTexture( GetCurrentPhase().TextureChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 );
 
             Vector2 position = Game1.GlobalToLocal(Game1.viewport, this_drawPosition);
             /*
@@ -514,7 +514,7 @@ namespace DynamicGameAssets.Game
             Color tintColor = this.tintColor.Value;
             if ( GetCurrentPhase().TextureColorChoices != null )
             {
-                var colorTex = Data.parent.GetMultiTexture( GetCurrentPhase().TextureColorChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 ); ;
+                var colorTex = Data.pack.GetMultiTexture( GetCurrentPhase().TextureColorChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 ); ;
                 b.Draw( colorTex.Texture, position, colorTex.Rect, tintColor, rotation, new Vector2( 8f, 24f ), 4f, effect, this_coloredLayerDepth );
             }
         }

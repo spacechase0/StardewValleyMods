@@ -99,12 +99,12 @@ namespace DynamicGameAssets.PackData
             {
                 if ( tf is HoeDirt hd && hd.crop is CustomCrop ccrop )
                 {
-                    if ( ccrop.SourcePack == parent.smapiPack.Manifest.UniqueID && ccrop.Id == ID )
+                    if ( ccrop.SourcePack == pack.smapiPack.Manifest.UniqueID && ccrop.Id == ID )
                         hd.crop = null;
                 }
                 else if ( tf is CustomGiantCrop cgc )
                 {
-                    if ( cgc.SourcePack == parent.smapiPack.Manifest.UniqueID && cgc.Id == ID )
+                    if ( cgc.SourcePack == pack.smapiPack.Manifest.UniqueID && cgc.Id == ID )
                         return null;
                 }
                 return tf;
@@ -118,7 +118,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return parent.GetMultiTexture( Phases[ ^1 ].TextureChoices, 0, 16, 32 );
+            return pack.GetMultiTexture( Phases[ ^1 ].TextureChoices, 0, 16, 32 );
         }
 
         public override object Clone()

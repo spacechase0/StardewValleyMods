@@ -33,8 +33,9 @@ using System.Runtime.CompilerServices;
 
 // TODO: Shirts don't work properly if JA is installed? (Might look funny, might make you run out of GPU memory thanks to SpaceCore tilesheet extensions)
 // TODO: Cooking recipes show when crafting, but not in the collection.
-// TODO: Recipes in stores don't show the correct ingredients
+// TODO: Recipe items (ie. in stores) don't show the correct ingredients
 
+// TODO: Dynamic tokens equivalent
 // TODO: Converter & Migration
 // TODO: Objects: Donatable to museum? Then need to do museum rewards...
 // TODO: Objects (or general): Deconstructor output patch?
@@ -121,7 +122,7 @@ namespace DynamicGameAssets
             helper.Events.Display.MenuChanged += OnMenuChanged;
 
             helper.ConsoleCommands.Add( "dga_list", "List all items.", OnListCommand );
-            helper.ConsoleCommands.Add( "dga_add", "`dga_add <mod.id/ItemId> [amount] - Add an item to your inventory.", OnAddCommand, AddCommandAutoComplete );
+            helper.ConsoleCommands.Add( "dga_add", "`dga_add <mod.id/ItemId> [amount] - Add an item to your inventory.", OnAddCommand/*, AddCommandAutoComplete*/ );
             helper.ConsoleCommands.Add( "dga_force", "Do not use", OnForceCommand );
             helper.ConsoleCommands.Add( "dga_reload", "Reload all content packs.", OnReloadCommand/*, ReloadCommandAutoComplete*/ );
             helper.ConsoleCommands.Add( "dga_clean", "Remove all invalid items from the currently loaded save.", OnCleanCommand );
@@ -180,7 +181,7 @@ namespace DynamicGameAssets
             {
                 if ( farmer.boots.Value is CustomBoots cboots )
                 {
-                    string frame = cboots.Data.parent.GetTextureFrame( cboots.Data.FarmerColors );
+                    string frame = cboots.Data.pack.GetTextureFrame( cboots.Data.FarmerColors );
                     if ( prevBootsFrame.GetOrCreateValue( farmer ).Value != frame )
                     {
                         prevBootsFrame.AddOrUpdate( farmer, new Holder<string>(frame) );
@@ -192,40 +193,125 @@ namespace DynamicGameAssets
         
         private void OnDayStarted( object sender, DayStartedEventArgs e )
         {
-            // Enabled/disabled
-            foreach ( var cp in contentPacks )
-            {
-                foreach ( var data in cp.Value.items )
-                {
-                    if ( data.Value.EnableConditionsObject == null )
-                        data.Value.EnableConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
-                                                                                             data.Value.EnableConditions,
-                                                                                             cp.Value.conditionVersion,
-                                                                                             cp.Value.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[0] );
+            foreach ( var recipe in customCraftingRecipes )
+                ( recipe.data.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Remove( recipe.data.CraftingDataKey );
+            foreach ( var recipe in customForgeRecipes )
+                CustomForgeRecipe.Recipes.Remove( recipe );
 
-                    bool wasEnabled = data.Value.Enabled;
-                    data.Value.Enabled = data.Value.EnableConditionsObject.IsMatch;
-                    
-                    if ( !data.Value.Enabled && wasEnabled )
-                    {
-                        data.Value.OnDisabled();
-                    }
-                }
-                foreach ( var data in cp.Value.others )
-                {
-                    if ( data.EnableConditionsObject == null )
-                        data.EnableConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
-                                                                                       data.EnableConditions,
-                                                                                       cp.Value.conditionVersion,
-                                                                                       cp.Value.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[ 0 ] );
-
-                    data.Enabled = data.EnableConditionsObject.IsMatch;
-                }
-            }
-
+            customCraftingRecipes.Clear();
+            customForgeRecipes.Clear();
             customMachineRecipes.Clear();
             customTailoringRecipes.Clear();
             SpriteBatchTileSheetAdjustments.packOverrides.Clear();
+
+            // Enabled/disabled
+            foreach ( var cp in contentPacks )
+            {
+                void DoDisable( ContentIndexPackData parent )
+                {
+                    foreach ( var data in cp.Value.enableIndex[ parent ] )
+                    {
+                        bool wasEnabled = data.Enabled;
+                        data.Enabled = data.original.Enabled = false;
+
+                        if ( data is CommonPackData cdata && !cdata.Enabled && wasEnabled )
+                        {
+                            cdata.OnDisabled();
+                        }
+                        else if ( data is ContentIndexPackData cidata )
+                        {
+                            DoDisable( cidata );
+                        }
+                    }
+                }
+
+                void DoEnableDisable( ContentIndexPackData parent )
+                {
+                    foreach ( var data in cp.Value.enableIndex[ parent ] )
+                    {
+                        var conds = new Dictionary<string, string>();
+                        if ( data.EnableConditions != null )
+                        {
+                            foreach ( var cond in data.EnableConditions )
+                            {
+                                string key = cond.Key, value = cond.Value;
+                                foreach ( var opt in parent.pack.configIndex )
+                                {
+                                    string val = parent.pack.currConfig.Values[ opt.Key ].ToString();
+                                    if ( parent.pack.configIndex[ opt.Key ].ValueType == ConfigPackData.ConfigValueType.String )
+                                        val = "'" + val + "'";
+
+                                    key = key.Replace( "{{" + opt.Key + "}}", val );
+                                    value = value.Replace( "{{" + opt.Key + "}}", val );
+                                }
+                                conds.Add( key, value );
+                            }
+                        }
+
+                        data.EnableConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
+                                                                                       conds,
+                                                                                       cp.Value.conditionVersion,
+                                                                                       cp.Value.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[ 0 ] );
+                        if ( !data.EnableConditionsObject.IsValid )
+                            Log.Warn( "Invalid enable conditions for " + data + " " + data.pack.smapiPack.Manifest.Name + "! " + data.EnableConditionsObject.ValidationError );
+
+                        bool wasEnabled = data.Enabled;
+                        data.Enabled = data.original.Enabled = data.EnableConditionsObject.IsMatch;
+
+                        if ( data is CommonPackData cdata && !cdata.Enabled && wasEnabled )
+                        {
+                            cdata.OnDisabled();
+                        }
+                        else if ( data is ContentIndexPackData cidata )
+                        {
+                            if ( !cidata.Enabled && wasEnabled )
+                                DoDisable( cidata );
+                            else
+                                DoEnableDisable( cidata );
+                        }
+                    }
+                }
+
+                foreach ( var contentIndex in cp.Value.enableIndex.Keys.Where( ci => ci.parent == null ) )
+                    DoEnableDisable( contentIndex );
+            }
+
+            // Get active recipes
+            foreach ( var cp in contentPacks )
+            {
+                var pack = cp.Value;
+                foreach ( var recipe in pack.items.Values.OfType<CraftingRecipePackData>() )
+                {
+                    if ( !recipe.Enabled )
+                        continue;
+                    try
+                    {
+                        var crecipe = new DGACustomCraftingRecipe(recipe);
+                        customCraftingRecipes.Add( crecipe );
+                        ( recipe.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Add( recipe.CraftingDataKey, crecipe );
+                    }
+                    catch ( Exception e2 )
+                    {
+                        Log.Error( "Failed when creating crafting recipe implementation for " + recipe.ID + "! " + e2 );
+                    }
+                }
+
+                foreach ( var recipe in pack.others.OfType<ForgeRecipePackData>() )
+                {
+                    if ( !recipe.Enabled )
+                        continue;
+                    try
+                    {
+                        var crecipe = new DGACustomForgeRecipe(recipe);
+                        customForgeRecipes.Add( crecipe );
+                        CustomForgeRecipe.Recipes.Add( crecipe );
+                    }
+                    catch ( Exception e2 )
+                    {
+                        Log.Error( "Failed when creating forge recipe implementation! " + e2 );
+                    }
+                }
+            }
 
             // Dynamic fields
             foreach ( var cp in contentPacks )
@@ -328,7 +414,8 @@ namespace DynamicGameAssets
                 output += cp.Key + ":\n";
                 foreach ( var entry in cp.Value.items )
                 {
-                    output += "\t" + entry.Key + "\n";
+                    if ( entry.Value.Enabled )
+                        output += "\t" + entry.Key + "\n";
                 }
                 output += "\n";
             }
@@ -411,6 +498,8 @@ namespace DynamicGameAssets
             itemLookup.Clear();
             foreach ( var recipe in customCraftingRecipes )
                 ( recipe.data.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Remove( recipe.data.CraftingDataKey );
+            foreach ( var recipe in customForgeRecipes )
+                CustomForgeRecipe.Recipes.Remove( recipe );
             customCraftingRecipes.Clear();
             customForgeRecipes.Clear();
             SpriteBatchTileSheetAdjustments.packOverrides.Clear();
@@ -562,34 +651,6 @@ namespace DynamicGameAssets
                 {
                     var pack = new ContentPack( cp );
                     contentPacks.Add( cp.Manifest.UniqueID, pack );
-
-                    foreach ( var recipe in pack.items.Values.OfType<CraftingRecipePackData>() )
-                    {
-                        try
-                        {
-                            var crecipe = new DGACustomCraftingRecipe(recipe);
-                            customCraftingRecipes.Add( crecipe );
-                            ( recipe.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Add( recipe.CraftingDataKey, crecipe );
-                        }
-                        catch ( Exception e )
-                        {
-                            Log.Error( "Failed when creating crafting recipe implementation for " + recipe.ID + "! " + e );
-                        }
-                    }
-
-                    foreach ( var recipe in pack.others.OfType<ForgeRecipePackData>() )
-                    {
-                        try
-                        {
-                            var crecipe = new DGACustomForgeRecipe(recipe);
-                            customForgeRecipes.Add( crecipe );
-                            CustomForgeRecipe.Recipes.Add( crecipe );
-                        }
-                        catch ( Exception e )
-                        {
-                            Log.Error( "Failed when creating forge recipe implementation! " + e );
-                        }
-                    }
                 }
                 catch ( Exception e )
                 {

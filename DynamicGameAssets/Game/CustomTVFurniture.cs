@@ -47,7 +47,7 @@ namespace DynamicGameAssets.Game
             flipped.Value = false;
 
             var newConf = GetCurrentConfiguration();
-            var newTex = Data.parent.GetTexture( newConf.Texture, ( int ) newConf.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, ( int ) newConf.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
+            var newTex = Data.pack.GetTexture( newConf.Texture, ( int ) newConf.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, ( int ) newConf.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
 
             boundingBox.Width = ( int ) newConf.DisplaySize.X * Game1.tileSize;
             boundingBox.Height = newConf.CollisionHeight * Game1.tileSize;
@@ -84,8 +84,8 @@ namespace DynamicGameAssets.Game
             }
 
             var currConfig = GetCurrentConfiguration();
-            var currTex = Data.parent.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
-            var frontTex = currConfig.FrontTexture != null ? Data.parent.GetTexture(currConfig.FrontTexture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom) : null;
+            var currTex = Data.pack.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
+            var frontTex = currConfig.FrontTexture != null ? Data.pack.GetTexture(currConfig.FrontTexture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom) : null;
 
             if (Furniture.isDrawingLocationFurniture)
             {
@@ -147,7 +147,7 @@ namespace DynamicGameAssets.Game
         public void drawAtNonTileSpot(SpriteBatch spriteBatch, Vector2 location, float layerDepth, float alpha = 1f)
         {
             var currConfig = GetCurrentConfiguration();
-            var currTex = Data.parent.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
+            var currTex = Data.pack.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
 
             spriteBatch.Draw(currTex.Texture, location, currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, base.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
         }

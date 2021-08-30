@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,6 +36,8 @@ namespace DynamicGameAssets.PackData
 
         protected internal List<BasePackData> others = new List<BasePackData>();
 
+        internal Dictionary< ContentIndexPackData?, List<BasePackData> > enableIndex = new();
+
         private List<ConfigPackData> configs = new();
         internal Dictionary<string, ConfigPackData> configIndex = new();
         internal ConfigModel currConfig = new();
@@ -42,6 +45,7 @@ namespace DynamicGameAssets.PackData
         public ContentPack( IContentPack pack, ISemanticVersion condVer )
         {
             smapiPack = pack;
+
             if ( pack.Manifest.UniqueID != "null" )
             {
                 conditionVersion = condVer;
@@ -62,6 +66,8 @@ namespace DynamicGameAssets.PackData
                 LoadOthers<MachineRecipePackData>( "machine-recipes.json" );
                 LoadOthers<TailoringRecipePackData>( "tailoring-recipes.json" );
                 LoadOthers<TextureOverridePackData>( "texture-overrides.json" );
+
+                LoadIndex( "content.json" );
 
                 LoadConfig();
             }
@@ -101,10 +107,90 @@ namespace DynamicGameAssets.PackData
             return ( T ) ( object ) smapiPack.LoadAsset<Texture2D>( path.Substring( start.Length ) );
         }
 
-        private void LoadAndValidateItems< T >( string json ) where T : CommonPackData
+        private void LoadIndex( string json, ContentIndexPackData parent = null )
         {
-            if (!smapiPack.HasFile(json))
+            if ( !smapiPack.HasFile( json ) )
+            {
+                if ( parent != null )
+                    Log.Warn( "Missing json file: " + json );
                 return;
+            }
+            if ( parent == null )
+            {
+                parent = new ContentIndexPackData()
+                {
+                    pack = this,
+                    parent = null,
+                    ContentType = "ContentIndex",
+                    FilePath = json,
+                };
+                parent.original = ( ContentIndexPackData ) parent.Clone();
+                parent.original.original = parent.original;
+            }
+
+            try
+            {
+                var data = smapiPack.LoadAsset<List<ContentIndexPackData>>( json ) ?? new List<ContentIndexPackData>();
+                foreach ( var d in data )
+                {
+                    Log.Trace( "Loading data<" + typeof( ContentIndexPackData ) + "> " + d.ContentType + " " + d.FilePath + "..." );
+                    others.Add( d );
+                    if ( !enableIndex.ContainsKey( parent ) )
+                        enableIndex.Add( parent, new() );
+                    enableIndex[ parent ].Add( d );
+                    d.pack = this;
+                    d.parent = parent;
+                    d.original = ( ContentIndexPackData ) d.Clone();
+                    d.original.original = d.original;
+                    d.PostLoad();
+
+                    var packDataType = Type.GetType( "DynamicGameAssets.PackData." + d.ContentType + "PackData" );
+                    if ( packDataType == null )
+                    {
+                        Log.Error( "Invalid ContentType: " + d.ContentType );
+                        continue;
+                    }
+
+                    MethodInfo baseMethod = null;
+                    if ( packDataType == typeof( ContentIndexPackData ) )
+                        baseMethod = typeof( ContentPack ).GetMethod( nameof( LoadIndex ), BindingFlags.NonPublic | BindingFlags.Instance );
+                    else if ( packDataType.BaseType == typeof( CommonPackData ) )
+                        baseMethod = typeof( ContentPack ).GetMethod( nameof( LoadAndValidateItems ), BindingFlags.NonPublic | BindingFlags.Instance );
+                    else if ( packDataType.BaseType == typeof( BasePackData ) )
+                        baseMethod = typeof( ContentPack ).GetMethod( nameof( LoadOthers ), BindingFlags.NonPublic | BindingFlags.Instance );
+                    else
+                        throw new Exception( "this should never happen" );
+
+                    MethodInfo genMethod = baseMethod.IsGenericMethod ? baseMethod.MakeGenericMethod( packDataType ) : baseMethod;
+                    genMethod.Invoke( this, new object[] { d.FilePath, d } );
+                }
+            }
+            catch ( Exception e )
+            {
+                Log.Error( "Exception loading content index: \"" + json + "\": " + e );
+            }
+        }
+
+        private void LoadAndValidateItems< T >( string json, ContentIndexPackData parent = null ) where T : CommonPackData
+        {
+            if (!smapiPack.HasFile(json) )
+            {
+                if ( parent != null )
+                    Log.Warn( "Missing json file: " + json );
+                return;
+            }
+            if ( parent == null )
+            {
+                parent = new ContentIndexPackData()
+                {
+                    pack = this,
+                    parent = null,
+                    ContentType = typeof( T ).Name.Substring( 0, typeof( T ).Name.Length - "PackData".Length ),
+                    FilePath = json,
+                };
+                parent.original = ( ContentIndexPackData ) parent.Clone();
+                parent.original.original = parent.original;
+            }
 
             try
             {
@@ -120,11 +206,15 @@ namespace DynamicGameAssets.PackData
                     {
                         Log.Trace( "Loading data<" + typeof( T ) + ">: " + d.ID );
                         items.Add( d.ID, d );
+                        if ( !enableIndex.ContainsKey( parent ) )
+                            enableIndex.Add( parent, new() );
+                        enableIndex[ parent ].Add( d );
                         Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetDeterministicHashCode(), $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
                         /*if ( d is ShirtPackData )
                             Mod.itemLookup.Add( $"{smapiPack.Manifest.UniqueID}/{d.ID}".GetDeterministicHashCode() + 1, $"{smapiPack.Manifest.UniqueID}/{d.ID}" );
                         */
-                        d.parent = this;
+                        d.pack = this;
+                        d.parent = parent;
                         d.original = ( T ) d.Clone();
                         d.original.original = d.original;
                         d.PostLoad();
@@ -141,10 +231,26 @@ namespace DynamicGameAssets.PackData
             }
         }
 
-        private void LoadOthers<T>( string json ) where T : BasePackData
+        private void LoadOthers<T>( string json, ContentIndexPackData parent = null ) where T : BasePackData
         {
-            if (!smapiPack.HasFile(json))
+            if (!smapiPack.HasFile(json) )
+            {
+                if ( parent != null )
+                    Log.Warn( "Missing json file: " + json );
                 return;
+            }
+            if ( parent == null )
+            {
+                parent = new ContentIndexPackData()
+                {
+                    pack = this,
+                    parent = null,
+                    ContentType = typeof( T ).Name.Substring( 0, typeof( T ).Name.Length - "PackData".Length ),
+                    FilePath = json,
+                };
+                parent.original = ( ContentIndexPackData ) parent.Clone();
+                parent.original.original = parent.original;
+            }
 
             try
             {
@@ -156,16 +262,20 @@ namespace DynamicGameAssets.PackData
                     try
                     {
                         others.Add( d );
-                        d.parent = this;
+                        if ( !enableIndex.ContainsKey( parent ) )
+                            enableIndex.Add( parent, new() );
+                        enableIndex[ parent ].Add( d );
+                        d.pack = this;
+                        d.parent = parent;
                         d.original = ( T ) d.Clone();
                         d.original.original = d.original;
                         d.PostLoad();
-                        ++i;
                     }
                     catch ( Exception e )
                     {
                         Log.Debug( $"Exception loading item entry {i} from {json}: " + e );
                     }
+                    ++i;
                 }
             }
             catch ( Exception e )

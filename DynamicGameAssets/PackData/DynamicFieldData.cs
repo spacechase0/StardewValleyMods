@@ -27,10 +27,10 @@ namespace DynamicGameAssets.PackData
                 foreach ( var cond in Conditions )
                 {
                     string key = cond.Key, value = cond.Value;
-                    foreach ( var opt in parent.parent.configIndex )
+                    foreach ( var opt in parent.pack.configIndex )
                     {
-                        string val = parent.parent.currConfig.Values[ opt.Key ].ToString();
-                        if ( parent.parent.configIndex[ opt.Key ].ValueType == ConfigPackData.ConfigValueType.String )
+                        string val = parent.pack.currConfig.Values[ opt.Key ].ToString();
+                        if ( parent.pack.configIndex[ opt.Key ].ValueType == ConfigPackData.ConfigValueType.String )
                             val = "'" + val + "'";
 
                         key = key.Replace( "{{" + opt.Key + "}}", val );
@@ -41,8 +41,8 @@ namespace DynamicGameAssets.PackData
 
                 ConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
                                                                     conds,
-                                                                    parent.parent.conditionVersion,
-                                                                    parent.parent.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[ 0 ] );
+                                                                    parent.pack.conditionVersion,
+                                                                    parent.pack.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[ 0 ] );
             }
             if ( !ConditionsObject.IsValid )
             {
@@ -65,9 +65,9 @@ namespace DynamicGameAssets.PackData
                 if ( Data.ToString().Contains( "{{" ) )
                 {
                     string strData = Data.ToString();
-                    foreach ( var opt in obj_.parent.configIndex )
+                    foreach ( var opt in obj_.pack.configIndex )
                     {
-                        string val = obj_.parent.currConfig.Values[ opt.Key ].ToString();
+                        string val = obj_.pack.currConfig.Values[ opt.Key ].ToString();
                         strData = strData.Replace( "{{" + opt.Key + "}}", val );
                     }
                     Data = JToken.Parse( strData );

@@ -249,7 +249,7 @@ namespace DynamicGameAssets.Game
         public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
         {
             base.drawTooltip( spriteBatch, ref x, ref y, font, alpha, overrideText );
-            string str = "Mod: " + Data.parent.smapiPack.Manifest.Name;
+            string str = "Mod: " + Data.pack.smapiPack.Manifest.Name;
             Utility.drawTextWithShadow( spriteBatch, Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ), font, new Vector2( x + 16, y + 16 + 4 ), new Color( 100, 100, 100 ) );
             y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
         }
@@ -264,7 +264,7 @@ namespace DynamicGameAssets.Game
 
         public override void drawWhenHeld( SpriteBatch spriteBatch, Vector2 objectPosition, Farmer f )
         {
-            var tex = Data.parent.GetTexture( GetCurrentTexture(), 16, 32 );
+            var tex = Data.pack.GetTexture( GetCurrentTexture(), 16, 32 );
 
             spriteBatch.Draw( tex.Texture, objectPosition, tex.Rect, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, Math.Max( 0f, ( float ) ( f.getStandingY() + 3 ) / 10000f ) );
         }
@@ -278,7 +278,7 @@ namespace DynamicGameAssets.Game
             }
             bool shouldDrawStackNumber = ((drawStackNumber == StackDrawType.Draw && this.maximumStackSize() > 1 && this.Stack > 1) || drawStackNumber == StackDrawType.Draw_OneInclusive) && (double)scaleSize > 0.3 && this.Stack != int.MaxValue;
             
-            var tex = Data.parent.GetTexture( GetCurrentTexture(), 16, 32 );
+            var tex = Data.pack.GetTexture( GetCurrentTexture(), 16, 32 );
 
             Microsoft.Xna.Framework.Rectangle sourceRect = tex.Rect ?? new Rectangle( 0, 0, tex.Texture.Width, tex.Texture.Height );
             spriteBatch.Draw( tex.Texture, location + new Vector2( 32f, 32f ), sourceRect, color * transparency, 0f, new Vector2( 8f, 16f ), 4f * ( ( ( double ) scaleSize < 0.2 ) ? scaleSize : ( scaleSize / 2f ) ), SpriteEffects.None, layerDepth );
@@ -297,7 +297,7 @@ namespace DynamicGameAssets.Game
             int x = (int)this.tileLocation.X;
             int y = (int)this.tileLocation.Y;
 
-            var tex = Data.parent.GetTexture( GetCurrentTexture(), 16, 32 );
+            var tex = Data.pack.GetTexture( GetCurrentTexture(), 16, 32 );
             Vector2 scaleFactor = this.PulseIfWorking ? this.getScale() : Vector2.One;
             scaleFactor *= 4f;
             Vector2 position = Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, y * 64 - 64));
@@ -309,7 +309,7 @@ namespace DynamicGameAssets.Game
             if ( isTemporarilyInvisible )
                 return;
 
-            var tex = Data.parent.GetTexture( GetCurrentTexture(), 16, 32 );
+            var tex = Data.pack.GetTexture( GetCurrentTexture(), 16, 32 );
 
             Vector2 scaleFactor = this.PulseIfWorking ? this.getScale() : Vector2.One;
             scaleFactor *= 4f;
@@ -344,7 +344,7 @@ namespace DynamicGameAssets.Game
             if ( isTemporarilyInvisible )
                 return;
 
-            var tex = Data.parent.GetTexture( GetCurrentTexture(), 16, 32 );
+            var tex = Data.pack.GetTexture( GetCurrentTexture(), 16, 32 );
 
             Vector2 scaleFactor = this.PulseIfWorking ? this.getScale() : Vector2.One;
             scaleFactor *= 4f;

@@ -32,7 +32,10 @@ namespace DynamicGameAssets.Patches
             if ( Mod.itemLookup.ContainsKey( index ) )
             {
                 var data = Mod.Find( Mod.itemLookup[ index ] ) as ObjectPackData;
-                __result = !data.HideFromShippingCollection;
+                if ( data != null ) // This means it was disabled
+                    __result = !data.HideFromShippingCollection;
+                else
+                    __result = false;
                 return false;
             }
 

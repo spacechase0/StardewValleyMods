@@ -21,9 +21,9 @@ namespace DynamicGameAssets.PackData
         public string TextureColor { get; set; }
 
         [JsonIgnore]
-        public string Name => parent.smapiPack.Translation.Get( $"object.{ID}.name" );
+        public string Name => pack.smapiPack.Translation.Get( $"object.{ID}.name" );
         [JsonIgnore]
-        public string Description => parent.smapiPack.Translation.Get( $"object.{ID}.description" );
+        public string Description => pack.smapiPack.Translation.Get( $"object.{ID}.description" );
 
         [DefaultValue( null )]
         public string Plants { get; set; }
@@ -55,7 +55,7 @@ namespace DynamicGameAssets.PackData
         [JsonConverter( typeof( StringEnumConverter ) )]
         public VanillaCategory Category { get; set; } = VanillaCategory.Junk;
         [JsonIgnore]
-        public string CategoryTextOverride => parent.smapiPack.Translation.Get( $"object.{ID}.category" ).UsePlaceholder( false ).ToString();
+        public string CategoryTextOverride => pack.smapiPack.Translation.Get( $"object.{ID}.category" ).UsePlaceholder( false ).ToString();
 
         [DefaultValue( null )]
         public Color? CategoryColorOverride { get; set; } = null;
@@ -165,7 +165,7 @@ namespace DynamicGameAssets.PackData
             {
                 if ( item is CustomObject jobj )
                 {
-                    if ( jobj.SourcePack == parent.smapiPack.Manifest.UniqueID && jobj.Id == ID )
+                    if ( jobj.SourcePack == pack.smapiPack.Manifest.UniqueID && jobj.Id == ID )
                         return null;
                 }
                 return item;
@@ -175,7 +175,7 @@ namespace DynamicGameAssets.PackData
             {
                 foreach ( var farmer in Game1.getAllFarmers() )
                 {
-                    int fakeId = $"{parent.smapiPack.Manifest.UniqueID}/{ID}".GetDeterministicHashCode();
+                    int fakeId = $"{pack.smapiPack.Manifest.UniqueID}/{ID}".GetDeterministicHashCode();
                     if ( farmer.basicShipped.ContainsKey( fakeId ) )
                         farmer.basicShipped.Remove( fakeId );
                 }
@@ -189,7 +189,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return parent.GetTexture(Texture, 16, 16);
+            return pack.GetTexture(Texture, 16, 16);
         }
 
         internal string GetFakeData()

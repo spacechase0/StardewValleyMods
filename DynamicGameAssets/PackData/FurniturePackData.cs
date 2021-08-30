@@ -85,9 +85,9 @@ namespace DynamicGameAssets.PackData
         public List<FurnitureConfiguration> Configurations { get; set; } = new List<FurnitureConfiguration>();
 
         [JsonIgnore]
-        public string Name => parent.smapiPack.Translation.Get($"furniture.{ID}.name");
+        public string Name => pack.smapiPack.Translation.Get($"furniture.{ID}.name");
         [JsonIgnore]
-        public string Description => parent.smapiPack.Translation.Get($"furniture.{ID}.description");
+        public string Description => pack.smapiPack.Translation.Get($"furniture.{ID}.description");
 
         public int GetVanillaFurnitureType()
         {
@@ -110,9 +110,9 @@ namespace DynamicGameAssets.PackData
         public override TexturedRect GetTexture()
         {
             if ( Configurations.Count == 0 )
-                return parent.GetTexture( null, 16, 16 );
+                return pack.GetTexture( null, 16, 16 );
 
-            return parent.GetTexture(Configurations[0].Texture, (int) Configurations[0].DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int) Configurations[0].DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
+            return pack.GetTexture(Configurations[0].Texture, (int) Configurations[0].DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int) Configurations[0].DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
         }
 
         public override void OnDisabled()
@@ -121,7 +121,7 @@ namespace DynamicGameAssets.PackData
             {
                 if (item is IDGAItem jfurn)
                 {
-                    if (jfurn.SourcePack == parent.smapiPack.Manifest.UniqueID && jfurn.Id == ID)
+                    if (jfurn.SourcePack == pack.smapiPack.Manifest.UniqueID && jfurn.Id == ID)
                         return null;
                 }
                 return item;

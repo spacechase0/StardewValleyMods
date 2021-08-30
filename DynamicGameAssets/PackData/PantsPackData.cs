@@ -15,9 +15,9 @@ namespace DynamicGameAssets.PackData
     public class PantsPackData : CommonPackData
     {
         [JsonIgnore]
-        public string Name => parent.smapiPack.Translation.Get( $"pants.{ID}.name" );
+        public string Name => pack.smapiPack.Translation.Get( $"pants.{ID}.name" );
         [JsonIgnore]
-        public string Description => parent.smapiPack.Translation.Get( $"pants.{ID}.description" );
+        public string Description => pack.smapiPack.Translation.Get( $"pants.{ID}.description" );
 
         public string Texture { get; set; }
 
@@ -33,7 +33,7 @@ namespace DynamicGameAssets.PackData
             {
                 if ( item is CustomPants cpants )
                 {
-                    if ( cpants.SourcePack == parent.smapiPack.Manifest.UniqueID && cpants.Id == ID )
+                    if ( cpants.SourcePack == pack.smapiPack.Manifest.UniqueID && cpants.Id == ID )
                         return null;
                 }
                 return item;
@@ -47,7 +47,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            var ret = parent.GetTexture( Texture, 192, 688 );
+            var ret = pack.GetTexture( Texture, 192, 688 );
             ret.Rect ??= new Rectangle( 0, 0, ret.Texture.Width, ret.Texture.Height );
             ret.Rect = new Rectangle( ret.Rect.Value.X, ret.Rect.Value.Y + 672, 16, 16 );
             return ret;

@@ -56,8 +56,8 @@ namespace DynamicGameAssets.Game
                 layerDepth = 1f - dye_portion_layer_offset;
             }
 
-            var texMale = Data.parent.GetTexture( Data.TextureMale, 8, 32);
-            var texMaleColor = Data.TextureMaleColor == null ? null : Data.parent.GetTexture( Data.TextureMaleColor, 8, 32);
+            var texMale = Data.pack.GetTexture( Data.TextureMale, 8, 32);
+            var texMaleColor = Data.TextureMaleColor == null ? null : Data.pack.GetTexture( Data.TextureMaleColor, 8, 32);
 
             texMale.Rect ??= new Rectangle( 0, 0, texMale.Texture.Width, texMale.Texture.Height );
             spriteBatch.Draw( texMale.Texture, location + new Vector2( 32f, 32f ), new Rectangle( texMale.Rect.Value.X+ 0 * 8 % 128, texMale.Rect.Value.Y + 0 * 8 / 128 * 32, 8, 8 ), color * transparency, 0f, new Vector2( 4f, 4f ), scaleSize * 4f, SpriteEffects.None, layerDepth );

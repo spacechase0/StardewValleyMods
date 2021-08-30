@@ -20,7 +20,7 @@ namespace DynamicGameAssets.Game
     {
         partial void DoInit()
         {
-            this.fenceTexture = new Lazy<Texture2D>( () => Data.parent.GetTexture( Data.PlacedTilesheet, 48, 325 ).Texture );
+            this.fenceTexture = new Lazy<Texture2D>( () => Data.pack.GetTexture( Data.PlacedTilesheet, 48, 325 ).Texture );
         }
 
         partial void DoInit( FencePackData data )
@@ -145,7 +145,7 @@ namespace DynamicGameAssets.Game
         public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
         {
             base.drawTooltip( spriteBatch, ref x, ref y, font, alpha, overrideText );
-            string str = "Mod: " + Data.parent.smapiPack.Manifest.Name;
+            string str = "Mod: " + Data.pack.smapiPack.Manifest.Name;
             Utility.drawTextWithShadow( spriteBatch, Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ), font, new Vector2( x + 16, y + 16 + 4 ), new Color( 100, 100, 100 ) );
             y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
         }
@@ -164,7 +164,7 @@ namespace DynamicGameAssets.Game
             {
                 spriteBatch.Draw( Game1.shadowTexture, location + new Vector2( 32f, 48f ), Game1.shadowTexture.Bounds, color * 0.5f, 0f, new Vector2( Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y ), 3f, SpriteEffects.None, layerDepth - 0.0001f );
             }
-            var tex = Data.parent.GetTexture( Data.ObjectTexture, 16, 16 );
+            var tex = Data.pack.GetTexture( Data.ObjectTexture, 16, 16 );
             spriteBatch.Draw( tex.Texture, location + new Vector2( ( int ) ( 32f * scaleSize ), ( int ) ( 32f * scaleSize ) ), tex.Rect, color * transparency, 0f, new Vector2( 8f, 8f ) * scaleSize, 4f * scaleSize, SpriteEffects.None, layerDepth );
             if ( shouldDrawStackNumber )
             {

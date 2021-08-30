@@ -34,7 +34,7 @@ namespace DynamicGameAssets.Patches
                 if ( aja != null && bja == null )
                     return 1;
 
-                return $"{aja.parent.smapiPack.Manifest.UniqueID}/{aja.ID}".CompareTo( $"{bja.parent.smapiPack.Manifest.UniqueID}/{bja.ID}" );
+                return $"{aja.pack.smapiPack.Manifest.UniqueID}/{aja.ID}".CompareTo( $"{bja.pack.smapiPack.Manifest.UniqueID}/{bja.ID}" );
             } );
         }
 

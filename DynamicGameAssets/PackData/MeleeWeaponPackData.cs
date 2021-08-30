@@ -23,9 +23,9 @@ namespace DynamicGameAssets.PackData
         }
 
         [JsonIgnore]
-        public string Name => parent.smapiPack.Translation.Get( $"melee-weapon.{ID}.name" );
+        public string Name => pack.smapiPack.Translation.Get( $"melee-weapon.{ID}.name" );
         [JsonIgnore]
-        public string Description => parent.smapiPack.Translation.Get( $"melee-weapon.{ID}.description" );
+        public string Description => pack.smapiPack.Translation.Get( $"melee-weapon.{ID}.description" );
 
         public string Texture { get; set; }
 
@@ -54,7 +54,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return parent.GetTexture( Texture, 16, 16 );
+            return pack.GetTexture( Texture, 16, 16 );
         }
 
         public override void OnDisabled()
@@ -63,7 +63,7 @@ namespace DynamicGameAssets.PackData
             {
                 if ( item is CustomMeleeWeapon cweapon )
                 {
-                    if ( cweapon.SourcePack == parent.smapiPack.Manifest.UniqueID && cweapon.Id == ID )
+                    if ( cweapon.SourcePack == pack.smapiPack.Manifest.UniqueID && cweapon.Id == ID )
                         return null;
                 }
                 return item;

@@ -21,6 +21,7 @@ Contents
         * [Paragraph](#paragraph)
         * [Image](#image)
         * [Config Option](#config-option)
+    * [Content Index](#content-index)
     * [Big Craftables](#big-craftables)
     * [Boots](#boots)
     * [Crafting Recipes](#crafting-recipes)
@@ -219,10 +220,46 @@ These fields are common to every type of pack data.
 | `EnableConditions` | `Dictionary<string, string>` | Default: `null` | Checked at the beginning of each day, these can changed the `Enabled` field dynamically. If disabled, instances of this item will be removed from the game world. Some data might linger; if a pack data type has a "Traces" section, it will describe what will linger. These can be removed, too, by setting `RemoveAllTracesWhenDisabled` to `true` for those pack data types. | `false` |
 | `DynamicFields` | `DynamicField[]` | Default: `null` | See the (Dynamic Fields)[#] section. | `false` |
 
-### Config Schema entries
+### Content Index
+Additional content indices live in `content.json`.
+
+These allow you to specify additional json files providing content. They also work with `EnableConditions`, meaning you could disable a bunch of entries referenced by one of these at once, without specifying it on every item.
+
+| Field | Type | Required or Default value | Description | Dynamic |
+| --- | --- | --- | --- | --- |
+| `ContentType` | `ContentType` | Required | The type of content in file. | `false` |
+| `FilePath` | `string` | Required | The path to the json file for this content. | `true` |
+
+`ContentType` can be one of the following:
+* `ContentIndex` - (another one of these)
+* `Config`
+* `BigCraftable`
+* `Boots`
+* `CraftingRecipe`
+* `Crop`
+* `Fence`
+* `ForgeRecipe`
+* `FruitTree`
+* `Furniture`
+* `Hat`
+* `MachineRecipe`
+* `Fence`
+* `MeleeWeapon`
+* `Object`
+* `Pants`
+* `Shirt`
+* `ShopEntry`
+* `Tailoring`
+* `TextureOverride`
+
+
+
+### Config Schema
+Config schema entries normally live in `config-schema.json`.
+
 DGA supports custom config files for packs, integrated with GMCM. You make a list of entries to show in Generic Mod Config Menu (GMCM) (or in the config file, although labels, paragraphcs, images, and pages don't work there), and it works automatically. Everything shows up in the order they show in the config schema.
 
-Config fields are usable in dynamic field conditions. (Remember, dynamic fields are only applied at the beginning of each day.) They are very useful with Content Patcher's (Query token)[https://github.com/Pathoschild/StardewMods/blob/stable/ContentPatcher/docs/author-tokens-guide.md#query-expressions]. To learn how to use config options in your dynamic fields, see the [Dynamic Fields](#dynamic-fields) section.
+Config fields are usable in dynamic field conditions and enable conditions. (Remember, these are only applied at the beginning of each day.) They are very useful with Content Patcher's (Query token)[https://github.com/Pathoschild/StardewMods/blob/stable/ContentPatcher/docs/author-tokens-guide.md#query-expressions]. To learn how to use config options in your dynamic fields, see the [Dynamic Fields](#dynamic-fields) section.
 
 Every config schema entry has two fields, plus more depending on the type.
 | Field | Type | Required or Default value | Description |
@@ -301,7 +338,7 @@ An string is just some text. In GMCM, this is a dropdown if `ValidValues` is spe
 | `ValidValues` | `string, string[, string[, string...]]` | Default: `null` (anything is valid) | The valid values for this option. If specified, this creates a dropdown in GMCM. The valid values must be comma separated. |
 
 ### Big Craftables
-Big craftables live in `big-craftables.json`.
+Big craftables normally live in `big-craftables.json`.
 
 Big craftables can be localized in the following keys: `"big-craftable.YourBigCraftable.name"` and `"big-craftable.YourBigCraftable.description"`.
 
@@ -373,7 +410,7 @@ Example:
 ]
 ```
 ### Crops
-Crafting recipes live in `crops.json`.
+Crops normally live in `crops.json`.
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
@@ -456,7 +493,7 @@ Example:
 ```
 
 ### Fences 
-Fences live in `fences.json`.
+Fences normally live in `fences.json`.
 
 Fences can be localized in the following keys: `"fence.YourFence.name"` and `"fence.YourFence.description"`.
 
@@ -472,7 +509,7 @@ Fences can be localized in the following keys: `"fence.YourFence.name"` and `"fe
 | `RepairSound` | `string` | Required | The sound cue ID of what to play when repairing this fence. | `true` |
 
 ### Forge Recipe
-Forge recipes live in `forge-recipes.json`.
+Forge recipes normally live in `forge-recipes.json`.
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
@@ -482,7 +519,7 @@ Forge recipes live in `forge-recipes.json`.
 | `CinderShardCost` | `int` | Default: `0` | The cost in cinder shards to forge this recipe. | `true` |
 
 ### Fruit Trees
-Fruit trees live in `fruit-trees.json`.
+Fruit trees normally live in `fruit-trees.json`.
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
@@ -504,7 +541,7 @@ Example `DynamicFields` for a spring-only `CanGrowNow`:
 ```
 
 ## Furniture
-Furniture lives in `furniture.json`.
+Furniture normally lives in `furniture.json`.
 
 Furniture can be localized in the following keys: `"furniture.YourFurniture.name"` and `"furniture.YourFurniture.description"`.
 
@@ -562,7 +599,7 @@ Example furniture configuration:
 ```
 
 ### Hats
-Hats live in `hats.json`.
+Hats normally live in `hats.json`.
 
 Hats can be localized in the following keys: `"hat.YourHat.name"` and `"hat.YourHat.description"`.
 
@@ -574,7 +611,7 @@ Hats can be localized in the following keys: `"hat.YourHat.name"` and `"hat.Your
 | `IgnoreHairstyleOffset` | `bool` | Default: `false` | If this hat should ignore where hair is placed when being positioned. | `true` |
 
 ### Machine Recipes
-Machine recipes live in `machine-recipes.json`. Only basic machine recipes are supported; for advanced machines, use Producer Framework Mod.
+Machine recipes normally live in `machine-recipes.json`. Only basic machine recipes are supported; for advanced machines, use Producer Framework Mod.
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
@@ -591,7 +628,7 @@ Machine recipes live in `machine-recipes.json`. Only basic machine recipes are s
 Note that the first ingredient must be being held for the recipe to activate.
 
 ### Melee Weapons
-Melee weapons live in `melee-weapons.json`.
+Melee weapons normally live in `melee-weapons.json`.
 
 Melee weapons can be localized in the following keys: `"melee-weapon.YourMeleeWeapon.name"` and `"melee-weapon.YourMeleeWeapon.description"`.
 
@@ -612,7 +649,7 @@ Melee weapons can be localized in the following keys: `"melee-weapon.YourMeleeWe
 | `CanTrash` | `bool` | Default: `true` | Whether or not this weapon can be trashed. | `true` |
 
 ### Objects
-Objects live in `objects.json`.
+Objects normally live in `objects.json`.
 
 Objects can be localized in the following keys: `"object.YourObject.name"` and `"object.YourObject.description"`. Additionally, `"object.YourObject.category"` can be specified for a category text override.
 
@@ -694,7 +731,7 @@ Here is an example `GiftTasteOverride` in the appropriate container inside an ob
 ```
 
 ### Pants
-Pants live in `pants.json`.
+Pants normally live in `pants.json`.
 
 Pants can be localized in the following keys: `"pants.YourPants.name"` and `"pants.YourPants.description"`.
 
@@ -706,7 +743,7 @@ Pants can be localized in the following keys: `"pants.YourPants.name"` and `"pan
 | `Dyeable` | `bool` | Default: `false` | Whether or not these pants are dyeable. | (unknown, untested) |
 
 ### Shirts
-Shirts live in `shirts.json`.
+Shirts normally live in `shirts.json`.
 
 Shirts can be localized in the following keys: `"shirt.YourShirt.name"` and `"shirt.YourShirt.description"`.
 
@@ -722,7 +759,7 @@ Shirts can be localized in the following keys: `"shirt.YourShirt.name"` and `"sh
 | `Sleeveless` | `bool` | Default: `false` | Whether this shirt is sleeveless or not. | (unknown, untested) |
 
 ### Shop Entries
-Shop entries live in `shop-entries.json`
+Shop entries normally live in `shop-entries.json`
 
 
 | Field | Type | Required or Default value | Description | Dynamic |
@@ -734,7 +771,7 @@ Shop entries live in `shop-entries.json`
 | `Currency` | `string` | Default: `null` | Custom currency override for this shop entry. Must be either a vanilla item ID, OR a full ID of a DGA *object*. | `true` |
 
 ### Tailoring Recipes
-Tailoring Recipes live in `talioring-recipes.json`
+Tailoring Recipes normally live in `talioring-recipes.json`
 
 
 | Field | Type | Required or Default value | Description | Dynamic |
@@ -745,9 +782,9 @@ Tailoring Recipes live in `talioring-recipes.json`
 | `CraftedItem` | `WeightedItem[]` | Required | The item to craft. | (unknown, untested) |
 
 ### Texture Overrides
-Texture overrides live in `texture-overrides.json`.
+Texture overrides normally live in `texture-overrides.json`.
 
-These were implemented for a more optimal solution than Content Patcher Animations for some cases. (There's a chance it works better with mods like SpriteMaster, too.')
+These were implemented for a more optimal solution than Content Patcher Animations for some cases. (There's a chance it works better with mods like SpriteMaster, too.)
 
 NOTE: These can be a little tricky, since `TargetRect` needs to be the exact rectangle the game uses to draw it. Overlapping rectangles, like drawing half the target area, will not be animated. For some cases, such as the tools tilesheet, you may need to look (or get someone else to look) in the game's source code to figure out what to use for `TargetRect`.
 

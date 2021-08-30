@@ -16,7 +16,7 @@ namespace DynamicGameAssets.PackData
 
         public TexturedRect GetCurrentTexture()
         {
-            return parent.GetTexture( SourceTexture, TargetRect.Width, TargetRect.Height );
+            return pack.GetTexture( SourceTexture, TargetRect.Width, TargetRect.Height );
         }
 
         [OnDeserialized]

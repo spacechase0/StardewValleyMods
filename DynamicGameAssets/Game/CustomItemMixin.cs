@@ -21,7 +21,7 @@ namespace DynamicGameAssets.Game
         [XmlIgnore]
         public string FullId => $"{SourcePack}/{Id}";
         [XmlIgnore]
-        public TPackData Data => Mod.Find( FullId ) as TPackData ?? new TPackData() { parent = Mod.DummyContentPack };
+        public TPackData Data => Mod.Find( FullId ) as TPackData ?? new TPackData() { pack = Mod.DummyContentPack };
 
         public CustomItemMixin()
         {
@@ -31,7 +31,7 @@ namespace DynamicGameAssets.Game
         public CustomItemMixin( TPackData data )
         :   this()
         {
-            _sourcePack.Value = data.parent.smapiPack.Manifest.UniqueID;
+            _sourcePack.Value = data.pack.smapiPack.Manifest.UniqueID;
             _id.Value = data.ID;
 
             DoInit( data );

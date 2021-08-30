@@ -18,9 +18,9 @@ namespace DynamicGameAssets.PackData
     public class CraftingRecipePackData : CommonPackData
     {
         [JsonIgnore]
-        public string Name => parent.smapiPack.Translation.Get($"crafting.{ID}.name");
+        public string Name => pack.smapiPack.Translation.Get($"crafting.{ID}.name");
         [JsonIgnore]
-        public string Description => parent.smapiPack.Translation.Get($"crafting.{ID}.description");
+        public string Description => pack.smapiPack.Translation.Get($"crafting.{ID}.description");
 
         [DefaultValue( false )]
         public bool IsCooking { get; set; } = false;
@@ -42,8 +42,8 @@ namespace DynamicGameAssets.PackData
             [DefaultValue( null )]
             public string IconOverride { get; set; }
 
-            public override Texture2D Icon => IconOverride == null ? base.Icon : parent.parent.GetTexture(IconOverride, 16, 16).Texture;
-            public override Rectangle IconSubrect => IconOverride == null ? base.IconSubrect : (parent.parent.GetTexture(IconOverride, 16, 16).Rect ?? new Rectangle(0, 0, Icon.Width, Icon.Height));
+            public override Texture2D Icon => IconOverride == null ? base.Icon : parent.pack.GetTexture(IconOverride, 16, 16).Texture;
+            public override Rectangle IconSubrect => IconOverride == null ? base.IconSubrect : (parent.pack.GetTexture(IconOverride, 16, 16).Rect ?? new Rectangle(0, 0, Icon.Width, Icon.Height));
         }
 
         [JsonConverter( typeof( ItemAbstractionWeightedListConverter ) )]
@@ -89,8 +89,12 @@ namespace DynamicGameAssets.PackData
             foreach ( var choice in Result )
                 ret.Result.Add( (Weighted<ItemAbstraction>) choice.Clone() );
             ret.Ingredients = new List<IngredientAbstraction>();
-            foreach (var ingred in Ingredients)
-                ret.Ingredients.Add((IngredientAbstraction) ingred.Clone());
+            foreach ( var ingred_ in Ingredients )
+            {
+                var ingred = (IngredientAbstraction) ingred_.Clone();
+                ingred.parent = ret;
+                ret.Ingredients.Add( ingred );
+            }
             return ret;
         }
     }

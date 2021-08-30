@@ -41,7 +41,7 @@ namespace DynamicGameAssets.Game
         public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
         {
             base.drawTooltip( spriteBatch, ref x, ref y, font, alpha, overrideText );
-            string str = "Mod: " + Data.parent.smapiPack.Manifest.Name;
+            string str = "Mod: " + Data.pack.smapiPack.Manifest.Name;
             Utility.drawTextWithShadow( spriteBatch, Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ), font, new Vector2( x + 16, y + 16 + 4 ), new Color( 100, 100, 100 ) );
             y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
         }

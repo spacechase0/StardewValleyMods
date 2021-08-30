@@ -53,7 +53,7 @@ namespace DynamicGameAssets
 
                 switch (Type)
                 {
-                    case ItemType.DGAItem: return Mod.Find(Value).GetTexture().Texture;
+                    case ItemType.DGAItem: return Mod.Find(Value)?.GetTexture()?.Texture ?? Game1.staminaRect;
                     case ItemType.DGARecipe:
                         Log.Error("Crafting recipes don't have an icon texture");
                         return null;
@@ -97,6 +97,8 @@ namespace DynamicGameAssets
                 {
                     case ItemType.DGAItem:
                         var found = Mod.Find(Value);
+                        if ( found == null )
+                            return new Rectangle( 0, 0, 1, 1 );
                         return found.GetTexture().Rect ?? new Rectangle(0, 0, found.GetTexture().Texture.Width, found.GetTexture().Texture.Height);
                     case ItemType.DGARecipe:
                         Log.Error("Recipes don't have an icon subrect.");

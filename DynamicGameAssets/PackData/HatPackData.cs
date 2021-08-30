@@ -22,9 +22,9 @@ namespace DynamicGameAssets.PackData
         }
 
         [JsonIgnore]
-        public string Name => parent.smapiPack.Translation.Get( $"hat.{ID}.name" );
+        public string Name => pack.smapiPack.Translation.Get( $"hat.{ID}.name" );
         [JsonIgnore]
-        public string Description => parent.smapiPack.Translation.Get( $"hat.{ID}.description" );
+        public string Description => pack.smapiPack.Translation.Get( $"hat.{ID}.description" );
 
 
         public string Texture { get; set; }
@@ -36,7 +36,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return parent.GetTexture( Texture, 20, 80 );
+            return pack.GetTexture( Texture, 20, 80 );
         }
 
         public override void OnDisabled()
@@ -45,7 +45,7 @@ namespace DynamicGameAssets.PackData
             {
                 if ( item is CustomHat chat )
                 {
-                    if ( chat.SourcePack == parent.smapiPack.Manifest.UniqueID && chat.Id == ID )
+                    if ( chat.SourcePack == pack.smapiPack.Manifest.UniqueID && chat.Id == ID )
                         return null;
                 }
                 return item;

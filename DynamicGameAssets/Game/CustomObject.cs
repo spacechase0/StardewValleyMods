@@ -146,7 +146,7 @@ namespace DynamicGameAssets.Game
         public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
         {
             base.drawTooltip( spriteBatch, ref x, ref y, font, alpha, overrideText );
-            string str = "Mod: " + Data.parent.smapiPack.Manifest.Name;
+            string str = "Mod: " + Data.pack.smapiPack.Manifest.Name;
             Utility.drawTextWithShadow( spriteBatch, Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ), font, new Vector2( x + 16, y + 16 + 4 ), new Color( 100, 100, 100 ) );
             y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
         }
@@ -155,18 +155,18 @@ namespace DynamicGameAssets.Game
         {
             var ret = base.getExtraSpaceNeededForTooltipSpecialIcons(font, minWidth, horizontalBuffer, startingHeight, descriptionText, boldTitleText, moneyAmountToDisplayAtBottom );
             ret.Y = startingHeight;
-            string str = "Mod: " + Data.parent.smapiPack.Manifest.Name;
+            string str = "Mod: " + Data.pack.smapiPack.Manifest.Name;
             ret.Y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
             return ret;
         }
 
         public override void drawWhenHeld( SpriteBatch spriteBatch, Vector2 objectPosition, Farmer f )
         {
-            var tex = Data.parent.GetTexture( Data.Texture, 16, 16 );
+            var tex = Data.pack.GetTexture( Data.Texture, 16, 16 );
             spriteBatch.Draw( tex.Texture, objectPosition, tex.Rect, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, Math.Max( 0f, ( float ) ( f.getStandingY() + 3 ) / 10000f ) );
             if ( _hasColor.Value )
             {
-                var colorTex = Data.parent.GetTexture( Data.TextureColor, 16, 16 );
+                var colorTex = Data.pack.GetTexture( Data.TextureColor, 16, 16 );
                 spriteBatch.Draw( colorTex.Texture, objectPosition, colorTex.Rect, ObjectColor.Value, 0f, Vector2.Zero, 4f, SpriteEffects.None, Math.Max( 0f, ( float ) ( f.getStandingY() + 3 ) / 10000f + 2e-05f ) );
             }
         }
@@ -184,11 +184,11 @@ namespace DynamicGameAssets.Game
             {
                 spriteBatch.Draw( Game1.shadowTexture, location + new Vector2( 32f, 48f ), Game1.shadowTexture.Bounds, color * 0.5f, 0f, new Vector2( Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y ), 3f, SpriteEffects.None, layerDepth - 0.0001f );
             }
-            var tex = Data.parent.GetTexture( Data.Texture, 16, 16 );
+            var tex = Data.pack.GetTexture( Data.Texture, 16, 16 );
             spriteBatch.Draw( tex.Texture, location + new Vector2( ( int ) ( 32f * scaleSize ), ( int ) ( 32f * scaleSize ) ), tex.Rect, color * transparency, 0f, new Vector2( 8f, 8f ) * scaleSize, 4f * scaleSize, SpriteEffects.None, layerDepth );
             if ( _hasColor.Value )
             {
-                var colorTex = Data.parent.GetTexture( Data.TextureColor, 16, 16 );
+                var colorTex = Data.pack.GetTexture( Data.TextureColor, 16, 16 );
                 spriteBatch.Draw( colorTex.Texture, location + new Vector2( ( int ) ( 32f * scaleSize ), ( int ) ( 32f * scaleSize ) ), colorTex.Rect, ObjectColor.Value * transparency, 0f, new Vector2( 8f, 8f ) * scaleSize, 4f * scaleSize, SpriteEffects.None, layerDepth + 2e-05f );
             }
             if ( shouldDrawStackNumber )
@@ -214,7 +214,7 @@ namespace DynamicGameAssets.Game
             int y = (int)this.tileLocation.Y;
 
             b.Draw(Game1.shadowTexture, this.getLocalPosition(Game1.viewport) + new Vector2(32f, 53f), Game1.shadowTexture.Bounds, Color.White, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, (float)this.getBoundingBox(new Vector2(x, y)).Bottom / 15000f);
-            var tex = Data.parent.GetTexture( Data.Texture, 16, 16 );
+            var tex = Data.pack.GetTexture( Data.Texture, 16, 16 );
             Texture2D objectSpriteSheet = tex.Texture;
             Vector2 position2 = Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 + 32, y * 64 + 32));
             Microsoft.Xna.Framework.Rectangle? sourceRectangle = tex.Rect;// GameLocation.getSourceRectForObject(base.ParentSheetIndex);
@@ -224,7 +224,7 @@ namespace DynamicGameAssets.Game
             b.Draw(objectSpriteSheet, position2, sourceRectangle, white, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)this.getBoundingBox(new Vector2(x, y)).Bottom / 10000f);
             if ( _hasColor.Value )
             {
-                var colorTex = Data.parent.GetTexture( Data.TextureColor, 16, 16 );
+                var colorTex = Data.pack.GetTexture( Data.TextureColor, 16, 16 );
                 b.Draw( colorTex.Texture, position2, colorTex.Rect, ObjectColor.Value, 0f, origin, ( this.scale.Y > 1f ) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ( float ) this.getBoundingBox( new Vector2( x, y ) ).Bottom / 10000f + 2e-05f );
             }
         }
@@ -237,7 +237,7 @@ namespace DynamicGameAssets.Game
             if ( !Game1.eventUp || !Game1.CurrentEvent.isTileWalkedOn( x, y ) )
             {
                 spriteBatch.Draw(Game1.shadowTexture, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 + 32, y * 64 + 51 + 4)), Game1.shadowTexture.Bounds, Color.White * alpha, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, (float)this.getBoundingBox(new Vector2(x, y)).Bottom / 15000f);
-                var tex = Data.parent.GetTexture( Data.Texture, 16, 16 );
+                var tex = Data.pack.GetTexture( Data.Texture, 16, 16 );
                 Texture2D objectSpriteSheet = tex.Texture;
                 Vector2 position3 = Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 + 32 + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), y * 64 + 32 + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0)));
                 Microsoft.Xna.Framework.Rectangle? sourceRectangle2 = tex.Rect; // GameLocation.getSourceRectForObject(base.ParentSheetIndex);
@@ -247,7 +247,7 @@ namespace DynamicGameAssets.Game
                 spriteBatch.Draw(objectSpriteSheet, position3, sourceRectangle2, color2, 0f, origin2, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.isPassable() ? this.getBoundingBox(new Vector2(x, y)).Top : this.getBoundingBox(new Vector2(x, y)).Bottom) / 10000f);
                 if ( _hasColor.Value )
                 {
-                    var colorTex = Data.parent.GetTexture( Data.TextureColor, 16, 16 );
+                    var colorTex = Data.pack.GetTexture( Data.TextureColor, 16, 16 );
                     spriteBatch.Draw( colorTex.Texture, position3, colorTex.Rect, ObjectColor.Value, 0f, origin2, ( this.scale.Y > 1f ) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ( float ) ( this.isPassable() ? this.getBoundingBox( new Vector2( x, y ) ).Top : this.getBoundingBox( new Vector2( x, y ) ).Bottom ) / 10000f + 2e-05f );
                 }
             }
@@ -261,7 +261,7 @@ namespace DynamicGameAssets.Game
             if ( !Game1.eventUp || !Game1.CurrentEvent.isTileWalkedOn( xNonTile / 64, yNonTile / 64 ) )
             {
                 spriteBatch.Draw(Game1.shadowTexture, Game1.GlobalToLocal(Game1.viewport, new Vector2(xNonTile + 32, yNonTile + 51 + 4)), Game1.shadowTexture.Bounds, Color.White * alpha, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, layerDepth - 1E-06f);
-                var tex = Data.parent.GetTexture( Data.Texture, 16, 16 );
+                var tex = Data.pack.GetTexture( Data.Texture, 16, 16 );
                 Texture2D objectSpriteSheet = tex.Texture;
                 Vector2 position2 = Game1.GlobalToLocal(Game1.viewport, new Vector2(xNonTile + 32 + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), yNonTile + 32 + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0)));
                 Microsoft.Xna.Framework.Rectangle? sourceRectangle = tex.Rect; // GameLocation.getSourceRectForObject(base.ParentSheetIndex);
@@ -271,7 +271,7 @@ namespace DynamicGameAssets.Game
                 spriteBatch.Draw(objectSpriteSheet, position2, sourceRectangle, color, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
                 if ( _hasColor.Value )
                 {
-                    var colorTex = Data.parent.GetTexture( Data.TextureColor, 16, 16 );
+                    var colorTex = Data.pack.GetTexture( Data.TextureColor, 16, 16 );
                     spriteBatch.Draw( colorTex.Texture, position2, colorTex.Rect, ObjectColor.Value, 0f, origin, ( this.scale.Y > 1f ) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth + 2e-05f );
                 }
             }

@@ -36,7 +36,7 @@ namespace DynamicGameAssets.Game
         }
         public override void draw( SpriteBatch spriteBatch, Vector2 tileLocation )
         {
-            var currTex = Data.parent.GetMultiTexture( Data.GiantTextureChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 48, 63 );
+            var currTex = Data.pack.GetMultiTexture( Data.GiantTextureChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 48, 63 );
 
             spriteBatch.Draw( currTex.Texture, Game1.GlobalToLocal( Game1.viewport, tileLocation * 64f - new Vector2( ( base.shakeTimer > 0f ) ? ( ( float ) Math.Sin( Math.PI * 2.0 / ( double ) base.shakeTimer ) * 2f ) : 0f, 64f ) ), currTex.Rect, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, ( tileLocation.Y + 2f ) * 64f / 10000f );
         }

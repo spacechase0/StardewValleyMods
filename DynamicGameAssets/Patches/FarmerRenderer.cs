@@ -34,7 +34,7 @@ namespace DynamicGameAssets.Patches
             var this_shoes = Mod.instance.Helper.Reflection.GetField< NetInt >( __instance, "shoes" ).GetValue();
             var this__SwapColor = Mod.instance.Helper.Reflection.GetMethod( __instance, "_SwapColor" );
 
-            var currTex = data.parent.GetTexture( data.FarmerColors, 4, 1 );
+            var currTex = data.pack.GetTexture( data.FarmerColors, 4, 1 );
 
             int which = this_shoes.Value;
             Texture2D shoeColors = currTex.Texture;
@@ -73,10 +73,10 @@ namespace DynamicGameAssets.Patches
                 };// new Color[FarmerRenderer.shirtsTexture.Bounds.Width * FarmerRenderer.shirtsTexture.Bounds.Height];
                 foreach ( var colors in shirtData )
                     Array.Fill( colors, Color.Transparent );
-                var maleNC = cshirt.Data.parent.GetTexture( cshirt.Data.TextureMale, 8, 32 );
-                var maleC = cshirt.Data.TextureMaleColor == null ? null : cshirt.Data.parent.GetTexture( cshirt.Data.TextureMaleColor, 8, 32 );
-                var femaleNC = cshirt.Data.TextureFemale == null ? maleNC : cshirt.Data.parent.GetTexture( cshirt.Data.TextureFemale, 8, 32 );
-                var femaleC = cshirt.Data.TextureFemaleColor == null ? null :cshirt.Data.parent.GetTexture( cshirt.Data.TextureFemaleColor, 8, 32 );
+                var maleNC = cshirt.Data.pack.GetTexture( cshirt.Data.TextureMale, 8, 32 );
+                var maleC = cshirt.Data.TextureMaleColor == null ? null : cshirt.Data.pack.GetTexture( cshirt.Data.TextureMaleColor, 8, 32 );
+                var femaleNC = cshirt.Data.TextureFemale == null ? maleNC : cshirt.Data.pack.GetTexture( cshirt.Data.TextureFemale, 8, 32 );
+                var femaleC = cshirt.Data.TextureFemaleColor == null ? null :cshirt.Data.pack.GetTexture( cshirt.Data.TextureFemaleColor, 8, 32 );
                 maleNC.Texture.GetData( 0, maleNC.Rect, shirtData[ 0 ], 0, 8 * 32 );
                 maleC?.Texture?.GetData( 0, maleNC.Rect, shirtData[ 1 ], 0, 8 * 32 );
                 femaleNC.Texture.GetData( 0, femaleNC.Rect, shirtData[ 2 ], 0, 8 * 32 );
