@@ -342,17 +342,20 @@ namespace JA_to_DGA
             }
             item.Colors = ( data.Colors?.Count ?? 0 ) > 0 ? new List<Color>( data.Colors ) : null;
 
-            for ( int i = 0; i < data.Phases.Count; ++i )
+            for ( int i = 0; i <= data.Phases.Count; ++i )
             {
                 var phase = new DynamicGameAssets.PackData.CropPackData.PhaseData();
-                phase.Length = data.Phases[ i ];
                 string texPathBase = Path.Combine( "assets", "crops", item.ID + ".png" );
-                phase.TextureChoices = i == 0 ? ( new string[] { $"{texPathBase}:0", $"{texPathBase}:1" } ) : ( new string[] { $"{texPathBase}:{i + 2}" } );
+                phase.TextureChoices = i == 0 ? ( new string[] { $"{texPathBase}:0", $"{texPathBase}:1" } ) : ( new string[] { $"{texPathBase}:{i + 1}" } );
                 phase.Trellis = data.TrellisCrop;
-                if ( i == data.Phases.Count - 1 )
+                if ( i < data.Phases.Count )
+                {
+                    phase.Length = data.Phases[ i ];
+                }
+                if ( i == data.Phases.Count )
                 {
                     if ( ( item.Colors?.Count ?? 0 ) > 0 )
-                        phase.TextureColorChoices = new string[] { $"{texPathBase}:{i + 3}" };
+                        phase.TextureColorChoices = new string[] { $"{texPathBase}:{i + 2}" };
 
                     phase.Scythable = data.HarvestWithScythe;
                     if ( data.RegrowthPhase != -1 )

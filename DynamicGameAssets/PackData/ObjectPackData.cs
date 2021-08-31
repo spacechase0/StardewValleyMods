@@ -142,8 +142,8 @@ namespace DynamicGameAssets.PackData
         }
         [DefaultValue( true )]
         public bool IsGiftable { get; set; } = true;
-        [DefaultValue( 0 )]
-        public int UniversalGiftTaste { get; set; } = 0;
+        [DefaultValue( 20 )]
+        public int UniversalGiftTaste { get; set; } = 20;
         public Dictionary<string, GiftTasteOverrideEntry> GiftTasteOverride { get; set; } = new Dictionary<string, GiftTasteOverrideEntry>();
 
         public bool ShouldSerializeGiftTasteOverride() { return GiftTasteOverride.Count > 0; }

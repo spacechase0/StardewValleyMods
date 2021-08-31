@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using HarmonyLib;
 using JsonAssets.Data;
 using Newtonsoft.Json;
 using SpaceShared;
@@ -46,7 +46,7 @@ namespace JA_to_DGA
                     return;
                 }
 
-                IContentPack cp = ( IContentPack ) AccessTools.Property( mod.GetType(), "ContentPack" ).GetMethod.Invoke( mod, null );
+                IContentPack cp = ( IContentPack ) mod.GetType().GetProperty( "ContentPack", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance ).GetValue( mod );
                 if ( cp == null )
                 {
                     Log.Error( "Not a content pack" );
@@ -59,7 +59,7 @@ namespace JA_to_DGA
 
         public void Convert( IContentPack cp, string newModId )
         {
-            string jaPath = ( string ) AccessTools.Property( cp.GetType(), "DirectoryPath" ).GetMethod.Invoke( cp, null );
+            string jaPath = ( string ) cp.GetType().GetProperty( "DirectoryPath", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance ).GetValue( cp );
             string dgaPath = Path.Combine( Path.GetDirectoryName( Helper.DirectoryPath ), "[DGA] " + newModId );
             Log.Info( "Path: " + jaPath + " -> " + dgaPath );
 
@@ -222,8 +222,11 @@ namespace JA_to_DGA
             manifest.ExtraFields.Add( "DGA.ConditionsFormatVersion", "1.23.0" );
             File.WriteAllText( Path.Combine( dgaPath, "manifest.json" ), JsonConvert.SerializeObject( manifest, serializeSettings ) );
 
+            var dga = Helper.ModRegistry.GetApi< IDynamicGameAssetsApi >( "spacechase0.DynamicGameAssets" );
+            dga.AddEmbeddedPack( manifest, dgaPath );
+
             Log.Info( "Done!" );
-            Log.Info( "Note: You need to restart the game to use the new content pack (including for migrations)." );
+            Log.Info( "We did some black magic to go ahead and load it without restarting the game, too. :)" );
             Log.Info( "Please do not upload converted packs for mods that you don't have permission to do!" );
             Log.Info( "NOTE: Regrowing crops work differently in DGA than in JA! See the making content packs documentation for detail." );
         }

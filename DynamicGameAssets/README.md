@@ -672,7 +672,7 @@ If `RemoveAllTraceswhenDisabled` is set, then the player will lose their shipped
 | `CanTrash` | `bool` | Default: `true` | Whether or not this object can be trashed. | `true` |
 | `HideFromShippingCollection` | `bool` | Default: `false` | Whether or not to hide this object from the shipping collection. | `true` |
 | `IsGiftable` | `bool` | Default: `true` | Whether or not this object is giftable. | `true` |
-| `UniversalGiftTaste` | `int` | Default: `0` | The universal gift taste for this object. Dialogue is chosen based on this value. 1 heart is 250 points. (Check wiki for vanilla point values for gifts.) | `true` |
+| `UniversalGiftTaste` | `int` | Default: `20` | The universal gift taste for this object. Dialogue is chosen based on this value. 1 heart is 250 points. (Check wiki for vanilla point values for gifts.) | `true` |
 | `GiftTasteOverride` | `Dictionary<string, GiftTasteOverride>` | Default: `null` | The gift taste overrides for specific NPCs. | `true` |
 | `Placeable` | `bool` | Default: `false` | Whether or not this object is placeable. | `true` |
 | `SprinklerTiles` | `Vector2[]` | Default: `null` | What tiles to water when this object is placed. | (unknown, untested) |

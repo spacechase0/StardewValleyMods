@@ -57,7 +57,7 @@ namespace SpaceShared
         /// <param name="index">The index of the value within the array to find.</param>
         public static T GetOrDefault<T>(this T[] array, int index)
         {
-            return array.TryGetIndex(index, out T value)
+            return TryGetIndex(array, index, out T value)
                 ? value
                 : default;
         }
