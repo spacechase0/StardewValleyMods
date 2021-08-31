@@ -1622,8 +1622,7 @@ namespace JsonAssets
                 string[] toks1 = toks[1].Split(' ');
                 if (toks1[0] == "O")
                 {
-                    int oldId = int.Parse(toks1[1]);
-                    if (oldId != -1)
+                    if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
                     {
                         if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
                         {
@@ -1638,8 +1637,7 @@ namespace JsonAssets
                 }
                 else if (toks1[0] == "BO")
                 {
-                    int oldId = int.Parse(toks1[1]);
-                    if (oldId != -1)
+                    if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
                     {
                         if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, ref oldId, this.VanillaBigCraftableIds))
                         {
@@ -1656,8 +1654,7 @@ namespace JsonAssets
                 string[] toks2 = toks[2].Split(' ');
                 for (int i = 0; i < toks2.Length; i += 3)
                 {
-                    int oldId = int.Parse(toks2[i]);
-                    if (oldId != -1)
+                    if (int.TryParse(toks2[i], out int oldId) && oldId != -1)
                     {
                         if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
                         {

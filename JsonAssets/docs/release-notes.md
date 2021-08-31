@@ -7,6 +7,7 @@
   _Json Assets now loads fine without EPU installed. If a content pack uses EPU conditions and you
   don't have it installed, Json Assets will log an error and treat those conditions as always failed._
 * Fixed resource clumps outside the farm not ID-fixed.
+* Fixed error when ID-fixing bundles with invalid item IDs.
 
 **Update note for mod authors:**  
 When using EPU conditions (i.e. the `PurchaseRequirements` fields), adding it as a [manifest
