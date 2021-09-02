@@ -37,6 +37,7 @@ namespace DynamicGameAssets.PackData.Loaders
             LoadOthers<MachineRecipePackData>( "machine-recipes.json" );
             LoadOthers<TailoringRecipePackData>( "tailoring-recipes.json" );
             LoadOthers<TextureOverridePackData>( "texture-overrides.json" );
+            LoadOthers<GiftTastePackData>( "gift-tastes.json" );
 
             LoadIndex( "content.json" );
         }

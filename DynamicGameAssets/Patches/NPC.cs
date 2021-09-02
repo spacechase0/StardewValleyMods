@@ -45,11 +45,13 @@ namespace DynamicGameAssets.Patches
             }
 
             var obj = o as CustomObject;
+            GiftTastePackData gt = null;
+            if ( Mod.giftTastes.ContainsKey( npc.Name ) && Mod.giftTastes[ npc.Name ].ContainsKey( obj.FullId ) )
+                gt = Mod.giftTastes[ npc.Name ][ obj.FullId ];
             var data = obj.Data;
             int amt = data.UniversalGiftTaste;
-            data.GiftTasteOverride.TryGetValue( npc.Name, out var overrideEntry );
-            if ( overrideEntry != null )
-                amt = overrideEntry.Amount;
+            if ( gt != null )
+                amt = gt.Amount;
 
             int giftTaste = 0;
             if ( amt >= 80 ) giftTaste = NPC.gift_taste_love;
@@ -74,8 +76,8 @@ namespace DynamicGameAssets.Patches
             {
                 friendshipChangeMultiplier = 8;
 
-                if ( overrideEntry != null )
-                    response = data.pack.smapiPack.Translation.Get( overrideEntry.BirthdayTextTranslationKey ).ToString();
+                if ( gt != null )
+                    response = gt.pack.smapiPack.Translation.Get( gt.BirthdayTextTranslationKey ).ToString();
                 if ( response == null )
                 {
                     switch ( giftTaste )
@@ -100,8 +102,8 @@ namespace DynamicGameAssets.Patches
             }
             else
             {
-                if ( overrideEntry != null )
-                    response = data.pack.smapiPack.Translation.Get( overrideEntry.NormalTextTranslationKey ).ToString();
+                if ( gt != null )
+                    response = gt.pack.smapiPack.Translation.Get( gt.NormalTextTranslationKey ).ToString();
                 if ( response == null )
                 {
                     string[] reactions = Game1.NPCGiftTastes[ npc.Name ].Split( '/' );
@@ -116,8 +118,8 @@ namespace DynamicGameAssets.Patches
                 response = "...";
 
             int? emote = null;
-            if ( overrideEntry != null )
-                emote = overrideEntry.EmoteId;
+            if ( gt != null )
+                emote = gt.EmoteId;
             if ( emote == null )
             {
                 switch ( giftTaste )

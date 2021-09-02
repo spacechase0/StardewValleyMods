@@ -85,6 +85,8 @@ namespace DynamicGameAssets
 
         internal static Dictionary<int, string> itemLookup = new Dictionary<int, string>();
 
+        internal static Dictionary<string, Dictionary<string, GiftTastePackData>> giftTastes = new();
+
         // TODO: Should these and SpriteBatchTileSheetAdjustments.packOverrides (and similar overrides) go into State? For splitscreen
         internal static List<DGACustomCraftingRecipe> customCraftingRecipes = new List<DGACustomCraftingRecipe>();
         internal static List<DGACustomForgeRecipe> customForgeRecipes = new List<DGACustomForgeRecipe>();
@@ -198,6 +200,7 @@ namespace DynamicGameAssets
             foreach ( var recipe in customForgeRecipes )
                 CustomForgeRecipe.Recipes.Remove( recipe );
 
+            giftTastes.Clear();
             customCraftingRecipes.Clear();
             customForgeRecipes.Clear();
             customMachineRecipes.Clear();
@@ -343,6 +346,15 @@ namespace DynamicGameAssets
                     {
                         if ( tailoringRecipe.Enabled )
                             customTailoringRecipes.Add( tailoringRecipe );
+                    }
+                    else if ( newOther is GiftTastePackData giftTaste )
+                    {
+                        if ( giftTaste.Enabled )
+                        {
+                            if ( !giftTastes.ContainsKey( giftTaste.Npc ) )
+                                giftTastes.Add( giftTaste.Npc, new() );
+                            giftTastes[ giftTaste.Npc ].Add( giftTaste.ObjectId, giftTaste );
+                        }
                     }
                 }
                 cp.Value.others = newOthers;

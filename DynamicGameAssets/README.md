@@ -43,7 +43,7 @@ Contents
     * [Objects](#objects)
         * [Special Types](#special-types)
             * [FoodBuffs](#foodbuffs)
-            * [GiftTasteOverride](#gifttasteoverride)
+    * [Gift Tastes](#gift-tastes)
     * [Pants](#pants)
     * [Shirts](#shirts)
     * [Shop Entries](#shop-entires)
@@ -652,7 +652,6 @@ If `RemoveAllTraceswhenDisabled` is set, then the player will lose their shipped
 | `HideFromShippingCollection` | `bool` | Default: `false` | Whether or not to hide this object from the shipping collection. | `true` |
 | `IsGiftable` | `bool` | Default: `true` | Whether or not this object is giftable. | `true` |
 | `UniversalGiftTaste` | `int` | Default: `20` | The universal gift taste for this object. Dialogue is chosen based on this value. 1 heart is 250 points. (Check wiki for vanilla point values for gifts.) | `true` |
-| `GiftTasteOverride` | `Dictionary<string, GiftTasteOverride>` | Default: `null` | The gift taste overrides for specific NPCs. | `true` |
 | `Placeable` | `bool` | Default: `false` | Whether or not this object is placeable. | `true` |
 | `SprinklerTiles` | `Vector2[]` | Default: `null` | What tiles to water when this object is placed. | (unknown, untested) |
 | `UpgradedSprinklerTiles` | `Vector2[]` | Default: `null` | What tiles to water when this object is placed and upgraded. | (unknown, untested) |
@@ -687,27 +686,17 @@ Here is an example `FoodBuffs` inside an object:
 },
 ```
 
-##### GiftTasteOverride
-A `GiftTasteOverride` is as follows.
+### Gift Tastes
+`$ItemType` - `"GiftTaste"`
 
-| Field | Type | Required or Default value | Description |
-| --- | --- | --- | --- |
-| `Amount` | `int` | Required | The amount of friendship points to give or take. |
-| `NormalTexTranslationKey` | `string` | Default: `null` | The translation key of the text normally shown for this NPC when they receive this object. |
-| `BirthdayTexTranslationKey` | `string` | Default: `null` | The translation key of the text for this NPC when they receive this object on their birthday. |
-| `EmoteId` | `int?` | Default: `null` | The emote ID override for when they receive this gift, if any. |
-
-Here is an example `GiftTasteOverride` in the appropriate container inside an object:
-
-```json
-"GiftTasteOverride": {
-    "Penny": {
-        "Amount": 300,
-        "NormalTextTranslationKey": "object.Mysterious Circle.gift.Penny.normal",
-        "BirthdayTextTranslationKey": "object.Mysterious Circle.gift.Penny.birthday"
-    }
-},
-```
+| Field | Type | Required or Default value | Description | Dynamic |
+| --- | --- | --- | --- | --- |
+| `ObjectId` | `string` | Required | The full object ID of what we are overriding the gift taste for. | `false` |
+| `Npc` | `string` | Required | The NPC of who we are overriding the gift taste for. | `false` |
+| `Amount` | `int` | Required | The amount of friendship points to give or take. | `true` |
+| `NormalTextTranslationKey` | `string` | Default: `null` | The translation key of the text normally shown for this NPC when they receive this object. | `true` |
+| `BirthdayTextTranslationKey` | `string` | Default: `null` | The translation key of the text for this NPC when they receive this object on their birthday. | `true` |
+| `EmoteId` | `int?` | Default: `null` | The emote ID override for when they receive this gift, if any. | `true` |
 
 ### Pants
 `$ItemType` - `"Pants"`
@@ -834,25 +823,13 @@ This is done in the following order:
     "SellPrice": 5,
     "ForcePriceOnAllInstances": true,
     "UniversalGiftTaste": 100,
-    "GiftTasteOverride": {
-      "Penny": {
-        "Amount": 300,
-        "NormalTextTranslationKey": "object.Mysterious Circle.gift.Penny.normal",
-        "BirthdayTextTranslationKey": "object.Mysterious Circle.gift.Penny.birthday"
-      }
-    },
     "DynamicFields": [
       {
         "Conditions": { "Season |contains=spring": false },
         "SellPrice": 500,
         "Texture": "items16.png:0",
         "EdibleIsDrink": false,
-        "EdibleBuffs.Speed": 500,
-        "GiftTasteOverride[Penny].Amount": 3000,
-        "GiftTasteOverride[Pam]": {
-          "Amount": -250,
-          "NormalTextTranslationKey": "object.Mysterious Circle.gift.Pam.spring"
-        }
+        "EdibleBuffs.Speed": 500
       },
       {
         // No `Conditions` means always true. We just want to use our config values

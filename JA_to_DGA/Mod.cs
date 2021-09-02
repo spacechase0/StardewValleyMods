@@ -86,6 +86,7 @@ namespace JA_to_DGA
             var forges = new List<DynamicGameAssets.PackData.ForgeRecipePackData>();
             var crafting = new List<DynamicGameAssets.PackData.CraftingRecipePackData>();
             var shops = new List<DynamicGameAssets.PackData.ShopEntryPackData>();
+            var giftTastes = new List<DynamicGameAssets.PackData.GiftTastePackData>();
 
             Directory.CreateDirectory( Path.Combine( dgaPath, "assets" ) );
 
@@ -99,7 +100,7 @@ namespace JA_to_DGA
                         continue;
                     Log.Trace( "Converting object " + dir + "..." );
                     var data = cp.ReadJsonFile< ObjectData >( Path.Combine( "Objects", dir, "object.json" ) );
-                    var packData = data.ConvertObject( newModId, i18n, objs, crafting, shops );
+                    var packData = data.ConvertObject( newModId, i18n, objs, crafting, shops, giftTastes );
                     File.Copy( Path.Combine( jaPath, "Objects", dir, "object.png" ), Path.Combine( dgaPath, "assets", "objects", packData.ID + ".png" ) );
                     if ( File.Exists( Path.Combine( jaPath, "Objects", dir, "color.png" ) ) )
                         File.Copy( Path.Combine( jaPath, "Objects", dir, "color.png" ), Path.Combine( dgaPath, "assets", "objects", packData.ID + "_color.png" ) );
@@ -197,6 +198,7 @@ namespace JA_to_DGA
             if ( forges.Count > 0 ) File.WriteAllText( Path.Combine( dgaPath, "forge-recipes.json" ), JsonConvert.SerializeObject( forges, serializeSettings ) );
             if ( crafting.Count > 0 ) File.WriteAllText( Path.Combine( dgaPath, "crafting-recipes.json" ), JsonConvert.SerializeObject( crafting, serializeSettings ) );
             if ( shops.Count > 0 ) File.WriteAllText( Path.Combine( dgaPath, "shop-entries.json" ), JsonConvert.SerializeObject( shops, serializeSettings ) );
+            if ( giftTastes.Count > 0 ) File.WriteAllText( Path.Combine( dgaPath, "gift-tastes.json" ), JsonConvert.SerializeObject( giftTastes, serializeSettings ) );
 
             Directory.CreateDirectory( Path.Combine( dgaPath, "i18n" ) );
             foreach ( var entry in i18n )

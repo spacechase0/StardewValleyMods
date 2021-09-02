@@ -162,7 +162,7 @@ namespace JA_to_DGA
             shops.Add( entry );
         }
 
-        public static DynamicGameAssets.PackData.ObjectPackData ConvertObject( this JsonAssets.Data.ObjectData data, string packId, Dictionary<string, Dictionary<string, string>> i18n, List<DynamicGameAssets.PackData.ObjectPackData> objs, List<DynamicGameAssets.PackData.CraftingRecipePackData> crafting, List<DynamicGameAssets.PackData.ShopEntryPackData> shops )
+        public static DynamicGameAssets.PackData.ObjectPackData ConvertObject( this JsonAssets.Data.ObjectData data, string packId, Dictionary<string, Dictionary<string, string>> i18n, List<DynamicGameAssets.PackData.ObjectPackData> objs, List<DynamicGameAssets.PackData.CraftingRecipePackData> crafting, List<DynamicGameAssets.PackData.ShopEntryPackData> shops, List<DynamicGameAssets.PackData.GiftTastePackData> giftTastes )
         {
             var item = new DynamicGameAssets.PackData.ObjectPackData();
             item.ExtensionData.Add( "JsonAssetsName", JToken.FromObject( data.Name ) );
@@ -220,8 +220,10 @@ namespace JA_to_DGA
                     if ( taste == "Universal" )
                         item.UniversalGiftTaste = 80;
                     else
-                        item.GiftTasteOverride.TryAdd( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
+                        giftTastes.Add( new DynamicGameAssets.PackData.GiftTastePackData()
                         {
+                            ObjectId = $"{packId}/{item.ID}",
+                            Npc = taste,
                             Amount = 80
                         } );
                 }
@@ -230,8 +232,10 @@ namespace JA_to_DGA
                     if ( taste == "Universal" )
                         item.UniversalGiftTaste = 45;
                     else
-                        item.GiftTasteOverride.TryAdd( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
+                        giftTastes.Add( new DynamicGameAssets.PackData.GiftTastePackData()
                         {
+                            ObjectId = $"{packId}/{item.ID}",
+                            Npc = taste,
                             Amount = 45
                         } );
                 }
@@ -240,8 +244,10 @@ namespace JA_to_DGA
                     if ( taste == "Universal" )
                         item.UniversalGiftTaste = 20;
                     else
-                        item.GiftTasteOverride.TryAdd( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
+                        giftTastes.Add( new DynamicGameAssets.PackData.GiftTastePackData()
                         {
+                            ObjectId = $"{packId}/{item.ID}",
+                            Npc = taste,
                             Amount = 20
                         } );
                 }
@@ -250,8 +256,10 @@ namespace JA_to_DGA
                     if ( taste == "Universal" )
                         item.UniversalGiftTaste = -20;
                     else
-                        item.GiftTasteOverride.TryAdd( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
+                        giftTastes.Add( new DynamicGameAssets.PackData.GiftTastePackData()
                         {
+                            ObjectId = $"{packId}/{item.ID}",
+                            Npc = taste,
                             Amount = -20
                         } );
                 }
@@ -260,8 +268,10 @@ namespace JA_to_DGA
                     if ( taste == "Universal" )
                         item.UniversalGiftTaste = -40;
                     else
-                        item.GiftTasteOverride.TryAdd( taste, new DynamicGameAssets.PackData.ObjectPackData.GiftTasteOverrideEntry()
+                        giftTastes.Add( new DynamicGameAssets.PackData.GiftTastePackData()
                         {
+                            ObjectId = $"{packId}/{item.ID}",
+                            Npc = taste,
                             Amount = -40
                         } );
                 }

@@ -128,25 +128,10 @@ namespace DynamicGameAssets.PackData
         [DefaultValue( false )]
         public bool HideFromShippingCollection { get; set; } = false;
 
-        public class GiftTasteOverrideEntry : ICloneable
-        {
-            public int Amount { get; set; }
-            [DefaultValue( null )]
-            public string NormalTextTranslationKey { get; set; }
-            [DefaultValue( null )]
-            public string BirthdayTextTranslationKey { get; set; }
-            [DefaultValue( null )]
-            public int? EmoteId { get; set; }
-
-            public object Clone() => this.MemberwiseClone();
-        }
         [DefaultValue( true )]
         public bool IsGiftable { get; set; } = true;
         [DefaultValue( 20 )]
         public int UniversalGiftTaste { get; set; } = 20;
-        public Dictionary<string, GiftTasteOverrideEntry> GiftTasteOverride { get; set; } = new Dictionary<string, GiftTasteOverrideEntry>();
-
-        public bool ShouldSerializeGiftTasteOverride() { return GiftTasteOverride.Count > 0; }
 
         [DefaultValue( false )]
         public bool Placeable { get; set; } = false;
@@ -215,14 +200,6 @@ namespace DynamicGameAssets.PackData
         {
             var ret = ( ObjectPackData ) base.Clone();
             ret.EdibleBuffs = ( FoodBuffsData ) EdibleBuffs.Clone();
-            if ( GiftTasteOverride != null )
-            {
-                ret.GiftTasteOverride = new Dictionary<string, GiftTasteOverrideEntry>();
-                foreach ( var entry in GiftTasteOverride )
-                {
-                    ret.GiftTasteOverride.Add( entry.Key, ( GiftTasteOverrideEntry ) entry.Value.Clone() );
-                }
-            }
             if ( ret.SprinklerTiles != null )
                 ret.SprinklerTiles = new List<Vector2>( SprinklerTiles );
             if ( ret.UpgradedSprinklerTiles != null )
