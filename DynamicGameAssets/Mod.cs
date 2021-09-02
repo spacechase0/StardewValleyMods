@@ -602,12 +602,12 @@ namespace DynamicGameAssets
             Log.Debug( $"Loading embedded content pack for \"{manifest.Name}\"..." );
             if ( manifest.ExtraFields == null ||
                  !manifest.ExtraFields.ContainsKey( "DGA.FormatVersion" ) ||
-                 !int.TryParse( manifest.ExtraFields[ "DGA.FormatVersion" ].ToString(), out int ver ) )
+                 !int.TryParse( manifest.ExtraFields[ "DGA.FormatVersion" ].ToString(), out int formatVer ) )
             {
                 Log.Error( "Must specify a DGA.FormatVersion as an integer! (See documentation.)" );
                 return;
             }
-            if ( ver != 1 )
+            if ( formatVer < 1 || formatVer > 2 )
             {
                 Log.Error( "Unsupported format version!" );
                 return;
@@ -620,7 +620,7 @@ namespace DynamicGameAssets
             }
 
             var cp = Mod.instance.Helper.ContentPacks.CreateTemporary( dir, manifest.UniqueID, manifest.Name, manifest.Description, manifest.Author, manifest.Version );
-            var pack = new ContentPack( cp, condVer );
+            var pack = new ContentPack( cp, formatVer, condVer );
             contentPacks.Add( manifest.UniqueID, pack );
         }
 
@@ -631,12 +631,12 @@ namespace DynamicGameAssets
                 Log.Debug( $"Loading content pack \"{cp.Manifest.Name}\"..." );
                 if ( cp.Manifest.ExtraFields == null ||
                      !cp.Manifest.ExtraFields.ContainsKey( "DGA.FormatVersion" ) ||
-                     !int.TryParse( cp.Manifest.ExtraFields[ "DGA.FormatVersion" ].ToString(), out int ver ) )
+                     !int.TryParse( cp.Manifest.ExtraFields[ "DGA.FormatVersion" ].ToString(), out int formatVer ) )
                 {
                     Log.Error("Must specify a DGA.FormatVersion as an integer! (See documentation.)");
                     continue;
                 }
-                if ( ver != 1 )
+                if ( formatVer < 1 || formatVer > 2 )
                 {
                     Log.Error( "Unsupported format version!" );
                     continue;

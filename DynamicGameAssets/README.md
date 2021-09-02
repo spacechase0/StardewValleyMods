@@ -65,19 +65,20 @@ This is a list of differences *as pertains to making content packs*. For a full 
 * Crops do not have `"MaxIncreasePerFarmLevel"`. I think this can be done using (Dynamic Fields)[#] (though I haven't tested it yet).
 * Internationalization is done through the `i18n` folder now.
 * Tilesheets are supported. See the (Texture field type)[#] section.
-* All items of the same type go in the same json file (such as `objects.json`) at the root of the content pack; this is to make it so overwriting folders does not result in items that should no longer be present. (In Json Assets, you had to delete the mod and reinstall it to avoid this behavior.)
+* Everything goes in or is referenced by `content.json` at the root of the content pack; this is to make it so overwriting folders does not result in items that should no longer be present. (In Json Assets, you had to delete the mod and reinstall it to avoid this behavior.)
 * Rings are not supported.
  * This is due to the fact that you need SMAPI code to implement their effects anyways; at that point, you can just use a custom subclass of `Ring` and the SpaceCore serialization API like this mod does.
-* Similarly, there is no longer a code API for dynamically registering items. (There is/will be one for registering a static content pack inside your mod folder, though.) You can just subclass things and register it with the SapceCore serializer like this mod does.
+* Similarly, there is no longer a code API for dynamically registering items. You can just subclass things and register it with the SapceCore serializer like this mod does, or subclass `ContentPack`, add your items to it, and then register your content pack directly with the mod.
 * Maybe more I forgot.
 
 ## Useful commands
 * `dga_list` - List the items in all content packs.
 * `dga_add <mod.id/ItemId> [quantity]` - Add the specified item to your inventory (in the specified amount, if possible for the given item type).
 * `dga_reload` - Reload all content packs.
+* `dga_store [mod.id]` - Get a store containing all currently enabled items (optionally from a speicfic pack).
 
 ## manifest.json
-For your content pack, you need a normal SMAPI content pack manifest.json. However, you need two additional fields, `"DGA.FormatVersion"` (currently 1) and `"DGA.ConditionsFormatVersion"` (matching the Content Patcher version for the conditions you want to use). Example:
+For your content pack, you need a normal SMAPI content pack manifest.json. However, you need two additional fields, `"DGA.FormatVersion"` (currently 2) and `"DGA.ConditionsFormatVersion"` (matching the Content Patcher version for the conditions you want to use). Example:
 
 ```json
 {
@@ -89,7 +90,7 @@ For your content pack, you need a normal SMAPI content pack manifest.json. Howev
     "ContentPackFor": { "UniqueID": "spacechase0.DynamicGameAssets" },
     "UpdateKeys": [],
 
-    "DGA.FormatVersion": 1,
+    "DGA.FormatVersion": 2,
     "DGA.ConditionsFormatVersion": "1.23.0"
   }
   ```
@@ -211,51 +212,27 @@ A little complex, but very powerful. See the (Dynamic Fields)[#] section.
 
 ## Pack data
 
-All pack data comes in a single json file in the root of the content pack per pack data type. For example, all objects are in `objects.json`, and all weapons are in `weapons.json`. Most pack data has an ID as well. This is unique *to your pack* (except crafting recipes, which are global to the game, including vanilla recipes), meaning multiple mods can create an item with the ID `"Cherry"`. Internally, IDs are prefixed with the content pack ID.
+All pack data comes in a single json file, `content.json` in the root of the content pack. Each entry has a `"$ItemType"` field, indicating what type of item it is. For example, all objects have `"$ItemType": "Object"`, and all melee weapons have `"$ItemType": "MeleeWeapon"`. Most pack data has an ID as well. This is unique *to your pack* (except crafting recipes, which are global to the game, including vanilla recipes), meaning multiple mods can create an item with the ID `"Cherry"`. Internally, IDs are prefixed with the content pack ID.
 
 ### Common
 These fields are common to every type of pack data.
 | Field | Type | Required or Default value | Description | Dynamic |
+| `$ItemType` | `string` | Required | The type of this pack data. Listed at the beginning of each pack data section. | `false` |
 | `Enabled` | `bool` | Default: `true` | Whether or not the item is currently enabled. Useful with dynamic fields. | `true` |
 | `EnableConditions` | `Dictionary<string, string>` | Default: `null` | Checked at the beginning of each day, these can changed the `Enabled` field dynamically. If disabled, instances of this item will be removed from the game world. Some data might linger; if a pack data type has a "Traces" section, it will describe what will linger. These can be removed, too, by setting `RemoveAllTracesWhenDisabled` to `true` for those pack data types. | `false` |
 | `DynamicFields` | `DynamicField[]` | Default: `null` | See the (Dynamic Fields)[#] section. | `false` |
 
 ### Content Index
-Additional content indices live in `content.json`.
+`$ItemType` - `"ContentIndex"`
 
 These allow you to specify additional json files providing content. They also work with `EnableConditions`, meaning you could disable a bunch of entries referenced by one of these at once, without specifying it on every item.
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
-| `ContentType` | `ContentType` | Required | The type of content in file. | `false` |
 | `FilePath` | `string` | Required | The path to the json file for this content. | `true` |
 
-`ContentType` can be one of the following:
-* `ContentIndex` - (another one of these)
-* `Config`
-* `BigCraftable`
-* `Boots`
-* `CraftingRecipe`
-* `Crop`
-* `Fence`
-* `ForgeRecipe`
-* `FruitTree`
-* `Furniture`
-* `Hat`
-* `MachineRecipe`
-* `Fence`
-* `MeleeWeapon`
-* `Object`
-* `Pants`
-* `Shirt`
-* `ShopEntry`
-* `Tailoring`
-* `TextureOverride`
-
-
-
 ### Config Schema
-Config schema entries normally live in `config-schema.json`.
+Unlike most pack data, config schema entries live in `config-schema.json`.
 
 DGA supports custom config files for packs, integrated with GMCM. You make a list of entries to show in Generic Mod Config Menu (GMCM) (or in the config file, although labels, paragraphcs, images, and pages don't work there), and it works automatically. Everything shows up in the order they show in the config schema.
 
@@ -338,7 +315,7 @@ An string is just some text. In GMCM, this is a dropdown if `ValidValues` is spe
 | `ValidValues` | `string, string[, string[, string...]]` | Default: `null` (anything is valid) | The valid values for this option. If specified, this creates a dropdown in GMCM. The valid values must be comma separated. |
 
 ### Big Craftables
-Big craftables normally live in `big-craftables.json`.
+`$ItemType` - `"BigCraftable"`
 
 Big craftables can be localized in the following keys: `"big-craftable.YourBigCraftable.name"` and `"big-craftable.YourBigCraftable.description"`.
 
@@ -351,7 +328,7 @@ Big craftables can be localized in the following keys: `"big-craftable.YourBigCr
 | `ProvidesLight` | `bool` | Default: `false` | Whether or not this big craftable provides light, like a lamp. | `true` |
 
 ### Boots
-Boots live in `boots.json`.
+`$ItemType` - `"Boots"`
 
 Boots can be localized in the following keys: `"boots.YourBoots.name"` and `"boots.YourBoots.description"`.
 
@@ -365,7 +342,7 @@ Boots can be localized in the following keys: `"boots.YourBoots.name"` and `"boo
 | `SellPrice` | `int` | Default: `0` | The sell price of these boots when sold to a shop. | `true` |
 
 ### Crafting Recipes
-Crafting recipes live in `crafting-recipes.json`.
+`$ItemType` - `"CraftingRecipe"`
 
 Note: Unlike everything else, the `ID` field must be unique *across the game* (including vanilla recipes).
 
@@ -399,7 +376,7 @@ Example:
 "Ingredients": [
     {
         "Type": "VanillaObject",
-                "Value": 74
+        "Value": 74
     },
     {
         "Type": "ContextTag",
@@ -410,7 +387,7 @@ Example:
 ]
 ```
 ### Crops
-Crops normally live in `crops.json`.
+`$ItemType` - `"Crop"`
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
@@ -493,7 +470,7 @@ Example:
 ```
 
 ### Fences 
-Fences normally live in `fences.json`.
+`$ItemType` - `"Fence"`
 
 Fences can be localized in the following keys: `"fence.YourFence.name"` and `"fence.YourFence.description"`.
 
@@ -509,7 +486,7 @@ Fences can be localized in the following keys: `"fence.YourFence.name"` and `"fe
 | `RepairSound` | `string` | Required | The sound cue ID of what to play when repairing this fence. | `true` |
 
 ### Forge Recipe
-Forge recipes normally live in `forge-recipes.json`.
+`$ItemType` - `"ForgeRecipe"`
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
@@ -519,7 +496,7 @@ Forge recipes normally live in `forge-recipes.json`.
 | `CinderShardCost` | `int` | Default: `0` | The cost in cinder shards to forge this recipe. | `true` |
 
 ### Fruit Trees
-Fruit trees normally live in `fruit-trees.json`.
+`$ItemType` - `"FruitTree"`
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
@@ -541,7 +518,7 @@ Example `DynamicFields` for a spring-only `CanGrowNow`:
 ```
 
 ## Furniture
-Furniture normally lives in `furniture.json`.
+`$ItemType` - `"Furniture"`
 
 Furniture can be localized in the following keys: `"furniture.YourFurniture.name"` and `"furniture.YourFurniture.description"`.
 
@@ -599,7 +576,7 @@ Example furniture configuration:
 ```
 
 ### Hats
-Hats normally live in `hats.json`.
+`$ItemType` - `"Hat"`
 
 Hats can be localized in the following keys: `"hat.YourHat.name"` and `"hat.YourHat.description"`.
 
@@ -611,7 +588,9 @@ Hats can be localized in the following keys: `"hat.YourHat.name"` and `"hat.Your
 | `IgnoreHairstyleOffset` | `bool` | Default: `false` | If this hat should ignore where hair is placed when being positioned. | `true` |
 
 ### Machine Recipes
-Machine recipes normally live in `machine-recipes.json`. Only basic machine recipes are supported; for advanced machines, use Producer Framework Mod.
+`$ItemType` - `"MachineRecipe"`
+
+Only basic machine recipes are supported; for advanced machines, use Producer Framework Mod.
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
@@ -628,7 +607,7 @@ Machine recipes normally live in `machine-recipes.json`. Only basic machine reci
 Note that the first ingredient must be being held for the recipe to activate.
 
 ### Melee Weapons
-Melee weapons normally live in `melee-weapons.json`.
+`$ItemType` - `"MeleeWeapon"`
 
 Melee weapons can be localized in the following keys: `"melee-weapon.YourMeleeWeapon.name"` and `"melee-weapon.YourMeleeWeapon.description"`.
 
@@ -649,7 +628,7 @@ Melee weapons can be localized in the following keys: `"melee-weapon.YourMeleeWe
 | `CanTrash` | `bool` | Default: `true` | Whether or not this weapon can be trashed. | `true` |
 
 ### Objects
-Objects normally live in `objects.json`.
+`$ItemType` - `"Object"`
 
 Objects can be localized in the following keys: `"object.YourObject.name"` and `"object.YourObject.description"`. Additionally, `"object.YourObject.category"` can be specified for a category text override.
 
@@ -731,7 +710,7 @@ Here is an example `GiftTasteOverride` in the appropriate container inside an ob
 ```
 
 ### Pants
-Pants normally live in `pants.json`.
+`$ItemType` - `"Pants"`
 
 Pants can be localized in the following keys: `"pants.YourPants.name"` and `"pants.YourPants.description"`.
 
@@ -743,7 +722,7 @@ Pants can be localized in the following keys: `"pants.YourPants.name"` and `"pan
 | `Dyeable` | `bool` | Default: `false` | Whether or not these pants are dyeable. | (unknown, untested) |
 
 ### Shirts
-Shirts normally live in `shirts.json`.
+`$ItemType` - `"Shirts"`
 
 Shirts can be localized in the following keys: `"shirt.YourShirt.name"` and `"shirt.YourShirt.description"`.
 
@@ -759,8 +738,7 @@ Shirts can be localized in the following keys: `"shirt.YourShirt.name"` and `"sh
 | `Sleeveless` | `bool` | Default: `false` | Whether this shirt is sleeveless or not. | (unknown, untested) |
 
 ### Shop Entries
-Shop entries normally live in `shop-entries.json`
-
+`$ItemType` - `"ShopEntry"`
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
@@ -771,8 +749,7 @@ Shop entries normally live in `shop-entries.json`
 | `Currency` | `string` | Default: `null` | Custom currency override for this shop entry. Must be either a vanilla item ID, OR a full ID of a DGA *object*. | `true` |
 
 ### Tailoring Recipes
-Tailoring Recipes normally live in `talioring-recipes.json`
-
+`$ItemType` - `"TailoringRecipe"`
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
@@ -782,7 +759,7 @@ Tailoring Recipes normally live in `talioring-recipes.json`
 | `CraftedItem` | `WeightedItem[]` | Required | The item to craft. | (unknown, untested) |
 
 ### Texture Overrides
-Texture overrides normally live in `texture-overrides.json`.
+`$ItemType` - `"TextureOverride"`
 
 These were implemented for a more optimal solution than Content Patcher Animations for some cases. (There's a chance it works better with mods like SpriteMaster, too.)
 

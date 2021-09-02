@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
@@ -28,14 +28,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpaceSharedGen\SpaceSharedGen.csproj"
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\SpaceSharedGen\SpaceSharedGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>DGAAutomate</_Parameter1>
     </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>JA_to_DGA</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Serialization\" />
   </ItemGroup>
 </Project>

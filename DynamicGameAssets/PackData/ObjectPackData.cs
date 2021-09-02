@@ -121,7 +121,7 @@ namespace DynamicGameAssets.PackData
         [DefaultValue( null )]
         public int? SellPrice { get; set; } = 0;
         [DefaultValue( false )]
-        public bool ForcePriceOnAllInstances = false;
+        public bool ForcePriceOnAllInstances { get; set; } = false;
 
         [DefaultValue( true )]
         public bool CanTrash { get; set; } = true;
