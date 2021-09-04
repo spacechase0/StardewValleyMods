@@ -46,7 +46,7 @@ namespace SpaceCore
             Skills.Init(helper.Events);
             TileSheetExtensions.Init();
 
-            var serializerManager = new SerializerManager();
+            var serializerManager = new SerializerManager(helper.ModRegistry);
 
             this.Harmony = HarmonyPatcher.Apply(this,
                 new EventPatcher(),

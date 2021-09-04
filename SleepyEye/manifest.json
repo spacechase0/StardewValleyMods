@@ -9,8 +9,7 @@
     "UpdateKeys": [ "Nexus:1152" ],
     "Dependencies": [
         {
-            "UniqueID": "spacechase0.SpaceCore",
-            "MinimumVersion": "1.5.9"
+            "UniqueID": "spacechase0.SpaceCore"
         }
     ]
 }

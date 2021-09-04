@@ -4,11 +4,8 @@
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <AssemblyName>TheftOfTheWinterStar</AssemblyName>
-    <RootNamespace>TheftOfTheWinterStar</RootNamespace>
     <Version>1.0.5</Version>
     <TargetFramework>net452</TargetFramework>
-
     <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>
 

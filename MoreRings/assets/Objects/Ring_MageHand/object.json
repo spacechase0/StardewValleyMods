@@ -21,9 +21,13 @@
         "PurchasePrice": 25000
     },
     "NameLocalization": {
-        "hu": "Messzire érő gyűrű"
+        "hu": "Messzire érő gyűrű",
+        "zh": "长臂戒指",
+        "es": "Anillo de largo alcance"
     },
     "DescriptionLocalization": {
-        "hu": "Szerszámokat használhatsz távolról."
+        "hu": "Szerszámokat használhatsz távolról.",
+        "zh": "在远处使用工具。",
+        "es": "Usa herramientas a distancia."
     }
 }

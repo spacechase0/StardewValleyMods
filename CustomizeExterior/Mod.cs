@@ -328,7 +328,7 @@ namespace CustomizeExterior
                 buildingType: "houses",
                 folderName: farm.GetFarmhouseAssetPackName(),
                 debugLabel: "farmhouse",
-                update: texture => typeof(Farm).GetField(nameof(Farm.houseTextures)).SetValue(null, texture)
+                update: texture => typeof(Farm).GetField(nameof(Farm.houseTextures)).SetValue(null, texture) // TODO when updated to Stardew Valley 1.5.5: Farm.houseTextures = texture
             );
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BugNet.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,25 +14,29 @@ using StardewValley.Menus;
 
 namespace BugNet
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
-        public class TextureTarget
-        {
-            public Texture2D Texture { get; set; }
-            public Rectangle SourceRect { get; set; }
-        }
-
-        public class CritterData
-        {
-            public TextureTarget Texture { get; set; }
-            public Func<string> Name { get; set; }
-            public Func<int, int, Critter> MakeFunction { get; set; }
-        }
-
-        public static Mod Instance;
+        /*********
+        ** Fields
+        *********/
         internal static IJsonAssetsApi Ja;
         private static readonly Dictionary<string, CritterData> CrittersData = new();
 
+        /// <summary>The placeholder texture for custom critter cages.</summary>
+        private TextureTarget PlaceholderSprite;
+
+
+        /*********
+        ** Accessors
+        *********/
+        public static Mod Instance;
+
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;
@@ -45,47 +50,73 @@ namespace BugNet
 
             var tilesheet = helper.Content.Load<Texture2D>("assets/critters.png");
 
-            void Register(string name, int index, Func<int, int, Critter> releaseFunc)
+            Rectangle GetTilesheetArea(int index)
             {
-                this.RegisterCritter(name, tilesheet, new Rectangle(index % 4 * 16, index / 4 * 16, 16, 16), () => helper.Translation.Get("critter." + name), releaseFunc);
+                return new Rectangle(index % 4 * 16, index / 4 * 16, 16, 16);
             }
-            Register("SummerButterflyBlue", 0, (x, y) => Critters.MakeButterfly(x, y, 128));
-            Register("SummerButterflyGreen", 1, (x, y) => Critters.MakeButterfly(x, y, 148));
-            Register("SummerButterflyRed", 2, (x, y) => Critters.MakeButterfly(x, y, 132));
-            Register("SummerButterflyPink", 3, (x, y) => Critters.MakeButterfly(x, y, 152));
-            Register("SummerButterflyYellow", 4, (x, y) => Critters.MakeButterfly(x, y, 136));
-            Register("SummerButterflyOrange", 5, (x, y) => Critters.MakeButterfly(x, y, 156));
-            Register("SpringButterflyPalePink", 6, (x, y) => Critters.MakeButterfly(x, y, 160));
-            Register("SpringButterflyMagenta", 7, (x, y) => Critters.MakeButterfly(x, y, 180));
-            Register("SpringButterflyWhite", 8, (x, y) => Critters.MakeButterfly(x, y, 163));
-            Register("SpringButterflyYellow", 9, (x, y) => Critters.MakeButterfly(x, y, 183));
-            Register("SpringButterflyPurple", 10, (x, y) => Critters.MakeButterfly(x, y, 166));
-            Register("SpringButterflyPink", 11, (x, y) => Critters.MakeButterfly(x, y, 186));
-            Register("BrownBird", 12, (x, y) => Critters.MakeBird(x, y, Birdie.brownBird));
-            Register("BlueBird", 13, (x, y) => Critters.MakeBird(x, y, Birdie.blueBird));
-            Register("GreenFrog", 14, (x, y) => Critters.MakeFrog(x, y, false));
-            Register("OliveFrog", 15, (x, y) => Critters.MakeFrog(x, y, false));
-            Register("Firefly", 16, Critters.MakeFirefly);
-            Register("Squirrel", 17, Critters.MakeSquirrel);
-            Register("GrayRabbit", 18, (x, y) => Critters.MakeRabbit(x, y, false));
-            Register("WhiteRabbit", 19, (x, y) => Critters.MakeRabbit(x, y, true));
-            Register("WoodPecker", 20, Critters.MakeWoodpecker);
-            Register("Seagull", 21, Critters.MakeSeagull);
-            Register("Owl", 22, Critters.MakeOwl);
-            Register("Crow", 23, Critters.MakeCrow);
-            Register("Cloud", 24, Critters.MakeCloud);
-            Register("BlueParrot", 25, (x, y) => Critters.MakeParrot(x, y, false));
-            Register("GreenParrot", 26, (x, y) => Critters.MakeParrot(x, y, true));
-            Register("Monkey", 27, Critters.MakeMonkey);
-            Register("OrangeIslandButterfly", 28, (x, y) => Critters.MakeButterfly(x, y, 364, true));
-            Register("PinkIslandButterfly", 29, (x, y) => Critters.MakeButterfly(x, y, 368, true));
-            Register("PurpleBird", 30, (x, y) => Critters.MakeBird(x, y, 115/*Birdie.greenBird*/));
-            Register("RedBird", 31, (x, y) => Critters.MakeBird(x, y, 120/*Birdie.redBird*/));
-            Register("SunsetTropicalButterfly", 32, (x, y) => Critters.MakeButterfly(x, y, 372, true));
-            Register("TropicalButterfly", 33, (x, y) => Critters.MakeButterfly(x, y, 376, true));
-            //register("Marsupial", 34, (x, y) => Critters.MakeMarsupial(x, y));
+            void Register(string name, int index, CritterBuilder critterBuilder)
+            {
+                this.RegisterCritter(
+                    critterId: name,
+                    texture: tilesheet,
+                    textureArea: GetTilesheetArea(index),
+                    translationKey: $"critter.{name}",
+                    isThisCritter: critterBuilder.IsThisCritter,
+                    makeCritter: critterBuilder.MakeCritter
+                );
+            }
+
+            this.PlaceholderSprite = new TextureTarget(tilesheet, GetTilesheetArea(24)); // empty jar sprite
+
+            Register("SummerButterflyBlue", 0, CritterBuilder.ForButterfly(128));
+            Register("SummerButterflyGreen", 1, CritterBuilder.ForButterfly(148));
+            Register("SummerButterflyRed", 2, CritterBuilder.ForButterfly(132));
+            Register("SummerButterflyPink", 3, CritterBuilder.ForButterfly(152));
+            Register("SummerButterflyYellow", 4, CritterBuilder.ForButterfly(136));
+            Register("SummerButterflyOrange", 5, CritterBuilder.ForButterfly(156));
+            Register("SpringButterflyPalePink", 6, CritterBuilder.ForButterfly(160));
+            Register("SpringButterflyMagenta", 7, CritterBuilder.ForButterfly(180));
+            Register("SpringButterflyWhite", 8, CritterBuilder.ForButterfly(163));
+            Register("SpringButterflyYellow", 9, CritterBuilder.ForButterfly(183));
+            Register("SpringButterflyPurple", 10, CritterBuilder.ForButterfly(166));
+            Register("SpringButterflyPink", 11, CritterBuilder.ForButterfly(186));
+            Register("BrownBird", 12, CritterBuilder.ForBird(Birdie.brownBird));
+            Register("BlueBird", 13, CritterBuilder.ForBird(Birdie.blueBird));
+            Register("GreenFrog", 14, CritterBuilder.ForFrog(olive: false));
+            Register("OliveFrog", 15, CritterBuilder.ForFrog(olive: false));
+            Register("Firefly", 16, CritterBuilder.ForFirefly());
+            Register("Squirrel", 17, CritterBuilder.ForSquirrel());
+            Register("GrayRabbit", 18, CritterBuilder.ForRabbit(white: false));
+            Register("WhiteRabbit", 19, CritterBuilder.ForRabbit(white: true));
+            Register("WoodPecker", 20, CritterBuilder.ForWoodpecker());
+            Register("Seagull", 21, CritterBuilder.ForSeagull());
+            Register("Owl", 22, CritterBuilder.ForOwl());
+            Register("Crow", 23, CritterBuilder.ForCrow());
+            Register("Cloud", 24, CritterBuilder.ForCloud());
+            Register("BlueParrot", 25, CritterBuilder.ForParrot(green: false));
+            Register("GreenParrot", 26, CritterBuilder.ForParrot(green: true));
+            Register("Monkey", 27, CritterBuilder.ForMonkey());
+            Register("OrangeIslandButterfly", 28, CritterBuilder.ForButterfly(364, island: true));
+            Register("PinkIslandButterfly", 29, CritterBuilder.ForButterfly(368, island: true));
+            Register("PurpleBird", 30, CritterBuilder.ForBird(Birdie.greenBird));
+            Register("RedBird", 31, CritterBuilder.ForBird(Birdie.redBird));
+            Register("SunsetTropicalButterfly", 32, CritterBuilder.ForButterfly(372, island: true));
+            Register("TropicalButterfly", 33, CritterBuilder.ForButterfly(376, island: true));
         }
 
+        /// <inheritdoc />
+        public override object GetApi()
+        {
+            return new BugNetApi(this.RegisterCritter, this.PlaceholderSprite, this.Monitor);
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             Mod.Ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
@@ -93,25 +124,66 @@ namespace BugNet
             spaceCore.RegisterSerializerType(typeof(BugNetTool));
         }
 
-        private void RegisterCritter(string critterId, Texture2D tex, Rectangle texRect, Func<string> getLocalizedName, Func<int, int, Critter> makeFunc)
+        /// <summary>Add a new critter which can be caught.</summary>
+        /// <param name="critterId">The unique critter ID.</param>
+        /// <param name="texture">The texture to show in the critter cage.</param>
+        /// <param name="textureArea">The pixel area within the <paramref name="texture"/> to show in the critter cage.</param>
+        /// <param name="translationKey">The translation key for the critter name.</param>
+        /// <param name="isThisCritter">Get whether a given critter instance matches this critter.</param>
+        /// <param name="makeCritter">Create a critter instance at the given X and Y tile position.</param>
+        private void RegisterCritter(string critterId, Texture2D texture, Rectangle textureArea, string translationKey, Func<int, int, Critter> makeCritter, Func<Critter, bool> isThisCritter)
         {
-            Mod.CrittersData.Add(critterId, new CritterData
+            // get name translations
+            this.GetTranslationsInAllLocales(
+                translationKey,
+                out string defaultCritterName,
+                out Dictionary<string, string> critterNameTranslations
+            );
+
+            // register critter
+            this.RegisterCritter(critterId, texture, textureArea, defaultCritterName, critterNameTranslations, makeCritter, isThisCritter);
+        }
+
+        /// <summary>Add a new critter which can be caught.</summary>
+        /// <param name="critterId">The unique critter ID.</param>
+        /// <param name="texture">The texture to show in the critter cage.</param>
+        /// <param name="textureArea">The pixel area within the <paramref name="texture"/> to show in the critter cage.</param>
+        /// <param name="defaultCritterName">The default English critter name.</param>
+        /// <param name="translatedCritterNames">The translated critter names in each available locale.</param>
+        /// <param name="makeCritter">Create a critter instance at the given X and Y tile position.</param>
+        /// <param name="isThisCritter">Get whether a given critter instance matches this critter.</param>
+        private void RegisterCritter(string critterId, Texture2D texture, Rectangle textureArea, string defaultCritterName, Dictionary<string, string> translatedCritterNames, Func<int, int, Critter> makeCritter, Func<Critter, bool> isThisCritter)
+        {
+            // get translations
+            string TranslateCritterName(string locale)
             {
-                Texture = new TextureTarget { Texture = tex, SourceRect = texRect },
-                Name = getLocalizedName,
-                MakeFunction = makeFunc
-            });
+                return translatedCritterNames.TryGetValue(locale, out string translatedName)
+                    ? translatedName
+                    : defaultCritterName;
+            }
+            this.GetTranslationsInAllLocales(
+                "critter.cage",
+                out string defaultCageName,
+                out Dictionary<string, string> cageNameTranslations,
+                format: (locale, translation) => translation.Tokens(new { critterName = TranslateCritterName(locale) }).ToString()
+            );
 
-            var texData = new Color[16 * 16];
-            tex.GetData(0, texRect, texData, 0, texData.Length);
-            var jaTex = new Texture2D(Game1.graphics.GraphicsDevice, 16, 16);
-            jaTex.SetData(texData);
+            // save critter data
+            Mod.CrittersData.Add(critterId, new CritterData(
+                defaultName: defaultCritterName,
+                translatedName: () => TranslateCritterName(this.Helper.Content.CurrentLocale),
+                texture: new TextureTarget(texture, textureArea),
+                isThisCritter: isThisCritter,
+                makeCritter: makeCritter
+            ));
 
+            // register cage with Json Assets
             JsonAssets.Mod.instance.RegisterObject(this.ModManifest, new JsonAssets.Data.ObjectData
             {
-                Name = $"Critter Cage: {getLocalizedName()}",
+                Name = defaultCageName,
+                NameLocalization = cageNameTranslations,
                 Description = "It's a critter! In a cage!",
-                Texture = jaTex,
+                Texture = this.CloneTextureArea(texture, textureArea),
                 Category = JsonAssets.Data.ObjectCategory.MonsterLoot,
                 CategoryTextOverride = "Critter",
                 Price = critterId.Contains("Butterfly") ? 50 : 100,
@@ -122,10 +194,10 @@ namespace BugNet
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson?.Name != "Pierre")
+            if (e.NewMenu is not ShopMenu { portraitPerson: { Name: "Pierre" } } menu)
                 return;
 
-            Log.Debug($"Adding bug net to Pierre's shop.");
+            Log.Debug("Adding bug net to Pierre's shop.");
 
             var forSale = menu.forSale;
             var itemPriceAndStock = menu.itemPriceAndStock;
@@ -144,7 +216,7 @@ namespace BugNet
                 CritterData activeCritter = null;
                 foreach (var critterData in Mod.CrittersData)
                 {
-                    int check = Mod.Ja.GetObjectId("Critter Cage: " + critterData.Value.Name());
+                    int check = Mod.Ja.GetObjectId($"Critter Cage: {critterData.Value.DefaultName}");
                     if (check == Game1.player.ActiveObject.ParentSheetIndex)
                     {
                         activeCritter = critterData.Value;
@@ -154,7 +226,7 @@ namespace BugNet
 
                 // Spawn the critter
                 int x = (int)e.Cursor.GrabTile.X + 1, y = (int)e.Cursor.GrabTile.Y + 1;
-                var critter = activeCritter.MakeFunction(x, y);
+                var critter = activeCritter.MakeCritter(x, y);
                 Game1.player.currentLocation.addCritter(critter);
 
                 Game1.player.reduceActiveItemByOne();
@@ -163,67 +235,46 @@ namespace BugNet
             }
         }
 
-        internal static string GetCritterName(string critter)
+        /// <summary>Get the data for a given critter, if it's supported by BugNet.</summary>
+        /// <param name="critter">The critter to match.</param>
+        /// <param name="data">The critter data.</param>
+        /// <returns>Returns whether the critter data was found.</returns>
+        internal static bool TryGetCritter(Critter critter, out CritterData data)
         {
-            return Mod.CrittersData.TryGetValue(critter, out CritterData critterData)
-                ? critterData.Name()
-                : "???";
+            data = Mod.CrittersData.Values.FirstOrDefault(p => p.IsThisCritter(critter));
+            return data != null;
         }
 
-        internal static string GetCritterIdFrom(Critter critter)
+        /// <summary>Get the translations in all available locales for a given translation key.</summary>
+        /// <param name="key">The translation key.</param>
+        /// <param name="defaultText">The default text.</param>
+        /// <param name="translations">The translation text in each locale.</param>
+        /// <param name="format">Format a translation.</param>
+        private void GetTranslationsInAllLocales(string key, out string defaultText, out Dictionary<string, string> translations, Func<string, Translation, string> format = null)
         {
-            int bframe = critter switch
-            {
-                Cloud => -2,
-                Frog frog => Mod.Instance.Helper.Reflection.GetField<bool>(frog, "waterLeaper").GetValue() ? -3 : -4,
-                OverheadParrot parrot => -10 - parrot.sourceRect.Y,
-                CalderaMonkey => -100,
-                _ => critter.baseFrame
-            };
+            translations = this.Helper.Translation
+                .GetInAllLocales(key, withFallback: true)
+                .ToDictionary(
+                    localeSet => localeSet.Key,
+                    localeSet => format?.Invoke(localeSet.Key, localeSet.Value) ?? localeSet.Value.ToString()
+                );
 
-            switch (bframe)
-            {
-                case -10:
-                case -34:
-                    return "GreenParrot";
-                case -58:
-                case -82:
-                    return "BlueParrot";
-                case -100: return "Monkey";
-                case -3: return "GreenFrog";
-                case -4: return "OliveFrog";
-                case -2: return "Cloud";
-                case -1: return "Firefly";
-                case 0: return "Seagull";
-                case 14: return "Crow";
-                case 25: return "BrownBird";
-                case 45: return "BlueBird";
-                case 54: return "GrayRabbit";
-                case 74: return "WhiteRabbit";
-                case 60: return "Squirrel";
-                case 83: return "Owl";
-                case 115: return "PurpleBird";
-                case 125: return "RedBird";
-                case 160: return "SpringButterflyPalePink";
-                case 163: return "SpringButterflyWhite";
-                case 166: return "SpringButterflyPurple";
-                case 180: return "SpringButterflyMagenta";
-                case 183: return "SpringButterflyYellow";
-                case 186: return "SpringButterflyPink";
-                case 128: return "SummerButterflyBlue";
-                case 132: return "SummerButterflyRed";
-                case 136: return "SummerButterflyYellow";
-                case 148: return "SummerButterflyGreen";
-                case 152: return "SummerButterflyPink";
-                case 156: return "SummerButterflyOrange";
-                case 320: return "WoodPecker";
-                case 364: return "OrangeIslandButterfly";
-                case 368: return "PinkIslandButterfly";
-                case 372: return "SunsetTropicalButterfly";
-                case 376: return "TropicalButterfly";
-            }
+            if (!translations.TryGetValue("default", out defaultText))
+                defaultText = null;
+            translations.Remove("default");
+        }
 
-            return "???";
+        /// <summary>Copy an area in a texture into a new texture.</summary>
+        /// <param name="texture">The texture to copy.</param>
+        /// <param name="textureArea">The pixel area within the <paramref name="texture"/> to copy.</param>
+        private Texture2D CloneTextureArea(Texture2D texture, Rectangle textureArea)
+        {
+            var data = new Color[textureArea.Width * textureArea.Height];
+            texture.GetData(0, textureArea, data, 0, data.Length);
+            Texture2D newTexture = new Texture2D(Game1.graphics.GraphicsDevice, textureArea.Width, textureArea.Height);
+            newTexture.SetData(data);
+
+            return newTexture;
         }
     }
 }

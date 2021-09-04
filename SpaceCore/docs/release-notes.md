@@ -1,13 +1,18 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.5.11
+Released 04 September 2021 for SMAPI 3.12.6 or later. Updated by Pathoschild.
+
+* Fixed conflict with PyTK items if no custom SpaceCore items are registered.
+
 ## 1.5.10
-Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
+Released 01 August 2021 for SMAPI 3.12.0 or later. Updated by Pathoschild.
 
 * Updated for Harmony upgrade in SMAPI 3.12.0.
 
 ## 1.5.9
-Released 17 July 2021. Updated by Pathoschild.
+Released 17 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed serialization API in 1.5.8...
   * not fully compatible with PyTK;
@@ -15,7 +20,7 @@ Released 17 July 2021. Updated by Pathoschild.
   * reordering custom items when there are several in the same list.
 
 ## 1.5.8
-Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 10 July 2021  for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Improved performance and reduced memory usage when read/writing saves.
 * SpaceCore no longer disables crop withering on day update.  
@@ -23,7 +28,7 @@ Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
   support Json Assets, which now applies the change itself._
 
 ## 1.5.7
-Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 19 June 2021  for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Reduced performance impact (thanks to pepoluan!).

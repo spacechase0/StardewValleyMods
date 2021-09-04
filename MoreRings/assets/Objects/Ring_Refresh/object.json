@@ -22,10 +22,12 @@
     },
     "NameLocalization": {
         "hu": "Felfrissítő gyűrű",
-        "zh": "醒灵之戒"
+        "zh": "醒灵戒指",
+        "es": "Anillo Refrescante"
     },
     "DescriptionLocalization": {
         "hu": "Vajon mit csinál.",
-        "zh": "我想知道它是干什么的。"
+        "zh": "我想知道它是干什么的。",
+        "es": "Me pregunto que hace esto."
     }
 }

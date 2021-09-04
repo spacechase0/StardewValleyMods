@@ -11,13 +11,19 @@
         "u 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28"
     ],
     "NameLocalization": {
+        "es": "Tabla De Surf A Rayas (Espantapájaros)",
         "hu": "Csíkos szörfdeszka (Madárijesztő)",
         "ko": "스트라이프 서핑보드 (허수아비)",
-        "ru": "Полосатая доска для сёрфинга (пугало)"
+        "pt": "Prancha de Surfe Listrada",
+        "ru": "Полосатая доска для сёрфинга (пугало)",
+        "zh": "条纹冲浪板（稻草人）"
     },
     "DescriptionLocalization": {
+        "es": "Una tabla de surf con rayas azules que también funciona como espantapájaros.",
         "hu": "Kék csíkos szörfdeszka. Madárijesztőként is használható.",
         "ko": "허수아비 역할도 하는 파란색 줄무늬 서핑보드.",
-        "ru": "Бело-голубая доска для сёрфинга. Также выполняет роль пугала."
+        "pt": "Uma prancha de surfe listrada de azul que também funciona como espantalho.",
+        "ru": "Бело-голубая доска для сёрфинга. Также выполняет роль пугала.",
+        "zh": "带蓝色条纹的冲浪板，也可以起到稻草人的作用。"
     }
 }

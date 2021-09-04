@@ -8,12 +8,10 @@
     "EntryDll": "TheftOfTheWinterStar.dll",
     "Dependencies": [
         {
-            "UniqueID": "spacechase0.SpaceCore",
-            "MinimumVersion": "1.5.10"
+            "UniqueID": "spacechase0.SpaceCore"
         },
         {
-            "UniqueID": "spacechase0.JsonAssets",
-            "MinimumVersion": "1.8.3"
+            "UniqueID": "spacechase0.JsonAssets"
         }
     ],
     "UpdateKeys": [ "Nexus:5062" ]

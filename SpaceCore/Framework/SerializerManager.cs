@@ -19,6 +19,10 @@ namespace SpaceCore.Framework
         /*********
         ** Fields
         *********/
+        /// <summary>Whether PyTK is installed.</summary>
+        private readonly bool HasPyTk;
+
+        /// <summary>Whether SpaceCore's custom types have been added to the <see cref="SaveGame"/> serializers.</summary>
         private bool InitializedSerializers;
 
         // Update these each game update
@@ -96,17 +100,34 @@ namespace SpaceCore.Framework
         /*********
         ** Public methods
         *********/
+        /// <summary>Construct an instance.</summary>
+        /// <param name="modRegistry">The mod registry to check for installed mods.</param>
+        public SerializerManager(IModRegistry modRegistry)
+        {
+            this.HasPyTk = modRegistry.IsLoaded("Platonymous.Toolkit");
+        }
+
         public void InitializeSerializers()
         {
-            if (this.InitializedSerializers || !SpaceCore.ModTypes.Any())
+            // skip if already initialized
+            if (this.InitializedSerializers)
                 return;
             this.InitializedSerializers = true;
 
-            Log.Trace("Reinitializing serializers...");
+            // add custom types to save serializers
+            //
+            // When PyTK is installed, this is needed even if we're not making any actual changes
+            // to the serializers. (Just notifying it doesn't seem to be enough.) This can be
+            // tested by installing Seed Bag, spawning one in the inventory, then checking whether
+            // it has the two attachment slots when you reload.
+            if (SpaceCore.ModTypes.Any() || this.HasPyTk)
+            {
+                Log.Trace($"Reinitializing serializers for {SpaceCore.ModTypes.Count} mod types...");
 
-            SaveGame.serializer = this.InitializeSerializer(typeof(SaveGame), this.VanillaMainTypes);
-            SaveGame.farmerSerializer = this.InitializeSerializer(typeof(Farmer), this.VanillaFarmerTypes);
-            SaveGame.locationSerializer = this.InitializeSerializer(typeof(GameLocation), this.VanillaGameLocationTypes);
+                SaveGame.serializer = this.InitializeSerializer(typeof(SaveGame), this.VanillaMainTypes);
+                SaveGame.farmerSerializer = this.InitializeSerializer(typeof(Farmer), this.VanillaFarmerTypes);
+                SaveGame.locationSerializer = this.InitializeSerializer(typeof(GameLocation), this.VanillaGameLocationTypes);
+            }
         }
 
         public XmlSerializer InitializeSerializer(Type baseType, Type[] extra = null)
@@ -128,7 +149,7 @@ namespace SpaceCore.Framework
         /// <param name="serializer">The XML serializer which changed.</param>
         private void NotifyPyTk(XmlSerializer serializer)
         {
-            if (!SpaceCore.Instance.Helper.ModRegistry.IsLoaded("Platonymous.Toolkit"))
+            if (!this.HasPyTk)
                 return;
 
             const string errorPrefix = "PyTK is installed, but we couldn't notify it about serializer changes. PyTK serialization might not work correctly.\nTechnical details:";

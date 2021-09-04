@@ -4,7 +4,7 @@
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.5.10</Version>
+    <Version>1.5.11</Version>
     <TargetFramework>net452</TargetFramework>
 
     <EnableHarmony>true</EnableHarmony>
@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
   <ItemGroup>

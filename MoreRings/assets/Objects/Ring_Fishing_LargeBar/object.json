@@ -25,10 +25,12 @@
     },
     "NameLocalization": {
         "hu": "Széles háló gyűrű",
-        "zh": "猎网指环"
+        "zh": "猎网戒指",
+        "es": "Anillo de Redes Anchas"
     },
     "DescriptionLocalization": {
         "hu": "50%-kal megnöveli a horgászbot kapási területét.",
-        "zh": "增加钓竿50%捕获区域。"
+        "zh": "增加钓竿50%捕获区域。",
+        "es": "Aumenta el tamaño de la barra de pesca en un 50%."
     }
 }
