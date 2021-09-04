@@ -3,8 +3,9 @@
 # Release notes
 ## Upcoming release
 * Expanded Preconditions Utility (EPU) is no longer required.  
-  _Json Assets now loads fine without EPU installed. If a content pack uses EPU conditions and you
-  don't have it installed, Json Assets will log an error and treat those conditions as always failed._
+  _Json Assets now loads fine without EPU installed, and will parse vanilla preconditions itself. If
+  a content pack uses EPU conditions and you don't have it installed, Json Assets will log an error
+  and treat those conditions as always failed._
 * Fixed resource clumps outside the farm not ID-fixed.
 * Fixed error when ID-fixing bundles with invalid item IDs.
 
