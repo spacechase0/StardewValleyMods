@@ -2,7 +2,6 @@
 
 # Release notes
 ## Upcoming release
-* Updated for Stardew Valley 1.5.5.
 * Fixed error item that can be caught in the fishing shack.
 
 ## 1.0.7

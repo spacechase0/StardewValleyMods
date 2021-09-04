@@ -2,7 +2,6 @@
 
 # Release notes
 ## Upcoming release
-* Updated for Stardew Valley 1.5.5.
 * The hunger drain and starvation damage are now configurable per-minute instead of per-10-minutes.
 * Added compatibility with Casual Life and other mods which change the clock at non-10-minute intervals.
 

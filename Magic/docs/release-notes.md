@@ -2,7 +2,6 @@
 
 # Release notes
 ## Upcoming release
-* Updated for Stardew Valley 1.5.5.
 * Fixed able to level up spells with zero free points.
 * Fixed initial spells no longer learned immediately.
 * Fixed PyTK still marked as a requirement in the manifest.

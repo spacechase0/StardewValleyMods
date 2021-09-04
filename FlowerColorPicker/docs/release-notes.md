@@ -1,9 +1,6 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
-* Updated for Stardew Valley 1.5.5.
-
 ## 1.0.4
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
