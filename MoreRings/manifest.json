@@ -1,8 +1,8 @@
 ﻿{
     "Name": "More Rings",
     "Author": "spacechase0, ParadigmNomad (sprites)",
-    "Version": "1.1.3",
-    "MinimumApiVersion": "3.12.0",
+    "Version": "1.1.4",
+    "MinimumApiVersion": "3.12.6",
     "Description": "Adds new rings with special effects.",
     "UniqueID": "spacechase0.MoreRings",
     "EntryDll": "MoreRings.dll",

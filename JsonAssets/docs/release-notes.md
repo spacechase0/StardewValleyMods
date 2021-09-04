@@ -1,37 +1,43 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
-* Expanded Preconditions Utility (EPU) is no longer required.  
-  _Json Assets now loads fine without EPU installed, and will parse vanilla preconditions itself. If
-  a content pack uses EPU conditions and you don't have it installed, Json Assets will log an error
-  and treat those conditions as always failed._
+## 1.9.0
+Released 04 September 2021 for SMAPI 3.12.6 or later. Updated by Pathoschild.
+
+* Expanded Preconditions Utility (EPU) is now optional.  
+  _Json Assets now handles vanilla conditions itself. If a content pack uses EPU-specific conditions
+  and you don't have it installed, Json Assets will log an error and treat those conditions as
+  always failed._
 * Fixed resource clumps outside the farm not ID-fixed.
 * Fixed error when ID-fixing bundles with invalid item IDs.
 
 **Update note for mod authors:**  
-When using EPU conditions (i.e. the `PurchaseRequirements` fields), adding it as a [manifest
-dependency](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Manifest#Dependencies) and to
-your mod description is recommended to avoid confusion.
+If your content pack uses EPU-specific conditions in a `PurchaseRequirements` field, adding it as a
+[manifest dependency](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Manifest#Dependencies)
+and to your mod description is recommended to avoid confusion.
+
+These conditions are EPU-specific: `!` (to reverse a condition), `CommunityCenterComplete`,
+`FarmHouseUpgradeLevel`, `HasCookingRecipe`, `HasCraftingRecipe`, `HasItem`, `HasMod`,
+`JojaMartComplete`, `NPCAt`, `SeededRandom`, and `SkillLevel`.
 
 ## 1.8.3
-Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
+Released 01 August 2021 for SMAPI 3.12.0 or later. Updated by Pathoschild.
 
 * Updated for Harmony upgrade in SMAPI 3.12.0.
 * Fixed duplicate items added to shop menu when it's hidden and restored by mods like Lookup Anything.
 
 ## 1.8.2
-Released 24 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 24 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed items added to Krobus' shop not added when he's not there.
 
 ## 1.8.1
-Released 18 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 18 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed error patching the forge menu.
 
 ## 1.8.0
-Released 17 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 17 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * You can now add items to any shop in the game, including custom shops. See [_shops_ in the author guide](author-guide.md#shops).
 * Shop IDs for `PurchaseFrom` fields are no longer case-sensitive.
@@ -39,7 +45,7 @@ Released 17 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 * Internal refactoring.
 
 ## 1.7.8
-Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 10 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Updated for SpaceCore 1.5.8.
 * Fixed `AdditionalData` for saplings adding recipe instead of sapling to the shop (thanks to lshtech!).
@@ -48,7 +54,7 @@ Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 * Internal refactoring.
 
 ## 1.7.7
-Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 19 June 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows). (Thanks to pepoluan for a related winter crop fix!)
 * Fixed cask contents not ID-fixed.¹

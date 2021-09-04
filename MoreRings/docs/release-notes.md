@@ -1,26 +1,28 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.1.4
+Released 04 September 2021 for SMAPI 3.12.6 or later. Updated by Pathoschild.
+
 * Improved translations. Thanks to Evelyon (added Spanish) and mcBegins2Snow (updated Chinese)!
 
 ## 1.1.3
-Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
+Released 01 August 2021 for SMAPI 3.12.0 or later. Updated by Pathoschild.
 
 * Updated for Harmony upgrade in SMAPI 3.12.0.
 
 ## 1.1.2
-Released 18 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 18 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed error with Harmony 2.x in the upcoming SMAPI 3.12.0.
 
 ## 1.1.1
-Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 10 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Updated translations. Thanks to martin66789 (added Hungarian)!
 
 ## 1.1.0
-Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 19 June 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Updated for Stardew Valley 1.5.¹
 * Added three new rings: Quality+ ring, Ring of Far Reaching, and Ring of True Sight.¹

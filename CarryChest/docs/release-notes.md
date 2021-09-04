@@ -1,22 +1,24 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.3.5
+Released 04 September 2021 for SMAPI 3.12.6 or later. Updated by Pathoschild.
+
 * Placing a chest now transfers attached mod data like Chests Anywhere settings (thanks to ImJustMatt!).
 
 ## 1.3.4
-Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
+Released 01 August 2021 for SMAPI 3.12.0 or later. Updated by Pathoschild.
 
 * Updated for Harmony upgrade in SMAPI 3.12.0.
 
 ## 1.3.3
-Released 17 July 2021. Updated by Pathoschild.
+Released 17 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed support for Stone Chests in Stardew Valley 1.5.
 * Fixed mod partially handling unsupported chest types.
 
 ## 1.3.2
-Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 19 June 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Internal refactoring.
