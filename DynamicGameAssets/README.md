@@ -76,6 +76,7 @@ This is a list of differences *as pertains to making content packs*. For a full 
 * `dga_add <mod.id/ItemId> [quantity]` - Add the specified item to your inventory (in the specified amount, if possible for the given item type).
 * `dga_reload` - Reload all content packs.
 * `dga_store [mod.id]` - Get a store containing all currently enabled items (optionally from a speicfic pack).
+* `dga_force` - Force-update enable conditions and dynamic fields. Useful if you used debug commands to change the season and want to test fruit trees, for example.
 
 ## manifest.json
 For your content pack, you need a normal SMAPI content pack manifest.json. However, you need two additional fields, `"DGA.FormatVersion"` (currently 2) and `"DGA.ConditionsFormatVersion"` (matching the Content Patcher version for the conditions you want to use). Example:
@@ -639,7 +640,7 @@ If `RemoveAllTraceswhenDisabled` is set, then the player will lose their shipped
 | `ID` | `string` | Required | The ID of this object. | `false` |
 | `Texture` | `Texture[16, 16]` | Required | The texture of this object. | `true` |
 | `Plants` | `string` | Default: `null` | The ID of the crop to plant. Must be the full ID of the DGA crop. | `true` |
-| `Category` | `Enum[Vegetable, Fruit, Flower, Gem, Fish, Egg, Milk, Cooking, Crafting, Mineral, Meat, Metal, Junk, Syrup, MonsterLoot, ArtisanGoods, Seeds, Ring, AnimalGoods, Greens]` | Default: `"Junk"` | The vanilla category for this object. | (unknown, untested) |
+| `Category` | `Enum[Vegetable, Fruit, Flower, Gem, Fish, Egg, Milk, Cooking, Crafting, Mineral, Meat, Metal, Junk, Syrup, MonsterLoot, ArtisanGoods, Seeds, AnimalGoods, Greens]` | Default: `"Junk"` | The vanilla category for this object. | (unknown, untested) |
 | `CategoryColorOverride` | `Color?` | Default: `null` | The color override for the category name. | (unknown, untested) |
 | `Edibility` | `int` | Default: `-300` (inedible) | The edibility value for thsi object; auto-calculates stamina and health restored based on the standard game formula. | `true` |
 | `EatenHealthRestoredOverride` | `int?` | Default: `null` | An override for how much health is restored upon eating. | `true` |
@@ -691,8 +692,8 @@ Here is an example `FoodBuffs` inside an object:
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
-| `ObjectId` | `string` | Required | The full object ID of what we are overriding the gift taste for. | `false` |
-| `Npc` | `string` | Required | The NPC of who we are overriding the gift taste for. | `false` |
+| `ObjectId` | `string` | Required | The full object ID of what we are overriding the gift taste for. This can be a comma-separated list. | `false` |
+| `Npc` | `string` | Required | The NPC of who we are overriding the gift taste for. This can be a comma-separated list. | `false` |
 | `Amount` | `int` | Required | The amount of friendship points to give or take. | `true` |
 | `NormalTextTranslationKey` | `string` | Default: `null` | The translation key of the text normally shown for this NPC when they receive this object. | `true` |
 | `BirthdayTextTranslationKey` | `string` | Default: `null` | The translation key of the text for this NPC when they receive this object on their birthday. | `true` |

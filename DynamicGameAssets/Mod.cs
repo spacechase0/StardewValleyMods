@@ -351,9 +351,17 @@ namespace DynamicGameAssets
                     {
                         if ( giftTaste.Enabled )
                         {
-                            if ( !giftTastes.ContainsKey( giftTaste.Npc ) )
-                                giftTastes.Add( giftTaste.Npc, new() );
-                            giftTastes[ giftTaste.Npc ].Add( giftTaste.ObjectId, giftTaste );
+                            string[] npcs = giftTaste.Npc.Split( ',' ).Select( npc => npc.Trim() ).ToArray();
+                            foreach ( string npc in npcs )
+                            {
+                                if ( !giftTastes.ContainsKey( npc ) )
+                                    giftTastes.Add( npc, new() );
+
+                                string[] objects = giftTaste.ObjectId.Split( ',' ).Select( obj => obj.Trim() ).ToArray();
+                                foreach ( string obj in objects )
+                                    if ( !giftTastes[ npc ].ContainsKey( obj ) )
+                                        giftTastes[ npc ].Add( obj, giftTaste );
+                            }
                         }
                     }
                 }
@@ -577,6 +585,9 @@ namespace DynamicGameAssets
                 {
                     foreach ( var data in pack.Value.items.Values )
                     {
+                        if ( !data.Enabled )
+                            continue;
+
                         var item = data.ToItem();
                         if ( item != null )
                             stuff.Add( item, new int[] { 0, item is DynamicGameAssets.Game.CustomCraftingRecipe ? 1 : int.MaxValue } );
@@ -596,6 +607,9 @@ namespace DynamicGameAssets
                 Dictionary<ISalable, int[]> stuff = new();
                 foreach ( var data in pack.items.Values )
                 {
+                    if ( !data.Enabled )
+                        continue;
+
                     var item = data.ToItem();
                     if ( item != null )
                         stuff.Add( item, new int[] { 0, item is DynamicGameAssets.Game.CustomCraftingRecipe ? 1 : int.MaxValue } );

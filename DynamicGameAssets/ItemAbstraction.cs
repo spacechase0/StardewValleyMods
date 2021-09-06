@@ -238,7 +238,12 @@ namespace DynamicGameAssets
             {
                 case ItemType.DGAItem:
                     {
-                        var ret = Mod.Find( Value ).ToItem();
+                        var ret = Mod.Find( Value )?.ToItem();
+                        if ( ret == null )
+                        {
+                            Log.Error( $"Failed to create item for {Value}! Does it exist and is an item (ie. not a crop or fruit tree or something)?" );
+                            return new StardewValley.Object( 1720, 1 );
+                        }
                         if ( ret is CustomObject obj && ObjectColor.A > 0 )
                             obj.ObjectColor = ObjectColor;
                         return ret;

@@ -91,10 +91,10 @@ namespace JA_to_DGA
                         else ret.Add( "Query: {{Year}} >= " + toks[ 1 ], "false" );
                         break;
                     case "z":
-                        ret.Add( "Season |contains=" + toks[ 1 ].Replace( " ", ", " ), "false" );
+                        ret.Add( "Season |contains=" + req.Substring( 2 ).Replace( " ", ", " ), "false" );
                         break;
                     case "!z":
-                        ret.Add( "Season |contains=" + toks[ 1 ].Replace( " ", ", " ), "true" );
+                        ret.Add( "Season |contains=" + req.Substring( 3 ).Replace( " ", ", " ), "true" );
                         break;
                     case "e":
                     case "!k":

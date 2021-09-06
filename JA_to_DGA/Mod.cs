@@ -231,6 +231,7 @@ namespace JA_to_DGA
             Log.Info( "We did some black magic to go ahead and load it without restarting the game, too. :)" );
             Log.Info( "Please do not upload converted packs for mods that you don't have permission to do!" );
             Log.Info( "NOTE: Regrowing crops work differently in DGA than in JA! See the making content packs documentation for detail." );
+            Log.Info( "NOTE: Crafting recipes are incomplete if they used ingredients from a different pack! They need prefixing with \"pack.id/\". (See documentation for details.)" );
         }
     }
 }
