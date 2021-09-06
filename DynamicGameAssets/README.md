@@ -46,7 +46,7 @@ Contents
     * [Gift Tastes](#gift-tastes)
     * [Pants](#pants)
     * [Shirts](#shirts)
-    * [Shop Entries](#shop-entires)
+    * [Shop Entries](#shop-entries)
     * [Tailoring Recipes](#tailoring-recipes)
     * [Texture Overrides](#texture-overrides)
     * [Extra Information](#extra-information)
