@@ -4,8 +4,8 @@
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.0.7</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <Version>1.0.8</Version>
+    <TargetFramework>net452</TargetFramework>
 
     <EnableHarmony>true</EnableHarmony>
     <IgnoreModFilePatterns>bathhouse_tiles.png, mine_lava.png, spring_outdoorsTileSheet.png, townInterior.png, walls_and_floors.png, assets[/\\]FishingShack[/\\]map-.tbin</IgnoreModFilePatterns>

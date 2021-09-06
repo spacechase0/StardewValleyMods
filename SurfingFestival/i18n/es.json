@@ -1,0 +1,17 @@
+﻿{
+    "ui.laps": "Vueltas: {{laps}}/2",
+    "ui.ranking": "Clasificación",
+    "ui.wood": "Añade leña a la hoguera",
+    "dialog.wood": "Has puesto 50 piezas de madera en la hoguera.",
+    "dialog.shorts": "...Qué raro. ¿Por qué el fuego se volvió púrpura?",
+    "dialog.prizemoney": "Has recibido 1500g.",
+    "item.boost": "Impulso de Fruta Estelar",
+    "item.homingprojectile": "Proyectil de Pez Globo",
+    "item.firstplaceprojectile": "Nube Teledirigida",
+    "item.invincibility": "Poder De Junimo",
+    "secret.text": "Un cartel dice: ¿Quieres saler adelante, ahora y en el futuro? Haz una oferta.",
+    "secret.yes": "¿Tirar 100.000g en la caja?",
+    "secret.no": "Irse",
+    "secret.broke": "No puedes permitirte eso.",
+    "secret.purchased": "Te sientes diferente de alguna manera."
+}

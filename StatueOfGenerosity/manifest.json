@@ -9,8 +9,7 @@
     "UpdateKeys": [ "Nexus:7532" ],
     "Dependencies": [
         {
-            "UniqueID": "spacechase0.JsonAssets",
-            "MinimumVersion": "1.8.3"
+            "UniqueID": "spacechase0.JsonAssets"
         }
     ]
 }

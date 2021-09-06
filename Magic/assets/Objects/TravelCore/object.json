@@ -20,14 +20,16 @@
         "PurchaseFrom": "Marlon",
         "PurchasePrice": 250
     },
-    "NameLocalization": { //Korean localisation
+    "NameLocalization": {
         "ko": "트래블 코어",
-        "zh": "传送核心", //Chinese (Simplified)
-        "pt": "Centro de Teleporte" //Portuguese Brazilian  
+        "zh": "传送核心",
+        "pt": "Centro de Teleporte",
+        "es": "Núcleo De Teletransportes"
     },
     "DescriptionLocalization": {
         "ko": "마법 주문의 촉매제입니다.",
-        "zh": "触媒之一。", //Chinese (Simplified)
-        "pt": "Catalizador." //Portuguese Brazilian  
+        "zh": "触媒之一。",
+        "pt": "Catalizador.",
+        "es": "Catalizador."
     }
 }

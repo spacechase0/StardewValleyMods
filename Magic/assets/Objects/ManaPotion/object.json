@@ -22,12 +22,14 @@
     },
     "NameLocalization": {
         "ko": "매직 엘릭서",
-        "zh": "魔力药水", //Chinese (Simplified)
-        "pt": "Elixir Magico" //Brazilian Portuguese  
+        "zh": "魔力药水",
+        "pt": "Elixir Magico",
+        "es": "Elixir Mágico"
     },
     "DescriptionLocalization": {
         "ko": "체력과 마나를 회복시켜주는 영약입니다.",
-        "zh": "恢复生命和法力。", //Chinese (Simplified)
-        "pt": "Restaura vida e mana." //Brazilian Portuguese  
+        "zh": "恢复生命和法力。",
+        "pt": "Restaura vida e mana.",
+        "es": "Restaura vida y maná."
     }
 }

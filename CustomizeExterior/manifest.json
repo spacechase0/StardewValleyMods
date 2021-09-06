@@ -9,8 +9,7 @@
     "UpdateKeys": [ "Nexus:1099" ],
     "Dependencies": [
         {
-            "UniqueID": "spacechase0.SpaceCore",
-            "MinimumVersion": "1.5.9"
+            "UniqueID": "spacechase0.SpaceCore"
         },
         {
             "UniqueID": "Entoarox.SeasonalImmersion",

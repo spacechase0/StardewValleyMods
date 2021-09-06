@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <Version>1.1.11</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net452</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

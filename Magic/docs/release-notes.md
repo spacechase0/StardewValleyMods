@@ -1,24 +1,29 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 0.5.6
+Released 04 September 2021 for SMAPI 3.12.6 or later. Updated by Pathoschild.
+
+* Fixed able to level up spells with zero free points.
 * Fixed initial spells no longer learned immediately.
 * Fixed PyTK still marked as a requirement in the manifest.
+* Fixed unable to learn spell from meteors outside the farm.
+* Improved translations. Thanks to Evelyon (added Spanish)!
 
 ## 0.5.5
-Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
+Released 01 August 2021 for SMAPI 3.12.0 or later. Updated by Pathoschild.
 
 * Switching spell bar now requires holding the cast key, and no longer rotates your toolbar too (thanks to AWolters-ru!).
 * Fixed initial spells not learned if you bypass the learn-magic event.
 
 ## 0.5.4
-Released 24 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 24 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed altar broken when other mods edit Pierre's shop map.
 * Fixed players having one spellbar instead of two.
 
 ## 0.5.3
-Released 18 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 18 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed some changes through the altar not persisted when you save and reload.
 * Fixed teleport spell opening the menu for all players.
@@ -26,19 +31,19 @@ Released 18 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 * Fixed typos.
 
 ## 0.5.2
-Released 17 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 17 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * PyTK is now optional. If it's not installed, the Magic TV channel won't be added in-game.
 
 ## 0.5.1
-Released 12 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 12 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Added professions to the `magic_summary` console command output.
 * Fixed spell selection UI not showing hotbar in some cases.
 * Fixed `magic_summary` showing max spell levels one higher than they are.
 
 ## 0.5.0
-Released 11 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 11 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Added `magic_summary` console command to show troubleshooting info.
 * Added `help` documentation for console commands.
@@ -48,7 +53,7 @@ Released 11 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 * Fixed typo in Magic Missile spell name.
 
 ## 0.4.0
-Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 10 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Added API methods to support Skill Prestige.
 * Magic sounds are now localized, so only nearby players in multiplayer will hear them.
@@ -64,14 +69,14 @@ Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 * Fixed multiplayer issues with _clear debris_ spell.
 
 ## 0.3.3
-Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 19 June 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Improved documentation.
 * Internal refactoring.
 
 ## 0.3.2
-Released 26 January 2021 for Stardew Valley 1.5.
+Released 26 January 2021 for SMAPI 3.9.5 or later.
 
 * Updated for Stardew Valley 1.5.
 * The mod now requires [Mana Bar](https://www.nexusmods.com/stardewvalley/mods/7831).

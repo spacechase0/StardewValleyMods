@@ -11,13 +11,19 @@
         "u 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28"
     ],
     "NameLocalization": {
+        "es": "Tabla De Surf Roja (Espantapájaros)",
         "hu": "Piros szörfdeszka (Madárijesztő)",
         "ko": "레드 서핑보드 (허수아비)",
-        "ru": "Красная доска для сёрфинга (пугало)"
+        "pt": "Prancha de Surfe Vermelha",
+        "ru": "Красная доска для сёрфинга (пугало)",
+        "zh": "红色冲浪板（稻草人）"
     },
     "DescriptionLocalization": {
+        "es": "Una tabla de surf roja que también funciona como espantapájaros.",
         "hu": "Piros szörfdeszka. Madárijesztőként is használható.",
         "ko": "허수아비 역할도 하는 빨간색 서핑보드.",
-        "ru": "Красная доска для сёрфинга. Также выполняет роль пугала."
+        "pt": "Uma prancha de surfe vermelha que também funciona como um espantalho.",
+        "ru": "Красная доска для сёрфинга. Также выполняет роль пугала.",
+        "zh": "红色的冲浪板，也可以起到稻草人的作用。"
     }
 }

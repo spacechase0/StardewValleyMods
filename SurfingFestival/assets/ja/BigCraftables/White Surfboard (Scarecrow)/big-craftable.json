@@ -11,13 +11,19 @@
         "u 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28"
     ],
     "NameLocalization": {
+        "es": "Tabla De Surf Blanca (Espantapájaros)",
         "hu": "Fehér szörfdeszka (Madárijesztő)",
         "ko": "화이트 서핑보드 (허수아비)",
-        "ru": "Белая доска для сёрфинга (пугало)"
+        "pt": "Prancha de Surfe Branca",
+        "ru": "Белая доска для сёрфинга (пугало)",
+        "zh": "白色冲浪板（稻草人）"
     },
     "DescriptionLocalization": {
+        "es": "Una tabla de surf blanca que también funciona como espantapájaros.",
         "hu": "Fehér szörfdeszka. Madárijesztőként is használható.",
         "ko": "허수아비 역할도 하는 흰색 서핑보드.",
-        "ru": "Белая доска для сёрфинга. Также выполняет роль пугала."
+        "pt": "Uma prancha de surfe branca que também funciona como espantalho.",
+        "ru": "Белая доска для сёрфинга. Также выполняет роль пугала.",
+        "zh": "白色的冲浪板，也可以起到稻草人的作用。"
     }
 }

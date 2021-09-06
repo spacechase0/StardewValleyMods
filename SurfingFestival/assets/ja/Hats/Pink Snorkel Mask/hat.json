@@ -5,13 +5,19 @@
     "ShowHair": true,
     "IgnoreHairstyleOffset": true,
     "NameLocalization": {
+        "es": "Máscara De Esnórquel Rosa",
         "hu": "Rózsaszín búvármaszk",
         "ko": "핑크 스노클 마스크",
-        "ru": "Розовая маска для подводного плавания"
+        "pt": "Máscara de Snorkel Rosa",
+        "ru": "Розовая маска для подводного плавания",
+        "zh": "粉红色潜水面罩"
     },
     "DescriptionLocalization": {
+        "es": "Una máscara de esnórquel: no sirve más que para decorar.",
         "hu": "Csak dekoráció.",
         "ko": "스노클 마스크 - 장식 용.",
-        "ru": "Маска для подводного плавания. Ныряйте с осторожностью, она декоративная."
+        "pt": "Uma máscara de snorkel - serve apenas para decoração.",
+        "ru": "Маска для подводного плавания. Ныряйте с осторожностью, она декоративная.",
+        "zh": "潜水面罩——除了装饰之外，没有其他用途。"
     }
 }

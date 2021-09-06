@@ -14,9 +14,10 @@ namespace CustomCritters.Framework
         /// <remarks>Setting an invalid light ID will crash the game. Valid IDs are based on <see cref="LightSource.loadTextureFromConstantValue"/>.</remarks>
         private readonly HashSet<int> ValidLightIds = new(new[] { LightSource.lantern, LightSource.windowLight, LightSource.sconceLight, LightSource.cauldronLight, LightSource.indoorWindowLight });
 
-        private readonly CritterEntry Data;
         private readonly LightSource Light;
         private readonly Random Rand;
+
+        public CritterEntry Data { get; }
 
         public CustomCritter(Vector2 pos, CritterEntry data)
         {
@@ -24,7 +25,7 @@ namespace CustomCritters.Framework
             this.Data = data;
             this.Rand = new Random(((int)this.startingPosition.X) << 32 | ((int)this.startingPosition.Y));
 
-            var tex = Mod.Instance.Helper.Content.Load<Texture2D>("Critters/" + data.Id + "/critter.png");
+            var tex = CustomCritter.LoadCritterTexture(data.Id);
             string texStr = Mod.Instance.Helper.Content.GetActualAssetKey($"Critters/{data.Id}/critter.png");
 
             this.baseFrame = Game1.random.Next(data.SpriteData.Variations) * (tex.Width / data.SpriteData.FrameWidth);
@@ -45,6 +46,11 @@ namespace CustomCritters.Framework
                     : new LightSource(LightSource.sconceLight, this.position, data.Light.Radius, col);
                 Game1.currentLightSources.Add(this.Light);
             }
+        }
+
+        public static Texture2D LoadCritterTexture(string id)
+        {
+            return Mod.Instance.Helper.Content.Load<Texture2D>($"Critters/{id}/critter.png");
         }
 
         private int PatrolIndex;

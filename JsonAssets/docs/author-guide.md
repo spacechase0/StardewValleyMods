@@ -115,7 +115,7 @@ field                    | purpose
 `CanSell`                | If you can sell the BigCraftble or not. Set to `true` or `false`. Default is `true`.
 `Description`            | Description for what this does. Note if it does anything special like provide light.
 `ProvidesLight`          | On/Off switch for if it provides light or not. Set to `true` or `false`.
-`Recipe`                 | Begins the recipe block.
+`Recipe`                 | Begins the recipe block. All of the following fields must go inside the recipe block:
 `ResultCount`            | How many of the product does the recipe produce. The game does not handle this correctly for BigCraftables, so it should generally be limited to `1`.
 `Ingredients`            |  Begins defining the ingredients required to craft the object.
 `Object` & `Count`       | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. You can use either the item ID or the name of the object. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used. You cannot use context tags for this field.
@@ -295,7 +295,7 @@ field                  | purpose
 `EdibleIsDrink`        | Set to `true` or `false`.
 `EdibleBuffs`          | Either set to `null` or include **all** required valid fields. It will not work if you only use the needed fields. Set unused fields to 0. Supports negative values. Required valid fields: `Farming`, `Fishing`, `Mining`, `Luck`, `Duration`. Optional valid fields: `Foraging`, `MaxStamina`, `MagnetRadius`, `Speed`, `Defense`, `Attack`.
 `IsColored`            |  _(optional)_ Set this value to `true` if your product is colored. If not, set to `false`. Any object that comes from a colored crop must also be colored. Any object with `IsColored` set to `true` must also have a `color.png` (see above) included in the object subfolder.
-`Recipe`               | Begins the recipe block. If you do not want to have a recipe for this object set to `null`.
+`Recipe`               | Begins the recipe block. If you do not want to have a recipe for this object set to `null`. If you do want to have a recipe, all of the following fields must go inside the recipe block:
 `ResultCount`          | How many of the product does the recipe produce.
 `Ingredients`          | Begins defining the ingredients required to craft the object.
 `Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. You can use either the item ID or the name of the object. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used. You cannot use context tags for this field.
@@ -492,7 +492,7 @@ field                  | purpose
 `BreakTool`            | The tool type used to break the fence.
 `PlacementSound`       | The Sound Bank ID (Name) that is heard when the fence is placed. You can find a list of known Sound Bank ID [here](https://docs.google.com/spreadsheets/d/1CpDrw23peQiq-C7F2FjYOMePaYe0Rc9BwQsj3h6sjyo/edit#gid=239695361). You may have to change the tab to Sound Bank IDs at the bottom.
 `RepairSound`          | Same as `PlacementSound` except the sound that is heard when the fence is repaied. Can be a different Sound Bank ID (Name).
-`Recipe`               | Begins the recipe block.
+`Recipe`               | Begins the recipe block. All of the following fields must go inside the recipe block:
 `ResultCount`          | How many of the product does the recipe produce.
 `Ingredients`          | If using a vanilla object, you will have to use the objects ID number. You can use either the item ID or the name of the object. If using a custom object added by Json Assets, you will have to use the name. Ex. "Honeysuckle".
 `Object` & `Count`     | Fields that are part of `Ingredients`. You can add up to five different ingredients to a recipe. `Object` fields that contain a negative value are the generic ID. Example: Rather than using a specific milk, -6 allows for any milk to be used.
@@ -549,37 +549,38 @@ Supported for: all content types.
 
 The `PurchaseFrom` field lets you add items to shops for the player to buy. Each shop has up to
 three IDs you can use, in order of preference:
-1. **owner ID:** a unique value used to create the shop.
+1. **owner ID:** a (usually) unique value used to create the shop.
 2. **portrait ID:** the default name of the NPC whose portrait is shown in the shop UI.
 3. **context ID:** the location containing the shop (not necessarily unique).
 
 You can use any ID to identify the shop, but should avoid the context ID if possible since multiple
 shops in the same location will have the same context ID.
 
-Here are the IDs for vanilla shops:
+Here are the IDs for vanilla shops (crossed out IDs match multiple vanilla shops):
 
-shop                                                                | owner ID      | portrait ID     | context ID
-------------------------------------------------------------------- | ------------- | --------------- | ----------
-[Casino](https://stardewvalleywiki.com/Casino)                      |               |                 | `Club`
-[Clint](https://stardewvalleywiki.com/Blacksmith)                   | `Clint`       | `Clint`         | `Blacksmith`
-[Desert trader](https://stardewvalleywiki.com/Desert_Trader)        | `DesertTrade` |                 | `Desert`
-[Dwarf](https://stardewvalleywiki.com/Dwarf)                        | `Dwarf`       | `Dwarf`         | `Mine`
-[Harvey](https://stardewvalleywiki.com/Harvey%27s_Clinic)           |               | `Harvey`        | `Hospital`
-[Hat mouse](https://stardewvalleywiki.com/Abandoned_House)          | `HatMouse`    |                 | `Forest`
-[Ice Cream Stand](https://stardewvalleywiki.com/Ice_Cream_Stand)    |               |                 | `Town`
-[Island Trader](https://stardewvalleywiki.com/Island_Trader)        | `IslandTrade` |                 | `IslandNorth`
-[JojaMart](https://stardewvalleywiki.com/JojaMart)                  |               |                 | `JojaMart`
-[Krobus](https://stardewvalleywiki.com/Krobus)                      | `Krobus`      | `Krobus`        | `Sewer`
-[Marlon](https://stardewvalleywiki.com/Adventurer%27s_Guild)        | `Marlon`      | `Marlon`        | `AdventureGuild`
-[Marnie (supplies)](https://stardewvalleywiki.com/Marnie%27s_Ranch) | `Marnie`      | `Marnie`        | `AnimalShop`
-[Pierre](https://stardewvalleywiki.com/Pierre%27s_General_Store)    | `Pierre`      | `Pierre`        | `SeedShop`
-[Qi walnut room](https://stardewvalleywiki.com/Qi%27s_Walnut_Room)  |               |                 | `QiGemShop`
-[Robin](https://stardewvalleywiki.com/Carpenter%27s_Shop)           | `Robin`       | `Robin`         | `ScienceHouse`
-[Saloon](https://stardewvalleywiki.com/The_Stardrop_Saloon)         | `Gus`         | `Gus`           | `Saloon`
-[Sandy](https://stardewvalleywiki.com/Oasis)                        | `Sandy`       | `Sandy`         | `SandyHouse`
-[Traveling cart](https://stardewvalleywiki.com/Traveling_Cart)      | `Traveler`    |                 | `Forest`
-[Volcano shop](https://stardewvalleywiki.com/Volcano_Dungeon#Shop)  | `VolcanoShop` |                 | `VolcanoShop`
-[Willy](https://stardewvalleywiki.com/Fish_Shop)                    | `Willy`       | `Willy`         | `FishShop`
+world area | shop                                                                | owner ID      | portrait ID     | context ID
+---------- | ------------------------------------------------------------------- | ------------- | --------------- | ----------
+Beach      | [Willy](https://stardewvalleywiki.com/Fish_Shop)                    | `Willy`       | `Willy`         | `FishShop`
+Desert     | [Casino](https://stardewvalleywiki.com/Casino)                      |               |                 | `Club`
+Desert     | [Desert trader](https://stardewvalleywiki.com/Desert_Trader)        | `DesertTrade` |                 | `Desert`
+Desert     | [Sandy](https://stardewvalleywiki.com/Oasis)                        | `Sandy`       | `Sandy`         | `SandyHouse`
+Forest     | [Hat mouse](https://stardewvalleywiki.com/Abandoned_House)          | `HatMouse`    |                 | ~~`Forest`~~
+Forest     | [Marnie (supplies)](https://stardewvalleywiki.com/Marnie%27s_Ranch) | `Marnie`      | `Marnie`        | `AnimalShop`
+Forest     | [Traveling cart](https://stardewvalleywiki.com/Traveling_Cart)      | `Traveler`    |                 | ~~`Forest`~~
+Island     | [Island Trader](https://stardewvalleywiki.com/Island_Trader)        | `IslandTrade` |                 | `IslandNorth`
+Island     | [Qi walnut room](https://stardewvalleywiki.com/Qi%27s_Walnut_Room)  |               |                 | `QiGemShop`
+Island     | [Resort bar](https://stardewvalleywiki.com/Ginger_Island#Beach_Resort) | ~~`Gus`~~  | ~~`Gus`~~       | `ResortBar`
+Island     | [Volcano shop](https://stardewvalleywiki.com/Volcano_Dungeon#Shop)  | `VolcanoShop` |                 | `VolcanoShop`
+Mountain   | [Dwarf](https://stardewvalleywiki.com/Dwarf)                        | `Dwarf`       | `Dwarf`         | `Mine`
+Mountain   | [Marlon](https://stardewvalleywiki.com/Adventurer%27s_Guild)        | `Marlon`      | `Marlon`        | `AdventureGuild`
+Mountain   | [Robin](https://stardewvalleywiki.com/Carpenter%27s_Shop)           | `Robin`       | `Robin`         | `ScienceHouse`
+Town       | [Clint](https://stardewvalleywiki.com/Blacksmith)                   | `Clint`       | `Clint`         | `Blacksmith`
+Town       | [Harvey](https://stardewvalleywiki.com/Harvey%27s_Clinic)           |               | `Harvey`        | `Hospital`
+Town       | [Ice Cream Stand](https://stardewvalleywiki.com/Ice_Cream_Stand)    |               |                 | `Town`
+Town       | [JojaMart](https://stardewvalleywiki.com/JojaMart)                  |               |                 | `JojaMart`
+Town       | [Krobus](https://stardewvalleywiki.com/Krobus)                      | `Krobus`      | `Krobus`        | `Sewer`
+Town       | [Pierre](https://stardewvalleywiki.com/Pierre%27s_General_Store)    | `Pierre`      | `Pierre`        | `SeedShop`
+Town       | [Saloon](https://stardewvalleywiki.com/The_Stardrop_Saloon)         | ~~`Gus`~~     | ~~`Gus`~~       | `Saloon`
 
 For custom shops, here's how to find the ID:
 

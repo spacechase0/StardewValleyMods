@@ -266,7 +266,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = obj.Recipe.PurchaseFrom,
                     Price = obj.Recipe.PurchasePrice,
-                    PurchaseRequirements = this.FormatAndValidateRequirements(source, obj.Recipe.PurchaseRequirements),
+                    PurchaseRequirements = this.ParseAndValidateRequirements(source, obj.Recipe.PurchaseRequirements),
                     Object = () => new SObject(obj.Id, 1, true, obj.Recipe.PurchasePrice)
                 });
 
@@ -276,7 +276,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
+                        PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new SObject(obj.Id, 1, true, entry.PurchasePrice)
                     });
                 }
@@ -287,7 +287,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = obj.PurchaseFrom,
                     Price = obj.PurchasePrice,
-                    PurchaseRequirements = this.FormatAndValidateRequirements(source, obj.PurchaseRequirements),
+                    PurchaseRequirements = this.ParseAndValidateRequirements(source, obj.PurchaseRequirements),
                     Object = () => new SObject(obj.Id, int.MaxValue, false, obj.PurchasePrice)
                 });
                 foreach (var entry in obj.AdditionalPurchaseData)
@@ -296,7 +296,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
+                        PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new SObject(obj.Id, int.MaxValue, false, entry.PurchasePrice)
                     });
                 }
@@ -377,7 +377,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = crop.Seed.PurchaseFrom,
                     Price = crop.Seed.PurchasePrice,
-                    PurchaseRequirements = this.FormatAndValidateRequirements(source, crop.Seed.PurchaseRequirements),
+                    PurchaseRequirements = this.ParseAndValidateRequirements(source, crop.Seed.PurchaseRequirements),
                     Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, crop.Seed.PurchasePrice),
                     ShowWithStocklist = true
                 });
@@ -387,7 +387,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
+                        PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, entry.PurchasePrice)
                     });
                 }
@@ -439,7 +439,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = tree.Sapling.PurchaseFrom,
                     Price = tree.Sapling.PurchasePrice,
-                    PurchaseRequirements = this.FormatAndValidateRequirements(source, tree.Sapling.PurchaseRequirements),
+                    PurchaseRequirements = this.ParseAndValidateRequirements(source, tree.Sapling.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
                 });
                 foreach (var entry in tree.Sapling.AdditionalPurchaseData)
@@ -448,7 +448,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
+                        PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
                     });
                 }
@@ -477,7 +477,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = craftable.Recipe.PurchaseFrom,
                     Price = craftable.Recipe.PurchasePrice,
-                    PurchaseRequirements = this.FormatAndValidateRequirements(source, craftable.Recipe.PurchaseRequirements),
+                    PurchaseRequirements = this.ParseAndValidateRequirements(source, craftable.Recipe.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, craftable.Id, true)
                 });
                 foreach (var entry in craftable.Recipe.AdditionalPurchaseData)
@@ -486,7 +486,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
+                        PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new SObject(Vector2.Zero, craftable.Id, true)
                     });
                 }
@@ -497,7 +497,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = craftable.PurchaseFrom,
                     Price = craftable.PurchasePrice,
-                    PurchaseRequirements = this.FormatAndValidateRequirements(source, craftable.PurchaseRequirements),
+                    PurchaseRequirements = this.ParseAndValidateRequirements(source, craftable.PurchaseRequirements),
                     Object = () => new SObject(Vector2.Zero, craftable.Id)
                 });
                 foreach (var entry in craftable.AdditionalPurchaseData)
@@ -506,7 +506,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
+                        PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new SObject(Vector2.Zero, craftable.Id)
                     });
                 }
@@ -535,7 +535,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = "HatMouse",
                     Price = hat.PurchasePrice,
-                    PurchaseRequirements = new string[0],
+                    PurchaseRequirements = ParsedConditions.AlwaysTrue,
                     Object = () => new Hat(hat.Id)
                 });
             }
@@ -563,7 +563,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = weapon.PurchaseFrom,
                     Price = weapon.PurchasePrice,
-                    PurchaseRequirements = this.FormatAndValidateRequirements(source, weapon.PurchaseRequirements),
+                    PurchaseRequirements = this.ParseAndValidateRequirements(source, weapon.PurchaseRequirements),
                     Object = () => new MeleeWeapon(weapon.Id)
                 });
                 foreach (var entry in weapon.AdditionalPurchaseData)
@@ -572,7 +572,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
+                        PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new MeleeWeapon(weapon.Id)
                     });
                 }
@@ -642,7 +642,7 @@ namespace JsonAssets
                 {
                     PurchaseFrom = boots.PurchaseFrom,
                     Price = boots.PurchasePrice,
-                    PurchaseRequirements = this.FormatAndValidateRequirements(source, boots.PurchaseRequirements),
+                    PurchaseRequirements = this.ParseAndValidateRequirements(source, boots.PurchaseRequirements),
                     Object = () => new Boots(boots.Id)
                 });
 
@@ -652,7 +652,7 @@ namespace JsonAssets
                     {
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
-                        PurchaseRequirements = this.FormatAndValidateRequirements(source, entry.PurchaseRequirements),
+                        PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
                         Object = () => new Boots(boots.Id)
                     });
                 }
@@ -737,17 +737,17 @@ namespace JsonAssets
             return this.ExpandedPreconditionsUtility.CheckConditions(conditions);
         }
 
-        /// <summary>Format individual requirements for the <see cref="ShopDataEntry.PurchaseRequirements"/> property, and log an error if Expanded Preconditions Utility is required but missing.</summary>
+        /// <summary>Parse individual requirements for the <see cref="ShopDataEntry.PurchaseRequirements"/> property, and log an error if a dependency is required but missing.</summary>
         /// <param name="source">The mod registering the content.</param>
         /// <param name="requirementFields">The purchase requirements.</param>
-        private string[] FormatAndValidateRequirements(IManifest source, IList<string> requirementFields)
+        private IParsedConditions ParseAndValidateRequirements(IManifest source, IList<string> requirementFields)
         {
-            string[] formatted = ShopDataEntry.FormatRequirements(requirementFields);
+            IParsedConditions parsed = new ParsedConditions(requirementFields, this.ExpandedPreconditionsUtility);
 
-            if (formatted.Any() && this.ExpandedPreconditionsUtility == null)
+            if (parsed.NeedsExpandedPreconditionsUtility && this.ExpandedPreconditionsUtility == null)
                 this.Monitor.LogOnce($"{source.Name} uses conditions from Expanded Preconditions Utility, but you don't have that mod installed. Some of its content might not work correctly.", LogLevel.Error);
 
-            return formatted;
+            return parsed;
         }
 
         private void LoadData(IContentPack contentPack)
@@ -1173,7 +1173,7 @@ namespace JsonAssets
                     if (!shopIds.Contains(entry.PurchaseFrom))
                         continue;
 
-                    bool normalCond = this.CheckEpuCondition(entry.PurchaseRequirements);
+                    bool normalCond = entry.PurchaseRequirements.CurrentlyMatch();
                     if (entry.Price == 0 || !normalCond && !(doAllSeeds && entry.ShowWithStocklist && isPierre))
                         continue;
 
@@ -1622,8 +1622,7 @@ namespace JsonAssets
                 string[] toks1 = toks[1].Split(' ');
                 if (toks1[0] == "O")
                 {
-                    int oldId = int.Parse(toks1[1]);
-                    if (oldId != -1)
+                    if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
                     {
                         if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
                         {
@@ -1638,8 +1637,7 @@ namespace JsonAssets
                 }
                 else if (toks1[0] == "BO")
                 {
-                    int oldId = int.Parse(toks1[1]);
-                    if (oldId != -1)
+                    if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
                     {
                         if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, ref oldId, this.VanillaBigCraftableIds))
                         {
@@ -1656,8 +1654,7 @@ namespace JsonAssets
                 string[] toks2 = toks[2].Split(' ');
                 for (int i = 0; i < toks2.Length; i += 3)
                 {
-                    int oldId = int.Parse(toks2[i]);
-                    if (oldId != -1)
+                    if (int.TryParse(toks2[i], out int oldId) && oldId != -1)
                     {
                         if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
                         {
@@ -1940,10 +1937,10 @@ namespace JsonAssets
             {
                 foreach (var animal in farm.Animals.Values)
                     this.FixFarmAnimal(animal);
-
-                foreach (var clump in farm.resourceClumps.Where(this.FixResourceClump).ToArray())
-                    farm.resourceClumps.Remove(clump);
             }
+
+            foreach (var clump in loc.resourceClumps.Where(this.FixResourceClump).ToArray())
+                loc.resourceClumps.Remove(clump);
         }
 
         /// <summary>Fix item IDs contained by a building.</summary>

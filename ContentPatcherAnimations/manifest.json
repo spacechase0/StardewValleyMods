@@ -9,8 +9,7 @@
     "UpdateKeys": [ "Nexus:3853" ],
     "Dependencies": [
         {
-            "UniqueID": "Pathoschild.ContentPatcher",
-            "MinimumVersion": "1.21.0"
+            "UniqueID": "Pathoschild.ContentPatcher"
         },
         {
             "UniqueID": "Platonymous.ScaleUp",
