@@ -1,0 +1,8 @@
+﻿{
+    "object.Film.name": "Film",
+    "object.Film.description": "For use with cameras.",
+    "object.Film.category": "Tool",
+
+    "furniture.TestPortrait.name": "Test Portrait",
+    "furniture.TestPortrait.description": "Meow"
+}
