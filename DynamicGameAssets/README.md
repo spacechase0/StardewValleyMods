@@ -244,7 +244,7 @@ Every config schema entry has two fields, plus more depending on the type.
 | Field | Type | Required or Default value | Description |
 | --- | --- | --- | --- |
 | `OnPage` | `string` | Default: `""` (the main page) | The page that this entry will show up on. |
-| `ElementType` | `ConfigElementType` | Defeault: `"ConfigOption"` | The type of element this is. | 
+| `ElementType` | `ConfigElementType` | Default: `"ConfigOption"` | The type of element this is. | 
 
 There are four `ConfigElementType`s for config schema entries. Each one has a section below.
 
@@ -281,7 +281,7 @@ Every config schema entry has three fields, plus more depending on the type.
 | --- | --- | --- | --- |
 | `Name` | `string` | Required | The name for this config option. |
 | `Description` | `string` | Default: `""` (no tooltip) | The tooltip for this config option. |
-| `ValueType` | `ConfigValueType` | Defeault: `"ConfigOption"` | The type of element this is. | 
+| `ValueType` | `ConfigValueType` | Default: `"ConfigOption"` | The type of element this is. | 
 
 There are four `ConfigValueType`s for config option entries. Each one has a section below.
 
@@ -540,9 +540,9 @@ Certain furniture types have additional fields:
 | `Bed` | `BedType` | `Enum[Single, Double, Child]` | `"Single"` | The bed type. | (unknown, untested) |
 | `TV` | `ScreenPosition` | `Vector2` | Default: `"0, 0"` | The offset for the screen to render, in pixels, from the texture. | (unknown, untested) |
 | `TV` | `ScreenSize` | `int` | Required | A multiplier for the screen size, in relation to the size of the graphics in the game files. | `true` |
-| `FishTank` | `TankSwimmingCapacity` | `int` | Default: `-1` | The max amount of "swimming fish" in the fish tnak, or -1 for unlimited. | `true` |
-| `FishTank` | `TankGroundCapacity` | `int` | Default: `-1` | The max amount of "ground fish" in the fish tnak, or -1 for unlimited. | `true` |
-| `FishTank` | `TankDecorationCapacity` | `int` | Default: `-1` | The max amount of "decorations" in the fish tnak, or -1 for unlimited. (NOTE: Only one of each type of decoration is supported.) | `true` |
+| `FishTank` | `TankSwimmingCapacity` | `int` | Default: `-1` | The max amount of "swimming fish" in the fish tank, or -1 for unlimited. | `true` |
+| `FishTank` | `TankGroundCapacity` | `int` | Default: `-1` | The max amount of "ground fish" in the fish tank, or -1 for unlimited. | `true` |
+| `FishTank` | `TankDecorationCapacity` | `int` | Default: `-1` | The max amount of "decorations" in the fish tank, or -1 for unlimited. (NOTE: Only one of each type of decoration is supported.) | `true` |
 
 #### Special types
 These are special types relating to just furniture, used in the above tables.
