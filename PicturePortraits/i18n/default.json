@@ -1,0 +1,5 @@
+﻿{
+    "camera.name": "Camera",
+    "camera.description": "Take a picture of an NPC! Buy film on Thursdays at Pierre's.",
+    "error.no-matching-portrait": "You forgot to take the lens cap off.\n(No matching portrait found.)"
+}

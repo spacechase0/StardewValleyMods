@@ -1,0 +1,10 @@
+﻿{
+    "Name": "Realtime Minimap",
+    "Author": "spacechase0",
+    "Version": "1.2.0",
+    "Description": "...",
+    "UniqueID": "spacechase0.RealtimeMinimap",
+    "EntryDll": "RealtimeMinimap.dll",
+    "MinimumApiVersion": "3.8.0",
+    "UpdateKeys": [ "Nexus:" ]
+}
