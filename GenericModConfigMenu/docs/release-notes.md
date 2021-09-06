@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+# Upcoming
+* Make no error happen if removing an already removed mod page.
+
 ## 1.4.1
 Released 12 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 
