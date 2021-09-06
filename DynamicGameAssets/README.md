@@ -218,6 +218,7 @@ All pack data comes in a single json file, `content.json` in the root of the con
 ### Common
 These fields are common to every type of pack data.
 | Field | Type | Required or Default value | Description | Dynamic |
+| --- | --- | --- | --- | --- |
 | `$ItemType` | `string` | Required | The type of this pack data. Listed at the beginning of each pack data section. | `false` |
 | `Enabled` | `bool` | Default: `true` | Whether or not the item is currently enabled. Useful with dynamic fields. | `true` |
 | `EnableConditions` | `Dictionary<string, string>` | Default: `null` | Checked at the beginning of each day, these can changed the `Enabled` field dynamically. If disabled, instances of this item will be removed from the game world. Some data might linger; if a pack data type has a "Traces" section, it will describe what will linger. These can be removed, too, by setting `RemoveAllTracesWhenDisabled` to `true` for those pack data types. | `false` |
@@ -368,6 +369,7 @@ These are special types relating to just crafting recipes, used in the above tab
 This should be an array of an an object called `Ingredient`. An `Ingredient` is just an `Item` with the following extra fields:
 
 | Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
 | `NameOverride` | `string` | Required/Default: `null` | Override the name showing for this ingredient. Required when using `ContextTag` for `Type`.  |
 | `IconOverride` | `Texture[16, 16]` | Required/Default: `null` | Override the icon showing for this ingredient. Required when using `ContextTag` for `Type`. |
 
@@ -419,6 +421,7 @@ These are special types relating to just crops, used in the above table.
 This should be an array of an an object called `Phase`. A `Phase` is as follows:
 
 | Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
 | `TextureChoices` | `MultiTexture[16, 32]` | Required | The choices between textures. A texture is chosen based on the tile location of the crop. |
 | `TextureColorChoices` | `MultiTexture[16, 32]` | Default: null | The choices between textures for the color layer. A texture is chosen based on the tile location of the crop. |
 | `Length` | `int` | Required | The length of this phase, in days. |
@@ -441,6 +444,7 @@ Example seed phase:
 This should be an array of an an object called `HarvestedDrop`. A `HarvestedDrop` is as follows:
 
 | Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
 | `MininumHarvestedQuantity` | `int` | Default: `1` | The minimum amount of this item to drop. |
 | `MaximumHarvestedQuantity` | `int` | Default: `1` | The maximum amount of this item to drop. |
 | `ExtraQuantityChance` | `float` | Default: `0` | A chance (between `0` and `0.9`, with `0.5` being 50%) for the quantity to increase. If increased, the check will run again, and again, until the check fails. |
