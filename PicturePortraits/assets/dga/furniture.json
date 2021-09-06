@@ -1,0 +1,17 @@
+﻿[
+    {
+        "ID": "TestPortrait",
+        "Type": "Painting",
+        "Configurations": [
+            {
+                "Texture": "portraits.png:0",
+                "DisplaySize": {
+                    "X": 1,
+                    "Y": 2
+                },
+                "CollisionHeight": 1
+            }
+        ],
+        "spacechase0.PicturePortraits.PortraitFor": "Abigail"
+    }
+]

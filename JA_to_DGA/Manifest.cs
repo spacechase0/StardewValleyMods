@@ -1,0 +1,43 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using StardewModdingAPI;
+
+namespace JA_to_DGA
+{
+    public class ManifestContentPackFor : IManifestContentPackFor
+    {
+        public string UniqueID { get; set; }
+
+        public ISemanticVersion MinimumVersion { get; set; }
+    }
+
+    public class Manifest : IManifest
+    {
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        public string Author { get; set; }
+
+        public ISemanticVersion Version { get; set; }
+
+        public ISemanticVersion MinimumApiVersion { get; set; }
+
+        public string UniqueID { get; set; }
+
+        public string EntryDll { get; set; }
+
+        public IManifestContentPackFor ContentPackFor { get; set; }
+
+        public IManifestDependency[] Dependencies { get; set; }
+
+        public string[] UpdateKeys { get; set; }
+
+        [JsonExtensionData]
+        public IDictionary<string, object> ExtraFields { get; set; }
+    }
+}

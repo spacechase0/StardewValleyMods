@@ -116,6 +116,7 @@ namespace BetterShopMenu
                 [SObject.weaponCategory] = "Weapons",
                 [SObject.bootsCategory] = "Boots",
                 [SObject.toolCategory] = "Tools",
+                [SObject.clothingCategory] = "Clothing",
                 [this.Categories.Count == 0 ? 1 : this.Categories.Count] = "Recipes"
             };
 
