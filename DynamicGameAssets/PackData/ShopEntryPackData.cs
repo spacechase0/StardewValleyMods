@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicGameAssets.PackData
 {
@@ -39,11 +34,13 @@ namespace DynamicGameAssets.PackData
         public string ShopId { get; set; }
 
         public ItemAbstraction Item { get; set; }
-        [DefaultValue( int.MaxValue )]
+
+        [DefaultValue(int.MaxValue)]
         public int MaxSold { get; set; } = int.MaxValue;
 
         public int Cost { get; set; }
-        [DefaultValue( null )]
+
+        [DefaultValue(null)]
         public string Currency { get; set; }
     }
 }

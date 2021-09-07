@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
 using DynamicGameAssets.PackData;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
-using SpaceShared;
 using StardewValley;
-using StardewValley.Objects;
 
 namespace DynamicGameAssets
 {
@@ -14,26 +8,26 @@ namespace DynamicGameAssets
     {
         private class DGAIngredientMatcher : IngredientMatcher
         {
-            private ItemAbstraction ingred;
+            private readonly ItemAbstraction ingred;
 
-            public DGAIngredientMatcher( ItemAbstraction theIngred )
+            public DGAIngredientMatcher(ItemAbstraction theIngred)
             {
-                ingred = theIngred;
+                this.ingred = theIngred;
             }
 
             public override bool HasEnoughFor(Item item)
             {
-                if ( ItemMatches( item ) && item.Stack >= ingred.Quantity )
+                if (this.ItemMatches(item) && item.Stack >= this.ingred.Quantity)
                     return true;
                 return false;
             }
 
             public override void Consume(ref Item item)
             {
-                int left = ingred.Quantity;
-                if ( ItemMatches( item ) )
+                int left = this.ingred.Quantity;
+                if (this.ItemMatches(item))
                 {
-                    if ( item.Stack <= left )
+                    if (item.Stack <= left)
                         item = null;
                     else
                         item.Stack -= left;
@@ -44,7 +38,7 @@ namespace DynamicGameAssets
 
             private bool ItemMatches(Item item)
             {
-                return ingred.Matches(item);
+                return this.ingred.Matches(item);
             }
         }
 
@@ -53,27 +47,27 @@ namespace DynamicGameAssets
         private IngredientMatcher cacheBase;
         private IngredientMatcher cacheIngred;
 
-        public DGACustomForgeRecipe( ForgeRecipePackData theData )
+        public DGACustomForgeRecipe(ForgeRecipePackData theData)
         {
-            data = theData;
-            Refresh();
+            this.data = theData;
+            this.Refresh();
         }
 
         public void Refresh()
         {
-            cacheBase = new DGAIngredientMatcher( data.BaseItem );
-            cacheIngred = new DGAIngredientMatcher( data.IngredientItem );
+            this.cacheBase = new DGAIngredientMatcher(this.data.BaseItem);
+            this.cacheIngred = new DGAIngredientMatcher(this.data.IngredientItem);
         }
 
 
-        public override IngredientMatcher BaseItem => cacheBase;
-        public override IngredientMatcher IngredientItem => cacheIngred;
-        public override int CinderShardCost => data.CinderShardCost;
+        public override IngredientMatcher BaseItem => this.cacheBase;
+        public override IngredientMatcher IngredientItem => this.cacheIngred;
+        public override int CinderShardCost => this.data.CinderShardCost;
 
-        public override Item CreateResult( Item baseItem, Item ingredItem )
+        public override Item CreateResult(Item baseItem, Item ingredItem)
         {
             // TODO: Random based on game seed and day
-            return data.Result.Choose().Create();
+            return this.data.Result.Choose().Create();
         }
     }
 }

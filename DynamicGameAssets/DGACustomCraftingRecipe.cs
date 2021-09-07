@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
-using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -14,34 +12,34 @@ namespace DynamicGameAssets
     {
         private class DGAIngredientMatcher : IngredientMatcher
         {
-            private CraftingRecipePackData.IngredientAbstraction ingred;
+            private readonly CraftingRecipePackData.IngredientAbstraction ingred;
 
-            private string cacheName;
-            private Texture2D cacheIconTex;
-            private Rectangle cacheIconRect;
+            private readonly string cacheName;
+            private readonly Texture2D cacheIconTex;
+            private readonly Rectangle cacheIconRect;
 
-            public DGAIngredientMatcher(CraftingRecipePackData.IngredientAbstraction theIngred )
+            public DGAIngredientMatcher(CraftingRecipePackData.IngredientAbstraction theIngred)
             {
-                ingred = theIngred;
-                cacheName = ingred.NameOverride ?? ingred.Create().DisplayName;
-                cacheIconTex = ingred.Icon;
-                cacheIconRect = ingred.IconSubrect;
+                this.ingred = theIngred;
+                this.cacheName = this.ingred.NameOverride ?? this.ingred.Create().DisplayName;
+                this.cacheIconTex = this.ingred.Icon;
+                this.cacheIconRect = this.ingred.IconSubrect;
             }
 
-            public override string DispayName => cacheName;
+            public override string DispayName => this.cacheName;
 
-            public override Texture2D IconTexture => cacheIconTex;
+            public override Texture2D IconTexture => this.cacheIconTex;
 
-            public override Rectangle? IconSubrect => cacheIconRect;
+            public override Rectangle? IconSubrect => this.cacheIconRect;
 
-            public override int Quantity => ingred.Quantity;
+            public override int Quantity => this.ingred.Quantity;
 
             public override int GetAmountInList(IList<Item> items)
             {
                 int ret = 0;
                 foreach (var item in items)
                 {
-                    if (ItemMatches(item))
+                    if (this.ItemMatches(item))
                         ret += item.Stack;
                 }
 
@@ -50,11 +48,11 @@ namespace DynamicGameAssets
 
             public override void Consume(IList<Chest> additionalIngredients)
             {
-                int left = Quantity;
+                int left = this.Quantity;
                 for (int i = Game1.player.Items.Count - 1; i >= 0; --i)
                 {
                     var item = Game1.player.Items[i];
-                    if (ItemMatches(item))
+                    if (this.ItemMatches(item))
                     {
                         if (item.Stack <= left)
                             Game1.player.items[i] = null;
@@ -76,7 +74,7 @@ namespace DynamicGameAssets
                         for (int i = chest.items.Count - 1; i >= 0; --i)
                         {
                             var item = chest.items[i];
-                            if (ItemMatches(item))
+                            if (this.ItemMatches(item))
                             {
                                 if (item.Stack <= left)
                                 {
@@ -103,7 +101,7 @@ namespace DynamicGameAssets
 
             private bool ItemMatches(Item item)
             {
-                return ingred.Matches(item);
+                return this.ingred.Matches(item);
             }
         }
 
@@ -113,36 +111,36 @@ namespace DynamicGameAssets
         private Rectangle cacheIconRect;
         private IngredientMatcher[] cacheIngreds;
 
-        public DGACustomCraftingRecipe( CraftingRecipePackData theData )
+        public DGACustomCraftingRecipe(CraftingRecipePackData theData)
         {
-            data = theData;
-            Refresh();
+            this.data = theData;
+            this.Refresh();
         }
 
         public void Refresh()
         {
-            cacheIconTex = data.Result[ 0 ].Value.Icon;
-            cacheIconRect = data.Result[ 0 ].Value.IconSubrect;
+            this.cacheIconTex = this.data.Result[0].Value.Icon;
+            this.cacheIconRect = this.data.Result[0].Value.IconSubrect;
 
             var ingreds = new List<IngredientMatcher>();
-            foreach (var ingred in data.Ingredients)
+            foreach (var ingred in this.data.Ingredients)
                 ingreds.Add(new DGAIngredientMatcher(ingred));
-            cacheIngreds = ingreds.ToArray();
+            this.cacheIngreds = ingreds.ToArray();
         }
 
-        public override string Name => data.Name;
-        public override string Description => data.Description + "\n\nMod: " + data.pack.smapiPack.Manifest.Name;
+        public override string Name => this.data.Name;
+        public override string Description => this.data.Description + "\n\nMod: " + this.data.pack.smapiPack.Manifest.Name;
 
-        public override Texture2D IconTexture => cacheIconTex;
+        public override Texture2D IconTexture => this.cacheIconTex;
 
-        public override Rectangle? IconSubrect => cacheIconRect;
+        public override Rectangle? IconSubrect => this.cacheIconRect;
 
-        public override IngredientMatcher[] Ingredients => cacheIngreds;
+        public override IngredientMatcher[] Ingredients => this.cacheIngreds;
 
         public override Item CreateResult()
         {
             // TODO: Random based on game seed and day?
-            return data.Result.Choose().Create();
+            return this.data.Result.Choose().Create();
         }
     }
 }

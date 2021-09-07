@@ -1,17 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using ContentPatcher;
-using DynamicGameAssets.Game;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using SpaceShared;
-using StardewValley;
 
 namespace DynamicGameAssets.PackData
 {
@@ -21,8 +10,9 @@ namespace DynamicGameAssets.PackData
 
         public string MachineId { get; set; }
 
-        [JsonConverter( typeof( ItemAbstractionWeightedListConverter ) )]
+        [JsonConverter(typeof(ItemAbstractionWeightedListConverter))]
         public List<Weighted<ItemAbstraction>> Result { get; set; }
+
         public List<ItemAbstraction> Ingredients { get; set; }
         public int MinutesToProcess { get; set; }
 
@@ -38,15 +28,19 @@ namespace DynamicGameAssets.PackData
             }
         }*/
 
-        [DefaultValue( "furnace" )]
+        [DefaultValue("furnace")]
         public string StartWorkingSound { get; set; } = "furnace";
-        [DefaultValue( null )]
+
+        [DefaultValue(null)]
         public bool? WorkingLightOverride { get; set; }
-        [DefaultValue( null )]
+
+        [DefaultValue(null)]
         public string MachineWorkingTextureOverride { get; set; }
-        [DefaultValue( null )]
+
+        [DefaultValue(null)]
         public string MachineFinishedTextureOverride { get; set; }
-        [DefaultValue( true )]
+
+        [DefaultValue(true)]
         public bool MachinePulseWhileWorking { get; set; } = true;
 
         public override void PostLoad()
@@ -56,13 +50,13 @@ namespace DynamicGameAssets.PackData
 
         public override object Clone()
         {
-            var ret = ( MachineRecipePackData ) base.Clone();
+            var ret = (MachineRecipePackData)base.Clone();
             ret.Result = new List<Weighted<ItemAbstraction>>();
-            foreach ( var choice in Result )
-                ret.Result.Add( (Weighted<ItemAbstraction>) choice.Clone() );
+            foreach (var choice in this.Result)
+                ret.Result.Add((Weighted<ItemAbstraction>)choice.Clone());
             ret.Ingredients = new List<ItemAbstraction>();
-            foreach (var ingred in Ingredients)
-                ret.Ingredients.Add(( ItemAbstraction ) ingred.Clone());
+            foreach (var ingred in this.Ingredients)
+                ret.Ingredients.Add((ItemAbstraction)ingred.Clone());
             return ret;
         }
     }

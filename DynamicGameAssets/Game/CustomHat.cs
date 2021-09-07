@@ -1,42 +1,34 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Netcode;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 
 namespace DynamicGameAssets.Game
 {
-    [XmlType( "Mods_DGAHat" )]
-    [Mixin( typeof( CustomItemMixin<HatPackData> ) )]
+    [XmlType("Mods_DGAHat")]
     public partial class CustomHat : Hat
     {
         partial void DoInit()
         {
-            base.NetFields.AddFields( _sourcePack, _id );
+            this.NetFields.AddFields(this.NetSourcePack, this.NetId);
         }
-        partial void DoInit( HatPackData data )
+
+        partial void DoInit(HatPackData data)
         {
-            this.Name = Id;
-            this.which.Value = FullId.GetDeterministicHashCode();
+            this.Name = this.Id;
+            this.which.Value = this.FullId.GetDeterministicHashCode();
 
-            this.hairDrawType.Value = ( int ) data.HairStyle;
+            this.hairDrawType.Value = (int)data.HairStyle;
             this.ignoreHairstyleOffset.Value = data.IgnoreHairstyleOffset;
-            base.Category = -95;
+            this.Category = -95;
         }
 
-        public override string DisplayName { get => Data.Name; set { } }
+        public override string DisplayName { get => this.Data.Name; set { } }
 
         public override string getDescription()
         {
-            return Game1.parseText( Data.Description, Game1.smallFont, this.getDescriptionWidth() );
+            return Game1.parseText(this.Data.Description, Game1.smallFont, this.getDescriptionWidth());
         }
         /*
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )

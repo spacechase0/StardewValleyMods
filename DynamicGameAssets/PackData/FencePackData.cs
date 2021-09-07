@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -21,9 +16,10 @@ namespace DynamicGameAssets.PackData
         }
 
         [JsonIgnore]
-        public string Name => pack.smapiPack.Translation.Get( $"fence.{ID}.name" );
+        public string Name => this.pack.smapiPack.Translation.Get($"fence.{this.ID}.name");
+
         [JsonIgnore]
-        public string Description => pack.smapiPack.Translation.Get( $"fence.{ID}.description" );
+        public string Description => this.pack.smapiPack.Translation.Get($"fence.{this.ID}.description");
 
         public string ObjectTexture { get; set; }
         public string PlacedTilesheet { get; set; }
@@ -31,35 +27,34 @@ namespace DynamicGameAssets.PackData
         public int MaxHealth { get; set; }
         public ItemAbstraction RepairMaterial { get; set; }
 
-        [DefaultValue( ToolType.Axe )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [DefaultValue(ToolType.Axe)]
+        [JsonConverter(typeof(StringEnumConverter))]
         public ToolType BreakTool { get; set; }
 
         public string PlacementSound { get; set; }
         public string RepairSound { get; set; }
 
-
         public override TexturedRect GetTexture()
         {
-            return pack.GetTexture( ObjectTexture, 16, 16 );
+            return this.pack.GetTexture(this.ObjectTexture, 16, 16);
         }
 
         public override void OnDisabled()
         {
-            SpaceUtility.iterateAllItems( ( item ) =>
-            {
-                if ( item is CustomFence cfence )
-                {
-                    if ( cfence.SourcePack == pack.smapiPack.Manifest.UniqueID && cfence.Id == ID )
-                        return null;
-                }
-                return item;
-            } );
+            SpaceUtility.iterateAllItems((item) =>
+           {
+               if (item is CustomFence cfence)
+               {
+                   if (cfence.SourcePack == this.pack.smapiPack.Manifest.UniqueID && cfence.Id == this.ID)
+                       return null;
+               }
+               return item;
+           });
         }
 
         public override Item ToItem()
         {
-            return new CustomFence( this );
+            return new CustomFence(this);
         }
     }
 }

@@ -57,7 +57,7 @@ namespace SurfingFestival
         {
             int w = 48, h = 16;
             int ox = 0, oy = 0;
-            if (this.Type == ObstacleType.Item || this.Type == ObstacleType.HomingProjectile || this.Type == ObstacleType.FirstPlaceProjectile)
+            if (this.Type is ObstacleType.Item or ObstacleType.HomingProjectile or ObstacleType.FirstPlaceProjectile)
                 w = 16;
             else if (this.Type == ObstacleType.Rock)
             {
@@ -225,7 +225,7 @@ namespace SurfingFestival
 
             foreach (var obstacle in Mod.Obstacles)
             {
-                if (obstacle.Type == ObstacleType.HomingProjectile || obstacle.Type == ObstacleType.FirstPlaceProjectile)
+                if (obstacle.Type is ObstacleType.HomingProjectile or ObstacleType.FirstPlaceProjectile)
                 {
                     var targetRect = Game1.CurrentEvent.getCharacterByName(obstacle.HomingTarget).GetBoundingBox().Center;
                     var target = new Vector2(targetRect.X, targetRect.Y);
@@ -475,7 +475,7 @@ namespace SurfingFestival
 
                         foreach (var obstacle in Mod.Obstacles)
                         {
-                            if ((obstacle.Type == ObstacleType.Net || obstacle.Type == ObstacleType.Rock) &&
+                            if ((obstacle.Type is ObstacleType.Net or ObstacleType.Rock) &&
                                  obstacle.GetBoundingBox().Intersects(bb))
                             {
                                 foundObstacle = true;
@@ -880,7 +880,7 @@ namespace SurfingFestival
 
             if (e.Action == "SurfingBonfire" && Mod.PlayerDidBonfire == BonfireState.NotDone)
             {
-                bool Highlight(StardewValley.Item item) => (item is SObject obj && !obj.bigCraftable.Value && ((obj.ParentSheetIndex == 388 && obj.Stack >= 50) || obj.ParentSheetIndex == 71 || obj.ParentSheetIndex == 789));
+                bool Highlight(StardewValley.Item item) => (item is SObject obj && !obj.bigCraftable.Value && ((obj.ParentSheetIndex == 388 && obj.Stack >= 50) || obj.ParentSheetIndex is 71 or 789));
                 void BehaviorOnSelect(StardewValley.Item item, Farmer farmer)
                 {
                     if (item == null)
@@ -902,7 +902,7 @@ namespace SurfingFestival
                         Game1.playSound("fireball");
                         PlaceBonfire(Game1.currentLocation.Map, 30, 5, false);
                     }
-                    else if (item.ParentSheetIndex == 71 || item.ParentSheetIndex == 789)
+                    else if (item.ParentSheetIndex is 71 or 789)
                     {
                         farmer.removeItemFromInventory(item);
                         Mod.PlayerDidBonfire = BonfireState.Shorts;

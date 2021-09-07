@@ -1,12 +1,8 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using SpaceShared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SpaceShared;
 
 namespace DynamicGameAssets.PackData
 {
@@ -46,19 +42,19 @@ namespace DynamicGameAssets.PackData
 
         public void ApplyDynamicFields()
         {
-            if ( DynamicFields == null )
+            if (this.DynamicFields == null)
                 return;
 
-            foreach ( var dynField in DynamicFields )
+            foreach (var dynField in this.DynamicFields)
             {
                 try
                 {
-                    if ( dynField.Check( this ) )
-                        dynField.Apply( this );
+                    if (dynField.Check(this))
+                        dynField.Apply(this);
                 }
-                catch ( Exception e )
+                catch (Exception e)
                 {
-                    Log.Error( "Error applying dynamic field: " + e );
+                    Log.Error("Error applying dynamic field: " + e);
                 }
             }
         }
@@ -70,7 +66,7 @@ namespace DynamicGameAssets.PackData
             // This is because objects are cloned from that to get the original values
             // before applying dynamic fields.
 
-            var ret = ( BasePackData ) this.MemberwiseClone();
+            var ret = (BasePackData)this.MemberwiseClone();
 
             // In theory should do deep clone of dynamic fields,
             // but I'm not planning on supporting dynamic field editing of dynamic fields.

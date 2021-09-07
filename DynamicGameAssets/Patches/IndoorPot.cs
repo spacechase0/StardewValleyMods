@@ -1,33 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using HarmonyLib;
-using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
 
 namespace DynamicGameAssets.Patches
 {
-    [HarmonyPatch( typeof( IndoorPot ), nameof( IndoorPot.performObjectDropInAction ) )]
+    [HarmonyPatch(typeof(IndoorPot), nameof(IndoorPot.performObjectDropInAction))]
     public static class IndoorPotPerformDropInActionPatch
     {
-        public static bool Prefix( IndoorPot __instance, Item dropInItem, bool probe, Farmer who, ref bool __result )
+        public static bool Prefix(IndoorPot __instance, Item dropInItem, bool probe, Farmer who, ref bool __result)
         {
-            if ( dropInItem is CustomObject cobj && !string.IsNullOrEmpty( cobj.Data.Plants ) )
+            if (dropInItem is CustomObject cobj && !string.IsNullOrEmpty(cobj.Data.Plants))
             {
-                __result = Impl( __instance, cobj, probe, who );
+                __result = IndoorPotPerformDropInActionPatch.Impl(__instance, cobj, probe, who);
                 return false;
             }
             return true;
         }
 
-        private static bool Impl( IndoorPot this_, CustomObject dropInItem, bool probe, Farmer who )
+        private static bool Impl(IndoorPot this_, CustomObject dropInItem, bool probe, Farmer who)
         {
-            if ( who != null && dropInItem != null && this_.bush.Value == null && dropInItem.CanPlantThisSeedHere( this_.hoeDirt.Value, ( int ) this_.tileLocation.X, ( int ) this_.tileLocation.Y, dropInItem.Category == -19 ) )
+            if (who != null && dropInItem != null && this_.bush.Value == null && dropInItem.CanPlantThisSeedHere(this_.hoeDirt.Value, (int)this_.tileLocation.X, (int)this_.tileLocation.Y, dropInItem.Category == -19))
             {
                 /*
                 if ( ( int ) dropInItem.parentSheetIndex == 805 )
@@ -47,9 +40,9 @@ namespace DynamicGameAssets.Patches
                     }
                     return false;
                 }*/
-                if ( !probe )
+                if (!probe)
                 {
-                    if ( !dropInItem.Plant( this_.hoeDirt.Value, ( int ) this_.tileLocation.X, ( int ) this_.tileLocation.Y, who, dropInItem.Category == -19, who.currentLocation ) )
+                    if (!dropInItem.Plant(this_.hoeDirt.Value, (int)this_.tileLocation.X, (int)this_.tileLocation.Y, who, dropInItem.Category == -19, who.currentLocation))
                     {
                         return false;
                     }

@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -15,48 +10,53 @@ namespace DynamicGameAssets.PackData
     public class ShirtPackData : CommonPackData
     {
         [JsonIgnore]
-        public string Name => pack.smapiPack.Translation.Get( $"shirt.{ID}.name" );
+        public string Name => this.pack.smapiPack.Translation.Get($"shirt.{this.ID}.name");
+
         [JsonIgnore]
-        public string Description => pack.smapiPack.Translation.Get( $"shirt.{ID}.description" );
+        public string Description => this.pack.smapiPack.Translation.Get($"shirt.{this.ID}.description");
 
         public string TextureMale { get; set; }
-        [DefaultValue( null )]
+
+        [DefaultValue(null)]
         public string TextureMaleColor { get; set; }
-        [DefaultValue( null )]
+
+        [DefaultValue(null)]
         public string TextureFemale { get; set; }
-        [DefaultValue( null )]
+
+        [DefaultValue(null)]
         public string TextureFemaleColor { get; set; }
 
         public Color DefaultColor { get; set; } = Color.White;
-        [DefaultValue( false )]
+
+        [DefaultValue(false)]
         public bool Dyeable { get; set; } = false;
 
-        public bool ShouldSerializeDefaultColor() { return DefaultColor != Color.White; }
+        public bool ShouldSerializeDefaultColor() { return this.DefaultColor != Color.White; }
 
-        [DefaultValue( false )]
+        [DefaultValue(false)]
         public bool Sleeveless { get; set; } = false;
 
         public override void OnDisabled()
         {
-            SpaceUtility.iterateAllItems( ( item ) =>
+            SpaceUtility.iterateAllItems((item) =>
             {
-                if ( item is CustomShirt cshirt )
+                if (item is CustomShirt cshirt)
                 {
-                    if ( cshirt.SourcePack == pack.smapiPack.Manifest.UniqueID && cshirt.Id == ID )
+                    if (cshirt.SourcePack == this.pack.smapiPack.Manifest.UniqueID && cshirt.Id == this.ID)
                         return null;
                 }
                 return item;
-            } );
+            });
         }
 
         public override Item ToItem()
         {
-            return new CustomShirt( this );
+            return new CustomShirt(this);
         }
 
         public override TexturedRect GetTexture()
         {
-            return pack.GetTexture( TextureMale, 8, 32 );
+            return this.pack.GetTexture(this.TextureMale, 8, 32);
         }
     }
 }

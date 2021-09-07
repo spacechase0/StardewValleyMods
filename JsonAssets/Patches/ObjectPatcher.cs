@@ -147,7 +147,7 @@ namespace JsonAssets.Patches
                 if (!__instance.Name?.Contains("Honey") == true)
                     return true;
 
-                if ( Mod.instance.ObjectIds == null )
+                if (Mod.instance.ObjectIds == null)
                     return true;
 
                 if (!__instance.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
@@ -303,7 +303,7 @@ namespace JsonAssets.Patches
         public static bool Before_PlacementAction(SObject __instance, GameLocation location, int x, int y, Farmer who, ref bool __result)
         {
             Vector2 pos = new Vector2(x / 64, y / 64);
-            if (!__instance.bigCraftable.Value && !(__instance is Furniture))
+            if (!__instance.bigCraftable.Value && __instance is not Furniture)
             {
                 foreach (var fence in Mod.instance.Fences)
                 {

@@ -34,7 +34,7 @@ namespace ExtendedReach.Patches
             {
                 harmony.Patch(
                     original: method,
-                    transpiler: this.GetHarmonyMethod(nameof(TranspileRadiusChecks))
+                    transpiler: this.GetHarmonyMethod(nameof(TileRadiusPatcher.TranspileRadiusChecks))
                 );
             }
         }
@@ -53,7 +53,7 @@ namespace ExtendedReach.Patches
             {
                 if (insn.opcode == OpCodes.Call && insn.operand is MethodInfo meth)
                 {
-                    if (meth.Name == "withinRadiusOfPlayer" || meth.Name == "tileWithinRadiusOfPlayer")
+                    if (meth.Name is "withinRadiusOfPlayer" or "tileWithinRadiusOfPlayer")
                     {
                         var newInsn = new CodeInstruction(OpCodes.Ldc_I4, 100);
                         Log.Trace($"Found {meth.Name}, replacing {newInsns[newInsns.Count - 2]} with {newInsn}");

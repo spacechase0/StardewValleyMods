@@ -112,9 +112,9 @@ namespace JsonAssets.Patches
         /// <summary>The method to call before <see cref="Fence.performToolAction"/>.</summary>
         private static bool Before_PerformToolAction(Fence __instance, Tool t, GameLocation location, ref bool __result)
         {
-            if (__instance.heldObject.Value != null && t != null && (!(t is MeleeWeapon) && t.isHeavyHitter()))
+            if (__instance.heldObject.Value != null && t is not (null or MeleeWeapon) && t.isHeavyHitter())
                 return true;
-            else if (__instance.isGate.Value && t != null && (t is Axe || t is Pickaxe))
+            else if (__instance.isGate.Value && t is Axe or Pickaxe)
                 return true;
 
             foreach (var fence in Mod.instance.Fences)
@@ -194,7 +194,7 @@ namespace JsonAssets.Patches
         /// <summary>The method to call before <see cref="Fence.CanRepairWithThisItem"/>.</summary>
         private static bool Before_CanRepairWithThisItem(Fence __instance, Item item, ref bool __result)
         {
-            if (__instance.health.Value > 1 || !(item is SObject))
+            if (__instance.health.Value > 1 || item is not SObject)
                 return true;
 
             foreach (var fence in Mod.instance.Fences)

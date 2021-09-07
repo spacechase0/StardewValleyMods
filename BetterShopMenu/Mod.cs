@@ -370,7 +370,7 @@ namespace BetterShopMenu
             if (this.Shop == null)
                 return;
 
-            if (e.Button == SButton.MouseLeft || e.Button == SButton.MouseRight)
+            if (e.Button is SButton.MouseLeft or SButton.MouseRight)
             {
                 int x = (int)e.Cursor.ScreenPixels.X;
                 int y = (int)e.Cursor.ScreenPixels.Y;
@@ -631,7 +631,7 @@ namespace BetterShopMenu
                         itemPriceAndStock.Remove(forSale[index2]);
                         forSale.RemoveAt(index2);
                     }
-                    if (heldItem == null || !Game1.options.SnappyMenus || (Game1.activeClickableMenu == null || !(Game1.activeClickableMenu is ShopMenu)) || !Game1.player.addItemToInventoryBool((Item)heldItem))
+                    if (heldItem == null || !Game1.options.SnappyMenus || Game1.activeClickableMenu is not ShopMenu || !Game1.player.addItemToInventoryBool((Item)heldItem))
                         break;
                     heldItem = null;
                     this.Shop.heldItem = heldItem;

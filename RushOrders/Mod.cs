@@ -74,7 +74,7 @@ namespace RushOrders
                                 break;
 
                             case "Robin":
-                                if (this.HasBuildingToRush() && !(e.OldMenu is RushConstructionMenu))
+                                if (this.HasBuildingToRush() && e.OldMenu is not RushConstructionMenu)
                                     Mod.DoRushBuildingDialogue();
                                 break;
                         }
@@ -84,7 +84,7 @@ namespace RushOrders
                 case DialogueBox diagBox:
                     {
                         var diag = diagBox.characterDialogue;
-                        if (diag?.speaker != null && diag.speaker.Name == "Robin" && this.HasBuildingToRush() && !(e.OldMenu is RushConstructionMenu))
+                        if (diag?.speaker != null && diag.speaker.Name == "Robin" && this.HasBuildingToRush() && e.OldMenu is not RushConstructionMenu)
                             Mod.DoRushBuildingDialogue();
 
                         break;
@@ -100,10 +100,10 @@ namespace RushOrders
             List<ISalable> items = shop.forSale;
             foreach (KeyValuePair<ISalable, int[]> entry in stock)
             {
-                if (!(entry.Key is Tool)) continue;
-                Tool tool = entry.Key as Tool;
+                if (entry.Key is not Tool tool)
+                    continue;
 
-                if (!(tool is Axe || tool is Pickaxe || tool is Hoe || tool is WateringCan))
+                if (tool is not (Axe or Pickaxe or Hoe or WateringCan))
                     continue;
 
                 // I'm going to edit the description, and I don't want to affect the original shop entry

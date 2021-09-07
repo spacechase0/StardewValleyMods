@@ -11,7 +11,7 @@ namespace SpaceShared.APIs
         void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile);
         void UnregisterModConfig(IManifest mod);
 
-        void SetDefaultIngameOptinValue( IManifest mod, bool optedIn );
+        void SetDefaultIngameOptinValue(IManifest mod, bool optedIn);
 
         void StartNewPage(IManifest mod, string pageName);
         void OverridePageDisplayName(IManifest mod, string pageName, string displayName);
@@ -26,7 +26,7 @@ namespace SpaceShared.APIs
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet);
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet);
         void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<SButton> optionGet, Action<SButton> optionSet);
-        void RegisterSimpleOption( IManifest mod, string optionName, string optionDesc, Func<KeybindList> optionGet, Action<KeybindList> optionSet );
+        void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<KeybindList> optionGet, Action<KeybindList> optionSet);
 
         void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max);
         void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max);
@@ -48,6 +48,6 @@ namespace SpaceShared.APIs
         /// <param name="mod">The manifest of the mod whose config menu is being shown, or <c>null</c> if not applicable.</param>
         /// <param name="page">The page ID being shown for the current config menu, or <c>null</c> if not applicable. This may be <c>null</c> even if a mod config menu is shown (e.g. because the mod doesn't have pages).</param>
         /// <returns>Returns whether a mod config menu is being shown.</returns>
-        bool TryGetCurrentMenu( out IManifest mod, out string page );
+        bool TryGetCurrentMenu(out IManifest mod, out string page);
     }
 }

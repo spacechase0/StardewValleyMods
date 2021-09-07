@@ -4,10 +4,6 @@
 
   <PropertyGroup>
     <Version>1.2.0</Version>
-    <TargetFramework>net5</TargetFramework>
+    <TargetFramework>net452</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Pathoschild.Stardew.ModBuildConfig" Version="3.4.0-beta.20210813" />
-  </ItemGroup>
 </Project>

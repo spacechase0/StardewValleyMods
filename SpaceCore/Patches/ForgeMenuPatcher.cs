@@ -1,19 +1,13 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Reflection.Emit;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
-using SpaceCore.Events;
-using SpaceCore.Framework;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
-using StardewValley.Objects;
-using xTile.Dimensions;
 
 namespace SpaceCore.Patches
 {
@@ -21,7 +15,11 @@ namespace SpaceCore.Patches
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class ForgeMenuPatcher : BasePatcher
     {
+        /*********
+        ** Fields
+        *********/
         private static CustomForgeRecipe justCrafted = null;
+
 
         /*********
         ** Public methods
@@ -69,8 +67,9 @@ namespace SpaceCore.Patches
         /*********
         ** Private methods
         *********/
+        /*
         /// <summary>The method to call before <see cref="ForgeMenu.GenerateHighlightDictionary"/>.</summary>
-        /*private static bool Before_GenerateHighlightDictionary( ForgeMenu __instance )
+        private static bool Before_GenerateHighlightDictionary( ForgeMenu __instance )
         {
             var this__highlightDictionary_ = SpaceCore.Instance.Helper.Reflection.GetField< Dictionary< Item, bool > >( __instance, "_highlightDictionary" );
 
@@ -140,9 +139,9 @@ namespace SpaceCore.Patches
             if (left_item == null || right_item == null)
                 return true;
 
-            foreach ( var recipe in CustomForgeRecipe.Recipes )
+            foreach (var recipe in CustomForgeRecipe.Recipes)
             {
-                if ( recipe.BaseItem.HasEnoughFor( left_item ) && recipe.IngredientItem.HasEnoughFor( right_item ) )
+                if (recipe.BaseItem.HasEnoughFor(left_item) && recipe.IngredientItem.HasEnoughFor(right_item))
                 {
                     __result = true;
                     return false;
@@ -155,9 +154,9 @@ namespace SpaceCore.Patches
         /// <summary>The method to call before <see cref="ForgeMenu.SpendLeftItem"/>.</summary>
         private static bool Before_SpendLeftItem(ForgeMenu __instance)
         {
-            if ( justCrafted != null )
+            if (ForgeMenuPatcher.justCrafted != null)
             {
-                justCrafted.BaseItem.Consume( ref __instance.leftIngredientSpot.item );
+                ForgeMenuPatcher.justCrafted.BaseItem.Consume(ref __instance.leftIngredientSpot.item);
                 return false;
             }
 
@@ -165,12 +164,12 @@ namespace SpaceCore.Patches
         }
 
         /// <summary>The method to call before <see cref="ForgeMenu.SpendLeftItem"/>.</summary>
-        private static bool Before_SpendRightItem( ForgeMenu __instance )
+        private static bool Before_SpendRightItem(ForgeMenu __instance)
         {
-            if ( justCrafted != null )
+            if (ForgeMenuPatcher.justCrafted != null)
             {
-                justCrafted.IngredientItem.Consume( ref __instance.rightIngredientSpot.item );
-                justCrafted = null;
+                ForgeMenuPatcher.justCrafted.IngredientItem.Consume(ref __instance.rightIngredientSpot.item);
+                ForgeMenuPatcher.justCrafted = null;
                 return false;
             }
 
@@ -183,13 +182,13 @@ namespace SpaceCore.Patches
             if (left_item == null || right_item == null)
                 return true;
 
-            foreach ( var recipe in CustomForgeRecipe.Recipes )
+            foreach (var recipe in CustomForgeRecipe.Recipes)
             {
-                if ( recipe.BaseItem.HasEnoughFor( left_item ) && recipe.IngredientItem.HasEnoughFor( right_item ) )
+                if (recipe.BaseItem.HasEnoughFor(left_item) && recipe.IngredientItem.HasEnoughFor(right_item))
                 {
-                    if ( forReal )
-                        justCrafted = recipe;
-                    __result = recipe.CreateResult( left_item, right_item );
+                    if (forReal)
+                        ForgeMenuPatcher.justCrafted = recipe;
+                    __result = recipe.CreateResult(left_item, right_item);
                     return false;
                 }
             }
@@ -203,9 +202,9 @@ namespace SpaceCore.Patches
             if (left_item == null || right_item == null)
                 return true;
 
-            foreach ( var recipe in CustomForgeRecipe.Recipes )
+            foreach (var recipe in CustomForgeRecipe.Recipes)
             {
-                if ( recipe.BaseItem.HasEnoughFor( left_item ) && recipe.IngredientItem.HasEnoughFor( right_item ) )
+                if (recipe.BaseItem.HasEnoughFor(left_item) && recipe.IngredientItem.HasEnoughFor(right_item))
                 {
                     __result = recipe.CinderShardCost;
                     return false;

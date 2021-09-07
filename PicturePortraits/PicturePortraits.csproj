@@ -5,13 +5,11 @@
 
   <PropertyGroup>
     <Version>1.0.0</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net452</TargetFramework>
     <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj">
-      <Private>false</Private>
-    </ProjectReference>
+    <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj" Private="false" />
   </ItemGroup>
 </Project>

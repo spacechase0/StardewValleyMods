@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -15,41 +10,43 @@ namespace DynamicGameAssets.PackData
     public class PantsPackData : CommonPackData
     {
         [JsonIgnore]
-        public string Name => pack.smapiPack.Translation.Get( $"pants.{ID}.name" );
+        public string Name => this.pack.smapiPack.Translation.Get($"pants.{this.ID}.name");
+
         [JsonIgnore]
-        public string Description => pack.smapiPack.Translation.Get( $"pants.{ID}.description" );
+        public string Description => this.pack.smapiPack.Translation.Get($"pants.{this.ID}.description");
 
         public string Texture { get; set; }
 
         public Color DefaultColor { get; set; } = Color.White;
-        [DefaultValue( false )]
+
+        [DefaultValue(false)]
         public bool Dyeable { get; set; } = false;
 
-        public bool ShouldSerializeDefaultColor() { return DefaultColor != Color.White; }
+        public bool ShouldSerializeDefaultColor() { return this.DefaultColor != Color.White; }
 
         public override void OnDisabled()
         {
-            SpaceUtility.iterateAllItems( ( item ) =>
+            SpaceUtility.iterateAllItems((item) =>
             {
-                if ( item is CustomPants cpants )
+                if (item is CustomPants cpants)
                 {
-                    if ( cpants.SourcePack == pack.smapiPack.Manifest.UniqueID && cpants.Id == ID )
+                    if (cpants.SourcePack == this.pack.smapiPack.Manifest.UniqueID && cpants.Id == this.ID)
                         return null;
                 }
                 return item;
-            } );
+            });
         }
 
         public override Item ToItem()
         {
-            return new CustomPants( this );
+            return new CustomPants(this);
         }
 
         public override TexturedRect GetTexture()
         {
-            var ret = pack.GetTexture( Texture, 192, 688 );
-            ret.Rect ??= new Rectangle( 0, 0, ret.Texture.Width, ret.Texture.Height );
-            ret.Rect = new Rectangle( ret.Rect.Value.X, ret.Rect.Value.Y + 672, 16, 16 );
+            var ret = this.pack.GetTexture(this.Texture, 192, 688);
+            ret.Rect ??= new Rectangle(0, 0, ret.Texture.Width, ret.Texture.Height);
+            ret.Rect = new Rectangle(ret.Rect.Value.X, ret.Rect.Value.Y + 672, 16, 16);
             return ret;
         }
     }

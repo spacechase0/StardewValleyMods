@@ -1,102 +1,103 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
-using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace DynamicGameAssets.Game
 {
-    [XmlType( "Mods_DGABigCraftable" )]
-    [Mixin( typeof( CustomItemMixin<BigCraftablePackData> ) )]
+    [XmlType("Mods_DGABigCraftable")]
     public partial class CustomBigCraftable : StardewValley.Object
     {
-        private readonly NetString _textureOverride = new();
-        private readonly NetString _pendingTextureOverride = new();
-        private readonly NetBool _pulseIfWorking = new();
+        /// <summary>The backing field for <see cref="TextureOverride"/>.</summary>
+        private readonly NetString NetTextureOverride = new();
+
+        /// <summary>The backing field for <see cref="PendingTextureOverride"/>.</summary>
+        private readonly NetString NetPendingTextureOverride = new();
+
+        /// <summary>The backing field for <see cref="PulseIfWorking"/>.</summary>
+        private readonly NetBool NetPulseIfWorking = new();
 
         public string TextureOverride
         {
-            get { return _textureOverride.Value; }
-            set { _textureOverride.Value = value; }
+            get => this.NetTextureOverride.Value;
+            set => this.NetTextureOverride.Value = value;
         }
         public string PendingTextureOverride // Triggers when recipe is finished
         {
-            get { return _pendingTextureOverride.Value; }
-            set { _pendingTextureOverride.Value = value; }
+            get => this.NetPendingTextureOverride.Value;
+            set => this.NetPendingTextureOverride.Value = value;
         }
         public bool PulseIfWorking
         {
-            get { return _pulseIfWorking.Value; }
-            set { _pulseIfWorking.Value = value; }
+            get => this.NetPulseIfWorking.Value;
+            set => this.NetPulseIfWorking.Value = value;
         }
 
-        public override string DisplayName { get => loadDisplayName(); set { } }
+        public override string DisplayName { get => this.loadDisplayName(); set { } }
 
-        public CustomBigCraftable( BigCraftablePackData data, Vector2 tileLocation )
-        :   this( data )
+        public CustomBigCraftable(BigCraftablePackData data, Vector2 tileLocation)
+            : this(data)
         {
             this.tileLocation.Value = tileLocation;
-            boundingBox.Value = new Rectangle( ( int ) tileLocation.X * Game1.tileSize, ( int ) tileLocation.X * Game1.tileSize, Game1.tileSize, Game1.tileSize );
+            this.boundingBox.Value = new Rectangle((int)tileLocation.X * Game1.tileSize, (int)tileLocation.X * Game1.tileSize, Game1.tileSize, Game1.tileSize);
         }
-        partial void DoInit( BigCraftablePackData data )
-        {
-            name = data.ID;
 
-            canBeSetDown.Value = true;
-            canBeGrabbed.Value = true;
-            bigCraftable.Value = true;
-            price.Value = data.SellPrice ?? 0;
-            edibility.Value = StardewValley.Object.inedible;
-            type.Value = "Crafting";
-            Category = -9;
-            setOutdoors.Value = setIndoors.Value = true;
-            fragility.Value = StardewValley.Object.fragility_Removable;
-            isLamp.Value = data.ProvidesLight;
+        partial void DoInit(BigCraftablePackData data)
+        {
+            this.name = data.ID;
+
+            this.canBeSetDown.Value = true;
+            this.canBeGrabbed.Value = true;
+            this.bigCraftable.Value = true;
+            this.price.Value = data.SellPrice ?? 0;
+            this.edibility.Value = StardewValley.Object.inedible;
+            this.type.Value = "Crafting";
+            this.Category = -9;
+            this.setOutdoors.Value = this.setIndoors.Value = true;
+            this.fragility.Value = StardewValley.Object.fragility_Removable;
+            this.isLamp.Value = data.ProvidesLight;
         }
 
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields( _sourcePack, _id );
-            NetFields.AddFields( _textureOverride, _pendingTextureOverride, _pulseIfWorking );
+            this.NetFields.AddFields(this.NetSourcePack, this.NetId);
+            this.NetFields.AddFields(this.NetTextureOverride, this.NetPendingTextureOverride, this.NetPulseIfWorking);
         }
 
         protected override string loadDisplayName()
         {
-            return Data.Name;
+            return this.Data.Name;
         }
 
-        public override bool minutesElapsed( int minutes, GameLocation environment )
+        public override bool minutesElapsed(int minutes, GameLocation environment)
         {
-            if ( Game1.IsMasterGame )
+            if (Game1.IsMasterGame)
                 this.MinutesUntilReady -= minutes;
 
-            if ( this.minutesUntilReady.Value <= 0 )
+            if (this.minutesUntilReady.Value <= 0)
             {
-                if ( !this.readyForHarvest.Value )
+                if (!this.readyForHarvest.Value)
                 {
-                    environment.playSound( "dwop" );
+                    environment.playSound("dwop");
                 }
                 this.readyForHarvest.Value = true;
                 this.minutesUntilReady.Value = 0;
-                this.onReadyForHarvest( environment );
+                this.onReadyForHarvest(environment);
 
-                TextureOverride = null;
-                if ( this.lightSource != null )
+                this.TextureOverride = null;
+                if (this.lightSource != null)
                 {
-                    if ( !Data.ProvidesLight )
+                    if (!this.Data.ProvidesLight)
                     {
-                        environment.removeLightSource( this.lightSource.identifier );
+                        environment.removeLightSource(this.lightSource.identifier);
                         this.lightSource = null;
                     }
                 }
@@ -105,25 +106,25 @@ namespace DynamicGameAssets.Game
             return false;
         }
 
-        public override bool performObjectDropInAction( Item dropInItem, bool probe, Farmer who )
+        public override bool performObjectDropInAction(Item dropInItem, bool probe, Farmer who)
         {
-            if ( this.isTemporarilyInvisible )
+            if (this.isTemporarilyInvisible)
             {
                 return false;
             }
 
-            if ( this.heldObject.Value != null )
+            if (this.heldObject.Value != null)
                 return false;
 
-            if ( !Mod.customMachineRecipes.ContainsKey( FullId ) )
+            if (!Mod.customMachineRecipes.ContainsKey(this.FullId))
                 return false;
 
             IList<Item> items = who.items;
-            if ( StardewValley.Object.autoLoadChest != null )
+            if (StardewValley.Object.autoLoadChest != null)
                 items = StardewValley.Object.autoLoadChest.items;
 
             // TODO: This could be optimized I'm pretty sure
-            foreach ( var recipe in Mod.customMachineRecipes[ FullId ] )
+            foreach (var recipe in Mod.customMachineRecipes[this.FullId])
             {
                 /*
                 if ( recipe.liveConditionsObj != null )
@@ -133,78 +134,78 @@ namespace DynamicGameAssets.Game
                         continue;
                 }
                 */
-                if ( !recipe.Ingredients[ 0 ].Matches( dropInItem ) )
+                if (!recipe.Ingredients[0].Matches(dropInItem))
                     continue;
 
                 bool hadIngredients = true;
-                foreach ( var ingred in recipe.Ingredients )
+                foreach (var ingred in recipe.Ingredients)
                 {
                     int left = ingred.Quantity;
-                    foreach ( var item in items )
+                    foreach (var item in items)
                     {
-                        if ( !ingred.Matches( item ) )
+                        if (!ingred.Matches(item))
                             continue;
                         left -= item.Stack;
-                        if ( left <= 0 )
+                        if (left <= 0)
                             break;
                     }
 
-                    if ( left > 0 )
+                    if (left > 0)
                     {
                         hadIngredients = false;
                         break;
                     }
                 }
 
-                if ( hadIngredients )
+                if (hadIngredients)
                 {
-                    if ( probe )
+                    if (probe)
                         return true;
                     else
                     {
-                        foreach ( var ingred in recipe.Ingredients )
+                        foreach (var ingred in recipe.Ingredients)
                         {
                             int left = ingred.Quantity;
-                            for ( int i = 0; i < items.Count; ++i )
+                            for (int i = 0; i < items.Count; ++i)
                             {
-                                if ( !ingred.Matches( items[ i ] ) )
+                                if (!ingred.Matches(items[i]))
                                     continue;
 
-                                if ( items[ i ].Stack <= left )
+                                if (items[i].Stack <= left)
                                 {
-                                    left -= items[ i ].Stack;
-                                    items[ i ] = null;
+                                    left -= items[i].Stack;
+                                    items[i] = null;
                                 }
                                 else
                                 {
-                                    items[ i ].Stack -= left;
+                                    items[i].Stack -= left;
                                     left = 0;
                                 }
 
-                                if ( left <= 0 )
+                                if (left <= 0)
                                     break;
                             }
                         }
 
-                        TextureOverride = recipe.MachineWorkingTextureOverride;
-                        PendingTextureOverride = recipe.MachineFinishedTextureOverride;
-                        PulseIfWorking = recipe.MachinePulseWhileWorking;
+                        this.TextureOverride = recipe.MachineWorkingTextureOverride;
+                        this.PendingTextureOverride = recipe.MachineFinishedTextureOverride;
+                        this.PulseIfWorking = recipe.MachinePulseWhileWorking;
 
-                        heldObject.Value = ( StardewValley.Object ) recipe.Result.Choose().Create();
+                        this.heldObject.Value = (StardewValley.Object)recipe.Result.Choose().Create();
 
-                        MinutesUntilReady = recipe.MinutesToProcess;
+                        this.MinutesUntilReady = recipe.MinutesToProcess;
 
-                        if ( recipe.StartWorkingSound != null )
-                            who.currentLocation.playSound( recipe.StartWorkingSound );
+                        if (recipe.StartWorkingSound != null)
+                            who.currentLocation.playSound(recipe.StartWorkingSound);
 
-                        if ( recipe.WorkingLightOverride.HasValue )
+                        if (recipe.WorkingLightOverride.HasValue)
                         {
-                            bool oldIsLamp = isLamp.Value;
-                            isLamp.Value = recipe.WorkingLightOverride.Value;
-                            if ( !oldIsLamp && isLamp.Value )
-                                this.initializeLightSource( this.tileLocation.Value );
-                            else if ( oldIsLamp && !isLamp.Value )
-                                who.currentLocation.removeLightSource( ( int ) ( this.tileLocation.X * 797f + this.tileLocation.Y * 13f + 666f ) );
+                            bool oldIsLamp = this.isLamp.Value;
+                            this.isLamp.Value = recipe.WorkingLightOverride.Value;
+                            if (!oldIsLamp && this.isLamp.Value)
+                                this.initializeLightSource(this.tileLocation.Value);
+                            else if (oldIsLamp && !this.isLamp.Value)
+                                who.currentLocation.removeLightSource((int)(this.tileLocation.X * 797f + this.tileLocation.Y * 13f + 666f));
                         }
 
                         return false;
@@ -212,188 +213,188 @@ namespace DynamicGameAssets.Game
                 }
                 else
                 {
-                    if ( !probe && StardewValley.Object.autoLoadChest == null )
-                        Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:Object.cs.12772" ) ); ;
+                    if (!probe && StardewValley.Object.autoLoadChest == null)
+                        Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12772")); ;
                     return false;
                 }
             }
 
-            if ( !probe && StardewValley.Object.autoLoadChest == null )
-                Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:Object.cs.12777" ) );
+            if (!probe && StardewValley.Object.autoLoadChest == null)
+                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12777"));
             return false;
         }
 
-        public override bool performToolAction( Tool t, GameLocation location )
+        public override bool performToolAction(Tool t, GameLocation location)
         {
             var who = t.getLastFarmerToUse();
-            if ( t is Pickaxe )
+            if (t is Pickaxe)
             {
-                performRemoveAction( this.tileLocation.Value, location );
-                Game1.currentLocation.debris.Add( new Debris( this.getOne(), who.GetToolLocation(), new Vector2( who.GetBoundingBox().Center.X, who.GetBoundingBox().Center.Y ) ) );
-                Game1.currentLocation.objects.Remove( this.tileLocation.Value );
+                this.performRemoveAction(this.tileLocation.Value, location);
+                Game1.currentLocation.debris.Add(new Debris(this.getOne(), who.GetToolLocation(), new Vector2(who.GetBoundingBox().Center.X, who.GetBoundingBox().Center.Y)));
+                Game1.currentLocation.objects.Remove(this.tileLocation.Value);
                 return false;
             }
-            return base.performToolAction( t, location );
+            return base.performToolAction(t, location);
         }
 
         public string GetCurrentTexture()
         {
-            if ( this.heldObject.Value != null && this.MinutesUntilReady == 0 )
+            if (this.heldObject.Value != null && this.MinutesUntilReady == 0)
             {
-                return PendingTextureOverride ?? Data.Texture;
+                return this.PendingTextureOverride ?? this.Data.Texture;
             }
 
-            return TextureOverride ?? Data.Texture;
+            return this.TextureOverride ?? this.Data.Texture;
         }
 
-        public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
+        public override void drawTooltip(SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText)
         {
-            base.drawTooltip( spriteBatch, ref x, ref y, font, alpha, overrideText );
-            string str = "Mod: " + Data.pack.smapiPack.Manifest.Name;
-            Utility.drawTextWithShadow( spriteBatch, Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ), font, new Vector2( x + 16, y + 16 + 4 ), new Color( 100, 100, 100 ) );
-            y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
+            base.drawTooltip(spriteBatch, ref x, ref y, font, alpha, overrideText);
+            string str = "Mod: " + this.Data.pack.smapiPack.Manifest.Name;
+            Utility.drawTextWithShadow(spriteBatch, Game1.parseText(str, Game1.smallFont, this.getDescriptionWidth()), font, new Vector2(x + 16, y + 16 + 4), new Color(100, 100, 100));
+            y += (int)font.MeasureString(Game1.parseText(str, Game1.smallFont, this.getDescriptionWidth())).Y + 10;
         }
 
-        public override Point getExtraSpaceNeededForTooltipSpecialIcons( SpriteFont font, int minWidth, int horizontalBuffer, int startingHeight, StringBuilder descriptionText, string boldTitleText, int moneyAmountToDisplayAtBottom )
+        public override Point getExtraSpaceNeededForTooltipSpecialIcons(SpriteFont font, int minWidth, int horizontalBuffer, int startingHeight, StringBuilder descriptionText, string boldTitleText, int moneyAmountToDisplayAtBottom)
         {
-            var ret = base.getExtraSpaceNeededForTooltipSpecialIcons(font, minWidth, horizontalBuffer, startingHeight, descriptionText, boldTitleText, moneyAmountToDisplayAtBottom );
+            var ret = base.getExtraSpaceNeededForTooltipSpecialIcons(font, minWidth, horizontalBuffer, startingHeight, descriptionText, boldTitleText, moneyAmountToDisplayAtBottom);
             ret.Y = startingHeight;
             ret.Y += 48;
             return ret;
         }
 
-        public override void drawWhenHeld( SpriteBatch spriteBatch, Vector2 objectPosition, Farmer f )
+        public override void drawWhenHeld(SpriteBatch spriteBatch, Vector2 objectPosition, Farmer f)
         {
-            var tex = Data.pack.GetTexture( GetCurrentTexture(), 16, 32 );
+            var tex = this.Data.pack.GetTexture(this.GetCurrentTexture(), 16, 32);
 
-            spriteBatch.Draw( tex.Texture, objectPosition, tex.Rect, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, Math.Max( 0f, ( float ) ( f.getStandingY() + 3 ) / 10000f ) );
+            spriteBatch.Draw(tex.Texture, objectPosition, tex.Rect, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, Math.Max(0f, (float)(f.getStandingY() + 3) / 10000f));
         }
 
-        public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
+        public override void drawInMenu(SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
-            if ( ( bool ) this.isRecipe )
+            if ((bool)this.isRecipe)
             {
                 transparency = 0.5f;
                 scaleSize *= 0.75f;
             }
             bool shouldDrawStackNumber = ((drawStackNumber == StackDrawType.Draw && this.maximumStackSize() > 1 && this.Stack > 1) || drawStackNumber == StackDrawType.Draw_OneInclusive) && (double)scaleSize > 0.3 && this.Stack != int.MaxValue;
-            
-            var tex = Data.pack.GetTexture( GetCurrentTexture(), 16, 32 );
 
-            Microsoft.Xna.Framework.Rectangle sourceRect = tex.Rect ?? new Rectangle( 0, 0, tex.Texture.Width, tex.Texture.Height );
-            spriteBatch.Draw( tex.Texture, location + new Vector2( 32f, 32f ), sourceRect, color * transparency, 0f, new Vector2( 8f, 16f ), 4f * ( ( ( double ) scaleSize < 0.2 ) ? scaleSize : ( scaleSize / 2f ) ), SpriteEffects.None, layerDepth );
-            if ( shouldDrawStackNumber )
+            var tex = this.Data.pack.GetTexture(this.GetCurrentTexture(), 16, 32);
+
+            Rectangle sourceRect = tex.Rect ?? new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
+            spriteBatch.Draw(tex.Texture, location + new Vector2(32f, 32f), sourceRect, color * transparency, 0f, new Vector2(8f, 16f), 4f * (((double)scaleSize < 0.2) ? scaleSize : (scaleSize / 2f)), SpriteEffects.None, layerDepth);
+            if (shouldDrawStackNumber)
             {
-                Utility.drawTinyDigits( this.stack, spriteBatch, location + new Vector2( ( float ) ( 64 - Utility.getWidthOfTinyDigitString( this.stack, 3f * scaleSize ) ) + 3f * scaleSize, 64f - 18f * scaleSize + 2f ), 3f * scaleSize, 1f, color );
+                Utility.drawTinyDigits(this.stack, spriteBatch, location + new Vector2((float)(64 - Utility.getWidthOfTinyDigitString(this.stack, 3f * scaleSize)) + 3f * scaleSize, 64f - 18f * scaleSize + 2f), 3f * scaleSize, 1f, color);
             }
         }
 
-        public override void drawAsProp( SpriteBatch b )
+        public override void drawAsProp(SpriteBatch b)
         {
-            if ( this.isTemporarilyInvisible )
+            if (this.isTemporarilyInvisible)
             {
                 return;
             }
             int x = (int)this.tileLocation.X;
             int y = (int)this.tileLocation.Y;
 
-            var tex = Data.pack.GetTexture( GetCurrentTexture(), 16, 32 );
+            var tex = this.Data.pack.GetTexture(this.GetCurrentTexture(), 16, 32);
             Vector2 scaleFactor = this.PulseIfWorking ? this.getScale() : Vector2.One;
             scaleFactor *= 4f;
             Vector2 position = Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, y * 64 - 64));
-            b.Draw( destinationRectangle: new Microsoft.Xna.Framework.Rectangle( ( int ) ( position.X - scaleFactor.X / 2f ), ( int ) ( position.Y - scaleFactor.Y / 2f ), ( int ) ( 64f + scaleFactor.X ), ( int ) ( 128f + scaleFactor.Y / 2f ) ), texture: tex.Texture, sourceRectangle: tex.Rect, color: Color.White, rotation: 0f, origin: Vector2.Zero, effects: SpriteEffects.None, layerDepth: Math.Max( 0f, ( float ) ( ( y + 1 ) * 64 - 1 ) / 10000f ) + ( ( ( int ) base.parentSheetIndex == 105 || ( int ) base.parentSheetIndex == 264 ) ? 0.0015f : 0f ) );
+            b.Draw(destinationRectangle: new Rectangle((int)(position.X - scaleFactor.X / 2f), (int)(position.Y - scaleFactor.Y / 2f), (int)(64f + scaleFactor.X), (int)(128f + scaleFactor.Y / 2f)), texture: tex.Texture, sourceRectangle: tex.Rect, color: Color.White, rotation: 0f, origin: Vector2.Zero, effects: SpriteEffects.None, layerDepth: Math.Max(0f, (float)((y + 1) * 64 - 1) / 10000f) + (((int)this.parentSheetIndex == 105 || (int)this.parentSheetIndex == 264) ? 0.0015f : 0f));
         }
 
-        public override void draw( SpriteBatch spriteBatch, int x, int y, float alpha = 1 )
+        public override void draw(SpriteBatch spriteBatch, int x, int y, float alpha = 1)
         {
-            if ( isTemporarilyInvisible )
+            if (this.isTemporarilyInvisible)
                 return;
 
-            var tex = Data.pack.GetTexture( GetCurrentTexture(), 16, 32 );
+            var tex = this.Data.pack.GetTexture(this.GetCurrentTexture(), 16, 32);
 
             Vector2 scaleFactor = this.PulseIfWorking ? this.getScale() : Vector2.One;
             scaleFactor *= 4f;
             Vector2 position = Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, y * 64 - 64));
-            Microsoft.Xna.Framework.Rectangle destination = new Microsoft.Xna.Framework.Rectangle((int)(position.X - scaleFactor.X / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(position.Y - scaleFactor.Y / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(64f + scaleFactor.X), (int)(128f + scaleFactor.Y / 2f));
+            Rectangle destination = new Rectangle((int)(position.X - scaleFactor.X / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(position.Y - scaleFactor.Y / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(64f + scaleFactor.X), (int)(128f + scaleFactor.Y / 2f));
             float draw_layer = Math.Max(0f, (float)((y + 1) * 64 - 24) / 10000f) + (float)x * 1E-05f;
-            spriteBatch.Draw( tex.Texture, destination, tex.Rect, Color.White * alpha, 0f, Vector2.Zero, SpriteEffects.None, draw_layer );
-            if ( ( bool ) this.isLamp && Game1.isDarkOut() )
+            spriteBatch.Draw(tex.Texture, destination, tex.Rect, Color.White * alpha, 0f, Vector2.Zero, SpriteEffects.None, draw_layer);
+            if ((bool)this.isLamp && Game1.isDarkOut())
             {
-                spriteBatch.Draw( Game1.mouseCursors, position + new Vector2( -32f, -32f ), new Microsoft.Xna.Framework.Rectangle( 88, 1779, 32, 32 ), Color.White * 0.75f, 0f, Vector2.Zero, 4f, SpriteEffects.None, Math.Max( 0f, ( float ) ( ( y + 1 ) * 64 - 20 ) / 10000f ) + ( float ) x / 1000000f );
+                spriteBatch.Draw(Game1.mouseCursors, position + new Vector2(-32f, -32f), new Rectangle(88, 1779, 32, 32), Color.White * 0.75f, 0f, Vector2.Zero, 4f, SpriteEffects.None, Math.Max(0f, (float)((y + 1) * 64 - 20) / 10000f) + (float)x / 1000000f);
             }
-            if ( !this.readyForHarvest )
+            if (!this.readyForHarvest)
             {
                 return;
             }
 
             float base_sort = (float)((y + 1) * 64) / 10000f + this.tileLocation.X / 50000f;
             float yOffset = 4f * (float)Math.Round(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 250.0), 2);
-            spriteBatch.Draw( Game1.mouseCursors, Game1.GlobalToLocal( Game1.viewport, new Vector2( x * 64 - 8, ( float ) ( y * 64 - 96 - 16 ) + yOffset ) ), new Microsoft.Xna.Framework.Rectangle( 141, 465, 20, 24 ), Color.White * 0.75f, 0f, Vector2.Zero, 4f, SpriteEffects.None, base_sort + 1E-06f );
-            if ( this.heldObject.Value != null )
+            spriteBatch.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 - 8, (float)(y * 64 - 96 - 16) + yOffset)), new Rectangle(141, 465, 20, 24), Color.White * 0.75f, 0f, Vector2.Zero, 4f, SpriteEffects.None, base_sort + 1E-06f);
+            if (this.heldObject.Value != null)
             {
-                spriteBatch.Draw( Game1.objectSpriteSheet, Game1.GlobalToLocal( Game1.viewport, new Vector2( x * 64 + 32, ( float ) ( y * 64 - 64 - 8 ) + yOffset ) ), Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, this.heldObject.Value.parentSheetIndex, 16, 16 ), Color.White * 0.75f, 0f, new Vector2( 8f, 8f ), 4f, SpriteEffects.None, base_sort + 1E-05f );
-                if ( this.heldObject.Value is ColoredObject )
+                spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 + 32, (float)(y * 64 - 64 - 8) + yOffset)), Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.heldObject.Value.parentSheetIndex, 16, 16), Color.White * 0.75f, 0f, new Vector2(8f, 8f), 4f, SpriteEffects.None, base_sort + 1E-05f);
+                if (this.heldObject.Value is ColoredObject)
                 {
-                    spriteBatch.Draw( Game1.objectSpriteSheet, Game1.GlobalToLocal( Game1.viewport, new Vector2( x * 64 + 32, ( float ) ( y * 64 - 64 - 8 ) + yOffset ) ), Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, ( int ) this.heldObject.Value.parentSheetIndex + 1, 16, 16 ), ( this.heldObject.Value as ColoredObject ).color.Value * 0.75f, 0f, new Vector2( 8f, 8f ), 4f, SpriteEffects.None, base_sort + 1.1E-05f );
+                    spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 + 32, (float)(y * 64 - 64 - 8) + yOffset)), Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, (int)this.heldObject.Value.parentSheetIndex + 1, 16, 16), (this.heldObject.Value as ColoredObject).color.Value * 0.75f, 0f, new Vector2(8f, 8f), 4f, SpriteEffects.None, base_sort + 1.1E-05f);
                 }
             }
         }
 
-        public override void draw( SpriteBatch spriteBatch, int xNonTile, int yNonTile, float layerDepth, float alpha = 1 )
+        public override void draw(SpriteBatch spriteBatch, int xNonTile, int yNonTile, float layerDepth, float alpha = 1)
         {
-            if ( isTemporarilyInvisible )
+            if (this.isTemporarilyInvisible)
                 return;
 
-            var tex = Data.pack.GetTexture( GetCurrentTexture(), 16, 32 );
+            var tex = this.Data.pack.GetTexture(this.GetCurrentTexture(), 16, 32);
 
             Vector2 scaleFactor = this.PulseIfWorking ? this.getScale() : Vector2.One;
             scaleFactor *= 4f;
             Vector2 position = Game1.GlobalToLocal(Game1.viewport, new Vector2(xNonTile, yNonTile));
-            Microsoft.Xna.Framework.Rectangle destination = new Microsoft.Xna.Framework.Rectangle((int)(position.X - scaleFactor.X / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(position.Y - scaleFactor.Y / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(64f + scaleFactor.X), (int)(128f + scaleFactor.Y / 2f));
-            spriteBatch.Draw( tex.Texture, destination,tex.Rect, Color.White * alpha, 0f, Vector2.Zero, SpriteEffects.None, layerDepth );
-            if ( ( bool ) this.isLamp && Game1.isDarkOut() )
+            Rectangle destination = new Rectangle((int)(position.X - scaleFactor.X / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(position.Y - scaleFactor.Y / 2f) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(64f + scaleFactor.X), (int)(128f + scaleFactor.Y / 2f));
+            spriteBatch.Draw(tex.Texture, destination, tex.Rect, Color.White * alpha, 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
+            if ((bool)this.isLamp && Game1.isDarkOut())
             {
-                spriteBatch.Draw( Game1.mouseCursors, position + new Vector2( -32f, -32f ), new Microsoft.Xna.Framework.Rectangle( 88, 1779, 32, 32 ), Color.White * 0.75f, 0f, Vector2.Zero, 4f, SpriteEffects.None, layerDepth );
+                spriteBatch.Draw(Game1.mouseCursors, position + new Vector2(-32f, -32f), new Rectangle(88, 1779, 32, 32), Color.White * 0.75f, 0f, Vector2.Zero, 4f, SpriteEffects.None, layerDepth);
             }
         }
 
         public override Item getOne()
         {
-            var ret = new CustomBigCraftable( Data, Vector2.Zero );
+            var ret = new CustomBigCraftable(this.Data, Vector2.Zero);
             // TODO: All the other fields objects does??
             ret.Stack = 1;
-            ret.Price = Price;
-            ret._GetOneFrom( this );
+            ret.Price = this.Price;
+            ret._GetOneFrom(this);
             return ret;
         }
 
-        public override bool canStackWith( ISalable other )
+        public override bool canStackWith(ISalable other)
         {
-            if ( !( other is CustomBigCraftable obj ) )
+            if (other is not CustomBigCraftable obj)
                 return false;
 
-            return obj.FullId == FullId && base.canStackWith( other );
+            return obj.FullId == this.FullId && base.canStackWith(other);
         }
 
         public override string getDescription()
         {
-            return Data.Description;
+            return this.Data.Description;
         }
 
         public override int salePrice()
         {
-            return Data.ForcePriceOnAllInstances ? (Data.SellPrice ?? 0) : Price;
+            return this.Data.ForcePriceOnAllInstances ? (this.Data.SellPrice ?? 0) : this.Price;
         }
 
-        public override int sellToStorePrice( long specificPlayerID = -1 )
+        public override int sellToStorePrice(long specificPlayerID = -1)
         {
-            float price = salePrice() * ( 1 + Quality * 0.25f );
-            price = Mod.instance.Helper.Reflection.GetMethod( this, "getPriceAfterMultipliers" ).Invoke< float >( price, specificPlayerID );
-            
-            if ( price > 0 )
-                price = Math.Max( 1, price * Game1.MasterPlayer.difficultyModifier );
+            float price = this.salePrice() * (1 + this.Quality * 0.25f);
+            price = Mod.instance.Helper.Reflection.GetMethod(this, "getPriceAfterMultipliers").Invoke<float>(price, specificPlayerID);
 
-            return ( int ) price;
+            if (price > 0)
+                price = Math.Max(1, price * Game1.MasterPlayer.difficultyModifier);
+
+            return (int)price;
         }
     }
 }
