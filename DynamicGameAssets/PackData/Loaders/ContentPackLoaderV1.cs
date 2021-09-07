@@ -7,7 +7,7 @@ namespace DynamicGameAssets.PackData.Loaders
 {
     public class ContentPackLoaderV1 : IContentPackLoader
     {
-        private ContentPack pack;
+        private readonly ContentPack pack;
 
         public ContentPackLoaderV1(ContentPack thePack)
         {

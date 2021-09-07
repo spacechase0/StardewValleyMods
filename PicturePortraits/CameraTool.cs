@@ -11,8 +11,8 @@ namespace PicturePortraits
     [XmlType("Mods_spacechase0.CameraTool")]
     public class CameraTool : Tool
     {
-        private static Texture2D Texture = Game1.content.Load<Texture2D>("Maps\\townInterior");
-        private static Rectangle CameraRect = new Rectangle(191, 688, 16, 16);
+        private static readonly Texture2D Texture = Game1.content.Load<Texture2D>("Maps\\townInterior");
+        private static readonly Rectangle CameraRect = new Rectangle(191, 688, 16, 16);
 
         public CameraTool()
         {

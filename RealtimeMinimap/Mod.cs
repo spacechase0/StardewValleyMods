@@ -20,7 +20,7 @@ namespace RealtimeMinimap
 
         public const int BORDER_WIDTH = 12;
 
-        private static PerScreen<State> _state = new();
+        private static readonly PerScreen<State> _state = new();
 
         public static State State
         {

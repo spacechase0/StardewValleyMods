@@ -26,9 +26,9 @@ namespace DynamicGameAssets.PackData
 
         internal ISemanticVersion conditionVersion;
 
-        private Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+        private readonly Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
-        private Dictionary<string, int[]> animInfo = new Dictionary<string, int[]>(); // Index is full animation descriptor (items16.png:1@333/items16.png:2@333/items16.png:3@334), value is [frameDur1, frameDur2, frameDur3, ..., totalFrameDur]
+        private readonly Dictionary<string, int[]> animInfo = new Dictionary<string, int[]>(); // Index is full animation descriptor (items16.png:1@333/items16.png:2@333/items16.png:3@334), value is [frameDur1, frameDur2, frameDur3, ..., totalFrameDur]
 
         protected internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
 
@@ -36,7 +36,7 @@ namespace DynamicGameAssets.PackData
 
         internal Dictionary<ContentIndexPackData?, List<BasePackData>> enableIndex = new();
 
-        private List<ConfigPackData> configs = new();
+        private readonly List<ConfigPackData> configs = new();
         internal Dictionary<string, ConfigPackData> configIndex = new();
         internal ConfigModel currConfig = new();
 

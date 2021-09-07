@@ -8,7 +8,7 @@ namespace DynamicGameAssets
     {
         private class DGAIngredientMatcher : IngredientMatcher
         {
-            private ItemAbstraction ingred;
+            private readonly ItemAbstraction ingred;
 
             public DGAIngredientMatcher(ItemAbstraction theIngred)
             {

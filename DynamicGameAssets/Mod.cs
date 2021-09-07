@@ -161,7 +161,7 @@ namespace DynamicGameAssets
             this.RefreshSpritebatchCache();
         }
 
-        private ConditionalWeakTable<Farmer, Holder<string>> prevBootsFrame = new ConditionalWeakTable<Farmer, Holder<string>>();
+        private readonly ConditionalWeakTable<Farmer, Holder<string>> prevBootsFrame = new ConditionalWeakTable<Farmer, Holder<string>>();
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {

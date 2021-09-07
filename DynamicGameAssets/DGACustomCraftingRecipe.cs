@@ -12,11 +12,11 @@ namespace DynamicGameAssets
     {
         private class DGAIngredientMatcher : IngredientMatcher
         {
-            private CraftingRecipePackData.IngredientAbstraction ingred;
+            private readonly CraftingRecipePackData.IngredientAbstraction ingred;
 
-            private string cacheName;
-            private Texture2D cacheIconTex;
-            private Rectangle cacheIconRect;
+            private readonly string cacheName;
+            private readonly Texture2D cacheIconTex;
+            private readonly Rectangle cacheIconRect;
 
             public DGAIngredientMatcher(CraftingRecipePackData.IngredientAbstraction theIngred)
             {
