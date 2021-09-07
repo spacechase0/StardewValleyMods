@@ -4,15 +4,12 @@ using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
-using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGABasicFurniture" )]
-    [Mixin( typeof( CustomItemMixin<FurniturePackData> ) )]
     public partial class CustomBasicFurniture : Furniture, ISittable
     {
         private FurniturePackData.FurnitureConfiguration GetCurrentConfiguration()

@@ -10,15 +10,12 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGAObject" )]
-    [Mixin( typeof( CustomItemMixin<ObjectPackData> ) )]
     public partial class CustomObject : StardewValley.Object
     {
         public readonly NetBool _hasColor = new NetBool();

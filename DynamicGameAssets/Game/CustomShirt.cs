@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
@@ -15,7 +9,6 @@ using StardewValley.Objects;
 namespace DynamicGameAssets.Game
 {
     [XmlType("Mods_DGAShirt")]
-    [Mixin( typeof( CustomItemMixin<ShirtPackData> ) )]
     public partial class CustomShirt : Clothing
     {
         partial void DoInit()

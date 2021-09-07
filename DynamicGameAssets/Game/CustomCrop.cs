@@ -1,24 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
-using SpaceShared;
 using StardewValley;
 using StardewValley.Characters;
-using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGACrop" )]
-    [Mixin( typeof( CustomItemMixin<CropPackData> ) )]
     public partial class CustomCrop : Crop
     {
         private CropPackData.PhaseData GetCurrentPhase()

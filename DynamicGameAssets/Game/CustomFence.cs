@@ -1,13 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Tools;
@@ -15,7 +11,6 @@ using StardewValley.Tools;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGAFence" )]
-    [Mixin( typeof( CustomItemMixin<FencePackData> ) )]
     public partial class CustomFence : Fence
     {
         partial void DoInit()

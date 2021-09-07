@@ -1,21 +1,13 @@
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
-using SpaceShared;
 using StardewValley;
-using StardewValley.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGACraftingRecipe" )] // Shouldn't ever exist inside an inventory, but just in case
-    [Mixin( typeof( CustomItemMixin<CraftingRecipePackData> ) )]
     public partial class CustomCraftingRecipe : StardewValley.Object
     {
         private Item craftedCache = null;

@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
-using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -13,7 +10,6 @@ namespace DynamicGameAssets.Game
 {
     // Literally a copy+paste of CustomBasicFurniture subclassing from a different type (with small storage-specific changes)
     [XmlType( "Mods_DGAStorageFurniture" )]
-    [Mixin( typeof( CustomItemMixin<FurniturePackData> ) )]
     public partial class CustomStorageFurniture : StorageFurniture, ISittable 
     {
         private FurniturePackData.FurnitureConfiguration GetCurrentConfiguration()

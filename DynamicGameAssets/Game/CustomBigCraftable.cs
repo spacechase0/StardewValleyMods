@@ -2,22 +2,17 @@ using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
-using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGABigCraftable" )]
-    [Mixin( typeof( CustomItemMixin<BigCraftablePackData> ) )]
     public partial class CustomBigCraftable : StardewValley.Object
     {
         private readonly NetString _textureOverride = new();

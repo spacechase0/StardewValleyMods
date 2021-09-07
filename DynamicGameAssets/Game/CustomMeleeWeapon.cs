@@ -1,13 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
@@ -16,7 +12,6 @@ using StardewValley.Tools;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGAMeleeWeapon" )]
-    [Mixin( typeof( CustomItemMixin<MeleeWeaponPackData> ) )]
     public partial class CustomMeleeWeapon : MeleeWeapon
     {
         partial void DoInit()

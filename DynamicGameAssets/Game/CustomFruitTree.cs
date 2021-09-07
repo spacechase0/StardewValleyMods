@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
-using SpaceShared;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
@@ -16,7 +12,6 @@ using StardewValley.Tools;
 namespace DynamicGameAssets.Game
 {
     [XmlType( "Mods_DGAFruitTree" )]
-    [Mixin( typeof( CustomItemMixin<FruitTreePackData> ) )]
     public partial class CustomFruitTree : FruitTree
     {
         public readonly NetObjectList<Item> grownFruits = new NetObjectList<Item>();
