@@ -18,7 +18,7 @@ namespace DynamicGameAssets.Game
 
         partial void DoInit()
         {
-            this.NetFields.AddFields(this._sourcePack, this._id);
+            this.NetFields.AddFields(this.NetSourcePack, this.NetId);
             this.NetFields.AddFields(this.grownFruits);
 
             this.treeType.Value = 0;

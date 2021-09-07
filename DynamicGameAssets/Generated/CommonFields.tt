@@ -39,27 +39,41 @@ foreach (var entry in generateClasses)
     [GeneratedCode("TextTemplatingFileGenerator", "1.0.0")]
     public partial class <#= itemType #> : IDGAItem
     {
-        public readonly NetString _sourcePack = new();
-        public readonly NetString _id = new();
+        /// <summary>The backing field for <see cref="SourcePack"/>.</summary>
+        public readonly NetString NetSourcePack = new();
+
+        /// <summary>The backing field for <see cref="Id"/>.</summary>
+        public readonly NetString NetId = new();
+
+        /// <inheritdoc />
         [XmlIgnore]
-        public string SourcePack => this._sourcePack.Value;
+        public string SourcePack => this.NetSourcePack.Value;
+
+        /// <inheritdoc />
         [XmlIgnore]
-        public string Id => this._id.Value;
+        public string Id => this.NetId.Value;
+
+        /// <inheritdoc />
         [XmlIgnore]
         public string FullId => $"{this.SourcePack}/{this.Id}";
-        [XmlIgnore]
-        public <#= packType #> Data => Mod.Find(this.FullId) as <#= packType #> ?? new <#= packType #>() { pack = Mod.DummyContentPack };
 
+        /// <summary>The content pack data for the item.</summary>
+        [XmlIgnore]
+        public <#= packType #> Data => Mod.Find(this.FullId) as <#= packType #> ?? new <#= packType #> { pack = Mod.DummyContentPack };
+
+        /// <summary>Construct an instance.</summary>
         public <#= itemType #>()
         {
             this.DoInit();
         }
 
+        /// <summary>Construct an instance.</summary>
+        /// <param name="data">The content pack data for the item.</param>
         public <#= itemType #>(<#= packType #> data)
             : this()
         {
-            this._sourcePack.Value = data.pack.smapiPack.Manifest.UniqueID;
-            this._id.Value = data.ID;
+            this.NetSourcePack.Value = data.pack.smapiPack.Manifest.UniqueID;
+            this.NetId.Value = data.ID;
             this.DoInit(data);
         }
 

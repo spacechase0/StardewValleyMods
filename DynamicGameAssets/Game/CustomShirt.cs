@@ -13,7 +13,7 @@ namespace DynamicGameAssets.Game
     {
         partial void DoInit()
         {
-            this.NetFields.AddFields(this._sourcePack, this._id);
+            this.NetFields.AddFields(this.NetSourcePack, this.NetId);
         }
 
         partial void DoInit(ShirtPackData data)

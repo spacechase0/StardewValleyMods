@@ -36,7 +36,7 @@ namespace DynamicGameAssets.Game
         protected override void initNetFields()
         {
             base.initNetFields();
-            this.NetFields.AddFields(this._sourcePack, this._id);
+            this.NetFields.AddFields(this.NetSourcePack, this.NetId);
         }
 
         public void UpdateRotation()

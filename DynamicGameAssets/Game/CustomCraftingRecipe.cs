@@ -26,8 +26,11 @@ namespace DynamicGameAssets.Game
         protected override void initNetFields()
         {
             base.initNetFields();
-            this.NetFields.AddFields(this._sourcePack, this._id);
-            this._id.fieldChangeEvent += (f, ov, nv) => { this.craftedCache = this.Data.Result[0].Value.Create(); };
+            this.NetFields.AddFields(this.NetSourcePack, this.NetId);
+            this.NetId.fieldChangeEvent += (_, _, _) =>
+            {
+                this.craftedCache = this.Data.Result[0].Value.Create();
+            };
         }
 
         public override void drawTooltip(SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText)
