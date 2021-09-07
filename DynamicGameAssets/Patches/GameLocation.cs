@@ -53,7 +53,7 @@ namespace DynamicGameAssets.Patches
                     }
                 }
             }
-            if (toPlace != null && toPlace.Category == -19)
+            if (toPlace?.Category == -19)
             {
                 if (toPlace.Category == -19 && this_.terrainFeatures.ContainsKey(tileLocation) && this_.terrainFeatures[tileLocation] is HoeDirt)
                 {
@@ -76,7 +76,7 @@ namespace DynamicGameAssets.Patches
             {
                 return true;
             }
-            if (toPlace != null && (toPlace.Category == -74 || toPlace.Category == -19) && o != null && o is IndoorPot)
+            if (toPlace?.Category is -74 or -19 && o is IndoorPot)
             {
                 if ((int)toPlace.parentSheetIndex == 251)
                 {

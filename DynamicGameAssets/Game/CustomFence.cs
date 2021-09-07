@@ -81,7 +81,7 @@ namespace DynamicGameAssets.Game
         {
             var Game1_multiplayer = Mod.instance.Helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
 
-            if (this.heldObject.Value != null && t != null && !(t is MeleeWeapon) && t.isHeavyHitter())
+            if (this.heldObject.Value != null && t is not (null or MeleeWeapon) && t.isHeavyHitter())
             {
                 StardewValley.Object value = this.heldObject.Value;
                 this.heldObject.Value.performRemoveAction(this.tileLocation, location);
@@ -90,7 +90,7 @@ namespace DynamicGameAssets.Game
                 location.playSound("axchop");
                 return false;
             }
-            if ((bool)this.isGate && t != null && (t is Axe || t is Pickaxe))
+            if ((bool)this.isGate && t is Axe or Pickaxe)
             {
                 location.playSound("axchop");
                 Game1.createObjectDebris(325, (int)this.tileLocation.X, (int)this.tileLocation.Y, Game1.player.UniqueMultiplayerID, Game1.player.currentLocation);
@@ -179,7 +179,7 @@ namespace DynamicGameAssets.Game
 
         public override bool canStackWith(ISalable other)
         {
-            if (!(other is CustomFence fence))
+            if (other is not CustomFence fence)
                 return false;
 
             return fence.FullId == this.FullId && base.canStackWith(fence);

@@ -99,7 +99,7 @@ namespace BuildableLocationsFramework.Framework
             {
                 foreach (KeyValuePair<long, FarmAnimal> pair in this.Animals.Pairs)
                 {
-                    if (character != null && !character.Equals(pair.Value) && (!(character is FarmAnimal) && position.Intersects(pair.Value.GetBoundingBox())) && (!isFarmer || !Game1.player.GetBoundingBox().Intersects(pair.Value.GetBoundingBox())))
+                    if (character != null && !character.Equals(pair.Value) && (character is not FarmAnimal && position.Intersects(pair.Value.GetBoundingBox())) && (!isFarmer || !Game1.player.GetBoundingBox().Intersects(pair.Value.GetBoundingBox())))
                     {
                         if (isFarmer && character is Farmer farmer)
                         {

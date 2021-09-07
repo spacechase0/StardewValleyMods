@@ -14,7 +14,7 @@ namespace DynamicGameAssets
         public void AddToShop(ShopMenu shop)
         {
             int qty = this.Quantity;
-            if (this.Item is StardewValley.Object obj && obj.IsRecipe)
+            if (this.Item is StardewValley.Object { IsRecipe: true })
                 qty = 1;
 
             this.Item.Stack = qty;
@@ -42,7 +42,7 @@ namespace DynamicGameAssets
         public void AddToShopStock(Dictionary<ISalable, int[]> stock)
         {
             int qty = this.Quantity;
-            if (this.Item is StardewValley.Object obj && obj.IsRecipe)
+            if (this.Item is StardewValley.Object { IsRecipe: true })
                 qty = 1;
 
             this.Item.Stack = qty;

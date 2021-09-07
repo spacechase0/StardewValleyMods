@@ -165,7 +165,7 @@ namespace SpaceCore.Interface
                 upNeighborID = 997,
                 fullyImmutable = true
             };
-            if (this.inventory.inventory != null && this.inventory.inventory.Count >= 12)
+            if (this.inventory.inventory?.Count >= 12)
             {
                 for (int j = 0; j < 12; j++)
                 {
@@ -310,7 +310,7 @@ namespace SpaceCore.Interface
         private void _leftIngredientSpotClicked()
         {
             Item old_item = this.leftIngredientSpot.item;
-            if ((this.heldItem == null || this.IsValidCraftIngredient(this.heldItem)) && (this.heldItem == null || this.heldItem is Tool || this.heldItem is Ring) || this.IsLeftCraftIngredient(this.heldItem))
+            if ((this.heldItem == null || this.IsValidCraftIngredient(this.heldItem)) && (this.heldItem is null or Tool or Ring) || this.IsLeftCraftIngredient(this.heldItem))
             {
                 Game1.playSound("stoneStep");
                 this.leftIngredientSpot.item = this.heldItem;
@@ -322,7 +322,7 @@ namespace SpaceCore.Interface
 
         public bool IsValidCraftIngredient(Item item)
         {
-            if (!item.canBeTrashed() && (!(item is Tool) || BaseEnchantment.GetAvailableEnchantmentsForItem(item as Tool).Count <= 0))
+            if (!item.canBeTrashed() && (item is not Tool || BaseEnchantment.GetAvailableEnchantmentsForItem(item as Tool).Count <= 0))
             {
                 return false;
             }
@@ -391,7 +391,7 @@ namespace SpaceCore.Interface
                     }
                     Item item_to_place2 = this.heldItem;
                     Item old_item2 = Game1.player.rightRing.Value;
-                    if (old_item2 != this.heldItem && (item_to_place2 == null || item_to_place2 is Ring))
+                    if (old_item2 != this.heldItem && (item_to_place2 is null or Ring))
                     {
                         if (Game1.player.rightRing.Value != null)
                         {
@@ -420,7 +420,7 @@ namespace SpaceCore.Interface
                     }
                     Item item_to_place = this.heldItem;
                     Item old_item = Game1.player.leftRing.Value;
-                    if (old_item != this.heldItem && (item_to_place == null || item_to_place is Ring))
+                    if (old_item != this.heldItem && (item_to_place is null or Ring))
                     {
                         if (Game1.player.leftRing.Value != null)
                         {
@@ -446,7 +446,7 @@ namespace SpaceCore.Interface
             if (Game1.GetKeyboardState().IsKeyDown(Keys.LeftShift) && old_held_item != this.heldItem && this.heldItem != null)
             {
                 //if ( base.heldItem is Tool || ( base.heldItem is Ring && this.leftIngredientSpot.item == null ) )
-                if ((this.heldItem is Tool || this.heldItem is Ring || this.IsLeftCraftIngredient(this.heldItem)) && this.leftIngredientSpot.item == null)
+                if ((this.heldItem is Tool or Ring || this.IsLeftCraftIngredient(this.heldItem)) && this.leftIngredientSpot.item == null)
                 {
                     this._leftIngredientSpotClicked();
                 }
@@ -677,11 +677,11 @@ namespace SpaceCore.Interface
             {
                 return 10;
             }
-            if (left_item != null && left_item is Tool)
+            if (left_item is Tool)
             {
                 return this.GetForgeCostAtLevel((left_item as Tool).GetTotalForgeLevels());
             }
-            if (left_item != null && left_item is Ring && right_item != null && right_item is Ring)
+            if (left_item is Ring && right_item is Ring)
             {
                 return 20;
             }
@@ -747,7 +747,7 @@ namespace SpaceCore.Interface
             }
             else if (this._craftState == CraftState.MissingShards)
             {
-                if (this.heldItem != null && this.heldItem.ParentSheetIndex == 848)
+                if (this.heldItem?.ParentSheetIndex == 848)
                 {
                     this.displayedDescription = Game1.content.LoadString("Strings\\UI:Forge_shards");
                 }
@@ -1178,11 +1178,11 @@ namespace SpaceCore.Interface
             {
                 return false;
             }
-            if (this.leftIngredientSpot.item != null && this.leftIngredientSpot.item is MeleeWeapon && ((this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() > 0 || (this.leftIngredientSpot.item as MeleeWeapon).appearance.Value >= 0))
+            if (this.leftIngredientSpot.item is MeleeWeapon && ((this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() > 0 || (this.leftIngredientSpot.item as MeleeWeapon).appearance.Value >= 0))
             {
                 return true;
             }
-            if (this.leftIngredientSpot.item != null && this.leftIngredientSpot.item is CombinedRing)
+            if (this.leftIngredientSpot.item is CombinedRing)
             {
                 return true;
             }
@@ -1219,7 +1219,7 @@ namespace SpaceCore.Interface
                 else
                 {
                     int source_offset = (cost - 10) / 5;
-                    if (source_offset >= 0 && source_offset <= 2)
+                    if (source_offset is >= 0 and <= 2)
                     {
                         b.Draw(this.forgeTextures, new Vector2(this.xPositionOnScreen + 344, this.yPositionOnScreen + 320), new Rectangle(142, 38 + source_offset * 10, 17, 10), Color.White * ((this._craftState == CraftState.MissingShards) ? 0.5f : 1f), 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.1f);
                     }
@@ -1260,7 +1260,7 @@ namespace SpaceCore.Interface
                 {
                     right_slot_accepts_this_item = true;
                 }
-                if (highlight_item is Ring && !(highlight_item is CombinedRing) && (this.leftIngredientSpot.item == null || this.leftIngredientSpot.item is Ring) && (this.rightIngredientSpot.item == null || this.rightIngredientSpot.item is Ring))
+                if (highlight_item is Ring && highlight_item is not CombinedRing && (this.leftIngredientSpot.item is null or Ring) && (this.rightIngredientSpot.item is null or Ring))
                 {
                     left_slot_accepts_this_item = true;
                     right_slot_accepts_this_item = true;

@@ -194,7 +194,7 @@ namespace DynamicGameAssets.Patches
     {
         public static void Postfix(string action)
         {
-            if ((action == "IceCreamStand" || action == "Theater_BoxOffice") && Game1.activeClickableMenu is ShopMenu shop)
+            if ((action is "IceCreamStand" or "Theater_BoxOffice") && Game1.activeClickableMenu is ShopMenu shop)
             {
                 PatchCommon.DoShop(action, shop);
             }

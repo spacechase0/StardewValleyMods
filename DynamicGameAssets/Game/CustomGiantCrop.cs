@@ -41,7 +41,7 @@ namespace DynamicGameAssets.Game
         {
             var Game1_multiplayer = Mod.instance.Helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
 
-            if (t == null || !(t is Axe))
+            if (t is not Axe)
             {
                 return false;
             }

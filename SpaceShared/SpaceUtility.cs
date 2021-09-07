@@ -206,7 +206,7 @@ namespace SpaceShared
                     }
                     else
                     {
-                        if (!(b is JunimoHut))
+                        if (b is not JunimoHut)
                         {
                             continue;
                         }

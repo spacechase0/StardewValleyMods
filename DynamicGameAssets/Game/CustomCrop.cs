@@ -402,7 +402,7 @@ namespace DynamicGameAssets.Game
                         for (int y = yTile - 1; y <= yTile + 1; y++)
                         {
                             Vector2 v2 = new Vector2(x2, y);
-                            if (!environment.terrainFeatures.ContainsKey(v2) || !(environment.terrainFeatures[v2] is HoeDirt) || (environment.terrainFeatures[v2] as HoeDirt).crop == null || ((environment.terrainFeatures[v2] as HoeDirt).crop as CustomCrop).FullId != this.FullId)
+                            if (!environment.terrainFeatures.ContainsKey(v2) || environment.terrainFeatures[v2] is not HoeDirt || (environment.terrainFeatures[v2] as HoeDirt).crop == null || ((environment.terrainFeatures[v2] as HoeDirt).crop as CustomCrop).FullId != this.FullId)
                             {
                                 return;
                             }

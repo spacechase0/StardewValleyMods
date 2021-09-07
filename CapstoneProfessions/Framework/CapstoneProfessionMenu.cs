@@ -137,7 +137,7 @@ namespace CapstoneProfessions.Framework
         {
             if (this.CanReceiveInput())
             {
-                if (direction == 3 || direction == 1)
+                if (direction is 3 or 1)
                 {
                     this.hasMovedSelection = true;
                 }

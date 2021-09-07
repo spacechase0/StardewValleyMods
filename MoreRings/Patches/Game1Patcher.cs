@@ -60,7 +60,7 @@ namespace MoreRings.Patches
             var tool = Game1.player.CurrentTool;
             if (tool == null)
                 return 1;
-            else if (tool is Hoe || tool is Pickaxe || tool is WateringCan || tool is Axe)
+            else if (tool is Hoe or Pickaxe or WateringCan or Axe)
             {
                 if (Mod.Instance.HasRingEquipped(Mod.Instance.RingMageHand) > 0)
                     return 100;

@@ -32,11 +32,11 @@ namespace FlowerColorPicker
 
             // get dirt under cursor
             Vector2 mouseTilePos = e.Cursor.Tile;
-            if (!Game1.player.currentLocation.terrainFeatures.TryGetValue(mouseTilePos, out TerrainFeature terrainFeature) || !(terrainFeature is HoeDirt dirt))
+            if (!Game1.player.currentLocation.terrainFeatures.TryGetValue(mouseTilePos, out TerrainFeature terrainFeature) || terrainFeature is not HoeDirt dirt)
                 return;
 
             // get held colored object
-            if (!(Game1.player.ActiveObject is ColoredObject held))
+            if (Game1.player.ActiveObject is not ColoredObject held)
                 return;
 
             // apply color

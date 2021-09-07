@@ -33,7 +33,7 @@ namespace RaftRestoration.Patches
         /// <summary>The method to call before <see cref="Tool.drawInMenu(SpriteBatch,Vector2,float,float,float,StackDrawType,Color,bool)"/>.</summary>
         private static bool Before_DrawInMenu(Tool __instance, SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
-            if (!(__instance is Raft))
+            if (__instance is not Raft)
                 return true;
 
             spriteBatch.Draw(Game1.toolSpriteSheet, location + new Vector2(32f, 32f), new Rectangle(16, 0, 16, 16), color * transparency, 0.0f, new Vector2(8f, 8f), 4f * scaleSize, SpriteEffects.None, layerDepth);

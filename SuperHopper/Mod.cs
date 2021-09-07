@@ -29,7 +29,7 @@ namespace SuperHopper
                 return;
 
             Game1.currentLocation.objects.TryGetValue(e.Cursor.GrabTile, out StardewValley.Object obj);
-            if (obj is Chest chest && chest.SpecialChestType == Chest.SpecialChestTypes.AutoLoader && (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA))
+            if (obj is Chest { SpecialChestType: Chest.SpecialChestTypes.AutoLoader } chest && (e.Button is SButton.MouseLeft or SButton.ControllerA))
             {
                 if (chest.heldObject.Value == null)
                 {
@@ -60,10 +60,10 @@ namespace SuperHopper
     {
         public static bool Prefix(StardewValley.Object __instance, int minutes, GameLocation environment)
         {
-            if (__instance is Chest chest && chest.SpecialChestType == Chest.SpecialChestTypes.AutoLoader && chest.heldObject.Value != null && Utility.IsNormalObjectAtParentSheetIndex(chest.heldObject.Value, StardewValley.Object.iridiumBar))
+            if (__instance is Chest { SpecialChestType: Chest.SpecialChestTypes.AutoLoader } chest && chest.heldObject.Value != null && Utility.IsNormalObjectAtParentSheetIndex(chest.heldObject.Value, StardewValley.Object.iridiumBar))
             {
                 environment.objects.TryGetValue(chest.TileLocation - new Vector2(0, 1), out StardewValley.Object aboveObj);
-                if (aboveObj != null && aboveObj is Chest aboveChest && chest.items.Count < chest.GetActualCapacity() && aboveChest.items.Count > 0)
+                if (aboveObj is Chest aboveChest && chest.items.Count < chest.GetActualCapacity() && aboveChest.items.Count > 0)
                 {
                     chest.items.Add(aboveChest.items[0]);
                     aboveChest.items.RemoveAt(0);
@@ -78,7 +78,7 @@ namespace SuperHopper
                 */
 
                 environment.objects.TryGetValue(chest.TileLocation + new Vector2(0, 1), out StardewValley.Object belowObj);
-                if (belowObj != null && belowObj is Chest belowChest && chest.items.Count > 0 && belowChest.items.Count < belowChest.GetActualCapacity())
+                if (belowObj is Chest belowChest && chest.items.Count > 0 && belowChest.items.Count < belowChest.GetActualCapacity())
                 {
                     belowChest.items.Add(chest.items[0]);
                     chest.items.RemoveAt(0);

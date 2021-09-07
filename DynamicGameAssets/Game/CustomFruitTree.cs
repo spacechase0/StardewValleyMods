@@ -201,13 +201,13 @@ namespace DynamicGameAssets.Game
             {
                 return false;
             }
-            if (t != null && t is MeleeWeapon)
+            if (t is MeleeWeapon)
             {
                 return false;
             }
             if ((int)this.growthStage >= 4)
             {
-                if (t != null && t is Axe)
+                if (t is Axe)
                 {
                     location.playSound("axchop");
                     location.debris.Add(new Debris(12, Game1.random.Next((int)t.upgradeLevel * 2, (int)t.upgradeLevel * 4), t.getLastFarmerToUse().GetToolLocation() + new Vector2(16f, 0f), t.getLastFarmerToUse().Position, 0));
@@ -407,7 +407,7 @@ namespace DynamicGameAssets.Game
                     location.playSound("axchop");
                     Game1.createRadialDebris(location, 12, (int)tileLocation.X, (int)tileLocation.Y, Game1.random.Next(10, 20), resource: false);
                 }
-                if (t is Axe || t is Pickaxe || t is Hoe || t is MeleeWeapon)
+                if (t is Axe or Pickaxe or Hoe or MeleeWeapon)
                 {
                     Game1.createRadialDebris(location, 12, (int)tileLocation.X, (int)tileLocation.Y, Game1.random.Next(10, 20), resource: false);
                     if (t.BaseName.Contains("Axe") && Game1.recentMultiplayerRandom.NextDouble() < (double)((float)t.getLastFarmerToUse().ForagingLevel / 10f))

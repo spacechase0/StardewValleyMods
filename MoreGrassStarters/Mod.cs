@@ -32,7 +32,7 @@ namespace MoreGrassStarters
         /// <param name="e">The event arguments.</param>
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (!(e.NewMenu is ShopMenu menu) || menu.portraitPerson == null)
+            if (e.NewMenu is not ShopMenu menu || menu.portraitPerson == null)
                 return;
 
             if (menu.portraitPerson.Name == "Pierre")

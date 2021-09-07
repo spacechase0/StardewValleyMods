@@ -168,7 +168,7 @@ namespace RealtimeMinimap
             b.Draw(Game1.staminaRect, new Rectangle(x + Mod.BORDER_WIDTH, y + Mod.BORDER_WIDTH, (int)actualSize, (int)actualSize), Color.Black);
             b.Draw(mapTex, rect, Color.White);
 
-            foreach (var obj in Game1.currentLocation.objects.Values.Where(o => o.bigCraftable && (o.ParentSheetIndex == 37 || o.ParentSheetIndex == 38 || o.ParentSheetIndex == 39) && (o as StardewValley.Objects.Sign).displayItem.Value != null))
+            foreach (var obj in Game1.currentLocation.objects.Values.Where(o => o.bigCraftable && (o.ParentSheetIndex is 37 or 38 or 39) && (o as StardewValley.Objects.Sign).displayItem.Value != null))
             {
                 var pos = obj.TileLocation * Game1.tileSize;
                 float s = Mod.Config.RenderWoodSigns;

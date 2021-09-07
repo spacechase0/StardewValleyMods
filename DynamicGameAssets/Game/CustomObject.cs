@@ -290,7 +290,7 @@ namespace DynamicGameAssets.Game
 
         public override bool canStackWith(ISalable other)
         {
-            if (!(other is CustomObject obj))
+            if (other is not CustomObject obj)
                 return false;
 
             return obj.FullId == this.FullId && base.canStackWith(other);
@@ -311,7 +311,7 @@ namespace DynamicGameAssets.Game
             if (t == null)
                 return false;
 
-            if (!(t is MeleeWeapon) && t.isHeavyHitter())
+            if (t is not MeleeWeapon && t.isHeavyHitter())
             {
                 location.playSound("hammer");
                 location.debris.Add(new Debris(this, this.TileLocation * Game1.tileSize + new Vector2(Game1.tileSize / 2, Game1.tileSize / 2)));
@@ -338,7 +338,7 @@ namespace DynamicGameAssets.Game
                             {
                                 foreach (SObject o in location.Objects.Values)
                                 {
-                                    if (!o.IsSprinkler() || o.heldObject.Value == null || o.heldObject.Value.ParentSheetIndex != 913 || !o.IsInSprinklerRangeBroadphase(placementTile) || !o.GetSprinklerTiles().Contains(placementTile))
+                                    if (!o.IsSprinkler() || o.heldObject.Value is not { ParentSheetIndex: 913 } || !o.IsInSprinklerRangeBroadphase(placementTile) || !o.GetSprinklerTiles().Contains(placementTile))
                                     {
                                         continue;
                                     }
@@ -397,7 +397,7 @@ namespace DynamicGameAssets.Game
                     }
                     if (location.terrainFeatures.ContainsKey(placementTile))
                     {
-                        if (!(location.terrainFeatures[placementTile] is HoeDirt) || (location.terrainFeatures[placementTile] as HoeDirt).crop != null)
+                        if ((location.terrainFeatures[placementTile] as HoeDirt)?.crop != null)
                         {
                             return false;
                         }
@@ -426,7 +426,7 @@ namespace DynamicGameAssets.Game
 
         public override bool IsSprinkler()
         {
-            return this.Data.SprinklerTiles != null && this.Data.SprinklerTiles.Count > 0;
+            return this.Data.SprinklerTiles?.Count > 0;
         }
 
         public override int GetBaseRadiusForSprinkler()

@@ -92,7 +92,7 @@ namespace DynamicGameAssets.Game
                 addedScale = 0f;
             }
             spriteBatch.Draw(currTex.Texture, location + (((int)this.type == 1) ? new Vector2(38f, 25f) : new Vector2(32f, 32f)), currTex.Rect, color * transparency, 0f, new Vector2(8f, 8f), 4f * (scaleSize + addedScale), SpriteEffects.None, layerDepth);
-            if (coolDownLevel > 0f && drawShadow && !drawing_as_debris && !this.isScythe() && (Game1.activeClickableMenu == null || !(Game1.activeClickableMenu is ShopMenu) || scaleSize != 1f))
+            if (coolDownLevel > 0f && drawShadow && !drawing_as_debris && !this.isScythe() && (Game1.activeClickableMenu is not ShopMenu || scaleSize != 1f))
             {
                 spriteBatch.Draw(Game1.staminaRect, new Rectangle((int)location.X, (int)location.Y + (64 - (int)(coolDownLevel * 64f)), 64, (int)(coolDownLevel * 64f)), Color.Red * 0.66f);
             }

@@ -47,7 +47,7 @@ namespace BiggerCraftables.Patches
                 __result = false;
                 return false;
             }
-            if (item == null || item is Tool || Game1.eventUp || f.bathingClothes.Value || f.onBridge.Value)
+            if (item is null or Tool || Game1.eventUp || f.bathingClothes.Value || f.onBridge.Value)
             {
                 __result = false;
                 return false;

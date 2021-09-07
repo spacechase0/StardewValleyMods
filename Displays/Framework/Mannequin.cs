@@ -105,7 +105,7 @@ namespace Displays.Framework
             if (t == null)
                 return false;
 
-            if (!(t is MeleeWeapon) && t.isHeavyHitter())
+            if (t is not MeleeWeapon && t.isHeavyHitter())
             {
                 if (this.Hat.Value != null || this.Shirt.Value != null || this.Pants.Value != null || this.Boots.Value != null)
                 {
@@ -161,7 +161,7 @@ namespace Displays.Framework
 
         public override bool performObjectDropInAction(Item dropInItem, bool probe, Farmer who)
         {
-            if (probe && (dropInItem is Hat || dropInItem is Clothing || dropInItem is Boots))
+            if (probe && (dropInItem is StardewValley.Objects.Hat or Clothing or StardewValley.Objects.Boots))
                 return true;
 
             switch (dropInItem)

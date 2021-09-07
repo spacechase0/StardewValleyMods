@@ -414,7 +414,7 @@ namespace DynamicGameAssets
         {
             if (e.NewMenu is ShopMenu shop)
             {
-                if (shop.storeContext == "ResortBar" || shop.storeContext == "VolcanoShop")
+                if (shop.storeContext is "ResortBar" or "VolcanoShop")
                 {
                     PatchCommon.DoShop(shop.storeContext, shop);
                 }
@@ -629,7 +629,7 @@ namespace DynamicGameAssets
                 Log.Error("Must specify a DGA.FormatVersion as an integer! (See documentation.)");
                 return;
             }
-            if (formatVer < 1 || formatVer > 2)
+            if (formatVer is < 1 or > 2)
             {
                 Log.Error("Unsupported format version!");
                 return;
@@ -658,7 +658,7 @@ namespace DynamicGameAssets
                     Log.Error("Must specify a DGA.FormatVersion as an integer! (See documentation.)");
                     continue;
                 }
-                if (formatVer < 1 || formatVer > 2)
+                if (formatVer is < 1 or > 2)
                 {
                     Log.Error("Unsupported format version!");
                     continue;

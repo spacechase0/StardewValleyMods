@@ -370,7 +370,7 @@ namespace DynamicGameAssets.Game
 
         public override bool canStackWith(ISalable other)
         {
-            if (!(other is CustomBigCraftable obj))
+            if (other is not CustomBigCraftable obj)
                 return false;
 
             return obj.FullId == this.FullId && base.canStackWith(other);

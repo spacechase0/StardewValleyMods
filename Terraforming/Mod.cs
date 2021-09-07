@@ -66,7 +66,7 @@ namespace Terraforming
             foreach (var layer in loc.Map.Layers)
             {
                 var newLayer = new Layer(layer.Id, map, layer.LayerSize, layer.TileSize);
-                if (newLayer.Id == "Back" || newLayer.Id == "Buildings" || newLayer.Id == "Front" || newLayer.Id == "AlwaysFront")
+                if (newLayer.Id is "Back" or "Buildings" or "Front" or "AlwaysFront")
                     newLayer.AfterDraw += Mod.DrawTerraformLayer;
                 if (newLayer.Id == "Back")
                 {

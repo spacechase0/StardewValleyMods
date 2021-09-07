@@ -215,7 +215,7 @@ namespace Terraforming.Framework
             {
                 int ix = i % this.TerrainWidth, iy = i / this.TerrainWidth;
                 var tile = this.TerrainData[ix, iy];
-                Game1.currentLocation.waterTiles[ix, iy] = (tile == TileType.Water || tile == TileType.DeepWater);
+                Game1.currentLocation.waterTiles[ix, iy] = (tile is TileType.Water or TileType.DeepWater);
             }
         }
     }
