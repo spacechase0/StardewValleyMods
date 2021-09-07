@@ -14,12 +14,15 @@ namespace DynamicGameAssets.Game
     [XmlType("Mods_DGAFruitTree")]
     public partial class CustomFruitTree : FruitTree
     {
-        public readonly NetObjectList<Item> grownFruits = new NetObjectList<Item>();
+        /// <summary>The backing field for <see cref="GrownFruits"/>.</summary>
+        public readonly NetObjectList<Item> NetGrownFruits = new();
+
+        public IList<Item> GrownFruits => this.NetGrownFruits;
 
         partial void DoInit()
         {
             this.NetFields.AddFields(this.NetSourcePack, this.NetId);
-            this.NetFields.AddFields(this.grownFruits);
+            this.NetFields.AddFields(this.NetGrownFruits);
 
             this.treeType.Value = 0;
         }
@@ -69,7 +72,7 @@ namespace DynamicGameAssets.Game
                     {
                         return;
                     }
-                    for (int j = 0; j < (int)this.grownFruits.Count; j++)
+                    for (int j = 0; j < (int)this.GrownFruits.Count; j++)
                     {
                         Vector2 offset = new Vector2(0f, 0f);
                         switch (j)
@@ -85,7 +88,7 @@ namespace DynamicGameAssets.Game
                                 offset.Y = 32f;
                                 break;
                         }
-                        Debris d = new Debris(((int)this.struckByLightningCountdown > 0) ? new StardewValley.Object(382, 1) : this.grownFruits[j].getOne(), new Vector2(tileLocation.X * 64f + 32f, (tileLocation.Y - 3f) * 64f + 32f) + offset, new Vector2(Game1.player.getStandingX(), Game1.player.getStandingY()))
+                        Debris d = new Debris(((int)this.struckByLightningCountdown > 0) ? new StardewValley.Object(382, 1) : this.GrownFruits[j].getOne(), new Vector2(tileLocation.X * 64f + 32f, (tileLocation.Y - 3f) * 64f + 32f) + offset, new Vector2(Game1.player.getStandingX(), Game1.player.getStandingY()))
                         {
                             itemQuality = fruitquality
                         };
@@ -93,7 +96,7 @@ namespace DynamicGameAssets.Game
                         d.chunkFinalYLevel = (int)(tileLocation.Y * 64f + 64f);
                         location.debris.Add(d);
                     }
-                    this.grownFruits.Clear();
+                    this.GrownFruits.Clear();
                 }
                 else if (Game1.random.NextDouble() < 0.66 && this.Data.CanGrowNow)
                 {
@@ -121,7 +124,7 @@ namespace DynamicGameAssets.Game
                 this.struckByLightningCountdown.Value--;
                 if ((int)this.struckByLightningCountdown <= 0)
                 {
-                    this.grownFruits.Clear();
+                    this.GrownFruits.Clear();
                 }
             }
             bool foundSomething = FruitTree.IsGrowthBlocked(tileLocation, environment);
@@ -159,9 +162,9 @@ namespace DynamicGameAssets.Game
             }
             if (!this.stump && (int)this.growthStage == 4 && (((int)this.struckByLightningCountdown > 0 && !Game1.IsWinter) || this.IsInSeasonHere(environment) || environment.SeedsIgnoreSeasonsHere()))
             {
-                if (this.grownFruits.Count < 3)
+                if (this.GrownFruits.Count < 3)
                 {
-                    this.grownFruits.Add(this.Data.Product.Choose().Create());
+                    this.GrownFruits.Add(this.Data.Product.Choose().Create());
                 }
                 if (environment.IsGreenhouse)
                 {
@@ -170,7 +173,7 @@ namespace DynamicGameAssets.Game
             }
             if ((bool)this.stump)
             {
-                this.grownFruits.Clear();
+                this.GrownFruits.Clear();
             }
         }
 
@@ -183,7 +186,7 @@ namespace DynamicGameAssets.Game
         {
             if (!this.IsInSeasonHere(this.currentLocation) && !onLoad && !this.greenHouseTree)
             {
-                this.grownFruits.Clear();
+                this.GrownFruits.Clear();
             }
             return false;
         }
@@ -228,7 +231,7 @@ namespace DynamicGameAssets.Game
                     }
                     if (location.terrainFeatures.ContainsKey(tileLocation) && location.terrainFeatures[tileLocation].Equals(this))
                     {
-                        for (int i = 0; i < (int)this.grownFruits.Count; i++)
+                        for (int i = 0; i < (int)this.GrownFruits.Count; i++)
                         {
                             Vector2 offset = new Vector2(0f, 0f);
                             switch (i)
@@ -244,7 +247,7 @@ namespace DynamicGameAssets.Game
                                     offset.Y = 32f;
                                     break;
                             }
-                            Debris d2 = new Debris(((int)this.struckByLightningCountdown > 0) ? new StardewValley.Object(382, 1) : this.grownFruits[i].getOne(), new Vector2(tileLocation.X * 64f + 32f, (tileLocation.Y - 3f) * 64f + 32f) + offset, new Vector2(Game1.player.getStandingX(), Game1.player.getStandingY()))
+                            Debris d2 = new Debris(((int)this.struckByLightningCountdown > 0) ? new StardewValley.Object(382, 1) : this.GrownFruits[i].getOne(), new Vector2(tileLocation.X * 64f + 32f, (tileLocation.Y - 3f) * 64f + 32f) + offset, new Vector2(Game1.player.getStandingX(), Game1.player.getStandingY()))
                             {
                                 itemQuality = fruitquality
                             };
@@ -252,7 +255,7 @@ namespace DynamicGameAssets.Game
                             d2.chunkFinalYLevel = (int)(tileLocation.Y * 64f + 64f);
                             location.debris.Add(d2);
                         }
-                        this.grownFruits.Clear();
+                        this.GrownFruits.Clear();
                     }
                 }
                 else if (explosion <= 0)
@@ -488,23 +491,23 @@ namespace DynamicGameAssets.Game
         {
             alpha = 1;
             Vector2 p = Vector2.Zero;
-            for (int i = 0; i < (int)this.grownFruits.Count; i++)
+            for (int i = 0; i < (int)this.GrownFruits.Count; i++)
             {
                 switch (i)
                 {
                     case 0:
                         p = /*Game1.GlobalToLocal*/( /*Game1.viewport,*/ new Vector2(tileLocation.X * 64 - 64 + tileLocation.X * 200f % 64 / 2, tileLocation.Y * 64 - 192 - tileLocation.X % 64 / 3));
-                        (this.grownFruits[i] as StardewValley.Object).draw(spriteBatch, (int)p.X, (int)p.Y, (float)this.getBoundingBox(tileLocation).Bottom / 10000f + 0.002f - tileLocation.X / 1000000f, alpha);
+                        (this.GrownFruits[i] as StardewValley.Object).draw(spriteBatch, (int)p.X, (int)p.Y, (float)this.getBoundingBox(tileLocation).Bottom / 10000f + 0.002f - tileLocation.X / 1000000f, alpha);
                         //spriteBatch.Draw( Game1.objectSpriteSheet, Game1.GlobalToLocal( Game1.viewport, new Vector2( tileLocation.X * 64f - 64f + tileLocation.X * 200f % 64f / 2f, tileLocation.Y * 64f - 192f - tileLocation.X % 64f / 3f ) ), Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, ( ( int ) this.struckByLightningCountdown > 0 ) ? 382 : ( ( int ) 382 ), 16, 16 ), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, ( float ) this.getBoundingBox( tileLocation ).Bottom / 10000f + 0.002f - tileLocation.X / 1000000f );
                         break;
                     case 1:
                         p = /*Game1.GlobalToLocal*/( /*Game1.viewport,*/ new Vector2(tileLocation.X * 64 + 32, tileLocation.Y * 64 - 256 + tileLocation.X % 232 % 64 / 3));
-                        (this.grownFruits[i] as StardewValley.Object).draw(spriteBatch, (int)p.X, (int)p.Y, (float)this.getBoundingBox(tileLocation).Bottom / 10000f + 0.002f - tileLocation.X / 1000000f, alpha);
+                        (this.GrownFruits[i] as StardewValley.Object).draw(spriteBatch, (int)p.X, (int)p.Y, (float)this.getBoundingBox(tileLocation).Bottom / 10000f + 0.002f - tileLocation.X / 1000000f, alpha);
                         //spriteBatch.Draw( Game1.objectSpriteSheet, Game1.GlobalToLocal( Game1.viewport, new Vector2( tileLocation.X * 64f + 32f, tileLocation.Y * 64f - 256f + tileLocation.X * 232f % 64f / 3f ) ), Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, ( ( int ) this.struckByLightningCountdown > 0 ) ? 382 : ( ( int ) 382 ), 16, 16 ), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, ( float ) this.getBoundingBox( tileLocation ).Bottom / 10000f + 0.002f - tileLocation.X / 1000000f );
                         break;
                     case 2:
                         p = /*Game1.GlobalToLocal*/( /*Game1.viewport,*/ new Vector2(tileLocation.X * 64 + tileLocation.X * 200f % 64f / 3f, tileLocation.Y * 64f - 160f + tileLocation.X * 200f % 64f / 3f));
-                        (this.grownFruits[i] as StardewValley.Object).draw(spriteBatch, (int)p.X, (int)p.Y, (float)this.getBoundingBox(tileLocation).Bottom / 10000f + 0.002f - tileLocation.X / 1000000f, alpha);
+                        (this.GrownFruits[i] as StardewValley.Object).draw(spriteBatch, (int)p.X, (int)p.Y, (float)this.getBoundingBox(tileLocation).Bottom / 10000f + 0.002f - tileLocation.X / 1000000f, alpha);
                         //spriteBatch.Draw( Game1.objectSpriteSheet, Game1.GlobalToLocal( Game1.viewport, new Vector2( tileLocation.X * 64f + tileLocation.X * 200f % 64f / 3f, tileLocation.Y * 64f - 160f + tileLocation.X * 200f % 64f / 3f ) ), Game1.getSourceRectForStandardTileSheet( Game1.objectSpriteSheet, ( ( int ) this.struckByLightningCountdown > 0 ) ? 382 : ( ( int ) 382 ), 16, 16 ), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.FlipHorizontally, ( float ) this.getBoundingBox( tileLocation ).Bottom / 10000f + 0.002f - tileLocation.X / 1000000f );
                         break;
                 }

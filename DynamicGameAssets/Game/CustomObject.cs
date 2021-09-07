@@ -19,31 +19,32 @@ namespace DynamicGameAssets.Game
     [XmlType("Mods_DGAObject")]
     public partial class CustomObject : SObject
     {
-        public readonly NetBool _hasColor = new NetBool();
-        public readonly NetColor _color = new NetColor();
+        public readonly NetBool NetHasColor = new();
+        public readonly NetColor NetColor = new();
 
         [XmlIgnore]
         public Color? ObjectColor
         {
-            get
-            {
-                if (!this._hasColor.Value)
-                    return null;
-                return this._color.Value;
-            }
+            get => this.NetHasColor.Value
+                ? this.NetColor.Value
+                : null;
             set
             {
                 if (value == null)
-                    this._hasColor.Value = false;
+                    this.NetHasColor.Value = false;
                 else
                 {
-                    this._hasColor.Value = true;
-                    this._color.Value = value.Value;
+                    this.NetHasColor.Value = true;
+                    this.NetColor.Value = value.Value;
                 }
             }
         }
 
-        public override string DisplayName { get => this.loadDisplayName(); set { } }
+        public override string DisplayName
+        {
+            get => this.loadDisplayName();
+            set { }
+        }
 
         partial void DoInit(ObjectPackData data)
         {
@@ -66,7 +67,7 @@ namespace DynamicGameAssets.Game
         {
             base.initNetFields();
             this.NetFields.AddFields(this.NetSourcePack, this.NetId);
-            this.NetFields.AddFields(this._hasColor, this._color);
+            this.NetFields.AddFields(this.NetHasColor, this.NetColor);
         }
 
         protected override string loadDisplayName()
@@ -162,7 +163,7 @@ namespace DynamicGameAssets.Game
         {
             var tex = this.Data.pack.GetTexture(this.Data.Texture, 16, 16);
             spriteBatch.Draw(tex.Texture, objectPosition, tex.Rect, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, Math.Max(0f, (float)(f.getStandingY() + 3) / 10000f));
-            if (this._hasColor.Value)
+            if (this.NetHasColor.Value)
             {
                 var colorTex = this.Data.pack.GetTexture(this.Data.TextureColor, 16, 16);
                 spriteBatch.Draw(colorTex.Texture, objectPosition, colorTex.Rect, this.ObjectColor.Value, 0f, Vector2.Zero, 4f, SpriteEffects.None, Math.Max(0f, (float)(f.getStandingY() + 3) / 10000f + 2e-05f));
@@ -184,7 +185,7 @@ namespace DynamicGameAssets.Game
             }
             var tex = this.Data.pack.GetTexture(this.Data.Texture, 16, 16);
             spriteBatch.Draw(tex.Texture, location + new Vector2((int)(32f * scaleSize), (int)(32f * scaleSize)), tex.Rect, color * transparency, 0f, new Vector2(8f, 8f) * scaleSize, 4f * scaleSize, SpriteEffects.None, layerDepth);
-            if (this._hasColor.Value)
+            if (this.NetHasColor.Value)
             {
                 var colorTex = this.Data.pack.GetTexture(this.Data.TextureColor, 16, 16);
                 spriteBatch.Draw(colorTex.Texture, location + new Vector2((int)(32f * scaleSize), (int)(32f * scaleSize)), colorTex.Rect, this.ObjectColor.Value * transparency, 0f, new Vector2(8f, 8f) * scaleSize, 4f * scaleSize, SpriteEffects.None, layerDepth + 2e-05f);
@@ -220,7 +221,7 @@ namespace DynamicGameAssets.Game
             Vector2 origin = new Vector2(8f, 8f);
             _ = this.scale;
             b.Draw(objectSpriteSheet, position2, sourceRectangle, white, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)this.getBoundingBox(new Vector2(x, y)).Bottom / 10000f);
-            if (this._hasColor.Value)
+            if (this.NetHasColor.Value)
             {
                 var colorTex = this.Data.pack.GetTexture(this.Data.TextureColor, 16, 16);
                 b.Draw(colorTex.Texture, position2, colorTex.Rect, this.ObjectColor.Value, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)this.getBoundingBox(new Vector2(x, y)).Bottom / 10000f + 2e-05f);
@@ -243,7 +244,7 @@ namespace DynamicGameAssets.Game
                 Vector2 origin2 = new Vector2(8f, 8f);
                 _ = this.scale;
                 spriteBatch.Draw(objectSpriteSheet, position3, sourceRectangle2, color2, 0f, origin2, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.isPassable() ? this.getBoundingBox(new Vector2(x, y)).Top : this.getBoundingBox(new Vector2(x, y)).Bottom) / 10000f);
-                if (this._hasColor.Value)
+                if (this.NetHasColor.Value)
                 {
                     var colorTex = this.Data.pack.GetTexture(this.Data.TextureColor, 16, 16);
                     spriteBatch.Draw(colorTex.Texture, position3, colorTex.Rect, this.ObjectColor.Value, 0f, origin2, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.isPassable() ? this.getBoundingBox(new Vector2(x, y)).Top : this.getBoundingBox(new Vector2(x, y)).Bottom) / 10000f + 2e-05f);
@@ -267,7 +268,7 @@ namespace DynamicGameAssets.Game
                 Vector2 origin = new Vector2(8f, 8f);
                 _ = this.scale;
                 spriteBatch.Draw(objectSpriteSheet, position2, sourceRectangle, color, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
-                if (this._hasColor.Value)
+                if (this.NetHasColor.Value)
                 {
                     var colorTex = this.Data.pack.GetTexture(this.Data.TextureColor, 16, 16);
                     spriteBatch.Draw(colorTex.Texture, position2, colorTex.Rect, this.ObjectColor.Value, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth + 2e-05f);

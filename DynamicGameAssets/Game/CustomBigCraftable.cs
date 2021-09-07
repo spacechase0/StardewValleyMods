@@ -15,24 +15,29 @@ namespace DynamicGameAssets.Game
     [XmlType("Mods_DGABigCraftable")]
     public partial class CustomBigCraftable : StardewValley.Object
     {
-        private readonly NetString _textureOverride = new();
-        private readonly NetString _pendingTextureOverride = new();
-        private readonly NetBool _pulseIfWorking = new();
+        /// <summary>The backing field for <see cref="TextureOverride"/>.</summary>
+        private readonly NetString NetTextureOverride = new();
+
+        /// <summary>The backing field for <see cref="PendingTextureOverride"/>.</summary>
+        private readonly NetString NetPendingTextureOverride = new();
+
+        /// <summary>The backing field for <see cref="PulseIfWorking"/>.</summary>
+        private readonly NetBool NetPulseIfWorking = new();
 
         public string TextureOverride
         {
-            get { return this._textureOverride.Value; }
-            set { this._textureOverride.Value = value; }
+            get => this.NetTextureOverride.Value;
+            set => this.NetTextureOverride.Value = value;
         }
         public string PendingTextureOverride // Triggers when recipe is finished
         {
-            get { return this._pendingTextureOverride.Value; }
-            set { this._pendingTextureOverride.Value = value; }
+            get => this.NetPendingTextureOverride.Value;
+            set => this.NetPendingTextureOverride.Value = value;
         }
         public bool PulseIfWorking
         {
-            get { return this._pulseIfWorking.Value; }
-            set { this._pulseIfWorking.Value = value; }
+            get => this.NetPulseIfWorking.Value;
+            set => this.NetPulseIfWorking.Value = value;
         }
 
         public override string DisplayName { get => this.loadDisplayName(); set { } }
@@ -64,7 +69,7 @@ namespace DynamicGameAssets.Game
         {
             base.initNetFields();
             this.NetFields.AddFields(this.NetSourcePack, this.NetId);
-            this.NetFields.AddFields(this._textureOverride, this._pendingTextureOverride, this._pulseIfWorking);
+            this.NetFields.AddFields(this.NetTextureOverride, this.NetPendingTextureOverride, this.NetPulseIfWorking);
         }
 
         protected override string loadDisplayName()
