@@ -118,7 +118,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return pack.GetMultiTexture( Phases[ ^1 ].TextureChoices, 0, 16, 32 );
+            return pack.GetMultiTexture( Phases[Phases.Count - 1].TextureChoices, 0, 16, 32 );
         }
 
         public override object Clone()

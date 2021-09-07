@@ -339,7 +339,7 @@ namespace DynamicGameAssets
         public override bool CanRead => true;
         public override bool CanWrite => false;
 
-        public override List<Weighted<ItemAbstraction>> ReadJson( JsonReader reader, Type objectType, [AllowNull] List<Weighted<ItemAbstraction>> existingValue, bool hasExistingValue, JsonSerializer serializer )
+        public override List<Weighted<ItemAbstraction>> ReadJson( JsonReader reader, Type objectType, List<Weighted<ItemAbstraction>> existingValue, bool hasExistingValue, JsonSerializer serializer )
         {
             var ret = new List<Weighted<ItemAbstraction>>();
             if ( reader.TokenType == JsonToken.StartObject )
@@ -353,7 +353,7 @@ namespace DynamicGameAssets
             return ret;
         }
 
-        public override void WriteJson( JsonWriter writer, [AllowNull] List<Weighted<ItemAbstraction>> value, JsonSerializer serializer )
+        public override void WriteJson( JsonWriter writer, List<Weighted<ItemAbstraction>> value, JsonSerializer serializer )
         {
             serializer.Serialize( writer, value );
         }

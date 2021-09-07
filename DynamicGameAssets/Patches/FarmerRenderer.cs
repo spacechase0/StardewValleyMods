@@ -72,7 +72,10 @@ namespace DynamicGameAssets.Patches
                     new Color[ 8 * 32 ],
                 };// new Color[FarmerRenderer.shirtsTexture.Bounds.Width * FarmerRenderer.shirtsTexture.Bounds.Height];
                 foreach ( var colors in shirtData )
-                    Array.Fill( colors, Color.Transparent );
+                {
+                    for (int i = 0; i < colors.Length; i++)
+                        colors[i] = Color.Transparent;
+                }
                 var maleNC = cshirt.Data.pack.GetTexture( cshirt.Data.TextureMale, 8, 32 );
                 var maleC = cshirt.Data.TextureMaleColor == null ? null : cshirt.Data.pack.GetTexture( cshirt.Data.TextureMaleColor, 8, 32 );
                 var femaleNC = cshirt.Data.TextureFemale == null ? maleNC : cshirt.Data.pack.GetTexture( cshirt.Data.TextureFemale, 8, 32 );

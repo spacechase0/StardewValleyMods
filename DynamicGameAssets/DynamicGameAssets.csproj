@@ -5,39 +5,20 @@
 
   <PropertyGroup>
     <Version>1.0.0</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net452</TargetFramework>
     <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj">
-      <Private>false</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="ContentPatcher" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="ContentPatcher">
-      <HintPath>$(GamePath)\Mods\ContentPatcher\ContentPatcher.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="false" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpaceSharedGen\SpaceSharedGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>DGAAutomate</_Parameter1>
-    </AssemblyAttribute>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>JA_to_DGA</_Parameter1>
-    </AssemblyAttribute>
+    <Reference Include="ContentPatcher" HintPath="$(GamePath)\Mods\ContentPatcher\ContentPatcher.dll" Private="false" />
   </ItemGroup>
 
   <ItemGroup>

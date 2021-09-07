@@ -452,7 +452,7 @@ namespace JA_to_DGA
                 i18n.AddI18n( loc.Key, $"object.{data.SeedName}.description", loc.Value );
             objs.Add( seedsItem );
 
-            data.SeedPurchaseRequirements.Add( "z " + string.Join( ' ', data.Seasons ) );
+            data.SeedPurchaseRequirements.Add( "z " + string.Join( " ", data.Seasons ) );
             DoShopEntry( shops, packId, data.SeedName, new JsonAssets.PurchaseData()
             {
                 PurchasePrice = data.SeedPurchasePrice,

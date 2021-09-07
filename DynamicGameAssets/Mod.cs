@@ -186,7 +186,11 @@ namespace DynamicGameAssets
                     string frame = cboots.Data.pack.GetTextureFrame( cboots.Data.FarmerColors );
                     if ( prevBootsFrame.GetOrCreateValue( farmer ).Value != frame )
                     {
-                        prevBootsFrame.AddOrUpdate( farmer, new Holder<string>(frame) );
+                        if (this.prevBootsFrame.TryGetValue(farmer, out var holder))
+                            holder.Value = frame;
+                        else
+                            this.prevBootsFrame.Add(farmer, new Holder<string>(frame));
+
                         farmer.FarmerRenderer.MarkSpriteDirty();
                     }
                 }
