@@ -15,9 +15,9 @@ namespace DynamicGameAssets.PackData
     public class BootsPackData : CommonPackData
     {
         [JsonIgnore]
-        public string Name => pack.smapiPack.Translation.Get( $"boots.{ID}.name" );
+        public string Name => this.pack.smapiPack.Translation.Get( $"boots.{this.ID}.name" );
         [JsonIgnore]
-        public string Description => pack.smapiPack.Translation.Get( $"boots.{ID}.description" );
+        public string Description => this.pack.smapiPack.Translation.Get( $"boots.{this.ID}.description" );
 
         public string Texture { get; set; }
         public string FarmerColors { get; set; }
@@ -33,7 +33,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return pack.GetTexture( Texture, 16, 16 );
+            return this.pack.GetTexture(this.Texture, 16, 16 );
         }
 
         public override void OnDisabled()
@@ -42,7 +42,7 @@ namespace DynamicGameAssets.PackData
             {
                 if ( item is CustomBoots cboots )
                 {
-                    if ( cboots.SourcePack == pack.smapiPack.Manifest.UniqueID && cboots.Id == ID )
+                    if ( cboots.SourcePack == this.pack.smapiPack.Manifest.UniqueID && cboots.Id == this.ID )
                         return null;
                 }
                 return item;

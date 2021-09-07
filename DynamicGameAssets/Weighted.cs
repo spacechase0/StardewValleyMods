@@ -18,7 +18,7 @@ namespace DynamicGameAssets
 
         public object Clone()
         {
-            return new Weighted<T>( Weight, ( T ) Value?.Clone() );
+            return new Weighted<T>(this.Weight, ( T ) this.Value?.Clone() );
         }
     }
 

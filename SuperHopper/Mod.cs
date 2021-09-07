@@ -17,14 +17,14 @@ namespace SuperHopper
     {
         public static Mod instance;
 
-        public override void Entry( StardewModdingAPI.IModHelper helper )
+        public override void Entry( IModHelper helper )
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.instance = this;
+            Log.Monitor = this.Monitor;
 
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
 
-            var harmony = new Harmony( ModManifest.UniqueID );
+            var harmony = new Harmony(this.ModManifest.UniqueID );
             harmony.PatchAll();
         }
 

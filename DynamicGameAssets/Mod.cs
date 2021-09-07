@@ -94,50 +94,50 @@ namespace DynamicGameAssets
         internal static List<TailoringRecipePackData> customTailoringRecipes = new List<TailoringRecipePackData>();
 
         private static readonly PerScreen<StateData> _state = new PerScreen<StateData>( () => new StateData() );
-        internal static StateData State => _state.Value;
+        internal static StateData State => Mod._state.Value;
 
         public static CommonPackData Find( string fullId )
         {
             int slash = fullId.IndexOf( '/' );
             string pack = fullId.Substring( 0, slash );
             string item = fullId.Substring( slash + 1 );
-            return contentPacks.ContainsKey( pack ) ? contentPacks[ pack ].Find( item ) : null;
+            return Mod.contentPacks.ContainsKey( pack ) ? Mod.contentPacks[ pack ].Find( item ) : null;
         }
 
         public static List<ContentPack> GetPacks()
         {
-            return new List<ContentPack>( contentPacks.Values );
+            return new List<ContentPack>( Mod.contentPacks.Values );
         }
         
         public override void Entry(IModHelper helper)
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.instance = this;
+            Log.Monitor = this.Monitor;
 
             //nullPack.Manifest.ExtraFields.Add( "DGA.FormatVersion", -1 );
             //nullPack.Manifest.ExtraFields.Add( "DGA.ConditionsVersion", "1.0.0" );
-            DummyContentPack = new ContentPack( new NullContentPack() );
+            Mod.DummyContentPack = new ContentPack( new NullContentPack() );
 
-            helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
-            helper.Events.GameLoop.GameLaunched += OnGameLaunched;
-            helper.Events.GameLoop.DayStarted += OnDayStarted;
-            helper.Events.Display.MenuChanged += OnMenuChanged;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.GameLoop.DayStarted += this.OnDayStarted;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
-            helper.ConsoleCommands.Add( "dga_list", "List all items.", OnListCommand );
-            helper.ConsoleCommands.Add( "dga_add", "`dga_add <mod.id/ItemId> [amount] - Add an item to your inventory.", OnAddCommand/*, AddCommandAutoComplete*/ );
-            helper.ConsoleCommands.Add( "dga_force", "Do not use", OnForceCommand );
-            helper.ConsoleCommands.Add( "dga_reload", "Reload all content packs.", OnReloadCommand/*, ReloadCommandAutoComplete*/ );
-            helper.ConsoleCommands.Add( "dga_clean", "Remove all invalid items from the currently loaded save.", OnCleanCommand );
-            helper.ConsoleCommands.Add( "dga_store", "`dga_store [mod.id] - Get a store containing everything for free (optionally from a specific content pack).", OnStoreCommand );
+            helper.ConsoleCommands.Add( "dga_list", "List all items.", this.OnListCommand );
+            helper.ConsoleCommands.Add( "dga_add", "`dga_add <mod.id/ItemId> [amount] - Add an item to your inventory.", this.OnAddCommand/*, AddCommandAutoComplete*/ );
+            helper.ConsoleCommands.Add( "dga_force", "Do not use", this.OnForceCommand );
+            helper.ConsoleCommands.Add( "dga_reload", "Reload all content packs.", this.OnReloadCommand/*, ReloadCommandAutoComplete*/ );
+            helper.ConsoleCommands.Add( "dga_clean", "Remove all invalid items from the currently loaded save.", this.OnCleanCommand );
+            helper.ConsoleCommands.Add( "dga_store", "`dga_store [mod.id] - Get a store containing everything for free (optionally from a specific content pack).", this.OnStoreCommand );
 
-            harmony = new Harmony( ModManifest.UniqueID );
-            harmony.PatchAll();
-            harmony.Patch( typeof( IClickableMenu ).GetMethod( "drawHoverText", new[] { typeof( SpriteBatch ), typeof( StringBuilder ), typeof( SpriteFont ), typeof( int ), typeof( int ), typeof( int ), typeof( string ), typeof( int ), typeof( string[] ), typeof( Item ), typeof( int ), typeof( int ), typeof( int ), typeof( int ), typeof( int ), typeof( int ),typeof( CraftingRecipe ), typeof( IList<Item> ) } ), transpiler: new HarmonyMethod( typeof( DrawHoverTextPatch ).GetMethod( "Transpiler" ) ) );
-            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix1 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
-            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix2 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
-            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix3 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
-            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( float ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix4 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
-            harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix5 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
+            this.harmony = new Harmony(this.ModManifest.UniqueID );
+            this.harmony.PatchAll();
+            this.harmony.Patch( typeof( IClickableMenu ).GetMethod( "drawHoverText", new[] { typeof( SpriteBatch ), typeof( StringBuilder ), typeof( SpriteFont ), typeof( int ), typeof( int ), typeof( int ), typeof( string ), typeof( int ), typeof( string[] ), typeof( Item ), typeof( int ), typeof( int ), typeof( int ), typeof( int ), typeof( int ), typeof( int ),typeof( CraftingRecipe ), typeof( IList<Item> ) } ), transpiler: new HarmonyMethod( typeof( DrawHoverTextPatch ).GetMethod( "Transpiler" ) ) );
+            this.harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix1 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
+            this.harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Rectangle ), typeof( Rectangle? ), typeof( Color ), } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix2 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
+            this.harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( Vector2 ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix3 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
+            this.harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ), typeof( float ), typeof( Vector2 ), typeof( float ), typeof( SpriteEffects ), typeof( float ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix4 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
+            this.harmony.Patch( typeof( SpriteBatch ).GetMethod( "Draw", new[] { typeof( Texture2D ), typeof( Vector2 ), typeof( Rectangle? ), typeof( Color ) } ), prefix: new HarmonyMethod( typeof( SpriteBatchTileSheetAdjustments ).GetMethod( nameof( SpriteBatchTileSheetAdjustments.Prefix5 ) ) ) { before = new string[] { "spacechase0.SpaceCore" } } );
         }
 
         public override object GetApi()
@@ -147,9 +147,9 @@ namespace DynamicGameAssets
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            cp = Helper.ModRegistry.GetApi<ContentPatcher.IContentPatcherAPI>( "Pathoschild.ContentPatcher" );
+            this.cp = this.Helper.ModRegistry.GetApi<ContentPatcher.IContentPatcherAPI>( "Pathoschild.ContentPatcher" );
 
-            var spacecore = Helper.ModRegistry.GetApi<ISpaceCoreApi>( "spacechase0.SpaceCore" );
+            var spacecore = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>( "spacechase0.SpaceCore" );
             spacecore.RegisterSerializerType( typeof( CustomObject ) );
             spacecore.RegisterSerializerType(typeof( Game.CustomCraftingRecipe));
             spacecore.RegisterSerializerType(typeof(CustomBasicFurniture));
@@ -168,15 +168,15 @@ namespace DynamicGameAssets
             spacecore.RegisterSerializerType(typeof(CustomShirt));
             spacecore.RegisterSerializerType(typeof(CustomPants));
 
-            LoadContentPacks();
+            this.LoadContentPacks();
 
-            RefreshSpritebatchCache();
+            this.RefreshSpritebatchCache();
         }
 
         private ConditionalWeakTable< Farmer, Holder< string > > prevBootsFrame = new ConditionalWeakTable< Farmer, Holder< string > >();
         private void OnUpdateTicked( object sender, UpdateTickedEventArgs e )
         {
-            State.AnimationFrames++;
+            Mod.State.AnimationFrames++;
 
             // Support animated boots colors
             foreach ( var farmer in Game1.getAllFarmers() )
@@ -184,7 +184,7 @@ namespace DynamicGameAssets
                 if ( farmer.boots.Value is CustomBoots cboots )
                 {
                     string frame = cboots.Data.pack.GetTextureFrame( cboots.Data.FarmerColors );
-                    if ( prevBootsFrame.GetOrCreateValue( farmer ).Value != frame )
+                    if (this.prevBootsFrame.GetOrCreateValue( farmer ).Value != frame )
                     {
                         if (this.prevBootsFrame.TryGetValue(farmer, out var holder))
                             holder.Value = frame;
@@ -199,20 +199,20 @@ namespace DynamicGameAssets
         
         private void OnDayStarted( object sender, DayStartedEventArgs e )
         {
-            foreach ( var recipe in customCraftingRecipes )
+            foreach ( var recipe in Mod.customCraftingRecipes )
                 ( recipe.data.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Remove( recipe.data.CraftingDataKey );
-            foreach ( var recipe in customForgeRecipes )
+            foreach ( var recipe in Mod.customForgeRecipes )
                 CustomForgeRecipe.Recipes.Remove( recipe );
 
-            giftTastes.Clear();
-            customCraftingRecipes.Clear();
-            customForgeRecipes.Clear();
-            customMachineRecipes.Clear();
-            customTailoringRecipes.Clear();
+            Mod.giftTastes.Clear();
+            Mod.customCraftingRecipes.Clear();
+            Mod.customForgeRecipes.Clear();
+            Mod.customMachineRecipes.Clear();
+            Mod.customTailoringRecipes.Clear();
             SpriteBatchTileSheetAdjustments.packOverrides.Clear();
 
             // Enabled/disabled
-            foreach ( var cp in contentPacks )
+            foreach ( var cp in Mod.contentPacks )
             {
                 void DoDisable( ContentIndexPackData parent )
                 {
@@ -284,7 +284,7 @@ namespace DynamicGameAssets
             }
 
             // Get active recipes
-            foreach ( var cp in contentPacks )
+            foreach ( var cp in Mod.contentPacks )
             {
                 var pack = cp.Value;
                 foreach ( var recipe in pack.items.Values.OfType<CraftingRecipePackData>() )
@@ -294,7 +294,7 @@ namespace DynamicGameAssets
                     try
                     {
                         var crecipe = new DGACustomCraftingRecipe(recipe);
-                        customCraftingRecipes.Add( crecipe );
+                        Mod.customCraftingRecipes.Add( crecipe );
                         ( recipe.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Add( recipe.CraftingDataKey, crecipe );
                     }
                     catch ( Exception e2 )
@@ -310,7 +310,7 @@ namespace DynamicGameAssets
                     try
                     {
                         var crecipe = new DGACustomForgeRecipe(recipe);
-                        customForgeRecipes.Add( crecipe );
+                        Mod.customForgeRecipes.Add( crecipe );
                         CustomForgeRecipe.Recipes.Add( crecipe );
                     }
                     catch ( Exception e2 )
@@ -321,7 +321,7 @@ namespace DynamicGameAssets
             }
 
             // Dynamic fields
-            foreach ( var cp in contentPacks )
+            foreach ( var cp in Mod.contentPacks )
             {
                 var newItems = new Dictionary<string, CommonPackData>();
                 foreach ( var data in cp.Value.items )
@@ -341,15 +341,15 @@ namespace DynamicGameAssets
 
                     if ( newOther is MachineRecipePackData machineRecipe )
                     {
-                        if ( !customMachineRecipes.ContainsKey( machineRecipe.MachineId ) )
-                            customMachineRecipes.Add( machineRecipe.MachineId, new List<MachineRecipePackData>() );
+                        if ( !Mod.customMachineRecipes.ContainsKey( machineRecipe.MachineId ) )
+                            Mod.customMachineRecipes.Add( machineRecipe.MachineId, new List<MachineRecipePackData>() );
                         if ( machineRecipe.Enabled )
-                            customMachineRecipes[ machineRecipe.MachineId ].Add( machineRecipe );
+                            Mod.customMachineRecipes[ machineRecipe.MachineId ].Add( machineRecipe );
                     }
                     else if ( newOther is TailoringRecipePackData tailoringRecipe )
                     {
                         if ( tailoringRecipe.Enabled )
-                            customTailoringRecipes.Add( tailoringRecipe );
+                            Mod.customTailoringRecipes.Add( tailoringRecipe );
                     }
                     else if ( newOther is GiftTastePackData giftTaste )
                     {
@@ -358,13 +358,13 @@ namespace DynamicGameAssets
                             string[] npcs = giftTaste.Npc.Split( ',' ).Select( npc => npc.Trim() ).ToArray();
                             foreach ( string npc in npcs )
                             {
-                                if ( !giftTastes.ContainsKey( npc ) )
-                                    giftTastes.Add( npc, new() );
+                                if ( !Mod.giftTastes.ContainsKey( npc ) )
+                                    Mod.giftTastes.Add( npc, new() );
 
                                 string[] objects = giftTaste.ObjectId.Split( ',' ).Select( obj => obj.Trim() ).ToArray();
                                 foreach ( string obj in objects )
-                                    if ( !giftTastes[ npc ].ContainsKey( obj ) )
-                                        giftTastes[ npc ].Add( obj, giftTaste );
+                                    if ( !Mod.giftTastes[ npc ].ContainsKey( obj ) )
+                                        Mod.giftTastes[ npc ].Add( obj, giftTaste );
                             }
                         }
                     }
@@ -374,7 +374,7 @@ namespace DynamicGameAssets
 
             foreach ( var player in Game1.getAllFarmers() )
             {
-                foreach ( var recipe in customCraftingRecipes )
+                foreach ( var recipe in Mod.customCraftingRecipes )
                 {
                     bool learn = false;
                     if ( recipe.data.KnownByDefault )
@@ -407,16 +407,16 @@ namespace DynamicGameAssets
                 }
             }
 
-            RefreshRecipes();
-            RefreshShopEntries();
+            this.RefreshRecipes();
+            this.RefreshShopEntries();
 
             if ( Context.ScreenId == 0 )
             {
-                RefreshSpritebatchCache();
+                this.RefreshSpritebatchCache();
             }
 
-            Helper.Content.InvalidateCache("Data\\CraftingRecipes");
-            Helper.Content.InvalidateCache("Data\\CookingRecipes");
+            this.Helper.Content.InvalidateCache("Data\\CraftingRecipes");
+            this.Helper.Content.InvalidateCache("Data\\CookingRecipes");
         }
 
         private void OnMenuChanged( object sender, MenuChangedEventArgs e )
@@ -433,7 +433,7 @@ namespace DynamicGameAssets
         private void OnListCommand( string cmd, string[] args )
         {
             string output = "";
-            foreach ( var cp in contentPacks )
+            foreach ( var cp in Mod.contentPacks )
             {
                 output += cp.Key + ":\n";
                 foreach ( var entry in cp.Value.items )
@@ -455,7 +455,7 @@ namespace DynamicGameAssets
                 return;
             }
 
-            var data = Find( args[ 0 ] );
+            var data = Mod.Find( args[ 0 ] );
             if ( data == null )
             {
                 Log.Error( $"Item '{args[ 0 ]}' not found." );
@@ -486,7 +486,7 @@ namespace DynamicGameAssets
             int slash = input.IndexOf( '/' );
             if ( slash == -1 )
             {
-                foreach ( string packId in contentPacks.Keys )
+                foreach ( string packId in Mod.contentPacks.Keys )
                 {
                     if ( packId.StartsWith( input ) )
                         ret.Add( packId );
@@ -497,10 +497,10 @@ namespace DynamicGameAssets
                 string packId = input.Substring( 0, slash );
                 string itemInPack = input.Substring( slash + 1 );
 
-                if ( !contentPacks.ContainsKey( packId ) )
+                if ( !Mod.contentPacks.ContainsKey( packId ) )
                     return null;
 
-                var pack = contentPacks[ packId ];
+                var pack = Mod.contentPacks[ packId ];
                 foreach ( string itemId in pack.items.Keys )
                 {
                     if ( itemId.StartsWith( itemInPack ) )
@@ -513,26 +513,27 @@ namespace DynamicGameAssets
 
         private void OnForceCommand( string cmd, string[] args )
         {
-            OnDayStarted( this, null );
+            this.OnDayStarted( this, null );
         }
 
         private void OnReloadCommand( string cmd, string[] args )
         {
-            contentPacks.Clear();
-            itemLookup.Clear();
-            foreach ( var recipe in customCraftingRecipes )
+            Mod.contentPacks.Clear();
+            Mod.itemLookup.Clear();
+            foreach ( var recipe in Mod.customCraftingRecipes )
                 ( recipe.data.IsCooking ? SpaceCore.CustomCraftingRecipe.CookingRecipes : SpaceCore.CustomCraftingRecipe.CraftingRecipes ).Remove( recipe.data.CraftingDataKey );
-            foreach ( var recipe in customForgeRecipes )
+            foreach ( var recipe in Mod.customForgeRecipes )
                 CustomForgeRecipe.Recipes.Remove( recipe );
-            customCraftingRecipes.Clear();
-            customForgeRecipes.Clear();
+            Mod.customCraftingRecipes.Clear();
+            Mod.customForgeRecipes.Clear();
             SpriteBatchTileSheetAdjustments.packOverrides.Clear();
-            foreach ( var state in _state.GetActiveValues() )
+            foreach ( var state in Mod._state.GetActiveValues() )
             {
                 state.Value.TodaysShopEntries.Clear();
             }
-            LoadContentPacks();
-            OnDayStarted( this, null );
+
+            this.LoadContentPacks();
+            this.OnDayStarted( this, null );
         }
         /*
         private string[] ReloadCommandAutoComplete( string cmd, string input )
@@ -585,7 +586,7 @@ namespace DynamicGameAssets
             if ( args.Length == 0 )
             {
                 Dictionary<ISalable, int[]> stuff = new();
-                foreach ( var pack in contentPacks )
+                foreach ( var pack in Mod.contentPacks )
                 {
                     foreach ( var data in pack.Value.items.Values )
                     {
@@ -601,12 +602,12 @@ namespace DynamicGameAssets
             }
             else
             {
-                if ( !contentPacks.ContainsKey( args[ 0 ] ) )
+                if ( !Mod.contentPacks.ContainsKey( args[ 0 ] ) )
                 {
                     Log.Error( "Invalid pack ID" );
                     return;
                 }
-                var pack = contentPacks[ args[ 0 ] ];
+                var pack = Mod.contentPacks[ args[ 0 ] ];
 
                 Dictionary<ISalable, int[]> stuff = new();
                 foreach ( var data in pack.items.Values )
@@ -624,7 +625,7 @@ namespace DynamicGameAssets
 
         public static void AddContentPack( ContentPack pack )
         {
-            contentPacks.Add( pack.smapiPack.Manifest.UniqueID, pack );
+            Mod.contentPacks.Add( pack.smapiPack.Manifest.UniqueID, pack );
         }
 
         internal static void AddEmbeddedContentPack( IManifest manifest, string dir )
@@ -651,12 +652,12 @@ namespace DynamicGameAssets
 
             var cp = Mod.instance.Helper.ContentPacks.CreateTemporary( dir, manifest.UniqueID, manifest.Name, manifest.Description, manifest.Author, manifest.Version );
             var pack = new ContentPack( cp, formatVer, condVer );
-            contentPacks.Add( manifest.UniqueID, pack );
+            Mod.contentPacks.Add( manifest.UniqueID, pack );
         }
 
         private void LoadContentPacks()
         {
-            foreach ( var cp in Helper.ContentPacks.GetOwned() )
+            foreach ( var cp in this.Helper.ContentPacks.GetOwned() )
             {
                 Log.Debug( $"Loading content pack \"{cp.Manifest.Name}\"..." );
                 if ( cp.Manifest.ExtraFields == null ||
@@ -680,7 +681,7 @@ namespace DynamicGameAssets
                 try
                 {
                     var pack = new ContentPack( cp );
-                    contentPacks.Add( cp.Manifest.UniqueID, pack );
+                    Mod.contentPacks.Add( cp.Manifest.UniqueID, pack );
                 }
                 catch ( Exception e )
                 {
@@ -690,7 +691,7 @@ namespace DynamicGameAssets
         }
         public bool CanLoad<T>( IAssetInfo asset )
         {
-            foreach ( var pack in contentPacks )
+            foreach ( var pack in Mod.contentPacks )
             {
                 if ( pack.Value.CanLoad<T>( asset ) )
                     return true;
@@ -701,7 +702,7 @@ namespace DynamicGameAssets
 
         public T Load<T>( IAssetInfo asset )
         {
-            foreach ( var pack in contentPacks )
+            foreach ( var pack in Mod.contentPacks )
             {
                 if ( pack.Value.CanLoad<T>( asset ) )
                     return pack.Value.Load< T >( asset );
@@ -727,7 +728,7 @@ namespace DynamicGameAssets
             {
                 var dict = asset.AsDictionary<string, string>().Data;
                 int i = 0;
-                foreach (var crecipe in customCraftingRecipes)
+                foreach (var crecipe in Mod.customCraftingRecipes)
                 {
                     if (crecipe.data.Enabled && crecipe.data.IsCooking)
                     {
@@ -735,13 +736,13 @@ namespace DynamicGameAssets
                         ++i;
                     }
                 }
-                Log.Trace("Added " + i + "/" + customCraftingRecipes.Count + " entries to cooking recipes");
+                Log.Trace("Added " + i + "/" + Mod.customCraftingRecipes.Count + " entries to cooking recipes");
             }
             else if (asset.AssetNameEquals("Data\\CraftingRecipes"))
             {
                 var dict = asset.AsDictionary<string, string>().Data;
                 int i = 0;
-                foreach (var crecipe in customCraftingRecipes)
+                foreach (var crecipe in Mod.customCraftingRecipes)
                 {
                     if (crecipe.data.Enabled && !crecipe.data.IsCooking)
                     {
@@ -749,11 +750,11 @@ namespace DynamicGameAssets
                         ++i;
                     }
                 }
-                Log.Trace("Added " + i + "/" + customCraftingRecipes.Count + " entries to crafting recipes");
+                Log.Trace("Added " + i + "/" + Mod.customCraftingRecipes.Count + " entries to crafting recipes");
             }
             else if (asset.AssetNameEquals("Data\\ObjectInformation"))
             {
-                asset.AsDictionary<int, string>().Data.Add(BaseFakeObjectId, "DGA Dummy Object/0/0/Basic -20/DGA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0");
+                asset.AsDictionary<int, string>().Data.Add(Mod.BaseFakeObjectId, "DGA Dummy Object/0/0/Basic -20/DGA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0");
             }
         }
 
@@ -801,16 +802,16 @@ namespace DynamicGameAssets
 
         private void RefreshRecipes()
         {
-            foreach ( var recipe in customCraftingRecipes )
+            foreach ( var recipe in Mod.customCraftingRecipes )
                 recipe.Refresh();
-            foreach ( var recipe in customForgeRecipes )
+            foreach ( var recipe in Mod.customForgeRecipes )
                 recipe.Refresh();
         }
 
         private void RefreshShopEntries()
         {
-            State.TodaysShopEntries.Clear();
-            foreach ( var cp in contentPacks )
+            Mod.State.TodaysShopEntries.Clear();
+            foreach ( var cp in Mod.contentPacks )
             {
                 foreach ( var shopEntry in cp.Value.others.OfType< ShopEntryPackData >() )
                 {
@@ -818,9 +819,9 @@ namespace DynamicGameAssets
                     {
                         if ( shopEntry.Enabled )
                         {
-                            if ( !State.TodaysShopEntries.ContainsKey( shopEntry.ShopId ) )
-                                State.TodaysShopEntries.Add( shopEntry.ShopId, new List<ShopEntry>() );
-                            State.TodaysShopEntries[ shopEntry.ShopId ].Add( new ShopEntry()
+                            if ( !Mod.State.TodaysShopEntries.ContainsKey( shopEntry.ShopId ) )
+                                Mod.State.TodaysShopEntries.Add( shopEntry.ShopId, new List<ShopEntry>() );
+                            Mod.State.TodaysShopEntries[ shopEntry.ShopId ].Add( new ShopEntry()
                             {
                                 Item = shopEntry.Item.Create(),//MakeItemFrom( shopEntry.Item, cp.Value ),
                                 Quantity = shopEntry.MaxSold,
@@ -848,7 +849,7 @@ namespace DynamicGameAssets
             SpriteBatchTileSheetAdjustments.shirtOverrides.Clear();
             SpriteBatchTileSheetAdjustments.pantsOverrides.Clear();
             SpriteBatchTileSheetAdjustments.packOverrides.Clear();
-            foreach ( var cp in contentPacks )
+            foreach ( var cp in Mod.contentPacks )
             {
                 foreach ( var item in cp.Value.items.Values )
                 {

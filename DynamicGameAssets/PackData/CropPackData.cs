@@ -46,7 +46,7 @@ namespace DynamicGameAssets.PackData
             {
                 var ret = ( HarvestedDropData ) this.MemberwiseClone();
                 ret.Item = new List<Weighted<ItemAbstraction>>();
-                foreach ( var choice in Item )
+                foreach ( var choice in this.Item )
                     ret.Item.Add( (Weighted<ItemAbstraction>) choice.Clone() );
                 return ret;
             }
@@ -72,7 +72,7 @@ namespace DynamicGameAssets.PackData
             [DefaultValue( -1 )]
             public int HarvestedNewPhase { get; set; } = -1;
 
-            public bool ShouldSerializeHarvestedDrops() { return HarvestedDrops.Count > 0; }
+            public bool ShouldSerializeHarvestedDrops() { return this.HarvestedDrops.Count > 0; }
 
             public object Clone()
             {
@@ -91,7 +91,7 @@ namespace DynamicGameAssets.PackData
         public string[] GiantTextureChoices { get; set; }
         public List<HarvestedDropData> GiantDrops { get; set; } = new List<HarvestedDropData>();
 
-        public bool ShouldSerializeGiantDrops() { return GiantDrops.Count > 0; }
+        public bool ShouldSerializeGiantDrops() { return this.GiantDrops.Count > 0; }
 
         public override void OnDisabled()
         {
@@ -99,12 +99,12 @@ namespace DynamicGameAssets.PackData
             {
                 if ( tf is HoeDirt hd && hd.crop is CustomCrop ccrop )
                 {
-                    if ( ccrop.SourcePack == pack.smapiPack.Manifest.UniqueID && ccrop.Id == ID )
+                    if ( ccrop.SourcePack == this.pack.smapiPack.Manifest.UniqueID && ccrop.Id == this.ID )
                         hd.crop = null;
                 }
                 else if ( tf is CustomGiantCrop cgc )
                 {
-                    if ( cgc.SourcePack == pack.smapiPack.Manifest.UniqueID && cgc.Id == ID )
+                    if ( cgc.SourcePack == this.pack.smapiPack.Manifest.UniqueID && cgc.Id == this.ID )
                         return null;
                 }
                 return tf;
@@ -118,7 +118,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return pack.GetMultiTexture( Phases[Phases.Count - 1].TextureChoices, 0, 16, 32 );
+            return this.pack.GetMultiTexture(this.Phases[this.Phases.Count - 1].TextureChoices, 0, 16, 32 );
         }
 
         public override object Clone()

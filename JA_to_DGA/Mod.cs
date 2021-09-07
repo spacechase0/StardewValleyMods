@@ -16,12 +16,12 @@ namespace JA_to_DGA
     {
         public static Mod instance;
 
-        public override void Entry( StardewModdingAPI.IModHelper helper )
+        public override void Entry( IModHelper helper )
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.instance = this;
+            Log.Monitor = this.Monitor;
 
-            helper.ConsoleCommands.Add( "dga_convert", "dga_convert <JA_mod_ID> <new_DGA_mod_id>", OnConvertCommand );
+            helper.ConsoleCommands.Add( "dga_convert", "dga_convert <JA_mod_ID> <new_DGA_mod_id>", this.OnConvertCommand );
         }
 
         private void OnConvertCommand( string cmd, string[] args )
@@ -35,11 +35,11 @@ namespace JA_to_DGA
             if ( args[ 0 ] == "all" )
             {
                 foreach ( var cp in JsonAssets.Mod.instance.Helper.ContentPacks.GetOwned() )
-                    Convert( cp, cp.Manifest.UniqueID + ".DGA" );
+                    this.Convert( cp, cp.Manifest.UniqueID + ".DGA" );
             }
             else
             {
-                var mod = Helper.ModRegistry.Get( args[ 0 ] );
+                var mod = this.Helper.ModRegistry.Get( args[ 0 ] );
                 if ( mod == null )
                 {
                     Log.Error( "No such mod" );
@@ -53,14 +53,14 @@ namespace JA_to_DGA
                     return;
                 }
 
-                Convert( cp, args[ 1 ] );
+                this.Convert( cp, args[ 1 ] );
             }
         }
 
         public void Convert( IContentPack cp, string newModId )
         {
             string jaPath = ( string ) cp.GetType().GetProperty( "DirectoryPath", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance ).GetValue( cp );
-            string dgaPath = Path.Combine( Path.GetDirectoryName( Helper.DirectoryPath ), "[DGA] " + newModId );
+            string dgaPath = Path.Combine( Path.GetDirectoryName(this.Helper.DirectoryPath ), "[DGA] " + newModId );
             Log.Info( "Path: " + jaPath + " -> " + dgaPath );
 
             if ( Directory.Exists( dgaPath ) )
@@ -224,7 +224,7 @@ namespace JA_to_DGA
             manifest.ExtraFields.Add( "DGA.ConditionsFormatVersion", "1.23.0" );
             File.WriteAllText( Path.Combine( dgaPath, "manifest.json" ), JsonConvert.SerializeObject( manifest, serializeSettings ) );
 
-            var dga = Helper.ModRegistry.GetApi< IDynamicGameAssetsApi >( "spacechase0.DynamicGameAssets" );
+            var dga = this.Helper.ModRegistry.GetApi< IDynamicGameAssetsApi >( "spacechase0.DynamicGameAssets" );
             dga.AddEmbeddedPack( manifest, dgaPath );
 
             Log.Info( "Done!" );

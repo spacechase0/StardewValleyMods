@@ -46,10 +46,10 @@ namespace DynamicGameAssets.PackData
 
         public void ApplyDynamicFields()
         {
-            if ( DynamicFields == null )
+            if (this.DynamicFields == null )
                 return;
 
-            foreach ( var dynField in DynamicFields )
+            foreach ( var dynField in this.DynamicFields )
             {
                 try
                 {

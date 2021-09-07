@@ -15,9 +15,9 @@ namespace DynamicGameAssets.PackData
     public class ShirtPackData : CommonPackData
     {
         [JsonIgnore]
-        public string Name => pack.smapiPack.Translation.Get( $"shirt.{ID}.name" );
+        public string Name => this.pack.smapiPack.Translation.Get( $"shirt.{this.ID}.name" );
         [JsonIgnore]
-        public string Description => pack.smapiPack.Translation.Get( $"shirt.{ID}.description" );
+        public string Description => this.pack.smapiPack.Translation.Get( $"shirt.{this.ID}.description" );
 
         public string TextureMale { get; set; }
         [DefaultValue( null )]
@@ -31,7 +31,7 @@ namespace DynamicGameAssets.PackData
         [DefaultValue( false )]
         public bool Dyeable { get; set; } = false;
 
-        public bool ShouldSerializeDefaultColor() { return DefaultColor != Color.White; }
+        public bool ShouldSerializeDefaultColor() { return this.DefaultColor != Color.White; }
 
         [DefaultValue( false )]
         public bool Sleeveless { get; set; } = false;
@@ -42,7 +42,7 @@ namespace DynamicGameAssets.PackData
             {
                 if ( item is CustomShirt cshirt )
                 {
-                    if ( cshirt.SourcePack == pack.smapiPack.Manifest.UniqueID && cshirt.Id == ID )
+                    if ( cshirt.SourcePack == this.pack.smapiPack.Manifest.UniqueID && cshirt.Id == this.ID )
                         return null;
                 }
                 return item;
@@ -56,7 +56,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return pack.GetTexture( TextureMale, 8, 32 );
+            return this.pack.GetTexture(this.TextureMale, 8, 32 );
         }
     }
 }

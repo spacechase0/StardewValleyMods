@@ -18,55 +18,55 @@ namespace DynamicGameAssets
 
         public void AddToShop( ShopMenu shop )
         {
-            int qty = Quantity;
-            if (Item is StardewValley.Object obj && obj.IsRecipe)
+            int qty = this.Quantity;
+            if (this.Item is StardewValley.Object obj && obj.IsRecipe)
                 qty = 1;
 
-            Item.Stack = qty;
-            shop.forSale.Add( Item );
-            if ( CurrencyId == null )
+            this.Item.Stack = qty;
+            shop.forSale.Add(this.Item );
+            if (this.CurrencyId == null )
             {
-                shop.itemPriceAndStock.Add( Item, new int[]
+                shop.itemPriceAndStock.Add(this.Item, new int[]
                 {
-                    CurrencyId == null ? Price : 0,
+                    this.CurrencyId == null ? this.Price : 0,
                     qty
                 } );
             }
             else
             {
-                shop.itemPriceAndStock.Add( Item, new int[]
+                shop.itemPriceAndStock.Add(this.Item, new int[]
                 {
                     0,
                     qty,
-                    CurrencyId.Value, // Black magic
-                    Price,
+                    this.CurrencyId.Value, // Black magic
+                    this.Price,
                 } );
             }
         }
 
         public void AddToShopStock( Dictionary<ISalable, int[]> stock )
         {
-            int qty = Quantity;
-            if (Item is StardewValley.Object obj && obj.IsRecipe)
+            int qty = this.Quantity;
+            if (this.Item is StardewValley.Object obj && obj.IsRecipe)
                 qty = 1;
 
-            Item.Stack = qty;
-            if ( CurrencyId == null )
+            this.Item.Stack = qty;
+            if (this.CurrencyId == null )
             {
-                stock.Add( Item, new int[]
+                stock.Add(this.Item, new int[]
                 {
-                    CurrencyId == null ? Price : 0,
+                    this.CurrencyId == null ? this.Price : 0,
                     qty
                 } );
             }
             else
             {
-                stock.Add( Item, new int[]
+                stock.Add(this.Item, new int[]
                 {
                     0,
                     qty,
-                    CurrencyId.Value, // Black magic
-                    Price,
+                    this.CurrencyId.Value, // Black magic
+                    this.Price,
                 } );
             }
         }

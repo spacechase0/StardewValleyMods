@@ -16,12 +16,12 @@ namespace DynamicGameAssets.Game
     {
         partial void DoInit()
         {
-            this.NetFields.AddFields( _sourcePack, _id );
+            this.NetFields.AddFields(this._sourcePack, this._id );
         }
 
         partial void DoInit( MeleeWeaponPackData data )
         {
-            this.Name = Id;
+            this.Name = this.Id;
 
             this.type.Value = ( int ) data.Type;
             this.minDamage.Value = data.MinimumDamage;
@@ -34,27 +34,27 @@ namespace DynamicGameAssets.Game
             this.critChance.Value = ( float ) data.CritChance;
             this.critMultiplier.Value = ( float ) data.CritMultiplier;
 
-            this.CurrentParentTileIndex = FullId.GetDeterministicHashCode();
+            this.CurrentParentTileIndex = this.FullId.GetDeterministicHashCode();
         }
 
         protected override string loadDisplayName()
         {
-            return Data.Name;
+            return this.Data.Name;
         }
 
         protected override string loadDescription()
         {
-            return Data.Description;
+            return this.Data.Description;
         }
 
         public override bool canBeTrashed()
         {
-            return Data.CanTrash;
+            return this.Data.CanTrash;
         }
 
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
         {
-            var currTex = Data.GetTexture();
+            var currTex = this.Data.GetTexture();
 
             float coolDownLevel = 0f;
             float addedScale = 0f;
@@ -101,7 +101,7 @@ namespace DynamicGameAssets.Game
         public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
         {
             base.drawTooltip( spriteBatch, ref x, ref y, font, alpha, overrideText );
-            string str = "Mod: " + Data.pack.smapiPack.Manifest.Name;
+            string str = "Mod: " + this.Data.pack.smapiPack.Manifest.Name;
             Utility.drawTextWithShadow( spriteBatch, Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ), font, new Vector2( x + 16, y + 16 + 4 ), new Color( 100, 100, 100 ) );
             y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
         }
@@ -430,7 +430,7 @@ namespace DynamicGameAssets.Game
         }
         public override Item getOne()
         {
-            var ret = new CustomMeleeWeapon( Data );
+            var ret = new CustomMeleeWeapon(this.Data );
             // TODO: the field from tailoring boots over another?
             ret._GetOneFrom( this );
             return ret;
@@ -438,11 +438,11 @@ namespace DynamicGameAssets.Game
 
         public void RecalculateAppliedForges( bool force = false )
         {
-            if ( base.enchantments.Count == 0 && !force )
+            if ( this.enchantments.Count == 0 && !force )
             {
                 return;
             }
-            foreach ( BaseEnchantment enchantment2 in base.enchantments )
+            foreach ( BaseEnchantment enchantment2 in this.enchantments )
             {
                 if ( enchantment2.IsForge() )
                 {
@@ -450,18 +450,18 @@ namespace DynamicGameAssets.Game
                 }
             }
 
-            this.type.Value = ( int ) Data.Type;
-            this.minDamage.Value = Data.MinimumDamage;
-            this.maxDamage.Value = Data.MaximumDamage;
-            this.knockback.Value = ( float ) Data.Knockback;
-            this.speed.Value = Data.Speed;
-            this.addedPrecision.Value = Data.Accuracy;
-            this.addedDefense.Value = Data.Defense;
-            this.addedAreaOfEffect.Value = Data.ExtraSwingArea;
-            this.critChance.Value = ( float ) Data.CritChance;
-            this.critMultiplier.Value = ( float ) Data.CritMultiplier;
+            this.type.Value = ( int ) this.Data.Type;
+            this.minDamage.Value = this.Data.MinimumDamage;
+            this.maxDamage.Value = this.Data.MaximumDamage;
+            this.knockback.Value = ( float ) this.Data.Knockback;
+            this.speed.Value = this.Data.Speed;
+            this.addedPrecision.Value = this.Data.Accuracy;
+            this.addedDefense.Value = this.Data.Defense;
+            this.addedAreaOfEffect.Value = this.Data.ExtraSwingArea;
+            this.critChance.Value = ( float ) this.Data.CritChance;
+            this.critMultiplier.Value = ( float ) this.Data.CritMultiplier;
 
-            foreach ( BaseEnchantment enchantment in base.enchantments )
+            foreach ( BaseEnchantment enchantment in this.enchantments )
             {
                 if ( enchantment.IsForge() )
                 {

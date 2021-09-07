@@ -11,23 +11,23 @@ namespace DynamicGameAssets.Game
     {
         partial void DoInit()
         {
-            base.NetFields.AddFields( _sourcePack, _id );
+            this.NetFields.AddFields(this._sourcePack, this._id );
         }
         partial void DoInit( HatPackData data )
         {
-            this.Name = Id;
-            this.which.Value = FullId.GetDeterministicHashCode();
+            this.Name = this.Id;
+            this.which.Value = this.FullId.GetDeterministicHashCode();
 
             this.hairDrawType.Value = ( int ) data.HairStyle;
             this.ignoreHairstyleOffset.Value = data.IgnoreHairstyleOffset;
-            base.Category = -95;
+            this.Category = -95;
         }
 
-        public override string DisplayName { get => Data.Name; set { } }
+        public override string DisplayName { get => this.Data.Name; set { } }
 
         public override string getDescription()
         {
-            return Game1.parseText( Data.Description, Game1.smallFont, this.getDescriptionWidth() );
+            return Game1.parseText(this.Data.Description, Game1.smallFont, this.getDescriptionWidth() );
         }
         /*
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )

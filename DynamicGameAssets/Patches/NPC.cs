@@ -17,7 +17,7 @@ namespace DynamicGameAssets.Patches
         {
             if ( o is CustomObject )
             {
-                DoReceiveGift( __instance, o, giver, updateGiftLimitInfo, friendshipChangeMultiplier, showResponse );
+                NPCGiftFriendshipPatch.DoReceiveGift( __instance, o, giver, updateGiftLimitInfo, friendshipChangeMultiplier, showResponse );
                 return false;
             }
             return true;

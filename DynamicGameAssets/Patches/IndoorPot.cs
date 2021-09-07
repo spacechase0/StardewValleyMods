@@ -19,7 +19,7 @@ namespace DynamicGameAssets.Patches
         {
             if ( dropInItem is CustomObject cobj && !string.IsNullOrEmpty( cobj.Data.Plants ) )
             {
-                __result = Impl( __instance, cobj, probe, who );
+                __result = IndoorPotPerformDropInActionPatch.Impl( __instance, cobj, probe, who );
                 return false;
             }
             return true;

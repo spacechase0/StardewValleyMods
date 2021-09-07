@@ -40,7 +40,7 @@ namespace DynamicGameAssets
         public int Quantity { get; set; } = 1;
         public Color ObjectColor { get; set; }
 
-        public bool ShouldSerializeObjectColor() { return ObjectColor != default( Color ); }
+        public bool ShouldSerializeObjectColor() { return this.ObjectColor != default( Color ); }
 
         [JsonIgnore]
         public virtual Texture2D Icon
@@ -48,12 +48,12 @@ namespace DynamicGameAssets
             get
             {
                 int? valAsInt = null;
-                if (int.TryParse(Value, out int x))
+                if (int.TryParse(this.Value, out int x))
                     valAsInt = x;
 
-                switch (Type)
+                switch (this.Type)
                 {
-                    case ItemType.DGAItem: return Mod.Find(Value)?.GetTexture()?.Texture ?? Game1.staminaRect;
+                    case ItemType.DGAItem: return Mod.Find(this.Value)?.GetTexture()?.Texture ?? Game1.staminaRect;
                     case ItemType.DGARecipe:
                         Log.Error("Crafting recipes don't have an icon texture");
                         return null;
@@ -65,21 +65,21 @@ namespace DynamicGameAssets
                     case ItemType.VanillaHat: return FarmerRenderer.hatsTexture;
                     case ItemType.VanillaClothing:
                         if (valAsInt.HasValue)
-                            return new StardewValley.Objects.Clothing(valAsInt.Value).clothesType.Value == (int) StardewValley.Objects.Clothing.ClothesType.SHIRT ? FarmerRenderer.shirtsTexture : FarmerRenderer.pantsTexture;
+                            return new Clothing(valAsInt.Value).clothesType.Value == (int) Clothing.ClothesType.SHIRT ? FarmerRenderer.shirtsTexture : FarmerRenderer.pantsTexture;
                         foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\ClothingInformation"))
                         {
-                            if (info.Value.Split('/')[0] == Value)
-                                return new StardewValley.Objects.Clothing(info.Key).clothesType.Value == (int) StardewValley.Objects.Clothing.ClothesType.SHIRT ? FarmerRenderer.shirtsTexture : FarmerRenderer.pantsTexture;
+                            if (info.Value.Split('/')[0] == this.Value)
+                                return new Clothing(info.Key).clothesType.Value == (int) Clothing.ClothesType.SHIRT ? FarmerRenderer.shirtsTexture : FarmerRenderer.pantsTexture;
                         }
                         break;
                     case ItemType.VanillaBoots: return Game1.objectSpriteSheet;
-                    case ItemType.VanillaFurniture: return StardewValley.Objects.Furniture.furnitureTexture;
+                    case ItemType.VanillaFurniture: return Furniture.furnitureTexture;
                     case ItemType.ContextTag:
                         Log.Error("Context tag ItemAbstraction instances don't have an icon texture");
                         return null;
                 }
 
-                Log.Error("Failed getting ItemAbstraction icon for " + Type + " " + Value + "!");
+                Log.Error("Failed getting ItemAbstraction icon for " + this.Type + " " + this.Value + "!");
                 return null;
             }
         }
@@ -90,13 +90,13 @@ namespace DynamicGameAssets
             get
             {
                 int? valAsInt = null;
-                if (int.TryParse(Value, out int x))
+                if (int.TryParse(this.Value, out int x))
                     valAsInt = x;
 
-                switch (Type)
+                switch (this.Type)
                 {
                     case ItemType.DGAItem:
-                        var found = Mod.Find(Value);
+                        var found = Mod.Find(this.Value);
                         if ( found == null )
                             return new Rectangle( 0, 0, 1, 1 );
                         return found.GetTexture().Rect ?? new Rectangle(0, 0, found.GetTexture().Texture.Width, found.GetTexture().Texture.Height);
@@ -112,7 +112,7 @@ namespace DynamicGameAssets
                         }
                         foreach (var info in Game1.objectInformation)
                         {
-                            if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == Value)
+                            if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == this.Value)
                                 return Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, info.Key, 16, 16);
                         }
                         break;
@@ -121,7 +121,7 @@ namespace DynamicGameAssets
                             return Game1.getSourceRectForStandardTileSheet(Game1.bigCraftableSpriteSheet, valAsInt.Value, 16, 32);
                         foreach (var info in Game1.bigCraftablesInformation)
                         {
-                            if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == Value)
+                            if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == this.Value)
                                 return Game1.getSourceRectForStandardTileSheet(Game1.bigCraftableSpriteSheet, info.Key, 16, 32);
                         }
                         break;
@@ -130,7 +130,7 @@ namespace DynamicGameAssets
                             return Game1.getSourceRectForStandardTileSheet(Tool.weaponsTexture, valAsInt.Value, 16, 16);
                         foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\weapons"))
                         {
-                            if (info.Value.Split('/')[0] == Value)
+                            if (info.Value.Split('/')[0] == this.Value)
                                 return Game1.getSourceRectForStandardTileSheet(Tool.weaponsTexture, info.Key, 16, 16);
                         }
                         break;
@@ -139,7 +139,7 @@ namespace DynamicGameAssets
                             return new Rectangle((int)valAsInt.Value * 20 % FarmerRenderer.hatsTexture.Width, (int)valAsInt.Value * 20 / FarmerRenderer.hatsTexture.Width * 20 * 4, 20, 20);
                         foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\hats"))
                         {
-                            if (info.Value.Split('/')[0] == Value)
+                            if (info.Value.Split('/')[0] == this.Value)
                                 return new Rectangle((int)info.Key * 20 % FarmerRenderer.hatsTexture.Width, (int)info.Key * 20 / FarmerRenderer.hatsTexture.Width * 20 * 4, 20, 20);
                         }
                         break;
@@ -148,11 +148,11 @@ namespace DynamicGameAssets
                         // 
                         Clothing clothing = null;
                         if (valAsInt.HasValue)
-                            clothing = new StardewValley.Objects.Clothing(valAsInt.Value);
+                            clothing = new Clothing(valAsInt.Value);
                         foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\ClothingInformation"))
                         {
-                            if (info.Value.Split('/')[0] == Value)
-                                clothing = new StardewValley.Objects.Clothing(info.Key);
+                            if (info.Value.Split('/')[0] == this.Value)
+                                clothing = new Clothing(info.Key);
                         }
                         if (clothing != null)
                         {
@@ -166,18 +166,18 @@ namespace DynamicGameAssets
                             return Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, valAsInt.Value, 16, 16);
                         foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\Boots"))
                         {
-                            if (info.Value.Split('/')[0] == Value)
+                            if (info.Value.Split('/')[0] == this.Value)
                                 return Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, info.Key, 16, 16);
                         }
                         break;
                     case ItemType.VanillaFurniture:
                         Furniture furniture = null;
                         if (valAsInt.HasValue)
-                            furniture = StardewValley.Objects.Furniture.GetFurnitureInstance(valAsInt.Value);
+                            furniture = Furniture.GetFurnitureInstance(valAsInt.Value);
                         foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\Furniture"))
                         {
-                            if (info.Value.Split('/')[0] == Value)
-                                furniture = StardewValley.Objects.Furniture.GetFurnitureInstance(info.Key);
+                            if (info.Value.Split('/')[0] == this.Value)
+                                furniture = Furniture.GetFurnitureInstance(info.Key);
                         }
                         if (furniture != null)
                             return furniture.defaultSourceRect.Value;
@@ -187,7 +187,7 @@ namespace DynamicGameAssets
                         return default(Rectangle);
                 }
 
-                Log.Error("Failed getting ItemAbstraction icon rect for " + Type + " " + Value + "!");
+                Log.Error("Failed getting ItemAbstraction icon rect for " + this.Type + " " + this.Value + "!");
                 return default(Rectangle);
             }
         }
@@ -195,33 +195,33 @@ namespace DynamicGameAssets
         public bool Matches( Item item )
         {
             int? valAsInt = null;
-            if (int.TryParse(Value, out int x))
+            if (int.TryParse(this.Value, out int x))
                 valAsInt = x;
 
-            switch (Type)
+            switch (this.Type)
             {
                 case ItemType.DGAItem:
-                    return (item is IDGAItem ditem && ditem.FullId == Value);
+                    return (item is IDGAItem ditem && ditem.FullId == this.Value);
                 case ItemType.DGARecipe:
                     return false;
                 case ItemType.VanillaObject:
-                    return (item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.Name == Value || (valAsInt.HasValue && (valAsInt.Value == obj.ParentSheetIndex || valAsInt.Value == obj.Category))));
+                    return (item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.Name == this.Value || (valAsInt.HasValue && (valAsInt.Value == obj.ParentSheetIndex || valAsInt.Value == obj.Category))));
                 case ItemType.VanillaObjectColored:
-                    return ( item is ColoredObject cobj && cobj.color.Value == ObjectColor && ( cobj.Name == Value || ( valAsInt.HasValue && ( valAsInt.Value == cobj.ParentSheetIndex || valAsInt.Value == cobj.Category ) ) ) );
+                    return ( item is ColoredObject cobj && cobj.color.Value == this.ObjectColor && ( cobj.Name == this.Value || ( valAsInt.HasValue && ( valAsInt.Value == cobj.ParentSheetIndex || valAsInt.Value == cobj.Category ) ) ) );
                 case ItemType.VanillaBigCraftable:
-                    return (item is StardewValley.Object bobj && bobj.bigCraftable.Value && (bobj.Name == Value || (valAsInt.HasValue && valAsInt.Value == bobj.ParentSheetIndex)));
+                    return (item is StardewValley.Object bobj && bobj.bigCraftable.Value && (bobj.Name == this.Value || (valAsInt.HasValue && valAsInt.Value == bobj.ParentSheetIndex)));
                 case ItemType.VanillaWeapon:
-                    return (item is StardewValley.Tools.MeleeWeapon weapon && (weapon.Name == Value || (valAsInt.HasValue && valAsInt.Value == weapon.InitialParentTileIndex)));
+                    return (item is StardewValley.Tools.MeleeWeapon weapon && (weapon.Name == this.Value || (valAsInt.HasValue && valAsInt.Value == weapon.InitialParentTileIndex)));
                 case ItemType.VanillaHat:
-                    return (item is StardewValley.Objects.Hat hat && (hat.Name == Value || (valAsInt.HasValue && valAsInt.Value == hat.which.Value)));
+                    return (item is Hat hat && (hat.Name == this.Value || (valAsInt.HasValue && valAsInt.Value == hat.which.Value)));
                 case ItemType.VanillaClothing:
-                    return (item is StardewValley.Objects.Clothing clothing && (clothing.Name == Value || (valAsInt.HasValue && valAsInt.Value == clothing.ParentSheetIndex)));
+                    return (item is Clothing clothing && (clothing.Name == this.Value || (valAsInt.HasValue && valAsInt.Value == clothing.ParentSheetIndex)));
                 case ItemType.VanillaBoots:
-                    return (item is StardewValley.Objects.Boots boots && (boots.Name == Value || (valAsInt.HasValue && valAsInt.Value == boots.indexInTileSheet.Value)));
+                    return (item is Boots boots && (boots.Name == this.Value || (valAsInt.HasValue && valAsInt.Value == boots.indexInTileSheet.Value)));
                 case ItemType.VanillaFurniture:
-                    return (item is StardewValley.Objects.Furniture furniture && (furniture.Name == Value || (valAsInt.HasValue && valAsInt.Value == furniture.ParentSheetIndex)));
+                    return (item is Furniture furniture && (furniture.Name == this.Value || (valAsInt.HasValue && valAsInt.Value == furniture.ParentSheetIndex)));
                 case ItemType.ContextTag:
-                    return item?.HasContextTag(Value) ?? false;
+                    return item?.HasContextTag(this.Value) ?? false;
             }
 
             Log.Error("Unknown ItemAbstraction type?");
@@ -231,50 +231,50 @@ namespace DynamicGameAssets
         public Item Create()
         {
             int? valAsInt = null;
-            if (int.TryParse(Value, out int x))
+            if (int.TryParse(this.Value, out int x))
                 valAsInt = x;
 
-            switch ( Type )
+            switch (this.Type )
             {
                 case ItemType.DGAItem:
                     {
-                        var ret = Mod.Find( Value )?.ToItem();
+                        var ret = Mod.Find(this.Value )?.ToItem();
                         if ( ret == null )
                         {
-                            Log.Error( $"Failed to create item for {Value}! Does it exist and is an item (ie. not a crop or fruit tree or something)?" );
+                            Log.Error( $"Failed to create item for {this.Value}! Does it exist and is an item (ie. not a crop or fruit tree or something)?" );
                             return new StardewValley.Object( 1720, 1 );
                         }
-                        if ( ret is CustomObject obj && ObjectColor.A > 0 )
-                            obj.ObjectColor = ObjectColor;
+                        if ( ret is CustomObject obj && this.ObjectColor.A > 0 )
+                            obj.ObjectColor = this.ObjectColor;
                         return ret;
                     }
                 case ItemType.DGARecipe:
-                    return new CustomCraftingRecipe(Mod.Find( Value ) as CraftingRecipePackData);
+                    return new CustomCraftingRecipe(Mod.Find(this.Value ) as CraftingRecipePackData);
                 case ItemType.VanillaObject:
                     if (valAsInt.HasValue)
-                        return new StardewValley.Object(valAsInt.Value, Quantity);
+                        return new StardewValley.Object(valAsInt.Value, this.Quantity);
                     foreach ( var info in Game1.objectInformation )
                     {
-                        if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == Value)
-                            return new StardewValley.Object(info.Key, Quantity);
+                        if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == this.Value)
+                            return new StardewValley.Object(info.Key, this.Quantity);
                     }
                     break;
                 case ItemType.VanillaObjectColored:
                     if ( valAsInt.HasValue )
-                        return new ColoredObject( valAsInt.Value, Quantity, ObjectColor );
+                        return new ColoredObject( valAsInt.Value, this.Quantity, this.ObjectColor );
                     foreach ( var info in Game1.objectInformation )
                     {
-                        if ( info.Value.Split( '/' )[ StardewValley.Object.objectInfoNameIndex ] == Value )
-                            return new ColoredObject( info.Key, Quantity, ObjectColor );
+                        if ( info.Value.Split( '/' )[ StardewValley.Object.objectInfoNameIndex ] == this.Value )
+                            return new ColoredObject( info.Key, this.Quantity, this.ObjectColor );
                     }
                     break;
                 case ItemType.VanillaBigCraftable:
                     if (valAsInt.HasValue)
-                        return new StardewValley.Object(Vector2.Zero, valAsInt.Value) { Stack = Quantity };
+                        return new StardewValley.Object(Vector2.Zero, valAsInt.Value) { Stack = this.Quantity };
                     foreach (var info in Game1.bigCraftablesInformation)
                     {
-                        if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == Value)
-                            return new StardewValley.Object(Vector2.Zero, info.Key) { Stack = Quantity };
+                        if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == this.Value)
+                            return new StardewValley.Object(Vector2.Zero, info.Key) { Stack = this.Quantity };
                     }
                     break;
                 case ItemType.VanillaWeapon:
@@ -282,44 +282,44 @@ namespace DynamicGameAssets
                         return new StardewValley.Tools.MeleeWeapon(valAsInt.Value);
                     foreach (var info in Game1.content.Load< Dictionary<int, string> >( "Data\\weapons" ))
                     {
-                        if (info.Value.Split('/')[0] == Value)
+                        if (info.Value.Split('/')[0] == this.Value)
                             return new StardewValley.Tools.MeleeWeapon(info.Key);
                     }
                     break;
                 case ItemType.VanillaHat:
                     if (valAsInt.HasValue)
-                        return new StardewValley.Objects.Hat(valAsInt.Value);
+                        return new Hat(valAsInt.Value);
                     foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\hats"))
                     {
-                        if (info.Value.Split('/')[0] == Value)
-                            return new StardewValley.Objects.Hat(info.Key);
+                        if (info.Value.Split('/')[0] == this.Value)
+                            return new Hat(info.Key);
                     }
                     break;
                 case ItemType.VanillaClothing:
                     if (valAsInt.HasValue)
-                        return new StardewValley.Objects.Clothing(valAsInt.Value);
+                        return new Clothing(valAsInt.Value);
                     foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\ClothingInformation"))
                     {
-                        if (info.Value.Split('/')[0] == Value)
-                            return new StardewValley.Objects.Clothing(info.Key);
+                        if (info.Value.Split('/')[0] == this.Value)
+                            return new Clothing(info.Key);
                     }
                     break;
                 case ItemType.VanillaBoots:
                     if (valAsInt.HasValue)
-                        return new StardewValley.Objects.Boots(valAsInt.Value);
+                        return new Boots(valAsInt.Value);
                     foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\Boots"))
                     {
-                        if (info.Value.Split('/')[0] == Value)
-                            return new StardewValley.Objects.Boots(info.Key);
+                        if (info.Value.Split('/')[0] == this.Value)
+                            return new Boots(info.Key);
                     }
                     break;
                 case ItemType.VanillaFurniture:
                     if (valAsInt.HasValue)
-                        return StardewValley.Objects.Furniture.GetFurnitureInstance(valAsInt.Value);
+                        return Furniture.GetFurnitureInstance(valAsInt.Value);
                     foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\Furniture"))
                     {
-                        if (info.Value.Split('/')[0] == Value)
-                            return StardewValley.Objects.Furniture.GetFurnitureInstance(info.Key);
+                        if (info.Value.Split('/')[0] == this.Value)
+                            return Furniture.GetFurnitureInstance(info.Key);
                     }
                     break;
                 case ItemType.ContextTag:
@@ -327,7 +327,7 @@ namespace DynamicGameAssets
                     return new StardewValley.Object( 1720, 1 );
             }
 
-            Log.Error($"Unknown item {Type} {Value} x {Quantity}");
+            Log.Error($"Unknown item {this.Type} {this.Value} x {this.Quantity}");
             return new StardewValley.Object( 1720, 1 );
         }
 

@@ -19,9 +19,9 @@ namespace DynamicGameAssets.PackData
         public string Texture { get; set; }
 
         [JsonIgnore]
-        public string Name => pack.smapiPack.Translation.Get( $"big-craftable.{ID}.name" );
+        public string Name => this.pack.smapiPack.Translation.Get( $"big-craftable.{this.ID}.name" );
         [JsonIgnore]
-        public string Description => pack.smapiPack.Translation.Get( $"big-craftable.{ID}.description" );
+        public string Description => this.pack.smapiPack.Translation.Get( $"big-craftable.{this.ID}.description" );
 
         [DefaultValue(null)]
         public int? SellPrice { get; set; }
@@ -36,7 +36,7 @@ namespace DynamicGameAssets.PackData
             {
                 if ( item is CustomBigCraftable cbc )
                 {
-                    if ( cbc.SourcePack == pack.smapiPack.Manifest.UniqueID && cbc.Id == ID )
+                    if ( cbc.SourcePack == this.pack.smapiPack.Manifest.UniqueID && cbc.Id == this.ID )
                         return null;
                 }
                 return item;
@@ -50,7 +50,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return pack.GetTexture(Texture, 16, 16);
+            return this.pack.GetTexture(this.Texture, 16, 16);
         }
 
         public override object Clone()

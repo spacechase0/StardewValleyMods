@@ -18,9 +18,9 @@ namespace DynamicGameAssets.PackData
     public class CraftingRecipePackData : CommonPackData
     {
         [JsonIgnore]
-        public string Name => pack.smapiPack.Translation.Get($"crafting.{ID}.name");
+        public string Name => this.pack.smapiPack.Translation.Get($"crafting.{this.ID}.name");
         [JsonIgnore]
-        public string Description => pack.smapiPack.Translation.Get($"crafting.{ID}.description");
+        public string Description => this.pack.smapiPack.Translation.Get($"crafting.{this.ID}.description");
 
         [DefaultValue( false )]
         public bool IsCooking { get; set; } = false;
@@ -42,8 +42,8 @@ namespace DynamicGameAssets.PackData
             [DefaultValue( null )]
             public string IconOverride { get; set; }
 
-            public override Texture2D Icon => IconOverride == null ? base.Icon : parent.pack.GetTexture(IconOverride, 16, 16).Texture;
-            public override Rectangle IconSubrect => IconOverride == null ? base.IconSubrect : (parent.pack.GetTexture(IconOverride, 16, 16).Rect ?? new Rectangle(0, 0, Icon.Width, Icon.Height));
+            public override Texture2D Icon => this.IconOverride == null ? base.Icon : this.parent.pack.GetTexture(this.IconOverride, 16, 16).Texture;
+            public override Rectangle IconSubrect => this.IconOverride == null ? base.IconSubrect : (this.parent.pack.GetTexture(this.IconOverride, 16, 16).Rect ?? new Rectangle(0, 0, this.Icon.Width, this.Icon.Height));
         }
 
         [JsonConverter( typeof( ItemAbstractionWeightedListConverter ) )]
@@ -53,21 +53,21 @@ namespace DynamicGameAssets.PackData
         [JsonIgnore]
         public string CraftingDataKey => this.ID;
         [JsonIgnore]
-        public string CraftingDataValue => "0 1/meow/0 1/" + ( this.IsCooking ? "false/" : "" ) + $"/{SkillUnlockName} {SkillUnlockLevel}/{Name}";
+        public string CraftingDataValue => "0 1/meow/0 1/" + ( this.IsCooking ? "false/" : "" ) + $"/{this.SkillUnlockName} {this.SkillUnlockLevel}/{this.Name}";
 
         public override void PostLoad()
         {
-            foreach (var ingred in Ingredients)
+            foreach (var ingred in this.Ingredients)
                 ingred.parent = this;
         }
 
         public override void OnDisabled()
         {
-            if (RemoveAllTracesWhenDisabled)
+            if (this.RemoveAllTracesWhenDisabled)
             {
                 foreach (var farmer in Game1.getAllFarmers())
                 {
-                    ( IsCooking ? farmer.cookingRecipes : farmer.craftingRecipes ).Remove( CraftingDataKey );
+                    (this.IsCooking ? farmer.cookingRecipes : farmer.craftingRecipes ).Remove(this.CraftingDataKey );
                 }
             }
         }
@@ -86,10 +86,10 @@ namespace DynamicGameAssets.PackData
         {
             var ret = ( CraftingRecipePackData ) base.Clone();
             ret.Result = new List<Weighted<ItemAbstraction>>();
-            foreach ( var choice in Result )
+            foreach ( var choice in this.Result )
                 ret.Result.Add( (Weighted<ItemAbstraction>) choice.Clone() );
             ret.Ingredients = new List<IngredientAbstraction>();
-            foreach ( var ingred_ in Ingredients )
+            foreach ( var ingred_ in this.Ingredients )
             {
                 var ingred = (IngredientAbstraction) ingred_.Clone();
                 ingred.parent = ret;

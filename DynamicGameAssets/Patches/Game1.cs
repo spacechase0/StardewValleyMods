@@ -20,7 +20,7 @@ namespace DynamicGameAssets.Patches
         {
             if ( f.CurrentTool is CustomMeleeWeapon || f.FarmerSprite.isUsingWeapon() && Mod.itemLookup.ContainsKey( f.FarmerSprite.CurrentToolIndex ) )
             {
-                Microsoft.Xna.Framework.Rectangle sourceRectangleForTool = new Microsoft.Xna.Framework.Rectangle(currentToolIndex * 16 % Game1.toolSpriteSheet.Width, currentToolIndex * 16 / Game1.toolSpriteSheet.Width * 16, 16, 32);
+                Rectangle sourceRectangleForTool = new Rectangle(currentToolIndex * 16 % Game1.toolSpriteSheet.Width, currentToolIndex * 16 / Game1.toolSpriteSheet.Width * 16, 16, 32);
                 Vector2 fPosition = f.getLocalPosition(Game1.viewport) + f.jitter + f.armOffset;
                 float tool_draw_layer_offset = 0f;
                 if ( f.FacingDirection == 0 )

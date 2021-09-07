@@ -31,7 +31,7 @@ namespace DynamicGameAssets.PackData
             {
                 if ( tf is CustomFruitTree cftree )
                 {
-                    if ( cftree.SourcePack == pack.smapiPack.Manifest.UniqueID && cftree.Id == ID )
+                    if ( cftree.SourcePack == this.pack.smapiPack.Manifest.UniqueID && cftree.Id == this.ID )
                         return null;
                 }
                 return tf;
@@ -45,7 +45,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return pack.GetTexture( Texture, 432, 80 );
+            return this.pack.GetTexture(this.Texture, 432, 80 );
         }
 
         public override object Clone()

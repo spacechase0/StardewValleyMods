@@ -20,7 +20,7 @@ namespace DynamicGameAssets.Patches
         {
             if ( toPlace is CustomObject cobj && !string.IsNullOrEmpty( cobj.Data.Plants ) )
             {
-                __result = Impl( __instance, tileLocation, cobj );
+                __result = GameLocationTileOccupiedForPlacementPatch.Impl( __instance, tileLocation, cobj );
                 return false;
             }
             return true;

@@ -45,11 +45,11 @@ namespace DynamicGameAssets.PackData
         
         public ContentPack( IContentPack pack, int formatVer, ISemanticVersion condVer )
         {
-            smapiPack = pack;
+            this.smapiPack = pack;
 
             if ( pack.Manifest.UniqueID != "null" )
             {
-                conditionVersion = condVer;
+                this.conditionVersion = condVer;
                 switch ( formatVer )
                 {
                     case 1: new ContentPackLoaderV1( this ).Load(); break;
@@ -58,7 +58,7 @@ namespace DynamicGameAssets.PackData
                         throw new Exception( "Invalid content pack format version: " + pack.Manifest.ExtraFields[ "DGA.FormatVersion" ].ToString() );
                 }
 
-                LoadConfig(); // TODO: Move this to pack loader as well, once it diverges
+                this.LoadConfig(); // TODO: Move this to pack loader as well, once it diverges
             }
         }
         public ContentPack( IContentPack pack )
@@ -68,49 +68,49 @@ namespace DynamicGameAssets.PackData
 
         public List<CommonPackData> GetItems()
         {
-            return new List<CommonPackData>( items.Values );
+            return new List<CommonPackData>(this.items.Values );
         }
 
         public CommonPackData Find( string item )
         {
-            if ( items.ContainsKey( item ) && items[ item ].Enabled )
-                return items[ item ];
+            if (this.items.ContainsKey( item ) && this.items[ item ].Enabled )
+                return this.items[ item ];
             return null;
         }
 
         public bool CanLoad<T>( IAssetInfo asset )
         {
             string path = asset.AssetName.Replace( '\\', '/' );
-            string start = "DGA/" + smapiPack.Manifest.UniqueID + "/";
+            string start = "DGA/" + this.smapiPack.Manifest.UniqueID + "/";
             if ( !path.StartsWith( start ) || !path.EndsWith( ".png" ) )
                 return false;
-            return smapiPack.HasFile( path.Substring( start.Length ) );
+            return this.smapiPack.HasFile( path.Substring( start.Length ) );
         }
 
         public T Load<T>( IAssetInfo asset )
         {
             string path = asset.AssetName.Replace( '\\', '/' );
-            string start = "DGA/" + smapiPack.Manifest.UniqueID + "/";
+            string start = "DGA/" + this.smapiPack.Manifest.UniqueID + "/";
             if ( !path.StartsWith( start ) || !path.EndsWith( ".png" ) )
                 return default( T );
-            return ( T ) ( object ) smapiPack.LoadAsset<Texture2D>( path.Substring( start.Length ) );
+            return ( T ) ( object ) this.smapiPack.LoadAsset<Texture2D>( path.Substring( start.Length ) );
         }
 
         private void LoadConfig()
         {
-            if ( !smapiPack.HasFile( "config-schema.json" ) )
+            if ( !this.smapiPack.HasFile( "config-schema.json" ) )
                 return;
 
             var gmcm = Mod.instance.Helper.ModRegistry.GetApi< IGenericModConfigMenuApi >( "spacechase0.GenericModConfigMenu" );
             if ( gmcm == null )
                 return;
 
-            gmcm.UnregisterModConfig( smapiPack.Manifest );
-            gmcm.RegisterModConfig( smapiPack.Manifest, this.ResetToDefaultConfig, () => smapiPack.WriteJsonFile( "config.json", currConfig ) );
-            gmcm.SetDefaultIngameOptinValue( smapiPack.Manifest, true );
-            gmcm.RegisterParagraph( smapiPack.Manifest, "Note: If in-game, config values may not take effect until the next in-game day." );
+            gmcm.UnregisterModConfig(this.smapiPack.Manifest );
+            gmcm.RegisterModConfig(this.smapiPack.Manifest, this.ResetToDefaultConfig, () => this.smapiPack.WriteJsonFile( "config.json", this.currConfig ) );
+            gmcm.SetDefaultIngameOptinValue(this.smapiPack.Manifest, true );
+            gmcm.RegisterParagraph(this.smapiPack.Manifest, "Note: If in-game, config values may not take effect until the next in-game day." );
 
-            var readConfig = smapiPack.ReadJsonFile< ConfigModel >( "config.json" );
+            var readConfig = this.smapiPack.ReadJsonFile< ConfigModel >( "config.json" );
             bool writeConfig = false;
             if ( readConfig == null )
             {
@@ -118,72 +118,73 @@ namespace DynamicGameAssets.PackData
                 writeConfig = true;
             }
 
-            var data = smapiPack.LoadAsset<List<ConfigPackData>>( "config-schema.json" ) ?? new List<ConfigPackData>();
+            var data = this.smapiPack.LoadAsset<List<ConfigPackData>>( "config-schema.json" ) ?? new List<ConfigPackData>();
             foreach ( var d in data )
             {
                 Log.Trace( $"Loading config entry {d.Name}..." );
-                configs.Add( d );
+                this.configs.Add( d );
 
-                gmcm.StartNewPage( smapiPack.Manifest, d.OnPage );
+                gmcm.StartNewPage(this.smapiPack.Manifest, d.OnPage );
                 switch ( d.ElementType )
                 {
                     case ConfigPackData.ConfigElementType.Label:
                         if ( d.PageToGoTo != null )
-                            gmcm.RegisterPageLabel( smapiPack.Manifest, d.Name, d.Description, d.PageToGoTo );
+                            gmcm.RegisterPageLabel(this.smapiPack.Manifest, d.Name, d.Description, d.PageToGoTo );
                         else
-                            gmcm.RegisterLabel( smapiPack.Manifest, d.Name, d.Description );
+                            gmcm.RegisterLabel(this.smapiPack.Manifest, d.Name, d.Description );
                         break;
 
                     case ConfigPackData.ConfigElementType.Paragraph:
-                        gmcm.RegisterParagraph( smapiPack.Manifest, d.Name );
+                        gmcm.RegisterParagraph(this.smapiPack.Manifest, d.Name );
                         break;
 
                     case ConfigPackData.ConfigElementType.Image:
-                        gmcm.RegisterImage( smapiPack.Manifest, Path.Combine( "DGA", smapiPack.Manifest.UniqueID, d.ImagePath ), d.ImageRect, d.ImageScale );
+                        gmcm.RegisterImage(this.smapiPack.Manifest, Path.Combine( "DGA", this.smapiPack.Manifest.UniqueID, d.ImagePath ), d.ImageRect, d.ImageScale );
                         break;
 
                     case ConfigPackData.ConfigElementType.ConfigOption:
                         string key = d.Name;
                         if ( !string.IsNullOrEmpty( d.OnPage ) )
                             key = d.OnPage + "/" + key;
-                        if ( configIndex.ContainsKey( key ) )
+                        if (this.configIndex.ContainsKey( key ) )
                         {
                             Log.Error( "Duplicate config key: " + key );
                             continue;
                         }
-                        configIndex.Add( key, d );
-                        currConfig.Values.Add( key, readConfig.Values.ContainsKey( key ) ? readConfig.Values[ key ] : d.DefaultValue );
+
+                        this.configIndex.Add( key, d );
+                        this.currConfig.Values.Add( key, readConfig.Values.ContainsKey( key ) ? readConfig.Values[ key ] : d.DefaultValue );
 
                         string[] valid = d.ValidValues?.Split( ',' )?.Select( s => s.Trim() )?.ToArray();
                         switch ( d.ValueType )
                         {
                             case ConfigPackData.ConfigValueType.Boolean:
-                                gmcm.RegisterSimpleOption( smapiPack.Manifest, d.Name, d.Description, () => currConfig.Values[ key ].ToString() == "true" ? true : false, ( v ) => currConfig.Values[ key ] = v ? "true" : "false" );
+                                gmcm.RegisterSimpleOption(this.smapiPack.Manifest, d.Name, d.Description, () => this.currConfig.Values[ key ].ToString() == "true" ? true : false, ( v ) => this.currConfig.Values[ key ] = v ? "true" : "false" );
                                 break;
 
                             case ConfigPackData.ConfigValueType.Integer:
                                 if ( valid?.Length == 2 )
-                                    gmcm.RegisterClampedOption( smapiPack.Manifest, d.Name, d.Description, () => int.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString(), int.Parse( valid[ 0 ] ), int.Parse( valid[ 1 ] ) );
+                                    gmcm.RegisterClampedOption(this.smapiPack.Manifest, d.Name, d.Description, () => int.Parse(this.currConfig.Values[ key ].ToString() ), ( v ) => this.currConfig.Values[ key ] = v.ToString(), int.Parse( valid[ 0 ] ), int.Parse( valid[ 1 ] ) );
                                 else if ( valid?.Length == 3 )
-                                    gmcm.RegisterClampedOption( smapiPack.Manifest, d.Name, d.Description, () => int.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString(), int.Parse( valid[ 0 ] ), int.Parse( valid[ 1 ] ), int.Parse( valid[ 2 ] ) );
+                                    gmcm.RegisterClampedOption(this.smapiPack.Manifest, d.Name, d.Description, () => int.Parse(this.currConfig.Values[ key ].ToString() ), ( v ) => this.currConfig.Values[ key ] = v.ToString(), int.Parse( valid[ 0 ] ), int.Parse( valid[ 1 ] ), int.Parse( valid[ 2 ] ) );
                                 else
-                                    gmcm.RegisterSimpleOption( smapiPack.Manifest, d.Name, d.Description, () => int.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString() );
+                                    gmcm.RegisterSimpleOption(this.smapiPack.Manifest, d.Name, d.Description, () => int.Parse(this.currConfig.Values[ key ].ToString() ), ( v ) => this.currConfig.Values[ key ] = v.ToString() );
                                 break;
 
                             case ConfigPackData.ConfigValueType.Float:
                                 if ( valid?.Length == 2 )
-                                    gmcm.RegisterClampedOption( smapiPack.Manifest, d.Name, d.Description, () => float.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString(), float.Parse( valid[ 0 ] ), float.Parse( valid[ 1 ] ) );
+                                    gmcm.RegisterClampedOption(this.smapiPack.Manifest, d.Name, d.Description, () => float.Parse(this.currConfig.Values[ key ].ToString() ), ( v ) => this.currConfig.Values[ key ] = v.ToString(), float.Parse( valid[ 0 ] ), float.Parse( valid[ 1 ] ) );
                                 else if ( valid?.Length == 3 )
-                                    gmcm.RegisterClampedOption( smapiPack.Manifest, d.Name, d.Description, () => float.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString(), float.Parse( valid[ 0 ] ), float.Parse( valid[ 1 ] ), float.Parse( valid[ 2 ] ) );
+                                    gmcm.RegisterClampedOption(this.smapiPack.Manifest, d.Name, d.Description, () => float.Parse(this.currConfig.Values[ key ].ToString() ), ( v ) => this.currConfig.Values[ key ] = v.ToString(), float.Parse( valid[ 0 ] ), float.Parse( valid[ 1 ] ), float.Parse( valid[ 2 ] ) );
                                 else
-                                    gmcm.RegisterSimpleOption( smapiPack.Manifest, d.Name, d.Description, () => float.Parse( currConfig.Values[ key ].ToString() ), ( v ) => currConfig.Values[ key ] = v.ToString() );
+                                    gmcm.RegisterSimpleOption(this.smapiPack.Manifest, d.Name, d.Description, () => float.Parse(this.currConfig.Values[ key ].ToString() ), ( v ) => this.currConfig.Values[ key ] = v.ToString() );
                                 break;
 
                             case ConfigPackData.ConfigValueType.String:
                                 if ( valid?.Length > 1 )
-                                    gmcm.RegisterChoiceOption( smapiPack.Manifest, d.Name, d.Description, () => currConfig.Values[ key ].ToString(), ( v ) => currConfig.Values[ key ] = v, valid );
+                                    gmcm.RegisterChoiceOption(this.smapiPack.Manifest, d.Name, d.Description, () => this.currConfig.Values[ key ].ToString(), ( v ) => this.currConfig.Values[ key ] = v, valid );
                                 else
-                                    gmcm.RegisterSimpleOption( smapiPack.Manifest, d.Name, d.Description, () => currConfig.Values[ key ].ToString(), ( v ) => currConfig.Values[ key ] = v );
+                                    gmcm.RegisterSimpleOption(this.smapiPack.Manifest, d.Name, d.Description, () => this.currConfig.Values[ key ].ToString(), ( v ) => this.currConfig.Values[ key ] = v );
                                 break;
                         }
                         break;
@@ -192,18 +193,18 @@ namespace DynamicGameAssets.PackData
 
             if ( writeConfig )
             {
-                smapiPack.WriteJsonFile( "config.json", currConfig );
+                this.smapiPack.WriteJsonFile( "config.json", this.currConfig );
             }
         }
 
         private void ResetToDefaultConfig()
         {
-            foreach ( var config in configs )
+            foreach ( var config in this.configs )
             {
-                if ( !currConfig.Values.ContainsKey( config.Name ) )
-                    currConfig.Values.Add( config.Name, config.DefaultValue );
+                if ( !this.currConfig.Values.ContainsKey( config.Name ) )
+                    this.currConfig.Values.Add( config.Name, config.DefaultValue );
                 else
-                    currConfig.Values[ config.Name ] = config.DefaultValue;
+                    this.currConfig.Values[ config.Name ] = config.DefaultValue;
             }
         }
 
@@ -211,8 +212,8 @@ namespace DynamicGameAssets.PackData
         {
             string[] frames = path.Split( ',' );
             int[] frameDurs = null;
-            if ( animInfo.ContainsKey( path ) )
-                frameDurs = animInfo[ path ];
+            if (this.animInfo.ContainsKey( path ) )
+                frameDurs = this.animInfo[ path ];
             else
             {
                 int total = 0;
@@ -228,7 +229,7 @@ namespace DynamicGameAssets.PackData
                     total += dur;
                 }
                 frameData.Add( total );
-                animInfo.Add( path, frameDurs = frameData.ToArray() );
+                this.animInfo.Add( path, frameDurs = frameData.ToArray() );
             }
 
             int spot = Mod.State.AnimationFrames % frameDurs[ frames.Length ];
@@ -247,7 +248,7 @@ namespace DynamicGameAssets.PackData
             if ( paths == null )
                 return new TexturedRect() { Texture = Game1.staminaRect, Rect = null };
 
-            return GetTexture( paths[ decider % paths.Length ], xSize, ySize );
+            return this.GetTexture( paths[ decider % paths.Length ], xSize, ySize );
         }
 
         internal TexturedRect GetTexture( string path_, int xSize, int ySize )
@@ -258,7 +259,7 @@ namespace DynamicGameAssets.PackData
             string path = path_;
             if ( path.Contains( ',' ) )
             {
-                return GetTexture( GetTextureFrame( path ), xSize, ySize );
+                return this.GetTexture(this.GetTextureFrame( path ), xSize, ySize );
             }
             else
             {
@@ -268,39 +269,40 @@ namespace DynamicGameAssets.PackData
 
                 int colon = path.IndexOf( ':' );
                 string pathItself = colon == -1 ? path : path.Substring( 0, colon );
-                if ( textures.ContainsKey( pathItself ) )
+                if (this.textures.ContainsKey( pathItself ) )
                 {
                     if ( colon == -1 )
-                        return new TexturedRect() { Texture = textures[ pathItself ], Rect = null };
+                        return new TexturedRect() { Texture = this.textures[ pathItself ], Rect = null };
                     else
                     {
-                        int sections = textures[ pathItself ].Width / xSize;
+                        int sections = this.textures[ pathItself ].Width / xSize;
                         int ind = int.Parse( path.Substring( colon + 1 ) );
 
                         return new TexturedRect()
                         {
-                            Texture = textures[ pathItself ],
+                            Texture = this.textures[ pathItself ],
                             Rect = new Rectangle( ind % sections * xSize, ind / sections * ySize, xSize, ySize )
                         };
                     }
                 }
 
-                if ( !smapiPack.HasFile( pathItself ) )
-                    Log.Warn( "No such \"" + pathItself + "\" in " + smapiPack.Manifest.Name + " (" + smapiPack.Manifest.UniqueID + ")!" );
+                if ( !this.smapiPack.HasFile( pathItself ) )
+                    Log.Warn( "No such \"" + pathItself + "\" in " + this.smapiPack.Manifest.Name + " (" + this.smapiPack.Manifest.UniqueID + ")!" );
 
                 Texture2D t;
                 try
                 {
-                    t = smapiPack.LoadAsset<Texture2D>( pathItself );
-                    t.Name = Path.Combine( "DGA", smapiPack.Manifest.UniqueID, pathItself ).Replace( '\\', '/' );
+                    t = this.smapiPack.LoadAsset<Texture2D>( pathItself );
+                    t.Name = Path.Combine( "DGA", this.smapiPack.Manifest.UniqueID, pathItself ).Replace( '\\', '/' );
                 }
                 catch ( Exception e )
                 {
                     t = Game1.staminaRect;
                 }
-                textures.Add( pathItself, t );
 
-                return GetTexture( path_, xSize, ySize );
+                this.textures.Add( pathItself, t );
+
+                return this.GetTexture( path_, xSize, ySize );
             }
         }
     }

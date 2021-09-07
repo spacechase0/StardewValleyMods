@@ -21,7 +21,7 @@ namespace DGAAutomate
     {
         private readonly CustomBigCraftable big;
 
-        public string MachineTypeID => "DGA/" + big.FullId;
+        public string MachineTypeID => "DGA/" + this.big.FullId;
 
         public GameLocation Location { get; }
 
@@ -36,7 +36,7 @@ namespace DGAAutomate
 
         public ITrackedStack GetOutput()
         {
-            return new TrackedItem( big.heldObject.Value, onEmpty: item =>
+            return new TrackedItem(this.big.heldObject.Value, onEmpty: item =>
             {
                 this.big.heldObject.Value = null;
                 this.big.readyForHarvest.Value = false;
@@ -54,10 +54,10 @@ namespace DGAAutomate
 
         public bool SetInput( IStorage input )
         {
-            if ( !DynamicGameAssets.Mod.customMachineRecipes.ContainsKey( big.FullId ) )
+            if ( !DynamicGameAssets.Mod.customMachineRecipes.ContainsKey(this.big.FullId ) )
                 return false;
 
-            foreach ( var recipe in DynamicGameAssets.Mod.customMachineRecipes[ big.FullId ] )
+            foreach ( var recipe in DynamicGameAssets.Mod.customMachineRecipes[this.big.FullId ] )
             {
                 if ( !input.TryGetIngredient( ( item ) => recipe.Ingredients[ 0 ].Matches( item.Sample ), recipe.Ingredients[ 0 ].Quantity, out IConsumable firstConsume ) )
                     continue;
@@ -88,7 +88,7 @@ namespace DGAAutomate
                     this.big.MinutesUntilReady = recipe.MinutesToProcess;
 
                     if ( recipe.StartWorkingSound != null )
-                        Location.playSound( recipe.StartWorkingSound );
+                        this.Location.playSound( recipe.StartWorkingSound );
 
                     if ( recipe.WorkingLightOverride.HasValue )
                     {
@@ -97,7 +97,7 @@ namespace DGAAutomate
                         if ( !oldIsLamp && this.big.isLamp.Value )
                             this.big.initializeLightSource( this.big.tileLocation.Value );
                         else if ( oldIsLamp && !this.big.isLamp.Value )
-                            Location.removeLightSource( ( int ) ( this.big.tileLocation.X * 797f + this.big.tileLocation.Y * 13f + 666f ) );
+                            this.Location.removeLightSource( ( int ) ( this.big.tileLocation.X * 797f + this.big.tileLocation.Y * 13f + 666f ) );
                     }
                 }
             }
@@ -140,15 +140,15 @@ namespace DGAAutomate
         public static Mod instance;
         public override void Entry( IModHelper helper )
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.instance = this;
+            Log.Monitor = this.Monitor;
 
-            Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+            this.Helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
         }
 
         private void OnGameLaunched( object sender, GameLaunchedEventArgs e )
         {
-            var automate = Helper.ModRegistry.GetApi< IAutomateAPI >( "Pathoschild.Automate" );
+            var automate = this.Helper.ModRegistry.GetApi< IAutomateAPI >( "Pathoschild.Automate" );
             automate.AddFactory( new MyAutomationFactory() );
         }
     }

@@ -16,7 +16,7 @@ namespace DynamicGameAssets.PackData
 
         public TexturedRect GetCurrentTexture()
         {
-            return pack.GetTexture( SourceTexture, TargetRect.Width, TargetRect.Height );
+            return this.pack.GetTexture(this.SourceTexture, this.TargetRect.Width, this.TargetRect.Height );
         }
 
         [OnDeserialized]
@@ -24,7 +24,7 @@ namespace DynamicGameAssets.PackData
         {
             // This is important because the paths need to match exactly.
             // Starting in SDV 1.5.5, these are always '/', not OS-dependent.
-            TargetTexture = TargetTexture.Replace( '\\', '/' );
+            this.TargetTexture = this.TargetTexture.Replace( '\\', '/' );
         }
     }
 }

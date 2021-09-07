@@ -15,26 +15,26 @@ namespace DynamicGameAssets.Game
         public readonly NetString _id = new NetString();
 
         [XmlIgnore]
-        public string SourcePack => _sourcePack.Value;
+        public string SourcePack => this._sourcePack.Value;
         [XmlIgnore]
-        public string Id => _id.Value;
+        public string Id => this._id.Value;
         [XmlIgnore]
-        public string FullId => $"{SourcePack}/{Id}";
+        public string FullId => $"{this.SourcePack}/{this.Id}";
         [XmlIgnore]
-        public TPackData Data => Mod.Find( FullId ) as TPackData ?? new TPackData() { pack = Mod.DummyContentPack };
+        public TPackData Data => Mod.Find(this.FullId ) as TPackData ?? new TPackData() { pack = Mod.DummyContentPack };
 
         public CustomItemMixin()
         {
-            DoInit();
+            this.DoInit();
         }
 
         public CustomItemMixin( TPackData data )
         :   this()
         {
-            _sourcePack.Value = data.pack.smapiPack.Manifest.UniqueID;
-            _id.Value = data.ID;
+            this._sourcePack.Value = data.pack.smapiPack.Manifest.UniqueID;
+            this._id.Value = data.ID;
 
-            DoInit( data );
+            this.DoInit( data );
         }
 
         partial void DoInit();

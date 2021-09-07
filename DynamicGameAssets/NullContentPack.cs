@@ -36,7 +36,7 @@ namespace DynamicGameAssets
 
     internal class NullTranslationHelper : ITranslationHelper
     {
-        public string Locale => LocaleEnum.ToString();
+        public string Locale => this.LocaleEnum.ToString();
 
         public LocalizedContentManager.LanguageCode LocaleEnum => LocalizedContentManager.CurrentLanguageCode;
 
@@ -49,7 +49,7 @@ namespace DynamicGameAssets
 
         public Translation Get( string key, object tokens )
         {
-            return Get( key );
+            return this.Get( key );
         }
 
         public IDictionary<string, Translation> GetInAllLocales( string key, bool withFallback = false )

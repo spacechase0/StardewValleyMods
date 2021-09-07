@@ -21,9 +21,9 @@ namespace DynamicGameAssets.PackData
         }
 
         [JsonIgnore]
-        public string Name => pack.smapiPack.Translation.Get( $"fence.{ID}.name" );
+        public string Name => this.pack.smapiPack.Translation.Get( $"fence.{this.ID}.name" );
         [JsonIgnore]
-        public string Description => pack.smapiPack.Translation.Get( $"fence.{ID}.description" );
+        public string Description => this.pack.smapiPack.Translation.Get( $"fence.{this.ID}.description" );
 
         public string ObjectTexture { get; set; }
         public string PlacedTilesheet { get; set; }
@@ -41,7 +41,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return pack.GetTexture( ObjectTexture, 16, 16 );
+            return this.pack.GetTexture(this.ObjectTexture, 16, 16 );
         }
 
         public override void OnDisabled()
@@ -50,7 +50,7 @@ namespace DynamicGameAssets.PackData
             {
                 if ( item is CustomFence cfence )
                 {
-                    if ( cfence.SourcePack == pack.smapiPack.Manifest.UniqueID && cfence.Id == ID )
+                    if ( cfence.SourcePack == this.pack.smapiPack.Manifest.UniqueID && cfence.Id == this.ID )
                         return null;
                 }
                 return item;

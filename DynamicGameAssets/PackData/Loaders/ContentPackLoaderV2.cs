@@ -130,12 +130,12 @@ namespace DynamicGameAssets.PackData.Loaders
             var conv = new BasePackDataListConverter();
             //Log.Debug( JsonConvert.SerializeObject( data, Formatting.Indented, new BasePackDataListConverter() ) );
             */
-            LoadIndex( "content.json" );
+            this.LoadIndex( "content.json" );
         }
 
         private void LoadIndex( string json, ContentIndexPackData parent = null )
         {
-            if ( !pack.smapiPack.HasFile( json ) )
+            if ( !this.pack.smapiPack.HasFile( json ) )
             {
                 if ( parent != null )
                     Log.Warn( "Missing json file: " + json );
@@ -145,7 +145,7 @@ namespace DynamicGameAssets.PackData.Loaders
             {
                 parent = new ContentIndexPackData()
                 {
-                    pack = pack,
+                    pack = this.pack,
                     parent = null,
                     ContentType = "ContentIndex",
                     FilePath = json,
@@ -162,38 +162,38 @@ namespace DynamicGameAssets.PackData.Loaders
                 {
                     Converters = new[] { new BasePackDataListConverter(), colorConverter, vec2Converter }
                 };
-                var data = JsonConvert.DeserializeObject<List<BasePackData>>( File.ReadAllText( Path.Combine( pack.smapiPack.DirectoryPath, json ) ), settings );
+                var data = JsonConvert.DeserializeObject<List<BasePackData>>( File.ReadAllText( Path.Combine(this.pack.smapiPack.DirectoryPath, json ) ), settings );
                 foreach ( var d in data )
                 {
-                    if ( d is CommonPackData cd && pack.items.ContainsKey( cd.ID ) )
+                    if ( d is CommonPackData cd && this.pack.items.ContainsKey( cd.ID ) )
                     {
                         Log.Error( "Duplicate found! " + cd.ID );
                         continue;
                     }
                     Log.Debug( "Loading data< " + d.GetType() + " >..." );
 
-                    if ( !pack.enableIndex.ContainsKey( parent ) )
-                        pack.enableIndex.Add( parent, new() );
-                    pack.enableIndex[ parent ].Add( d );
-                    d.pack = pack;
+                    if ( !this.pack.enableIndex.ContainsKey( parent ) )
+                        this.pack.enableIndex.Add( parent, new() );
+                    this.pack.enableIndex[ parent ].Add( d );
+                    d.pack = this.pack;
                     d.parent = parent;
                     d.original = ( BasePackData ) d.Clone();
                     d.original.original = d.original;
 
                     if ( d is CommonPackData cdata )
                     {
-                        pack.items.Add( cdata.ID, cdata );
-                        Mod.itemLookup.Add( $"{pack.smapiPack.Manifest.UniqueID}/{cdata.ID}".GetDeterministicHashCode(), $"{pack.smapiPack.Manifest.UniqueID}/{cdata.ID}" );
+                        this.pack.items.Add( cdata.ID, cdata );
+                        Mod.itemLookup.Add( $"{this.pack.smapiPack.Manifest.UniqueID}/{cdata.ID}".GetDeterministicHashCode(), $"{this.pack.smapiPack.Manifest.UniqueID}/{cdata.ID}" );
                     }
                     else
                     {
-                        pack.others.Add( d );
+                        this.pack.others.Add( d );
                     }
                     d.PostLoad();
 
                     if ( d is ContentIndexPackData cidata )
                     {
-                        LoadIndex( cidata.FilePath, cidata );
+                        this.LoadIndex( cidata.FilePath, cidata );
                     }
                 }
             }

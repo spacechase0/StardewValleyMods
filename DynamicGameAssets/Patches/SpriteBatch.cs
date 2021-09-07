@@ -25,7 +25,7 @@ namespace DynamicGameAssets.Patches
             if ( sourceRectangle.HasValue )
             {
                 Rectangle rect = sourceRectangle.Value;
-                FixTilesheetReference( ref texture, ref rect );
+                SpriteBatchTileSheetAdjustments.FixTilesheetReference( ref texture, ref rect );
                 sourceRectangle = rect;
             }
         }
@@ -35,7 +35,7 @@ namespace DynamicGameAssets.Patches
             if ( sourceRectangle.HasValue )
             {
                 Rectangle rect = sourceRectangle.Value;
-                FixTilesheetReference( ref texture, ref rect );
+                SpriteBatchTileSheetAdjustments.FixTilesheetReference( ref texture, ref rect );
                 sourceRectangle = rect;
             }
         }
@@ -45,7 +45,7 @@ namespace DynamicGameAssets.Patches
             if ( sourceRectangle.HasValue )
             {
                 Rectangle rect = sourceRectangle.Value;
-                FixTilesheetReference( ref texture, ref rect );
+                SpriteBatchTileSheetAdjustments.FixTilesheetReference( ref texture, ref rect );
                 sourceRectangle = rect;
             }
         }
@@ -54,7 +54,7 @@ namespace DynamicGameAssets.Patches
             if ( sourceRectangle.HasValue )
             {
                 Rectangle rect = sourceRectangle.Value;
-                FixTilesheetReference( ref texture, ref rect );
+                SpriteBatchTileSheetAdjustments.FixTilesheetReference( ref texture, ref rect );
                 sourceRectangle = rect;
             }
         }
@@ -63,40 +63,40 @@ namespace DynamicGameAssets.Patches
             if ( sourceRectangle.HasValue )
             {
                 Rectangle rect = sourceRectangle.Value;
-                FixTilesheetReference( ref texture, ref rect );
+                SpriteBatchTileSheetAdjustments.FixTilesheetReference( ref texture, ref rect );
                 sourceRectangle = rect;
             }
         }
 
         public static void FixTilesheetReference( ref Texture2D tex, ref Rectangle sourceRect )
         {
-            if ( tex == Game1.objectSpriteSheet && objectOverrides.ContainsKey( sourceRect ) )
+            if ( tex == Game1.objectSpriteSheet && SpriteBatchTileSheetAdjustments.objectOverrides.ContainsKey( sourceRect ) )
             {
-                var texRect = objectOverrides[ sourceRect ];
+                var texRect = SpriteBatchTileSheetAdjustments.objectOverrides[ sourceRect ];
                 tex = texRect.Texture;
                 sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle( 0, 0, tex.Width, tex.Height );
             }
-            else if ( tex == Tool.weaponsTexture && weaponOverrides.ContainsKey( sourceRect ) )
+            else if ( tex == Tool.weaponsTexture && SpriteBatchTileSheetAdjustments.weaponOverrides.ContainsKey( sourceRect ) )
             {
-                var texRect = weaponOverrides[ sourceRect ];
+                var texRect = SpriteBatchTileSheetAdjustments.weaponOverrides[ sourceRect ];
                 tex = texRect.Texture;
                 sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle( 0, 0, tex.Width, tex.Height );
             }
-            else if ( tex == FarmerRenderer.hatsTexture && hatOverrides.ContainsKey( sourceRect ) )
+            else if ( tex == FarmerRenderer.hatsTexture && SpriteBatchTileSheetAdjustments.hatOverrides.ContainsKey( sourceRect ) )
             {
-                var texRect = hatOverrides[ sourceRect ];
+                var texRect = SpriteBatchTileSheetAdjustments.hatOverrides[ sourceRect ];
                 tex = texRect.Texture;
                 sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle( 0, 0, tex.Width, tex.Height );
             }
-            else if ( tex == FarmerRenderer.shirtsTexture && shirtOverrides.ContainsKey( sourceRect ) )
+            else if ( tex == FarmerRenderer.shirtsTexture && SpriteBatchTileSheetAdjustments.shirtOverrides.ContainsKey( sourceRect ) )
             {
-                var texRect = shirtOverrides[ sourceRect ];
+                var texRect = SpriteBatchTileSheetAdjustments.shirtOverrides[ sourceRect ];
                 tex = texRect.Texture;
                 sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle( 0, 0, tex.Width, tex.Height );
             }
             else if ( tex == FarmerRenderer.pantsTexture )
             {
-                foreach ( var pants in pantsOverrides )
+                foreach ( var pants in SpriteBatchTileSheetAdjustments.pantsOverrides )
                 {
                     if ( pants.Key.Contains( sourceRect ) )
                     {
@@ -117,11 +117,11 @@ namespace DynamicGameAssets.Patches
 
             if ( tex.Name == null )
                 return;
-            if ( packOverrides.ContainsKey( tex.Name ) )
+            if ( SpriteBatchTileSheetAdjustments.packOverrides.ContainsKey( tex.Name ) )
             {
-                if ( packOverrides[ tex.Name ].ContainsKey( sourceRect ) )
+                if ( SpriteBatchTileSheetAdjustments.packOverrides[ tex.Name ].ContainsKey( sourceRect ) )
                 {
-                    var texRect = packOverrides[ tex.Name ][ sourceRect ].GetCurrentTexture();
+                    var texRect = SpriteBatchTileSheetAdjustments.packOverrides[ tex.Name ][ sourceRect ].GetCurrentTexture();
                     tex = texRect.Texture;
                     sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle( 0, 0, tex.Width, tex.Height );
                 }

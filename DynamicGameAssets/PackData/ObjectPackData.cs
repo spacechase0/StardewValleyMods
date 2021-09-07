@@ -21,9 +21,9 @@ namespace DynamicGameAssets.PackData
         public string TextureColor { get; set; }
 
         [JsonIgnore]
-        public string Name => pack.smapiPack.Translation.Get( $"object.{ID}.name" );
+        public string Name => this.pack.smapiPack.Translation.Get( $"object.{this.ID}.name" );
         [JsonIgnore]
-        public string Description => pack.smapiPack.Translation.Get( $"object.{ID}.description" );
+        public string Description => this.pack.smapiPack.Translation.Get( $"object.{this.ID}.description" );
 
         [DefaultValue( null )]
         public string Plants { get; set; }
@@ -55,7 +55,7 @@ namespace DynamicGameAssets.PackData
         [JsonConverter( typeof( StringEnumConverter ) )]
         public VanillaCategory Category { get; set; } = VanillaCategory.Junk;
         [JsonIgnore]
-        public string CategoryTextOverride => pack.smapiPack.Translation.Get( $"object.{ID}.category" ).UsePlaceholder( false ).ToString();
+        public string CategoryTextOverride => this.pack.smapiPack.Translation.Get( $"object.{this.ID}.category" ).UsePlaceholder( false ).ToString();
 
         [DefaultValue( null )]
         public Color? CategoryColorOverride { get; set; } = null;
@@ -96,17 +96,17 @@ namespace DynamicGameAssets.PackData
             {
                 if ( obj is FoodBuffsData other )
                 {
-                    if ( Farming != other.Farming ) return false;
-                    if ( Fishing != other.Fishing ) return false;
-                    if ( Mining != other.Mining ) return false;
-                    if ( Luck != other.Luck ) return false;
-                    if ( Foraging != other.Foraging ) return false;
-                    if ( MaxStamina != other.MaxStamina ) return false;
-                    if ( MagnetRadius != other.MagnetRadius ) return false;
-                    if ( Speed != other.Speed ) return false;
-                    if ( Defense != other.Defense ) return false;
-                    if ( Attack != other.Attack ) return false;
-                    if ( Duration != other.Duration ) return false;
+                    if (this.Farming != other.Farming ) return false;
+                    if (this.Fishing != other.Fishing ) return false;
+                    if (this.Mining != other.Mining ) return false;
+                    if (this.Luck != other.Luck ) return false;
+                    if (this.Foraging != other.Foraging ) return false;
+                    if (this.MaxStamina != other.MaxStamina ) return false;
+                    if (this.MagnetRadius != other.MagnetRadius ) return false;
+                    if (this.Speed != other.Speed ) return false;
+                    if (this.Defense != other.Defense ) return false;
+                    if (this.Attack != other.Attack ) return false;
+                    if (this.Duration != other.Duration ) return false;
                     return true;
                 }
                 return false;
@@ -116,7 +116,7 @@ namespace DynamicGameAssets.PackData
         }
         public FoodBuffsData EdibleBuffs { get; set; } = new FoodBuffsData();
 
-        public bool ShouldSerializeEdibleBuffs() { return !EdibleBuffs.Equals(new FoodBuffsData()); }
+        public bool ShouldSerializeEdibleBuffs() { return !this.EdibleBuffs.Equals(new FoodBuffsData()); }
 
         [DefaultValue( null )]
         public int? SellPrice { get; set; } = 0;
@@ -142,7 +142,7 @@ namespace DynamicGameAssets.PackData
 
         public List<string> ContextTags { get; set; } = new List<string>();
 
-        public bool ShouldSerializeContextTags() { return ContextTags.Count > 0; }
+        public bool ShouldSerializeContextTags() { return this.ContextTags.Count > 0; }
 
         public override void OnDisabled()
         {
@@ -150,17 +150,17 @@ namespace DynamicGameAssets.PackData
             {
                 if ( item is CustomObject jobj )
                 {
-                    if ( jobj.SourcePack == pack.smapiPack.Manifest.UniqueID && jobj.Id == ID )
+                    if ( jobj.SourcePack == this.pack.smapiPack.Manifest.UniqueID && jobj.Id == this.ID )
                         return null;
                 }
                 return item;
             } );
 
-            if ( RemoveAllTracesWhenDisabled )
+            if (this.RemoveAllTracesWhenDisabled )
             {
                 foreach ( var farmer in Game1.getAllFarmers() )
                 {
-                    int fakeId = $"{pack.smapiPack.Manifest.UniqueID}/{ID}".GetDeterministicHashCode();
+                    int fakeId = $"{this.pack.smapiPack.Manifest.UniqueID}/{this.ID}".GetDeterministicHashCode();
                     if ( farmer.basicShipped.ContainsKey( fakeId ) )
                         farmer.basicShipped.Remove( fakeId );
                 }
@@ -174,38 +174,38 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return pack.GetTexture(Texture, 16, 16);
+            return this.pack.GetTexture(this.Texture, 16, 16);
         }
 
         internal string GetFakeData()
         {
-            if ( Edibility != StardewValley.Object.inedible )
+            if (this.Edibility != StardewValley.Object.inedible )
             {
-                int itype = ( int ) Category;
-                string str = $"{ID}/{SellPrice}/{Edibility}/Basic {itype}/{Name}/{Description}/";
-                str += ( EdibleIsDrink ? "drink" : "food" ) + "/";
-                if ( EdibleBuffs == null )
-                    EdibleBuffs = new FoodBuffsData();
-                str += $"{EdibleBuffs.Farming} {EdibleBuffs.Fishing} {EdibleBuffs.Mining} 0 {EdibleBuffs.Luck} {EdibleBuffs.Foraging} 0 {EdibleBuffs.MaxStamina} {EdibleBuffs.MagnetRadius} {EdibleBuffs.Speed} {EdibleBuffs.Defense} {EdibleBuffs.Attack}/{EdibleBuffs.Duration}";
+                int itype = ( int ) this.Category;
+                string str = $"{this.ID}/{this.SellPrice}/{this.Edibility}/Basic {itype}/{this.Name}/{this.Description}/";
+                str += (this.EdibleIsDrink ? "drink" : "food" ) + "/";
+                if (this.EdibleBuffs == null )
+                    this.EdibleBuffs = new FoodBuffsData();
+                str += $"{this.EdibleBuffs.Farming} {this.EdibleBuffs.Fishing} {this.EdibleBuffs.Mining} 0 {this.EdibleBuffs.Luck} {this.EdibleBuffs.Foraging} 0 {this.EdibleBuffs.MaxStamina} {this.EdibleBuffs.MagnetRadius} {this.EdibleBuffs.Speed} {this.EdibleBuffs.Defense} {this.EdibleBuffs.Attack}/{this.EdibleBuffs.Duration}";
                 return str;
             }
             else
             {
-                int itype = ( int ) Category;
-                return $"{ID}/{SellPrice}/{Edibility}/Basic {itype}/{Name}/{Description}";
+                int itype = ( int ) this.Category;
+                return $"{this.ID}/{this.SellPrice}/{this.Edibility}/Basic {itype}/{this.Name}/{this.Description}";
             }
         }
 
         public override object Clone()
         {
             var ret = ( ObjectPackData ) base.Clone();
-            ret.EdibleBuffs = ( FoodBuffsData ) EdibleBuffs.Clone();
+            ret.EdibleBuffs = ( FoodBuffsData ) this.EdibleBuffs.Clone();
             if ( ret.SprinklerTiles != null )
-                ret.SprinklerTiles = new List<Vector2>( SprinklerTiles );
+                ret.SprinklerTiles = new List<Vector2>(this.SprinklerTiles );
             if ( ret.UpgradedSprinklerTiles != null )
-                ret.UpgradedSprinklerTiles = new List<Vector2>( UpgradedSprinklerTiles );
+                ret.UpgradedSprinklerTiles = new List<Vector2>(this.UpgradedSprinklerTiles );
             if ( ret.ContextTags != null )
-                ret.ContextTags = new List<string>( ContextTags );
+                ret.ContextTags = new List<string>(this.ContextTags );
             return ret;
         }
     }

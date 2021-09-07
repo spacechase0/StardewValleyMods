@@ -14,19 +14,19 @@ namespace DynamicGameAssets.Game
     {
         partial void DoInit()
         {
-            this.NetFields.AddFields( _sourcePack, _id );
+            this.NetFields.AddFields(this._sourcePack, this._id );
         }
 
         partial void DoInit( BootsPackData data )
         {
-            this.Name = Id;
-            reloadData();
+            this.Name = this.Id;
+            this.reloadData();
         }
 
         public bool LoadDisplayFields()
         {
-            this.displayName = Data.Name;
-            this.description = Data.Description;
+            this.displayName = this.Data.Name;
+            this.description = this.Data.Description;
             if ( this.appliedBootSheetIndex.Value >= 0 )
             {
                 Game1.content.LoadString( "Strings\\StringsFromCSFiles:CustomizedBootItemName", this.DisplayName );
@@ -36,15 +36,15 @@ namespace DynamicGameAssets.Game
 
         public override void reloadData()
         {
-            this.price.Value = Data.SellPrice;
-            this.defenseBonus.Value = Data.Defense;
-            this.immunityBonus.Value = Data.Immunity;
-            this.indexInColorSheet.Value = FullId.GetDeterministicHashCode();
+            this.price.Value = this.Data.SellPrice;
+            this.defenseBonus.Value = this.Data.Defense;
+            this.immunityBonus.Value = this.Data.Immunity;
+            this.indexInColorSheet.Value = this.FullId.GetDeterministicHashCode();
         }
         public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
         {
             base.drawTooltip( spriteBatch, ref x, ref y, font, alpha, overrideText );
-            string str = "Mod: " + Data.pack.smapiPack.Manifest.Name;
+            string str = "Mod: " + this.Data.pack.smapiPack.Manifest.Name;
             Utility.drawTextWithShadow( spriteBatch, Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ), font, new Vector2( x + 16, y + 16 + 4 ), new Color( 100, 100, 100 ) );
             y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
         }
@@ -59,12 +59,12 @@ namespace DynamicGameAssets.Game
 
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
         {
-            var tex = Data.pack.GetTexture( Data.Texture, 16, 16 );
+            var tex = this.Data.pack.GetTexture(this.Data.Texture, 16, 16 );
             spriteBatch.Draw( tex.Texture, location + new Vector2( ( int ) ( 32f * scaleSize ), ( int ) ( 32f * scaleSize ) ), tex.Rect, color * transparency, 0f, new Vector2( 8f, 8f ) * scaleSize, 4f * scaleSize, SpriteEffects.None, layerDepth );
         }
         public override Item getOne()
         {
-            var ret = new CustomBoots( Data );
+            var ret = new CustomBoots(this.Data );
             // TODO: the field from tailoring boots over another?
             ret._GetOneFrom( this );
             return ret;

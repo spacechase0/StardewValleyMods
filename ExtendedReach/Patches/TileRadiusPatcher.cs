@@ -34,7 +34,7 @@ namespace ExtendedReach.Patches
             {
                 harmony.Patch(
                     original: method,
-                    transpiler: this.GetHarmonyMethod(nameof(TranspileRadiusChecks))
+                    transpiler: this.GetHarmonyMethod(nameof(TileRadiusPatcher.TranspileRadiusChecks))
                 );
             }
         }

@@ -14,24 +14,24 @@ namespace DynamicGameAssets.Game
     {
         partial void DoInit()
         {
-            base.NetFields.AddFields( this._sourcePack, this._id );
+            this.NetFields.AddFields( this._sourcePack, this._id );
         }
         partial void DoInit( CropPackData data )
         {
-            base.width.Value = 3;
-            base.height.Value = 3;
-            base.health.Value = 3;
+            this.width.Value = 3;
+            this.height.Value = 3;
+            this.health.Value = 3;
         }
         public CustomGiantCrop( CropPackData data, Vector2 tile )
         :   this( data )
         {
-            base.tile.Value = tile;
+            this.tile.Value = tile;
         }
         public override void draw( SpriteBatch spriteBatch, Vector2 tileLocation )
         {
-            var currTex = Data.pack.GetMultiTexture( Data.GiantTextureChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 48, 63 );
+            var currTex = this.Data.pack.GetMultiTexture(this.Data.GiantTextureChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 48, 63 );
 
-            spriteBatch.Draw( currTex.Texture, Game1.GlobalToLocal( Game1.viewport, tileLocation * 64f - new Vector2( ( base.shakeTimer > 0f ) ? ( ( float ) Math.Sin( Math.PI * 2.0 / ( double ) base.shakeTimer ) * 2f ) : 0f, 64f ) ), currTex.Rect, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, ( tileLocation.Y + 2f ) * 64f / 10000f );
+            spriteBatch.Draw( currTex.Texture, Game1.GlobalToLocal( Game1.viewport, tileLocation * 64f - new Vector2( ( this.shakeTimer > 0f ) ? ( ( float ) Math.Sin( Math.PI * 2.0 / ( double ) this.shakeTimer ) * 2f ) : 0f, 64f ) ), currTex.Rect, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, ( tileLocation.Y + 2f ) * 64f / 10000f );
         }
 
         public override bool performToolAction( Tool t, int damage, Vector2 tileLocation, GameLocation location )
@@ -44,9 +44,9 @@ namespace DynamicGameAssets.Game
             }
             location.playSound( "axchop" );
             int power = (int)t.upgradeLevel / 2 + 1;
-            base.health.Value -= power;
+            this.health.Value -= power;
             Game1.createRadialDebris( Game1.currentLocation, 12, ( int ) tileLocation.X + 1, ( int ) tileLocation.Y + 1, Game1.random.Next( 4, 9 ), resource: false );
-            foreach ( var drop in Data.GiantDrops )
+            foreach ( var drop in this.Data.GiantDrops )
             {
                 if ( t is Axe && t.hasEnchantmentOfType<ShavingEnchantment>() && Game1.random.NextDouble() <= ( double ) ( ( float ) power / 5f ) )
                 {
@@ -57,12 +57,12 @@ namespace DynamicGameAssets.Game
                     location.debris.Add( d );
                 }
             }
-            if ( base.shakeTimer <= 0f )
+            if ( this.shakeTimer <= 0f )
             {
-                base.shakeTimer = 100f;
-                base.NeedsUpdate = true;
+                this.shakeTimer = 100f;
+                this.NeedsUpdate = true;
             }
-            if ( ( float ) base.health <= 0f )
+            if ( ( float ) this.health <= 0f )
             {
                 t.getLastFarmerToUse().gainExperience( 5, 50 * ( ( ( int ) t.getLastFarmerToUse().luckLevel + 1 ) / 2 ) );
                 if ( location.HasUnlockedAreaSecretNotes( t.getLastFarmerToUse() ) )
@@ -83,7 +83,7 @@ namespace DynamicGameAssets.Game
                 {
                     r = new Random( ( int ) Game1.uniqueIDForThisGame + ( int ) Game1.stats.DaysPlayed + ( int ) tileLocation.X * 7 + ( int ) tileLocation.Y * 11 );
                 }
-                foreach ( var drop in Data.GiantDrops )
+                foreach ( var drop in this.Data.GiantDrops )
                 {
                     int numChunks =  r.Next( drop.MininumHarvestedQuantity, drop.MaximumHarvestedQuantity + 1 );
                     while ( r.NextDouble() <= Math.Min( 0.9, drop.ExtraQuantityChance ) )
@@ -96,7 +96,7 @@ namespace DynamicGameAssets.Game
                     }
                     else
                     {
-                        Game1_createRadialDebris( location, drop.Item.Choose( r ).Create(), ( int ) tileLocation.X, ( int ) tileLocation.Y, numChunks, resource: false, -1, item: true );
+                        CustomGiantCrop.Game1_createRadialDebris( location, drop.Item.Choose( r ).Create(), ( int ) tileLocation.X, ( int ) tileLocation.Y, numChunks, resource: false, -1, item: true );
                     }
                 }
                 //Object tmp = new Object(Vector2.Zero, base.parentSheetIndex, 1);

@@ -24,7 +24,7 @@ namespace DynamicGameAssets.PackData
             //if ( ConditionsObject == null )
             {
                 var conds = new Dictionary<string, string>();
-                foreach ( var cond in Conditions )
+                foreach ( var cond in this.Conditions )
                 {
                     string key = cond.Key, value = cond.Value;
                     foreach ( var opt in parent.pack.configIndex )
@@ -39,26 +39,26 @@ namespace DynamicGameAssets.PackData
                     conds.Add( key, value );
                 }
 
-                ConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
+                this.ConditionsObject = Mod.instance.cp.ParseConditions( Mod.instance.ModManifest,
                                                                     conds,
                                                                     parent.pack.conditionVersion,
                                                                     parent.pack.smapiPack.Manifest.Dependencies?.Select( ( d ) => d.UniqueID )?.ToArray() ?? new string[ 0 ] );
             }
-            if ( !ConditionsObject.IsValid )
+            if ( !this.ConditionsObject.IsValid )
             {
                 string id = parent.ToString();
                 if ( parent is CommonPackData cpd )
                     id += $"[{cpd.ID}]";
-                Log.Error( "Invalid conditions object for " + id + "! Error from CP: " + ConditionsObject.ValidationError );
+                Log.Error( "Invalid conditions object for " + id + "! Error from CP: " + this.ConditionsObject.ValidationError );
             }
-            if ( ConditionsObject.IsMatch )
+            if (this.ConditionsObject.IsMatch )
                 return true;
             return false;
         }
 
         public void Apply( BasePackData obj_ )
         {
-            foreach ( var singleField in Fields )
+            foreach ( var singleField in this.Fields )
             {
                 string Field = singleField.Key;
                 JToken Data = singleField.Value;

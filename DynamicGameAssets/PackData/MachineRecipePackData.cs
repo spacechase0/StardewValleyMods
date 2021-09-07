@@ -58,10 +58,10 @@ namespace DynamicGameAssets.PackData
         {
             var ret = ( MachineRecipePackData ) base.Clone();
             ret.Result = new List<Weighted<ItemAbstraction>>();
-            foreach ( var choice in Result )
+            foreach ( var choice in this.Result )
                 ret.Result.Add( (Weighted<ItemAbstraction>) choice.Clone() );
             ret.Ingredients = new List<ItemAbstraction>();
-            foreach (var ingred in Ingredients)
+            foreach (var ingred in this.Ingredients)
                 ret.Ingredients.Add(( ItemAbstraction ) ingred.Clone());
             return ret;
         }

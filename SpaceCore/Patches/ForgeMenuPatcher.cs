@@ -155,9 +155,9 @@ namespace SpaceCore.Patches
         /// <summary>The method to call before <see cref="ForgeMenu.SpendLeftItem"/>.</summary>
         private static bool Before_SpendLeftItem(ForgeMenu __instance)
         {
-            if ( justCrafted != null )
+            if ( ForgeMenuPatcher.justCrafted != null )
             {
-                justCrafted.BaseItem.Consume( ref __instance.leftIngredientSpot.item );
+                ForgeMenuPatcher.justCrafted.BaseItem.Consume( ref __instance.leftIngredientSpot.item );
                 return false;
             }
 
@@ -167,10 +167,10 @@ namespace SpaceCore.Patches
         /// <summary>The method to call before <see cref="ForgeMenu.SpendLeftItem"/>.</summary>
         private static bool Before_SpendRightItem( ForgeMenu __instance )
         {
-            if ( justCrafted != null )
+            if ( ForgeMenuPatcher.justCrafted != null )
             {
-                justCrafted.IngredientItem.Consume( ref __instance.rightIngredientSpot.item );
-                justCrafted = null;
+                ForgeMenuPatcher.justCrafted.IngredientItem.Consume( ref __instance.rightIngredientSpot.item );
+                ForgeMenuPatcher.justCrafted = null;
                 return false;
             }
 
@@ -188,7 +188,7 @@ namespace SpaceCore.Patches
                 if ( recipe.BaseItem.HasEnoughFor( left_item ) && recipe.IngredientItem.HasEnoughFor( right_item ) )
                 {
                     if ( forReal )
-                        justCrafted = recipe;
+                        ForgeMenuPatcher.justCrafted = recipe;
                     __result = recipe.CreateResult( left_item, right_item );
                     return false;
                 }

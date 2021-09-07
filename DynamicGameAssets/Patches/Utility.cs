@@ -19,7 +19,7 @@ namespace DynamicGameAssets.Patches
         {
             if ( item is CustomObject cobj && !string.IsNullOrEmpty( cobj.Data.Plants ) )
             {
-                __result = Impl( location, tileLocation, cobj );
+                __result = UtilityIsViableSeedSpotPatch.Impl( location, tileLocation, cobj );
                 return false;
             }
             return true;

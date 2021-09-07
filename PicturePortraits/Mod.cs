@@ -18,23 +18,23 @@ namespace PicturePortraits
 
         public override void Entry( StardewModdingAPI.IModHelper helper )
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Mod.instance = this;
+            Log.Monitor = this.Monitor;
 
-            Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
-            Helper.Events.GameLoop.GameLaunched += OnDayStarted;
-            SpaceEvents.OnEventFinished += OnEventFinished;
+            this.Helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            this.Helper.Events.GameLoop.GameLaunched += this.OnDayStarted;
+            SpaceEvents.OnEventFinished += this.OnEventFinished;
 
-            Helper.ConsoleCommands.Add( "camera_add", "Add a camera to your inventory.", ( cmd, args ) => Game1.player.addItemByMenuIfNecessary( new CameraTool() ) );
+            this.Helper.ConsoleCommands.Add( "camera_add", "Add a camera to your inventory.", ( cmd, args ) => Game1.player.addItemByMenuIfNecessary( new CameraTool() ) );
         }
 
         private void OnGameLaunched( object sender, GameLaunchedEventArgs e )
         {
-            var spacecore = Helper.ModRegistry.GetApi< ISpaceCoreApi >( "spacechase0.SpaceCore" );
+            var spacecore = this.Helper.ModRegistry.GetApi< ISpaceCoreApi >( "spacechase0.SpaceCore" );
             spacecore.RegisterSerializerType( typeof( CameraTool ) );
 
-            var dga = Helper.ModRegistry.GetApi< IDynamicGameAssetsApi >( "spacechase0.DynamicGameAssets" );
-            dga.AddEmbeddedPack( ModManifest, Path.Combine( Helper.DirectoryPath, "assets", "dga" ) );
+            var dga = this.Helper.ModRegistry.GetApi< IDynamicGameAssetsApi >( "spacechase0.DynamicGameAssets" );
+            dga.AddEmbeddedPack(this.ModManifest, Path.Combine(this.Helper.DirectoryPath, "assets", "dga" ) );
         }
 
         private void OnDayStarted( object sender, GameLaunchedEventArgs e )

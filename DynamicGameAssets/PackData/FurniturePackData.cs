@@ -36,11 +36,11 @@ namespace DynamicGameAssets.PackData
             [JsonConverter( typeof( StringEnumConverter ) )]
             public SeatDirection SittingDirection { get; set; }
 
-            public bool ShouldSerializeSeats() { return Seats.Count > 0; }
+            public bool ShouldSerializeSeats() { return this.Seats.Count > 0; }
 
             public Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>> TileProperties { get; set; } = new Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>>();
 
-            public bool ShouldSerializeTileProperties() { return TileProperties.Count > 0; }
+            public bool ShouldSerializeTileProperties() { return this.TileProperties.Count > 0; }
         }
 
         public enum FurnitureType
@@ -64,34 +64,34 @@ namespace DynamicGameAssets.PackData
         [JsonConverter( typeof( StringEnumConverter ) )]
         public BedFurniture.BedType BedType { get; set; } = BedFurniture.BedType.Single;
 
-        public bool ShouldSerializeBedType() { return Type == FurnitureType.Bed; }
+        public bool ShouldSerializeBedType() { return this.Type == FurnitureType.Bed; }
 
         // TV specific
         public Vector2 ScreenPosition { get; set; }
         public int ScreenSize { get; set; }
 
-        public bool ShouldSerializeScreenPositione() { return Type == FurnitureType.TV; }
-        public bool ShouldSerializeScreenSize() { return Type == FurnitureType.TV; }
+        public bool ShouldSerializeScreenPositione() { return this.Type == FurnitureType.TV; }
+        public bool ShouldSerializeScreenSize() { return this.Type == FurnitureType.TV; }
 
         // Fish tank specific
         public int TankSwimmingCapacity { get; set; } = -1;
         public int TankGroundCapacity { get; set; } = -1;
         public int TankDecorationCapacity { get; set; } = -1;
 
-        public bool ShouldSerializeTankSwimmingCapacity() { return Type == FurnitureType.FishTank; }
-        public bool ShouldSerializeTankGroundCapacity() { return Type == FurnitureType.FishTank; }
-        public bool ShouldSerializeTankDecorationCapacity() { return Type == FurnitureType.FishTank; }
+        public bool ShouldSerializeTankSwimmingCapacity() { return this.Type == FurnitureType.FishTank; }
+        public bool ShouldSerializeTankGroundCapacity() { return this.Type == FurnitureType.FishTank; }
+        public bool ShouldSerializeTankDecorationCapacity() { return this.Type == FurnitureType.FishTank; }
 
         public List<FurnitureConfiguration> Configurations { get; set; } = new List<FurnitureConfiguration>();
 
         [JsonIgnore]
-        public string Name => pack.smapiPack.Translation.Get($"furniture.{ID}.name");
+        public string Name => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.name");
         [JsonIgnore]
-        public string Description => pack.smapiPack.Translation.Get($"furniture.{ID}.description");
+        public string Description => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.description");
 
         public int GetVanillaFurnitureType()
         {
-            switch ( Type )
+            switch (this.Type )
             {
                 case FurnitureType.Decoration: return Furniture.decor;
                 case FurnitureType.Rug: return Furniture.rug;
@@ -109,10 +109,10 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            if ( Configurations.Count == 0 )
-                return pack.GetTexture( null, 16, 16 );
+            if (this.Configurations.Count == 0 )
+                return this.pack.GetTexture( null, 16, 16 );
 
-            return pack.GetTexture(Configurations[0].Texture, (int) Configurations[0].DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int) Configurations[0].DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
+            return this.pack.GetTexture(this.Configurations[0].Texture, (int) this.Configurations[0].DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int) this.Configurations[0].DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
         }
 
         public override void OnDisabled()
@@ -121,7 +121,7 @@ namespace DynamicGameAssets.PackData
             {
                 if (item is IDGAItem jfurn)
                 {
-                    if (jfurn.SourcePack == pack.smapiPack.Manifest.UniqueID && jfurn.Id == ID)
+                    if (jfurn.SourcePack == this.pack.smapiPack.Manifest.UniqueID && jfurn.Id == this.ID)
                         return null;
                 }
                 return item;
@@ -130,7 +130,7 @@ namespace DynamicGameAssets.PackData
 
         public override Item ToItem()
         {
-            switch ( Type )
+            switch (this.Type )
             {
                 case FurnitureType.Bed:
                     return new CustomBedFurniture( this );

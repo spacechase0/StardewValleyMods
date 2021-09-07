@@ -13,7 +13,7 @@ namespace DynamicGameAssets.Game
     {
         partial void DoInit()
         {
-            base.NetFields.AddFields( _sourcePack, _id );
+            this.NetFields.AddFields(this._sourcePack, this._id );
         }
 
         partial void DoInit( ShirtPackData data )
@@ -24,15 +24,15 @@ namespace DynamicGameAssets.Game
                 this.otherData.Value = "Sleeveless";
             this.clothesColor.Value = data.DefaultColor;
 
-            this.indexInTileSheetMale.Value = FullId.GetDeterministicHashCode();
-            this.indexInTileSheetFemale.Value = data.TextureFemale != null ? ( FullId.GetDeterministicHashCode() + 1 ) : FullId.GetDeterministicHashCode();
+            this.indexInTileSheetMale.Value = this.FullId.GetDeterministicHashCode();
+            this.indexInTileSheetFemale.Value = data.TextureFemale != null ? (this.FullId.GetDeterministicHashCode() + 1 ) : this.FullId.GetDeterministicHashCode();
         }
 
-        public override string DisplayName { get => Data.Name; set { } }
+        public override string DisplayName { get => this.Data.Name; set { } }
 
         public override string getDescription()
         {
-            return Game1.parseText( Data.Description, Game1.smallFont, this.getDescriptionWidth() );
+            return Game1.parseText(this.Data.Description, Game1.smallFont, this.getDescriptionWidth() );
         }
 
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
@@ -49,8 +49,8 @@ namespace DynamicGameAssets.Game
                 layerDepth = 1f - dye_portion_layer_offset;
             }
 
-            var texMale = Data.pack.GetTexture( Data.TextureMale, 8, 32);
-            var texMaleColor = Data.TextureMaleColor == null ? null : Data.pack.GetTexture( Data.TextureMaleColor, 8, 32);
+            var texMale = this.Data.pack.GetTexture(this.Data.TextureMale, 8, 32);
+            var texMaleColor = this.Data.TextureMaleColor == null ? null : this.Data.pack.GetTexture(this.Data.TextureMaleColor, 8, 32);
 
             texMale.Rect ??= new Rectangle( 0, 0, texMale.Texture.Width, texMale.Texture.Height );
             spriteBatch.Draw( texMale.Texture, location + new Vector2( 32f, 32f ), new Rectangle( texMale.Rect.Value.X+ 0 * 8 % 128, texMale.Rect.Value.Y + 0 * 8 / 128 * 32, 8, 8 ), color * transparency, 0f, new Vector2( 4f, 4f ), scaleSize * 4f, SpriteEffects.None, layerDepth );
@@ -63,8 +63,8 @@ namespace DynamicGameAssets.Game
 
         public override Item getOne()
         {
-            var ret = new CustomShirt( Data );
-            ret.clothesColor.Value = clothesColor.Value;
+            var ret = new CustomShirt(this.Data );
+            ret.clothesColor.Value = this.clothesColor.Value;
             ret._GetOneFrom( this );
             return ret;
         }

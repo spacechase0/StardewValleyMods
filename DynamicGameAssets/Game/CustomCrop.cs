@@ -16,23 +16,23 @@ namespace DynamicGameAssets.Game
     {
         private CropPackData.PhaseData GetCurrentPhase()
         {
-            return Data.Phases.Count > this.currentPhase.Value ? Data.Phases[ this.currentPhase.Value ] : new CropPackData.PhaseData();
+            return this.Data.Phases.Count > this.currentPhase.Value ? this.Data.Phases[ this.currentPhase.Value ] : new CropPackData.PhaseData();
         }
 
         partial void DoInit()
         {
-            this.NetFields.AddFields( _sourcePack, _id );
+            this.NetFields.AddFields(this._sourcePack, this._id );
         }
         partial void DoInit( CropPackData data )
         {
             if ( ( data.Colors?.Count ?? 0 ) > 0 )
             {
-                tintColor.Value = data.Colors[ Game1.random.Next( data.Colors.Count ) ];
+                this.tintColor.Value = data.Colors[ Game1.random.Next( data.Colors.Count ) ];
             }
 
-            ResetPhaseDays();
-            this.harvestMethod.Value = Data.Phases[ 0 ].Scythable ? Crop.sickleHarvest : Crop.grabHarvest;
-            this.raisedSeeds.Value = Data.Phases[ 0 ].Trellis;
+            this.ResetPhaseDays();
+            this.harvestMethod.Value = this.Data.Phases[ 0 ].Scythable ? Crop.sickleHarvest : Crop.grabHarvest;
+            this.raisedSeeds.Value = this.Data.Phases[ 0 ].Trellis;
         }
         public CustomCrop( CropPackData data, int tileX, int tileY )
         :   this( data )
@@ -43,7 +43,7 @@ namespace DynamicGameAssets.Game
         public void ResetPhaseDays()
         {
             this.phaseDays.Clear();
-            this.phaseDays.AddRange( Data.Phases.Select( p => p.Length ) );
+            this.phaseDays.AddRange(this.Data.Phases.Select( p => p.Length ) );
         }
 
         public bool Harvest( int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester = null )
@@ -51,7 +51,7 @@ namespace DynamicGameAssets.Game
             var Game1_multiplayer = ( Multiplayer ) typeof( Game1 ).GetField( "multiplayer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static ).GetValue( null );
             var this_tilePosition = Mod.instance.Helper.Reflection.GetField< Vector2 >( this, "tilePosition" ).GetValue();
 
-            var currPhase = GetCurrentPhase();
+            var currPhase = this.GetCurrentPhase();
 
             if ( ( bool ) this.dead )
             {
@@ -175,7 +175,7 @@ namespace DynamicGameAssets.Game
                     {
                         if ( harvestedItem is StardewValley.Object obj )
                             obj.Quality = cropQuality;
-                        if ( Data.Colors != null )
+                        if (this.Data.Colors != null )
                         {
                             if ( harvestedItem is StardewValley.Objects.ColoredObject colObj )
                                 colObj.color.Value = this.tintColor.Value;
@@ -360,9 +360,9 @@ namespace DynamicGameAssets.Game
         {
             var OneTimeRandom_GetDouble = Mod.instance.Helper.Reflection.GetMethod( AccessTools.TypeByName( "StardewValley.OneTimeRandom" ), "GetDouble" );
 
-            ResetPhaseDays();
+            this.ResetPhaseDays();
 
-            if ( ( bool ) environment.isOutdoors && ( ( bool ) this.dead || !Data.CanGrowNow || Data.Type == CropPackData.CropType.Indoors /*( !environment.SeedsIgnoreSeasonsHere() && !this.seasonsToGrowIn.Contains( environment.GetSeasonForLocation() ) ) || ( !environment.SeedsIgnoreSeasonsHere() && ( int ) this.indexOfHarvest == 90 )*/ ) )
+            if ( ( bool ) environment.isOutdoors && ( ( bool ) this.dead || !this.Data.CanGrowNow || this.Data.Type == CropPackData.CropType.Indoors /*( !environment.SeedsIgnoreSeasonsHere() && !this.seasonsToGrowIn.Contains( environment.GetSeasonForLocation() ) ) || ( !environment.SeedsIgnoreSeasonsHere() && ( int ) this.indexOfHarvest == 90 )*/ ) )
             {
                 this.Kill();
                 return;
@@ -391,10 +391,10 @@ namespace DynamicGameAssets.Game
                     this.phaseToShow.Value = Game1.random.Next( 1, 7 );
                 }
 
-                this.harvestMethod.Value = GetCurrentPhase().Scythable ? Crop.sickleHarvest : Crop.grabHarvest;
-                this.raisedSeeds.Value = GetCurrentPhase().Trellis;
+                this.harvestMethod.Value = this.GetCurrentPhase().Scythable ? Crop.sickleHarvest : Crop.grabHarvest;
+                this.raisedSeeds.Value = this.GetCurrentPhase().Trellis;
 
-                if ( Data.GiantTextureChoices != null && environment is Farm && ( int ) this.currentPhase == this.phaseDays.Count - 1 /*&& ( ( int ) this.indexOfHarvest == 276 || ( int ) this.indexOfHarvest == 190 || ( int ) this.indexOfHarvest == 254 )*/ && OneTimeRandom_GetDouble.Invoke< double >( Game1.uniqueIDForThisGame, Game1.stats.DaysPlayed, ( ulong ) xTile, ( ulong ) yTile ) < Data.GiantChance )
+                if (this.Data.GiantTextureChoices != null && environment is Farm && ( int ) this.currentPhase == this.phaseDays.Count - 1 /*&& ( ( int ) this.indexOfHarvest == 276 || ( int ) this.indexOfHarvest == 190 || ( int ) this.indexOfHarvest == 254 )*/ && OneTimeRandom_GetDouble.Invoke< double >( Game1.uniqueIDForThisGame, Game1.stats.DaysPlayed, ( ulong ) xTile, ( ulong ) yTile ) < this.Data.GiantChance )
                 {
                     for ( int x2 = xTile - 1; x2 <= xTile + 1; x2++ )
                     {
@@ -415,7 +415,7 @@ namespace DynamicGameAssets.Game
                             ( environment.terrainFeatures[ v3 ] as HoeDirt ).crop = null;
                         }
                     }
-                    ( environment as Farm ).resourceClumps.Add( new CustomGiantCrop( Data, new Vector2( xTile - 1, yTile - 1 ) ) );
+                    ( environment as Farm ).resourceClumps.Add( new CustomGiantCrop(this.Data, new Vector2( xTile - 1, yTile - 1 ) ) );
                 }
             }
             /*if ( ( !this.fullyGrown || ( int ) this.dayOfCurrentPhase <= 0 ) && ( int ) this.currentPhase >= this.phaseDays.Count - 1 && ( int ) this.rowInSpriteSheet == 23 )
@@ -467,7 +467,7 @@ namespace DynamicGameAssets.Game
 
         public override bool isPaddyCrop()
         {
-            return Data.Type == CropPackData.CropType.Paddy;
+            return this.Data.Type == CropPackData.CropType.Paddy;
         }
 
         public void Draw( SpriteBatch b, Vector2 tileLocation, Color toTint, float rotation )
@@ -476,7 +476,7 @@ namespace DynamicGameAssets.Game
             float this_layerDepth = Mod.instance.Helper.Reflection.GetField< float >( this, "layerDepth" ).GetValue();
             float this_coloredLayerDepth = Mod.instance.Helper.Reflection.GetField< float >( this, "coloredLayerDepth" ).GetValue();
 
-            var currTex = Data.pack.GetMultiTexture( GetCurrentPhase().TextureChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 );
+            var currTex = this.Data.pack.GetMultiTexture(this.GetCurrentPhase().TextureChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 );
 
             Vector2 position = Game1.GlobalToLocal(Game1.viewport, this_drawPosition);
             /*
@@ -505,23 +505,23 @@ namespace DynamicGameAssets.Game
 
             b.Draw( currTex.Texture, position, currTex.Rect, toTint, rotation, /*Crop.origin*/new Vector2( 8f, 24f ), 4f, effect, this_layerDepth );
             Color tintColor = this.tintColor.Value;
-            if ( GetCurrentPhase().TextureColorChoices != null )
+            if (this.GetCurrentPhase().TextureColorChoices != null )
             {
-                var colorTex = Data.pack.GetMultiTexture( GetCurrentPhase().TextureColorChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 ); ;
+                var colorTex = this.Data.pack.GetMultiTexture(this.GetCurrentPhase().TextureColorChoices, ((int)tileLocation.X * 7 + (int)tileLocation.Y * 11), 16, 32 ); ;
                 b.Draw( colorTex.Texture, position, colorTex.Rect, tintColor, rotation, new Vector2( 8f, 24f ), 4f, effect, this_coloredLayerDepth );
             }
         }
 
         public void DrawInMenu( SpriteBatch b, Vector2 screenPosition, Color toTint, float rotation, float scale, float layerDepth )
         {
-            var currTex = Data.GetTexture();
+            var currTex = this.Data.GetTexture();
 
             b.Draw( currTex.Texture, screenPosition, currTex.Rect, toTint, rotation, new Vector2( 32f, 96f ), scale, this.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth );
         }
 
         public void DrawWithOffset( SpriteBatch b, Vector2 tileLocation, Color toTint, float rotation, Vector2 offset )
         {
-            var currTex = Data.GetTexture();
+            var currTex = this.Data.GetTexture();
             /*
             if ( ( bool ) this.forageCrop )
             {

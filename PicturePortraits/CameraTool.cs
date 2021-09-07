@@ -51,7 +51,7 @@ namespace PicturePortraits
             who.UsingTool = false;
             who.canReleaseTool = true;
 
-            if ( attachments[ 0 ] == null )
+            if (this.attachments[ 0 ] == null )
             {
                 Game1.playSound( "shiny4" );
                 return;
@@ -78,10 +78,10 @@ namespace PicturePortraits
                                     Game1.playSound( "cameraNoise" );
 
                                     who.addItemByMenuIfNecessary( furniture.ToItem() );
-                                    if ( attachments[ 0 ].Stack > 1 )
-                                        attachments[ 0 ].Stack--;
+                                    if (this.attachments[ 0 ].Stack > 1 )
+                                        this.attachments[ 0 ].Stack--;
                                     else
-                                        attachments[ 0 ] = null;
+                                        this.attachments[ 0 ] = null;
                                     return;
                                 }
                             }
@@ -95,18 +95,18 @@ namespace PicturePortraits
 
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
         {
-            spriteBatch.Draw( Texture, location, CameraRect, Color.White * transparency, 0, Vector2.Zero, scaleSize * 4, SpriteEffects.None, layerDepth );
+            spriteBatch.Draw( CameraTool.Texture, location, CameraTool.CameraRect, Color.White * transparency, 0, Vector2.Zero, scaleSize * 4, SpriteEffects.None, layerDepth );
         }
 
         public override void drawAttachments( SpriteBatch b, int x, int y )
         {
-            if ( base.attachments[ 0 ] == null )
+            if ( this.attachments[ 0 ] == null )
             {
                 b.Draw( Game1.menuTexture, new Vector2( x, y ), Game1.getSourceRectForStandardTileSheet( Game1.menuTexture, 43 ), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.86f );
                 return;
             }
             b.Draw( Game1.menuTexture, new Vector2( x, y ), Game1.getSourceRectForStandardTileSheet( Game1.menuTexture, 10 ), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.86f );
-            base.attachments[ 0 ].drawInMenu( b, new Vector2( x, y ), 1f );
+            this.attachments[ 0 ].drawInMenu( b, new Vector2( x, y ), 1f );
         }
 
         public override Item getOne()

@@ -25,10 +25,10 @@ namespace DynamicGameAssets.PackData
         {
             var ret = ( ForgeRecipePackData ) base.Clone();
             ret.Result = new List<Weighted<ItemAbstraction>>();
-            foreach ( var choice in Result )
+            foreach ( var choice in this.Result )
                 ret.Result.Add( (Weighted<ItemAbstraction>) choice.Clone() );
-            ret.BaseItem = ( ItemAbstraction ) BaseItem.Clone();
-            ret.IngredientItem = ( ItemAbstraction ) IngredientItem.Clone();
+            ret.BaseItem = ( ItemAbstraction ) this.BaseItem.Clone();
+            ret.IngredientItem = ( ItemAbstraction ) this.IngredientItem.Clone();
             return ret;
         }
     }

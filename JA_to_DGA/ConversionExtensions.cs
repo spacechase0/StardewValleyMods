@@ -202,7 +202,7 @@ namespace JA_to_DGA
             }
             if ( data.CanPurchase )
             {
-                DoShopEntry( shops, packId, data.Name, new JsonAssets.PurchaseData()
+                ConversionExtensions.DoShopEntry( shops, packId, data.Name, new JsonAssets.PurchaseData()
                 {
                     PurchasePrice = data.PurchasePrice,
                     PurchaseFrom = data.PurchaseFrom,
@@ -210,7 +210,7 @@ namespace JA_to_DGA
                 } );
                 foreach ( var entry in data.AdditionalPurchaseData )
                 {
-                    DoShopEntry( shops, packId, data.Name, entry );
+                    ConversionExtensions.DoShopEntry( shops, packId, data.Name, entry );
                 }
             }
             if ( data.GiftTastes != null )
@@ -321,7 +321,7 @@ namespace JA_to_DGA
 
                 if ( data.Recipe.CanPurchase )
                 {
-                    DoShopEntry( shops, packId, recipe.ID, new JsonAssets.PurchaseData()
+                    ConversionExtensions.DoShopEntry( shops, packId, recipe.ID, new JsonAssets.PurchaseData()
                     {
                         PurchasePrice = data.Recipe.PurchasePrice,
                         PurchaseFrom = data.Recipe.PurchaseFrom,
@@ -329,7 +329,7 @@ namespace JA_to_DGA
                     } );
                     foreach ( var entry in data.AdditionalPurchaseData )
                     {
-                        DoShopEntry( shops, packId, recipe.ID, entry );
+                        ConversionExtensions.DoShopEntry( shops, packId, recipe.ID, entry );
                     }
                 }
 
@@ -453,7 +453,7 @@ namespace JA_to_DGA
             objs.Add( seedsItem );
 
             data.SeedPurchaseRequirements.Add( "z " + string.Join( " ", data.Seasons ) );
-            DoShopEntry( shops, packId, data.SeedName, new JsonAssets.PurchaseData()
+            ConversionExtensions.DoShopEntry( shops, packId, data.SeedName, new JsonAssets.PurchaseData()
             {
                 PurchasePrice = data.SeedPurchasePrice,
                 PurchaseFrom = data.SeedPurchaseFrom,
@@ -461,7 +461,7 @@ namespace JA_to_DGA
             } );
             foreach ( var entry in data.SeedAdditionalPurchaseData )
             {
-                DoShopEntry( shops, packId, data.SeedName, entry );
+                ConversionExtensions.DoShopEntry( shops, packId, data.SeedName, entry );
             }
 
             return item;
@@ -507,7 +507,7 @@ namespace JA_to_DGA
             objs.Add( saplingItem );
 
             data.SaplingPurchaseRequirements.Add( "z " + data.Season );
-            DoShopEntry( shops, packId, data.SaplingName, new JsonAssets.PurchaseData()
+            ConversionExtensions.DoShopEntry( shops, packId, data.SaplingName, new JsonAssets.PurchaseData()
             {
                 PurchasePrice = data.SaplingPurchasePrice,
                 PurchaseFrom = data.SaplingPurchaseFrom,
@@ -515,7 +515,7 @@ namespace JA_to_DGA
             } );
             foreach ( var entry in data.SaplingAdditionalPurchaseData )
             {
-                DoShopEntry( shops, packId, data.SaplingName, entry );
+                ConversionExtensions.DoShopEntry( shops, packId, data.SaplingName, entry );
             }
 
             return item;
@@ -564,7 +564,7 @@ namespace JA_to_DGA
 
                 if ( data.Recipe.CanPurchase )
                 {
-                    DoShopEntry( shops, packId, recipe.ID, new JsonAssets.PurchaseData()
+                    ConversionExtensions.DoShopEntry( shops, packId, recipe.ID, new JsonAssets.PurchaseData()
                     {
                         PurchasePrice = data.Recipe.PurchasePrice,
                         PurchaseFrom = data.Recipe.PurchaseFrom,
@@ -572,7 +572,7 @@ namespace JA_to_DGA
                     } );
                     foreach ( var entry in data.AdditionalPurchaseData )
                     {
-                        DoShopEntry( shops, packId, recipe.ID, entry );
+                        ConversionExtensions.DoShopEntry( shops, packId, recipe.ID, entry );
                     }
                 }
             }

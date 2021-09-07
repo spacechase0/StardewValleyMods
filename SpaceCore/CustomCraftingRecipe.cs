@@ -32,7 +32,7 @@ namespace SpaceCore
                 foreach (var chest in additionalIngredients)
                     items.AddRange(chest.items);
 
-                return GetAmountInList(items) / Quantity;
+                return this.GetAmountInList(items) / this.Quantity;
             }
 
             public abstract void Consume(IList<Chest> additionalIngredients);
@@ -45,17 +45,17 @@ namespace SpaceCore
 
             public ObjectIngredientMatcher(int index, int quantity )
             {
-                objectIndex = index;
-                qty = quantity;
+                this.objectIndex = index;
+                this.qty = quantity;
             }
 
             public override string DispayName
             {
                 get
                 {
-                    if (objectIndex < 0)
+                    if (this.objectIndex < 0)
                     {
-                        return objectIndex switch
+                        return this.objectIndex switch
                         {
                             -1 => Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.568"),
                             -2 => Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.569"),
@@ -68,9 +68,9 @@ namespace SpaceCore
                         };
                     }
                     string retString = Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.575");
-                    if (Game1.objectInformation.ContainsKey(objectIndex))
+                    if (Game1.objectInformation.ContainsKey(this.objectIndex))
                     {
-                        retString = Game1.objectInformation[objectIndex].Split('/')[4];
+                        retString = Game1.objectInformation[this.objectIndex].Split('/')[4];
                     }
                     return retString;
                 }
@@ -78,16 +78,16 @@ namespace SpaceCore
 
             public override Texture2D IconTexture => Game1.objectSpriteSheet;
 
-            public override Rectangle? IconSubrect => Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, objectIndex, 16, 16);
+            public override Rectangle? IconSubrect => Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.objectIndex, 16, 16);
 
-            public override int Quantity => Quantity;
+            public override int Quantity => this.Quantity;
 
             public override int GetAmountInList(IList<Item> items)
             {
                 int ret = 0;
                 foreach ( var item in items )
                 {
-                    if (ItemMatches(item))
+                    if (this.ItemMatches(item))
                         ret += item.Stack;
                 }
 
@@ -96,11 +96,11 @@ namespace SpaceCore
 
             public override void Consume(IList<Chest> additionalIngredients)
             {
-                int left = qty;
+                int left = this.qty;
                 for ( int i = Game1.player.Items.Count - 1; i >= 0; --i )
                 {
                     var item = Game1.player.Items[i];
-                    if ( ItemMatches( item ) )
+                    if (this.ItemMatches( item ) )
                     {
                         int amt = Math.Min(left, item.Stack);
                         left -= amt;
@@ -121,7 +121,7 @@ namespace SpaceCore
                         for (int i = chest.items.Count - 1; i >= 0; --i)
                         {
                             var item = chest.items[i];
-                            if ( ItemMatches( item ) )
+                            if (this.ItemMatches( item ) )
                             {
                                 int amt = Math.Min(left, item.Stack);
                                 left -= amt;
@@ -147,7 +147,7 @@ namespace SpaceCore
 
             private bool ItemMatches(Item item)
             {
-                return item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.ParentSheetIndex == objectIndex || obj.Category == objectIndex);
+                return item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.ParentSheetIndex == this.objectIndex || obj.Category == this.objectIndex);
             }
         }
 

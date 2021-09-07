@@ -18,8 +18,8 @@ namespace DynamicGameAssets.Game
 
         partial void DoInit()
         {
-            base.NetFields.AddFields( _sourcePack, _id );
-            base.NetFields.AddFields( grownFruits );
+            this.NetFields.AddFields(this._sourcePack, this._id );
+            this.NetFields.AddFields(this.grownFruits );
 
             this.treeType.Value = 0;
         }
@@ -40,7 +40,7 @@ namespace DynamicGameAssets.Game
                 this_maxShake.SetValue( ( float ) ( ( ( int ) this.growthStage >= 4 ) ? ( Math.PI / 128.0 ) : ( Math.PI / 64.0 ) ) );
                 if ( ( int ) this.growthStage >= 4 )
                 {
-                    if ( Game1.random.NextDouble() < 0.66 && Data.CanGrowNow )
+                    if ( Game1.random.NextDouble() < 0.66 && this.Data.CanGrowNow )
                     {
                         int numberOfLeaves2 = Game1.random.Next(1, 6);
                         for ( int k = 0; k < numberOfLeaves2; k++ )
@@ -85,7 +85,7 @@ namespace DynamicGameAssets.Game
                                 offset.Y = 32f;
                                 break;
                         }
-                        Debris d = new Debris(((int)this.struckByLightningCountdown > 0) ? new StardewValley.Object( 382, 1 ) : grownFruits[ j ].getOne(), new Vector2(tileLocation.X * 64f + 32f, (tileLocation.Y - 3f) * 64f + 32f) + offset, new Vector2(Game1.player.getStandingX(), Game1.player.getStandingY()))
+                        Debris d = new Debris(((int)this.struckByLightningCountdown > 0) ? new StardewValley.Object( 382, 1 ) : this.grownFruits[ j ].getOne(), new Vector2(tileLocation.X * 64f + 32f, (tileLocation.Y - 3f) * 64f + 32f) + offset, new Vector2(Game1.player.getStandingX(), Game1.player.getStandingY()))
                         {
                             itemQuality = fruitquality
                         };
@@ -95,7 +95,7 @@ namespace DynamicGameAssets.Game
                     }
                     this.grownFruits.Clear();
                 }
-                else if ( Game1.random.NextDouble() < 0.66 && Data.CanGrowNow )
+                else if ( Game1.random.NextDouble() < 0.66 && this.Data.CanGrowNow )
                 {
                     int numberOfLeaves = Game1.random.Next(1, 3);
                     for ( int i = 0; i < numberOfLeaves; i++ )
@@ -155,13 +155,13 @@ namespace DynamicGameAssets.Game
             }
             else if ( foundSomething && this.growthStage.Value != 4 )
             {
-                Game1_multiplayer.broadcastGlobalMessage( "Strings\\UI:FruitTree_Warning", true, Data.Product[ 0 ].Value.Create().DisplayName );
+                Game1_multiplayer.broadcastGlobalMessage( "Strings\\UI:FruitTree_Warning", true, this.Data.Product[ 0 ].Value.Create().DisplayName );
             }
             if ( !this.stump && ( int ) this.growthStage == 4 && ( ( ( int ) this.struckByLightningCountdown > 0 && !Game1.IsWinter ) || this.IsInSeasonHere( environment ) || environment.SeedsIgnoreSeasonsHere() ) )
             {
                 if ( this.grownFruits.Count < 3 )
                 {
-                    this.grownFruits.Add( Data.Product.Choose().Create() );
+                    this.grownFruits.Add(this.Data.Product.Choose().Create() );
                 }
                 if ( environment.IsGreenhouse )
                 {
@@ -176,12 +176,12 @@ namespace DynamicGameAssets.Game
 
         public override bool IsInSeasonHere( GameLocation location )
         {
-            return Data.CanGrowNow;
+            return this.Data.CanGrowNow;
         }
 
         public override bool seasonUpdate( bool onLoad )
         {
-            if ( !this.IsInSeasonHere( base.currentLocation ) && !onLoad && !this.greenHouseTree )
+            if ( !this.IsInSeasonHere( this.currentLocation ) && !onLoad && !this.greenHouseTree )
             {
                 this.grownFruits.Clear();
             }
@@ -243,7 +243,7 @@ namespace DynamicGameAssets.Game
                                     offset.Y = 32f;
                                     break;
                             }
-                            Debris d2 = new Debris(((int)this.struckByLightningCountdown > 0) ? new StardewValley.Object( 382, 1 ) : grownFruits[ i ].getOne(), new Vector2(tileLocation.X * 64f + 32f, (tileLocation.Y - 3f) * 64f + 32f) + offset, new Vector2(Game1.player.getStandingX(), Game1.player.getStandingY()))
+                            Debris d2 = new Debris(((int)this.struckByLightningCountdown > 0) ? new StardewValley.Object( 382, 1 ) : this.grownFruits[ i ].getOne(), new Vector2(tileLocation.X * 64f + 32f, (tileLocation.Y - 3f) * 64f + 32f) + offset, new Vector2(Game1.player.getStandingX(), Game1.player.getStandingY()))
                             {
                                 itemQuality = fruitquality
                             };
@@ -438,9 +438,9 @@ namespace DynamicGameAssets.Game
             var this_leaves = Mod.instance.Helper.Reflection.GetField< List< Leaf > >( this, "leaves" ).GetValue();
             float this_alpha = Mod.instance.Helper.Reflection.GetField< float >( this, "alpha" ).GetValue(); 
 
-            var currTex = Data.GetTexture();
+            var currTex = this.Data.GetTexture();
 
-            string season = Game1.GetSeasonForLocation(base.currentLocation);
+            string season = Game1.GetSeasonForLocation(this.currentLocation);
             if ( ( bool ) this.greenHouseTileTree )
             {
                 spriteBatch.Draw( Game1.mouseCursors, Game1.GlobalToLocal( Game1.viewport, new Vector2( tileLocation.X * 64f, tileLocation.Y * 64f ) ), new Rectangle( 669, 1957, 16, 16 ), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1E-08f );
@@ -473,7 +473,8 @@ namespace DynamicGameAssets.Game
                 {
                     spriteBatch.Draw( currTex.Texture, Game1.GlobalToLocal( Game1.viewport, new Vector2( tileLocation.X * 64f + 32f + ( ( this_shakeTimer > 0f ) ? ( ( float ) Math.Sin( Math.PI * 2.0 / ( double ) this_shakeTimer ) * 2f ) : 0f ), tileLocation.Y * 64f + 64f ) ), new Rectangle( 384, ( int ) this.treeType * 5 * 16 + 48, 48, 32 ), ( ( int ) this.struckByLightningCountdown > 0 ) ? ( Color.Gray * this_alpha ) : ( Color.White * this_alpha ), 0f, new Vector2( 24f, 32f ), 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ( ( bool ) this.stump && !this_falling ) ? ( ( float ) this.getBoundingBox( tileLocation ).Bottom / 10000f ) : ( ( float ) this.getBoundingBox( tileLocation ).Bottom / 10000f - 0.001f - tileLocation.X / 1000000f ) );
                 }
-                drawFruits( spriteBatch, tileLocation, this_alpha );
+
+                this.drawFruits( spriteBatch, tileLocation, this_alpha );
             }
             foreach ( Leaf j in this_leaves )
             {

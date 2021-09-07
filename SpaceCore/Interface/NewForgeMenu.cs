@@ -103,24 +103,24 @@ namespace SpaceCore.Interface
             : base( null, okButton: true, trashCan: true, 12, 132 )
         {
             Game1.playSound( "bigSelect" );
-            if ( base.yPositionOnScreen == IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder )
+            if ( this.yPositionOnScreen == IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder )
             {
-                base.movePosition( 0, -IClickableMenu.spaceToClearTopBorder );
+                this.movePosition( 0, -IClickableMenu.spaceToClearTopBorder );
             }
-            base.inventory.highlightMethod = HighlightItems;
+            this.inventory.highlightMethod = this.HighlightItems;
             this.forgeTextures = Game1.temporaryContent.Load<Texture2D>( "LooseSprites\\ForgeMenu" );
             this._CreateButtons();
-            if ( base.trashCan != null )
+            if ( this.trashCan != null )
             {
-                base.trashCan.myID = 106;
+                this.trashCan.myID = 106;
             }
-            if ( base.okButton != null )
+            if ( this.okButton != null )
             {
-                base.okButton.leftNeighborID = 11;
+                this.okButton.leftNeighborID = 11;
             }
             if ( Game1.options.SnappyMenus )
             {
-                base.populateClickableComponentList();
+                this.populateClickableComponentList();
                 this.snapToDefaultClickableComponent();
             }
             this._ValidateCraft();
@@ -128,7 +128,7 @@ namespace SpaceCore.Interface
 
         protected void _CreateButtons()
         {
-            this.leftIngredientSpot = new ClickableTextureComponent( new Rectangle( base.xPositionOnScreen + 204, base.yPositionOnScreen + 212, 64, 64 ), this.forgeTextures, new Rectangle( 142, 0, 16, 16 ), 4f )
+            this.leftIngredientSpot = new ClickableTextureComponent( new Rectangle( this.xPositionOnScreen + 204, this.yPositionOnScreen + 212, 64, 64 ), this.forgeTextures, new Rectangle( 142, 0, 16, 16 ), 4f )
             {
                 myID = 998,
                 downNeighborID = -99998,
@@ -137,7 +137,7 @@ namespace SpaceCore.Interface
                 item = ( ( this.leftIngredientSpot != null ) ? this.leftIngredientSpot.item : null ),
                 fullyImmutable = true
             };
-            this.rightIngredientSpot = new ClickableTextureComponent( new Rectangle( base.xPositionOnScreen + 348, base.yPositionOnScreen + 212, 64, 64 ), this.forgeTextures, new Rectangle( 142, 0, 16, 16 ), 4f )
+            this.rightIngredientSpot = new ClickableTextureComponent( new Rectangle( this.xPositionOnScreen + 348, this.yPositionOnScreen + 212, 64, 64 ), this.forgeTextures, new Rectangle( 142, 0, 16, 16 ), 4f )
             {
                 myID = 997,
                 downNeighborID = 996,
@@ -146,7 +146,7 @@ namespace SpaceCore.Interface
                 item = ( ( this.rightIngredientSpot != null ) ? this.rightIngredientSpot.item : null ),
                 fullyImmutable = true
             };
-            this.startTailoringButton = new ClickableTextureComponent( new Rectangle( base.xPositionOnScreen + 204, base.yPositionOnScreen + 308, 52, 56 ), this.forgeTextures, new Rectangle( 0, 80, 13, 14 ), 4f )
+            this.startTailoringButton = new ClickableTextureComponent( new Rectangle( this.xPositionOnScreen + 204, this.yPositionOnScreen + 308, 52, 56 ), this.forgeTextures, new Rectangle( 0, 80, 13, 14 ), 4f )
             {
                 myID = 996,
                 downNeighborID = -99998,
@@ -156,7 +156,7 @@ namespace SpaceCore.Interface
                 item = ( ( this.startTailoringButton != null ) ? this.startTailoringButton.item : null ),
                 fullyImmutable = true
             };
-            this.unforgeButton = new ClickableComponent( new Rectangle( base.xPositionOnScreen + 484, base.yPositionOnScreen + 312, 40, 44 ), "Unforge" )
+            this.unforgeButton = new ClickableComponent( new Rectangle( this.xPositionOnScreen + 484, this.yPositionOnScreen + 312, 40, 44 ), "Unforge" )
             {
                 myID = 994,
                 downNeighborID = -99998,
@@ -165,17 +165,17 @@ namespace SpaceCore.Interface
                 upNeighborID = 997,
                 fullyImmutable = true
             };
-            if ( base.inventory.inventory != null && base.inventory.inventory.Count >= 12 )
+            if ( this.inventory.inventory != null && this.inventory.inventory.Count >= 12 )
             {
                 for ( int j = 0; j < 12; j++ )
                 {
-                    if ( base.inventory.inventory[ j ] != null )
+                    if ( this.inventory.inventory[ j ] != null )
                     {
-                        base.inventory.inventory[ j ].upNeighborID = -99998;
+                        this.inventory.inventory[ j ].upNeighborID = -99998;
                     }
                 }
             }
-            this.craftResultDisplay = new ClickableTextureComponent( new Rectangle( base.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth / 2 + 4 + 660, base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 8 + 232, 64, 64 ), this.forgeTextures, new Rectangle( 0, 208, 16, 16 ), 4f )
+            this.craftResultDisplay = new ClickableTextureComponent( new Rectangle( this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth / 2 + 4 + 660, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 8 + 232, 64, 64 ), this.forgeTextures, new Rectangle( 0, 208, 16, 16 ), 4f )
             {
                 myID = 995,
                 downNeighborID = -99998,
@@ -202,14 +202,14 @@ namespace SpaceCore.Interface
             } );
             for ( int i = 0; i < this.equipmentIcons.Count; i++ )
             {
-                this.equipmentIcons[ i ].bounds.X = base.xPositionOnScreen - 64 + 9;
-                this.equipmentIcons[ i ].bounds.Y = base.yPositionOnScreen + 192 + i * 64;
+                this.equipmentIcons[ i ].bounds.X = this.xPositionOnScreen - 64 + 9;
+                this.equipmentIcons[ i ].bounds.Y = this.yPositionOnScreen + 192 + i * 64;
             }
         }
 
         public override void snapToDefaultClickableComponent()
         {
-            base.currentlySnappedComponent = base.getComponentWithID( 0 );
+            this.currentlySnappedComponent = this.getComponentWithID( 0 );
             this.snapCursorToCurrentSnappedComponent();
         }
 
@@ -224,7 +224,7 @@ namespace SpaceCore.Interface
 
         public override bool readyToClose()
         {
-            if ( base.readyToClose() && base.heldItem == null )
+            if ( base.readyToClose() && this.heldItem == null )
             {
                 return !this.IsBusy();
             }
@@ -256,7 +256,7 @@ namespace SpaceCore.Interface
         public void GenerateHighlightDictionary()
         {
             this._highlightDictionary = new Dictionary<Item, bool>();
-            List<Item> item_list = new List<Item>(base.inventory.actualInventory);
+            List<Item> item_list = new List<Item>(this.inventory.actualInventory);
             if ( Game1.player.leftRing.Value != null )
             {
                 item_list.Add( Game1.player.leftRing.Value );
@@ -310,11 +310,11 @@ namespace SpaceCore.Interface
         private void _leftIngredientSpotClicked()
         {
             Item old_item = this.leftIngredientSpot.item;
-            if ( ( base.heldItem == null || this.IsValidCraftIngredient( base.heldItem ) ) && ( base.heldItem == null || base.heldItem is Tool || base.heldItem is Ring ) || IsLeftCraftIngredient( base.heldItem ) )
+            if ( ( this.heldItem == null || this.IsValidCraftIngredient( this.heldItem ) ) && ( this.heldItem == null || this.heldItem is Tool || this.heldItem is Ring ) || this.IsLeftCraftIngredient( this.heldItem ) )
             {
                 Game1.playSound( "stoneStep" );
-                this.leftIngredientSpot.item = base.heldItem;
-                base.heldItem = old_item;
+                this.leftIngredientSpot.item = this.heldItem;
+                this.heldItem = old_item;
                 this._highlightDictionary = null;
                 this._ValidateCraft();
             }
@@ -332,11 +332,11 @@ namespace SpaceCore.Interface
         private void _rightIngredientSpotClicked()
         {
             Item old_item = this.rightIngredientSpot.item;
-            if ( ( base.heldItem == null || this.IsValidCraftIngredient( base.heldItem ) ) && ( base.heldItem == null || ( int ) base.heldItem.parentSheetIndex != 848 ) )
+            if ( ( this.heldItem == null || this.IsValidCraftIngredient( this.heldItem ) ) && ( this.heldItem == null || ( int ) this.heldItem.parentSheetIndex != 848 ) )
             {
                 Game1.playSound( "stoneStep" );
-                this.rightIngredientSpot.item = base.heldItem;
-                base.heldItem = old_item;
+                this.rightIngredientSpot.item = this.heldItem;
+                this.heldItem = old_item;
                 this._highlightDictionary = null;
                 this._ValidateCraft();
             }
@@ -346,10 +346,10 @@ namespace SpaceCore.Interface
         {
             if ( key == Keys.Delete )
             {
-                if ( base.heldItem != null && this.IsValidCraftIngredient( base.heldItem ) )
+                if ( this.heldItem != null && this.IsValidCraftIngredient( this.heldItem ) )
                 {
-                    Utility.trashItem( base.heldItem );
-                    base.heldItem = null;
+                    Utility.trashItem( this.heldItem );
+                    this.heldItem = null;
                 }
             }
             else
@@ -360,20 +360,20 @@ namespace SpaceCore.Interface
 
         public bool IsHoldingEquippedItem()
         {
-            if ( base.heldItem == null )
+            if ( this.heldItem == null )
             {
                 return false;
             }
-            if ( !Game1.player.IsEquippedItem( base.heldItem ) )
+            if ( !Game1.player.IsEquippedItem( this.heldItem ) )
             {
-                return Game1.player.IsEquippedItem( Utility.PerformSpecialItemGrabReplacement( base.heldItem ) );
+                return Game1.player.IsEquippedItem( Utility.PerformSpecialItemGrabReplacement( this.heldItem ) );
             }
             return true;
         }
 
         public override void receiveLeftClick( int x, int y, bool playSound = true )
         {
-            Item old_held_item = base.heldItem;
+            Item old_held_item = this.heldItem;
             Game1.player.IsEquippedItem( old_held_item );
             base.receiveLeftClick( x, y );
             foreach ( ClickableComponent c in this.equipmentIcons )
@@ -389,22 +389,22 @@ namespace SpaceCore.Interface
                     {
                         return;
                     }
-                    Item item_to_place2 = base.heldItem;
+                    Item item_to_place2 = this.heldItem;
                     Item old_item2 = Game1.player.rightRing.Value;
-                    if ( old_item2 != base.heldItem && ( item_to_place2 == null || item_to_place2 is Ring ) )
+                    if ( old_item2 != this.heldItem && ( item_to_place2 == null || item_to_place2 is Ring ) )
                     {
                         if ( Game1.player.rightRing.Value != null )
                         {
                             Game1.player.rightRing.Value.onUnequip( Game1.player, Game1.currentLocation );
                         }
                         Game1.player.rightRing.Value = ( item_to_place2 as Ring );
-                        base.heldItem = old_item2;
+                        this.heldItem = old_item2;
                         if ( Game1.player.rightRing.Value != null )
                         {
                             Game1.player.rightRing.Value.onEquip( Game1.player, Game1.currentLocation );
                             Game1.playSound( "crit" );
                         }
-                        else if ( base.heldItem != null )
+                        else if ( this.heldItem != null )
                         {
                             Game1.playSound( "dwop" );
                         }
@@ -418,22 +418,22 @@ namespace SpaceCore.Interface
                     {
                         return;
                     }
-                    Item item_to_place = base.heldItem;
+                    Item item_to_place = this.heldItem;
                     Item old_item = Game1.player.leftRing.Value;
-                    if ( old_item != base.heldItem && ( item_to_place == null || item_to_place is Ring ) )
+                    if ( old_item != this.heldItem && ( item_to_place == null || item_to_place is Ring ) )
                     {
                         if ( Game1.player.leftRing.Value != null )
                         {
                             Game1.player.leftRing.Value.onUnequip( Game1.player, Game1.currentLocation );
                         }
                         Game1.player.leftRing.Value = ( item_to_place as Ring );
-                        base.heldItem = old_item;
+                        this.heldItem = old_item;
                         if ( Game1.player.leftRing.Value != null )
                         {
                             Game1.player.leftRing.Value.onEquip( Game1.player, Game1.currentLocation );
                             Game1.playSound( "crit" );
                         }
-                        else if ( base.heldItem != null )
+                        else if ( this.heldItem != null )
                         {
                             Game1.playSound( "dwop" );
                         }
@@ -443,10 +443,10 @@ namespace SpaceCore.Interface
                 }
                 return;
             }
-            if ( Game1.GetKeyboardState().IsKeyDown( Keys.LeftShift ) && old_held_item != base.heldItem && base.heldItem != null )
+            if ( Game1.GetKeyboardState().IsKeyDown( Keys.LeftShift ) && old_held_item != this.heldItem && this.heldItem != null )
             {
                 //if ( base.heldItem is Tool || ( base.heldItem is Ring && this.leftIngredientSpot.item == null ) )
-                if ( ( base.heldItem is Tool || base.heldItem is Ring || this.IsLeftCraftIngredient( base.heldItem ) ) && this.leftIngredientSpot.item == null )
+                if ( ( this.heldItem is Tool || this.heldItem is Ring || this.IsLeftCraftIngredient( this.heldItem ) ) && this.leftIngredientSpot.item == null )
                 {
                     this._leftIngredientSpotClicked();
                 }
@@ -462,36 +462,36 @@ namespace SpaceCore.Interface
             if ( this.leftIngredientSpot.containsPoint( x, y ) )
             {
                 this._leftIngredientSpotClicked();
-                if ( Game1.GetKeyboardState().IsKeyDown( Keys.LeftShift ) && base.heldItem != null )
+                if ( Game1.GetKeyboardState().IsKeyDown( Keys.LeftShift ) && this.heldItem != null )
                 {
-                    if ( Game1.player.IsEquippedItem( base.heldItem ) )
+                    if ( Game1.player.IsEquippedItem( this.heldItem ) )
                     {
-                        base.heldItem = null;
+                        this.heldItem = null;
                     }
                     else
                     {
-                        base.heldItem = base.inventory.tryToAddItem( base.heldItem, "" );
+                        this.heldItem = this.inventory.tryToAddItem( this.heldItem, "" );
                     }
                 }
             }
             else if ( this.rightIngredientSpot.containsPoint( x, y ) )
             {
                 this._rightIngredientSpotClicked();
-                if ( Game1.GetKeyboardState().IsKeyDown( Keys.LeftShift ) && base.heldItem != null )
+                if ( Game1.GetKeyboardState().IsKeyDown( Keys.LeftShift ) && this.heldItem != null )
                 {
-                    if ( Game1.player.IsEquippedItem( base.heldItem ) )
+                    if ( Game1.player.IsEquippedItem( this.heldItem ) )
                     {
-                        base.heldItem = null;
+                        this.heldItem = null;
                     }
                     else
                     {
-                        base.heldItem = base.inventory.tryToAddItem( base.heldItem, "" );
+                        this.heldItem = this.inventory.tryToAddItem( this.heldItem, "" );
                     }
                 }
             }
             else if ( this.startTailoringButton.containsPoint( x, y ) )
             {
-                if ( base.heldItem == null )
+                if ( this.heldItem == null )
                 {
                     bool fail = false;
                     if ( !this.CanFitCraftedItem() )
@@ -511,7 +511,7 @@ namespace SpaceCore.Interface
                         int crystals2 = this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item);
                         for ( int k = 0; k < crystals2; k++ )
                         {
-                            this.tempSprites.Add( new TemporaryAnimatedSprite( "", new Rectangle( 143, 17, 14, 15 ), new Vector2( base.xPositionOnScreen + 276, base.yPositionOnScreen + 300 ), flipped: false, 0.1f, Color.White )
+                            this.tempSprites.Add( new TemporaryAnimatedSprite( "", new Rectangle( 143, 17, 14, 15 ), new Vector2( this.xPositionOnScreen + 276, this.yPositionOnScreen + 300 ), flipped: false, 0.1f, Color.White )
                             {
                                 texture = this.forgeTextures,
                                 motion = new Vector2( -4f, -4f ),
@@ -625,33 +625,33 @@ namespace SpaceCore.Interface
                     Game1.playSound( "cancel" );
                 }
             }
-            if ( base.heldItem == null || this.isWithinBounds( x, y ) || !base.heldItem.canBeTrashed() )
+            if ( this.heldItem == null || this.isWithinBounds( x, y ) || !this.heldItem.canBeTrashed() )
             {
                 return;
             }
-            if ( Game1.player.IsEquippedItem( base.heldItem ) )
+            if ( Game1.player.IsEquippedItem( this.heldItem ) )
             {
-                if ( base.heldItem == Game1.player.hat.Value )
+                if ( this.heldItem == Game1.player.hat.Value )
                 {
                     Game1.player.hat.Value = null;
                 }
-                else if ( base.heldItem == Game1.player.shirtItem.Value )
+                else if ( this.heldItem == Game1.player.shirtItem.Value )
                 {
                     Game1.player.shirtItem.Value = null;
                 }
-                else if ( base.heldItem == Game1.player.pantsItem.Value )
+                else if ( this.heldItem == Game1.player.pantsItem.Value )
                 {
                     Game1.player.pantsItem.Value = null;
                 }
             }
             Game1.playSound( "throwDownITem" );
-            Game1.createItemDebris( base.heldItem, Game1.player.getStandingPosition(), Game1.player.FacingDirection );
-            base.heldItem = null;
+            Game1.createItemDebris( this.heldItem, Game1.player.getStandingPosition(), Game1.player.FacingDirection );
+            this.heldItem = null;
         }
 
         protected virtual bool CheckHeldItem( Func<Item, bool> f = null )
         {
-            return f?.Invoke( base.heldItem ) ?? ( base.heldItem != null );
+            return f?.Invoke( this.heldItem ) ?? ( this.heldItem != null );
         }
 
         public virtual int GetForgeCostAtLevel( int level )
@@ -747,7 +747,7 @@ namespace SpaceCore.Interface
             }
             else if ( this._craftState == CraftState.MissingShards )
             {
-                if ( base.heldItem != null && base.heldItem.ParentSheetIndex == 848 )
+                if ( this.heldItem != null && this.heldItem.ParentSheetIndex == 848 )
                 {
                     this.displayedDescription = Game1.content.LoadString( "Strings\\UI:Forge_shards" );
                 }
@@ -825,8 +825,7 @@ namespace SpaceCore.Interface
             {
                 if ( recipe.BaseItem.HasEnoughFor( left_item ) && recipe.IngredientItem.HasEnoughFor( right_item ) )
                 {
-                    if ( forReal )
-                        justCrafted = recipe;
+                    if ( forReal ) this.justCrafted = recipe;
                     return recipe.CreateResult( left_item, right_item );
                 }
             }
@@ -838,10 +837,10 @@ namespace SpaceCore.Interface
         public void SpendRightItem()
         {
             //<MINE>
-            if ( justCrafted != null )
+            if (this.justCrafted != null )
             {
-                justCrafted.IngredientItem.Consume( ref this.rightIngredientSpot.item );
-                justCrafted = null;
+                this.justCrafted.IngredientItem.Consume( ref this.rightIngredientSpot.item );
+                this.justCrafted = null;
                 return;
             }
             //</MINE>
@@ -859,9 +858,9 @@ namespace SpaceCore.Interface
         public void SpendLeftItem()
         {
             //<MINE>
-            if ( justCrafted != null )
+            if (this.justCrafted != null )
             {
-                justCrafted.BaseItem.Consume( ref this.leftIngredientSpot.item );
+                this.justCrafted.BaseItem.Consume( ref this.leftIngredientSpot.item );
                 return;
             }
             //</MINE>
@@ -890,38 +889,38 @@ namespace SpaceCore.Interface
             {
                 return;
             }
-            base.hoveredItem = null;
+            this.hoveredItem = null;
             base.performHoverAction( x, y );
-            base.hoverText = "";
+            this.hoverText = "";
             for ( int i = 0; i < this.equipmentIcons.Count; i++ )
             {
                 if ( this.equipmentIcons[ i ].containsPoint( x, y ) )
                 {
                     if ( this.equipmentIcons[ i ].name == "Ring1" )
                     {
-                        base.hoveredItem = Game1.player.leftRing.Value;
+                        this.hoveredItem = Game1.player.leftRing.Value;
                     }
                     else if ( this.equipmentIcons[ i ].name == "Ring2" )
                     {
-                        base.hoveredItem = Game1.player.rightRing.Value;
+                        this.hoveredItem = Game1.player.rightRing.Value;
                     }
                 }
             }
             if ( this.craftResultDisplay.visible && this.craftResultDisplay.containsPoint( x, y ) && this.craftResultDisplay.item != null )
             {
-                base.hoveredItem = this.craftResultDisplay.item;
+                this.hoveredItem = this.craftResultDisplay.item;
             }
             if ( this.leftIngredientSpot.containsPoint( x, y ) && this.leftIngredientSpot.item != null )
             {
-                base.hoveredItem = this.leftIngredientSpot.item;
+                this.hoveredItem = this.leftIngredientSpot.item;
             }
             if ( this.rightIngredientSpot.containsPoint( x, y ) && this.rightIngredientSpot.item != null )
             {
-                base.hoveredItem = this.rightIngredientSpot.item;
+                this.hoveredItem = this.rightIngredientSpot.item;
             }
             if ( this.unforgeButton.containsPoint( x, y ) )
             {
-                base.hoverText = Game1.content.LoadString( "Strings\\UI:Forge_Unforge" );
+                this.hoverText = Game1.content.LoadString( "Strings\\UI:Forge_Unforge" );
             }
             if ( this._craftState == CraftState.Valid && this.CanFitCraftedItem() )
             {
@@ -935,7 +934,7 @@ namespace SpaceCore.Interface
 
         public bool CanFitCraftedItem()
         {
-            if ( this.craftResultDisplay.item != null && !Utility.canItemBeAddedToThisInventoryList( this.craftResultDisplay.item, base.inventory.actualInventory ) )
+            if ( this.craftResultDisplay.item != null && !Utility.canItemBeAddedToThisInventoryList( this.craftResultDisplay.item, this.inventory.actualInventory ) )
             {
                 return false;
             }
@@ -945,8 +944,8 @@ namespace SpaceCore.Interface
         public override void gameWindowSizeChanged( Rectangle oldBounds, Rectangle newBounds )
         {
             base.gameWindowSizeChanged( oldBounds, newBounds );
-            int yPositionForInventory = base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + 192 - 16 + 128 + 4;
-            base.inventory = new InventoryMenu( base.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth / 2 + 12, yPositionForInventory, playerInventory: false, null, base.inventory.highlightMethod );
+            int yPositionForInventory = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + 192 - 16 + 128 + 4;
+            this.inventory = new InventoryMenu( this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth / 2 + 12, yPositionForInventory, playerInventory: false, null, this.inventory.highlightMethod );
             this._CreateButtons();
         }
 
@@ -979,7 +978,7 @@ namespace SpaceCore.Interface
             {
                 this._ValidateCraft();
             }
-            base.descriptionText = this.displayedDescription;
+            this.descriptionText = this.displayedDescription;
             this.questionMarkOffset.X = ( float ) Math.Sin( time.TotalGameTime.TotalSeconds * 2.5 ) * 4f;
             this.questionMarkOffset.Y = ( float ) Math.Cos( time.TotalGameTime.TotalSeconds * 5.0 ) * -4f;
             bool can_fit_crafted_item = this.CanFitCraftedItem();
@@ -1124,7 +1123,7 @@ namespace SpaceCore.Interface
                         }
                         this.leftIngredientSpot.item = null;
                         Game1.playSound( "coin" );
-                        base.heldItem = weapon;
+                        this.heldItem = weapon;
                     }
                     Utility.CollectOrDrop( new StardewValley.Object( 848, cost / 2 ) );
                 }
@@ -1151,7 +1150,7 @@ namespace SpaceCore.Interface
             }
             Game1.player.removeItemsFromInventory( 848, this.GetForgeCost( this.leftIngredientSpot.item, this.rightIngredientSpot.item ) );
             Item crafted_item = this.CraftItem(this.leftIngredientSpot.item, this.rightIngredientSpot.item, forReal: true);
-            if ( crafted_item != null && !Utility.canItemBeAddedToThisInventoryList( crafted_item, base.inventory.actualInventory ) )
+            if ( crafted_item != null && !Utility.canItemBeAddedToThisInventoryList( crafted_item, this.inventory.actualInventory ) )
             {
                 Game1.playSound( "cancel" );
                 Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:Crop.cs.588" ) );
@@ -1168,7 +1167,7 @@ namespace SpaceCore.Interface
             }
             this.SpendRightItem();
             Game1.playSound( "coin" );
-            base.heldItem = crafted_item;
+            this.heldItem = crafted_item;
             this._timeUntilCraft = 0;
             this._ValidateCraft();
         }
@@ -1193,16 +1192,16 @@ namespace SpaceCore.Interface
         public override void draw( SpriteBatch b )
         {
             b.Draw( Game1.fadeToBlackRect, Game1.graphics.GraphicsDevice.Viewport.Bounds, Color.Black * 0.6f );
-            Game1.DrawBox( base.xPositionOnScreen - 64, base.yPositionOnScreen + 128, 128, 201, new Color( 116, 11, 3 ) );
-            Game1.player.FarmerRenderer.drawMiniPortrat( b, new Vector2( ( float ) ( base.xPositionOnScreen - 64 ) + 9.6f, base.yPositionOnScreen + 128 ), 0.87f, 4f, 2, Game1.player );
+            Game1.DrawBox( this.xPositionOnScreen - 64, this.yPositionOnScreen + 128, 128, 201, new Color( 116, 11, 3 ) );
+            Game1.player.FarmerRenderer.drawMiniPortrat( b, new Vector2( ( float ) ( this.xPositionOnScreen - 64 ) + 9.6f, this.yPositionOnScreen + 128 ), 0.87f, 4f, 2, Game1.player );
             base.draw( b, drawUpperPortion: true, drawDescriptionArea: true, 116, 11, 3 );
-            b.Draw( this.forgeTextures, new Vector2( base.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth / 2 - 4, base.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder ), new Rectangle( 0, 0, 142, 80 ), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f );
+            b.Draw( this.forgeTextures, new Vector2( this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth / 2 - 4, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder ), new Rectangle( 0, 0, 142, 80 ), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.87f );
             Color draw_color = Color.White;
             if ( this._craftState == CraftState.MissingShards )
             {
                 draw_color = Color.Gray * 0.75f;
             }
-            b.Draw( this.forgeTextures, new Vector2( base.xPositionOnScreen + 276, base.yPositionOnScreen + 300 ), new Rectangle( 142, 16, 17, 17 ), draw_color, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.1f );
+            b.Draw( this.forgeTextures, new Vector2( this.xPositionOnScreen + 276, this.yPositionOnScreen + 300 ), new Rectangle( 142, 16, 17, 17 ), draw_color, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.1f );
             if ( this.leftIngredientSpot.item != null && this.rightIngredientSpot.item != null && this.IsValidCraft( this.leftIngredientSpot.item, this.rightIngredientSpot.item ) )
             {
                 /*
@@ -1222,7 +1221,7 @@ namespace SpaceCore.Interface
                     int source_offset = (cost - 10) / 5;
                     if ( source_offset >= 0 && source_offset <= 2 )
                     {
-                        b.Draw( this.forgeTextures, new Vector2( base.xPositionOnScreen + 344, base.yPositionOnScreen + 320 ), new Rectangle( 142, 38 + source_offset * 10, 17, 10 ), Color.White * ( ( this._craftState == CraftState.MissingShards ) ? 0.5f : 1f ), 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.1f );
+                        b.Draw( this.forgeTextures, new Vector2( this.xPositionOnScreen + 344, this.yPositionOnScreen + 320 ), new Rectangle( 142, 38 + source_offset * 10, 17, 10 ), Color.White * ( ( this._craftState == CraftState.MissingShards ) ? 0.5f : 1f ), 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.1f );
                     }
                 }
                 //</MINE>
@@ -1239,10 +1238,10 @@ namespace SpaceCore.Interface
             Point random_shaking = new Point(0, 0);
             bool left_slot_accepts_this_item = false;
             bool right_slot_accepts_this_item = false;
-            Item highlight_item = base.hoveredItem;
-            if ( base.heldItem != null )
+            Item highlight_item = this.hoveredItem;
+            if ( this.heldItem != null )
             {
-                highlight_item = base.heldItem;
+                highlight_item = this.heldItem;
             }
             if ( highlight_item != null && highlight_item != this.leftIngredientSpot.item && highlight_item != this.rightIngredientSpot.item && highlight_item != this.craftResultDisplay.item )
             {
@@ -1267,9 +1266,9 @@ namespace SpaceCore.Interface
                     right_slot_accepts_this_item = true;
                 }
                 //<MINE> PATCH_NEEDS_PORTING
-                if ( IsLeftCraftIngredient( highlight_item ) )
+                if (this.IsLeftCraftIngredient( highlight_item ) )
                     left_slot_accepts_this_item = true;
-                if ( IsRightCraftIngredient( highlight_item ) )
+                if (this.IsRightCraftIngredient( highlight_item ) )
                     right_slot_accepts_this_item = true;
                 //</MINE>
             }
@@ -1290,7 +1289,7 @@ namespace SpaceCore.Interface
                         {
                             transparency2 = 0.5f;
                         }
-                        if ( Game1.player.rightRing.Value == base.heldItem )
+                        if ( Game1.player.rightRing.Value == this.heldItem )
                         {
                             transparency2 = 0.5f;
                         }
@@ -1309,7 +1308,7 @@ namespace SpaceCore.Interface
                     {
                         transparency = 0.5f;
                     }
-                    if ( Game1.player.leftRing.Value == base.heldItem )
+                    if ( Game1.player.leftRing.Value == this.heldItem )
                     {
                         transparency = 0.5f;
                     }
@@ -1351,26 +1350,26 @@ namespace SpaceCore.Interface
             {
                 tempSprite.draw( b, localPosition: true );
             }
-            if ( !base.hoverText.Equals( "" ) )
+            if ( !this.hoverText.Equals( "" ) )
             {
-                IClickableMenu.drawHoverText( b, base.hoverText, Game1.smallFont, ( base.heldItem != null ) ? 32 : 0, ( base.heldItem != null ) ? 32 : 0 );
+                IClickableMenu.drawHoverText( b, this.hoverText, Game1.smallFont, ( this.heldItem != null ) ? 32 : 0, ( this.heldItem != null ) ? 32 : 0 );
             }
-            else if ( base.hoveredItem != null )
+            else if ( this.hoveredItem != null )
             {
-                if ( base.hoveredItem == this.craftResultDisplay.item && Utility.IsNormalObjectAtParentSheetIndex( this.rightIngredientSpot.item, 74 ) )
+                if ( this.hoveredItem == this.craftResultDisplay.item && Utility.IsNormalObjectAtParentSheetIndex( this.rightIngredientSpot.item, 74 ) )
                 {
                     BaseEnchantment.hideEnchantmentName = true;
                 }
-                IClickableMenu.drawToolTip( b, base.hoveredItem.getDescription(), base.hoveredItem.DisplayName, base.hoveredItem, base.heldItem != null );
+                IClickableMenu.drawToolTip( b, this.hoveredItem.getDescription(), this.hoveredItem.DisplayName, this.hoveredItem, this.heldItem != null );
                 BaseEnchantment.hideEnchantmentName = false;
             }
-            if ( base.heldItem != null )
+            if ( this.heldItem != null )
             {
-                base.heldItem.drawInMenu( b, new Vector2( Game1.getOldMouseX() + 8, Game1.getOldMouseY() + 8 ), 1f );
+                this.heldItem.drawInMenu( b, new Vector2( Game1.getOldMouseX() + 8, Game1.getOldMouseY() + 8 ), 1f );
             }
             if ( !Game1.options.hardwareCursor )
             {
-                base.drawMouse( b );
+                this.drawMouse( b );
             }
         }
 
@@ -1381,9 +1380,9 @@ namespace SpaceCore.Interface
 
         protected void _OnCloseMenu()
         {
-            if ( !Game1.player.IsEquippedItem( base.heldItem ) )
+            if ( !Game1.player.IsEquippedItem( this.heldItem ) )
             {
-                Utility.CollectOrDrop( base.heldItem, 2 );
+                Utility.CollectOrDrop( this.heldItem, 2 );
             }
             if ( !Game1.player.IsEquippedItem( this.leftIngredientSpot.item ) )
             {
@@ -1397,7 +1396,7 @@ namespace SpaceCore.Interface
             {
                 Utility.CollectOrDrop( this.startTailoringButton.item, 2 );
             }
-            base.heldItem = null;
+            this.heldItem = null;
             this.leftIngredientSpot.item = null;
             this.rightIngredientSpot.item = null;
             this.startTailoringButton.item = null;

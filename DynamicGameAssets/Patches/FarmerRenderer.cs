@@ -22,7 +22,7 @@ namespace DynamicGameAssets.Patches
 
             if ( Mod.itemLookup.ContainsKey( this_shoes.Value ) )
             {
-                Impl( Mod.Find( Mod.itemLookup[ this_shoes.Value ] ) as BootsPackData, __instance, texture_name, pixels );
+                FarmerRendererApplyShoesPatch.Impl( Mod.Find( Mod.itemLookup[ this_shoes.Value ] ) as BootsPackData, __instance, texture_name, pixels );
                 return false;
             }
 
