@@ -160,10 +160,10 @@ namespace SpaceCore.Events
 
         internal static void InvokeOnEventFinished()
         {
-            Log.Trace( "Event: OnEventFinished" );
-            if ( SpaceEvents.OnEventFinished == null )
+            Log.Trace("Event: OnEventFinished");
+            if (SpaceEvents.OnEventFinished == null)
                 return;
-            Util.InvokeEvent( "SpaceEvents.OnEventFinished", SpaceEvents.OnEventFinished.GetInvocationList(), null );
+            Util.InvokeEvent("SpaceEvents.OnEventFinished", SpaceEvents.OnEventFinished.GetInvocationList(), null);
         }
     }
 }

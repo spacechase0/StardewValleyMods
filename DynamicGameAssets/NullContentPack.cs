@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HarmonyLib;
 using StardewModdingAPI;
 using StardewValley;
@@ -17,7 +14,7 @@ namespace DynamicGameAssets
 
         public string Author => "null";
 
-        public ISemanticVersion Version => new SemanticVersion( "1.0.0" );
+        public ISemanticVersion Version => new SemanticVersion("1.0.0");
 
         public ISemanticVersion MinimumApiVersion => null;
 
@@ -42,17 +39,17 @@ namespace DynamicGameAssets
 
         public string ModID => "null";
 
-        public Translation Get( string key )
+        public Translation Get(string key)
         {
-            return ( Translation ) AccessTools.Constructor( typeof( Translation ), new Type[] { typeof( string ), typeof( string ), typeof( string ) } ).Invoke( new object[] { "null", "null", "null" } );
+            return (Translation)AccessTools.Constructor(typeof(Translation), new Type[] { typeof(string), typeof(string), typeof(string) }).Invoke(new object[] { "null", "null", "null" });
         }
 
-        public Translation Get( string key, object tokens )
+        public Translation Get(string key, object tokens)
         {
-            return this.Get( key );
+            return this.Get(key);
         }
 
-        public IDictionary<string, Translation> GetInAllLocales( string key, bool withFallback = false )
+        public IDictionary<string, Translation> GetInAllLocales(string key, bool withFallback = false)
         {
             return new Dictionary<string, Translation>();
         }
@@ -71,27 +68,27 @@ namespace DynamicGameAssets
 
         public ITranslationHelper Translation => new NullTranslationHelper();
 
-        public string GetActualAssetKey( string key )
+        public string GetActualAssetKey(string key)
         {
             return key;
         }
 
-        public bool HasFile( string path )
+        public bool HasFile(string path)
         {
             return false;
         }
 
-        public T LoadAsset<T>( string key )
+        public T LoadAsset<T>(string key)
         {
-            return default( T );
+            return default(T);
         }
 
-        public TModel ReadJsonFile<TModel>( string path ) where TModel : class
+        public TModel ReadJsonFile<TModel>(string path) where TModel : class
         {
-            return default( TModel );
+            return default(TModel);
         }
 
-        public void WriteJsonFile<TModel>( string path, TModel data ) where TModel : class
+        public void WriteJsonFile<TModel>(string path, TModel data) where TModel : class
         {
         }
     }

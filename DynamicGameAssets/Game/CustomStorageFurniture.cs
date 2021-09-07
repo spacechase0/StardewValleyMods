@@ -9,25 +9,25 @@ using StardewValley.Objects;
 namespace DynamicGameAssets.Game
 {
     // Literally a copy+paste of CustomBasicFurniture subclassing from a different type (with small storage-specific changes)
-    [XmlType( "Mods_DGAStorageFurniture" )]
-    public partial class CustomStorageFurniture : StorageFurniture, ISittable 
+    [XmlType("Mods_DGAStorageFurniture")]
+    public partial class CustomStorageFurniture : StorageFurniture, ISittable
     {
         private FurniturePackData.FurnitureConfiguration GetCurrentConfiguration()
         {
-            return this.Data.Configurations.Count > this.currentRotation.Value ? this.Data.Configurations[ this.currentRotation.Value ] : new FurniturePackData.FurnitureConfiguration();
+            return this.Data.Configurations.Count > this.currentRotation.Value ? this.Data.Configurations[this.currentRotation.Value] : new FurniturePackData.FurnitureConfiguration();
         }
 
         partial void DoInit()
         {
-            Mod.instance.Helper.Reflection.GetField<int>( this, "_placementRestriction" ).SetValue( 2 );
+            Mod.instance.Helper.Reflection.GetField<int>(this, "_placementRestriction").SetValue(2);
         }
 
-        partial void DoInit( FurniturePackData data )
+        partial void DoInit(FurniturePackData data)
         {
             this.name = this.FullId;
             this.furniture_type.Value = data.GetVanillaFurnitureType();
-            this.defaultSourceRect.Value = this.sourceRect.Value = data.GetTexture().Rect ?? new Rectangle( 0, 0, data.GetTexture().Texture.Width, data.GetTexture().Texture.Height );
-            this.defaultBoundingBox.Value = this.boundingBox.Value = new Rectangle( 0, (int)(data.Configurations[0].DisplaySize.Y - data.Configurations[0].CollisionHeight) * Game1.tileSize, ( int ) data.Configurations[0].DisplaySize.X * Game1.tileSize, ( int ) data.Configurations[0].CollisionHeight * Game1.tileSize );
+            this.defaultSourceRect.Value = this.sourceRect.Value = data.GetTexture().Rect ?? new Rectangle(0, 0, data.GetTexture().Texture.Width, data.GetTexture().Texture.Height);
+            this.defaultBoundingBox.Value = this.boundingBox.Value = new Rectangle(0, (int)(data.Configurations[0].DisplaySize.Y - data.Configurations[0].CollisionHeight) * Game1.tileSize, (int)data.Configurations[0].DisplaySize.X * Game1.tileSize, (int)data.Configurations[0].CollisionHeight * Game1.tileSize);
             Mod.instance.Helper.Reflection.GetField<int>(this, "_placementRestriction").SetValue(2);
             this.rotations.Value = data.Configurations.Count;
             this.UpdateRotation();
@@ -44,11 +44,11 @@ namespace DynamicGameAssets.Game
             this.flipped.Value = false;
 
             var newConf = this.GetCurrentConfiguration();
-            var newTex = this.Data.pack.GetTexture( newConf.Texture, ( int ) newConf.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, ( int ) newConf.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
+            var newTex = this.Data.pack.GetTexture(newConf.Texture, (int)newConf.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)newConf.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
 
-            this.boundingBox.Width = ( int ) newConf.DisplaySize.X * Game1.tileSize;
+            this.boundingBox.Width = (int)newConf.DisplaySize.X * Game1.tileSize;
             this.boundingBox.Height = newConf.CollisionHeight * Game1.tileSize;
-            this.sourceRect.Value = newTex.Rect ?? new Rectangle( 0, 0, newTex.Texture.Width, newTex.Texture.Height );
+            this.sourceRect.Value = newTex.Rect ?? new Rectangle(0, 0, newTex.Texture.Width, newTex.Texture.Height);
             this.flipped.Value = newConf.Flipped;
 
             this.updateDrawPosition();
@@ -75,7 +75,7 @@ namespace DynamicGameAssets.Game
 
         public override void draw(SpriteBatch spriteBatch, int x, int y, float alpha = 1f)
         {
-            if ( this.isTemporarilyInvisible )
+            if (this.isTemporarilyInvisible)
             {
                 return;
             }
@@ -84,46 +84,46 @@ namespace DynamicGameAssets.Game
             var currTex = this.Data.pack.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
             var frontTex = currConfig.FrontTexture != null ? this.Data.pack.GetTexture(currConfig.FrontTexture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom) : null;
 
-            if ( Furniture.isDrawingLocationFurniture )
+            if (Furniture.isDrawingLocationFurniture)
             {
-                if ( this.HasSittingFarmers() && this.sourceRect.Right <= Furniture.furnitureFrontTexture.Width && this.sourceRect.Bottom <= Furniture.furnitureFrontTexture.Height )
+                if (this.HasSittingFarmers() && this.sourceRect.Right <= Furniture.furnitureFrontTexture.Width && this.sourceRect.Bottom <= Furniture.furnitureFrontTexture.Height)
                 {
-                    spriteBatch.Draw( currTex.Texture, Game1.GlobalToLocal( Game1.viewport, this.drawPosition + ( ( this.shakeTimer > 0 ) ? new Vector2( Game1.random.Next( -1, 2 ), Game1.random.Next( -1, 2 ) ) : Vector2.Zero ) ), currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ( float ) ( this.boundingBox.Value.Top + 16 ) / 10000f );
-                    spriteBatch.Draw( frontTex.Texture, Game1.GlobalToLocal( Game1.viewport, this.drawPosition + ( ( this.shakeTimer > 0 ) ? new Vector2( Game1.random.Next( -1, 2 ), Game1.random.Next( -1, 2 ) ) : Vector2.Zero ) ), frontTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ( float ) ( this.boundingBox.Value.Bottom - 8 ) / 10000f );
+                    spriteBatch.Draw(currTex.Texture, Game1.GlobalToLocal(Game1.viewport, this.drawPosition + ((this.shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero)), currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.boundingBox.Value.Top + 16) / 10000f);
+                    spriteBatch.Draw(frontTex.Texture, Game1.GlobalToLocal(Game1.viewport, this.drawPosition + ((this.shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero)), frontTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.boundingBox.Value.Bottom - 8) / 10000f);
                 }
                 else
                 {
-                    spriteBatch.Draw( currTex.Texture, Game1.GlobalToLocal( Game1.viewport, this.drawPosition + ( ( this.shakeTimer > 0 ) ? new Vector2( Game1.random.Next( -1, 2 ), Game1.random.Next( -1, 2 ) ) : Vector2.Zero ) ), currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ( ( int ) this.furniture_type == 12 ) ? ( 2E-09f + this.tileLocation.Y / 100000f ) : ( ( float ) ( this.boundingBox.Value.Bottom - ( ( ( int ) this.furniture_type == 6 || ( int ) this.furniture_type == 17 || ( int ) this.furniture_type == 13 ) ? 48 : 8 ) ) / 10000f ) );
+                    spriteBatch.Draw(currTex.Texture, Game1.GlobalToLocal(Game1.viewport, this.drawPosition + ((this.shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero)), currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ((int)this.furniture_type == 12) ? (2E-09f + this.tileLocation.Y / 100000f) : ((float)(this.boundingBox.Value.Bottom - (((int)this.furniture_type == 6 || (int)this.furniture_type == 17 || (int)this.furniture_type == 13) ? 48 : 8)) / 10000f));
                 }
             }
             else
             {
-                spriteBatch.Draw( currTex.Texture, Game1.GlobalToLocal( Game1.viewport, new Vector2( x * 64 + ( ( this.shakeTimer > 0 ) ? Game1.random.Next( -1, 2 ) : 0 ), y * 64 - ( this.sourceRect.Height * 4 - this.boundingBox.Height ) + ( ( this.shakeTimer > 0 ) ? Game1.random.Next( -1, 2 ) : 0 ) ) ), currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ( ( int ) this.furniture_type == 12 ) ? ( 2E-09f + this.tileLocation.Y / 100000f ) : ( ( float ) ( this.boundingBox.Value.Bottom - ( ( ( int ) this.furniture_type == 6 || ( int ) this.furniture_type == 17 || ( int ) this.furniture_type == 13 ) ? 48 : 8 ) ) / 10000f ) );
+                spriteBatch.Draw(currTex.Texture, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), y * 64 - (this.sourceRect.Height * 4 - this.boundingBox.Height) + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0))), currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ((int)this.furniture_type == 12) ? (2E-09f + this.tileLocation.Y / 100000f) : ((float)(this.boundingBox.Value.Bottom - (((int)this.furniture_type == 6 || (int)this.furniture_type == 17 || (int)this.furniture_type == 13) ? 48 : 8)) / 10000f));
             }
-            if ( this.heldObject.Value != null )
+            if (this.heldObject.Value != null)
             {
-                if ( this.heldObject.Value is Furniture )
+                if (this.heldObject.Value is Furniture)
                 {
-                    ( this.heldObject.Value as Furniture ).drawAtNonTileSpot( spriteBatch, Game1.GlobalToLocal( Game1.viewport, new Vector2( this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - ( this.heldObject.Value as Furniture ).sourceRect.Height * 4 - ( this.drawHeldObjectLow ? ( -16 ) : 16 ) ) ), ( float ) ( this.boundingBox.Bottom - 7 ) / 10000f, alpha );
+                    (this.heldObject.Value as Furniture).drawAtNonTileSpot(spriteBatch, Game1.GlobalToLocal(Game1.viewport, new Vector2(this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - (this.heldObject.Value as Furniture).sourceRect.Height * 4 - (this.drawHeldObjectLow ? (-16) : 16))), (float)(this.boundingBox.Bottom - 7) / 10000f, alpha);
                 }
                 else
                 {
-                    spriteBatch.Draw( Game1.shadowTexture, Game1.GlobalToLocal( Game1.viewport, new Vector2( this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - ( this.drawHeldObjectLow ? 32 : 85 ) ) ) + new Vector2( 32f, 53f ), Game1.shadowTexture.Bounds, Color.White * alpha, 0f, new Vector2( Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y ), 4f, SpriteEffects.None, ( float ) this.boundingBox.Bottom / 10000f );
-                    spriteBatch.Draw( Game1.objectSpriteSheet, Game1.GlobalToLocal( Game1.viewport, new Vector2( this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - ( this.drawHeldObjectLow ? 32 : 85 ) ) ), GameLocation.getSourceRectForObject( this.heldObject.Value.ParentSheetIndex ), Color.White * alpha, 0f, Vector2.Zero, 4f, SpriteEffects.None, ( float ) ( this.boundingBox.Bottom + 1 ) / 10000f );
+                    spriteBatch.Draw(Game1.shadowTexture, Game1.GlobalToLocal(Game1.viewport, new Vector2(this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - (this.drawHeldObjectLow ? 32 : 85))) + new Vector2(32f, 53f), Game1.shadowTexture.Bounds, Color.White * alpha, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, (float)this.boundingBox.Bottom / 10000f);
+                    spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - (this.drawHeldObjectLow ? 32 : 85))), GameLocation.getSourceRectForObject(this.heldObject.Value.ParentSheetIndex), Color.White * alpha, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)(this.boundingBox.Bottom + 1) / 10000f);
                 }
             }
-            if ( ( bool ) this.isOn && ( int ) this.furniture_type == 14 )
+            if ((bool)this.isOn && (int)this.furniture_type == 14)
             {
-                spriteBatch.Draw( Game1.mouseCursors, Game1.GlobalToLocal( Game1.viewport, new Vector2( this.boundingBox.Center.X - 12, this.boundingBox.Center.Y - 64 ) ), new Rectangle( 276 + ( int ) ( ( Game1.currentGameTime.TotalGameTime.TotalMilliseconds + ( double ) ( x * 3047 ) + ( double ) ( y * 88 ) ) % 400.0 / 100.0 ) * 12, 1985, 12, 11 ), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, ( float ) ( this.getBoundingBox( new Vector2( x, y ) ).Bottom - 2 ) / 10000f );
-                spriteBatch.Draw( Game1.mouseCursors, Game1.GlobalToLocal( Game1.viewport, new Vector2( this.boundingBox.Center.X - 32 - 4, this.boundingBox.Center.Y - 64 ) ), new Rectangle( 276 + ( int ) ( ( Game1.currentGameTime.TotalGameTime.TotalMilliseconds + ( double ) ( x * 2047 ) + ( double ) ( y * 98 ) ) % 400.0 / 100.0 ) * 12, 1985, 12, 11 ), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, ( float ) ( this.getBoundingBox( new Vector2( x, y ) ).Bottom - 1 ) / 10000f );
+                spriteBatch.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2(this.boundingBox.Center.X - 12, this.boundingBox.Center.Y - 64)), new Rectangle(276 + (int)((Game1.currentGameTime.TotalGameTime.TotalMilliseconds + (double)(x * 3047) + (double)(y * 88)) % 400.0 / 100.0) * 12, 1985, 12, 11), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)(this.getBoundingBox(new Vector2(x, y)).Bottom - 2) / 10000f);
+                spriteBatch.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2(this.boundingBox.Center.X - 32 - 4, this.boundingBox.Center.Y - 64)), new Rectangle(276 + (int)((Game1.currentGameTime.TotalGameTime.TotalMilliseconds + (double)(x * 2047) + (double)(y * 98)) % 400.0 / 100.0) * 12, 1985, 12, 11), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)(this.getBoundingBox(new Vector2(x, y)).Bottom - 1) / 10000f);
             }
-            else if ( ( bool ) this.isOn && ( int ) this.furniture_type == 16 )
+            else if ((bool)this.isOn && (int)this.furniture_type == 16)
             {
-                spriteBatch.Draw( Game1.mouseCursors, Game1.GlobalToLocal( Game1.viewport, new Vector2( this.boundingBox.Center.X - 20, ( float ) this.boundingBox.Center.Y - 105.6f ) ), new Rectangle( 276 + ( int ) ( ( Game1.currentGameTime.TotalGameTime.TotalMilliseconds + ( double ) ( x * 3047 ) + ( double ) ( y * 88 ) ) % 400.0 / 100.0 ) * 12, 1985, 12, 11 ), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, ( float ) ( this.getBoundingBox( new Vector2( x, y ) ).Bottom - 2 ) / 10000f );
+                spriteBatch.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2(this.boundingBox.Center.X - 20, (float)this.boundingBox.Center.Y - 105.6f)), new Rectangle(276 + (int)((Game1.currentGameTime.TotalGameTime.TotalMilliseconds + (double)(x * 3047) + (double)(y * 88)) % 400.0 / 100.0) * 12, 1985, 12, 11), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)(this.getBoundingBox(new Vector2(x, y)).Bottom - 2) / 10000f);
             }
-            if ( Game1.debugMode )
+            if (Game1.debugMode)
             {
-                spriteBatch.DrawString( Game1.smallFont, this.parentSheetIndex?.ToString() ?? "", Game1.GlobalToLocal( Game1.viewport, this.drawPosition ), Color.Yellow, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f );
+                spriteBatch.DrawString(Game1.smallFont, this.parentSheetIndex?.ToString() ?? "", Game1.GlobalToLocal(Game1.viewport, this.drawPosition), Color.Yellow, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
             }
         }
 
@@ -139,16 +139,16 @@ namespace DynamicGameAssets.Game
         {
             var currConfig = this.GetCurrentConfiguration();
             Vector2 key = new Vector2((int)(tile_x - this.tileLocation.X), (int)(tile_y - this.tileLocation.Y));
-            if ( currConfig.TileProperties.ContainsKey( key ) && currConfig.TileProperties[ key ].ContainsKey( layer_name ) )
+            if (currConfig.TileProperties.ContainsKey(key) && currConfig.TileProperties[key].ContainsKey(layer_name))
             {
-                if ( currConfig.TileProperties[ key ][ layer_name ].ContainsKey( property_name ) )
+                if (currConfig.TileProperties[key][layer_name].ContainsKey(property_name))
                 {
-                    property_value = currConfig.TileProperties[key][ layer_name ][ property_name ];
+                    property_value = currConfig.TileProperties[key][layer_name][property_name];
                     return true;
                 }
             }
 
-            if ( base.DoesTileHaveProperty( tile_x, tile_y, property_name, layer_name, ref property_value ) )
+            if (base.DoesTileHaveProperty(tile_x, tile_y, property_name, layer_name, ref property_value))
                 return true;
 
             return false;
@@ -159,13 +159,13 @@ namespace DynamicGameAssets.Game
             return this.GetCurrentConfiguration().Seats.Count;
         }
 
-        public override List<Vector2> GetSeatPositions( bool ignore_offsets = false )
+        public override List<Vector2> GetSeatPositions(bool ignore_offsets = false)
         {
             var ret = new List<Vector2>();
 
-            foreach ( var seat in this.GetCurrentConfiguration().Seats )
+            foreach (var seat in this.GetCurrentConfiguration().Seats)
             {
-                ret.Add(this.TileLocation + seat );
+                ret.Add(this.TileLocation + seat);
             }
 
             return ret;
@@ -174,7 +174,7 @@ namespace DynamicGameAssets.Game
         public int GetSittingDirection()
         {
             return this.GetCurrentConfiguration().SittingDirection == FurniturePackData.FurnitureConfiguration.SeatDirection.Any ?
-                   Game1.player.FacingDirection : ( int ) this.GetCurrentConfiguration().SittingDirection;
+                   Game1.player.FacingDirection : (int)this.GetCurrentConfiguration().SittingDirection;
         }
 
         public override Item getOne()

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace SpaceShared
 {
     public class Holder<T>
@@ -9,7 +5,8 @@ namespace SpaceShared
         public T Value;
 
         public Holder() { }
-        public Holder( T value )
+
+        public Holder(T value)
         {
             this.Value = value;
         }

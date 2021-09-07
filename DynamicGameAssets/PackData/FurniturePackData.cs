@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using DynamicGameAssets.Game;
@@ -25,15 +24,20 @@ namespace DynamicGameAssets.PackData
             }
 
             public string Texture { get; set; }
-            [DefaultValue( null )]
+
+            [DefaultValue(null)]
             public string FrontTexture { get; set; } // for seats, beds, fish tanks
+
             public Vector2 DisplaySize { get; set; }
             public int CollisionHeight { get; set; }
-            [DefaultValue( false )]
+
+            [DefaultValue(false)]
             public bool Flipped { get; set; }
+
             public List<Vector2> Seats { get; set; } = new List<Vector2>();
-            [DefaultValue( SeatDirection.Any )]
-            [JsonConverter( typeof( StringEnumConverter ) )]
+
+            [DefaultValue(SeatDirection.Any)]
+            [JsonConverter(typeof(StringEnumConverter))]
             public SeatDirection SittingDirection { get; set; }
 
             public bool ShouldSerializeSeats() { return this.Seats.Count > 0; }
@@ -56,12 +60,12 @@ namespace DynamicGameAssets.PackData
             TV,
         }
 
-        [DefaultValue( FurnitureType.Decoration )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [DefaultValue(FurnitureType.Decoration)]
+        [JsonConverter(typeof(StringEnumConverter))]
         public FurnitureType Type { get; set; }
 
         // Bed specific
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonConverter(typeof(StringEnumConverter))]
         public BedFurniture.BedType BedType { get; set; } = BedFurniture.BedType.Single;
 
         public bool ShouldSerializeBedType() { return this.Type == FurnitureType.Bed; }
@@ -91,7 +95,7 @@ namespace DynamicGameAssets.PackData
 
         public int GetVanillaFurnitureType()
         {
-            switch (this.Type )
+            switch (this.Type)
             {
                 case FurnitureType.Decoration: return Furniture.decor;
                 case FurnitureType.Rug: return Furniture.rug;
@@ -109,10 +113,10 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            if (this.Configurations.Count == 0 )
-                return this.pack.GetTexture( null, 16, 16 );
+            if (this.Configurations.Count == 0)
+                return this.pack.GetTexture(null, 16, 16);
 
-            return this.pack.GetTexture(this.Configurations[0].Texture, (int) this.Configurations[0].DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int) this.Configurations[0].DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
+            return this.pack.GetTexture(this.Configurations[0].Texture, (int)this.Configurations[0].DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)this.Configurations[0].DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
         }
 
         public override void OnDisabled()
@@ -130,18 +134,18 @@ namespace DynamicGameAssets.PackData
 
         public override Item ToItem()
         {
-            switch (this.Type )
+            switch (this.Type)
             {
                 case FurnitureType.Bed:
-                    return new CustomBedFurniture( this );
+                    return new CustomBedFurniture(this);
                 case FurnitureType.TV:
-                    return new CustomTVFurniture( this );
+                    return new CustomTVFurniture(this);
                 case FurnitureType.FishTank:
-                    return new CustomFishTankFurniture( this );
+                    return new CustomFishTankFurniture(this);
                 case FurnitureType.Dresser:
-                    return new CustomStorageFurniture( this );
+                    return new CustomStorageFurniture(this);
                 default:
-                    return new CustomBasicFurniture( this );
+                    return new CustomBasicFurniture(this);
             }
         }
     }

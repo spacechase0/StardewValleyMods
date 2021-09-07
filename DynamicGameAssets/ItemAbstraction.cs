@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
@@ -16,7 +15,7 @@ namespace DynamicGameAssets
 {
     public class ItemAbstraction : ICloneable
     {
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonConverter(typeof(StringEnumConverter))]
         public enum ItemType
         {
             DGAItem,
@@ -35,12 +34,15 @@ namespace DynamicGameAssets
 
         [DefaultValue(ItemType.DGAItem)]
         public ItemType Type { get; set; } = ItemType.DGAItem;
+
         public string Value { get; set; }
+
         [DefaultValue(1)]
         public int Quantity { get; set; } = 1;
+
         public Color ObjectColor { get; set; }
 
-        public bool ShouldSerializeObjectColor() { return this.ObjectColor != default( Color ); }
+        public bool ShouldSerializeObjectColor() { return this.ObjectColor != default(Color); }
 
         [JsonIgnore]
         public virtual Texture2D Icon
@@ -65,11 +67,11 @@ namespace DynamicGameAssets
                     case ItemType.VanillaHat: return FarmerRenderer.hatsTexture;
                     case ItemType.VanillaClothing:
                         if (valAsInt.HasValue)
-                            return new Clothing(valAsInt.Value).clothesType.Value == (int) Clothing.ClothesType.SHIRT ? FarmerRenderer.shirtsTexture : FarmerRenderer.pantsTexture;
+                            return new Clothing(valAsInt.Value).clothesType.Value == (int)Clothing.ClothesType.SHIRT ? FarmerRenderer.shirtsTexture : FarmerRenderer.pantsTexture;
                         foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\ClothingInformation"))
                         {
                             if (info.Value.Split('/')[0] == this.Value)
-                                return new Clothing(info.Key).clothesType.Value == (int) Clothing.ClothesType.SHIRT ? FarmerRenderer.shirtsTexture : FarmerRenderer.pantsTexture;
+                                return new Clothing(info.Key).clothesType.Value == (int)Clothing.ClothesType.SHIRT ? FarmerRenderer.shirtsTexture : FarmerRenderer.pantsTexture;
                         }
                         break;
                     case ItemType.VanillaBoots: return Game1.objectSpriteSheet;
@@ -97,8 +99,8 @@ namespace DynamicGameAssets
                 {
                     case ItemType.DGAItem:
                         var found = Mod.Find(this.Value);
-                        if ( found == null )
-                            return new Rectangle( 0, 0, 1, 1 );
+                        if (found == null)
+                            return new Rectangle(0, 0, 1, 1);
                         return found.GetTexture().Rect ?? new Rectangle(0, 0, found.GetTexture().Texture.Width, found.GetTexture().Texture.Height);
                     case ItemType.DGARecipe:
                         Log.Error("Recipes don't have an icon subrect.");
@@ -192,7 +194,7 @@ namespace DynamicGameAssets
             }
         }
 
-        public bool Matches( Item item )
+        public bool Matches(Item item)
         {
             int? valAsInt = null;
             if (int.TryParse(this.Value, out int x))
@@ -207,7 +209,7 @@ namespace DynamicGameAssets
                 case ItemType.VanillaObject:
                     return (item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.Name == this.Value || (valAsInt.HasValue && (valAsInt.Value == obj.ParentSheetIndex || valAsInt.Value == obj.Category))));
                 case ItemType.VanillaObjectColored:
-                    return ( item is ColoredObject cobj && cobj.color.Value == this.ObjectColor && ( cobj.Name == this.Value || ( valAsInt.HasValue && ( valAsInt.Value == cobj.ParentSheetIndex || valAsInt.Value == cobj.Category ) ) ) );
+                    return (item is ColoredObject cobj && cobj.color.Value == this.ObjectColor && (cobj.Name == this.Value || (valAsInt.HasValue && (valAsInt.Value == cobj.ParentSheetIndex || valAsInt.Value == cobj.Category))));
                 case ItemType.VanillaBigCraftable:
                     return (item is StardewValley.Object bobj && bobj.bigCraftable.Value && (bobj.Name == this.Value || (valAsInt.HasValue && valAsInt.Value == bobj.ParentSheetIndex)));
                 case ItemType.VanillaWeapon:
@@ -234,38 +236,38 @@ namespace DynamicGameAssets
             if (int.TryParse(this.Value, out int x))
                 valAsInt = x;
 
-            switch (this.Type )
+            switch (this.Type)
             {
                 case ItemType.DGAItem:
                     {
-                        var ret = Mod.Find(this.Value )?.ToItem();
-                        if ( ret == null )
+                        var ret = Mod.Find(this.Value)?.ToItem();
+                        if (ret == null)
                         {
-                            Log.Error( $"Failed to create item for {this.Value}! Does it exist and is an item (ie. not a crop or fruit tree or something)?" );
-                            return new StardewValley.Object( 1720, 1 );
+                            Log.Error($"Failed to create item for {this.Value}! Does it exist and is an item (ie. not a crop or fruit tree or something)?");
+                            return new StardewValley.Object(1720, 1);
                         }
-                        if ( ret is CustomObject obj && this.ObjectColor.A > 0 )
+                        if (ret is CustomObject obj && this.ObjectColor.A > 0)
                             obj.ObjectColor = this.ObjectColor;
                         return ret;
                     }
                 case ItemType.DGARecipe:
-                    return new CustomCraftingRecipe(Mod.Find(this.Value ) as CraftingRecipePackData);
+                    return new CustomCraftingRecipe(Mod.Find(this.Value) as CraftingRecipePackData);
                 case ItemType.VanillaObject:
                     if (valAsInt.HasValue)
                         return new StardewValley.Object(valAsInt.Value, this.Quantity);
-                    foreach ( var info in Game1.objectInformation )
+                    foreach (var info in Game1.objectInformation)
                     {
                         if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == this.Value)
                             return new StardewValley.Object(info.Key, this.Quantity);
                     }
                     break;
                 case ItemType.VanillaObjectColored:
-                    if ( valAsInt.HasValue )
-                        return new ColoredObject( valAsInt.Value, this.Quantity, this.ObjectColor );
-                    foreach ( var info in Game1.objectInformation )
+                    if (valAsInt.HasValue)
+                        return new ColoredObject(valAsInt.Value, this.Quantity, this.ObjectColor);
+                    foreach (var info in Game1.objectInformation)
                     {
-                        if ( info.Value.Split( '/' )[ StardewValley.Object.objectInfoNameIndex ] == this.Value )
-                            return new ColoredObject( info.Key, this.Quantity, this.ObjectColor );
+                        if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == this.Value)
+                            return new ColoredObject(info.Key, this.Quantity, this.ObjectColor);
                     }
                     break;
                 case ItemType.VanillaBigCraftable:
@@ -280,7 +282,7 @@ namespace DynamicGameAssets
                 case ItemType.VanillaWeapon:
                     if (valAsInt.HasValue)
                         return new StardewValley.Tools.MeleeWeapon(valAsInt.Value);
-                    foreach (var info in Game1.content.Load< Dictionary<int, string> >( "Data\\weapons" ))
+                    foreach (var info in Game1.content.Load<Dictionary<int, string>>("Data\\weapons"))
                     {
                         if (info.Value.Split('/')[0] == this.Value)
                             return new StardewValley.Tools.MeleeWeapon(info.Key);
@@ -324,38 +326,38 @@ namespace DynamicGameAssets
                     break;
                 case ItemType.ContextTag:
                     Log.Error("Context tag ItemAbstraction instances cannot be created!");
-                    return new StardewValley.Object( 1720, 1 );
+                    return new StardewValley.Object(1720, 1);
             }
 
             Log.Error($"Unknown item {this.Type} {this.Value} x {this.Quantity}");
-            return new StardewValley.Object( 1720, 1 );
+            return new StardewValley.Object(1720, 1);
         }
 
         public virtual object Clone() => this.MemberwiseClone();
     }
 
-    public class ItemAbstractionWeightedListConverter : JsonConverter< List< Weighted< ItemAbstraction > > >
+    public class ItemAbstractionWeightedListConverter : JsonConverter<List<Weighted<ItemAbstraction>>>
     {
         public override bool CanRead => true;
         public override bool CanWrite => false;
 
-        public override List<Weighted<ItemAbstraction>> ReadJson( JsonReader reader, Type objectType, List<Weighted<ItemAbstraction>> existingValue, bool hasExistingValue, JsonSerializer serializer )
+        public override List<Weighted<ItemAbstraction>> ReadJson(JsonReader reader, Type objectType, List<Weighted<ItemAbstraction>> existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             var ret = new List<Weighted<ItemAbstraction>>();
-            if ( reader.TokenType == JsonToken.StartObject )
+            if (reader.TokenType == JsonToken.StartObject)
             {
-                ret.Add( new Weighted<ItemAbstraction>( 1.0, serializer.Deserialize<ItemAbstraction>( reader ) ) );
+                ret.Add(new Weighted<ItemAbstraction>(1.0, serializer.Deserialize<ItemAbstraction>(reader)));
             }
             else
             {
-                ret = serializer.Deserialize<List<Weighted<ItemAbstraction>>>( reader );
+                ret = serializer.Deserialize<List<Weighted<ItemAbstraction>>>(reader);
             }
             return ret;
         }
 
-        public override void WriteJson( JsonWriter writer, List<Weighted<ItemAbstraction>> value, JsonSerializer serializer )
+        public override void WriteJson(JsonWriter writer, List<Weighted<ItemAbstraction>> value, JsonSerializer serializer)
         {
-            serializer.Serialize( writer, value );
+            serializer.Serialize(writer, value);
         }
     }
 }

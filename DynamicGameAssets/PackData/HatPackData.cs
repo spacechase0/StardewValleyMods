@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -22,39 +17,41 @@ namespace DynamicGameAssets.PackData
         }
 
         [JsonIgnore]
-        public string Name => this.pack.smapiPack.Translation.Get( $"hat.{this.ID}.name" );
-        [JsonIgnore]
-        public string Description => this.pack.smapiPack.Translation.Get( $"hat.{this.ID}.description" );
+        public string Name => this.pack.smapiPack.Translation.Get($"hat.{this.ID}.name");
 
+        [JsonIgnore]
+        public string Description => this.pack.smapiPack.Translation.Get($"hat.{this.ID}.description");
 
         public string Texture { get; set; }
-        [DefaultValue( HairStyleType.Full )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+
+        [DefaultValue(HairStyleType.Full)]
+        [JsonConverter(typeof(StringEnumConverter))]
         public HairStyleType HairStyle { get; set; }
-        [DefaultValue( false )]
+
+        [DefaultValue(false)]
         public bool IgnoreHairstyleOffset { get; set; }
 
         public override TexturedRect GetTexture()
         {
-            return this.pack.GetTexture(this.Texture, 20, 80 );
+            return this.pack.GetTexture(this.Texture, 20, 80);
         }
 
         public override void OnDisabled()
         {
-            SpaceUtility.iterateAllItems( ( item ) =>
+            SpaceUtility.iterateAllItems((item) =>
             {
-                if ( item is CustomHat chat )
+                if (item is CustomHat chat)
                 {
-                    if ( chat.SourcePack == this.pack.smapiPack.Manifest.UniqueID && chat.Id == this.ID )
+                    if (chat.SourcePack == this.pack.smapiPack.Manifest.UniqueID && chat.Id == this.ID)
                         return null;
                 }
                 return item;
-            } );
+            });
         }
 
         public override Item ToItem()
         {
-            return new CustomHat( this );
+            return new CustomHat(this);
         }
     }
 }

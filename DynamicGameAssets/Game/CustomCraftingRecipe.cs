@@ -1,18 +1,18 @@
+using System.Text;
+using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
-using System.Text;
-using System.Xml.Serialization;
 
 namespace DynamicGameAssets.Game
 {
-    [XmlType( "Mods_DGACraftingRecipe" )] // Shouldn't ever exist inside an inventory, but just in case
+    [XmlType("Mods_DGACraftingRecipe")] // Shouldn't ever exist inside an inventory, but just in case
     public partial class CustomCraftingRecipe : Object
     {
         private Item craftedCache = null;
 
-        partial void DoInit( CraftingRecipePackData data )
+        partial void DoInit(CraftingRecipePackData data)
         {
             this.ParentSheetIndex = Mod.BaseFakeObjectId;
             this.name = data.ID + " Recipe";
@@ -26,28 +26,28 @@ namespace DynamicGameAssets.Game
         protected override void initNetFields()
         {
             base.initNetFields();
-            this.NetFields.AddFields(this._sourcePack, this._id );
-            this._id.fieldChangeEvent += (f, ov, nv) => { this.craftedCache = this.Data.Result[ 0 ].Value.Create(); };
+            this.NetFields.AddFields(this._sourcePack, this._id);
+            this._id.fieldChangeEvent += (f, ov, nv) => { this.craftedCache = this.Data.Result[0].Value.Create(); };
         }
 
-        public override void drawTooltip( SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
+        public override void drawTooltip(SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText)
         {
-            base.drawTooltip( spriteBatch, ref x, ref y, font, alpha, overrideText );
+            base.drawTooltip(spriteBatch, ref x, ref y, font, alpha, overrideText);
             string str = "Mod: " + this.Data.pack.smapiPack.Manifest.Name;
-            Utility.drawTextWithShadow( spriteBatch, Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ), font, new Vector2( x + 16, y + 16 + 4 ), new Color( 100, 100, 100 ) );
-            y += ( int ) font.MeasureString( Game1.parseText( str, Game1.smallFont, this.getDescriptionWidth() ) ).Y + 10;
+            Utility.drawTextWithShadow(spriteBatch, Game1.parseText(str, Game1.smallFont, this.getDescriptionWidth()), font, new Vector2(x + 16, y + 16 + 4), new Color(100, 100, 100));
+            y += (int)font.MeasureString(Game1.parseText(str, Game1.smallFont, this.getDescriptionWidth())).Y + 10;
         }
 
-        public override Point getExtraSpaceNeededForTooltipSpecialIcons( SpriteFont font, int minWidth, int horizontalBuffer, int startingHeight, StringBuilder descriptionText, string boldTitleText, int moneyAmountToDisplayAtBottom )
+        public override Point getExtraSpaceNeededForTooltipSpecialIcons(SpriteFont font, int minWidth, int horizontalBuffer, int startingHeight, StringBuilder descriptionText, string boldTitleText, int moneyAmountToDisplayAtBottom)
         {
-            var ret = base.getExtraSpaceNeededForTooltipSpecialIcons(font, minWidth, horizontalBuffer, startingHeight, descriptionText, boldTitleText, moneyAmountToDisplayAtBottom );
+            var ret = base.getExtraSpaceNeededForTooltipSpecialIcons(font, minWidth, horizontalBuffer, startingHeight, descriptionText, boldTitleText, moneyAmountToDisplayAtBottom);
             ret.Y = startingHeight;
             ret.Y += 48;
             return ret;
         }
 
 
-        public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
+        public override void drawInMenu(SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
             transparency = 0.5f;
             scaleSize *= 0.75f;
@@ -57,12 +57,12 @@ namespace DynamicGameAssets.Game
 
         public override Item getOne()
         {
-            var ret = new CustomCraftingRecipe(this.Data );
+            var ret = new CustomCraftingRecipe(this.Data);
             // TODO: All the other fields objects does??
             ret.Quality = this.Quality;
             ret.Stack = 1;
             ret.Price = this.Price;
-            ret._GetOneFrom( this );
+            ret._GetOneFrom(this);
             return ret;
         }
 

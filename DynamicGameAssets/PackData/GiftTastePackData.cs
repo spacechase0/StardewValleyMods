@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicGameAssets.PackData
 {
@@ -13,11 +8,14 @@ namespace DynamicGameAssets.PackData
         public string Npc { get; set; }
 
         public int Amount { get; set; }
-        [DefaultValue( null )]
+
+        [DefaultValue(null)]
         public string NormalTextTranslationKey { get; set; }
-        [DefaultValue( null )]
+
+        [DefaultValue(null)]
         public string BirthdayTextTranslationKey { get; set; }
-        [DefaultValue( null )]
+
+        [DefaultValue(null)]
         public int? EmoteId { get; set; }
     }
 }

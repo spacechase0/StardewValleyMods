@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
@@ -9,25 +8,25 @@ using StardewValley.Objects;
 
 namespace DynamicGameAssets.Game
 {
-    [XmlType( "Mods_DGABasicFurniture" )]
+    [XmlType("Mods_DGABasicFurniture")]
     public partial class CustomBasicFurniture : Furniture, ISittable
     {
         private FurniturePackData.FurnitureConfiguration GetCurrentConfiguration()
         {
-            return this.Data.Configurations.Count > this.currentRotation.Value ? this.Data.Configurations[ this.currentRotation.Value ] : new FurniturePackData.FurnitureConfiguration();
+            return this.Data.Configurations.Count > this.currentRotation.Value ? this.Data.Configurations[this.currentRotation.Value] : new FurniturePackData.FurnitureConfiguration();
         }
 
         partial void DoInit()
         {
-            Mod.instance.Helper.Reflection.GetField<int>( this, "_placementRestriction" ).SetValue( 2 );
+            Mod.instance.Helper.Reflection.GetField<int>(this, "_placementRestriction").SetValue(2);
         }
 
         partial void DoInit(FurniturePackData data)
         {
             this.name = this.FullId;
             this.furniture_type.Value = data.GetVanillaFurnitureType();
-            this.defaultSourceRect.Value = this.sourceRect.Value = data.GetTexture().Rect ?? new Rectangle( 0, 0, data.GetTexture().Texture.Width, data.GetTexture().Texture.Height );
-            this.boundingBox.Value = new Rectangle( 0, (int)(data.Configurations[0].DisplaySize.Y - data.Configurations[0].CollisionHeight) * Game1.tileSize, ( int ) data.Configurations[0].DisplaySize.X * Game1.tileSize, ( int ) data.Configurations[0].CollisionHeight * Game1.tileSize );
+            this.defaultSourceRect.Value = this.sourceRect.Value = data.GetTexture().Rect ?? new Rectangle(0, 0, data.GetTexture().Texture.Width, data.GetTexture().Texture.Height);
+            this.boundingBox.Value = new Rectangle(0, (int)(data.Configurations[0].DisplaySize.Y - data.Configurations[0].CollisionHeight) * Game1.tileSize, (int)data.Configurations[0].DisplaySize.X * Game1.tileSize, (int)data.Configurations[0].CollisionHeight * Game1.tileSize);
             this.rotations.Value = data.Configurations.Count;
             this.UpdateRotation();
         }
@@ -43,11 +42,11 @@ namespace DynamicGameAssets.Game
             this.flipped.Value = false;
 
             var newConf = this.GetCurrentConfiguration();
-            var newTex = this.Data.pack.GetTexture( newConf.Texture, ( int ) newConf.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, ( int ) newConf.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom );
+            var newTex = this.Data.pack.GetTexture(newConf.Texture, (int)newConf.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)newConf.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
 
-            this.boundingBox.Width = ( int ) newConf.DisplaySize.X * Game1.tileSize;
+            this.boundingBox.Width = (int)newConf.DisplaySize.X * Game1.tileSize;
             this.boundingBox.Height = newConf.CollisionHeight * Game1.tileSize;
-            this.sourceRect.Value = newTex.Rect ?? new Rectangle( 0, 0, newTex.Texture.Width, newTex.Texture.Height );
+            this.sourceRect.Value = newTex.Rect ?? new Rectangle(0, 0, newTex.Texture.Width, newTex.Texture.Height);
             this.flipped.Value = newConf.Flipped;
 
             this.updateDrawPosition();
@@ -138,11 +137,11 @@ namespace DynamicGameAssets.Game
         {
             var currConfig = this.GetCurrentConfiguration();
             Vector2 key = new Vector2((int)(tile_x - this.tileLocation.X), (int)(tile_y - this.tileLocation.Y));
-            if ( currConfig.TileProperties.ContainsKey( key ) && currConfig.TileProperties[ key ].ContainsKey( layer_name ) )
+            if (currConfig.TileProperties.ContainsKey(key) && currConfig.TileProperties[key].ContainsKey(layer_name))
             {
-                if ( currConfig.TileProperties[ key ][ layer_name ].ContainsKey( property_name ) )
+                if (currConfig.TileProperties[key][layer_name].ContainsKey(property_name))
                 {
-                    property_value = currConfig.TileProperties[key][ layer_name ][ property_name ];
+                    property_value = currConfig.TileProperties[key][layer_name][property_name];
                     return true;
                 }
             }
@@ -154,13 +153,13 @@ namespace DynamicGameAssets.Game
             return this.GetCurrentConfiguration().Seats.Count;
         }
 
-        public override List<Vector2> GetSeatPositions( bool ignore_offsets = false )
+        public override List<Vector2> GetSeatPositions(bool ignore_offsets = false)
         {
             var ret = new List<Vector2>();
 
-            foreach ( var seat in this.GetCurrentConfiguration().Seats )
+            foreach (var seat in this.GetCurrentConfiguration().Seats)
             {
-                ret.Add(this.TileLocation + seat );
+                ret.Add(this.TileLocation + seat);
             }
 
             return ret;
@@ -169,7 +168,7 @@ namespace DynamicGameAssets.Game
         public int GetSittingDirection()
         {
             return this.GetCurrentConfiguration().SittingDirection == FurniturePackData.FurnitureConfiguration.SeatDirection.Any ?
-                   Game1.player.FacingDirection : ( int ) this.GetCurrentConfiguration().SittingDirection;
+                   Game1.player.FacingDirection : (int)this.GetCurrentConfiguration().SittingDirection;
         }
 
         public override Item getOne()

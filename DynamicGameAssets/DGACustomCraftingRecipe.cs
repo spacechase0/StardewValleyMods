@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
-using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -20,7 +18,7 @@ namespace DynamicGameAssets
             private Texture2D cacheIconTex;
             private Rectangle cacheIconRect;
 
-            public DGAIngredientMatcher(CraftingRecipePackData.IngredientAbstraction theIngred )
+            public DGAIngredientMatcher(CraftingRecipePackData.IngredientAbstraction theIngred)
             {
                 this.ingred = theIngred;
                 this.cacheName = this.ingred.NameOverride ?? this.ingred.Create().DisplayName;
@@ -113,7 +111,7 @@ namespace DynamicGameAssets
         private Rectangle cacheIconRect;
         private IngredientMatcher[] cacheIngreds;
 
-        public DGACustomCraftingRecipe( CraftingRecipePackData theData )
+        public DGACustomCraftingRecipe(CraftingRecipePackData theData)
         {
             this.data = theData;
             this.Refresh();
@@ -121,8 +119,8 @@ namespace DynamicGameAssets
 
         public void Refresh()
         {
-            this.cacheIconTex = this.data.Result[ 0 ].Value.Icon;
-            this.cacheIconRect = this.data.Result[ 0 ].Value.IconSubrect;
+            this.cacheIconTex = this.data.Result[0].Value.Icon;
+            this.cacheIconRect = this.data.Result[0].Value.IconSubrect;
 
             var ingreds = new List<IngredientMatcher>();
             foreach (var ingred in this.data.Ingredients)

@@ -1,16 +1,9 @@
+using System.ComponentModel;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using SpaceShared;
-using StardewModdingAPI;
 using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicGameAssets.PackData
 {
@@ -19,33 +12,36 @@ namespace DynamicGameAssets.PackData
         public string Texture { get; set; }
 
         [JsonIgnore]
-        public string Name => this.pack.smapiPack.Translation.Get( $"big-craftable.{this.ID}.name" );
+        public string Name => this.pack.smapiPack.Translation.Get($"big-craftable.{this.ID}.name");
+
         [JsonIgnore]
-        public string Description => this.pack.smapiPack.Translation.Get( $"big-craftable.{this.ID}.description" );
+        public string Description => this.pack.smapiPack.Translation.Get($"big-craftable.{this.ID}.description");
 
         [DefaultValue(null)]
         public int? SellPrice { get; set; }
+
         [DefaultValue(false)]
         public bool ForcePriceOnAllInstances { get; set; }
+
         [DefaultValue(false)]
         public bool ProvidesLight { get; set; }
 
         public override void OnDisabled()
         {
-            SpaceUtility.iterateAllItems( ( item ) =>
-            {
-                if ( item is CustomBigCraftable cbc )
-                {
-                    if ( cbc.SourcePack == this.pack.smapiPack.Manifest.UniqueID && cbc.Id == this.ID )
-                        return null;
-                }
-                return item;
-            } );
+            SpaceUtility.iterateAllItems((item) =>
+           {
+               if (item is CustomBigCraftable cbc)
+               {
+                   if (cbc.SourcePack == this.pack.smapiPack.Manifest.UniqueID && cbc.Id == this.ID)
+                       return null;
+               }
+               return item;
+           });
         }
 
         public override Item ToItem()
         {
-            return new CustomBigCraftable( this, Vector2.Zero );
+            return new CustomBigCraftable(this, Vector2.Zero);
         }
 
         public override TexturedRect GetTexture()
@@ -55,7 +51,7 @@ namespace DynamicGameAssets.PackData
 
         public override object Clone()
         {
-            return ( BigCraftablePackData ) base.Clone();
+            return (BigCraftablePackData)base.Clone();
         }
     }
 }

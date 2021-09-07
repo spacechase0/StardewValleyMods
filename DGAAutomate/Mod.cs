@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DynamicGameAssets;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
@@ -27,11 +22,11 @@ namespace DGAAutomate
 
         public Rectangle TileArea { get; }
 
-        public MyMachine( CustomBigCraftable cbig, GameLocation location, Vector2 tile )
+        public MyMachine(CustomBigCraftable cbig, GameLocation location, Vector2 tile)
         {
             this.big = cbig;
             this.Location = location;
-            this.TileArea = new Rectangle( ( int ) tile.X, ( int ) tile.Y, 1, 1 );
+            this.TileArea = new Rectangle((int)tile.X, (int)tile.Y, 1, 1);
         }
 
         public ITrackedStack GetOutput()
@@ -40,35 +35,35 @@ namespace DGAAutomate
             {
                 this.big.heldObject.Value = null;
                 this.big.readyForHarvest.Value = false;
-            } );
+            });
         }
 
         public MachineState GetState()
         {
-            if ( this.big.heldObject.Value == null )
+            if (this.big.heldObject.Value == null)
                 return MachineState.Empty;
-            if ( this.big.readyForHarvest.Value )
+            if (this.big.readyForHarvest.Value)
                 return MachineState.Done;
             return MachineState.Processing;
         }
 
-        public bool SetInput( IStorage input )
+        public bool SetInput(IStorage input)
         {
-            if ( !DynamicGameAssets.Mod.customMachineRecipes.ContainsKey(this.big.FullId ) )
+            if (!DynamicGameAssets.Mod.customMachineRecipes.ContainsKey(this.big.FullId))
                 return false;
 
-            foreach ( var recipe in DynamicGameAssets.Mod.customMachineRecipes[this.big.FullId ] )
+            foreach (var recipe in DynamicGameAssets.Mod.customMachineRecipes[this.big.FullId])
             {
-                if ( !input.TryGetIngredient( ( item ) => recipe.Ingredients[ 0 ].Matches( item.Sample ), recipe.Ingredients[ 0 ].Quantity, out IConsumable firstConsume ) )
+                if (!input.TryGetIngredient((item) => recipe.Ingredients[0].Matches(item.Sample), recipe.Ingredients[0].Quantity, out IConsumable firstConsume))
                     continue;
 
                 bool foundAll = true;
-                IConsumable[] consumes = new IConsumable[ recipe.Ingredients.Count ];
-                consumes[ 0 ] = firstConsume;
-                for ( int i = 1; i < recipe.Ingredients.Count; ++i )
+                IConsumable[] consumes = new IConsumable[recipe.Ingredients.Count];
+                consumes[0] = firstConsume;
+                for (int i = 1; i < recipe.Ingredients.Count; ++i)
                 {
-                    if ( input.TryGetIngredient( ( item ) => recipe.Ingredients[ i ].Matches( item.Sample ), recipe.Ingredients[ i ].Quantity, out IConsumable consumed ) )
-                        consumes[ i ] = consumed;
+                    if (input.TryGetIngredient((item) => recipe.Ingredients[i].Matches(item.Sample), recipe.Ingredients[i].Quantity, out IConsumable consumed))
+                        consumes[i] = consumed;
                     else
                     {
                         foundAll = false;
@@ -76,28 +71,28 @@ namespace DGAAutomate
                     }
                 }
 
-                if ( foundAll )
+                if (foundAll)
                 {
-                    foreach ( var consume in consumes )
+                    foreach (var consume in consumes)
                         consume.Take();
 
                     this.big.TextureOverride = recipe.MachineWorkingTextureOverride;
                     this.big.PendingTextureOverride = recipe.MachineFinishedTextureOverride;
                     this.big.PulseIfWorking = recipe.MachinePulseWhileWorking;
-                    this.big.heldObject.Value = ( StardewValley.Object ) recipe.Result.Choose().Create();
+                    this.big.heldObject.Value = (StardewValley.Object)recipe.Result.Choose().Create();
                     this.big.MinutesUntilReady = recipe.MinutesToProcess;
 
-                    if ( recipe.StartWorkingSound != null )
-                        this.Location.playSound( recipe.StartWorkingSound );
+                    if (recipe.StartWorkingSound != null)
+                        this.Location.playSound(recipe.StartWorkingSound);
 
-                    if ( recipe.WorkingLightOverride.HasValue )
+                    if (recipe.WorkingLightOverride.HasValue)
                     {
                         bool oldIsLamp = this.big.isLamp.Value;
                         this.big.isLamp.Value = recipe.WorkingLightOverride.Value;
-                        if ( !oldIsLamp && this.big.isLamp.Value )
-                            this.big.initializeLightSource( this.big.tileLocation.Value );
-                        else if ( oldIsLamp && !this.big.isLamp.Value )
-                            this.Location.removeLightSource( ( int ) ( this.big.tileLocation.X * 797f + this.big.tileLocation.Y * 13f + 666f ) );
+                        if (!oldIsLamp && this.big.isLamp.Value)
+                            this.big.initializeLightSource(this.big.tileLocation.Value);
+                        else if (oldIsLamp && !this.big.isLamp.Value)
+                            this.Location.removeLightSource((int)(this.big.tileLocation.X * 797f + this.big.tileLocation.Y * 13f + 666f));
                     }
                 }
             }
@@ -108,28 +103,28 @@ namespace DGAAutomate
 
     public class MyAutomationFactory : IAutomationFactory
     {
-        public IAutomatable GetFor( StardewValley.Object obj, GameLocation location, in Vector2 tile )
+        public IAutomatable GetFor(StardewValley.Object obj, GameLocation location, in Vector2 tile)
         {
-            if ( obj is CustomBigCraftable cbig )
+            if (obj is CustomBigCraftable cbig)
             {
-                if ( DynamicGameAssets.Mod.customMachineRecipes.ContainsKey( cbig.FullId ) )
-                    return new MyMachine( cbig, location, tile );
+                if (DynamicGameAssets.Mod.customMachineRecipes.ContainsKey(cbig.FullId))
+                    return new MyMachine(cbig, location, tile);
             }
 
             return null;
         }
 
-        public IAutomatable GetFor( TerrainFeature feature, GameLocation location, in Vector2 tile )
+        public IAutomatable GetFor(TerrainFeature feature, GameLocation location, in Vector2 tile)
         {
             return null;
         }
 
-        public IAutomatable GetFor( Building building, BuildableGameLocation location, in Vector2 tile )
+        public IAutomatable GetFor(Building building, BuildableGameLocation location, in Vector2 tile)
         {
             return null;
         }
 
-        public IAutomatable GetForTile( GameLocation location, in Vector2 tile )
+        public IAutomatable GetForTile(GameLocation location, in Vector2 tile)
         {
             return null;
         }
@@ -138,7 +133,7 @@ namespace DGAAutomate
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
-        public override void Entry( IModHelper helper )
+        public override void Entry(IModHelper helper)
         {
             Mod.instance = this;
             Log.Monitor = this.Monitor;
@@ -146,10 +141,10 @@ namespace DGAAutomate
             this.Helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
         }
 
-        private void OnGameLaunched( object sender, GameLaunchedEventArgs e )
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var automate = this.Helper.ModRegistry.GetApi< IAutomateAPI >( "Pathoschild.Automate" );
-            automate.AddFactory( new MyAutomationFactory() );
+            var automate = this.Helper.ModRegistry.GetApi<IAutomateAPI>("Pathoschild.Automate");
+            automate.AddFactory(new MyAutomationFactory());
         }
     }
 }

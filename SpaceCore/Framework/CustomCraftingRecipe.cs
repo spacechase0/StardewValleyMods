@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -13,11 +11,11 @@ namespace SpaceCore.Framework
     {
         internal readonly global::SpaceCore.CustomCraftingRecipe recipe;
 
-        public CustomCraftingRecipe( string name, bool isCooking, global::SpaceCore.CustomCraftingRecipe recipeOverride )
-        :   base( name, isCooking )
+        public CustomCraftingRecipe(string name, bool isCooking, global::SpaceCore.CustomCraftingRecipe recipeOverride)
+            : base(name, isCooking)
         {
             this.recipe = recipeOverride;
-            if (this.recipe.Name != null )
+            if (this.recipe.Name != null)
                 this.DisplayName = this.recipe.Name;
         }
 
@@ -33,7 +31,7 @@ namespace SpaceCore.Framework
             if (extraToCheck == null)
                 extraToCheck = new List<Item>();
 
-            foreach ( var ingred in this.recipe.Ingredients )
+            foreach (var ingred in this.recipe.Ingredients)
             {
                 if (ingred.GetAmountInList(Game1.player.Items) + ingred.GetAmountInList(extraToCheck) < ingred.Quantity)
                     return false;
@@ -45,7 +43,7 @@ namespace SpaceCore.Framework
         public override void drawMenuView(SpriteBatch b, int x, int y, float layerDepth = 0.88F, bool shadow = true)
         {
             // TODO: Allow 2-tall icons, like big craftables
-            Utility.drawWithShadow(b, this.recipe.IconTexture, new Vector2(x, y), this.recipe.IconSubrect ?? new Rectangle( 0, 0, this.recipe.IconTexture.Width, this.recipe.IconTexture.Height ), Color.White, 0f, Vector2.Zero, 4f, flipped: false, layerDepth);
+            Utility.drawWithShadow(b, this.recipe.IconTexture, new Vector2(x, y), this.recipe.IconSubrect ?? new Rectangle(0, 0, this.recipe.IconTexture.Width, this.recipe.IconTexture.Height), Color.White, 0f, Vector2.Zero, 4f, flipped: false, layerDepth);
         }
 
         public override void drawRecipeDescription(SpriteBatch b, Vector2 position, int width, IList<Item> additional_crafting_items)
@@ -88,7 +86,7 @@ namespace SpaceCore.Framework
         public override int getCraftableCount(IList<Chest> additional_material_chests)
         {
             int amt = int.MaxValue;
-            foreach ( var ingred in this.recipe.Ingredients )
+            foreach (var ingred in this.recipe.Ingredients)
             {
                 amt = Math.Min(amt, ingred.HasEnoughFor(additional_material_chests));
             }

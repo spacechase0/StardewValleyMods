@@ -6,19 +6,20 @@ using StardewValley.Objects;
 
 namespace DynamicGameAssets.Game
 {
-    [XmlType( "Mods_DGAHat" )]
+    [XmlType("Mods_DGAHat")]
     public partial class CustomHat : Hat
     {
         partial void DoInit()
         {
-            this.NetFields.AddFields(this._sourcePack, this._id );
+            this.NetFields.AddFields(this._sourcePack, this._id);
         }
-        partial void DoInit( HatPackData data )
+
+        partial void DoInit(HatPackData data)
         {
             this.Name = this.Id;
             this.which.Value = this.FullId.GetDeterministicHashCode();
 
-            this.hairDrawType.Value = ( int ) data.HairStyle;
+            this.hairDrawType.Value = (int)data.HairStyle;
             this.ignoreHairstyleOffset.Value = data.IgnoreHairstyleOffset;
             this.Category = -95;
         }
@@ -27,7 +28,7 @@ namespace DynamicGameAssets.Game
 
         public override string getDescription()
         {
-            return Game1.parseText(this.Data.Description, Game1.smallFont, this.getDescriptionWidth() );
+            return Game1.parseText(this.Data.Description, Game1.smallFont, this.getDescriptionWidth());
         }
         /*
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )

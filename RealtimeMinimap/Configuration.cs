@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 
@@ -11,7 +6,7 @@ namespace RealtimeMinimap
     public class Configuration
     {
         public bool ShowByDefault { get; set; } = true;
-        public KeybindList ToggleShowKey { get; set; } = new KeybindList( new Keybind( SButton.M, SButton.LeftControl ), new Keybind( SButton.M, SButton.RightControl ) );
+        public KeybindList ToggleShowKey { get; set; } = new KeybindList(new Keybind(SButton.M, SButton.LeftControl), new Keybind(SButton.M, SButton.RightControl));
         //public KeybindList MapKey { get; set; } = new KeybindList( new Keybind( SButton.M ) );
 
         public int UpdateInterval = -1;

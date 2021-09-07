@@ -147,7 +147,7 @@ namespace JsonAssets.Patches
                 if (!__instance.Name?.Contains("Honey") == true)
                     return true;
 
-                if ( Mod.instance.ObjectIds == null )
+                if (Mod.instance.ObjectIds == null)
                     return true;
 
                 if (!__instance.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))

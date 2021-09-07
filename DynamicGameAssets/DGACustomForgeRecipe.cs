@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
 using DynamicGameAssets.PackData;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
-using SpaceShared;
 using StardewValley;
-using StardewValley.Objects;
 
 namespace DynamicGameAssets
 {
@@ -16,14 +10,14 @@ namespace DynamicGameAssets
         {
             private ItemAbstraction ingred;
 
-            public DGAIngredientMatcher( ItemAbstraction theIngred )
+            public DGAIngredientMatcher(ItemAbstraction theIngred)
             {
                 this.ingred = theIngred;
             }
 
             public override bool HasEnoughFor(Item item)
             {
-                if (this.ItemMatches( item ) && item.Stack >= this.ingred.Quantity )
+                if (this.ItemMatches(item) && item.Stack >= this.ingred.Quantity)
                     return true;
                 return false;
             }
@@ -31,9 +25,9 @@ namespace DynamicGameAssets
             public override void Consume(ref Item item)
             {
                 int left = this.ingred.Quantity;
-                if (this.ItemMatches( item ) )
+                if (this.ItemMatches(item))
                 {
-                    if ( item.Stack <= left )
+                    if (item.Stack <= left)
                         item = null;
                     else
                         item.Stack -= left;
@@ -53,7 +47,7 @@ namespace DynamicGameAssets
         private IngredientMatcher cacheBase;
         private IngredientMatcher cacheIngred;
 
-        public DGACustomForgeRecipe( ForgeRecipePackData theData )
+        public DGACustomForgeRecipe(ForgeRecipePackData theData)
         {
             this.data = theData;
             this.Refresh();
@@ -61,8 +55,8 @@ namespace DynamicGameAssets
 
         public void Refresh()
         {
-            this.cacheBase = new DGAIngredientMatcher(this.data.BaseItem );
-            this.cacheIngred = new DGAIngredientMatcher(this.data.IngredientItem );
+            this.cacheBase = new DGAIngredientMatcher(this.data.BaseItem);
+            this.cacheIngred = new DGAIngredientMatcher(this.data.IngredientItem);
         }
 
 
@@ -70,7 +64,7 @@ namespace DynamicGameAssets
         public override IngredientMatcher IngredientItem => this.cacheIngred;
         public override int CinderShardCost => this.data.CinderShardCost;
 
-        public override Item CreateResult( Item baseItem, Item ingredItem )
+        public override Item CreateResult(Item baseItem, Item ingredItem)
         {
             // TODO: Random based on game seed and day
             return this.data.Result.Choose().Create();
