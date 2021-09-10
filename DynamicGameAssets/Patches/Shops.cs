@@ -153,7 +153,7 @@ namespace DynamicGameAssets.Patches
         }
     }
 
-    [HarmonyPatch(typeof(Utility), nameof(Utility.getAdventureShopStock))]
+    [HarmonyPatch(typeof(Utility), nameof(Utility.getCarpenterStock))]
     public static class CarpenterStockPatch
     {
         public static void Postfix(Dictionary<ISalable, int[]> __result)
@@ -162,7 +162,7 @@ namespace DynamicGameAssets.Patches
         }
     }
 
-    [HarmonyPatch(typeof(Utility), nameof(Utility.getAdventureShopStock))]
+    [HarmonyPatch(typeof(Utility), nameof(Utility.getAnimalShopStock))]
     public static class AnimalSuppliesStockPatch
     {
         public static void Postfix(Dictionary<ISalable, int[]> __result)
@@ -171,7 +171,7 @@ namespace DynamicGameAssets.Patches
         }
     }
 
-    [HarmonyPatch(typeof(Utility), nameof(Utility.getAdventureShopStock))]
+    [HarmonyPatch(typeof(Utility), nameof(Utility.getBlacksmithStock))]
     public static class BlacksmithStockPatch
     {
         public static void Postfix(Dictionary<ISalable, int[]> __result)
