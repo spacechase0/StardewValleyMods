@@ -238,7 +238,7 @@ Unlike most pack data, config schema entries live in `config-schema.json`.
 
 DGA supports custom config files for packs, integrated with GMCM. You make a list of entries to show in Generic Mod Config Menu (GMCM) (or in the config file, although labels, paragraphcs, images, and pages don't work there), and it works automatically. Everything shows up in the order they show in the config schema.
 
-Config fields are usable in dynamic field conditions and enable conditions. (Remember, these are only applied at the beginning of each day.) They are very useful with Content Patcher's (Query token)[https://github.com/Pathoschild/StardewMods/blob/stable/ContentPatcher/docs/author-tokens-guide.md#query-expressions]. To learn how to use config options in your dynamic fields, see the [Dynamic Fields](#dynamic-fields) section.
+Config fields are usable in dynamic field conditions and enable conditions. (Remember, these are only applied at the beginning of each day.) They are very useful with Content Patcher's [Query token](https://github.com/Pathoschild/StardewMods/blob/stable/ContentPatcher/docs/author-tokens-guide.md#query-expressions). To learn how to use config options in your dynamic fields, see the [Dynamic Fields](#dynamic-fields) section.
 
 Every config schema entry has two fields, plus more depending on the type.
 | Field | Type | Required or Default value | Description |
