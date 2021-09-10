@@ -348,7 +348,7 @@ Boots can be localized in the following keys: `"boots.YourBoots.name"` and `"boo
 
 Note: Unlike everything else, the `ID` field must be unique *across the game* (including vanilla recipes).
 
-Crafting recipes can be localized in the following keys: `"crafting-recipe.YourCraftingRecipe.name"` and `"crafting-recipe.YourCraftingRecipe.description"`.
+Crafting recipes can be localized in the following keys: `"crafting.YourCraftingRecipe.name"` and `"crafting.YourCraftingRecipe.description"`.
 
 If `RemoveAllTraceswhenDisabled` is set, then the player will not remember the recipe when it is re-enabled.
 
