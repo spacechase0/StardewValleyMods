@@ -68,7 +68,7 @@ This is a list of differences *as pertains to making content packs*. For a full 
 * Everything goes in or is referenced by `content.json` at the root of the content pack; this is to make it so overwriting folders does not result in items that should no longer be present. (In Json Assets, you had to delete the mod and reinstall it to avoid this behavior.)
 * Rings are not supported.
  * This is due to the fact that you need SMAPI code to implement their effects anyways; at that point, you can just use a custom subclass of `Ring` and the SpaceCore serialization API like this mod does.
-* Similarly, there is no longer a code API for dynamically registering items. You can just subclass things and register it with the SapceCore serializer like this mod does, or subclass `ContentPack`, add your items to it, and then register your content pack directly with the mod.
+* Similarly, there is no longer a code API for dynamically registering items. You can just subclass things and register it with the SpaceCore serializer like this mod does, or subclass `ContentPack`, add your items to it, and then register your content pack directly with the mod.
 * Maybe more I forgot.
 
 ## Useful commands
