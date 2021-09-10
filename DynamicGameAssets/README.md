@@ -143,7 +143,7 @@ This is simply an array of `Texture`, ie.:
 ### Item
 There are multiple types of items in the game, and specifying them can be tricky. Sometimes, you may want a vanilla weapon or big craftable, or other times you'll want one of your custom items. For `Item`s, you'll need to specify a `Type`, and `Value` (which depends on the `Type`). Here are a few examples:
 
-```json
+```jsonc
 {
     "Type": "VanillaObject",
     "Value": 74, // ID of prismatic shard
@@ -182,7 +182,7 @@ Note 2: The default value for `Type` is `DGAItem`. So, if you are specifying tha
 ### WeightedItem[]
 In some cases (primarily recipe output) you may specify multiple `Item`s, with a weight. The mod will then choose one based on the weight values. Higher weights are more likely to be chosen. Here is an example:
 
-```json
+```jsonc
 [
     {
         "Weight": 10,
@@ -813,7 +813,7 @@ This is done in the following order:
 
  Here is an example with an Object:
 
- ```json
+ ```jsonc
   {
     "ID": "Mysterious Circle",
     "Category": "Vegetable",
