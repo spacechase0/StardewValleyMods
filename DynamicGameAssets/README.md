@@ -55,16 +55,16 @@ Contents
 * [Additional Resources](#additional-resources)
 
 ## Differences from Json Assets
-This is a list of differences *as pertains to making content packs*. For a full list of differences, see the (Nexus)[#] page.
+This is a list of differences *as pertains to making content packs*. For a full list of differences, see the [Nexus](https://www.nexusmods.com/stardewvalley/mods/9365) page.
 
 * JA crops that regrow work on the amount of days until they can be harvested (yes, really, I just double-checked and tested). However, in DGA, you can only revert to a different phase. Because of this, the converter will only revert regrow crops to their previous phase. You can reconfigure this to a different phase if you want.
 * Shop entries are calculated at the beginning of the day instead of when the shop is opened. This means certain conditions (such as time based ones) might not work, or behave oddly.
 * Crops and fruit trees do not have seeds/saplings created automatically; instead, create an object with specify the crop/fruit tree using the `Plants` field.
 * Crops and fruit trees do not have a `"Season"` field anymore; instead the `"CanGrowNow"` field must be set using dynamic fields. An example is shown in the (Crop)[#] section.
 * Crops can have as many phases are you want.
-* Crops do not have `"MaxIncreasePerFarmLevel"`. I think this can be done using (Dynamic Fields)[#] (though I haven't tested it yet).
+* Crops do not have `"MaxIncreasePerFarmLevel"`. I think this can be done using [Dynamic Fields](#dynamicfield) (though I haven't tested it yet).
 * Internationalization is done through the `i18n` folder now.
-* Tilesheets are supported. See the (Texture field type)[#] section.
+* Tilesheets are supported. See the [Texture field type](#texture) section.
 * Everything goes in or is referenced by `content.json` at the root of the content pack; this is to make it so overwriting folders does not result in items that should no longer be present. (In Json Assets, you had to delete the mod and reinstall it to avoid this behavior.)
 * Rings are not supported.
  * This is due to the fact that you need SMAPI code to implement their effects anyways; at that point, you can just use a custom subclass of `Ring` and the SpaceCore serialization API like this mod does.
