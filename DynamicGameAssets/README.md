@@ -1,6 +1,6 @@
 ﻿# Dynamic Game Assets
 
-This documentation is for making mods; for using Dynamic Game Assets as a user, please check the (Nexus)[https://www.nexusmods.com/stardewvalley/mods/9365] page.
+This documentation is for making mods; for using Dynamic Game Assets as a user, please check the [Nexus](https://www.nexusmods.com/stardewvalley/mods/9365) page.
 
 Contents
 * [Differences from Json Assets](#differences-from-json-assets)
@@ -46,7 +46,7 @@ Contents
     * [Gift Tastes](#gift-tastes)
     * [Pants](#pants)
     * [Shirts](#shirts)
-    * [Shop Entries](#shop-entires)
+    * [Shop Entries](#shop-entries)
     * [Tailoring Recipes](#tailoring-recipes)
     * [Texture Overrides](#texture-overrides)
     * [Extra Information](#extra-information)
@@ -55,20 +55,20 @@ Contents
 * [Additional Resources](#additional-resources)
 
 ## Differences from Json Assets
-This is a list of differences *as pertains to making content packs*. For a full list of differences, see the (Nexus)[#] page.
+This is a list of differences *as pertains to making content packs*. For a full list of differences, see the [Nexus](https://www.nexusmods.com/stardewvalley/mods/9365) page.
 
 * JA crops that regrow work on the amount of days until they can be harvested (yes, really, I just double-checked and tested). However, in DGA, you can only revert to a different phase. Because of this, the converter will only revert regrow crops to their previous phase. You can reconfigure this to a different phase if you want.
 * Shop entries are calculated at the beginning of the day instead of when the shop is opened. This means certain conditions (such as time based ones) might not work, or behave oddly.
 * Crops and fruit trees do not have seeds/saplings created automatically; instead, create an object with specify the crop/fruit tree using the `Plants` field.
 * Crops and fruit trees do not have a `"Season"` field anymore; instead the `"CanGrowNow"` field must be set using dynamic fields. An example is shown in the (Crop)[#] section.
 * Crops can have as many phases are you want.
-* Crops do not have `"MaxIncreasePerFarmLevel"`. I think this can be done using (Dynamic Fields)[#] (though I haven't tested it yet).
+* Crops do not have `"MaxIncreasePerFarmLevel"`. I think this can be done using [Dynamic Fields](#dynamicfield) (though I haven't tested it yet).
 * Internationalization is done through the `i18n` folder now.
-* Tilesheets are supported. See the (Texture field type)[#] section.
+* Tilesheets are supported. See the [Texture field type](#texture) section.
 * Everything goes in or is referenced by `content.json` at the root of the content pack; this is to make it so overwriting folders does not result in items that should no longer be present. (In Json Assets, you had to delete the mod and reinstall it to avoid this behavior.)
 * Rings are not supported.
  * This is due to the fact that you need SMAPI code to implement their effects anyways; at that point, you can just use a custom subclass of `Ring` and the SpaceCore serialization API like this mod does.
-* Similarly, there is no longer a code API for dynamically registering items. You can just subclass things and register it with the SapceCore serializer like this mod does, or subclass `ContentPack`, add your items to it, and then register your content pack directly with the mod.
+* Similarly, there is no longer a code API for dynamically registering items. You can just subclass things and register it with the SpaceCore serializer like this mod does, or subclass `ContentPack`, add your items to it, and then register your content pack directly with the mod.
 * Maybe more I forgot.
 
 ## Useful commands
@@ -143,7 +143,7 @@ This is simply an array of `Texture`, ie.:
 ### Item
 There are multiple types of items in the game, and specifying them can be tricky. Sometimes, you may want a vanilla weapon or big craftable, or other times you'll want one of your custom items. For `Item`s, you'll need to specify a `Type`, and `Value` (which depends on the `Type`). Here are a few examples:
 
-```json
+```jsonc
 {
     "Type": "VanillaObject",
     "Value": 74, // ID of prismatic shard
@@ -182,7 +182,7 @@ Note 2: The default value for `Type` is `DGAItem`. So, if you are specifying tha
 ### WeightedItem[]
 In some cases (primarily recipe output) you may specify multiple `Item`s, with a weight. The mod will then choose one based on the weight values. Higher weights are more likely to be chosen. Here is an example:
 
-```json
+```jsonc
 [
     {
         "Weight": 10,
@@ -209,7 +209,7 @@ In some cases (primarily recipe output) you may specify multiple `Item`s, with a
 ```
 
 ### DynamicField[]
-A little complex, but very powerful. See the (Dynamic Fields)[#] section.
+A little complex, but very powerful. See the [Dynamic Fields](#dynamic-fields) section.
 
 ## Pack data
 
@@ -218,10 +218,11 @@ All pack data comes in a single json file, `content.json` in the root of the con
 ### Common
 These fields are common to every type of pack data.
 | Field | Type | Required or Default value | Description | Dynamic |
+| --- | --- | --- | --- | --- |
 | `$ItemType` | `string` | Required | The type of this pack data. Listed at the beginning of each pack data section. | `false` |
 | `Enabled` | `bool` | Default: `true` | Whether or not the item is currently enabled. Useful with dynamic fields. | `true` |
 | `EnableConditions` | `Dictionary<string, string>` | Default: `null` | Checked at the beginning of each day, these can changed the `Enabled` field dynamically. If disabled, instances of this item will be removed from the game world. Some data might linger; if a pack data type has a "Traces" section, it will describe what will linger. These can be removed, too, by setting `RemoveAllTracesWhenDisabled` to `true` for those pack data types. | `false` |
-| `DynamicFields` | `DynamicField[]` | Default: `null` | See the (Dynamic Fields)[#] section. | `false` |
+| `DynamicFields` | `DynamicField[]` | Default: `null` | See the [Dynamic Fields](#dynamic-fields) section. | `false` |
 
 ### Content Index
 `$ItemType` - `"ContentIndex"`
@@ -237,13 +238,13 @@ Unlike most pack data, config schema entries live in `config-schema.json`.
 
 DGA supports custom config files for packs, integrated with GMCM. You make a list of entries to show in Generic Mod Config Menu (GMCM) (or in the config file, although labels, paragraphcs, images, and pages don't work there), and it works automatically. Everything shows up in the order they show in the config schema.
 
-Config fields are usable in dynamic field conditions and enable conditions. (Remember, these are only applied at the beginning of each day.) They are very useful with Content Patcher's (Query token)[https://github.com/Pathoschild/StardewMods/blob/stable/ContentPatcher/docs/author-tokens-guide.md#query-expressions]. To learn how to use config options in your dynamic fields, see the [Dynamic Fields](#dynamic-fields) section.
+Config fields are usable in dynamic field conditions and enable conditions. (Remember, these are only applied at the beginning of each day.) They are very useful with Content Patcher's [Query token](https://github.com/Pathoschild/StardewMods/blob/stable/ContentPatcher/docs/author-tokens-guide.md#query-expressions). To learn how to use config options in your dynamic fields, see the [Dynamic Fields](#dynamic-fields) section.
 
 Every config schema entry has two fields, plus more depending on the type.
 | Field | Type | Required or Default value | Description |
 | --- | --- | --- | --- |
 | `OnPage` | `string` | Default: `""` (the main page) | The page that this entry will show up on. |
-| `ElementType` | `ConfigElementType` | Defeault: `"ConfigOption"` | The type of element this is. | 
+| `ElementType` | `ConfigElementType` | Default: `"ConfigOption"` | The type of element this is. | 
 
 There are four `ConfigElementType`s for config schema entries. Each one has a section below.
 
@@ -280,7 +281,7 @@ Every config schema entry has three fields, plus more depending on the type.
 | --- | --- | --- | --- |
 | `Name` | `string` | Required | The name for this config option. |
 | `Description` | `string` | Default: `""` (no tooltip) | The tooltip for this config option. |
-| `ValueType` | `ConfigValueType` | Defeault: `"ConfigOption"` | The type of element this is. | 
+| `ValueType` | `ConfigValueType` | Default: `"ConfigOption"` | The type of element this is. | 
 
 There are four `ConfigValueType`s for config option entries. Each one has a section below.
 
@@ -347,7 +348,7 @@ Boots can be localized in the following keys: `"boots.YourBoots.name"` and `"boo
 
 Note: Unlike everything else, the `ID` field must be unique *across the game* (including vanilla recipes).
 
-Crafting recipes can be localized in the following keys: `"crafting-recipe.YourCraftingRecipe.name"` and `"crafting-recipe.YourCraftingRecipe.description"`.
+Crafting recipes can be localized in the following keys: `"crafting.YourCraftingRecipe.name"` and `"crafting.YourCraftingRecipe.description"`.
 
 If `RemoveAllTraceswhenDisabled` is set, then the player will not remember the recipe when it is re-enabled.
 
@@ -368,6 +369,7 @@ These are special types relating to just crafting recipes, used in the above tab
 This should be an array of an an object called `Ingredient`. An `Ingredient` is just an `Item` with the following extra fields:
 
 | Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
 | `NameOverride` | `string` | Required/Default: `null` | Override the name showing for this ingredient. Required when using `ContextTag` for `Type`.  |
 | `IconOverride` | `Texture[16, 16]` | Required/Default: `null` | Override the icon showing for this ingredient. Required when using `ContextTag` for `Type`. |
 
@@ -394,7 +396,7 @@ Example:
 | --- | --- | --- | --- | --- |
 | `ID` | `string` | Required | The ID of this crop. | `false` |
 | `Type` | `Enum[Normal, Indoors, Paddy]` | Default: `"Normal"` | The crop type: a "normal" one, one that must be indoors, or one that grows faster near water. | `true` |
-| `CanGrowNow` | `bool` | Default: `false` | Whether or not the crop can grow. Use with (Dynamic Fields)[#] to make a crop that doesn't either always or never grow. | `true` |
+| `CanGrowNow` | `bool` | Default: `false` | Whether or not the crop can grow. Use with [Dynamic Fields](#dynamicfield) to make a crop that doesn't either always or never grow. | `true` |
 | `Colors` | `Color[]` | Default: `null` | The potential colors for the color layer of a phase to use. Harvested products will also use this color if they have a color layer. | (unknown, untested) |
 | `Phases` | `Phase[]` | Required | The phases for this crop. | (unknown, untested) |
 | `GiantChance` | `float` | Default: `0.01` | The chance for a giant crop to grow, if `GiantTextureChoices` is set. | `true` |
@@ -419,6 +421,7 @@ These are special types relating to just crops, used in the above table.
 This should be an array of an an object called `Phase`. A `Phase` is as follows:
 
 | Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
 | `TextureChoices` | `MultiTexture[16, 32]` | Required | The choices between textures. A texture is chosen based on the tile location of the crop. |
 | `TextureColorChoices` | `MultiTexture[16, 32]` | Default: null | The choices between textures for the color layer. A texture is chosen based on the tile location of the crop. |
 | `Length` | `int` | Required | The length of this phase, in days. |
@@ -441,6 +444,7 @@ Example seed phase:
 This should be an array of an an object called `HarvestedDrop`. A `HarvestedDrop` is as follows:
 
 | Field | Type | Required or Default value | Description |
+| --- | --- | --- | --- |
 | `MininumHarvestedQuantity` | `int` | Default: `1` | The minimum amount of this item to drop. |
 | `MaximumHarvestedQuantity` | `int` | Default: `1` | The maximum amount of this item to drop. |
 | `ExtraQuantityChance` | `float` | Default: `0` | A chance (between `0` and `0.9`, with `0.5` being 50%) for the quantity to increase. If increased, the check will run again, and again, until the check fails. |
@@ -503,7 +507,7 @@ Fences can be localized in the following keys: `"fence.YourFence.name"` and `"fe
 | --- | --- | --- | --- | --- |
 | `ID` | `string` | Required | The ID of this fruit tree. | `false` |
 | `Texture` | `Texture[432, 80]` | Required | The texture used for this fruit tree, matching the vanilla format. | `true` |
-| `CanGrowNow` | `bool` | Default: `false` | Whether or not the fruit tree can produce fruit. Use with (Dynamic Fields)[#] to make a fruit tree that doesn't either always or never produce fruit. | `true` |
+| `CanGrowNow` | `bool` | Default: `false` | Whether or not the fruit tree can produce fruit. Use with [Dynamic Fields](#dynamic-fields) to make a fruit tree that doesn't either always or never produce fruit. | `true` |
 | `Product` | `WeightedItem[]` | Required | The product to grow on the tree. Once something rows on the tree, it will stay there until shaken (or struck by lightning). Max of 3 per tree. (NOTE: For technical purposes, this must be a `VanillaObject` or an object pack data type!) |
 
 Example `DynamicFields` for a spring-only `CanGrowNow`:
@@ -536,9 +540,9 @@ Certain furniture types have additional fields:
 | `Bed` | `BedType` | `Enum[Single, Double, Child]` | `"Single"` | The bed type. | (unknown, untested) |
 | `TV` | `ScreenPosition` | `Vector2` | Default: `"0, 0"` | The offset for the screen to render, in pixels, from the texture. | (unknown, untested) |
 | `TV` | `ScreenSize` | `int` | Required | A multiplier for the screen size, in relation to the size of the graphics in the game files. | `true` |
-| `FishTank` | `TankSwimmingCapacity` | `int` | Default: `-1` | The max amount of "swimming fish" in the fish tnak, or -1 for unlimited. | `true` |
-| `FishTank` | `TankGroundCapacity` | `int` | Default: `-1` | The max amount of "ground fish" in the fish tnak, or -1 for unlimited. | `true` |
-| `FishTank` | `TankDecorationCapacity` | `int` | Default: `-1` | The max amount of "decorations" in the fish tnak, or -1 for unlimited. (NOTE: Only one of each type of decoration is supported.) | `true` |
+| `FishTank` | `TankSwimmingCapacity` | `int` | Default: `-1` | The max amount of "swimming fish" in the fish tank, or -1 for unlimited. | `true` |
+| `FishTank` | `TankGroundCapacity` | `int` | Default: `-1` | The max amount of "ground fish" in the fish tank, or -1 for unlimited. | `true` |
+| `FishTank` | `TankDecorationCapacity` | `int` | Default: `-1` | The max amount of "decorations" in the fish tank, or -1 for unlimited. (NOTE: Only one of each type of decoration is supported.) | `true` |
 
 #### Special types
 These are special types relating to just furniture, used in the above tables.
@@ -809,7 +813,7 @@ This is done in the following order:
 
  Here is an example with an Object:
 
- ```json
+ ```jsonc
   {
     "ID": "Mysterious Circle",
     "Category": "Vegetable",
