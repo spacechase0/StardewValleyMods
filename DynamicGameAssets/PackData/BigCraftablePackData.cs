@@ -46,7 +46,7 @@ namespace DynamicGameAssets.PackData
 
         public override TexturedRect GetTexture()
         {
-            return this.pack.GetTexture(this.Texture, 16, 16);
+            return this.pack.GetTexture(this.Texture, 16, 32);
         }
 
         public override object Clone()
