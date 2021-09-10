@@ -1,6 +1,6 @@
 ﻿# Dynamic Game Assets
 
-This documentation is for making mods; for using Dynamic Game Assets as a user, please check the (Nexus)[https://www.nexusmods.com/stardewvalley/mods/9365] page.
+This documentation is for making mods; for using Dynamic Game Assets as a user, please check the [Nexus](https://www.nexusmods.com/stardewvalley/mods/9365) page.
 
 Contents
 * [Differences from Json Assets](#differences-from-json-assets)
