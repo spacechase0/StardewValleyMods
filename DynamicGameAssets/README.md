@@ -209,7 +209,7 @@ In some cases (primarily recipe output) you may specify multiple `Item`s, with a
 ```
 
 ### DynamicField[]
-A little complex, but very powerful. See the (Dynamic Fields)[#] section.
+A little complex, but very powerful. See the [Dynamic Fields](#dynamic-fields) section.
 
 ## Pack data
 
@@ -222,7 +222,7 @@ These fields are common to every type of pack data.
 | `$ItemType` | `string` | Required | The type of this pack data. Listed at the beginning of each pack data section. | `false` |
 | `Enabled` | `bool` | Default: `true` | Whether or not the item is currently enabled. Useful with dynamic fields. | `true` |
 | `EnableConditions` | `Dictionary<string, string>` | Default: `null` | Checked at the beginning of each day, these can changed the `Enabled` field dynamically. If disabled, instances of this item will be removed from the game world. Some data might linger; if a pack data type has a "Traces" section, it will describe what will linger. These can be removed, too, by setting `RemoveAllTracesWhenDisabled` to `true` for those pack data types. | `false` |
-| `DynamicFields` | `DynamicField[]` | Default: `null` | See the (Dynamic Fields)[#] section. | `false` |
+| `DynamicFields` | `DynamicField[]` | Default: `null` | See the [Dynamic Fields](#dynamic-fields) section. | `false` |
 
 ### Content Index
 `$ItemType` - `"ContentIndex"`
@@ -396,7 +396,7 @@ Example:
 | --- | --- | --- | --- | --- |
 | `ID` | `string` | Required | The ID of this crop. | `false` |
 | `Type` | `Enum[Normal, Indoors, Paddy]` | Default: `"Normal"` | The crop type: a "normal" one, one that must be indoors, or one that grows faster near water. | `true` |
-| `CanGrowNow` | `bool` | Default: `false` | Whether or not the crop can grow. Use with (Dynamic Fields)[#] to make a crop that doesn't either always or never grow. | `true` |
+| `CanGrowNow` | `bool` | Default: `false` | Whether or not the crop can grow. Use with [Dynamic Fields](#dynamicfield) to make a crop that doesn't either always or never grow. | `true` |
 | `Colors` | `Color[]` | Default: `null` | The potential colors for the color layer of a phase to use. Harvested products will also use this color if they have a color layer. | (unknown, untested) |
 | `Phases` | `Phase[]` | Required | The phases for this crop. | (unknown, untested) |
 | `GiantChance` | `float` | Default: `0.01` | The chance for a giant crop to grow, if `GiantTextureChoices` is set. | `true` |
@@ -507,7 +507,7 @@ Fences can be localized in the following keys: `"fence.YourFence.name"` and `"fe
 | --- | --- | --- | --- | --- |
 | `ID` | `string` | Required | The ID of this fruit tree. | `false` |
 | `Texture` | `Texture[432, 80]` | Required | The texture used for this fruit tree, matching the vanilla format. | `true` |
-| `CanGrowNow` | `bool` | Default: `false` | Whether or not the fruit tree can produce fruit. Use with (Dynamic Fields)[#] to make a fruit tree that doesn't either always or never produce fruit. | `true` |
+| `CanGrowNow` | `bool` | Default: `false` | Whether or not the fruit tree can produce fruit. Use with [Dynamic Fields](#dynamic-fields) to make a fruit tree that doesn't either always or never produce fruit. | `true` |
 | `Product` | `WeightedItem[]` | Required | The product to grow on the tree. Once something rows on the tree, it will stay there until shaken (or struck by lightning). Max of 3 per tree. (NOTE: For technical purposes, this must be a `VanillaObject` or an object pack data type!) |
 
 Example `DynamicFields` for a spring-only `CanGrowNow`:
