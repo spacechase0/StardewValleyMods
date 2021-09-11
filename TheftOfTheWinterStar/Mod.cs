@@ -26,15 +26,6 @@ using SObject = StardewValley.Object;
 
 namespace TheftOfTheWinterStar
 {
-    internal enum ArenaStage
-    {
-        NotTriggered,
-        Stage1,
-        Finished1,
-        Stage2,
-        Finished2
-    }
-
     internal class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
         public const int EventId = 91000;

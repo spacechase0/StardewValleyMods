@@ -61,10 +61,10 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig modConfig = this.Configs.Get(mod, assert: true);
-            if (modConfig.Options.TryGetValue(pageName, out ModConfig.ModPage page))
+            if (modConfig.Options.TryGetValue(pageName, out ModConfigPage page))
                 modConfig.ActiveRegisteringPage = page;
             else
-                modConfig.Options.Add(pageName, modConfig.ActiveRegisteringPage = new ModConfig.ModPage(pageName));
+                modConfig.Options.Add(pageName, modConfig.ActiveRegisteringPage = new ModConfigPage(pageName));
         }
 
         public void OverridePageDisplayName(IManifest mod, string pageName, string displayName)
@@ -72,7 +72,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig modConfig = this.Configs.Get(mod, assert: true);
-            if (!modConfig.Options.TryGetValue(pageName, out ModConfig.ModPage page))
+            if (!modConfig.Options.TryGetValue(pageName, out ModConfigPage page))
                 throw new ArgumentException("Page not registered");
 
             page.DisplayName = displayName;

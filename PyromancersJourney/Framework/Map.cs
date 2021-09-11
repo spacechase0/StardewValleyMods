@@ -2,18 +2,6 @@ using Microsoft.Xna.Framework;
 
 namespace PyromancersJourney.Framework
 {
-    internal enum FloorTile
-    {
-        Stone,
-        Lava
-    }
-
-    internal enum WallTile
-    {
-        Empty,
-        Stone
-    }
-
     internal class Map
     {
         public Color Sky = Color.Black;

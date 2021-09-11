@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
+using DynamicGameAssets.Framework;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

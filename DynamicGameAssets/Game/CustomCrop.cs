@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Xml.Serialization;
+using DynamicGameAssets.Framework;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
 using Microsoft.Xna.Framework;

@@ -38,7 +38,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Dropdown.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Element.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\Floatbox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\FloatBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Intbox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Label.cs" />

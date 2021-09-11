@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DynamicGameAssets.Framework;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

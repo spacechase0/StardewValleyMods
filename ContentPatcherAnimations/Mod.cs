@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using ContentPatcherAnimations.Framework;
 using Microsoft.Xna.Framework;
@@ -13,30 +12,6 @@ using StardewValley;
 
 namespace ContentPatcherAnimations
 {
-    internal class PatchData
-    {
-        public object PatchObj;
-        public Func<bool> IsActive;
-        public Func<Texture2D> TargetFunc;
-        public Texture2D Target;
-        public Func<Texture2D> SourceFunc;
-        public Texture2D Source;
-        public Func<Rectangle> FromAreaFunc;
-        public Func<Rectangle> ToAreaFunc;
-        public int CurrentFrame;
-    }
-
-    internal class ScreenState
-    {
-        public IEnumerable CpPatches;
-
-        public Dictionary<Patch, PatchData> AnimatedPatches = new();
-
-        public uint FrameCounter;
-        public int FindTargetsCounter;
-        public Queue<Patch> FindTargetsQueue = new();
-    }
-
     internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;

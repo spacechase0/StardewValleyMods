@@ -21,74 +21,6 @@ using SObject = StardewValley.Object;
 
 namespace SurfingFestival
 {
-    internal enum Item
-    {
-        Boost,
-        HomingProjectile,
-        FirstPlaceProjectile,
-        Invincibility
-    }
-
-    internal enum ObstacleType
-    {
-        Item,
-        Net,
-        Rock,
-        HomingProjectile,
-        FirstPlaceProjectile
-    }
-
-    internal enum BonfireState
-    {
-        NotDone,
-        Normal,
-        Shorts
-    }
-
-    internal class Obstacle
-    {
-        public ObstacleType Type { get; set; }
-        public Vector2 Position { get; set; }
-        public string HomingTarget { get; set; }
-
-        public TemporaryAnimatedSprite UnderwaterSprite { get; set; }
-
-        public Rectangle GetBoundingBox()
-        {
-            int w = 48, h = 16;
-            int ox = 0, oy = 0;
-            if (this.Type is ObstacleType.Item or ObstacleType.HomingProjectile or ObstacleType.FirstPlaceProjectile)
-                w = 16;
-            else if (this.Type == ObstacleType.Rock)
-            {
-                oy = -16 * Game1.pixelZoom;
-                h += 16;
-            }
-            w *= Game1.pixelZoom;
-            h *= Game1.pixelZoom;
-            return new Rectangle((int)this.Position.X + ox /*- w / 2*/, (int)this.Position.Y + oy /*- h / 2*/, w, h);
-        }
-    }
-
-    internal class RacerState
-    {
-        public int Speed { get; set; } = Mod.SurfSpeed;
-        public int AddedSpeed { get; set; }
-        public int Surfboard { get; set; }
-        public int Facing { get; set; } = Game1.right;
-
-        public int LapsDone { get; set; }
-        public bool ReachedHalf { get; set; }
-
-        public Item? CurrentItem { get; set; }
-        public int ItemObtainTimer { get; set; } = -1;
-        public int ItemUsageTimer { get; set; } = -1;
-        public int SlowdownTimer { get; set; } = -1;
-        public int StunTimer { get; set; } = -1;
-
-        public bool ShouldUseItem { get; set; }
-    }
-
     internal class Mod : StardewModdingAPI.Mod, IAssetLoader, IAssetEditor
     {
         public static Mod Instance;
@@ -326,13 +258,13 @@ namespace SurfingFestival
                                 else continue;
                                 break;
                             case ObstacleType.Net:
-                                if (!(state.CurrentItem == Item.Invincibility && state.ItemUsageTimer >= 0))
+                                if (!(state.CurrentItem == SurfItem.Invincibility && state.ItemUsageTimer >= 0))
                                 {
                                     state.StunTimer = 90;
                                 }
                                 break;
                             case ObstacleType.Rock:
-                                if (!(state.CurrentItem == Item.Invincibility && state.ItemUsageTimer >= 0))
+                                if (!(state.CurrentItem == SurfItem.Invincibility && state.ItemUsageTimer >= 0))
                                 {
                                     if (state.SlowdownTimer == -1)
                                         state.Speed /= 2;
@@ -344,7 +276,7 @@ namespace SurfingFestival
                             case ObstacleType.HomingProjectile:
                                 if (racerName != obstacle.HomingTarget)
                                     continue;
-                                if (!(state.CurrentItem == Item.Invincibility && state.ItemUsageTimer >= 0))
+                                if (!(state.CurrentItem == SurfItem.Invincibility && state.ItemUsageTimer >= 0))
                                 {
                                     if (state.SlowdownTimer == -1)
                                         state.Speed /= 2;
@@ -372,8 +304,8 @@ namespace SurfingFestival
                     {
                         while (true)
                         {
-                            state.CurrentItem = (Item)Game1.recentMultiplayerRandom.Next(Enum.GetValues(typeof(Item)).Length);
-                            if (Mod.GetRacePlacement()[Mod.GetRacePlacement().Count - 1] == racerName && state.CurrentItem == Item.FirstPlaceProjectile)
+                            state.CurrentItem = (SurfItem)Game1.recentMultiplayerRandom.Next(Enum.GetValues(typeof(SurfItem)).Length);
+                            if (Mod.GetRacePlacement()[Mod.GetRacePlacement().Count - 1] == racerName && state.CurrentItem == SurfItem.FirstPlaceProjectile)
                             { }
                             else break;
                         }
@@ -383,12 +315,12 @@ namespace SurfingFestival
                 {
                     if (--state.ItemUsageTimer < 0)
                     {
-                        if (state.CurrentItem.Value == Item.Boost)
+                        if (state.CurrentItem.Value == SurfItem.Boost)
                         {
                             state.Speed /= 2;
                             racer.stopGlowing();
                         }
-                        else if (state.CurrentItem.Value == Item.Invincibility)
+                        else if (state.CurrentItem.Value == SurfItem.Invincibility)
                         {
                             state.AddedSpeed -= 3;
                             racer.stopGlowing();
@@ -397,7 +329,7 @@ namespace SurfingFestival
                     }
                     else
                     {
-                        if (state.CurrentItem == Item.Invincibility)
+                        if (state.CurrentItem == SurfItem.Invincibility)
                             racer.glowingColor = Mod.MyGetPrismaticColor();
                     }
                 }
@@ -537,13 +469,13 @@ namespace SurfingFestival
                     }
                     switch (state.CurrentItem.Value)
                     {
-                        case Item.Boost:
+                        case SurfItem.Boost:
                             state.Speed *= 2;
                             state.ItemUsageTimer = 80;
                             racer.startGlowing(Color.DarkViolet, false, 0.05f);
                             Game1.playSound("wand");
                             break;
-                        case Item.HomingProjectile:
+                        case SurfItem.HomingProjectile:
                             string target = null;
                             bool next = false;
                             foreach (string other in Mod.GetRacePlacement())
@@ -571,7 +503,7 @@ namespace SurfingFestival
                             Game1.CurrentEvent.underwaterSprites.Add(tas);
                             Game1.playSound("throwDownITem");
                             break;
-                        case Item.FirstPlaceProjectile:
+                        case SurfItem.FirstPlaceProjectile:
                             state.CurrentItem = null;
                             Mod.Obstacles.Add(new Obstacle
                             {
@@ -581,7 +513,7 @@ namespace SurfingFestival
                             });
                             Game1.playSound("fishEscape");
                             break;
-                        case Item.Invincibility:
+                        case SurfItem.Invincibility:
                             state.ItemUsageTimer = 150;
                             if (state.SlowdownTimer > 0)
                                 state.SlowdownTimer = 0;
@@ -759,7 +691,7 @@ namespace SurfingFestival
             b.Draw(Game1.mouseCursors, new Vector2(pos.X - 14 * 2, pos.Y + 74 * 2), new Rectangle(589, 488, 102, 18), Color.White, 0, Vector2.Zero, 2, SpriteEffects.None, 0);
             if (state.CurrentItem.HasValue || state.ItemObtainTimer >= 0)
             {
-                int displayItem = state.ItemObtainTimer / 5 % Enum.GetValues(typeof(Item)).Length;
+                int displayItem = state.ItemObtainTimer / 5 % Enum.GetValues(typeof(SurfItem)).Length;
                 if (state.CurrentItem.HasValue)
                     displayItem = (int)state.CurrentItem.Value;
 
@@ -769,25 +701,25 @@ namespace SurfingFestival
                 string displayName = null;
                 switch (displayItem)
                 {
-                    case (int)Item.Boost:
+                    case (int)SurfItem.Boost:
                         displayTex = Game1.objectSpriteSheet;
                         displayRect = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 434, 16, 16);
                         displayName = this.Helper.Translation.Get("item.boost");
                         break;
 
-                    case (int)Item.HomingProjectile:
+                    case (int)SurfItem.HomingProjectile:
                         displayTex = Game1.objectSpriteSheet;
                         displayRect = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 128, 16, 16);
                         displayName = this.Helper.Translation.Get("item.homingprojectile");
                         break;
 
-                    case (int)Item.FirstPlaceProjectile:
+                    case (int)SurfItem.FirstPlaceProjectile:
                         displayTex = Game1.mouseCursors;
                         displayRect = new Rectangle(643, 1043, 61, 61);
                         displayName = this.Helper.Translation.Get("item.firstplaceprojectile");
                         break;
 
-                    case (int)Item.Invincibility:
+                    case (int)SurfItem.Invincibility:
                         displayTex = Game1.content.Load<Texture2D>("Characters\\Junimo"); // TODO: Cache this
                         displayRect = new Rectangle(80, 80, 16, 16);
                         displayColor = Mod.MyGetPrismaticColor();
@@ -1198,54 +1130,6 @@ namespace SurfingFestival
             if (Game1.activeClickableMenu == null)
                 ++instance.CurrentCommand;
         }
-
-        private class RacerPlacementComparer : Comparer<string>
-        {
-            public override int Compare(string x, string y)
-            {
-                int xLaps = Mod.RacerState[x].LapsDone;
-                int yLaps = Mod.RacerState[y].LapsDone;
-                if (xLaps != yLaps)
-                    return xLaps - yLaps;
-
-                int xPlace = this.DirectionToProgress(Mod.RacerState[x].Facing);
-                int yPlace = this.DirectionToProgress(Mod.RacerState[y].Facing);
-                if (xPlace != yPlace)
-                    return xPlace - yPlace;
-
-                int xCoord = (int)this.GetProgressCoordinate(x);
-                int yCoord = (int)this.GetProgressCoordinate(y);
-
-                // x @ 5, y @ 10
-                // right: 5 - 10 = -5, y is greater (same for down)
-                // left: -5 - -10 = -5 + 10 = 5, x is greater (same for up)
-                return xCoord - yCoord;
-            }
-
-            private int DirectionToProgress(int dir)
-            {
-                return dir switch
-                {
-                    Game1.up => 3,
-                    Game1.down => 1,
-                    Game1.left => 2,
-                    Game1.right => 0,
-                    _ => throw new ArgumentException("Bad facing direction")
-                };
-            }
-
-            private float GetProgressCoordinate(string racerName)
-            {
-                return Mod.RacerState[racerName].Facing switch
-                {
-                    Game1.up => -Game1.CurrentEvent.getCharacterByName(racerName).Position.Y,
-                    Game1.down => Game1.CurrentEvent.getCharacterByName(racerName).Position.Y,
-                    Game1.left => -Game1.CurrentEvent.getCharacterByName(racerName).Position.X,
-                    Game1.right => Game1.CurrentEvent.getCharacterByName(racerName).Position.X,
-                    _ => throw new ArgumentException("Bad facing direction")
-                };
-            }
-        };
 
         public static List<string> GetRacePlacement()
         {

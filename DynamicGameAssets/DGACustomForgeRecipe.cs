@@ -1,3 +1,4 @@
+using DynamicGameAssets.Framework;
 using DynamicGameAssets.PackData;
 using SpaceCore;
 using StardewValley;

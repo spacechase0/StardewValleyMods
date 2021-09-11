@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Emit;
+using FlowerRain.Framework;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,7 +22,7 @@ namespace FlowerRain.Patches
         ** Fields
         *********/
         /// <summary>The flower metadata for each season.</summary>
-        private static IDictionary<string, List<Mod.FlowerData>> FlowerData;
+        private static IDictionary<string, List<FlowerData>> FlowerData;
 
 
         /*********
@@ -29,7 +30,7 @@ namespace FlowerRain.Patches
         *********/
         /// <summary>Construct an instance.</summary>
         /// <param name="flowerData">The flower metadata for each season.</param>
-        public Game1Patcher(IDictionary<string, List<Mod.FlowerData>> flowerData)
+        public Game1Patcher(IDictionary<string, List<FlowerData>> flowerData)
         {
             Game1Patcher.FlowerData = flowerData;
         }

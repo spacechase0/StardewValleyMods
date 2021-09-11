@@ -17,7 +17,7 @@ namespace RushOrders
     internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
-        public static RushOrdersConfig ModConfig { get; private set; }
+        public static ModConfig ModConfig { get; private set; }
         private static Api Api;
         private static bool HadDialogue;
         private static int PrevMoney;
@@ -30,7 +30,7 @@ namespace RushOrders
             Log.Monitor = this.Monitor;
 
             Log.Info("Loading Config");
-            Mod.ModConfig = this.Helper.ReadConfig<RushOrdersConfig>();
+            Mod.ModConfig = this.Helper.ReadConfig<ModConfig>();
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
@@ -47,7 +47,7 @@ namespace RushOrders
             var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (capi != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Mod.ModConfig = new RushOrdersConfig(), () => this.Helper.WriteConfig(Mod.ModConfig));
+                capi.RegisterModConfig(this.ModManifest, () => Mod.ModConfig = new ModConfig(), () => this.Helper.WriteConfig(Mod.ModConfig));
                 capi.RegisterSimpleOption(this.ModManifest, "Price: Tool - One day", "The price multiplier for a one-day tool upgrade.", () => (float)Mod.ModConfig.PriceFactor.Tool.Rush, (float val) => Mod.ModConfig.PriceFactor.Tool.Rush = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Price: Tool - Instant", "The price multiplier for an instant upgrade.", () => (float)Mod.ModConfig.PriceFactor.Tool.Rush, (float val) => Mod.ModConfig.PriceFactor.Tool.Now = val);
                 capi.RegisterSimpleOption(this.ModManifest, "Price: Building - Accelerate", "The price multiplier to accelerate building construction by one day.", () => (float)Mod.ModConfig.PriceFactor.Building.RushOneDay, (float val) => Mod.ModConfig.PriceFactor.Building.RushOneDay = val);

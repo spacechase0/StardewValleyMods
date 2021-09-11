@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using JsonAssets.Data;
 using JsonAssets.Framework;
+using JsonAssets.Framework.ContentPatcher;
 using JsonAssets.Patches;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
