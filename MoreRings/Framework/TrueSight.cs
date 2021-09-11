@@ -32,7 +32,7 @@ namespace MoreRings.Framework
                 {
                     if (!(Game1.currentLocation.Name.StartsWith("UndergroundMine")))
                     {
-                        if (obj.ParentSheetIndex == 343 || obj.ParentSheetIndex == 450)
+                        if (obj.ParentSheetIndex is 343 or 450)
                         {
 
                             Random rand = new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2 + (int)pos.X * 2000 + (int)pos.Y);
@@ -115,7 +115,7 @@ namespace MoreRings.Framework
             double num1 = who.DailyLuck / 2.0 + who.MiningLevel * 0.005 + who.LuckLevel * 0.001;
             Random r = new Random(x * 1000 + y + mineLevel + (int)Game1.uniqueIDForThisGame / 2);
             r.NextDouble();
-            double num2 = tileIndexOfStone == 40 || tileIndexOfStone == 42 ? 1.2 : 0.8;
+            double num2 = tileIndexOfStone is 40 or 42 ? 1.2 : 0.8;
             //if (tileIndexOfStone != 34 && tileIndexOfStone != 36 && tileIndexOfStone != 50)
             //    ;
             --stonesLeftOnThisLevel;
@@ -135,7 +135,7 @@ namespace MoreRings.Framework
                 {
                     if (mineLevel < 40 && objectIndex != 66 && objectIndex != 68)
                         objectIndex = r.NextDouble() < 0.5 ? 66 : 68;
-                    else if (mineLevel < 80 && (objectIndex == 64 || objectIndex == 60))
+                    else if (mineLevel < 80 && (objectIndex is 64 or 60))
                         objectIndex = r.NextDouble() < 0.5 ? (r.NextDouble() < 0.5 ? 66 : 70) : (r.NextDouble() < 0.5 ? 68 : 62);
                 }
                 return objectIndex;
@@ -365,7 +365,7 @@ namespace MoreRings.Framework
                 if (objectIndex != -1)
                     break;
             }
-            if (random.NextDouble() < 0.2 && !(Game1.currentLocation is Farm))
+            if (random.NextDouble() < 0.2 && Game1.currentLocation is not Farm)
                 objectIndex = 102;
             if (objectIndex == 102 && who.archaeologyFound.TryGetValue(102, out int[] archeologyValues) && archeologyValues[0] >= 21)
                 objectIndex = 770;
@@ -373,7 +373,7 @@ namespace MoreRings.Framework
             {
                 return objectIndex;
             }
-            else if (Game1.currentSeason.Equals("winter") && random.NextDouble() < 0.5 && !(Game1.currentLocation is Desert))
+            else if (Game1.currentSeason.Equals("winter") && random.NextDouble() < 0.5 && Game1.currentLocation is not Desert)
             {
                 if (random.NextDouble() < 0.4)
                 {
@@ -393,7 +393,7 @@ namespace MoreRings.Framework
                 {
                     return 890;
                 }
-                if (Game1.GetSeasonForLocation(Game1.currentLocation).Equals("spring") && random.NextDouble() < 0.0625 && !(Game1.currentLocation is Desert) && !(Game1.currentLocation is Beach))
+                if (Game1.GetSeasonForLocation(Game1.currentLocation).Equals("spring") && random.NextDouble() < 0.0625 && Game1.currentLocation is not Desert && Game1.currentLocation is not Beach)
                 {
                     return 273;
                 }

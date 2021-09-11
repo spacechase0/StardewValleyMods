@@ -43,11 +43,11 @@ namespace MoreRings.Patches
             return instructions
                 .MethodReplacer(
                     from: PatchHelper.RequireMethod<Game1>(nameof(Game1.createItemDebris)),
-                    to: PatchHelper.RequireMethod<CropPatcher>(nameof(CropPatcher.Game_CreateItemDebris))
+                    to: PatchHelper.RequireMethod<CropPatcher>(nameof(Game_CreateItemDebris))
                 )
                 .MethodReplacer(
                     from: PatchHelper.RequireMethod<Farmer>(nameof(Farmer.addItemToInventoryBool)),
-                    to: PatchHelper.RequireMethod<CropPatcher>(nameof(CropPatcher.Farmer_AddItemToInventoryBool))
+                    to: PatchHelper.RequireMethod<CropPatcher>(nameof(Farmer_AddItemToInventoryBool))
                 );
 
         }

@@ -1,0 +1,10 @@
+﻿{
+    "Name": "Realtime Minimap",
+    "Author": "spacechase0",
+    "Version": "1.2.1",
+    "Description": "Adds a minimap which renders a live view of your current location.",
+    "UniqueID": "spacechase0.RealtimeMinimap",
+    "EntryDll": "RealtimeMinimap.dll",
+    "MinimumApiVersion": "3.12.5",
+    "UpdateKeys": [ "Nexus:9386" ]
+}

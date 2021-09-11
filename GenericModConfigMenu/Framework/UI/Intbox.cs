@@ -4,7 +4,7 @@ namespace GenericModConfigMenu.Framework.UI
     {
         public int Value
         {
-            get => (this.String == "" || this.String == "-") ? 0 : int.Parse(this.String);
+            get => (this.String is "" or "-") ? 0 : int.Parse(this.String);
             set => this.String = value.ToString();
         }
 

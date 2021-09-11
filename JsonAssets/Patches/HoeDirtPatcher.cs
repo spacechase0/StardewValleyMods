@@ -36,12 +36,11 @@ namespace JsonAssets.Patches
         {
             return instructions.MethodReplacer(
                 from: PatchHelper.RequireMethod<HoeDirt>(nameof(HoeDirt.destroyCrop)),
-                to: PatchHelper.RequireMethod<HoeDirtPatcher>(nameof(HoeDirtPatcher.destroyCrop))
+                to: PatchHelper.RequireMethod<HoeDirtPatcher>(nameof(DestroyCrop))
             );
         }
 
         /// <summary>An implementation of <see cref="HoeDirt.destroyCrop"/> that does nothing.</summary>
-        public void destroyCrop(Vector2 tileLocation, bool showAnimation, GameLocation location) { }
-
+        public void DestroyCrop(Vector2 tileLocation, bool showAnimation, GameLocation location) { }
     }
 }

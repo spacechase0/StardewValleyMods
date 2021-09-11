@@ -1,0 +1,89 @@
+<#@ template hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#
+    var generateClasses = new Dictionary<string, string>
+    {
+        ["CustomBasicFurniture"] = "FurniturePackData",
+        ["CustomBedFurniture"] = "FurniturePackData",
+        ["CustomBigCraftable"] = "BigCraftablePackData",
+        ["CustomBoots"] = "BootsPackData",
+        ["CustomCraftingRecipe"] = "CraftingRecipePackData",
+        ["CustomCrop"] = "CropPackData",
+        ["CustomFence"] = "FencePackData",
+        ["CustomFishTankFurniture"] = "FurniturePackData",
+        ["CustomFruitTree"] = "FruitTreePackData",
+        ["CustomGiantCrop"] = "CropPackData",
+        ["CustomHat"] = "HatPackData",
+        ["CustomMeleeWeapon"] = "MeleeWeaponPackData",
+        ["CustomObject"] = "ObjectPackData",
+        ["CustomPants"] = "PantsPackData",
+        ["CustomShirt"] = "ShirtPackData",
+        ["CustomStorageFurniture"] = "FurniturePackData",
+        ["CustomTVFurniture"] = "FurniturePackData"
+    };
+#>
+using System.CodeDom.Compiler;
+using System.Xml.Serialization;
+using DynamicGameAssets.PackData;
+using Netcode;
+
+// ReSharper disable once CheckNamespace -- match partial classes
+namespace DynamicGameAssets.Game
+{
+<#
+foreach (var entry in generateClasses)
+{
+    string itemType = entry.Key;
+    string packType = entry.Value;
+#>
+    [GeneratedCode("TextTemplatingFileGenerator", "1.0.0")]
+    public partial class <#= itemType #> : IDGAItem
+    {
+        /// <summary>The backing field for <see cref="SourcePack"/>.</summary>
+        public readonly NetString NetSourcePack = new();
+
+        /// <summary>The backing field for <see cref="Id"/>.</summary>
+        public readonly NetString NetId = new();
+
+        /// <inheritdoc />
+        [XmlIgnore]
+        public string SourcePack => this.NetSourcePack.Value;
+
+        /// <inheritdoc />
+        [XmlIgnore]
+        public string Id => this.NetId.Value;
+
+        /// <inheritdoc />
+        [XmlIgnore]
+        public string FullId => $"{this.SourcePack}/{this.Id}";
+
+        /// <summary>The content pack data for the item.</summary>
+        [XmlIgnore]
+        public <#= packType #> Data => Mod.Find(this.FullId) as <#= packType #> ?? new <#= packType #> { pack = Mod.DummyContentPack };
+
+        /// <summary>Construct an instance.</summary>
+        public <#= itemType #>()
+        {
+            this.DoInit();
+        }
+
+        /// <summary>Construct an instance.</summary>
+        /// <param name="data">The content pack data for the item.</param>
+        public <#= itemType #>(<#= packType #> data)
+            : this()
+        {
+            this.NetSourcePack.Value = data.pack.smapiPack.Manifest.UniqueID;
+            this.NetId.Value = data.ID;
+            this.DoInit(data);
+        }
+
+        partial void DoInit();
+
+        partial void DoInit(<#= packType #> data);
+    }
+
+<#
+}
+#>
+}

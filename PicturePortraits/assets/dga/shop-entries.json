@@ -1,0 +1,12 @@
+﻿[
+    {
+        "Item": { "Value": "spacechase0.PicturePortraits/Film" },
+        "ShopId": "SeedShop",
+        "MaxSold": 2,
+        "Cost": 500,
+        "EnableConditions": {
+            "DayOfWeek": "Thursday",
+            "HasSeenEvent": 14
+        }
+    }
+]

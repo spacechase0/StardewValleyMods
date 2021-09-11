@@ -84,35 +84,39 @@ I     | 1.  Better Meteorites
       | 16. MultiFertilizer
       | 17. Object Time Left
       | 18. Profit Calculator
-      | 19. Rush Orders
-      | 20. Spenny
-      | 21. Three-Heart Dance Partner
-      | 22. Throwable Axe
+      | 19. Realtime Minimap
+      | 20. Rush Orders
+      | 21. Spenny
+      | 22. Super Hopper
+      | 23. Three-Heart Dance Partner
+      | 24. Throwable Axe
 ----- | ------------------------------
-II    | 23. Content Patcher Animations
-      | 24. Generic Mod Config Menu
-      | 25. Hybrid Crop Engine
-      | 26. SpaceCore
-      | 27. Json Assets                 * needs SpaceCore
+II    | 25. Content Patcher Animations
+      | 26. Generic Mod Config Menu
+      | 27. Hybrid Crop Engine
+      | 28. SpaceCore
+      | 29. Dynamic Game Assets         * needs SpaceCore
+      | 30. Json Assets                 * needs SpaceCore
 ----- | ------------------------------
-III   | 28. Animal Social Menu
-      | 29. Another Hunger Mod
-      | 30. Bigger Craftables
-      | 31. Bug Net
-      | 32. Capstone Professions
-      | 33. Cooking Skill
-      | 34. Customize Exterior
-      | 35. Displays
-      | 36. Luck Skill
-      | 37. Mana Bar
-      | 38. Magic                       * needs Mana Bar
-      | 39. More Buildings
-      | 40. More Rings
-      | 41. Preexisting Relationship
-      | 42. Pyromancer's Journey
-      | 43. Sleepy Eye
-      | 44. Statue of Generosity
-      | 45. Theft of the Winter Star
+III   | 31. Animal Social Menu
+      | 32. Another Hunger Mod
+      | 33. Bigger Craftables
+      | 34. Bug Net
+      | 35. Capstone Professions
+      | 36. Cooking Skill
+      | 37. Customize Exterior
+      | 38. DGAAutomate
+      | 39. Displays
+      | 40. Luck Skill
+      | 41. Mana Bar
+      | 42. Magic                       * needs Mana Bar
+      | 43. More Buildings
+      | 44. More Rings
+      | 45. Preexisting Relationship
+      | 46. Pyromancer's Journey
+      | 47. Sleepy Eye
+      | 48. Statue of Generosity
+      | 49. Theft of the Winter Star
 ----- | ------------------------------
-IV    | 46. Surfing Festival
+IV    | 50. Surfing Festival
 ```

@@ -113,7 +113,7 @@ namespace LuckSkill.Patches
                 newInsns.Add(insn);
                 if (insn.opcode == OpCodes.Call && ((MethodInfo)insn.operand).Name.Contains("InitializeArray"))
                 {
-                    newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<LevelUpMenuPatcher>(nameof(LevelUpMenuPatcher.GetFixedArray))));
+                    newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<LevelUpMenuPatcher>(nameof(GetFixedArray))));
                 }
             }
 

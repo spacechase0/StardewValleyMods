@@ -57,7 +57,7 @@ namespace AnimalSocialMenu
         private void DrawSocialIcon(object sender, RenderedActiveMenuEventArgs e)
         {
             // For some reason this check is necessary despite removing it in the onMenuChanged event.
-            if (!(Game1.activeClickableMenu is GameMenu menu))
+            if (Game1.activeClickableMenu is not GameMenu menu)
             {
                 this.Helper.Events.Display.RenderedActiveMenu -= this.DrawSocialIcon;
                 return;

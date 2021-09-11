@@ -58,14 +58,14 @@ namespace BuildableLocationsFramework
         {
             if (Game1.activeClickableMenu is CarpenterMenu carpMenu)
             {
-                if (carpMenu.CurrentBlueprint?.displayName == "Stone Cabin" || carpMenu.CurrentBlueprint?.displayName == "Plank Cabin" || carpMenu.CurrentBlueprint?.displayName == "Log Cabin" || carpMenu.CurrentBlueprint?.displayName == "Stable")
+                if (carpMenu.CurrentBlueprint?.displayName is "Stone Cabin" or "Plank Cabin" or "Log Cabin" or "Stable")
                     return;
             }
 
             int newLocIndex = this.BuildableLocIndex;
-            if (e.Button == SButton.Z || e.Button == SButton.LeftShoulder)
+            if (e.Button is SButton.Z or SButton.LeftShoulder)
                 newLocIndex--;
-            else if (e.Button == SButton.X || e.Button == SButton.RightShoulder)
+            else if (e.Button is SButton.X or SButton.RightShoulder)
                 newLocIndex++;
 
             if (this.BuildableLocIndex != newLocIndex)
@@ -116,7 +116,7 @@ namespace BuildableLocationsFramework
                 this.Helper.Events.Display.RenderedActiveMenu += this.DoMenuRender;
                 this.Helper.Events.Input.ButtonPressed += this.DoMenuButtons;
             }
-            if (e.OldMenu is CarpenterMenu || e.OldMenu is PurchaseAnimalsMenu)
+            if (e.OldMenu is CarpenterMenu or PurchaseAnimalsMenu)
             {
                 this.Helper.Events.GameLoop.UpdateTicked -= this.DoMenuUpdate;
                 this.Helper.Events.Display.RenderedActiveMenu -= this.DoMenuRender;

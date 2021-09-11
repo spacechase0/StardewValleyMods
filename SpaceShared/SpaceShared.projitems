@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IBugNetApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ICookingSkillApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IDynamicGameAssetsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IExpandedPreconditionsUtilityApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IEntoaroxFrameworkApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IManaBarApi.cs" />
@@ -28,14 +29,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\ConsoleCommandHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\IConsoleCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DiagnosticMessages.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Holder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModDataHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SpaceUtility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Checkbox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Dropdown.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Element.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\Floatbox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\FloatBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Intbox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Label.cs" />

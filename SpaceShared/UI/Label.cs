@@ -26,7 +26,7 @@ namespace SpaceShared.UI
             base.Update(hidden);
 
             if (this.Clicked)
-                Callback?.Invoke(this);
+                this.Callback?.Invoke(this);
         }
 
         public Vector2 Measure()

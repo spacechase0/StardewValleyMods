@@ -1,14 +1,20 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.4.2
+Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild and spacechase0.
+
+* Fixed error when a mod removes an already-removed mod page.
+* Internal refactoring.
+
 ## 1.4.1
-Released 12 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 12 July 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 
 * Improved mod manifest validation.
 * Fixed intermittent error with Custom Music.
 
 ## 1.4.0
-Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 10 July 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 
 * You can now press `ESC` to exit a mod config menu (thanks to pepoluan!).
 * Added API method to get info about the currently displayed mod config menu (thanks to pepoluan!).
@@ -22,7 +28,7 @@ Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
   * fixed paragraph break after every second line.
 
 ## 1.3.4
-Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 19 June 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Fixed error changing a keybind list option which is currently unbound.

@@ -23,6 +23,11 @@ namespace SpaceCore.Patches
         public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
+                original: this.RequireMethod<Game1>(nameof(Game1.eventFinished)),
+                prefix: this.GetHarmonyMethod(nameof(Before_EventFinished))
+            );
+
+            harmony.Patch(
                 original: this.RequireMethod<Game1>(nameof(Game1.loadForNewGame)),
                 postfix: this.GetHarmonyMethod(nameof(After_LoadForNewGame))
             );
@@ -47,6 +52,13 @@ namespace SpaceCore.Patches
         /*********
         ** Private methods
         *********/
+        /// <summary>The method to call before <see cref="Game1.eventFinished"/>.</summary>
+        private static void Before_EventFinished()
+        {
+            if (Game1.CurrentEvent != null)
+                SpaceEvents.InvokeOnEventFinished();
+        }
+
         /// <summary>The method to call after <see cref="Game1.loadForNewGame"/>.</summary>
         private static void After_LoadForNewGame(bool loadedGame)
         {

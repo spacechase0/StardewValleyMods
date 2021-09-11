@@ -21,7 +21,7 @@ namespace CarryChest.Patches
         {
             harmony.Patch(
                 original: this.RequireMethod<Item>(nameof(Item.canStackWith)),
-                postfix: this.GetHarmonyMethod(nameof(ItemPatcher.After_CanStackWith))
+                postfix: this.GetHarmonyMethod(nameof(After_CanStackWith))
             );
         }
 

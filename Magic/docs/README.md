@@ -81,7 +81,7 @@ professions:
 
 <tr>
   <td><strong>Rewind</strong></td>
-  <td>Unlock every other arcane spell.</td>
+  <td>Unlock every other spell (in every school).</td>
   <td>Move the clock time back two hours by sacrificing a gold bar.</td>
 </tr>
 

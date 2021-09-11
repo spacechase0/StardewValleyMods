@@ -1,13 +1,18 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.1.2
+Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Internal refactoring.
+
 ## 1.1.1
-Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
+Released 01 August 2021 for SMAPI 3.12.0 or later. Updated by Pathoschild.
 
 * Updated for Harmony upgrade in SMAPI 3.12.0.
 
 ## 1.1.0
-Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 19 June 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Added [mod API](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Integrations#Mod-provided_APIs) to get whether an object is a bigger craftable and get its base craftable.¹
 * Fixed compatibility with Linux/macOS.

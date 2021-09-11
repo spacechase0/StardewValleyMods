@@ -72,7 +72,8 @@ namespace GenericModConfigMenu.Framework
             {
                 this.AssertManifest(manifest);
 
-                this.Configs.Remove(manifest.UniqueID);
+                if (this.Configs.ContainsKey(manifest.UniqueID))
+                    this.Configs.Remove(manifest.UniqueID);
             }
         }
 

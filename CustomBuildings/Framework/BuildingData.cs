@@ -45,11 +45,6 @@ namespace CustomBuildings.Framework
         public int UpgradeSignX { get; set; }
         public int UpgradeSignY { get; set; }
 
-        public class Ingredient
-        {
-            public object Object { get; set; }
-            public int Count { get; set; }
-        }
         public int Price { get; set; } = 0;
         public List<Ingredient> Ingredients { get; set; } = new();
         public bool Magical { get; set; } = false;

@@ -13,14 +13,7 @@ namespace PyromancersJourney.Framework.Objects
 
         public override RectangleF BoundingBox { get; } = new(-0.5f, -0.5f, 1, 1);
 
-        private enum AnimState
-        {
-            Glow,
-            Shoot,
-            Immune,
-            Summon
-        }
-        private AnimState State = AnimState.Glow;
+        private GolemAnimState State = GolemAnimState.Glow;
         private int Frame;
         private float FrameAccum;
 
@@ -56,7 +49,7 @@ namespace PyromancersJourney.Framework.Objects
 
         public override void Hurt(int amt)
         {
-            if (this.State == AnimState.Immune && this.Frame is > 3 and < 11)
+            if (this.State == GolemAnimState.Immune && this.Frame is > 3 and < 11)
             {
                 Game1.playSound("crit");
                 return;
@@ -81,13 +74,13 @@ namespace PyromancersJourney.Framework.Objects
 
                 switch (this.State)
                 {
-                    case AnimState.Glow:
+                    case GolemAnimState.Glow:
                         if (++this.Frame > 7)
                         {
                             this.GoToNextState();
                         }
                         break;
-                    case AnimState.Shoot:
+                    case GolemAnimState.Shoot:
                         if (++this.Frame == 8)
                         {
                             var player = this.World.Player;
@@ -107,7 +100,7 @@ namespace PyromancersJourney.Framework.Objects
                             this.GoToNextState();
                         }
                         break;
-                    case AnimState.Immune:
+                    case GolemAnimState.Immune:
                         if (this.Frame < 7)
                             ++this.Frame;
                         if (this.World.Objects.OfType<Enemy>().Count() <= 1)
@@ -118,7 +111,7 @@ namespace PyromancersJourney.Framework.Objects
                             }
                         }
                         break;
-                    case AnimState.Summon:
+                    case GolemAnimState.Summon:
                         if (++this.Frame > 6)
                         {
                             this.GoToNextState();
@@ -131,7 +124,7 @@ namespace PyromancersJourney.Framework.Objects
         private void GoToNextState()
         {
             this.Frame = 0;
-            if (this.State == AnimState.Summon)
+            if (this.State == GolemAnimState.Summon)
             {
                 int amt = 2;
                 for (int i = 0; i < amt; ++i)
@@ -149,11 +142,11 @@ namespace PyromancersJourney.Framework.Objects
                     }
                 }
                 Game1.playSound("debuffHit");
-                this.State = AnimState.Immune;
+                this.State = GolemAnimState.Immune;
             }
-            else if (this.State != AnimState.Glow)
+            else if (this.State != GolemAnimState.Glow)
             {
-                this.State = AnimState.Glow;
+                this.State = GolemAnimState.Glow;
             }
             else
             {
@@ -161,13 +154,13 @@ namespace PyromancersJourney.Framework.Objects
                 {
                     case 0:
                     case 1:
-                        this.State = AnimState.Glow;
+                        this.State = GolemAnimState.Glow;
                         break;
                     case 2:
-                        this.State = AnimState.Shoot;
+                        this.State = GolemAnimState.Shoot;
                         break;
                     case 3:
-                        this.State = AnimState.Summon;
+                        this.State = GolemAnimState.Summon;
                         break;
                 }
             }
@@ -181,20 +174,20 @@ namespace PyromancersJourney.Framework.Objects
             int fy = 0;
             switch (this.State)
             {
-                case AnimState.Glow:
+                case GolemAnimState.Glow:
                     fy = 1;
                     break;
-                case AnimState.Shoot:
+                case GolemAnimState.Shoot:
                     fy = 2;
                     if (fx > 8)
                         fx = 8 - (fx - 8);
                     break;
-                case AnimState.Immune:
+                case GolemAnimState.Immune:
                     fy = 3;
                     if (fx > 7)
                         fx = 7 - (fx - 7);
                     break;
-                case AnimState.Summon:
+                case GolemAnimState.Summon:
                     fy = 5;
                     if (fx > 6)
                         fx = 6 - (fx - 6);

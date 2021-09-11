@@ -1,0 +1,10 @@
+﻿{
+    "Name": "Super Hopper",
+    "Author": "spacechase0",
+    "Version": "1.0.1",
+    "Description": "Lets you upgrade hoppers to transfer items between chests.",
+    "UniqueID": "spacechase0.SuperHopper",
+    "EntryDll": "SuperHopper.dll",
+    "MinimumApiVersion": "3.12.5",
+    "UpdateKeys": [ "Nexus:9418" ]
+}

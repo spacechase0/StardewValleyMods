@@ -45,6 +45,9 @@ namespace SpaceCore.Events
         // When a bomb explodes
         public static event EventHandler<EventArgsBombExploded> BombExploded;
 
+        // When an event finishes. Use Game1.CurrentEvent to check which one.
+        public static event EventHandler OnEventFinished;
+
         internal static void InvokeOnBlankSave()
         {
             Log.Trace("Event: OnBlankSave");
@@ -153,6 +156,14 @@ namespace SpaceCore.Events
                 return;
             var arg = new EventArgsBombExploded(tileLocation, radius);
             Util.InvokeEvent("SpaceEvents.BombExploded", SpaceEvents.BombExploded.GetInvocationList(), who, arg);
+        }
+
+        internal static void InvokeOnEventFinished()
+        {
+            Log.Trace("Event: OnEventFinished");
+            if (SpaceEvents.OnEventFinished == null)
+                return;
+            Util.InvokeEvent("SpaceEvents.OnEventFinished", SpaceEvents.OnEventFinished.GetInvocationList(), null);
         }
     }
 }

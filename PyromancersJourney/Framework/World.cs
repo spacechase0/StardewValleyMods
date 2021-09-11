@@ -270,7 +270,7 @@ namespace PyromancersJourney.Framework
             this.Objects.Insert(1, new Walls(this, path == "ending"));
             this.Objects.Add(this.Player = new Player(this) { Position = new Vector3(playerPos.X, 0.5f, playerPos.Y) });
 
-            if (path == "0" || path == "ending")
+            if (path is "0" or "ending")
             {
                 this.Objects.Add(this.Warp = new LevelWarp(this) { Position = new Vector3(this.WarpPos.X, 0, this.WarpPos.Y) });
             }

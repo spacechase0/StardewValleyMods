@@ -218,7 +218,7 @@ namespace SpaceCore.Interface
         {
             if (!this.CanReceiveInput())
                 return;
-            if (direction == 3 || direction == 1)
+            if (direction is 3 or 1)
                 this.hasMovedSelection = true;
             base.applyMovementKey(direction);
         }

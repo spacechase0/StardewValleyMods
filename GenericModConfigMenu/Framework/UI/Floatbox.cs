@@ -6,7 +6,7 @@ namespace GenericModConfigMenu.Framework.UI
     {
         public float Value
         {
-            get => (this.String == "" || this.String == "-") ? 0 : float.Parse(this.String);
+            get => (this.String is "" or "-") ? 0 : float.Parse(this.String);
             set => this.String = value.ToString();
         }
 

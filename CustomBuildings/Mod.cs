@@ -91,7 +91,7 @@ namespace CustomBuildings
                     var b = farm.buildings[i];
 
                     // This is probably a new building if it hasn't been converted yet.
-                    if (this.Buildings.TryGetValue(b.buildingType.Value, out BuildingData buildingData) && !(b is Coop))
+                    if (this.Buildings.TryGetValue(b.buildingType.Value, out BuildingData buildingData) && b is not Coop)
                     {
                         farm.buildings[i] = new Coop(new BluePrint(b.buildingType.Value), new Vector2(b.tileX.Value, b.tileY.Value));
                         farm.buildings[i].indoors.Value = b.indoors.Value;

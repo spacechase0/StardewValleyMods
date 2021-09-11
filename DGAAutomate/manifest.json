@@ -1,0 +1,18 @@
+﻿{
+    "Name": "DGA Automate",
+    "Author": "spacechase0",
+    "Version": "1.0.1",
+    "Description": "Enables automation of Dynamic Game Assets machines using Automate.",
+    "UniqueID": "spacechase0.DGAAutomate",
+    "EntryDll": "DGAAutomate.dll",
+    "MinimumApiVersion": "3.12.5",
+    "UpdateKeys": [ "Nexus:9365@Automate" ],
+    "Dependencies": [
+        {
+            "UniqueID": "Pathoschild.Automate"
+        },
+        {
+            "UniqueID": "spacechase0.DynamicGameAssets"
+        }
+    ]
+}

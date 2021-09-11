@@ -87,12 +87,6 @@ namespace FlowerRain
             }
         }
 
-        internal struct FlowerData
-        {
-            public int Index;
-            public Color Color;
-        }
-
         private void BuildFlowerData(bool useWhitelist)
         {
             var objData = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");

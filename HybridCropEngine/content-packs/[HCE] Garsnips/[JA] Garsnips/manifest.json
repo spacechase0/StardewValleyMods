@@ -1,0 +1,16 @@
+﻿{
+    "Name": "[JA] Garsnips",
+    "Description": "Hybrid Crop Engine example pack.",
+    "Author": "spacechase0, ParadigmNomad",
+    "Version": "1.0.3",
+    "UniqueID": "spacechase0.HybridCropEngine.Example.JA",
+    "ContentPackFor": {
+        "UniqueID": "spacechase0.JsonAssets"
+    },
+    "Dependencies": [
+        {
+            "UniqueID": "spacechase0.HybridCropEngine"
+        }
+    ],
+    "UpdateKeys": [ "Nexus:6577@Garsnips" ]
+}

@@ -1,8 +1,14 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.2.1
+Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild and spacechase0.
+
+* Fixed errors due to missing clothing category label.
+* Internal refactoring.
+
 ## 1.2.0
-Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 19 June 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Updated for Stardew Valley 1.5.¹
 * Added search box to shop UI.¹

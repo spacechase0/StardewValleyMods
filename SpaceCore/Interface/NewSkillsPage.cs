@@ -512,8 +512,7 @@ namespace SpaceCore.Interface
             if (Game1.options.SnappyMenus && this.currentlySnappedComponent != null)
             {
                 // wallet navigation
-                if (this.currentlySnappedComponent.myID == NewSkillsPage.WalletUpArrowRegionId || this.currentlySnappedComponent.myID == NewSkillsPage.WalletDownArrowRegionId
-                    || (this.currentlySnappedComponent.myID >= NewSkillsPage.WalletRegionStartId && this.currentlySnappedComponent.myID < NewSkillsPage.WalletRegionStartId + (this.IsLegacyWallet ? this.specialItemComponents.Count : this.specialItems.Count)))
+                if (this.currentlySnappedComponent.myID is NewSkillsPage.WalletUpArrowRegionId or NewSkillsPage.WalletDownArrowRegionId || (this.currentlySnappedComponent.myID >= NewSkillsPage.WalletRegionStartId && this.currentlySnappedComponent.myID < NewSkillsPage.WalletRegionStartId + (this.IsLegacyWallet ? this.specialItemComponents.Count : this.specialItems.Count)))
                 {
                     // navigating left with a right-side non-legacy wallet will move to the skills page
                     if (Game1.options.doesInputListContain(Game1.options.moveLeftButton, key) && this.IsWalletRightSide && !this.IsLegacyWallet)
@@ -573,7 +572,7 @@ namespace SpaceCore.Interface
         public override void receiveGamePadButton(Buttons b)
         {
             // Shoulder buttons navigate between skills and wallet
-            if (b == Buttons.LeftShoulder || b == Buttons.RightShoulder)
+            if (b is Buttons.LeftShoulder or Buttons.RightShoulder)
             {
                 if (this.currentlySnappedComponent?.myID < NewSkillsPage.WalletRegionStartId && this.CanNavigateToWallet)
                 {

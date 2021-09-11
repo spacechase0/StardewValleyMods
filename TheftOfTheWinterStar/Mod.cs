@@ -26,15 +26,6 @@ using SObject = StardewValley.Object;
 
 namespace TheftOfTheWinterStar
 {
-    internal enum ArenaStage
-    {
-        NotTriggered,
-        Stage1,
-        Finished1,
-        Stage2,
-        Finished2
-    }
-
     internal class Mod : StardewModdingAPI.Mod, IAssetEditor
     {
         public const int EventId = 91000;
@@ -160,7 +151,7 @@ namespace TheftOfTheWinterStar
 
             if (Game1.currentLocation.Name == "FrostDungeon.Arena")
             {
-                if ((this.SaveData.ArenaStage == ArenaStage.Stage1 || this.SaveData.ArenaStage == ArenaStage.Stage2) &&
+                if ((this.SaveData.ArenaStage is ArenaStage.Stage1 or ArenaStage.Stage2) &&
                     Game1.currentLocation.characters.Count(npc => npc is Monster) <= 0)
                 {
                     Game1.playSound("questcomplete");
@@ -400,7 +391,7 @@ namespace TheftOfTheWinterStar
                         loc.objects[pos] = breakable;
                     }*/
                 }
-                if (locName == "Bonus1" || locName == "Bonus2" || locName == "Bonus3")
+                if (locName is "Bonus1" or "Bonus2" or "Bonus3")
                 {
                     var pos = new Vector2(9, 9);
                     if (locName == "Bonus2")
