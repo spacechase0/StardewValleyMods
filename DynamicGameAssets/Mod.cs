@@ -24,6 +24,7 @@ using StardewValley.TerrainFeatures;
 // TODO: Shirts don't work properly if JA is installed? (Might look funny, might make you run out of GPU memory thanks to SpaceCore tilesheet extensions)
 // TODO: Cooking recipes show when crafting, but not in the collection.
 // TODO: Recipe items (ie. in stores) don't show the correct ingredients
+// TODO: Big craftables recipes don't take two vertical slots on the crafting page.
 
 // TODO: Dynamic tokens equivalent
 // TODO: Converter & Migration
@@ -39,9 +40,12 @@ using StardewValley.TerrainFeatures;
 // TODO: General validation, optimization (cache Data in IDGAItem's), not crashing when an item is missing, etc.
 // TODO: Look into Gourmand requests?
 /* TODO:
+ * ? mail
+ * ? quests
+ * ? adding through events/dialogue
  * ? bundles
  * ? quests
- * fishing
+ * ? fishing
  * ? walls/floors
  * Custom Ore Nodes & Custom Resource Clumps (with permission from aedenthorn)
  * ? paths
