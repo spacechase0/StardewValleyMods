@@ -1,4 +1,6 @@
-﻿# Dynamic Game Assets
+﻿﻿[← back to readme](README.md)
+
+# Dynamic Game Assets
 
 This documentation is for making mods; for using Dynamic Game Assets as a user, please check the [Nexus](https://www.nexusmods.com/stardewvalley/mods/9365) page.
 

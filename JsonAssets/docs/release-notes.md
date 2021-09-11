@@ -153,7 +153,6 @@ Released 01 January 2020 for Stardew Valley 1.4.
 
 * Fixed `Crop.netSeedIndex`.
 
-
 ## 1.5.4
 Released 31 December 2019 for Stardew Valley 1.4.
 
@@ -216,7 +215,6 @@ Released 14 June 2019 for Stardew Valley 1.3.36.
 * Fixed Harvey not being a valid shop location.
 * Added [custom tokens for Content Patcher](author-guide.md#tokens-in-fields) (`ObjectId`, `BigCraftableId`, `CropId`, `FruitTreeId`, `HatId`, and `WeaponId`).
 
-
 ## 1.3.6
 Released 18 May 2019 for Stardew Valley 1.3.36.
 
@@ -229,7 +227,6 @@ Released 18 May 2019 for Stardew Valley 1.3.36.
 * Fixed API null issue.
 * Fixed certain weird loading issue.
 * Fixed collections not being ID-fixed.
-
 
 ## 1.3.4
 Released 09 May 2019 for Stardew Valley 1.3.36.
@@ -288,7 +285,6 @@ Released 24 February 2018 for Stardew Valley 1.2.
 * Added API.
 * Added ring category.
 * Fixed some problems with default recipes. 
-
 
 ## 1.0.0
 Released 28 December 2017 for Stardew Valley 1.2.
