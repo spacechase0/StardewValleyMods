@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Added update keys for Garsnips.
 * Fixed typo in Garsnips.
 
 ## 1.0.2
