@@ -52,7 +52,7 @@ namespace SpaceCore.Patches
         /*********
         ** Private methods
         *********/
-        /// <summary>The method to call after <see cref="Game1.eventFinished"/>.</summary>
+        /// <summary>The method to call before <see cref="Game1.eventFinished"/>.</summary>
         private static void Before_EventFinished()
         {
             if (Game1.CurrentEvent != null)

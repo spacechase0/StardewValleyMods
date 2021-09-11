@@ -1,33 +1,62 @@
+using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
+using Spacechase.Shared.Patching;
+using SpaceShared;
+using StardewModdingAPI;
+using SObject = StardewValley.Object;
 
 namespace DynamicGameAssets.Patches
 {
-    [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.countsForShippedCollection))]
-    public static class ObjectCountsForShippedCollectionPatch
+    /// <summary>Applies Harmony patches to <see cref="SObject"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
+    internal class ObjectPatcher : BasePatcher
     {
-        public static bool Prefix(StardewValley.Object __instance, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
-            if (__instance is CustomObject cobj)
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.countsForShippedCollection)),
+                prefix: this.GetHarmonyMethod(nameof(Before_CountsForShippedCollection))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.isIndexOkForBasicShippedCategory)),
+                prefix: this.GetHarmonyMethod(nameof(Before_IsIndexOkForBasicShippedCategory))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.isSapling)),
+                prefix: this.GetHarmonyMethod(nameof(Before_IsSapling))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="SObject.countsForShippedCollection"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_CountsForShippedCollection(SObject __instance, ref bool __result)
+        {
+            if (__instance is CustomObject obj)
             {
-                __result = !cobj.Data.HideFromShippingCollection;
+                __result = !obj.Data.HideFromShippingCollection;
                 return false;
             }
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.isIndexOkForBasicShippedCategory))]
-    public static class ObjectIndexOkForShippedCollectionPatch
-    {
-        public static bool Prefix(int index, ref bool __result)
+        /// <summary>The method to call before <see cref="SObject.isIndexOkForBasicShippedCategory"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_IsIndexOkForBasicShippedCategory(int index, ref bool __result)
         {
             if (Mod.itemLookup.ContainsKey(index))
             {
-                var data = Mod.Find(Mod.itemLookup[index]) as ObjectPackData;
-                if (data != null) // This means it was disabled
+                if (Mod.Find(Mod.itemLookup[index]) is ObjectPackData data) // This means it was disabled
                     __result = !data.HideFromShippingCollection;
                 else
                     __result = false;
@@ -36,16 +65,14 @@ namespace DynamicGameAssets.Patches
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.isSapling))]
-    public static class ObjectIsSaplingPatch
-    {
-        public static bool Prefix(StardewValley.Object __instance, ref bool __result)
+        /// <summary>The method to call before <see cref="SObject.isSapling"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_IsSapling(SObject __instance, ref bool __result)
         {
-            if (__instance is CustomObject cobj && !string.IsNullOrEmpty(cobj.Data.Plants))
+            if (__instance is CustomObject obj && !string.IsNullOrEmpty(obj.Data.Plants))
             {
-                var data = Mod.Find(cobj.Data.Plants);
+                var data = Mod.Find(obj.Data.Plants);
                 if (data is FruitTreePackData)
                 {
                     __result = true;

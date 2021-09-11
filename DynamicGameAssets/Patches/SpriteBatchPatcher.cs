@@ -1,98 +1,148 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Patching;
+using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace DynamicGameAssets.Patches
 {
-    public class SpriteBatchTileSheetAdjustments
+    /// <summary>Applies Harmony patches to <see cref="SpriteBatch"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
+    internal class SpriteBatchPatcher : BasePatcher
     {
-        internal static Dictionary<Rectangle, TexturedRect> objectOverrides = new Dictionary<Rectangle, TexturedRect>();
-        internal static Dictionary<Rectangle, TexturedRect> weaponOverrides = new Dictionary<Rectangle, TexturedRect>();
-        internal static Dictionary<Rectangle, TexturedRect> hatOverrides = new Dictionary<Rectangle, TexturedRect>();
-        internal static Dictionary<Rectangle, TexturedRect> shirtOverrides = new Dictionary<Rectangle, TexturedRect>();
-        internal static Dictionary<Rectangle, TexturedRect> pantsOverrides = new Dictionary<Rectangle, TexturedRect>();
-
+        /*********
+        ** Accessors
+        *********/
+        internal static Dictionary<Rectangle, TexturedRect> objectOverrides = new();
+        internal static Dictionary<Rectangle, TexturedRect> weaponOverrides = new();
+        internal static Dictionary<Rectangle, TexturedRect> hatOverrides = new();
+        internal static Dictionary<Rectangle, TexturedRect> shirtOverrides = new();
+        internal static Dictionary<Rectangle, TexturedRect> pantsOverrides = new();
         internal static Dictionary<string, Dictionary<Rectangle, TextureOverridePackData>> packOverrides = new();
 
-        public static void Prefix1(SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, SpriteEffects effects, float layerDepth)
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(Harmony harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Rectangle), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(SpriteEffects), typeof(float) }),
+                prefix: this.GetHarmonyMethod(nameof(Before_Draw_1), before: "spacechase0.SpaceCore")
+            );
+            harmony.Patch(
+                original: this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Rectangle), typeof(Rectangle?), typeof(Color) }),
+                prefix: this.GetHarmonyMethod(nameof(Before_Draw_2), before: "spacechase0.SpaceCore")
+            );
+            harmony.Patch(
+                original: this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(Vector2), typeof(SpriteEffects), typeof(float) }),
+                prefix: this.GetHarmonyMethod(nameof(Before_Draw_3), before: "spacechase0.SpaceCore")
+            );
+            harmony.Patch(
+                original: this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(float), typeof(SpriteEffects), typeof(float) }),
+                prefix: this.GetHarmonyMethod(nameof(Before_Draw_4), before: "spacechase0.SpaceCore")
+            );
+            harmony.Patch(
+                original: this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color) }),
+                prefix: this.GetHarmonyMethod(nameof(Before_Draw_5), before: "spacechase0.SpaceCore")
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Rectangle,Rectangle?,Color,float,Vector2,SpriteEffects,float)"/>.</summary>
+        private static void Before_Draw_1(SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, SpriteEffects effects, float layerDepth)
         {
             if (sourceRectangle.HasValue)
             {
                 Rectangle rect = sourceRectangle.Value;
-                SpriteBatchTileSheetAdjustments.FixTilesheetReference(ref texture, ref rect);
+                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
                 sourceRectangle = rect;
             }
         }
 
-        public static void Prefix2(SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, ref Rectangle? sourceRectangle, Color color)
+        /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Rectangle,Rectangle?,Color)"/>.</summary>
+        private static void Before_Draw_2(SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, ref Rectangle? sourceRectangle, Color color)
         {
             if (sourceRectangle.HasValue)
             {
                 Rectangle rect = sourceRectangle.Value;
-                SpriteBatchTileSheetAdjustments.FixTilesheetReference(ref texture, ref rect);
+                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
                 sourceRectangle = rect;
             }
         }
 
-        public static void Prefix3(SpriteBatch __instance, ref Texture2D texture, Vector2 position, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth)
+        /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Vector2,Rectangle?,Color,float,Vector2,Vector2,SpriteEffects,float)"/>.</summary>
+        private static void Before_Draw_3(SpriteBatch __instance, ref Texture2D texture, Vector2 position, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth)
         {
             if (sourceRectangle.HasValue)
             {
                 Rectangle rect = sourceRectangle.Value;
-                SpriteBatchTileSheetAdjustments.FixTilesheetReference(ref texture, ref rect);
-                sourceRectangle = rect;
-            }
-        }
-        public static void Prefix4(SpriteBatch __instance, ref Texture2D texture, Vector2 position, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
-        {
-            if (sourceRectangle.HasValue)
-            {
-                Rectangle rect = sourceRectangle.Value;
-                SpriteBatchTileSheetAdjustments.FixTilesheetReference(ref texture, ref rect);
-                sourceRectangle = rect;
-            }
-        }
-        public static void Prefix5(SpriteBatch __instance, ref Texture2D texture, Vector2 position, ref Rectangle? sourceRectangle, Color color)
-        {
-            if (sourceRectangle.HasValue)
-            {
-                Rectangle rect = sourceRectangle.Value;
-                SpriteBatchTileSheetAdjustments.FixTilesheetReference(ref texture, ref rect);
+                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
                 sourceRectangle = rect;
             }
         }
 
-        public static void FixTilesheetReference(ref Texture2D tex, ref Rectangle sourceRect)
+        /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Vector2,Rectangle?,Color,float,Vector2,float,SpriteEffects,float)"/>.</summary>
+        private static void Before_Draw_4(SpriteBatch __instance, ref Texture2D texture, Vector2 position, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
         {
-            if (tex == Game1.objectSpriteSheet && SpriteBatchTileSheetAdjustments.objectOverrides.ContainsKey(sourceRect))
+            if (sourceRectangle.HasValue)
             {
-                var texRect = SpriteBatchTileSheetAdjustments.objectOverrides[sourceRect];
+                Rectangle rect = sourceRectangle.Value;
+                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
+                sourceRectangle = rect;
+            }
+        }
+
+        /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Vector2,Rectangle?,Color)"/>.</summary>
+        private static void Before_Draw_5(SpriteBatch __instance, ref Texture2D texture, Vector2 position, ref Rectangle? sourceRectangle, Color color)
+        {
+            if (sourceRectangle.HasValue)
+            {
+                Rectangle rect = sourceRectangle.Value;
+                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
+                sourceRectangle = rect;
+            }
+        }
+
+        private static void FixTilesheetReference(ref Texture2D tex, ref Rectangle sourceRect)
+        {
+            if (tex == Game1.objectSpriteSheet && SpriteBatchPatcher.objectOverrides.ContainsKey(sourceRect))
+            {
+                var texRect = SpriteBatchPatcher.objectOverrides[sourceRect];
                 tex = texRect.Texture;
                 sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
             }
-            else if (tex == Tool.weaponsTexture && SpriteBatchTileSheetAdjustments.weaponOverrides.ContainsKey(sourceRect))
+            else if (tex == Tool.weaponsTexture && SpriteBatchPatcher.weaponOverrides.ContainsKey(sourceRect))
             {
-                var texRect = SpriteBatchTileSheetAdjustments.weaponOverrides[sourceRect];
+                var texRect = SpriteBatchPatcher.weaponOverrides[sourceRect];
                 tex = texRect.Texture;
                 sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
             }
-            else if (tex == FarmerRenderer.hatsTexture && SpriteBatchTileSheetAdjustments.hatOverrides.ContainsKey(sourceRect))
+            else if (tex == FarmerRenderer.hatsTexture && SpriteBatchPatcher.hatOverrides.ContainsKey(sourceRect))
             {
-                var texRect = SpriteBatchTileSheetAdjustments.hatOverrides[sourceRect];
+                var texRect = SpriteBatchPatcher.hatOverrides[sourceRect];
                 tex = texRect.Texture;
                 sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
             }
-            else if (tex == FarmerRenderer.shirtsTexture && SpriteBatchTileSheetAdjustments.shirtOverrides.ContainsKey(sourceRect))
+            else if (tex == FarmerRenderer.shirtsTexture && SpriteBatchPatcher.shirtOverrides.ContainsKey(sourceRect))
             {
-                var texRect = SpriteBatchTileSheetAdjustments.shirtOverrides[sourceRect];
+                var texRect = SpriteBatchPatcher.shirtOverrides[sourceRect];
                 tex = texRect.Texture;
                 sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
             }
             else if (tex == FarmerRenderer.pantsTexture)
             {
-                foreach (var pants in SpriteBatchTileSheetAdjustments.pantsOverrides)
+                foreach (var pants in SpriteBatchPatcher.pantsOverrides)
                 {
                     if (pants.Key.Contains(sourceRect))
                     {
@@ -113,11 +163,11 @@ namespace DynamicGameAssets.Patches
 
             if (tex.Name == null)
                 return;
-            if (SpriteBatchTileSheetAdjustments.packOverrides.ContainsKey(tex.Name))
+            if (SpriteBatchPatcher.packOverrides.ContainsKey(tex.Name))
             {
-                if (SpriteBatchTileSheetAdjustments.packOverrides[tex.Name].ContainsKey(sourceRect))
+                if (SpriteBatchPatcher.packOverrides[tex.Name].ContainsKey(sourceRect))
                 {
-                    var texRect = SpriteBatchTileSheetAdjustments.packOverrides[tex.Name][sourceRect].GetCurrentTexture();
+                    var texRect = SpriteBatchPatcher.packOverrides[tex.Name][sourceRect].GetCurrentTexture();
                     tex = texRect.Texture;
                     sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
                 }

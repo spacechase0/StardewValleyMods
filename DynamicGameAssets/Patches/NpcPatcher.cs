@@ -1,24 +1,48 @@
+using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
+using Spacechase.Shared.Patching;
+using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
+using SObject = StardewValley.Object;
 
 namespace DynamicGameAssets.Patches
 {
-    [HarmonyPatch(typeof(NPC), nameof(NPC.receiveGift))]
-    public static class NPCGiftFriendshipPatch
+    /// <summary>Applies Harmony patches to <see cref="NPC"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
+    internal class NpcPatcher : BasePatcher
     {
-        public static bool Prefix(NPC __instance, StardewValley.Object o, Farmer giver, bool updateGiftLimitInfo, float friendshipChangeMultiplier, bool showResponse)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(Harmony harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<NPC>(nameof(NPC.receiveGift)),
+                prefix: this.GetHarmonyMethod(nameof(Before_ReceiveGift))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="NPC.receiveGift"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_ReceiveGift(NPC __instance, SObject o, Farmer giver, bool updateGiftLimitInfo, float friendshipChangeMultiplier, bool showResponse)
         {
             if (o is CustomObject)
             {
-                NPCGiftFriendshipPatch.DoReceiveGift(__instance, o, giver, updateGiftLimitInfo, friendshipChangeMultiplier, showResponse);
+                NpcPatcher.DoReceiveGift(__instance, o, giver, updateGiftLimitInfo, friendshipChangeMultiplier, showResponse);
                 return false;
             }
             return true;
         }
 
-        private static void DoReceiveGift(NPC npc, StardewValley.Object o, Farmer giver, bool updateGiftLimitInfo, float friendshipChangeMultiplier, bool showResponse)
+        private static void DoReceiveGift(NPC npc, SObject o, Farmer giver, bool updateGiftLimitInfo, float friendshipChangeMultiplier, bool showResponse)
         {
             giver?.onGiftGiven(npc, o);
             if (!Game1.NPCGiftTastes.ContainsKey(npc.Name))

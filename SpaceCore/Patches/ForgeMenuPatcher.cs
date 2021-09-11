@@ -27,10 +27,10 @@ namespace SpaceCore.Patches
         /// <inheritdoc />
         public override void Apply(Harmony harmony, IMonitor monitor)
         {
-            /*harmony.Patch(
-                original: this.RequireMethod<ForgeMenu>( nameof( ForgeMenu.GenerateHighlightDictionary ) ),
-                prefix: this.GetHarmonyMethod( nameof( Before_GenerateHighlightDictionary ) )
-            );*/
+            //harmony.Patch(
+            //    original: this.RequireMethod<ForgeMenu>(nameof(ForgeMenu.GenerateHighlightDictionary)),
+            //    prefix: this.GetHarmonyMethod(nameof(Before_GenerateHighlightDictionary))
+            //);
 
             harmony.Patch(
                 original: this.RequireMethod<ForgeMenu>(nameof(ForgeMenu.IsValidCraft)),
@@ -67,73 +67,73 @@ namespace SpaceCore.Patches
         /*********
         ** Private methods
         *********/
-        /*
-        /// <summary>The method to call before <see cref="ForgeMenu.GenerateHighlightDictionary"/>.</summary>
-        private static bool Before_GenerateHighlightDictionary( ForgeMenu __instance )
-        {
-            var this__highlightDictionary_ = SpaceCore.Instance.Helper.Reflection.GetField< Dictionary< Item, bool > >( __instance, "_highlightDictionary" );
+        ///// <summary>The method to call before <see cref="ForgeMenu.GenerateHighlightDictionary"/>.</summary>
+        //private static bool Before_GenerateHighlightDictionary(ForgeMenu __instance)
+        //{
+        //    var this__highlightDictionary_ = SpaceCore.Instance.Helper.Reflection.GetField<Dictionary<Item, bool>>(__instance, "_highlightDictionary");
 
-            this__highlightDictionary_.SetValue( new Dictionary<Item, bool>() );
-            var this__highlightDictionary = this__highlightDictionary_.GetValue();
-            List<Item> item_list = new List<Item>(__instance.inventory.actualInventory);
-            if ( Game1.player.leftRing.Value != null )
-            {
-                item_list.Add( Game1.player.leftRing.Value );
-            }
-            if ( Game1.player.rightRing.Value != null )
-            {
-                item_list.Add( Game1.player.rightRing.Value );
-            }
-            foreach ( Item item in item_list )
-            {
-                if ( item == null )
-                {
-                    continue;
-                }
-                if ( Utility.IsNormalObjectAtParentSheetIndex( item, 848 ) )
-                {
-                    this__highlightDictionary[ item ] = true;
-                }
-                else if ( __instance.leftIngredientSpot.item == null && __instance.rightIngredientSpot.item == null )
-                {
-                    bool valid = false;
-                    if ( item is Ring )
-                    {
-                        valid = true;
-                    }
-                    if ( item is Tool && BaseEnchantment.GetAvailableEnchantmentsForItem( item as Tool ).Count > 0 )
-                    {
-                        valid = true;
-                    }
-                    if ( BaseEnchantment.GetEnchantmentFromItem( null, item ) != null )
-                    {
-                        valid = true;
-                    }
-                    foreach ( var recipe in CustomForgeRecipe.Recipes )
-                    {
-                        if ( recipe.BaseItem.HasEnoughFor( item ) || recipe.IngredientItem.HasEnoughFor( item ) )
-                            valid = true;
-                    }
-                    this__highlightDictionary[ item ] = valid;
-                }
-                else if ( __instance.leftIngredientSpot.item != null && __instance.rightIngredientSpot.item != null )
-                {
-                    this__highlightDictionary[ item ] = false;
-                }
-                else if ( __instance.leftIngredientSpot.item != null )
-                {
-                    this__highlightDictionary[ item ] = __instance.IsValidCraft( __instance.leftIngredientSpot.item, item );
-                }
-                else
-                {
-                    this__highlightDictionary[ item ] = __instance.IsValidCraft( item, __instance.rightIngredientSpot.item );
-                }
-            }
+        //    this__highlightDictionary_.SetValue(new Dictionary<Item, bool>());
+        //    var this__highlightDictionary = this__highlightDictionary_.GetValue();
+        //    List<Item> item_list = new List<Item>(__instance.inventory.actualInventory);
+        //    if (Game1.player.leftRing.Value != null)
+        //    {
+        //        item_list.Add(Game1.player.leftRing.Value);
+        //    }
+        //    if (Game1.player.rightRing.Value != null)
+        //    {
+        //        item_list.Add(Game1.player.rightRing.Value);
+        //    }
+        //    foreach (Item item in item_list)
+        //    {
+        //        if (item == null)
+        //        {
+        //            continue;
+        //        }
+        //        if (Utility.IsNormalObjectAtParentSheetIndex(item, 848))
+        //        {
+        //            this__highlightDictionary[item] = true;
+        //        }
+        //        else if (__instance.leftIngredientSpot.item == null && __instance.rightIngredientSpot.item == null)
+        //        {
+        //            bool valid = false;
+        //            if (item is Ring)
+        //            {
+        //                valid = true;
+        //            }
+        //            if (item is Tool && BaseEnchantment.GetAvailableEnchantmentsForItem(item as Tool).Count > 0)
+        //            {
+        //                valid = true;
+        //            }
+        //            if (BaseEnchantment.GetEnchantmentFromItem(null, item) != null)
+        //            {
+        //                valid = true;
+        //            }
+        //            foreach (var recipe in CustomForgeRecipe.Recipes)
+        //            {
+        //                if (recipe.BaseItem.HasEnoughFor(item) || recipe.IngredientItem.HasEnoughFor(item))
+        //                    valid = true;
+        //            }
+        //            this__highlightDictionary[item] = valid;
+        //        }
+        //        else if (__instance.leftIngredientSpot.item != null && __instance.rightIngredientSpot.item != null)
+        //        {
+        //            this__highlightDictionary[item] = false;
+        //        }
+        //        else if (__instance.leftIngredientSpot.item != null)
+        //        {
+        //            this__highlightDictionary[item] = __instance.IsValidCraft(__instance.leftIngredientSpot.item, item);
+        //        }
+        //        else
+        //        {
+        //            this__highlightDictionary[item] = __instance.IsValidCraft(item, __instance.rightIngredientSpot.item);
+        //        }
+        //    }
 
-            return false;
-        }*/
+        //    return false;
+        //}
 
         /// <summary>The method to call before <see cref="ForgeMenu.IsValidCraft"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
         private static bool Before_IsValidCraft(ForgeMenu __instance, Item left_item, Item right_item, ref bool __result)
         {
             if (left_item == null || right_item == null)
@@ -152,6 +152,7 @@ namespace SpaceCore.Patches
         }
 
         /// <summary>The method to call before <see cref="ForgeMenu.SpendLeftItem"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
         private static bool Before_SpendLeftItem(ForgeMenu __instance)
         {
             if (ForgeMenuPatcher.justCrafted != null)
@@ -164,6 +165,7 @@ namespace SpaceCore.Patches
         }
 
         /// <summary>The method to call before <see cref="ForgeMenu.SpendLeftItem"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
         private static bool Before_SpendRightItem(ForgeMenu __instance)
         {
             if (ForgeMenuPatcher.justCrafted != null)
@@ -177,6 +179,7 @@ namespace SpaceCore.Patches
         }
 
         /// <summary>The method to call before <see cref="ForgeMenu.CraftItem"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
         private static bool Before_CraftItem(ForgeMenu __instance, Item left_item, Item right_item, bool forReal, ref Item __result)
         {
             if (left_item == null || right_item == null)
@@ -197,6 +200,7 @@ namespace SpaceCore.Patches
         }
 
         /// <summary>The method to call before <see cref="ForgeMenu.GetForgeCost"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
         private static bool Before_GetForgeCost(ForgeMenu __instance, Item left_item, Item right_item, ref int __result)
         {
             if (left_item == null || right_item == null)

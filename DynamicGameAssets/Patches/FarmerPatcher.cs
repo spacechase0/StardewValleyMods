@@ -1,18 +1,53 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 using DynamicGameAssets.Framework;
 using DynamicGameAssets.Game;
 using HarmonyLib;
+using Spacechase.Shared.Patching;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace DynamicGameAssets.Patches
 {
-    [HarmonyPatch(typeof(Farmer), nameof(Farmer.getItemCountInList))]
-    public static class FarmerGetItemCountPatch
+    /// <summary>Applies Harmony patches to <see cref="Farmer"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
+    internal class FarmerPatcher : BasePatcher
     {
-        public static bool Prefix(Farmer __instance, IList<Item> list, int item_index, int min_price, ref int __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(Harmony harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Farmer>(nameof(Farmer.getItemCountInList)),
+                prefix: this.GetHarmonyMethod(nameof(Before_GetItemCountInList))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<Farmer>(nameof(Farmer.removeItemsFromInventory)),
+                prefix: this.GetHarmonyMethod(nameof(Before_RemoveItemsFromInventory))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<Farmer>(nameof(Farmer.eatObject)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_EatObject))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<Farmer>(nameof(Farmer.doneEating)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_DoneEating))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Farmer.getItemCountInList"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_GetItemCountInList(Farmer __instance, IList<Item> list, int item_index,
+            int min_price, ref int __result)
         {
             if (Mod.itemLookup.ContainsKey(item_index))
             {
@@ -26,14 +61,13 @@ namespace DynamicGameAssets.Patches
 
                 return false;
             }
+
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Farmer), nameof(Farmer.removeItemsFromInventory))]
-    public static class FarmerRemoveItemsPatch
-    {
-        public static bool Prefix(Farmer __instance, int index, int stack, ref bool __result)
+        /// <summary>The method to call before <see cref="Farmer.removeItemsFromInventory"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_RemoveItemsFromInventory(Farmer __instance, int index, int stack, ref bool __result)
         {
             if (Mod.itemLookup.ContainsKey(index))
             {
@@ -59,6 +93,7 @@ namespace DynamicGameAssets.Patches
                                 break;
                         }
                     }
+
                     __result = true;
                 }
                 else
@@ -71,23 +106,17 @@ namespace DynamicGameAssets.Patches
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Farmer), nameof(Farmer.eatObject))]
-    public static class FarmerEatObjectgPatch
-    {
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /// <summary>The method which transpiles <see cref="Farmer.eatObject"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_EatObject(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> instructions)
         {
-            return PatchCommon.RedirectForFakeObjectInformationTranspiler2(gen, original, insns);
+            return PatchCommon.RedirectForFakeObjectInformationTranspiler2(gen, original, instructions);
         }
-    }
 
-    [HarmonyPatch(typeof(Farmer), nameof(Farmer.doneEating))]
-    public static class FarmerDoneEatingPatch
-    {
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /// <summary>The method which transpiles <see cref="Farmer.doneEating"/>.</summary>
+        private static IEnumerable<CodeInstruction> Transpile_DoneEating(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> instructions)
         {
-            return PatchCommon.RedirectForFakeObjectInformationTranspiler2(gen, original, insns);
+            return PatchCommon.RedirectForFakeObjectInformationTranspiler2(gen, original, instructions);
         }
     }
 }

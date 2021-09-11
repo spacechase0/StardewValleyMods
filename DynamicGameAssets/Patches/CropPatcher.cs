@@ -1,96 +1,129 @@
+using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Patching;
+using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.TerrainFeatures;
 
 namespace DynamicGameAssets.Patches
 {
-    [HarmonyPatch(typeof(Crop), nameof(Crop.ResetPhaseDays))]
-    public static class CropResetPhaseDaysPatch
+    /// <summary>Applies Harmony patches to <see cref="Crop"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
+    internal class CropPatcher : BasePatcher
     {
-        public static bool Prefix(Crop __instance)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
-            if (__instance is CustomCrop cc)
+            harmony.Patch(
+                original: this.RequireMethod<Crop>(nameof(Crop.ResetPhaseDays)),
+                prefix: this.GetHarmonyMethod(nameof(Before_ResetPhaseDays))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<Crop>(nameof(Crop.newDay)),
+                prefix: this.GetHarmonyMethod(nameof(Before_NewDay))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<Crop>(nameof(Crop.harvest)),
+                prefix: this.GetHarmonyMethod(nameof(Before_Harvest))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<Crop>(nameof(Crop.draw)),
+                prefix: this.GetHarmonyMethod(nameof(Before_Draw))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<Crop>(nameof(Crop.drawInMenu)),
+                prefix: this.GetHarmonyMethod(nameof(Before_DrawInMenu))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<Crop>(nameof(Crop.drawWithOffset)),
+                prefix: this.GetHarmonyMethod(nameof(Before_DrawWithOffset))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Crop.ResetPhaseDays"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_ResetPhaseDays(Crop __instance)
+        {
+            if (__instance is CustomCrop crop)
             {
-                cc.ResetPhaseDays();
+                crop.ResetPhaseDays();
                 return false;
             }
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Crop), nameof(Crop.newDay))]
-    public static class CropNewDayPatch
-    {
-        public static bool Prefix(Crop __instance, int state, int fertilizer, int xTile, int yTile, GameLocation environment)
+        /// <summary>The method to call before <see cref="Crop.newDay"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_NewDay(Crop __instance, int state, int fertilizer, int xTile, int yTile, GameLocation environment)
         {
-            if (__instance is CustomCrop cc)
+            if (__instance is CustomCrop crop)
             {
-                cc.NewDay(state, fertilizer, xTile, yTile, environment);
+                crop.NewDay(state, fertilizer, xTile, yTile, environment);
                 return false;
             }
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Crop), nameof(Crop.harvest))]
-    public static class CropHarvestPatch
-    {
-        public static bool Prefix(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester, ref bool __result)
+        /// <summary>The method to call before <see cref="Crop.harvest"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_Harvest(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester, ref bool __result)
         {
-            if (__instance is CustomCrop cc)
+            if (__instance is CustomCrop crop)
             {
-                __result = cc.Harvest(xTile, yTile, soil, junimoHarvester);
+                __result = crop.Harvest(xTile, yTile, soil, junimoHarvester);
                 return false;
             }
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Crop), nameof(Crop.draw))]
-    public static class CropDrawPatch
-    {
-        public static bool Prefix(Crop __instance, SpriteBatch b, Vector2 tileLocation, Color toTint, float rotation)
+        /// <summary>The method to call before <see cref="Crop.draw"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_Draw(Crop __instance, SpriteBatch b, Vector2 tileLocation, Color toTint, float rotation)
         {
-            if (__instance is CustomCrop cc)
+            if (__instance is CustomCrop crop)
             {
-                cc.Draw(b, tileLocation, toTint, rotation);
+                crop.Draw(b, tileLocation, toTint, rotation);
                 return false;
             }
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Crop), nameof(Crop.drawInMenu))]
-    public static class CropDrawInMenuPatch
-    {
-        public static bool Prefix(Crop __instance, SpriteBatch b, Vector2 screenPosition, Color toTint, float rotation, float scale, float layerDepth)
+        /// <summary>The method to call before <see cref="Crop.drawInMenu"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_DrawInMenu(Crop __instance, SpriteBatch b, Vector2 screenPosition, Color toTint, float rotation, float scale, float layerDepth)
         {
-            if (__instance is CustomCrop cc)
+            if (__instance is CustomCrop crop)
             {
-                cc.DrawInMenu(b, screenPosition, toTint, rotation, scale, layerDepth);
+                crop.DrawInMenu(b, screenPosition, toTint, rotation, scale, layerDepth);
                 return false;
             }
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Crop), nameof(Crop.drawWithOffset))]
-    public static class CropDrawWithOffsetPatch
-    {
-        public static bool Prefix(Crop __instance, SpriteBatch b, Vector2 tileLocation, Color toTint, float rotation, Vector2 offset)
+        /// <summary>The method to call before <see cref="Crop.drawWithOffset"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_DrawWithOffset(Crop __instance, SpriteBatch b, Vector2 tileLocation, Color toTint, float rotation, Vector2 offset)
         {
-            if (__instance is CustomCrop cc)
+            if (__instance is CustomCrop crop)
             {
-                cc.DrawWithOffset(b, tileLocation, toTint, rotation, offset);
+                crop.DrawWithOffset(b, tileLocation, toTint, rotation, offset);
                 return false;
             }
 

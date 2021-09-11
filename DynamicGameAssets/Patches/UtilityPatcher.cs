@@ -1,20 +1,43 @@
+using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Patching;
+using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 
 namespace DynamicGameAssets.Patches
 {
-    [HarmonyPatch(typeof(Utility), nameof(Utility.isViableSeedSpot))]
-    public static class UtilityIsViableSeedSpotPatch
+    /// <summary>Applies Harmony patches to <see cref="Utility"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
+    internal class UtilityPatcher : BasePatcher
     {
-        public static bool Prefix(GameLocation location, Vector2 tileLocation, Item item, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
-            if (item is CustomObject cobj && !string.IsNullOrEmpty(cobj.Data.Plants))
+            harmony.Patch(
+                original: this.RequireMethod<Utility>(nameof(Utility.isViableSeedSpot)),
+                prefix: this.GetHarmonyMethod(nameof(Before_IsViableSeedSpot))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Utility.isViableSeedSpot"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_IsViableSeedSpot(GameLocation location, Vector2 tileLocation, Item item, ref bool __result)
+        {
+            if (item is CustomObject obj && !string.IsNullOrEmpty(obj.Data.Plants))
             {
-                __result = UtilityIsViableSeedSpotPatch.Impl(location, tileLocation, cobj);
+                __result = UtilityPatcher.Impl(location, tileLocation, obj);
                 return false;
             }
             return true;

@@ -1,10 +1,11 @@
-using HarmonyLib;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Objects;
+using SuperHopper.Patches;
 
 namespace SuperHopper
 {
@@ -19,8 +20,9 @@ namespace SuperHopper
 
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
 
-            var harmony = new Harmony(this.ModManifest.UniqueID);
-            harmony.PatchAll();
+            HarmonyPatcher.Apply(this,
+                new ObjectPatcher()
+            );
         }
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)

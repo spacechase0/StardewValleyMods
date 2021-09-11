@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using DynamicGameAssets.Framework;
 using DynamicGameAssets.Framework.ContentPacks;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using DynamicGameAssets.Patches;
-using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Patching;
 using SpaceCore;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -70,7 +69,6 @@ namespace DynamicGameAssets
     {
         public static Mod instance;
         internal ContentPatcher.IContentPatcherAPI cp;
-        private Harmony harmony;
 
         public static readonly int BaseFakeObjectId = 1720;
         public static ContentPack DummyContentPack;
@@ -81,7 +79,7 @@ namespace DynamicGameAssets
 
         internal static Dictionary<string, Dictionary<string, GiftTastePackData>> giftTastes = new();
 
-        // TODO: Should these and SpriteBatchTileSheetAdjustments.packOverrides (and similar overrides) go into State? For splitscreen
+        // TODO: Should these and SpriteBatchPatcher.packOverrides (and similar overrides) go into State? For splitscreen
         internal static List<DGACustomCraftingRecipe> customCraftingRecipes = new List<DGACustomCraftingRecipe>();
         internal static List<DGACustomForgeRecipe> customForgeRecipes = new List<DGACustomForgeRecipe>();
         internal static Dictionary<string, List<MachineRecipePackData>> customMachineRecipes = new Dictionary<string, List<MachineRecipePackData>>();
@@ -124,14 +122,30 @@ namespace DynamicGameAssets
             helper.ConsoleCommands.Add("dga_clean", "Remove all invalid items from the currently loaded save.", this.OnCleanCommand);
             helper.ConsoleCommands.Add("dga_store", "`dga_store [mod.id] - Get a store containing everything for free (optionally from a specific content pack).", this.OnStoreCommand);
 
-            this.harmony = new Harmony(this.ModManifest.UniqueID);
-            this.harmony.PatchAll();
-            this.harmony.Patch(typeof(IClickableMenu).GetMethod("drawHoverText", new[] { typeof(SpriteBatch), typeof(StringBuilder), typeof(SpriteFont), typeof(int), typeof(int), typeof(int), typeof(string), typeof(int), typeof(string[]), typeof(Item), typeof(int), typeof(int), typeof(int), typeof(int), typeof(int), typeof(int), typeof(CraftingRecipe), typeof(IList<Item>) }), transpiler: new HarmonyMethod(typeof(DrawHoverTextPatch).GetMethod("Transpiler")));
-            this.harmony.Patch(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Rectangle), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(SpriteEffects), typeof(float) }), prefix: new HarmonyMethod(typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix1))) { before = new string[] { "spacechase0.SpaceCore" } });
-            this.harmony.Patch(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Rectangle), typeof(Rectangle?), typeof(Color), }), prefix: new HarmonyMethod(typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix2))) { before = new string[] { "spacechase0.SpaceCore" } });
-            this.harmony.Patch(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(Vector2), typeof(SpriteEffects), typeof(float) }), prefix: new HarmonyMethod(typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix3))) { before = new string[] { "spacechase0.SpaceCore" } });
-            this.harmony.Patch(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(float), typeof(SpriteEffects), typeof(float) }), prefix: new HarmonyMethod(typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix4))) { before = new string[] { "spacechase0.SpaceCore" } });
-            this.harmony.Patch(typeof(SpriteBatch).GetMethod("Draw", new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color) }), prefix: new HarmonyMethod(typeof(SpriteBatchTileSheetAdjustments).GetMethod(nameof(SpriteBatchTileSheetAdjustments.Prefix5))) { before = new string[] { "spacechase0.SpaceCore" } });
+            HarmonyPatcher.Apply(this,
+                new BootsPatcher(),
+                new CollectionsPagePatcher(),
+                new CropPatcher(),
+                new FarmerPatcher(),
+                new FarmerRendererPatcher(),
+                new FencePatcher(),
+                new FishTankFurniturePatcher(),
+                new FruitTreePatcher(),
+                new FurniturePatcher(),
+                new Game1Patcher(),
+                new GameLocationPatcher(),
+                //new HatPatcher(),
+                new IClickableMenuPatcher(),
+                new IndoorPotPatcher(),
+                new MeleeWeaponPatcher(),
+                new NpcPatcher(),
+                new ObjectPatcher(),
+                new ShippingMenuPatcher(),
+                new ShopPatcher(),
+                new SpriteBatchPatcher(),
+                new TailoringMenuPatcher(),
+                new UtilityPatcher()
+            );
         }
 
         public override object GetApi()
@@ -204,7 +218,7 @@ namespace DynamicGameAssets
             Mod.customForgeRecipes.Clear();
             Mod.customMachineRecipes.Clear();
             Mod.customTailoringRecipes.Clear();
-            SpriteBatchTileSheetAdjustments.packOverrides.Clear();
+            SpriteBatchPatcher.packOverrides.Clear();
 
             // Enabled/disabled
             foreach (var cp in Mod.contentPacks)
@@ -523,7 +537,7 @@ namespace DynamicGameAssets
                 CustomForgeRecipe.Recipes.Remove(recipe);
             Mod.customCraftingRecipes.Clear();
             Mod.customForgeRecipes.Clear();
-            SpriteBatchTileSheetAdjustments.packOverrides.Clear();
+            SpriteBatchPatcher.packOverrides.Clear();
             foreach (var state in Mod._state.GetActiveValues())
             {
                 state.Value.TodaysShopEntries.Clear();
@@ -840,12 +854,12 @@ namespace DynamicGameAssets
             if (Game1.objectSpriteSheet == null)
                 Game1.objectSpriteSheet = Game1.content.Load<Texture2D>("Maps\\springobjects");
 
-            SpriteBatchTileSheetAdjustments.objectOverrides.Clear();
-            SpriteBatchTileSheetAdjustments.weaponOverrides.Clear();
-            SpriteBatchTileSheetAdjustments.hatOverrides.Clear();
-            SpriteBatchTileSheetAdjustments.shirtOverrides.Clear();
-            SpriteBatchTileSheetAdjustments.pantsOverrides.Clear();
-            SpriteBatchTileSheetAdjustments.packOverrides.Clear();
+            SpriteBatchPatcher.objectOverrides.Clear();
+            SpriteBatchPatcher.weaponOverrides.Clear();
+            SpriteBatchPatcher.hatOverrides.Clear();
+            SpriteBatchPatcher.shirtOverrides.Clear();
+            SpriteBatchPatcher.pantsOverrides.Clear();
+            SpriteBatchPatcher.packOverrides.Clear();
             foreach (var cp in Mod.contentPacks)
             {
                 foreach (var item in cp.Value.items.Values)
@@ -854,13 +868,13 @@ namespace DynamicGameAssets
                     {
                         var tex = cp.Value.GetTexture(obj.Texture, 16, 16);
                         string fullId = $"{cp.Key}/{obj.ID}";
-                        SpriteBatchTileSheetAdjustments.objectOverrides.Add(Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, fullId.GetDeterministicHashCode(), 16, 16), tex);
+                        SpriteBatchPatcher.objectOverrides.Add(Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, fullId.GetDeterministicHashCode(), 16, 16), tex);
                     }
                     else if (item is MeleeWeaponPackData weapon)
                     {
                         var tex = cp.Value.GetTexture(weapon.Texture, 16, 16);
                         string fullId = $"{cp.Key}/{weapon.ID}";
-                        SpriteBatchTileSheetAdjustments.weaponOverrides.Add(Game1.getSourceRectForStandardTileSheet(Tool.weaponsTexture, fullId.GetDeterministicHashCode(), 16, 16), tex);
+                        SpriteBatchPatcher.weaponOverrides.Add(Game1.getSourceRectForStandardTileSheet(Tool.weaponsTexture, fullId.GetDeterministicHashCode(), 16, 16), tex);
                     }
                     else if (item is HatPackData hat)
                     {
@@ -872,13 +886,13 @@ namespace DynamicGameAssets
                         int which = fullId.GetDeterministicHashCode();
 
                         var rect = new Rectangle(20 * (int)which % FarmerRenderer.hatsTexture.Width, 20 * (int)which / FarmerRenderer.hatsTexture.Width * 20 * 4, 20, 20);
-                        SpriteBatchTileSheetAdjustments.hatOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                        SpriteBatchPatcher.hatOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                         rect.Offset(0, 20);
-                        SpriteBatchTileSheetAdjustments.hatOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                        SpriteBatchPatcher.hatOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                         rect.Offset(0, 20);
-                        SpriteBatchTileSheetAdjustments.hatOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                        SpriteBatchPatcher.hatOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                         rect.Offset(0, 20);
-                        SpriteBatchTileSheetAdjustments.hatOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                        SpriteBatchPatcher.hatOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                     }
                     else if (item is ShirtPackData shirt)
                     {
@@ -889,13 +903,13 @@ namespace DynamicGameAssets
                         if (!tex.Rect.HasValue)
                             tex.Rect = new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
                         var rect = new Rectangle(which * 8 % 128, which * 8 / 128 * 32, 8, 8);
-                        SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                        SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                         rect.Offset(0, 8);
-                        SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                        SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                         rect.Offset(0, 8);
-                        SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                        SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                         rect.Offset(0, 8);
-                        SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                        SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
 
                         if (shirt.TextureMaleColor != null)
                         {
@@ -903,13 +917,13 @@ namespace DynamicGameAssets
                             if (!tex.Rect.HasValue)
                                 tex.Rect = new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
                             rect.Offset(128, -24);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                             rect.Offset(0, 8);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                             rect.Offset(0, 8);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                             rect.Offset(0, 8);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                         }
 
                         if (shirt.TextureFemale != null)
@@ -919,13 +933,13 @@ namespace DynamicGameAssets
                                 tex.Rect = new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
                             which += 1;
                             rect = new Rectangle(which * 8 % 128, which * 8 / 128 * 32, 8, 8);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                             rect.Offset(0, 8);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                             rect.Offset(0, 8);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                             rect.Offset(0, 8);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                         }
 
                         if (shirt.TextureFemaleColor != null)
@@ -934,13 +948,13 @@ namespace DynamicGameAssets
                             if (!tex.Rect.HasValue)
                                 tex.Rect = new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
                             rect.Offset(128, -24);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                             rect.Offset(0, 8);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 1, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                             rect.Offset(0, 8);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 2, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                             rect.Offset(0, 8);
-                            SpriteBatchTileSheetAdjustments.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
+                            SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 3, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                         }
                     }
                     else if (item is PantsPackData pants)
@@ -948,16 +962,16 @@ namespace DynamicGameAssets
                         var tex = cp.Value.GetTexture(pants.Texture, 192, 688);
                         string fullId = $"{cp.Key}/{pants.ID}";
                         int which = fullId.GetDeterministicHashCode();
-                        SpriteBatchTileSheetAdjustments.pantsOverrides.Add(new Rectangle(which % 10 * 192, which / 10 * 688, 192, 688), tex);
+                        SpriteBatchPatcher.pantsOverrides.Add(new Rectangle(which % 10 * 192, which / 10 * 688, 192, 688), tex);
                     }
                 }
                 foreach (var other in cp.Value.others)
                 {
                     if (other is TextureOverridePackData textureOverride)
                     {
-                        if (!SpriteBatchTileSheetAdjustments.packOverrides.ContainsKey(textureOverride.TargetTexture))
-                            SpriteBatchTileSheetAdjustments.packOverrides.Add(textureOverride.TargetTexture, new());
-                        SpriteBatchTileSheetAdjustments.packOverrides[textureOverride.TargetTexture].Add(textureOverride.TargetRect, textureOverride);
+                        if (!SpriteBatchPatcher.packOverrides.ContainsKey(textureOverride.TargetTexture))
+                            SpriteBatchPatcher.packOverrides.Add(textureOverride.TargetTexture, new());
+                        SpriteBatchPatcher.packOverrides[textureOverride.TargetTexture].Add(textureOverride.TargetRect, textureOverride);
                     }
                 }
             }

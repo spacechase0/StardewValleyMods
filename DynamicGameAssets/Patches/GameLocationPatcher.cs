@@ -1,6 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Patching;
+using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
@@ -8,16 +12,36 @@ using xTile.Dimensions;
 
 namespace DynamicGameAssets.Patches
 {
-    [HarmonyPatch(typeof(GameLocation), nameof(GameLocation.isTileOccupiedForPlacement))]
-    public static class GameLocationTileOccupiedForPlacementPatch
+    /// <summary>Applies Harmony patches to <see cref="GameLocation"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
+    internal class GameLocationPatcher : BasePatcher
     {
-        public static bool Prefix(GameLocation __instance, Vector2 tileLocation, StardewValley.Object toPlace, ref bool __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
-            if (toPlace is CustomObject cobj && !string.IsNullOrEmpty(cobj.Data.Plants))
+            harmony.Patch(
+                original: this.RequireMethod<GameLocation>(nameof(GameLocation.isTileOccupiedForPlacement)),
+                prefix: this.GetHarmonyMethod(nameof(Before_IsTileOccupiedForPlacement))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="GameLocation.isTileOccupiedForPlacement"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_IsTileOccupiedForPlacement(GameLocation __instance, Vector2 tileLocation, StardewValley.Object toPlace, ref bool __result)
+        {
+            if (toPlace is CustomObject obj && !string.IsNullOrEmpty(obj.Data.Plants))
             {
-                __result = GameLocationTileOccupiedForPlacementPatch.Impl(__instance, tileLocation, cobj);
+                __result = GameLocationPatcher.Impl(__instance, tileLocation, obj);
                 return false;
             }
+
             return true;
         }
 

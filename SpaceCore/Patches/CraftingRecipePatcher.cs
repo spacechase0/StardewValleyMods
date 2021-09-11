@@ -12,7 +12,7 @@ using StardewValley.Objects;
 
 namespace SpaceCore.Patches
 {
-    /// <summary>Applies Harmony patches to <see cref="Event"/>.</summary>
+    /// <summary>Applies Harmony patches to <see cref="CraftingRecipe"/>.</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class CraftingRecipePatcher : BasePatcher
     {
@@ -24,15 +24,15 @@ namespace SpaceCore.Patches
         {
             harmony.Patch(
                 original: this.RequireMethod<CraftingRecipe>(nameof(CraftingRecipe.consumeIngredients)),
-                prefix: this.GetHarmonyMethod(nameof(Before_ConsumeIngredients))
+                prefix: this.GetHarmonyMethod(nameof(Before_CraftingRecipe_ConsumeIngredients))
             );
             harmony.Patch(
                 original: this.RequireMethod<CraftingPage>("layoutRecipes"),
-                transpiler: this.GetHarmonyMethod(nameof(Transpile_LayoutRecipes))
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_CraftingPage_LayoutRecipes))
             );
             harmony.Patch(
                 original: this.RequireMethod<CollectionsPage>(nameof(CollectionsPage.createDescription)),
-                transpiler: this.GetHarmonyMethod(nameof(Transpile_MakeCraftingRecipe))
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_CollectionsPage_CreateDescription))
             );
         }
 
@@ -40,13 +40,15 @@ namespace SpaceCore.Patches
         /*********
         ** Private methods
         *********/
-        private static bool Before_ConsumeIngredients(CraftingRecipe __instance, List<Chest> additional_materials)
+        /// <summary>The method to call before <see cref="CraftingRecipe.consumeIngredients"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_CraftingRecipe_ConsumeIngredients(CraftingRecipe __instance, List<Chest> additional_materials)
         {
             if (__instance is Framework.CustomCraftingRecipe ccr)
             {
-                foreach (var ingred in ccr.recipe.Ingredients)
+                foreach (var ingredient in ccr.recipe.Ingredients)
                 {
-                    ingred.Consume(additional_materials);
+                    ingredient.Consume(additional_materials);
                 }
                 return false;
             }
@@ -54,54 +56,58 @@ namespace SpaceCore.Patches
             return true;
         }
 
-        private static IEnumerable<CodeInstruction> Transpile_LayoutRecipes(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /// <summary>The method which transpiles <see cref="CraftingPage.layoutRecipes"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static IEnumerable<CodeInstruction> Transpile_CraftingPage_LayoutRecipes(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> instructions)
         {
-            insns = Transpile_MakeCraftingRecipe(gen, original, insns);
+            instructions = CraftingRecipePatcher.Transpile_CollectionsPage_CreateDescription(gen, original, instructions);
 
             LocalBuilder recipeLocal = null;
             bool didIt = false;
-            var newInsns = new List<CodeInstruction>();
-            foreach (var insn in insns)
+            var newInstructions = new List<CodeInstruction>();
+            foreach (var instruction in instructions)
             {
-                if (recipeLocal == null && insn.opcode == OpCodes.Ldloc_S && (insn.operand as LocalBuilder).LocalType == typeof(CraftingRecipe))
+                if (recipeLocal == null && instruction.opcode == OpCodes.Ldloc_S && (instruction.operand as LocalBuilder).LocalType == typeof(CraftingRecipe))
                 {
-                    recipeLocal = insn.operand as LocalBuilder;
+                    recipeLocal = instruction.operand as LocalBuilder;
                 }
-                else if (!didIt && insn.opcode == OpCodes.Ldloc_S && (insn.operand as LocalBuilder).LocalType == typeof(ClickableTextureComponent))
+                else if (!didIt && instruction.opcode == OpCodes.Ldloc_S && (instruction.operand as LocalBuilder).LocalType == typeof(ClickableTextureComponent))
                 {
                     Log.Trace($"Found first ldloc.s for ClickableTextureComponent in {original}; storing potential override w/ recipeLocal={recipeLocal}");
-                    newInsns.Add(new CodeInstruction(OpCodes.Ldloc_S, insn.operand));
-                    newInsns.Add(new CodeInstruction(OpCodes.Ldloc_S, recipeLocal));
-                    newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CraftingRecipePatcher>(nameof(RedirectedCTCCreation))));
-                    newInsns.Add(new CodeInstruction(OpCodes.Stloc_S, insn.operand));
-                    newInsns.Add(insn);
+                    newInstructions.Add(new CodeInstruction(OpCodes.Ldloc_S, instruction.operand));
+                    newInstructions.Add(new CodeInstruction(OpCodes.Ldloc_S, recipeLocal));
+                    newInstructions.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CraftingRecipePatcher>(nameof(RedirectedCTCCreation))));
+                    newInstructions.Add(new CodeInstruction(OpCodes.Stloc_S, instruction.operand));
+                    newInstructions.Add(instruction);
 
                     didIt = true;
                     continue;
                 }
 
-                newInsns.Add(insn);
+                newInstructions.Add(instruction);
             }
 
-            return newInsns;
+            return newInstructions;
         }
 
-        private static IEnumerable<CodeInstruction> Transpile_MakeCraftingRecipe(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        /// <summary>The method which transpiles <see cref="CollectionsPage.createDescription"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static IEnumerable<CodeInstruction> Transpile_CollectionsPage_CreateDescription(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> instructions)
         {
-            var newInsns = new List<CodeInstruction>();
-            foreach (var insn in insns)
+            var newInstructions = new List<CodeInstruction>();
+            foreach (var instruction in instructions)
             {
-                if (insn.opcode == OpCodes.Newobj && insn.operand is ConstructorInfo cinfo && cinfo.DeclaringType == typeof(CraftingRecipe) && cinfo.GetParameters().Length == 2)
+                if (instruction.opcode == OpCodes.Newobj && instruction.operand is ConstructorInfo constructor && constructor.DeclaringType == typeof(CraftingRecipe) && constructor.GetParameters().Length == 2)
                 {
                     Log.Trace($"Found crafting recipe constructor in {original}!");
-                    insn.opcode = OpCodes.Call;
-                    insn.operand = PatchHelper.RequireMethod<CraftingRecipePatcher>(nameof(RedirectedCreateRecipe));
+                    instruction.opcode = OpCodes.Call;
+                    instruction.operand = PatchHelper.RequireMethod<CraftingRecipePatcher>(nameof(RedirectedCreateRecipe));
                 }
 
-                newInsns.Add(insn);
+                newInstructions.Add(instruction);
             }
 
-            return newInsns;
+            return newInstructions;
         }
 
         private static CraftingRecipe RedirectedCreateRecipe(string name, bool isCooking)

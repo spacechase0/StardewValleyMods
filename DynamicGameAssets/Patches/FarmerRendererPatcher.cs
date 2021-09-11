@@ -1,57 +1,86 @@
+using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using Spacechase.Shared.Patching;
+using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace DynamicGameAssets.Patches
 {
-    [HarmonyPatch(typeof(FarmerRenderer), "ApplyShoeColor")]
-    public static class FarmerRendererApplyShoesPatch
+    /// <summary>Applies Harmony patches to <see cref="FarmerRenderer"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
+    internal class FarmerRendererPatcher : BasePatcher
     {
-        public static bool Prefix(FarmerRenderer __instance, string texture_name, Color[] pixels)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(Harmony harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<FarmerRenderer>("ApplyShoeColor"),
+                prefix: this.GetHarmonyMethod(nameof(Before_ApplyShoeColor))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<FarmerRenderer>(nameof(FarmerRenderer.ApplySleeveColor)),
+                prefix: this.GetHarmonyMethod(nameof(Before_ApplySleeveColor))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<FarmerRenderer>(nameof(FarmerRenderer.ClampShirt)),
+                prefix: this.GetHarmonyMethod(nameof(Before_ClampShirt))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<FarmerRenderer>(nameof(FarmerRenderer.ClampPants)),
+                prefix: this.GetHarmonyMethod(nameof(Before_ClampPants))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="FarmerRenderer.ApplyShoeColor"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_ApplyShoeColor(FarmerRenderer __instance, string texture_name, Color[] pixels)
         {
             var this_shoes = Mod.instance.Helper.Reflection.GetField<NetInt>(__instance, "shoes").GetValue();
 
             if (Mod.itemLookup.ContainsKey(this_shoes.Value))
             {
-                FarmerRendererApplyShoesPatch.Impl(Mod.Find(Mod.itemLookup[this_shoes.Value]) as BootsPackData, __instance, texture_name, pixels);
+                BootsPackData data = Mod.Find(Mod.itemLookup[this_shoes.Value]) as BootsPackData;
+                var this__SwapColor = Mod.instance.Helper.Reflection.GetMethod(__instance, "_SwapColor");
+
+                var currTex = data.pack.GetTexture(data.FarmerColors, 4, 1);
+
+                int which = this_shoes.Value;
+                Texture2D shoeColors = currTex.Texture;
+                Color[] shoeColorsData = new Color[shoeColors.Width * shoeColors.Height];
+                shoeColors.GetData(0, currTex.Rect, shoeColorsData, 0, 4);
+                Color darkest = shoeColorsData[0];
+                Color medium = shoeColorsData[1];
+                Color lightest = shoeColorsData[2];
+                Color lightest2 = shoeColorsData[3];
+                this__SwapColor.Invoke(texture_name, pixels, 268, darkest);
+                this__SwapColor.Invoke(texture_name, pixels, 269, medium);
+                this__SwapColor.Invoke(texture_name, pixels, 270, lightest);
+                this__SwapColor.Invoke(texture_name, pixels, 271, lightest2);
+
                 return false;
             }
 
             return true;
         }
 
-        public static void Impl(BootsPackData data, FarmerRenderer __instance, string texture_name, Color[] pixels)
+        /// <summary>The method to call before <see cref="FarmerRenderer.ApplySleeveColor"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_ApplySleeveColor(FarmerRenderer __instance, string texture_name, Color[] pixels, Farmer who)
         {
-            var this_shoes = Mod.instance.Helper.Reflection.GetField<NetInt>(__instance, "shoes").GetValue();
-            var this__SwapColor = Mod.instance.Helper.Reflection.GetMethod(__instance, "_SwapColor");
-
-            var currTex = data.pack.GetTexture(data.FarmerColors, 4, 1);
-
-            int which = this_shoes.Value;
-            Texture2D shoeColors = currTex.Texture;
-            Color[] shoeColorsData = new Color[shoeColors.Width * shoeColors.Height];
-            shoeColors.GetData(0, currTex.Rect, shoeColorsData, 0, 4);
-            Color darkest = shoeColorsData[0];
-            Color medium = shoeColorsData[1];
-            Color lightest = shoeColorsData[2];
-            Color lightest2 = shoeColorsData[3];
-            this__SwapColor.Invoke(texture_name, pixels, 268, darkest);
-            this__SwapColor.Invoke(texture_name, pixels, 269, medium);
-            this__SwapColor.Invoke(texture_name, pixels, 270, lightest);
-            this__SwapColor.Invoke(texture_name, pixels, 271, lightest2);
-        }
-    }
-
-    [HarmonyPatch(typeof(FarmerRenderer), nameof(FarmerRenderer.ApplySleeveColor))]
-    public static class FarmerRendererApplySleeveColorPatch
-    {
-        public static bool Prefix(FarmerRenderer __instance, string texture_name, Color[] pixels, Farmer who)
-        {
-            if (who.shirtItem.Value is CustomShirt cshirt)
+            if (who.shirtItem.Value is CustomShirt shirt)
             {
                 var this_farmerTextureManager = Mod.instance.Helper.Reflection.GetField<LocalizedContentManager>(__instance, "farmerTextureManager").GetValue();
                 var this_skin = Mod.instance.Helper.Reflection.GetField<NetInt>(__instance, "skin").GetValue();
@@ -71,10 +100,10 @@ namespace DynamicGameAssets.Patches
                     for (int i = 0; i < colors.Length; i++)
                         colors[i] = Color.Transparent;
                 }
-                var maleNC = cshirt.Data.pack.GetTexture(cshirt.Data.TextureMale, 8, 32);
-                var maleC = cshirt.Data.TextureMaleColor == null ? null : cshirt.Data.pack.GetTexture(cshirt.Data.TextureMaleColor, 8, 32);
-                var femaleNC = cshirt.Data.TextureFemale == null ? maleNC : cshirt.Data.pack.GetTexture(cshirt.Data.TextureFemale, 8, 32);
-                var femaleC = cshirt.Data.TextureFemaleColor == null ? null : cshirt.Data.pack.GetTexture(cshirt.Data.TextureFemaleColor, 8, 32);
+                var maleNC = shirt.Data.pack.GetTexture(shirt.Data.TextureMale, 8, 32);
+                var maleC = shirt.Data.TextureMaleColor == null ? null : shirt.Data.pack.GetTexture(shirt.Data.TextureMaleColor, 8, 32);
+                var femaleNC = shirt.Data.TextureFemale == null ? maleNC : shirt.Data.pack.GetTexture(shirt.Data.TextureFemale, 8, 32);
+                var femaleC = shirt.Data.TextureFemaleColor == null ? null : shirt.Data.pack.GetTexture(shirt.Data.TextureFemaleColor, 8, 32);
                 maleNC.Texture.GetData(0, maleNC.Rect, shirtData[0], 0, 8 * 32);
                 maleC?.Texture?.GetData(0, maleNC.Rect, shirtData[1], 0, 8 * 32);
                 femaleNC.Texture.GetData(0, femaleNC.Rect, shirtData[2], 0, 8 * 32);
@@ -143,12 +172,10 @@ namespace DynamicGameAssets.Patches
             }
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(FarmerRenderer), nameof(FarmerRenderer.ClampShirt))]
-    public static class FarmerRendererClampShirtPatch
-    {
-        public static bool Prefix(FarmerRenderer __instance, int shirt_value, ref int __result)
+        /// <summary>The method to call before <see cref="FarmerRenderer.ClampShirt"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_ClampShirt(FarmerRenderer __instance, int shirt_value, ref int __result)
         {
             if (Mod.itemLookup.ContainsKey(shirt_value) || Mod.itemLookup.ContainsKey(shirt_value + 1))
             {
@@ -158,12 +185,10 @@ namespace DynamicGameAssets.Patches
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(FarmerRenderer), nameof(FarmerRenderer.ClampPants))]
-    public static class FarmerRendererClampPantsPatch
-    {
-        public static bool Prefix(FarmerRenderer __instance, int pants_value, ref int __result)
+        /// <summary>The method to call before <see cref="FarmerRenderer.ClampPants"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_ClampPants(FarmerRenderer __instance, int pants_value, ref int __result)
         {
             if (Mod.itemLookup.ContainsKey(pants_value))
             {

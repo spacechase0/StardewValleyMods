@@ -1,17 +1,39 @@
+using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Patching;
+using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
 
 namespace DynamicGameAssets.Patches
 {
-
-    [HarmonyPatch(typeof(Game1), nameof(Game1.drawTool), typeof(Farmer), typeof(int))]
-    public static class Game1DrawToolPatch
+    /// <summary>Applies Harmony patches to <see cref="Game1"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
+    internal class Game1Patcher : BasePatcher
     {
-        public static bool Prefix(Farmer f, int currentToolIndex)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(Harmony harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<Game1>(nameof(Game1.drawTool), new[] { typeof(Farmer), typeof(int) }),
+                prefix: this.GetHarmonyMethod(nameof(Before_DrawTool))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Game1.drawTool(Farmer,int)"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_DrawTool(Farmer f, int currentToolIndex)
         {
             if (f.CurrentTool is CustomMeleeWeapon || f.FarmerSprite.isUsingWeapon() && Mod.itemLookup.ContainsKey(f.FarmerSprite.CurrentToolIndex))
             {
@@ -24,9 +46,9 @@ namespace DynamicGameAssets.Patches
                 }
 
 
-                if (f.CurrentTool is CustomMeleeWeapon cmw)
+                if (f.CurrentTool is CustomMeleeWeapon weapon)
                 {
-                    CustomMeleeWeapon.DrawDuringUse(cmw.Data.GetTexture(), ((FarmerSprite)f.Sprite).currentAnimationIndex, f.FacingDirection, Game1.spriteBatch, fPosition, f, MeleeWeapon.getSourceRect(cmw.getDrawnItemIndex()), cmw.type, cmw.isOnSpecial);
+                    CustomMeleeWeapon.DrawDuringUse(weapon.Data.GetTexture(), ((FarmerSprite)f.Sprite).currentAnimationIndex, f.FacingDirection, Game1.spriteBatch, fPosition, f, MeleeWeapon.getSourceRect(weapon.getDrawnItemIndex()), weapon.type, weapon.isOnSpecial);
                 }
                 else
                 {
@@ -39,6 +61,5 @@ namespace DynamicGameAssets.Patches
 
             return true;
         }
-
     }
 }

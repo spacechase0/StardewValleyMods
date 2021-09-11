@@ -1,16 +1,43 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Framework;
 using HarmonyLib;
+using Spacechase.Shared.Patching;
+using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Crafting;
 using StardewValley.Menus;
 
 namespace DynamicGameAssets.Patches
 {
-    [HarmonyPatch(typeof(TailoringMenu), nameof(TailoringMenu.GetRecipeForItems))]
-    public static class TailoringMenuGetRecipePatch
+    /// <summary>Applies Harmony patches to <see cref="TailoringMenu"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
+    internal class TailoringMenuPatcher : BasePatcher
     {
-        public static bool Prefix(TailoringMenu __instance, Item left_item, Item right_item, ref TailorItemRecipe __result)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(Harmony harmony, IMonitor monitor)
+        {
+            harmony.Patch(
+                original: this.RequireMethod<TailoringMenu>(nameof(TailoringMenu.GetRecipeForItems)),
+                prefix: this.GetHarmonyMethod(nameof(Before_GetRecipeForItems))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<TailoringMenu>(nameof(TailoringMenu.CraftItem)),
+                prefix: this.GetHarmonyMethod(nameof(Before_CraftItem))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="TailoringMenu.GetRecipeForItems"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_GetRecipeForItems(TailoringMenu __instance, Item left_item, Item right_item, ref TailorItemRecipe __result)
         {
             if (left_item == null || right_item == null)
                 return true;
@@ -55,12 +82,10 @@ namespace DynamicGameAssets.Patches
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(TailoringMenu), nameof(TailoringMenu.CraftItem))]
-    public static class TailoringMenuCraftPatch
-    {
-        public static bool Prefix(TailoringMenu __instance, Item left_item, Item right_item, ref Item __result)
+        /// <summary>The method to call before <see cref="TailoringMenu.CraftItem"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_CraftItem(TailoringMenu __instance, Item left_item, Item right_item, ref Item __result)
         {
             if (left_item == null || right_item == null)
                 return false;

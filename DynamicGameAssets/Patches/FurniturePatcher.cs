@@ -1,36 +1,61 @@
+using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using HarmonyLib;
+using Spacechase.Shared.Patching;
+using SpaceShared;
+using StardewModdingAPI;
 using StardewValley.Objects;
 
 namespace DynamicGameAssets.Patches
 {
-    [HarmonyPatch(typeof(Furniture), nameof(Furniture.rotate))]
-    public static class FurnitureRotatePatch
+    /// <summary>Applies Harmony patches to <see cref="Furniture"/>.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
+    internal class FurniturePatcher : BasePatcher
     {
-        public static bool Prefix(Furniture __instance)
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
+        public override void Apply(Harmony harmony, IMonitor monitor)
         {
-            if (__instance is CustomBasicFurniture cbf)
+            harmony.Patch(
+                original: this.RequireMethod<Furniture>(nameof(Furniture.rotate)),
+                prefix: this.GetHarmonyMethod(nameof(Before_Rotate))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<Furniture>(nameof(Furniture.updateRotation)),
+                prefix: this.GetHarmonyMethod(nameof(Before_UpdateRotation))
+            );
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>The method to call before <see cref="Furniture.rotate"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_Rotate(Furniture __instance)
+        {
+            if (__instance is CustomBasicFurniture furniture)
             {
                 if (__instance.rotations.Value > 1)
                 {
                     __instance.currentRotation.Value = (__instance.currentRotation.Value + 1) % __instance.rotations.Value;
-                    cbf.UpdateRotation();
+                    furniture.UpdateRotation();
                 }
                 return false;
             }
 
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(Furniture), nameof(Furniture.updateRotation))]
-    public static class FurnitureUpdateRotationPatch
-    {
-        public static bool Prefix(Furniture __instance)
+        /// <summary>The method to call before <see cref="Furniture.updateRotation"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_UpdateRotation(Furniture __instance)
         {
-            if (__instance is CustomBasicFurniture cbf)
+            if (__instance is CustomBasicFurniture furniture)
             {
-                cbf.UpdateRotation();
+                furniture.UpdateRotation();
                 return false;
             }
 
