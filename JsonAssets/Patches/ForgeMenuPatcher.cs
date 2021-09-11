@@ -120,7 +120,7 @@ namespace JsonAssets.Patches
         {
             return instructions.MethodReplacer(
                 from: PatchHelper.RequireMethod<ForgeMenu>(nameof(ForgeMenu.GetForgeCost)),
-                to: PatchHelper.RequireMethod<ForgeMenuPatcher>(nameof(ForgeMenuPatcher.GetAndDrawCost))
+                to: PatchHelper.RequireMethod<ForgeMenuPatcher>(nameof(GetAndDrawCost))
             );
         }
 

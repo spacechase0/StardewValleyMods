@@ -53,7 +53,7 @@ namespace DynamicGameAssets.Patches
                     Log.Trace("Found object sorting, replacing with ours");
                     foundRedirect = false;
                     instruction.opcode = OpCodes.Call;
-                    instruction.operand = PatchHelper.RequireMethod<CollectionsPagePatcher>(nameof(CollectionsPagePatcher.RealSort));
+                    instruction.operand = PatchHelper.RequireMethod<CollectionsPagePatcher>(nameof(RealSort));
                 }
 
                 ret.Add(instruction);

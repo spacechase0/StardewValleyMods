@@ -26,37 +26,37 @@ namespace CustomBuildings.Patches
         {
             harmony.Patch(
                 original: this.RequireMethod<Coop>("getIndoors"),
-                prefix: this.GetHarmonyMethod(nameof(CoopPatcher.Before_GetIndoors))
+                prefix: this.GetHarmonyMethod(nameof(Before_GetIndoors))
             );
 
             harmony.Patch(
                 original: this.RequireMethod<Coop>(nameof(Coop.performActionOnConstruction)),
-                postfix: this.GetHarmonyMethod(nameof(CoopPatcher.After_PerformActionOnConstruction))
+                postfix: this.GetHarmonyMethod(nameof(After_PerformActionOnConstruction))
             );
 
             harmony.Patch(
                 original: this.RequireMethod<Coop>(nameof(Coop.performActionOnUpgrade)),
-                prefix: this.GetHarmonyMethod(nameof(CoopPatcher.Before_PerformActionOnUpgrade))
+                prefix: this.GetHarmonyMethod(nameof(Before_PerformActionOnUpgrade))
             );
 
             harmony.Patch(
                 original: this.RequireMethod<Coop>(nameof(Coop.dayUpdate)),
-                postfix: this.GetHarmonyMethod(nameof(CoopPatcher.After_DayUpdate))
+                postfix: this.GetHarmonyMethod(nameof(After_DayUpdate))
             );
 
             harmony.Patch(
                 original: this.RequireMethod<Coop>(nameof(Coop.upgrade)),
-                prefix: this.GetHarmonyMethod(nameof(CoopPatcher.Before_Upgrade))
+                prefix: this.GetHarmonyMethod(nameof(Before_Upgrade))
             );
 
             //harmony.Patch(
             //    original: this.RequireMethod<Coop>(nameof(Coop.getUpgradeSignLocation)),
-            //    postfix: this.GetHarmonyMethod(nameof(CoopPatcher.After_GetUpgradeSignLocation))
+            //    postfix: this.GetHarmonyMethod(nameof(After_GetUpgradeSignLocation))
             //);
 
             harmony.Patch(
                 original: this.RequireMethod<Coop>(nameof(Coop.draw)),
-                prefix: this.GetHarmonyMethod(nameof(CoopPatcher.Before_Draw))
+                prefix: this.GetHarmonyMethod(nameof(Before_Draw))
             );
         }
 
