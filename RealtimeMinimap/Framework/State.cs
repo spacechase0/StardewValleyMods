@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace RealtimeMinimap
+namespace RealtimeMinimap.Framework
 {
-    public class State
+    internal class State
     {
         public bool ShowMinimap { get; set; }
         public RenderTarget2D MinimapTarget { get; set; }

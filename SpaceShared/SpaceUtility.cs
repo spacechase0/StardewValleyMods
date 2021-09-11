@@ -10,7 +10,7 @@ using StardewValley.TerrainFeatures;
 
 namespace SpaceShared
 {
-    class SpaceUtility
+    internal class SpaceUtility
     {
         public static void iterateAllTerrainFeatures(Func<TerrainFeature, TerrainFeature> action)
         {

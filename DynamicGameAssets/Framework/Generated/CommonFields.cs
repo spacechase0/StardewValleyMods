@@ -3,6 +3,7 @@ using System.Xml.Serialization;
 using DynamicGameAssets.PackData;
 using Netcode;
 
+// ReSharper disable once CheckNamespace -- match partial classes
 namespace DynamicGameAssets.Game
 {
     [GeneratedCode("TextTemplatingFileGenerator", "1.0.0")]

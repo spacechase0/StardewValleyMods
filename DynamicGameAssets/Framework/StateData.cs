@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace DynamicGameAssets
+namespace DynamicGameAssets.Framework
 {
     internal class StateData
     {

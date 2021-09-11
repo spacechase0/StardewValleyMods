@@ -1,9 +1,9 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 
-namespace RealtimeMinimap
+namespace RealtimeMinimap.Framework
 {
-    public class Configuration
+    internal class Configuration
     {
         public bool ShowByDefault { get; set; } = true;
         public KeybindList ToggleShowKey { get; set; } = new KeybindList(new Keybind(SButton.M, SButton.LeftControl), new Keybind(SButton.M, SButton.RightControl));

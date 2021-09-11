@@ -7,9 +7,9 @@ using Newtonsoft.Json.Linq;
 using SpaceShared;
 using StardewValley;
 
-namespace JA_to_DGA
+namespace JA_to_DGA.Framework
 {
-    public static class ConversionExtensions
+    internal static class ConversionExtensions
     {
         public static void AddI18n(this Dictionary<string, Dictionary<string, string>> i18n, string lang, string key, string value)
         {

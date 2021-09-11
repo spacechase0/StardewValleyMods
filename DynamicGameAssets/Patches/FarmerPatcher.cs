@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using DynamicGameAssets.Framework;
 using DynamicGameAssets.Game;
 using HarmonyLib;
 using SpaceShared;

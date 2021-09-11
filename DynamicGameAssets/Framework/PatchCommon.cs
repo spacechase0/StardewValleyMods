@@ -9,9 +9,9 @@ using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
 
-namespace DynamicGameAssets.Patches
+namespace DynamicGameAssets.Framework
 {
-    public static class PatchCommon
+    internal static class PatchCommon
     {
         public static void DoShop(string key, ShopMenu shop)
         {

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using DynamicGameAssets.Framework;
+using DynamicGameAssets.Framework.ContentPacks;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using DynamicGameAssets.Patches;

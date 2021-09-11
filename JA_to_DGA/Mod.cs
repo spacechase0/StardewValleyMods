@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using JA_to_DGA.Framework;
 using JsonAssets.Data;
 using Newtonsoft.Json;
 using SpaceShared;
@@ -8,7 +9,7 @@ using StardewModdingAPI;
 
 namespace JA_to_DGA
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
 

@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using DynamicGameAssets.PackData;
 using SpaceShared;
 
-namespace DynamicGameAssets.PackData.Loaders
+namespace DynamicGameAssets.Framework.ContentPacks
 {
-    public class ContentPackLoaderV1 : IContentPackLoader
+    internal class ContentPackLoaderV1 : IContentPackLoader
     {
         private readonly ContentPack pack;
 

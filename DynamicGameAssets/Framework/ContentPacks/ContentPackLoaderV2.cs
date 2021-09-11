@@ -4,12 +4,13 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using DynamicGameAssets.PackData;
 using HarmonyLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SpaceShared;
 
-namespace DynamicGameAssets.PackData.Loaders
+namespace DynamicGameAssets.Framework.ContentPacks
 {
     internal class BasePackDataListConverter : JsonConverter
     {
@@ -109,7 +110,7 @@ namespace DynamicGameAssets.PackData.Loaders
         }
     }
 
-    public class ContentPackLoaderV2 : IContentPackLoader
+    internal class ContentPackLoaderV2 : IContentPackLoader
     {
         private readonly ContentPack pack;
 

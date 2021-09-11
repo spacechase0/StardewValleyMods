@@ -1,4 +1,4 @@
-namespace DynamicGameAssets.PackData.Loaders
+namespace DynamicGameAssets.Framework.ContentPacks
 {
     internal interface IContentPackLoader
     {

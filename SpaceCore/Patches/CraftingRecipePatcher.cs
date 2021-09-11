@@ -36,31 +36,6 @@ namespace SpaceCore.Patches
             );
         }
 
-        public static CraftingRecipe RedirectedCreateRecipe(string name, bool isCooking)
-        {
-            var container = CustomCraftingRecipe.CraftingRecipes;
-            if (isCooking)
-                container = CustomCraftingRecipe.CookingRecipes;
-
-            if (container.ContainsKey(name))
-            {
-                return new Framework.CustomCraftingRecipe(name, isCooking, container[name]);
-            }
-
-            return new CraftingRecipe(name, isCooking);
-        }
-
-        public static ClickableTextureComponent RedirectedCTCCreation(ClickableTextureComponent ctc, CraftingRecipe recipe)
-        {
-            if (recipe is Framework.CustomCraftingRecipe ccr)
-            {
-                ctc.texture = ccr.recipe.IconTexture;
-                ctc.sourceRect = ccr.recipe.IconSubrect ?? new Microsoft.Xna.Framework.Rectangle(0, 0, ctc.texture.Width, ctc.texture.Height);
-            }
-
-            return ctc;
-        }
-
 
         /*********
         ** Private methods
@@ -127,6 +102,31 @@ namespace SpaceCore.Patches
             }
 
             return newInsns;
+        }
+
+        private static CraftingRecipe RedirectedCreateRecipe(string name, bool isCooking)
+        {
+            var container = CustomCraftingRecipe.CraftingRecipes;
+            if (isCooking)
+                container = CustomCraftingRecipe.CookingRecipes;
+
+            if (container.ContainsKey(name))
+            {
+                return new Framework.CustomCraftingRecipe(name, isCooking, container[name]);
+            }
+
+            return new CraftingRecipe(name, isCooking);
+        }
+
+        private static ClickableTextureComponent RedirectedCTCCreation(ClickableTextureComponent ctc, CraftingRecipe recipe)
+        {
+            if (recipe is Framework.CustomCraftingRecipe ccr)
+            {
+                ctc.texture = ccr.recipe.IconTexture;
+                ctc.sourceRect = ccr.recipe.IconSubrect ?? new Microsoft.Xna.Framework.Rectangle(0, 0, ctc.texture.Width, ctc.texture.Height);
+            }
+
+            return ctc;
         }
     }
 }

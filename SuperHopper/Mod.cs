@@ -8,7 +8,7 @@ using StardewValley.Objects;
 
 namespace SuperHopper
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
 

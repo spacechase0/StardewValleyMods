@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using StardewModdingAPI;
 
-namespace JA_to_DGA
+namespace JA_to_DGA.Framework
 {
-    public class ManifestContentPackFor : IManifestContentPackFor
+    internal class ManifestContentPackFor : IManifestContentPackFor
     {
         public string UniqueID { get; set; }
 
         public ISemanticVersion MinimumVersion { get; set; }
     }
 
-    public class Manifest : IManifest
+    internal class Manifest : IManifest
     {
         public string Name { get; set; }
 

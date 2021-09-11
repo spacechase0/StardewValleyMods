@@ -3,6 +3,7 @@ using System.Linq;
 using System.Timers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RealtimeMinimap.Framework;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
@@ -13,7 +14,7 @@ using StardewValley.Menus;
 
 namespace RealtimeMinimap
 {
-    public class Mod : StardewModdingAPI.Mod
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
         public static Configuration Config;

@@ -4,7 +4,7 @@ using HarmonyLib;
 using StardewModdingAPI;
 using StardewValley;
 
-namespace DynamicGameAssets
+namespace DynamicGameAssets.Framework.ContentPacks
 {
     internal class NullManifest : IManifest
     {
