@@ -1,4 +1,5 @@
 ﻿{
+    "Name": "Garsnip",
     "Product": "Garsnip",
     "SeedName": "Garsnip Seeds",
     "SeedDescription": "How did this happen? Grows in spring, takes 4 days.",
@@ -14,9 +15,12 @@
     "SeedPurchasePrice": 0,
     "SeedSellPrice": -1,
     "SeedPurchaseFrom": "Pierre",
-    "SeedNameLocalization": {},
-    "SeedDescriptionLocalization": {},
-    "Name": "Garsnip",
+    "SeedNameLocalization": {
+        "hu": "Pasztinák magvak"
+    },
+    "SeedDescriptionLocalization": {
+        "hu": "Ezeket tavasszal ültesd el. 4 napig tart megérnie."
+    },
     "EnableWithMod": null,
     "DisableWithMod": null
 }

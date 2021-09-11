@@ -2,8 +2,10 @@
 
 # Release notes
 ## Upcoming release
-* Added update keys for Garsnips.
-* Fixed typo in Garsnips.
+* For the example Garsnips content pack:
+  * Added missing update keys.
+  * Fixed typo.
+  * Improved translations. Thanks to martin66789 (added Hungarian)!
 
 ## 1.0.2
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
