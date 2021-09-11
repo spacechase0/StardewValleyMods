@@ -1,4 +1,4 @@
-﻿**DGAAutomate** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you integrates
+﻿**DGAAutomate** is a [Stardew Valley](http://stardewvalley.net/) mod which integrates
 [Dynamic Game Assets](https://www.nexusmods.com/stardewvalley/mods/9365) with
 [Automate](https://www.nexusmods.com/stardewvalley/mods/1063).
 

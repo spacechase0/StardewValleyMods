@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.9.1
+Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild and spacechase0.
+
 * Fixed error if an item is initialized before Json Assets is initialized.
 * Internal refactoring.
 

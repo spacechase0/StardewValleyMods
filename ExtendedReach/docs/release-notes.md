@@ -1,21 +1,23 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.1.3
+Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
 * Internal refactoring.
 
 ## 1.1.2
-Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
+Released 01 August 2021 for SMAPI 3.12.0 or later. Updated by Pathoschild.
 
 * Updated for Harmony upgrade in SMAPI 3.12.0.
 
 ## 1.1.1
-Released 11 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 11 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Internal refactoring.
 
 ## 1.1.0
-Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 19 June 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Added optional wiggly arms mode (can be enabled in `config.json`).¹
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).

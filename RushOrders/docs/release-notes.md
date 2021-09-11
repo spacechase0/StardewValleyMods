@@ -1,11 +1,13 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.1.7
+Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
 * Internal refactoring.
 
 ## 1.1.6
-Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 19 June 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed compatibility with [unofficial 64-bit mode](https://stardewvalleywiki.com/Modding:Migrate_to_64-bit_on_Windows).
 * Improved documentation.

@@ -1,8 +1,8 @@
 ﻿{
     "Name": "Bug Net",
     "Author": "spacechase0, ParadigmNomad, Keychain",
-    "Version": "1.4.0",
-    "MinimumApiVersion": "3.12.6",
+    "Version": "1.4.1",
+    "MinimumApiVersion": "3.12.5",
     "Description": "Catch bugs and stuff.",
     "UniqueID": "spacechase0.BugNet",
     "EntryDll": "BugNet.dll",

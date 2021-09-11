@@ -1,21 +1,23 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.0.6
+Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
 * Internal refactoring.
 
 ## 1.0.5
-Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
+Released 01 August 2021 for SMAPI 3.12.0 or later. Updated by Pathoschild.
 
 * Updated for Harmony upgrade in SMAPI 3.12.0.
 
 ## 1.0.4
-Released 11 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 11 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed `NullReferenceException` error when ending the day in some cases.
 
 ## 1.0.3
-Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
+Released 10 July 2021 for SMAPI 3.9.5 or later. Updated by Pathoschild.
 
 * Fixed Tempus Globes...
   * not working on the Ginger Island farm;
