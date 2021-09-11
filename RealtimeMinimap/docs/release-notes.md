@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Backported to Stardew Valley 1.5.4.
+* Added missing update key.
 * Internal refactoring.
 
 ## 1.2.0
