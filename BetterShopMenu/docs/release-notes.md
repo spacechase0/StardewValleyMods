@@ -1,8 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming
-* Fix no clothing category label, which caused errors.
+## Upcoming release
+* Fixed errors due to missing clothing category label.
+* Internal refactoring.
 
 ## 1.2.0
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
