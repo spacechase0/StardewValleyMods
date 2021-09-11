@@ -1,16 +1,16 @@
-{
-   "Format": "1.14.0",
-   "Changes": [
-      {
-         "Action": "EditData",
-         "Target": "Data/HybridCrops",
-         "Entries": {
-            "{{spacechase0.JsonAssets/CropId:Garsnip}}": {
-               "BaseCropA": 0,
-               "BaseCropB": 4,
-               "Chance": 0.05,
+﻿{
+    "Format": "1.14.0",
+    "Changes": [
+        {
+            "Action": "EditData",
+            "Target": "Data/HybridCrops",
+            "Entries": {
+                "{{spacechase0.JsonAssets/CropId:Garsnip}}": {
+                    "BaseCropA": 0,
+                    "BaseCropB": 4,
+                    "Chance": 0.05
+                }
             }
-         }
-      }
-   ]
+        }
+    ]
 }
