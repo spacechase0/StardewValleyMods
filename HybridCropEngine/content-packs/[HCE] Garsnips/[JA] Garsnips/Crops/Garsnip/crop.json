@@ -1,0 +1,24 @@
+{
+  "Product": "Garsnip",
+  "SeedName": "Garsnip Seeds",
+  "SeedDescription": "How did this happen? Gros in spring, takes 4 days.",
+  "CropType": "Normal",
+  "Seasons": [
+    "spring"
+  ],
+  "Phases": [1, 1, 1, 1],
+  "RegrowthPhase": -1,
+  "HarvestWithScythe": false,
+  "TrellisCrop": false,
+  "Colors": [],
+  "Bonus": null,
+  "SeedPurchaseRequirements": [],
+  "SeedPurchasePrice": 0,
+  "SeedSellPrice": -1,
+  "SeedPurchaseFrom": "Pierre",
+  "SeedNameLocalization": {},
+  "SeedDescriptionLocalization": {},
+  "Name": "Garsnip",
+  "EnableWithMod": null,
+  "DisableWithMod": null
+}

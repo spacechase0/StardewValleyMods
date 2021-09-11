@@ -1,0 +1,25 @@
+{
+  "Name": "[CP] Garsnips",
+  "Description": "Hybrid Crop Engine example pack.",
+  "Author": "spacechase0, ParadigmNomad",
+  "Version": "1.0.0",
+  "MinimumApiVersion": "3.0.0",
+  "UniqueID": "spacechase0.HybridCropEngine.Example.CP",
+  "ContentPackFor": {
+    "UniqueID": "Pathoschild.ContentPatcher",
+    "MinimumVersion": "1.14.0"
+  },
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.HybridCropEngine",
+      "IsRequired": true,
+      "MinimumVersion": "1.0.0"
+    },
+    {
+      "UniqueID": "spacechase0.JsonAssets",
+      "IsRequired": true,
+      "MinimumVersion": "1.6.1"
+    }
+  ],
+  "UpdateKeys": []
+}
