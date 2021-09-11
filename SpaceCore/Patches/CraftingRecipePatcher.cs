@@ -72,7 +72,7 @@ namespace SpaceCore.Patches
                     Log.Trace($"Found first ldloc.s for ClickableTextureComponent in {original}; storing potential override w/ recipeLocal={recipeLocal}");
                     newInsns.Add(new CodeInstruction(OpCodes.Ldloc_S, insn.operand));
                     newInsns.Add(new CodeInstruction(OpCodes.Ldloc_S, recipeLocal));
-                    newInsns.Add(new CodeInstruction(OpCodes.Call, typeof(CraftingRecipePatcher).GetMethod(nameof(RedirectedCTCCreation))));
+                    newInsns.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CraftingRecipePatcher>(nameof(RedirectedCTCCreation))));
                     newInsns.Add(new CodeInstruction(OpCodes.Stloc_S, insn.operand));
                     newInsns.Add(insn);
 
@@ -95,7 +95,7 @@ namespace SpaceCore.Patches
                 {
                     Log.Trace($"Found crafting recipe constructor in {original}!");
                     insn.opcode = OpCodes.Call;
-                    insn.operand = typeof(CraftingRecipePatcher).GetMethod(nameof(RedirectedCreateRecipe));
+                    insn.operand = PatchHelper.RequireMethod<CraftingRecipePatcher>(nameof(RedirectedCreateRecipe));
                 }
 
                 newInsns.Add(insn);

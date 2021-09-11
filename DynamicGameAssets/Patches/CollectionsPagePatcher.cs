@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using DynamicGameAssets.Framework;
 using HarmonyLib;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewValley.Menus;
 
@@ -10,7 +11,7 @@ namespace DynamicGameAssets.Patches
 {
     [HarmonyPatch]//( typeof( CollectionsPage ) )]
     //[HarmonyPatch( new[] { typeof( int ), typeof( int ), typeof( int ), typeof( int ) } )]
-    public static class CollectionsPageConstructorPatch
+    public class CollectionsPageConstructorPatch
     {
         public static IEnumerable<MethodBase> TargetMethods()
         {
@@ -52,7 +53,7 @@ namespace DynamicGameAssets.Patches
                     Log.Trace("Found object sorting, replacing with ours");
                     foundRedirect = false;
                     insn.opcode = OpCodes.Call;
-                    insn.operand = typeof(CollectionsPageConstructorPatch).GetMethod(nameof(CollectionsPageConstructorPatch.RealSort));
+                    insn.operand = PatchHelper.RequireMethod<CollectionsPageConstructorPatch>(nameof(CollectionsPageConstructorPatch.RealSort));
                 }
 
                 ret.Add(insn);
