@@ -11,7 +11,7 @@ namespace DynamicGameAssets.Patches
     [HarmonyPatch(typeof(GameLocation), nameof(GameLocation.isTileOccupiedForPlacement))]
     public static class GameLocationTileOccupiedForPlacementPatch
     {
-        public static bool isTileOccupiedForPlacement(GameLocation __instance, Vector2 tileLocation, StardewValley.Object toPlace, ref bool __result)
+        public static bool Prefix(GameLocation __instance, Vector2 tileLocation, StardewValley.Object toPlace, ref bool __result)
         {
             if (toPlace is CustomObject cobj && !string.IsNullOrEmpty(cobj.Data.Plants))
             {

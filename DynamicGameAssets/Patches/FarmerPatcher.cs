@@ -65,8 +65,11 @@ namespace DynamicGameAssets.Patches
                 {
                     __result = false;
                 }
+
+                return false;
             }
-            return false;
+
+            return true;
         }
     }
 

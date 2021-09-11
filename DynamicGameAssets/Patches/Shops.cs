@@ -181,7 +181,7 @@ namespace DynamicGameAssets.Patches
         }
     }
 
-    [HarmonyPatch(typeof(Utility), nameof(Utility.getAdventureShopStock))]
+    [HarmonyPatch(typeof(Utility), nameof(Utility.getDwarfShopStock))]
     public static class DwarfStockPatch
     {
         public static void Postfix(Dictionary<ISalable, int[]> __result)
