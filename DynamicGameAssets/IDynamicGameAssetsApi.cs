@@ -42,7 +42,7 @@ namespace DynamicGameAssets
         }
 
         /// <inheritdoc/>
-        object SpawnDGAItem(string fullId)
+        public object SpawnDGAItem(string fullId)
         {
             return Mod.Find( fullId ).ToItem();
         }
