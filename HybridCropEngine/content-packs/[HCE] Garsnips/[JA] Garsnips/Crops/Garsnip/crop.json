@@ -1,7 +1,7 @@
 ﻿{
     "Product": "Garsnip",
     "SeedName": "Garsnip Seeds",
-    "SeedDescription": "How did this happen? Gros in spring, takes 4 days.",
+    "SeedDescription": "How did this happen? Grows in spring, takes 4 days.",
     "CropType": "Normal",
     "Seasons": [ "spring" ],
     "Phases": [ 1, 1, 1, 1 ],
