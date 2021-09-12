@@ -348,6 +348,8 @@ Boots can be localized in the following keys: `"boots.YourBoots.name"` and `"boo
 ### Crafting Recipes
 `$ItemType` - `"CraftingRecipe"`
 
+Note: Crafting recipes cannot have the string " Recipe" in them (including the space). So use either " recipe" or "_Recipe", and use i18n to show the " Recipe" part.
+
 Note: Unlike everything else, the `ID` field must be unique *across the game* (including vanilla recipes).
 
 Crafting recipes can be localized in the following keys: `"crafting.YourCraftingRecipe.name"` and `"crafting.YourCraftingRecipe.description"`.
