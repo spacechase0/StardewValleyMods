@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
@@ -331,6 +332,14 @@ namespace DynamicGameAssets
 
             Log.Error($"Unknown item {this.Type} {this.Value} x {this.Quantity}");
             return new StardewValley.Object(1720, 1);
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized( StreamingContext ctx )
+        {
+            // This avoids some game weirdness
+            if ( this.Type == ItemType.DGARecipe )
+                this.Value = this.Value.Replace( " Recipe", " recipe" );
         }
 
         public virtual object Clone() => this.MemberwiseClone();
