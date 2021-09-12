@@ -582,5 +582,75 @@ namespace JA_to_DGA.Framework
 
             return item;
         }
+
+        public static DynamicGameAssets.PackData.HatPackData ConvertHat( this JsonAssets.Data.HatData data, string packId, Dictionary< string, Dictionary< string, string > > i18n, List<DynamicGameAssets.PackData.HatPackData> hats, List<DynamicGameAssets.PackData.ShopEntryPackData> shops )
+        {
+            var item = new DynamicGameAssets.PackData.HatPackData();
+            item.ExtensionData.Add( "JsonAssetsName", JToken.FromObject( data.Name ) );
+            item.ID = data.Name;
+            item.Texture = Path.Combine( "assets", "hats", data.Name + ".png" );
+            i18n.AddI18n( "en", $"hat.{data.Name}.name", data.Name );
+            i18n.AddI18n( "en", $"hat.{data.Name}.description", data.Description );
+            item.HairStyle = data.ShowHair ? DynamicGameAssets.PackData.HatPackData.HairStyleType.Full : DynamicGameAssets.PackData.HatPackData.HairStyleType.Hide;
+            item.IgnoreHairstyleOffset = data.IgnoreHairstyleOffset;
+            // todo: data.Metadata
+            if ( data.CanPurchase )
+            {
+                ConversionExtensions.DoShopEntry( shops, packId, item.ID, new JsonAssets.PurchaseData()
+                {
+                    PurchasePrice = data.PurchasePrice,
+                    PurchaseFrom = "HatMouse",
+                } );
+            }
+            foreach ( var loc in data.NameLocalization )
+                i18n.AddI18n( loc.Key, $"hat.{data.Name}.name", loc.Value );
+            foreach ( var loc in data.DescriptionLocalization )
+                i18n.AddI18n( loc.Key, $"hat.{data.Name}.description", loc.Value );
+
+            hats.Add( item );
+
+            return item;
+        }
+
+        public static DynamicGameAssets.PackData.MeleeWeaponPackData ConvertMeleeWeapon( this JsonAssets.Data.WeaponData data, string packId, Dictionary<string, Dictionary<string, string>> i18n, List<DynamicGameAssets.PackData.MeleeWeaponPackData> meleeWeapons, List<DynamicGameAssets.PackData.ShopEntryPackData> shops)
+        {
+            var item = new DynamicGameAssets.PackData.MeleeWeaponPackData();
+            item.ExtensionData.Add( "JsonAssetsName", JToken.FromObject( data.Name ) );
+            item.ID = data.Name;
+            item.Texture = Path.Combine( "assets", "melee-weapons", data.Name + ".png" );
+            i18n.AddI18n( "en", $"melee-weapon.{data.Name}.name", data.Name );
+            i18n.AddI18n( "en", $"melee-weapon.{data.Name}.description", data.Description );
+            item.MinimumDamage = data.MinimumDamage;
+            item.MaximumDamage = data.MaximumDamage;
+            item.Knockback = data.Knockback;
+            item.Speed = data.Speed;
+            item.Accuracy = data.Accuracy;
+            item.Defense = data.Defense;
+            // todo: Mine drop var / minimum level ?
+            item.ExtraSwingArea = data.ExtraSwingArea;
+            item.CritChance = data.CritChance;
+            item.CritMultiplier = data.CritMultiplier;
+            item.CanTrash = data.CanTrash;
+
+            if ( data.CanPurchase )
+            {
+                ConversionExtensions.DoShopEntry( shops, packId, item.ID, new JsonAssets.PurchaseData()
+                {
+                    PurchasePrice = data.PurchasePrice,
+                    PurchaseFrom = data.PurchaseFrom,
+                    PurchaseRequirements = data.PurchaseRequirements,
+                } );
+                foreach ( var entry in data.AdditionalPurchaseData )
+                    ConversionExtensions.DoShopEntry( shops, packId, item.ID, entry );
+            }
+
+            foreach ( var loc in data.NameLocalization )
+                i18n.AddI18n( loc.Key, $"melee-weapon.{data.Name}.name", loc.Value );
+            foreach ( var loc in data.DescriptionLocalization )
+                i18n.AddI18n( loc.Key, $"melee-weapon.{data.Name}.description", loc.Value );
+
+            meleeWeapons.Add( item );
+            return item;
+        }
     }
 }

@@ -175,6 +175,57 @@ namespace JA_to_DGA
                 }
             }
 
+            if ( Directory.Exists( Path.Combine( jaPath, "Hats" ) ) )
+            {
+                Directory.CreateDirectory( Path.Combine( dgaPath, "assets", "hats" ) );
+                foreach (string dir_ in Directory.GetDirectories(Path.Combine(jaPath, "Hats")))
+                {
+                    string dir = Path.GetFileName(dir_);
+                    if (!File.Exists(Path.Combine(jaPath, "Hats", dir, "hat.json")))
+                        continue;
+                    Log.Trace("Converting hat " + dir + "...");
+                    var data = cp.ReadJsonFile<HatData>(Path.Combine("Hats", dir, "hat.json"));
+                    var packData = data.ConvertHat(newModId, i18n, hats, shops);
+                    File.Copy(Path.Combine(jaPath, "Hats", dir, "hat.png"), Path.Combine(dgaPath, "assets", "hats", packData.ID + ".png"));
+                }
+            }
+
+            if ( Directory.Exists( Path.Combine( jaPath, "Weapons" ) ) )
+            {
+                Directory.CreateDirectory( Path.Combine( dgaPath, "assets", "melee-weapons" ) );
+                foreach ( string dir_ in Directory.GetDirectories( Path.Combine( jaPath, "Weapons" ) ) )
+                {
+                    string dir = Path.GetFileName(dir_);
+                    if ( !File.Exists( Path.Combine( jaPath, "Weapons", dir, "weapon.json" ) ) )
+                        continue;
+                    Log.Trace( "Converting melee weapon " + dir + "..." );
+                    var data = cp.ReadJsonFile<WeaponData>(Path.Combine("Weapons", dir, "weapon.json"));
+                    var packData = data.ConvertMeleeWeapon(newModId, i18n, weapons, shops);
+                    File.Copy( Path.Combine( jaPath, "Weapons", dir, "weapon.png" ), Path.Combine( dgaPath, "assets", "melee-weapons", packData.ID + ".png" ) );
+                }
+            }
+
+            if ( Directory.Exists( Path.Combine( jaPath, "Shirts" ) ) )
+            {
+                Directory.CreateDirectory( Path.Combine( dgaPath, "assets", "shirts" ) );
+                foreach ( string dir_ in Directory.GetDirectories( Path.Combine( jaPath, "Shirts" ) ) )
+                {
+                    string dir = Path.GetFileName(dir_);
+                    if ( !File.Exists( Path.Combine( jaPath, "Shirts", dir, "shirt.json" ) ) )
+                        continue;
+                    Log.Trace( "Converting shirt " + dir + "..." );
+                    var data = cp.ReadJsonFile<WeaponData>(Path.Combine("Shirts", dir, "shirt.json"));
+                    var packData = data.ConvertShirt(newModId, i18n, shirts);
+                    File.Copy( Path.Combine( jaPath, "Shirts", dir, "male.png" ), Path.Combine( dgaPath, "assets", "shirts", packData.ID + "_male.png" ) );
+                    if ( File.Exists( Path.Combine( jaPath, "Shirts", dir, "female.png" ) ) )
+                        File.Copy( Path.Combine( jaPath, "Shirts", dir, "female.png" ), Path.Combine( dgaPath, "assets", "shirts", packData.ID + "_female.png" ) );
+                    if ( File.Exists( Path.Combine( jaPath, "Shirts", dir, "male-color.png" ) ) )
+                        File.Copy( Path.Combine( jaPath, "Shirts", dir, "male-color.png" ), Path.Combine( dgaPath, "assets", "shirts", packData.ID + "_male_color.png" ) );
+                    if ( File.Exists( Path.Combine( jaPath, "Shirts", dir, "female-color.png" ) ) )
+                        File.Copy( Path.Combine( jaPath, "Shirts", dir, "female-color.png" ), Path.Combine( dgaPath, "assets", "shirts", packData.ID + "_female_color.png" ) );
+                }
+            }
+
             var serializeSettings = new JsonSerializerSettings()
             {
                 DefaultValueHandling = DefaultValueHandling.Ignore,
