@@ -1,4 +1,8 @@
 ﻿{
+    // net
+    "bug-net.name": "Bug Net",
+    "bug-net.description": "Catches critters and stuff.",
+
     // critter cage
     "cage.name": "Critter Cage: {{critterName}}",
     "cage.description": "It's a critter! In a cage!",

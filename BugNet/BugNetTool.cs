@@ -45,12 +45,12 @@ namespace BugNet
 
         protected override string loadDisplayName()
         {
-            return "Bug Net";
+            return Mod.Instance.Helper.Translation.Get("bug-net.name");
         }
 
         protected override string loadDescription()
         {
-            return "Catches critters and stuff";
+            return Mod.Instance.Helper.Translation.Get("bug-net.description");
         }
 
         public override void drawInMenu(SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
