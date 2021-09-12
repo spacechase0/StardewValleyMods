@@ -161,12 +161,8 @@ namespace BugNet
                     ? translatedName
                     : defaultCritterName;
             }
-            this.GetTranslationsInAllLocales(
-                "critter.cage",
-                out string defaultCageName,
-                out Dictionary<string, string> cageNameTranslations,
-                format: (locale, translation) => translation.Tokens(new { critterName = TranslateCritterName(locale) }).ToString()
-            );
+            this.GetTranslationsInAllLocales("cage.name", out string defaultCageName, out var cageNameTranslations, format: (locale, translation) => translation.Tokens(new { critterName = TranslateCritterName(locale) }).ToString());
+            this.GetTranslationsInAllLocales("cage.description", out string defaultCageDescription, out var cageDescriptionTranslations);
 
             // save critter data
             Mod.CrittersData.Add(critterId, new CritterData(
@@ -182,7 +178,8 @@ namespace BugNet
             {
                 Name = defaultCageName,
                 NameLocalization = cageNameTranslations,
-                Description = "It's a critter! In a cage!",
+                Description = defaultCageDescription,
+                DescriptionLocalization = cageDescriptionTranslations,
                 Texture = this.CloneTextureArea(texture, textureArea),
                 Category = JsonAssets.Data.ObjectCategory.MonsterLoot,
                 CategoryTextOverride = "Critter",
@@ -209,8 +206,7 @@ namespace BugNet
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (e.Button.IsActionButton() && Game1.player.ActiveObject != null &&
-                 Game1.player.ActiveObject.Name.StartsWith("Critter Cage: "))
+            if (e.Button.IsActionButton() && Game1.player.ActiveObject?.Name.StartsWith("Critter Cage: ") is true)
             {
                 // Get the critter ID
                 CritterData activeCritter = null;

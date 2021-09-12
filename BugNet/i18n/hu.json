@@ -1,5 +1,9 @@
 ﻿{
-    "critter.cage": "Kalitka: {{critterName}}",
+    // critter cage
+    "cage.name": "Kalitka: {{critterName}}",
+    "cage.description": "It's a critter! In a cage!", // TODO
+
+    // critter names
     "critter.GreenFrog": "Zöld béka",
     "critter.OliveFrog": "Olajzöld béka",
     "critter.Cloud": "Felhő?",

@@ -1,5 +1,9 @@
 ﻿{
-    "critter.cage": "动物笼：{{critterName}}",
+    // critter cage
+    "cage.name": "动物笼：{{critterName}}",
+    "cage.description": "It's a critter! In a cage!", // TODO
+
+    // critter names
     "critter.GreenFrog": "绿色青蛙",
     "critter.OliveFrog": "橄榄色青蛙",
     "critter.Cloud": "云？",
