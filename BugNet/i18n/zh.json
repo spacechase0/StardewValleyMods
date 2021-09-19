@@ -5,7 +5,7 @@
 
     // critter cage
     "cage.name": "动物笼：{{critterName}}",
-    "cage.description": "哇！是一只可爱的小动物！在动物笼里舞蹈!", // TODO
+    "cage.description": "哇！是一只可爱的小动物！在动物笼里舞蹈!",
 
     // critter names
     "critter.GreenFrog": "绿青蛙",

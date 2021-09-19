@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Added animation range syntax (thanks to ImJustMatt!).
+* Added support for custom fruit trees with a chance to produce nothing on a given day.
+* Fixed edge cases for custom items with " Recipe" in the name.
+* Fixed error parsing rectangle fields in some cases.
+
 ## 1.1.0
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild and spacechase0.
 
