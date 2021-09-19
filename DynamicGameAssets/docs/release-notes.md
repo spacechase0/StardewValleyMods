@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.2.1
+Released 19 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Reverted recipe changes in 1.2.0 which broke some content packs.
+* Fixed breaking bigcraftables with an axe (thanks to ImJustMatt!).
+
 ## 1.2.0
 Released 19 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild and spacechase0.
 
