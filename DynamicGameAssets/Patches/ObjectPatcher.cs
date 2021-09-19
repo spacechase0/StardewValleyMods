@@ -1,10 +1,14 @@
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
+using StardewValley;
 using SObject = StardewValley.Object;
 
 namespace DynamicGameAssets.Patches
@@ -30,6 +34,10 @@ namespace DynamicGameAssets.Patches
             harmony.Patch(
                 original: this.RequireMethod<SObject>(nameof(SObject.isSapling)),
                 prefix: this.GetHarmonyMethod(nameof(Before_IsSapling))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.performToolAction)),
+                postfix: this.GetHarmonyMethod(nameof(After_PerformToolAction))
             );
         }
 
@@ -81,6 +89,36 @@ namespace DynamicGameAssets.Patches
             }
 
             return true;
+        }
+
+        /// <summary>The method to call after <see cref="SObject.performToolAction"/>.</summary>
+        private static void After_PerformToolAction(SObject __instance, Tool t, GameLocation location, ref bool __result)
+        {
+            if (__instance is CustomBigCraftable)
+            {
+                Vector2 tile = __instance.TileLocation;
+                if (tile == Vector2.Zero)
+                {
+                    KeyValuePair<Vector2, SObject> obj = location.Objects.Pairs.SingleOrDefault(obj => obj.Value == __instance);
+                    tile = obj.Value is not null ? obj.Key : Game1.player.GetToolLocation() / 64;
+                    tile.X = (int)tile.X;
+                    tile.Y = (int)tile.Y;
+                }
+                if (location.Objects[tile].Type.Equals("Crafting") && location.Objects[tile].Fragility != 2)
+                {
+                    var debris = new Debris(
+                        objectIndex: __instance.ParentSheetIndex,
+                        debrisOrigin: Game1.player.GetToolLocation(),
+                        playerPosition: new Vector2(Game1.player.GetBoundingBox().Center.X, Game1.player.GetBoundingBox().Center.Y))
+                    {
+                        item = __instance,
+                    };
+                    location.debris.Add(debris);
+                }
+                location.Objects[tile].performRemoveAction(tile, location);
+                location.Objects.Remove(tile);
+                __result = false;
+            }
         }
     }
 }
