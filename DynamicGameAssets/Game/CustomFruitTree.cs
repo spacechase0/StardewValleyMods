@@ -165,7 +165,9 @@ namespace DynamicGameAssets.Game
             {
                 if (this.GrownFruits.Count < 3)
                 {
-                    this.GrownFruits.Add(this.Data.Product.Choose().Create());
+                    var product = this.Data.Product.Choose()?.Create();
+                    if (product != null)
+                        this.GrownFruits.Add(product);
                 }
                 if (environment.IsGreenhouse)
                 {

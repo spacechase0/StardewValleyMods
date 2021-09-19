@@ -1,5 +1,6 @@
 ﻿**JA to DGA** is a [Stardew Valley](http://stardewvalley.net/) mod which adds a `dga_convert`
-console command to convert a specific Json Assets content pack into a Dynamic Game Assets pack.
+console command to convert a specific Json Assets content pack into a Dynamic Game Assets pack, and
+a `dga_migrate` command to convert JA items to DGA items.
 
 ## Install
 1. Install the latest version of...
@@ -26,9 +27,18 @@ To convert a content pack:
 3. The migrated content pack will be created in a `Mods/[DGA] NEW_ID` folder (where `NEW_ID` is the
    one you set in step 2).
 
-At this point you can exit the game, delete the Json Assets version, and launch again to use the
-DGA version of the content pack. Don't forget to review the new content pack to make sure it was
-migrated correctly.
+To migrate existing items to DGA for packs you have installed with migration information:
+
+1. Launch the game.
+2. Load your save.
+3. Enter this command int he SMAPI console window:
+   ```
+   dga_migrate
+   ```
+4. Save your game.
+
+The `dga_migrate` command will output how many JA items were converted. If no JA items remain, you
+can exit the game and delete Json Assets and its content packs.
 
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows.

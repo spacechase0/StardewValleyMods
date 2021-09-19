@@ -1,5 +1,13 @@
 ﻿{
-    "critter.cage": "Kalitka: {{critterName}}",
+    // net
+    "bug-net.name": "Bug Net", // TODO
+    "bug-net.description": "Catches critters and stuff.", // TODO
+
+    // critter cage
+    "cage.name": "Kalitka: {{critterName}}",
+    "cage.description": "It's a critter! In a cage!", // TODO
+
+    // critter names
     "critter.GreenFrog": "Zöld béka",
     "critter.OliveFrog": "Olajzöld béka",
     "critter.Cloud": "Felhő?",

@@ -1,5 +1,13 @@
 ﻿{
-    "critter.cage": "Critter Cage: {{critterName}}",
+    // net
+    "bug-net.name": "Bug Net",
+    "bug-net.description": "Catches critters and stuff.",
+
+    // critter cage
+    "cage.name": "Critter Cage: {{critterName}}",
+    "cage.description": "It's a critter! In a cage!",
+
+    // critter names
     "critter.GreenFrog": "Green Frog",
     "critter.OliveFrog": "Olive Frog",
     "critter.Cloud": "Cloud?",

@@ -7,11 +7,11 @@ This documentation is for making mods; for using Dynamic Game Assets as a user, 
 Contents
 * [Differences from Json Assets](#differences-from-json-assets)
 * [Useful Commands](#useful-commands)
-* [manifest.json](#manifest.json)
+* [manifest.json](#manifestjson)
 * [Localization](#localization)
 * [Common Field Types](#common-field-types)
     * [Texture](#texture)
-        * [Animations](#animations)
+    * [Texture Animation](#texture-animation)
     * [MultiTexture](#multitexture)
     * [Item](#item)
     * [WeightedItem](#weighteditem)
@@ -54,7 +54,6 @@ Contents
     * [Extra Information](#extra-information)
         * [Vaild Shop IDs for Vanilla](#valid-shop-ids-for-vanilla)
 * [Dynamic Fields](#dynamic-fields)
-* [Additional Resources](#additional-resources)
 
 ## Differences from Json Assets
 This is a list of differences *as pertains to making content packs*. For a full list of differences, see the [Nexus](https://www.nexusmods.com/stardewvalley/mods/9365) page.
@@ -125,13 +124,26 @@ OR
 
 `file_name` is pretty obvious; it's the filename of the texture. `index` is where in the file it is, based on the size of the object searching the texture. If the texture size is (16, 32), then it will search in (16, 32) sized blocks to the right, until it reaches the right side of the texture. Then, it will go down a row and repeat, until it reaches the end of the texture. (This means you can't have two different sized objects in the same file, such as a horizontal and vertical rug.) If the `index` is not specified, the top left of the file will be used.
 
-Optionally, you can also specify animations in any `Texture` field. The frames are separated by commas inside the string, with the frame time being specified after an `@` for each frame. For example:
+### Texture Animation
+You can optionally animate any `Texture` field. A basic animation consists of a comma-separated list of frames, each in the form `<image source>[:<frame>][@<duration>]` (like `objects.png:0@5`):
 
-```json
+field          | effect
+-------------- | ------
+`image source` | The name of the image file which contains the animation frame; see [_Texture_](#texture).
+`frame`        | The sprite index within the image source; see [_Texture_](#texture). If omitted, defaults to `0`.
+`duration`     | how long the animation frame should be drawn before switching to the next frame, measured in game ticks. Each tick is 1/60th of a second. If omitted, defaults to one tick.
+
+For example:
+```js
+// draw index 0 for 5 ticks, index 1 for 10 ticks, index 2 for 5 ticks, then repeat
 "objects.png:0@5, objects.png:1@10, objects.png:2@5"
 ```
 
-This will specify three animation frames, with the first and last lasting 5 in-game frames, and the second lasting 10. (The game runs at 60 frames per second.)
+As a shortcut, you can specify a sequence of animated frames:
+```js
+// draw indexes 0 to 5 (inclusive) for 5 ticks each
+"objects.png:0..5@5"
+```
 
 ### MultiTexture
 Sometimes, you can specify multiple textures instead of one. This will change which texture is used based on in-game conditions. An example of this being used in the vanilla game is with the seed phase of crops; they all have two seed sprites, but only one is used on each tile, depending on where the crop is.
@@ -275,7 +287,7 @@ An image entry is just a centered image. This shows up in GMCM only.
 | `ImageRect` | `Rectangle` | Default: `null` (show full image) | The subrect of the image to show. |
 | `ImageScale` | `int` | Default: `4` (matches vanilla image scale) | How scaled up the image should be. |
 
-#### ConfigOption
+#### Config Option
 A config option is an actual configurable option for the user. This showsi n both config.json and GMCM.
 
 Every config schema entry has three fields, plus more depending on the type.
@@ -560,7 +572,7 @@ This should be an array of an an object called `FurnitureConfiguration`. A `Furn
 | `CollisionHeight` | `int` | Required | How high from the bottom this furniture is solid. |
 | `Flipped` | `bool` | Default: `false` | If the texture is flipped or not. |
 | `Seats` | `Vector2[]` | Default: `null` | The list of seat positions, in tiles, if any. |
-| `SeatDirection` | `Enum[Any, Up, Down, Left, Right]` | Default: `"Any"` | The direction the seats face. |
+| `SittingDirection` | `Enum[Any, Up, Down, Left, Right]` | Default: `"Any"` | The direction the seats face. |
 | `TileProperties` | `Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>>` | The tile properties to emulate for this furniture. It goes position -> layer -> property = value. (See example.)
 
 `Texture` and `FrontTexture` (if any) should have the same size: `DisplaySize` multiplied by 16 for both `X` and `Y`.
@@ -769,7 +781,7 @@ You don't need to use these to animate DGA objects from your pack; you can just 
 | `TargetRect` | `Rectangle` | Required | The target rectangle on `TargetTexture` to override. See the note above this table. | (unknown, untested) |
 | `SourceTexture` | `Texture` | Required | The source texture from your pack to use. This supports texture indexing (such as `texture.png:5`, with 5 being the index) and animations as well, just like other fields of type `Texture`. For the case of indexing, the size of the tilesheet's squares should be the same as `TargetRect`. | `true` |
 
-## ExtraInformation
+## Extra Information
 
 ### Valid Shop IDs for Vanilla
 

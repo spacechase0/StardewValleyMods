@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using DynamicGameAssets.Framework.ContentPacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -28,7 +29,9 @@ namespace DynamicGameAssets.PackData
 
         private readonly Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
-        private readonly Dictionary<string, int[]> animInfo = new Dictionary<string, int[]>(); // Index is full animation descriptor (items16.png:1@333/items16.png:2@333/items16.png:3@334), value is [frameDur1, frameDur2, frameDur3, ..., totalFrameDur]
+        private readonly Dictionary<string, string[]> animFrames = new Dictionary<string, string[]>(); // Index is full animation descriptor (items16.png:1..2@333/items16.png:3@334), value is [frame1, frame2, frame3, ..., lastframe]
+
+        private readonly Dictionary<string, int[]> animInfo = new Dictionary<string, int[]>(); // Index is full animation descriptor (items16.png:1..2@333/items16.png:3@334), value is [frameDur1, frameDur2, frameDur3, ..., totalFrameDur]
 
         protected internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
 
@@ -206,26 +209,39 @@ namespace DynamicGameAssets.PackData
 
         internal string GetTextureFrame(string path)
         {
-            string[] frames = path.Split(',');
+            string[] frames = null;
             int[] frameDurs = null;
             if (this.animInfo.ContainsKey(path))
+            {
+                frames = this.animFrames[path];
                 frameDurs = this.animInfo[path];
+            }
             else
             {
+                IList<string> framePaths = new List<string>();
+                IList<int> frameDurations = new List<int>();
                 int total = 0;
-                var frameData = new List<int>();
-                for (int i = 0; i < frames.Length; ++i)
+                Regex regex = new Regex(@"((?<path>[^,:@]+)(:(?<startframe>\d+))?(\.{2}(?<endframe>\d+))?(@(?<duration>\d+))?)");
+                foreach (Match match in regex.Matches(path))
                 {
-                    int dur = 1;
-                    int at = frames[i].IndexOf('@');
-                    if (at != -1)
-                        dur = int.Parse(frames[i].Substring(at + 1).Trim());
-
-                    frameData.Add(dur);
-                    total += dur;
+                    if (!int.TryParse(match.Groups["startFrame"].Value, out int startFrame))
+                        startFrame = 0;
+                    if (!int.TryParse(match.Groups["endframe"].Value, out int endFrame))
+                        endFrame = startFrame;
+                    if (!int.TryParse(match.Groups["duration"].Value, out int duration))
+                        duration = 1;
+                    for (int frame = startFrame; frame <= endFrame; frame++)
+                    {
+                        framePaths.Add($"{match.Groups["path"].Value}:{frame}@{duration}");
+                        frameDurations.Add(duration);
+                        total += duration;
+                    }
                 }
-                frameData.Add(total);
-                this.animInfo.Add(path, frameDurs = frameData.ToArray());
+                frameDurations.Add(total);
+                frames = framePaths.ToArray();
+                frameDurs = frameDurations.ToArray();
+                this.animFrames.Add(path, frames);
+                this.animInfo.Add(path, frameDurs);
             }
 
             int spot = Mod.State.AnimationFrames % frameDurs[frames.Length];
@@ -251,7 +267,6 @@ namespace DynamicGameAssets.PackData
         {
             if (path_ == null)
                 return new TexturedRect() { Texture = Game1.staminaRect, Rect = null };
-
             string path = path_;
             if (path.Contains(','))
             {

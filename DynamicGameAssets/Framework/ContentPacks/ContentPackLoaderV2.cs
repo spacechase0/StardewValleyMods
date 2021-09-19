@@ -54,9 +54,10 @@ namespace DynamicGameAssets.Framework.ContentPacks
             {
                 var colorConverter = (JsonConverter)AccessTools.Constructor(AccessTools.TypeByName("StardewModdingAPI.Framework.Serialization.ColorConverter")).Invoke(new object[0]);
                 var vec2Converter = (JsonConverter)AccessTools.Constructor(AccessTools.TypeByName("StardewModdingAPI.Framework.Serialization.Vector2Converter")).Invoke(new object[0]);
+                var rectConverter = (JsonConverter)AccessTools.Constructor(AccessTools.TypeByName("StardewModdingAPI.Framework.Serialization.RectangleConverter")).Invoke(new object[0]);
                 JsonSerializerSettings settings = new JsonSerializerSettings()
                 {
-                    Converters = new[] { new BasePackDataListConverter(), colorConverter, vec2Converter }
+                    Converters = new[] { new BasePackDataListConverter(), colorConverter, vec2Converter, rectConverter }
                 };
                 var data = JsonConvert.DeserializeObject<List<BasePackData>>(File.ReadAllText(Path.Combine(this.pack.smapiPack.DirectoryPath, json)), settings);
                 foreach (var d in data)

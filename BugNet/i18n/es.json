@@ -1,5 +1,13 @@
 ﻿{
-    "critter.cage": "Jaula Para Bichos: {{critterName}}",
+    // net
+    "bug-net.name": "Red Cazainsectos",
+    "bug-net.description": "Atrapa bichos y demás cosas.",
+
+    // critter cage
+    "cage.name": "Jaula Para Bichos: {{critterName}}",
+    "cage.description": "¡Es un bicho! ¡En una jaula!",
+
+    // critter names
     "critter.GreenFrog": "Rana Verde",
     "critter.OliveFrog": "Rana Verde Oliva",
     "critter.Cloud": "Nube?",
