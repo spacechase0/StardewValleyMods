@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* You can now skip the event with Lewis.
 * Migrated maps to the newer `.tmx` format.
 
 ## 1.0.6
