@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.5.0
+Released 19 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
 * The critter cage description is now translatable.
 * Improved translations. Thanks to Evelyon (updated Spanish) and pikulet (updated Chinese)!
 
