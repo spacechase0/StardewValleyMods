@@ -6,7 +6,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
-using SpaceCore;
 using SpaceCore.Events;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -144,47 +143,13 @@ namespace TheftOfTheWinterStar
             // edit tunnel map
             else if (asset.AssetNameEquals("Maps/Tunnel"))
             {
-                var editor = asset.AsMap();
-                var map = editor.Data;
+                var overlay = Game1.currentSeason == "winter" && Game1.dayOfMonth < 25
+                    ? this.Helper.Content.Load<Map>("assets/OverlayPortal.tmx")
+                    : this.Helper.Content.Load<Map>("assets/OverlayPortalLocked.tmx");
 
-                // add tilesheet
-                TileSheet animDoorTilesheet;
-                Dictionary<int, Content.TileAnimation> animMapping;
-                {
-                    // AddTileSheet sorts the tilesheets by ID after adding them.
-                    // The game sometimes refers to tilesheets by their index (such as in Beach.fixBridge)
-                    // Prepending this to the ID should ensure that this tilesheet is added to the end,
-                    // which preserves the normal indices of the tilesheets.
-                    char comeLast = '\u03a9'; // Omega
-
-                    animDoorTilesheet = SpaceCore.Content.LoadTsx(this.Helper, "assets/magic-doorway.tsx", "magic-doorway", map, out animMapping);
-                    animDoorTilesheet.Id = comeLast + animDoorTilesheet.Id;
-                    map.AddTileSheet(animDoorTilesheet);
-                }
-
-                // add door tiles
-                var buildingsLayer = map.GetLayer("Buildings");
-                buildingsLayer.Tiles[7, 4] = animMapping[0].MakeTile(animDoorTilesheet, buildingsLayer);
-                buildingsLayer.Tiles[8, 4] = animMapping[1].MakeTile(animDoorTilesheet, buildingsLayer);
-                buildingsLayer.Tiles[9, 4] = animMapping[2].MakeTile(animDoorTilesheet, buildingsLayer);
-                buildingsLayer.Tiles[7, 5] = animMapping[16].MakeTile(animDoorTilesheet, buildingsLayer);
-                buildingsLayer.Tiles[8, 5] = animMapping[17].MakeTile(animDoorTilesheet, buildingsLayer);
-                buildingsLayer.Tiles[9, 5] = animMapping[18].MakeTile(animDoorTilesheet, buildingsLayer);
-                buildingsLayer.Tiles[7, 6] = animMapping[32].MakeTile(animDoorTilesheet, buildingsLayer);
-                buildingsLayer.Tiles[8, 6] = animMapping[33].MakeTile(animDoorTilesheet, buildingsLayer);
-                buildingsLayer.Tiles[9, 6] = animMapping[34].MakeTile(animDoorTilesheet, buildingsLayer);
-
-                // add door warp
-                if (Game1.currentSeason == "winter" && Game1.dayOfMonth < 25)
-                {
-                    animDoorTilesheet.ImageSource = animDoorTilesheet.ImageSource.Replace("magic-doorway-locked.png", "magic-doorway.png");
-                    buildingsLayer.Tiles[8, 6].Properties["Action"] = "Warp 9 12 FrostDungeon.Entrance";
-                }
-                else
-                {
-                    animDoorTilesheet.ImageSource = animDoorTilesheet.ImageSource.Replace("magic-doorway.png", "magic-doorway-locked.png");
-                    buildingsLayer.Tiles[8, 6].Properties["Action"] = "Message \"FrostDungeon.LockedEntrance\"";
-                }
+                asset
+                    .AsMap()
+                    .PatchMap(overlay, targetArea: new Rectangle(7, 4, 3, 3));
             }
         }
 
