@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="20" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="7">
+ <properties>
+  <property name="AmbientLight" value="255 255 255"/>
+  <property name="Warp" value="9 14 FrostDungeon.Branch1 12 6 10 14 FrostDungeon.Branch1 12 6"/>
+ </properties>
+ <tileset firstgid="1" name="mine" tilewidth="16" tileheight="16" tilecount="288" columns="16">
+  <image source="mine_frost_dark.png" width="256" height="288"/>
+  <tile id="0">
+   <properties>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="137">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="138">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="139">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="140">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="153">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="154">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="155">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="165">
+   <properties>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="166">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="167">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="168">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="169">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="170">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="171">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="172">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="181">
+   <properties>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="182">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="183">
+   <properties>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="184">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="185">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="186">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="187">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="188">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="198">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="199">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="200">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="201">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="202">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="203">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="204">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="217">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="218">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="219">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="233">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="234">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="235">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="240">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="241">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="242">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="256">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="257">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="258">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="272">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="273">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="274">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer id="1" name="Back" width="20" height="16">
+  <data encoding="base64" compression="zlib">
+   eJzdktENgjAQhltwAakTFLZVFpANHAF1AXUCdAL1RV2An/BfcmlQqvFFL/nS9Hr5ONoz5rcj+VPfDmzB8U02YD/ga3i+BhfFDdzJQ+XrwBvGmXVX/mMBJsBa7Elq+3yi6usnvjlZggx44MAUjow4MONZye81Iz5PcvrEq0npKiJ8K9Z59unUqt3S55ivo1LOXK2Sk/t1kT6hpNtzvzD9XHXzcWBO3iXGN4T0cwryn/r0XL3yfStaIrhRgQ==
+  </data>
+ </layer>
+ <objectgroup id="2" name="Back"/>
+ <layer id="3" name="Buildings" width="20" height="16">
+  <data encoding="base64" compression="zlib">
+   eJzV0DsOAVEUxvGZih1QsAiLQOLVofAKCY23BAVCgw6NFo3eEjRqKrXWLvxvcgrkDoPKSX65Z86582UyhvE/FUAQETgQkv7+OSzPUWSRs8jyI4Ek0vDJeS+DlOxUX0MdDU1eHCUUUEFeTsVhGoYTVfqy7FTfwhAjTV4RHXTRR1NOxUWWGwP6nuxUP8McC01eGxNMLf6HrlZYY6PZjT/Iea6dZrb8IW+vmW3l9Jj2c7xy96TZHT77pIe6WMyvX+YdLebnL7JiNvaxN/fs3Hn13q8573Jf1Q3qdSYs
+  </data>
+ </layer>
+ <objectgroup id="4" name="Buildings">
+  <object id="1" name="TileData" x="96" y="80" width="16" height="16">
+   <properties>
+    <property name="Action" value="Warp 12 27 FrostDungeon.Maze"/>
+   </properties>
+  </object>
+  <object id="2" name="TileData" x="144" y="80" width="16" height="16">
+   <properties>
+    <property name="Action" value="Message &quot;FrostDungeon.LockedBoss&quot;"/>
+    <property name="UnlockAction" value="Warp 9 16 FrostDungeon.Boss"/>
+   </properties>
+  </object>
+  <object id="3" name="TileData" x="160" y="80" width="16" height="16">
+   <properties>
+    <property name="Action" value="Message &quot;FrostDungeon.LockedBoss&quot;"/>
+    <property name="UnlockAction" value="Warp 9 16 FrostDungeon.Boss"/>
+   </properties>
+  </object>
+  <object id="4" name="TileData" x="208" y="80" width="16" height="16">
+   <properties>
+    <property name="Action" value="Warp 9 16 FrostDungeon.PushPuzzle"/>
+   </properties>
+  </object>
+  <object id="5" name="TileData" x="64" y="144" width="16" height="16">
+   <properties>
+    <property name="Action" value="BossKeyHalf A"/>
+   </properties>
+  </object>
+  <object id="6" name="TileData" x="240" y="144" width="16" height="16">
+   <properties>
+    <property name="Action" value="BossKeyHalf B"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer id="5" name="Front" width="20" height="16">
+  <data encoding="base64" compression="zlib">
+   eJzzY2Bg8BsimFxATbNwmYkPGFHZPGLAUDWPh5F4M3iR1NLafdeA+CYVzQPhl2SYcw6Iz+MwD+TGG0B8HYiPETDjOlTtPRxmYTMbpgcUDnfJMGMwYgCvPzzn
+  </data>
+ </layer>
+ <objectgroup id="6" name="Front"/>
+</map>

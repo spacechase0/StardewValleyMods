@@ -6,7 +6,9 @@
   <PropertyGroup>
     <Version>1.0.6</Version>
     <TargetFramework>net452</TargetFramework>
+
     <EnableHarmony>true</EnableHarmony>
+    <IgnoreModFilePatterns>$(IgnoreModFilePatterns), _empty.tmx</IgnoreModFilePatterns>
   </PropertyGroup>
 
   <ItemGroup>

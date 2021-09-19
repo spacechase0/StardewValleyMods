@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="16">
+ <properties>
+  <property name="AmbientLight" value="255 255 255"/>
+  <property name="Warp" value="9 18 FrostDungeon.Branch2 13 6 10 18 FrostDungeon.Branch2 13 6"/>
+ </properties>
+ <tileset firstgid="1" name="mine" tilewidth="16" tileheight="16" tilecount="288" columns="16">
+  <image source="mine_frost_dark.png" width="256" height="288"/>
+  <tile id="0">
+   <properties>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="137">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="138">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="139">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="140">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="153">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="154">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="155">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="165">
+   <properties>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="166">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="167">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="168">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="169">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="170">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="171">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="172">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="181">
+   <properties>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="182">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="183">
+   <properties>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="184">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="185">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="186">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="187">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="188">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="198">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="199">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="200">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="201">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="202">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="203">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="204">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="217">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="218">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="219">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="233">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="234">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="235">
+   <properties>
+    <property name="Type" value="Stone"/>
+   </properties>
+  </tile>
+  <tile id="240">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="241">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="242">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="256">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="257">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="258">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="272">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="273">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="274">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer id="1" name="Back" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzdk+0NwiAQhgvqAG11Aey26gK6QUeouoA6QXUC6x+tA3ikL/FyqeYw/lGSJ8BxPFw/SJLfbvZPfTtiSxwj2RD7Hl+N9TXRKKiEV7Yz8i54xoIYYuwpWdyy/OqFbwaWxJW4CVrCsbUW59UKnzHd3pT6DFjTeSzmuYnzhXoCBs6Beca0vpTVE7CI3Wk8pn4SUR+vRxJbn/92I/beJDnzFQpfiTyfnxE5w4mxU/g8Kzj53ik7x7J1jS+wgNthPk+6e+nv1wGx8F9rfH2Eek4i/qmP38t3vm+1B9F/bnw=
+  </data>
+ </layer>
+ <objectgroup id="2" name="Back"/>
+ <layer id="3" name="Buildings" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg6wA2I3YHYB4jZgdgLiDmBmA2J7w2V9wXiOCCOx2GWKxCHAXE4EMcAcTSUlkRix6Kx84A4H4gLsJgXCsRpQJwExDlAnA2lNZHYuWjsIiCuB+IGLOalAnEZEJcDcQ0QV0NpSyR2LRq7D4j7gXgCFvNKgbgNiNtxhAc2MA+I5wPxAixyrSSYgw42YBGbSkDPVzxyB8gwDx8gxjx87iHHPFIAPcxbisQmxa8gcAGL2FESzUAGD3CIvyTTvPM4xK+RYZYfEfJ+BNQRowafPkrNIWQuPgAAwKIu3A==
+  </data>
+ </layer>
+ <objectgroup id="4" name="Buildings">
+  <object id="1" name="TileData" x="112" y="32" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=71"/>
+   </properties>
+  </object>
+  <object id="2" name="TileData" x="128" y="32" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=-1 Warp=9,12,FrostDungeon.Bonus3"/>
+   </properties>
+  </object>
+  <object id="3" name="TileData" x="144" y="32" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=72"/>
+   </properties>
+  </object>
+  <object id="4" name="TileData" x="112" y="48" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=87"/>
+   </properties>
+  </object>
+  <object id="5" name="TileData" x="128" y="48" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=-1"/>
+   </properties>
+  </object>
+  <object id="6" name="TileData" x="144" y="48" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=88"/>
+   </properties>
+  </object>
+  <object id="7" name="TileData" x="112" y="64" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=103"/>
+   </properties>
+  </object>
+  <object id="8" name="TileData" x="128" y="64" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=-1"/>
+   </properties>
+  </object>
+  <object id="9" name="TileData" x="144" y="64" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=104"/>
+   </properties>
+  </object>
+  <object id="10" name="TileData" x="112" y="80" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=119"/>
+   </properties>
+  </object>
+  <object id="11" name="TileData" x="128" y="80" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=-1"/>
+   </properties>
+  </object>
+  <object id="12" name="TileData" x="144" y="80" width="16" height="16">
+   <properties>
+    <property name="Bombable" value="Buildings=120"/>
+   </properties>
+  </object>
+  <object id="13" name="TileData" x="160" y="128" width="16" height="16">
+   <properties>
+    <property name="Action" value="Movable"/>
+   </properties>
+  </object>
+  <object id="14" name="TileData" x="96" y="160" width="16" height="16">
+   <properties>
+    <property name="Action" value="Movable"/>
+   </properties>
+  </object>
+  <object id="15" name="TileData" x="80" y="208" width="16" height="16">
+   <properties>
+    <property name="Action" value="Movable"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer id="5" name="Front" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzzY2Bg8BsimBxATbPwmTtqHu3MM6KyecSAUfOoa941IL5JRfNA+CUZ5pwD4vM4zAO58QYQXwfiYwTMuA5Vew+HWdjMhukBhcNdMswYjBgAf49B+g==
+  </data>
+ </layer>
+ <objectgroup id="6" name="Front"/>
+</map>

@@ -40,7 +40,7 @@ namespace TheftOfTheWinterStar
         /// <summary>The unique key in <see cref="TerrainFeature.modData"/> which contains the original crop data for the Tempus Globe logic.</summary>
         private string PrevCropDataKey;
 
-        private static readonly string[] Locs = new[]
+        private static readonly string[] LocationNames = new[]
         {
             "Entrance",
             "Arena",
@@ -378,7 +378,7 @@ namespace TheftOfTheWinterStar
             int keyHalfB = Mod.Ja.GetObjectId("Festive Big Key (A)");
             Log.Trace("IDs for chests: " + stardropPiece + " " + scepter + " " + key + " " + keyHalfB);
 
-            foreach (string locName in Mod.Locs)
+            foreach (string locName in Mod.LocationNames)
             {
                 var loc = Game1.getLocationFromName("FrostDungeon." + locName);
                 if (locName == "Entrance")
@@ -572,10 +572,10 @@ namespace TheftOfTheWinterStar
         {
             Log.Debug("Adding frost dungeon");
 
-            foreach (string locName in Mod.Locs)
+            foreach (string locName in Mod.LocationNames)
             {
-                var loc = new GameLocation(this.Helper.Content.GetActualAssetKey("assets/" + locName + ".tbin"), "FrostDungeon." + locName);
-                Game1.locations.Add(loc);
+                var location = new GameLocation(this.Helper.Content.GetActualAssetKey($"assets/{locName}.tmx"), $"FrostDungeon.{locName}");
+                Game1.locations.Add(location);
             }
 
             // AddTileSheet sorts the tilesheets by ID after adding them.
