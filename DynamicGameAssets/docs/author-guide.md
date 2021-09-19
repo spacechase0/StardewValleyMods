@@ -560,7 +560,7 @@ This should be an array of an an object called `FurnitureConfiguration`. A `Furn
 | `CollisionHeight` | `int` | Required | How high from the bottom this furniture is solid. |
 | `Flipped` | `bool` | Default: `false` | If the texture is flipped or not. |
 | `Seats` | `Vector2[]` | Default: `null` | The list of seat positions, in tiles, if any. |
-| `SeatDirection` | `Enum[Any, Up, Down, Left, Right]` | Default: `"Any"` | The direction the seats face. |
+| `SittingDirection` | `Enum[Any, Up, Down, Left, Right]` | Default: `"Any"` | The direction the seats face. |
 | `TileProperties` | `Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>>` | The tile properties to emulate for this furniture. It goes position -> layer -> property = value. (See example.)
 
 `Texture` and `FrontTexture` (if any) should have the same size: `DisplaySize` multiplied by 16 for both `X` and `Y`.
