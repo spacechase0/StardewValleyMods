@@ -1,11 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.1.0
+Released 19 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
 * You can now skip the event with Lewis.
-* Migrated maps to the newer `.tmx` format.
 * Fixed map changes lost if another mod edits the same locations.
-* Internal refactoring.
+* Internal refactoring, and migrated maps to the newer `.tmx` format.
 
 ## 1.0.6
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.

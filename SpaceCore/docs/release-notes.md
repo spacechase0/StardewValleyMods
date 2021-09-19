@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.6.2
+Released 19 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
 * Removed custom map/tilesheet editing API.  
   _This was previously used by Magic and Theft of the Winter Star, which now use the built-in SMAPI APIs._
 * Removed bundled `TiledNet.dll` and `TiledNet.pdb` files.
