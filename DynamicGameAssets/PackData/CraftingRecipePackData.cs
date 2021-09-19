@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using DynamicGameAssets.Framework;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -58,10 +57,10 @@ namespace DynamicGameAssets.PackData
         public string CraftingDataValue => "0 1/meow/0 1/" + (this.IsCooking ? "false/" : "") + $"/{this.SkillUnlockName} {this.SkillUnlockLevel}/{this.Name}";
 
         [OnDeserialized]
-        private void OnDeserialized( StreamingContext ctx )
+        private void OnDeserialized(StreamingContext ctx)
         {
             // This avoids some game weirdness
-            ID = ID.Replace( " Recipe", " recipe" );
+            ID = ID.Replace(" Recipe", " recipe");
         }
 
         public override void PostLoad()

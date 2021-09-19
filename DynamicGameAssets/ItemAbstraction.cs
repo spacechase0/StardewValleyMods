@@ -335,11 +335,11 @@ namespace DynamicGameAssets
         }
 
         [OnDeserialized]
-        private void OnDeserialized( StreamingContext ctx )
+        private void OnDeserialized(StreamingContext ctx)
         {
             // This avoids some game weirdness
-            if ( this.Type == ItemType.DGARecipe )
-                this.Value = this.Value.Replace( " Recipe", " recipe" );
+            if (this.Type == ItemType.DGARecipe)
+                this.Value = this.Value.Replace(" Recipe", " recipe");
         }
 
         public virtual object Clone() => this.MemberwiseClone();
