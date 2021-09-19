@@ -228,13 +228,14 @@ namespace DynamicGameAssets.Game
         public override bool performToolAction(Tool t, GameLocation location)
         {
             var who = t.getLastFarmerToUse();
-            if (t is Pickaxe)
+            if (t is Pickaxe or Axe)
             {
                 this.performRemoveAction(this.tileLocation.Value, location);
                 Game1.currentLocation.debris.Add(new Debris(this.getOne(), who.GetToolLocation(), new Vector2(who.GetBoundingBox().Center.X, who.GetBoundingBox().Center.Y)));
                 Game1.currentLocation.objects.Remove(this.tileLocation.Value);
                 return false;
             }
+
             return base.performToolAction(t, location);
         }
 
