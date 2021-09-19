@@ -14,8 +14,4 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Tiled.Net\Tiled.Net\Tiled.Net.csproj" />
-  </ItemGroup>
 </Project>

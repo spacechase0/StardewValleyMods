@@ -35,15 +35,9 @@ for troubleshooting.
 ### Compiling a mod for testing
 To compile a mod and add it to your game's `Mods` directory:
 
-1. Clone Tiled.Net:
-
-   ```bash
-   git clone https://github.com/napen123/Tiled.Net.git
-   ```
-
-2. Rebuild the solution in [Visual Studio](https://www.visualstudio.com/vs/community/) or [MonoDevelop](http://www.monodevelop.com/).  
+1. Rebuild the solution in [Visual Studio](https://www.visualstudio.com/vs/community/) or [MonoDevelop](http://www.monodevelop.com/).  
    <small>This will compile the code and package it into the `Mods` directory.</small>
-3. Launch any project with debugging.  
+2. Launch any project with debugging.  
    <small>This will start the game through SMAPI and attach the Visual Studio debugger.</small>
 
 ### Compiling a mod for release

@@ -16,7 +16,7 @@
 
   <!--common mod build package options-->
   <PropertyGroup>
-    <IgnoreModFilePatterns Condition="'$(MSBuildProjectName)' != 'SpaceCore'">SpaceCore\.dll, SpaceCore\.pdb, TiledNet\.dll, TiledNet\.pdb</IgnoreModFilePatterns>
+    <IgnoreModFilePatterns Condition="'$(MSBuildProjectName)' != 'SpaceCore'">SpaceCore\.dll, SpaceCore\.pdb</IgnoreModFilePatterns>
     <ModZipPath>$(SolutionDir)\_releases</ModZipPath>
   </PropertyGroup>
 </Project>
