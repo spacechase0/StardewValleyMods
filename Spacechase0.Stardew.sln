@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{622B2762
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		common-unreleased.targets = common-unreleased.targets
 		common.targets = common.targets
 		LICENSE = LICENSE
 		README.md = README.md
