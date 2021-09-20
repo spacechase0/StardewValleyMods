@@ -211,7 +211,7 @@ namespace Terraforming.Framework
 
             // Water tile effects
             Game1.currentLocation.waterTiles ??= new bool[this.TerrainWidth, this.TerrainHeight];
-            for (int i = 0; i < Game1.currentLocation.waterTiles.Length; ++i)
+            for (int i = 0; i < Game1.currentLocation.waterTiles.waterTiles.Length; ++i)
             {
                 int ix = i % this.TerrainWidth, iy = i / this.TerrainWidth;
                 var tile = this.TerrainData[ix, iy];
