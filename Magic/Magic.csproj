@@ -4,9 +4,9 @@
 
   <PropertyGroup>
     <Version>0.7.0</Version>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 
-    <IgnoreModFilePatterns>\.psd$</IgnoreModFilePatterns>
+    <IgnoreModFilePaths>assets/altarsobjects.psd</IgnoreModFilePaths>
   </PropertyGroup>
 
   <ItemGroup>

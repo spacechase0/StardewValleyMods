@@ -5,10 +5,10 @@
 
   <PropertyGroup>
     <Version>1.2.2</Version>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 
     <EnableHarmony>true</EnableHarmony>
-    <IgnoreModFilePatterns>$(IgnoreModFilePatterns), _empty.tmx</IgnoreModFilePatterns>
+    <IgnoreModFilePaths>assets/_empty.tmx</IgnoreModFilePaths>
   </PropertyGroup>
 
   <ItemGroup>
