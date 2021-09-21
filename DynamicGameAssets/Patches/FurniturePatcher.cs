@@ -26,6 +26,10 @@ namespace DynamicGameAssets.Patches
                 original: this.RequireMethod<Furniture>(nameof(Furniture.updateRotation)),
                 prefix: this.GetHarmonyMethod(nameof(Before_UpdateRotation))
             );
+            harmony.Patch(
+                original: this.RequireMethod<Furniture>(nameof(Furniture.placementAction)),
+                postfix: this.GetHarmonyMethod(nameof(After_PlacementAction))
+            );
         }
 
 
