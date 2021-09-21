@@ -298,6 +298,20 @@ namespace DynamicGameAssets.Game
 
         public override bool canBePlacedHere(GameLocation l, Vector2 tile)
         {
+            Vector2 nonTile = tile * 64f * 64f;
+            nonTile.X += 32f;
+            nonTile.Y += 32f;
+            foreach (Furniture f in l.furniture)
+            {
+                if ((int)f.furniture_type.Value == 11 && f.getBoundingBox(f.TileLocation).Contains((int)nonTile.X, (int)nonTile.Y) && f.heldObject.Value == null)
+                {
+                    return true;
+                }
+                if (f.getBoundingBox(f.TileLocation).Intersects(new Rectangle((int)tile.X * 64, (int)tile.Y * 64, 64, 64)) && !f.isPassable() && !f.AllowPlacementOnThisTile((int)tile.X, (int)tile.Y))
+                {
+                    return false;
+                }
+            }
             return this.isPlaceable() && !l.isTileOccupiedForPlacement(tile, this);
         }
 

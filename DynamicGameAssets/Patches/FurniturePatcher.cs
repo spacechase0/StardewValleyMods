@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
@@ -25,6 +27,10 @@ namespace DynamicGameAssets.Patches
             harmony.Patch(
                 original: this.RequireMethod<Furniture>(nameof(Furniture.updateRotation)),
                 prefix: this.GetHarmonyMethod(nameof(Before_UpdateRotation))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<Furniture>(nameof(Furniture.drawAtNonTileSpot)),
+                prefix: this.GetHarmonyMethod(nameof(Before_drawAtNonTileSpot))
             );
         }
 
@@ -56,6 +62,17 @@ namespace DynamicGameAssets.Patches
             if (__instance is CustomBasicFurniture furniture)
             {
                 furniture.UpdateRotation();
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool Before_drawAtNonTileSpot(Furniture __instance, SpriteBatch spriteBatch, Vector2 location, float layerDepth, float alpha)
+        {
+            if (__instance is CustomBasicFurniture furniture)
+            {
+                furniture.drawAtNonTileSpot(spriteBatch, location, layerDepth, alpha);
                 return false;
             }
 
