@@ -76,12 +76,6 @@ namespace DynamicGameAssets.Patches
                 {
                     __instance.resetOnPlayerEntry(location, false);
                 }
-                //else if (__instance.furniture_type == 13)
-                //{
-                //    __instance.removeLights(location);
-                //    __instance.RemoveLightGlow(location);
-                //    __instance.resetOnPlayerEntry(location, false);
-                //}
             }
         }
     }
