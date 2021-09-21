@@ -61,5 +61,24 @@ namespace DynamicGameAssets.Patches
 
             return true;
         }
+        
+        // <summary>The method to call after placing down lamps or sconces to reset the light to be in the right place.</summary>
+        // <returns>Nothing, it's void.</returns>
+        private static void After_PlacementAction(Furniture __instance, GameLocation location)
+        {
+            if (__instance is CustomBasicFurniture furniture)
+            {
+                if (__instance.furniture_type == 7 || __instance.furniture_type == 17)
+                {
+                    __instance.resetOnPlayerEntry(location, false);
+                }
+                //else if (__instance.furniture_type == 13)
+                //{
+                //    __instance.removeLights(location);
+                //    __instance.RemoveLightGlow(location);
+                //    __instance.resetOnPlayerEntry(location, false);
+                //}
+            }
+        }
     }
 }
