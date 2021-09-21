@@ -132,6 +132,19 @@ namespace DynamicGameAssets.Game
 
             spriteBatch.Draw(currTex.Texture, location, currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
         }
+        
+        public override void AddLightGlow(GameLocation location)
+        {
+            if (!this.lightGlowPosition.HasValue)
+            {
+                Vector2 vector = new Vector2((int)base.tileLocation.X * 64 + 32, (int)base.tileLocation.Y * 64 + 64);
+                if (!location.lightGlows.Contains(vector))
+                {
+                    this.lightGlowPosition = vector;
+                    location.lightGlows.Add(vector);
+                }
+            }
+        }
 
         public override bool DoesTileHaveProperty(int tile_x, int tile_y, string property_name, string layer_name, ref string property_value)
         {
