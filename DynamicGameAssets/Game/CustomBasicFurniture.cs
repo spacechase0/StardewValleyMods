@@ -110,7 +110,7 @@ namespace DynamicGameAssets.Game
                     if(this.heldObject.Value is CustomObject customObject)
                     {
                         Vector2 position = new Vector2(this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - (this.drawHeldObjectLow.Value ? 32 : 85));
-                        customObject.draw(spriteBatch, (int)position.X, (int)position.Y, (float)(this.boundingBox.Bottom + 1) / 10000f + 0.5f, alpha);
+                        customObject.draw(spriteBatch, (int)position.X, (int)position.Y, (float)(this.boundingBox.Bottom + 1) / 10000f, alpha);
                     }
                     else
                     {
