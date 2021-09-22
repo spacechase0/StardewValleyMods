@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed various animation parsing issues.
+
 ## 1.2.1
 Released 19 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

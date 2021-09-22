@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using DynamicGameAssets.Framework.ContentPacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 
 namespace DynamicGameAssets.PackData
@@ -27,11 +27,11 @@ namespace DynamicGameAssets.PackData
 
         internal ISemanticVersion conditionVersion;
 
-        private readonly Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+        /// <summary>The textures loaded from this content pack.</summary>
+        private readonly IDictionary<string, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
 
-        private readonly Dictionary<string, string[]> animFrames = new Dictionary<string, string[]>(); // Index is full animation descriptor (items16.png:1..2@333/items16.png:3@334), value is [frame1, frame2, frame3, ..., lastframe]
-
-        private readonly Dictionary<string, int[]> animInfo = new Dictionary<string, int[]>(); // Index is full animation descriptor (items16.png:1..2@333/items16.png:3@334), value is [frameDur1, frameDur2, frameDur3, ..., totalFrameDur]
+        /// <summary>The animations parsed from this content pack, indexed by the raw animation descriptor they were parsed from (e.g. <c>items16.png:1..2@333, items16.png:3@334</c>).</summary>
+        private readonly IDictionary<string, TextureAnimation> TextureAnimationCache = new Dictionary<string, TextureAnimation>();
 
         protected internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
 
@@ -207,52 +207,19 @@ namespace DynamicGameAssets.PackData
             }
         }
 
-        internal string GetTextureFrame(string path)
+        /// <summary>Get the current frame for an animation descriptor.</summary>
+        /// <param name="descriptor">The animation descriptor. See 'texture animations' in the author guide for a description of the format.</param>
+        internal TextureAnimationFrame GetTextureFrame(string descriptor)
         {
-            string[] frames = null;
-            int[] frameDurs = null;
-            if (this.animInfo.ContainsKey(path))
-            {
-                frames = this.animFrames[path];
-                frameDurs = this.animInfo[path];
-            }
-            else
-            {
-                IList<string> framePaths = new List<string>();
-                IList<int> frameDurations = new List<int>();
-                int total = 0;
-                Regex regex = new Regex(@"((?<path>[^,:@]+)(:(?<startframe>\d+))?(\.{2}(?<endframe>\d+))?(@(?<duration>\d+))?)");
-                foreach (Match match in regex.Matches(path))
-                {
-                    if (!int.TryParse(match.Groups["startFrame"].Value, out int startFrame))
-                        startFrame = 0;
-                    if (!int.TryParse(match.Groups["endframe"].Value, out int endFrame))
-                        endFrame = startFrame;
-                    if (!int.TryParse(match.Groups["duration"].Value, out int duration))
-                        duration = 1;
-                    for (int frame = startFrame; frame <= endFrame; frame++)
-                    {
-                        framePaths.Add($"{match.Groups["path"].Value}:{frame}@{duration}");
-                        frameDurations.Add(duration);
-                        total += duration;
-                    }
-                }
-                frameDurations.Add(total);
-                frames = framePaths.ToArray();
-                frameDurs = frameDurations.ToArray();
-                this.animFrames.Add(path, frames);
-                this.animInfo.Add(path, frameDurs);
-            }
+            if (string.IsNullOrWhiteSpace(descriptor))
+                return null;
 
-            int spot = Mod.State.AnimationFrames % frameDurs[frames.Length];
-            for (int i = 0; i < frames.Length; ++i)
-            {
-                spot -= frameDurs[i];
-                if (spot < 0)
-                    return frames[i].Trim();
-            }
+            // parse animation frames
+            if (!this.TextureAnimationCache.TryGetValue(descriptor, out TextureAnimation animation))
+                this.TextureAnimationCache[descriptor] = animation = TextureAnimation.ParseFrom(descriptor);
 
-            throw new Exception("This should never happen (" + path + ")");
+            // get current frame
+            return animation.GetCurrentFrame(Mod.State.AnimationFrames);
         }
 
         internal TexturedRect GetMultiTexture(string[] paths, int decider, int xSize, int ySize)
@@ -263,58 +230,50 @@ namespace DynamicGameAssets.PackData
             return this.GetTexture(paths[decider % paths.Length], xSize, ySize);
         }
 
-        internal TexturedRect GetTexture(string path_, int xSize, int ySize)
+        /// <summary>Get the texture and source rectangle to show for an animation descriptor during the current game tick.</summary>
+        /// <param name="descriptor">The animation descriptor. See 'texture animations' in the author guide for a description of the format.</param>
+        /// <param name="xSize">The sprite width in pixels.</param>
+        /// <param name="ySize">The sprite height in pixels.</param>
+        internal TexturedRect GetTexture(string descriptor, int xSize, int ySize)
         {
-            if (path_ == null)
-                return new TexturedRect() { Texture = Game1.staminaRect, Rect = null };
-            string path = path_;
-            if (path.Contains(','))
-            {
-                return this.GetTexture(this.GetTextureFrame(path), xSize, ySize);
-            }
-            else
-            {
-                int at = path.IndexOf('@');
-                if (at != -1)
-                    path = path.Substring(0, at);
+            // get current animation frame
+            TextureAnimationFrame frame = this.GetTextureFrame(descriptor);
+            if (frame == null)
+                return new TexturedRect { Texture = Game1.staminaRect, Rect = null };
 
-                int colon = path.IndexOf(':');
-                string pathItself = colon == -1 ? path : path.Substring(0, colon);
-                if (this.textures.ContainsKey(pathItself))
+            // load texture
+            if (!this.TextureCache.TryGetValue(frame.FilePath, out Texture2D texture))
+            {
+                if (this.smapiPack.HasFile(frame.FilePath))
                 {
-                    if (colon == -1)
-                        return new TexturedRect() { Texture = this.textures[pathItself], Rect = null };
-                    else
+                    try
                     {
-                        int sections = this.textures[pathItself].Width / xSize;
-                        int ind = int.Parse(path.Substring(colon + 1));
-
-                        return new TexturedRect()
-                        {
-                            Texture = this.textures[pathItself],
-                            Rect = new Rectangle(ind % sections * xSize, ind / sections * ySize, xSize, ySize)
-                        };
+                        texture = this.smapiPack.LoadAsset<Texture2D>(frame.FilePath);
+                        texture.Name = PathUtilities.NormalizeAssetName($"DGA/{this.smapiPack.Manifest.UniqueID}/{frame.FilePath}");
+                    }
+                    catch
+                    {
+                        texture = null;
                     }
                 }
-
-                if (!this.smapiPack.HasFile(pathItself))
-                    Log.Warn("No such \"" + pathItself + "\" in " + this.smapiPack.Manifest.Name + " (" + this.smapiPack.Manifest.UniqueID + ")!");
-
-                Texture2D t;
-                try
+                else
                 {
-                    t = this.smapiPack.LoadAsset<Texture2D>(pathItself);
-                    t.Name = Path.Combine("DGA", this.smapiPack.Manifest.UniqueID, pathItself).Replace('\\', '/');
-                }
-                catch (Exception e)
-                {
-                    t = Game1.staminaRect;
+                    Log.Warn($"No such \"{frame.FilePath}\" in {this.smapiPack.Manifest.Name} ({this.smapiPack.Manifest.UniqueID})!");
+                    texture = null;
                 }
 
-                this.textures.Add(pathItself, t);
-
-                return this.GetTexture(path_, xSize, ySize);
+                texture ??= Game1.staminaRect;
+                this.TextureCache[frame.FilePath] = texture;
             }
+
+            // build texture + source rectangle
+            int spriteColumns = texture.Width / xSize;
+            int index = frame.SpriteIndex;
+            return new TexturedRect
+            {
+                Texture = texture,
+                Rect = new Rectangle(index % spriteColumns * xSize, index / spriteColumns * ySize, xSize, ySize)
+            };
         }
     }
 }
