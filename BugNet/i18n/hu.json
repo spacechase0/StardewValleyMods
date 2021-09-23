@@ -1,11 +1,11 @@
 ﻿{
     // net
-    "bug-net.name": "Bug Net", // TODO
-    "bug-net.description": "Catches critters and stuff.", // TODO
+    "bug-net.name": "Bogárháló",
+    "bug-net.description": "Elkapja az állatkákat, meg az ilyesmiket.",
 
     // critter cage
-    "cage.name": "Kalitka: {{critterName}}",
-    "cage.description": "It's a critter! In a cage!", // TODO
+    "cage.name": "Állatka ketrec: {{critterName}}",
+    "cage.description": "Ez egy állatka! Egy ketrecben!",
 
     // critter names
     "critter.GreenFrog": "Zöld béka",

@@ -190,15 +190,15 @@ namespace DynamicGameAssets
             // Support animated boots colors
             foreach (var farmer in Game1.getAllFarmers())
             {
-                if (farmer.boots.Value is CustomBoots cboots)
+                if (farmer.boots.Value is CustomBoots boots)
                 {
-                    string frame = cboots.Data.pack.GetTextureFrame(cboots.Data.FarmerColors);
-                    if (this.prevBootsFrame.GetOrCreateValue(farmer).Value != frame)
+                    TextureAnimationFrame frame = boots.Data.pack.GetTextureFrame(boots.Data.FarmerColors);
+                    if (this.prevBootsFrame.GetOrCreateValue(farmer).Value != frame.Descriptor)
                     {
                         if (this.prevBootsFrame.TryGetValue(farmer, out var holder))
-                            holder.Value = frame;
+                            holder.Value = frame.Descriptor;
                         else
-                            this.prevBootsFrame.Add(farmer, new Holder<string>(frame));
+                            this.prevBootsFrame.Add(farmer, new Holder<string>(frame.Descriptor));
 
                         farmer.FarmerRenderer.MarkSpriteDirty();
                     }

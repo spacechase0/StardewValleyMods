@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.targets" />
+  <Import Project="..\common-unreleased.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
@@ -13,9 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj" Private="false" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\JsonAssets\JsonAssets.csproj" Private="false" />
   </ItemGroup>
 </Project>
