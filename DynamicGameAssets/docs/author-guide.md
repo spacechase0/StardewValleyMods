@@ -792,7 +792,7 @@ You don't need to use these to animate DGA objects from your pack; you can just 
 * HatMouse
 * IslandMerchant
 * ResortBar
-* Krobus
+* Shadow (this is Krobus)
 * VolcanoShop
 * Festival.<date> ie. Festival.summer5
 * QiGemShop
