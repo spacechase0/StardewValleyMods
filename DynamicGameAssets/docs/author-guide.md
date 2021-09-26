@@ -787,7 +787,7 @@ You don't need to use these to animate DGA objects from your pack; you can just 
 
 * BlueBoat
 * TravelingMerchant
-* GeMagic (one of the night market shops)
+* Magic (one of the night market shops)
 * DesertMerchant
 * HatMouse
 * IslandMerchant
