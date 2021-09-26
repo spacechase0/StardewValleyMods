@@ -143,7 +143,7 @@ namespace DynamicGameAssets.Patches
         /// <summary>The method to call after <see cref="BeachNightMarket.geMagicShopStock"/>.</summary>
         private static void After_BeachNightMarket_GeMagicShopStock(Dictionary<ISalable, int[]> __result)
         {
-            PatchCommon.DoShopStock("GeMagic", __result);
+            PatchCommon.DoShopStock("Magic", __result);
         }
 
         /****
