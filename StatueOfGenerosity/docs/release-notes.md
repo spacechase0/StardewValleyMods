@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* If multiple villagers have a birthday on the same day, each statue will now choose one of them randomly.
+* Fixed statue producing error items in some cases.
+* Fixed statues not providing birthday gifts for Dwarf, Krobus, Leo, Sandy, or Wizard.
+* Fixed error when the selected gift taste is invalid or targets a context tag.
+
 ## 1.0.3
 Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
 
