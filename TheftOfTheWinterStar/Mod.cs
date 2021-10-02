@@ -35,7 +35,7 @@ namespace TheftOfTheWinterStar
         public static Mod Instance;
         internal static IJsonAssetsApi Ja;
 
-        private SaveData SaveData;
+        private SaveData SaveData = new();
 
         private Texture2D BossBarBg;
         private Texture2D BossBarFg;
