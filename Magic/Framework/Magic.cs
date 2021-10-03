@@ -443,7 +443,7 @@ namespace Magic.Framework
 
         private static void OnTimeChanged(object sender, TimeChangedEventArgs e)
         {
-            float manaRegen = Game1.player.GetCustomSkillLevel(Magic.Skill) / 2 + Magic.CarryoverManaRegen;
+            float manaRegen = (Game1.player.GetCustomSkillLevel(Magic.Skill) + 1) / 2 + Magic.CarryoverManaRegen; // start at +1 mana at level 1
             if (Game1.player.HasCustomProfession(Skill.ManaRegen2Profession))
                 manaRegen *= 3;
             else if (Game1.player.HasCustomProfession(Skill.ManaRegen1Profession))
