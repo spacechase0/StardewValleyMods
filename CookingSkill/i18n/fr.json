@@ -1,0 +1,19 @@
+﻿{
+    // skill
+    "skill.name": "Cuisine",
+    "skill.level-up-perk": "+{{bonus}}% comestibilité pour les plats fait maison",
+
+    // professions
+    "efficient.name": "Efficace",
+    "efficient.desc": "15% chance de ne pas consommer d'ingrédients",
+    "gourmet.name": "Gourmet",
+    "gourmet.desc": "+20% prix de vente",
+    "intense-flavors.name": "Saveurs intenses",
+    "intense-flavors.desc": "Les bonus de nourriture sont d'un niveau plus forts\n(+20% pour énergie maximale ou magnétisme)",
+    "professional-chef.name": "Chef Professionnel",
+    "professional-chef.desc": "Les plats cuisinés sont toujours de qualité argent au minimum",
+    "satisfying.name": "Satisfaisant",
+    "satisfying.desc": "+25% durée des bonus de repas",
+    "secret-spices.name": "Epices secrètes",
+    "secret-spices.desc": "Donne un bonus aléatoire pour une nourriture sans bonus"
+}

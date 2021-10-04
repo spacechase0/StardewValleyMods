@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Cooking Skill is now translatable.
+* Improved translations. Thanks to Chibranche (added French)!
 
 ## 1.3.4
 Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.

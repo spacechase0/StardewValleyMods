@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Luck Skill is now translatable into other languages.
+* Improved translations. Thanks to Chibranche (added French)!
 
 ## 1.1.1
 Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
