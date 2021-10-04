@@ -638,22 +638,18 @@ namespace LuckSkill
 
         private void OnGameLaunched(object sender, EventArgs args)
         {
-            // enableLuckSkillBar
+            // enable Luck skill bar
             var api = this.Helper.ModRegistry.GetApi<IExperienceBarsApi>("spacechase0.ExperienceBars");
-            Log.Trace($"Experience Bars API {(api == null ? "not " : "")}found");
             api?.SetDrawLuck(true);
         }
 
         private void CheckForAllProfessions()
         {
-            if (!this.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
+            if (this.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
-                Log.Info("All Professions not found.");
-                return;
+                Log.Info("All Professions found. You will get every luck profession for your level.");
+                this.HasAllProfessions = true;
             }
-
-            Log.Info("All Professions found. You will get every luck profession for your level.");
-            this.HasAllProfessions = true;
         }
     }
 }
