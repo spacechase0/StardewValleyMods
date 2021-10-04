@@ -1,6 +1,9 @@
 using System.IO;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace SpaceCore.Framework
@@ -12,8 +15,76 @@ namespace SpaceCore.Framework
             Command.Register("player_giveexp", Commands.ExpCommand);
             Command.Register("asset_invalidate", Commands.InvalidateCommand);
             Command.Register("exttilesheets_dump", Commands.DumpTilesheetsCommand);
+            Command.Register("dump_spacecore_skills", Commands.DumpSkills);
             //Command.register( "test", ( args ) => Game1.player.addItemByMenuIfNecessary( new TestObject() ) );
             //SpaceCore.modTypes.Add( typeof( TestObject ) );
+        }
+
+        /// <summary>Show a report of currently registered skills and professions.</summary>
+        /// <param name="args">The command arguments.</param>
+        private static void DumpSkills(string[] args)
+        {
+            StringBuilder report = new StringBuilder();
+
+            if (Skills.SkillsByName.Any())
+            {
+                report.AppendLine("The following custom skills are registered with SpaceCore.");
+                report.AppendLine();
+
+                foreach (Skills.Skill skill in Skills.SkillsByName.Values)
+                {
+                    // base skill info
+                    report.AppendLine(skill.Id);
+                    report.AppendLine("--------------------------------------------------");
+                    if (Context.IsWorldReady)
+                    {
+                        report.AppendLine($"Level: {Skills.GetSkillLevel(Game1.player, skill.Id)}");
+                        report.AppendLine($"Experience: {Skills.GetExperienceFor(Game1.player, skill.Id)}");
+                    }
+
+                    // level perks
+                    {
+                        var perks = Enumerable.Range(1, 10)
+                            .Select(level => new { level, perks = skill.GetExtraLevelUpInfo(level) })
+                            .Where(p => p.perks.Any())
+                            .ToArray();
+
+                        if (perks.Any())
+                        {
+                            report.AppendLine();
+                            report.AppendLine("Level perks:");
+                            foreach (var entry in perks)
+                                report.AppendLine($"   - level {entry.level}: {string.Join(", ", entry.perks)}");
+                        }
+                    }
+
+                    // professions
+                    if (skill.Professions.Any())
+                    {
+                        report.AppendLine();
+                        report.AppendLine("Professions:");
+
+                        foreach (var profession in skill.Professions)
+                        {
+                            int vanillaId = profession.GetVanillaId();
+                            bool hasProfession = Context.IsWorldReady && Game1.player.professions.Contains(vanillaId);
+
+                            report.AppendLine($"   [{(hasProfession ? "X" : " ")}] {profession.GetName()}");
+                            report.AppendLine($"        - ID: {profession.Id} ({vanillaId})");
+                            report.AppendLine($"        - Description: {profession.GetDescription()}");
+                            report.AppendLine();
+                        }
+                    }
+                    else
+                        report.AppendLine();
+
+                    report.AppendLine();
+                }
+            }
+            else
+                report.AppendLine("There are no custom skills registered with SpaceCore currently.");
+
+            Log.Info(report.ToString());
         }
 
         private static void ExpCommand(string[] args)

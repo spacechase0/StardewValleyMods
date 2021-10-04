@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Added `dump_spacecore_skills` command to list custom skills/professions registered through SpaceCore, including their IDs for save editing.
+
 ## 1.6.2
 Released 19 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 
