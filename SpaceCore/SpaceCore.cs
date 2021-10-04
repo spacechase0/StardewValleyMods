@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
@@ -22,6 +21,9 @@ namespace SpaceCore
         ** Fields
         *********/
         private Harmony Harmony;
+
+        /// <summary>Handles migrating legacy data for a save file.</summary>
+        private LegacyDataMigrator LegacyDataMigrator;
 
         /// <summary>Whether the current update tick is the first one raised by SMAPI.</summary>
         private bool IsFirstTick;
@@ -46,6 +48,8 @@ namespace SpaceCore
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            this.LegacyDataMigrator = new LegacyDataMigrator(helper.Data, this.Monitor);
+
             SpaceCore.Instance = this;
             SpaceCore.Reflection = helper.Reflection;
             Log.Monitor = this.Monitor;
@@ -161,14 +165,13 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            // delete legacy data
-            if (Context.IsMainPlayer)
+            try
             {
-                this.Helper.Data.WriteSaveData("sleepy-eye", null as object);
-
-                FileInfo legacyFile = new FileInfo(Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json"));
-                if (legacyFile.Exists)
-                    legacyFile.Delete();
+                this.LegacyDataMigrator.OnSaveLoaded();
+            }
+            catch (Exception ex)
+            {
+                Log.Warn($"Exception migrating legacy save data: {ex}");
             }
         }
 
