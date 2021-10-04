@@ -15,21 +15,33 @@ using StardewValley;
 
 namespace SpaceCore
 {
+    /// <summary>The mod entry class.</summary>
     internal class SpaceCore : Mod
     {
-        public Configuration Config { get; set; }
-        internal static SpaceCore Instance;
-        internal static IReflectionHelper Reflection;
+        /*********
+        ** Fields
+        *********/
         private Harmony Harmony;
 
         /// <summary>Whether the current update tick is the first one raised by SMAPI.</summary>
         private bool IsFirstTick;
 
-        internal static List<Type> ModTypes = new();
-
         /// <summary>A queue of textures to dispose, with the <see cref="Game1.ticks"/> value when they were queued.</summary>
         private readonly Queue<KeyValuePair<Texture2D, int>> TextureDisposalQueue = new();
 
+
+        /*********
+        ** Accessors
+        *********/
+        public Configuration Config { get; set; }
+        internal static SpaceCore Instance;
+        internal static IReflectionHelper Reflection;
+        internal static List<Type> ModTypes = new();
+
+
+        /*********
+        ** Public methods
+        *********/
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
@@ -69,11 +81,19 @@ namespace SpaceCore
             );
         }
 
+        /// <inheritdoc />
         public override object GetApi()
         {
             return new Api();
         }
 
+
+        /*********
+        ** Private methods
+        *********/
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
@@ -91,7 +111,7 @@ namespace SpaceCore
             }
         }
 
-        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -136,7 +156,7 @@ namespace SpaceCore
             }
         }
 
-        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <inheritdoc cref="IGameLoopEvents.SaveLoaded"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
@@ -152,6 +172,9 @@ namespace SpaceCore
             }
         }
 
+        /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is StardewValley.Menus.ForgeMenu)
