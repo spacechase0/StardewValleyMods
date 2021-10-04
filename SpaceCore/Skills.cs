@@ -34,7 +34,7 @@ namespace SpaceCore
 
                 public int GetVanillaId()
                 {
-                    return this.Skill.Id.GetHashCode() ^ this.Id.GetHashCode(); // TODO: Something better
+                    return this.Skill.Id.GetDeterministicHashCode() ^ this.Id.GetDeterministicHashCode(); // TODO: Something better
                 }
 
                 public virtual void DoImmediateProfessionPerk() { }

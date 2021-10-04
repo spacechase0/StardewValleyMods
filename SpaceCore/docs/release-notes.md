@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Added `dump_spacecore_skills` command to list custom skills/professions registered through SpaceCore, including their IDs for save editing.
+* Changed custom profession IDs for compatibility with the upcoming Stardew Valley 1.5.5. Existing saves will be migrated automatically.
 
 ## 1.6.2
 Released 19 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
