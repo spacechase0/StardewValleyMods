@@ -289,7 +289,7 @@ namespace JsonAssets
                     PurchaseFrom = obj.PurchaseFrom,
                     Price = obj.PurchasePrice,
                     PurchaseRequirements = this.ParseAndValidateRequirements(source, obj.PurchaseRequirements),
-                    Object = () => new SObject(obj.Id, int.MaxValue, false, obj.PurchasePrice)
+                    Object = () => new SObject(obj.Id, int.MaxValue, false, obj.Price)
                 });
                 foreach (var entry in obj.AdditionalPurchaseData)
                 {
@@ -298,7 +298,7 @@ namespace JsonAssets
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
                         PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
-                        Object = () => new SObject(obj.Id, int.MaxValue, false, entry.PurchasePrice)
+                        Object = () => new SObject(obj.Id, int.MaxValue, false, obj.Price)
                     });
                 }
             }
@@ -379,7 +379,7 @@ namespace JsonAssets
                     PurchaseFrom = crop.Seed.PurchaseFrom,
                     Price = crop.Seed.PurchasePrice,
                     PurchaseRequirements = this.ParseAndValidateRequirements(source, crop.Seed.PurchaseRequirements),
-                    Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, crop.Seed.PurchasePrice),
+                    Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, crop.Seed.Price),
                     ShowWithStocklist = true
                 });
                 foreach (var entry in crop.Seed.AdditionalPurchaseData)
@@ -389,7 +389,7 @@ namespace JsonAssets
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
                         PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
-                        Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, entry.PurchasePrice)
+                        Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, crop.Seed.Price)
                     });
                 }
             }

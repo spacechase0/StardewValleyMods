@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed objects/seeds in shops using `PurchasePrice` instead of `Price` as the sell price.
+
 ## 1.9.1
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild and spacechase0.
 
