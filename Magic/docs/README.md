@@ -125,7 +125,7 @@ professions:
 
 <tr>
   <td><strong>Frostbolt</strong></td>
-  <td>Cast analyze on a frost pip.</td>
+  <td>Cast analyze on an <a href="https://stardewvalleywiki.com/Ice_Pip">ice pip</a>.</td>
   <td>Shoot a piercing bolt of ice at your enemies. Higher levels improve damage and speed.</td>
 </tr>
 
