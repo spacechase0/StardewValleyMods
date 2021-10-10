@@ -162,7 +162,7 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call before <see cref="HoeDirt.seasonUpdate"/>.</summary>
         private static void Before_SeasonUpdate(HoeDirt __instance, bool onLoad)
         {
-            if (!onLoad && (__instance.crop == null || __instance.crop.dead.Value || !__instance.crop.seasonsToGrowIn.Contains(Game1.currentLocation.GetSeasonForLocation())))
+            if (!onLoad && !__instance.currentLocation.SeedsIgnoreSeasonsHere() && (__instance.crop == null || __instance.crop.dead.Value || !__instance.crop.seasonsToGrowIn.Contains(Game1.currentLocation.GetSeasonForLocation())))
             {
                 foreach (string key in DirtHelper.GetFertilizerTypes())
                     __instance.modData.Remove(key);
