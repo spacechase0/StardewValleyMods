@@ -26,11 +26,21 @@ namespace CombatLevelDamageScaler
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (capi != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Damage Scale", "The amount of damage to scale up per combat level, in percentage.", () => (int)(Mod.Config.DamageScalePerLevel * 100), (int val) => Mod.Config.DamageScalePerLevel = val / 100f);
+                configMenu.RegisterModConfig(
+                    mod: this.ModManifest,
+                    revertToDefault: () => Mod.Config = new Configuration(),
+                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Damage Scale",
+                    optionDesc: "The amount of damage to scale up per combat level, in percentage.",
+                    optionGet: () => (int)(Mod.Config.DamageScalePerLevel * 100),
+                    optionSet: value => Mod.Config.DamageScalePerLevel = value / 100f
+                );
             }
         }
     }

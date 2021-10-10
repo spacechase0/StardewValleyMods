@@ -29,11 +29,21 @@ namespace JunimosAcceptCash
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                gmcm.RegisterModConfig(this.ModManifest, () => this.Config = new Configuration(), () => this.Helper.WriteConfig(this.Config));
-                gmcm.RegisterSimpleOption(this.ModManifest, "Cost Multiplier", "The multiplier for the cost of the items to charge.", () => this.Config.CostMultiplier, i => this.Config.CostMultiplier = i);
+                configMenu.RegisterModConfig(
+                    mod: this.ModManifest,
+                    revertToDefault: () => this.Config = new Configuration(),
+                    saveToFile: () => this.Helper.WriteConfig(this.Config)
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Cost Multiplier",
+                    optionDesc: "The multiplier for the cost of the items to charge.",
+                    optionGet: () => this.Config.CostMultiplier,
+                    optionSet: value => this.Config.CostMultiplier = value
+                );
             }
         }
 

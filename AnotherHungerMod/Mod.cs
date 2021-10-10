@@ -52,19 +52,77 @@ namespace AnotherHungerMod
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (capi != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Fullness UI (X)", "The X position of the fullness UI.", () => Mod.Config.FullnessUiX, val => Mod.Config.FullnessUiX = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Fullness UI (Y)", "The Y position of the fullness UI.", () => Mod.Config.FullnessUiY, val => Mod.Config.FullnessUiY = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Max Fullness", "Maximum amount of fullness you can have.", () => Mod.Config.MaxFullness, val => Mod.Config.MaxFullness = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Edibility Multiplier", "A multiplier for the amount of fullness you get, based on the food's edibility.", () => Mod.Config.EdibilityMultiplier, val => Mod.Config.EdibilityMultiplier = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Fullness Drain", "The amount of fullness to drain per in-game minute.", () => Mod.Config.DrainPerMinute, val => Mod.Config.DrainPerMinute = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Positive Buff Threshold", "The amount of fullness you need for positive buffs to apply.", () => Mod.Config.PositiveBuffThreshold, val => Mod.Config.PositiveBuffThreshold = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Negative Buff Threshold", "The amount of fullness you need before negative buffs apply.", () => Mod.Config.NegativeBuffThreshold, val => Mod.Config.NegativeBuffThreshold = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Starvation Damage", "The amount of starvation damage taken every in-game minute when you have no fullness.", () => Mod.Config.StarvationDamagePerMinute, val => Mod.Config.StarvationDamagePerMinute = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Unfed Spouse Penalty", "The relationship points penalty for not feeding your spouse.", () => Mod.Config.RelationshipHitForNotFeedingSpouse, val => Mod.Config.RelationshipHitForNotFeedingSpouse = val);
+                configMenu.RegisterModConfig(
+                    mod: this.ModManifest,
+                    revertToDefault: () => Mod.Config = new Configuration(),
+                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Fullness UI (X)",
+                    optionDesc: "The X position of the fullness UI.",
+                    optionGet: () => Mod.Config.FullnessUiX,
+                    optionSet: value => Mod.Config.FullnessUiX = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Fullness UI (Y)",
+                    optionDesc: "The Y position of the fullness UI.",
+                    optionGet: () => Mod.Config.FullnessUiY,
+                    optionSet: value => Mod.Config.FullnessUiY = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Max Fullness",
+                    optionDesc: "Maximum amount of fullness you can have.",
+                    optionGet: () => Mod.Config.MaxFullness,
+                    optionSet: value => Mod.Config.MaxFullness = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Edibility Multiplier",
+                    optionDesc: "A multiplier for the amount of fullness you get, based on the food's edibility.",
+                    optionGet: () => Mod.Config.EdibilityMultiplier,
+                    optionSet: value => Mod.Config.EdibilityMultiplier = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Fullness Drain",
+                    optionDesc: "The amount of fullness to drain per in-game minute.",
+                    optionGet: () => Mod.Config.DrainPerMinute,
+                    optionSet: value => Mod.Config.DrainPerMinute = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Positive Buff Threshold",
+                    optionDesc: "The amount of fullness you need for positive buffs to apply.",
+                    optionGet: () => Mod.Config.PositiveBuffThreshold,
+                    optionSet: value => Mod.Config.PositiveBuffThreshold = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Negative Buff Threshold",
+                    optionDesc: "The amount of fullness you need before negative buffs apply.",
+                    optionGet: () => Mod.Config.NegativeBuffThreshold,
+                    optionSet: value => Mod.Config.NegativeBuffThreshold = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Starvation Damage",
+                    optionDesc: "The amount of starvation damage taken every in-game minute when you have no fullness.",
+                    optionGet: () => Mod.Config.StarvationDamagePerMinute,
+                    optionSet: value => Mod.Config.StarvationDamagePerMinute = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Unfed Spouse Penalty",
+                    optionDesc: "The relationship points penalty for not feeding your spouse.",
+                    optionGet: () => Mod.Config.RelationshipHitForNotFeedingSpouse,
+                    optionSet: value => Mod.Config.RelationshipHitForNotFeedingSpouse = value
+                );
             }
         }
 

@@ -38,36 +38,36 @@ it to a `Config` field in your entry class):
 private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
 {
     // get Generic Mod Config Menu API (if it's installed)
-    var api = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-    if (api is null)
+    var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+    if (configMenu is null)
         return;
 
     // register mod configuration
-    api.RegisterModConfig(
+    configMenu.RegisterModConfig(
         mod: this.ModManifest,
         revertToDefault: () => this.Config = new ModConfig(),
         saveToFile: () => this.Helper.WriteConfig(this.Config)
     );
 
     // let players configure your mod in-game (instead of just from the title screen)
-    api.SetDefaultIngameOptinValue(this.ModManifest, true);
+    configMenu.SetDefaultIngameOptinValue(this.ModManifest, true);
 
     // add some config options
-    api.RegisterSimpleOption(
+    configMenu.RegisterSimpleOption(
         mod: this.ModManifest,
         optionName: "Example checkbox",
         optionDesc: "An optional description shown as a tooltip to the player.",
         optionGet: () => this.Config.ExampleCheckbox,
         optionSet: value => this.Config.ExampleCheckbox = value
     );
-    api.RegisterSimpleOption(
+    configMenu.RegisterSimpleOption(
         mod: this.ModManifest,
         optionName: "Example string",
         optionDesc: "...",
         optionGet: () => this.Config.ExampleString,
         optionSet: value => this.Config.ExampleString = value
     );
-    api.RegisterChoiceOption(
+    configMenu.RegisterChoiceOption(
         mod: this.ModManifest,
         optionName: "Example dropdown",
         optionDesc: "...",
@@ -78,7 +78,7 @@ private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
 }
 ```
 
-See the `IGenericModConfigMenuApi` for more options.
+See [`IGenericModConfigMenuApi`](../IGenericModConfigMenuApi.cs) for more options.
 
 ### For Content Patcher pack authors
 You don't need to do anything! Content Patcher will add the config UI automatically for you.

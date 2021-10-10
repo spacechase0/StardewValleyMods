@@ -100,14 +100,21 @@ namespace DynamicGameAssets.PackData
             if (!this.smapiPack.HasFile("config-schema.json"))
                 return;
 
-            var gmcm = Mod.instance.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm == null)
+            var configMenu = Mod.instance.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu == null)
                 return;
 
-            gmcm.UnregisterModConfig(this.smapiPack.Manifest);
-            gmcm.RegisterModConfig(this.smapiPack.Manifest, this.ResetToDefaultConfig, () => this.smapiPack.WriteJsonFile("config.json", this.currConfig));
-            gmcm.SetDefaultIngameOptinValue(this.smapiPack.Manifest, true);
-            gmcm.RegisterParagraph(this.smapiPack.Manifest, "Note: If in-game, config values may not take effect until the next in-game day.");
+            configMenu.UnregisterModConfig(this.smapiPack.Manifest);
+            configMenu.RegisterModConfig(
+                mod: this.smapiPack.Manifest,
+                revertToDefault: this.ResetToDefaultConfig,
+                saveToFile: () => this.smapiPack.WriteJsonFile("config.json", this.currConfig)
+            );
+            configMenu.SetDefaultIngameOptinValue(this.smapiPack.Manifest, true);
+            configMenu.RegisterParagraph(
+                mod: this.smapiPack.Manifest,
+                paragraph: "Note: If in-game, config values may not take effect until the next in-game day."
+            );
 
             var readConfig = this.smapiPack.ReadJsonFile<ConfigModel>("config.json");
             bool writeConfig = false;
@@ -123,22 +130,47 @@ namespace DynamicGameAssets.PackData
                 Log.Trace($"Loading config entry {d.Name}...");
                 this.configs.Add(d);
 
-                gmcm.StartNewPage(this.smapiPack.Manifest, d.OnPage);
+                configMenu.StartNewPage(
+                    mod: this.smapiPack.Manifest,
+                    pageName: d.OnPage
+                );
                 switch (d.ElementType)
                 {
                     case ConfigPackData.ConfigElementType.Label:
                         if (d.PageToGoTo != null)
-                            gmcm.RegisterPageLabel(this.smapiPack.Manifest, d.Name, d.Description, d.PageToGoTo);
+                        {
+                            configMenu.RegisterPageLabel(
+                                mod: this.smapiPack.Manifest,
+                                labelName: d.Name,
+                                labelDesc: d.Description,
+                                newPage: d.PageToGoTo
+                            );
+                        }
                         else
-                            gmcm.RegisterLabel(this.smapiPack.Manifest, d.Name, d.Description);
+                        {
+                            configMenu.RegisterLabel(
+                                mod: this.smapiPack.Manifest,
+                                labelName: d.Name,
+                                labelDesc: d.Description
+                            );
+                        }
+
                         break;
 
                     case ConfigPackData.ConfigElementType.Paragraph:
-                        gmcm.RegisterParagraph(this.smapiPack.Manifest, d.Name);
+                        configMenu.RegisterParagraph(
+                            mod: this.smapiPack.Manifest,
+                            paragraph: d.Name
+                        );
                         break;
 
                     case ConfigPackData.ConfigElementType.Image:
-                        gmcm.RegisterImage(this.smapiPack.Manifest, Path.Combine("DGA", this.smapiPack.Manifest.UniqueID, d.ImagePath), d.ImageRect, d.ImageScale);
+                        configMenu.RegisterImage(
+                            mod: this.smapiPack.Manifest,
+                            texPath: Path.Combine("DGA", this.smapiPack.Manifest.UniqueID, d.ImagePath),
+                            texRect: d.ImageRect,
+                            scale: d.ImageScale
+                        );
                         break;
 
                     case ConfigPackData.ConfigElementType.ConfigOption:
@@ -158,32 +190,117 @@ namespace DynamicGameAssets.PackData
                         switch (d.ValueType)
                         {
                             case ConfigPackData.ConfigValueType.Boolean:
-                                gmcm.RegisterSimpleOption(this.smapiPack.Manifest, d.Name, d.Description, () => this.currConfig.Values[key].ToString() == "true" ? true : false, (v) => this.currConfig.Values[key] = v ? "true" : "false");
+                                configMenu.RegisterSimpleOption(
+                                    mod: this.smapiPack.Manifest,
+                                    optionName: d.Name,
+                                    optionDesc: d.Description,
+                                    optionGet: () => this.currConfig.Values[key].ToString() == "true",
+                                    optionSet: value => this.currConfig.Values[key] = value ? "true" : "false"
+                                );
                                 break;
 
                             case ConfigPackData.ConfigValueType.Integer:
-                                if (valid?.Length == 2)
-                                    gmcm.RegisterClampedOption(this.smapiPack.Manifest, d.Name, d.Description, () => int.Parse(this.currConfig.Values[key].ToString()), (v) => this.currConfig.Values[key] = v.ToString(), int.Parse(valid[0]), int.Parse(valid[1]));
-                                else if (valid?.Length == 3)
-                                    gmcm.RegisterClampedOption(this.smapiPack.Manifest, d.Name, d.Description, () => int.Parse(this.currConfig.Values[key].ToString()), (v) => this.currConfig.Values[key] = v.ToString(), int.Parse(valid[0]), int.Parse(valid[1]), int.Parse(valid[2]));
-                                else
-                                    gmcm.RegisterSimpleOption(this.smapiPack.Manifest, d.Name, d.Description, () => int.Parse(this.currConfig.Values[key].ToString()), (v) => this.currConfig.Values[key] = v.ToString());
+                                switch (valid?.Length)
+                                {
+                                    case 2:
+                                        configMenu.RegisterClampedOption(
+                                            mod: this.smapiPack.Manifest,
+                                            optionName: d.Name,
+                                            optionDesc: d.Description,
+                                            optionGet: () => int.Parse(this.currConfig.Values[key].ToString()),
+                                            optionSet: value => this.currConfig.Values[key] = value.ToString(),
+                                            min: int.Parse(valid[0]),
+                                            max: int.Parse(valid[1])
+                                        );
+                                        break;
+
+                                    case 3:
+                                        configMenu.RegisterClampedOption(
+                                            mod: this.smapiPack.Manifest,
+                                            optionName: d.Name,
+                                            optionDesc: d.Description,
+                                            optionGet: () => int.Parse(this.currConfig.Values[key].ToString()),
+                                            optionSet: value => this.currConfig.Values[key] = value.ToString(),
+                                            min: int.Parse(valid[0]),
+                                            max: int.Parse(valid[1]),
+                                            interval: int.Parse(valid[2])
+                                        );
+                                        break;
+
+                                    default:
+                                        configMenu.RegisterSimpleOption(
+                                            mod: this.smapiPack.Manifest,
+                                            optionName: d.Name,
+                                            optionDesc: d.Description,
+                                            optionGet: () => int.Parse(this.currConfig.Values[key].ToString()),
+                                            optionSet: value => this.currConfig.Values[key] = value.ToString()
+                                        );
+                                        break;
+                                }
                                 break;
 
                             case ConfigPackData.ConfigValueType.Float:
-                                if (valid?.Length == 2)
-                                    gmcm.RegisterClampedOption(this.smapiPack.Manifest, d.Name, d.Description, () => float.Parse(this.currConfig.Values[key].ToString()), (v) => this.currConfig.Values[key] = v.ToString(), float.Parse(valid[0]), float.Parse(valid[1]));
-                                else if (valid?.Length == 3)
-                                    gmcm.RegisterClampedOption(this.smapiPack.Manifest, d.Name, d.Description, () => float.Parse(this.currConfig.Values[key].ToString()), (v) => this.currConfig.Values[key] = v.ToString(), float.Parse(valid[0]), float.Parse(valid[1]), float.Parse(valid[2]));
-                                else
-                                    gmcm.RegisterSimpleOption(this.smapiPack.Manifest, d.Name, d.Description, () => float.Parse(this.currConfig.Values[key].ToString()), (v) => this.currConfig.Values[key] = v.ToString());
+                                switch (valid?.Length)
+                                {
+                                    case 2:
+                                        configMenu.RegisterClampedOption(
+                                            mod: this.smapiPack.Manifest,
+                                            optionName: d.Name,
+                                            optionDesc: d.Description,
+                                            optionGet: () => float.Parse(this.currConfig.Values[key].ToString()),
+                                            optionSet: value => this.currConfig.Values[key] = value.ToString(),
+                                            min: float.Parse(valid[0]),
+                                            max: float.Parse(valid[1])
+                                        );
+                                        break;
+
+                                    case 3:
+                                        configMenu.RegisterClampedOption(
+                                            mod: this.smapiPack.Manifest,
+                                            optionName: d.Name,
+                                            optionDesc: d.Description,
+                                            optionGet: () => float.Parse(this.currConfig.Values[key].ToString()),
+                                            optionSet: value => this.currConfig.Values[key] = value.ToString(),
+                                            min: float.Parse(valid[0]),
+                                            max: float.Parse(valid[1]),
+                                            interval: float.Parse(valid[2])
+                                        );
+                                        break;
+
+                                    default:
+                                        configMenu.RegisterSimpleOption(
+                                            mod: this.smapiPack.Manifest,
+                                            optionName: d.Name,
+                                            optionDesc: d.Description,
+                                            optionGet: () => float.Parse(this.currConfig.Values[key].ToString()),
+                                            optionSet: value => this.currConfig.Values[key] = value.ToString()
+                                        );
+                                        break;
+                                }
                                 break;
 
                             case ConfigPackData.ConfigValueType.String:
                                 if (valid?.Length > 1)
-                                    gmcm.RegisterChoiceOption(this.smapiPack.Manifest, d.Name, d.Description, () => this.currConfig.Values[key].ToString(), (v) => this.currConfig.Values[key] = v, valid);
+                                {
+                                    configMenu.RegisterChoiceOption(
+                                        mod: this.smapiPack.Manifest,
+                                        optionName: d.Name,
+                                        optionDesc: d.Description,
+                                        optionGet: () => this.currConfig.Values[key].ToString(),
+                                        optionSet: value => this.currConfig.Values[key] = value,
+                                        choices: valid
+                                    );
+                                }
                                 else
-                                    gmcm.RegisterSimpleOption(this.smapiPack.Manifest, d.Name, d.Description, () => this.currConfig.Values[key].ToString(), (v) => this.currConfig.Values[key] = v);
+                                {
+                                    configMenu.RegisterSimpleOption(
+                                        mod: this.smapiPack.Manifest,
+                                        optionName: d.Name,
+                                        optionDesc: d.Description,
+                                        optionGet: () => this.currConfig.Values[key].ToString(),
+                                        optionSet: value => this.currConfig.Values[key] = value
+                                    );
+                                }
                                 break;
                         }
                         break;
@@ -191,9 +308,7 @@ namespace DynamicGameAssets.PackData
             }
 
             if (writeConfig)
-            {
                 this.smapiPack.WriteJsonFile("config.json", this.currConfig);
-            }
         }
 
         private void ResetToDefaultConfig()

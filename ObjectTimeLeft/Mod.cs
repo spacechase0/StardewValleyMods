@@ -33,13 +33,35 @@ namespace ObjectTimeLeft
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (capi != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Show on Start", "Whether to start the game with time left already showing.", () => Mod.Config.ShowOnStart, val => Mod.Config.ShowOnStart = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Mod.Config.ToggleKey, val => Mod.Config.ToggleKey = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Text Scale", "Scale of text that will superimpose the objects.", () => Mod.Config.TextScale, val => Mod.Config.TextScale = val);
+                configMenu.RegisterModConfig(
+                    mod: this.ModManifest,
+                    revertToDefault: () => Mod.Config = new Configuration(),
+                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Show on Start",
+                    optionDesc: "Whether to start the game with time left already showing.",
+                    optionGet: () => Mod.Config.ShowOnStart,
+                    optionSet: value => Mod.Config.ShowOnStart = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Key: Toggle Display",
+                    optionDesc: "The key to toggle the display on objects.",
+                    optionGet: () => Mod.Config.ToggleKey,
+                    optionSet: value => Mod.Config.ToggleKey = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Text Scale",
+                    optionDesc: "Scale of text that will superimpose the objects.",
+                    optionGet: () => Mod.Config.TextScale,
+                    optionSet: value => Mod.Config.TextScale = value
+                );
             }
         }
 

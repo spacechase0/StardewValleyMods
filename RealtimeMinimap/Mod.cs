@@ -55,29 +55,138 @@ namespace RealtimeMinimap
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                gmcm.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                gmcm.SetDefaultIngameOptinValue(this.ModManifest, true);
+                configMenu.RegisterModConfig(
+                    mod: this.ModManifest,
+                    revertToDefault: () => Mod.Config = new Configuration(),
+                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.SetDefaultIngameOptinValue(this.ModManifest, true);
 
-                gmcm.RegisterSimpleOption(this.ModManifest, "Show by default", "Whether or not the minimap should be shown by default.\nYou must restart the game for this to take effect.", () => Mod.Config.ShowByDefault, (v) => Mod.Config.ShowByDefault = v);
-                gmcm.RegisterSimpleOption(this.ModManifest, "Toggle shown key", "Key to toggle showing the minimap.", () => Mod.Config.ToggleShowKey, (v) => Mod.Config.ToggleShowKey = v);
-                gmcm.RegisterSimpleOption(this.ModManifest, "Update Interval", "The interval, in milliseconds, that the minimap will update. 0 will be every frame. -1 will only do it when entering a new location. (Markers update every frame regardless.)", () => Mod.Config.UpdateInterval, (v) => { Mod.Config.UpdateInterval = v; this.ResetTimer(); });
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Show by default",
+                    optionDesc: "Whether or not the minimap should be shown by default.\nYou must restart the game for this to take effect.",
+                    optionGet: () => Mod.Config.ShowByDefault,
+                    optionSet: value => Mod.Config.ShowByDefault = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Toggle shown key",
+                    optionDesc: "Key to toggle showing the minimap.",
+                    optionGet: () => Mod.Config.ToggleShowKey,
+                    optionSet: value => Mod.Config.ToggleShowKey = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Update Interval",
+                    optionDesc: "The interval, in milliseconds, that the minimap will update. 0 will be every frame. -1 will only do it when entering a new location. (Markers update every frame regardless.)",
+                    optionGet: () => Mod.Config.UpdateInterval,
+                    optionSet: value =>
+                    {
+                        Mod.Config.UpdateInterval = value;
+                        this.ResetTimer();
+                    }
+                );
 
-                gmcm.RegisterLabel(this.ModManifest, "Positioning & Size", "Options pertaining to the placement of the minimap.");
-                gmcm.RegisterClampedOption(this.ModManifest, "Minimap Anchor X", "The percentage of the screen's width where the top-left of the minimap will be placed.", () => Mod.Config.MinimapAnchorX, (v) => Mod.Config.MinimapAnchorX = v, 0, 1);
-                gmcm.RegisterClampedOption(this.ModManifest, "Minimap Anchor Y", "The percentage of the screen's height where the top-left of the minimap will be placed.", () => Mod.Config.MinimapAnchorY, (v) => Mod.Config.MinimapAnchorY = v, 0, 1);
-                gmcm.RegisterSimpleOption(this.ModManifest, "Minimap Offset X", "The X offset from the anchor that the minimap will be placed at.", () => Mod.Config.MinimapOffsetX, (v) => Mod.Config.MinimapOffsetX = v);
-                gmcm.RegisterSimpleOption(this.ModManifest, "Minimap Offset Y", "The Y offset from the anchor that the minimap will be placed at.", () => Mod.Config.MinimapOffsetY, (v) => Mod.Config.MinimapOffsetY = v);
-                gmcm.RegisterSimpleOption(this.ModManifest, "Minimap Size", "The size of the minimap, in pixels (before UI scale).", () => Mod.Config.MinimapSize, (v) => Mod.Config.MinimapSize = v);
+                configMenu.RegisterLabel(
+                    mod: this.ModManifest,
+                    labelName: "Positioning & Size",
+                    labelDesc: "Options pertaining to the placement of the minimap."
+                );
+                configMenu.RegisterClampedOption(
+                    mod: this.ModManifest,
+                    optionName: "Minimap Anchor X",
+                    optionDesc: "The percentage of the screen's width where the top-left of the minimap will be placed.",
+                    optionGet: () => Mod.Config.MinimapAnchorX,
+                    optionSet: value => Mod.Config.MinimapAnchorX = value,
+                    min: 0,
+                    max: 1
+                );
+                configMenu.RegisterClampedOption(
+                    mod: this.ModManifest,
+                    optionName: "Minimap Anchor Y",
+                    optionDesc: "The percentage of the screen's height where the top-left of the minimap will be placed.",
+                    optionGet: () => Mod.Config.MinimapAnchorY,
+                    optionSet: value => Mod.Config.MinimapAnchorY = value,
+                    min: 0,
+                    max: 1
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Minimap Offset X",
+                    optionDesc: "The X offset from the anchor that the minimap will be placed at.",
+                    optionGet: () => Mod.Config.MinimapOffsetX,
+                    optionSet: value => Mod.Config.MinimapOffsetX = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Minimap Offset Y",
+                    optionDesc: "The Y offset from the anchor that the minimap will be placed at.",
+                    optionGet: () => Mod.Config.MinimapOffsetY,
+                    optionSet: value => Mod.Config.MinimapOffsetY = value
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Minimap Size",
+                    optionDesc: "The size of the minimap, in pixels (before UI scale).",
+                    optionGet: () => Mod.Config.MinimapSize,
+                    optionSet: value => Mod.Config.MinimapSize = value
+                );
 
-                gmcm.RegisterLabel(this.ModManifest, "Markers", "Options pertaining to rendering markers on the map.");
-                gmcm.RegisterClampedOption(this.ModManifest, "Player Heads", "Render scale for the head of a player. 0 disables it.", () => Mod.Config.RenderHeads, (v) => Mod.Config.RenderHeads = v, 0, 4);
-                gmcm.RegisterClampedOption(this.ModManifest, "NPC Heads", "Render scale for the head of an NPC. 0 disables it.", () => Mod.Config.RenderNpcs, (v) => Mod.Config.RenderNpcs = v, 0, 4);
-                gmcm.RegisterClampedOption(this.ModManifest, "Wood Signs", "Render scale for items held on wooden signs . 0 disables it.", () => Mod.Config.RenderWoodSigns, (v) => Mod.Config.RenderWoodSigns = v, 0, 4);
-                gmcm.RegisterClampedOption(this.ModManifest, "Stone Signs", "Render scale for items held on stone signs. 0 disables it.", () => Mod.Config.RenderStoneSigns, (v) => Mod.Config.RenderStoneSigns = v, 0, 4);
-                gmcm.RegisterClampedOption(this.ModManifest, "Dark Signs", "Render scale for items held on dark signs. 0 disables it.", () => Mod.Config.RenderDarkSigns, (v) => Mod.Config.RenderDarkSigns = v, 0, 4);
+                configMenu.RegisterLabel(
+                    mod: this.ModManifest,
+                    labelName: "Markers",
+                    labelDesc: "Options pertaining to rendering markers on the map."
+                );
+                configMenu.RegisterClampedOption(
+                    mod: this.ModManifest,
+                    optionName: "Player Heads",
+                    optionDesc: "Render scale for the head of a player. 0 disables it.",
+                    optionGet: () => Mod.Config.RenderHeads,
+                    optionSet: value => Mod.Config.RenderHeads = value,
+                    min: 0,
+                    max: 4
+                );
+                configMenu.RegisterClampedOption(
+                    mod: this.ModManifest,
+                    optionName: "NPC Heads",
+                    optionDesc: "Render scale for the head of an NPC. 0 disables it.",
+                    optionGet: () => Mod.Config.RenderNpcs,
+                    optionSet: value => Mod.Config.RenderNpcs = value,
+                    min: 0,
+                    max: 4
+                );
+                configMenu.RegisterClampedOption(
+                    mod: this.ModManifest,
+                    optionName: "Wood Signs",
+                    optionDesc: "Render scale for items held on wooden signs . 0 disables it.",
+                    optionGet: () => Mod.Config.RenderWoodSigns,
+                    optionSet: value => Mod.Config.RenderWoodSigns = value,
+                    min: 0,
+                    max: 4
+                );
+                configMenu.RegisterClampedOption(
+                    mod: this.ModManifest,
+                    optionName: "Stone Signs",
+                    optionDesc: "Render scale for items held on stone signs. 0 disables it.",
+                    optionGet: () => Mod.Config.RenderStoneSigns,
+                    optionSet: value => Mod.Config.RenderStoneSigns = value,
+                    min: 0,
+                    max: 4
+
+                );
+                configMenu.RegisterClampedOption(
+                    mod: this.ModManifest,
+                    optionName: "Dark Signs",
+                    optionDesc: "Render scale for items held on dark signs. 0 disables it.",
+                    optionGet: () => Mod.Config.RenderDarkSigns,
+                    optionSet: value => Mod.Config.RenderDarkSigns = value,
+                    min: 0,
+                    max: 4
+                );
             }
         }
 

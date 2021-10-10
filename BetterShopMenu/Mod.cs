@@ -35,11 +35,21 @@ namespace BetterShopMenu
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (capi != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Grid Layout)", "Whether or not to use the grid layout in shops.", () => Mod.Config.GridLayout, (bool val) => Mod.Config.GridLayout = val);
+                configMenu.RegisterModConfig(
+                    mod: this.ModManifest,
+                    revertToDefault: () => Mod.Config = new Configuration(),
+                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Grid Layout)",
+                    optionDesc: "Whether or not to use the grid layout in shops.",
+                    optionGet: () => Mod.Config.GridLayout,
+                    optionSet: value => Mod.Config.GridLayout = value
+                );
             }
         }
 

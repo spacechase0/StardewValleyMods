@@ -55,21 +55,26 @@ namespace FlowerRain
 
         private void GameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                gmcm.RegisterModConfig(this.ModManifest, () => Mod.Config = new Config(), () => this.Helper.WriteConfig(Mod.Config));
-                gmcm.RegisterSimpleOption(
-                    this.ModManifest,
-                    "Use Vanilla Flowers Only",
-                    "Only use vanilla flowers in the flower rain",
-                    () => Mod.Config.VanillaFlowersOnly,
-                    b =>
+                configMenu.RegisterModConfig(
+                    mod: this.ModManifest,
+                    revertToDefault: () => Mod.Config = new Config(),
+                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Use Vanilla Flowers Only",
+                    optionDesc: "Only use vanilla flowers in the flower rain",
+                    optionGet: () => Mod.Config.VanillaFlowersOnly,
+                    optionSet: value =>
                     {
-                        Mod.Config.VanillaFlowersOnly = b;
+                        Mod.Config.VanillaFlowersOnly = value;
                         if (Mod.Config.VanillaFlowersOnly)
                             this.BuildFlowerData(useWhitelist: true);
-                    });
+                    }
+                );
             }
 
             var ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");

@@ -51,13 +51,35 @@ namespace ExperienceBars
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (capi != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "X position", "The pixel X position at which to draw the experience bars, relative to the top-left corner of the screen.", () => Mod.Config.Position.X, (int val) => Mod.Config.Position = new(val, Mod.Config.Position.Y));
-                capi.RegisterSimpleOption(this.ModManifest, "Y position", "The pixel Y position at which to draw the experience bars, relative to the top-left corner of the screen.", () => Mod.Config.Position.Y, (int val) => Mod.Config.Position = new(Mod.Config.Position.X, val));
-                capi.RegisterSimpleOption(this.ModManifest, "Toggle Button", "The button which shows or hides the experience bars display. Press Shift and this button to move the display.", () => Mod.Config.ToggleBars, (SButton val) => Mod.Config.ToggleBars = val);
+                configMenu.RegisterModConfig(
+                    mod: this.ModManifest,
+                    revertToDefault: () => Mod.Config = new Configuration(),
+                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "X position",
+                    optionDesc: "The pixel X position at which to draw the experience bars, relative to the top-left corner of the screen.",
+                    optionGet: () => Mod.Config.Position.X,
+                    optionSet: value => Mod.Config.Position = new(value, Mod.Config.Position.Y)
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Y position",
+                    optionDesc: "The pixel Y position at which to draw the experience bars, relative to the top-left corner of the screen.",
+                    optionGet: () => Mod.Config.Position.Y,
+                    optionSet: value => Mod.Config.Position = new(Mod.Config.Position.X, value)
+                );
+                configMenu.RegisterSimpleOption(
+                    mod: this.ModManifest,
+                    optionName: "Toggle Button",
+                    optionDesc: "The button which shows or hides the experience bars display. Press Shift and this button to move the display.",
+                    optionGet: () => Mod.Config.ToggleBars,
+                    optionSet: value => Mod.Config.ToggleBars = value
+                );
             }
         }
 
