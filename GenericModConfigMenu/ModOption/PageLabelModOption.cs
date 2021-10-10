@@ -2,7 +2,7 @@ using GenericModConfigMenu.Framework;
 
 namespace GenericModConfigMenu.ModOption
 {
-    internal class PageLabelModOption : BaseModOption
+    internal class PageLabelModOption : ReadOnlyModOption
     {
         /*********
         ** Accessors
@@ -14,15 +14,9 @@ namespace GenericModConfigMenu.ModOption
         ** Public methods
         *********/
         public PageLabelModOption(string name, string desc, string newPage, ModConfig mod)
-            : base(name, desc, name, mod)
+            : base(name, desc, mod)
         {
             this.NewPage = newPage;
         }
-
-        /// <inheritdoc />
-        public override void SyncToMod() { }
-
-        /// <inheritdoc />
-        public override void Save() { }
     }
 }

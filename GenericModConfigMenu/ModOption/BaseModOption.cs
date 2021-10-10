@@ -1,3 +1,4 @@
+using System;
 using GenericModConfigMenu.Framework;
 
 namespace GenericModConfigMenu.ModOption
@@ -30,6 +31,12 @@ namespace GenericModConfigMenu.ModOption
             this.Description = desc;
             this.Id = id;
             this.Owner = mod;
+        }
+
+        /// <summary>Generate a random ID for an option field.</summary>
+        protected static string RandomId()
+        {
+            return Guid.NewGuid().ToString("N");
         }
     }
 }

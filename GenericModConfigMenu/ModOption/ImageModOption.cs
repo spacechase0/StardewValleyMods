@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace GenericModConfigMenu.ModOption
 {
-    internal class ImageModOption : BaseModOption
+    internal class ImageModOption : ReadOnlyModOption
     {
         /*********
         ** Accessors
@@ -17,17 +17,11 @@ namespace GenericModConfigMenu.ModOption
         ** Public methods
         *********/
         public ImageModOption(string texPath, Rectangle? texRect, int scale, ModConfig mod)
-            : base(texPath, "", texPath, mod)
+            : base(texPath, "", mod)
         {
             this.TexturePath = texPath;
             this.TextureRect = texRect;
             this.Scale = scale;
         }
-
-        /// <inheritdoc />
-        public override void SyncToMod() { }
-
-        /// <inheritdoc />
-        public override void Save() { }
     }
 }
