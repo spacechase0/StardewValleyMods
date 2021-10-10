@@ -136,7 +136,7 @@ namespace GenericModConfigMenu.Framework
                         };
                         break;
 
-                    case ClampedModOption<int> option:
+                    case NumericModOption<int> option:
                         {
                             var label2 = new Label
                             {
@@ -162,7 +162,7 @@ namespace GenericModConfigMenu.Framework
                             break;
                         }
 
-                    case ClampedModOption<float> option:
+                    case NumericModOption<float> option:
                         {
                             var label2 = new Label
                             {
@@ -237,7 +237,7 @@ namespace GenericModConfigMenu.Framework
                         };
                         break;
 
-                    case LabelModOption option:
+                    case SectionTitleModOption option:
                         label.LocalPosition = new Vector2(-8, 0);
                         label.Bold = true;
                         if (option.Name == "")
@@ -245,7 +245,7 @@ namespace GenericModConfigMenu.Framework
                         other = null;
                         break;
 
-                    case PageLabelModOption option:
+                    case PageLinkModOption option:
                         label.Bold = true;
                         label.Callback = _ => this.OpenPage(option.NewPage);
                         other = null;

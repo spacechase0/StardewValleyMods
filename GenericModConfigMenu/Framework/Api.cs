@@ -55,7 +55,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig modConfig = this.Configs.Get(mod, assert: true);
-            modConfig.ActiveRegisteringPage.Options.Add(new LabelModOption(labelName, labelDesc, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
+            modConfig.ActiveRegisteringPage.Options.Add(new SectionTitleModOption(labelName, labelDesc, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
             if (modConfig.DefaultOptedIngame)
                 modConfig.HasAnyInGame = true;
         }
@@ -190,7 +190,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig modConfig = this.Configs.Get(mod, assert: true);
-            modConfig.ActiveRegisteringPage.Options.Add(new PageLabelModOption(labelName, labelDesc, newPage, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
+            modConfig.ActiveRegisteringPage.Options.Add(new PageLinkModOption(labelName, labelDesc, newPage, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
             if (modConfig.DefaultOptedIngame)
                 modConfig.HasAnyInGame = true;
         }
@@ -346,7 +346,7 @@ namespace GenericModConfigMenu.Framework
             if (!valid.Contains(typeof(T)))
                 throw new ArgumentException("Invalid config option type.");
 
-            modConfig.ActiveRegisteringPage.Options.Add(new ClampedModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, min, max, interval, id, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
+            modConfig.ActiveRegisteringPage.Options.Add(new NumericModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, min, max, interval, id, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
             if (modConfig.DefaultOptedIngame)
                 modConfig.HasAnyInGame = true;
         }

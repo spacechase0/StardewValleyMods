@@ -4,7 +4,7 @@ using SpaceShared;
 
 namespace GenericModConfigMenu.ModOption
 {
-    internal class ClampedModOption<T> : SimpleModOption<T>
+    internal class NumericModOption<T> : SimpleModOption<T>
     {
         /*********
         ** Accessors
@@ -24,7 +24,7 @@ namespace GenericModConfigMenu.ModOption
         /*********
         ** Public methods
         *********/
-        public ClampedModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, T theMin, T theMax, T interval, string id, ModConfig mod)
+        public NumericModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, T theMin, T theMax, T interval, string id, ModConfig mod)
             : base(name, desc, type, theGetter, theSetter, id, mod)
         {
             this.Minimum = theMin;

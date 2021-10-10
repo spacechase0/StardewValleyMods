@@ -2,7 +2,7 @@ using GenericModConfigMenu.Framework;
 
 namespace GenericModConfigMenu.ModOption
 {
-    internal class PageLabelModOption : ReadOnlyModOption
+    internal class PageLinkModOption : ReadOnlyModOption
     {
         /*********
         ** Accessors
@@ -13,7 +13,7 @@ namespace GenericModConfigMenu.ModOption
         /*********
         ** Public methods
         *********/
-        public PageLabelModOption(string name, string desc, string newPage, ModConfig mod)
+        public PageLinkModOption(string name, string desc, string newPage, ModConfig mod)
             : base(name, desc, mod)
         {
             this.NewPage = newPage;

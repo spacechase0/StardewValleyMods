@@ -2,12 +2,12 @@ using GenericModConfigMenu.Framework;
 
 namespace GenericModConfigMenu.ModOption
 {
-    internal class LabelModOption : ReadOnlyModOption
+    internal class SectionTitleModOption : ReadOnlyModOption
     {
         /*********
         ** Public methods
         *********/
-        public LabelModOption(string name, string desc, ModConfig mod)
+        public SectionTitleModOption(string name, string desc, ModConfig mod)
             : base(name, desc, mod) { }
     }
 }
