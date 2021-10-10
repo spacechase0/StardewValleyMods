@@ -35,6 +35,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<OwnModConfig>();
@@ -143,7 +144,7 @@ namespace GenericModConfigMenu
             if (e.NewMenu is GameMenu menu)
             {
                 OptionsPage page = (OptionsPage)menu.pages[GameMenu.optionsTab];
-                page.options.Add(new OptionsButton("Mod Options", this.OpenListMenu));
+                page.options.Add(new OptionsButton(I18n.Button_ModOptions(), this.OpenListMenu));
             }
         }
 

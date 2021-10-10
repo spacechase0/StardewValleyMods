@@ -124,7 +124,7 @@ namespace GenericModConfigMenu.Framework
 
                         other = new Label
                         {
-                            String = option.Value.ToString(),
+                            String = option.Value != SButton.None ? option.Value.ToString() : I18n.Config_RebindKey_NoKey(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                             Callback = (Element e) => this.DoKeybindingFor(option, e as Label)
                         };
@@ -136,7 +136,7 @@ namespace GenericModConfigMenu.Framework
 
                         other = new Label
                         {
-                            String = option.Value.IsBound ? option.Value.ToString() : "(None)",
+                            String = option.Value.IsBound ? option.Value.ToString() : I18n.Config_RebindKey_NoKey(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                             Callback = (Element e) => this.DoKeybinding2For(option, e as Label)
                         };
@@ -381,7 +381,7 @@ namespace GenericModConfigMenu.Framework
 
             var cancelLabel = new Label
             {
-                String = "Cancel",
+                String = I18n.Config_Buttons_Cancel(),
                 Bold = true,
                 LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 400, Game1.uiViewport.Height - 50 - 36),
                 Callback = _ => this.Cancel()
@@ -390,7 +390,7 @@ namespace GenericModConfigMenu.Framework
 
             var defaultLabel = new Label
             {
-                String = "Default",
+                String = I18n.Config_Buttons_ResetToDefault(),
                 Bold = true,
                 LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 200, Game1.uiViewport.Height - 50 - 36),
                 Callback = _ => this.RevertToDefault()
@@ -399,7 +399,7 @@ namespace GenericModConfigMenu.Framework
 
             var saveLabel = new Label
             {
-                String = "Save",
+                String = I18n.Config_Buttons_Save(),
                 Bold = true,
                 LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 50, Game1.uiViewport.Height - 50 - 36),
                 Callback = _ => this.Save()
@@ -408,7 +408,7 @@ namespace GenericModConfigMenu.Framework
 
             var saveCloseLabel = new Label
             {
-                String = "Save&Close",
+                String = I18n.Config_Buttons_SaveAndClose(),
                 Bold = true,
                 LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 200, Game1.uiViewport.Height - 50 - 36),
                 Callback = _ =>
@@ -472,11 +472,11 @@ namespace GenericModConfigMenu.Framework
                 int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
                 IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
 
-                string s = "Rebinding key: " + this.KeybindingOpt.Name;
+                string s = I18n.Config_RebindKey_Title(this.KeybindingOpt.Name);
                 int sw = (int)Game1.dialogueFont.MeasureString(s).X;
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 20), Game1.textColor);
 
-                s = "Press a key to rebind";
+                s = I18n.Config_RebindKey_SimpleInstructions();
                 sw = (int)Game1.dialogueFont.MeasureString(s).X;
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 100), Game1.textColor);
             }
@@ -488,11 +488,11 @@ namespace GenericModConfigMenu.Framework
                 int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
                 IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
 
-                string s = "Rebinding key: " + this.Keybinding2Opt.Name;
+                string s = I18n.Config_RebindKey_Title(this.Keybinding2Opt.Name);
                 int sw = (int)Game1.dialogueFont.MeasureString(s).X;
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 20), Game1.textColor);
 
-                s = "Press a key combination to rebind";
+                s = I18n.Config_RebindKey_ComboInstructions();
                 sw = (int)Game1.dialogueFont.MeasureString(s).X;
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 100), Game1.textColor);
             }

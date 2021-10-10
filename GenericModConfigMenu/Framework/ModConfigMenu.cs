@@ -36,7 +36,7 @@ namespace GenericModConfigMenu.Framework
 
             var heading = new Label
             {
-                String = "Configure Mods",
+                String = I18n.List_Heading(),
                 Bold = true
             };
             heading.LocalPosition = new Vector2((800 - heading.Measure().X) / 2, heading.LocalPosition.Y);
