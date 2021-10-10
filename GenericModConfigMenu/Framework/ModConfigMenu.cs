@@ -56,7 +56,7 @@ namespace GenericModConfigMenu.Framework
 
             foreach (var entry in configs.GetAll().OrderBy(entry => entry.ModName))
             {
-                if (this.InGame && !entry.HasAnyInGame)
+                if (this.InGame && !entry.AnyEditableInGame)
                     continue;
                 var label = new Label
                 {

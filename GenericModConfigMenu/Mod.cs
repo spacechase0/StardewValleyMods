@@ -20,8 +20,8 @@ namespace GenericModConfigMenu
         private RootElement Ui;
         private Button ConfigButton;
 
-        /// <summary>The registered mod config menus.</summary>
-        private readonly ModConfigManager Configs = new();
+        /// <summary>Manages registered mod config menus.</summary>
+        private readonly ModConfigManager ConfigManager = new();
 
 
         /*********
@@ -54,16 +54,16 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override object GetApi()
         {
-            return new Api(this.Configs);
+            return new Api(this.ConfigManager);
         }
 
         /// <summary>Open the menu which shows a list of configurable mods.</summary>
         public void OpenListMenu()
         {
             if (Game1.activeClickableMenu is TitleMenu)
-                TitleMenu.subMenu = new ModConfigMenu(false, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.Configs);
+                TitleMenu.subMenu = new ModConfigMenu(false, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
             else
-                Game1.activeClickableMenu = new ModConfigMenu(true, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.Configs);
+                Game1.activeClickableMenu = new ModConfigMenu(true, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
         }
 
         /// <summary>Open the config UI for a specific mod.</summary>
@@ -72,7 +72,7 @@ namespace GenericModConfigMenu
         public void OpenModMenu(IManifest mod, string page = null)
         {
             bool inGame = Game1.activeClickableMenu is not TitleMenu;
-            ModConfig config = this.Configs.Get(mod, assert: true);
+            ModConfig config = this.ConfigManager.Get(mod, assert: true);
 
             var menu = new SpecificModConfigMenu(
                 config: config,

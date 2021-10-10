@@ -14,6 +14,7 @@ using StardewValley.Menus;
 
 namespace GenericModConfigMenu.Framework
 {
+    /// <summary>The config UI for a specific mod.</summary>
     internal class SpecificModConfigMenu : IClickableMenu, IAssetEditor
     {
         /*********
@@ -76,16 +77,19 @@ namespace GenericModConfigMenu.Framework
             this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
             foreach (var opt in this.ModConfig.Options[this.CurrPage].Options)
             {
-                opt.SyncToMod();
-                if (this.InGame && !opt.AvailableInGame)
+                string name = opt.Name;
+                string tooltip = opt.Tooltip;
+
+                opt.GetLatest();
+                if (this.InGame && !opt.EditableInGame)
                     continue;
 
-                var label = new Label
+                Label label = new Label
                 {
-                    String = opt.Name,
-                    UserData = opt.Description
+                    String = name,
+                    UserData = tooltip
                 };
-                if (!string.IsNullOrEmpty(opt.Description))
+                if (!string.IsNullOrEmpty(tooltip))
                     this.OptHovers.Add(label);
 
                 Element other = new Label
@@ -240,14 +244,14 @@ namespace GenericModConfigMenu.Framework
                     case SectionTitleModOption option:
                         label.LocalPosition = new Vector2(-8, 0);
                         label.Bold = true;
-                        if (option.Name == "")
+                        if (name == "")
                             label = null;
                         other = null;
                         break;
 
                     case PageLinkModOption option:
                         label.Bold = true;
-                        label.Callback = _ => this.OpenPage(option.NewPage);
+                        label.Callback = _ => this.OpenPage(option.PageId);
                         other = null;
                         break;
 
@@ -259,7 +263,7 @@ namespace GenericModConfigMenu.Framework
                             List<string> lines = new();
                             {
                                 string nextLine = "";
-                                foreach (string word in option.Name.Split(' '))
+                                foreach (string word in name.Split(' '))
                                 {
                                     // always add at least one word
                                     if (nextLine == "")
@@ -289,7 +293,7 @@ namespace GenericModConfigMenu.Framework
                             {
                                 new Label
                                 {
-                                    UserData = opt.Description,
+                                    UserData = tooltip,
                                     NonBoldScale = 0.75f,
                                     NonBoldShadow = false,
                                     String = string.Join("\n", lines)
@@ -302,22 +306,22 @@ namespace GenericModConfigMenu.Framework
                         {
                             var tex = Game1.content.Load<Texture2D>(option.TexturePath);
                             var imgSize = new Vector2(tex.Width, tex.Height);
-                            if (option.TextureRect.HasValue)
-                                imgSize = new Vector2(option.TextureRect.Value.Width, option.TextureRect.Value.Height);
+                            if (option.TexturePixelArea.HasValue)
+                                imgSize = new Vector2(option.TexturePixelArea.Value.Width, option.TexturePixelArea.Value.Height);
                             imgSize *= option.Scale;
 
 
                             var localPos = new Vector2(this.Table.Size.X / 2 - imgSize.X / 2, 0);
                             var baseRectPos = new Vector2(
-                                option.TextureRect?.X ?? 0,
-                                option.TextureRect?.Y ?? 0
+                                option.TexturePixelArea?.X ?? 0,
+                                option.TexturePixelArea?.Y ?? 0
                             );
 
-                            var texs = new List<Image>();
+                            var images = new List<Image>();
                             if (this.Textures.ContainsKey(option.TexturePath))
-                                texs = this.Textures[option.TexturePath];
+                                images = this.Textures[option.TexturePath];
                             else
-                                this.Textures.Add(option.TexturePath, texs);
+                                this.Textures.Add(option.TexturePath, images);
 
                             for (int ir = 0; ir < imgSize.Y / this.Table.RowHeight; ++ir)
                             {
@@ -334,7 +338,7 @@ namespace GenericModConfigMenu.Framework
                                     Scale = option.Scale,
                                     LocalPosition = localPos
                                 };
-                                texs.Add(img);
+                                images.Add(img);
                                 this.Table.AddRow(new Element[] { img });
                             }
 
@@ -510,44 +514,42 @@ namespace GenericModConfigMenu.Framework
         *********/
         private void AddDefaultLabels(IManifest modManifest)
         {
-            string page = this.ModConfig.Options[this.CurrPage].DisplayName;
-            var titleLabel = new Label
+            // add page title
             {
-                String = modManifest.Name + (page == "" ? "" : " > " + page),
-                Bold = true
-            };
-            titleLabel.LocalPosition = new Vector2((Game1.uiViewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
-            titleLabel.HoverTextColor = titleLabel.IdleTextColor;
-            this.Ui.AddChild(titleLabel);
+                string pageTitle = this.ModConfig.Options[this.CurrPage].PageTitle;
+                var titleLabel = new Label
+                {
+                    String = modManifest.Name + (pageTitle == "" ? "" : " > " + pageTitle),
+                    Bold = true
+                };
+                titleLabel.LocalPosition = new Vector2((Game1.uiViewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
+                titleLabel.HoverTextColor = titleLabel.IdleTextColor;
+                this.Ui.AddChild(titleLabel);
+            }
 
-            var cancelLabel = new Label
+            // add buttons
+            this.Ui.AddChild(new Label
             {
                 String = I18n.Config_Buttons_Cancel(),
                 Bold = true,
                 LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 400, Game1.uiViewport.Height - 50 - 36),
                 Callback = _ => this.Cancel()
-            };
-            this.Ui.AddChild(cancelLabel);
-
-            var defaultLabel = new Label
+            });
+            this.Ui.AddChild(new Label
             {
                 String = I18n.Config_Buttons_ResetToDefault(),
                 Bold = true,
                 LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 200, Game1.uiViewport.Height - 50 - 36),
                 Callback = _ => this.RevertToDefault()
-            };
-            this.Ui.AddChild(defaultLabel);
-
-            var saveLabel = new Label
+            });
+            this.Ui.AddChild(new Label
             {
                 String = I18n.Config_Buttons_Save(),
                 Bold = true,
                 LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 50, Game1.uiViewport.Height - 50 - 36),
                 Callback = _ => this.Save()
-            };
-            this.Ui.AddChild(saveLabel);
-
-            var saveCloseLabel = new Label
+            });
+            this.Ui.AddChild(new Label
             {
                 String = I18n.Config_Buttons_SaveAndClose(),
                 Bold = true,
@@ -557,8 +559,7 @@ namespace GenericModConfigMenu.Framework
                     this.Save();
                     this.Close();
                 }
-            };
-            this.Ui.AddChild(saveCloseLabel);
+            });
         }
 
         private void RevertToDefault()
@@ -567,8 +568,8 @@ namespace GenericModConfigMenu.Framework
             this.ModConfig.RevertToDefault.Invoke();
             foreach (var page in this.ModConfig.Options)
                 foreach (var opt in page.Value.Options)
-                    opt.SyncToMod();
-            this.ModConfig.SaveToFile.Invoke();
+                    opt.GetLatest();
+            this.ModConfig.SaveChanges.Invoke();
 
             this.OpenPage(this.CurrPage);
         }
@@ -579,7 +580,7 @@ namespace GenericModConfigMenu.Framework
             foreach (var page in this.ModConfig.Options)
                 foreach (var opt in page.Value.Options)
                     opt.Save();
-            this.ModConfig.SaveToFile.Invoke();
+            this.ModConfig.SaveChanges.Invoke();
         }
 
         private void Close()

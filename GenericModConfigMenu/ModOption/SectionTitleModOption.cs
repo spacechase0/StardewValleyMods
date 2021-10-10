@@ -2,12 +2,17 @@ using GenericModConfigMenu.Framework;
 
 namespace GenericModConfigMenu.ModOption
 {
+    /// <summary>A mod option which renders a section title.</summary>
     internal class SectionTitleModOption : ReadOnlyModOption
     {
         /*********
         ** Public methods
         *********/
-        public SectionTitleModOption(string name, string desc, ModConfig mod)
-            : base(name, desc, mod) { }
+        /// <summary>Construct an instance.</summary>
+        /// <param name="text">The title text to show in the form.</param>
+        /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
+        /// <param name="mod">The mod config UI that contains this option.</param>
+        public SectionTitleModOption(string text, string tooltip, ModConfig mod)
+            : base(text, tooltip, mod) { }
     }
 }

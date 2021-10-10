@@ -4,26 +4,41 @@ using GenericModConfigMenu.Framework;
 
 namespace GenericModConfigMenu.ModOption
 {
+    /// <summary>A mod option which renders a dropdown field.</summary>
     internal class ChoiceModOption<T> : SimpleModOption<T>
     {
         /*********
         ** Accessors
         *********/
+        /// <summary>The values that can be selected.</summary>
         public T[] Choices { get; set; }
 
         /// <inheritdoc />
         public override T Value
         {
             get => base.Value;
-            set { if (this.Choices.Contains(value)) base.Value = value; }
+            set
+            {
+                if (this.Choices.Contains(value))
+                    base.Value = value;
+            }
         }
 
 
         /*********
         ** Public methods
         *********/
-        public ChoiceModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, T[] choices, string id, ModConfig mod)
-            : base(name, desc, type, theGetter, theSetter, id, mod)
+        /// <summary>Construct an instance.</summary>
+        /// <param name="name">The label text to show in the form.</param>
+        /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
+        /// <param name="type">The option value type.</param>
+        /// <param name="mod">The mod config UI that contains this option.</param>
+        /// <param name="id">The unique field ID used when raising field-changed events.</param>
+        /// <param name="getValue">Get the latest value from the mod config.</param>
+        /// <param name="setValue">Update the mod config with the given value.</param>
+        /// <param name="choices">The values that can be selected.</param>
+        public ChoiceModOption(string name, string tooltip, Type type, Func<T> getValue, Action<T> setValue, T[] choices, string id, ModConfig mod)
+            : base(name, tooltip, type, getValue, setValue, id, mod)
         {
             this.Choices = choices;
         }

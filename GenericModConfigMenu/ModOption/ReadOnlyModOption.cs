@@ -9,7 +9,7 @@ namespace GenericModConfigMenu.ModOption
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void SyncToMod() { }
+        public override void GetLatest() { }
 
         /// <inheritdoc />
         public override void Save() { }
@@ -20,9 +20,9 @@ namespace GenericModConfigMenu.ModOption
         *********/
         /// <summary>Construct an instance.</summary>
         /// <param name="name">The label text to show in the form.</param>
-        /// <param name="desc">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
+        /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
         /// <param name="mod">The mod config UI that contains this option.</param>
-        protected ReadOnlyModOption(string name, string desc, ModConfig mod)
-            : base(name, desc, BaseModOption.RandomId(), mod) { }
+        protected ReadOnlyModOption(string name, string tooltip, ModConfig mod)
+            : base(name, tooltip, BaseModOption.RandomId(), mod) { }
     }
 }
