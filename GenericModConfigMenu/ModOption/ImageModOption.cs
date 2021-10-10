@@ -5,18 +5,17 @@ namespace GenericModConfigMenu.ModOption
 {
     internal class ImageModOption : BaseModOption
     {
+        /*********
+        ** Accessors
+        *********/
         public string TexturePath { get; }
         public Rectangle? TextureRect { get; }
         public int Scale { get; }
 
-        public override void SyncToMod()
-        {
-        }
 
-        public override void Save()
-        {
-        }
-
+        /*********
+        ** Public methods
+        *********/
         public ImageModOption(string texPath, Rectangle? texRect, int scale, ModConfig mod)
             : base(texPath, "", texPath, mod)
         {
@@ -24,5 +23,11 @@ namespace GenericModConfigMenu.ModOption
             this.TextureRect = texRect;
             this.Scale = scale;
         }
+
+        /// <inheritdoc />
+        public override void SyncToMod() { }
+
+        /// <inheritdoc />
+        public override void Save() { }
     }
 }

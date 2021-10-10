@@ -5,11 +5,19 @@ namespace GenericModConfigMenu.ModOption
 {
     internal class SimpleModOption<T> : BaseModOption
     {
-        public Type Type { get; }
+        /*********
+        ** Fields
+        *********/
+        private T State;
         protected Func<T> Getter;
         protected Action<T> Setter;
 
-        private T State;
+
+        /*********
+        ** Accessors
+        *********/
+        public Type Type { get; }
+
         public virtual T Value
         {
             get => this.State;
@@ -22,17 +30,10 @@ namespace GenericModConfigMenu.ModOption
             }
         }
 
-        public override void SyncToMod()
-        {
-            this.State = this.Getter.Invoke();
-        }
 
-        public override void Save()
-        {
-            SpaceShared.Log.Trace("saving " + this.Name + " " + this.Description);
-            this.Setter.Invoke(this.State);
-        }
-
+        /*********
+        ** Public methods
+        *********/
         public SimpleModOption(string name, string desc, Type type, Func<T> theGetter, Action<T> theSetter, string id, ModConfig mod)
             : base(name, desc, id, mod)
         {
@@ -41,6 +42,19 @@ namespace GenericModConfigMenu.ModOption
             this.Setter = theSetter;
 
             this.State = this.Getter.Invoke();
+        }
+
+        /// <inheritdoc />
+        public override void SyncToMod()
+        {
+            this.State = this.Getter.Invoke();
+        }
+
+        /// <inheritdoc />
+        public override void Save()
+        {
+            SpaceShared.Log.Trace("saving " + this.Name + " " + this.Description);
+            this.Setter.Invoke(this.State);
         }
     }
 }

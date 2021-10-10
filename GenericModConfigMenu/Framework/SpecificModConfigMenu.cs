@@ -16,6 +16,9 @@ namespace GenericModConfigMenu.Framework
 {
     internal class SpecificModConfigMenu : IClickableMenu, IAssetEditor
     {
+        /*********
+        ** Fields
+        *********/
         private readonly bool InGame;
         private readonly Action<string> OpenPage;
         private readonly Action ReturnToList;
@@ -34,34 +37,25 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Whether the user hit escape.</summary>
         private bool ExitOnNextUpdate;
 
+        private SimpleModOption<SButton> KeybindingOpt;
+        private SimpleModOption<KeybindList> Keybinding2Opt;
+        private Label KeybindingLabel;
+
         /// <summary>Whether a keybinding UI is open.</summary>
         private bool IsBindingKey => this.KeybindingOpt != null || this.Keybinding2Opt != null;
 
+
+        /*********
+        ** Accessors
+        *********/
         public IManifest Manifest => this.ModConfig.ModManifest;
         public readonly string CurrPage;
         public static IClickableMenu ActiveConfigMenu;
 
-        public bool CanEdit<T>(IAssetInfo asset)
-        {
-            foreach (string key in this.Textures.Keys)
-            {
-                if (asset.AssetNameEquals(key))
-                    return true;
-            }
-            return false;
-        }
 
-        public void Edit<T>(IAssetData asset)
-        {
-            foreach (string key in this.Textures.Keys)
-            {
-                if (asset.AssetNameEquals(key))
-                {
-                    this.PendingTexChanges.Enqueue(key);
-                }
-            }
-        }
-
+        /*********
+        ** Public methods
+        *********/
         public SpecificModConfigMenu(ModConfig config, bool inGame, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
         {
             this.ModConfig = config;
@@ -361,63 +355,33 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
+        public bool CanEdit<T>(IAssetInfo asset)
+        {
+            foreach (string key in this.Textures.Keys)
+            {
+                if (asset.AssetNameEquals(key))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <inheritdoc />
+        public void Edit<T>(IAssetData asset)
+        {
+            foreach (string key in this.Textures.Keys)
+            {
+                if (asset.AssetNameEquals(key))
+                {
+                    this.PendingTexChanges.Enqueue(key);
+                }
+            }
+        }
+
+        /// <inheritdoc />
         public override void receiveKeyPress(Keys key)
         {
             if (key == Keys.Escape && !this.IsBindingKey)
                 this.ExitOnNextUpdate = true;
-        }
-
-        private void AddDefaultLabels(IManifest modManifest)
-        {
-            string page = this.ModConfig.Options[this.CurrPage].DisplayName;
-            var titleLabel = new Label
-            {
-                String = modManifest.Name + (page == "" ? "" : " > " + page),
-                Bold = true
-            };
-            titleLabel.LocalPosition = new Vector2((Game1.uiViewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
-            titleLabel.HoverTextColor = titleLabel.IdleTextColor;
-            this.Ui.AddChild(titleLabel);
-
-            var cancelLabel = new Label
-            {
-                String = I18n.Config_Buttons_Cancel(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 400, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.Cancel()
-            };
-            this.Ui.AddChild(cancelLabel);
-
-            var defaultLabel = new Label
-            {
-                String = I18n.Config_Buttons_ResetToDefault(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 200, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.RevertToDefault()
-            };
-            this.Ui.AddChild(defaultLabel);
-
-            var saveLabel = new Label
-            {
-                String = I18n.Config_Buttons_Save(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 50, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.Save()
-            };
-            this.Ui.AddChild(saveLabel);
-
-            var saveCloseLabel = new Label
-            {
-                String = I18n.Config_Buttons_SaveAndClose(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 200, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ =>
-                {
-                    this.Save();
-                    this.Close();
-                }
-            };
-            this.Ui.AddChild(saveCloseLabel);
         }
 
         public void ReceiveScrollWheelActionSmapi(int direction)
@@ -431,11 +395,13 @@ namespace GenericModConfigMenu.Framework
                 SpecificModConfigMenu.ActiveConfigMenu = null;
         }
 
+        /// <inheritdoc />
         public override bool readyToClose()
         {
             return false;
         }
 
+        /// <inheritdoc />
         public override void update(GameTime time)
         {
             base.update(time);
@@ -456,6 +422,7 @@ namespace GenericModConfigMenu.Framework
                 this.Cancel();
         }
 
+        /// <inheritdoc />
         public override void draw(SpriteBatch b)
         {
             base.draw(b);
@@ -516,6 +483,84 @@ namespace GenericModConfigMenu.Framework
             }
         }
 
+        /// <inheritdoc />
+        public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
+        {
+            this.Ui = new RootElement();
+
+            Vector2 newSize = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116);
+
+            foreach (Element opt in this.Table.Children)
+            {
+                opt.LocalPosition = new Vector2(newSize.X / (this.Table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
+                if (opt is Slider slider)
+                    slider.RequestWidth = (int)(newSize.X / (this.Table.Size.X / slider.Width));
+            }
+
+            this.Table.Size = newSize;
+            this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
+            this.Table.Scrollbar.Update();
+            this.Ui.AddChild(this.Table);
+            this.AddDefaultLabels(this.Manifest);
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        private void AddDefaultLabels(IManifest modManifest)
+        {
+            string page = this.ModConfig.Options[this.CurrPage].DisplayName;
+            var titleLabel = new Label
+            {
+                String = modManifest.Name + (page == "" ? "" : " > " + page),
+                Bold = true
+            };
+            titleLabel.LocalPosition = new Vector2((Game1.uiViewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
+            titleLabel.HoverTextColor = titleLabel.IdleTextColor;
+            this.Ui.AddChild(titleLabel);
+
+            var cancelLabel = new Label
+            {
+                String = I18n.Config_Buttons_Cancel(),
+                Bold = true,
+                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 400, Game1.uiViewport.Height - 50 - 36),
+                Callback = _ => this.Cancel()
+            };
+            this.Ui.AddChild(cancelLabel);
+
+            var defaultLabel = new Label
+            {
+                String = I18n.Config_Buttons_ResetToDefault(),
+                Bold = true,
+                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 200, Game1.uiViewport.Height - 50 - 36),
+                Callback = _ => this.RevertToDefault()
+            };
+            this.Ui.AddChild(defaultLabel);
+
+            var saveLabel = new Label
+            {
+                String = I18n.Config_Buttons_Save(),
+                Bold = true,
+                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 50, Game1.uiViewport.Height - 50 - 36),
+                Callback = _ => this.Save()
+            };
+            this.Ui.AddChild(saveLabel);
+
+            var saveCloseLabel = new Label
+            {
+                String = I18n.Config_Buttons_SaveAndClose(),
+                Bold = true,
+                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 200, Game1.uiViewport.Height - 50 - 36),
+                Callback = _ =>
+                {
+                    this.Save();
+                    this.Close();
+                }
+            };
+            this.Ui.AddChild(saveCloseLabel);
+        }
+
         private void RevertToDefault()
         {
             Game1.playSound("backpackIN");
@@ -553,9 +598,6 @@ namespace GenericModConfigMenu.Framework
             this.Close();
         }
 
-        private SimpleModOption<SButton> KeybindingOpt;
-        private SimpleModOption<KeybindList> Keybinding2Opt;
-        private Label KeybindingLabel;
         private void DoKeybindingFor(SimpleModOption<SButton> opt, Label label)
         {
             Game1.playSound("breathin");
@@ -636,26 +678,6 @@ namespace GenericModConfigMenu.Framework
                 return;
             }
 
-        }
-
-        public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
-        {
-            this.Ui = new RootElement();
-
-            Vector2 newSize = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116);
-
-            foreach (Element opt in this.Table.Children)
-            {
-                opt.LocalPosition = new Vector2(newSize.X / (this.Table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
-                if (opt is Slider slider)
-                    slider.RequestWidth = (int)(newSize.X / (this.Table.Size.X / slider.Width));
-            }
-
-            this.Table.Size = newSize;
-            this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
-            this.Table.Scrollbar.Update();
-            this.Ui.AddChild(this.Table);
-            this.AddDefaultLabels(this.Manifest);
         }
     }
 }

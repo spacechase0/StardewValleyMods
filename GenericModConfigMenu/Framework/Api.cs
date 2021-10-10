@@ -28,6 +28,10 @@ namespace GenericModConfigMenu.Framework
             this.Configs = configs;
         }
 
+
+        /****
+        ** Must be called first
+        ****/
         /// <inheritdoc />
         public void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile)
         {
@@ -41,21 +45,122 @@ namespace GenericModConfigMenu.Framework
             this.Configs.Set(mod, new ModConfig(mod, revertToDefault, saveToFile));
         }
 
-        public void UnregisterModConfig(IManifest mod)
-        {
-            this.AssertNotNull(mod, nameof(mod));
 
-            this.Configs.Remove(mod);
-        }
-
-        public void SetDefaultIngameOptinValue(IManifest mod, bool optedIn)
+        /****
+        ** Basic options
+        ****/
+        /// <inheritdoc />
+        public void RegisterLabel(IManifest mod, string labelName, string labelDesc)
         {
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig modConfig = this.Configs.Get(mod, assert: true);
-            modConfig.DefaultOptedIngame = optedIn;
+            modConfig.ActiveRegisteringPage.Options.Add(new LabelModOption(labelName, labelDesc, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
+            if (modConfig.DefaultOptedIngame)
+                modConfig.HasAnyInGame = true;
         }
 
+        /// <inheritdoc />
+        public void RegisterParagraph(IManifest mod, string paragraph)
+        {
+            this.AssertNotNull(mod, nameof(mod));
+
+            ModConfig modConfig = this.Configs.Get(mod, assert: true);
+            modConfig.ActiveRegisteringPage.Options.Add(new ParagraphModOption(paragraph, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
+            if (modConfig.DefaultOptedIngame)
+                modConfig.HasAnyInGame = true;
+        }
+
+        /// <inheritdoc />
+        public void RegisterImage(IManifest mod, string texPath, Rectangle? texRect = null, int scale = 4)
+        {
+            this.AssertNotNull(mod, nameof(mod));
+
+            ModConfig modConfig = this.Configs.Get(mod, assert: true);
+            modConfig.ActiveRegisteringPage.Options.Add(new ImageModOption(texPath, texRect, scale, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
+            if (modConfig.DefaultOptedIngame)
+                modConfig.HasAnyInGame = true;
+        }
+
+        /// <inheritdoc />
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<bool> optionGet, Action<bool> optionSet)
+        {
+            this.RegisterSimpleOption<bool>(mod, optionName, optionDesc, optionGet, optionSet);
+        }
+
+        /// <inheritdoc />
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet)
+        {
+            this.RegisterSimpleOption<int>(mod, optionName, optionDesc, optionGet, optionSet);
+        }
+
+        /// <inheritdoc />
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet)
+        {
+            this.RegisterSimpleOption<float>(mod, optionName, optionDesc, optionGet, optionSet);
+        }
+
+        /// <inheritdoc />
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet)
+        {
+            this.RegisterSimpleOption<string>(mod, optionName, optionDesc, optionGet, optionSet);
+        }
+
+        /// <inheritdoc />
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<SButton> optionGet, Action<SButton> optionSet)
+        {
+            this.RegisterSimpleOption<SButton>(mod, optionName, optionDesc, optionGet, optionSet);
+        }
+
+        /// <inheritdoc />
+        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<KeybindList> optionGet, Action<KeybindList> optionSet)
+        {
+            this.RegisterSimpleOption<KeybindList>(mod, optionName, optionDesc, optionGet, optionSet);
+        }
+
+        /// <inheritdoc />
+        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max)
+        {
+            this.RegisterClampedOption<int>(mod, optionName, optionDesc, optionGet, optionSet, min, max, 1);
+        }
+
+        /// <inheritdoc />
+        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max)
+        {
+            this.RegisterClampedOption<float>(mod, optionName, optionDesc, optionGet, optionSet, min, max, 0.01f);
+        }
+
+        /// <inheritdoc />
+        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max, int interval)
+        {
+            this.RegisterClampedOption<int>(mod, optionName, optionDesc, optionGet, optionSet, min, max, interval);
+        }
+
+        /// <inheritdoc />
+        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max, float interval)
+        {
+            this.RegisterClampedOption<float>(mod, optionName, optionDesc, optionGet, optionSet, min, max, interval);
+        }
+
+        /// <inheritdoc />
+        public void RegisterChoiceOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet, string[] choices)
+        {
+            this.AssertNotNull(mod, nameof(mod));
+            this.AssertNotNull(optionGet, nameof(optionGet));
+            this.AssertNotNull(optionSet, nameof(optionSet));
+
+            ModConfig modConfig = this.Configs.Get(mod, assert: true);
+
+            modConfig.ActiveRegisteringPage.Options.Add(new ChoiceModOption<string>(optionName, optionDesc, typeof(string), optionGet, optionSet, choices, optionName, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
+            if (modConfig.DefaultOptedIngame)
+                modConfig.HasAnyInGame = true;
+        }
+
+
+        /****
+        ** Multi-page management
+        ****/
+        /// <inheritdoc />
         public void StartNewPage(IManifest mod, string pageName)
         {
             this.AssertNotNull(mod, nameof(mod));
@@ -67,6 +172,7 @@ namespace GenericModConfigMenu.Framework
                 modConfig.Options.Add(pageName, modConfig.ActiveRegisteringPage = new ModConfigPage(pageName));
         }
 
+        /// <inheritdoc />
         public void OverridePageDisplayName(IManifest mod, string pageName, string displayName)
         {
             this.AssertNotNull(mod, nameof(mod));
@@ -78,16 +184,7 @@ namespace GenericModConfigMenu.Framework
             page.DisplayName = displayName;
         }
 
-        public void RegisterLabel(IManifest mod, string labelName, string labelDesc)
-        {
-            this.AssertNotNull(mod, nameof(mod));
-
-            ModConfig modConfig = this.Configs.Get(mod, assert: true);
-            modConfig.ActiveRegisteringPage.Options.Add(new LabelModOption(labelName, labelDesc, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
-            if (modConfig.DefaultOptedIngame)
-                modConfig.HasAnyInGame = true;
-        }
-
+        /// <inheritdoc />
         public void RegisterPageLabel(IManifest mod, string labelName, string labelDesc, string newPage)
         {
             this.AssertNotNull(mod, nameof(mod));
@@ -98,138 +195,11 @@ namespace GenericModConfigMenu.Framework
                 modConfig.HasAnyInGame = true;
         }
 
-        public void RegisterParagraph(IManifest mod, string paragraph)
-        {
-            this.AssertNotNull(mod, nameof(mod));
 
-            ModConfig modConfig = this.Configs.Get(mod, assert: true);
-            modConfig.ActiveRegisteringPage.Options.Add(new ParagraphModOption(paragraph, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
-            if (modConfig.DefaultOptedIngame)
-                modConfig.HasAnyInGame = true;
-        }
-
-        public void RegisterImage(IManifest mod, string texPath, Rectangle? texRect = null, int scale = 4)
-        {
-            this.AssertNotNull(mod, nameof(mod));
-
-            ModConfig modConfig = this.Configs.Get(mod, assert: true);
-            modConfig.ActiveRegisteringPage.Options.Add(new ImageModOption(texPath, texRect, scale, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
-            if (modConfig.DefaultOptedIngame)
-                modConfig.HasAnyInGame = true;
-        }
-
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<bool> optionGet, Action<bool> optionSet)
-        {
-            this.RegisterSimpleOption<bool>(mod, optionName, optionDesc, optionGet, optionSet);
-        }
-
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet)
-        {
-            this.RegisterSimpleOption<int>(mod, optionName, optionDesc, optionGet, optionSet);
-        }
-
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet)
-        {
-            this.RegisterSimpleOption<float>(mod, optionName, optionDesc, optionGet, optionSet);
-        }
-
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet)
-        {
-            this.RegisterSimpleOption<string>(mod, optionName, optionDesc, optionGet, optionSet);
-        }
-
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<SButton> optionGet, Action<SButton> optionSet)
-        {
-            this.RegisterSimpleOption<SButton>(mod, optionName, optionDesc, optionGet, optionSet);
-        }
-
-        public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<KeybindList> optionGet, Action<KeybindList> optionSet)
-        {
-            this.RegisterSimpleOption<KeybindList>(mod, optionName, optionDesc, optionGet, optionSet);
-        }
-
-        public void RegisterSimpleOption<T>(IManifest mod, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet)
-        {
-            this.RegisterSimpleOption(mod, optionName, optionName, optionDesc, optionGet, optionSet);
-        }
-
-        public void RegisterSimpleOption<T>(IManifest mod, string id, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet)
-        {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(optionGet, nameof(optionGet));
-            this.AssertNotNull(optionSet, nameof(optionSet));
-
-            ModConfig modConfig = this.Configs.Get(mod, assert: true);
-
-            Type[] valid = new[] { typeof(bool), typeof(int), typeof(float), typeof(string), typeof(SButton), typeof(KeybindList) };
-            if (!valid.Contains(typeof(T)))
-                throw new ArgumentException("Invalid config option type.");
-
-            modConfig.ActiveRegisteringPage.Options.Add(new SimpleModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, id, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
-            if (modConfig.DefaultOptedIngame)
-                modConfig.HasAnyInGame = true;
-        }
-
-        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max)
-        {
-            this.RegisterClampedOption<int>(mod, optionName, optionDesc, optionGet, optionSet, min, max, 1);
-        }
-
-        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max)
-        {
-            this.RegisterClampedOption<float>(mod, optionName, optionDesc, optionGet, optionSet, min, max, 0.01f);
-        }
-
-        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max, int interval)
-        {
-            this.RegisterClampedOption<int>(mod, optionName, optionDesc, optionGet, optionSet, min, max, interval);
-        }
-
-        public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max, float interval)
-        {
-            this.RegisterClampedOption<float>(mod, optionName, optionDesc, optionGet, optionSet, min, max, interval);
-        }
-
-        public void RegisterClampedOption<T>(IManifest mod, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet, T min, T max, T interval)
-        {
-            this.RegisterClampedOption(mod, optionName, optionName, optionDesc, optionGet, optionSet, min, max, interval);
-        }
-
-        public void RegisterClampedOption<T>(IManifest mod, string id, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet, T min, T max, T interval)
-        {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(optionGet, nameof(optionGet));
-            this.AssertNotNull(optionSet, nameof(optionSet));
-
-            ModConfig modConfig = this.Configs.Get(mod, assert: true);
-
-            Type[] valid = new[] { typeof(int), typeof(float) };
-            if (!valid.Contains(typeof(T)))
-                throw new ArgumentException("Invalid config option type.");
-
-            modConfig.ActiveRegisteringPage.Options.Add(new ClampedModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, min, max, interval, id, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
-            if (modConfig.DefaultOptedIngame)
-                modConfig.HasAnyInGame = true;
-        }
-
-        public void RegisterChoiceOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet, string[] choices)
-        {
-            this.RegisterChoiceOption(mod, optionName, optionName, optionDesc, optionGet, optionSet, choices);
-        }
-
-        public void RegisterChoiceOption(IManifest mod, string id, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet, string[] choices)
-        {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(optionGet, nameof(optionGet));
-            this.AssertNotNull(optionSet, nameof(optionSet));
-
-            ModConfig modConfig = this.Configs.Get(mod, assert: true);
-
-            modConfig.ActiveRegisteringPage.Options.Add(new ChoiceModOption<string>(optionName, optionDesc, typeof(string), optionGet, optionSet, choices, id, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
-            if (modConfig.DefaultOptedIngame)
-                modConfig.HasAnyInGame = true;
-        }
-
+        /****
+        ** Advanced
+        ****/
+        /// <inheritdoc />
         public void RegisterComplexOption(IManifest mod, string optionName, string optionDesc, Func<Vector2, object, object> widgetUpdate, Func<SpriteBatch, Vector2, object, object> widgetDraw, Action<object> onSave)
         {
             this.RegisterComplexOption<object>(mod, optionName, optionDesc, widgetUpdate, widgetDraw, onSave);
@@ -253,21 +223,34 @@ namespace GenericModConfigMenu.Framework
                 modConfig.HasAnyInGame = true;
         }
 
+        /// <inheritdoc />
+        public void SetDefaultIngameOptinValue(IManifest mod, bool optedIn)
+        {
+            this.AssertNotNull(mod, nameof(mod));
+
+            ModConfig modConfig = this.Configs.Get(mod, assert: true);
+            modConfig.DefaultOptedIngame = optedIn;
+        }
+
+        /// <inheritdoc />
         public void SubscribeToChange(IManifest mod, Action<string, bool> changeHandler)
         {
             this.SubscribeToChange<bool>(mod, changeHandler);
         }
 
+        /// <inheritdoc />
         public void SubscribeToChange(IManifest mod, Action<string, int> changeHandler)
         {
             this.SubscribeToChange<int>(mod, changeHandler);
         }
 
+        /// <inheritdoc />
         public void SubscribeToChange(IManifest mod, Action<string, float> changeHandler)
         {
             this.SubscribeToChange<float>(mod, changeHandler);
         }
 
+        /// <inheritdoc />
         public void SubscribeToChange(IManifest mod, Action<string, string> changeHandler)
         {
             this.SubscribeToChange<string>(mod, changeHandler);
@@ -293,11 +276,20 @@ namespace GenericModConfigMenu.Framework
             modConfig.ActiveRegisteringPage.ChangeHandler.Add(changeHandler);
         }
 
+        /// <inheritdoc />
         public void OpenModMenu(IManifest mod)
         {
             this.AssertNotNull(mod, nameof(mod));
 
             Mod.Instance.OpenModMenu(mod);
+        }
+
+        /// <inheritdoc />
+        public void UnregisterModConfig(IManifest mod)
+        {
+            this.AssertNotNull(mod, nameof(mod));
+
+            this.Configs.Remove(mod);
         }
 
         /// <inheritdoc />
@@ -315,6 +307,50 @@ namespace GenericModConfigMenu.Framework
         /*********
         ** Private methods
         *********/
+        private void RegisterSimpleOption<T>(IManifest mod, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet)
+        {
+            this.RegisterSimpleOption(mod, optionName, optionName, optionDesc, optionGet, optionSet);
+        }
+
+        private void RegisterSimpleOption<T>(IManifest mod, string id, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet)
+        {
+            this.AssertNotNull(mod, nameof(mod));
+            this.AssertNotNull(optionGet, nameof(optionGet));
+            this.AssertNotNull(optionSet, nameof(optionSet));
+
+            ModConfig modConfig = this.Configs.Get(mod, assert: true);
+
+            Type[] valid = new[] { typeof(bool), typeof(int), typeof(float), typeof(string), typeof(SButton), typeof(KeybindList) };
+            if (!valid.Contains(typeof(T)))
+                throw new ArgumentException("Invalid config option type.");
+
+            modConfig.ActiveRegisteringPage.Options.Add(new SimpleModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, id, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
+            if (modConfig.DefaultOptedIngame)
+                modConfig.HasAnyInGame = true;
+        }
+
+        private void RegisterClampedOption<T>(IManifest mod, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet, T min, T max, T interval)
+        {
+            this.RegisterClampedOption(mod, optionName, optionName, optionDesc, optionGet, optionSet, min, max, interval);
+        }
+
+        private void RegisterClampedOption<T>(IManifest mod, string id, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet, T min, T max, T interval)
+        {
+            this.AssertNotNull(mod, nameof(mod));
+            this.AssertNotNull(optionGet, nameof(optionGet));
+            this.AssertNotNull(optionSet, nameof(optionSet));
+
+            ModConfig modConfig = this.Configs.Get(mod, assert: true);
+
+            Type[] valid = new[] { typeof(int), typeof(float) };
+            if (!valid.Contains(typeof(T)))
+                throw new ArgumentException("Invalid config option type.");
+
+            modConfig.ActiveRegisteringPage.Options.Add(new ClampedModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, min, max, interval, id, modConfig) { AvailableInGame = modConfig.DefaultOptedIngame });
+            if (modConfig.DefaultOptedIngame)
+                modConfig.HasAnyInGame = true;
+        }
+
         /// <summary>Assert that a required parameter is not null.</summary>
         /// <param name="value">The parameter value.</param>
         /// <param name="paramName">The parameter name.</param>

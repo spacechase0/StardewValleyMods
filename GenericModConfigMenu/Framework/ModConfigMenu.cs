@@ -12,13 +12,25 @@ namespace GenericModConfigMenu.Framework
 {
     internal class ModConfigMenu : IClickableMenu
     {
+        /*********
+        ** Fields
+        *********/
         private RootElement Ui;
-        public Table Table;
-        public static IClickableMenu ActiveConfigMenu;
+        private readonly Table Table;
         private readonly bool InGame;
         private readonly int ScrollSpeed;
         private readonly Action<IManifest> OpenModMenu;
 
+
+        /*********
+        ** Accessors
+        *********/
+        public static IClickableMenu ActiveConfigMenu;
+
+
+        /*********
+        ** Public methods
+        *********/
         public ModConfigMenu(bool inGame, int scrollSpeed, Action<IManifest> openModMenu, ModConfigManager configs)
         {
             this.InGame = inGame;
@@ -64,6 +76,7 @@ namespace GenericModConfigMenu.Framework
             ModConfigMenu.ActiveConfigMenu = this;
         }
 
+        /// <inheritdoc />
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
             if (this.upperRightCloseButton != null && this.readyToClose() && this.upperRightCloseButton.containsPoint(x, y))
@@ -83,12 +96,14 @@ namespace GenericModConfigMenu.Framework
                 ModConfigMenu.ActiveConfigMenu = null;
         }
 
+        /// <inheritdoc />
         public override void update(GameTime time)
         {
             base.update(time);
             this.Ui.Update();
         }
 
+        /// <inheritdoc />
         public override void draw(SpriteBatch b)
         {
             base.draw(b);
@@ -99,14 +114,7 @@ namespace GenericModConfigMenu.Framework
                 this.drawMouse(b);
         }
 
-        private void ChangeToModPage(IManifest modManifest)
-        {
-            Log.Trace("Changing to mod config page for mod " + modManifest.UniqueID);
-            Game1.playSound("bigSelect");
-
-            this.OpenModMenu(modManifest);
-        }
-
+        /// <inheritdoc />
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
         {
             this.Ui = new RootElement();
@@ -119,6 +127,18 @@ namespace GenericModConfigMenu.Framework
             this.Table.Size = newSize;
             this.Table.Scrollbar.Update();
             this.Ui.AddChild(this.Table);
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        private void ChangeToModPage(IManifest modManifest)
+        {
+            Log.Trace("Changing to mod config page for mod " + modManifest.UniqueID);
+            Game1.playSound("bigSelect");
+
+            this.OpenModMenu(modManifest);
         }
     }
 }

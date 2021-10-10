@@ -6,6 +6,9 @@ namespace GenericModConfigMenu.Framework
 {
     internal class ModConfig
     {
+        /*********
+        ** Accessors
+        *********/
         /// <summary>The name of the mod which registered the mod configuration.</summary>
         public string ModName => this.ModManifest.Name;
 
@@ -23,6 +26,10 @@ namespace GenericModConfigMenu.Framework
 
         public bool HasAnyInGame = false;
 
+
+        /*********
+        ** Public methods
+        *********/
         public ModConfig(IManifest manifest, Action revertToDefault, Action saveToFile)
         {
             this.ModManifest = manifest;

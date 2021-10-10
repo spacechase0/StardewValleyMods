@@ -23,6 +23,7 @@ namespace GenericModConfigMenu
         /// <summary>The registered mod config menus.</summary>
         private readonly ModConfigManager Configs = new();
 
+
         /*********
         ** Accessors
         *********/

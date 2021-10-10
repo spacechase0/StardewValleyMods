@@ -8,6 +8,9 @@ namespace GenericModConfigMenu.Framework.UI
 {
     internal class Label : Element
     {
+        /*********
+        ** Accessors
+        *********/
         public bool Bold { get; set; } = false;
         public float NonBoldScale { get; set; } = 1f; // Only applies when Bold = false
         public bool NonBoldShadow { get; set; } = true; // Only applies when Bold = false
@@ -29,6 +32,10 @@ namespace GenericModConfigMenu.Framework.UI
         /// <inheritdoc />
         public override string HoveredSound => (this.Callback != null) ? "shiny4" : null;
 
+
+        /*********
+        ** Public methods
+        *********/
         /// <inheritdoc />
         public override void Update(bool hidden = false)
         {

@@ -7,11 +7,18 @@ namespace GenericModConfigMenu.ModOption
 {
     internal class ComplexModOption : BaseModOption
     {
+        /*********
+        ** Fields
+        *********/
         private object State;
         private readonly Func<Vector2, object, object> UpdateFunc;
         private readonly Func<SpriteBatch, Vector2, object, object> DrawFunc;
         private readonly Action<object> SaveFunc;
 
+
+        /*********
+        ** Public methods
+        *********/
         public ComplexModOption(string name, string desc, Func<Vector2, object, object> update, Func<SpriteBatch, Vector2, object, object> draw, Action<object> save, ModConfig mod)
             : base(name, desc, name, mod)
         {
@@ -20,11 +27,13 @@ namespace GenericModConfigMenu.ModOption
             this.SaveFunc = save;
         }
 
+        /// <inheritdoc />
         public override void SyncToMod()
         {
             this.State = null;
         }
 
+        /// <inheritdoc />
         public override void Save()
         {
             this.SaveFunc.Invoke(this.State);

@@ -2,12 +2,20 @@ namespace GenericModConfigMenu.Framework.UI
 {
     internal class Intbox : Textbox
     {
+        /*********
+        ** Accessors
+        *********/
         public int Value
         {
             get => (this.String is "" or "-") ? 0 : int.Parse(this.String);
             set => this.String = value.ToString();
         }
 
+
+        /*********
+        ** Protected methods
+        *********/
+        /// <inheritdoc />
         protected override void ReceiveInput(string str)
         {
             bool valid = true;

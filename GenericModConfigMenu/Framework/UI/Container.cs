@@ -7,12 +7,23 @@ namespace GenericModConfigMenu.Framework.UI
 {
     internal abstract class Container : Element
     {
+        /*********
+        ** Fields
+        *********/
         private readonly IList<Element> ChildrenImpl = new List<Element>();
 
+
+        /*********
+        ** Accessors
+        *********/
         public Element RenderLast { get; set; }
 
         public Element[] Children => this.ChildrenImpl.ToArray();
 
+
+        /*********
+        ** Public methods
+        *********/
         public void AddChild(Element element)
         {
             element.Parent?.RemoveChild(element);
@@ -28,6 +39,7 @@ namespace GenericModConfigMenu.Framework.UI
             element.Parent = null;
         }
 
+        /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
             foreach (var child in this.ChildrenImpl)
