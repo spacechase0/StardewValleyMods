@@ -135,9 +135,10 @@ namespace SpaceShared.APIs
         /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
         /// <param name="draw">Draw the option in the config UI. This is called with the sprite batch being rendered and the pixel position at which to start drawing.</param>
         /// <param name="saveChanges">Save the current value to the mod config.</param>
+        /// <param name="height">The pixel height to allocate for the option in the form, or <c>null</c> for a standard input-sized option. This is called and cached each time the form is opened.</param>
         /// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
         /// <remarks>The custom logic represented by <paramref name="draw"/> and <paramref name="saveChanges"/> is responsible for managing its own state if needed. For example, you can store state in a static field or use closures to use a state variable.</remarks>
-        void AddComplexOption(IManifest mod, Func<string> name, Func<string> tooltip, Action<SpriteBatch, Vector2> draw, Action saveChanges, string fieldId = null);
+        void AddComplexOption(IManifest mod, Func<string> name, Func<string> tooltip, Action<SpriteBatch, Vector2> draw, Action saveChanges, Func<int> height = null, string fieldId = null);
 
         /// <summary>Set whether the options registered after this point can be edited in-game (instead of only on the title screen).</summary>
         /// <param name="mod">The mod's manifest.</param>

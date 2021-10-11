@@ -11,10 +11,10 @@ namespace GenericModConfigMenu.Framework.UI
         public ComplexModOption ModOption { get; }
 
         /// <inheritdoc />
-        public override int Width => 0;
+        public override int Width { get; } = 0;
 
         /// <inheritdoc />
-        public override int Height => 0;
+        public override int Height { get; }
 
 
         /*********
@@ -23,6 +23,7 @@ namespace GenericModConfigMenu.Framework.UI
         public ComplexModOptionWidget(ComplexModOption modOption)
         {
             this.ModOption = modOption;
+            this.Height = modOption.Height();
         }
 
         /// <inheritdoc />

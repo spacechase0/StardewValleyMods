@@ -9,9 +9,14 @@ namespace GenericModConfigMenu.Framework.UI
         /*********
         ** Accessors
         *********/
+        /// <summary>The image texture to display.</summary>
         public Texture2D Texture { get; set; }
-        public Rectangle? TextureRect { get; set; }
-        public float Scale { get; set; } = 1;
+
+        /// <summary>The pixel area within the texture to display, or <c>null</c> to show the entire image.</summary>
+        public Rectangle? TexturePixelArea { get; set; }
+
+        /// <summary>The zoom factor to apply to the image.</summary>
+        public int Scale { get; set; }
 
         public Action<Element> Callback { get; set; }
 
@@ -40,7 +45,7 @@ namespace GenericModConfigMenu.Framework.UI
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
-            b.Draw(this.Texture, this.Position, this.TextureRect, Color.White, 0, Vector2.Zero, this.Scale, SpriteEffects.None, 1);
+            b.Draw(this.Texture, this.Position, this.TexturePixelArea, Color.White, 0, Vector2.Zero, this.Scale, SpriteEffects.None, 1);
         }
 
 
@@ -49,8 +54,8 @@ namespace GenericModConfigMenu.Framework.UI
         *********/
         private Vector2 GetActualSize()
         {
-            if (this.TextureRect.HasValue)
-                return new Vector2(this.TextureRect.Value.Width, this.TextureRect.Value.Height) * this.Scale;
+            if (this.TexturePixelArea.HasValue)
+                return new Vector2(this.TexturePixelArea.Value.Width, this.TexturePixelArea.Value.Height) * this.Scale;
             else
                 return new Vector2(this.Texture.Width, this.Texture.Height) * this.Scale;
         }

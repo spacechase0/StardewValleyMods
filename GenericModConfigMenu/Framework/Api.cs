@@ -147,11 +147,11 @@ namespace GenericModConfigMenu.Framework
         ** Advanced
         ****/
         /// <inheritdoc />
-        public void AddComplexOption(IManifest mod, Func<string> name, Func<string> tooltip, Action<SpriteBatch, Vector2> draw, Action saveChanges, string fieldId = null)
+        public void AddComplexOption(IManifest mod, Func<string> name, Func<string> tooltip, Action<SpriteBatch, Vector2> draw, Action saveChanges, Func<int> height = null, string fieldId = null)
         {
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
 
-            modConfig.AddOption(new ComplexModOption(fieldId, name, tooltip, modConfig, draw, saveChanges));
+            modConfig.AddOption(new ComplexModOption(fieldId, name, tooltip, modConfig, height, draw, saveChanges));
         }
 
         /// <inheritdoc />

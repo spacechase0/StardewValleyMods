@@ -6,10 +6,12 @@
   * Added full translation support for display text.
   * Simplified usage and merged methods.
   * Options are now available in-game by default when using the new API (unless you set `editableInGame: false`).
+  * Complex options can now specify a height to support multi-row content.
 * The generic config UI is now translatable.
 * Fixed `api.SubscribeToChange` only tracking fields on the page that was active when it was called.
 * Fixed sliders with an `interval` sometimes snapping to a value outside the `min`/`max` range.
 * Fixed integer sliders not showing the value label.
+* Fixed large images clipped before the end of the content area.
 
 **Migration guide for mod authors:**  
 <details>

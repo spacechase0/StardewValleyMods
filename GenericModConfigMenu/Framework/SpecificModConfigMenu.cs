@@ -32,8 +32,6 @@ namespace GenericModConfigMenu.Framework
         private readonly Table Table;
         private readonly List<Label> OptHovers = new();
 
-        private readonly Dictionary<string, Image[]> FieldTextures = new();
-
         /// <summary>Whether the user hit escape.</summary>
         private bool ExitOnNextUpdate;
 
@@ -297,47 +295,39 @@ namespace GenericModConfigMenu.Framework
 
                     case ImageModOption option:
                         {
-                            var tex = option.Texture();
-                            var imgSize = new Vector2(tex.Width, tex.Height);
+                            var texture = option.Texture();
+
+                            var size = new Vector2(texture.Width, texture.Height);
                             if (option.TexturePixelArea.HasValue)
-                                imgSize = new Vector2(option.TexturePixelArea.Value.Width, option.TexturePixelArea.Value.Height);
-                            imgSize *= option.Scale;
+                                size = new Vector2(option.TexturePixelArea.Value.Width, option.TexturePixelArea.Value.Height);
+                            size *= option.Scale;
 
-
-                            var localPos = new Vector2(this.Table.Size.X / 2 - imgSize.X / 2, 0);
-                            var baseRectPos = new Vector2(
-                                option.TexturePixelArea?.X ?? 0,
-                                option.TexturePixelArea?.Y ?? 0
-                            );
-
-                            var images = new List<Image>();
-
-                            for (int ir = 0; ir < imgSize.Y / this.Table.RowHeight; ++ir)
+                            var localPos = new Vector2(this.Table.Size.X / 2 - size.X / 2, 0);
+                            optionElement = new Image
                             {
-                                int section = Math.Min((int)(imgSize.Y / option.Scale), this.Table.RowHeight);
-                                int baseY = (int)(baseRectPos.Y + section * ir);
-                                if (baseY + section > baseRectPos.Y + imgSize.Y / option.Scale)
-                                {
-                                    section = (int)(baseRectPos.Y + imgSize.Y / option.Scale) - baseY;
-                                }
-                                var img = new Image
-                                {
-                                    Texture = tex,
-                                    TextureRect = new Rectangle((int)baseRectPos.X, baseY, (int)imgSize.X / option.Scale, section),
-                                    Scale = option.Scale,
-                                    LocalPosition = localPos
-                                };
-                                images.Add(img);
-                                this.Table.AddRow(new Element[] { img });
-                            }
+                                Texture = texture,
+                                TexturePixelArea = option.TexturePixelArea ?? new Rectangle(0, 0, (int)size.X, (int)size.Y),
+                                Scale = option.Scale,
+                                LocalPosition = localPos
+                            };
 
-                            this.FieldTextures[opt.FieldId] = images.ToArray();
-
-                            continue;
+                            break;
                         }
                 }
 
                 this.Table.AddRow(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());
+
+                // add spacer rows for multi-row content
+                {
+                    int elementHeight = new[] { label?.Height, optionElement?.Height, rightLabel?.Height }.Max(p => p ?? 0);
+                    float overlapRows = ((elementHeight * 1.0f) / (this.Table.RowHeight + 16)) - 1;
+
+                    if (overlapRows > 0.05f) // avoid adding an empty row if an element only overlaps slightly
+                    {
+                        for (int i = 0; i < overlapRows; i++)
+                            this.Table.AddRow(new Element[0]);
+                    }
+                }
             }
             this.Ui.AddChild(this.Table);
             this.AddDefaultLabels(this.Manifest);
