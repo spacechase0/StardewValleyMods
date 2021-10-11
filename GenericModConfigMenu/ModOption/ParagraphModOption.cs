@@ -1,3 +1,4 @@
+using System;
 using GenericModConfigMenu.Framework;
 
 namespace GenericModConfigMenu.ModOption
@@ -9,9 +10,9 @@ namespace GenericModConfigMenu.ModOption
         ** Public methods
         *********/
         /// <summary>Construct an instance.</summary>
-        /// <param name="paragraph">The paragraph text to show in the form.</param>
+        /// <param name="text">The paragraph text to show in the form.</param>
         /// <param name="mod">The mod config UI that contains this option.</param>
-        public ParagraphModOption(string paragraph, ModConfig mod)
-            : base(paragraph, "", mod) { }
+        public ParagraphModOption(Func<string> text, ModConfig mod)
+            : base(text, null, mod) { }
     }
 }

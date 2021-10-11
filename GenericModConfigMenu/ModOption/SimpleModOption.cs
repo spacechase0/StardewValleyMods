@@ -23,7 +23,7 @@ namespace GenericModConfigMenu.ModOption
         ** Accessors
         *********/
         /// <summary>The option value type.</summary>
-        public Type Type { get; }
+        public Type Type => typeof(T);
 
         /// <summary>The cached value fetched from the mod config.</summary>
         public virtual T Value
@@ -32,7 +32,7 @@ namespace GenericModConfigMenu.ModOption
             set
             {
                 if (!this.CachedValue.Equals(value))
-                    this.Owner.ChangeHandlers.ForEach(handler => handler(this.Id, value));
+                    this.Owner.ChangeHandlers.ForEach(handler => handler(this.FieldId, value));
 
                 this.CachedValue = value;
             }
@@ -43,34 +43,32 @@ namespace GenericModConfigMenu.ModOption
         ** Public methods
         *********/
         /// <summary>Construct an instance.</summary>
+        /// <param name="fieldId">The unique field ID used when raising field-changed events, or <c>null</c> to generate a random one.</param>
         /// <param name="name">The label text to show in the form.</param>
         /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
-        /// <param name="type">The option value type.</param>
+        /// <param name="mod">The mod config UI that contains this option.</param>
         /// <param name="getValue">Get the latest value from the mod config.</param>
         /// <param name="setValue">Update the mod config with the given value.</param>
-        /// <param name="id">The unique field ID used when raising field-changed events.</param>
-        /// <param name="mod">The mod config UI that contains this option.</param>
-        public SimpleModOption(string name, string tooltip, Type type, Func<T> getValue, Action<T> setValue, string id, ModConfig mod)
-            : base(name, tooltip, id, mod)
+        public SimpleModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<T> getValue, Action<T> setValue)
+            : base(fieldId, name, tooltip, mod)
         {
-            this.Type = type;
             this.GetValue = getValue;
             this.SetValue = setValue;
 
-            this.CachedValue = this.GetValue.Invoke();
+            this.CachedValue = this.GetValue();
         }
 
         /// <inheritdoc />
         public override void GetLatest()
         {
-            this.CachedValue = this.GetValue.Invoke();
+            this.CachedValue = this.GetValue();
         }
 
         /// <inheritdoc />
         public override void Save()
         {
-            SpaceShared.Log.Trace("saving " + this.Name + " " + this.Tooltip);
-            this.SetValue.Invoke(this.CachedValue);
+            SpaceShared.Log.Trace("saving " + this.Name() + " " + this.Tooltip());
+            this.SetValue(this.CachedValue);
         }
     }
 }

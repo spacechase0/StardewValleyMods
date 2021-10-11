@@ -47,31 +47,31 @@ namespace RushOrders
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu != null)
             {
-                configMenu.RegisterModConfig(
+                configMenu.Register(
                     mod: this.ModManifest,
-                    revertToDefault: () => Mod.ModConfig = new ModConfig(),
-                    saveToFile: () => this.Helper.WriteConfig(Mod.ModConfig)
+                    reset: () => Mod.ModConfig = new ModConfig(),
+                    save: () => this.Helper.WriteConfig(Mod.ModConfig)
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Price: Tool - One day",
-                    optionDesc: "The price multiplier for a one-day tool upgrade.",
-                    optionGet: () => (float)Mod.ModConfig.PriceFactor.Tool.Rush,
-                    optionSet: value => Mod.ModConfig.PriceFactor.Tool.Rush = value
+                    name: () => "Price: Tool - One day",
+                    tooltip: () => "The price multiplier for a one-day tool upgrade.",
+                    getValue: () => (float)Mod.ModConfig.PriceFactor.Tool.Rush,
+                    setValue: value => Mod.ModConfig.PriceFactor.Tool.Rush = value
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Price: Tool - Instant",
-                    optionDesc: "The price multiplier for an instant upgrade.",
-                    optionGet: () => (float)Mod.ModConfig.PriceFactor.Tool.Rush,
-                    optionSet: value => Mod.ModConfig.PriceFactor.Tool.Now = value
+                    name: () => "Price: Tool - Instant",
+                    tooltip: () => "The price multiplier for an instant upgrade.",
+                    getValue: () => (float)Mod.ModConfig.PriceFactor.Tool.Rush,
+                    setValue: value => Mod.ModConfig.PriceFactor.Tool.Now = value
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Price: Building - Accelerate",
-                    optionDesc: "The price multiplier to accelerate building construction by one day.",
-                    optionGet: () => (float)Mod.ModConfig.PriceFactor.Building.RushOneDay,
-                    optionSet: value => Mod.ModConfig.PriceFactor.Building.RushOneDay = value
+                    name: () => "Price: Building - Accelerate",
+                    tooltip: () => "The price multiplier to accelerate building construction by one day.",
+                    getValue: () => (float)Mod.ModConfig.PriceFactor.Building.RushOneDay,
+                    setValue: value => Mod.ModConfig.PriceFactor.Building.RushOneDay = value
                 );
             }
         }

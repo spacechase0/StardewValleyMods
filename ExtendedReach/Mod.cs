@@ -47,17 +47,17 @@ namespace ExtendedReach
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu != null)
             {
-                configMenu.RegisterModConfig(
+                configMenu.Register(
                     mod: this.ModManifest,
-                    revertToDefault: () => this.Config = new Configuration(),
-                    saveToFile: () => this.Helper.WriteConfig(this.Config)
+                    reset: () => this.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(this.Config)
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Wiggly Arms",
-                    optionDesc: "Show wiggly arms reaching out to your cursor.",
-                    optionGet: () => this.Config.WigglyArms,
-                    optionSet: value => this.Config.WigglyArms = value
+                    name: () => "Wiggly Arms",
+                    tooltip: () => "Show wiggly arms reaching out to your cursor.",
+                    getValue: () => this.Config.WigglyArms,
+                    setValue: value => this.Config.WigglyArms = value
                 );
             }
         }

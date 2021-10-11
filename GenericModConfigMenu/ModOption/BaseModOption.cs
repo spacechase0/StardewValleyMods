@@ -10,13 +10,13 @@ namespace GenericModConfigMenu.ModOption
         ** Accessors
         *********/
         /// <summary>The unique field ID used when raising field-changed events.</summary>
-        public string Id { get; }
+        public string FieldId { get; }
 
         /// <summary>The label text to show in the form.</summary>
-        public string Name { get; }
+        public Func<string> Name { get; }
 
         /// <summary>The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</summary>
-        public string Tooltip { get; }
+        public Func<string> Tooltip { get; }
 
         /// <summary>Whether the option can be edited from the in-game options menu. If this is false, it can only be edited from the title screen.</summary>
         public bool EditableInGame { get; }
@@ -39,23 +39,20 @@ namespace GenericModConfigMenu.ModOption
         ** Protected methods
         *********/
         /// <summary>Construct an instance.</summary>
+        /// <param name="fieldId">The unique field ID used when raising field-changed events, or <c>null</c> to generate a random one.</param>
         /// <param name="name">The label text to show in the form.</param>
         /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
-        /// <param name="id">The unique field ID used when raising field-changed events.</param>
         /// <param name="mod">The mod config UI that contains this option.</param>
-        protected BaseModOption(string name, string tooltip, string id, ModConfig mod)
+        protected BaseModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod)
         {
+            fieldId ??= Guid.NewGuid().ToString("N");
+            tooltip ??= () => null;
+
             this.Name = name;
             this.Tooltip = tooltip;
-            this.Id = id;
+            this.FieldId = fieldId;
             this.EditableInGame = mod.DefaultEditableInGame;
             this.Owner = mod;
-        }
-
-        /// <summary>Generate a random ID for an option field.</summary>
-        protected static string RandomId()
-        {
-            return Guid.NewGuid().ToString("N");
         }
     }
 }

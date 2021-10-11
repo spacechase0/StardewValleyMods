@@ -14,10 +14,10 @@ namespace GenericModConfigMenu.Framework
         public string PageId { get; }
 
         /// <summary>The page title shown in its UI.</summary>
-        public string PageTitle { get; set; }
+        public Func<string> PageTitle { get; private set; }
 
         /// <summary>The options on the page.</summary>
-        public List<BaseModOption> Options { get; set; } = new();
+        public List<BaseModOption> Options { get; } = new();
 
 
         /*********
@@ -25,10 +25,21 @@ namespace GenericModConfigMenu.Framework
         *********/
         /// <summary>Construct an instance.</summary>
         /// <param name="pageId">The unique page ID.</param>
-        public ModConfigPage(string pageId)
+        /// <param name="pageTitle">The page title shown in its UI, or <c>null</c> to show the <paramref name="pageId"/> value.</param>
+        public ModConfigPage(string pageId, Func<string> pageTitle)
         {
+            pageTitle ??= () => pageId;
+
             this.PageId = pageId;
-            this.PageTitle = this.PageId;
+            this.PageTitle = pageTitle;
+        }
+
+        /// <summary>Set the <see cref="PageTitle"/> value.</summary>
+        /// <param name="value">The value to set.</param>
+        [Obsolete("This is only intended to support backwards compatibility. Most code should set the value in the constructor instead.")]
+        public void SetPageTitle(Func<string> value)
+        {
+            this.PageTitle = value;
         }
     }
 }

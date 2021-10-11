@@ -42,17 +42,17 @@ namespace HybridCropEngine
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu != null)
             {
-                configMenu.RegisterModConfig(
+                configMenu.Register(
                     mod: this.ModManifest,
-                    revertToDefault: () => Mod.Config = new Configuration(),
-                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                    reset: () => Mod.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(Mod.Config)
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Scan Everywhere",
-                    optionDesc: "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.",
-                    optionGet: () => Mod.Config.ScanEverywhere,
-                    optionSet: value => Mod.Config.ScanEverywhere = value
+                    name: () => "Scan Everywhere",
+                    tooltip: () => "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.",
+                    getValue: () => Mod.Config.ScanEverywhere,
+                    setValue: value => Mod.Config.ScanEverywhere = value
                 );
             }
         }

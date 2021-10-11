@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Improved integration with Generic Mod Config Menu (GMCM):
+  * Updated for GMCM 1.5.0.
+  * Enabled config UI from the in-game options menu after the save is loaded.
+
 ## 1.1.2
 Released 18 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

@@ -103,17 +103,17 @@ namespace SpaceCore
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu != null)
             {
-                configMenu.RegisterModConfig(
+                configMenu.Register(
                     mod: this.ModManifest,
-                    revertToDefault: () => this.Config = new Configuration(),
-                    saveToFile: () => this.Helper.WriteConfig(this.Config)
+                    reset: () => this.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(this.Config)
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Custom Skill Page",
-                    optionDesc: "Whether or not to show the custom skill page.\nThis will move the wallet so that there is room for more skills.",
-                    optionGet: () => this.Config.CustomSkillPage,
-                    optionSet: value => this.Config.CustomSkillPage = value
+                    name: () => "Custom Skill Page",
+                    tooltip: () => "Whether or not to show the custom skill page.\nThis will move the wallet so that there is room for more skills.",
+                    getValue: () => this.Config.CustomSkillPage,
+                    setValue: value => this.Config.CustomSkillPage = value
                 );
             }
 

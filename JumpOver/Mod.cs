@@ -29,17 +29,17 @@ namespace JumpOver
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu != null)
             {
-                configMenu.RegisterModConfig(
+                configMenu.Register(
                     mod: this.ModManifest,
-                    revertToDefault: () => Mod.Config = new Configuration(),
-                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                    reset: () => Mod.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(Mod.Config)
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Jump Key",
-                    optionDesc: "The key to jump",
-                    optionGet: () => Mod.Config.KeyJump,
-                    optionSet: value => Mod.Config.KeyJump = value
+                    name: () => "Jump Key",
+                    tooltip: () => "The key to jump",
+                    getValue: () => Mod.Config.KeyJump,
+                    setValue: value => Mod.Config.KeyJump = value
                 );
             }
         }

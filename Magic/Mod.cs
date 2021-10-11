@@ -79,80 +79,81 @@ namespace Magic
                 var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
                 if (configMenu != null)
                 {
-                    configMenu.RegisterModConfig(
+                    configMenu.Register(
                         mod: this.ModManifest,
-                        revertToDefault: () => Mod.Config = new Configuration(),
-                        saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                        reset: () => Mod.Config = new Configuration(),
+                        save: () => this.Helper.WriteConfig(Mod.Config),
+                        editableInGame: false
                     );
-                    configMenu.RegisterSimpleOption(
+                    configMenu.AddOption(
                         mod: this.ModManifest,
-                        optionName: "Altar Location",
-                        optionDesc: "The (internal) name of the location the magic altar should be placed at.",
-                        optionGet: () => Mod.Config.AltarLocation,
-                        optionSet: value => Mod.Config.AltarLocation = value
+                        name: () => "Altar Location",
+                        tooltip: () => "The (internal) name of the location the magic altar should be placed at.",
+                        getValue: () => Mod.Config.AltarLocation,
+                        setValue: value => Mod.Config.AltarLocation = value
                     );
-                    configMenu.RegisterSimpleOption(
+                    configMenu.AddOption(
                         mod: this.ModManifest,
-                        optionName: "Altar X",
-                        optionDesc: "The X tile position of where the magic altar should be placed.",
-                        optionGet: () => Mod.Config.AltarX,
-                        optionSet: value => Mod.Config.AltarX = value
+                        name: () => "Altar X",
+                        tooltip: () => "The X tile position of where the magic altar should be placed.",
+                        getValue: () => Mod.Config.AltarX,
+                        setValue: value => Mod.Config.AltarX = value
                     );
-                    configMenu.RegisterSimpleOption(
+                    configMenu.AddOption(
                         mod: this.ModManifest,
-                        optionName: "Altar Y",
-                        optionDesc: "The Y tile position of where the magic altar should be placed.",
-                        optionGet: () => Mod.Config.AltarY,
-                        optionSet: value => Mod.Config.AltarY = value
+                        name: () => "Altar Y",
+                        tooltip: () => "The Y tile position of where the magic altar should be placed.",
+                        getValue: () => Mod.Config.AltarY,
+                        setValue: value => Mod.Config.AltarY = value
                     );
-                    configMenu.RegisterSimpleOption(
+                    configMenu.AddOption(
                         mod: this.ModManifest,
-                        optionName: "Key: Cast",
-                        optionDesc: "The key to initiate casting a spell.",
-                        optionGet: () => Mod.Config.Key_Cast,
-                        optionSet: value => Mod.Config.Key_Cast = value
+                        name: () => "Key: Cast",
+                        tooltip: () => "The key to initiate casting a spell.",
+                        getValue: () => Mod.Config.Key_Cast,
+                        setValue: value => Mod.Config.Key_Cast = value
                     );
-                    configMenu.RegisterSimpleOption(
+                    configMenu.AddOption(
                         mod: this.ModManifest,
-                        optionName: "Key: Swap Spells",
-                        optionDesc: "The key to swap spell sets.",
-                        optionGet: () => Mod.Config.Key_SwapSpells,
-                        optionSet: value => Mod.Config.Key_SwapSpells = value
+                        name: () => "Key: Swap Spells",
+                        tooltip: () => "The key to swap spell sets.",
+                        getValue: () => Mod.Config.Key_SwapSpells,
+                        setValue: value => Mod.Config.Key_SwapSpells = value
                     );
-                    configMenu.RegisterSimpleOption(
+                    configMenu.AddOption(
                         mod: this.ModManifest,
-                        optionName: "Key: Spell 1",
-                        optionDesc: "The key for spell 1.",
-                        optionGet: () => Mod.Config.Key_Spell1,
-                        optionSet: value => Mod.Config.Key_Spell1 = value
+                        name: () => "Key: Spell 1",
+                        tooltip: () => "The key for spell 1.",
+                        getValue: () => Mod.Config.Key_Spell1,
+                        setValue: value => Mod.Config.Key_Spell1 = value
                     );
-                    configMenu.RegisterSimpleOption(
+                    configMenu.AddOption(
                         mod: this.ModManifest,
-                        optionName: "Key: Spell 2",
-                        optionDesc: "The key for spell 2.",
-                        optionGet: () => Mod.Config.Key_Spell2,
-                        optionSet: value => Mod.Config.Key_Spell2 = value
+                        name: () => "Key: Spell 2",
+                        tooltip: () => "The key for spell 2.",
+                        getValue: () => Mod.Config.Key_Spell2,
+                        setValue: value => Mod.Config.Key_Spell2 = value
                     );
-                    configMenu.RegisterSimpleOption(
+                    configMenu.AddOption(
                         mod: this.ModManifest,
-                        optionName: "Key: Spell 3",
-                        optionDesc: "The key for spell 3.",
-                        optionGet: () => Mod.Config.Key_Spell3,
-                        optionSet: value => Mod.Config.Key_Spell3 = value
+                        name: () => "Key: Spell 3",
+                        tooltip: () => "The key for spell 3.",
+                        getValue: () => Mod.Config.Key_Spell3,
+                        setValue: value => Mod.Config.Key_Spell3 = value
                     );
-                    configMenu.RegisterSimpleOption(
+                    configMenu.AddOption(
                         mod: this.ModManifest,
-                        optionName: "Key: Spell 4",
-                        optionDesc: "The key for spell 4.",
-                        optionGet: () => Mod.Config.Key_Spell4,
-                        optionSet: value => Mod.Config.Key_Spell4 = value
+                        name: () => "Key: Spell 4",
+                        tooltip: () => "The key for spell 4.",
+                        getValue: () => Mod.Config.Key_Spell4,
+                        setValue: value => Mod.Config.Key_Spell4 = value
                     );
-                    configMenu.RegisterSimpleOption(
+                    configMenu.AddOption(
                         mod: this.ModManifest,
-                        optionName: "Key: Spell 5",
-                        optionDesc: "The key for spell 5.",
-                        optionGet: () => Mod.Config.Key_Spell5,
-                        optionSet: value => Mod.Config.Key_Spell5 = value
+                        name: () => "Key: Spell 5",
+                        tooltip: () => "The key for spell 5.",
+                        getValue: () => Mod.Config.Key_Spell5,
+                        setValue: value => Mod.Config.Key_Spell5 = value
                     );
                 }
             }

@@ -38,17 +38,17 @@ namespace BetterShopMenu
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu != null)
             {
-                configMenu.RegisterModConfig(
+                configMenu.Register(
                     mod: this.ModManifest,
-                    revertToDefault: () => Mod.Config = new Configuration(),
-                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                    reset: () => Mod.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(Mod.Config)
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Grid Layout)",
-                    optionDesc: "Whether or not to use the grid layout in shops.",
-                    optionGet: () => Mod.Config.GridLayout,
-                    optionSet: value => Mod.Config.GridLayout = value
+                    name: () => "Grid Layout",
+                    tooltip: () => "Whether or not to use the grid layout in shops.",
+                    getValue: () => Mod.Config.GridLayout,
+                    setValue: value => Mod.Config.GridLayout = value
                 );
             }
         }

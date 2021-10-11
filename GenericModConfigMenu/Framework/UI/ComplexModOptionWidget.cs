@@ -29,7 +29,6 @@ namespace GenericModConfigMenu.Framework.UI
         public override void Update(bool hidden = false)
         {
             // intentionally not calling Element.Update
-            this.ModOption.Update(this.Position);
         }
 
         /// <inheritdoc />

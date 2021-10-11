@@ -32,17 +32,17 @@ namespace JunimosAcceptCash
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu != null)
             {
-                configMenu.RegisterModConfig(
+                configMenu.Register(
                     mod: this.ModManifest,
-                    revertToDefault: () => this.Config = new Configuration(),
-                    saveToFile: () => this.Helper.WriteConfig(this.Config)
+                    reset: () => this.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(this.Config)
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Cost Multiplier",
-                    optionDesc: "The multiplier for the cost of the items to charge.",
-                    optionGet: () => this.Config.CostMultiplier,
-                    optionSet: value => this.Config.CostMultiplier = value
+                    name: () => "Cost Multiplier",
+                    tooltip: () => "The multiplier for the cost of the items to charge.",
+                    getValue: () => this.Config.CostMultiplier,
+                    setValue: value => this.Config.CostMultiplier = value
                 );
             }
         }

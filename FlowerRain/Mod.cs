@@ -58,17 +58,18 @@ namespace FlowerRain
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu != null)
             {
-                configMenu.RegisterModConfig(
+                configMenu.Register(
                     mod: this.ModManifest,
-                    revertToDefault: () => Mod.Config = new Config(),
-                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                    reset: () => Mod.Config = new Config(),
+                    save: () => this.Helper.WriteConfig(Mod.Config),
+                    editableInGame: false
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Use Vanilla Flowers Only",
-                    optionDesc: "Only use vanilla flowers in the flower rain",
-                    optionGet: () => Mod.Config.VanillaFlowersOnly,
-                    optionSet: value =>
+                    name: () => "Use Vanilla Flowers Only",
+                    tooltip: () => "Only use vanilla flowers in the flower rain",
+                    getValue: () => Mod.Config.VanillaFlowersOnly,
+                    setValue: value =>
                     {
                         Mod.Config.VanillaFlowersOnly = value;
                         if (Mod.Config.VanillaFlowersOnly)
@@ -77,11 +78,9 @@ namespace FlowerRain
                 );
             }
 
-            var ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
-            if (ja != null)
-            {
-                ja.IdsAssigned += this.JaIdsAssigned;
-            }
+            var jsonAssets = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
+            if (jsonAssets != null)
+                jsonAssets.IdsAssigned += this.JaIdsAssigned;
         }
 
         private void JaIdsAssigned(object sender, EventArgs e)

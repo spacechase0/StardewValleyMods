@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Improved integration with Generic Mod Config Menu (GMCM):
+  * Updated for GMCM 1.5.0.
+  * Enabled config UI from the in-game options menu after the save is loaded.
+
 ## 1.0.3
 Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
 

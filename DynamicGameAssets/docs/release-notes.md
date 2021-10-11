@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Updated for Generic Mod Config Menu 1.5.0.
 * Fixed various animation parsing issues.
 
 ## 1.2.1

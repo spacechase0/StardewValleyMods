@@ -2,8 +2,59 @@
 
 # Release notes
 ## Upcoming release
-* The generic config UI is now translatable. (Option labels added by other mods aren't translated yet.)
+* Redesigned API:
+  * Added full translation support for display text.
+  * Simplified usage and merged methods.
+  * Options are now available in-game by default when using the new API (unless you set `editableInGame: false`).
+* The generic config UI is now translatable.
 * `api.SubscribeToChange` now tracks any fields in the mod's config, not only those on the current page at the time it was registered.
+
+**Migration guide for mod authors:**  
+<details>
+  <summary>Click to expand</summary>
+
+The previous API still works, but it's now deprecated and will eventually be removed. To migrate
+your mod code to the new API:
+
+1. Replace `IGenericModConfigMenuApi` with [the latest version](../IGenericModConfigMenuApi.cs).
+2. Arguments like `name` and `tooltip` let you get text from your mod's translations now:
+
+   ```c#
+   name: () => this.Helper.Translation.Get("example.name"),
+   tooltip: () => this.Helper.Translation.Get("example.tooltip")
+   ```
+
+   If you config text isn't translatable, you can just return literal text instead:
+
+   ```c#
+   name: () => "Example Option",
+   tooltip: () => "This is just an example option."
+   ```
+3. Update code which calls the old methods:
+
+   old method | migration notes
+   :--------- | :--------------
+   `RegisterModConfig` | Use `Register`.<br />**Note:** config fields will be enabled both on the title screen and in-game. To keep the previous behavior, set the `editableInGame: false` argument.
+   `UnregisterModConfig` | Use `Unregister`.
+   `SetDefaultIngameOptinValue` | To change the default for all fields, set `editableInGame` in the `Register` call. To only change it for some fields, use `SetEditableInGameForNextOptions` which works just like the old method.
+   `StartNewPage` | Use `AddPage`.
+   `OverridePageDisplayName` | Use `AddPage` with the `pageTitle` argument.
+   `RegisterLabel` | Use `AddSectionTitle`.
+   `RegisterPageLabel` | Use `AddPageLink`.
+   `RegisterParagraph` | Use `AddParagraph`.
+   `RegisterImage` | Use `AddImage`.<br />**Note A:** You now need to pass a `Texture2D` instance instead of an asset path. This avoids needing to provide the image through the game's content pipeline. To keep the previous logic, change `RegisterImage(mod, "texture path")` to `AddImage(mod, () => Game1.content.Load<Texture2D>("texture path"))`.<br />**Note B:** the texture is now cached while the menu is open. If it changes, the change will only be visible in-game when the mod's menu is reopened.
+   `RegisterSimpleOption` | Use `AddOption`.
+   `RegisterClampedOption` | Use `AddOption`.
+   `RegisterChoiceOption` | Use `AddOption`.
+   `RegisterComplexOption` | Use `AddComplexOption`.
+   `SubscribeToChange` | Use `OnFieldChanged`.
+
+4. Delete any methods you don't need in your copy of `IGenericModConfigMenuApi`.
+
+If you need help migrating your code, feel free to [ask in #making-mods on the Stardew Valley
+Discord](https://stardewvalleywiki.com/Modding:Community#Discord)!
+
+</details>
 
 ## 1.4.2
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild and spacechase0.

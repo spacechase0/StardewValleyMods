@@ -25,10 +25,10 @@ installed (they just won't see the config UI).
 To use it:
 
 1. Copy [`IGenericModConfigMenuApi`](../IGenericModConfigMenuApi.cs) into your code.
-2. In the [`GameLaunched` event](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Events#Game_loop),
-   call the API and register your config fields.
-3. Delete any methods in `IGenericModConfigMenuApi` you're not using (for best compatibility with
+2. Delete any methods in `IGenericModConfigMenuApi` you're not using (for better compatibility with
    future versions).
+3. In the [`GameLaunched` event](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Events#Game_loop),
+   call the API and register your config fields.
 
 For example, this adds a very simple config UI (assuming you [created a config
 model](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Config) named `ModConfig` and saved
@@ -37,48 +37,54 @@ it to a `Config` field in your entry class):
 ```c#
 private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
 {
-    // get Generic Mod Config Menu API (if it's installed)
+    // get Generic Mod Config Menu's API (if it's installed)
     var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
     if (configMenu is null)
         return;
 
-    // register mod configuration
-    configMenu.RegisterModConfig(
+    // register mod
+    configMenu.Register(
         mod: this.ModManifest,
-        revertToDefault: () => this.Config = new ModConfig(),
-        saveToFile: () => this.Helper.WriteConfig(this.Config)
+        reset: () => this.Config = new ModConfig(),
+        save: () => this.Helper.WriteConfig(this.Config)
     );
-
-    // let players configure your mod in-game (instead of just from the title screen)
-    configMenu.SetDefaultIngameOptinValue(this.ModManifest, true);
 
     // add some config options
-    configMenu.RegisterSimpleOption(
+    configMenu.AddOption(
         mod: this.ModManifest,
-        optionName: "Example checkbox",
-        optionDesc: "An optional description shown as a tooltip to the player.",
-        optionGet: () => this.Config.ExampleCheckbox,
-        optionSet: value => this.Config.ExampleCheckbox = value
+        name: () => "Example checkbox",
+        tooltip: () => "An optional description shown as a tooltip to the player.",
+        getValue: () => this.Config.ExampleCheckbox,
+        setValue: value => this.Config.ExampleCheckbox = value
     );
-    configMenu.RegisterSimpleOption(
+    configMenu.AddOption(
         mod: this.ModManifest,
-        optionName: "Example string",
-        optionDesc: "...",
-        optionGet: () => this.Config.ExampleString,
-        optionSet: value => this.Config.ExampleString = value
+        name: () => "Example string",
+        getValue: () => this.Config.ExampleString,
+        setValue: value => this.Config.ExampleString = value
     );
-    configMenu.RegisterChoiceOption(
+    configMenu.AddOption(
         mod: this.ModManifest,
-        optionName: "Example dropdown",
-        optionDesc: "...",
-        optionGet: () => this.Config.ExampleDropdown,
-        optionSet: value => this.Config.ExampleDropdown = value,
-        choices: new string[] { "choice A", "choice B", "choice C" }
+        name: () => "Example dropdown",
+        getValue: () => this.Config.ExampleDropdown,
+        setValue: value => this.Config.ExampleDropdown = value,
+        allowedValues: new string[] { "choice A", "choice B", "choice C" }
     );
 }
 ```
 
-See [`IGenericModConfigMenuApi`](../IGenericModConfigMenuApi.cs) for more options.
+Generic Mod Config Menu will automatically choose the best field type to show each option. For
+example, a string option that allows any value will be shown as a textbox; one with a set of
+allowed values will be shown as a dropdown.
+
+The text fields all use `Func<string>` so you can return translations if your mod supports them:
+
+```c#
+name: () => this.Helper.Translation.Get("translation-key")
+```
+
+See the code documentation on [`IGenericModConfigMenuApi`](../IGenericModConfigMenuApi.cs) for more
+options.
 
 ### For Content Patcher pack authors
 You don't need to do anything! Content Patcher will add the config UI automatically for you.

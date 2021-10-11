@@ -55,73 +55,74 @@ namespace AnotherHungerMod
             var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu != null)
             {
-                configMenu.RegisterModConfig(
+                configMenu.Register(
                     mod: this.ModManifest,
-                    revertToDefault: () => Mod.Config = new Configuration(),
-                    saveToFile: () => this.Helper.WriteConfig(Mod.Config)
+                    reset: () => Mod.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(Mod.Config),
+                    editableInGame: false
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Fullness UI (X)",
-                    optionDesc: "The X position of the fullness UI.",
-                    optionGet: () => Mod.Config.FullnessUiX,
-                    optionSet: value => Mod.Config.FullnessUiX = value
+                    name: () => "Fullness UI (X)",
+                    tooltip: () => "The X position of the fullness UI.",
+                    getValue: () => Mod.Config.FullnessUiX,
+                    setValue: value => Mod.Config.FullnessUiX = value
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Fullness UI (Y)",
-                    optionDesc: "The Y position of the fullness UI.",
-                    optionGet: () => Mod.Config.FullnessUiY,
-                    optionSet: value => Mod.Config.FullnessUiY = value
+                    name: () => "Fullness UI (Y)",
+                    tooltip: () => "The Y position of the fullness UI.",
+                    getValue: () => Mod.Config.FullnessUiY,
+                    setValue: value => Mod.Config.FullnessUiY = value
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Max Fullness",
-                    optionDesc: "Maximum amount of fullness you can have.",
-                    optionGet: () => Mod.Config.MaxFullness,
-                    optionSet: value => Mod.Config.MaxFullness = value
+                    name: () => "Max Fullness",
+                    tooltip: () => "Maximum amount of fullness you can have.",
+                    getValue: () => Mod.Config.MaxFullness,
+                    setValue: value => Mod.Config.MaxFullness = value
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Edibility Multiplier",
-                    optionDesc: "A multiplier for the amount of fullness you get, based on the food's edibility.",
-                    optionGet: () => Mod.Config.EdibilityMultiplier,
-                    optionSet: value => Mod.Config.EdibilityMultiplier = value
+                    name: () => "Edibility Multiplier",
+                    tooltip: () => "A multiplier for the amount of fullness you get, based on the food's edibility.",
+                    getValue: () => Mod.Config.EdibilityMultiplier,
+                    setValue: value => Mod.Config.EdibilityMultiplier = value
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Fullness Drain",
-                    optionDesc: "The amount of fullness to drain per in-game minute.",
-                    optionGet: () => Mod.Config.DrainPerMinute,
-                    optionSet: value => Mod.Config.DrainPerMinute = value
+                    name: () => "Fullness Drain",
+                    tooltip: () => "The amount of fullness to drain per in-game minute.",
+                    getValue: () => Mod.Config.DrainPerMinute,
+                    setValue: value => Mod.Config.DrainPerMinute = value
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Positive Buff Threshold",
-                    optionDesc: "The amount of fullness you need for positive buffs to apply.",
-                    optionGet: () => Mod.Config.PositiveBuffThreshold,
-                    optionSet: value => Mod.Config.PositiveBuffThreshold = value
+                    name: () => "Positive Buff Threshold",
+                    tooltip: () => "The amount of fullness you need for positive buffs to apply.",
+                    getValue: () => Mod.Config.PositiveBuffThreshold,
+                    setValue: value => Mod.Config.PositiveBuffThreshold = value
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Negative Buff Threshold",
-                    optionDesc: "The amount of fullness you need before negative buffs apply.",
-                    optionGet: () => Mod.Config.NegativeBuffThreshold,
-                    optionSet: value => Mod.Config.NegativeBuffThreshold = value
+                    name: () => "Negative Buff Threshold",
+                    tooltip: () => "The amount of fullness you need before negative buffs apply.",
+                    getValue: () => Mod.Config.NegativeBuffThreshold,
+                    setValue: value => Mod.Config.NegativeBuffThreshold = value
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Starvation Damage",
-                    optionDesc: "The amount of starvation damage taken every in-game minute when you have no fullness.",
-                    optionGet: () => Mod.Config.StarvationDamagePerMinute,
-                    optionSet: value => Mod.Config.StarvationDamagePerMinute = value
+                    name: () => "Starvation Damage",
+                    tooltip: () => "The amount of starvation damage taken every in-game minute when you have no fullness.",
+                    getValue: () => Mod.Config.StarvationDamagePerMinute,
+                    setValue: value => Mod.Config.StarvationDamagePerMinute = value
                 );
-                configMenu.RegisterSimpleOption(
+                configMenu.AddOption(
                     mod: this.ModManifest,
-                    optionName: "Unfed Spouse Penalty",
-                    optionDesc: "The relationship points penalty for not feeding your spouse.",
-                    optionGet: () => Mod.Config.RelationshipHitForNotFeedingSpouse,
-                    optionSet: value => Mod.Config.RelationshipHitForNotFeedingSpouse = value
+                    name: () => "Unfed Spouse Penalty",
+                    tooltip: () => "The relationship points penalty for not feeding your spouse.",
+                    getValue: () => Mod.Config.RelationshipHitForNotFeedingSpouse,
+                    setValue: value => Mod.Config.RelationshipHitForNotFeedingSpouse = value
                 );
             }
         }

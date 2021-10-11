@@ -15,7 +15,7 @@ using StardewValley.Menus;
 namespace GenericModConfigMenu.Framework
 {
     /// <summary>The config UI for a specific mod.</summary>
-    internal class SpecificModConfigMenu : IClickableMenu, IAssetEditor
+    internal class SpecificModConfigMenu : IClickableMenu
     {
         /*********
         ** Fields
@@ -32,8 +32,7 @@ namespace GenericModConfigMenu.Framework
         private readonly Table Table;
         private readonly List<Label> OptHovers = new();
 
-        private readonly Dictionary<string, List<Image>> Textures = new();
-        private readonly Queue<string> PendingTexChanges = new();
+        private readonly Dictionary<string, Image[]> FieldTextures = new();
 
         /// <summary>Whether the user hit escape.</summary>
         private bool ExitOnNextUpdate;
@@ -77,8 +76,8 @@ namespace GenericModConfigMenu.Framework
             this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
             foreach (var opt in this.ModConfig.Options[this.CurrPage].Options)
             {
-                string name = opt.Name;
-                string tooltip = opt.Tooltip;
+                string name = opt.Name();
+                string tooltip = opt.Tooltip();
 
                 opt.GetLatest();
                 if (this.InGame && !opt.EditableInGame)
@@ -140,7 +139,7 @@ namespace GenericModConfigMenu.Framework
                         };
                         break;
 
-                    case NumericModOption<int> option:
+                    case NumericModOption<int> option when (option.Minimum.HasValue && option.Maximum.HasValue):
                         {
                             var label2 = new Label
                             {
@@ -154,9 +153,9 @@ namespace GenericModConfigMenu.Framework
                                 LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                                 RequestWidth = (int)this.Table.Size.X / 3,
                                 Value = option.Value,
-                                Minimum = option.Minimum,
-                                Maximum = option.Maximum,
-                                Interval = option.Interval,
+                                Minimum = option.Minimum.Value,
+                                Maximum = option.Maximum.Value,
+                                Interval = option.Interval ?? 1,
                                 Callback = e =>
                                 {
                                     option.Value = (e as Slider<int>).Value;
@@ -166,7 +165,7 @@ namespace GenericModConfigMenu.Framework
                             break;
                         }
 
-                    case NumericModOption<float> option:
+                    case NumericModOption<float> option when (option.Minimum.HasValue && option.Maximum.HasValue):
                         {
                             var label2 = new Label
                             {
@@ -180,9 +179,9 @@ namespace GenericModConfigMenu.Framework
                                 LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                                 RequestWidth = (int)this.Table.Size.X / 3,
                                 Value = option.Value,
-                                Minimum = option.Minimum,
-                                Maximum = option.Maximum,
-                                Interval = option.Interval,
+                                Minimum = option.Minimum.Value,
+                                Maximum = option.Maximum.Value,
+                                Interval = option.Interval ?? 0.01f,
                                 Callback = (Element e) =>
                                 {
                                     option.Value = (e as Slider<float>).Value;
@@ -304,7 +303,7 @@ namespace GenericModConfigMenu.Framework
 
                     case ImageModOption option:
                         {
-                            var tex = Game1.content.Load<Texture2D>(option.TexturePath);
+                            var tex = option.Texture();
                             var imgSize = new Vector2(tex.Width, tex.Height);
                             if (option.TexturePixelArea.HasValue)
                                 imgSize = new Vector2(option.TexturePixelArea.Value.Width, option.TexturePixelArea.Value.Height);
@@ -318,10 +317,6 @@ namespace GenericModConfigMenu.Framework
                             );
 
                             var images = new List<Image>();
-                            if (this.Textures.ContainsKey(option.TexturePath))
-                                images = this.Textures[option.TexturePath];
-                            else
-                                this.Textures.Add(option.TexturePath, images);
 
                             for (int ir = 0; ir < imgSize.Y / this.Table.RowHeight; ++ir)
                             {
@@ -342,6 +337,8 @@ namespace GenericModConfigMenu.Framework
                                 this.Table.AddRow(new Element[] { img });
                             }
 
+                            this.FieldTextures[opt.FieldId] = images.ToArray();
+
                             continue;
                         }
                 }
@@ -355,30 +352,6 @@ namespace GenericModConfigMenu.Framework
             this.Table.ForceUpdateEvenHidden();
 
             SpecificModConfigMenu.ActiveConfigMenu = this;
-            Mod.Instance.Helper.Content.AssetEditors.Add(this);
-        }
-
-        /// <inheritdoc />
-        public bool CanEdit<T>(IAssetInfo asset)
-        {
-            foreach (string key in this.Textures.Keys)
-            {
-                if (asset.AssetNameEquals(key))
-                    return true;
-            }
-            return false;
-        }
-
-        /// <inheritdoc />
-        public void Edit<T>(IAssetData asset)
-        {
-            foreach (string key in this.Textures.Keys)
-            {
-                if (asset.AssetNameEquals(key))
-                {
-                    this.PendingTexChanges.Enqueue(key);
-                }
-            }
         }
 
         /// <inheritdoc />
@@ -411,17 +384,6 @@ namespace GenericModConfigMenu.Framework
             base.update(time);
             this.Ui.Update();
 
-            while (this.PendingTexChanges.Count > 0)
-            {
-                string texPath = this.PendingTexChanges.Dequeue();
-                var tex = Game1.content.Load<Texture2D>(texPath);
-
-                foreach (var images in this.Textures[texPath])
-                {
-                    images.Texture = tex;
-                }
-            }
-
             if (this.ExitOnNextUpdate)
                 this.Cancel();
         }
@@ -443,7 +405,7 @@ namespace GenericModConfigMenu.Framework
                 int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
                 IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
 
-                string s = I18n.Config_RebindKey_Title(this.KeybindingOpt.Name);
+                string s = I18n.Config_RebindKey_Title(this.KeybindingOpt.Name());
                 int sw = (int)Game1.dialogueFont.MeasureString(s).X;
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 20), Game1.textColor);
 
@@ -459,7 +421,7 @@ namespace GenericModConfigMenu.Framework
                 int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
                 IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
 
-                string s = I18n.Config_RebindKey_Title(this.Keybinding2Opt.Name);
+                string s = I18n.Config_RebindKey_Title(this.Keybinding2Opt.Name());
                 int sw = (int)Game1.dialogueFont.MeasureString(s).X;
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 20), Game1.textColor);
 
@@ -516,7 +478,7 @@ namespace GenericModConfigMenu.Framework
         {
             // add page title
             {
-                string pageTitle = this.ModConfig.Options[this.CurrPage].PageTitle;
+                string pageTitle = this.ModConfig.Options[this.CurrPage].PageTitle();
                 var titleLabel = new Label
                 {
                     String = modManifest.Name + (pageTitle == "" ? "" : " > " + pageTitle),
@@ -540,14 +502,14 @@ namespace GenericModConfigMenu.Framework
                 String = I18n.Config_Buttons_ResetToDefault(),
                 Bold = true,
                 LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 200, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.RevertToDefault()
+                Callback = _ => this.ResetConfig()
             });
             this.Ui.AddChild(new Label
             {
                 String = I18n.Config_Buttons_Save(),
                 Bold = true,
                 LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 50, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.Save()
+                Callback = _ => this.SaveConfig()
             });
             this.Ui.AddChild(new Label
             {
@@ -556,37 +518,35 @@ namespace GenericModConfigMenu.Framework
                 LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 200, Game1.uiViewport.Height - 50 - 36),
                 Callback = _ =>
                 {
-                    this.Save();
+                    this.SaveConfig();
                     this.Close();
                 }
             });
         }
 
-        private void RevertToDefault()
+        private void ResetConfig()
         {
             Game1.playSound("backpackIN");
-            this.ModConfig.RevertToDefault.Invoke();
+            this.ModConfig.Reset();
             foreach (var page in this.ModConfig.Options)
                 foreach (var opt in page.Value.Options)
                     opt.GetLatest();
-            this.ModConfig.SaveChanges.Invoke();
+            this.ModConfig.Save();
 
             this.OpenPage(this.CurrPage);
         }
 
-        private void Save()
+        private void SaveConfig()
         {
             Game1.playSound("money");
             foreach (var page in this.ModConfig.Options)
                 foreach (var opt in page.Value.Options)
                     opt.Save();
-            this.ModConfig.SaveChanges.Invoke();
+            this.ModConfig.Save();
         }
 
         private void Close()
         {
-            Mod.Instance.Helper.Content.AssetEditors.Remove(this);
-
             if (this.IsSubPage)
                 this.OpenPage(null);
             else
