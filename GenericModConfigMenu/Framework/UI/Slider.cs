@@ -65,14 +65,13 @@ namespace GenericModConfigMenu.Framework.UI
             if (this.Dragging)
             {
                 float perc = (Game1.getOldMouseX() - this.Position.X) / this.Width;
+                this.Value = Util.Adjust(this.Value, this.Interval);
                 this.Value = this.Value switch
                 {
                     int => Util.Clamp<T>(this.Minimum, (T)(object)(int)(perc * ((int)(object)this.Maximum - (int)(object)this.Minimum) + (int)(object)this.Minimum), this.Maximum),
                     float => Util.Clamp<T>(this.Minimum, (T)(object)(perc * ((float)(object)this.Maximum - (float)(object)this.Minimum) + (float)(object)this.Minimum), this.Maximum),
                     _ => this.Value
                 };
-
-                this.Value = Util.Adjust(this.Value, this.Interval);
 
                 this.Callback?.Invoke(this);
             }

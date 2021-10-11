@@ -7,7 +7,8 @@
   * Simplified usage and merged methods.
   * Options are now available in-game by default when using the new API (unless you set `editableInGame: false`).
 * The generic config UI is now translatable.
-* `api.SubscribeToChange` now tracks any fields in the mod's config, not only those on the current page at the time it was registered.
+* Fixed `api.SubscribeToChange` only tracking fields on the page that was active when it was called.
+* Fixed sliders with an `interval` sometimes snapping to a value outside the `min`/`max` range.
 
 **Migration guide for mod authors:**  
 <details>
