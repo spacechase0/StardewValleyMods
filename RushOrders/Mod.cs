@@ -52,21 +52,21 @@ namespace RushOrders
                     reset: () => Mod.ModConfig = new ModConfig(),
                     save: () => this.Helper.WriteConfig(Mod.ModConfig)
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Price: Tool - One day",
                     tooltip: () => "The price multiplier for a one-day tool upgrade.",
                     getValue: () => (float)Mod.ModConfig.PriceFactor.Tool.Rush,
                     setValue: value => Mod.ModConfig.PriceFactor.Tool.Rush = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Price: Tool - Instant",
                     tooltip: () => "The price multiplier for an instant upgrade.",
                     getValue: () => (float)Mod.ModConfig.PriceFactor.Tool.Rush,
                     setValue: value => Mod.ModConfig.PriceFactor.Tool.Now = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Price: Building - Accelerate",
                     tooltip: () => "The price multiplier to accelerate building construction by one day.",

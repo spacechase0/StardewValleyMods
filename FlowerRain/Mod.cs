@@ -64,7 +64,7 @@ namespace FlowerRain
                     save: () => this.Helper.WriteConfig(Mod.Config),
                     editableInGame: false
                 );
-                configMenu.AddOption(
+                configMenu.AddBoolOption(
                     mod: this.ModManifest,
                     name: () => "Use Vanilla Flowers Only",
                     tooltip: () => "Only use vanilla flowers in the flower rain",

@@ -64,21 +64,21 @@ namespace RealtimeMinimap
                     save: () => this.Helper.WriteConfig(Mod.Config)
                 );
 
-                configMenu.AddOption(
+                configMenu.AddBoolOption(
                     mod: this.ModManifest,
                     name: () => "Show by default",
                     tooltip: () => "Whether or not the minimap should be shown by default.\nYou must restart the game for this to take effect.",
                     getValue: () => Mod.Config.ShowByDefault,
                     setValue: value => Mod.Config.ShowByDefault = value
                 );
-                configMenu.AddOption(
+                configMenu.AddKeybindList(
                     mod: this.ModManifest,
                     name: () => "Toggle shown key",
                     tooltip: () => "Key to toggle showing the minimap.",
                     getValue: () => Mod.Config.ToggleShowKey,
                     setValue: value => Mod.Config.ToggleShowKey = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Update Interval",
                     tooltip: () => "The interval, in milliseconds, that the minimap will update. 0 will be every frame. -1 will only do it when entering a new location. (Markers update every frame regardless.)",
@@ -95,7 +95,7 @@ namespace RealtimeMinimap
                     text: () => "Positioning & Size",
                     tooltip: () => "Options pertaining to the placement of the minimap."
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Minimap Anchor X",
                     tooltip: () => "The percentage of the screen's width where the top-left of the minimap will be placed.",
@@ -104,7 +104,7 @@ namespace RealtimeMinimap
                     min: 0,
                     max: 1
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Minimap Anchor Y",
                     tooltip: () => "The percentage of the screen's height where the top-left of the minimap will be placed.",
@@ -113,21 +113,21 @@ namespace RealtimeMinimap
                     min: 0,
                     max: 1
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Minimap Offset X",
                     tooltip: () => "The X offset from the anchor that the minimap will be placed at.",
                     getValue: () => Mod.Config.MinimapOffsetX,
                     setValue: value => Mod.Config.MinimapOffsetX = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Minimap Offset Y",
                     tooltip: () => "The Y offset from the anchor that the minimap will be placed at.",
                     getValue: () => Mod.Config.MinimapOffsetY,
                     setValue: value => Mod.Config.MinimapOffsetY = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Minimap Size",
                     tooltip: () => "The size of the minimap, in pixels (before UI scale).",
@@ -140,7 +140,7 @@ namespace RealtimeMinimap
                     text: () => "Markers",
                     tooltip: () => "Options pertaining to rendering markers on the map."
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Player Heads",
                     tooltip: () => "Render scale for the head of a player. 0 disables it.",
@@ -149,7 +149,7 @@ namespace RealtimeMinimap
                     min: 0,
                     max: 4
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "NPC Heads",
                     tooltip: () => "Render scale for the head of an NPC. 0 disables it.",
@@ -158,7 +158,7 @@ namespace RealtimeMinimap
                     min: 0,
                     max: 4
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Wood Signs",
                     tooltip: () => "Render scale for items held on wooden signs . 0 disables it.",
@@ -167,7 +167,7 @@ namespace RealtimeMinimap
                     min: 0,
                     max: 4
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Stone Signs",
                     tooltip: () => "Render scale for items held on stone signs. 0 disables it.",
@@ -177,7 +177,7 @@ namespace RealtimeMinimap
                     max: 4
 
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Dark Signs",
                     tooltip: () => "Render scale for items held on dark signs. 0 disables it.",

@@ -41,21 +41,21 @@ namespace ObjectTimeLeft
                     reset: () => Mod.Config = new Configuration(),
                     save: () => this.Helper.WriteConfig(Mod.Config)
                 );
-                configMenu.AddOption(
+                configMenu.AddBoolOption(
                     mod: this.ModManifest,
                     name: () => "Show on Start",
                     tooltip: () => "Whether to start the game with time left already showing.",
                     getValue: () => Mod.Config.ShowOnStart,
                     setValue: value => Mod.Config.ShowOnStart = value
                 );
-                configMenu.AddOption(
+                configMenu.AddKeybind(
                     mod: this.ModManifest,
                     name: () => "Key: Toggle Display",
                     tooltip: () => "The key to toggle the display on objects.",
                     getValue: () => Mod.Config.ToggleKey,
                     setValue: value => Mod.Config.ToggleKey = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Text Scale",
                     tooltip: () => "Scale of text that will superimpose the objects.",

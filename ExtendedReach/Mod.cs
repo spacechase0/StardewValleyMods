@@ -52,7 +52,7 @@ namespace ExtendedReach
                     reset: () => this.Config = new Configuration(),
                     save: () => this.Helper.WriteConfig(this.Config)
                 );
-                configMenu.AddOption(
+                configMenu.AddBoolOption(
                     mod: this.ModManifest,
                     name: () => "Wiggly Arms",
                     tooltip: () => "Show wiggly arms reaching out to your cursor.",

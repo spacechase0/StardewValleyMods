@@ -85,70 +85,70 @@ namespace Magic
                         save: () => this.Helper.WriteConfig(Mod.Config),
                         editableInGame: false
                     );
-                    configMenu.AddOption(
+                    configMenu.AddTextOption(
                         mod: this.ModManifest,
                         name: () => "Altar Location",
                         tooltip: () => "The (internal) name of the location the magic altar should be placed at.",
                         getValue: () => Mod.Config.AltarLocation,
                         setValue: value => Mod.Config.AltarLocation = value
                     );
-                    configMenu.AddOption(
+                    configMenu.AddNumberOption(
                         mod: this.ModManifest,
                         name: () => "Altar X",
                         tooltip: () => "The X tile position of where the magic altar should be placed.",
                         getValue: () => Mod.Config.AltarX,
                         setValue: value => Mod.Config.AltarX = value
                     );
-                    configMenu.AddOption(
+                    configMenu.AddNumberOption(
                         mod: this.ModManifest,
                         name: () => "Altar Y",
                         tooltip: () => "The Y tile position of where the magic altar should be placed.",
                         getValue: () => Mod.Config.AltarY,
                         setValue: value => Mod.Config.AltarY = value
                     );
-                    configMenu.AddOption(
+                    configMenu.AddKeybind(
                         mod: this.ModManifest,
                         name: () => "Key: Cast",
                         tooltip: () => "The key to initiate casting a spell.",
                         getValue: () => Mod.Config.Key_Cast,
                         setValue: value => Mod.Config.Key_Cast = value
                     );
-                    configMenu.AddOption(
+                    configMenu.AddKeybind(
                         mod: this.ModManifest,
                         name: () => "Key: Swap Spells",
                         tooltip: () => "The key to swap spell sets.",
                         getValue: () => Mod.Config.Key_SwapSpells,
                         setValue: value => Mod.Config.Key_SwapSpells = value
                     );
-                    configMenu.AddOption(
+                    configMenu.AddKeybind(
                         mod: this.ModManifest,
                         name: () => "Key: Spell 1",
                         tooltip: () => "The key for spell 1.",
                         getValue: () => Mod.Config.Key_Spell1,
                         setValue: value => Mod.Config.Key_Spell1 = value
                     );
-                    configMenu.AddOption(
+                    configMenu.AddKeybind(
                         mod: this.ModManifest,
                         name: () => "Key: Spell 2",
                         tooltip: () => "The key for spell 2.",
                         getValue: () => Mod.Config.Key_Spell2,
                         setValue: value => Mod.Config.Key_Spell2 = value
                     );
-                    configMenu.AddOption(
+                    configMenu.AddKeybind(
                         mod: this.ModManifest,
                         name: () => "Key: Spell 3",
                         tooltip: () => "The key for spell 3.",
                         getValue: () => Mod.Config.Key_Spell3,
                         setValue: value => Mod.Config.Key_Spell3 = value
                     );
-                    configMenu.AddOption(
+                    configMenu.AddKeybind(
                         mod: this.ModManifest,
                         name: () => "Key: Spell 4",
                         tooltip: () => "The key for spell 4.",
                         getValue: () => Mod.Config.Key_Spell4,
                         setValue: value => Mod.Config.Key_Spell4 = value
                     );
-                    configMenu.AddOption(
+                    configMenu.AddKeybind(
                         mod: this.ModManifest,
                         name: () => "Key: Spell 5",
                         tooltip: () => "The key for spell 5.",

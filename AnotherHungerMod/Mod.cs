@@ -61,63 +61,63 @@ namespace AnotherHungerMod
                     save: () => this.Helper.WriteConfig(Mod.Config),
                     editableInGame: false
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Fullness UI (X)",
                     tooltip: () => "The X position of the fullness UI.",
                     getValue: () => Mod.Config.FullnessUiX,
                     setValue: value => Mod.Config.FullnessUiX = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Fullness UI (Y)",
                     tooltip: () => "The Y position of the fullness UI.",
                     getValue: () => Mod.Config.FullnessUiY,
                     setValue: value => Mod.Config.FullnessUiY = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Max Fullness",
                     tooltip: () => "Maximum amount of fullness you can have.",
                     getValue: () => Mod.Config.MaxFullness,
                     setValue: value => Mod.Config.MaxFullness = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Edibility Multiplier",
                     tooltip: () => "A multiplier for the amount of fullness you get, based on the food's edibility.",
                     getValue: () => Mod.Config.EdibilityMultiplier,
                     setValue: value => Mod.Config.EdibilityMultiplier = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Fullness Drain",
                     tooltip: () => "The amount of fullness to drain per in-game minute.",
                     getValue: () => Mod.Config.DrainPerMinute,
                     setValue: value => Mod.Config.DrainPerMinute = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Positive Buff Threshold",
                     tooltip: () => "The amount of fullness you need for positive buffs to apply.",
                     getValue: () => Mod.Config.PositiveBuffThreshold,
                     setValue: value => Mod.Config.PositiveBuffThreshold = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Negative Buff Threshold",
                     tooltip: () => "The amount of fullness you need before negative buffs apply.",
                     getValue: () => Mod.Config.NegativeBuffThreshold,
                     setValue: value => Mod.Config.NegativeBuffThreshold = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Starvation Damage",
                     tooltip: () => "The amount of starvation damage taken every in-game minute when you have no fullness.",
                     getValue: () => Mod.Config.StarvationDamagePerMinute,
                     setValue: value => Mod.Config.StarvationDamagePerMinute = value
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Unfed Spouse Penalty",
                     tooltip: () => "The relationship points penalty for not feeding your spouse.",

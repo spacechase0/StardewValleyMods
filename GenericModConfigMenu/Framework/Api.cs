@@ -80,25 +80,25 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
-        public void AddOption(IManifest mod, Func<bool> getValue, Action<bool> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null)
+        public void AddBoolOption(IManifest mod, Func<bool> getValue, Action<bool> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null)
         {
             this.AddSimpleOption(mod, name, tooltip, getValue, setValue, fieldId);
         }
 
         /// <inheritdoc />
-        public void AddOption(IManifest mod, Func<int> getValue, Action<int> setValue, Func<string> name = null, Func<string> tooltip = null, int? min = null, int? max = null, int? interval = null, string fieldId = null)
+        public void AddNumberOption(IManifest mod, Func<int> getValue, Action<int> setValue, Func<string> name = null, Func<string> tooltip = null, int? min = null, int? max = null, int? interval = null, string fieldId = null)
         {
             this.AddNumericOption(mod, name, tooltip, getValue, setValue, min, max, interval, fieldId);
         }
 
         /// <inheritdoc />
-        public void AddOption(IManifest mod, Func<float> getValue, Action<float> setValue, Func<string> name = null, Func<string> tooltip = null, float? min = null, float? max = null, float? interval = null, string fieldId = null)
+        public void AddNumberOption(IManifest mod, Func<float> getValue, Action<float> setValue, Func<string> name = null, Func<string> tooltip = null, float? min = null, float? max = null, float? interval = null, string fieldId = null)
         {
             this.AddNumericOption(mod, name, tooltip, getValue, setValue, min, max, interval, fieldId);
         }
 
         /// <inheritdoc />
-        public void AddOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null)
+        public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null)
         {
             if (allowedValues?.Any() == true)
                 this.AddChoiceOption(mod, name, tooltip, getValue, setValue, allowedValues, fieldId);
@@ -107,13 +107,13 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
-        public void AddOption(IManifest mod, Func<SButton> getValue, Action<SButton> setValue, Func<string> name = null, Func<string> tooltip = null, string fieldId = null)
+        public void AddKeybind(IManifest mod, Func<SButton> getValue, Action<SButton> setValue, Func<string> name = null, Func<string> tooltip = null, string fieldId = null)
         {
             this.AddSimpleOption(mod, name, tooltip, getValue, setValue, fieldId);
         }
 
         /// <inheritdoc />
-        public void AddOption(IManifest mod, Func<KeybindList> getValue, Action<KeybindList> setValue, Func<string> name = null, Func<string> tooltip = null, string fieldId = null)
+        public void AddKeybindList(IManifest mod, Func<KeybindList> getValue, Action<KeybindList> setValue, Func<string> name = null, Func<string> tooltip = null, string fieldId = null)
         {
             this.AddSimpleOption(mod, name, tooltip, getValue, setValue, fieldId);
         }
@@ -276,77 +276,77 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<bool> optionGet, Action<bool> optionSet)
         {
-            this.AddOption(mod: mod, fieldId: optionName, getValue: optionGet, setValue: optionSet, name: () => optionName, tooltip: () => optionDesc);
+            this.AddBoolOption(mod: mod, fieldId: optionName, getValue: optionGet, setValue: optionSet, name: () => optionName, tooltip: () => optionDesc);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet)
         {
-            this.AddOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
+            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet)
         {
-            this.AddOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
+            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet)
         {
-            this.AddOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
+            this.AddTextOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<SButton> optionGet, Action<SButton> optionSet)
         {
-            this.AddOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
+            this.AddKeybind(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<KeybindList> optionGet, Action<KeybindList> optionSet)
         {
-            this.AddOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
+            this.AddKeybindList(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max)
         {
-            this.AddOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max);
+            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max)
         {
-            this.AddOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max);
+            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max, int interval)
         {
-            this.AddOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: interval);
+            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: interval);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max, float interval)
         {
-            this.AddOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: interval);
+            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: interval);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterChoiceOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet, string[] choices)
         {
-            this.AddOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, allowedValues: choices);
+            this.AddTextOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, allowedValues: choices);
         }
 
         /// <inheritdoc />

@@ -189,7 +189,7 @@ namespace DynamicGameAssets.PackData
                         switch (d.ValueType)
                         {
                             case ConfigPackData.ConfigValueType.Boolean:
-                                configMenu.AddOption(
+                                configMenu.AddBoolOption(
                                     mod: this.smapiPack.Manifest,
                                     name: () => d.Name,
                                     tooltip: () => d.Description,
@@ -199,7 +199,7 @@ namespace DynamicGameAssets.PackData
                                 break;
 
                             case ConfigPackData.ConfigValueType.Integer:
-                                configMenu.AddOption(
+                                configMenu.AddNumberOption(
                                     mod: this.smapiPack.Manifest,
                                     name: () => d.Name,
                                     tooltip: () => d.Description,
@@ -212,7 +212,7 @@ namespace DynamicGameAssets.PackData
                                 break;
 
                             case ConfigPackData.ConfigValueType.Float:
-                                configMenu.AddOption(
+                                configMenu.AddNumberOption(
                                     mod: this.smapiPack.Manifest,
                                     name: () => d.Name,
                                     tooltip: () => d.Description,
@@ -225,7 +225,7 @@ namespace DynamicGameAssets.PackData
                                 break;
 
                             case ConfigPackData.ConfigValueType.String:
-                                configMenu.AddOption(
+                                configMenu.AddTextOption(
                                     mod: this.smapiPack.Manifest,
                                     name: () => d.Name,
                                     tooltip: () => d.Description,

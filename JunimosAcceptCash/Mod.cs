@@ -37,7 +37,7 @@ namespace JunimosAcceptCash
                     reset: () => this.Config = new Configuration(),
                     save: () => this.Helper.WriteConfig(this.Config)
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Cost Multiplier",
                     tooltip: () => "The multiplier for the cost of the items to charge.",

@@ -50,20 +50,20 @@ private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
     );
 
     // add some config options
-    configMenu.AddOption(
+    configMenu.AddBoolOption(
         mod: this.ModManifest,
         name: () => "Example checkbox",
         tooltip: () => "An optional description shown as a tooltip to the player.",
         getValue: () => this.Config.ExampleCheckbox,
         setValue: value => this.Config.ExampleCheckbox = value
     );
-    configMenu.AddOption(
+    configMenu.AddTextOption(
         mod: this.ModManifest,
         name: () => "Example string",
         getValue: () => this.Config.ExampleString,
         setValue: value => this.Config.ExampleString = value
     );
-    configMenu.AddOption(
+    configMenu.AddTextOption(
         mod: this.ModManifest,
         name: () => "Example dropdown",
         getValue: () => this.Config.ExampleDropdown,

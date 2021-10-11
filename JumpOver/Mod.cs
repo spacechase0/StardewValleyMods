@@ -34,7 +34,7 @@ namespace JumpOver
                     reset: () => Mod.Config = new Configuration(),
                     save: () => this.Helper.WriteConfig(Mod.Config)
                 );
-                configMenu.AddOption(
+                configMenu.AddKeybind(
                     mod: this.ModManifest,
                     name: () => "Jump Key",
                     tooltip: () => "The key to jump",

@@ -81,7 +81,7 @@ namespace SleepyEye
                     reset: () => this.ApplyConfig(new ModConfig()),
                     save: this.SaveConfig
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Seconds until save",
                     tooltip: () => "The number of seconds until the tent tool should trigger a save.",

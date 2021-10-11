@@ -108,7 +108,7 @@ namespace SpaceCore
                     reset: () => this.Config = new Configuration(),
                     save: () => this.Helper.WriteConfig(this.Config)
                 );
-                configMenu.AddOption(
+                configMenu.AddBoolOption(
                     mod: this.ModManifest,
                     name: () => "Custom Skill Page",
                     tooltip: () => "Whether or not to show the custom skill page.\nThis will move the wallet so that there is room for more skills.",

@@ -47,7 +47,7 @@ namespace HybridCropEngine
                     reset: () => Mod.Config = new Configuration(),
                     save: () => this.Helper.WriteConfig(Mod.Config)
                 );
-                configMenu.AddOption(
+                configMenu.AddBoolOption(
                     mod: this.ModManifest,
                     name: () => "Scan Everywhere",
                     tooltip: () => "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.",

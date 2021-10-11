@@ -34,7 +34,7 @@ namespace CombatLevelDamageScaler
                     reset: () => Mod.Config = new Configuration(),
                     save: () => this.Helper.WriteConfig(Mod.Config)
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Damage Scale",
                     tooltip: () => "The amount of damage to scale up per combat level, in percentage.",

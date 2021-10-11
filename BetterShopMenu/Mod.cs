@@ -43,7 +43,7 @@ namespace BetterShopMenu
                     reset: () => Mod.Config = new Configuration(),
                     save: () => this.Helper.WriteConfig(Mod.Config)
                 );
-                configMenu.AddOption(
+                configMenu.AddBoolOption(
                     mod: this.ModManifest,
                     name: () => "Grid Layout",
                     tooltip: () => "Whether or not to use the grid layout in shops.",

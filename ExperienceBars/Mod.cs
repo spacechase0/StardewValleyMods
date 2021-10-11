@@ -59,21 +59,21 @@ namespace ExperienceBars
                     reset: () => Mod.Config = new Configuration(),
                     save: () => this.Helper.WriteConfig(Mod.Config)
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "X position",
                     tooltip: () => "The pixel X position at which to draw the experience bars, relative to the top-left corner of the screen.",
                     getValue: () => Mod.Config.Position.X,
                     setValue: value => Mod.Config.Position = new(value, Mod.Config.Position.Y)
                 );
-                configMenu.AddOption(
+                configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: () => "Y position",
                     tooltip: () => "The pixel Y position at which to draw the experience bars, relative to the top-left corner of the screen.",
                     getValue: () => Mod.Config.Position.Y,
                     setValue: value => Mod.Config.Position = new(Mod.Config.Position.X, value)
                 );
-                configMenu.AddOption(
+                configMenu.AddKeybind(
                     mod: this.ModManifest,
                     name: () => "Toggle Button",
                     tooltip: () => "The button which shows or hides the experience bars display. Press Shift and this button to move the display.",

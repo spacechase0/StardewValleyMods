@@ -45,9 +45,9 @@ your mod code to the new API:
    `RegisterPageLabel` | Use `AddPageLink`.
    `RegisterParagraph` | Use `AddParagraph`.
    `RegisterImage` | Use `AddImage`.<br />**Note A:** You now need to pass a `Texture2D` instance instead of an asset path. This avoids needing to provide the image through the game's content pipeline. To keep the previous logic, change `RegisterImage(mod, "texture path")` to `AddImage(mod, () => Game1.content.Load<Texture2D>("texture path"))`.<br />**Note B:** the texture is now cached while the menu is open. If it changes, the change will only be visible in-game when the mod's menu is reopened.
-   `RegisterSimpleOption` | Use `AddOption`.
-   `RegisterClampedOption` | Use `AddOption`.
-   `RegisterChoiceOption` | Use `AddOption`.
+   `RegisterSimpleOption` | Use `AddBoolOption`, `AddKeybind`, `AddKeybindList`, `AddNumberOption`, or `AddTextOption` depending on the option type.
+   `RegisterClampedOption` | Use `AddNumberOption`.
+   `RegisterChoiceOption` | Use `AddTextOption`.
    `RegisterComplexOption` | Use `AddComplexOption`.
    `SubscribeToChange` | Use `OnFieldChanged`.
 
