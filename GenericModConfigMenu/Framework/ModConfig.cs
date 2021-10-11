@@ -37,6 +37,9 @@ namespace GenericModConfigMenu.Framework
         /// <summary>The page currently being rendered in-game.</summary>
         public ModConfigPage ActiveDisplayPage { get; set; }
 
+        /// <summary>The callbacks to invoke when an option value changes.</summary>
+        public List<Action<string, object>> ChangeHandlers { get; } = new();
+
 
         /*********
         ** Public methods

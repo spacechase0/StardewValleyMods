@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * The generic config UI is now translatable. (Option labels added by other mods aren't translated yet.)
+* `api.SubscribeToChange` now tracks any fields in the mod's config, not only those on the current page at the time it was registered.
 
 ## 1.4.2
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild and spacechase0.

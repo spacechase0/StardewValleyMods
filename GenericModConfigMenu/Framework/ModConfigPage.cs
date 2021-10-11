@@ -16,9 +16,6 @@ namespace GenericModConfigMenu.Framework
         /// <summary>The page title shown in its UI.</summary>
         public string PageTitle { get; set; }
 
-        /// <summary>The callbacks to invoke when an option value changes.</summary>
-        public List<Action<string, object>> ChangeHandler { get; } = new();
-
         /// <summary>The options on the page.</summary>
         public List<BaseModOption> Options { get; set; } = new();
 

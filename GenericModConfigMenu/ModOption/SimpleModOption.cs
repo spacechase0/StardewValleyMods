@@ -32,7 +32,7 @@ namespace GenericModConfigMenu.ModOption
             set
             {
                 if (!this.CachedValue.Equals(value))
-                    this.Owner.Options[this.Owner.ActiveDisplayPage.PageId].ChangeHandler.ForEach(c => c.Invoke(this.Id, value));
+                    this.Owner.ChangeHandlers.ForEach(handler => handler(this.Id, value));
 
                 this.CachedValue = value;
             }

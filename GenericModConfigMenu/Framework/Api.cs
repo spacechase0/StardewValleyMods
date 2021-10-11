@@ -274,7 +274,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(changeHandler, nameof(changeHandler));
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
-            modConfig.ActiveRegisteringPage.ChangeHandler.Add(changeHandler);
+            modConfig.ChangeHandlers.Add(changeHandler);
         }
 
         /// <inheritdoc />
