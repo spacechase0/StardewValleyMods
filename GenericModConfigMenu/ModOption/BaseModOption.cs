@@ -19,7 +19,7 @@ namespace GenericModConfigMenu.ModOption
         public string Tooltip { get; }
 
         /// <summary>Whether the option can be edited from the in-game options menu. If this is false, it can only be edited from the title screen.</summary>
-        public bool EditableInGame { get; set; }
+        public bool EditableInGame { get; }
 
         /// <summary>The mod config UI that contains this option.</summary>
         public ModConfig Owner { get; }
@@ -48,6 +48,7 @@ namespace GenericModConfigMenu.ModOption
             this.Name = name;
             this.Tooltip = tooltip;
             this.Id = id;
+            this.EditableInGame = mod.DefaultEditableInGame;
             this.Owner = mod;
         }
 

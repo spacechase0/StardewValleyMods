@@ -56,9 +56,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
-            modConfig.ActiveRegisteringPage.Options.Add(new SectionTitleModOption(labelName, labelDesc, modConfig) { EditableInGame = modConfig.DefaultEditableInGame });
-            if (modConfig.DefaultEditableInGame)
-                modConfig.AnyEditableInGame = true;
+            modConfig.AddOption(new SectionTitleModOption(labelName, labelDesc, modConfig));
         }
 
         /// <inheritdoc />
@@ -67,9 +65,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
-            modConfig.ActiveRegisteringPage.Options.Add(new ParagraphModOption(paragraph, modConfig) { EditableInGame = modConfig.DefaultEditableInGame });
-            if (modConfig.DefaultEditableInGame)
-                modConfig.AnyEditableInGame = true;
+            modConfig.AddOption(new ParagraphModOption(paragraph, modConfig));
         }
 
         /// <inheritdoc />
@@ -78,9 +74,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
-            modConfig.ActiveRegisteringPage.Options.Add(new ImageModOption(texPath, texRect, scale, modConfig) { EditableInGame = modConfig.DefaultEditableInGame });
-            if (modConfig.DefaultEditableInGame)
-                modConfig.AnyEditableInGame = true;
+            modConfig.AddOption(new ImageModOption(texPath, texRect, scale, modConfig));
         }
 
         /// <inheritdoc />
@@ -151,10 +145,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(optionSet, nameof(optionSet));
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
-
-            modConfig.ActiveRegisteringPage.Options.Add(new ChoiceModOption<string>(optionName, optionDesc, typeof(string), optionGet, optionSet, choices, optionName, modConfig) { EditableInGame = modConfig.DefaultEditableInGame });
-            if (modConfig.DefaultEditableInGame)
-                modConfig.AnyEditableInGame = true;
+            modConfig.AddOption(new ChoiceModOption<string>(optionName, optionDesc, typeof(string), optionGet, optionSet, choices, optionName, modConfig));
         }
 
 
@@ -166,11 +157,9 @@ namespace GenericModConfigMenu.Framework
         {
             this.AssertNotNull(mod, nameof(mod));
 
-            ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
-            if (modConfig.Options.TryGetValue(pageName, out ModConfigPage page))
-                modConfig.ActiveRegisteringPage = page;
-            else
-                modConfig.Options.Add(pageName, modConfig.ActiveRegisteringPage = new ModConfigPage(pageName));
+            this.ConfigManager
+                .Get(mod, assert: true)
+                .SetActiveRegisteringPage(pageName);
         }
 
         /// <inheritdoc />
@@ -191,9 +180,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
-            modConfig.ActiveRegisteringPage.Options.Add(new PageLinkModOption(labelName, labelDesc, newPage, modConfig) { EditableInGame = modConfig.DefaultEditableInGame });
-            if (modConfig.DefaultEditableInGame)
-                modConfig.AnyEditableInGame = true;
+            modConfig.AddOption(new PageLinkModOption(labelName, labelDesc, newPage, modConfig));
         }
 
 
@@ -219,9 +206,7 @@ namespace GenericModConfigMenu.Framework
             object Draw(SpriteBatch b, Vector2 v2, object o) => widgetDraw.Invoke(b, v2, (T)o);
             void Save(object o) => onSave.Invoke((T)o);
 
-            modConfig.ActiveRegisteringPage.Options.Add(new ComplexModOption(optionName, optionDesc, Update, Draw, Save, modConfig) { EditableInGame = modConfig.DefaultEditableInGame });
-            if (modConfig.DefaultEditableInGame)
-                modConfig.AnyEditableInGame = true;
+            modConfig.AddOption(new ComplexModOption(optionName, optionDesc, Update, Draw, Save, modConfig));
         }
 
         /// <inheritdoc />
@@ -325,9 +310,7 @@ namespace GenericModConfigMenu.Framework
             if (!valid.Contains(typeof(T)))
                 throw new ArgumentException("Invalid config option type.");
 
-            modConfig.ActiveRegisteringPage.Options.Add(new SimpleModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, id, modConfig) { EditableInGame = modConfig.DefaultEditableInGame });
-            if (modConfig.DefaultEditableInGame)
-                modConfig.AnyEditableInGame = true;
+            modConfig.AddOption(new SimpleModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, id, modConfig));
         }
 
         private void RegisterClampedOption<T>(IManifest mod, string optionName, string optionDesc, Func<T> optionGet, Action<T> optionSet, T min, T max, T interval)
@@ -347,9 +330,7 @@ namespace GenericModConfigMenu.Framework
             if (!valid.Contains(typeof(T)))
                 throw new ArgumentException("Invalid config option type.");
 
-            modConfig.ActiveRegisteringPage.Options.Add(new NumericModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, min, max, interval, id, modConfig) { EditableInGame = modConfig.DefaultEditableInGame });
-            if (modConfig.DefaultEditableInGame)
-                modConfig.AnyEditableInGame = true;
+            modConfig.AddOption(new NumericModOption<T>(optionName, optionDesc, typeof(T), optionGet, optionSet, min, max, interval, id, modConfig));
         }
 
         /// <summary>Assert that a required parameter is not null.</summary>
