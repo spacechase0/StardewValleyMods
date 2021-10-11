@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* All display text is now translatable.
 * Updated for Generic Mod Config Menu 1.5.0.
 
 ## 1.3.0
