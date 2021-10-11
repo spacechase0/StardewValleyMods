@@ -146,7 +146,7 @@ namespace GenericModConfigMenu.Framework
                                 String = option.Value.ToString(),
                                 LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
                             };
-                            other2 = label;
+                            other2 = label2;
 
                             other = new Slider<int>
                             {

@@ -9,6 +9,7 @@
 * The generic config UI is now translatable.
 * Fixed `api.SubscribeToChange` only tracking fields on the page that was active when it was called.
 * Fixed sliders with an `interval` sometimes snapping to a value outside the `min`/`max` range.
+* Fixed integer sliders not showing the value label.
 
 **Migration guide for mod authors:**  
 <details>
