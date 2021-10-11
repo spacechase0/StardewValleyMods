@@ -55,28 +55,32 @@ namespace FlowerRain
 
         private void GameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                gmcm.RegisterModConfig(this.ModManifest, () => Mod.Config = new Config(), () => this.Helper.WriteConfig(Mod.Config));
-                gmcm.RegisterSimpleOption(
-                    this.ModManifest,
-                    "Use Vanilla Flowers Only",
-                    "Only use vanilla flowers in the flower rain",
-                    () => Mod.Config.VanillaFlowersOnly,
-                    b =>
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => Mod.Config = new Config(),
+                    save: () => this.Helper.WriteConfig(Mod.Config),
+                    editableInGame: false
+                );
+                configMenu.AddBoolOption(
+                    mod: this.ModManifest,
+                    name: () => "Use Vanilla Flowers Only",
+                    tooltip: () => "Only use vanilla flowers in the flower rain",
+                    getValue: () => Mod.Config.VanillaFlowersOnly,
+                    setValue: value =>
                     {
-                        Mod.Config.VanillaFlowersOnly = b;
+                        Mod.Config.VanillaFlowersOnly = value;
                         if (Mod.Config.VanillaFlowersOnly)
                             this.BuildFlowerData(useWhitelist: true);
-                    });
+                    }
+                );
             }
 
-            var ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
-            if (ja != null)
-            {
-                ja.IdsAssigned += this.JaIdsAssigned;
-            }
+            var jsonAssets = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
+            if (jsonAssets != null)
+                jsonAssets.IdsAssigned += this.JaIdsAssigned;
         }
 
         private void JaIdsAssigned(object sender, EventArgs e)

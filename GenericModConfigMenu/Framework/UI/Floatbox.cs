@@ -4,12 +4,20 @@ namespace GenericModConfigMenu.Framework.UI
 {
     internal class Floatbox : Textbox
     {
+        /*********
+        ** Accessors
+        *********/
         public float Value
         {
             get => (this.String is "" or "-") ? 0 : float.Parse(this.String);
             set => this.String = value.ToString();
         }
 
+
+        /*********
+        ** Protected methods
+        *********/
+        /// <inheritdoc />
         protected override void ReceiveInput(string str)
         {
             bool hasDot = this.String.Contains('.');

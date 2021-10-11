@@ -9,6 +9,9 @@ namespace GenericModConfigMenu.Framework.UI
 {
     internal abstract class Element
     {
+        /*********
+        ** Accessors
+        *********/
         public object UserData { get; set; }
 
         public Container Parent { get; internal set; }
@@ -34,6 +37,10 @@ namespace GenericModConfigMenu.Framework.UI
         public bool Clicked => this.Hover && this.ClickGestured;
         public virtual string ClickedSound => null;
 
+
+        /*********
+        ** Public methods
+        *********/
         public virtual void Update(bool hidden = false)
         {
             int mouseX;

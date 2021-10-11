@@ -8,12 +8,19 @@ namespace GenericModConfigMenu.Framework.UI
 {
     internal class Textbox : Element, IKeyboardSubscriber
     {
+        /*********
+        ** Fields
+        *********/
         private readonly Texture2D Tex;
         private readonly SpriteFont Font;
+        private bool SelectedImpl;
 
+
+        /*********
+        ** Accessors
+        *********/
         public virtual string String { get; set; }
 
-        private bool SelectedImpl;
         public bool Selected
         {
             get => this.SelectedImpl;
@@ -35,15 +42,23 @@ namespace GenericModConfigMenu.Framework.UI
 
         public Action<Element> Callback { get; set; }
 
+        /// <inheritdoc />
+        public override int Width => 192;
+
+        /// <inheritdoc />
+        public override int Height => 48;
+
+
+        /*********
+        ** Public methods
+        *********/
         public Textbox()
         {
             this.Tex = Game1.content.Load<Texture2D>("LooseSprites\\textBox");
             this.Font = Game1.smallFont;
         }
 
-        public override int Width => 192;
-        public override int Height => 48;
-
+        /// <inheritdoc />
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
@@ -54,6 +69,7 @@ namespace GenericModConfigMenu.Framework.UI
             }
         }
 
+        /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
             b.Draw(this.Tex, this.Position, Color.White);
@@ -69,12 +85,7 @@ namespace GenericModConfigMenu.Framework.UI
             b.DrawString(this.Font, text, this.Position + new Vector2(16, 12), Game1.textColor);
         }
 
-        protected virtual void ReceiveInput(string str)
-        {
-            this.String += str;
-            this.Callback?.Invoke(this);
-        }
-
+        /// <inheritdoc />
         public void RecieveTextInput(char inputChar)
         {
             this.ReceiveInput(inputChar.ToString());
@@ -105,11 +116,13 @@ namespace GenericModConfigMenu.Framework.UI
             }
         }
 
+        /// <inheritdoc />
         public void RecieveTextInput(string text)
         {
             this.ReceiveInput(text);
         }
 
+        /// <inheritdoc />
         public void RecieveCommandInput(char command)
         {
             if (command == '\b' && this.String.Length > 0)
@@ -120,8 +133,17 @@ namespace GenericModConfigMenu.Framework.UI
             }
         }
 
-        public void RecieveSpecialInput(Keys key)
+        /// <inheritdoc />
+        public void RecieveSpecialInput(Keys key) { }
+
+
+        /*********
+        ** Protected methods
+        *********/
+        protected virtual void ReceiveInput(string str)
         {
+            this.String += str;
+            this.Callback?.Invoke(this);
         }
     }
 }

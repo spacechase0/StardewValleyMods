@@ -1,27 +1,39 @@
+using System;
 using GenericModConfigMenu.Framework;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace GenericModConfigMenu.ModOption
 {
-    internal class ImageModOption : BaseModOption
+    /// <summary>A mod option which renders an image.</summary>
+    internal class ImageModOption : ReadOnlyModOption
     {
-        public string TexturePath { get; }
-        public Rectangle? TextureRect { get; }
+        /*********
+        ** Accessors
+        *********/
+        /// <summary>The image texture to display.</summary>
+        public Func<Texture2D> Texture { get; }
+
+        /// <summary>The pixel area within the texture to display, or <c>null</c> to show the entire image.</summary>
+        public Rectangle? TexturePixelArea { get; }
+
+        /// <summary>The zoom factor to apply to the image.</summary>
         public int Scale { get; }
 
-        public override void SyncToMod()
-        {
-        }
 
-        public override void Save()
+        /*********
+        ** Public methods
+        *********/
+        /// <summary>Construct an instance.</summary>
+        /// <param name="texture">The image texture to display.</param>
+        /// <param name="texturePixelArea">The pixel area within the texture to display, or <c>null</c> to show the entire image.</param>
+        /// <param name="scale">The zoom factor to apply to the image.</param>
+        /// <param name="mod">The mod config UI that contains this option.</param>
+        public ImageModOption(Func<Texture2D> texture, Rectangle? texturePixelArea, int scale, ModConfig mod)
+            : base(() => "", null, mod)
         {
-        }
-
-        public ImageModOption(string texPath, Rectangle? texRect, int scale, ModConfig mod)
-            : base(texPath, "", texPath, mod)
-        {
-            this.TexturePath = texPath;
-            this.TextureRect = texRect;
+            this.Texture = texture;
+            this.TexturePixelArea = texturePixelArea;
             this.Scale = scale;
         }
     }

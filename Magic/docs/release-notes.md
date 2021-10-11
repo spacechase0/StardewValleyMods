@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Updated for Generic Mod Config Menu 1.5.0.
 * Fixed mana regen not starting until level 2, and slightly increase regen at higher levels.
 
 ## 0.5.7

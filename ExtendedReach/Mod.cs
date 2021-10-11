@@ -44,12 +44,22 @@ namespace ExtendedReach
         *********/
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm == null)
-                return;
-
-            gmcm.RegisterModConfig(this.ModManifest, () => this.Config = new Configuration(), () => this.Helper.WriteConfig(this.Config));
-            gmcm.RegisterSimpleOption(this.ModManifest, "Wiggly Arms", "Show wiggly arms reaching out to your cursor.", () => this.Config.WigglyArms, value => this.Config.WigglyArms = value);
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
+            {
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => this.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(this.Config)
+                );
+                configMenu.AddBoolOption(
+                    mod: this.ModManifest,
+                    name: () => "Wiggly Arms",
+                    tooltip: () => "Show wiggly arms reaching out to your cursor.",
+                    getValue: () => this.Config.WigglyArms,
+                    setValue: value => this.Config.WigglyArms = value
+                );
+            }
         }
 
         private void OnRenderWorld(object sender, RenderedWorldEventArgs e)

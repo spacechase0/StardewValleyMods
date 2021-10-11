@@ -7,9 +7,20 @@ namespace GenericModConfigMenu.Framework.UI
 {
     internal class Table : Container
     {
+        /*********
+        ** Fields
+        *********/
         private readonly List<Element[]> Rows = new();
 
         private Vector2 SizeImpl;
+
+        private const int RowPadding = 16;
+        private int RowHeightImpl;
+
+
+        /*********
+        ** Accessors
+        *********/
         public Vector2 Size
         {
             get => this.SizeImpl;
@@ -20,8 +31,6 @@ namespace GenericModConfigMenu.Framework.UI
             }
         }
 
-        public const int RowPadding = 16;
-        private int RowHeightImpl;
         public int RowHeight
         {
             get => this.RowHeightImpl;
@@ -36,6 +45,16 @@ namespace GenericModConfigMenu.Framework.UI
 
         public Scrollbar Scrollbar { get; }
 
+        /// <inheritdoc />
+        public override int Width => (int)this.Size.X;
+
+        /// <inheritdoc />
+        public override int Height => (int)this.Size.Y;
+
+
+        /*********
+        ** Public methods
+        *********/
         public Table()
         {
             this.Scrollbar = new Scrollbar
@@ -55,17 +74,7 @@ namespace GenericModConfigMenu.Framework.UI
             this.UpdateScrollbar();
         }
 
-        private void UpdateScrollbar()
-        {
-            this.Scrollbar.LocalPosition = new Vector2(this.Size.X + 48, this.Scrollbar.LocalPosition.Y);
-            this.Scrollbar.RequestHeight = (int)this.Size.Y;
-            this.Scrollbar.Rows = this.Rows.Count;
-            this.Scrollbar.FrameSize = (int)(this.Size.Y / this.RowHeight);
-        }
-
-        public override int Width => (int)this.Size.X;
-        public override int Height => (int)this.Size.Y;
-
+        /// <inheritdoc />
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
@@ -102,6 +111,7 @@ namespace GenericModConfigMenu.Framework.UI
             this.Scrollbar.Update(hidden);
         }
 
+        /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
             IClickableMenu.drawTextureBox(b, (int)this.Position.X - 32, (int)this.Position.Y - 32, (int)this.Size.X + 64, (int)this.Size.Y + 64, Color.White);
@@ -121,6 +131,18 @@ namespace GenericModConfigMenu.Framework.UI
             this.RenderLast?.Draw(b);
 
             this.Scrollbar.Draw(b);
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        private void UpdateScrollbar()
+        {
+            this.Scrollbar.LocalPosition = new Vector2(this.Size.X + 48, this.Scrollbar.LocalPosition.Y);
+            this.Scrollbar.RequestHeight = (int)this.Size.Y;
+            this.Scrollbar.Rows = this.Rows.Count;
+            this.Scrollbar.FrameSize = (int)(this.Size.Y / this.RowHeight);
         }
     }
 }

@@ -39,11 +39,21 @@ namespace HybridCropEngine
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                gmcm.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                gmcm.RegisterSimpleOption(this.ModManifest, "Scan Everywhere", "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.", () => Mod.Config.ScanEverywhere, b => Mod.Config.ScanEverywhere = b);
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => Mod.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.AddBoolOption(
+                    mod: this.ModManifest,
+                    name: () => "Scan Everywhere",
+                    tooltip: () => "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.",
+                    getValue: () => Mod.Config.ScanEverywhere,
+                    setValue: value => Mod.Config.ScanEverywhere = value
+                );
             }
         }
 

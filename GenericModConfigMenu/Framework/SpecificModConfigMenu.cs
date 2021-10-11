@@ -14,8 +14,12 @@ using StardewValley.Menus;
 
 namespace GenericModConfigMenu.Framework
 {
-    internal class SpecificModConfigMenu : IClickableMenu, IAssetEditor
+    /// <summary>The config UI for a specific mod.</summary>
+    internal class SpecificModConfigMenu : IClickableMenu
     {
+        /*********
+        ** Fields
+        *********/
         private readonly bool InGame;
         private readonly Action<string> OpenPage;
         private readonly Action ReturnToList;
@@ -28,40 +32,30 @@ namespace GenericModConfigMenu.Framework
         private readonly Table Table;
         private readonly List<Label> OptHovers = new();
 
-        private readonly Dictionary<string, List<Image>> Textures = new();
-        private readonly Queue<string> PendingTexChanges = new();
+        private readonly Dictionary<string, Image[]> FieldTextures = new();
 
         /// <summary>Whether the user hit escape.</summary>
         private bool ExitOnNextUpdate;
 
+        private SimpleModOption<SButton> KeybindingOpt;
+        private SimpleModOption<KeybindList> Keybinding2Opt;
+        private Label KeybindingLabel;
+
         /// <summary>Whether a keybinding UI is open.</summary>
         private bool IsBindingKey => this.KeybindingOpt != null || this.Keybinding2Opt != null;
 
+
+        /*********
+        ** Accessors
+        *********/
         public IManifest Manifest => this.ModConfig.ModManifest;
         public readonly string CurrPage;
         public static IClickableMenu ActiveConfigMenu;
 
-        public bool CanEdit<T>(IAssetInfo asset)
-        {
-            foreach (string key in this.Textures.Keys)
-            {
-                if (asset.AssetNameEquals(key))
-                    return true;
-            }
-            return false;
-        }
 
-        public void Edit<T>(IAssetData asset)
-        {
-            foreach (string key in this.Textures.Keys)
-            {
-                if (asset.AssetNameEquals(key))
-                {
-                    this.PendingTexChanges.Enqueue(key);
-                }
-            }
-        }
-
+        /*********
+        ** Public methods
+        *********/
         public SpecificModConfigMenu(ModConfig config, bool inGame, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
         {
             this.ModConfig = config;
@@ -82,35 +76,38 @@ namespace GenericModConfigMenu.Framework
             this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
             foreach (var opt in this.ModConfig.Options[this.CurrPage].Options)
             {
-                opt.SyncToMod();
-                if (this.InGame && !opt.AvailableInGame)
+                string name = opt.Name();
+                string tooltip = opt.Tooltip();
+
+                opt.GetLatest();
+                if (this.InGame && !opt.EditableInGame)
                     continue;
 
-                var label = new Label
+                Label label = new Label
                 {
-                    String = opt.Name,
-                    UserData = opt.Description
+                    String = name,
+                    UserData = tooltip
                 };
-                if (!string.IsNullOrEmpty(opt.Description))
+                if (!string.IsNullOrEmpty(tooltip))
                     this.OptHovers.Add(label);
 
-                Element other = new Label
+                Element optionElement = new Label
                 {
                     String = "TODO",
                     LocalPosition = new Vector2(500, 0)
                 };
-                Element other2 = null;
+                Label rightLabel = null;
                 switch (opt)
                 {
                     case ComplexModOption option:
-                        other = new ComplexModOptionWidget(option)
+                        optionElement = new ComplexModOptionWidget(option)
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0)
                         };
                         break;
 
                     case SimpleModOption<bool> option:
-                        other = new Checkbox
+                        optionElement = new Checkbox
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                             Checked = option.Value,
@@ -122,7 +119,7 @@ namespace GenericModConfigMenu.Framework
                         if (Constants.TargetPlatform == GamePlatform.Android)
                             continue; // TODO: Support virtual keyboard input.
 
-                        other = new Label
+                        optionElement = new Label
                         {
                             String = option.Value != SButton.None ? option.Value.ToString() : I18n.Config_RebindKey_NoKey(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
@@ -134,7 +131,7 @@ namespace GenericModConfigMenu.Framework
                         if (Constants.TargetPlatform == GamePlatform.Android)
                             continue; // TODO: Support virtual keyboard input.
 
-                        other = new Label
+                        optionElement = new Label
                         {
                             String = option.Value.IsBound ? option.Value.ToString() : I18n.Config_RebindKey_NoKey(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
@@ -142,61 +139,55 @@ namespace GenericModConfigMenu.Framework
                         };
                         break;
 
-                    case ClampedModOption<int> option:
+                    case NumericModOption<int> option when (option.Minimum.HasValue && option.Maximum.HasValue):
+                        rightLabel = new Label
                         {
-                            var label2 = new Label
-                            {
-                                String = option.Value.ToString(),
-                                LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
-                            };
-                            other2 = label;
+                            String = option.Value.ToString(),
+                            LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
+                        };
 
-                            other = new Slider<int>
-                            {
-                                LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                                RequestWidth = (int)this.Table.Size.X / 3,
-                                Value = option.Value,
-                                Minimum = option.Minimum,
-                                Maximum = option.Maximum,
-                                Interval = option.Interval,
-                                Callback = e =>
-                                {
-                                    option.Value = (e as Slider<int>).Value;
-                                    label2.String = option.Value.ToString();
-                                }
-                            };
-                            break;
-                        }
-
-                    case ClampedModOption<float> option:
+                        optionElement = new Slider<int>
                         {
-                            var label2 = new Label
+                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                            RequestWidth = (int)this.Table.Size.X / 3,
+                            Value = option.Value,
+                            Minimum = option.Minimum.Value,
+                            Maximum = option.Maximum.Value,
+                            Interval = option.Interval ?? 1,
+                            Callback = e =>
                             {
-                                String = option.Value.ToString(),
-                                LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
-                            };
-                            other2 = label2;
+                                option.Value = (e as Slider<int>).Value;
+                                rightLabel.String = option.Value.ToString();
+                            }
+                        };
+                        break;
 
-                            other = new Slider<float>
+                    case NumericModOption<float> option when (option.Minimum.HasValue && option.Maximum.HasValue):
+                        rightLabel = new Label
+                        {
+                            String = option.Value.ToString(),
+                            LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
+                        };
+
+                        optionElement = new Slider<float>
+                        {
+                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                            RequestWidth = (int)this.Table.Size.X / 3,
+                            Value = option.Value,
+                            Minimum = option.Minimum.Value,
+                            Maximum = option.Maximum.Value,
+                            Interval = option.Interval ?? 0.01f,
+                            Callback = (Element e) =>
                             {
-                                LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                                RequestWidth = (int)this.Table.Size.X / 3,
-                                Value = option.Value,
-                                Minimum = option.Minimum,
-                                Maximum = option.Maximum,
-                                Interval = option.Interval,
-                                Callback = (Element e) =>
-                                {
-                                    option.Value = (e as Slider<float>).Value;
-                                    label2.String = option.Value.ToString();
-                                }
-                            };
-                            break;
-                        }
+                                option.Value = (e as Slider<float>).Value;
+                                rightLabel.String = option.Value.ToString();
+                            }
+                        };
+                        break;
 
                     // The following need to come after the Clamped/ChoiceModOption's since those subclass these
                     case ChoiceModOption<string> option:
-                        other = new Dropdown
+                        optionElement = new Dropdown
                         {
                             Choices = option.Choices,
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
@@ -211,7 +202,7 @@ namespace GenericModConfigMenu.Framework
                         if (Constants.TargetPlatform == GamePlatform.Android)
                             continue; // TODO: Support virtual keyboard input.
 
-                        other = new Intbox
+                        optionElement = new Intbox
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             Value = option.Value,
@@ -223,7 +214,7 @@ namespace GenericModConfigMenu.Framework
                         if (Constants.TargetPlatform == GamePlatform.Android)
                             continue; // TODO: Support virtual keyboard input.
 
-                        other = new Floatbox
+                        optionElement = new Floatbox
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             Value = option.Value,
@@ -235,7 +226,7 @@ namespace GenericModConfigMenu.Framework
                         if (Constants.TargetPlatform == GamePlatform.Android)
                             continue; // TODO: Support virtual keyboard input.
 
-                        other = new Textbox
+                        optionElement = new Textbox
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             String = option.Value,
@@ -243,29 +234,29 @@ namespace GenericModConfigMenu.Framework
                         };
                         break;
 
-                    case LabelModOption option:
+                    case SectionTitleModOption _:
                         label.LocalPosition = new Vector2(-8, 0);
                         label.Bold = true;
-                        if (option.Name == "")
+                        if (name == "")
                             label = null;
-                        other = null;
+                        optionElement = null;
                         break;
 
-                    case PageLabelModOption option:
+                    case PageLinkModOption option:
                         label.Bold = true;
-                        label.Callback = _ => this.OpenPage(option.NewPage);
-                        other = null;
+                        label.Callback = _ => this.OpenPage(option.PageId);
+                        optionElement = null;
                         break;
 
-                    case ParagraphModOption option:
+                    case ParagraphModOption _:
                         {
                             label = null;
-                            other = null;
+                            optionElement = null;
 
                             List<string> lines = new();
                             {
                                 string nextLine = "";
-                                foreach (string word in option.Name.Split(' '))
+                                foreach (string word in name.Split(' '))
                                 {
                                     // always add at least one word
                                     if (nextLine == "")
@@ -295,7 +286,7 @@ namespace GenericModConfigMenu.Framework
                             {
                                 new Label
                                 {
-                                    UserData = opt.Description,
+                                    UserData = tooltip,
                                     NonBoldScale = 0.75f,
                                     NonBoldShadow = false,
                                     String = string.Join("\n", lines)
@@ -306,24 +297,20 @@ namespace GenericModConfigMenu.Framework
 
                     case ImageModOption option:
                         {
-                            var tex = Game1.content.Load<Texture2D>(option.TexturePath);
+                            var tex = option.Texture();
                             var imgSize = new Vector2(tex.Width, tex.Height);
-                            if (option.TextureRect.HasValue)
-                                imgSize = new Vector2(option.TextureRect.Value.Width, option.TextureRect.Value.Height);
+                            if (option.TexturePixelArea.HasValue)
+                                imgSize = new Vector2(option.TexturePixelArea.Value.Width, option.TexturePixelArea.Value.Height);
                             imgSize *= option.Scale;
 
 
                             var localPos = new Vector2(this.Table.Size.X / 2 - imgSize.X / 2, 0);
                             var baseRectPos = new Vector2(
-                                option.TextureRect?.X ?? 0,
-                                option.TextureRect?.Y ?? 0
+                                option.TexturePixelArea?.X ?? 0,
+                                option.TexturePixelArea?.Y ?? 0
                             );
 
-                            var texs = new List<Image>();
-                            if (this.Textures.ContainsKey(option.TexturePath))
-                                texs = this.Textures[option.TexturePath];
-                            else
-                                this.Textures.Add(option.TexturePath, texs);
+                            var images = new List<Image>();
 
                             for (int ir = 0; ir < imgSize.Y / this.Table.RowHeight; ++ir)
                             {
@@ -340,15 +327,17 @@ namespace GenericModConfigMenu.Framework
                                     Scale = option.Scale,
                                     LocalPosition = localPos
                                 };
-                                texs.Add(img);
+                                images.Add(img);
                                 this.Table.AddRow(new Element[] { img });
                             }
+
+                            this.FieldTextures[opt.FieldId] = images.ToArray();
 
                             continue;
                         }
                 }
 
-                this.Table.AddRow(new[] { label, other, other2 }.Where(p => p != null).ToArray());
+                this.Table.AddRow(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());
             }
             this.Ui.AddChild(this.Table);
             this.AddDefaultLabels(this.Manifest);
@@ -357,7 +346,6 @@ namespace GenericModConfigMenu.Framework
             this.Table.ForceUpdateEvenHidden();
 
             SpecificModConfigMenu.ActiveConfigMenu = this;
-            Mod.Instance.Helper.Content.AssetEditors.Add(this);
         }
 
         /// <inheritdoc />
@@ -365,59 +353,6 @@ namespace GenericModConfigMenu.Framework
         {
             if (key == Keys.Escape && !this.IsBindingKey)
                 this.ExitOnNextUpdate = true;
-        }
-
-        private void AddDefaultLabels(IManifest modManifest)
-        {
-            string page = this.ModConfig.Options[this.CurrPage].DisplayName;
-            var titleLabel = new Label
-            {
-                String = modManifest.Name + (page == "" ? "" : " > " + page),
-                Bold = true
-            };
-            titleLabel.LocalPosition = new Vector2((Game1.uiViewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
-            titleLabel.HoverTextColor = titleLabel.IdleTextColor;
-            this.Ui.AddChild(titleLabel);
-
-            var cancelLabel = new Label
-            {
-                String = I18n.Config_Buttons_Cancel(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 400, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.Cancel()
-            };
-            this.Ui.AddChild(cancelLabel);
-
-            var defaultLabel = new Label
-            {
-                String = I18n.Config_Buttons_ResetToDefault(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 200, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.RevertToDefault()
-            };
-            this.Ui.AddChild(defaultLabel);
-
-            var saveLabel = new Label
-            {
-                String = I18n.Config_Buttons_Save(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 50, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.Save()
-            };
-            this.Ui.AddChild(saveLabel);
-
-            var saveCloseLabel = new Label
-            {
-                String = I18n.Config_Buttons_SaveAndClose(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 200, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ =>
-                {
-                    this.Save();
-                    this.Close();
-                }
-            };
-            this.Ui.AddChild(saveCloseLabel);
         }
 
         public void ReceiveScrollWheelActionSmapi(int direction)
@@ -431,31 +366,23 @@ namespace GenericModConfigMenu.Framework
                 SpecificModConfigMenu.ActiveConfigMenu = null;
         }
 
+        /// <inheritdoc />
         public override bool readyToClose()
         {
             return false;
         }
 
+        /// <inheritdoc />
         public override void update(GameTime time)
         {
             base.update(time);
             this.Ui.Update();
 
-            while (this.PendingTexChanges.Count > 0)
-            {
-                string texPath = this.PendingTexChanges.Dequeue();
-                var tex = Game1.content.Load<Texture2D>(texPath);
-
-                foreach (var images in this.Textures[texPath])
-                {
-                    images.Texture = tex;
-                }
-            }
-
             if (this.ExitOnNextUpdate)
                 this.Cancel();
         }
 
+        /// <inheritdoc />
         public override void draw(SpriteBatch b)
         {
             base.draw(b);
@@ -472,7 +399,7 @@ namespace GenericModConfigMenu.Framework
                 int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
                 IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
 
-                string s = I18n.Config_RebindKey_Title(this.KeybindingOpt.Name);
+                string s = I18n.Config_RebindKey_Title(this.KeybindingOpt.Name());
                 int sw = (int)Game1.dialogueFont.MeasureString(s).X;
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 20), Game1.textColor);
 
@@ -488,7 +415,7 @@ namespace GenericModConfigMenu.Framework
                 int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
                 IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
 
-                string s = I18n.Config_RebindKey_Title(this.Keybinding2Opt.Name);
+                string s = I18n.Config_RebindKey_Title(this.Keybinding2Opt.Name());
                 int sw = (int)Game1.dialogueFont.MeasureString(s).X;
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 20), Game1.textColor);
 
@@ -516,31 +443,104 @@ namespace GenericModConfigMenu.Framework
             }
         }
 
-        private void RevertToDefault()
+        /// <inheritdoc />
+        public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
+        {
+            this.Ui = new RootElement();
+
+            Vector2 newSize = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116);
+
+            foreach (Element opt in this.Table.Children)
+            {
+                opt.LocalPosition = new Vector2(newSize.X / (this.Table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
+                if (opt is Slider slider)
+                    slider.RequestWidth = (int)(newSize.X / (this.Table.Size.X / slider.Width));
+            }
+
+            this.Table.Size = newSize;
+            this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
+            this.Table.Scrollbar.Update();
+            this.Ui.AddChild(this.Table);
+            this.AddDefaultLabels(this.Manifest);
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        private void AddDefaultLabels(IManifest modManifest)
+        {
+            // add page title
+            {
+                string pageTitle = this.ModConfig.Options[this.CurrPage].PageTitle();
+                var titleLabel = new Label
+                {
+                    String = modManifest.Name + (pageTitle == "" ? "" : " > " + pageTitle),
+                    Bold = true
+                };
+                titleLabel.LocalPosition = new Vector2((Game1.uiViewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
+                titleLabel.HoverTextColor = titleLabel.IdleTextColor;
+                this.Ui.AddChild(titleLabel);
+            }
+
+            // add buttons
+            this.Ui.AddChild(new Label
+            {
+                String = I18n.Config_Buttons_Cancel(),
+                Bold = true,
+                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 400, Game1.uiViewport.Height - 50 - 36),
+                Callback = _ => this.Cancel()
+            });
+            this.Ui.AddChild(new Label
+            {
+                String = I18n.Config_Buttons_ResetToDefault(),
+                Bold = true,
+                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 200, Game1.uiViewport.Height - 50 - 36),
+                Callback = _ => this.ResetConfig()
+            });
+            this.Ui.AddChild(new Label
+            {
+                String = I18n.Config_Buttons_Save(),
+                Bold = true,
+                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 50, Game1.uiViewport.Height - 50 - 36),
+                Callback = _ => this.SaveConfig()
+            });
+            this.Ui.AddChild(new Label
+            {
+                String = I18n.Config_Buttons_SaveAndClose(),
+                Bold = true,
+                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 200, Game1.uiViewport.Height - 50 - 36),
+                Callback = _ =>
+                {
+                    this.SaveConfig();
+                    this.Close();
+                }
+            });
+        }
+
+        private void ResetConfig()
         {
             Game1.playSound("backpackIN");
-            this.ModConfig.RevertToDefault.Invoke();
+            this.ModConfig.Reset();
             foreach (var page in this.ModConfig.Options)
                 foreach (var opt in page.Value.Options)
-                    opt.SyncToMod();
-            this.ModConfig.SaveToFile.Invoke();
+                    opt.GetLatest();
+            this.ModConfig.Save();
 
             this.OpenPage(this.CurrPage);
         }
 
-        private void Save()
+        private void SaveConfig()
         {
             Game1.playSound("money");
             foreach (var page in this.ModConfig.Options)
                 foreach (var opt in page.Value.Options)
                     opt.Save();
-            this.ModConfig.SaveToFile.Invoke();
+            this.ModConfig.Save();
         }
 
         private void Close()
         {
-            Mod.Instance.Helper.Content.AssetEditors.Remove(this);
-
             if (this.IsSubPage)
                 this.OpenPage(null);
             else
@@ -553,9 +553,6 @@ namespace GenericModConfigMenu.Framework
             this.Close();
         }
 
-        private SimpleModOption<SButton> KeybindingOpt;
-        private SimpleModOption<KeybindList> Keybinding2Opt;
-        private Label KeybindingLabel;
         private void DoKeybindingFor(SimpleModOption<SButton> opt, Label label)
         {
             Game1.playSound("breathin");
@@ -636,26 +633,6 @@ namespace GenericModConfigMenu.Framework
                 return;
             }
 
-        }
-
-        public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
-        {
-            this.Ui = new RootElement();
-
-            Vector2 newSize = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116);
-
-            foreach (Element opt in this.Table.Children)
-            {
-                opt.LocalPosition = new Vector2(newSize.X / (this.Table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
-                if (opt is Slider slider)
-                    slider.RequestWidth = (int)(newSize.X / (this.Table.Size.X / slider.Width));
-            }
-
-            this.Table.Size = newSize;
-            this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
-            this.Table.Scrollbar.Update();
-            this.Ui.AddChild(this.Table);
-            this.AddDefaultLabels(this.Manifest);
         }
     }
 }

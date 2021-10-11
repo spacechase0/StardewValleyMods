@@ -26,11 +26,21 @@ namespace JumpOver
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (capi != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Jump Key", "The key to jump", () => Mod.Config.KeyJump, (SButton val) => Mod.Config.KeyJump = val);
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => Mod.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.AddKeybind(
+                    mod: this.ModManifest,
+                    name: () => "Jump Key",
+                    tooltip: () => "The key to jump",
+                    getValue: () => Mod.Config.KeyJump,
+                    setValue: value => Mod.Config.KeyJump = value
+                );
             }
         }
 

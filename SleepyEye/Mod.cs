@@ -73,11 +73,21 @@ namespace SleepyEye
             var spaceCore = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
             spaceCore.RegisterSerializerType(typeof(TentTool));
 
-            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                gmcm.RegisterModConfig(this.ModManifest, revertToDefault: () => this.ApplyConfig(new ModConfig()), saveToFile: this.SaveConfig);
-                gmcm.RegisterSimpleOption(this.ModManifest, "Seconds until save", "The number of seconds until the tent tool should trigger a save.", () => (int)TentTool.UseDelay.TotalSeconds, (int val) => TentTool.UseDelay = TimeSpan.FromSeconds(val));
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => this.ApplyConfig(new ModConfig()),
+                    save: this.SaveConfig
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: () => "Seconds until save",
+                    tooltip: () => "The number of seconds until the tent tool should trigger a save.",
+                    getValue: () => (int)TentTool.UseDelay.TotalSeconds,
+                    setValue: value => TentTool.UseDelay = TimeSpan.FromSeconds(value)
+                );
             }
         }
 
