@@ -147,9 +147,10 @@ namespace GenericModConfigMenu
         /// <remarks>This lets you have different values per-field. Most mods should just set it once in <see cref="Register"/>.</remarks>
         void SetEditableInGameForNextOptions(IManifest mod, bool editableInGame);
 
-        /// <summary>Register a method to notify when any option is edited through the config UI.</summary>
+        /// <summary>Register a method to notify when any option registered by this mod is edited through the config UI.</summary>
         /// <param name="mod">The mod's manifest.</param>
         /// <param name="onChange">The method to call with the option's unique field ID and new value.</param>
+        /// <remarks>Options use a randomized ID by default; you'll likely want to specify the <c>fieldId</c> argument when adding options if you use this.</remarks>
         void OnFieldChanged(IManifest mod, Action<string, object> onChange);
 
         /// <summary>Open the config UI for a specific mod.</summary>
