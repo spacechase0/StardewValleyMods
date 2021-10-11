@@ -91,23 +91,23 @@ namespace GenericModConfigMenu.Framework
                 if (!string.IsNullOrEmpty(tooltip))
                     this.OptHovers.Add(label);
 
-                Element other = new Label
+                Element optionElement = new Label
                 {
                     String = "TODO",
                     LocalPosition = new Vector2(500, 0)
                 };
-                Element other2 = null;
+                Label rightLabel = null;
                 switch (opt)
                 {
                     case ComplexModOption option:
-                        other = new ComplexModOptionWidget(option)
+                        optionElement = new ComplexModOptionWidget(option)
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0)
                         };
                         break;
 
                     case SimpleModOption<bool> option:
-                        other = new Checkbox
+                        optionElement = new Checkbox
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                             Checked = option.Value,
@@ -119,7 +119,7 @@ namespace GenericModConfigMenu.Framework
                         if (Constants.TargetPlatform == GamePlatform.Android)
                             continue; // TODO: Support virtual keyboard input.
 
-                        other = new Label
+                        optionElement = new Label
                         {
                             String = option.Value != SButton.None ? option.Value.ToString() : I18n.Config_RebindKey_NoKey(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
@@ -131,7 +131,7 @@ namespace GenericModConfigMenu.Framework
                         if (Constants.TargetPlatform == GamePlatform.Android)
                             continue; // TODO: Support virtual keyboard input.
 
-                        other = new Label
+                        optionElement = new Label
                         {
                             String = option.Value.IsBound ? option.Value.ToString() : I18n.Config_RebindKey_NoKey(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
@@ -140,60 +140,54 @@ namespace GenericModConfigMenu.Framework
                         break;
 
                     case NumericModOption<int> option when (option.Minimum.HasValue && option.Maximum.HasValue):
+                        rightLabel = new Label
                         {
-                            var label2 = new Label
-                            {
-                                String = option.Value.ToString(),
-                                LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
-                            };
-                            other2 = label2;
+                            String = option.Value.ToString(),
+                            LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
+                        };
 
-                            other = new Slider<int>
+                        optionElement = new Slider<int>
+                        {
+                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                            RequestWidth = (int)this.Table.Size.X / 3,
+                            Value = option.Value,
+                            Minimum = option.Minimum.Value,
+                            Maximum = option.Maximum.Value,
+                            Interval = option.Interval ?? 1,
+                            Callback = e =>
                             {
-                                LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                                RequestWidth = (int)this.Table.Size.X / 3,
-                                Value = option.Value,
-                                Minimum = option.Minimum.Value,
-                                Maximum = option.Maximum.Value,
-                                Interval = option.Interval ?? 1,
-                                Callback = e =>
-                                {
-                                    option.Value = (e as Slider<int>).Value;
-                                    label2.String = option.Value.ToString();
-                                }
-                            };
-                            break;
-                        }
+                                option.Value = (e as Slider<int>).Value;
+                                rightLabel.String = option.Value.ToString();
+                            }
+                        };
+                        break;
 
                     case NumericModOption<float> option when (option.Minimum.HasValue && option.Maximum.HasValue):
+                        rightLabel = new Label
                         {
-                            var label2 = new Label
-                            {
-                                String = option.Value.ToString(),
-                                LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
-                            };
-                            other2 = label2;
+                            String = option.Value.ToString(),
+                            LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
+                        };
 
-                            other = new Slider<float>
+                        optionElement = new Slider<float>
+                        {
+                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                            RequestWidth = (int)this.Table.Size.X / 3,
+                            Value = option.Value,
+                            Minimum = option.Minimum.Value,
+                            Maximum = option.Maximum.Value,
+                            Interval = option.Interval ?? 0.01f,
+                            Callback = (Element e) =>
                             {
-                                LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                                RequestWidth = (int)this.Table.Size.X / 3,
-                                Value = option.Value,
-                                Minimum = option.Minimum.Value,
-                                Maximum = option.Maximum.Value,
-                                Interval = option.Interval ?? 0.01f,
-                                Callback = (Element e) =>
-                                {
-                                    option.Value = (e as Slider<float>).Value;
-                                    label2.String = option.Value.ToString();
-                                }
-                            };
-                            break;
-                        }
+                                option.Value = (e as Slider<float>).Value;
+                                rightLabel.String = option.Value.ToString();
+                            }
+                        };
+                        break;
 
                     // The following need to come after the Clamped/ChoiceModOption's since those subclass these
                     case ChoiceModOption<string> option:
-                        other = new Dropdown
+                        optionElement = new Dropdown
                         {
                             Choices = option.Choices,
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
@@ -208,7 +202,7 @@ namespace GenericModConfigMenu.Framework
                         if (Constants.TargetPlatform == GamePlatform.Android)
                             continue; // TODO: Support virtual keyboard input.
 
-                        other = new Intbox
+                        optionElement = new Intbox
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             Value = option.Value,
@@ -220,7 +214,7 @@ namespace GenericModConfigMenu.Framework
                         if (Constants.TargetPlatform == GamePlatform.Android)
                             continue; // TODO: Support virtual keyboard input.
 
-                        other = new Floatbox
+                        optionElement = new Floatbox
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             Value = option.Value,
@@ -232,7 +226,7 @@ namespace GenericModConfigMenu.Framework
                         if (Constants.TargetPlatform == GamePlatform.Android)
                             continue; // TODO: Support virtual keyboard input.
 
-                        other = new Textbox
+                        optionElement = new Textbox
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             String = option.Value,
@@ -240,24 +234,24 @@ namespace GenericModConfigMenu.Framework
                         };
                         break;
 
-                    case SectionTitleModOption option:
+                    case SectionTitleModOption _:
                         label.LocalPosition = new Vector2(-8, 0);
                         label.Bold = true;
                         if (name == "")
                             label = null;
-                        other = null;
+                        optionElement = null;
                         break;
 
                     case PageLinkModOption option:
                         label.Bold = true;
                         label.Callback = _ => this.OpenPage(option.PageId);
-                        other = null;
+                        optionElement = null;
                         break;
 
-                    case ParagraphModOption option:
+                    case ParagraphModOption _:
                         {
                             label = null;
-                            other = null;
+                            optionElement = null;
 
                             List<string> lines = new();
                             {
@@ -343,7 +337,7 @@ namespace GenericModConfigMenu.Framework
                         }
                 }
 
-                this.Table.AddRow(new[] { label, other, other2 }.Where(p => p != null).ToArray());
+                this.Table.AddRow(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());
             }
             this.Ui.AddChild(this.Table);
             this.AddDefaultLabels(this.Manifest);
