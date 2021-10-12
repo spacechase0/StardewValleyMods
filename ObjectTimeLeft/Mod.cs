@@ -21,6 +21,7 @@ namespace ObjectTimeLeft
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
@@ -43,22 +44,22 @@ namespace ObjectTimeLeft
                 );
                 configMenu.AddBoolOption(
                     mod: this.ModManifest,
-                    name: () => "Show on Start",
-                    tooltip: () => "Whether to start the game with time left already showing.",
+                    name: I18n.Config_ShowOnStart_Name,
+                    tooltip: I18n.Config_ShowOnStart_Tooltip,
                     getValue: () => Mod.Config.ShowOnStart,
                     setValue: value => Mod.Config.ShowOnStart = value
                 );
                 configMenu.AddKeybind(
                     mod: this.ModManifest,
-                    name: () => "Key: Toggle Display",
-                    tooltip: () => "The key to toggle the display on objects.",
+                    name: I18n.Config_ToggleKey_Name,
+                    tooltip: I18n.Config_ShowOnStart_Tooltip,
                     getValue: () => Mod.Config.ToggleKey,
                     setValue: value => Mod.Config.ToggleKey = value
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Text Scale",
-                    tooltip: () => "Scale of text that will superimpose the objects.",
+                    name: I18n.Config_TextScale_Name,
+                    tooltip: I18n.Config_TextScale_Tooltip,
                     getValue: () => Mod.Config.TextScale,
                     setValue: value => Mod.Config.TextScale = value
                 );
