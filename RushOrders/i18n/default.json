@@ -1,0 +1,30 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // Clint's shop
+    "clint.rush.name-suffix": "         *RUSH*",
+    "clint.rush.description": "The tool will take one day to upgrade.",
+    "clint.rush.dialogue": "Thanks. I'll get started right away. It should be ready tomorrow.",
+
+    "clint.instant.name-suffix": "       =INSTANT=",
+    "clint.instant.description": "The tool will be immediately upgraded.",
+    "clint.instant.dialogue": "Thanks. I'll get started right away. It should be ready in a few minutes.",
+
+    // Robin's shop
+    "robin.rush-question": "Rush your building construction? ({{daysLeft}} days left.)",
+    "robin.rush-answer-yes": "Yes ({{price}}g)",
+    "robin.rush-answer-no": "No",
+    "robin.not-enough-money": "You do not have enough money.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.price-tool-one-day.name": "Price: Tool - One Day",
+    "config.price-tool-one-day.tooltip": "The price multiplier for a one-day tool upgrade.",
+    "config.price-tool-instant.name": "Price: Tool - Instant",
+    "config.price-tool-instant.tooltip": "The price multiplier for an instant upgrade.",
+    "config.price-building.name": "Price: Building - Accelerate",
+    "config.price-building.tooltip": "The price multiplier to accelerate building construction by one day."
+}

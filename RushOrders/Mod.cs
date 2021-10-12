@@ -26,6 +26,7 @@ namespace RushOrders
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -54,22 +55,22 @@ namespace RushOrders
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Price: Tool - One day",
-                    tooltip: () => "The price multiplier for a one-day tool upgrade.",
+                    name: I18n.Config_PriceToolOneDay_Name,
+                    tooltip: I18n.Config_PriceToolOneDay_Tooltip,
                     getValue: () => (float)Mod.ModConfig.PriceFactor.Tool.Rush,
                     setValue: value => Mod.ModConfig.PriceFactor.Tool.Rush = value
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Price: Tool - Instant",
-                    tooltip: () => "The price multiplier for an instant upgrade.",
+                    name: I18n.Config_PriceToolInstant_Name,
+                    tooltip: I18n.Config_PriceToolInstant_Tooltip,
                     getValue: () => (float)Mod.ModConfig.PriceFactor.Tool.Rush,
                     setValue: value => Mod.ModConfig.PriceFactor.Tool.Now = value
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Price: Building - Accelerate",
-                    tooltip: () => "The price multiplier to accelerate building construction by one day.",
+                    name: I18n.Config_PriceBuilding_Name,
+                    tooltip: I18n.Config_PriceBuilding_Tooltip,
                     getValue: () => (float)Mod.ModConfig.PriceFactor.Building.RushOneDay,
                     setValue: value => Mod.ModConfig.PriceFactor.Building.RushOneDay = value
                 );
@@ -152,10 +153,10 @@ namespace RushOrders
                 }
                 toolRush.UpgradeLevel = tool.UpgradeLevel;
                 toolNow.UpgradeLevel = tool.UpgradeLevel;
-                toolRush.DisplayName = tool.DisplayName + "         *RUSH*";
-                toolNow.DisplayName = tool.DisplayName + "       =INSTANT=";
-                toolRush.description = "The tool will take one day to upgrade." + Environment.NewLine + Environment.NewLine + tool.description;
-                toolNow.description = "The tool will be immediately upgraded." + Environment.NewLine + Environment.NewLine + tool.description;
+                toolRush.DisplayName = $"{tool.DisplayName}{I18n.Clint_Rush_NameSuffix()}";
+                toolNow.DisplayName = $"{tool.DisplayName}{I18n.Clint_Instant_NameSuffix()}";
+                toolRush.description = I18n.Clint_Rush_Description() + Environment.NewLine + Environment.NewLine + tool.description;
+                toolNow.description = I18n.Clint_Instant_Description() + Environment.NewLine + Environment.NewLine + tool.description;
 
                 int price = Mod.GetToolUpgradePrice(tool.UpgradeLevel);
                 if (entry.Value[0] == price)
@@ -217,14 +218,14 @@ namespace RushOrders
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 0;
                     clint.CurrentDialogue.Pop();
-                    Game1.drawDialogue(clint, "Thanks. I'll get started right away. It should be ready in a few minutes.");
+                    Game1.drawDialogue(clint, I18n.Clint_Instant_Dialogue());
                     Mod.Api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
                 else if (diff == (int)(curPrice * Mod.ModConfig.PriceFactor.Tool.Rush))
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 1;
                     clint.CurrentDialogue.Pop();
-                    Game1.drawDialogue(clint, "Thanks. I'll get started right away. It should be ready tomorrow.");
+                    Game1.drawDialogue(clint, I18n.Clint_Rush_Dialogue());
                     Mod.Api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
             }
