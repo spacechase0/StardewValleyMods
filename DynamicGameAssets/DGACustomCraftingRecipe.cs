@@ -130,7 +130,7 @@ namespace DynamicGameAssets
         }
 
         public override string Name => this.data.Name;
-        public override string Description => this.data.Description + "\n\nMod: " + this.data.pack.smapiPack.Manifest.Name;
+        public override string Description => this.data.Description + $"\n\n{I18n.ItemTooltip_AddedByMod(this.data.pack.smapiPack.Manifest.Name)}";
 
         public override Texture2D IconTexture => this.cacheIconTex;
 

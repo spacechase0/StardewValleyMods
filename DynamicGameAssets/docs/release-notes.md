@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Added translation support for the `Mod: <name>` text in item tooltips.
 * Updated for Generic Mod Config Menu 1.5.0.
 * Fixed various animation parsing issues.
 
