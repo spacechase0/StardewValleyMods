@@ -56,7 +56,7 @@ namespace DynamicGameAssets
                     if (this.ItemMatches(item))
                     {
                         if (item.Stack <= left)
-                            Game1.player.items[i] = null;
+                            Game1.player.Items[i] = null;
                         else
                             item.Stack -= left;
 
@@ -67,7 +67,7 @@ namespace DynamicGameAssets
                     }
                 }
 
-                if (left > 0)
+                if (left > 0 && additionalIngredients != null)
                 {
                     foreach (var chest in additionalIngredients)
                     {

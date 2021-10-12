@@ -5,6 +5,7 @@
 * Added translation support for the `Mod: <name>` text in item tooltips.
 * Updated for Generic Mod Config Menu 1.5.0.
 * Fixed various animation parsing issues.
+* Fixed error when crafting in some cases.
 
 ## 1.2.1
 Released 19 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
