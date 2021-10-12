@@ -88,71 +88,71 @@ namespace Magic
                     );
                     configMenu.AddTextOption(
                         mod: this.ModManifest,
-                        name: () => "Altar Location",
-                        tooltip: () => "The (internal) name of the location the magic altar should be placed at.",
+                        name: I18n.Config_AltarLocation_Name,
+                        tooltip: I18n.Config_AltarLocation_Tooltip,
                         getValue: () => Mod.Config.AltarLocation,
                         setValue: value => Mod.Config.AltarLocation = value
                     );
                     configMenu.AddNumberOption(
                         mod: this.ModManifest,
-                        name: () => "Altar X",
-                        tooltip: () => "The X tile position of where the magic altar should be placed.",
+                        name: I18n.Config_AltarX_Name,
+                        tooltip: I18n.Config_AltarX_Tooltip,
                         getValue: () => Mod.Config.AltarX,
                         setValue: value => Mod.Config.AltarX = value
                     );
                     configMenu.AddNumberOption(
                         mod: this.ModManifest,
-                        name: () => "Altar Y",
-                        tooltip: () => "The Y tile position of where the magic altar should be placed.",
+                        name: I18n.Config_AltarY_Name,
+                        tooltip: I18n.Config_AltarY_Tooltip,
                         getValue: () => Mod.Config.AltarY,
                         setValue: value => Mod.Config.AltarY = value
                     );
                     configMenu.AddKeybind(
                         mod: this.ModManifest,
-                        name: () => "Key: Cast",
-                        tooltip: () => "The key to initiate casting a spell.",
+                        name: I18n.Config_CastKey_Name,
+                        tooltip: I18n.Config_CastKey_Tooltip,
                         getValue: () => Mod.Config.Key_Cast,
                         setValue: value => Mod.Config.Key_Cast = value
                     );
                     configMenu.AddKeybind(
                         mod: this.ModManifest,
-                        name: () => "Key: Swap Spells",
-                        tooltip: () => "The key to swap spell sets.",
+                        name: I18n.Config_SwapSpellsKey_Name,
+                        tooltip: I18n.Config_SwapSpellsKey_Tooltip,
                         getValue: () => Mod.Config.Key_SwapSpells,
                         setValue: value => Mod.Config.Key_SwapSpells = value
                     );
                     configMenu.AddKeybind(
                         mod: this.ModManifest,
-                        name: () => "Key: Spell 1",
-                        tooltip: () => "The key for spell 1.",
+                        name: () => I18n.Config_SelectSpellKey_Name(slotNumber: 1),
+                        tooltip: () => I18n.Config_SelectSpellKey_Tooltip(slotNumber: 1),
                         getValue: () => Mod.Config.Key_Spell1,
                         setValue: value => Mod.Config.Key_Spell1 = value
                     );
                     configMenu.AddKeybind(
                         mod: this.ModManifest,
-                        name: () => "Key: Spell 2",
-                        tooltip: () => "The key for spell 2.",
+                        name: () => I18n.Config_SelectSpellKey_Name(slotNumber: 2),
+                        tooltip: () => I18n.Config_SelectSpellKey_Tooltip(slotNumber: 2),
                         getValue: () => Mod.Config.Key_Spell2,
                         setValue: value => Mod.Config.Key_Spell2 = value
                     );
                     configMenu.AddKeybind(
                         mod: this.ModManifest,
-                        name: () => "Key: Spell 3",
-                        tooltip: () => "The key for spell 3.",
+                        name: () => I18n.Config_SelectSpellKey_Name(slotNumber: 3),
+                        tooltip: () => I18n.Config_SelectSpellKey_Tooltip(slotNumber: 3),
                         getValue: () => Mod.Config.Key_Spell3,
                         setValue: value => Mod.Config.Key_Spell3 = value
                     );
                     configMenu.AddKeybind(
                         mod: this.ModManifest,
-                        name: () => "Key: Spell 4",
-                        tooltip: () => "The key for spell 4.",
+                        name: () => I18n.Config_SelectSpellKey_Name(slotNumber: 4),
+                        tooltip: () => I18n.Config_SelectSpellKey_Tooltip(slotNumber: 4),
                         getValue: () => Mod.Config.Key_Spell4,
                         setValue: value => Mod.Config.Key_Spell4 = value
                     );
                     configMenu.AddKeybind(
                         mod: this.ModManifest,
-                        name: () => "Key: Spell 5",
-                        tooltip: () => "The key for spell 5.",
+                        name: () => I18n.Config_SelectSpellKey_Name(slotNumber: 5),
+                        tooltip: () => I18n.Config_SelectSpellKey_Tooltip(slotNumber: 5),
                         getValue: () => Mod.Config.Key_Spell5,
                         setValue: value => Mod.Config.Key_Spell5 = value
                     );

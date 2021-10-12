@@ -28,6 +28,26 @@ namespace Magic.Framework
             I18n.Translations = translations;
         }
 
+        /// <summary>Get a translation equivalent to "You learned a spell: {{spellName}}".</summary>
+        /// <param name="spellName">The value to inject for the <c>{{spellName}}</c> token.</param>
+        public static string Spell_Learn(object spellName)
+        {
+            return I18n.GetByKey("spell.learn", new { spellName });
+        }
+
+        /// <summary>Get a translation equivalent to "You learned an ancient spell: {{spellName}}".</summary>
+        /// <param name="spellName">The value to inject for the <c>{{spellName}}</c> token.</param>
+        public static string Spell_Learn_Ancient(object spellName)
+        {
+            return I18n.GetByKey("spell.learn.ancient", new { spellName });
+        }
+
+        /// <summary>Get a translation equivalent to "A glowing altar".</summary>
+        public static string Altar_Glow()
+        {
+            return I18n.GetByKey("altar.glow");
+        }
+
         /// <summary>Get a translation equivalent to "It is time for you to learn the ways of magic.".</summary>
         public static string Event_Wizard_1()
         {
@@ -170,26 +190,6 @@ namespace Magic.Framework
         public static string Tv_Analyzehints_12()
         {
             return I18n.GetByKey("tv.analyzehints.12");
-        }
-
-        /// <summary>Get a translation equivalent to "You learned a spell: {{spellName}}".</summary>
-        /// <param name="spellName">The value to inject for the <c>{{spellName}}</c> token.</param>
-        public static string Spell_Learn(object spellName)
-        {
-            return I18n.GetByKey("spell.learn", new { spellName });
-        }
-
-        /// <summary>Get a translation equivalent to "You learned an ancient spell: {{spellName}}".</summary>
-        /// <param name="spellName">The value to inject for the <c>{{spellName}}</c> token.</param>
-        public static string Spell_Learn_Ancient(object spellName)
-        {
-            return I18n.GetByKey("spell.learn.ancient", new { spellName });
-        }
-
-        /// <summary>Get a translation equivalent to "A glowing altar".</summary>
-        public static string Altar_Glow()
-        {
-            return I18n.GetByKey("altar.glow");
         }
 
         /// <summary>Get a translation equivalent to "arcane".</summary>
@@ -526,6 +526,80 @@ namespace Magic.Framework
         public static string Spell_EldritchSpirit_Desc()
         {
             return I18n.GetByKey("spell.eldritch:spirit.desc");
+        }
+
+        /// <summary>Get a translation equivalent to "Altar Location".</summary>
+        public static string Config_AltarLocation_Name()
+        {
+            return I18n.GetByKey("config.altar-location.name");
+        }
+
+        /// <summary>Get a translation equivalent to "The (internal) name of the location the magic altar should be placed at.".</summary>
+        public static string Config_AltarLocation_Tooltip()
+        {
+            return I18n.GetByKey("config.altar-location.tooltip");
+        }
+
+        /// <summary>Get a translation equivalent to "Altar X".</summary>
+        public static string Config_AltarX_Name()
+        {
+            return I18n.GetByKey("config.altar-x.name");
+        }
+
+        /// <summary>Get a translation equivalent to "The X tile position where the magic altar should be placed.".</summary>
+        public static string Config_AltarX_Tooltip()
+        {
+            return I18n.GetByKey("config.altar-x.tooltip");
+        }
+
+        /// <summary>Get a translation equivalent to "Altar Y".</summary>
+        public static string Config_AltarY_Name()
+        {
+            return I18n.GetByKey("config.altar-y.name");
+        }
+
+        /// <summary>Get a translation equivalent to "The Y tile position where the magic altar should be placed.".</summary>
+        public static string Config_AltarY_Tooltip()
+        {
+            return I18n.GetByKey("config.altar-y.tooltip");
+        }
+
+        /// <summary>Get a translation equivalent to "Key: Cast".</summary>
+        public static string Config_CastKey_Name()
+        {
+            return I18n.GetByKey("config.cast-key.name");
+        }
+
+        /// <summary>Get a translation equivalent to "The key to initiate casting a spell.".</summary>
+        public static string Config_CastKey_Tooltip()
+        {
+            return I18n.GetByKey("config.cast-key.tooltip");
+        }
+
+        /// <summary>Get a translation equivalent to "Key: Swap Sells".</summary>
+        public static string Config_SwapSpellsKey_Name()
+        {
+            return I18n.GetByKey("config.swap-spells-key.name");
+        }
+
+        /// <summary>Get a translation equivalent to "The key to swap spell sets.".</summary>
+        public static string Config_SwapSpellsKey_Tooltip()
+        {
+            return I18n.GetByKey("config.swap-spells-key.tooltip");
+        }
+
+        /// <summary>Get a translation equivalent to "Key: Spell {{slotNumber}}".</summary>
+        /// <param name="slotNumber">The value to inject for the <c>{{slotNumber}}</c> token.</param>
+        public static string Config_SelectSpellKey_Name(object slotNumber)
+        {
+            return I18n.GetByKey("config.select-spell-key.name", new { slotNumber });
+        }
+
+        /// <summary>Get a translation equivalent to "The key to select spell {{slotNumber}}.".</summary>
+        /// <param name="slotNumber">The value to inject for the <c>{{slotNumber}}</c> token.</param>
+        public static string Config_SelectSpellKey_Tooltip(object slotNumber)
+        {
+            return I18n.GetByKey("config.select-spell-key.tooltip", new { slotNumber });
         }
 
         /// <summary>Get a translation by its key.</summary>
