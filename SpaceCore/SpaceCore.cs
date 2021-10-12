@@ -116,6 +116,13 @@ namespace SpaceCore
                     getValue: () => this.Config.CustomSkillPage,
                     setValue: value => this.Config.CustomSkillPage = value
                 );
+                configMenu.AddBoolOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_SupportAllProfessionsMod_Name,
+                    tooltip: I18n.Config_SupportAllProfessionsMod_Tooltip,
+                    getValue: () => this.Config.SupportAllProfessionsMod,
+                    setValue: value => this.Config.SupportAllProfessionsMod = value
+                );
             }
 
             var entoaroxFramework = this.Helper.ModRegistry.GetApi<IEntoaroxFrameworkApi>("Entoarox.EntoaroxFramework");

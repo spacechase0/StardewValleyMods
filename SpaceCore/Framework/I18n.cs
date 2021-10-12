@@ -40,6 +40,18 @@ namespace SpaceCore.Framework
             return I18n.GetByKey("config.custom-skill-page.tooltip");
         }
 
+        /// <summary>Get a translation equivalent to "Support All Professions Mod".</summary>
+        public static string Config_SupportAllProfessionsMod_Name()
+        {
+            return I18n.GetByKey("config.support-all-professions-mod.name");
+        }
+
+        /// <summary>Get a translation equivalent to "When All Professions is installed, whether to automatically apply custom professions registered through SpaceCore when their level is reached.".</summary>
+        public static string Config_SupportAllProfessionsMod_Tooltip()
+        {
+            return I18n.GetByKey("config.support-all-professions-mod.tooltip");
+        }
+
 
         /*********
         ** Private methods

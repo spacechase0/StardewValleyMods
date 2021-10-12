@@ -4,6 +4,7 @@
 ## Upcoming release
 * All display text is now translatable.
 * Added `dump_spacecore_skills` command to list custom skills/professions registered through SpaceCore, including their IDs for save editing.
+* Added option to disable All Professions integration for custom professions.
 * Changed custom profession IDs for compatibility with the upcoming Stardew Valley 1.5.5. Existing saves will be migrated automatically.
 * Improved integration with Generic Mod Config Menu (GMCM):
   * Updated for GMCM 1.5.0.
