@@ -16,6 +16,7 @@ namespace JumpOver
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
@@ -36,8 +37,8 @@ namespace JumpOver
                 );
                 configMenu.AddKeybind(
                     mod: this.ModManifest,
-                    name: () => "Jump Key",
-                    tooltip: () => "The key to jump",
+                    name: I18n.Config_JumpKey_Name,
+                    tooltip: I18n.Config_JumpKey_Tooltip,
                     getValue: () => Mod.Config.KeyJump,
                     setValue: value => Mod.Config.KeyJump = value
                 );
