@@ -37,6 +37,7 @@ namespace RealtimeMinimap
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.instance = this;
             Log.Monitor = this.Monitor;
 
@@ -66,22 +67,22 @@ namespace RealtimeMinimap
 
                 configMenu.AddBoolOption(
                     mod: this.ModManifest,
-                    name: () => "Show by default",
-                    tooltip: () => "Whether or not the minimap should be shown by default.\nYou must restart the game for this to take effect.",
+                    name: I18n.Config_ShowByDefault_Name,
+                    tooltip: I18n.Config_ShowByDefault_Tooltip,
                     getValue: () => Mod.Config.ShowByDefault,
                     setValue: value => Mod.Config.ShowByDefault = value
                 );
                 configMenu.AddKeybindList(
                     mod: this.ModManifest,
-                    name: () => "Toggle shown key",
-                    tooltip: () => "Key to toggle showing the minimap.",
+                    name: I18n.Config_ToggleKey_Name,
+                    tooltip: I18n.Config_ToggleKey_Tooltip,
                     getValue: () => Mod.Config.ToggleShowKey,
                     setValue: value => Mod.Config.ToggleShowKey = value
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Update Interval",
-                    tooltip: () => "The interval, in milliseconds, that the minimap will update. 0 will be every frame. -1 will only do it when entering a new location. (Markers update every frame regardless.)",
+                    name: I18n.Config_UpdateInterval_Name,
+                    tooltip: I18n.Config_UpdateInterval_Tooltip,
                     getValue: () => Mod.Config.UpdateInterval,
                     setValue: value =>
                     {
@@ -92,13 +93,13 @@ namespace RealtimeMinimap
 
                 configMenu.AddSectionTitle(
                     mod: this.ModManifest,
-                    text: () => "Positioning & Size",
-                    tooltip: () => "Options pertaining to the placement of the minimap."
+                    text: I18n.Config_PositioningAndSize_Text,
+                    tooltip: I18n.Config_PositioningAndSize_Tooltip
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Minimap Anchor X",
-                    tooltip: () => "The percentage of the screen's width where the top-left of the minimap will be placed.",
+                    name: I18n.Config_AnchorX_Name,
+                    tooltip: I18n.Config_AnchorX_Tooltip,
                     getValue: () => Mod.Config.MinimapAnchorX,
                     setValue: value => Mod.Config.MinimapAnchorX = value,
                     min: 0,
@@ -106,8 +107,8 @@ namespace RealtimeMinimap
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Minimap Anchor Y",
-                    tooltip: () => "The percentage of the screen's height where the top-left of the minimap will be placed.",
+                    name: I18n.Config_AnchorY_Name,
+                    tooltip: I18n.Config_AnchorY_Tooltip,
                     getValue: () => Mod.Config.MinimapAnchorY,
                     setValue: value => Mod.Config.MinimapAnchorY = value,
                     min: 0,
@@ -115,35 +116,35 @@ namespace RealtimeMinimap
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Minimap Offset X",
-                    tooltip: () => "The X offset from the anchor that the minimap will be placed at.",
+                    name: I18n.Config_OffsetX_Name,
+                    tooltip: I18n.Config_OffsetX_Tooltip,
                     getValue: () => Mod.Config.MinimapOffsetX,
                     setValue: value => Mod.Config.MinimapOffsetX = value
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Minimap Offset Y",
-                    tooltip: () => "The Y offset from the anchor that the minimap will be placed at.",
+                    name: I18n.Config_OffsetY_Name,
+                    tooltip: I18n.Config_OffsetY_Tooltip,
                     getValue: () => Mod.Config.MinimapOffsetY,
                     setValue: value => Mod.Config.MinimapOffsetY = value
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Minimap Size",
-                    tooltip: () => "The size of the minimap, in pixels (before UI scale).",
+                    name: I18n.Config_Size_Name,
+                    tooltip: I18n.Config_Size_Tooltip,
                     getValue: () => Mod.Config.MinimapSize,
                     setValue: value => Mod.Config.MinimapSize = value
                 );
 
                 configMenu.AddSectionTitle(
                     mod: this.ModManifest,
-                    text: () => "Markers",
-                    tooltip: () => "Options pertaining to rendering markers on the map."
+                    text: I18n.Config_Markers_Text,
+                    tooltip: I18n.Config_Markers_Tooltip
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Player Heads",
-                    tooltip: () => "Render scale for the head of a player. 0 disables it.",
+                    name: I18n.Config_PlayerMarkerScale_Name,
+                    tooltip: I18n.Config_PlayerMarkerScale_Tooltip,
                     getValue: () => Mod.Config.RenderHeads,
                     setValue: value => Mod.Config.RenderHeads = value,
                     min: 0,
@@ -151,8 +152,8 @@ namespace RealtimeMinimap
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "NPC Heads",
-                    tooltip: () => "Render scale for the head of an NPC. 0 disables it.",
+                    name: I18n.Config_NpcMarkerScale_Name,
+                    tooltip: I18n.Config_NpcMarkerScale_Tooltip,
                     getValue: () => Mod.Config.RenderNpcs,
                     setValue: value => Mod.Config.RenderNpcs = value,
                     min: 0,
@@ -160,8 +161,8 @@ namespace RealtimeMinimap
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Wood Signs",
-                    tooltip: () => "Render scale for items held on wooden signs . 0 disables it.",
+                    name: I18n.Config_WoodSignMarkerScale_Name,
+                    tooltip: I18n.Config_WoodSignMarkerScale_Tooltip,
                     getValue: () => Mod.Config.RenderWoodSigns,
                     setValue: value => Mod.Config.RenderWoodSigns = value,
                     min: 0,
@@ -169,8 +170,8 @@ namespace RealtimeMinimap
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Stone Signs",
-                    tooltip: () => "Render scale for items held on stone signs. 0 disables it.",
+                    name: I18n.Config_StoneSignMarkerScale_Name,
+                    tooltip: I18n.Config_StoneSignMarkerScale_Tooltip,
                     getValue: () => Mod.Config.RenderStoneSigns,
                     setValue: value => Mod.Config.RenderStoneSigns = value,
                     min: 0,
@@ -179,8 +180,8 @@ namespace RealtimeMinimap
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Dark Signs",
-                    tooltip: () => "Render scale for items held on dark signs. 0 disables it.",
+                    name: I18n.Config_DarkSignMarkerScale_Name,
+                    tooltip: I18n.Config_DarkSignMarkerScale_Tooltip,
                     getValue: () => Mod.Config.RenderDarkSigns,
                     setValue: value => Mod.Config.RenderDarkSigns = value,
                     min: 0,
