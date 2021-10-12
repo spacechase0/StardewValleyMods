@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Internal refactoring to translation support.
+
 ## 1.0.3
 Released 04 September 2021 for SMAPI 3.12.6 or later. Updated by Pathoschild.
 
