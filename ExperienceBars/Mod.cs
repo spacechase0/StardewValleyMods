@@ -36,6 +36,7 @@ namespace ExperienceBars
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
 
@@ -61,22 +62,22 @@ namespace ExperienceBars
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "X position",
-                    tooltip: () => "The pixel X position at which to draw the experience bars, relative to the top-left corner of the screen.",
+                    name: I18n.Config_PositionX_Name,
+                    tooltip: I18n.Config_PositionX_Tooltip,
                     getValue: () => Mod.Config.Position.X,
                     setValue: value => Mod.Config.Position = new(value, Mod.Config.Position.Y)
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Y position",
-                    tooltip: () => "The pixel Y position at which to draw the experience bars, relative to the top-left corner of the screen.",
+                    name: I18n.Config_PositionY_Name,
+                    tooltip: I18n.Config_PositionY_Tooltip,
                     getValue: () => Mod.Config.Position.Y,
                     setValue: value => Mod.Config.Position = new(Mod.Config.Position.X, value)
                 );
                 configMenu.AddKeybind(
                     mod: this.ModManifest,
-                    name: () => "Toggle Button",
-                    tooltip: () => "The button which shows or hides the experience bars display. Press Shift and this button to move the display.",
+                    name: I18n.Config_ToggleKey_Name,
+                    tooltip: I18n.Config_ToggleKey_Tooltip,
                     getValue: () => Mod.Config.ToggleBars,
                     setValue: value => Mod.Config.ToggleBars = value
                 );

@@ -1,0 +1,11 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.position-x.name": "X Position",
+    "config.position-x.tooltip": "The pixel X position at which to draw the experience bars, relative to the top-left corner of the screen.",
+    "config.position-y.name": "Y Position",
+    "config.position-y.tooltip": "The pixel Y position at which to draw the experience bars, relative to the top-left corner of the screen.",
+    "config.toggle-key.name": "Toggle Button",
+    "config.toggle-key.tooltip": "The button which shows or hides the experience bars display. Press Shift and this button to move the display."
+}
