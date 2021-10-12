@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* All display text is now translatable.
 * Improved integration with Generic Mod Config Menu (GMCM):
   * Updated for GMCM 1.5.0.
   * The config UI is now also available after loading a save.

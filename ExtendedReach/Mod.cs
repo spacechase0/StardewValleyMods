@@ -26,6 +26,7 @@ namespace ExtendedReach
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<Configuration>();
             this.WigglyArmsRenderer = new(helper.Input, helper.Reflection);
@@ -54,8 +55,8 @@ namespace ExtendedReach
                 );
                 configMenu.AddBoolOption(
                     mod: this.ModManifest,
-                    name: () => "Wiggly Arms",
-                    tooltip: () => "Show wiggly arms reaching out to your cursor.",
+                    name: I18n.Config_WigglyArms_Name,
+                    tooltip: I18n.Config_WigglyArms_Tooltip,
                     getValue: () => this.Config.WigglyArms,
                     setValue: value => this.Config.WigglyArms = value
                 );
