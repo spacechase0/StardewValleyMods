@@ -34,6 +34,7 @@ namespace FlowerRain
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -66,8 +67,8 @@ namespace FlowerRain
                 );
                 configMenu.AddBoolOption(
                     mod: this.ModManifest,
-                    name: () => "Use Vanilla Flowers Only",
-                    tooltip: () => "Only use vanilla flowers in the flower rain",
+                    name: I18n.Config_VanillaFlowersOnly_Name,
+                    tooltip: I18n.Config_VanillaFlowersOnly_Tooltip,
                     getValue: () => Mod.Config.VanillaFlowersOnly,
                     setValue: value =>
                     {
