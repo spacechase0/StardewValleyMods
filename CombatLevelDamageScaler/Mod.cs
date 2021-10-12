@@ -14,6 +14,7 @@ namespace CombatLevelDamageScaler
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
 
@@ -36,8 +37,8 @@ namespace CombatLevelDamageScaler
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Damage Scale",
-                    tooltip: () => "The amount of damage to scale up per combat level, in percentage.",
+                    name: I18n.Config_DamageScale_Name,
+                    tooltip: I18n.Config_DamageScale_Tooltip,
                     getValue: () => (int)(Mod.Config.DamageScalePerLevel * 100),
                     setValue: value => Mod.Config.DamageScalePerLevel = value / 100f
                 );
