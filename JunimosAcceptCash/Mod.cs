@@ -18,6 +18,7 @@ namespace JunimosAcceptCash
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             this.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -39,8 +40,8 @@ namespace JunimosAcceptCash
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Cost Multiplier",
-                    tooltip: () => "The multiplier for the cost of the items to charge.",
+                    name: I18n.Config_CostMultiplier_Name,
+                    tooltip: I18n.Config_CostMultiplier_Tooltip,
                     getValue: () => this.Config.CostMultiplier,
                     setValue: value => this.Config.CostMultiplier = value
                 );
