@@ -72,6 +72,7 @@ namespace TheftOfTheWinterStar
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -121,7 +122,7 @@ namespace TheftOfTheWinterStar
                 if (Mod.Ja != null)
                 {
                     var dict = asset.AsDictionary<string, string>().Data;
-                    dict.Add("Frosty Stardrop", Mod.Ja.GetObjectId("Frosty Stardrop Piece") + " 5/Field/434/false/null");
+                    dict.Add("Frosty Stardrop", $"{Mod.Ja.GetObjectId("Frosty Stardrop Piece")} 5/Field/434/false/null/{I18n.Recipe_FrostyStardrop_Name()}");
                 }
             }
 
@@ -129,16 +130,16 @@ namespace TheftOfTheWinterStar
             else if (asset.AssetNameEquals("Strings/StringsFromMaps"))
             {
                 var dict = asset.AsDictionary<string, string>().Data;
-                dict.Add("FrostDungeon.LockedEntrance", "This door is locked right now.");
-                dict.Add("FrostDungeon.Locked", "This door is locked. It probably needs a key.");
-                dict.Add("FrostDungeon.LockedBoss", "This giant door is locked. Perhaps something nearby can open it.");
-                dict.Add("FrostDungeon.Unlock", "The door has been unlocked.");
-                dict.Add("FrostDungeon.ItemPuzzle", "There seems to be a silhouette on the pedestal.");
-                dict.Add("FrostDungeon.Target", "A target.");
-                dict.Add("FrostDungeon.Trail0", "Some festive lights.");
-                dict.Add("FrostDungeon.Trail1", "A smashed candy cane.");
-                dict.Add("FrostDungeon.Trail2", "Some festive ornaments.");
-                dict.Add("FrostDungeon.Trail3", "A smashed miniature tree.");
+                dict.Add("FrostDungeon.LockedEntrance", I18n.MapMessages_LockedEntrance());
+                dict.Add("FrostDungeon.Locked", I18n.MapMessages_LockedDoor());
+                dict.Add("FrostDungeon.LockedBoss", I18n.MapMessages_LockedBoss());
+                dict.Add("FrostDungeon.Unlock", I18n.MapMessages_Unlocked());
+                dict.Add("FrostDungeon.ItemPuzzle", I18n.MapMessages_ItemPuzzle());
+                dict.Add("FrostDungeon.Target", I18n.MapMessages_Target());
+                dict.Add("FrostDungeon.Trail0", I18n.MapMessages_TrailLights());
+                dict.Add("FrostDungeon.Trail1", I18n.MapMessages_TrailCandyCane());
+                dict.Add("FrostDungeon.Trail2", I18n.MapMessages_TrailOrnaments());
+                dict.Add("FrostDungeon.Trail3", I18n.MapMessages_TrailTree());
             }
 
             // edit tunnel map
@@ -258,7 +259,7 @@ namespace TheftOfTheWinterStar
                                 player.changeFriendship(250, npc);
                         }
 
-                        Game1.drawObjectDialogue("You got the decorations back!\nYou also learned the recipe for the 'Tempus Globe'!");
+                        Game1.drawObjectDialogue(I18n.FinalBoss_VictoryMessage());
                     }
                 }
             }
@@ -498,7 +499,7 @@ namespace TheftOfTheWinterStar
 
             if (e.NewLocation.Name == "Farm" && !Game1.player.eventsSeen.Contains(Mod.EventId) && Game1.currentSeason == "winter" && Game1.dayOfMonth < 25)
             {
-                string eventStr = "continue/64 15/farmer 64 16 2 Lewis 64 18 0/skippable/pause 1500/speak Lewis \"Hello, @.#$b#I was making preparations for the Feast of the Winter Star and... I can't find any of the decorations!$s#$b#It seems someone stole the decorations.$4#$b#I'm not sure why somebody would do this... but decorations don't just disappear by themselves!$s#$b#Anyways, I was hoping you could retrieve them for us?$h#$b#There was a trail of broken decorations leading down the tunnel to the left of the bus stop. We'd all appreciate it if you could do this for us.$n#$b#Or we could hire Marlon but that's going to be costly.$s#$b#Good luck!$n\"/pause 500/end";
+                string eventStr = $"continue/64 15/farmer 64 16 2 Lewis 64 18 0/skippable/pause 1500/speak Lewis \"{I18n.Event_LewisSpeech()}\"/pause 500/end";
                 e.NewLocation.currentEvent = new Event(eventStr, Mod.EventId);
                 Game1.eventUp = true;
                 Game1.displayHUD = false;
@@ -515,7 +516,7 @@ namespace TheftOfTheWinterStar
                     e.NewLocation.characters.Add(witch);
 
                     var dummySpeaker = new NPC(new AnimatedSprite("Characters\\Penny"), new Vector2(-1, -1), "", 0, "Witch", false, null, witch.Portrait);
-                    var dialogue = new Dialogue("How DARE they have fun without me! They'll never get their decorations back!", dummySpeaker);
+                    var dialogue = new Dialogue(I18n.FinalBoss_Speech(), dummySpeaker);
                     var dialogueBox = new DialogueBox(dialogue);
 
                     Game1.activeClickableMenu = dialogueBox;

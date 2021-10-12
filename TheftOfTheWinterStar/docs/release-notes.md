@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* All display text is now translatable.
 * Fixed error if the bus stop, backwoods, or tunnel maps are loaded earlier than expected.
 
 ## 1.1.0
