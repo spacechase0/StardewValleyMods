@@ -19,6 +19,7 @@ namespace HybridCropEngine
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
@@ -49,8 +50,8 @@ namespace HybridCropEngine
                 );
                 configMenu.AddBoolOption(
                     mod: this.ModManifest,
-                    name: () => "Scan Everywhere",
-                    tooltip: () => "Scan everywhere for hybrid creation.\nFalse means only scan the Farm and Greenhouse.",
+                    name: I18n.Config_ScanEverywhere_Name,
+                    tooltip: I18n.Config_ScanEverywhere_Tooltip,
                     getValue: () => Mod.Config.ScanEverywhere,
                     setValue: value => Mod.Config.ScanEverywhere = value
                 );
