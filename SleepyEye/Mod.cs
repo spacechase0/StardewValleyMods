@@ -38,6 +38,7 @@ namespace SleepyEye
             this.ApplyConfig(helper.ReadConfig<ModConfig>());
 
             // init
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
@@ -83,8 +84,8 @@ namespace SleepyEye
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
-                    name: () => "Seconds until save",
-                    tooltip: () => "The number of seconds until the tent tool should trigger a save.",
+                    name: I18n.Config_SecondsUntilSave_Name,
+                    tooltip: I18n.Config_SecondsUntilSave_Tooltip,
                     getValue: () => (int)TentTool.UseDelay.TotalSeconds,
                     setValue: value => TentTool.UseDelay = TimeSpan.FromSeconds(value)
                 );
@@ -144,12 +145,12 @@ namespace SleepyEye
             GameLocation location = Game1.getLocationFromName(camp.Location);
             if (location == null)
             {
-                Game1.addHUDMessage(new HUDMessage("You camped somewhere strange, so you've returned home."));
+                Game1.addHUDMessage(new HUDMessage(I18n.Messages_SleptAtLostLocation()));
                 return;
             }
             if (location.Name == this.GetFestivalLocation())
             {
-                Game1.addHUDMessage(new HUDMessage("You camped on the festival grounds, so you've returned home."));
+                Game1.addHUDMessage(new HUDMessage(I18n.Messages_SleptAtFestival()));
                 return;
             }
 

@@ -2,6 +2,7 @@ using System;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SleepyEye.Framework;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -169,13 +170,13 @@ namespace SleepyEye
         /// <inheritdoc />
         protected override string loadDescription()
         {
-            return "Sleep here. Sleep there. Sleep everywhere!";
+            return I18n.Tent_Description();
         }
 
         /// <inheritdoc />
         protected override string loadDisplayName()
         {
-            return "Tent";
+            return I18n.Tent_Name();
         }
 
         /// <inheritdoc />
