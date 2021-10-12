@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * All display text is now translatable.
+* The grid layout is now disabled by default. (If you want it, you'll need to re-enable it in the `config.json` file.)
 * Improved integration with Generic Mod Config Menu (GMCM):
   * Updated for GMCM 1.5.0.
   * Enabled config UI from the in-game options menu after the save is loaded.

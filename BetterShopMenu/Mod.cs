@@ -51,8 +51,8 @@ namespace BetterShopMenu
                     mod: this.ModManifest,
                     name: I18n.Config_GridLayout_Name,
                     tooltip: I18n.Config_GridLayout_Tooltip,
-                    getValue: () => Mod.Config.GridLayout,
-                    setValue: value => Mod.Config.GridLayout = value
+                    getValue: () => Mod.Config.ExperimentalGridLayout,
+                    setValue: value => Mod.Config.ExperimentalGridLayout = value
                 );
             }
         }
@@ -234,7 +234,7 @@ namespace BetterShopMenu
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1, 1), new Color(224, 150, 80), 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color(86, 22, 12), 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
 
-            if (Mod.Config.GridLayout)
+            if (Mod.Config.ExperimentalGridLayout)
             {
                 this.DrawGridLayout();
             }
@@ -396,7 +396,7 @@ namespace BetterShopMenu
                 if (new Rectangle(this.Shop.xPositionOnScreen + 25, this.Shop.yPositionOnScreen + 600, 200, 48).Contains(x, y))
                     this.ChangeSorting(direction);
 
-                if (Mod.Config.GridLayout)
+                if (Mod.Config.ExperimentalGridLayout)
                 {
                     this.Helper.Input.Suppress(e.Button);
                     if (e.Button == SButton.MouseRight)
