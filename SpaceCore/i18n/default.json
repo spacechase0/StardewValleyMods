@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.custom-skill-page.name": "Custom Skill Page",
+    "config.custom-skill-page.tooltip": "Whether to show the custom skill page.\nThis will move the wallet so that there is room for more skills."
+}

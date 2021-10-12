@@ -50,6 +50,7 @@ namespace SpaceCore
         {
             this.LegacyDataMigrator = new LegacyDataMigrator(helper.Data, this.Monitor);
 
+            I18n.Init(helper.Translation);
             SpaceCore.Instance = this;
             SpaceCore.Reflection = helper.Reflection;
             Log.Monitor = this.Monitor;
@@ -110,8 +111,8 @@ namespace SpaceCore
                 );
                 configMenu.AddBoolOption(
                     mod: this.ModManifest,
-                    name: () => "Custom Skill Page",
-                    tooltip: () => "Whether or not to show the custom skill page.\nThis will move the wallet so that there is room for more skills.",
+                    name: I18n.Config_CustomSkillPage_Name,
+                    tooltip: I18n.Config_CustomSkillPage_Tooltip,
                     getValue: () => this.Config.CustomSkillPage,
                     setValue: value => this.Config.CustomSkillPage = value
                 );
