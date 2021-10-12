@@ -4,5 +4,9 @@
     "Price": 100000,
     "CanPurchase": true,
     "PurchaseFrom": "Krobus",
-    "PurchasePrice": 100000
+    "PurchasePrice": 100000,
+    "NameLocalization": {
+    },
+    "DescriptionLocalization": {
+    }
 }
