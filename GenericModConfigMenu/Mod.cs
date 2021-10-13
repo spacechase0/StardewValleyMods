@@ -1,9 +1,9 @@
 using GenericModConfigMenu.Framework;
-using GenericModConfigMenu.Framework.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
+using SpaceShared.UI;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;

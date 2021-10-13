@@ -97,7 +97,7 @@ namespace PreexistingRelationship.Framework
                     cont.AddChild(new Image
                     {
                         Texture = Game1.mouseCursors,
-                        TextureRect = new Rectangle(583, 411, 115, 97),
+                        TexturePixelArea = new Rectangle(583, 411, 115, 97),
                         Scale = 2,
                         LocalPosition = new Vector2(0, 0),
                         Callback = SelCallback
@@ -105,7 +105,7 @@ namespace PreexistingRelationship.Framework
                     cont.AddChild(new Image
                     {
                         Texture = valid[col].Portrait,
-                        TextureRect = new Rectangle(0, 128, 64, 64),
+                        TexturePixelArea = new Rectangle(0, 128, 64, 64),
                         Scale = 2,
                         LocalPosition = new Vector2(50, 16)
                     });

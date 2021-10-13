@@ -10,6 +10,9 @@ namespace SpaceShared.UI
 {
     internal class Dropdown : Element
     {
+        /*********
+        ** Accessors
+        *********/
         public int RequestWidth { get; set; }
         public int MaxValuesAtOnce { get; set; }
         public Texture2D Texture { get; set; } = Game1.mouseCursors;
@@ -21,6 +24,7 @@ namespace SpaceShared.UI
             get => this.Choices[this.ActiveChoice];
             set { if (this.Choices.Contains(value)) this.ActiveChoice = Array.IndexOf(this.Choices, value); }
         }
+
         public int ActiveChoice { get; set; }
 
         public int ActivePosition { get; set; }
@@ -32,10 +36,20 @@ namespace SpaceShared.UI
 
         public static Dropdown ActiveDropdown;
 
+        /// <inheritdoc />
         public override int Width => Math.Max(300, Math.Min(500, this.RequestWidth));
+
+        /// <inheritdoc />
         public override int Height => 44;
+
+        /// <inheritdoc />
         public override string ClickedSound => "shwip";
 
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);

@@ -1,7 +1,8 @@
 using GenericModConfigMenu.ModOption;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared.UI;
 
-namespace GenericModConfigMenu.Framework.UI
+namespace GenericModConfigMenu.Framework
 {
     internal class ComplexModOptionWidget : Element
     {
