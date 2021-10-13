@@ -44,6 +44,7 @@ namespace SurfingFestival
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
