@@ -5,6 +5,7 @@
 * The config UI is now translatable.
 * Updated for Generic Mod Config Menu 1.5.0.
 * Fixed mana regen not starting until level 2, and slightly increase regen at higher levels.
+* Fixed controller not usable in Magic menus.
 
 ## 0.5.7
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
