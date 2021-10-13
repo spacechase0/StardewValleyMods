@@ -138,16 +138,25 @@ namespace PreexistingRelationship.Framework
             });
         }
 
+        /// <inheritdoc />
+        public override bool overrideSnappyMenuCursorMovementBan()
+        {
+            return true;
+        }
+
+        /// <inheritdoc />
         public override void receiveScrollWheelAction(int direction)
         {
             this.Table.Scrollbar.ScrollBy(direction / -120);
         }
 
+        /// <inheritdoc />
         public override void update(GameTime time)
         {
             this.Ui.Update();
         }
 
+        /// <inheritdoc />
         public override void draw(SpriteBatch b)
         {
             base.draw(b);

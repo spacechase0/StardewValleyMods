@@ -61,8 +61,7 @@ namespace SpaceShared.UI
                 Game1.playSound(this.HoveredSound);
             this.Hover = newHover;
 
-            var input = Game1.input;
-            this.ClickGestured = Game1.oldMouseState.LeftButton == ButtonState.Released && input.GetMouseState().LeftButton == ButtonState.Pressed;
+            this.ClickGestured = Game1.didPlayerJustLeftClick();
             if (this.Clicked && this.ClickedSound != null)
                 Game1.playSound(this.ClickedSound);
         }

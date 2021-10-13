@@ -233,7 +233,7 @@ namespace CapstoneProfessions.Framework
                     if (Game1.getMouseX() > this.xPositionOnScreen && Game1.getMouseX() < this.xPositionOnScreen + this.width / 2)
                     {
                         this.leftProfessionColor = Color.Green;
-                        if (((Game1.input.GetMouseState().LeftButton == ButtonState.Pressed && this.oldMouseState.LeftButton == ButtonState.Released) || (Game1.options.gamepadControls && Game1.input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A))) && this.readyToClose())
+                        if (Game1.didPlayerJustLeftClick() && this.readyToClose())
                         {
                             Game1.player.professions.Add(this.professionsToChoose[0]);
                             this.isActive = false;
@@ -243,7 +243,7 @@ namespace CapstoneProfessions.Framework
                     else if (Game1.getMouseX() > this.xPositionOnScreen + this.width / 2 && Game1.getMouseX() < this.xPositionOnScreen + this.width)
                     {
                         this.rightProfessionColor = Color.Green;
-                        if (((Game1.input.GetMouseState().LeftButton == ButtonState.Pressed && this.oldMouseState.LeftButton == ButtonState.Released) || (Game1.options.gamepadControls && Game1.input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A))) && this.readyToClose())
+                        if (Game1.didPlayerJustLeftClick() && this.readyToClose())
                         {
                             Game1.player.professions.Add(this.professionsToChoose[1]);
                             this.isActive = false;
