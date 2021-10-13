@@ -4,6 +4,7 @@ using HarmonyLib;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
+using StardewValley;
 using StardewValley.Objects;
 
 namespace DynamicGameAssets.Patches
@@ -65,17 +66,15 @@ namespace DynamicGameAssets.Patches
 
             return true;
         }
-        
-        // <summary>The method to call after placing down lamps or sconces to reset the light to be in the right place.</summary>
-        // <returns>Nothing, it's void.</returns>
+
+        /// <summary>The method to call after <see cref="Furniture.placementAction"/>.</summary>
         private static void After_PlacementAction(Furniture __instance, GameLocation location)
         {
+            // correct lamp/sconce light position
             if (__instance is CustomBasicFurniture furniture)
             {
-                if (__instance.furniture_type == 7 || __instance.furniture_type == 17)
-                {
-                    __instance.resetOnPlayerEntry(location, false);
-                }
+                if (furniture.furniture_type.Value is Furniture.lamp or Furniture.sconce)
+                    furniture.resetOnPlayerEntry(location);
             }
         }
     }

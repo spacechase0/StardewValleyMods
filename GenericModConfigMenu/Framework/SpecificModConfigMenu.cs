@@ -621,7 +621,6 @@ namespace GenericModConfigMenu.Framework
 
                 return;
             }
-
         }
     }
 }

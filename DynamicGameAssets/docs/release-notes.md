@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Added translation support for the `Mod: <name>` text in item tooltips.
+* Added three new furniture types: `Lamp`, `Sconce`, and `Window` (thanks to echangda!).
 * Updated for Generic Mod Config Menu 1.5.0.
 * Fixed various animation parsing issues.
 * Fixed error when crafting in some cases.

@@ -544,7 +544,7 @@ Furniture can be localized in the following keys: `"furniture.YourFurniture.name
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
 | `ID` | `string` | Required | The ID of this furniture. | `false` |
-| `Type` | `Enum[Decoration, Rug, Table, Dresser, FishTank, Bed, Painting, Fireplace, TV]` | Required | The type of this furniture. | `false` |
+| `Type` | `Enum[Bed, Decoration, Dresser, Fireplace, FishTank, Lamp, Painting, Rug, Table, Sconce, TV, Window]` | Required | The type of this furniture. | `false` |
 | `Configurations` | `FurnitureConfiguration[]` | Required | The configurations for this funriture. It uses the first configuration by default, and the others after being rotated. (NOTE: Fish tanks, beds, and TVs may only support one configuration!) | (unknown, untested) |
 
 Certain furniture types have additional fields:
