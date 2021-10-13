@@ -13,6 +13,7 @@
 * Fixed sliders for int values not showing the value label.
 * Fixed large images or paragraphs clipped before the end of the content area.
 * Fixed `api.SubscribeToChange` only tracking fields on the page that was active when it was called.
+* Improved translations. Thanks to Evelyon (added Spanish)!
 
 **Migration guide for mod authors:**  
 <details>

@@ -1,4 +1,4 @@
-{
+﻿{
     // skill
     "skill.name": "Cocina",
     "skill.level-up-perk": "+{{bonus}}% comestibilidad en la comida casera",
