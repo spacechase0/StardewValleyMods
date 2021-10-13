@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{622B2762-903D-417C-8E20-810F9ED2731F}"
 	ProjectSection(SolutionItems) = preProject
@@ -125,6 +125,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CapstoneProfessions", "CapstoneProfessions\CapstoneProfessions.csproj", "{94C0B3EB-EB7F-4113-B634-4778F7523E7B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreexistingRelationship", "PreexistingRelationship\PreexistingRelationship.csproj", "{03BE86D2-DAD8-4F43-AA94-9E27B654F449}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deprecated mods", "deprecated mods", "{88541912-D5C2-4322-8079-4A949DF04384}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "unreleased mods", "unreleased mods", "{8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}"
 EndProject
@@ -490,6 +492,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{CB66640E-62E0-4EFE-B2F2-5C06720275F3} = {88541912-D5C2-4322-8079-4A949DF04384}
 		{061610A4-7D02-4F52-A921-F59ED123C2A9} = {DED81BB3-A571-46E2-91C2-6A8B7890C7EA}
 		{3F979F1D-6D46-45EE-9201-8A4E9864FCBF} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{5ECB259A-6E3C-46B7-980C-E71730B34C19} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
