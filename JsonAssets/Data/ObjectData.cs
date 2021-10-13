@@ -6,14 +6,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using SpaceShared;
-using StardewValley;
 using SObject = StardewValley.Object;
 
 namespace JsonAssets.Data
 {
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
-    public class ObjectData : DataNeedsIdWithTexture
+    public class ObjectData : DataNeedsIdWithTexture, ITranslatableItem
     {
         /*********
         ** Accessors
@@ -21,6 +20,7 @@ namespace JsonAssets.Data
         [JsonIgnore]
         public Texture2D TextureColor { get; set; }
 
+        /// <inheritdoc />
         public string Description { get; set; }
         public ObjectCategory Category { get; set; }
         public string CategoryTextOverride { get; set; }
@@ -49,7 +49,10 @@ namespace JsonAssets.Data
 
         public ObjectGiftTastes GiftTastes { get; set; } = new();
 
+        /// <inheritdoc />
         public Dictionary<string, string> NameLocalization { get; set; } = new();
+
+        /// <inheritdoc />
         public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
         public List<string> ContextTags { get; set; } = new();
@@ -58,22 +61,6 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        public string LocalizedName()
-        {
-            var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.NameLocalization.TryGetValue(lang.ToString(), out string localization)
-                ? localization
-                : this.Name;
-        }
-
-        public string LocalizedDescription()
-        {
-            var lang = LocalizedContentManager.CurrentLanguageCode;
-            return this.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
-                ? localization
-                : this.Description;
-        }
-
         public int GetObjectId()
         {
             return this.Id;
