@@ -6,5 +6,9 @@
     "CategoryTextOverride": "Treasure",
     "CanTrash": false,
     "CanSell": false,
-    "CanBeGifted": false
+    "CanBeGifted": false,
+    "NameLocalization": {
+    },
+    "DescriptionLocalization": {
+    }
 }

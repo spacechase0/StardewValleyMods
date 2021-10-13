@@ -19,5 +19,9 @@
             }
         ],
         "IsDefault": false
+    },
+    "NameLocalization": {
+    },
+    "DescriptionLocalization": {
     }
 }
