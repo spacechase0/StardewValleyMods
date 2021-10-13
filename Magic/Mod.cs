@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using Magic.Framework;
-using Magic.Framework.Apis;
 using SpaceShared;
 using SpaceShared.APIs;
 using SpaceShared.ConsoleCommands;
@@ -27,7 +26,7 @@ namespace Magic
         public static Mod Instance;
         public static Configuration Config { get; private set; }
 
-        public static JsonAssetsApi Ja;
+        public static IJsonAssetsApi Ja;
         public static IManaBarApi Mana;
 
         public Api Api;
@@ -172,7 +171,7 @@ namespace Magic
 
             // hook Json Assets
             {
-                var api = this.Helper.ModRegistry.GetApi<JsonAssetsApi>("spacechase0.JsonAssets");
+                var api = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
                 if (api == null)
                 {
                     Log.Error("No Json Assets API???");
