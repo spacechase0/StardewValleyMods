@@ -173,7 +173,7 @@ namespace SpaceShared.UI
             try
             {
                 device.ScissorRectangle = area;
-                contentBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, null, Utility.ScissorEnabled);
+                contentBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, Utility.ScissorEnabled);
 
                 draw(contentBatch);
 
@@ -185,7 +185,7 @@ namespace SpaceShared.UI
             }
 
             // resume previous sprite batch
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
         }
     }
 }
