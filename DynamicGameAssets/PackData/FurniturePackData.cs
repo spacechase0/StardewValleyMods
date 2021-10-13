@@ -58,6 +58,9 @@ namespace DynamicGameAssets.PackData
             Painting,
             Fireplace,
             TV,
+            Lamp,
+            Sconce,
+            Window,
         }
 
         [DefaultValue(FurnitureType.Decoration)]
@@ -106,6 +109,9 @@ namespace DynamicGameAssets.PackData
                 case FurnitureType.Painting: return Furniture.painting;
                 case FurnitureType.Fireplace: return Furniture.fireplace;
                 case FurnitureType.TV: return Furniture.decor;
+                case FurnitureType.Lamp: return Furniture.lamp;
+                case FurnitureType.Sconce: return Furniture.sconce;
+                case FurnitureType.Window: return Furniture.window;
             }
 
             return Furniture.other;

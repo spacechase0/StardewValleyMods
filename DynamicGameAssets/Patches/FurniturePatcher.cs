@@ -26,6 +26,10 @@ namespace DynamicGameAssets.Patches
                 original: this.RequireMethod<Furniture>(nameof(Furniture.updateRotation)),
                 prefix: this.GetHarmonyMethod(nameof(Before_UpdateRotation))
             );
+            harmony.Patch(
+                original: this.RequireMethod<Furniture>(nameof(Furniture.placementAction)),
+                postfix: this.GetHarmonyMethod(nameof(After_PlacementAction))
+            );
         }
 
 
@@ -60,6 +64,19 @@ namespace DynamicGameAssets.Patches
             }
 
             return true;
+        }
+        
+        // <summary>The method to call after placing down lamps or sconces to reset the light to be in the right place.</summary>
+        // <returns>Nothing, it's void.</returns>
+        private static void After_PlacementAction(Furniture __instance, GameLocation location)
+        {
+            if (__instance is CustomBasicFurniture furniture)
+            {
+                if (__instance.furniture_type == 7 || __instance.furniture_type == 17)
+                {
+                    __instance.resetOnPlayerEntry(location, false);
+                }
+            }
         }
     }
 }
