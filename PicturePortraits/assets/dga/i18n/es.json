@@ -1,0 +1,8 @@
+{
+    "object.Film.name": "Cartucho",
+    "object.Film.description": "Para usar con cámaras.",
+    "object.Film.category": "Herramienta",
+
+    "furniture.TestPortrait.name": "Retrato De Prueba",
+    "furniture.TestPortrait.description": "Miau"
+}
