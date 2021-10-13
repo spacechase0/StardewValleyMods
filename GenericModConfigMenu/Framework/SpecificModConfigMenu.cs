@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using GenericModConfigMenu.ModOption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -251,7 +252,7 @@ namespace GenericModConfigMenu.Framework
                             label = null;
                             optionElement = null;
 
-                            List<string> lines = new();
+                            StringBuilder text = new StringBuilder(name.Length + 50);
                             {
                                 string nextLine = "";
                                 foreach (string word in name.Split(' '))
@@ -272,24 +273,22 @@ namespace GenericModConfigMenu.Framework
                                     }
 
                                     // else start new line
-                                    lines.Add(nextLine);
+                                    text.AppendLine(nextLine);
                                     nextLine = word;
                                 }
 
                                 if (nextLine != "")
-                                    lines.Add(nextLine);
+                                    text.AppendLine(nextLine);
                             }
 
-                            this.Table.AddRow(new Element[]
+                            label = null;
+                            optionElement = new Label
                             {
-                                new Label
-                                {
-                                    UserData = tooltip,
-                                    NonBoldScale = 0.75f,
-                                    NonBoldShadow = false,
-                                    String = string.Join("\n", lines)
-                                }
-                            });
+                                UserData = tooltip,
+                                NonBoldScale = 0.75f,
+                                NonBoldShadow = false,
+                                String = text.ToString()
+                            };
                             break;
                         }
 

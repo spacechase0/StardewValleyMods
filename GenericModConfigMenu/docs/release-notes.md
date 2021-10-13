@@ -8,10 +8,11 @@
   * Options are now available in-game by default when using the new API (unless you set `editableInGame: false`).
   * Complex options can now specify a height to support multi-row content.
 * The generic config UI is now translatable.
-* Fixed `api.SubscribeToChange` only tracking fields on the page that was active when it was called.
+* Fixed long paragraphs sometimes overlapping the fields below them.
 * Fixed sliders with an `interval` sometimes snapping to a value outside the `min`/`max` range.
-* Fixed integer sliders not showing the value label.
-* Fixed large images clipped before the end of the content area.
+* Fixed sliders for int values not showing the value label.
+* Fixed large images or paragraphs clipped before the end of the content area.
+* Fixed `api.SubscribeToChange` only tracking fields on the page that was active when it was called.
 
 **Migration guide for mod authors:**  
 <details>
