@@ -6,6 +6,7 @@
 * Added three new furniture types: `Lamp`, `Sconce`, and `Window` (thanks to echangda!).
 * Updated for Generic Mod Config Menu 1.5.0.
 * Fixed various animation parsing issues.
+* Fixed shop ID for Krobus (thanks to echangda!).
 * Fixed error when crafting in some cases.
 
 ## 1.2.1
