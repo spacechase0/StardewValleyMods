@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Moved item and festival translations into the standard `i18n` folder.
+* Copyedited festival dialogue (thanks to kellytslo!).
 * Fixed error loading the festival when playing with a custom language in Stardew Valley 1.5.5.
 * Fixed Lewis' start-race question not translatable.
 
