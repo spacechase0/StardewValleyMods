@@ -34,7 +34,7 @@ namespace GenericModConfigMenu.Framework
         ** Must be called first
         ****/
         /// <inheritdoc />
-        public void Register(IManifest mod, Action reset, Action save, bool editableInGame = true)
+        public void Register(IManifest mod, Action reset, Action save, bool titleScreenOnly = true)
         {
             this.AssertNotNull(mod, nameof(mod));
             this.AssertNotNull(reset, nameof(reset));
@@ -43,7 +43,7 @@ namespace GenericModConfigMenu.Framework
             if (this.ConfigManager.Get(mod, assert: false) != null)
                 throw new InvalidOperationException($"The '{mod.Name}' mod has already registered a config menu, so it can't do it again.");
 
-            this.ConfigManager.Set(mod, new ModConfig(mod, reset, save, editableInGame));
+            this.ConfigManager.Set(mod, new ModConfig(mod, reset, save, titleScreenOnly));
         }
 
         /****
@@ -155,12 +155,12 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
-        public void SetEditableInGameForNextOptions(IManifest mod, bool editableInGame)
+        public void SetTitleScreenOnlyForNextOptions(IManifest mod, bool titleScreenOnly)
         {
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig config = this.ConfigManager.Get(mod, assert: true);
-            config.SetEditableInGame(editableInGame);
+            config.DefaultTitleScreenOnly = titleScreenOnly;
         }
 
         /// <inheritdoc />
@@ -207,7 +207,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile)
         {
-            this.Register(mod: mod, reset: revertToDefault, save: saveToFile, editableInGame: false);
+            this.Register(mod: mod, reset: revertToDefault, save: saveToFile, titleScreenOnly: true);
         }
 
         /// <inheritdoc />
@@ -221,7 +221,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void SetDefaultIngameOptinValue(IManifest mod, bool optedIn)
         {
-            this.SetEditableInGameForNextOptions(mod: mod, editableInGame: optedIn);
+            this.SetTitleScreenOnlyForNextOptions(mod: mod, titleScreenOnly: !optedIn);
         }
 
         /// <inheritdoc />

@@ -63,7 +63,7 @@ namespace FlowerRain
                     mod: this.ModManifest,
                     reset: () => Mod.Config = new Config(),
                     save: () => this.Helper.WriteConfig(Mod.Config),
-                    editableInGame: false
+                    titleScreenOnly: true
                 );
                 configMenu.AddBoolOption(
                     mod: this.ModManifest,

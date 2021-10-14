@@ -22,9 +22,9 @@ namespace GenericModConfigMenu
         /// <param name="mod">The mod's manifest.</param>
         /// <param name="reset">Reset the mod's config to its default values.</param>
         /// <param name="save">Save the mod's current config to the <c>config.json</c> file.</param>
-        /// <param name="editableInGame">Whether the options can be edited from the in-game options menu. If this is false, they can only be edited from the title screen.</param>
+        /// <param name="titleScreenOnly">Whether the options can only be edited from the title screen.</param>
         /// <remarks>Each mod can only be registered once, unless it's deleted via <see cref="Unregister"/> before calling this again.</remarks>
-        void Register(IManifest mod, Action reset, Action save, bool editableInGame = true);
+        void Register(IManifest mod, Action reset, Action save, bool titleScreenOnly = false);
 
 
         /****
@@ -142,11 +142,11 @@ namespace GenericModConfigMenu
         /// <remarks>The custom logic represented by <paramref name="draw"/> and <paramref name="saveChanges"/> is responsible for managing its own state if needed. For example, you can store state in a static field or use closures to use a state variable.</remarks>
         void AddComplexOption(IManifest mod, Func<string> name, Func<string> tooltip, Action<SpriteBatch, Vector2> draw, Action saveChanges, Func<int> height = null, string fieldId = null);
 
-        /// <summary>Set whether the options registered after this point can be edited in-game (instead of only on the title screen).</summary>
+        /// <summary>Set whether the options registered after this point can only be edited from the title screen.</summary>
         /// <param name="mod">The mod's manifest.</param>
-        /// <param name="editableInGame">Whether the options can be edited from the in-game options menu. If this is false, they can only be edited from the title screen.</param>
+        /// <param name="titleScreenOnly">Whether the options can only be edited from the title screen.</param>
         /// <remarks>This lets you have different values per-field. Most mods should just set it once in <see cref="Register"/>.</remarks>
-        void SetEditableInGameForNextOptions(IManifest mod, bool editableInGame);
+        void SetTitleScreenOnlyForNextOptions(IManifest mod, bool titleScreenOnly);
 
         /// <summary>Register a method to notify when any option registered by this mod is edited through the config UI.</summary>
         /// <param name="mod">The mod's manifest.</param>

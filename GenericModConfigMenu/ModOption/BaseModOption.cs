@@ -18,8 +18,8 @@ namespace GenericModConfigMenu.ModOption
         /// <summary>The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</summary>
         public Func<string> Tooltip { get; }
 
-        /// <summary>Whether the option can be edited from the in-game options menu. If this is false, it can only be edited from the title screen.</summary>
-        public bool EditableInGame { get; }
+        /// <summary>Whether the option can only be edited from the title screen.</summary>
+        public bool IsTitleScreenOnly { get; }
 
         /// <summary>The mod config UI that contains this option.</summary>
         public ModConfig Owner { get; }
@@ -51,7 +51,7 @@ namespace GenericModConfigMenu.ModOption
             this.Name = name;
             this.Tooltip = tooltip;
             this.FieldId = fieldId;
-            this.EditableInGame = mod.DefaultEditableInGame;
+            this.IsTitleScreenOnly = mod.DefaultTitleScreenOnly;
             this.Owner = mod;
         }
     }

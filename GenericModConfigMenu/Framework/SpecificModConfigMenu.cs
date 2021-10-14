@@ -79,7 +79,7 @@ namespace GenericModConfigMenu.Framework
                 string tooltip = opt.Tooltip();
 
                 opt.GetLatest();
-                if (this.InGame && !opt.EditableInGame)
+                if (this.InGame && opt.IsTitleScreenOnly)
                     continue;
 
                 Label label = new Label

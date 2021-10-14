@@ -60,7 +60,7 @@ namespace AnotherHungerMod
                     mod: this.ModManifest,
                     reset: () => Mod.Config = new Configuration(),
                     save: () => this.Helper.WriteConfig(Mod.Config),
-                    editableInGame: false
+                    titleScreenOnly: true
                 );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,

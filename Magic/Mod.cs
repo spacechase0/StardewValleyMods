@@ -83,7 +83,7 @@ namespace Magic
                         mod: this.ModManifest,
                         reset: () => Mod.Config = new Configuration(),
                         save: () => this.Helper.WriteConfig(Mod.Config),
-                        editableInGame: false
+                        titleScreenOnly: true
                     );
                     configMenu.AddTextOption(
                         mod: this.ModManifest,

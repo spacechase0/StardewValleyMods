@@ -17,7 +17,7 @@ namespace GenericModConfigMenu.Framework
         *********/
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.Register) + " instead.")] void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.Unregister) + " instead.")] void UnregisterModConfig(IManifest mod);
-        [Obsolete("Use " + nameof(IGenericModConfigMenuApi.Register) + " or " + nameof(IGenericModConfigMenuApi.SetEditableInGameForNextOptions) + " instead.")] void SetDefaultIngameOptinValue(IManifest mod, bool optedIn);
+        [Obsolete("Use " + nameof(IGenericModConfigMenuApi.Register) + " or " + nameof(IGenericModConfigMenuApi.SetTitleScreenOnlyForNextOptions) + " instead.")] void SetDefaultIngameOptinValue(IManifest mod, bool optedIn);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddPage) + " instead.")] void StartNewPage(IManifest mod, string pageName);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddPage) + " instead.")] void OverridePageDisplayName(IManifest mod, string pageName, string displayName);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddSectionTitle) + " instead.")] void RegisterLabel(IManifest mod, string labelName, string labelDesc);
