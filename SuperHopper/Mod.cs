@@ -40,7 +40,7 @@ namespace SuperHopper
                 return;
 
             Game1.currentLocation.objects.TryGetValue(e.Cursor.GrabTile, out SObject obj);
-            if (obj is Chest { SpecialChestType: Chest.SpecialChestTypes.AutoLoader } chest && (e.Button is SButton.MouseLeft or SButton.ControllerA))
+            if (this.TryGetHopper(obj, out Chest chest) && e.Button.IsActionButton())
             {
                 if (chest.heldObject.Value == null)
                 {
@@ -70,30 +70,40 @@ namespace SuperHopper
         /// <param name="location">The location containing the machine.</param>
         private void OnMachineMinutesElapsed(SObject machine, GameLocation location)
         {
-            if (machine is Chest { SpecialChestType: Chest.SpecialChestTypes.AutoLoader } chest && chest.heldObject.Value != null && Utility.IsNormalObjectAtParentSheetIndex(chest.heldObject.Value, SObject.iridiumBar))
-            {
-                location.objects.TryGetValue(chest.TileLocation - new Vector2(0, 1), out SObject aboveObj);
-                if (aboveObj is Chest aboveChest && chest.items.Count < chest.GetActualCapacity() && aboveChest.items.Count > 0)
-                {
-                    chest.items.Add(aboveChest.items[0]);
-                    aboveChest.items.RemoveAt(0);
-                }
-                // Not doing for now because I'd need to handle every machine's special rules, like changing ParentSheetIndex
-                /*
-                else if ( aboveObj != null && aboveObj?.GetType() == typeof( SObject ) && aboveObj.bigCraftable.Value && aboveObj.MinutesUntilReady == 0 && chest.items.Count < chest.GetActualCapacity() )
-                {
-                    chest.addItem( aboveObj.heldObject.Value );
-                    aboveObj.heldObject.Value = null;
-                }
-                */
+            // not super hopper
+            if (!this.TryGetHopper(machine, out Chest hopper) || hopper.heldObject.Value == null || !Utility.IsNormalObjectAtParentSheetIndex(hopper.heldObject.Value, SObject.iridiumBar))
+                return;
 
-                location.objects.TryGetValue(chest.TileLocation + new Vector2(0, 1), out SObject belowObj);
-                if (belowObj is Chest belowChest && chest.items.Count > 0 && belowChest.items.Count < belowChest.GetActualCapacity())
-                {
-                    belowChest.items.Add(chest.items[0]);
-                    chest.items.RemoveAt(0);
-                }
+            // no chests to transfer
+            if (!location.objects.TryGetValue(hopper.TileLocation - new Vector2(0, 1), out SObject objAbove) || objAbove is not Chest chestAbove)
+                return;
+            if (!location.objects.TryGetValue(hopper.TileLocation + new Vector2(0, 1), out SObject objBelow) || objBelow is not Chest chestBelow)
+                return;
+
+            // transfer items
+            chestAbove.clearNulls();
+            for (int i = chestAbove.items.Count - 1; i >= 0; i--)
+            {
+                Item item = chestAbove.items[i];
+                if (chestBelow.addItem(item) == null)
+                    chestAbove.items.RemoveAt(i);
             }
+        }
+
+        /// <summary>Get the hopper instance if the object is a hopper.</summary>
+        /// <param name="obj">The object to check.</param>
+        /// <param name="hopper">The hopper instance.</param>
+        /// <returns>Returns whether the object is a hopper.</returns>
+        private bool TryGetHopper(SObject obj, out Chest hopper)
+        {
+            if (obj is Chest { SpecialChestType: Chest.SpecialChestTypes.AutoLoader } chest)
+            {
+                hopper = chest;
+                return true;
+            }
+
+            hopper = null;
+            return false;
         }
     }
 }
