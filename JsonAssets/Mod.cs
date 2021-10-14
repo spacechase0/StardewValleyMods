@@ -272,11 +272,15 @@ namespace JsonAssets
         /// <param name="translations">The translations from which to get text if <see cref="ObjectData.TranslationKey"/> is used.</param>
         public void RegisterObject(IManifest source, ObjectData obj, ITranslationHelper translations)
         {
-            // normalize content
+            // load data
             obj.InvokeOnDeserialized();
             this.PopulateTranslations(obj, translations);
 
-            // add content
+            // validate
+            if (!this.AssertHasName(obj, "object", source, translations))
+                return;
+
+            // save data
             this.Objects.Add(obj);
 
             // add recipe to shops
@@ -328,7 +332,7 @@ namespace JsonAssets
             if (obj.Category == ObjectCategory.Ring)
                 this.MyRings.Add(obj);
 
-            // Duplicate check
+            // check for duplicates
             if (this.DupObjects.TryGetValue(obj.Name, out IManifest prevManifest))
                 Log.Error($"Duplicate object: {obj.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
@@ -356,10 +360,8 @@ namespace JsonAssets
         /// <param name="translations">The translations from which to get text if <see cref="CropData.SeedTranslationKey"/> is used.</param>
         public void RegisterCrop(IManifest source, CropData crop, Texture2D seedTexture, ITranslationHelper translations)
         {
+            // load data
             crop.InvokeOnDeserialized();
-            this.Crops.Add(crop);
-
-            // save seeds
             crop.Seed = new ObjectData
             {
                 Texture = seedTexture,
@@ -378,37 +380,48 @@ namespace JsonAssets
             };
             this.PopulateTranslations(crop.Seed, translations);
 
-            // TODO: Clean up this chunk
-            // I copy/pasted it from the unofficial update decompiled
-            string str = "";
-            foreach (string season in new[] { "spring", "summer", "fall", "winter" }.Except(crop.Seasons))
-                str += $"/z {season}";
-            if (str != "")
+            // validate
+            if (!this.AssertHasName(crop, "crop", source, translations))
+                return;
+            if (!this.AssertHasName(crop.Seed, "crop seed", source, translations, discriminator: $"crop: {crop.Name}"))
+                return;
+
+            // save crop data
+            this.Crops.Add(crop);
+
+            // add purchase requirement for crop seasons
             {
-                str = str.TrimStart('/');
-                if (crop.SeedPurchaseRequirements.Any())
+                string seasonReq = "";
+                foreach (string season in new[] { "spring", "summer", "fall", "winter" }.Except(crop.Seasons))
+                    seasonReq += $"/z {season}";
+                if (seasonReq != "")
                 {
-                    for (int index = 0; index < crop.SeedPurchaseRequirements.Count; index++)
+                    seasonReq = seasonReq.TrimStart('/');
+                    if (crop.SeedPurchaseRequirements.Any())
                     {
-                        if (this.SeasonLimiter.IsMatch(crop.SeedPurchaseRequirements[index]))
+                        for (int index = 0; index < crop.SeedPurchaseRequirements.Count; index++)
                         {
-                            crop.SeedPurchaseRequirements[index] = str;
-                            Log.Warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
+                            if (this.SeasonLimiter.IsMatch(crop.SeedPurchaseRequirements[index]))
+                            {
+                                crop.SeedPurchaseRequirements[index] = seasonReq;
+                                Log.Warn($"        Faulty season requirements for {crop.SeedName}!\n        Fixed season requirements: {crop.SeedPurchaseRequirements[index]}");
+                            }
+                        }
+                        if (!crop.SeedPurchaseRequirements.Contains(seasonReq))
+                        {
+                            Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {seasonReq}");
+                            crop.Seed.PurchaseRequirements.Add(seasonReq);
                         }
                     }
-                    if (!crop.SeedPurchaseRequirements.Contains(str))
+                    else
                     {
-                        Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {str}");
-                        crop.Seed.PurchaseRequirements.Add(str);
+                        Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {seasonReq}");
+                        crop.Seed.PurchaseRequirements.Add(seasonReq);
                     }
-                }
-                else
-                {
-                    Log.Trace($"        Adding season requirements for {crop.SeedName}:\n        New season requirements: {str}");
-                    crop.Seed.PurchaseRequirements.Add(str);
                 }
             }
 
+            // add seed to shops
             if (crop.Seed.CanPurchase)
             {
                 this.shopData.Add(new ShopDataEntry
@@ -431,12 +444,13 @@ namespace JsonAssets
                 }
             }
 
-            // Duplicate check
+            // check for duplicates
             if (this.DupCrops.TryGetValue(crop.Name, out IManifest prevManifest))
                 Log.Error($"Duplicate crop: {crop.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
                 this.DupCrops[crop.Name] = source;
 
+            // save seed data
             this.Objects.Add(crop.Seed);
 
             if (!this.CropsByContentPack.TryGetValue(source, out List<string> addedCrops))
@@ -464,10 +478,8 @@ namespace JsonAssets
         /// <param name="translations">The translations from which to get text if <see cref="FruitTreeData.SaplingTranslationKey"/> is used.</param>
         public void RegisterFruitTree(IManifest source, FruitTreeData tree, Texture2D saplingTexture, ITranslationHelper translations)
         {
+            // load data
             tree.InvokeOnDeserialized();
-            this.FruitTrees.Add(tree);
-
-            // save sapling
             tree.Sapling = new ObjectData
             {
                 Texture = saplingTexture,
@@ -485,6 +497,15 @@ namespace JsonAssets
                 TranslationKey = tree.SaplingTranslationKey
             };
             this.PopulateTranslations(tree.Sapling, translations);
+
+            // validate
+            if (!this.AssertHasName(tree, "fruit tree", source, translations))
+                return;
+            if (!this.AssertHasName(tree.Sapling, "fruit tree sapling", source, translations, discriminator: $"fruit tree: {tree.Name}"))
+                return;
+
+            // save data
+            this.FruitTrees.Add(tree);
             this.Objects.Add(tree.Sapling);
 
             // add sapling to shops
@@ -509,7 +530,7 @@ namespace JsonAssets
                 }
             }
 
-            // Duplicate check
+            // check for duplicates
             if (this.DupFruitTrees.TryGetValue(tree.Name, out IManifest prevManifest))
                 Log.Error($"Duplicate fruit tree: {tree.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
@@ -534,9 +555,15 @@ namespace JsonAssets
         /// <param name="translations">The translations from which to get text if <see cref="BigCraftableData.TranslationKey"/> is used.</param>
         public void RegisterBigCraftable(IManifest source, BigCraftableData craftable, ITranslationHelper translations)
         {
+            // load data
             craftable.InvokeOnDeserialized();
             this.PopulateTranslations(craftable, translations);
 
+            // validate
+            if (!this.AssertHasName(craftable, "craftable", source, translations))
+                return;
+
+            // save data
             this.BigCraftables.Add(craftable);
 
             // add recipe shop data
@@ -583,7 +610,7 @@ namespace JsonAssets
                 }
             }
 
-            // Duplicate check
+            // check for duplicates
             if (this.DupBigCraftables.TryGetValue(craftable.Name, out IManifest prevManifest))
                 Log.Error($"Duplicate big craftable: {craftable.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
@@ -608,10 +635,18 @@ namespace JsonAssets
         /// <param name="translations">The translations from which to get text if <see cref="BigCraftableData.TranslationKey"/> is used.</param>
         public void RegisterHat(IManifest source, HatData hat, ITranslationHelper translations)
         {
+            // load data
             hat.InvokeOnDeserialized();
             this.PopulateTranslations(hat, translations);
+
+            // validate
+            if (!this.AssertHasName(hat, "hat", source, translations))
+                return;
+
+            // save data
             this.Hats.Add(hat);
 
+            // add to shops
             if (hat.CanPurchase)
             {
                 this.shopData.Add(new ShopDataEntry
@@ -623,7 +658,7 @@ namespace JsonAssets
                 });
             }
 
-            // Duplicate check
+            // check for duplicates
             if (this.DupHats.TryGetValue(hat.Name, out IManifest prevManifest))
                 Log.Error($"Duplicate hat: {hat.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
@@ -648,11 +683,18 @@ namespace JsonAssets
         /// <param name="translations">The translations from which to get text if <see cref="WeaponData.TranslationKey"/> is used.</param>
         public void RegisterWeapon(IManifest source, WeaponData weapon, ITranslationHelper translations)
         {
+            // load data
             weapon.InvokeOnDeserialized();
             this.PopulateTranslations(weapon, translations);
 
+            // validate
+            if (!this.AssertHasName(weapon, "weapon", source, translations))
+                return;
+
+            // save data
             this.Weapons.Add(weapon);
 
+            // add to shops
             if (weapon.CanPurchase)
             {
                 this.shopData.Add(new ShopDataEntry
@@ -674,7 +716,7 @@ namespace JsonAssets
                 }
             }
 
-            // Duplicate check
+            // check for duplicates
             if (this.DupWeapons.TryGetValue(weapon.Name, out IManifest prevManifest))
                 Log.Error($"Duplicate weapon: {weapon.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
@@ -699,12 +741,18 @@ namespace JsonAssets
         /// <param name="translations">The translations from which to get text if <see cref="ShirtData.TranslationKey"/> is used.</param>
         public void RegisterShirt(IManifest source, ShirtData shirt, ITranslationHelper translations)
         {
+            // load data
             shirt.InvokeOnDeserialized();
             this.PopulateTranslations(shirt, translations);
 
+            // validate
+            if (!this.AssertHasName(shirt, "shirt", source, translations))
+                return;
+
+            // save data
             this.Shirts.Add(shirt);
 
-            // Duplicate check
+            // check for duplicates
             if (this.DupShirts.TryGetValue(shirt.Name, out IManifest prevManifest))
                 Log.Error($"Duplicate shirt: {shirt.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
@@ -729,12 +777,18 @@ namespace JsonAssets
         /// <param name="translations">The translations from which to get text if <see cref="PantsData.TranslationKey"/> is used.</param>
         public void RegisterPants(IManifest source, PantsData pants, ITranslationHelper translations)
         {
+            // load data
             pants.InvokeOnDeserialized();
             this.PopulateTranslations(pants, translations);
 
+            // validate
+            if (!this.AssertHasName(pants, "pants", source, translations))
+                return;
+
+            // save data
             this.Pants.Add(pants);
 
-            // Duplicate check
+            // check for duplicates
             if (this.DupPants.TryGetValue(pants.Name, out IManifest prevManifest))
                 Log.Error($"Duplicate pants: {pants.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
@@ -769,11 +823,18 @@ namespace JsonAssets
         /// <param name="translations">The translations from which to get text if <see cref="BootsData.TranslationKey"/> is used.</param>
         public void RegisterBoots(IManifest source, BootsData boots, ITranslationHelper translations)
         {
+            // load data
             boots.InvokeOnDeserialized();
             this.PopulateTranslations(boots, translations);
 
+            // validate
+            if (!this.AssertHasName(boots, "boots", source, translations))
+                return;
+
+            // save data
             this.Boots.Add(boots);
 
+            // add to shops
             if (boots.CanPurchase)
             {
                 this.shopData.Add(new ShopDataEntry
@@ -796,7 +857,7 @@ namespace JsonAssets
                 }
             }
 
-            // Duplicate check
+            // check for duplicates
             if (this.DupBoots.TryGetValue(boots.Name, out IManifest prevManifest))
                 Log.Error($"Duplicate boots: {boots.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
             else
@@ -831,18 +892,9 @@ namespace JsonAssets
         /// <param name="translations">The translations from which to get text if <see cref="FenceData.TranslationKey"/> is used.</param>
         public void RegisterFence(IManifest source, FenceData fence, ITranslationHelper translations)
         {
+            // load data
             fence.InvokeOnDeserialized();
             this.PopulateTranslations(fence, translations);
-
-            this.Fences.Add(fence);
-
-            IList<ObjectIngredient> ConvertIngredients(IList<FenceIngredient> ingredients)
-            {
-                return ingredients
-                    .Select(ingredient => new ObjectIngredient { Object = ingredient.Object, Count = ingredient.Count })
-                    .ToList();
-            }
-
             fence.CorrespondingObject = new ObjectData
             {
                 Texture = fence.ObjectTexture,
@@ -855,7 +907,9 @@ namespace JsonAssets
                     SkillUnlockName = fence.Recipe.SkillUnlockName,
                     SkillUnlockLevel = fence.Recipe.SkillUnlockLevel,
                     ResultCount = fence.Recipe.ResultCount,
-                    Ingredients = ConvertIngredients(fence.Recipe.Ingredients),
+                    Ingredients = fence.Recipe.Ingredients
+                        .Select(ingredient => new ObjectIngredient { Object = ingredient.Object, Count = ingredient.Count })
+                        .ToList(),
                     IsDefault = fence.Recipe.IsDefault,
                     CanPurchase = fence.Recipe.CanPurchase,
                     PurchasePrice = fence.Recipe.PurchasePrice,
@@ -872,6 +926,15 @@ namespace JsonAssets
                 DescriptionLocalization = fence.DescriptionLocalization,
                 TranslationKey = fence.TranslationKey
             };
+
+            // validate data
+            if (!this.AssertHasName(fence, "fence", source, translations))
+                return;
+            if (!this.AssertHasName(fence.CorrespondingObject, "fence object", source, translations, discriminator: $"fence: {fence.Name}"))
+                return;
+
+            // save data
+            this.Fences.Add(fence);
             this.RegisterObject(source, fence.CorrespondingObject, translations);
         }
 
@@ -1683,6 +1746,38 @@ namespace JsonAssets
                 else
                     item.DescriptionLocalization[locale] = text;
             }
+        }
+
+        /// <summary>Assert that an item has a name set, and log a descriptive error if it doesn't.</summary>
+        /// <param name="item">The item whose name to validate.</param>
+        /// <param name="typeLabel">The type label shown in the error message.</param>
+        /// <param name="source">The mod which registered the item.</param>
+        /// <param name="translations">The translations which have been applied to the name field, if any.</param>
+        /// <param name="discriminator">A human-readable parenthetical phrase which provide more details in the error message, if any.</param>
+        private bool AssertHasName(DataNeedsId item, string typeLabel, IManifest source, ITranslationHelper translations, string discriminator = null)
+        {
+            if (!string.IsNullOrWhiteSpace(item.Name))
+                return true;
+
+            // build error message with the relevant details:
+            //    - ModName added object with no name.
+            //    - ModName added object with no name or TranslationKey value.
+            //    - ModName added object with no name. The mod provided translation key 'Key' but no translation helper.
+            //    - ModName added object with no name, and 'Key' was not found in the content pack's translations.
+            string suffix = discriminator is not null ? $" ({discriminator})" : "";
+            string error = $"{source.Name} added {typeLabel} with no name";
+            if (item is not ITranslatableItem translatable)
+                error += $"{suffix}.";
+            else if (string.IsNullOrWhiteSpace(translatable.TranslationKey))
+                error += $" or {nameof(translatable.TranslationKey)} value{suffix}.";
+            else if (translations is null)
+                error += $"{suffix}. The mod provided translation key '{translatable.TranslationKey}' but no translation helper.";
+            else
+                error += $"{suffix}, and '{translatable.TranslationKey}.name' wasn't found in the content pack's translations.";
+
+            // log error
+            Log.Error($"Ignored invalid content: {error}");
+            return false;
         }
 
         private Dictionary<string, int> AssignIds(string type, int starting, List<DataNeedsId> data)
