@@ -6,6 +6,9 @@
     "festival.name": "Szörf fesztivál",
 
     // race
+    "race.start.question": "Ready for the race?", // TODO
+    "race.start.yes": "Yes, let's start.", // TODO
+    "race.start.no": "Not yet.", // TODO
     "race.instructions": "Elemek leírása (Jobb gombbal használható):^ Csillaghulló lendület - Ideiglenes sebesség növelés.^ Gömbhal lövedék - Gömbhal kilövése egy másik játékosra.^ Viharfelhő - Áramütés az 1. helyen lévő versenyzőnek.^ Junimo erő - Legyőzhetetlenség és egy kis sebesség növelés.",
     "race.lewis-start.0": "Készülj...",
     "race.lewis-start.1": "Vigyázz.....",

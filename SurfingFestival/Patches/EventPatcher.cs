@@ -5,6 +5,7 @@ using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
+using SurfingFestival.Framework;
 
 namespace SurfingFestival.Patches
 {
@@ -44,7 +45,7 @@ namespace SurfingFestival.Patches
             if (id == "surfing")
             {
                 Mod.Instance.Helper.Reflection.GetField<NPC>(__instance, "festivalHost").SetValue(__instance.getActorByName("Lewis"));
-                Mod.Instance.Helper.Reflection.GetField<string>(__instance, "hostMessage").SetValue("$q -1 null#Ready for the race?#$r -1 0 yes#Yes, let's start.#$r -1 0 no#Not yet.");
+                Mod.Instance.Helper.Reflection.GetField<string>(__instance, "hostMessage").SetValue($"$q -1 null#{I18n.Race_Start_Question()}#$r -1 0 yes#{I18n.Race_Start_Yes()}#$r -1 0 no#{I18n.Race_Start_No()}");
             }
         }
 

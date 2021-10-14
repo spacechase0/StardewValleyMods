@@ -34,6 +34,24 @@ namespace SurfingFestival.Framework
             return I18n.GetByKey("festival.name");
         }
 
+        /// <summary>Get a translation equivalent to "Ready for the race?".</summary>
+        public static string Race_Start_Question()
+        {
+            return I18n.GetByKey("race.start.question");
+        }
+
+        /// <summary>Get a translation equivalent to "Yes, let's start.".</summary>
+        public static string Race_Start_Yes()
+        {
+            return I18n.GetByKey("race.start.yes");
+        }
+
+        /// <summary>Get a translation equivalent to "Not yet.".</summary>
+        public static string Race_Start_No()
+        {
+            return I18n.GetByKey("race.start.no");
+        }
+
         /// <summary>Get a translation equivalent to "Items (right click to use):^ Stardrop Boost - Temporary speed boost.^ Pufferfish Projectile - Shoot a pufferfish at the next player ahead.^ Seeking Cloud - Zap the player in first place.^ Junimo Power - Invincibility and a small speed boost.".</summary>
         public static string Race_Instructions()
         {

@@ -4,6 +4,7 @@
 ## Upcoming release
 * Moved item and festival translations into the standard `i18n` folder.
 * Fixed error loading the festival when playing with a custom language in Stardew Valley 1.5.5.
+* Fixed Lewis' start-race question not translatable.
 
 ## 1.0.12
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.

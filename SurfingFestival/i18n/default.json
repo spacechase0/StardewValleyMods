@@ -6,6 +6,9 @@
     "festival.name": "Surfing Festival",
 
     // race
+    "race.start.question": "Ready for the race?",
+    "race.start.yes": "Yes, let's start.",
+    "race.start.no": "Not yet.",
     "race.instructions": "Items (right click to use):^ Stardrop Boost - Temporary speed boost.^ Pufferfish Projectile - Shoot a pufferfish at the next player ahead.^ Seeking Cloud - Zap the player in first place.^ Junimo Power - Invincibility and a small speed boost.",
     "race.lewis-start.0": "Ready...",
     "race.lewis-start.1": "Set.....",
