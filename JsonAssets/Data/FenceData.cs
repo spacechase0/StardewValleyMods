@@ -10,7 +10,7 @@ namespace JsonAssets.Data
 {
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
-    public class FenceData : DataNeedsIdWithTexture
+    public class FenceData : DataNeedsIdWithTexture, ITranslatableItem
     {
         /*********
         ** Accessors
@@ -21,6 +21,7 @@ namespace JsonAssets.Data
         [JsonIgnore]
         internal ObjectData CorrespondingObject { get; set; }
 
+        /// <inheritdoc />
         public string Description { get; set; }
 
         public int MaxHealth { get; set; } = 1;
@@ -38,8 +39,14 @@ namespace JsonAssets.Data
         public IList<string> PurchaseRequirements { get; set; } = new List<string>();
         public IList<PurchaseData> AdditionalPurchaseData { get; set; } = new List<PurchaseData>();
 
+        /// <inheritdoc />
         public Dictionary<string, string> NameLocalization { get; set; } = new();
+
+        /// <inheritdoc />
         public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
+
+        /// <inheritdoc />
+        public string TranslationKey { get; set; }
 
 
         /*********

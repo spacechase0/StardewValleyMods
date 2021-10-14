@@ -254,13 +254,28 @@ namespace JsonAssets
         internal Dictionary<IManifest, List<string>> ClothingByContentPack = new();
         internal Dictionary<IManifest, List<string>> BootsByContentPack = new();
 
+        /// <summary>Register a custom object with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the object.</param>
+        /// <param name="obj">The object data.</param>
         public void RegisterObject(IManifest source, ObjectData obj)
+        {
+            this.RegisterObject(source, obj, null);
+        }
+
+        /// <summary>Register a custom object with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the object.</param>
+        /// <param name="obj">The object data.</param>
+        /// <param name="translations">The translations from which to get text if <see cref="ObjectData.TranslationKey"/> is used.</param>
+        public void RegisterObject(IManifest source, ObjectData obj, ITranslationHelper translations)
         {
             // normalize content
             obj.InvokeOnDeserialized();
+            this.PopulateTranslations(obj, translations);
 
             // add content
             this.Objects.Add(obj);
+
+            // add recipe to shops
             if (obj.Recipe is { CanPurchase: true })
             {
                 this.shopData.Add(new ShopDataEntry
@@ -282,6 +297,8 @@ namespace JsonAssets
                     });
                 }
             }
+
+            // add object to shops
             if (obj.CanPurchase)
             {
                 this.shopData.Add(new ShopDataEntry
@@ -319,7 +336,21 @@ namespace JsonAssets
             addedNames.Add(obj.Name);
         }
 
+        /// <summary>Register a custom crop with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the crop.</param>
+        /// <param name="crop">The crop data.</param>
+        /// <param name="seedTex">The crop's seed texture.</param>
         public void RegisterCrop(IManifest source, CropData crop, Texture2D seedTex)
+        {
+            this.RegisterCrop(source, crop, seedTex, null);
+        }
+
+        /// <summary>Register a custom crop with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the crop.</param>
+        /// <param name="crop">The crop data.</param>
+        /// <param name="seedTexture">The crop's seed texture.</param>
+        /// <param name="translations">The translations from which to get text if <see cref="CropData.SeedTranslationKey"/> is used.</param>
+        public void RegisterCrop(IManifest source, CropData crop, Texture2D seedTexture, ITranslationHelper translations)
         {
             crop.InvokeOnDeserialized();
             this.Crops.Add(crop);
@@ -327,7 +358,7 @@ namespace JsonAssets
             // save seeds
             crop.Seed = new ObjectData
             {
-                Texture = seedTex,
+                Texture = seedTexture,
                 Name = crop.SeedName,
                 Description = crop.SeedDescription,
                 Category = ObjectCategory.Seeds,
@@ -338,8 +369,10 @@ namespace JsonAssets
                 PurchaseRequirements = crop.SeedPurchaseRequirements,
                 AdditionalPurchaseData = crop.SeedAdditionalPurchaseData,
                 NameLocalization = crop.SeedNameLocalization,
-                DescriptionLocalization = crop.SeedDescriptionLocalization
+                DescriptionLocalization = crop.SeedDescriptionLocalization,
+                TranslationKey = crop.SeedTranslationKey
             };
+            this.PopulateTranslations(crop.Seed, translations);
 
             // TODO: Clean up this chunk
             // I copy/pasted it from the unofficial update decompiled
@@ -411,15 +444,29 @@ namespace JsonAssets
             addedSeeds.Add(crop.Seed.Name);
         }
 
+        /// <summary>Register a custom fruit tree with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the fruit tree.</param>
+        /// <param name="tree">The fruit tree data.</param>
+        /// <param name="saplingTex">The fruit tree's sapling texture.</param>
         public void RegisterFruitTree(IManifest source, FruitTreeData tree, Texture2D saplingTex)
+        {
+            this.RegisterFruitTree(source, tree, saplingTex, null);
+        }
+
+        /// <summary>Register a custom fruit tree with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the fruit tree.</param>
+        /// <param name="tree">The fruit tree data.</param>
+        /// <param name="saplingTexture">The fruit tree's sapling texture.</param>
+        /// <param name="translations">The translations from which to get text if <see cref="FruitTreeData.SaplingTranslationKey"/> is used.</param>
+        public void RegisterFruitTree(IManifest source, FruitTreeData tree, Texture2D saplingTexture, ITranslationHelper translations)
         {
             tree.InvokeOnDeserialized();
             this.FruitTrees.Add(tree);
 
-            // save seed
+            // save sapling
             tree.Sapling = new ObjectData
             {
-                Texture = saplingTex,
+                Texture = saplingTexture,
                 Name = tree.SaplingName,
                 Description = tree.SaplingDescription,
                 Category = ObjectCategory.Seeds,
@@ -430,10 +477,13 @@ namespace JsonAssets
                 PurchasePrice = tree.SaplingPurchasePrice,
                 AdditionalPurchaseData = tree.SaplingAdditionalPurchaseData,
                 NameLocalization = tree.SaplingNameLocalization,
-                DescriptionLocalization = tree.SaplingDescriptionLocalization
+                DescriptionLocalization = tree.SaplingDescriptionLocalization,
+                TranslationKey = tree.SaplingTranslationKey
             };
+            this.PopulateTranslations(tree.Sapling, translations);
             this.Objects.Add(tree.Sapling);
 
+            // add sapling to shops
             if (tree.Sapling.CanPurchase)
             {
                 this.shopData.Add(new ShopDataEntry
@@ -466,12 +516,26 @@ namespace JsonAssets
             addedNames.Add(tree.Name);
         }
 
+        /// <summary>Register a custom big craftable with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the big craftable.</param>
+        /// <param name="craftable">The big craftable data.</param>
         public void RegisterBigCraftable(IManifest source, BigCraftableData craftable)
         {
+            this.RegisterBigCraftable(source, craftable, null);
+        }
+
+        /// <summary>Register a custom big craftable with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the big craftable.</param>
+        /// <param name="craftable">The big craftable data.</param>
+        /// <param name="translations">The translations from which to get text if <see cref="BigCraftableData.TranslationKey"/> is used.</param>
+        public void RegisterBigCraftable(IManifest source, BigCraftableData craftable, ITranslationHelper translations)
+        {
             craftable.InvokeOnDeserialized();
+            this.PopulateTranslations(craftable, translations);
 
             this.BigCraftables.Add(craftable);
 
+            // add recipe shop data
             if (craftable.Recipe?.CanPurchase == true)
             {
                 this.shopData.Add(new ShopDataEntry
@@ -492,6 +556,8 @@ namespace JsonAssets
                     });
                 }
             }
+
+            // add item shop data
             if (craftable.CanPurchase)
             {
                 this.shopData.Add(new ShopDataEntry
@@ -524,10 +590,22 @@ namespace JsonAssets
             addedNames.Add(craftable.Name);
         }
 
+        /// <summary>Register a custom hat with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the hat.</param>
+        /// <param name="hat">The shirt data.</param>
         public void RegisterHat(IManifest source, HatData hat)
         {
-            hat.InvokeOnDeserialized();
+            this.RegisterHat(source, hat, null);
+        }
 
+        /// <summary>Register a custom hat with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the hat.</param>
+        /// <param name="hat">The shirt data.</param>
+        /// <param name="translations">The translations from which to get text if <see cref="BigCraftableData.TranslationKey"/> is used.</param>
+        public void RegisterHat(IManifest source, HatData hat, ITranslationHelper translations)
+        {
+            hat.InvokeOnDeserialized();
+            this.PopulateTranslations(hat, translations);
             this.Hats.Add(hat);
 
             if (hat.CanPurchase)
@@ -552,9 +630,22 @@ namespace JsonAssets
             addedNames.Add(hat.Name);
         }
 
+        /// <summary>Register a custom weapon with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the weapon.</param>
+        /// <param name="weapon">The weapon data.</param>
         public void RegisterWeapon(IManifest source, WeaponData weapon)
         {
+            this.RegisterWeapon(source, weapon, null);
+        }
+
+        /// <summary>Register a custom weapon with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the weapon.</param>
+        /// <param name="weapon">The weapon data.</param>
+        /// <param name="translations">The translations from which to get text if <see cref="WeaponData.TranslationKey"/> is used.</param>
+        public void RegisterWeapon(IManifest source, WeaponData weapon, ITranslationHelper translations)
+        {
             weapon.InvokeOnDeserialized();
+            this.PopulateTranslations(weapon, translations);
 
             this.Weapons.Add(weapon);
 
@@ -590,9 +681,22 @@ namespace JsonAssets
             addedNames.Add(weapon.Name);
         }
 
+        /// <summary>Register a custom shirt with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the shirt.</param>
+        /// <param name="shirt">The shirt data.</param>
         public void RegisterShirt(IManifest source, ShirtData shirt)
         {
+            this.RegisterShirt(source, shirt, null);
+        }
+
+        /// <summary>Register a custom shirt with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the shirt.</param>
+        /// <param name="shirt">The shirt data.</param>
+        /// <param name="translations">The translations from which to get text if <see cref="ShirtData.TranslationKey"/> is used.</param>
+        public void RegisterShirt(IManifest source, ShirtData shirt, ITranslationHelper translations)
+        {
             shirt.InvokeOnDeserialized();
+            this.PopulateTranslations(shirt, translations);
 
             this.Shirts.Add(shirt);
 
@@ -607,9 +711,22 @@ namespace JsonAssets
             addedNames.Add(shirt.Name);
         }
 
+        /// <summary>Register custom pants with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the pants.</param>
+        /// <param name="pants">The pants data.</param>
         public void RegisterPants(IManifest source, PantsData pants)
         {
+            this.RegisterPants(source, pants, null);
+        }
+
+        /// <summary>Register custom pants with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the pants.</param>
+        /// <param name="pants">The pants data.</param>
+        /// <param name="translations">The translations from which to get text if <see cref="PantsData.TranslationKey"/> is used.</param>
+        public void RegisterPants(IManifest source, PantsData pants, ITranslationHelper translations)
+        {
             pants.InvokeOnDeserialized();
+            this.PopulateTranslations(pants, translations);
 
             this.Pants.Add(pants);
 
@@ -624,6 +741,9 @@ namespace JsonAssets
             addedNames.Add(pants.Name);
         }
 
+        /// <summary>Register a custom tailoring recipe with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the pants.</param>
+        /// <param name="recipe">The pants data.</param>
         public void RegisterTailoringRecipe(IManifest source, TailoringRecipeData recipe)
         {
             recipe.InvokeOnDeserialized();
@@ -631,9 +751,22 @@ namespace JsonAssets
             this.Tailoring.Add(recipe);
         }
 
+        /// <summary>Register custom boots with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the boots.</param>
+        /// <param name="boots">The boots data.</param>
         public void RegisterBoots(IManifest source, BootsData boots)
         {
+            this.RegisterBoots(source, boots, null);
+        }
+
+        /// <summary>Register custom boots with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the boots.</param>
+        /// <param name="boots">The boots data.</param>
+        /// <param name="translations">The translations from which to get text if <see cref="BootsData.TranslationKey"/> is used.</param>
+        public void RegisterBoots(IManifest source, BootsData boots, ITranslationHelper translations)
+        {
             boots.InvokeOnDeserialized();
+            this.PopulateTranslations(boots, translations);
 
             this.Boots.Add(boots);
 
@@ -670,6 +803,9 @@ namespace JsonAssets
             addedNames.Add(boots.Name);
         }
 
+        /// <summary>Register a custom forge recipe with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the forge recipe.</param>
+        /// <param name="recipe">The forge recipe data.</param>
         public void RegisterForgeRecipe(IManifest source, ForgeRecipeData recipe)
         {
             recipe.InvokeOnDeserialized();
@@ -677,9 +813,22 @@ namespace JsonAssets
             this.Forge.Add(recipe);
         }
 
+        /// <summary>Register a custom fence with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the fence.</param>
+        /// <param name="fence">The fence data.</param>
         public void RegisterFence(IManifest source, FenceData fence)
         {
+            this.RegisterFence(source, fence, null);
+        }
+
+        /// <summary>Register a custom fence with Json Assets.</summary>
+        /// <param name="source">The manifest for the mod registering the fence.</param>
+        /// <param name="fence">The fence data.</param>
+        /// <param name="translations">The translations from which to get text if <see cref="FenceData.TranslationKey"/> is used.</param>
+        public void RegisterFence(IManifest source, FenceData fence, ITranslationHelper translations)
+        {
             fence.InvokeOnDeserialized();
+            this.PopulateTranslations(fence, translations);
 
             this.Fences.Add(fence);
 
@@ -690,7 +839,7 @@ namespace JsonAssets
                     .ToList();
             }
 
-            this.RegisterObject(source, fence.CorrespondingObject = new ObjectData
+            fence.CorrespondingObject = new ObjectData
             {
                 Texture = fence.ObjectTexture,
                 Name = fence.Name,
@@ -716,8 +865,10 @@ namespace JsonAssets
                 PurchaseRequirements = fence.PurchaseRequirements,
                 AdditionalPurchaseData = fence.AdditionalPurchaseData,
                 NameLocalization = fence.NameLocalization,
-                DescriptionLocalization = fence.DescriptionLocalization
-            });
+                DescriptionLocalization = fence.DescriptionLocalization,
+                TranslationKey = fence.TranslationKey
+            };
+            this.RegisterObject(source, fence.CorrespondingObject, translations);
         }
 
         /// <summary>Get whether conditions in the Expanded Preconditions Utility (EPU) format match the current context.</summary>
@@ -773,7 +924,7 @@ namespace JsonAssets
                     if (obj.IsColored)
                         obj.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
 
-                    this.RegisterObject(contentPack.Manifest, obj);
+                    this.RegisterObject(contentPack.Manifest, obj, contentPack.Translation);
                 }
             }
 
@@ -795,7 +946,7 @@ namespace JsonAssets
                     if (contentPack.HasFile($"{relativePath}/giant.png"))
                         crop.GiantTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/giant.png");
 
-                    this.RegisterCrop(contentPack.Manifest, crop, contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"));
+                    this.RegisterCrop(contentPack.Manifest, crop, contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"), contentPack.Translation);
                 }
             }
 
@@ -814,7 +965,7 @@ namespace JsonAssets
 
                     // save fruit tree
                     tree.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/tree.png");
-                    this.RegisterFruitTree(contentPack.Manifest, tree, contentPack.LoadAsset<Texture2D>($"{relativePath}/sapling.png"));
+                    this.RegisterFruitTree(contentPack.Manifest, tree, contentPack.LoadAsset<Texture2D>($"{relativePath}/sapling.png"), contentPack.Translation);
                 }
             }
 
@@ -841,7 +992,7 @@ namespace JsonAssets
                         for (int i = 0; i < craftable.ReserveExtraIndexCount; ++i)
                             craftable.ExtraTextures[i] = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable-{i + 2}.png");
                     }
-                    this.RegisterBigCraftable(contentPack.Manifest, craftable);
+                    this.RegisterBigCraftable(contentPack.Manifest, craftable, contentPack.Translation);
                 }
             }
 
@@ -860,7 +1011,7 @@ namespace JsonAssets
 
                     // save object
                     hat.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/hat.png");
-                    this.RegisterHat(contentPack.Manifest, hat);
+                    this.RegisterHat(contentPack.Manifest, hat, contentPack.Translation);
                 }
             }
 
@@ -879,7 +1030,7 @@ namespace JsonAssets
 
                     // save object
                     weapon.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/weapon.png");
-                    this.RegisterWeapon(contentPack.Manifest, weapon);
+                    this.RegisterWeapon(contentPack.Manifest, weapon, contentPack.Translation);
                 }
             }
 
@@ -906,7 +1057,7 @@ namespace JsonAssets
                         if (shirt.Dyeable)
                             shirt.TextureFemaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/female-color.png");
                     }
-                    this.RegisterShirt(contentPack.Manifest, shirt);
+                    this.RegisterShirt(contentPack.Manifest, shirt, contentPack.Translation);
                 }
             }
 
@@ -925,7 +1076,7 @@ namespace JsonAssets
 
                     // save pants
                     pants.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/pants.png");
-                    this.RegisterPants(contentPack.Manifest, pants);
+                    this.RegisterPants(contentPack.Manifest, pants, contentPack.Translation);
                 }
             }
 
@@ -961,7 +1112,7 @@ namespace JsonAssets
 
                     boots.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/boots.png");
                     boots.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
-                    this.RegisterBoots(contentPack.Manifest, boots);
+                    this.RegisterBoots(contentPack.Manifest, boots, contentPack.Translation);
                 }
             }
 
@@ -980,7 +1131,7 @@ namespace JsonAssets
 
                     fence.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/fence.png");
                     fence.ObjectTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
-                    this.RegisterFence(contentPack.Manifest, fence);
+                    this.RegisterFence(contentPack.Manifest, fence, contentPack.Translation);
                 }
             }
 
@@ -1492,6 +1643,37 @@ namespace JsonAssets
 
             Log.Warn($"No idea what '{data}' is!");
             return 0;
+        }
+
+        /// <summary>Populate an item's localization fields based on the <see cref="ITranslatableItem.TranslationKey"/> property, if defined.</summary>
+        /// <param name="item">The item for which to populate translations.</param>
+        /// <param name="translations">The translation helper from which to fetch translations.</param>
+        private void PopulateTranslations(ITranslatableItem item, ITranslationHelper translations)
+        {
+            if (translations == null || string.IsNullOrWhiteSpace(item?.TranslationKey))
+                return;
+
+            foreach (var pair in translations.GetInAllLocales($"{item.TranslationKey}.name"))
+            {
+                string locale = pair.Key;
+                string text = pair.Value;
+
+                if (locale == "default")
+                    item.Name = text;
+                else
+                    item.NameLocalization[locale] = text;
+            }
+
+            foreach (var pair in translations.GetInAllLocales($"{item.TranslationKey}.description"))
+            {
+                string locale = pair.Key;
+                string text = pair.Value;
+
+                if (locale == "default")
+                    item.Description = text;
+                else
+                    item.DescriptionLocalization[locale] = text;
+            }
         }
 
         private Dictionary<string, int> AssignIds(string type, int starting, List<DataNeedsId> data)

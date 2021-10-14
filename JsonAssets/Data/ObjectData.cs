@@ -55,6 +55,9 @@ namespace JsonAssets.Data
         /// <inheritdoc />
         public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
+        /// <inheritdoc />
+        public string TranslationKey { get; set; }
+
         public List<string> ContextTags { get; set; } = new();
 
 

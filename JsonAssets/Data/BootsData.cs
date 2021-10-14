@@ -38,6 +38,9 @@ namespace JsonAssets.Data
         /// <inheritdoc />
         public Dictionary<string, string> DescriptionLocalization { get; set; } = new();
 
+        /// <inheritdoc />
+        public string TranslationKey { get; set; }
+
         public int Defense { get; set; }
         public int Immunity { get; set; }
 

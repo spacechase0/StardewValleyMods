@@ -619,29 +619,57 @@ You can see a list of context tags under `Content/Data/ObjectInformation` An alt
 ### Localization
 Supported for: all content types.
 
-JsonAssets supports name localization without the need for a seperate or different download. These lines can be added to the bottom of their respective `json` files. Most localization is the same except "Crops have their localization fields prefixed with `Seed`, fruit trees prefixed with `Sapling`."
+You can translate your items' name/description fields directly in your content pack. There are two
+ways to add translations:
 
-Examples:
+1. You can add `NameLocalization` and `DescriptionLocalization` fields directly in the item's JSON
+   file (e.g. `hat.json` for a hat), and provide the text for any number of [language
+   codes](https://stardewvalleywiki.com/Modding:Translations):
 
-For Anything not a crop/sapling:
-```
-    "NameLocalization": { "es": "spanish weapon (name)" },
-    "DescriptionLocalization": { "es": "spanish weapon (desc)" }
-```
+   ```js
+   "Name": "Surfing Trophy",
+   "Description": "A trophy for winning the surfing festival.",
+   "NameLocalization": {
+       "ko": "서핑 트로피",
+       "ru": "Приз лучшего сёрфера"
+   },
+   "DescriptionLocalization": {
+       "ko": "서핑 페스티벌 우승 트로피.",
+       "ru": "Награда за победу на фестивале сёрфинга."
+   }
+   ```
 
-For Crops:
-```
-    "SeedNameLocalization": { "es": "spanish seed (name)" },
-    "SeedDescriptionLocalization": { "es": "spanish seed (desc)" }
-```
+2. Or you can add a `TranslationKey` field in the item's JSON file, and put the translations in
+   your content pack's [standard `i18n` folder](https://stardewvalleywiki.com/Modding:Translations).
 
-For Saplings:
-```
-    "SaplingNameLocalization": { "es": "spanish tree (name)" },
-    "SaplingDescriptionLocalization": { "es": "spanish tree (desc)" }
-```
+   For example, if you have this `bigcraftable.json`:
 
-PPJA has put together some [translation templates](https://github.com/paradigmnomad/PPJA/wiki/Submitting-a-Translation#translation-guide) that we strongly encourage users to use as a way to standardize how translations are done.
+   ```js
+   {
+       "Price": 500,
+       "TranslationKey": "item.surfing-trophy"
+   }
+   ```
+
+   Then you can have the Korean translations in your `i18n/ko.json` like this:
+
+   ```js
+   {
+      "item.surfing-trophy.name": "서핑 트로피",
+      "item.surfing-trophy.description": "서핑 페스티벌 우승 트로피."
+   }
+   ```
+
+   These are merged into the `NameLocalization` and `DescriptionLocalization` fields, so they work
+   exactly the same way. The text in `i18n/default.json` will replace the `Name` and `Description`
+   fields if specified.
+
+Note that crops add a `Seed` prefix and fruit trees add a `Sapling` prefix, like
+`SeedNameLocalization` and `SeedTranslationKey`.
+
+**⚠ Careful:** the item's `Name` field uniquely identifies your item. Changing the name (including
+through `default.json`) may break existing items for players or affect other mods which reference
+the item.
 
 ## Integration with Content Patcher
 Json Assets adds several custom tokens to [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915),

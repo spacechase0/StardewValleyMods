@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Added support for storing item display text in standard `i18n` translation files ([see docs](author-guide.md#localization)).
 * Fixed objects/seeds in shops using `PurchasePrice` instead of `Price` as the sell price.
 
 ## 1.9.1

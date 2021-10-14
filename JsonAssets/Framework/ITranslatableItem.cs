@@ -19,5 +19,8 @@ namespace JsonAssets.Framework
 
         /// <summary>The item description translations by language code.</summary>
         Dictionary<string, string> DescriptionLocalization { get; }
+
+        /// <summary>An optional translation key in the content pack's <c>i18n</c> files, used to populate the <see cref="NameLocalization"/> (<c>{{key}}.name</c>) and <see cref="DescriptionLocalization"/> (<c>{{key}}.description</c>) fields. Translations from <c>i18n/default.json</c> (if any) will overwrite <see cref="Name"/> and <see cref="Description"/>.</summary>
+        public string TranslationKey { get; set; }
     }
 }
