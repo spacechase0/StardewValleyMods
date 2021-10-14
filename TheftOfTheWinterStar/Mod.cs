@@ -158,7 +158,7 @@ namespace TheftOfTheWinterStar
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             Mod.Ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
-            Mod.Ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"));
+            Mod.Ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
             Mod.Ja.IdsFixed += this.OnIdsFixed;
         }
 

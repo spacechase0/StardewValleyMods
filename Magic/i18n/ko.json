@@ -109,6 +109,16 @@
 
 
     /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "매직 엘릭서",
+    "objects.mana-potion.description": "체력과 마나를 회복시켜주는 영약입니다.",
+
+    "objects.travel-core.name": "트래블 코어",
+    "objects.travel-core.description": "마법 주문의 촉매제입니다.",
+
+
+    /*********
     ** Generic Mod Config Menu UI
     *********/
     // TODO

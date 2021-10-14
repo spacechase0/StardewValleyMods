@@ -109,6 +109,16 @@
 
 
     /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "魔力药水",
+    "objects.mana-potion.description": "恢复生命和法力。",
+
+    "objects.travel-core.name": "传送核心",
+    "objects.travel-core.description": "触媒之一。",
+
+
+    /*********
     ** Generic Mod Config Menu UI
     *********/
     // TODO

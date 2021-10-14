@@ -46,22 +46,10 @@ namespace LuckSkill.Framework
             return I18n.GetByKey("fortunate.name");
         }
 
-        /// <summary>Get a translation equivalent to "Fortunate".</summary>
+        /// <summary>Get a translation equivalent to "Better daily luck.".</summary>
         public static string Fortunate_Desc()
         {
             return I18n.GetByKey("fortunate.desc");
-        }
-
-        /// <summary>Get a translation equivalent to "Popular Helper".</summary>
-        public static string PopularHelper_Name()
-        {
-            return I18n.GetByKey("popular-helper.name");
-        }
-
-        /// <summary>Get a translation equivalent to "Daily quests occur three times as often.".</summary>
-        public static string PopularHelper_Desc()
-        {
-            return I18n.GetByKey("popular-helper.desc");
         }
 
         /// <summary>Get a translation equivalent to "Lucky".</summary>
@@ -76,16 +64,16 @@ namespace LuckSkill.Framework
             return I18n.GetByKey("lucky.desc");
         }
 
-        /// <summary>Get a translation equivalent to "Un-unlucky".</summary>
-        public static string UnUnlucky_Name()
+        /// <summary>Get a translation equivalent to "Popular Helper".</summary>
+        public static string PopularHelper_Name()
         {
-            return I18n.GetByKey("un-unlucky.name");
+            return I18n.GetByKey("popular-helper.name");
         }
 
-        /// <summary>Get a translation equivalent to "Never have bad luck.".</summary>
-        public static string UnUnlucky_Desc()
+        /// <summary>Get a translation equivalent to "Daily quests occur three times as often.".</summary>
+        public static string PopularHelper_Desc()
         {
-            return I18n.GetByKey("un-unlucky.desc");
+            return I18n.GetByKey("popular-helper.desc");
         }
 
         /// <summary>Get a translation equivalent to "Shooting Star".</summary>
@@ -112,16 +100,16 @@ namespace LuckSkill.Framework
             return I18n.GetByKey("spirit-child.desc");
         }
 
-        /// <summary>Get a translation equivalent to "The junimos gave you a prismatic shard!".</summary>
-        public static string JunimoRewards_PrismaticShard()
+        /// <summary>Get a translation equivalent to "Un-unlucky".</summary>
+        public static string UnUnlucky_Name()
         {
-            return I18n.GetByKey("junimo-rewards.prismatic-shard");
+            return I18n.GetByKey("un-unlucky.name");
         }
 
-        /// <summary>Get a translation equivalent to "The junimos advanced your crops!".</summary>
-        public static string JunimoRewards_GrowCrops()
+        /// <summary>Get a translation equivalent to "Never have bad luck.".</summary>
+        public static string UnUnlucky_Desc()
         {
-            return I18n.GetByKey("junimo-rewards.grow-crops");
+            return I18n.GetByKey("un-unlucky.desc");
         }
 
         /// <summary>Get a translation equivalent to "The junimos made some of your animals more fond of you!".</summary>
@@ -130,10 +118,22 @@ namespace LuckSkill.Framework
             return I18n.GetByKey("junimo-rewards.animal-friendship");
         }
 
+        /// <summary>Get a translation equivalent to "The junimos advanced your crops!".</summary>
+        public static string JunimoRewards_GrowCrops()
+        {
+            return I18n.GetByKey("junimo-rewards.grow-crops");
+        }
+
         /// <summary>Get a translation equivalent to "The junimos grew your grass and repaired your fences!".</summary>
         public static string JunimoRewards_GrowGrass()
         {
             return I18n.GetByKey("junimo-rewards.grow-grass");
+        }
+
+        /// <summary>Get a translation equivalent to "The junimos gave you a prismatic shard!".</summary>
+        public static string JunimoRewards_PrismaticShard()
+        {
+            return I18n.GetByKey("junimo-rewards.prismatic-shard");
         }
 
 

@@ -1,4 +1,7 @@
 ﻿{
+    /*********
+    ** Festival
+    *********/
     "ui.laps": "Vueltas: {{laps}}/2",
     "ui.ranking": "Clasificación",
     "ui.wood": "Añade leña a la hoguera",
@@ -13,5 +16,59 @@
     "secret.yes": "¿Tirar 100.000g en la caja?",
     "secret.no": "Irse",
     "secret.broke": "No puedes permitirte eso.",
-    "secret.purchased": "Te sientes diferente de alguna manera."
+    "secret.purchased": "Te sientes diferente de alguna manera.",
+
+
+    /*********
+    ** Craftable items
+    *********/
+    "craftables.surfboard-brown.name": "Tabla De Surf Marrón (Espantapájaros)",
+    "craftables.surfboard-brown.description": "Una tabla de surf marrón que también funciona como espantapájaros.",
+
+    "craftables.surfboard-cool.name": "Tabla De Surf Genial (Espantapájaros)",
+    "craftables.surfboard-cool.description": "Una tabla de surf con un diseño verde brillante que también funciona como espantapájaros.",
+
+    "craftables.surfboard-hibiscus.name": "Tabla De Surf Hibisca (Espantapájaros)",
+    "craftables.surfboard-hibiscus.description": "Una tabla de surf rosa y amarilla con hibisco en ella que también funciona como espantapájaros.",
+
+    "craftables.surfboard-red.name": "Tabla De Surf Roja (Espantapájaros)",
+    "craftables.surfboard-red.description": "Una tabla de surf roja que también funciona como espantapájaros.",
+
+    "craftables.surfboard-stripe.name": "Tabla De Surf A Rayas (Espantapájaros)",
+    "craftables.surfboard-stripe.description": "Una tabla de surf con rayas azules que también funciona como espantapájaros.",
+
+    "craftables.surfboard-white.name": "Tabla De Surf Blanca (Espantapájaros)",
+    "craftables.surfboard-white.description": "Una tabla de surf blanca que también funciona como espantapájaros.",
+
+    "craftables.surfing-trophy.name": "Trofeo De Surf",
+    "craftables.surfing-trophy.description": "Un trofeo por ganar el festival de surf.",
+
+
+    /*********
+    ** Hat items
+    *********/
+    "hats.snorkel-mask-black.name": "Máscara De Esnórquel Negra",
+    "hats.snorkel-mask-black.description": "Una máscara de esnórquel: no sirve más que para decorar.",
+
+    "hats.snorkel-mask-blue.name": "Máscara De Esnórquel Azul",
+    "hats.snorkel-mask-blue.description": "Una máscara de esnórquel: no sirve más que para decorar.",
+
+    "hats.snorkel-mask-green.name": "Máscara De Esnórquel Verde",
+    "hats.snorkel-mask-green.description": "Una máscara de esnórquel: no sirve más que para decorar.",
+
+    "hats.snorkel-mask-orange.name": "Máscara De Esnórquel Naranja",
+    "hats.snorkel-mask-orange.description": "Una máscara de esnórquel: no sirve más que para decorar.",
+
+    "hats.snorkel-mask-pink.name": "Máscara De Esnórquel Rosa",
+    "hats.snorkel-mask-pink.description": "Una máscara de esnórquel: no sirve más que para decorar.",
+
+    "hats.snorkel-mask-red.name": "Máscara De Esnórquel Roja",
+    "hats.snorkel-mask-red.description": "Una máscara de esnórquel: no sirve más que para decorar.",
+
+
+    /*********
+    ** Object items
+    *********/
+    "items.cheap-amulet.name": "Amuleto Barato?",
+    "items.cheap-amulet.description": "Algo parece raro en este amuleto. Me pregunto por que es tan barato."
 }

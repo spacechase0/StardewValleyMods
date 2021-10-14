@@ -1,4 +1,7 @@
 ﻿{
+    /*********
+    ** Festival
+    *********/
     "ui.laps": "Круг: {{laps}}/2",
     "ui.ranking": "Рейтинг",
     "ui.wood": "Положите немного древесины в костёр",
@@ -13,5 +16,59 @@
     "secret.yes": "Бросить 100 000 з. в ящик?",
     "secret.no": "Отойти",
     "secret.broke": "Вы не можете себе это позволить.",
-    "secret.purchased": "Вы чувствуете себя как-то по-другому."
+    "secret.purchased": "Вы чувствуете себя как-то по-другому.",
+
+
+    /*********
+    ** Craftable items
+    *********/
+    "craftables.surfboard-brown.name": "Коричневая доска для сёрфинга (пугало)",
+    "craftables.surfboard-brown.description": "Коричневая доска для сёрфинга. Также выполняет роль пугала.",
+
+    "craftables.surfboard-cool.name": "Классная доска для сёрфинга (пугало)",
+    "craftables.surfboard-cool.description": "Доска для сёрфинга с классным ярко-зелёным рисунком. Также выполняет роль пугала.",
+
+    "craftables.surfboard-hibiscus.name": "Доска для сёрфинга с гибискусом (пугало)",
+    "craftables.surfboard-hibiscus.description": "Розово-жёлтая доска для сёрфинга с цветами гибискуса. Также выполняет роль пугала.",
+
+    "craftables.surfboard-red.name": "Красная доска для сёрфинга (пугало)",
+    "craftables.surfboard-red.description": "Красная доска для сёрфинга. Также выполняет роль пугала.",
+
+    "craftables.surfboard-stripe.name": "Полосатая доска для сёрфинга (пугало)",
+    "craftables.surfboard-stripe.description": "Бело-голубая доска для сёрфинга. Также выполняет роль пугала.",
+
+    "craftables.surfboard-white.name": "Белая доска для сёрфинга (пугало)",
+    "craftables.surfboard-white.description": "Белая доска для сёрфинга. Также выполняет роль пугала.",
+
+    "craftables.surfing-trophy.name": "Приз лучшего сёрфера",
+    "craftables.surfing-trophy.description": "Награда за победу на фестивале сёрфинга.",
+
+
+    /*********
+    ** Hat items
+    *********/
+    "hats.snorkel-mask-black.name": "Чёрная маска для подводного плавания",
+    "hats.snorkel-mask-black.description": "Маска для подводного плавания. Ныряйте с осторожностью, она декоративная.",
+
+    "hats.snorkel-mask-blue.name": "Синяя маска для подводного плавания",
+    "hats.snorkel-mask-blue.description": "Маска для подводного плавания. Ныряйте с осторожностью, она декоративная.",
+
+    "hats.snorkel-mask-green.name": "Зелёная маска для подводного плавания",
+    "hats.snorkel-mask-green.description": "Маска для подводного плавания. Ныряйте с осторожностью, она декоративная.",
+
+    "hats.snorkel-mask-orange.name": "Оранжевая маска для подводного плавания",
+    "hats.snorkel-mask-orange.description": "Маска для подводного плавания. Ныряйте с осторожностью, она декоративная.",
+
+    "hats.snorkel-mask-pink.name": "Розовая маска для подводного плавания",
+    "hats.snorkel-mask-pink.description": "Маска для подводного плавания. Ныряйте с осторожностью, она декоративная.",
+
+    "hats.snorkel-mask-red.name": "Красная маска для подводного плавания",
+    "hats.snorkel-mask-red.description": "Маска для подводного плавания. Ныряйте с осторожностью, она декоративная.",
+
+
+    /*********
+    ** Object items
+    *********/
+    "items.cheap-amulet.name": "Дешевый амулет",
+    "items.cheap-amulet.description": "Что-то не так с этим амулетом. Интересно, почему он такой дешевый?"
 }

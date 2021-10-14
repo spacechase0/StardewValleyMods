@@ -4,6 +4,7 @@
 ## Upcoming release
 * The config UI is now translatable.
 * Updated for Generic Mod Config Menu 1.5.0.
+* Moved item translations into the standard `i18n` folder.
 * Fixed mana regen not starting until level 2, and slightly increase regen at higher levels.
 * Fixed controller not usable in Magic menus.
 

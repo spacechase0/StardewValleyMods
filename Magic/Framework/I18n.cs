@@ -528,6 +528,30 @@ namespace Magic.Framework
             return I18n.GetByKey("spell.eldritch:spirit.desc");
         }
 
+        /// <summary>Get a translation equivalent to "Magic Elixir".</summary>
+        public static string Objects_ManaPotion_Name()
+        {
+            return I18n.GetByKey("objects.mana-potion.name");
+        }
+
+        /// <summary>Get a translation equivalent to "Restores health and mana.".</summary>
+        public static string Objects_ManaPotion_Description()
+        {
+            return I18n.GetByKey("objects.mana-potion.description");
+        }
+
+        /// <summary>Get a translation equivalent to "Travel Core".</summary>
+        public static string Objects_TravelCore_Name()
+        {
+            return I18n.GetByKey("objects.travel-core.name");
+        }
+
+        /// <summary>Get a translation equivalent to "Catalyst.".</summary>
+        public static string Objects_TravelCore_Description()
+        {
+            return I18n.GetByKey("objects.travel-core.description");
+        }
+
         /// <summary>Get a translation equivalent to "Altar Location".</summary>
         public static string Config_AltarLocation_Name()
         {

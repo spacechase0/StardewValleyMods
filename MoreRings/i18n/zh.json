@@ -1,0 +1,25 @@
+﻿{
+    /*********
+    ** Ring items
+    *********/
+    "quality-ring.name": "提质戒指",
+    "quality-ring.description": "有机会获得更高质量的作物。",
+
+    "refreshing-ring.name": "醒灵戒指",
+    "refreshing-ring.description": "我想知道它是干什么的。",
+
+    "ring-of-regeneration.name": "再生戒指",
+    "ring-of-regeneration.description": "随时间缓慢回复生命值。",
+
+    "ring-of-diamond-booze.name": "钻石酒戒",
+    "ring-of-diamond-booze.description": "抵消了轻度酒精饮料的微醺效果。",
+
+    "ring-of-wide-nets.name": "猎网戒指",
+    "ring-of-wide-nets.description": "增加钓竿50%捕获区域。",
+
+    "ring-of-far-reaching.name": "长臂戒指",
+    "ring-of-far-reaching.description": "在远处使用工具。",
+
+    "ring-of-true-sight.name": "真视戒指",
+    "ring-of-true-sight.description": "超越你所能看到的。"
+}

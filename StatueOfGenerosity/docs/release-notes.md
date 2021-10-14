@@ -2,8 +2,8 @@
 
 # Release notes
 ## Upcoming release
-* All display text is now translatable.
 * If multiple villagers have a birthday on the same day, each statue will now choose one of them randomly.
+* Moved item translations into the standard `i18n` folder.
 * Fixed statue producing error items in some cases.
 * Fixed statues not providing birthday gifts for Dwarf, Krobus, Leo, Sandy, or Wizard.
 * Fixed error when the selected gift taste is invalid or targets a context tag.

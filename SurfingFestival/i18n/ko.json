@@ -1,4 +1,7 @@
 ﻿{
+    /*********
+    ** Festival
+    *********/
     "ui.laps": "구간: {{laps}}/2",
     "ui.ranking": "순위",
     "ui.wood": "모닥불에 약간의 나무를 추가하십시오",
@@ -13,5 +16,59 @@
     "secret.yes": "상자에 100,000 골드를 넣을까요?",
     "secret.no": "닫기",
     "secret.broke": "당신은 그것을 감당할 수 없습니다.",
-    "secret.purchased": "뭔가 이상한 느낌이 듭니다."
+    "secret.purchased": "뭔가 이상한 느낌이 듭니다.",
+
+
+    /*********
+    ** Craftable items
+    *********/
+    "craftables.surfboard-brown.name": "브라운 서핑보드 (허수아비)",
+    "craftables.surfboard-brown.description": "허수아비 역할도 하는 갈색 서핑보드.",
+
+    "craftables.surfboard-cool.name": "멋진 서핑보드 (허수아비)",
+    "craftables.surfboard-cool.description": "허수아비 역할도 하는 시원하고 밝은 녹색 무늬가 새겨진 서핑보드.",
+
+    "craftables.surfboard-hibiscus.name": "히비스커스 서핑보드 (허수아비)",
+    "craftables.surfboard-hibiscus.description": "허수아비 역할도 하는 히비스커스가 그려진 분홍색과 노란색 서핑보드.",
+
+    "craftables.surfboard-red.name": "레드 서핑보드 (허수아비)",
+    "craftables.surfboard-red.description": "허수아비 역할도 하는 빨간색 서핑보드.",
+
+    "craftables.surfboard-stripe.name": "스트라이프 서핑보드 (허수아비)",
+    "craftables.surfboard-stripe.description": "허수아비 역할도 하는 파란색 줄무늬 서핑보드.",
+
+    "craftables.surfboard-white.name": "화이트 서핑보드 (허수아비)",
+    "craftables.surfboard-white.description": "허수아비 역할도 하는 흰색 서핑보드.",
+
+    "craftables.surfing-trophy.name": "서핑 트로피",
+    "craftables.surfing-trophy.description": "서핑 페스티벌 우승 트로피.",
+
+
+    /*********
+    ** Hat items
+    *********/
+    "hats.snorkel-mask-black.name": "블랙 스노클 마스크",
+    "hats.snorkel-mask-black.description": "스노클 마스크 - 장식 용.",
+
+    "hats.snorkel-mask-blue.name": "블루 스노클 마스크",
+    "hats.snorkel-mask-blue.description": "스노클 마스크 - 장식 용.",
+
+    "hats.snorkel-mask-green.name": "그린 스노클 마스크",
+    "hats.snorkel-mask-green.description": "스노클 마스크 - 장식 용.",
+
+    "hats.snorkel-mask-orange.name": "오렌지색 스노클 마스크",
+    "hats.snorkel-mask-orange.description": "스노클 마스크 - 장식 용.",
+
+    "hats.snorkel-mask-pink.name": "핑크 스노클 마스크",
+    "hats.snorkel-mask-pink.description": "스노클 마스크 - 장식 용.",
+
+    "hats.snorkel-mask-red.name": "레드 스노클 마스크",
+    "hats.snorkel-mask-red.description": "스노클 마스크 - 장식 용.",
+
+
+    /*********
+    ** Object items
+    *********/
+    "items.cheap-amulet.name": "값싼 부적?",
+    "items.cheap-amulet.description": "이 부적에 문제가 있는 것 같습니다. 왜 이렇게 싼지 궁금하네요."
 }

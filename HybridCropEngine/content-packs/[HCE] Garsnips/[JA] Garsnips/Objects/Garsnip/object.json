@@ -1,6 +1,4 @@
 ﻿{
-    "Name": "Garsnip",
-    "Description": "A gross combination of garlic and parsnips.",
     "Category": "Vegetable",
     "CategoryTextOverride": "Vegetable (Hybrid)",
     "IsColored": false,
@@ -16,13 +14,6 @@
     "PurchaseFrom": "Pierre",
     "PurchaseRequirements": [],
     "GiftTastes": null,
-    "NameLocalization": {
-        "hu": "Pasztinák"
-    },
-    "DescriptionLocalization": {
-        "hu": "A fokhagyma és a paszternák durva kombinációja."
-    },
     "ContextTags": [],
-    "EnableWithMod": null,
-    "DisableWithMod": null
+    "TranslationKey": "produce"
 }

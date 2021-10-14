@@ -109,6 +109,16 @@
 
 
     /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "Magic Elixir",
+    "objects.mana-potion.description": "Restores health and mana.",
+
+    "objects.travel-core.name": "Travel Core",
+    "objects.travel-core.description": "Catalyst.",
+
+
+    /*********
     ** Generic Mod Config Menu UI
     *********/
     "config.altar-location.name": "Altar Location",

@@ -58,7 +58,7 @@ namespace GenericModConfigMenu.Framework
             return I18n.GetByKey("config.buttons.save");
         }
 
-        /// <summary>Get a translation equivalent to "Save&amp;Close".</summary>
+        /// <summary>Get a translation equivalent to "Save&Close".</summary>
         public static string Config_Buttons_SaveAndClose()
         {
             return I18n.GetByKey("config.buttons.save-and-close");
@@ -66,7 +66,7 @@ namespace GenericModConfigMenu.Framework
 
         /// <summary>Get a translation equivalent to "Rebinding key: {{optionName}}".</summary>
         /// <param name="optionName">The value to inject for the <c>{{optionName}}</c> token.</param>
-        public static string Config_RebindKey_Title(string optionName)
+        public static string Config_RebindKey_Title(object optionName)
         {
             return I18n.GetByKey("config.rebind-key.title", new { optionName });
         }

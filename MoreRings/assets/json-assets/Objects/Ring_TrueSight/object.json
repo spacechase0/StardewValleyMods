@@ -1,6 +1,4 @@
 ﻿{
-    "Name": "Ring of True Sight",
-    "Description": "See beyond what you can see.",
     "Category": "Ring",
     "Edibility": -300,
     "Price": 5000,
@@ -20,14 +18,5 @@
         "PurchaseFrom": "Dwarf",
         "PurchasePrice": 12500
     },
-    "NameLocalization": {
-        "hu": "Igaz látás gyűrűje",
-        "zh": "真视戒指",
-        "es": "Anillo de la vista verdadera"
-    },
-    "DescriptionLocalization": {
-        "hu": "Láss túl azon, mint amit láthatsz.",
-        "zh": "超越你所能看到的。",
-        "es": "Ve más allá de lo que puedes ver."
-    }
+    "TranslationKey": "ring-of-true-sight"
 }

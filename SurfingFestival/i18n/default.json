@@ -1,4 +1,7 @@
 ﻿{
+    /*********
+    ** Festival
+    *********/
     "ui.laps": "Laps: {{laps}}/2",
     "ui.ranking": "Ranking",
     "ui.wood": "Add some wood to the bonfire",
@@ -13,5 +16,59 @@
     "secret.yes": "Throw 100,000g into the box?",
     "secret.no": "Leave",
     "secret.broke": "You can't afford that.",
-    "secret.purchased": "You feel different somehow."
+    "secret.purchased": "You feel different somehow.",
+
+
+    /*********
+    ** Craftable items
+    *********/
+    "craftables.surfboard-brown.name": "Brown Surfboard (Scarecrow)",
+    "craftables.surfboard-brown.description": "A brown surfboard that also functions as a scarecrow.",
+
+    "craftables.surfboard-cool.name": "Cool Surfboard (Scarecrow)",
+    "craftables.surfboard-cool.description": "A surfboard with a cool, bright green pattern on it that also functions as a scarecrow.",
+
+    "craftables.surfboard-hibiscus.name": "Hibiscus Surfboard (Scarecrow)",
+    "craftables.surfboard-hibiscus.description": "A pink and yellow surfboard with hibiscus on it that also functions as a scarecrow.",
+
+    "craftables.surfboard-red.name": "Red Surfboard (Scarecrow)",
+    "craftables.surfboard-red.description": "A red surfboard that also functions as a scarecrow.",
+
+    "craftables.surfboard-stripe.name": "Stripe Surfboard (Scarecrow)",
+    "craftables.surfboard-stripe.description": "A blue stiped surfboard that also functions as a scarecrow.",
+
+    "craftables.surfboard-white.name": "White Surfboard (Scarecrow)",
+    "craftables.surfboard-white.description": "A white surfboard that also functions as a scarecrow.",
+
+    "craftables.surfing-trophy.name": "Surfing Trophy",
+    "craftables.surfing-trophy.description": "A trophy for winning the surfing festival.",
+
+
+    /*********
+    ** Hat items
+    *********/
+    "hats.snorkel-mask-black.name": "Black Snorkel Mask",
+    "hats.snorkel-mask-black.description": "A snorkel mask - serves no other purpose than decorative.",
+
+    "hats.snorkel-mask-blue.name": "Blue Snorkel Mask",
+    "hats.snorkel-mask-blue.description": "A snorkel mask - serves no other purpose than decorative.",
+
+    "hats.snorkel-mask-green.name": "Green Snorkel Mask",
+    "hats.snorkel-mask-green.description": "A snorkel mask - serves no other purpose than decorative.",
+
+    "hats.snorkel-mask-orange.name": "Orange Snorkel Mask",
+    "hats.snorkel-mask-orange.description": "A snorkel mask - serves no other purpose than decorative.",
+
+    "hats.snorkel-mask-pink.name": "Pink Snorkel Mask",
+    "hats.snorkel-mask-pink.description": "A snorkel mask - serves no other purpose than decorative.",
+
+    "hats.snorkel-mask-red.name": "Red Snorkel Mask",
+    "hats.snorkel-mask-red.description": "A snorkel mask - serves no other purpose than decorative.",
+
+
+    /*********
+    ** Object items
+    *********/
+    "items.cheap-amulet.name": "Cheap Amulet?",
+    "items.cheap-amulet.description": "Something seems off about this amulet. Wonder why it's so cheap."
 }

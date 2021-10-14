@@ -1,6 +1,4 @@
 ﻿{
-    "Name": "Refreshing Ring",
-    "Description": "I wonder what it does.",
     "Category": "Ring",
     "Edibility": -300,
     "Price": 25000,
@@ -20,14 +18,5 @@
         "PurchaseFrom": "Krobus",
         "PurchasePrice": 25000
     },
-    "NameLocalization": {
-        "hu": "Felfrissítő gyűrű",
-        "zh": "醒灵戒指",
-        "es": "Anillo Refrescante"
-    },
-    "DescriptionLocalization": {
-        "hu": "Vajon mit csinál.",
-        "zh": "我想知道它是干什么的。",
-        "es": "Me pregunto que hace esto."
-    }
+    "TranslationKey": "refreshing-ring"
 }

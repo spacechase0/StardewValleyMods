@@ -178,7 +178,7 @@ namespace Magic
                     return;
                 }
                 Mod.Ja = api;
-                api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"));
+                api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
             }
         }
 

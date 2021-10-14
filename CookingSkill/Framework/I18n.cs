@@ -41,6 +41,18 @@ namespace CookingSkill.Framework
             return I18n.GetByKey("skill.level-up-perk", new { bonus });
         }
 
+        /// <summary>Get a translation equivalent to "Efficient".</summary>
+        public static string Efficient_Name()
+        {
+            return I18n.GetByKey("efficient.name");
+        }
+
+        /// <summary>Get a translation equivalent to "15% chance to not consume ingredients".</summary>
+        public static string Efficient_Desc()
+        {
+            return I18n.GetByKey("efficient.desc");
+        }
+
         /// <summary>Get a translation equivalent to "Gourmet".</summary>
         public static string Gourmet_Name()
         {
@@ -53,28 +65,16 @@ namespace CookingSkill.Framework
             return I18n.GetByKey("gourmet.desc");
         }
 
-        /// <summary>Get a translation equivalent to "Satisfying".</summary>
-        public static string Satisfying_Name()
+        /// <summary>Get a translation equivalent to "Intense Flavors".</summary>
+        public static string IntenseFlavors_Name()
         {
-            return I18n.GetByKey("satisfying.name");
+            return I18n.GetByKey("intense-flavors.name");
         }
 
-        /// <summary>Get a translation equivalent to "+25% buff duration once eaten".</summary>
-        public static string Satisfying_Desc()
+        /// <summary>Get a translation equivalent to "Food buffs are one level stronger once eaten\n(+20% for max energy or magnetism)".</summary>
+        public static string IntenseFlavors_Desc()
         {
-            return I18n.GetByKey("satisfying.desc");
-        }
-
-        /// <summary>Get a translation equivalent to "Efficient".</summary>
-        public static string Efficient_Name()
-        {
-            return I18n.GetByKey("efficient.name");
-        }
-
-        /// <summary>Get a translation equivalent to "15% chance to not consume ingredients".</summary>
-        public static string Efficient_Desc()
-        {
-            return I18n.GetByKey("efficient.desc");
+            return I18n.GetByKey("intense-flavors.desc");
         }
 
         /// <summary>Get a translation equivalent to "Professional Chef".</summary>
@@ -89,16 +89,16 @@ namespace CookingSkill.Framework
             return I18n.GetByKey("professional-chef.desc");
         }
 
-        /// <summary>Get a translation equivalent to "Intense Flavors".</summary>
-        public static string IntenseFlavors_Name()
+        /// <summary>Get a translation equivalent to "Satisfying".</summary>
+        public static string Satisfying_Name()
         {
-            return I18n.GetByKey("intense-flavors.name");
+            return I18n.GetByKey("satisfying.name");
         }
 
-        /// <summary>Get a translation equivalent to "Food buffs are one level stronger once eaten\n(+20% for max energy or magnetism)".</summary>
-        public static string IntenseFlavors_Desc()
+        /// <summary>Get a translation equivalent to "+25% buff duration once eaten".</summary>
+        public static string Satisfying_Desc()
         {
-            return I18n.GetByKey("intense-flavors.desc");
+            return I18n.GetByKey("satisfying.desc");
         }
 
         /// <summary>Get a translation equivalent to "Secret Spices".</summary>

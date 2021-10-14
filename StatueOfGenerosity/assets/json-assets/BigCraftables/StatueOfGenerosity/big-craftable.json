@@ -1,12 +1,7 @@
 ﻿{
-    "Name": "Statue of Generosity",
-    "Description": "It's made of solid silver. What's it for?",
     "Price": 100000,
     "CanPurchase": true,
     "PurchaseFrom": "Krobus",
     "PurchasePrice": 100000,
-    "NameLocalization": {
-    },
-    "DescriptionLocalization": {
-    }
+    "TranslationKey": "statue-of-generosity"
 }

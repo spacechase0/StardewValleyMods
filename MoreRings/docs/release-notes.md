@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Moved item translations into the standard `i18n` folder.
+
 ## 1.1.5
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

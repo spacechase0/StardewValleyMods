@@ -109,6 +109,16 @@
 
 
     /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "Elixir Magico",
+    "objects.mana-potion.description": "Restaura vida e mana.",
+
+    "objects.travel-core.name": "Centro de Teleporte",
+    "objects.travel-core.description": "Catalizador.",
+
+
+    /*********
     ** Generic Mod Config Menu UI
     *********/
     // TODO

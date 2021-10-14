@@ -1,4 +1,7 @@
 ﻿{
+    /*********
+    ** Festival
+    *********/
     "ui.laps": "Kör: {{laps}}/2",
     "ui.ranking": "Rangsor",
     "ui.wood": "Rakj fát a máglyára",
@@ -13,5 +16,59 @@
     "secret.yes": "Szeretnél 100.000g-t tenni a dobozba?",
     "secret.no": "Mégsem.",
     "secret.broke": "Ezt nem engedheted meg magadnak.",
-    "secret.purchased": "Valmi furcsát érzel."
+    "secret.purchased": "Valmi furcsát érzel.",
+
+
+    /*********
+    ** Craftable items
+    *********/
+    "craftables.surfboard-brown.name": "Barna szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-brown.description": "Egy barna szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfboard-cool.name": "Menő szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-cool.description": "Menő élénkzöld mintás szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfboard-hibiscus.name": "Hibiszkusz szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-hibiscus.description": "Rózsaszín és sárga hibiszkusszal díszített szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfboard-red.name": "Piros szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-red.description": "Piros szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfboard-stripe.name": "Csíkos szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-stripe.description": "Kék csíkos szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfboard-white.name": "Fehér szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-white.description": "Fehér szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfing-trophy.name": "Szörf trófea",
+    "craftables.surfing-trophy.description": "A Szörf fesztivál megnyeréséért járó trófea.",
+
+
+    /*********
+    ** Hat items
+    *********/
+    "hats.snorkel-mask-black.name": "Fekete búvármaszk",
+    "hats.snorkel-mask-black.description": "Csak dekoráció.",
+
+    "hats.snorkel-mask-blue.name": "Kék búvármaszk",
+    "hats.snorkel-mask-blue.description": "Csak dekoráció.",
+
+    "hats.snorkel-mask-green.name": "Zöld búvármaszk",
+    "hats.snorkel-mask-green.description": "Csak dekoráció.",
+
+    "hats.snorkel-mask-orange.name": "Narancssárga búvármaszk",
+    "hats.snorkel-mask-orange.description": "Csak dekoráció.",
+
+    "hats.snorkel-mask-pink.name": "Rózsaszín búvármaszk",
+    "hats.snorkel-mask-pink.description": "Csak dekoráció.",
+
+    "hats.snorkel-mask-red.name": "Piros búvármaszk",
+    "hats.snorkel-mask-red.description": "Csak dekoráció.",
+
+
+    /*********
+    ** Object items
+    *********/
+    "items.cheap-amulet.name": "Olcsó amulett?",
+    "items.cheap-amulet.description": "Valami nem stimmel ezzel az amulettel. Vajon miért olyan olcsó?"
 }

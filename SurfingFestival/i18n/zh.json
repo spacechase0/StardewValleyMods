@@ -1,4 +1,7 @@
 ﻿{
+    /*********
+    ** Festival
+    *********/
     "ui.laps": "圈数：{{laps}}/2",
     "ui.ranking": "排名",
     "ui.wood": "在篝火中添加一些木头",
@@ -13,5 +16,59 @@
     "secret.yes": "往盒子里扔 100,000 金？",
     "secret.no": "离开",
     "secret.broke": "你买不起。",
-    "secret.purchased": "不知怎的，你感觉不一样。"
+    "secret.purchased": "不知怎的，你感觉不一样。",
+
+
+    /*********
+    ** Craftable items
+    *********/
+    "craftables.surfboard-brown.name": "棕色冲浪板（稻草人）",
+    "craftables.surfboard-brown.description": "棕色的冲浪板，也可以起到稻草人的作用。",
+
+    "craftables.surfboard-cool.name": "炫酷冲浪板（稻草人）",
+    "craftables.surfboard-cool.description": "上面有很酷的亮绿色图案的冲浪板，也可以起到稻草人的作用。",
+
+    "craftables.surfboard-hibiscus.name": "木槿花冲浪板（稻草人）",
+    "craftables.surfboard-hibiscus.description": "粉色和黄色的冲浪板，上面有木槿花，也可以起到稻草人的作用。",
+
+    "craftables.surfboard-red.name": "红色冲浪板（稻草人）",
+    "craftables.surfboard-red.description": "红色的冲浪板，也可以起到稻草人的作用。",
+
+    "craftables.surfboard-stripe.name": "条纹冲浪板（稻草人）",
+    "craftables.surfboard-stripe.description": "带蓝色条纹的冲浪板，也可以起到稻草人的作用。",
+
+    "craftables.surfboard-white.name": "白色冲浪板（稻草人）",
+    "craftables.surfboard-white.description": "白色的冲浪板，也可以起到稻草人的作用。",
+
+    "craftables.surfing-trophy.name": "冲浪节奖杯",
+    "craftables.surfing-trophy.description": "赢得冲浪节冠军的奖杯。",
+
+
+    /*********
+    ** Hat items
+    *********/
+    "hats.snorkel-mask-black.name": "黑色潜水面罩",
+    "hats.snorkel-mask-black.description": "潜水面罩——除了装饰之外，没有其他用途。",
+
+    "hats.snorkel-mask-blue.name": "蓝色潜水面罩",
+    "hats.snorkel-mask-blue.description": "潜水面罩——除了装饰之外，没有其他用途。",
+
+    "hats.snorkel-mask-green.name": "绿色潜水面罩",
+    "hats.snorkel-mask-green.description": "潜水面罩——除了装饰之外，没有其他用途。",
+
+    "hats.snorkel-mask-orange.name": "橙色潜水面罩",
+    "hats.snorkel-mask-orange.description": "潜水面罩——除了装饰之外，没有其他用途。",
+
+    "hats.snorkel-mask-pink.name": "粉红色潜水面罩",
+    "hats.snorkel-mask-pink.description": "潜水面罩——除了装饰之外，没有其他用途。",
+
+    "hats.snorkel-mask-red.name": "红色潜水面罩",
+    "hats.snorkel-mask-red.description": "潜水面罩——除了装饰之外，没有其他用途。",
+
+
+    /*********
+    ** Object items
+    *********/
+    "items.cheap-amulet.name": "便宜的护身符？",
+    "items.cheap-amulet.description": "这个护身符似乎有些不对劲，想知道为什么这么便宜。"
 }

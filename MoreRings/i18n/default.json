@@ -1,0 +1,25 @@
+﻿{
+    /*********
+    ** Ring items
+    *********/
+    "quality-ring.name": "Quality+ Ring",
+    "quality-ring.description": "A chance for higher quality crop harvests.",
+
+    "refreshing-ring.name": "Refreshing Ring",
+    "refreshing-ring.description": "I wonder what it does.",
+
+    "ring-of-regeneration.name": "Ring of Regeneration",
+    "ring-of-regeneration.description": "Slowly heal over time.",
+
+    "ring-of-diamond-booze.name": "Ring of Diamond Booze",
+    "ring-of-diamond-booze.description": "Negates the tipsy effect of lighter alcohol.",
+
+    "ring-of-wide-nets.name": "Ring of Wide Nets",
+    "ring-of-wide-nets.description": "Increases fishing bar size by 50%.",
+
+    "ring-of-far-reaching.name": "Ring of Far Reaching",
+    "ring-of-far-reaching.description": "Use tools at a distance.",
+
+    "ring-of-true-sight.name": "Ring of True Sight",
+    "ring-of-true-sight.description": "See beyond what you can see."
+}

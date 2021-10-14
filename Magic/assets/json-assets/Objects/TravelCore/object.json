@@ -1,6 +1,4 @@
 ﻿{
-    "Name": "Travel Core",
-    "Description": "Catalyst.",
     "Category": "MonsterLoot",
     "Edibility": 80,
     "Price": 100,
@@ -20,16 +18,5 @@
         "PurchaseFrom": "Marlon",
         "PurchasePrice": 250
     },
-    "NameLocalization": {
-        "ko": "트래블 코어",
-        "zh": "传送核心",
-        "pt": "Centro de Teleporte",
-        "es": "Núcleo De Teletransportes"
-    },
-    "DescriptionLocalization": {
-        "ko": "마법 주문의 촉매제입니다.",
-        "zh": "触媒之一。",
-        "pt": "Catalizador.",
-        "es": "Catalizador."
-    }
+    "TranslationKey": "objects.travel-core"
 }

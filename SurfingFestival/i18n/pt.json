@@ -1,4 +1,7 @@
 ﻿{
+    /*********
+    ** Festival
+    *********/
     "ui.laps": "Voltas: {{laps}}/2",
     "ui.ranking": "Ranking",
     "ui.wood": "Coloque algumas madeiras na fogueira.",
@@ -13,5 +16,59 @@
     "secret.yes": "Pagar 100,000g?",
     "secret.no": "Sair",
     "secret.broke": "Você não pode pagar por isso.",
-    "secret.purchased": "Você se sente diferente de alguma forma."
+    "secret.purchased": "Você se sente diferente de alguma forma.",
+
+
+    /*********
+    ** Craftable items
+    *********/
+    "craftables.surfboard-brown.name": "Prancha de Surfe Marrom",
+    "craftables.surfboard-brown.description": "Uma prancha de surfe marrom que também funciona como um espantalho.",
+
+    "craftables.surfboard-cool.name": "Uma prancha de surfe com um padrão verde brilhante que também funciona como um espantalho.",
+    "craftables.surfboard-cool.description": "Uma prancha de surfe com um padrão verde brilhante que também funciona como um espantalho.",
+
+    "craftables.surfboard-hibiscus.name": "Prancha de Surfe Hibisco",
+    "craftables.surfboard-hibiscus.description": "Uma prancha de surfe rosa e amarela com hibisco que também funciona como um espantalho.",
+
+    "craftables.surfboard-red.name": "Prancha de Surfe Vermelha",
+    "craftables.surfboard-red.description": "Uma prancha de surfe vermelha que também funciona como um espantalho.",
+
+    "craftables.surfboard-stripe.name": "Prancha de Surfe Listrada",
+    "craftables.surfboard-stripe.description": "Uma prancha de surfe listrada de azul que também funciona como espantalho.",
+
+    "craftables.surfboard-white.name": "Prancha de Surfe Branca",
+    "craftables.surfboard-white.description": "Uma prancha de surfe branca que também funciona como espantalho.",
+
+    "craftables.surfing-trophy.name": "Troféu de Surfe",
+    "craftables.surfing-trophy.description": "Um troféu por vencer o festival de surfe.",
+
+
+    /*********
+    ** Hat items
+    *********/
+    "hats.snorkel-mask-black.name": "Máscara de Snorkel Preta",
+    "hats.snorkel-mask-black.description": "Uma máscara de snorkel - serve apenas para decoração.",
+
+    "hats.snorkel-mask-blue.name": "Máscara de Snorkel Azul",
+    "hats.snorkel-mask-blue.description": "Uma máscara de snorkel - serve apenas para decoração.",
+
+    "hats.snorkel-mask-green.name": "Máscara de Snorkel Verde",
+    "hats.snorkel-mask-green.description": "Uma máscara de snorkel - serve apenas para decoração.",
+
+    "hats.snorkel-mask-orange.name": "Máscara de Snorkel Laranja",
+    "hats.snorkel-mask-orange.description": "Uma máscara de snorkel - serve apenas para decoração.",
+
+    "hats.snorkel-mask-pink.name": "Máscara de Snorkel Rosa",
+    "hats.snorkel-mask-pink.description": "Uma máscara de snorkel - serve apenas para decoração.",
+
+    "hats.snorkel-mask-red.name": "Máscara de Snorkel Vermelha",
+    "hats.snorkel-mask-red.description": "Uma máscara de snorkel - serve apenas para decoração.",
+
+
+    /*********
+    ** Object items
+    *********/
+    "items.cheap-amulet.name": "Amuleto barato?",
+    "items.cheap-amulet.description": "Parece que há algo errado com este amuleto. Me pergunto por que é tão barato."
 }

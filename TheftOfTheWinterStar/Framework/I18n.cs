@@ -34,6 +34,78 @@ namespace TheftOfTheWinterStar.Framework
             return I18n.GetByKey("recipe.frosty-stardrop.name");
         }
 
+        /// <summary>Get a translation equivalent to "Festive Big Key (A)".</summary>
+        public static string Item_FestiveBigKeyA_Name()
+        {
+            return I18n.GetByKey("item.festive-big-key-a.name");
+        }
+
+        /// <summary>Get a translation equivalent to "Half of a 'big key' used in the Frost Dungeon.".</summary>
+        public static string Item_FestiveBigKeyA_Description()
+        {
+            return I18n.GetByKey("item.festive-big-key-a.description");
+        }
+
+        /// <summary>Get a translation equivalent to "Festive Big Key (B)".</summary>
+        public static string Item_FestiveBigKeyB_Name()
+        {
+            return I18n.GetByKey("item.festive-big-key-b.name");
+        }
+
+        /// <summary>Get a translation equivalent to "Half of a 'big key' used in the Frost Dungeon.".</summary>
+        public static string Item_FestiveBigKeyB_Description()
+        {
+            return I18n.GetByKey("item.festive-big-key-b.description");
+        }
+
+        /// <summary>Get a translation equivalent to "Festive Key".</summary>
+        public static string Item_FestiveKey_Name()
+        {
+            return I18n.GetByKey("item.festive-key.name");
+        }
+
+        /// <summary>Get a translation equivalent to "A key used in the Frost Dungeon.".</summary>
+        public static string Item_FestiveKey_Description()
+        {
+            return I18n.GetByKey("item.festive-key.description");
+        }
+
+        /// <summary>Get a translation equivalent to "Frosty Stardrop Piece".</summary>
+        public static string Item_FrostyStardropPiece_Name()
+        {
+            return I18n.GetByKey("item.frosty-stardrop-piece.name");
+        }
+
+        /// <summary>Get a translation equivalent to "A piece of a stardrop. Five can be combined for a full one.".</summary>
+        public static string Item_FrostyStardropPiece_Description()
+        {
+            return I18n.GetByKey("item.frosty-stardrop-piece.description");
+        }
+
+        /// <summary>Get a translation equivalent to "Tempus Globe".</summary>
+        public static string Item_TempusGlobe_Name()
+        {
+            return I18n.GetByKey("item.tempus-globe.name");
+        }
+
+        /// <summary>Get a translation equivalent to "A mystical item that allows crops around it to grow year-long. It also waters crops near it.\n5x5 area, centered on the object.".</summary>
+        public static string Item_TempusGlobe_Description()
+        {
+            return I18n.GetByKey("item.tempus-globe.description");
+        }
+
+        /// <summary>Get a translation equivalent to "Festive Scepter".</summary>
+        public static string Weapon_FestiveScepter_Name()
+        {
+            return I18n.GetByKey("weapon.festive-scepter.name");
+        }
+
+        /// <summary>Get a translation equivalent to "It shoots a frosty beam.".</summary>
+        public static string Weapon_FestiveScepter_Description()
+        {
+            return I18n.GetByKey("weapon.festive-scepter.description");
+        }
+
         /// <summary>Get a translation equivalent to "Hello, @.#$b#I was making preparations for the Feast of the Winter Star and... I can't find any of the decorations!$s#$b#It seems someone stole the decorations.$4#$b#I'm not sure why somebody would do this... but decorations don't just disappear by themselves!$s#$b#Anyways, I was hoping you could retrieve them for us?$h#$b#There was a trail of broken decorations leading down the tunnel to the left of the bus stop. We'd all appreciate it if you could do this for us.$n#$b#Or we could hire Marlo...".</summary>
         public static string Event_LewisSpeech()
         {

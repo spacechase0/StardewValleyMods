@@ -109,6 +109,16 @@
 
 
     /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "Elixir Mágico",
+    "objects.mana-potion.description": "Restaura vida y maná.",
+
+    "objects.travel-core.name": "Núcleo De Teletransportes",
+    "objects.travel-core.description": "Catalizador.",
+
+
+    /*********
     ** Generic Mod Config Menu UI
     *********/
     // TODO

@@ -286,13 +286,13 @@ namespace BetterShopMenu.Framework
             return I18n.GetByKey("categories.weapons");
         }
 
-        /// <summary>Get a translation equivalent to "Grid Layout".</summary>
+        /// <summary>Get a translation equivalent to "Experimental Grid Layout".</summary>
         public static string Config_GridLayout_Name()
         {
             return I18n.GetByKey("config.grid-layout.name");
         }
 
-        /// <summary>Get a translation equivalent to "Whether to use the grid layout in shops.".</summary>
+        /// <summary>Get a translation equivalent to "Whether to use the experimental grid layout in shops. This may cause minor display issues or impact other mods' features in shop menus.".</summary>
         public static string Config_GridLayout_Tooltip()
         {
             return I18n.GetByKey("config.grid-layout.tooltip");
