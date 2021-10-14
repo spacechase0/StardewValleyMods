@@ -228,21 +228,25 @@ namespace JsonAssets
         }
 
         private static readonly Regex NameToId = new("[^a-zA-Z0-9_.]");
-        private void LoadData(string dir)
+
+        /// <summary>Load a folder as a Json Assets content pack.</summary>
+        /// <param name="path">The absolute path to the content pack folder.</param>
+        /// <param name="translations">The translations to use for <c>TranslationKey</c> fields, or <c>null</c> to load the content pack's <c>i18n</c> folder if present.</param>
+        private void LoadData(string path, ITranslationHelper translations = null)
         {
             // read initial info
-            IContentPack temp = this.Helper.ContentPacks.CreateFake(dir);
+            IContentPack temp = this.Helper.ContentPacks.CreateFake(path);
             ContentPackData info = temp.ReadJsonFile<ContentPackData>("content-pack.json");
             if (info == null)
             {
-                Log.Warn($"\tNo {dir}/content-pack.json!");
+                Log.Warn($"\tNo {path}/content-pack.json!");
                 return;
             }
 
             // load content pack
             string id = Mod.NameToId.Replace(info.Name, "");
-            IContentPack contentPack = this.Helper.ContentPacks.CreateTemporary(dir, id: id, name: info.Name, description: info.Description, author: info.Author, version: new SemanticVersion(info.Version));
-            this.LoadData(contentPack);
+            IContentPack contentPack = this.Helper.ContentPacks.CreateTemporary(path, id: id, name: info.Name, description: info.Description, author: info.Author, version: new SemanticVersion(info.Version));
+            this.LoadData(contentPack, translations);
         }
 
         internal Dictionary<IManifest, List<string>> ObjectsByContentPack = new();
@@ -902,9 +906,14 @@ namespace JsonAssets
             return parsed;
         }
 
-        private void LoadData(IContentPack contentPack)
+        /// <summary>Load a content pack.</summary>
+        /// <param name="contentPack">The content pack.</param>
+        /// <param name="translations">The translations to use for <c>TranslationKey</c> fields, or <c>null</c> to use the content pack's translations.</param>
+        private void LoadData(IContentPack contentPack, ITranslationHelper translations = null)
         {
             Log.Info($"\t{contentPack.Manifest.Name} {contentPack.Manifest.Version} by {contentPack.Manifest.Author} - {contentPack.Manifest.Description}");
+
+            translations ??= contentPack.Translation;
 
             // load objects
             DirectoryInfo objectsDir = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Objects"));
@@ -924,7 +933,7 @@ namespace JsonAssets
                     if (obj.IsColored)
                         obj.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
 
-                    this.RegisterObject(contentPack.Manifest, obj, contentPack.Translation);
+                    this.RegisterObject(contentPack.Manifest, obj, translations);
                 }
             }
 
@@ -946,7 +955,7 @@ namespace JsonAssets
                     if (contentPack.HasFile($"{relativePath}/giant.png"))
                         crop.GiantTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/giant.png");
 
-                    this.RegisterCrop(contentPack.Manifest, crop, contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"), contentPack.Translation);
+                    this.RegisterCrop(contentPack.Manifest, crop, contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"), translations);
                 }
             }
 
@@ -965,7 +974,7 @@ namespace JsonAssets
 
                     // save fruit tree
                     tree.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/tree.png");
-                    this.RegisterFruitTree(contentPack.Manifest, tree, contentPack.LoadAsset<Texture2D>($"{relativePath}/sapling.png"), contentPack.Translation);
+                    this.RegisterFruitTree(contentPack.Manifest, tree, contentPack.LoadAsset<Texture2D>($"{relativePath}/sapling.png"), translations);
                 }
             }
 
@@ -992,7 +1001,7 @@ namespace JsonAssets
                         for (int i = 0; i < craftable.ReserveExtraIndexCount; ++i)
                             craftable.ExtraTextures[i] = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable-{i + 2}.png");
                     }
-                    this.RegisterBigCraftable(contentPack.Manifest, craftable, contentPack.Translation);
+                    this.RegisterBigCraftable(contentPack.Manifest, craftable, translations);
                 }
             }
 
@@ -1011,7 +1020,7 @@ namespace JsonAssets
 
                     // save object
                     hat.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/hat.png");
-                    this.RegisterHat(contentPack.Manifest, hat, contentPack.Translation);
+                    this.RegisterHat(contentPack.Manifest, hat, translations);
                 }
             }
 
@@ -1030,7 +1039,7 @@ namespace JsonAssets
 
                     // save object
                     weapon.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/weapon.png");
-                    this.RegisterWeapon(contentPack.Manifest, weapon, contentPack.Translation);
+                    this.RegisterWeapon(contentPack.Manifest, weapon, translations);
                 }
             }
 
@@ -1057,7 +1066,7 @@ namespace JsonAssets
                         if (shirt.Dyeable)
                             shirt.TextureFemaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/female-color.png");
                     }
-                    this.RegisterShirt(contentPack.Manifest, shirt, contentPack.Translation);
+                    this.RegisterShirt(contentPack.Manifest, shirt, translations);
                 }
             }
 
@@ -1076,7 +1085,7 @@ namespace JsonAssets
 
                     // save pants
                     pants.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/pants.png");
-                    this.RegisterPants(contentPack.Manifest, pants, contentPack.Translation);
+                    this.RegisterPants(contentPack.Manifest, pants, translations);
                 }
             }
 
@@ -1112,7 +1121,7 @@ namespace JsonAssets
 
                     boots.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/boots.png");
                     boots.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
-                    this.RegisterBoots(contentPack.Manifest, boots, contentPack.Translation);
+                    this.RegisterBoots(contentPack.Manifest, boots, translations);
                 }
             }
 
@@ -1131,7 +1140,7 @@ namespace JsonAssets
 
                     fence.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/fence.png");
                     fence.ObjectTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
-                    this.RegisterFence(contentPack.Manifest, fence, contentPack.Translation);
+                    this.RegisterFence(contentPack.Manifest, fence, translations);
                 }
             }
 
