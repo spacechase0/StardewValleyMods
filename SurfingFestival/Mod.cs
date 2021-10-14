@@ -80,18 +80,14 @@ namespace SurfingFestival
         {
             if (asset.AssetNameEquals("Data\\Festivals\\summer5"))
             {
-                var data = this.Helper.Content.Load<Dictionary<string, string>>("assets/festival." + LocalizedContentManager.CurrentLanguageCode + ".json");
+                var data = this.BuildFestivalData();
                 Mod.FestivalName = data["name"];
-                return (T)(object)data;
+                return (T)data;
             }
-            else if (asset.AssetNameEquals("Maps\\Beach-Surfing"))
-            {
+            if (asset.AssetNameEquals("Maps\\Beach-Surfing"))
                 return (T)(object)this.Helper.Content.Load<Map>("assets/Beach.tbin");
-            }
-            else if (asset.AssetNameEquals("Maps\\surfing"))
-            {
+            if (asset.AssetNameEquals("Maps\\surfing"))
                 return (T)(object)this.Helper.Content.Load<Texture2D>("assets/surfing.png");
-            }
 
             return default(T);
         }
@@ -107,6 +103,34 @@ namespace SurfingFestival
             {
                 asset.AsDictionary<string, string>().Data.Add("summer5", Mod.FestivalName);
             }
+        }
+
+        /// <summary>Build the festival data file from the mod translations.</summary>
+        private IDictionary<string, string> BuildFestivalData()
+        {
+            // base data
+            var data = new Dictionary<string, string>
+            {
+                ["name"] = I18n.Festival_Name(),
+                ["conditions"] = "Beach/900 1400",
+                ["set-up"] = "event2/-1000 -1000/farmer 38 3 2/changeToTemporaryMap Beach-Surfing/loadActors Set-Up/animate Robin false true 500 20 21 20 22/animate Demetrius false true 500 24 25 24 26/viewport 38 2 clamp true/pause 1000/playerControl surfing",
+                ["mainEvent"] = $@"pause 500/playMusic none/pause 500/globalFade/viewport -1000 -1000/loadActors MainEvent/warpSurfingRacers/viewport 18 57 true unfreeze/pause 2000/message ""{I18n.Race_Instructions()}""/speak Lewis ""{I18n.Race_LewisStart_0()}""/speak Lewis ""{I18n.Race_LewisStart_1()}""/speak Lewis ""{I18n.Race_LewisStart_2()}""/waitForOtherPlayers actualRace/playSound whistle/playMusic cowboy_outlawsong/playerControl surfingRace",
+                ["afterSurfingRace"] = "pause 100/playSound whistle/waitForOtherPlayers endContest/pause 1000/globalFade/viewport -1000 -1000/playMusic event1/loadActors PostEvent/warpSurfingRacersFinish/pause 1000/viewport 34 12 true/pause 2000/speak Lewis \"{{winDialog}}\"/awardSurfingPrize/pause 600/viewport move 1 0 5000/pause 2000/globalFade/viewport -1000 -1000/waitForOtherPlayers festivalEnd/end",
+                ["HarveyWin"] = I18n.Race_Winner_Harvey(),
+                ["EmilyWin"] = I18n.Race_Winner_Emily(),
+                ["MaruWin"] = I18n.Race_Winner_Maru(),
+                ["ShaneWin"] = I18n.Race_Winner_Shane()
+            };
+
+            // NPC dialogue strings
+            foreach (var translation in this.Helper.Translation.GetTranslations())
+            {
+                const string prefix = "npc.";
+                if (translation.Key.StartsWith(prefix))
+                    data[translation.Key.Substring(prefix.Length)] = translation.ToString();
+            }
+
+            return data;
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -589,7 +613,7 @@ namespace SurfingFestival
 
                         if (!festData.TryGetValue($"{Mod.RaceWinner}Win", out string winDialog))
                             winDialog = null;
-                        winDialog ??= festData["FarmerWin"].Replace("{{winner}}", racer.Name);
+                        winDialog ??= I18n.Race_Winner_Player(name: racer.Name);
 
                         Game1.CurrentEvent.eventCommands = festData["afterSurfingRace"].Replace("{{winDialog}}", winDialog).Split('/');
                         Game1.CurrentEvent.currentCommand = 0;
