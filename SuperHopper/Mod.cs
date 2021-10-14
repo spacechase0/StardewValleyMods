@@ -13,6 +13,13 @@ namespace SuperHopper
     internal class Mod : StardewModdingAPI.Mod
     {
         /*********
+        ** Fields
+        *********/
+        /// <summary>The <see cref="Item.modData"/> flag which indicates a hopper is a super hopper.</summary>
+        private readonly string ModDataFlag = "spacechase0.SuperHopper";
+
+
+        /*********
         ** Public methods
         *********/
         /// <inheritdoc />
@@ -48,10 +55,13 @@ namespace SuperHopper
                     {
                         chest.Tint = Color.DarkViolet;
                         chest.heldObject.Value = (SObject)Game1.player.ActiveObject.getOne();
+                        chest.modData[this.ModDataFlag] = "1";
+
                         if (Game1.player.ActiveObject.Stack > 1)
                             Game1.player.ActiveObject.Stack--;
                         else
                             Game1.player.ActiveObject = null;
+
                         Game1.playSound("furnace");
                     }
                 }
@@ -59,7 +69,10 @@ namespace SuperHopper
                 {
                     chest.Tint = Color.White;
                     chest.heldObject.Value = null;
+                    chest.modData.Remove(this.ModDataFlag);
+
                     Game1.player.addItemToInventory(new SObject(SObject.iridiumBar, 1));
+
                     Game1.playSound("shiny4");
                 }
             }
@@ -73,6 +86,10 @@ namespace SuperHopper
             // not super hopper
             if (!this.TryGetHopper(machine, out Chest hopper) || hopper.heldObject.Value == null || !Utility.IsNormalObjectAtParentSheetIndex(hopper.heldObject.Value, SObject.iridiumBar))
                 return;
+
+            // fix flag if needed
+            if (!hopper.modData.ContainsKey(this.ModDataFlag))
+                hopper.modData[this.ModDataFlag] = "1";
 
             // no chests to transfer
             if (!location.objects.TryGetValue(hopper.TileLocation - new Vector2(0, 1), out SObject objAbove) || objAbove is not Chest chestAbove)
