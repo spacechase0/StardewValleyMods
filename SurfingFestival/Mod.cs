@@ -117,7 +117,7 @@ namespace SurfingFestival
             spacecore.AddEventCommand("awardSurfingPrize", PatchHelper.RequireMethod<Mod>(nameof(Mod.EventCommand_AwardSurfingPrize)));
 
             Mod.Ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
-            Mod.Ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "ja"));
+            Mod.Ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"));
         }
 
         private Event PrevEvent;
