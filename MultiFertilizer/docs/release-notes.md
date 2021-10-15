@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.0.4
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
 * Fixed multi-fertilizer removed on season update in the greenhouse or Ginger Island.
 
 ## 1.0.3

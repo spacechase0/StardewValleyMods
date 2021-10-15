@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.1.0
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
 * If multiple villagers have a birthday on the same day, each statue will now choose one of them randomly.
 * Moved item translations into the standard `i18n` folder.
 * Fixed statue producing error items in some cases.

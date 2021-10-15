@@ -1,8 +1,10 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
-* Added translation support for the `Mod: <name>` text in item tooltips.
+## 1.3.0
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Added full [translation](https://stardewvalleywiki.com/Modding:Translations) support.
 * Added three new furniture types: `Lamp`, `Sconce`, and `Window` (thanks to echangda!).
 * Updated for Generic Mod Config Menu 1.5.0.
 * Fixed various animation parsing issues.

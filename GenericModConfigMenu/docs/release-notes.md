@@ -1,17 +1,19 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
-* Redesigned API:
-  * Added full translation support for display text.
+## 1.5.0
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Added full [translation](https://stardewvalleywiki.com/Modding:Translations) support.
+* Redesigned mod API:
+  * Added support for translating mod options.
   * Simplified usage and merged methods.
   * Options are now available in-game by default when using the new API (unless you set `titleScreenOnly: true`).
-  * Complex options can now specify a height to support multi-row content.
-* The generic config UI is now translatable.
-* Fixed long paragraphs sometimes overlapping the fields below them.
+  * Complex options can now set a height to support multi-row content.
+* Fixed sliders for integer values not showing the value label.
 * Fixed sliders with an `interval` sometimes snapping to a value outside the `min`/`max` range.
-* Fixed sliders for int values not showing the value label.
-* Fixed large images or paragraphs clipped before the end of the content area.
+* Fixed long paragraphs sometimes overlapping the fields below them.
+* Fixed long paragraphs or images clipped before the end of the content area.
 * Fixed `api.SubscribeToChange` only tracking fields on the page that was active when it was called.
 * Improved translations. Thanks to Evelyon (added Spanish)!
 

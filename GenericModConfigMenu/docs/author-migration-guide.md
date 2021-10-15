@@ -7,7 +7,7 @@ a version isn't listed here, no migration is needed for it.
 
 ## Migration guides
 ### 1.5.0
-Released 14 October 2021 (see [release notes](release-notes.md#150)).
+Released 15 October 2021 (see [release notes](release-notes.md#150)).
 
 1.5.0 adds a redesigned mod API. The previous API still works, but it's deprecated and will
 eventually be removed. To migrate your mod code to the new API:
@@ -24,7 +24,7 @@ eventually be removed. To migrate your mod code to the new API:
 
    ```c#
    name: () => "Example Option",
-   tooltip: () => "This is just an example option."
+   tooltip: () => "This is an example option."
    ```
 3. Update code which calls the old methods:
 

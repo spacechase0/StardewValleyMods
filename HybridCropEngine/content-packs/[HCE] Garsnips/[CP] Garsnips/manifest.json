@@ -2,7 +2,7 @@
     "Name": "[CP] Garsnips",
     "Description": "Hybrid Crop Engine example pack.",
     "Author": "spacechase0, ParadigmNomad",
-    "Version": "1.0.3",
+    "Version": "1.1.0",
     "UniqueID": "spacechase0.HybridCropEngine.Example.CP",
     "ContentPackFor": {
         "UniqueID": "Pathoschild.ContentPatcher"

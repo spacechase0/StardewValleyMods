@@ -1,8 +1,8 @@
 ﻿{
     "Name": "Statue of Generosity",
     "Author": "spacechase0, ParadigmNomad (sprites)",
-    "Version": "1.0.3",
-    "MinimumApiVersion": "3.12.0",
+    "Version": "1.1.0",
+    "MinimumApiVersion": "3.12.5",
     "Description": "Purchase a statue which produces loved gifts each morning.",
     "UniqueID": "spacechase0.StatueOfGenerosity",
     "EntryDll": "StatueOfGenerosity.dll",

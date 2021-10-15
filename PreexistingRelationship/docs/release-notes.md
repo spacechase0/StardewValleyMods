@@ -1,8 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
-* Internal refactoring to translation support.
+## 1.0.4
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
 * Fixed controller not usable in the spouse selection menu.
 
 ## 1.0.3
