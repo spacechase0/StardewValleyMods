@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
-using GenericModConfigMenu.Framework;
 
-namespace GenericModConfigMenu.ModOption
+namespace GenericModConfigMenu.Framework.ModOption
 {
     /// <summary>A mod option which renders a dropdown field.</summary>
     internal class ChoiceModOption<T> : SimpleModOption<T>

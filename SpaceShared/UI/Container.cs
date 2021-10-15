@@ -12,6 +12,9 @@ namespace SpaceShared.UI
         *********/
         private readonly IList<Element> ChildrenImpl = new List<Element>();
 
+        /// <summary>Whether to update the <see cref="Children"/> when <see cref="Update"/> is called.</summary>
+        protected bool UpdateChildren { get; set; } = true;
+
 
         /*********
         ** Accessors
@@ -43,9 +46,10 @@ namespace SpaceShared.UI
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
-            foreach (var element in this.ChildrenImpl)
+            if (this.UpdateChildren)
             {
-                element.Update(hidden);
+                foreach (var element in this.ChildrenImpl)
+                    element.Update(hidden);
             }
         }
 

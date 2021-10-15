@@ -1,4 +1,4 @@
-using GenericModConfigMenu.ModOption;
+using GenericModConfigMenu.Framework.ModOption;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared.UI;
 

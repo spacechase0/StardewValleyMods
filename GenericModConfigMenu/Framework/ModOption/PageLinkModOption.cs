@@ -1,7 +1,6 @@
 using System;
-using GenericModConfigMenu.Framework;
 
-namespace GenericModConfigMenu.ModOption
+namespace GenericModConfigMenu.Framework.ModOption
 {
     /// <summary>A mod option which renders a link to another page.</summary>
     internal class PageLinkModOption : ReadOnlyModOption

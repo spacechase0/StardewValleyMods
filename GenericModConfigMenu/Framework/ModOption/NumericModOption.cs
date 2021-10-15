@@ -1,8 +1,7 @@
 using System;
-using GenericModConfigMenu.Framework;
 using SpaceShared;
 
-namespace GenericModConfigMenu.ModOption
+namespace GenericModConfigMenu.Framework.ModOption
 {
     /// <summary>A mod option which renders a numeric field.</summary>
     internal class NumericModOption<T> : SimpleModOption<T>
