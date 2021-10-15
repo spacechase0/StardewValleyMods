@@ -1,7 +1,6 @@
 using System;
-using GenericModConfigMenu.Framework;
 
-namespace GenericModConfigMenu.ModOption
+namespace GenericModConfigMenu.Framework.ModOption
 {
     /// <summary>A mod option which renders a basic form input (e.g. a checkbox, textbox, or key binding).</summary>
     internal class SimpleModOption<T> : BaseModOption

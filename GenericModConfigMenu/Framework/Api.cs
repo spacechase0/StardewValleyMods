@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using GenericModConfigMenu.ModOption;
+using GenericModConfigMenu.Framework.ModOption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;

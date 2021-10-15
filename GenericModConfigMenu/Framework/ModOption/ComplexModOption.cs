@@ -1,9 +1,8 @@
 using System;
-using GenericModConfigMenu.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GenericModConfigMenu.ModOption
+namespace GenericModConfigMenu.Framework.ModOption
 {
     /// <summary>A mod option with custom rendering logic provided by the original mod.</summary>
     internal class ComplexModOption : BaseModOption

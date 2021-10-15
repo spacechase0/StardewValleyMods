@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using GenericModConfigMenu.ModOption;
+using GenericModConfigMenu.Framework.ModOption;
 using StardewModdingAPI;
 
 namespace GenericModConfigMenu.Framework

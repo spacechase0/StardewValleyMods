@@ -1,7 +1,6 @@
 using System;
-using GenericModConfigMenu.Framework;
 
-namespace GenericModConfigMenu.ModOption
+namespace GenericModConfigMenu.Framework.ModOption
 {
     /// <summary>The base implementation for a config option.</summary>
     internal abstract class BaseModOption

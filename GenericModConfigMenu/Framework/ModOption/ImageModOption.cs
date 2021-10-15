@@ -1,9 +1,8 @@
 using System;
-using GenericModConfigMenu.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace GenericModConfigMenu.ModOption
+namespace GenericModConfigMenu.Framework.ModOption
 {
     /// <summary>A mod option which renders an image.</summary>
     internal class ImageModOption : ReadOnlyModOption
