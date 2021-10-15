@@ -40,6 +40,8 @@ namespace SpaceShared.UI
         /*********
         ** Public methods
         *********/
+        /// <summary>Update the element for the current game tick.</summary>
+        /// <param name="hidden">Whether the element is currently hidden.</param>
         public virtual void Update(bool hidden = false)
         {
             if (hidden)

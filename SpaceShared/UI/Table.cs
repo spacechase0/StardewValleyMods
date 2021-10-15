@@ -59,6 +59,7 @@ namespace SpaceShared.UI
         *********/
         public Table()
         {
+            this.UpdateChildren = false; // table will update children itself
             this.Scrollbar = new Scrollbar
             {
                 LocalPosition = new Vector2(0, 0)
@@ -80,7 +81,8 @@ namespace SpaceShared.UI
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
-            if (hidden) return;
+            if (hidden)
+                return;
 
             int ir = 0;
             foreach (var row in this.Rows)

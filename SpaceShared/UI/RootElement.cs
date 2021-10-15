@@ -18,11 +18,6 @@ namespace SpaceShared.UI
         public override void Update(bool hidden = false)
         {
             base.Update(hidden || this.Obscured);
-            if (!hidden)
-            {
-                foreach (var child in this.Children)
-                    child.Update(hidden);
-            }
         }
 
         /// <inheritdoc />
