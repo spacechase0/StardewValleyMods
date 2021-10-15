@@ -1,0 +1,19 @@
+﻿{
+    // skill
+    "skill.name": "Cooking",
+    "skill.level-up-perk": "+{{bonus}}% edibility in home-cooked foods",
+
+    // professions
+    "efficient.name": "Efficient",
+    "efficient.desc": "15% chance to not consume ingredients",
+    "gourmet.name": "Gourmet",
+    "gourmet.desc": "+20% sell price",
+    "intense-flavors.name": "Intense Flavors",
+    "intense-flavors.desc": "Food buffs are one level stronger once eaten\n(+20% for max energy or magnetism)",
+    "professional-chef.name": "Professional Chef",
+    "professional-chef.desc": "Home-cooked meals are always at least silver",
+    "satisfying.name": "Satisfying",
+    "satisfying.desc": "+25% buff duration once eaten",
+    "secret-spices.name": "Secret Spices",
+    "secret-spices.desc": "Provides a few random buffs when eating unbuffed food"
+}

@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.2.0
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Added full [translation](https://stardewvalleywiki.com/Modding:Translations) support.
+* Fixed error if the bus stop, backwoods, or tunnel maps are loaded earlier than expected.
+
 ## 1.1.0
 Released 19 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

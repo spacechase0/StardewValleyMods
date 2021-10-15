@@ -1,4 +1,15 @@
 ﻿{
+    /*********
+    ** General text
+    *********/
+    "spell.learn": "Has aprendido un hechizo: {{spellName}}",
+    "spell.learn.ancient": "Has aprendido un hechizo antiguo: {{spellName}}",
+    "altar.glow": "Un altar brillante",
+
+
+    /*********
+    ** Wizard learn-magic event
+    *********/
     "event.wizard.1": "Es hora de que aprendas los caminos de la magia.",
     "event.wizard.2": "He... ajustado el altar de Yoba en la tienda de Pierra para que lo uses.",
     "event.wizard.3": "Te enseñaré lo básico de la magia arcana, pero el resto debes descubrirlo por tu cuenta. ",
@@ -10,6 +21,10 @@
     "event.wizard.9": "(Estos controles se pueden ajustar en el archivo de configuración de Magic.)",
     "event.wizard.abovehead": "MAGIA",
 
+
+    /*********
+    ** TV channel
+    *********/
     "tv.analyzehints.name": "Análisis Mágico",
     "tv.analyzehints.notmagical": "*estático*",
     "tv.analyzehints.1": "¿Quieres usar tu magia para trabajar en la granja? Intenta analizar tus herramientas.",
@@ -25,11 +40,10 @@
     "tv.analyzehints.11": "La mayoría de la gente usa escaleras para descender bajo tierra, pero vi a una persona lanzar un hechizo y atravesar el suelo.",
     "tv.analyzehints.12": "Vi a alguien lanzar un hechizo para recuperar maná. Parecía que dolía. Se rumorea que aprendieron esta técnica mientras pescaban anguilas de lava.",
 
-    "spell.learn": "Has aprendido un hechizo: {{spellName}}",
-    "spell.learn.ancient": "Has aprendido un hechizo antiguo: {{spellName}}",
 
-    "altar.glow": "Un altar brillante",
-
+    /*********
+    ** Magic spells
+    *********/
     "school.arcane.name": "arcano",
     "school.toil.name": "esfuerzo",
     "school.nature.name": "naturaleza",
@@ -91,5 +105,34 @@
     "spell.eldritch:lucksteal.name": "Robo De Suerte",
     "spell.eldritch:lucksteal.desc": "Catalizador: La felicidad de tus seres queridos",
     "spell.eldritch:spirit.name": "Espíritu",
-    "spell.eldritch:spirit.desc": "Invoca a un espíritu perdido para que luche por ti."
+    "spell.eldritch:spirit.desc": "Invoca a un espíritu perdido para que luche por ti.",
+
+
+    /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "Elixir Mágico",
+    "objects.mana-potion.description": "Restaura vida y maná.",
+
+    "objects.travel-core.name": "Núcleo De Teletransportes",
+    "objects.travel-core.description": "Catalizador.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // TODO
+    "config.altar-location.name": "Altar Location",
+    "config.altar-location.tooltip": "The (internal) name of the location the magic altar should be placed at.",
+    "config.altar-x.name": "Altar X",
+    "config.altar-x.tooltip": "The X tile position where the magic altar should be placed.",
+    "config.altar-y.name": "Altar Y",
+    "config.altar-y.tooltip": "The Y tile position where the magic altar should be placed.",
+
+    "config.cast-key.name": "Key: Cast",
+    "config.cast-key.tooltip": "The key to initiate casting a spell.",
+    "config.swap-spells-key.name": "Key: Swap Sells",
+    "config.swap-spells-key.tooltip": "The key to swap spell sets.",
+    "config.select-spell-key.name": "Key: Spell {{slotNumber}}",
+    "config.select-spell-key.tooltip": "The key to select spell {{slotNumber}}."
 }

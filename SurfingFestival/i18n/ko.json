@@ -1,17 +1,141 @@
 ﻿{
+    /*********
+    ** Festival
+    *********/
+    // info
+    "festival.name": "서핑 페스티벌",
+
+    // race
+    "race.start.question": "Ready for the race?", // TODO
+    "race.start.yes": "Yes, let's start.", // TODO
+    "race.start.no": "Not yet.", // TODO
+    "race.instructions": "획득 아이템 설명 (오른쪽 마우스 클릭으로 사용):^ 스타드롭 부스터 - 일시적인 속도 향상.^ 복어 폭탄 - 전방의 다른 선수에게 복어를 발사한다.^ 번개 구름 - 1등 선수를 감전 시킨다.^ 주니모 파워 - 무적 효과와 약간의 속도 향상.",
+    "race.lewis-start.0": "준비...",
+    "race.lewis-start.1": "제자리에...",
+    "race.lewis-start.2": "출발!",
+    "race.winner.player": "축하합니다! {{name}}!#$b#당신을 볼 때마다 당신에 대해 새로운 것을 배웁니다! 당신이 서핑을 그렇게 잘 하는지 몰랐습니다.#$b#와서 상을 받으세요.",
+    "race.winner.harvey": "하비, 축하합니다! 와서 상을 받으세요. 첫 번째 선수 치고는 나쁘지 않았어요. 여기 상금입니다.",
+    "race.winner.emily": "에밀리, 축하합니다! 내년에 이기려면 경쟁이 치열할것 같습니다. 여기 상금입니다.",
+    "race.winner.maru": "마루, 축하합니다! 당신은 정말 환상적이었어요. 여기 상금입니다.",
+    "race.winner.shane": "셰인, 축하합니다! 재스가 내내 당신을 응원하고 있었어요. 여기 상금입니다.",
+
+    // dialogue
+    "npc.Abigail_spouse": "내가 왜 서핑을 두려워했는지 아니? @?#$b#온라인에서 누군가가 물밑에 사는 바다괴물에 대해 이야기하고 있었어. 내가 읽는 모든 것을 믿어서는 안 된다는 것을 알지만, 그것은 정말 진짜처럼 들렸어!",
+    "npc.Leah_spouse": "만약 네가 참여한다면, 나는 너를 응원할게!$h",
+    "npc.Maru_spouse": "서핑 대회에서 저를 이길 수 있을 것 같아요? 오늘 저녁은 진 사람이 만드는 게 어때요?",
+    "npc.Penny_spouse": "@, 서핑 대회에 참여 할 건지 결정했어? 응원할게! 넌 할 수 있어!$h",
+    "npc.Haley_spouse": "난 해변에 남아서 모두가 서핑하는 것을 보는 것이 좋아. 에밀리는 흥미 진진한 것을 시도하는 것이 나에게 좋을 거라고 말해줬지만, 이건 내게 조금 과한것 같아.",
+    "npc.Sebastian_spouse": "물 밑에 뭔가 있다고 생각해? 아비게일이 밑에 사는 바다 생물체에 대한 글을 보내줬어. 그게 사실이라고 생각해?",
+    "npc.Sam_spouse": "참가하고 싶었지만, 우리 엄마는 빈센트 때문에 참가하지 않는 것이 최선이라고 생각하셔. 엄마는 빈센트가 어떤 아이디어도 얻는 것을 원하지 않고 난 엄마를 미워 할 수 없어. 빈센트는 약간 성가신 녀석이야.",
+    "npc.Alex_spouse": "내 걱정은 하지 않아도 돼. 샘이 참여 할 수 없어서 나도 참가를 철회했어. 나랑 서핑보더 둘중에 누가 가장 빠른지 보려고 했는데..",
+    "npc.Harvey_spouse": "제발 다치지 말아줘 @. 바위에 머리를 부딪히는 건 원치 않아.",
+    "npc.Elliott_spouse": "가끔 그 낡고 외풍이 있는 오두막이 그리워. 하지만 우리 집이 훨씬 더 좋아.",
+    "npc.Emily_spouse": "난 헤일리가 새로운 걸 시도하도록 계속 노력할 거야. 헤일리는 항상 펠리컨 타운에서 벗어나는 것에 대해 얘기했지만, 도시의 어디에서 파도를 탈 수 있을까?",
+    "npc.Abigail": "@, 경주에 참가할 생각이야?#$b#나도 참여하고 싶지만, 물속에 뭐가 있을지 좀 무서워...$3",
+    "npc.Emily": "헤일리는 항상 신나는 것을 시도하고 싶어하지만 경주에 참가하고 싶지 않은것 같아.#$b#그래서 내가 그녀를 대신 참가할거야! 행운을 빌어, @!$h",
+    "npc.Robin": "루이스는 서핑보드가 너무 비싸서 구입할 수 없다고 만들어 달라고 부탁했어.",
+    "npc.Demetrius": "마루가 서핑을 한다는거 알고 있었어? 어쨌든 모르겠어! 이 계곡은 비밀로 가득 차 있는것 같아, 심지어 좀 비과학적이야.",
+    "npc.Maru": "음, 서핑 대회 때문에 좀 긴장되지만 하비가 나랑 같이 참가하겠다고 했어.",
+    "npc.Sebastian": "흥분이 좀 필요하긴 하지만, 난 오토바이에 충실 할 거야.",
+    "npc.Linus": "나는 물 위에서 수영하는 것보다 물속에서 수영하는 것을 훨씬 더 좋아해.",
+    "npc.Pierre": "로빈이 만든 모든 서핑보드 보고가세요. 이렇게 솜씨 좋은 훌륭한 물건을 팔 수있게 되어 영광입니다.",
+    "npc.Caroline": "나는 항상 이런 종류의 축제를 좋아해. 친구들과 음식, 그리고 아이들이 즐거워하는 모습을 보는 것은 너무 좋아.",
+    "npc.Alex": "이 근육을 자랑하고 샘과 경주하려고 했는데 샘이 마지막 순간에 포기 했어.",
+    "npc.George": "내가 젊었을 때 서핑을 하곤 했어. 이 늙은이를 믿을지 모르지만 오아후 섬과 타바루아 섬에도 갔었지..",
+    "npc.Evelyn": "조지가 옛날에 서퍼였던 거 알고 있었니?#$b#조지가 서핑할 때 그를 몰랐는데, 조지가 파도를 타는 사진을 보여줬어.#$b#조지는 언제나 잘 생겼어.$h",
+    "npc.Lewis": "모닥불에 연료를 넣는 것을 잊지 마세요.#$b#우리는 대회가 열리는 동안 모두가 따뜻해지길 바랍니다.",
+    "npc.Clint": "난 내 인생의 대부분을 펠리컨 타운에서 보냈어. 이 물 위에서 누군가가 서핑을 할 수 있다는 것을 들어 본 적이 없어.$s",
+    "npc.Penny": "서핑 대회를 기대하고 있어요! @, 내년을 위해 준비를 시작해야 할까요?",
+    "npc.Pam": "@, 네가 여기 오기 전에 계곡에서 이런 축제를 한 적이 없었어. 루이스 혼자서 이런 생각을 했을 리가 없지.",
+    "npc.Haley": "에밀리는 계속해서 서핑에 참가하라고 말했지만, 난 내 머리카락이 망가지는 것을 원하지 않아.#$b#수영모? 안 돼! 끔찍해 보일 거야.$a",
+    "npc.Jodi": "올해 아이들에게 서핑하러 가지 말라고 설득했어.#$b#샘은 타고난 스케이트 보더지만, 난 샘이 바위에 부딪혀 다치거나 그물에 걸리는 것을 원하지 않아.#$b#빈센트? 너무 어리지만 나이가 들면 샘이랑 똑같아 질지도 몰라.",
+    "npc.Kent": "조디는 올해 아이들이 참여하도록 놔뒀어야 했어. 그애들은 젊어. 그애들은 삶에서 더 많은 긍정적인 것들을 경험할 필요가 있어.",
+    "npc.Marlon": "이 곳에는 파도를 손상시킬 수있는 검이나 활은 없어. 행운을 빌어! @.",
+    "npc.Sam": "알렉스는 서핑을 하고 싶어 했지만, 난 그저 쉬고 싶어서 완벽한 핑계를 댔어.",
+    "npc.Leah": "다음 예술 작품의 영감을 얻기 위해 해변에 머물고 있어. '밸리 웨이브'라고 부를까?",
+    "npc.Shane": "다음 경주를 기대하고 있어! @, 참여하기를 원한다면 내게 여분의 보드가 있어.",
+    "npc.Marnie": "루이스가 셰인이 경주에 참가한다고 내게 말해줬어. 처음에는 깜짝 놀랐지만, 셰인이 이길 거라는걸 것을 알고 있어.",
+    "npc.Elliott": "내 집 앞을 차지하는 것을 별로 좋아하지 않지만, 이 축제는 꽤 재미있는것 같아.#$b#작은 웅덩이 중 하나에서 서핑보드 위에서 균형을 잡는 연습을 해야겠어.",
+    "npc.Gus": "나는 항상 술집에서 하루를 보내는 것이 좋아. 이번 축제는 정말 멋질 거야.$h",
+    "npc.Dwarf": "겉으로 사람들은 물을 두려워하지 않아. 그들은 그것을 타고 있지만 여기 아래는? 물이 틈새로 밀려 들어 오고 있어.",
+    "npc.Wizard": "게임에서 운을 향상시키기 위해 신비한 주문이 필요한가?",
+    "npc.Harvey": "*꿀꺽* 내가 왜 참가하겠다고 동의했지.. 난 전에 서핑을 해 본 적이 없거든.$s",
+    "npc.Sandy": "축제가 열리고 있어! 너무 흥분돼!",
+    "npc.Jas": "셰인이 서핑 대회에서 우승할 거예요!$h",
+    "npc.Vincent": "엄마는 제가 서핑 할 수 있는 나이가 아니라고 말씀하셨어요.$s",
+    "npc.Willy": "때때로 파도가 부두에 부딪치는 소리를 들을 수 있어. 아이들이 무엇을 하는지 알았으면 좋겠어요. 바다, 그녀는 거친 사람이 될 수 있어",
+
+
+    /*********
+    ** Map text
+    *********/
     "ui.laps": "구간: {{laps}}/2",
     "ui.ranking": "순위",
     "ui.wood": "모닥불에 약간의 나무를 추가하십시오",
     "dialog.wood": "모닥불 위에 나무 50개를 놓았습니다.",
     "dialog.shorts": "...이상하군요. 왜 불이 보라색으로 변했을까요?",
-    "dialog.prizemoney": "1500 골드를 받았습니다.",
+    "dialog.prize-money": "1500 골드를 받았습니다.",
     "item.boost": "스타드롭 부스터",
-    "item.homingprojectile": "복어 폭탄",
-    "item.firstplaceprojectile": "번개 구름",
+    "item.homing-projectile": "복어 폭탄",
+    "item.first-place-projectile": "번개 구름",
     "item.invincibility": "주니모 파워",
     "secret.text": "표지판 내용: 현재와 미래에 모두 성공하고 싶습니까? 거래를 하십시오.",
     "secret.yes": "상자에 100,000 골드를 넣을까요?",
     "secret.no": "닫기",
     "secret.broke": "당신은 그것을 감당할 수 없습니다.",
-    "secret.purchased": "뭔가 이상한 느낌이 듭니다."
+    "secret.purchased": "뭔가 이상한 느낌이 듭니다.",
+
+
+    /*********
+    ** Craftable items
+    *********/
+    "craftables.surfboard-brown.name": "브라운 서핑보드 (허수아비)",
+    "craftables.surfboard-brown.description": "허수아비 역할도 하는 갈색 서핑보드.",
+
+    "craftables.surfboard-cool.name": "멋진 서핑보드 (허수아비)",
+    "craftables.surfboard-cool.description": "허수아비 역할도 하는 시원하고 밝은 녹색 무늬가 새겨진 서핑보드.",
+
+    "craftables.surfboard-hibiscus.name": "히비스커스 서핑보드 (허수아비)",
+    "craftables.surfboard-hibiscus.description": "허수아비 역할도 하는 히비스커스가 그려진 분홍색과 노란색 서핑보드.",
+
+    "craftables.surfboard-red.name": "레드 서핑보드 (허수아비)",
+    "craftables.surfboard-red.description": "허수아비 역할도 하는 빨간색 서핑보드.",
+
+    "craftables.surfboard-stripe.name": "스트라이프 서핑보드 (허수아비)",
+    "craftables.surfboard-stripe.description": "허수아비 역할도 하는 파란색 줄무늬 서핑보드.",
+
+    "craftables.surfboard-white.name": "화이트 서핑보드 (허수아비)",
+    "craftables.surfboard-white.description": "허수아비 역할도 하는 흰색 서핑보드.",
+
+    "craftables.surfing-trophy.name": "서핑 트로피",
+    "craftables.surfing-trophy.description": "서핑 페스티벌 우승 트로피.",
+
+
+    /*********
+    ** Hat items
+    *********/
+    "hats.snorkel-mask-black.name": "블랙 스노클 마스크",
+    "hats.snorkel-mask-black.description": "스노클 마스크 - 장식 용.",
+
+    "hats.snorkel-mask-blue.name": "블루 스노클 마스크",
+    "hats.snorkel-mask-blue.description": "스노클 마스크 - 장식 용.",
+
+    "hats.snorkel-mask-green.name": "그린 스노클 마스크",
+    "hats.snorkel-mask-green.description": "스노클 마스크 - 장식 용.",
+
+    "hats.snorkel-mask-orange.name": "오렌지색 스노클 마스크",
+    "hats.snorkel-mask-orange.description": "스노클 마스크 - 장식 용.",
+
+    "hats.snorkel-mask-pink.name": "핑크 스노클 마스크",
+    "hats.snorkel-mask-pink.description": "스노클 마스크 - 장식 용.",
+
+    "hats.snorkel-mask-red.name": "레드 스노클 마스크",
+    "hats.snorkel-mask-red.description": "스노클 마스크 - 장식 용.",
+
+
+    /*********
+    ** Object items
+    *********/
+    "items.cheap-amulet.name": "값싼 부적?",
+    "items.cheap-amulet.description": "이 부적에 문제가 있는 것 같습니다. 왜 이렇게 싼지 궁금하네요."
 }

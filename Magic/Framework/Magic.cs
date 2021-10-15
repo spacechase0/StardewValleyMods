@@ -221,7 +221,7 @@ namespace Magic.Framework
                     Log.Debug("Player learnt spell: " + spell);
                     spellBook.LearnSpell(spell, 0, true);
                     //Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") }));
-                    Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("spell.learn", new { spellName = SpellManager.Get(spell).GetTranslatedName() })));
+                    Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn(spellName: SpellManager.Get(spell).GetTranslatedName())));
                 }
             }
 
@@ -258,7 +258,7 @@ namespace Magic.Framework
                 {
                     Log.Debug("Player learnt ancient spell: " + ancientSpell);
                     spellBook.LearnSpell(ancientSpell, 0, true);
-                    Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = ancientSpell.GetTranslatedName() })));
+                    Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: ancientSpell.GetTranslatedName())));
                 }
             }
 
@@ -267,7 +267,7 @@ namespace Magic.Framework
             {
                 Log.Debug("Player learnt ancient spell: " + rewindSpell);
                 spellBook.LearnSpell(rewindSpell, 0, true);
-                Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("spell.learn.ancient", new { spellName = rewindSpell.GetTranslatedName() })));
+                Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: rewindSpell.GetTranslatedName())));
             }
         }
 
@@ -443,7 +443,7 @@ namespace Magic.Framework
 
         private static void OnTimeChanged(object sender, TimeChangedEventArgs e)
         {
-            float manaRegen = Game1.player.GetCustomSkillLevel(Magic.Skill) / 2 + Magic.CarryoverManaRegen;
+            float manaRegen = (Game1.player.GetCustomSkillLevel(Magic.Skill) + 1) / 2 + Magic.CarryoverManaRegen; // start at +1 mana at level 1
             if (Game1.player.HasCustomProfession(Skill.ManaRegen2Profession))
                 manaRegen *= 3;
             else if (Game1.player.HasCustomProfession(Skill.ManaRegen1Profession))
@@ -470,16 +470,16 @@ namespace Magic.Framework
                 string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/skippable/ignoreCollisions farmer/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{9}\"/pause 750/fade 750/end";
                 eventStr = string.Format(
                     eventStr,
-                    Mod.Instance.Helper.Translation.Get("event.wizard.1"),
-                    Mod.Instance.Helper.Translation.Get("event.wizard.2"),
-                    Mod.Instance.Helper.Translation.Get("event.wizard.3"),
-                    Mod.Instance.Helper.Translation.Get("event.wizard.4"),
-                    Mod.Instance.Helper.Translation.Get("event.wizard.5"),
-                    Mod.Instance.Helper.Translation.Get("event.wizard.6"),
-                    Mod.Instance.Helper.Translation.Get("event.wizard.7"),
-                    Mod.Instance.Helper.Translation.Get("event.wizard.8"),
-                    Mod.Instance.Helper.Translation.Get("event.wizard.9"),
-                    Mod.Instance.Helper.Translation.Get("event.wizard.abovehead")
+                    I18n.Event_Wizard_1(),
+                    I18n.Event_Wizard_2(),
+                    I18n.Event_Wizard_3(),
+                    I18n.Event_Wizard_4(),
+                    I18n.Event_Wizard_5(),
+                    I18n.Event_Wizard_6(),
+                    I18n.Event_Wizard_7(),
+                    I18n.Event_Wizard_8(),
+                    I18n.Event_Wizard_9(),
+                    I18n.Event_Wizard_Abovehead()
                 );
                 e.NewLocation.currentEvent = new Event(eventStr, MagicConstants.LearnedMagicEventId);
                 Game1.eventUp = true;
@@ -499,7 +499,7 @@ namespace Magic.Framework
             {
                 if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
                 {
-                    Game1.drawObjectDialogue(Mod.Instance.Helper.Translation.Get("altar.glow"));
+                    Game1.drawObjectDialogue(I18n.Altar_Glow());
                 }
                 else
                 {

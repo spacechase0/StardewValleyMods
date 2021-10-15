@@ -198,7 +198,7 @@ namespace AnimalSocialMenu.Framework
             }
 
             if (!animal.wasPet.Value)
-                b.DrawString(Game1.dialogueFont, "Needs petting", new Vector2(this.xPositionOnScreen + 250 + 264, this.Sprites[i].bounds.Y + 32 - 12), Game1.textColor);
+                b.DrawString(Game1.dialogueFont, I18n.NeedsPetting(), new Vector2(this.xPositionOnScreen + 250 + 264, this.Sprites[i].bounds.Y + 32 - 12), Game1.textColor);
         }
 
         private int RowPosition(int i)

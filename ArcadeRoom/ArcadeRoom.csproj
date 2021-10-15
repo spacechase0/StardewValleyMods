@@ -1,13 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.targets" />
+  <Import Project="..\common-unreleased.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
     <Version>1.0.0</Version>
     <TargetFramework>net452</TargetFramework>
-
-    <EnableModDeploy>false</EnableModDeploy>
-    <EnableModZip>false</EnableModZip>
   </PropertyGroup>
 
   <ItemGroup>

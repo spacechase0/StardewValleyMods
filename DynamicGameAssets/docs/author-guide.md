@@ -544,7 +544,7 @@ Furniture can be localized in the following keys: `"furniture.YourFurniture.name
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
 | `ID` | `string` | Required | The ID of this furniture. | `false` |
-| `Type` | `Enum[Decoration, Rug, Table, Dresser, FishTank, Bed, Painting, Fireplace, TV]` | Required | The type of this furniture. | `false` |
+| `Type` | `Enum[Bed, Decoration, Dresser, Fireplace, FishTank, Lamp, Painting, Rug, Table, Sconce, TV, Window]` | Required | The type of this furniture. | `false` |
 | `Configurations` | `FurnitureConfiguration[]` | Required | The configurations for this funriture. It uses the first configuration by default, and the others after being rotated. (NOTE: Fish tanks, beds, and TVs may only support one configuration!) | (unknown, untested) |
 
 Certain furniture types have additional fields:
@@ -784,32 +784,35 @@ You don't need to use these to animate DGA objects from your pack; you can just 
 ## Extra Information
 
 ### Valid Shop IDs for Vanilla
+Here are the shop IDs for vanilla shops:
 
-* BlueBoat
-* TravelingMerchant
-* GeMagic (one of the night market shops)
-* DesertMerchant
-* HatMouse
-* IslandMerchant
-* ResortBar
-* Krobus
-* VolcanoShop
-* Festival.<date> ie. Festival.summer5
-* QiGemShop
-* Joja
-* IceCreamStand
-* Hospital
-* Club
-* Theater_BoxOffice
-* FishShop
-* SeedShop
-* Sandy
-* Saloon
-* AdventurerGuild
-* Carpenter
-* AnimalSupplies
-* Blacksmith
-* Dwarf
+world area | shop                                                                                       | shop ID
+---------- | ------------------------------------------------------------------------------------------ | -------
+Beach      | [Night Market decoration boat](https://stardewvalleywiki.com/Night_Market#Decoration_Boat) | `BlueBoat`
+Beach      | [Night Market magic shop boat](https://stardewvalleywiki.com/Night_Market#Magic_Shop_Boat) | `GeMagic`
+Beach      | [Willy](https://stardewvalleywiki.com/Fish_Shop)                                           | `FishShop`
+Desert     | [Casino](https://stardewvalleywiki.com/Casino)                                             | `Club`
+Desert     | [Desert trader](https://stardewvalleywiki.com/Desert_Trader)                               | `DesertMerchant`
+Desert     | [Sandy](https://stardewvalleywiki.com/Oasis)                                               | `Sandy`
+Forest     | [Hat mouse](https://stardewvalleywiki.com/Abandoned_House)                                 | `HatMouse`
+Forest     | [Marnie's supplies](https://stardewvalleywiki.com/Marnie%27s_Ranch)                        | `AnimalSupplies`
+Forest     | [Traveling cart](https://stardewvalleywiki.com/Traveling_Cart)                             | `TravelingMerchant`
+Island     | [Island trader](https://stardewvalleywiki.com/Island_Trader)                               | `IslandMerchant`
+Island     | [Qi walnut room](https://stardewvalleywiki.com/Qi%27s_Walnut_Room)                         | `QiGemShop`
+Island     | [Resort bar](https://stardewvalleywiki.com/Ginger_Island#Beach_Resort)                     | `ResortBar`
+Island     | [Volcano shop](https://stardewvalleywiki.com/Volcano_Dungeon#Shop)                         | `VolcanoShop`
+Mountain   | [Adventurer's guild](https://stardewvalleywiki.com/Adventurer%27s_Guild)                   | `AdventurerGuild`
+Mountain   | [Dwarf](https://stardewvalleywiki.com/Dwarf)                                               | `Dwarf`
+Mountain   | [Robin's carpentry](https://stardewvalleywiki.com/Carpenter%27s_Shop)                      | `Carpenter`
+Town       | [Clint's blacksmithery](https://stardewvalleywiki.com/Blacksmith)                          | `Blacksmith`
+Town       | [Harvey's clinic](https://stardewvalleywiki.com/Harvey%27s_Clinic)                         | `Hospital`
+Town       | [Ice cream stand](https://stardewvalleywiki.com/Ice_Cream_Stand)                           | `IceCreamStand`
+Town       | [JojaMart](https://stardewvalleywiki.com/JojaMart)                                         | `Joja`
+Town       | [Krobus](https://stardewvalleywiki.com/Krobus)                                             | `Krobus`
+Town       | [Movie theater ticket office](https://stardewvalleywiki.com/Movie_Theater)                 | `Theater_BoxOffice`
+Town       | [Pierre](https://stardewvalleywiki.com/Pierre%27s_General_Store)                           | `SeedShop`
+Town       | [Saloon](https://stardewvalleywiki.com/The_Stardrop_Saloon)                                | `Saloon`
+_festival_ | Festival shop                                                                              | `Festival.<date>` (e.g. `Festival.summer5`)
 
 ## Dynamic Fields
 Dynamic fields let you change a field of an item at the beginning of the day based on Content Patcher conditions, as well as values from config.json (if you have a config schema).

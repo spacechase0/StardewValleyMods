@@ -1,0 +1,23 @@
+﻿{
+    "Name": "Ring of True Sight",
+    "Category": "Ring",
+    "Edibility": -300,
+    "Price": 5000,
+    "Recipe": {
+        "ResultCount": 1,
+        "Ingredients": [
+            {
+                "Object": 562,
+                "Count": 2
+            },
+            {
+                "Object": 336,
+                "Count": 10
+            }
+        ],
+        "CanPurchase": true,
+        "PurchaseFrom": "Dwarf",
+        "PurchasePrice": 12500
+    },
+    "TranslationKey": "ring-of-true-sight"
+}

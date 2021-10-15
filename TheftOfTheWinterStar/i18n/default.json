@@ -1,0 +1,55 @@
+﻿{
+    /*********
+    ** Items
+    *********/
+    // crafting recipe
+    "recipe.frosty-stardrop.name": "Frosty Stardrop",
+
+    // items
+    "item.festive-big-key-a.name": "Festive Big Key (A)",
+    "item.festive-big-key-a.description": "Half of a 'big key' used in the Frost Dungeon.",
+
+    "item.festive-big-key-b.name": "Festive Big Key (B)",
+    "item.festive-big-key-b.description": "Half of a 'big key' used in the Frost Dungeon.",
+
+    "item.festive-key.name": "Festive Key",
+    "item.festive-key.description": "A key used in the Frost Dungeon.",
+
+    "item.frosty-stardrop-piece.name": "Frosty Stardrop Piece",
+    "item.frosty-stardrop-piece.description": "A piece of a stardrop. Five can be combined for a full one.",
+
+    "item.tempus-globe.name": "Tempus Globe",
+    "item.tempus-globe.description": "A mystical item that allows crops around it to grow year-long. It also waters crops near it.\n5x5 area, centered on the object.",
+
+    // weapons
+    "weapon.festive-scepter.name": "Festive Scepter",
+    "weapon.festive-scepter.description": "It shoots a frosty beam.",
+
+
+    /*********
+    ** Lewis event
+    *********/
+    "event.lewis-speech": "Hello, @.#$b#I was making preparations for the Feast of the Winter Star and... I can't find any of the decorations!$s#$b#It seems someone stole the decorations.$4#$b#I'm not sure why somebody would do this... but decorations don't just disappear by themselves!$s#$b#Anyways, I was hoping you could retrieve them for us?$h#$b#There was a trail of broken decorations leading down the tunnel to the left of the bus stop. We'd all appreciate it if you could do this for us.$n#$b#Or we could hire Marlon but that's going to be costly.$s#$b#Good luck!$n",
+
+
+    /*********
+    ** Map messages
+    *********/
+    "map-messages.locked-entrance": "This door is locked right now.",
+    "map-messages.locked-door": "This door is locked. It probably needs a key.",
+    "map-messages.locked-boss": "This giant door is locked. Perhaps something nearby can open it.",
+    "map-messages.unlocked": "The door has been unlocked.",
+    "map-messages.item-puzzle": "There seems to be a silhouette on the pedestal.",
+    "map-messages.target": "A target.",
+    "map-messages.trail-lights": "Some festive lights.",
+    "map-messages.trail-candy-cane": "A smashed candy cane.",
+    "map-messages.trail-ornaments": "Some festive ornaments.",
+    "map-messages.trail-tree": "A smashed miniature tree.",
+
+
+    /*********
+    ** Final boss
+    *********/
+    "final-boss.speech": "How DARE they have fun without me! They'll never get their decorations back!",
+    "final-boss.victory-message": "You got the decorations back!\nYou also learned the recipe for the 'Tempus Globe'!"
+}

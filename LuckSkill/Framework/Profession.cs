@@ -1,8 +1,20 @@
+using System;
+
 namespace LuckSkill.Framework
 {
     /// <summary>A luck skill profession.</summary>
     internal class Profession : IProfession
     {
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Get the translated name.</summary>
+        private readonly Func<string> GetName;
+
+        /// <summary>Get the translated description.</summary>
+        private readonly Func<string> GetDescription;
+
+
         /*********
         ** Accessors
         *********/
@@ -16,10 +28,10 @@ namespace LuckSkill.Framework
         public string DefaultDescription { get; }
 
         /// <inheritdoc />
-        public string Name => this.DefaultName;
+        public string Name => this.GetName();
 
         /// <inheritdoc />
-        public string Description => this.DefaultDescription;
+        public string Description => this.GetDescription();
 
 
         /*********
@@ -27,13 +39,17 @@ namespace LuckSkill.Framework
         *********/
         /// <summary>Construct an instance.</summary>
         /// <param name="id"><inheritdoc cref="IProfession.Id" path="/summary"/></param>
+        /// <param name="defaultName"><inheritdoc cref="IProfession.DefaultName" path="/summary"/></param>
+        /// <param name="defaultDescription"><inheritdoc cref="IProfession.DefaultDescription" path="/summary"/></param>
         /// <param name="name"><inheritdoc cref="IProfession.Name" path="/summary"/></param>
         /// <param name="description"><inheritdoc cref="IProfession.Description" path="/summary"/></param>
-        public Profession(int id, string name, string description)
+        public Profession(int id, string defaultName, string defaultDescription, Func<string> name, Func<string> description)
         {
             this.Id = id;
-            this.DefaultName = name;
-            this.DefaultDescription = description;
+            this.DefaultName = defaultName;
+            this.DefaultDescription = defaultDescription;
+            this.GetName = name;
+            this.GetDescription = description;
         }
     }
 }

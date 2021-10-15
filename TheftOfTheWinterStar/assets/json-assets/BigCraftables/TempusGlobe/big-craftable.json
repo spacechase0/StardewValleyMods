@@ -1,0 +1,23 @@
+﻿{
+    "Name": "Tempus Globe",
+    "ProvidesLight": true,
+    "Recipe": {
+        "ResultCount": 1,
+        "Ingredients": [
+            {
+                "Object": 768,
+                "Count": 25
+            },
+            {
+                "Object": 769,
+                "Count": 25
+            },
+            {
+                "Object": 645,
+                "Count": 1
+            }
+        ],
+        "IsDefault": false
+    },
+    "TranslationKey": "item.tempus-globe"
+}

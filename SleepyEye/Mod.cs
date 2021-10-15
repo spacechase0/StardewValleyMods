@@ -38,6 +38,7 @@ namespace SleepyEye
             this.ApplyConfig(helper.ReadConfig<ModConfig>());
 
             // init
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
@@ -73,11 +74,21 @@ namespace SleepyEye
             var spaceCore = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
             spaceCore.RegisterSerializerType(typeof(TentTool));
 
-            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                gmcm.RegisterModConfig(this.ModManifest, revertToDefault: () => this.ApplyConfig(new ModConfig()), saveToFile: this.SaveConfig);
-                gmcm.RegisterSimpleOption(this.ModManifest, "Seconds until save", "The number of seconds until the tent tool should trigger a save.", () => (int)TentTool.UseDelay.TotalSeconds, (int val) => TentTool.UseDelay = TimeSpan.FromSeconds(val));
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => this.ApplyConfig(new ModConfig()),
+                    save: this.SaveConfig
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_SecondsUntilSave_Name,
+                    tooltip: I18n.Config_SecondsUntilSave_Tooltip,
+                    getValue: () => (int)TentTool.UseDelay.TotalSeconds,
+                    setValue: value => TentTool.UseDelay = TimeSpan.FromSeconds(value)
+                );
             }
         }
 
@@ -134,12 +145,12 @@ namespace SleepyEye
             GameLocation location = Game1.getLocationFromName(camp.Location);
             if (location == null)
             {
-                Game1.addHUDMessage(new HUDMessage("You camped somewhere strange, so you've returned home."));
+                Game1.addHUDMessage(new HUDMessage(I18n.Messages_SleptAtLostLocation()));
                 return;
             }
             if (location.Name == this.GetFestivalLocation())
             {
-                Game1.addHUDMessage(new HUDMessage("You camped on the festival grounds, so you've returned home."));
+                Game1.addHUDMessage(new HUDMessage(I18n.Messages_SleptAtFestival()));
                 return;
             }
 

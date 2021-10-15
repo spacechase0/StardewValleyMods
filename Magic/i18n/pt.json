@@ -1,4 +1,15 @@
 ﻿{
+    /*********
+    ** General text
+    *********/
+    "spell.learn": "Você aprendeu a magia: {{spellName}}",
+    "spell.learn.ancient": "Você aprendeu a magia anciã: {{spellName}}",
+    "altar.glow": "Um altar brilhante",
+
+
+    /*********
+    ** Wizard learn-magic event
+    *********/
     "event.wizard.1": "Já é a hora do você aprender os caminhos da magia.",
     "event.wizard.2": "Eu... 'ajustei' o altar Yoba na loja do Pierre pra você.",
     "event.wizard.3": "Vou te ensinar o básico da magia Arcana, mas ro resto tera de descobrir por conta própria. ",
@@ -10,6 +21,10 @@
     "event.wizard.9": "(Esses controles podem ser ajustados no arquivo 'config' do mod.)",
     "event.wizard.abovehead": "MAGICA",
 
+
+    /*********
+    ** TV channel
+    *********/
     "tv.analyzehints.name": "Análize Magica",
     "tv.analyzehints.notmagical": "*estatica*",
     "tv.analyzehints.1": "Procurando por magias pra usar na sua fazenda? Tente analizar as suas ferramentas.",
@@ -25,11 +40,10 @@
     "tv.analyzehints.11": "A maioria das pessoas usam as escadas pra descer pelas minas, mas eu vi alguém usar uma magia pra descer direto pelo chão.",
     "tv.analyzehints.12": "Eu não podia acreditar no que via, alguém usando uma magia pra recuperar mana!? Parecia ser doloroso. Pessoas dizem que ele aprendeu essa magia enquanto procurava pelas Enguias de Lava.",
 
-    "spell.learn": "Você aprendeu a magia: {{spellName}}",
-    "spell.learn.ancient": "Você aprendeu a magia anciã: {{spellName}}",
 
-    "altar.glow": "Um altar brilhante",
-
+    /*********
+    ** Magic spells
+    *********/
     "school.arcane.name": "arcana",
     "school.toil.name": "trabalho",
     "school.nature.name": "natural",
@@ -91,5 +105,34 @@
     "spell.eldritch:lucksteal.name": "Sortudo",
     "spell.eldritch:lucksteal.desc": "Catalizador: Felicidade",
     "spell.eldritch:spirit.name": "Espirito",
-    "spell.eldritch:spirit.desc": "Alguém das tumbas pra te ajudar."
+    "spell.eldritch:spirit.desc": "Alguém das tumbas pra te ajudar.",
+
+
+    /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "Elixir Magico",
+    "objects.mana-potion.description": "Restaura vida e mana.",
+
+    "objects.travel-core.name": "Centro de Teleporte",
+    "objects.travel-core.description": "Catalizador.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // TODO
+    "config.altar-location.name": "Altar Location",
+    "config.altar-location.tooltip": "The (internal) name of the location the magic altar should be placed at.",
+    "config.altar-x.name": "Altar X",
+    "config.altar-x.tooltip": "The X tile position where the magic altar should be placed.",
+    "config.altar-y.name": "Altar Y",
+    "config.altar-y.tooltip": "The Y tile position where the magic altar should be placed.",
+
+    "config.cast-key.name": "Key: Cast",
+    "config.cast-key.tooltip": "The key to initiate casting a spell.",
+    "config.swap-spells-key.name": "Key: Swap Sells",
+    "config.swap-spells-key.tooltip": "The key to swap spell sets.",
+    "config.select-spell-key.name": "Key: Spell {{slotNumber}}",
+    "config.select-spell-key.tooltip": "The key to select spell {{slotNumber}}."
 }

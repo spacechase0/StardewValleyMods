@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.damage-scale.name": "Damage Scale",
+    "config.damage-scale.tooltip": "The amount of damage to scale up per combat level, in percentage."
+}

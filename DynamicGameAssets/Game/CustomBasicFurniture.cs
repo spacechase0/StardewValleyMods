@@ -133,6 +133,23 @@ namespace DynamicGameAssets.Game
             spriteBatch.Draw(currTex.Texture, location, currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
         }
 
+        /// <inheritdoc />
+        public override void AddLightGlow(GameLocation location)
+        {
+            // equivalent to the base logic, but correct lighting position for custom furniture
+            if (!this.lightGlowPosition.HasValue)
+            {
+                Vector2 furniturePixel = this.TileLocation * Game1.tileSize;
+                Vector2 glowPixel = furniturePixel + new Vector2((float)Game1.tileSize / 2, Game1.tileSize);
+
+                if (!location.lightGlows.Contains(glowPixel))
+                {
+                    this.lightGlowPosition = glowPixel;
+                    location.lightGlows.Add(glowPixel);
+                }
+            }
+        }
+
         public override bool DoesTileHaveProperty(int tile_x, int tile_y, string property_name, string layer_name, ref string property_value)
         {
             var currConfig = this.GetCurrentConfiguration();

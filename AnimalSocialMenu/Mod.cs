@@ -9,13 +9,16 @@ using StardewValley.Menus;
 
 namespace AnimalSocialMenu
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         private static int MyTabId;
 
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -32,7 +35,7 @@ namespace AnimalSocialMenu
                 var tabs = gm.tabs;
 
                 this.MyTabIndex = tabs.Count;
-                tabs.Add(new ClickableComponent(new Rectangle(gm.xPositionOnScreen + 192, gm.yPositionOnScreen + IClickableMenu.tabYPositionRelativeToMenuY + 64 - 64, 64, 64), "animals", "Animals")
+                tabs.Add(new ClickableComponent(new Rectangle(gm.xPositionOnScreen + 192, gm.yPositionOnScreen + IClickableMenu.tabYPositionRelativeToMenuY + 64 - 64, 64, 64), "animals", I18n.TabTooltip())
                 {
                     myID = 912342,
                     downNeighborID = 12342,

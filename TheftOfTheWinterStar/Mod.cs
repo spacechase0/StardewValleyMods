@@ -35,9 +35,10 @@ namespace TheftOfTheWinterStar
         public static Mod Instance;
         internal static IJsonAssetsApi Ja;
 
-        private SaveData SaveData;
+        private SaveData SaveData = new();
 
-        private Texture2D BossBarBg, BossBarFg;
+        private Texture2D BossBarBg;
+        private Texture2D BossBarFg;
 
         /// <summary>The unique key in <see cref="TerrainFeature.modData"/> which contains the original crop data for the Tempus Globe logic.</summary>
         private string PrevCropDataKey;
@@ -71,6 +72,7 @@ namespace TheftOfTheWinterStar
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -120,7 +122,7 @@ namespace TheftOfTheWinterStar
                 if (Mod.Ja != null)
                 {
                     var dict = asset.AsDictionary<string, string>().Data;
-                    dict.Add("Frosty Stardrop", Mod.Ja.GetObjectId("Frosty Stardrop Piece") + " 5/Field/434/false/null");
+                    dict.Add("Frosty Stardrop", $"{Mod.Ja.GetObjectId("Frosty Stardrop Piece")} 5/Field/434/false/null/{I18n.Recipe_FrostyStardrop_Name()}");
                 }
             }
 
@@ -128,16 +130,16 @@ namespace TheftOfTheWinterStar
             else if (asset.AssetNameEquals("Strings/StringsFromMaps"))
             {
                 var dict = asset.AsDictionary<string, string>().Data;
-                dict.Add("FrostDungeon.LockedEntrance", "This door is locked right now.");
-                dict.Add("FrostDungeon.Locked", "This door is locked. It probably needs a key.");
-                dict.Add("FrostDungeon.LockedBoss", "This giant door is locked. Perhaps something nearby can open it.");
-                dict.Add("FrostDungeon.Unlock", "The door has been unlocked.");
-                dict.Add("FrostDungeon.ItemPuzzle", "There seems to be a silhouette on the pedestal.");
-                dict.Add("FrostDungeon.Target", "A target.");
-                dict.Add("FrostDungeon.Trail0", "Some festive lights.");
-                dict.Add("FrostDungeon.Trail1", "A smashed candy cane.");
-                dict.Add("FrostDungeon.Trail2", "Some festive ornaments.");
-                dict.Add("FrostDungeon.Trail3", "A smashed miniature tree.");
+                dict.Add("FrostDungeon.LockedEntrance", I18n.MapMessages_LockedEntrance());
+                dict.Add("FrostDungeon.Locked", I18n.MapMessages_LockedDoor());
+                dict.Add("FrostDungeon.LockedBoss", I18n.MapMessages_LockedBoss());
+                dict.Add("FrostDungeon.Unlock", I18n.MapMessages_Unlocked());
+                dict.Add("FrostDungeon.ItemPuzzle", I18n.MapMessages_ItemPuzzle());
+                dict.Add("FrostDungeon.Target", I18n.MapMessages_Target());
+                dict.Add("FrostDungeon.Trail0", I18n.MapMessages_TrailLights());
+                dict.Add("FrostDungeon.Trail1", I18n.MapMessages_TrailCandyCane());
+                dict.Add("FrostDungeon.Trail2", I18n.MapMessages_TrailOrnaments());
+                dict.Add("FrostDungeon.Trail3", I18n.MapMessages_TrailTree());
             }
 
             // edit tunnel map
@@ -156,7 +158,7 @@ namespace TheftOfTheWinterStar
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             Mod.Ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
-            Mod.Ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "ja"));
+            Mod.Ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
             Mod.Ja.IdsFixed += this.OnIdsFixed;
         }
 
@@ -257,7 +259,7 @@ namespace TheftOfTheWinterStar
                                 player.changeFriendship(250, npc);
                         }
 
-                        Game1.drawObjectDialogue("You got the decorations back!\nYou also learned the recipe for the 'Tempus Globe'!");
+                        Game1.drawObjectDialogue(I18n.FinalBoss_VictoryMessage());
                     }
                 }
             }
@@ -497,7 +499,7 @@ namespace TheftOfTheWinterStar
 
             if (e.NewLocation.Name == "Farm" && !Game1.player.eventsSeen.Contains(Mod.EventId) && Game1.currentSeason == "winter" && Game1.dayOfMonth < 25)
             {
-                string eventStr = "continue/64 15/farmer 64 16 2 Lewis 64 18 0/skippable/pause 1500/speak Lewis \"Hello, @.#$b#I was making preparations for the Feast of the Winter Star and... I can't find any of the decorations!$s#$b#It seems someone stole the decorations.$4#$b#I'm not sure why somebody would do this... but decorations don't just disappear by themselves!$s#$b#Anyways, I was hoping you could retrieve them for us?$h#$b#There was a trail of broken decorations leading down the tunnel to the left of the bus stop. We'd all appreciate it if you could do this for us.$n#$b#Or we could hire Marlon but that's going to be costly.$s#$b#Good luck!$n\"/pause 500/end";
+                string eventStr = $"continue/64 15/farmer 64 16 2 Lewis 64 18 0/skippable/pause 1500/speak Lewis \"{I18n.Event_LewisSpeech()}\"/pause 500/end";
                 e.NewLocation.currentEvent = new Event(eventStr, Mod.EventId);
                 Game1.eventUp = true;
                 Game1.displayHUD = false;
@@ -514,7 +516,7 @@ namespace TheftOfTheWinterStar
                     e.NewLocation.characters.Add(witch);
 
                     var dummySpeaker = new NPC(new AnimatedSprite("Characters\\Penny"), new Vector2(-1, -1), "", 0, "Witch", false, null, witch.Portrait);
-                    var dialogue = new Dialogue("How DARE they have fun without me! They'll never get their decorations back!", dummySpeaker);
+                    var dialogue = new Dialogue(I18n.FinalBoss_Speech(), dummySpeaker);
                     var dialogueBox = new DialogueBox(dialogue);
 
                     Game1.activeClickableMenu = dialogueBox;
@@ -529,6 +531,7 @@ namespace TheftOfTheWinterStar
         }
 
         /// <summary>Get the <see cref="DecoSpots"/> for a map asset, if any.</summary>
+        /// <param name="asset">The map asset being edited.</param>
         /// <param name="decoSpots">The tiles on which to drop decorations.</param>
         private bool TryGetDecoSpots(IAssetInfo asset, out Vector2[] decoSpots)
         {
@@ -553,16 +556,8 @@ namespace TheftOfTheWinterStar
         {
             if (Game1.currentSeason == "winter" && Game1.dayOfMonth < 25 && !this.SaveData.BeatBoss)
             {
-                TileSheet ts = null;
-                for (int i = 0; i < map.TileSheets.Count; ++i)
-                {
-                    if (map.TileSheets[i].ImageSource.Contains("trail-decorations"))
-                    {
-                        ts = map.TileSheets[i];
-                        break;
-                    }
-                }
-                if (ts == null)
+                TileSheet tilesheet = map.TileSheets.FirstOrDefault(p => p.ImageSource.Contains("trail-decorations"));
+                if (tilesheet == null)
                 {
                     // AddTileSheet sorts the tilesheets by ID after adding them.
                     // The game sometimes refers to tilesheets by their index (such as in Beach.fixBridge)
@@ -570,9 +565,9 @@ namespace TheftOfTheWinterStar
                     // which preserves the normal indices of the tilesheets.
                     char comeLast = '\u03a9'; // Omega
 
-                    ts = new TileSheet(map, this.Helper.Content.GetActualAssetKey("assets/trail-decorations.png"), new xTile.Dimensions.Size(2, 2), new xTile.Dimensions.Size(16, 16));
-                    ts.Id = comeLast + ts.Id;
-                    map.AddTileSheet(ts);
+                    tilesheet = new TileSheet(map, this.Helper.Content.GetActualAssetKey("assets/trail-decorations.png"), new xTile.Dimensions.Size(2, 2), new xTile.Dimensions.Size(16, 16));
+                    tilesheet.Id = comeLast + tilesheet.Id;
+                    map.AddTileSheet(tilesheet);
                     map.LoadTileSheets(Game1.mapDisplayDevice);
 
                     Random r = new Random((int)Game1.uniqueIDForThisGame + map.assetPath.GetHashCode());
@@ -580,7 +575,7 @@ namespace TheftOfTheWinterStar
                     foreach (var spot in spots)
                     {
                         int tile = r.Next(4);
-                        buildingsLayer.Tiles[(int)spot.X, (int)spot.Y] = new StaticTile(buildingsLayer, ts, BlendMode.Alpha, tile)
+                        buildingsLayer.Tiles[(int)spot.X, (int)spot.Y] = new StaticTile(buildingsLayer, tilesheet, BlendMode.Alpha, tile)
                         {
                             Properties = { ["Action"] = $"Message \"FrostDungeon.Trail{tile}\"" }
                         };
@@ -590,7 +585,7 @@ namespace TheftOfTheWinterStar
             else
             {
                 var layer = map.GetLayer("Buildings");
-                foreach (var spot in spots)
+                foreach (Vector2 spot in spots)
                     layer.Tiles[(int)spot.X, (int)spot.Y] = null;
             }
         }
@@ -600,8 +595,10 @@ namespace TheftOfTheWinterStar
             if (!e.Player.knowsRecipe("Frosty Stardrop"))
             {
                 foreach (var item in e.Added)
+                {
                     if (item is SObject obj && obj.ParentSheetIndex == Mod.Ja.GetObjectId("Frosty Stardrop Piece"))
                         e.Player.craftingRecipes.Add("Frosty Stardrop", 0);
+                }
             }
         }
 
@@ -619,7 +616,9 @@ namespace TheftOfTheWinterStar
 
         private void OnActionActivated(object sender, EventArgsAction e)
         {
-            var farmer = sender as Farmer;
+            if (sender is not Farmer farmer)
+                return;
+
             if (e.ActionString == "Message \"FrostDungeon.Locked\"")
             {
                 int key = Mod.Ja.GetObjectId("Festive Key");
@@ -638,166 +637,173 @@ namespace TheftOfTheWinterStar
                     e.Cancel = true;
                 }
             }
-            else if (e.Action == "ActivateArena")
+            else
             {
-                if (farmer.currentLocation.Name == "FrostDungeon.Arena")
+                switch (e.Action)
                 {
-                    Log.Trace("Activate arena: Stage " + this.SaveData.ArenaStage);
-                    Game1.playSound("batScreech");
-                    Game1.playSound("rockGolemSpawn");
-                    if (this.SaveData.ArenaStage == ArenaStage.NotTriggered)
-                    {
-                        this.SaveData.ArenaStage = ArenaStage.Stage1;
-                        for (int i = 0; i < 9; ++i)
+                    case "ActivateArena" when farmer.currentLocation.Name == "FrostDungeon.Arena":
                         {
-                            int cx = e.Position.X, cy = e.Position.Y;
-                            int dx = (int)(Math.Cos(Math.PI * 2 / 9 * i) * 5);
-                            int dy = (int)(Math.Sin(Math.PI * 2 / 9 * i) * 5);
-                            int x = cx + dx, y = cy + dy;
-                            x *= Game1.tileSize;
-                            y *= Game1.tileSize;
-
-                            if (i % 3 == 0)
-                                farmer.currentLocation.addCharacter(new Ghost(new Vector2(x, y)));
-                            else if (i % 3 == 1)
-                                farmer.currentLocation.addCharacter(new Skeleton(new Vector2(x, y)));
-                            else if (i % 3 == 2)
-                                farmer.currentLocation.addCharacter(new DustSpirit(new Vector2(x, y)));
-                        }
-                    }
-                    else if (this.SaveData.ArenaStage == ArenaStage.Finished1)
-                    {
-                        this.SaveData.ArenaStage = ArenaStage.Stage2;
-                        for (int i = 0; i < 3; ++i)
-                        {
-                            int cx = e.Position.X, cy = e.Position.Y;
-                            int dx = (int)(Math.Cos(Math.PI * 2 / 3 * i) * 4);
-                            int dy = (int)(Math.Sin(Math.PI * 2 / 3 * i) * 4);
-                            int x = cx + dx, y = cy + dy;
-                            x *= Game1.tileSize;
-                            y *= Game1.tileSize;
-
-                            if (i % 2 == 0)
-                                farmer.currentLocation.addCharacter(new Bat(new Vector2(x, y), 77377));
-                        }
-                        farmer.currentLocation.addCharacter(new DinoMonster(new Vector2(9 * Game1.tileSize, 8 * Game1.tileSize)));
-                    }
-                }
-            }
-            else if (e.Action == "ItemPuzzle")
-            {
-                string[] toks = e.ActionString.Split(' ');
-                int item = int.Parse(toks[1]);
-                if (farmer.ActiveObject?.ParentSheetIndex == item)
-                {
-                    farmer.removeFirstOfThisItemFromInventory(item);
-                    farmer.currentLocation.removeTileProperty(e.Position.X, e.Position.Y, "Buildings", "Action");
-
-                    int warpIndex = farmer.currentLocation.Map.GetLayer("Buildings").Tiles[e.Position.X, e.Position.Y].TileIndex - 32;
-                    var back = farmer.currentLocation.Map.GetLayer("Back");
-                    back.Tiles[e.Position.X, e.Position.Y + 3] = new StaticTile(back, farmer.currentLocation.Map.TileSheets[0], BlendMode.Additive, warpIndex);
-
-                    var warp = new Warp(e.Position.X, e.Position.Y + 3, toks[2], 7, 9, false);
-                    farmer.currentLocation.warps.Add(warp);
-
-                    Game1.playSound("secret1");
-                }
-                else
-                {
-                    Game1.drawDialogueNoTyping(Game1.content.LoadString("Strings\\StringsFromMaps:FrostDungeon.ItemPuzzle"));
-                }
-            }
-            else if (e.Action == "BossKeyHalf")
-            {
-                string[] toks = e.ActionString.Split(' ');
-
-                int key = Mod.Ja.GetObjectId("Festive Big Key (" + toks[1] + ")");
-                if (farmer.ActiveObject?.ParentSheetIndex == key)
-                {
-                    farmer.removeFirstOfThisItemFromInventory(key);
-
-                    farmer.currentLocation.removeTile(e.Position.X, e.Position.Y - 1, "Front");
-                    farmer.currentLocation.removeTile(e.Position.X, e.Position.Y, "Buildings");
-
-                    Game1.playSound("secret1");
-
-                    if (++Mod.BossKeysUsed >= 2)
-                    {
-                        var buildings = farmer.currentLocation.Map.GetLayer("Buildings");
-                        int bx = 9, by = 4;
-                        for (int i = 0; i < 4; ++i)
-                        {
-                            int ix = i % 2, iy = i / 2;
-                            int x = bx + ix, y = by + iy;
-                            buildings.Tiles[x, y].TileIndex += 2;
-
-                            string prop = farmer.currentLocation.doesTileHaveProperty(x, y, "UnlockAction", "Buildings");
-                            if (!string.IsNullOrEmpty(prop))
+                            Log.Trace("Activate arena: Stage " + this.SaveData.ArenaStage);
+                            Game1.playSound("batScreech");
+                            Game1.playSound("rockGolemSpawn");
+                            if (this.SaveData.ArenaStage == ArenaStage.NotTriggered)
                             {
-                                farmer.currentLocation.setTileProperty(x, y, "Buildings", "Action", prop);
+                                this.SaveData.ArenaStage = ArenaStage.Stage1;
+                                for (int i = 0; i < 9; ++i)
+                                {
+                                    int cx = e.Position.X, cy = e.Position.Y;
+                                    int dx = (int)(Math.Cos(Math.PI * 2 / 9 * i) * 5);
+                                    int dy = (int)(Math.Sin(Math.PI * 2 / 9 * i) * 5);
+                                    int x = cx + dx, y = cy + dy;
+                                    x *= Game1.tileSize;
+                                    y *= Game1.tileSize;
+
+                                    if (i % 3 == 0)
+                                        farmer.currentLocation.addCharacter(new Ghost(new Vector2(x, y)));
+                                    else if (i % 3 == 1)
+                                        farmer.currentLocation.addCharacter(new Skeleton(new Vector2(x, y)));
+                                    else if (i % 3 == 2)
+                                        farmer.currentLocation.addCharacter(new DustSpirit(new Vector2(x, y)));
+                                }
+                            }
+                            else if (this.SaveData.ArenaStage == ArenaStage.Finished1)
+                            {
+                                this.SaveData.ArenaStage = ArenaStage.Stage2;
+                                for (int i = 0; i < 3; ++i)
+                                {
+                                    int cx = e.Position.X, cy = e.Position.Y;
+                                    int dx = (int)(Math.Cos(Math.PI * 2 / 3 * i) * 4);
+                                    int dy = (int)(Math.Sin(Math.PI * 2 / 3 * i) * 4);
+                                    int x = cx + dx, y = cy + dy;
+                                    x *= Game1.tileSize;
+                                    y *= Game1.tileSize;
+
+                                    if (i % 2 == 0)
+                                        farmer.currentLocation.addCharacter(new Bat(new Vector2(x, y), 77377));
+                                }
+                                farmer.currentLocation.addCharacter(new DinoMonster(new Vector2(9 * Game1.tileSize, 8 * Game1.tileSize)));
                             }
                         }
-                    }
-                }
-            }
-            else if (e.Action == "Movable")
-            {
-                int dir = farmer.FacingDirection;
-                int ox = 0, oy = 0;
-                switch (dir)
-                {
-                    case 2: oy = 1; break;
-                    case 0: oy = -1; break;
-                    case 3: ox = -1; break;
-                    case 1: ox = 1; break;
-                }
-
-                int[] validPuzzleTiles = new[]
-                {
-                    240, 241, 242, 243,
-                    256, 257, 258, 259, 260,
-                    272, 273, 274, 275, 276
-                };
-                int target = 243;
-
-                int tx = e.Position.X, ty = e.Position.Y;
-                while (true)
-                {
-                    tx += ox;
-                    ty += oy;
-                    if (!validPuzzleTiles.Contains(farmer.currentLocation.getTileIndexAt(tx, ty, "Back")) ||
-                         farmer.currentLocation.doesTileHaveProperty(tx, ty, "Action", "Buildings") == "Movable")
-                    {
-                        tx -= ox;
-                        ty -= oy;
                         break;
-                    }
-                }
 
-                int currIndex = farmer.currentLocation.getTileIndexAt(e.Position.X, e.Position.Y, "Buildings");
-                farmer.currentLocation.removeTile(e.Position.X, e.Position.Y, "Buildings");
-                var buildings = farmer.currentLocation.Map.GetLayer("Buildings");
-                buildings.Tiles[tx, ty] = new StaticTile(buildings, farmer.currentLocation.Map.TileSheets[0], BlendMode.Additive, currIndex);
-                farmer.currentLocation.setTileProperty(tx, ty, "Buildings", "Action", "Movable");
-                Game1.playSound("throw");
-
-                if (farmer.currentLocation.getTileIndexAt(tx, ty, "Back") == target)
-                {
-                    var back = farmer.currentLocation.Map.GetLayer("Back");
-                    back.Tiles[tx, ty] = new StaticTile(back, farmer.currentLocation.Map.TileSheets[0], BlendMode.Additive, 257);
-                    var pos = new Vector2(14, 13);
-                    var chest = new Chest(0, new List<Item>(new Item[] { new SObject(Mod.Ja.GetObjectId("Festive Big Key (B)"), 1) }), pos);
-                    farmer.currentLocation.overlayObjects[pos] = chest;
-                    Game1.playSound("secret1");
-
-                    for (int ix = 0; ix < back.LayerWidth; ++ix)
-                    {
-                        for (int iy = 0; iy < back.LayerHeight; ++iy)
+                    case "ItemPuzzle":
                         {
-                            if (farmer.currentLocation.doesTileHaveProperty(ix, iy, "Action", "Buildings") == "Movable")
-                                farmer.currentLocation.removeTile(ix, iy, "Buildings");
+                            string[] tokens = e.ActionString.Split(' ');
+                            int item = int.Parse(tokens[1]);
+                            if (farmer.ActiveObject?.ParentSheetIndex == item)
+                            {
+                                farmer.removeFirstOfThisItemFromInventory(item);
+                                farmer.currentLocation.removeTileProperty(e.Position.X, e.Position.Y, "Buildings", "Action");
+
+                                int warpIndex = farmer.currentLocation.Map.GetLayer("Buildings").Tiles[e.Position.X, e.Position.Y].TileIndex - 32;
+                                var back = farmer.currentLocation.Map.GetLayer("Back");
+                                back.Tiles[e.Position.X, e.Position.Y + 3] = new StaticTile(back, farmer.currentLocation.Map.TileSheets[0], BlendMode.Additive, warpIndex);
+
+                                var warp = new Warp(e.Position.X, e.Position.Y + 3, tokens[2], 7, 9, false);
+                                farmer.currentLocation.warps.Add(warp);
+
+                                Game1.playSound("secret1");
+                            }
+                            else
+                                Game1.drawDialogueNoTyping(Game1.content.LoadString("Strings\\StringsFromMaps:FrostDungeon.ItemPuzzle"));
                         }
-                    }
+                        break;
+
+                    case "BossKeyHalf":
+                        {
+                            string[] tokens = e.ActionString.Split(' ');
+
+                            int key = Mod.Ja.GetObjectId("Festive Big Key (" + tokens[1] + ")");
+                            if (farmer.ActiveObject?.ParentSheetIndex == key)
+                            {
+                                farmer.removeFirstOfThisItemFromInventory(key);
+
+                                farmer.currentLocation.removeTile(e.Position.X, e.Position.Y - 1, "Front");
+                                farmer.currentLocation.removeTile(e.Position.X, e.Position.Y, "Buildings");
+
+                                Game1.playSound("secret1");
+
+                                if (++Mod.BossKeysUsed >= 2)
+                                {
+                                    var buildings = farmer.currentLocation.Map.GetLayer("Buildings");
+                                    int bx = 9, by = 4;
+                                    for (int i = 0; i < 4; ++i)
+                                    {
+                                        int ix = i % 2, iy = i / 2;
+                                        int x = bx + ix, y = @by + iy;
+                                        buildings.Tiles[x, y].TileIndex += 2;
+
+                                        string prop = farmer.currentLocation.doesTileHaveProperty(x, y, "UnlockAction", "Buildings");
+                                        if (!string.IsNullOrEmpty(prop))
+                                        {
+                                            farmer.currentLocation.setTileProperty(x, y, "Buildings", "Action", prop);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case "Movable":
+                        {
+                            int dir = farmer.FacingDirection;
+                            int ox = 0, oy = 0;
+                            switch (dir)
+                            {
+                                case 2: oy = 1; break;
+                                case 0: oy = -1; break;
+                                case 3: ox = -1; break;
+                                case 1: ox = 1; break;
+                            }
+
+                            int[] validPuzzleTiles = new[]
+                            {
+                                240, 241, 242, 243,
+                                256, 257, 258, 259, 260,
+                                272, 273, 274, 275, 276
+                            };
+                            int target = 243;
+
+                            int tx = e.Position.X, ty = e.Position.Y;
+                            while (true)
+                            {
+                                tx += ox;
+                                ty += oy;
+                                if (!validPuzzleTiles.Contains(farmer.currentLocation.getTileIndexAt(tx, ty, "Back")) || farmer.currentLocation.doesTileHaveProperty(tx, ty, "Action", "Buildings") == "Movable")
+                                {
+                                    tx -= ox;
+                                    ty -= oy;
+                                    break;
+                                }
+                            }
+
+                            int curIndex = farmer.currentLocation.getTileIndexAt(e.Position.X, e.Position.Y, "Buildings");
+                            farmer.currentLocation.removeTile(e.Position.X, e.Position.Y, "Buildings");
+                            var buildings = farmer.currentLocation.Map.GetLayer("Buildings");
+                            buildings.Tiles[tx, ty] = new StaticTile(buildings, farmer.currentLocation.Map.TileSheets[0], BlendMode.Additive, curIndex);
+                            farmer.currentLocation.setTileProperty(tx, ty, "Buildings", "Action", "Movable");
+                            Game1.playSound("throw");
+
+                            if (farmer.currentLocation.getTileIndexAt(tx, ty, "Back") == target)
+                            {
+                                var back = farmer.currentLocation.Map.GetLayer("Back");
+                                back.Tiles[tx, ty] = new StaticTile(back, farmer.currentLocation.Map.TileSheets[0], BlendMode.Additive, 257);
+                                var pos = new Vector2(14, 13);
+                                var chest = new Chest(0, new List<Item>(new Item[] { new SObject(Mod.Ja.GetObjectId("Festive Big Key (B)"), 1) }), pos);
+                                farmer.currentLocation.overlayObjects[pos] = chest;
+                                Game1.playSound("secret1");
+
+                                for (int ix = 0; ix < back.LayerWidth; ++ix)
+                                {
+                                    for (int iy = 0; iy < back.LayerHeight; ++iy)
+                                    {
+                                        if (farmer.currentLocation.doesTileHaveProperty(ix, iy, "Action", "Buildings") == "Movable")
+                                            farmer.currentLocation.removeTile(ix, iy, "Buildings");
+                                    }
+                                }
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -811,7 +817,7 @@ namespace TheftOfTheWinterStar
                     if (MeleeWeapon.defenseCooldown > 0)
                         return;
 
-                    new Beam(Game1.player, e.Cursor.AbsolutePixels);
+                    _ = new Beam(Game1.player, e.Cursor.AbsolutePixels);
                 }
             }
         }
@@ -825,19 +831,18 @@ namespace TheftOfTheWinterStar
                 int posX = (Game1.viewport.Width - this.BossBarBg.Width * 4) / 2;
                 b.Draw(this.BossBarBg, new Vector2(posX, 5), null, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
 
-                float perc = (float)witch.Health / Witch.WitchHealth;
-                Rectangle r = new Rectangle(0, 0, (int)(this.BossBarFg.Width * perc), this.BossBarFg.Height);
-                if (r.Width > 0)
+                float percent = (float)witch.Health / Witch.WitchHealth;
+                Rectangle sourceRect = new Rectangle(0, 0, (int)(this.BossBarFg.Width * percent), this.BossBarFg.Height);
+                if (sourceRect.Width > 0)
                 {
-                    b.Draw(this.BossBarFg, new Vector2(posX, 5), r, Color.Green, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
+                    b.Draw(this.BossBarFg, new Vector2(posX, 5), sourceRect, Color.Green, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1);
                 }
             }
         }
 
         private void BombExploded(object sender, EventArgsBombExploded e)
         {
-            var who = sender as Farmer;
-            if (!who.currentLocation.Name.StartsWith("FrostDungeon."))
+            if (sender is not Farmer who || !who.currentLocation.Name.StartsWith("FrostDungeon."))
                 return;
 
             int radius = e.Radius + 2;

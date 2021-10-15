@@ -56,7 +56,7 @@ namespace Magic.Framework.Integrations
             // add channel
             try
             {
-                addChannel.Invoke(null, new object[] { "magic", (string)Mod.Instance.Helper.Translation.Get("tv.analyzehints.name"), (Action<TV, TemporaryAnimatedSprite, Farmer, string>)OnTvChannelSelected });
+                addChannel.Invoke(null, new object[] { "magic", I18n.Tv_Analyzehints_Name(), (Action<TV, TemporaryAnimatedSprite, Farmer, string>)OnTvChannelSelected });
             }
             catch (Exception ex)
             {
@@ -87,7 +87,7 @@ namespace Magic.Framework.Integrations
                 // register with PyTK
                 try
                 {
-                    showProgram.Invoke(null, new object[] { screen, (string)Mod.Instance.Helper.Translation.Get(transKey), null, null });
+                    showProgram.Invoke(null, new object[] { screen, I18n.GetByKey(transKey), null, null });
                 }
                 catch (Exception ex)
                 {

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using Magic.Framework;
-using Magic.Framework.Apis;
 using SpaceShared;
 using SpaceShared.APIs;
 using SpaceShared.ConsoleCommands;
@@ -27,7 +26,7 @@ namespace Magic
         public static Mod Instance;
         public static Configuration Config { get; private set; }
 
-        public static JsonAssetsApi Ja;
+        public static IJsonAssetsApi Ja;
         public static IManaBarApi Mana;
 
         public Api Api;
@@ -40,6 +39,7 @@ namespace Magic
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -79,17 +79,82 @@ namespace Magic
                 var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
                 if (configMenu != null)
                 {
-                    configMenu.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                    configMenu.RegisterSimpleOption(this.ModManifest, "Altar Location", "The (internal) name of the location the magic altar should be placed at.", () => Mod.Config.AltarLocation, val => Mod.Config.AltarLocation = val);
-                    configMenu.RegisterSimpleOption(this.ModManifest, "Altar X", "The X tile position of where the magic altar should be placed.", () => Mod.Config.AltarX, val => Mod.Config.AltarX = val);
-                    configMenu.RegisterSimpleOption(this.ModManifest, "Altar Y", "The Y tile position of where the magic altar should be placed.", () => Mod.Config.AltarY, val => Mod.Config.AltarY = val);
-                    configMenu.RegisterSimpleOption(this.ModManifest, "Key: Cast", "The key to initiate casting a spell.", () => Mod.Config.Key_Cast, val => Mod.Config.Key_Cast = val);
-                    configMenu.RegisterSimpleOption(this.ModManifest, "Key: Swap Spells", "The key to swap spell sets.", () => Mod.Config.Key_SwapSpells, val => Mod.Config.Key_SwapSpells = val);
-                    configMenu.RegisterSimpleOption(this.ModManifest, "Key: Spell 1", "The key for spell 1.", () => Mod.Config.Key_Spell1, val => Mod.Config.Key_Spell1 = val);
-                    configMenu.RegisterSimpleOption(this.ModManifest, "Key: Spell 2", "The key for spell 2.", () => Mod.Config.Key_Spell2, val => Mod.Config.Key_Spell2 = val);
-                    configMenu.RegisterSimpleOption(this.ModManifest, "Key: Spell 3", "The key for spell 3.", () => Mod.Config.Key_Spell3, val => Mod.Config.Key_Spell3 = val);
-                    configMenu.RegisterSimpleOption(this.ModManifest, "Key: Spell 4", "The key for spell 4.", () => Mod.Config.Key_Spell4, val => Mod.Config.Key_Spell4 = val);
-                    configMenu.RegisterSimpleOption(this.ModManifest, "Key: Spell 5", "The key for spell 5.", () => Mod.Config.Key_Spell5, val => Mod.Config.Key_Spell5 = val);
+                    configMenu.Register(
+                        mod: this.ModManifest,
+                        reset: () => Mod.Config = new Configuration(),
+                        save: () => this.Helper.WriteConfig(Mod.Config),
+                        titleScreenOnly: true
+                    );
+                    configMenu.AddTextOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_AltarLocation_Name,
+                        tooltip: I18n.Config_AltarLocation_Tooltip,
+                        getValue: () => Mod.Config.AltarLocation,
+                        setValue: value => Mod.Config.AltarLocation = value
+                    );
+                    configMenu.AddNumberOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_AltarX_Name,
+                        tooltip: I18n.Config_AltarX_Tooltip,
+                        getValue: () => Mod.Config.AltarX,
+                        setValue: value => Mod.Config.AltarX = value
+                    );
+                    configMenu.AddNumberOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_AltarY_Name,
+                        tooltip: I18n.Config_AltarY_Tooltip,
+                        getValue: () => Mod.Config.AltarY,
+                        setValue: value => Mod.Config.AltarY = value
+                    );
+                    configMenu.AddKeybind(
+                        mod: this.ModManifest,
+                        name: I18n.Config_CastKey_Name,
+                        tooltip: I18n.Config_CastKey_Tooltip,
+                        getValue: () => Mod.Config.Key_Cast,
+                        setValue: value => Mod.Config.Key_Cast = value
+                    );
+                    configMenu.AddKeybind(
+                        mod: this.ModManifest,
+                        name: I18n.Config_SwapSpellsKey_Name,
+                        tooltip: I18n.Config_SwapSpellsKey_Tooltip,
+                        getValue: () => Mod.Config.Key_SwapSpells,
+                        setValue: value => Mod.Config.Key_SwapSpells = value
+                    );
+                    configMenu.AddKeybind(
+                        mod: this.ModManifest,
+                        name: () => I18n.Config_SelectSpellKey_Name(slotNumber: 1),
+                        tooltip: () => I18n.Config_SelectSpellKey_Tooltip(slotNumber: 1),
+                        getValue: () => Mod.Config.Key_Spell1,
+                        setValue: value => Mod.Config.Key_Spell1 = value
+                    );
+                    configMenu.AddKeybind(
+                        mod: this.ModManifest,
+                        name: () => I18n.Config_SelectSpellKey_Name(slotNumber: 2),
+                        tooltip: () => I18n.Config_SelectSpellKey_Tooltip(slotNumber: 2),
+                        getValue: () => Mod.Config.Key_Spell2,
+                        setValue: value => Mod.Config.Key_Spell2 = value
+                    );
+                    configMenu.AddKeybind(
+                        mod: this.ModManifest,
+                        name: () => I18n.Config_SelectSpellKey_Name(slotNumber: 3),
+                        tooltip: () => I18n.Config_SelectSpellKey_Tooltip(slotNumber: 3),
+                        getValue: () => Mod.Config.Key_Spell3,
+                        setValue: value => Mod.Config.Key_Spell3 = value
+                    );
+                    configMenu.AddKeybind(
+                        mod: this.ModManifest,
+                        name: () => I18n.Config_SelectSpellKey_Name(slotNumber: 4),
+                        tooltip: () => I18n.Config_SelectSpellKey_Tooltip(slotNumber: 4),
+                        getValue: () => Mod.Config.Key_Spell4,
+                        setValue: value => Mod.Config.Key_Spell4 = value
+                    );
+                    configMenu.AddKeybind(
+                        mod: this.ModManifest,
+                        name: () => I18n.Config_SelectSpellKey_Name(slotNumber: 5),
+                        tooltip: () => I18n.Config_SelectSpellKey_Tooltip(slotNumber: 5),
+                        getValue: () => Mod.Config.Key_Spell5,
+                        setValue: value => Mod.Config.Key_Spell5 = value
+                    );
                 }
             }
 
@@ -106,14 +171,14 @@ namespace Magic
 
             // hook Json Assets
             {
-                var api = this.Helper.ModRegistry.GetApi<JsonAssetsApi>("spacechase0.JsonAssets");
+                var api = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
                 if (api == null)
                 {
                     Log.Error("No Json Assets API???");
                     return;
                 }
                 Mod.Ja = api;
-                api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
+                api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
             }
         }
 

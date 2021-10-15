@@ -1,17 +1,141 @@
 ﻿{
+    /*********
+    ** Festival
+    *********/
+    // info
+    "festival.name": "Szörf fesztivál",
+
+    // race
+    "race.start.question": "Ready for the race?", // TODO
+    "race.start.yes": "Yes, let's start.", // TODO
+    "race.start.no": "Not yet.", // TODO
+    "race.instructions": "Elemek leírása (Jobb gombbal használható):^ Csillaghulló lendület - Ideiglenes sebesség növelés.^ Gömbhal lövedék - Gömbhal kilövése egy másik játékosra.^ Viharfelhő - Áramütés az 1. helyen lévő versenyzőnek.^ Junimo erő - Legyőzhetetlenség és egy kis sebesség növelés.",
+    "race.lewis-start.0": "Készülj...",
+    "race.lewis-start.1": "Vigyázz.....",
+    "race.lewis-start.2": "Rajt!",
+    "race.winner.player": "Gratulálok {{name}}!#$b#Valahányszor látunk, mindig valami újat tudunk meg rólad! Szerintem egyikünk sem tudta, hogy ilyen jól tudsz szörfözni.#$b#Gyere és vedd át a nyereményed.",
+    "race.winner.harvey": "Gratulálok Harvey! Nem volt rossz ez első próbálkozásnak. Itt van a nyereményed.",
+    "race.winner.emily": "Gratulálok Emily! A verseny kiélezett lesz a következő évben. Itt van a nyereményed.",
+    "race.winner.maru": "Gratulálok Maru! Fantasztikus voltál. Itt van a nyereményed.",
+    "race.winner.shane": "Gratulálok Shane! Jas egész idő alatt szurkolt. Itt van a nyereményed.",
+
+    // dialogue
+    "npc.Abigail_spouse": "@. Tudod, miért félek a szörfözéstől?#$b#Valaki az interneten egy tengeri szörnyről beszélt, ami a víz alatt él. Tudom, hogy nem szabad elhinni mindent, amit olvasok, de annyira valóságosnak hangzott!",
+    "npc.Leah_spouse": "Ha rész veszel a versenyen, támogatni foglak!$h",
+    "npc.Maru_spouse": "Gondolod, hogy legyőzhetsz a szörf versenyen? Mit szólsz ahhoz, hogy a vesztes ma este elkészíti a vacsorát?",
+    "npc.Penny_spouse": "@. Döntöttél-e már, hogy részt veszel a szörf versenyen? Szurkolni fogok neked! Meg tudod csinálni!$h",
+    "npc.Haley_spouse": "Szeretek a tengerparton maradni és nézni, hogy a többiek szörföznek. Emily szerint jó lenne, ha új izgalmas dolgokat próbálnék ki, de ez egy kicsit sok nekem.",
+    "npc.Sebastian_spouse": "Szerinted mi van a víz alatt? Abigail küldött egy cikket, amiben egy víz alatt élő tengeri szörnyről írtak. Szerinted ez igaz?",
+    "npc.Sam_spouse": "Szerettem volna részt venni a versenyen, de anyukám úgy gondolja, hogy az a legjobb ha nem veszek rész a versenyen Vincent miatt. Nem akarja, hogy ötleteket adjon neki és ezért nem hibáztatom. Vincent egy kicsit vad testvér.",
+    "npc.Alex_spouse": "Nem kell aggódnod miattam. Mivel Sam nem tudott csatlakozni a versenyhez ezért visszavontam a nevezésemet. Pedig megtudtuk volna ki a leggyorsabb: Én vagy a gördeszkás.",
+    "npc.Harvey_spouse": "Kérlek, vigyázz magadra @. Nem akarom hogy a fejem sziklának csapódjon.",
+    "npc.Elliott_spouse": "Néha hiányzik az a régi huzatos kunyhó. De a házamat sokkal jobban szeretem.",
+    "npc.Emily_spouse": "Folyamatosan megpróbálom rávenni Haleyt, hogy próbáljon ki valami újat. De ő mindig csak arról beszél, hogy végre kijusson Pelikán városból. De a városban hol lehet a hullámokon lovagolni?",
+    "npc.Abigail": "@, tervezed, hogy részt veszel a versenyen?#$b#Szerettem volna részt venni a versenyen, de kicsit félek attól, hogy mi van a vízben...$3",
+    "npc.Emily": "Haley mindig szeretne izgalmas dolgokat kipróbálni, de úgy tűnik, hogy a versenyen nem akar részt venni.#$b#So Szóval csatlakozni fogok helyette! Sok szernecsét, @!$h",
+    "npc.Robin": "Lewis megkért, hogy készítsek néhány szörfdeszkát, mivel a külföldről behozottak túl drágák voltak.",
+    "npc.Demetrius": "Tudtad, hogy Maru szörfözik? Én nem tudtam! Ez a völgy tele van titkokkal, még olyanokkal is melyek nem tudományosak.",
+    "npc.Maru": "Nos, egy kicsit ideges vagyok a Szörf verseny miatt, de Harvey azt mondta, hogy ő is csatlakozni fog a versenyhez.",
+    "npc.Sebastian": "Kell egy kis izgalom, de ragaszkodom a motorkerékpáromhoz.",
+    "npc.Linus": "Sokkal jobban szeretek a víz alatt úszni, mint felette.",
+    "npc.Pierre": "Vess egy pillantást a Robin által készített szörfdeszkákra. Megtiszteltetés számomra, hogy ilyen remek termékeket tudok árulni.",
+    "npc.Caroline": "Mindig szeretem az ilyen típusú fesztiválokat. Nagyon jó ha a barátaim és jó ételek vesznek körül, meg a gyerekeket szórakozni látom.",
+    "npc.Alex": "Meg akartam mutatni ezeket az izmokat, és versenyeztem Sammel, de az utolsó pillanatban Sam feladta.",
+    "npc.George": "Fiatal koromban szörföztem. Lehet, hogy nem hiszel ennek az öregembernek, de jártam Oahu és Tavarua szigetén.",
+    "npc.Evelyn": "Tudtad, hogy George régen szörfözött?#$b#Nem ismertem még amikor szörfözött, de mutatott nekem képeket, melyeken a hullámokon lovagol.#$b#Mindig olyan jóképű volt.$h",
+    "npc.Lewis": "Ha még nem tetted meg, ne felejtsd el feltölteni és meggyújtani a máglyát.#$b#Azt akarjuk, hogy mindneki melegen legyen a verseny alatt.",
+    "npc.Clint": "Életem nagy részét Pelikán városban töltöttem @. Soha nem láttam, hogy bárki is szörfözött volna ezeken a vizeken.$s",
+    "npc.Penny": "Későbbre vártam a szörf fesztivált! @, gondolod, hogy el kellne kezdenünk készülődni a következő évre?",
+    "npc.Pam": "@, még soha nem volt ilyen fesztivál a völgyben, mielőtt idejöttél. Lewis nem egyedül gondolta ezt ki.",
+    "npc.Haley": "Emily folyamatosan azt mondja, hogy próbáljam ki a szörfözést, de nem akarom, hogy tönkremenjen a hajam.#$b#Úszósapka? Nem! Szörnyen néznék ki.$a",
+    "npc.Jodi": "Meggyőztem a gyerekeimet hogy az idén ne szörfözzenek.#$b#Sam természetesen gördeszkázhat, de nem akarom, hogy megsérüljenek ha sziklába ütköznek, vagy hálóba akadnak.#$b#Vincent? Még túl fiatal, de talán majd idősebb korában.",
+    "npc.Kent": "Jodinak az idén hagynia kellett volna a gyerekeket szörfözni. Fiatalok. Több pozitív dolgot kellene átélniük az életben.",
+    "npc.Marlon": "Nincsenek olyan kardok vagy íjak, melyek károsíthatnák a hullámokat. Sok szerencsét @!",
+    "npc.Sam": "Alex szörfözni szeretne, de én csak pihenni akarok. Tökéletes kifogást találtam ki.",
+    "npc.Leah": "A tengerparton maradok, hogy ihletet szerezzek a következő művemhez. Talán hívhatnám 'Hullámvölgy'-nek.",
+    "npc.Shane": "Várom a következő versenyt! @, van egy extra deszkám, ha részt szeretnél venni.",
+    "npc.Marnie": "Lewis mondta, hogy Shane jelentkezett a versenyre. Először meglepődtem, de tudom, hogy Shane nyerni fog.",
+    "npc.Elliott": "Nem szeretek a házam előtt állni, de szeretem ezt a fesztivált. Nagyon szórakoztató.#$b#Gyakorolnom kellene a szörfdeszkán való egyensúlyozást az egyik dagály medencében.",
+    "npc.Gus": "Mindig szeretek egy napot a Szalonon kívül eltölteni. Nagyszerű ez a fesztivál.$h",
+    "npc.Dwarf": "A felszínen az emberek nem félnek a víztől. Meglovagolják. De a föld alatt? A víz a repedéseken keresztül áramlik be.",
+    "npc.Wizard": "Szükséged van egy titokzatos varázslatra, mely javítja a szerencsédet a játékban?",
+    "npc.Harvey": "*Nyel* Miért vállaltam el a részvételt... Még soha nem szörföztem.$s",
+    "npc.Sandy": "Egy fesztivál! Nagyon izgatott vagyok!",
+    "npc.Jas": "Shane megnyeri a Szörf versenyt!$h",
+    "npc.Vincent": "Anya azt mondta, hogy még nem vagyok elég idős a szörfözéshez.$s",
+    "npc.Willy": "Néha hallom, hogy a hullámok a mólóhoz csapódnak. Remélem a gyereket tudják mit csinálnak. A tenger elég vad.",
+
+
+    /*********
+    ** Map text
+    *********/
     "ui.laps": "Kör: {{laps}}/2",
     "ui.ranking": "Rangsor",
     "ui.wood": "Rakj fát a máglyára",
     "dialog.wood": "50 fát tettél a máglyára.",
     "dialog.shorts": "...Ez fura. Miért lett lila a tűz?",
-    "dialog.prizemoney": "1500g-t kaptál.",
+    "dialog.prize-money": "1500g-t kaptál.",
     "item.boost": "Csillaghulló lendület",
-    "item.homingprojectile": "Gömbhal lövedék",
-    "item.firstplaceprojectile": "Villámfelhő",
+    "item.homing-projectile": "Gömbhal lövedék",
+    "item.first-place-projectile": "Villámfelhő",
     "item.invincibility": "Junimo erő",
     "secret.text": "A táblán ez áll: Szeretne most és a jövőben is sikeres lenni? Tegyen ajánlatot.",
     "secret.yes": "Szeretnél 100.000g-t tenni a dobozba?",
     "secret.no": "Mégsem.",
     "secret.broke": "Ezt nem engedheted meg magadnak.",
-    "secret.purchased": "Valmi furcsát érzel."
+    "secret.purchased": "Valmi furcsát érzel.",
+
+
+    /*********
+    ** Craftable items
+    *********/
+    "craftables.surfboard-brown.name": "Barna szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-brown.description": "Egy barna szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfboard-cool.name": "Menő szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-cool.description": "Menő élénkzöld mintás szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfboard-hibiscus.name": "Hibiszkusz szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-hibiscus.description": "Rózsaszín és sárga hibiszkusszal díszített szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfboard-red.name": "Piros szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-red.description": "Piros szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfboard-stripe.name": "Csíkos szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-stripe.description": "Kék csíkos szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfboard-white.name": "Fehér szörfdeszka (Madárijesztő)",
+    "craftables.surfboard-white.description": "Fehér szörfdeszka. Madárijesztőként is használható.",
+
+    "craftables.surfing-trophy.name": "Szörf trófea",
+    "craftables.surfing-trophy.description": "A Szörf fesztivál megnyeréséért járó trófea.",
+
+
+    /*********
+    ** Hat items
+    *********/
+    "hats.snorkel-mask-black.name": "Fekete búvármaszk",
+    "hats.snorkel-mask-black.description": "Csak dekoráció.",
+
+    "hats.snorkel-mask-blue.name": "Kék búvármaszk",
+    "hats.snorkel-mask-blue.description": "Csak dekoráció.",
+
+    "hats.snorkel-mask-green.name": "Zöld búvármaszk",
+    "hats.snorkel-mask-green.description": "Csak dekoráció.",
+
+    "hats.snorkel-mask-orange.name": "Narancssárga búvármaszk",
+    "hats.snorkel-mask-orange.description": "Csak dekoráció.",
+
+    "hats.snorkel-mask-pink.name": "Rózsaszín búvármaszk",
+    "hats.snorkel-mask-pink.description": "Csak dekoráció.",
+
+    "hats.snorkel-mask-red.name": "Piros búvármaszk",
+    "hats.snorkel-mask-red.description": "Csak dekoráció.",
+
+
+    /*********
+    ** Object items
+    *********/
+    "items.cheap-amulet.name": "Olcsó amulett?",
+    "items.cheap-amulet.description": "Valami nem stimmel ezzel az amulettel. Vajon miért olyan olcsó?"
 }

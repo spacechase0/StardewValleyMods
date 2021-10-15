@@ -1,4 +1,15 @@
 ﻿{
+    /*********
+    ** General text
+    *********/
+    "spell.learn": "你学会了一个咒语：{{spellName}}",
+    "spell.learn.ancient": "你学会了一个远古咒语： {{spellName}}",
+    "altar.glow": "一个发光的祭坛",
+
+
+    /*********
+    ** Wizard learn-magic event
+    *********/
     "event.wizard.1": "现在是你学习魔法的时候了。",
     "event.wizard.2": "我已经...调整了皮埃尔店里的由巴祭坛供你使用。 ",
     "event.wizard.3": "我会教你基本的奥术魔法，但剩下的你必须自己去发现。",
@@ -10,6 +21,10 @@
     "event.wizard.9": "(这些热键可以在magic的配置文件中进行调整。)",
     "event.wizard.abovehead": "魔法",
 
+
+    /*********
+    ** TV channel
+    *********/
     "tv.analyzehints.name": "魔力解析",
     "tv.analyzehints.notmagical": "*static*",
     "tv.analyzehints.1": "想用魔法在农场里干活吗？试着分析你的工具。",
@@ -25,11 +40,10 @@
     "tv.analyzehints.11": "大多数人用梯子下到地下，但我看到一个人施了一个咒语，直接穿过地层。",
     "tv.analyzehints.12": "我看到有人念了一个咒法来恢复法力！？这项秘法震撼了我。传说他们是在钓岩浆鳗鱼的时候学会这门秘法的。 ",
 
-    "spell.learn": "你学会了一个咒语：{{spellName}}",
-    "spell.learn.ancient": "你学会了一个远古咒语： {{spellName}}",
 
-    "altar.glow": "一个发光的祭坛",
-
+    /*********
+    ** Magic spells
+    *********/
     "school.arcane.name": "神秘",
     "school.toil.name": "劳作",
     "school.nature.name": "自然",
@@ -91,5 +105,34 @@
     "spell.eldritch:lucksteal.name": "幸运窃贼",
     "spell.eldritch:lucksteal.desc": "触媒：你所爱之人的幸福",
     "spell.eldritch:spirit.name": "唤灵",
-    "spell.eldritch:spirit.desc": "召唤迷失的灵魂为你而战"
+    "spell.eldritch:spirit.desc": "召唤迷失的灵魂为你而战",
+
+
+    /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "魔力药水",
+    "objects.mana-potion.description": "恢复生命和法力。",
+
+    "objects.travel-core.name": "传送核心",
+    "objects.travel-core.description": "触媒之一。",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // TODO
+    "config.altar-location.name": "Altar Location",
+    "config.altar-location.tooltip": "The (internal) name of the location the magic altar should be placed at.",
+    "config.altar-x.name": "Altar X",
+    "config.altar-x.tooltip": "The X tile position where the magic altar should be placed.",
+    "config.altar-y.name": "Altar Y",
+    "config.altar-y.tooltip": "The Y tile position where the magic altar should be placed.",
+
+    "config.cast-key.name": "Key: Cast",
+    "config.cast-key.tooltip": "The key to initiate casting a spell.",
+    "config.swap-spells-key.name": "Key: Swap Sells",
+    "config.swap-spells-key.tooltip": "The key to swap spell sets.",
+    "config.select-spell-key.name": "Key: Spell {{slotNumber}}",
+    "config.select-spell-key.tooltip": "The key to select spell {{slotNumber}}."
 }

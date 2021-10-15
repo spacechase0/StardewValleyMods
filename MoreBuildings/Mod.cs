@@ -7,6 +7,7 @@ using MoreBuildings.Buildings.BigShed;
 using MoreBuildings.Buildings.FishingShack;
 using MoreBuildings.Buildings.MiniSpa;
 using MoreBuildings.Buildings.SpookyShed;
+using MoreBuildings.Framework;
 using MoreBuildings.Patches;
 using PyTK.CustomElementHandler;
 using Spacechase.Shared.Patching;
@@ -32,6 +33,7 @@ namespace MoreBuildings
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -210,18 +212,10 @@ namespace MoreBuildings
 
         public void Edit<T>(IAssetData asset)
         {
-            //*
             asset.AsDictionary<string, string>().Data.Add("Shed2", "388 750/7/3/3/2/-1/-1/Shed2/Big Shed/An even bigger Shed./Upgrades/Shed/96/96/20/null/Farm/25000/false");
-            asset.AsDictionary<string, string>().Data.Add("SpookyShed", "156 10 768 25 769 25 337 20 388 500/7/3/3/2/-1/-1/SpookyShed/Spooky Shed/An empty building. But spooky, too./Buildings/none/96/96/20/null/Farm/25000/false");
-            asset.AsDictionary<string, string>().Data.Add("FishShack", "163 1 390 250 388 500/7/3/3/2/-1/-1/FishShack/Fishing Shack/A shack for fishing./Buildings/none/96/96/20/null/Farm/50000/false");
-            asset.AsDictionary<string, string>().Data.Add("MiniSpa", "337 25 390 999 388 999/7/3/3/2/-1/-1/MiniSpa/Mini Spa/A place to relax and recharge./Buildings/none/96/96/20/null/Farm/250000/false");
-            //*/
-            /*
-            asset.AsDictionary<string, string>().Data.Add("Shed2", "388 1/7/3/3/2/-1/-1/Shed2/Big Shed/An even bigger Shed./Upgrades/Shed/96/96/20/null/Farm/25000/false");
-            asset.AsDictionary<string, string>().Data.Add("SpookyShed", "388 1/7/3/3/2/-1/-1/SpookyShed/Spooky Shed/An empty building. But spooky, too./Buildings/none/96/96/20/null/Farm/25000/false");
-            asset.AsDictionary<string, string>().Data.Add("FishShack", "388 1/7/3/3/2/-1/-1/FishShack/Fishing Shack/A shack for fishing./Buildings/none/96/96/20/null/Farm/50000/false");
-            asset.AsDictionary<string, string>().Data.Add("MiniSpa", "388 1/7/3/3/2/-1/-1/MiniSpa/Mini Spa/A place to relax and recharge./Buildings/none/96/96/20/null/Farm/250000/false");
-            //*/
+            asset.AsDictionary<string, string>().Data.Add("SpookyShed", $"156 10 768 25 769 25 337 20 388 500/7/3/3/2/-1/-1/SpookyShed/{I18n.SpookyShed_Name()}/{I18n.SpookyShed_Description()}/Buildings/none/96/96/20/null/Farm/25000/false");
+            asset.AsDictionary<string, string>().Data.Add("FishShack", $"163 1 390 250 388 500/7/3/3/2/-1/-1/FishShack/{I18n.FishingShack_Name()}/{I18n.FishingShack_Description()}/Buildings/none/96/96/20/null/Farm/50000/false");
+            asset.AsDictionary<string, string>().Data.Add("MiniSpa", $"337 25 390 999 388 999/7/3/3/2/-1/-1/MiniSpa/{I18n.MiniSpa_Name()}/{I18n.MiniSpa_Description()}/Buildings/none/96/96/20/null/Farm/250000/false");
         }
 
         public bool CanLoad<T>(IAssetInfo asset)

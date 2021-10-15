@@ -1,0 +1,25 @@
+﻿{
+    // skill
+    "skill.name": "Luck",
+    "skill.level-up": "Luck Increased",
+
+    // professions
+    "fortunate.name": "Fortunate",
+    "fortunate.desc": "Better daily luck.",
+    "lucky.name": "Lucky",
+    "lucky.desc": "20% chance for max daily luck.",
+    "popular-helper.name": "Popular Helper",
+    "popular-helper.desc": "Daily quests occur three times as often.",
+    "shooting-star.name": "Shooting Star",
+    "shooting-star.desc": "Nightly events occur twice as often.",
+    "spirit-child.name": "Spirit Child",
+    "spirit-child.desc": "Giving gifts makes junimos happy. They might help your farm.\n(15% chance for some form of farm advancement.)",
+    "un-unlucky.name": "Un-unlucky",
+    "un-unlucky.desc": "Never have bad luck.",
+
+    // Spirit Child reward messages
+    "junimo-rewards.animal-friendship": "The junimos made some of your animals more fond of you!",
+    "junimo-rewards.grow-crops": "The junimos advanced your crops!",
+    "junimo-rewards.grow-grass": "The junimos grew your grass and repaired your fences!",
+    "junimo-rewards.prismatic-shard": "The junimos gave you a prismatic shard!"
+}

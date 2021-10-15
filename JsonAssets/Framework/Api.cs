@@ -16,7 +16,8 @@ namespace JsonAssets
         /*********
         ** Fields
         *********/
-        private readonly Action<string> LoadFolder;
+        /// <summary>Load a folder as a Json Assets content pack.</summary>
+        private readonly Action<string, ITranslationHelper> LoadFolder;
 
 
         /*********
@@ -31,14 +32,23 @@ namespace JsonAssets
         /*********
         ** Public methods
         *********/
-        public Api(Action<string> loadFolder)
+        /// <summary>Construct an instance.</summary>
+        /// <param name="loadFolder">Load a folder as a Json Assets content pack.</param>
+        public Api(Action<string, ITranslationHelper> loadFolder)
         {
             this.LoadFolder = loadFolder;
         }
 
+        /// <inheritdoc />
         public void LoadAssets(string path)
         {
-            this.LoadFolder(path);
+            this.LoadAssets(path, null);
+        }
+
+        /// <inheritdoc />
+        public void LoadAssets(string path, ITranslationHelper translations)
+        {
+            this.LoadFolder(path, translations);
         }
 
         public int GetObjectId(string name)

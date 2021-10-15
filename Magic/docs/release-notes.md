@@ -1,6 +1,15 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 0.6.0
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* The config UI is now translatable.
+* Moved item translations into the standard `i18n` folder.
+* Updated for Generic Mod Config Menu 1.5.0.
+* Fixed mana regen not starting until level 2, and slightly increase regen at higher levels.
+* Fixed controller not usable in Magic menus.
+
 ## 0.5.7
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 
