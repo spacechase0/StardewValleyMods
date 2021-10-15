@@ -1,4 +1,5 @@
 ﻿{
+    "Name": "Statue of Generosity",
     "Price": 100000,
     "CanPurchase": true,
     "PurchaseFrom": "Krobus",

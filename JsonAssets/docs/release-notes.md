@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Added support for storing item display text in standard `i18n` translation files ([see docs](author-guide.md#localization)).
+* Added support for using `default` as a locale in `NameLocalization` and `DescriptionLocalization` fields, which sets the default display name in any language (including English) which doesn't have a translation.
 * Added validation error if an item doesn't have the required name field.
 * Fixed objects/seeds in shops using `PurchasePrice` instead of `Price` as the sell price.
 

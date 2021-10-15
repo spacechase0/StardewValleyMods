@@ -383,7 +383,7 @@ namespace JsonAssets
             // validate
             if (!this.AssertHasName(crop, "crop", source, translations))
                 return;
-            if (!this.AssertHasName(crop.Seed, "crop seed", source, translations, discriminator: $"crop: {crop.Name}"))
+            if (!this.AssertHasName(crop.Seed, "crop seed", source, translations, discriminator: $"crop: {crop.Name}", fieldName: nameof(crop.SeedName)))
                 return;
 
             // save crop data
@@ -501,7 +501,7 @@ namespace JsonAssets
             // validate
             if (!this.AssertHasName(tree, "fruit tree", source, translations))
                 return;
-            if (!this.AssertHasName(tree.Sapling, "fruit tree sapling", source, translations, discriminator: $"fruit tree: {tree.Name}"))
+            if (!this.AssertHasName(tree.Sapling, "fruit tree sapling", source, translations, discriminator: $"fruit tree: {tree.Name}", fieldName: nameof(tree.SaplingName)))
                 return;
 
             // save data
@@ -1730,10 +1730,7 @@ namespace JsonAssets
                 string locale = pair.Key;
                 string text = pair.Value;
 
-                if (locale == "default")
-                    item.Name = text;
-                else
-                    item.NameLocalization[locale] = text;
+                item.NameLocalization[locale] = text;
             }
 
             foreach (var pair in translations.GetInAllLocales($"{item.TranslationKey}.description"))
@@ -1741,10 +1738,9 @@ namespace JsonAssets
                 string locale = pair.Key;
                 string text = pair.Value;
 
-                if (locale == "default")
+                item.DescriptionLocalization[locale] = text;
+                if (locale == "default" && string.IsNullOrWhiteSpace(item.Description))
                     item.Description = text;
-                else
-                    item.DescriptionLocalization[locale] = text;
             }
         }
 
@@ -1754,29 +1750,23 @@ namespace JsonAssets
         /// <param name="source">The mod which registered the item.</param>
         /// <param name="translations">The translations which have been applied to the name field, if any.</param>
         /// <param name="discriminator">A human-readable parenthetical phrase which provide more details in the error message, if any.</param>
-        private bool AssertHasName(DataNeedsId item, string typeLabel, IManifest source, ITranslationHelper translations, string discriminator = null)
+        /// <param name="fieldName">The field name to show in error messages.</param>
+        private bool AssertHasName(DataNeedsId item, string typeLabel, IManifest source, ITranslationHelper translations, string discriminator = null, string fieldName = nameof(DataNeedsId.Name))
         {
             if (!string.IsNullOrWhiteSpace(item.Name))
                 return true;
 
-            // build error message with the relevant details:
-            //    - ModName added object with no name.
-            //    - ModName added object with no name or TranslationKey value.
-            //    - ModName added object with no name. The mod provided translation key 'Key' but no translation helper.
-            //    - ModName added object with no name, and 'Key' was not found in the content pack's translations.
-            string suffix = discriminator is not null ? $" ({discriminator})" : "";
-            string error = $"{source.Name} added {typeLabel} with no name";
-            if (item is not ITranslatableItem translatable)
-                error += $"{suffix}.";
-            else if (string.IsNullOrWhiteSpace(translatable.TranslationKey))
-                error += $" or {nameof(translatable.TranslationKey)} value{suffix}.";
-            else if (translations is null)
-                error += $"{suffix}. The mod provided translation key '{translatable.TranslationKey}' but no translation helper.";
-            else
-                error += $"{suffix}, and '{translatable.TranslationKey}.name' wasn't found in the content pack's translations.";
+            // add translation key to error
+            if (item is ITranslatableItem translatable && !string.IsNullOrWhiteSpace(translatable.TranslationKey))
+            {
+                discriminator = string.Join(
+                    ", ",
+                    new[] { discriminator, $"translation key: {translatable.TranslationKey}" }.Where(p => !string.IsNullOrWhiteSpace(p))
+                );
+            }
 
             // log error
-            Log.Error($"Ignored invalid content: {error}");
+            this.Monitor.Log($"Ignored invalid content: {source.Name} added {typeLabel} with no {fieldName} field{(discriminator is not null ? $" ({discriminator})" : "")}.", LogLevel.Error);
             return false;
         }
 

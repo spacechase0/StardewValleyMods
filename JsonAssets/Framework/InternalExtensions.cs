@@ -77,20 +77,26 @@ namespace JsonAssets.Framework
         /// <param name="item">The item instance.</param>
         public static string LocalizedName(this ITranslatableItem item)
         {
-            LocalizedContentManager.LanguageCode lang = LocalizedContentManager.CurrentLanguageCode;
-            return item.NameLocalization.TryGetValue(lang.ToString(), out string localization)
-                ? localization
-                : item.Name;
+            return InternalExtensions.GetLocalized(item.Name, item.NameLocalization);
         }
 
         /// <summary>Get the translated description for the item, or the default description if not translated.</summary>
         /// <param name="item">The item instance.</param>
         public static string LocalizedDescription(this ITranslatableItem item)
         {
-            LocalizedContentManager.LanguageCode lang = LocalizedContentManager.CurrentLanguageCode;
-            return item.DescriptionLocalization.TryGetValue(lang.ToString(), out string localization)
-                ? localization
-                : item.Description;
+            return InternalExtensions.GetLocalized(item.Description, item.DescriptionLocalization) ?? string.Empty;
+        }
+
+        /// <summary>Get the translated text, or the default description if not translated.</summary>
+        /// <param name="defaultText">The default text if no translation matches.</param>
+        /// <param name="translations">The translations by language code.</param>
+        private static string GetLocalized(string defaultText, IDictionary<string, string> translations)
+        {
+            var locale = LocalizedContentManager.CurrentLanguageCode;
+
+            return translations.TryGetValue(locale.ToString(), out string translated) || translations.TryGetValue("default", out translated)
+                ? translated
+                : defaultText;
         }
     }
 }

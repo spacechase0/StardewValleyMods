@@ -1,4 +1,5 @@
 ﻿{
+    "Name": "Tempus Globe",
     "ProvidesLight": true,
     "Recipe": {
         "ResultCount": 1,
