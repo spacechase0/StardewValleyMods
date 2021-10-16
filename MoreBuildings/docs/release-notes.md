@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.1.1
+Released 16 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
 * Fixed 'no longer compatible' error when playing in Stardew Valley 1.5.4.
 
 ## 1.1.0
