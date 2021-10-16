@@ -232,10 +232,10 @@ namespace TheftOfTheWinterStar
 
             GameLocation location = Game1.currentLocation;
 
-            switch (location.Name)
+            switch (location?.Name)
             {
                 case "FrostDungeon.Arena":
-                    if ((this.SaveData.ArenaStage is ArenaStage.Stage1 or ArenaStage.Stage2) && location.characters.Count(npc => npc is Monster) <= 0)
+                    if ((this.SaveData.ArenaStage is ArenaStage.Stage1 or ArenaStage.Stage2) && !location.characters.Any(npc => npc is Monster))
                     {
                         Game1.playSound("questcomplete");
                         switch (this.SaveData.ArenaStage)
