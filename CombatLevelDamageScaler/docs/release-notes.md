@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed error when a monster is damaged indirectly in some cases.
+
 ## 1.1.0
 Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 
