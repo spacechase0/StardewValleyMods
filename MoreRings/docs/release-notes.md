@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed support for nested combined rings.
+
 ## 1.1.6
 Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

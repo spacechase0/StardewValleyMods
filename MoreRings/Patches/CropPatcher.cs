@@ -77,7 +77,7 @@ namespace MoreRings.Patches
                 return;
 
             CropPatcher.LastItem = item;
-            if (Game1.random.NextDouble() < Mod.Instance.HasRingEquipped(Mod.Instance.RingQuality) * 0.125)
+            if (Game1.random.NextDouble() < Mod.Instance.CountRingsEquipped(Mod.Instance.RingQuality) * 0.125)
             {
                 obj.Quality = obj.Quality switch
                 {

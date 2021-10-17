@@ -17,7 +17,7 @@ namespace MoreRings.Framework
         private static readonly Dictionary<int, SObject> DrawObjs = new();
         internal static void OnDrawWorld(object sender, RenderedWorldEventArgs args)
         {
-            if (!Context.IsWorldReady || Mod.Instance.HasRingEquipped(Mod.Instance.RingTrueSight) <= 0)
+            if (!Context.IsWorldReady || !Mod.Instance.HasRingEquipped(Mod.Instance.RingTrueSight))
                 return;
 
             var b = args.SpriteBatch;
@@ -26,39 +26,34 @@ namespace MoreRings.Framework
             {
                 var pos = pair.Key;
                 var obj = pair.Value;
-
                 int doDraw = -1;
-                if (Mod.Instance.HasRingEquipped(Mod.Instance.RingTrueSight) > 0)
+
+                if (!(Game1.currentLocation.Name.StartsWith("UndergroundMine")))
                 {
-                    if (!(Game1.currentLocation.Name.StartsWith("UndergroundMine")))
+                    if (obj.ParentSheetIndex is 343 or 450)
                     {
-                        if (obj.ParentSheetIndex is 343 or 450)
-                        {
 
-                            Random rand = new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2 + (int)pos.X * 2000 + (int)pos.Y);
-                            if (rand.NextDouble() < 0.035 && Game1.stats.DaysPlayed > 1U)
-                                doDraw = 535 + (Game1.stats.DaysPlayed <= 60U || rand.NextDouble() >= 0.2 ? (Game1.stats.DaysPlayed <= 120U || rand.NextDouble() >= 0.2 ? 0 : 2) : 1);
-                            if (rand.NextDouble() < 0.035 * (Game1.player.professions.Contains(21) ? 2.0 : 1.0) && Game1.stats.DaysPlayed > 1U)
-                                doDraw = 382;
-                            if (rand.NextDouble() < 0.01 && Game1.stats.DaysPlayed > 1U)
-                                doDraw = 390;
+                        Random rand = new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2 + (int)pos.X * 2000 + (int)pos.Y);
+                        if (rand.NextDouble() < 0.035 && Game1.stats.DaysPlayed > 1U)
+                            doDraw = 535 + (Game1.stats.DaysPlayed <= 60U || rand.NextDouble() >= 0.2 ? (Game1.stats.DaysPlayed <= 120U || rand.NextDouble() >= 0.2 ? 0 : 2) : 1);
+                        if (rand.NextDouble() < 0.035 * (Game1.player.professions.Contains(21) ? 2.0 : 1.0) && Game1.stats.DaysPlayed > 1U)
+                            doDraw = 382;
+                        if (rand.NextDouble() < 0.01 && Game1.stats.DaysPlayed > 1U)
+                            doDraw = 390;
 
-                            if (doDraw == 390) // 390 is more stone
-                                continue;
+                        if (doDraw == 390) // 390 is more stone
+                            continue;
 
-                        }
-                    }
-                    else if (obj.Name.Contains("Stone"))
-                    {
-                        doDraw = TrueSight.MineDrops(obj.ParentSheetIndex, (int)pos.X, (int)pos.Y, Game1.player, (Game1.currentLocation as MineShaft));
                     }
                 }
-                if (Mod.Instance.HasRingEquipped(Mod.Instance.RingTrueSight) > 0)
+                else if (obj.Name.Contains("Stone"))
                 {
-                    if (obj.ParentSheetIndex == 590)
-                    {
-                        doDraw = TrueSight.DigUpArtifactSpot((int)pos.X, (int)pos.Y, Game1.player, obj.name);
-                    }
+                    doDraw = TrueSight.MineDrops(obj.ParentSheetIndex, (int)pos.X, (int)pos.Y, Game1.player, (Game1.currentLocation as MineShaft));
+                }
+
+                if (obj.ParentSheetIndex == 590)
+                {
+                    doDraw = TrueSight.DigUpArtifactSpot((int)pos.X, (int)pos.Y, Game1.player, obj.name);
                 }
 
                 if (doDraw != -1)

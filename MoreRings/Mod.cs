@@ -10,7 +10,6 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using StardewValley.Objects;
 
 namespace MoreRings
 {
@@ -27,7 +26,7 @@ namespace MoreRings
         public int RingMageHand => this.Ja.GetObjectId("Ring of Far Reaching");
         public int RingTrueSight => this.Ja.GetObjectId("Ring of True Sight");
 
-        private IMoreRingsApi MoreRings;
+        private IMoreRingsApi WearMoreRings;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -69,7 +68,7 @@ namespace MoreRings
 
             api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
 
-            this.MoreRings = this.Helper.ModRegistry.GetApi<IMoreRingsApi>("bcmpinc.WearMoreRings");
+            this.WearMoreRings = this.Helper.ModRegistry.GetApi<IMoreRingsApi>("bcmpinc.WearMoreRings");
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
@@ -77,7 +76,7 @@ namespace MoreRings
         /// <param name="e">The event arguments.</param>
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (e.NewMenu is BobberBar bobber && this.HasRingEquipped(this.RingFishingLargeBar) > 0)
+            if (e.NewMenu is BobberBar bobber && this.HasRingEquipped(this.RingFishingLargeBar))
             {
                 var field = this.Helper.Reflection.GetField<int>(bobber, "bobberBarHeight");
                 field.SetValue((int)(field.GetValue() * 1.50));
@@ -95,13 +94,16 @@ namespace MoreRings
             if (!Context.IsPlayerFree || !e.IsOneSecond)
                 return;
 
-            if (this.HasRingEquipped(this.RingCombatRegen) > 0 && this.RegenCounter++ >= 4 / this.HasRingEquipped(this.RingCombatRegen))
+            int hasHealthRings = this.CountRingsEquipped(this.RingCombatRegen);
+            int hasStaminaRings = this.CountRingsEquipped(this.RingRefresh);
+
+            if (hasHealthRings > 0 && this.RegenCounter++ >= 4 / hasHealthRings)
             {
                 this.RegenCounter = 0;
                 Game1.player.health = Math.Min(Game1.player.health + 1, Game1.player.maxHealth);
             }
 
-            if (this.HasRingEquipped(this.RingRefresh) > 0 && this.RefreshCounter++ >= 4 / this.HasRingEquipped(this.RingRefresh))
+            if (hasStaminaRings > 0 && this.RefreshCounter++ >= 4 / hasStaminaRings)
             {
                 this.RefreshCounter = 0;
                 Game1.player.Stamina = Math.Min(Game1.player.Stamina + 1, Game1.player.MaxStamina);
@@ -110,7 +112,7 @@ namespace MoreRings
 
         private void OnItemEaten(object sender, EventArgs args)
         {
-            if (this.HasRingEquipped(this.RingDiamondBooze) > 0)
+            if (this.HasRingEquipped(this.RingDiamondBooze))
             {
                 Buff tipsyBuff = null;
                 foreach (var buff in Game1.buffsDisplay.otherBuffs)
@@ -152,33 +154,24 @@ namespace MoreRings
             }
         }
 
-        public int HasRingEquipped(int id)
+        /// <summary>Get whether the player has any ring with the given ID equipped.</summary>
+        /// <param name="id">The ring ID to match.</param>
+        public bool HasRingEquipped(int id)
         {
-            if (this.MoreRings != null)
-                return this.MoreRings.CountEquippedRings(Game1.player, id);
+            return this.CountRingsEquipped(id) > 0;
+        }
 
-            int num = 0;
-            if (Game1.player.leftRing.Value != null && Game1.player.leftRing.Value.ParentSheetIndex == id)
-                ++num;
-            if (Game1.player.leftRing.Value is CombinedRing lcring)
-            {
-                foreach (var ring in lcring.combinedRings)
-                {
-                    if (ring.ParentSheetIndex == id)
-                        ++num;
-                }
-            }
-            if (Game1.player.rightRing.Value != null && Game1.player.rightRing.Value.ParentSheetIndex == id)
-                ++num;
-            if (Game1.player.rightRing.Value is CombinedRing rcring)
-            {
-                foreach (var ring in rcring.combinedRings)
-                {
-                    if (ring.ParentSheetIndex == id)
-                        ++num;
-                }
-            }
-            return num;
+        /// <summary>Count the number of rings with the given ID equipped by the player.</summary>
+        /// <param name="id">The ring ID to match.</param>
+        public int CountRingsEquipped(int id)
+        {
+            if (this.WearMoreRings != null)
+                return this.WearMoreRings.CountEquippedRings(Game1.player, id);
+
+            return
+                Game1.player.leftRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0
+                + Game1.player.rightRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0;
+
         }
     }
 }
