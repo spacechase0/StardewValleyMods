@@ -527,7 +527,7 @@ namespace SpaceCore.Interface
                             if (Game1.getMouseX() > this.xPositionOnScreen && Game1.getMouseX() < this.xPositionOnScreen + this.width / 2)
                             {
                                 this.leftProfessionColor = Color.Green;
-                                if ((Game1input.GetMouseState().LeftButton == ButtonState.Pressed && this.oldMouseState.LeftButton == ButtonState.Released || Game1.options.gamepadControls && (Game1input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A))) && this.readyToClose())
+                                if (Game1.didPlayerJustLeftClick() && this.readyToClose())
                                 {
                                     Game1.player.professions.Add(this.professionsToChoose[0]);
                                     this.getImmediateProfessionPerk(this.professionsToChoose[0]);
@@ -539,7 +539,7 @@ namespace SpaceCore.Interface
                             else if (Game1.getMouseX() > this.xPositionOnScreen + this.width / 2 && Game1.getMouseX() < this.xPositionOnScreen + this.width)
                             {
                                 this.rightProfessionColor = Color.Green;
-                                if ((Game1input.GetMouseState().LeftButton == ButtonState.Pressed && this.oldMouseState.LeftButton == ButtonState.Released || Game1.options.gamepadControls && (Game1input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A))) && this.readyToClose())
+                                if (Game1.didPlayerJustLeftClick() && this.readyToClose())
                                 {
                                     Game1.player.professions.Add(this.professionsToChoose[1]);
                                     this.getImmediateProfessionPerk(this.professionsToChoose[1]);
@@ -664,7 +664,7 @@ namespace SpaceCore.Interface
                     if (this.okButton.containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) && !this.isProfessionChooser)
                     {
                         this.okButton.scale = Math.Min(1.1f, this.okButton.scale + 0.05f);
-                        if ((this.oldMouseState.LeftButton == ButtonState.Pressed || Game1.options.gamepadControls && Game1.oldPadState.IsButtonDown(Buttons.A)) && this.readyToClose())
+                        if (Game1.didPlayerJustLeftClick() && this.readyToClose())
                             this.okButtonClicked();
                     }
                     else

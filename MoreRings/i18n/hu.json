@@ -1,0 +1,25 @@
+﻿{
+    /*********
+    ** Ring items
+    *********/
+    "quality-ring.name": "Minőség növelő gyűrű",
+    "quality-ring.description": "Esély a jobb minőségű terméshozamra.",
+
+    "refreshing-ring.name": "Felfrissítő gyűrű",
+    "refreshing-ring.description": "Vajon mit csinál.",
+
+    "ring-of-regeneration.name": "Regeneráló gyűrű",
+    "ring-of-regeneration.description": "Idővel lassan gyógyulni fogsz.",
+
+    "ring-of-diamond-booze.name": "Gyémánt borgyűrű",
+    "ring-of-diamond-booze.description": "Ellensúlyozza az enyhe alkohol hatását.",
+
+    "ring-of-wide-nets.name": "Széles háló gyűrű",
+    "ring-of-wide-nets.description": "50%-kal megnöveli a horgászbot kapási területét.",
+
+    "ring-of-far-reaching.name": "Messzire érő gyűrű",
+    "ring-of-far-reaching.description": "Szerszámokat használhatsz távolról.",
+
+    "ring-of-true-sight.name": "Igaz látás gyűrűje",
+    "ring-of-true-sight.description": "Láss túl azon, mint amit láthatsz."
+}

@@ -1,15 +1,28 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewValley;
 using StardewValley.Menus;
 
 namespace SpaceShared.UI
 {
     internal class Table : Container
     {
+        /*********
+        ** Fields
+        *********/
         private readonly List<Element[]> Rows = new();
 
         private Vector2 SizeImpl;
+
+        private const int RowPadding = 16;
+        private int RowHeightImpl;
+
+
+        /*********
+        ** Accessors
+        *********/
         public Vector2 Size
         {
             get => this.SizeImpl;
@@ -20,8 +33,6 @@ namespace SpaceShared.UI
             }
         }
 
-        public const int RowPadding = 16;
-        private int RowHeightImpl;
         public int RowHeight
         {
             get => this.RowHeightImpl;
@@ -36,8 +47,19 @@ namespace SpaceShared.UI
 
         public Scrollbar Scrollbar { get; }
 
+        /// <inheritdoc />
+        public override int Width => (int)this.Size.X;
+
+        /// <inheritdoc />
+        public override int Height => (int)this.Size.Y;
+
+
+        /*********
+        ** Public methods
+        *********/
         public Table()
         {
+            this.UpdateChildren = false; // table will update children itself
             this.Scrollbar = new Scrollbar
             {
                 LocalPosition = new Vector2(0, 0)
@@ -55,21 +77,12 @@ namespace SpaceShared.UI
             this.UpdateScrollbar();
         }
 
-        private void UpdateScrollbar()
-        {
-            this.Scrollbar.LocalPosition = new Vector2(this.Size.X + 48, this.Scrollbar.LocalPosition.Y);
-            this.Scrollbar.RequestHeight = (int)this.Size.Y;
-            this.Scrollbar.Rows = this.Rows.Count;
-            this.Scrollbar.FrameSize = (int)(this.Size.Y / this.RowHeight);
-        }
-
-        public override int Width => (int)this.Size.X;
-        public override int Height => (int)this.Size.Y;
-
+        /// <inheritdoc />
         public override void Update(bool hidden = false)
         {
-            //base.Update(hidden);
-            if (hidden) return;
+            base.Update(hidden);
+            if (hidden)
+                return;
 
             int ir = 0;
             foreach (var row in this.Rows)
@@ -102,25 +115,79 @@ namespace SpaceShared.UI
             this.Scrollbar.Update(hidden);
         }
 
+        /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
-            IClickableMenu.drawTextureBox(b, (int)this.Position.X - 32, (int)this.Position.Y - 32, (int)this.Size.X + 64, (int)this.Size.Y + 64, Color.White);
+            // calculate draw area
+            var backgroundArea = new Rectangle((int)this.Position.X - 32, (int)this.Position.Y - 32, (int)this.Size.X + 64, (int)this.Size.Y + 64);
+            int contentPadding = 12;
+            var contentArea = new Rectangle(backgroundArea.X + contentPadding, backgroundArea.Y + contentPadding, backgroundArea.Width - contentPadding * 2, backgroundArea.Height - contentPadding * 2);
 
-            foreach (var row in this.Rows)
+            // draw background
+            IClickableMenu.drawTextureBox(b, backgroundArea.X, backgroundArea.Y, backgroundArea.Width, backgroundArea.Height, Color.White);
+
+            // draw table contents
+            // This uses a scissor rectangle to clip content taller than one row that might be
+            // drawn past the bottom of the UI, like images or complex options.
+            this.InScissorRectangle(b, contentArea, contentBatch =>
             {
-                foreach (var element in row)
+                foreach (var row in this.Rows)
                 {
-                    if (element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y)
-                        continue;
-                    if (element == this.RenderLast)
-                        continue;
-                    element.Draw(b);
+                    foreach (var element in row)
+                    {
+                        if (element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y)
+                            continue;
+                        if (element == this.RenderLast)
+                            continue;
+                        element.Draw(contentBatch);
+                    }
                 }
-            }
 
-            this.RenderLast?.Draw(b);
+                this.RenderLast?.Draw(contentBatch);
+            });
 
             this.Scrollbar.Draw(b);
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        private void UpdateScrollbar()
+        {
+            this.Scrollbar.LocalPosition = new Vector2(this.Size.X + 48, this.Scrollbar.LocalPosition.Y);
+            this.Scrollbar.RequestHeight = (int)this.Size.Y;
+            this.Scrollbar.Rows = this.Rows.Count;
+            this.Scrollbar.FrameSize = (int)(this.Size.Y / this.RowHeight);
+        }
+
+        private void InScissorRectangle(SpriteBatch spriteBatch, Rectangle area, Action<SpriteBatch> draw)
+        {
+            // render the current sprite batch to the screen
+            spriteBatch.End();
+
+            // start temporary sprite batch
+            using SpriteBatch contentBatch = new SpriteBatch(Game1.graphics.GraphicsDevice);
+            GraphicsDevice device = Game1.graphics.GraphicsDevice;
+            Rectangle prevScissorRectangle = device.ScissorRectangle;
+
+            // render in scissor rectangle
+            try
+            {
+                device.ScissorRectangle = area;
+                contentBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, Utility.ScissorEnabled);
+
+                draw(contentBatch);
+
+                contentBatch.End();
+            }
+            finally
+            {
+                device.ScissorRectangle = prevScissorRectangle;
+            }
+
+            // resume previous sprite batch
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
         }
     }
 }

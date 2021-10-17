@@ -10,6 +10,15 @@ namespace SpaceShared.UI
 {
     internal class Scrollbar : Element
     {
+        /*********
+        ** Fields
+        *********/
+        private bool DragScroll;
+
+
+        /*********
+        ** Accessors
+        *********/
         public int RequestHeight { get; set; }
 
         public int Rows { get; set; }
@@ -20,8 +29,16 @@ namespace SpaceShared.UI
 
         public float ScrollPercent => (this.MaxTopRow > 0) ? this.TopRow / (float)this.MaxTopRow : 0f;
 
-        private bool DragScroll;
+        /// <inheritdoc />
+        public override int Width => 24;
 
+        /// <inheritdoc />
+        public override int Height => this.RequestHeight;
+
+
+        /*********
+        ** Public methods
+        *********/
         public void ScrollBy(int amount)
         {
             int row = Util.Clamp(0, this.TopRow + amount, this.MaxTopRow);
@@ -41,9 +58,7 @@ namespace SpaceShared.UI
             }
         }
 
-        public override int Width => 24;
-        public override int Height => this.RequestHeight;
-
+        /// <inheritdoc />
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
@@ -61,6 +76,7 @@ namespace SpaceShared.UI
             }
         }
 
+        /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
             Rectangle back = new Rectangle((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);

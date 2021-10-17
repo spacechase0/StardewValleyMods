@@ -1,0 +1,23 @@
+﻿{
+    "Name": "Magic Elixir",
+    "Category": "Cooking",
+    "Edibility": 80,
+    "Price": 1000,
+    "Recipe": {
+        "ResultCount": 1,
+        "Ingredients": [
+            {
+                "Object": 773,
+                "Count": 1
+            },
+            {
+                "Object": 422,
+                "Count": 1
+            }
+        ],
+        "CanPurchase": true,
+        "PurchaseFrom": "Marlon",
+        "PurchasePrice": 3000
+    },
+    "TranslationKey": "objects.mana-potion"
+}

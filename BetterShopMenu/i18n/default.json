@@ -1,0 +1,60 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // filter labels
+    "filter.category": "Category:",
+    "filter.sorting": "Sorting:",
+
+    // sort types
+    "sort.none": "None",
+    "sort.name": "Name", 
+    "sort.price": "Price", 
+
+    // category names
+    "categories.everything": "Everything",
+    "categories.other": "Other",
+    "categories.artisan-goods": "Artisan Goods",
+    "categories.bait": "Bait",
+    "categories.big-craftables": "Big Craftables",
+    "categories.boots": "Boots",
+    "categories.building-resources": "Building Resources",
+    "categories.clothing": "Clothing",
+    "categories.cooking": "Cooking",
+    "categories.crafting": "Crafting",
+    "categories.eggs": "Egg",
+    "categories.equipment": "Equipment",
+    "categories.fertilizer": "Fertilizer",
+    "categories.fish": "Fish",
+    "categories.flowers": "Flowers",
+    "categories.fruits": "Fruits",
+    "categories.furniture": "Furniture",
+    "categories.gems": "Gems",
+    "categories.greens": "Greens",
+    "categories.hats": "Hats",
+    "categories.ingredients": "Ingredients",
+    "categories.junk": "Junk",
+    "categories.meat": "Meat",
+    "categories.metals": "Metals",
+    "categories.milk": "Milk",
+    "categories.minerals": "Minerals",
+    "categories.monster-loot": "Monster Loot",
+    "categories.recipes": "Recipes",
+    "categories.rings": "Rings",
+    "categories.seeds": "Seeds",
+    "categories.sell-to-pierre-or-marnie": "Sellable @ Pierre's/Marnie's",
+    "categories.sell-to-pierre": "Sellable @ Pierres",
+    "categories.sell-to-willy": "Sellable @ Willy's",
+    "categories.syrups": "Syrups",
+    "categories.tackle": "Tackle",
+    "categories.tools": "Tools",
+    "categories.vegetables": "Vegetables",
+    "categories.weapons": "Weapons",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.grid-layout.name": "Experimental Grid Layout",
+    "config.grid-layout.tooltip": "Whether to use the experimental grid layout in shops. This may cause minor display issues or impact other mods' features in shop menus."
+}

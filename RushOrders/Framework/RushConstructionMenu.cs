@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
@@ -11,10 +10,10 @@ namespace RushOrders.Framework
     {
         private readonly int X;
         private readonly int Y;
-        private readonly string[] Responses = { "Yes", "No" };
         private readonly int HeightForQuestions;
         private readonly IClickableMenu Old;
-        private string Question = "Rush your building construction?";
+        private string Question;
+        private readonly string[] Responses;
         private int SelectedResponse = -1;
         private bool ShowingBroke;
 
@@ -26,8 +25,12 @@ namespace RushOrders.Framework
             this.X = (int)Utility.getTopLeftPositionForCenteringOnScreen(this.width, this.height).X;
             this.Y = Game1.viewport.Height - this.height - Game1.tileSize;
 
-            this.Question += $" ({Mod.GetBuildingDaysLeft()} days left)";
-            this.Responses[0] += $" ({Mod.GetBuildingRushPrice()}g)";
+            this.Question = I18n.Robin_RushQuestion(daysLeft: Mod.GetBuildingDaysLeft());
+            this.Responses = new[]
+            {
+                I18n.Robin_RushAnswerYes(price: Mod.GetBuildingRushPrice()),
+                I18n.Robin_RushAnswerNo()
+            };
 
             this.HeightForQuestions = SpriteText.getHeightOfString(this.Question, this.width - Game1.pixelZoom * 4);
             foreach (string rs in this.Responses)
@@ -56,7 +59,7 @@ namespace RushOrders.Framework
                         int cost = Mod.GetBuildingRushPrice();
                         if (Game1.player.Money < cost)
                         {
-                            this.Question = "You do not have enough money.";
+                            this.Question = I18n.Robin_NotEnoughMoney();
                             this.ShowingBroke = true;
                             return;
                         }

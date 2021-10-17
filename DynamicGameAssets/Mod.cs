@@ -103,6 +103,7 @@ namespace DynamicGameAssets
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.instance = this;
             Log.Monitor = this.Monitor;
 

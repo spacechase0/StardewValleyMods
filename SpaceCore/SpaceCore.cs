@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
@@ -15,25 +14,43 @@ using StardewValley;
 
 namespace SpaceCore
 {
+    /// <summary>The mod entry class.</summary>
     internal class SpaceCore : Mod
     {
-        public Configuration Config { get; set; }
-        internal static SpaceCore Instance;
-        internal static IReflectionHelper Reflection;
+        /*********
+        ** Fields
+        *********/
         private Harmony Harmony;
+
+        /// <summary>Handles migrating legacy data for a save file.</summary>
+        private LegacyDataMigrator LegacyDataMigrator;
 
         /// <summary>Whether the current update tick is the first one raised by SMAPI.</summary>
         private bool IsFirstTick;
 
-        internal static List<Type> ModTypes = new();
-
         /// <summary>A queue of textures to dispose, with the <see cref="Game1.ticks"/> value when they were queued.</summary>
         private readonly Queue<KeyValuePair<Texture2D, int>> TextureDisposalQueue = new();
 
+
+        /*********
+        ** Accessors
+        *********/
+        public Configuration Config { get; set; }
+        internal static SpaceCore Instance;
+        internal static IReflectionHelper Reflection;
+        internal static List<Type> ModTypes = new();
+
+
+        /*********
+        ** Public methods
+        *********/
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            this.LegacyDataMigrator = new LegacyDataMigrator(helper.Data, this.Monitor);
+
+            I18n.Init(helper.Translation);
             SpaceCore.Instance = this;
             SpaceCore.Reflection = helper.Reflection;
             Log.Monitor = this.Monitor;
@@ -69,29 +86,54 @@ namespace SpaceCore
             );
         }
 
+        /// <inheritdoc />
         public override object GetApi()
         {
             return new Api();
         }
 
+
+        /*********
+        ** Private methods
+        *********/
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (capi != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => this.Config = new Configuration(), () => this.Helper.WriteConfig(this.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Custom Skill Page", "Whether or not to show the custom skill page.\nThis will move the wallet so that there is room for more skills.", () => this.Config.CustomSkillPage, (bool val) => this.Config.CustomSkillPage = val);
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => this.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(this.Config)
+                );
+                configMenu.AddBoolOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_CustomSkillPage_Name,
+                    tooltip: I18n.Config_CustomSkillPage_Tooltip,
+                    getValue: () => this.Config.CustomSkillPage,
+                    setValue: value => this.Config.CustomSkillPage = value
+                );
+                configMenu.AddBoolOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_SupportAllProfessionsMod_Name,
+                    tooltip: I18n.Config_SupportAllProfessionsMod_Tooltip,
+                    getValue: () => this.Config.SupportAllProfessionsMod,
+                    setValue: value => this.Config.SupportAllProfessionsMod = value
+                );
             }
 
-            var efapi = this.Helper.ModRegistry.GetApi<IEntoaroxFrameworkApi>("Entoarox.EntoaroxFramework");
-            if (efapi != null)
+            var entoaroxFramework = this.Helper.ModRegistry.GetApi<IEntoaroxFrameworkApi>("Entoarox.EntoaroxFramework");
+            if (entoaroxFramework != null)
             {
                 Log.Info("Telling EntoaroxFramework to let us handle the serializer");
-                efapi.HoistSerializerOwnership();
+                entoaroxFramework.HoistSerializerOwnership();
             }
         }
 
-        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -136,22 +178,24 @@ namespace SpaceCore
             }
         }
 
-        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <inheritdoc cref="IGameLoopEvents.SaveLoaded"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            // delete legacy data
-            if (Context.IsMainPlayer)
+            try
             {
-                this.Helper.Data.WriteSaveData("sleepy-eye", null as object);
-
-                FileInfo legacyFile = new FileInfo(Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json"));
-                if (legacyFile.Exists)
-                    legacyFile.Delete();
+                this.LegacyDataMigrator.OnSaveLoaded();
+            }
+            catch (Exception ex)
+            {
+                Log.Warn($"Exception migrating legacy save data: {ex}");
             }
         }
 
+        /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is StardewValley.Menus.ForgeMenu)

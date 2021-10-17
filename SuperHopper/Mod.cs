@@ -6,43 +6,62 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Objects;
 using SuperHopper.Patches;
+using SObject = StardewValley.Object;
 
 namespace SuperHopper
 {
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        /*********
+        ** Fields
+        *********/
+        /// <summary>The <see cref="Item.modData"/> flag which indicates a hopper is a super hopper.</summary>
+        private readonly string ModDataFlag = "spacechase0.SuperHopper";
 
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
-            Mod.instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
 
             HarmonyPatcher.Apply(this,
-                new ObjectPatcher()
+                new ObjectPatcher(this.OnMachineMinutesElapsed)
             );
         }
 
+
+        /*********
+        ** Private methods
+        *********/
+        /// <inheritdoc cref="IInputEvents.ButtonPressed"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             if (!Context.IsPlayerFree)
                 return;
 
-            Game1.currentLocation.objects.TryGetValue(e.Cursor.GrabTile, out StardewValley.Object obj);
-            if (obj is Chest { SpecialChestType: Chest.SpecialChestTypes.AutoLoader } chest && (e.Button is SButton.MouseLeft or SButton.ControllerA))
+            Game1.currentLocation.objects.TryGetValue(e.Cursor.GrabTile, out SObject obj);
+            if (this.TryGetHopper(obj, out Chest chest) && e.Button.IsActionButton())
             {
                 if (chest.heldObject.Value == null)
                 {
-                    if (Utility.IsNormalObjectAtParentSheetIndex(Game1.player.ActiveObject, StardewValley.Object.iridiumBar))
+                    if (Utility.IsNormalObjectAtParentSheetIndex(Game1.player.ActiveObject, SObject.iridiumBar))
                     {
                         chest.Tint = Color.DarkViolet;
-                        chest.heldObject.Value = (StardewValley.Object)Game1.player.ActiveObject.getOne();
+                        chest.heldObject.Value = (SObject)Game1.player.ActiveObject.getOne();
+                        chest.modData[this.ModDataFlag] = "1";
+
                         if (Game1.player.ActiveObject.Stack > 1)
                             Game1.player.ActiveObject.Stack--;
                         else
                             Game1.player.ActiveObject = null;
+
                         Game1.playSound("furnace");
                     }
                 }
@@ -50,10 +69,58 @@ namespace SuperHopper
                 {
                     chest.Tint = Color.White;
                     chest.heldObject.Value = null;
-                    Game1.player.addItemToInventory(new StardewValley.Object(StardewValley.Object.iridiumBar, 1));
+                    chest.modData.Remove(this.ModDataFlag);
+
+                    Game1.player.addItemToInventory(new SObject(SObject.iridiumBar, 1));
+
                     Game1.playSound("shiny4");
                 }
             }
+        }
+
+        /// <summary>Called after a machine updates on time change.</summary>
+        /// <param name="machine">The machine that updated.</param>
+        /// <param name="location">The location containing the machine.</param>
+        private void OnMachineMinutesElapsed(SObject machine, GameLocation location)
+        {
+            // not super hopper
+            if (!this.TryGetHopper(machine, out Chest hopper) || hopper.heldObject.Value == null || !Utility.IsNormalObjectAtParentSheetIndex(hopper.heldObject.Value, SObject.iridiumBar))
+                return;
+
+            // fix flag if needed
+            if (!hopper.modData.ContainsKey(this.ModDataFlag))
+                hopper.modData[this.ModDataFlag] = "1";
+
+            // no chests to transfer
+            if (!location.objects.TryGetValue(hopper.TileLocation - new Vector2(0, 1), out SObject objAbove) || objAbove is not Chest chestAbove)
+                return;
+            if (!location.objects.TryGetValue(hopper.TileLocation + new Vector2(0, 1), out SObject objBelow) || objBelow is not Chest chestBelow)
+                return;
+
+            // transfer items
+            chestAbove.clearNulls();
+            for (int i = chestAbove.items.Count - 1; i >= 0; i--)
+            {
+                Item item = chestAbove.items[i];
+                if (chestBelow.addItem(item) == null)
+                    chestAbove.items.RemoveAt(i);
+            }
+        }
+
+        /// <summary>Get the hopper instance if the object is a hopper.</summary>
+        /// <param name="obj">The object to check.</param>
+        /// <param name="hopper">The hopper instance.</param>
+        /// <returns>Returns whether the object is a hopper.</returns>
+        private bool TryGetHopper(SObject obj, out Chest hopper)
+        {
+            if (obj is Chest { SpecialChestType: Chest.SpecialChestTypes.AutoLoader } chest)
+            {
+                hopper = chest;
+                return true;
+            }
+
+            hopper = null;
+            return false;
         }
     }
 }

@@ -1,6 +1,13 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.1.0
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* The super hopper now transfers all items from the chest at once, instead of one stack per 10 minutes.
+* Added `chest.modData` flag to identify super hoppers for other mods like Automate.
+* Fixed super hopper still collecting input if the chest below is full.
+
 ## 1.0.1
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

@@ -1,0 +1,10 @@
+﻿{
+    "Name": "Frosty Stardrop Piece",
+    "Category": "Gem",
+    "Edibility": -300,
+    "CategoryTextOverride": "Treasure",
+    "CanTrash": false,
+    "CanSell": false,
+    "CanBeGifted": false,
+    "TranslationKey": "item.frosty-stardrop-piece"
+}

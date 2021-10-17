@@ -1,9 +1,9 @@
 using GenericModConfigMenu.Framework;
-using GenericModConfigMenu.Framework.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
+using SpaceShared.UI;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -20,8 +20,9 @@ namespace GenericModConfigMenu
         private RootElement Ui;
         private Button ConfigButton;
 
-        /// <summary>The registered mod config menus.</summary>
-        private readonly ModConfigManager Configs = new();
+        /// <summary>Manages registered mod config menus.</summary>
+        private readonly ModConfigManager ConfigManager = new();
+
 
         /*********
         ** Accessors
@@ -35,6 +36,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<OwnModConfig>();
@@ -52,16 +54,16 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override object GetApi()
         {
-            return new Api(this.Configs);
+            return new Api(this.ConfigManager);
         }
 
         /// <summary>Open the menu which shows a list of configurable mods.</summary>
         public void OpenListMenu()
         {
             if (Game1.activeClickableMenu is TitleMenu)
-                TitleMenu.subMenu = new ModConfigMenu(false, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.Configs);
+                TitleMenu.subMenu = new ModConfigMenu(false, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
             else
-                Game1.activeClickableMenu = new ModConfigMenu(true, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.Configs);
+                Game1.activeClickableMenu = new ModConfigMenu(true, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
         }
 
         /// <summary>Open the config UI for a specific mod.</summary>
@@ -70,7 +72,7 @@ namespace GenericModConfigMenu
         public void OpenModMenu(IManifest mod, string page = null)
         {
             bool inGame = Game1.activeClickableMenu is not TitleMenu;
-            ModConfig config = this.Configs.Get(mod, assert: true);
+            ModConfig config = this.ConfigManager.Get(mod, assert: true);
 
             var menu = new SpecificModConfigMenu(
                 config: config,
@@ -143,7 +145,7 @@ namespace GenericModConfigMenu
             if (e.NewMenu is GameMenu menu)
             {
                 OptionsPage page = (OptionsPage)menu.pages[GameMenu.optionsTab];
-                page.options.Add(new OptionsButton("Mod Options", this.OpenListMenu));
+                page.options.Add(new OptionsButton(I18n.Button_ModOptions(), this.OpenListMenu));
             }
         }
 

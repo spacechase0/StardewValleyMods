@@ -1,0 +1,25 @@
+﻿{
+    // skill
+    "skill.name": "Chance",
+    "skill.level-up": "Chance accrue",
+
+    // professions
+    "fortunate.name": "Fortuné",
+    "fortunate.desc": "Meilleure chance journalière.",
+    "lucky.name": "Chanceux",
+    "lucky.desc": "20% chance que la chance journalière soit maximale.",
+    "popular-helper.name": "Aide Populaire",
+    "popular-helper.desc": "Les quêtes journalières arrivent trois fois plus souvent.",
+    "shooting-star.name": "Etoile Filante",
+    "shooting-star.desc": "Les événements nocturnes sont deux fois plus fréquents.",
+    "spirit-child.name": "Enfant Prodige",
+    "spirit-child.desc": "Donner des cadeaux rends les junimos heureux. Ca se pourrait qu'ils aident la ferme.\n(15% chance pour une aide aléatoire.)",
+    "un-unlucky.name": "Mal-Malchanceux",
+    "un-unlucky.desc": "Jamais de malchance.",
+
+    // Spirit Child reward messages
+    "junimo-rewards.animal-friendship": "Les junimos ont renforcé ton amitié avec tes animaux !",
+    "junimo-rewards.grow-crops": "Les junimos ont fait pousser tes cultures !",
+    "junimo-rewards.grow-grass": "Les junimos ont fait pousser de l'herbe et réparé les barrières !",
+    "junimo-rewards.prismatic-shard": "Les junimos t'ont donné un tesson prismatique !"
+}

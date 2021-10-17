@@ -58,6 +58,9 @@ namespace DynamicGameAssets.PackData
             Painting,
             Fireplace,
             TV,
+            Lamp,
+            Sconce,
+            Window
         }
 
         [DefaultValue(FurnitureType.Decoration)]
@@ -95,20 +98,22 @@ namespace DynamicGameAssets.PackData
 
         public int GetVanillaFurnitureType()
         {
-            switch (this.Type)
+            return this.Type switch
             {
-                case FurnitureType.Decoration: return Furniture.decor;
-                case FurnitureType.Rug: return Furniture.rug;
-                case FurnitureType.Table: return Furniture.table;
-                case FurnitureType.Dresser: return Furniture.dresser;
-                case FurnitureType.FishTank: return Furniture.other;
-                case FurnitureType.Bed: return Furniture.bed;
-                case FurnitureType.Painting: return Furniture.painting;
-                case FurnitureType.Fireplace: return Furniture.fireplace;
-                case FurnitureType.TV: return Furniture.decor;
-            }
-
-            return Furniture.other;
+                FurnitureType.Decoration => Furniture.decor,
+                FurnitureType.Rug => Furniture.rug,
+                FurnitureType.Table => Furniture.table,
+                FurnitureType.Dresser => Furniture.dresser,
+                FurnitureType.FishTank => Furniture.other,
+                FurnitureType.Bed => Furniture.bed,
+                FurnitureType.Painting => Furniture.painting,
+                FurnitureType.Fireplace => Furniture.fireplace,
+                FurnitureType.TV => Furniture.decor,
+                FurnitureType.Lamp => Furniture.lamp,
+                FurnitureType.Sconce => Furniture.sconce,
+                FurnitureType.Window => Furniture.window,
+                _ => Furniture.other
+            };
         }
 
         public override TexturedRect GetTexture()

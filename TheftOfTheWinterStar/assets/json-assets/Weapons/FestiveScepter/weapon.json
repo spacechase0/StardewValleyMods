@@ -1,0 +1,8 @@
+﻿{
+    "Name": "Festive Scepter",
+    "Type": "Sword",
+    "MinimumDamage": 25,
+    "MaximumDamage": 35,
+    "Knockback": 1.0,
+    "TranslationKey": "weapon.festive-scepter"
+}

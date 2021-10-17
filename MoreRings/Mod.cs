@@ -67,7 +67,7 @@ namespace MoreRings
             }
             this.Ja = api;
 
-            api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets"));
+            api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
 
             this.MoreRings = this.Helper.ModRegistry.GetApi<IMoreRingsApi>("bcmpinc.WearMoreRings");
         }

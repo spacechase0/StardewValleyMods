@@ -5,6 +5,9 @@ each instance of a building ([see example](screenshot-buildings.png)).
 ![](screenshot-menu.png)
 
 ## Install
+**This mod is deprecated. Consider using [Alternative Textures](https://smapi.io/mods/#Alternative_Textures)
+instead.**
+
 1. Install the latest version of...
    * [SMAPI](https://smapi.io);
    * and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).

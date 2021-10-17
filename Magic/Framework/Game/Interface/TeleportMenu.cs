@@ -36,6 +36,8 @@ namespace Magic.Framework.Game.Interface
         public TeleportMenu()
             : base((Game1.viewport.Width - TeleportMenu.WindowWidth) / 2, (Game1.viewport.Height - TeleportMenu.WindowHeight) / 2, TeleportMenu.WindowWidth, TeleportMenu.WindowHeight)
         {
+            this.gamePadControlsImplemented = false;
+
             foreach (var loc in Game1.locations)
             {
                 if (loc.IsOutdoors && !(loc.Name.StartsWith("SDM") && loc.Name.EndsWith("Farm")))
@@ -47,6 +49,13 @@ namespace Magic.Framework.Game.Interface
             this.Scrollbar = new Rectangle(this.ScrollbarBack.X + 2, this.ScrollbarBack.Y + 2, 6 * Game1.pixelZoom - 4, (int)((5.0 / this.Locs.Count) * this.ScrollbarBack.Height) - 4);
         }
 
+        /// <inheritdoc />
+        public override bool overrideSnappyMenuCursorMovementBan()
+        {
+            return true;
+        }
+
+        /// <inheritdoc />
         public override void update(GameTime time)
         {
             base.update(time);
@@ -88,6 +97,7 @@ namespace Magic.Framework.Game.Interface
             }
         }
 
+        /// <inheritdoc />
         public override void draw(SpriteBatch b)
         {
             IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, TeleportMenu.WindowWidth, TeleportMenu.WindowHeight, Color.White);
@@ -138,6 +148,7 @@ namespace Magic.Framework.Game.Interface
             this.drawMouse(b);
         }
 
+        /// <inheritdoc />
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
             base.receiveLeftClick(x, y, playSound);
@@ -152,6 +163,7 @@ namespace Magic.Framework.Game.Interface
             }
         }
 
+        /// <inheritdoc />
         public override void releaseLeftClick(int x, int y)
         {
             base.releaseLeftClick(x, y);
@@ -159,10 +171,7 @@ namespace Magic.Framework.Game.Interface
             this.DragScroll = false;
         }
 
-        public override void receiveRightClick(int x, int y, bool playSound = true)
-        {
-        }
-
+        /// <inheritdoc />
         public override void receiveScrollWheelAction(int direction)
         {
             base.receiveScrollWheelAction(direction);

@@ -42,6 +42,7 @@ namespace JsonAssets.Data
 
         public Dictionary<string, string> SeedNameLocalization { get; set; } = new();
         public Dictionary<string, string> SeedDescriptionLocalization { get; set; } = new();
+        public string SeedTranslationKey { get; set; }
 
         internal ObjectData Seed { get; set; }
 

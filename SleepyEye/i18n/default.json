@@ -1,0 +1,13 @@
+﻿{
+    // tent tool
+    "tent.name": "Tent",
+    "tent.description": "Sleep here. Sleep there. Sleep everywhere!",
+
+    // HUD messages
+    "messages.slept-at-lost-location": "You camped somewhere strange, so you've returned home.",
+    "messages.slept-at-festival": "You camped on the festival grounds, so you've returned home.",
+
+    // Generic Mod Config Menu UI
+    "config.seconds-until-save.name": "Seconds Until Save",
+    "config.seconds-until-save.tooltip": "The number of seconds until the tent tool should trigger a save."
+}

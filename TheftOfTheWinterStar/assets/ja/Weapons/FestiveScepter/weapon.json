@@ -1,9 +1,0 @@
-﻿{
-    "Name": "Festive Scepter",
-    "Description": "It shoots a frosty beam.",
-    "Type": "Sword",
-
-    "MinimumDamage": 25,
-    "MaximumDamage": 35,
-    "Knockback": 1.0
-}

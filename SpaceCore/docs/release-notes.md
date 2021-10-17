@@ -1,6 +1,17 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.7.0
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Added full [translation](https://stardewvalleywiki.com/Modding:Translations) support.
+* Added `dump_spacecore_skills` command to list custom skills/professions registered through SpaceCore, including their IDs for save editing.
+* Added option to disable All Professions integration for custom professions.
+* Changed custom profession IDs for compatibility with the upcoming Stardew Valley 1.5.5. Existing saves will be migrated automatically.
+* Improved integration with Generic Mod Config Menu:
+  * Updated for Generic Mod Config Menu 1.5.0.
+  * Enabled config UI from the in-game options menu after the save is loaded.
+
 ## 1.6.2
 Released 19 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

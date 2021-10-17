@@ -20,7 +20,7 @@ namespace ManaBar
         private IApi Api;
 
         /// <summary>Handles migrating legacy data for a save file.</summary>
-        private LegacyDataMigrator LegayDataMigrator;
+        private LegacyDataMigrator LegacyDataMigrator;
 
 
         /*********
@@ -37,7 +37,7 @@ namespace ManaBar
         {
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
-            this.LegayDataMigrator = new(helper.Data, this.Monitor);
+            this.LegacyDataMigrator = new(helper.Data, this.Monitor);
 
             Command.Register("player_addmana", Mod.HandleAddManaCommand);
             Command.Register("player_setmaxmana", Mod.HandleSetMaxManaCommand);
@@ -138,7 +138,7 @@ namespace ManaBar
         {
             try
             {
-                this.LegayDataMigrator.OnSaveLoaded();
+                this.LegacyDataMigrator.OnSaveLoaded();
             }
             catch (Exception ex)
             {

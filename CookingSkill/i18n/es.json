@@ -1,0 +1,19 @@
+﻿{
+    // skill
+    "skill.name": "Cocina",
+    "skill.level-up-perk": "+{{bonus}}% comestibilidad en la comida casera",
+
+    // professions
+    "efficient.name": "Eficiencia",
+    "efficient.desc": "15% de posibilidades de no consumir ingredientes",
+    "gourmet.name": "Gourmet",
+    "gourmet.desc": "+20% del precio de venta",
+    "intense-flavors.name": "Sabores Intensos",
+    "intense-flavors.desc": "Los buffs de la comida son un nivel más fuerte una vez se comen\n(+20% para la energía máxima o el magnetismo)",
+    "professional-chef.name": "Chef Profesional",
+    "professional-chef.desc": "Las comidas caseras son siempre al menos de rango plata",
+    "satisfying.name": "Satisfactorio",
+    "satisfying.desc": "+25% de duración del buff una vez comido",
+    "secret-spices.name": "Especias Secretas",
+    "secret-spices.desc": "Proporciona unos cuantos buffs aleatorios cuando se come comida sin buffs"
+}

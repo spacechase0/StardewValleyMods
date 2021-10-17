@@ -9,26 +9,49 @@ namespace SpaceShared.UI
 {
     internal class Slider : Element
     {
+        /*********
+        ** Fields
+        *********/
+        protected bool Dragging;
+
+
+        /*********
+        ** Accessors
+        *********/
         public int RequestWidth { get; set; }
 
         public Action<Element> Callback { get; set; }
 
-        protected bool Dragging;
-
+        /// <inheritdoc />
         public override int Width => this.RequestWidth;
+
+        /// <inheritdoc />
         public override int Height => 24;
 
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Draw(SpriteBatch b) { }
     }
 
     internal class Slider<T> : Slider
     {
+        /*********
+        ** Accessors
+        *********/
         public T Minimum { get; set; }
         public T Maximum { get; set; }
         public T Value { get; set; }
 
         public T Interval { get; set; }
 
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
@@ -41,6 +64,7 @@ namespace SpaceShared.UI
             if (this.Dragging)
             {
                 float perc = (Game1.getOldMouseX() - this.Position.X) / this.Width;
+                this.Value = Util.Adjust(this.Value, this.Interval);
                 this.Value = this.Value switch
                 {
                     int => Util.Clamp<T>(this.Minimum, (T)(object)(int)(perc * ((int)(object)this.Maximum - (int)(object)this.Minimum) + (int)(object)this.Minimum), this.Maximum),
@@ -48,12 +72,11 @@ namespace SpaceShared.UI
                     _ => this.Value
                 };
 
-                this.Value = Util.Adjust(this.Value, this.Interval);
-
                 this.Callback?.Invoke(this);
             }
         }
 
+        /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
             float perc = this.Value switch

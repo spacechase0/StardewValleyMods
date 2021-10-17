@@ -38,11 +38,11 @@ namespace Magic.Framework.Spells
 
         public virtual string GetTranslatedName()
         {
-            return Mod.Instance.Helper.Translation.Get("spell." + this.FullId + ".name");
+            return I18n.GetByKey($"spell.{this.FullId}.name");
         }
         public virtual string GetTranslatedDescription()
         {
-            return Mod.Instance.Helper.Translation.Get("spell." + this.FullId + ".desc");
+            return I18n.GetByKey($"spell.{this.FullId}.desc");
         }
 
         public abstract IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY);

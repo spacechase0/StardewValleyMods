@@ -13,6 +13,7 @@ namespace PreexistingRelationship
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -121,7 +122,7 @@ namespace PreexistingRelationship
                     spouse.addMarriageDialogue("Strings\\StringsFromCSFiles", "Game1.cs.2782");
                 }
 
-                Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("married")));
+                Game1.addHUDMessage(new HUDMessage(I18n.Married()));
             }
         }
     }

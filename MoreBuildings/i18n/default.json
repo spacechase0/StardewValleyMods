@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Building data
+    *********/
+    "spooky-shed.name": "Spooky Shed",
+    "spooky-shed.description": "An empty building. But spooky, too.",
+
+    "fishing-shack.name": "Fishing Shack",
+    "fishing-shack.description": "A shack for fishing.",
+
+    "mini-spa.name": "Mini Spa",
+    "mini-spa.description": "A place to relax and recharge."
+}

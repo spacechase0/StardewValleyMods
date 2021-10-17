@@ -36,6 +36,7 @@ namespace ExperienceBars
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
 
@@ -51,13 +52,35 @@ namespace ExperienceBars
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (capi != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "X position", "The pixel X position at which to draw the experience bars, relative to the top-left corner of the screen.", () => Mod.Config.Position.X, (int val) => Mod.Config.Position = new(val, Mod.Config.Position.Y));
-                capi.RegisterSimpleOption(this.ModManifest, "Y position", "The pixel Y position at which to draw the experience bars, relative to the top-left corner of the screen.", () => Mod.Config.Position.Y, (int val) => Mod.Config.Position = new(Mod.Config.Position.X, val));
-                capi.RegisterSimpleOption(this.ModManifest, "Toggle Button", "The button which shows or hides the experience bars display. Press Shift and this button to move the display.", () => Mod.Config.ToggleBars, (SButton val) => Mod.Config.ToggleBars = val);
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => Mod.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_PositionX_Name,
+                    tooltip: I18n.Config_PositionX_Tooltip,
+                    getValue: () => Mod.Config.Position.X,
+                    setValue: value => Mod.Config.Position = new(value, Mod.Config.Position.Y)
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_PositionY_Name,
+                    tooltip: I18n.Config_PositionY_Tooltip,
+                    getValue: () => Mod.Config.Position.Y,
+                    setValue: value => Mod.Config.Position = new(Mod.Config.Position.X, value)
+                );
+                configMenu.AddKeybind(
+                    mod: this.ModManifest,
+                    name: I18n.Config_ToggleKey_Name,
+                    tooltip: I18n.Config_ToggleKey_Tooltip,
+                    getValue: () => Mod.Config.ToggleBars,
+                    setValue: value => Mod.Config.ToggleBars = value
+                );
             }
         }
 

@@ -52,6 +52,7 @@ namespace LuckSkill
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -99,12 +100,48 @@ namespace LuckSkill
         {
             return new IProfession[]
             {
-                new Profession(id: Mod.FortunateProfessionId, name: "Fortunate", description: "Better daily luck."),
-                new Profession(id: Mod.ShootingStarProfessionId, name: "Shooting Star", description: "Nightly events occur twice as often."),
-                new Profession(id: Mod.LuckyProfessionId, name: "Lucky", description: "20% chance for max daily luck."),
-                new Profession(id: Mod.UnUnluckyProfessionId, name: "Un-unlucky", description: "Never have bad luck."),
-                new Profession(id: Mod.PopularHelperProfessionId, name: "Popular Helper", description: "Daily quests occur three times as often."),
-                new Profession(id: Mod.SpiritChildProfessionId, name: "Spirit Child", description: "Giving gifts makes junimos happy. They might help your farm.\n(15% chance for some form of farm advancement.)")
+                new Profession(
+                    id: Mod.FortunateProfessionId,
+                    defaultName: "Fortunate",
+                    defaultDescription:"Better daily luck.",
+                    name: I18n.Fortunate_Name,
+                    description: I18n.Fortunate_Desc
+                ),
+                new Profession(
+                    id: Mod.ShootingStarProfessionId,
+                    defaultName: "Shooting Star",
+                    defaultDescription: "Nightly events occur twice as often.",
+                    name: I18n.ShootingStar_Name,
+                    description: I18n.ShootingStar_Desc
+                ),
+                new Profession(
+                    id: Mod.LuckyProfessionId,
+                    defaultName: "Lucky",
+                    defaultDescription: "20% chance for max daily luck.",
+                    name: I18n.Lucky_Name,
+                    description: I18n.Lucky_Desc
+                ),
+                new Profession(
+                    id: Mod.UnUnluckyProfessionId,
+                    defaultName: "Un-unlucky",
+                    defaultDescription: "Never have bad luck.",
+                    name: I18n.UnUnlucky_Name,
+                    description: I18n.UnUnlucky_Desc
+                ),
+                new Profession(
+                    id: Mod.PopularHelperProfessionId,
+                    defaultName: "Popular Helper",
+                    defaultDescription: "Daily quests occur three times as often.",
+                    name: I18n.PopularHelper_Name,
+                    description: I18n.PopularHelper_Desc
+                ),
+                new Profession(
+                    id: Mod.SpiritChildProfessionId,
+                    defaultName: "Spirit Child",
+                    defaultDescription: "Giving gifts makes junimos happy. They might help your farm.\n(15% chance for some form of farm advancement.)",
+                    name: I18n.SpiritChild_Name,
+                    description: I18n.SpiritChild_Desc
+                )
             }.ToDictionary(p => p.Id);
         }
 
@@ -232,7 +269,7 @@ namespace LuckSkill
                             }
                         }
 
-                        Game1.showGlobalMessage("The junimos advanced your crops!");
+                        Game1.showGlobalMessage(I18n.JunimoRewards_GrowCrops());
                     }
 
                     void AdvanceBarn(AnimalHouse house)
@@ -242,7 +279,7 @@ namespace LuckSkill
                             animal.friendshipTowardFarmer.Value = Math.Min(1000, animal.friendshipTowardFarmer.Value + 100);
                         }
 
-                        Game1.showGlobalMessage("The junimos made some of your animals more fond of you!");
+                        Game1.showGlobalMessage(I18n.JunimoRewards_AnimalFriendship());
                     }
 
                     void GrassAndFences()
@@ -264,12 +301,12 @@ namespace LuckSkill
                             }
                         }
 
-                        Game1.showGlobalMessage("The junimos grew your grass and repaired your fences!");
+                        Game1.showGlobalMessage(I18n.JunimoRewards_GrowGrass());
                     }
 
                     if (r.Next() <= 0.05 && Game1.player.addItemToInventoryBool(new SObject(SObject.prismaticShardIndex, 1)))
                     {
-                        Game1.showGlobalMessage("The junimos gave you a prismatic shard!");
+                        Game1.showGlobalMessage(I18n.JunimoRewards_PrismaticShard());
                         continue;
                     }
 
@@ -381,7 +418,7 @@ namespace LuckSkill
             string text3 = "";
             if (Game1.player.LuckLevel > 0)
             {
-                text3 = "Luck Increased";
+                text3 = I18n.Skill_LevelUp();
             }
             var skillAreas = skills.skillAreas;
             skillAreas.Add(new ClickableTextureComponent(string.Concat(num6), new Rectangle(num3 - Game1.tileSize * 2 - Game1.tileSize * 3 / 4, num4 + k * (Game1.tileSize / 2 + Game1.pixelZoom * 6), Game1.tileSize * 2 + Game1.pixelZoom * 5, 9 * Game1.pixelZoom), string.Concat(num6), text3, null, Rectangle.Empty, 1f));
@@ -402,7 +439,7 @@ namespace LuckSkill
 
                 bool flag = (Game1.player.LuckLevel > i);
                 if (i == 0)
-                    text = "Luck";
+                    text = I18n.Skill_Name();
                 int num4 = Game1.player.LuckLevel;
                 bool flag2 = (Game1.player.addedLuckLevel.Value > 0);
                 Rectangle empty = new Rectangle(50, 428, 10, 10);
@@ -601,22 +638,18 @@ namespace LuckSkill
 
         private void OnGameLaunched(object sender, EventArgs args)
         {
-            // enableLuckSkillBar
+            // enable Luck skill bar
             var api = this.Helper.ModRegistry.GetApi<IExperienceBarsApi>("spacechase0.ExperienceBars");
-            Log.Trace($"Experience Bars API {(api == null ? "not " : "")}found");
             api?.SetDrawLuck(true);
         }
 
         private void CheckForAllProfessions()
         {
-            if (!this.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
+            if (this.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
             {
-                Log.Info("All Professions not found.");
-                return;
+                Log.Info("All Professions found. You will get every luck profession for your level.");
+                this.HasAllProfessions = true;
             }
-
-            Log.Info("All Professions found. You will get every luck profession for your level.");
-            this.HasAllProfessions = true;
         }
     }
 }

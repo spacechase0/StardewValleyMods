@@ -1,4 +1,15 @@
 ﻿{
+    /*********
+    ** General text
+    *********/
+    "spell.learn": "주문을 배웠습니다. : {{spellName}}",
+    "spell.learn.ancient": "고대 주문을 배웠습니다. : {{spellName}}",
+    "altar.glow": "은은히 빛나는 제단이다.",
+
+
+    /*********
+    ** Wizard learn-magic event
+    *********/
     "event.wizard.1": "흠... 이제 그대 또한 마법의 도에 대해 배워야 할 때가 되었구나.",
     "event.wizard.2": "내가 피에르 상점에 있는데 요바의 제단을 네가 사용할 수 있게 조정해놓았도다.",
     "event.wizard.3": "내가 너에게 마법 주문의 기초를 가르쳐 주겠다. 그렇지만 나머지는 네가 스스로 알아서 깨우쳐야한다.",
@@ -10,6 +21,10 @@
     "event.wizard.9": "(조작 설정은 Magic의 Config 파일을 통해서 설정이 가능합니다.)",
     "event.wizard.abovehead": "마술...",
 
+
+    /*********
+    ** TV channel
+    *********/
     "tv.analyzehints.name": "마법적 분석",
     "tv.analyzehints.notmagical": "*지지직*",
     "tv.analyzehints.1": "마법을 사용하여 농장에서 일하고 싶으세요? 당신의 도구를 분석해보세요.",
@@ -25,11 +40,10 @@
     "tv.analyzehints.11": "대부분의 사람들은 사다리를 사용하여 지하로 내려가지만 어떤 사람이 주문을 걸고 바닥을 곧바로 통과하는 것을 보았어요.",
     "tv.analyzehints.12": "누군가 마나를 되찾기 위해 주문을 외우는 걸 봤네요! 아파 보였습니다. 용암 장어를 잡는 동안이 기술을 배웠다는 소문이 있더라고요.",
 
-    "spell.learn": "주문을 배웠습니다. : {{spellName}}",
-    "spell.learn.ancient": "고대 주문을 배웠습니다. : {{spellName}}",
 
-    "altar.glow": "은은히 빛나는 제단이다.",
-
+    /*********
+    ** Magic spells
+    *********/
     "school.arcane.name": "마법",
     "school.toil.name": "노동",
     "school.nature.name": "자연",
@@ -91,5 +105,34 @@
     "spell.eldritch:lucksteal.name": "행운 강탈",
     "spell.eldritch:lucksteal.desc": "촉매제: 당신이 아끼는 이들의 행복입니다.",
     "spell.eldritch:spirit.name": "스피릿(정령)",
-    "spell.eldritch:spirit.desc": "당신들을 위해 싸울 떠도는 정령들을 소환하십시오."
+    "spell.eldritch:spirit.desc": "당신들을 위해 싸울 떠도는 정령들을 소환하십시오.",
+
+
+    /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "매직 엘릭서",
+    "objects.mana-potion.description": "체력과 마나를 회복시켜주는 영약입니다.",
+
+    "objects.travel-core.name": "트래블 코어",
+    "objects.travel-core.description": "마법 주문의 촉매제입니다.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // TODO
+    "config.altar-location.name": "Altar Location",
+    "config.altar-location.tooltip": "The (internal) name of the location the magic altar should be placed at.",
+    "config.altar-x.name": "Altar X",
+    "config.altar-x.tooltip": "The X tile position where the magic altar should be placed.",
+    "config.altar-y.name": "Altar Y",
+    "config.altar-y.tooltip": "The Y tile position where the magic altar should be placed.",
+
+    "config.cast-key.name": "Key: Cast",
+    "config.cast-key.tooltip": "The key to initiate casting a spell.",
+    "config.swap-spells-key.name": "Key: Swap Sells",
+    "config.swap-spells-key.tooltip": "The key to swap spell sets.",
+    "config.select-spell-key.name": "Key: Spell {{slotNumber}}",
+    "config.select-spell-key.tooltip": "The key to select spell {{slotNumber}}."
 }

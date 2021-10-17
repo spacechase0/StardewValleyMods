@@ -1,6 +1,14 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.2.0
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Added full [translation](https://stardewvalleywiki.com/Modding:Translations) support.
+* Improved integration with Generic Mod Config Menu:
+  * Updated for Generic Mod Config Menu 1.5.0.
+  * The config UI is now also available after loading a save.
+
 ## 1.1.3
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 
