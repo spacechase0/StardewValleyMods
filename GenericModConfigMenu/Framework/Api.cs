@@ -98,10 +98,10 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
-        public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, string[] labels = null, string fieldId = null)
+        public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, Func<string, string> formatAllowedValues = null, string fieldId = null)
         {
             if (allowedValues?.Any() == true)
-                this.AddChoiceOption(mod, name, tooltip, getValue, setValue, allowedValues, labels, fieldId);
+                this.AddChoiceOption(mod, name, tooltip, getValue, setValue, allowedValues, formatAllowedValues, fieldId);
             else
                 this.AddSimpleOption(mod, name, tooltip, getValue, setValue, fieldId);
         }
@@ -297,7 +297,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet)
         {
-            this.AddTextOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, labels: null);
+            this.AddTextOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, formatAllowedValues: null);
         }
 
         /// <inheritdoc />
@@ -474,9 +474,9 @@ namespace GenericModConfigMenu.Framework
         /// <param name="getValue">Get the current value from the mod config.</param>
         /// <param name="setValue">Set a new value in the mod config.</param>
         /// <param name="allowedValues">The values that can be selected, or <c>null</c> to allow any.</param>
-        /// <param name="labels">The values that can be selected, or <c>null</c> to allow any.</param>
+        /// <param name="formatAllowedValues">Allows formatting allowed values with a displayed value, or <c>null</c> to use values as labels.</param>
         /// <param name="fieldId">The unique field ID used when raising field-changed events, or <c>null</c> to generate a random one.</param>
-        private void AddChoiceOption(IManifest mod, Func<string> name, Func<string> tooltip, Func<string> getValue, Action<string> setValue, string[] allowedValues, string[] labels, string fieldId)
+        private void AddChoiceOption(IManifest mod, Func<string> name, Func<string> tooltip, Func<string> getValue, Action<string> setValue, string[] allowedValues, Func<string, string> formatAllowedValues, string fieldId)
         {
             this.AssertNotNull(mod, nameof(mod));
             this.AssertNotNull(name, nameof(name));
@@ -487,7 +487,7 @@ namespace GenericModConfigMenu.Framework
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
 
-            modConfig.AddOption(new ChoiceModOption<string>(fieldId, name, tooltip, modConfig, getValue, setValue, allowedValues, labels));
+            modConfig.AddOption(new ChoiceModOption<string>(fieldId, name, tooltip, modConfig, getValue, setValue, allowedValues, formatAllowedValues));
         }
 
         /// <summary>Register a field changed handler for a value type.</summary>
