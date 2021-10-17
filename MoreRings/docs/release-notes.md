@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* You can now configure the ring effects (including through Generic Mod Config Menu).
 * Fixed support for nested combined rings.
 
 ## 1.1.6

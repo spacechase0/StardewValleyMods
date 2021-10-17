@@ -62,7 +62,7 @@ namespace MoreRings.Patches
             if (tool is Hoe or Pickaxe or WateringCan or Axe)
             {
                 return Mod.Instance.HasRingEquipped(Mod.Instance.RingMageHand)
-                    ? 100
+                    ? Mod.Instance.Config.RingOfFarReaching_TileDistance
                     : 1;
             }
             else

@@ -21,5 +21,25 @@
     "ring-of-far-reaching.description": "在远处使用工具。",
 
     "ring-of-true-sight.name": "真视戒指",
-    "ring-of-true-sight.description": "超越你所能看到的。"
+    "ring-of-true-sight.description": "超越你所能看到的。",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // TODO
+    "config.quality-ring-chance.name": "Quality+ Ring: Chance",
+    "config.quality-ring-chance.description": "The percentage chance of a higher crop quality with the Quality+ Ring equipped.",
+
+    "config.ring-of-wide-nets-multiplier.name": "Ring of Wide Nets: Multiplier",
+    "config.ring-of-wide-nets-multiplier.description": "The multiplier applied to the fishing bar size with the Ring of Wide Nets equipped.",
+
+    "config.ring-of-regeneration-rate.name": "Ring of Regeneration: Regen",
+    "config.ring-of-regeneration-rate.description": "The health regen rate per second with the Ring of Regeneration equipped.",
+
+    "config.refreshing-ring-rate.name": "Refreshing Ring: Regen",
+    "config.refreshing-ring-rate.description": "The stamina regen rate per second with the Refreshing Ring equipped.",
+
+    "config.ring-of-far-reaching-distance.name": "Ring of Far Reaching: Distance",
+    "config.ring-of-far-reaching-distance.description": "The distance in tiles at which you can use tools with the Ring of Far Reaching equipped."
 }

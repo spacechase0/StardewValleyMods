@@ -25,18 +25,21 @@ namespace MoreRings
         /// <summary>The Wear More Rings mod API.</summary>
         private IMoreRingsApi WearMoreRings;
 
-        /// <summary>The number of ticks until the next health regen point.</summary>
-        private int HealthRegenCounter;
+        /// <summary>The remainder to carry over to the next health regen.</summary>
+        private float HealthRegenRemainder;
 
-        /// <summary>The number of ticks until the next stamina regen point.</summary>
-        private int StaminaRegenCounter;
+        /// <summary>The remainder to carry over to the next stamina regen.</summary>
+        private float StaminaRegenRemainder;
 
 
         /*********
         ** Accessors
         *********/
         /// <summary>The mod instance.</summary>
-        public static Mod Instance;
+        public static Mod Instance { get; private set; }
+
+        /// <summary>The mod configuration.</summary>
+        public ModConfig Config { get; private set; }
 
         /// <summary>The item ID for the Ring of Wide Nets.</summary>
         public int RingFishingLargeBar => this.JsonAssets.GetObjectId("Ring of Wide Nets");
@@ -66,8 +69,10 @@ namespace MoreRings
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
+            this.Config = helper.ReadConfig<ModConfig>();
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
@@ -96,17 +101,75 @@ namespace MoreRings
         /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var api = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
-            if (api == null)
-            {
-                Log.Error("No Json Assets API???");
-                return;
-            }
-            this.JsonAssets = api;
-
-            api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
-
+            // get Wear More Rings API if present
             this.WearMoreRings = this.Helper.ModRegistry.GetApi<IMoreRingsApi>("bcmpinc.WearMoreRings");
+
+            // register rings with Json Assets
+            this.JsonAssets = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
+            if (this.JsonAssets != null)
+                this.JsonAssets.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
+            else
+                Log.Error("Couldn't get the Json Assets API, so the new rings won't be available.");
+
+            // register with Generic Mod Config Menu
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
+            {
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => this.Config = new ModConfig(),
+                    save: () => this.Helper.WriteConfig(this.Config)
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_QualityRingChance_Name,
+                    tooltip: I18n.Config_QualityRingChance_Description,
+                    getValue: () => this.Config.QualityRing_ChancePerRing,
+                    setValue: value => this.Config.QualityRing_ChancePerRing = value,
+                    min: 0.05f,
+                    max: 1,
+                    interval: 0.05f
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_RingOfWideNetsMultiplier_Name,
+                    tooltip: I18n.Config_RingOfWideNetsMultiplier_Description,
+                    getValue: () => this.Config.RingOfWideNets_BarSizeMultiplier,
+                    setValue: value => this.Config.RingOfWideNets_BarSizeMultiplier = value,
+                    min: 1,
+                    max: 3,
+                    interval: 0.05f
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_RingOfRegenerationRate_Name,
+                    tooltip: I18n.Config_RingOfRegenerationRate_Description,
+                    getValue: () => this.Config.RingOfRegeneration_RegenPerSecond,
+                    setValue: value => this.Config.RingOfRegeneration_RegenPerSecond = value,
+                    min: 0.05f,
+                    max: 200,
+                    interval: 0.05f
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_RingOfRegenerationRate_Name,
+                    tooltip: I18n.Config_RingOfRegenerationRate_Description,
+                    getValue: () => this.Config.RefreshingRing_RegenPerSecond,
+                    setValue: value => this.Config.RefreshingRing_RegenPerSecond = value,
+                    min: 0.05f,
+                    max: 200,
+                    interval: 0.05f
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_RingOfFarReachingDistance_Name,
+                    tooltip: I18n.Config_RingOfFarReachingDistance_Description,
+                    getValue: () => this.Config.RingOfFarReaching_TileDistance,
+                    setValue: value => this.Config.RingOfFarReaching_TileDistance = value,
+                    min: 1,
+                    max: 200
+                );
+            }
         }
 
         /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
@@ -117,7 +180,7 @@ namespace MoreRings
             if (e.NewMenu is BobberBar bobber && this.HasRingEquipped(this.RingFishingLargeBar))
             {
                 var field = this.Helper.Reflection.GetField<int>(bobber, "bobberBarHeight");
-                field.SetValue((int)(field.GetValue() * 1.50));
+                field.SetValue((int)(field.GetValue() * this.Config.RingOfWideNets_BarSizeMultiplier));
             }
         }
 
@@ -140,16 +203,24 @@ namespace MoreRings
             int hasHealthRings = this.CountRingsEquipped(this.RingCombatRegen);
             int hasStaminaRings = this.CountRingsEquipped(this.RingRefresh);
 
-            if (hasHealthRings > 0 && this.HealthRegenCounter++ >= 4 / hasHealthRings)
+            if (hasHealthRings > 0)
             {
-                this.HealthRegenCounter = 0;
-                Game1.player.health = Math.Min(Game1.player.health + 1, Game1.player.maxHealth);
+                this.HealthRegenRemainder += this.Config.RingOfRegeneration_RegenPerSecond * hasHealthRings;
+                if (this.HealthRegenRemainder > 0)
+                {
+                    Game1.player.health = Math.Min(Game1.player.health + (int)this.HealthRegenRemainder, Game1.player.maxHealth);
+                    this.HealthRegenRemainder %= 1;
+                }
             }
 
-            if (hasStaminaRings > 0 && this.StaminaRegenCounter++ >= 4 / hasStaminaRings)
+            if (hasStaminaRings > 0)
             {
-                this.StaminaRegenCounter = 0;
-                Game1.player.Stamina = Math.Min(Game1.player.Stamina + 1, Game1.player.MaxStamina);
+                this.StaminaRegenRemainder += this.Config.RefreshingRing_RegenPerSecond * hasStaminaRings;
+                if (this.StaminaRegenRemainder > 0)
+                {
+                    Game1.player.Stamina = Math.Min(Game1.player.Stamina + (int)this.StaminaRegenRemainder, Game1.player.MaxStamina);
+                    this.StaminaRegenRemainder %= 1;
+                }
             }
         }
 
