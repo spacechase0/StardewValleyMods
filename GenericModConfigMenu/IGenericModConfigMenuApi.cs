@@ -88,16 +88,6 @@ namespace GenericModConfigMenu
         /// <param name="name">The label text to show in the form.</param>
         /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
         /// <param name="allowedValues">The values that can be selected, or <c>null</c> to allow any.</param>
-        /// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
-        void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null);
-
-        /// <summary>Add a string option at the current position in the form.</summary>
-        /// <param name="mod">The mod's manifest.</param>
-        /// <param name="getValue">Get the current value from the mod config.</param>
-        /// <param name="setValue">Set a new value in the mod config.</param>
-        /// <param name="name">The label text to show in the form.</param>
-        /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
-        /// <param name="allowedValues">The values that can be selected, or <c>null</c> to allow any.</param>
         /// <param name="labels">The labels that can be displayed for each allowed Value, or <c>null</c> to use values as labels.</param>
         /// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
         void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name, Func<string> tooltip = null, string[] allowedValues = null, string[] labels = null, string fieldId = null);
