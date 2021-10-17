@@ -13,32 +13,66 @@ using StardewValley.Menus;
 
 namespace MoreRings
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod Instance;
+        /*********
+        ** Fields
+        *********/
+        /// <summary>The Json Assets mod API.</summary>
+        private IJsonAssetsApi JsonAssets;
 
-        private IJsonAssetsApi Ja;
-        public int RingFishingLargeBar => this.Ja.GetObjectId("Ring of Wide Nets");
-        public int RingCombatRegen => this.Ja.GetObjectId("Ring of Regeneration");
-        public int RingDiamondBooze => this.Ja.GetObjectId("Ring of Diamond Booze");
-        public int RingRefresh => this.Ja.GetObjectId("Refreshing Ring");
-        public int RingQuality => this.Ja.GetObjectId("Quality+ Ring");
-        public int RingMageHand => this.Ja.GetObjectId("Ring of Far Reaching");
-        public int RingTrueSight => this.Ja.GetObjectId("Ring of True Sight");
-
+        /// <summary>The Wear More Rings mod API.</summary>
         private IMoreRingsApi WearMoreRings;
 
-        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
-        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        /// <summary>The number of ticks until the next health regen point.</summary>
+        private int HealthRegenCounter;
+
+        /// <summary>The number of ticks until the next stamina regen point.</summary>
+        private int StaminaRegenCounter;
+
+
+        /*********
+        ** Accessors
+        *********/
+        /// <summary>The mod instance.</summary>
+        public static Mod Instance;
+
+        /// <summary>The item ID for the Ring of Wide Nets.</summary>
+        public int RingFishingLargeBar => this.JsonAssets.GetObjectId("Ring of Wide Nets");
+
+        /// <summary>The item ID for the Ring of Regeneration.</summary>
+        public int RingCombatRegen => this.JsonAssets.GetObjectId("Ring of Regeneration");
+
+        /// <summary>The item ID for the Ring of Diamond Booze.</summary>
+        public int RingDiamondBooze => this.JsonAssets.GetObjectId("Ring of Diamond Booze");
+
+        /// <summary>The item ID for the Refreshing Ring.</summary>
+        public int RingRefresh => this.JsonAssets.GetObjectId("Refreshing Ring");
+
+        /// <summary>The item ID for the Quality+ Ring.</summary>
+        public int RingQuality => this.JsonAssets.GetObjectId("Quality+ Ring");
+
+        /// <summary>The item ID for the Ring of Far Reaching.</summary>
+        public int RingMageHand => this.JsonAssets.GetObjectId("Ring of Far Reaching");
+
+        /// <summary>The item ID for the Ring of True Sight.</summary>
+        public int RingTrueSight => this.JsonAssets.GetObjectId("Ring of True Sight");
+
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
-            helper.Events.Display.MenuChanged += this.OnMenuChanged;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
-            helper.Events.Display.RenderedWorld += TrueSight.OnDrawWorld;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            helper.Events.Display.RenderedWorld += this.OnRenderedWorld;
 
             SpaceEvents.OnItemEaten += this.OnItemEaten;
 
@@ -53,7 +87,11 @@ namespace MoreRings
             );
         }
 
-        /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
+
+        /*********
+        ** Private methods
+        *********/
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -64,14 +102,14 @@ namespace MoreRings
                 Log.Error("No Json Assets API???");
                 return;
             }
-            this.Ja = api;
+            this.JsonAssets = api;
 
             api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
 
             this.WearMoreRings = this.Helper.ModRegistry.GetApi<IMoreRingsApi>("bcmpinc.WearMoreRings");
         }
 
-        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
@@ -83,10 +121,15 @@ namespace MoreRings
             }
         }
 
-        private int RegenCounter;
-        private int RefreshCounter;
+        /// <inheritdoc cref="IDisplayEvents.RenderedWorld"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderedWorld(object sender, RenderedWorldEventArgs e)
+        {
+            TrueSight.DrawOverWorld(e.SpriteBatch);
+        }
 
-        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -97,20 +140,23 @@ namespace MoreRings
             int hasHealthRings = this.CountRingsEquipped(this.RingCombatRegen);
             int hasStaminaRings = this.CountRingsEquipped(this.RingRefresh);
 
-            if (hasHealthRings > 0 && this.RegenCounter++ >= 4 / hasHealthRings)
+            if (hasHealthRings > 0 && this.HealthRegenCounter++ >= 4 / hasHealthRings)
             {
-                this.RegenCounter = 0;
+                this.HealthRegenCounter = 0;
                 Game1.player.health = Math.Min(Game1.player.health + 1, Game1.player.maxHealth);
             }
 
-            if (hasStaminaRings > 0 && this.RefreshCounter++ >= 4 / hasStaminaRings)
+            if (hasStaminaRings > 0 && this.StaminaRegenCounter++ >= 4 / hasStaminaRings)
             {
-                this.RefreshCounter = 0;
+                this.StaminaRegenCounter = 0;
                 Game1.player.Stamina = Math.Min(Game1.player.Stamina + 1, Game1.player.MaxStamina);
             }
         }
 
-        private void OnItemEaten(object sender, EventArgs args)
+        /// <inheritdoc cref="SpaceEvents.OnItemEaten"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnItemEaten(object sender, EventArgs e)
         {
             if (this.HasRingEquipped(this.RingDiamondBooze))
             {
