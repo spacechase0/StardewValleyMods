@@ -165,13 +165,14 @@ namespace MoreRings
         /// <param name="id">The ring ID to match.</param>
         public int CountRingsEquipped(int id)
         {
-            if (this.WearMoreRings != null)
-                return this.WearMoreRings.CountEquippedRings(Game1.player, id);
-
-            return
+            int count =
                 Game1.player.leftRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0
                 + Game1.player.rightRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0;
 
+            if (this.WearMoreRings != null)
+                count = Math.Max(count, this.WearMoreRings.CountEquippedRings(Game1.player, id));
+
+            return count;
         }
     }
 }
