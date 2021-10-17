@@ -98,12 +98,6 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
-        public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null)
-        {
-            this.AddTextOption(mod, getValue, setValue, name, tooltip, allowedValues, null, fieldId);
-        }
-
-        /// <inheritdoc />
         public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, string[] labels = null, string fieldId = null)
         {
             if (allowedValues?.Any() == true)
@@ -406,6 +400,13 @@ namespace GenericModConfigMenu.Framework
         public void SubscribeToChange(IManifest mod, Action<string, string> changeHandler)
         {
             this.SubscribeToChange<string>(mod, changeHandler);
+        }
+
+        /// <inheritdoc />
+        [Obsolete]
+        public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null)
+        {
+            this.AddTextOption(mod, getValue, setValue, name, tooltip, allowedValues, null, fieldId);
         }
 
 

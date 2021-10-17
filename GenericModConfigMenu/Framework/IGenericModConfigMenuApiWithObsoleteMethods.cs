@@ -40,5 +40,6 @@ namespace GenericModConfigMenu.Framework
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.OnFieldChanged) + " instead.")] void SubscribeToChange(IManifest mod, Action<string, int> changeHandler);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.OnFieldChanged) + " instead.")] void SubscribeToChange(IManifest mod, Action<string, float> changeHandler);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.OnFieldChanged) + " instead.")] void SubscribeToChange(IManifest mod, Action<string, string> changeHandler);
+        [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddTextOption) + " instead.")]  void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null);
     }
 }
