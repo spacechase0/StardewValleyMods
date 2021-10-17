@@ -12,6 +12,9 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <summary>The values that can be selected.</summary>
         public T[] Choices { get; }
 
+        /// <summary>The labels that will be displayed for each choice.</summary>
+        public string[] Labels { get; }
+
         /// <inheritdoc />
         public override T Value
         {
@@ -35,10 +38,12 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <param name="getValue">Get the latest value from the mod config.</param>
         /// <param name="setValue">Update the mod config with the given value.</param>
         /// <param name="choices">The values that can be selected.</param>
-        public ChoiceModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<T> getValue, Action<T> setValue, T[] choices)
+        /// <param name="labels">The labels that will be displayed for each choice.</param>
+        public ChoiceModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<T> getValue, Action<T> setValue, T[] choices, string[] labels = null)
             : base(fieldId, name, tooltip, mod, getValue, setValue)
         {
             this.Choices = choices;
+            this.Labels = labels;
         }
     }
 }
