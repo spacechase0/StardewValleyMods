@@ -15,13 +15,17 @@ using SObject = StardewValley.Object;
 
 namespace BetterShopMenu
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static Configuration Config;
 
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
+
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
@@ -35,11 +39,21 @@ namespace BetterShopMenu
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (capi != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Grid Layout)", "Whether or not to use the grid layout in shops.", () => Mod.Config.GridLayout, (bool val) => Mod.Config.GridLayout = val);
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => Mod.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.AddBoolOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_GridLayout_Name,
+                    tooltip: I18n.Config_GridLayout_Tooltip,
+                    getValue: () => Mod.Config.ExperimentalGridLayout,
+                    setValue: value => Mod.Config.ExperimentalGridLayout = value
+                );
             }
         }
 
@@ -80,50 +94,51 @@ namespace BetterShopMenu
 
             this.CategoryNames = new Dictionary<int, string>
             {
-                [-1] = "Everything",
-                [0] = "Other",
-                [SObject.GreensCategory] = "Greens",
-                [SObject.GemCategory] = "Gems",
-                [SObject.VegetableCategory] = "Vegetables",
-                [SObject.FishCategory] = "Fish",
-                [SObject.EggCategory] = "Egg",
-                [SObject.MilkCategory] = "Milk",
-                [SObject.CookingCategory] = "Cooking",
-                [SObject.CraftingCategory] = "Crafting",
-                [SObject.BigCraftableCategory] = "Big Craftables",
-                [SObject.FruitsCategory] = "Fruits",
-                [SObject.SeedsCategory] = "Seeds",
-                [SObject.mineralsCategory] = "Minerals",
-                [SObject.flowersCategory] = "Flowers",
-                [SObject.meatCategory] = "Meat",
-                [SObject.metalResources] = "Metals",
-                [SObject.buildingResources] = "Building Resources", //?
-                [SObject.sellAtPierres] = "Sellable @ Pierres",
-                [SObject.sellAtPierresAndMarnies] = "Sellable @ Pierre's/Marnie's",
-                [SObject.fertilizerCategory] = "Fertilizer",
-                [SObject.junkCategory] = "Junk",
-                [SObject.baitCategory] = "Bait",
-                [SObject.tackleCategory] = "Tackle",
-                [SObject.sellAtFishShopCategory] = "Sellable @ Willy's",
-                [SObject.furnitureCategory] = "Furniture",
-                [SObject.ingredientsCategory] = "Ingredients",
-                [SObject.artisanGoodsCategory] = "Artisan Goods",
-                [SObject.syrupCategory] = "Syrups",
-                [SObject.monsterLootCategory] = "Monster Loot",
-                [SObject.equipmentCategory] = "Equipment",
-                [SObject.hatCategory] = "Hats",
-                [SObject.ringCategory] = "Rings",
-                [SObject.weaponCategory] = "Weapons",
-                [SObject.bootsCategory] = "Boots",
-                [SObject.toolCategory] = "Tools",
-                [SObject.clothingCategory] = "Clothing",
-                [this.Categories.Count == 0 ? 1 : this.Categories.Count] = "Recipes"
+                [-1] = I18n.Categories_Everything(),
+                [0] = I18n.Categories_Other(),
+                [SObject.GreensCategory] = I18n.Categories_Greens(),
+                [SObject.GemCategory] = I18n.Categories_Gems(),
+                [SObject.VegetableCategory] = I18n.Categories_Vegetables(),
+                [SObject.FishCategory] = I18n.Categories_Fish(),
+                [SObject.EggCategory] = I18n.Categories_Eggs(),
+                [SObject.MilkCategory] = I18n.Categories_Milk(),
+                [SObject.CookingCategory] = I18n.Categories_Cooking(),
+                [SObject.CraftingCategory] = I18n.Categories_Crafting(),
+                [SObject.BigCraftableCategory] = I18n.Categories_BigCraftables(),
+                [SObject.FruitsCategory] = I18n.Categories_Fruits(),
+                [SObject.SeedsCategory] = I18n.Categories_Seeds(),
+                [SObject.mineralsCategory] = I18n.Categories_Minerals(),
+                [SObject.flowersCategory] = I18n.Categories_Flowers(),
+                [SObject.meatCategory] = I18n.Categories_Meat(),
+                [SObject.metalResources] = I18n.Categories_Metals(),
+                [SObject.buildingResources] = I18n.Categories_BuildingResources(), //?
+                [SObject.sellAtPierres] = I18n.Categories_SellToPierre(),
+                [SObject.sellAtPierresAndMarnies] = I18n.Categories_SellToPierreOrMarnie(),
+                [SObject.fertilizerCategory] = I18n.Categories_Fertilizer(),
+                [SObject.junkCategory] = I18n.Categories_Junk(),
+                [SObject.baitCategory] = I18n.Categories_Bait(),
+                [SObject.tackleCategory] = I18n.Categories_Tackle(),
+                [SObject.sellAtFishShopCategory] = I18n.Categories_SellToWilly(),
+                [SObject.furnitureCategory] = I18n.Categories_Furniture(),
+                [SObject.ingredientsCategory] = I18n.Categories_Ingredients(),
+                [SObject.artisanGoodsCategory] = I18n.Categories_ArtisanGoods(),
+                [SObject.syrupCategory] = I18n.Categories_Syrups(),
+                [SObject.monsterLootCategory] = I18n.Categories_MonsterLoot(),
+                [SObject.equipmentCategory] = I18n.Categories_Equipment(),
+                [SObject.hatCategory] = I18n.Categories_Hats(),
+                [SObject.ringCategory] = I18n.Categories_Rings(),
+                [SObject.weaponCategory] = I18n.Categories_Weapons(),
+                [SObject.bootsCategory] = I18n.Categories_Boots(),
+                [SObject.toolCategory] = I18n.Categories_Tools(),
+                [SObject.clothingCategory] = I18n.Categories_Clothing(),
+                [this.Categories.Count == 0 ? 1 : this.Categories.Count] = I18n.Categories_Recipes()
             };
 
             this.Search = new TextBox(Game1.content.Load<Texture2D>("LooseSprites\\textBox"), null, Game1.smallFont, Game1.textColor);
 
             this.SyncStock();
         }
+
         private void ChangeCategory(int amt)
         {
             this.CurrCategory += amt;
@@ -207,7 +222,7 @@ namespace BetterShopMenu
             IClickableMenu.drawTextureBox(Game1.spriteBatch, (int)pos.X, (int)pos.Y, 200, 72, Color.White);
             pos.X += 16;
             pos.Y += 16;
-            string str = "Category: \n" + this.CategoryNames[((this.CurrCategory == -1 || this.CurrCategory == this.Categories.Count) ? this.CurrCategory : this.Categories[this.CurrCategory])];
+            string str = $"{I18n.Filter_Category()}\n" + this.CategoryNames[((this.CurrCategory == -1 || this.CurrCategory == this.Categories.Count) ? this.CurrCategory : this.Categories[this.CurrCategory])];
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1, 1), new Color(224, 150, 80), 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color(86, 22, 12), 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
 
@@ -215,11 +230,11 @@ namespace BetterShopMenu
             IClickableMenu.drawTextureBox(Game1.spriteBatch, (int)pos.X, (int)pos.Y, 200, 48, Color.White);
             pos.X += 16;
             pos.Y += 16;
-            str = "Sorting: " + (this.Sorting == 0 ? "None" : (this.Sorting == 1 ? "Price" : "Name"));
+            str = I18n.Filter_Sorting() + " " + (this.Sorting == 0 ? I18n.Sort_None() : (this.Sorting == 1 ? I18n.Sort_Price() : I18n.Sort_Name()));
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos + new Vector2(-1, 1), new Color(224, 150, 80), 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
             Game1.spriteBatch.DrawString(Game1.dialogueFont, str, pos, new Color(86, 22, 12), 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
 
-            if (Mod.Config.GridLayout)
+            if (Mod.Config.ExperimentalGridLayout)
             {
                 this.DrawGridLayout();
             }
@@ -381,7 +396,7 @@ namespace BetterShopMenu
                 if (new Rectangle(this.Shop.xPositionOnScreen + 25, this.Shop.yPositionOnScreen + 600, 200, 48).Contains(x, y))
                     this.ChangeSorting(direction);
 
-                if (Mod.Config.GridLayout)
+                if (Mod.Config.ExperimentalGridLayout)
                 {
                     this.Helper.Input.Suppress(e.Button);
                     if (e.Button == SButton.MouseRight)

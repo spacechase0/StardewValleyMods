@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using StardewValley;
 
 namespace JsonAssets.Framework
 {
@@ -70,6 +71,32 @@ namespace JsonAssets.Framework
                         values.RemoveAt(i);
                 }
             }
+        }
+
+        /// <summary>Get the translated name for the item, or the default name if not translated.</summary>
+        /// <param name="item">The item instance.</param>
+        public static string LocalizedName(this ITranslatableItem item)
+        {
+            return InternalExtensions.GetLocalized(item.Name, item.NameLocalization);
+        }
+
+        /// <summary>Get the translated description for the item, or the default description if not translated.</summary>
+        /// <param name="item">The item instance.</param>
+        public static string LocalizedDescription(this ITranslatableItem item)
+        {
+            return InternalExtensions.GetLocalized(item.Description, item.DescriptionLocalization) ?? string.Empty;
+        }
+
+        /// <summary>Get the translated text, or the default description if not translated.</summary>
+        /// <param name="defaultText">The default text if no translation matches.</param>
+        /// <param name="translations">The translations by language code.</param>
+        private static string GetLocalized(string defaultText, IDictionary<string, string> translations)
+        {
+            var locale = LocalizedContentManager.CurrentLanguageCode;
+
+            return translations.TryGetValue(locale.ToString(), out string translated) || translations.TryGetValue("default", out translated)
+                ? translated
+                : defaultText;
         }
     }
 }

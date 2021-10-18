@@ -1,6 +1,17 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed error when a monster is damaged indirectly in some cases.
+
+## 1.1.0
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Added full [translation](https://stardewvalleywiki.com/Modding:Translations) support.
+* Improved integration with Generic Mod Config Menu:
+  * Updated for Generic Mod Config Menu 1.5.0.
+  * Enabled config UI from the in-game options menu after the save is loaded.
+
 ## 1.0.3
 Released 01 August 2021 for SMAPI 3.12.0. Updated by Pathoschild.
 

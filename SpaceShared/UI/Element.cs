@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -9,6 +8,9 @@ namespace SpaceShared.UI
 {
     internal abstract class Element
     {
+        /*********
+        ** Accessors
+        *********/
         public object UserData { get; set; }
 
         public Container Parent { get; internal set; }
@@ -34,6 +36,12 @@ namespace SpaceShared.UI
         public bool Clicked => this.Hover && this.ClickGestured;
         public virtual string ClickedSound => null;
 
+
+        /*********
+        ** Public methods
+        *********/
+        /// <summary>Update the element for the current game tick.</summary>
+        /// <param name="hidden">Whether the element is currently hidden.</param>
         public virtual void Update(bool hidden = false)
         {
             if (hidden)
@@ -61,8 +69,7 @@ namespace SpaceShared.UI
                 Game1.playSound(this.HoveredSound);
             this.Hover = newHover;
 
-            var input = Game1.input;
-            this.ClickGestured = Game1.oldMouseState.LeftButton == ButtonState.Released && input.GetMouseState().LeftButton == ButtonState.Pressed;
+            this.ClickGestured = Game1.didPlayerJustLeftClick();
             if (this.Clicked && this.ClickedSound != null)
                 Game1.playSound(this.ClickedSound);
         }

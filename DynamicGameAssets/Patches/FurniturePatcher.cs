@@ -4,6 +4,7 @@ using HarmonyLib;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
+using StardewValley;
 using StardewValley.Objects;
 
 namespace DynamicGameAssets.Patches
@@ -25,6 +26,10 @@ namespace DynamicGameAssets.Patches
             harmony.Patch(
                 original: this.RequireMethod<Furniture>(nameof(Furniture.updateRotation)),
                 prefix: this.GetHarmonyMethod(nameof(Before_UpdateRotation))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<Furniture>(nameof(Furniture.placementAction)),
+                postfix: this.GetHarmonyMethod(nameof(After_PlacementAction))
             );
         }
 
@@ -60,6 +65,17 @@ namespace DynamicGameAssets.Patches
             }
 
             return true;
+        }
+
+        /// <summary>The method to call after <see cref="Furniture.placementAction"/>.</summary>
+        private static void After_PlacementAction(Furniture __instance, GameLocation location)
+        {
+            // correct lamp/sconce light position
+            if (__instance is CustomBasicFurniture furniture)
+            {
+                if (furniture.furniture_type.Value is Furniture.lamp or Furniture.sconce)
+                    furniture.resetOnPlayerEntry(location);
+            }
         }
     }
 }

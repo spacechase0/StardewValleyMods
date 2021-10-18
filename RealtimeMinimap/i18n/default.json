@@ -1,0 +1,40 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // top section
+    "config.show-by-default.name": "Show By Default",
+    "config.show-by-default.tooltip": "Whether the minimap should be shown by default.\nYou must restart the game for this to take effect.",
+    "config.toggle-key.name": "Toggle Key",
+    "config.toggle-key.tooltip": "The key which shows or hides the minimap.",
+    "config.update-interval.name": "Update Interval",
+    "config.update-interval.tooltip": "The interval in milliseconds between each minimap update. 0 will be every frame; -1 will only do it when entering a new location. (Markers update every frame regardless.)",
+
+    // Positioning & Size section
+    "config.positioning-and-size.text": "Positioning & Size",
+    "config.positioning-and-size.tooltip": "Options pertaining to the placement of the minimap.",
+    "config.anchor-x.name": "Minimap Anchor X",
+    "config.anchor-x.tooltip": "The percentage of the screen's width where the top-left of the minimap will be placed.",
+    "config.anchor-y.name": "Minimap Anchor Y",
+    "config.anchor-y.tooltip": "The percentage of the screen's height where the top-left of the minimap will be placed.",
+    "config.offset-x.name": "Minimap Offset X",
+    "config.offset-x.tooltip": "The X offset from the anchor that the minimap will be placed at.",
+    "config.offset-y.name": "Minimap Offset Y",
+    "config.offset-y.tooltip": "The Y offset from the anchor that the minimap will be placed at.",
+    "config.size.name": "Minimap Size",
+    "config.size.tooltip": "The size of the minimap, in pixels (before UI scale).",
+
+    // Markers section
+    "config.markers.text": "Markers",
+    "config.markers.tooltip": "Options pertaining to rendering markers on the map.",
+    "config.player-marker-scale.name": "Player Heads",
+    "config.player-marker-scale.tooltip": "Render scale for the head of a player. 0 disables it.",
+    "config.npc-marker-scale.name": "NPC Heads",
+    "config.npc-marker-scale.tooltip": "Render scale for the head of an NPC. 0 disables it.",
+    "config.wood-sign-marker-scale.name": "Wood Signs",
+    "config.wood-sign-marker-scale.tooltip": "Render scale for items held on wooden signs. 0 disables it.",
+    "config.stone-sign-marker-scale.name": "Stone Signs",
+    "config.stone-sign-marker-scale.tooltip": "Render scale for items held on stone signs. 0 disables it.",
+    "config.dark-sign-marker-scale.name": "Dark Signs",
+    "config.dark-sign-marker-scale.tooltip": "Render scale for items held on dark signs. 0 disables it."
+}

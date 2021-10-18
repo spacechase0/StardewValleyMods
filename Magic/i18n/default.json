@@ -1,4 +1,15 @@
 ﻿{
+    /*********
+    ** General text
+    *********/
+    "spell.learn": "You learned a spell: {{spellName}}",
+    "spell.learn.ancient": "You learned an ancient spell: {{spellName}}",
+    "altar.glow": "A glowing altar",
+
+
+    /*********
+    ** Wizard learn-magic event
+    *********/
     "event.wizard.1": "It is time for you to learn the ways of magic.",
     "event.wizard.2": "I have... adjusted the Yoba altar in Pierre's shop for you to use.",
     "event.wizard.3": "I will teach you the basic of Arcane magic, but the rest you must discover on your own. ",
@@ -10,6 +21,10 @@
     "event.wizard.9": "(These controls can be adjusted in Magic's config file.)",
     "event.wizard.abovehead": "MAGIC",
 
+
+    /*********
+    ** TV channel
+    *********/
     "tv.analyzehints.name": "Magical Analytics",
     "tv.analyzehints.notmagical": "*static*",
     "tv.analyzehints.1": "Looking to use magic to work around the farm? Try analyzing your tools.",
@@ -25,11 +40,10 @@
     "tv.analyzehints.11": "Most people use ladders to descend underground, but I saw one person cast a spell and zip straight through the floor.",
     "tv.analyzehints.12": "I saw someone cast a spell to regain mana!? It looked like it hurt. Rumor has it they learned this technique while fishing for Lava Eels.",
 
-    "spell.learn": "You learned a spell: {{spellName}}",
-    "spell.learn.ancient": "You learned an ancient spell: {{spellName}}",
 
-    "altar.glow": "A glowing altar",
-
+    /*********
+    ** Magic spells
+    *********/
     "school.arcane.name": "arcane",
     "school.toil.name": "toil",
     "school.nature.name": "nature",
@@ -91,5 +105,33 @@
     "spell.eldritch:lucksteal.name": "Luck Steal",
     "spell.eldritch:lucksteal.desc": "Catalyst: The happiness of your loved ones",
     "spell.eldritch:spirit.name": "Spirit",
-    "spell.eldritch:spirit.desc": "Summon a lost spirit to fight for you."
+    "spell.eldritch:spirit.desc": "Summon a lost spirit to fight for you.",
+
+
+    /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "Magic Elixir",
+    "objects.mana-potion.description": "Restores health and mana.",
+
+    "objects.travel-core.name": "Travel Core",
+    "objects.travel-core.description": "Catalyst.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.altar-location.name": "Altar Location",
+    "config.altar-location.tooltip": "The (internal) name of the location the magic altar should be placed at.",
+    "config.altar-x.name": "Altar X",
+    "config.altar-x.tooltip": "The X tile position where the magic altar should be placed.",
+    "config.altar-y.name": "Altar Y",
+    "config.altar-y.tooltip": "The Y tile position where the magic altar should be placed.",
+
+    "config.cast-key.name": "Key: Cast",
+    "config.cast-key.tooltip": "The key to initiate casting a spell.",
+    "config.swap-spells-key.name": "Key: Swap Sells",
+    "config.swap-spells-key.tooltip": "The key to swap spell sets.",
+    "config.select-spell-key.name": "Key: Spell {{slotNumber}}",
+    "config.select-spell-key.tooltip": "The key to select spell {{slotNumber}}."
 }

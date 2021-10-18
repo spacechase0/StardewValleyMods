@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.wiggly-arms.name": "Wiggly Arms",
+    "config.wiggly-arms.tooltip": "Whether to show wiggly arms reaching out to your cursor."
+}

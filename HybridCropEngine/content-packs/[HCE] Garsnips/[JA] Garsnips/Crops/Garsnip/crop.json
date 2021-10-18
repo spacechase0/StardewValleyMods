@@ -1,8 +1,6 @@
 ﻿{
     "Name": "Garsnip",
     "Product": "Garsnip",
-    "SeedName": "Garsnip Seeds",
-    "SeedDescription": "How did this happen? Grows in spring, takes 4 days.",
     "CropType": "Normal",
     "Seasons": [ "spring" ],
     "Phases": [ 1, 1, 1, 1 ],
@@ -10,17 +8,10 @@
     "HarvestWithScythe": false,
     "TrellisCrop": false,
     "Colors": [],
-    "Bonus": null,
+    "SeedName": "Garsnip Seeds",
     "SeedPurchaseRequirements": [],
     "SeedPurchasePrice": 0,
     "SeedSellPrice": -1,
     "SeedPurchaseFrom": "Pierre",
-    "SeedNameLocalization": {
-        "hu": "Pasztinák magvak"
-    },
-    "SeedDescriptionLocalization": {
-        "hu": "Ezeket tavasszal ültesd el. 4 napig tart megérnie."
-    },
-    "EnableWithMod": null,
-    "DisableWithMod": null
+    "SeedTranslationKey": "seeds"
 }

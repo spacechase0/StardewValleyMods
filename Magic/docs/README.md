@@ -119,13 +119,13 @@ professions:
 
 <tr>
   <td><strong>Fireball</strong></td>
-  <td>Cast analyze on a fire quartz.</td>
+  <td>Select a fire quartz on your toolbar and cast analyze.</td>
   <td>Shoot a devasting ball of fire at your enemies. Higher levels improve damage and speed.</td>
 </tr>
 
 <tr>
   <td><strong>Frostbolt</strong></td>
-  <td>Cast analyze on a frost pip.</td>
+  <td>Select an <a href="https://stardewvalleywiki.com/Ice_Pip">ice pip</a> on your toolbar and cast analyze.</td>
   <td>Shoot a piercing bolt of ice at your enemies. Higher levels improve damage and speed.</td>
 </tr>
 
@@ -144,19 +144,19 @@ professions:
 
 <tr>
   <td><strong>Evac</strong></td>
-  <td>Cast analyze on boots.</td>
+  <td>Select boots on your toolbar and cast analyze.</td>
   <td>Teleport to where you entered the area.</td>
 </tr>
 
 <tr>
   <td><strong>Haste</strong></td>
-  <td>Cast analyze on coffee.</td>
+  <td>Select coffee on your toolbar and cast analyze.</td>
   <td>Increase your move speed. Higher levels make you move faster and longer.</td>
 </tr>
 
 <tr>
   <td><strong>Heal</strong></td>
-  <td>Cast analyze on a life elixir.</td>
+  <td>Select a life elixir on your toolbar and cast analyze.</td>
   <td>Regain health at the cost of mana. Higher levels heal more at a better cost ratio.</td>
 </tr>
 
@@ -175,7 +175,7 @@ professions:
 
 <tr>
   <td><strong>Shockwave</strong></td>
-  <td>Cast analyze on an earth crystal.</td>
+  <td>Select an earth crystal on your toolbar and cast analyze.</td>
   <td>Jump into the air and slam down, sending out a shockwave. Higher levels are larger and fiercer.</td>
 </tr>
 
@@ -194,19 +194,19 @@ professions:
 
 <tr>
   <td><strong>Clear Debris</strong></td>
-  <td>Cast analyze on an axe or pickaxe.</td>
+  <td>Equip an axe or pickaxe and cast analyze.</td>
   <td>Clear debris around the targeted area. Higher levels clear larger debris types.</td>
 </tr>
 
 <tr>
   <td><strong>Till</strong></td>
-  <td>Cast analyze on a hoe.</td>
+  <td>Equip a hoe and cast analyze.</td>
   <td>Till soil around the targeted area. Higher levels till larger areas.</td>
 </tr>
 
 <tr>
   <td><strong>Water</strong></td>
-  <td>Cast analyze on a watering can.</td>
+  <td>Equip a watering can and cast analyze.</td>
   <td>Water soil around the targeted area. Higher levels water larger areas.</td>
 </tr>
 </table>

@@ -47,7 +47,7 @@ namespace PreexistingRelationship.Framework
 
             var title = new Label
             {
-                String = Mod.Instance.Helper.Translation.Get("menu.title"),
+                String = I18n.Menu_Title(),
                 Bold = true
             };
             title.LocalPosition = new Vector2((800 - title.Measure().X) / 2, 10);
@@ -55,7 +55,7 @@ namespace PreexistingRelationship.Framework
 
             this.Ui.AddChild(new Label
             {
-                String = Mod.Instance.Helper.Translation.Get("menu.text").ToString().Replace("\\n", "\n"),
+                String = I18n.Menu_Text(),
                 LocalPosition = new Vector2(50, 75),
                 NonBoldScale = 0.75f,
                 NonBoldShadow = false
@@ -97,7 +97,7 @@ namespace PreexistingRelationship.Framework
                     cont.AddChild(new Image
                     {
                         Texture = Game1.mouseCursors,
-                        TextureRect = new Rectangle(583, 411, 115, 97),
+                        TexturePixelArea = new Rectangle(583, 411, 115, 97),
                         Scale = 2,
                         LocalPosition = new Vector2(0, 0),
                         Callback = SelCallback
@@ -105,7 +105,7 @@ namespace PreexistingRelationship.Framework
                     cont.AddChild(new Image
                     {
                         Texture = valid[col].Portrait,
-                        TextureRect = new Rectangle(0, 128, 64, 64),
+                        TexturePixelArea = new Rectangle(0, 128, 64, 64),
                         Scale = 2,
                         LocalPosition = new Vector2(50, 16)
                     });
@@ -126,28 +126,37 @@ namespace PreexistingRelationship.Framework
 
             this.Ui.AddChild(new Label
             {
-                String = Mod.Instance.Helper.Translation.Get("menu.button.cancel"),
+                String = I18n.Menu_Button_Cancel(),
                 LocalPosition = new Vector2(175, 650),
                 Callback = e => Game1.exitActiveMenu()
             });
             this.Ui.AddChild(new Label
             {
-                String = Mod.Instance.Helper.Translation.Get("menu.button.accept"),
+                String = I18n.Menu_Button_Accept(),
                 LocalPosition = new Vector2(500, 650),
                 Callback = e => this.DoMarriage()
             });
         }
 
+        /// <inheritdoc />
+        public override bool overrideSnappyMenuCursorMovementBan()
+        {
+            return true;
+        }
+
+        /// <inheritdoc />
         public override void receiveScrollWheelAction(int direction)
         {
             this.Table.Scrollbar.ScrollBy(direction / -120);
         }
 
+        /// <inheritdoc />
         public override void update(GameTime time)
         {
             this.Ui.Update();
         }
 
+        /// <inheritdoc />
         public override void draw(SpriteBatch b)
         {
             base.draw(b);
@@ -168,7 +177,7 @@ namespace PreexistingRelationship.Framework
             {
                 if (player.spouse == this.SelectedNpc)
                 {
-                    Game1.addHUDMessage(new HUDMessage(Mod.Instance.Helper.Translation.Get("spouse-taken")));
+                    Game1.addHUDMessage(new HUDMessage(I18n.SpouseTaken()));
                     this.SelectedContainer.OutlineColor = null;
                     this.SelectedContainer = null;
                     this.SelectedNpc = null;

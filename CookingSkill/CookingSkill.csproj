@@ -4,23 +4,13 @@
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.3.4</Version>
+    <Version>1.4.0</Version>
     <TargetFramework>net452</TargetFramework>
 
     <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="False" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-    <None Update="Framework\I18n.tt" Generator="TextTemplatingFileGenerator" LastGenOutput="I18n.cs" />
-    <Compile Update="Framework\I18n.cs" DesignTime="True" AutoGen="True" DependentUpon="I18n.tt" />
   </ItemGroup>
 </Project>

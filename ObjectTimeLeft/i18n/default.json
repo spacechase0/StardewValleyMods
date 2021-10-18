@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.show-on-start.name": "Show On Start",
+    "config.show-on-start.tooltip": "Whether to start the game with time left already showing.",
+
+    "config.toggle-key.name": "Key: Toggle Display",
+    "config.toggle-key.tooltip": "The key to toggle the display on objects.",
+
+    "config.text-scale.name": "Text Scale",
+    "config.text-scale.tooltip": "The scale of the text to superimpose on objects."
+}

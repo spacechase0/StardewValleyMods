@@ -40,6 +40,13 @@ namespace Magic.Framework.Game.Interface
             this.Active = school;
         }
 
+        /// <inheritdoc />
+        public override bool overrideSnappyMenuCursorMovementBan()
+        {
+            return true;
+        }
+
+        /// <inheritdoc />
         public override void draw(SpriteBatch b)
         {
             var spellBook = Game1.player.GetSpellBook();
@@ -232,12 +239,14 @@ namespace Magic.Framework.Game.Interface
             this.drawMouse(b);
         }
 
+        /// <inheritdoc />
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
             base.receiveLeftClick(x, y, playSound);
             this.JustLeftClicked = true;
         }
 
+        /// <inheritdoc />
         public override void receiveRightClick(int x, int y, bool playSound = true)
         {
             this.JustRightClicked = true;

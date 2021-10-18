@@ -1,0 +1,5 @@
+﻿{
+    "camera.name": "Camara",
+    "camera.description": "¡Haz una foto de un NPC! Compra cartuchos en la tienda de Pierre en los Jueves.",
+    "error.no-matching-portrait": "Te olvidaste de quitar la tapa de la lente.\n(No se encontro ningún retrato coincidente.)"
+}

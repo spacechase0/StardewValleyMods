@@ -18,6 +18,7 @@ namespace JunimosAcceptCash
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             this.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -29,11 +30,21 @@ namespace JunimosAcceptCash
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                gmcm.RegisterModConfig(this.ModManifest, () => this.Config = new Configuration(), () => this.Helper.WriteConfig(this.Config));
-                gmcm.RegisterSimpleOption(this.ModManifest, "Cost Multiplier", "The multiplier for the cost of the items to charge.", () => this.Config.CostMultiplier, i => this.Config.CostMultiplier = i);
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => this.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(this.Config)
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_CostMultiplier_Name,
+                    tooltip: I18n.Config_CostMultiplier_Tooltip,
+                    getValue: () => this.Config.CostMultiplier,
+                    setValue: value => this.Config.CostMultiplier = value
+                );
             }
         }
 

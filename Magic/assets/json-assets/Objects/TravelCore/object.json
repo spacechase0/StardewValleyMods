@@ -1,0 +1,23 @@
+﻿{
+    "Name": "Travel Core",
+    "Category": "MonsterLoot",
+    "Edibility": 80,
+    "Price": 100,
+    "Recipe": {
+        "ResultCount": 1,
+        "Ingredients": [
+            {
+                "Object": 768,
+                "Count": 1
+            },
+            {
+                "Object": 769,
+                "Count": 1
+            }
+        ],
+        "CanPurchase": true,
+        "PurchaseFrom": "Marlon",
+        "PurchasePrice": 250
+    },
+    "TranslationKey": "objects.travel-core"
+}

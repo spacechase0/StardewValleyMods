@@ -1,0 +1,45 @@
+﻿{
+    /*********
+    ** Ring items
+    *********/
+    "quality-ring.name": "Anillo de Calidad+",
+    "quality-ring.description": "Aumenta la probabilidad de obtener cosechas de mayor calidad.",
+
+    "refreshing-ring.name": "Anillo Refrescante",
+    "refreshing-ring.description": "Me pregunto que hace esto.",
+
+    "ring-of-regeneration.name": "Anillo de Regeneración",
+    "ring-of-regeneration.description": "Cura lentamente con el tiempo.",
+
+    "ring-of-diamond-booze.name": "Anillo de diamantes de bebida",
+    "ring-of-diamond-booze.description": "Anula el efecto del mareo del alcohol ligero.",
+
+    "ring-of-wide-nets.name": "Anillo de Redes Anchas",
+    "ring-of-wide-nets.description": "Aumenta el tamaño de la barra de pesca en un 50%.",
+
+    "ring-of-far-reaching.name": "Anillo de largo alcance",
+    "ring-of-far-reaching.description": "Usa herramientas a distancia.",
+
+    "ring-of-true-sight.name": "Anillo de la vista verdadera",
+    "ring-of-true-sight.description": "Ve más allá de lo que puedes ver.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // TODO
+    "config.quality-ring-chance.name": "Quality+ Ring: Chance",
+    "config.quality-ring-chance.description": "The percentage chance of a higher crop quality with the Quality+ Ring equipped.",
+
+    "config.ring-of-wide-nets-multiplier.name": "Ring of Wide Nets: Multiplier",
+    "config.ring-of-wide-nets-multiplier.description": "The multiplier applied to the fishing bar size with the Ring of Wide Nets equipped.",
+
+    "config.ring-of-regeneration-rate.name": "Ring of Regeneration: Regen",
+    "config.ring-of-regeneration-rate.description": "The health regen rate per second with the Ring of Regeneration equipped.",
+
+    "config.refreshing-ring-rate.name": "Refreshing Ring: Regen",
+    "config.refreshing-ring-rate.description": "The stamina regen rate per second with the Refreshing Ring equipped.",
+
+    "config.ring-of-far-reaching-distance.name": "Ring of Far Reaching: Distance",
+    "config.ring-of-far-reaching-distance.description": "The distance in tiles at which you can use tools with the Ring of Far Reaching equipped."
+}

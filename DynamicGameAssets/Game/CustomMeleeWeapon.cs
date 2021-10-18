@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Xml.Serialization;
+using DynamicGameAssets.Framework;
 using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -101,7 +102,7 @@ namespace DynamicGameAssets.Game
         public override void drawTooltip(SpriteBatch spriteBatch, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText)
         {
             base.drawTooltip(spriteBatch, ref x, ref y, font, alpha, overrideText);
-            string str = "Mod: " + this.Data.pack.smapiPack.Manifest.Name;
+            string str = I18n.ItemTooltip_AddedByMod(this.Data.pack.smapiPack.Manifest.Name);
             Utility.drawTextWithShadow(spriteBatch, Game1.parseText(str, Game1.smallFont, this.getDescriptionWidth()), font, new Vector2(x + 16, y + 16 + 4), new Color(100, 100, 100));
             y += (int)font.MeasureString(Game1.parseText(str, Game1.smallFont, this.getDescriptionWidth())).Y + 10;
         }

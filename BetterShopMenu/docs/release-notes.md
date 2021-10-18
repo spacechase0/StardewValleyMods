@@ -1,6 +1,16 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.3.0
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Added full [translation](https://stardewvalleywiki.com/Modding:Translations) support.
+* The grid layout is now disabled by default.
+* Improved integration with Generic Mod Config Menu:
+  * Updated for Generic Mod Config Menu 1.5.0.
+  * Enabled config UI from the in-game options menu after the save is loaded.
+  * Fixed typo in config UI.
+
 ## 1.2.1
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild and spacechase0.
 

@@ -1,0 +1,25 @@
+﻿{
+    // skill
+    "skill.name": "Suerte",
+    "skill.level-up": "Aumento de la suerte",
+
+    // professions
+    "fortunate.name": "Afortunado",
+    "fortunate.desc": "Mejor suerte diaria.",
+    "lucky.name": "Suertudo",
+    "lucky.desc": "20% de posibilidades de obtener la máxima suerte diaria.",
+    "popular-helper.name": "Ayudante Popular",
+    "popular-helper.desc": "Las misiones diarias son tres veces más frecuentes.",
+    "shooting-star.name": "Estrella Fugaz",
+    "shooting-star.desc": "Los eventos nocturnos son dos veces más frecuentes.",
+    "spirit-child.name": "Niño Espíritu",
+    "spirit-child.desc": "Dar regalos hace felices a los junimos. Ellos podrían ayudarte en tu granja.\n(15% de probabilidiad de algún tipo de avance en la granja.)",
+    "un-unlucky.name": "Mala-Malasuerte",
+    "un-unlucky.desc": "Nunca tener mala suerte.",
+
+    // Spirit Child reward messages
+    "junimo-rewards.animal-friendship": "¡Los junimos hicieron que algunos de tus animales te tuvieran más cariño!",
+    "junimo-rewards.grow-crops": "¡Los junimos adelantaron tus cosechas!",
+    "junimo-rewards.grow-grass": "¡Los junimos cultivaron tu hierba y repararon tus vallas!",
+    "junimo-rewards.prismatic-shard": "¡Los junimos te dieron una Esquirla Prism!"
+}

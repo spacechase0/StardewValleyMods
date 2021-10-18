@@ -1,0 +1,23 @@
+﻿{
+    "Name": "Ring of Diamond Booze",
+    "Category": "Ring",
+    "Edibility": -300,
+    "Price": 1000,
+    "Recipe": {
+        "ResultCount": 1,
+        "Ingredients": [
+            {
+                "Object": 72,
+                "Count": 1
+            },
+            {
+                "Object": 336,
+                "Count": 3
+            }
+        ],
+        "CanPurchase": true,
+        "PurchaseFrom": "Dwarf",
+        "PurchasePrice": 1000
+    },
+    "TranslationKey": "ring-of-diamond-booze"
+}

@@ -1,6 +1,6 @@
-﻿**Better Shop Menu** is a [Stardew Valley](http://stardewvalley.net/) mod which changes the shop
-menu into a grid (can be disabled in the config file), and adds buttons to filter by category and
-sort by price/name.
+﻿**Better Shop Menu** is a [Stardew Valley](http://stardewvalley.net/) mod which adds buttons to
+filter shops by category and sort by price/name. You can also optionally change the shop menu into
+a grid layout.
 
 ![](screenshot.png)
 

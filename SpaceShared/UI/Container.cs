@@ -7,12 +7,26 @@ namespace SpaceShared.UI
 {
     internal abstract class Container : Element
     {
+        /*********
+        ** Fields
+        *********/
         private readonly IList<Element> ChildrenImpl = new List<Element>();
 
+        /// <summary>Whether to update the <see cref="Children"/> when <see cref="Update"/> is called.</summary>
+        protected bool UpdateChildren { get; set; } = true;
+
+
+        /*********
+        ** Accessors
+        *********/
         public Element RenderLast { get; set; }
 
         public Element[] Children => this.ChildrenImpl.ToArray();
 
+
+        /*********
+        ** Public methods
+        *********/
         public void AddChild(Element element)
         {
             element.Parent?.RemoveChild(element);
@@ -28,15 +42,18 @@ namespace SpaceShared.UI
             element.Parent = null;
         }
 
+        /// <inheritdoc />
         public override void Update(bool hidden = false)
         {
             base.Update(hidden);
-            foreach (var element in this.ChildrenImpl)
+            if (this.UpdateChildren)
             {
-                element.Update(hidden);
+                foreach (var element in this.ChildrenImpl)
+                    element.Update(hidden);
             }
         }
 
+        /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
             foreach (var child in this.ChildrenImpl)

@@ -1,0 +1,10 @@
+﻿{
+    /*********
+    ** Item data
+    *********/
+    "seeds.name": "Pasztinák magvak",
+    "seeds.description": "Ezeket tavasszal ültesd el. 4 napig tart megérnie.",
+
+    "produce.name": "Pasztinák",
+    "produce.description": "A fokhagyma és a paszternák durva kombinációja."
+}

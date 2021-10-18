@@ -1,6 +1,15 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* You can now configure the ring effects (including through Generic Mod Config Menu).
+* Fixed support for nested combined rings.
+
+## 1.1.6
+Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Moved item translations into the standard `i18n` folder.
+
 ## 1.1.5
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

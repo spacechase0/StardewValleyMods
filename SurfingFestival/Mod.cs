@@ -44,6 +44,7 @@ namespace SurfingFestival
 
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
@@ -79,18 +80,14 @@ namespace SurfingFestival
         {
             if (asset.AssetNameEquals("Data\\Festivals\\summer5"))
             {
-                var data = this.Helper.Content.Load<Dictionary<string, string>>("assets/festival." + LocalizedContentManager.CurrentLanguageCode + ".json");
+                var data = this.BuildFestivalData();
                 Mod.FestivalName = data["name"];
-                return (T)(object)data;
+                return (T)data;
             }
-            else if (asset.AssetNameEquals("Maps\\Beach-Surfing"))
-            {
+            if (asset.AssetNameEquals("Maps\\Beach-Surfing"))
                 return (T)(object)this.Helper.Content.Load<Map>("assets/Beach.tbin");
-            }
-            else if (asset.AssetNameEquals("Maps\\surfing"))
-            {
+            if (asset.AssetNameEquals("Maps\\surfing"))
                 return (T)(object)this.Helper.Content.Load<Texture2D>("assets/surfing.png");
-            }
 
             return default(T);
         }
@@ -108,6 +105,34 @@ namespace SurfingFestival
             }
         }
 
+        /// <summary>Build the festival data file from the mod translations.</summary>
+        private IDictionary<string, string> BuildFestivalData()
+        {
+            // base data
+            var data = new Dictionary<string, string>
+            {
+                ["name"] = I18n.Festival_Name(),
+                ["conditions"] = "Beach/900 1400",
+                ["set-up"] = "event2/-1000 -1000/farmer 38 3 2/changeToTemporaryMap Beach-Surfing/loadActors Set-Up/animate Robin false true 500 20 21 20 22/animate Demetrius false true 500 24 25 24 26/viewport 38 2 clamp true/pause 1000/playerControl surfing",
+                ["mainEvent"] = $@"pause 500/playMusic none/pause 500/globalFade/viewport -1000 -1000/loadActors MainEvent/warpSurfingRacers/viewport 18 57 true unfreeze/pause 2000/message ""{I18n.Race_Instructions()}""/speak Lewis ""{I18n.Race_LewisStart_0()}""/speak Lewis ""{I18n.Race_LewisStart_1()}""/speak Lewis ""{I18n.Race_LewisStart_2()}""/waitForOtherPlayers actualRace/playSound whistle/playMusic cowboy_outlawsong/playerControl surfingRace",
+                ["afterSurfingRace"] = "pause 100/playSound whistle/waitForOtherPlayers endContest/pause 1000/globalFade/viewport -1000 -1000/playMusic event1/loadActors PostEvent/warpSurfingRacersFinish/pause 1000/viewport 34 12 true/pause 2000/speak Lewis \"{{winDialog}}\"/awardSurfingPrize/pause 600/viewport move 1 0 5000/pause 2000/globalFade/viewport -1000 -1000/waitForOtherPlayers festivalEnd/end",
+                ["HarveyWin"] = I18n.Race_Winner_Harvey(),
+                ["EmilyWin"] = I18n.Race_Winner_Emily(),
+                ["MaruWin"] = I18n.Race_Winner_Maru(),
+                ["ShaneWin"] = I18n.Race_Winner_Shane()
+            };
+
+            // NPC dialogue strings
+            foreach (var translation in this.Helper.Translation.GetTranslations())
+            {
+                const string prefix = "npc.";
+                if (translation.Key.StartsWith(prefix))
+                    data[translation.Key.Substring(prefix.Length)] = translation.ToString();
+            }
+
+            return data;
+        }
+
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             var spacecore = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
@@ -116,7 +141,7 @@ namespace SurfingFestival
             spacecore.AddEventCommand("awardSurfingPrize", PatchHelper.RequireMethod<Mod>(nameof(Mod.EventCommand_AwardSurfingPrize)));
 
             Mod.Ja = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
-            Mod.Ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "ja"));
+            Mod.Ja.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
         }
 
         private Event PrevEvent;
@@ -588,7 +613,7 @@ namespace SurfingFestival
 
                         if (!festData.TryGetValue($"{Mod.RaceWinner}Win", out string winDialog))
                             winDialog = null;
-                        winDialog ??= festData["FarmerWin"].Replace("{{winner}}", racer.Name);
+                        winDialog ??= I18n.Race_Winner_Player(name: racer.Name);
 
                         Game1.CurrentEvent.eventCommands = festData["afterSurfingRace"].Replace("{{winDialog}}", winDialog).Split('/');
                         Game1.CurrentEvent.currentCommand = 0;
@@ -704,26 +729,26 @@ namespace SurfingFestival
                     case (int)SurfItem.Boost:
                         displayTex = Game1.objectSpriteSheet;
                         displayRect = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 434, 16, 16);
-                        displayName = this.Helper.Translation.Get("item.boost");
+                        displayName = I18n.Item_Boost();
                         break;
 
                     case (int)SurfItem.HomingProjectile:
                         displayTex = Game1.objectSpriteSheet;
                         displayRect = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 128, 16, 16);
-                        displayName = this.Helper.Translation.Get("item.homingprojectile");
+                        displayName = I18n.Item_HomingProjectile();
                         break;
 
                     case (int)SurfItem.FirstPlaceProjectile:
                         displayTex = Game1.mouseCursors;
                         displayRect = new Rectangle(643, 1043, 61, 61);
-                        displayName = this.Helper.Translation.Get("item.firstplaceprojectile");
+                        displayName = I18n.Item_FirstPlaceProjectile();
                         break;
 
                     case (int)SurfItem.Invincibility:
                         displayTex = Game1.content.Load<Texture2D>("Characters\\Junimo"); // TODO: Cache this
                         displayRect = new Rectangle(80, 80, 16, 16);
                         displayColor = Mod.MyGetPrismaticColor();
-                        displayName = this.Helper.Translation.Get("item.invincibility");
+                        displayName = I18n.Item_Invincibility();
                         break;
                 }
 
@@ -731,10 +756,10 @@ namespace SurfingFestival
                 b.DrawString(Game1.smallFont, displayName, new Vector2((int)pos.X + 74, (int)pos.Y + 74 * 2 + 6), Game1.textColor, 0, new Vector2(Game1.smallFont.MeasureString(displayName).X / 2, 0), 0.85f, SpriteEffects.None, 0.88f);
             }
 
-            string lapsStr = this.Helper.Translation.Get("ui.laps", new { laps = state.LapsDone });
+            string lapsStr = I18n.Ui_Laps(laps: state.LapsDone);
             SpriteText.drawStringHorizontallyCenteredAt(b, lapsStr, (int)pos.X + 74, (int)pos.Y + 74 * 2 + 18 * 2 + 8);
 
-            string str = this.Helper.Translation.Get("ui.ranking");
+            string str = I18n.Ui_Ranking();
             SpriteText.drawStringHorizontallyCenteredAt(b, str, (int)pos.X + 74, Game1.viewport.Height - 128 - (Mod.Racers.Count - 1) / 5 * 40);
 
             int i = 0;
@@ -830,7 +855,7 @@ namespace SurfingFestival
                         }
 
                         Mod.PlayerDidBonfire = BonfireState.Normal;
-                        Game1.drawObjectDialogue(this.Helper.Translation.Get("dialog.wood"));
+                        Game1.drawObjectDialogue(I18n.Dialog_Wood());
                         Game1.playSound("fireball");
                         PlaceBonfire(Game1.currentLocation.Map, 30, 5, false);
                     }
@@ -839,13 +864,13 @@ namespace SurfingFestival
                         farmer.removeItemFromInventory(item);
                         Mod.PlayerDidBonfire = BonfireState.Shorts;
 
-                        Game1.drawDialogue(Game1.getCharacterFromName("Lewis"), this.Helper.Translation.Get("dialog.shorts"));
+                        Game1.drawDialogue(Game1.getCharacterFromName("Lewis"), I18n.Dialog_Shorts());
                         Game1.playSound("fireball");
                         PlaceBonfire(Game1.currentLocation.Map, 30, 5, true);
                     }
                 }
 
-                var menu = new ItemGrabMenu(null, true, false, Highlight, BehaviorOnSelect, this.Helper.Translation.Get("ui.wood"), BehaviorOnSelect);
+                var menu = new ItemGrabMenu(null, true, false, Highlight, BehaviorOnSelect, I18n.Ui_Wood(), BehaviorOnSelect);
                 Game1.activeClickableMenu = menu;
 
                 e.Cancel = true;
@@ -854,8 +879,8 @@ namespace SurfingFestival
             {
                 var answers = new Response[]
                 {
-                    new("MakeOffering", this.Helper.Translation.Get("secret.yes")),
-                    new("Leave", this.Helper.Translation.Get("secret.no"))
+                    new("MakeOffering", I18n.Secret_Yes()),
+                    new("Leave", I18n.Secret_No())
                 };
 
                 void AfterQuestion(Farmer who, string choice)
@@ -865,16 +890,16 @@ namespace SurfingFestival
                         if (Game1.player.Money >= 100000)
                         {
                             Game1.player.mailReceived.Add("SurfingFestivalOffering");
-                            Game1.drawObjectDialogue(this.Helper.Translation.Get("secret.purchased"));
+                            Game1.drawObjectDialogue(I18n.Secret_Purchased());
                         }
                         else
                         {
-                            Game1.drawObjectDialogue(this.Helper.Translation.Get("secret.broke"));
+                            Game1.drawObjectDialogue(I18n.Secret_Broke());
                         }
                     }
                 }
 
-                Game1.currentLocation.createQuestionDialogue(Game1.parseText(this.Helper.Translation.Get("secret.text")), answers, AfterQuestion);
+                Game1.currentLocation.createQuestionDialogue(Game1.parseText(I18n.Secret_Text()), answers, AfterQuestion);
 
                 e.Cancel = true;
             }
@@ -1123,7 +1148,7 @@ namespace SurfingFestival
 
                 Game1.playSound("money");
                 Game1.player.Money += 1500;
-                Game1.drawObjectDialogue(Mod.Instance.Helper.Translation.Get("dialog.prizemoney"));
+                Game1.drawObjectDialogue(I18n.Dialog_PrizeMoney());
             }
 
             instance.CurrentCommand++;

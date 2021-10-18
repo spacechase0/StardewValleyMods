@@ -21,6 +21,7 @@ namespace ObjectTimeLeft
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
@@ -33,13 +34,35 @@ namespace ObjectTimeLeft
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var capi = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (capi != null)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                capi.RegisterModConfig(this.ModManifest, () => Mod.Config = new Configuration(), () => this.Helper.WriteConfig(Mod.Config));
-                capi.RegisterSimpleOption(this.ModManifest, "Show on Start", "Whether to start the game with time left already showing.", () => Mod.Config.ShowOnStart, val => Mod.Config.ShowOnStart = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Key: Toggle Display", "The key to toggle the display on objects.", () => Mod.Config.ToggleKey, val => Mod.Config.ToggleKey = val);
-                capi.RegisterSimpleOption(this.ModManifest, "Text Scale", "Scale of text that will superimpose the objects.", () => Mod.Config.TextScale, val => Mod.Config.TextScale = val);
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => Mod.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(Mod.Config)
+                );
+                configMenu.AddBoolOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_ShowOnStart_Name,
+                    tooltip: I18n.Config_ShowOnStart_Tooltip,
+                    getValue: () => Mod.Config.ShowOnStart,
+                    setValue: value => Mod.Config.ShowOnStart = value
+                );
+                configMenu.AddKeybind(
+                    mod: this.ModManifest,
+                    name: I18n.Config_ToggleKey_Name,
+                    tooltip: I18n.Config_ShowOnStart_Tooltip,
+                    getValue: () => Mod.Config.ToggleKey,
+                    setValue: value => Mod.Config.ToggleKey = value
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_TextScale_Name,
+                    tooltip: I18n.Config_TextScale_Tooltip,
+                    getValue: () => Mod.Config.TextScale,
+                    setValue: value => Mod.Config.TextScale = value
+                );
             }
         }
 

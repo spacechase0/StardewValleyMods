@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.cost-multiplier.name": "Cost Multiplier",
+    "config.cost-multiplier.tooltip": "The multiplier for the cost of the items to charge."
+}

@@ -1,0 +1,10 @@
+﻿{
+    "Name": "Festive Key",
+    "Category": "Gem",
+    "Edibility": -300,
+    "CategoryTextOverride": "Treasure",
+    "CanTrash": false,
+    "CanSell": false,
+    "CanBeGifted": false,
+    "TranslationKey": "item.festive-key"
+}

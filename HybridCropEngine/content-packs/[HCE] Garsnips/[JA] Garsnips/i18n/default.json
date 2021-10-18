@@ -1,0 +1,10 @@
+﻿{
+    /*********
+    ** Item data
+    *********/
+    "seeds.name": "Garsnip Seeds",
+    "seeds.description": "How did this happen? Grows in spring, takes 4 days.",
+
+    "produce.name": "Garsnip",
+    "produce.description": "A gross combination of garlic and parsnips.",
+}

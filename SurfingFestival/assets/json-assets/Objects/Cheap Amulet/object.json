@@ -1,0 +1,11 @@
+﻿{
+    "Name": "Cheap Amulet?",
+    "Category": "ArtisanGoods",
+    "Edibility": -300,
+    "EdibleIsDrink": false,
+    "Price": 50,
+    "HideFromShippingCollection": true,
+    "IsColored": false,
+    "Recipe": null,
+    "TranslationKey": "items.cheap-amulet"
+}

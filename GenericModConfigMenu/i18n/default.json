@@ -1,0 +1,18 @@
+﻿{
+    // button text at the bottom of the in-game options menu
+    "button.mod-options": "Mod Options",
+
+    // mod list UI
+    "list.heading": "Configure Mods",
+
+    // mod config pages
+    "config.buttons.cancel": "Cancel",
+    "config.buttons.reset-to-default": "Default",
+    "config.buttons.save": "Save",
+    "config.buttons.save-and-close": "Save&Close",
+
+    "config.rebind-key.title": "Rebinding key: {{optionName}}",
+    "config.rebind-key.simple-instructions": "Press a key to rebind",
+    "config.rebind-key.combo-instructions": "Press a key combination to rebind",
+    "config.rebind-key.no-key": "(None)"
+}

@@ -26,6 +26,7 @@ namespace ExtendedReach
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<Configuration>();
             this.WigglyArmsRenderer = new(helper.Input, helper.Reflection);
@@ -44,12 +45,22 @@ namespace ExtendedReach
         *********/
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var gmcm = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (gmcm == null)
-                return;
-
-            gmcm.RegisterModConfig(this.ModManifest, () => this.Config = new Configuration(), () => this.Helper.WriteConfig(this.Config));
-            gmcm.RegisterSimpleOption(this.ModManifest, "Wiggly Arms", "Show wiggly arms reaching out to your cursor.", () => this.Config.WigglyArms, value => this.Config.WigglyArms = value);
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
+            {
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => this.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(this.Config)
+                );
+                configMenu.AddBoolOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_WigglyArms_Name,
+                    tooltip: I18n.Config_WigglyArms_Tooltip,
+                    getValue: () => this.Config.WigglyArms,
+                    setValue: value => this.Config.WigglyArms = value
+                );
+            }
         }
 
         private void OnRenderWorld(object sender, RenderedWorldEventArgs e)

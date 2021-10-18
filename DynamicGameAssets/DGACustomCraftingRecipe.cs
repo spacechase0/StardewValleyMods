@@ -56,7 +56,7 @@ namespace DynamicGameAssets
                     if (this.ItemMatches(item))
                     {
                         if (item.Stack <= left)
-                            Game1.player.items[i] = null;
+                            Game1.player.Items[i] = null;
                         else
                             item.Stack -= left;
 
@@ -67,7 +67,7 @@ namespace DynamicGameAssets
                     }
                 }
 
-                if (left > 0)
+                if (left > 0 && additionalIngredients != null)
                 {
                     foreach (var chest in additionalIngredients)
                     {
@@ -130,7 +130,7 @@ namespace DynamicGameAssets
         }
 
         public override string Name => this.data.Name;
-        public override string Description => this.data.Description + "\n\nMod: " + this.data.pack.smapiPack.Manifest.Name;
+        public override string Description => this.data.Description + $"\n\n{I18n.ItemTooltip_AddedByMod(this.data.pack.smapiPack.Manifest.Name)}";
 
         public override Texture2D IconTexture => this.cacheIconTex;
 
