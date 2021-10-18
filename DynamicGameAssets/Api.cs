@@ -1,5 +1,8 @@
+using DynamicGameAssets.Framework;
 using DynamicGameAssets.Game;
+using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
+using SpaceShared;
 using StardewModdingAPI;
 
 namespace DynamicGameAssets
@@ -13,6 +16,41 @@ namespace DynamicGameAssets
                 return item.FullId;
             else
                 return null;
+        }
+
+        /// <inheritdoc/>
+        public string GetDGAItemId(int fakeIndex)
+        {
+            if (Mod.itemLookup.ContainsKey(fakeIndex))
+            {
+                return Mod.itemLookup[fakeIndex];
+            }
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public int? GetDGAFakeIndex(object item_)
+        {
+            if (item_ is IDGAItem item)
+                return item.FullId.GetDeterministicHashCode();
+            else
+                return null;
+        }
+
+        /// <inheritdoc/>
+        public int? GetDGAFakeIndex(string fullId)
+        {
+            return fullId.GetDeterministicHashCode();
+        }
+
+        /// <inheritdoc/>
+        public string GetDGAFakeObjectInformation(int fakeIndex)
+        {
+            if (this.GetDGAItemId(fakeIndex) is string fullId)
+            {
+                return (Mod.Find(fullId) as ObjectPackData)?.GetFakeData();
+            }
+            return null;
         }
 
         /// <inheritdoc/>
