@@ -283,8 +283,8 @@ namespace MoreRings
         public int CountRingsEquipped(int id)
         {
             int count =
-                Game1.player.leftRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0
-                + Game1.player.rightRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0;
+                (Game1.player.leftRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0)
+                + (Game1.player.rightRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0);
 
             if (this.WearMoreRings != null)
                 count = Math.Max(count, this.WearMoreRings.CountEquippedRings(Game1.player, id));
