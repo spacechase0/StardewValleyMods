@@ -2,7 +2,8 @@
 
 # Release notes
 ## Upcoming release
-* You can now configure the ring effects (including through Generic Mod Config Menu).
+* Added configuration for ring effects (including Generic Mod Config Menu support).
+* Added `more_rings_summary` console command.
 * Fixed support for nested combined rings.
 
 ## 1.1.6

@@ -6,6 +6,7 @@ using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceShared;
 using SpaceShared.APIs;
+using SpaceShared.ConsoleCommands;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -62,6 +63,9 @@ namespace MoreRings
         /// <summary>The item ID for the Ring of True Sight.</summary>
         public int RingTrueSight => this.JsonAssets.GetObjectId("Ring of True Sight");
 
+        /// <summary>Whether the player has Wear More Rings installed.</summary>
+        public bool HasWearMoreRings => this.WearMoreRings != null;
+
 
         /*********
         ** Public methods
@@ -90,6 +94,8 @@ namespace MoreRings
                 new PickaxePatcher(),
                 new WateringCanPatcher()
             );
+
+            ConsoleCommandHelper.RegisterCommandsInAssembly(this);
         }
 
 
