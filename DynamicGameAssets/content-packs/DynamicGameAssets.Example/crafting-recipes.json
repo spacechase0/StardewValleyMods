@@ -30,7 +30,7 @@
                 "Type": "ContextTag",
                 "Value": "color_white",
                 "NameOverride": "Something white",
-                "IconOverride": "objects.png:0"
+                "IconOverride": "assets/objects.png:0"
             },
             {
                 "Value": "spacechase0.DynamicGameAssets.Example/RedSquare",

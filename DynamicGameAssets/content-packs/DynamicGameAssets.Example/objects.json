@@ -3,8 +3,8 @@
     "$ItemType": "Object",
     "ID": "Mysterious Circle",
     "Category": "Vegetable",
-    "Texture": "items16.png:1@20, items16.png:2@20, items16.png:3@20",
-    "TextureColor": "items16.png:4",
+    "Texture": "assets/items16.png:1@20, assets/items16.png:2@20, assets/items16.png:3@20",
+    "TextureColor": "assets/items16.png:4",
     "Edibility": 9,
     "EdibileIsDrink": true,
     "EdibleBuffs": {
@@ -18,7 +18,7 @@
       {
         "Conditions": { "Season |contains=spring": false },
         "SellPrice": 500,
-        "Texture": "items16.png:0",
+        "Texture": "assets/items16.png:0",
         "EdibleIsDrink": false,
         "EdibleBuffs.Speed": 500,
       },
@@ -29,19 +29,19 @@
       },
       {
         "Conditions": { "Query: {{Actual Settings/Animated Mysterious Circle}} = false and {{Actual Settings/Static Mysterious Circle Color}} = 'White'": true },
-        "Texture": "items16.png:0"
+        "Texture": "assets/items16.png:0"
       },
       {
         "Conditions": { "Query: {{Actual Settings/Animated Mysterious Circle}} = false and {{Actual Settings/Static Mysterious Circle Color}} = 'Red'": true },
-        "Texture": "items16.png:1"
+        "Texture": "assets/items16.png:1"
       },
       {
         "Conditions": { "Query: {{Actual Settings/Animated Mysterious Circle}} = false and {{Actual Settings/Static Mysterious Circle Color}} = 'Green'": true },
-        "Texture": "items16.png:2"
+        "Texture": "assets/items16.png:2"
       },
       {
         "Conditions": { "Query: {{Actual Settings/Animated Mysterious Circle}} = false and {{Actual Settings/Static Mysterious Circle Color}} = 'Blue'": true },
-        "Texture": "items16.png:3"
+        "Texture": "assets/items16.png:3"
       }
     ]
   },
@@ -71,7 +71,7 @@
     "$ItemType": "Object",
     "ID": "Mysterious Blue Circle",
     "Category": "Fruit",
-    "Texture": "items16.png:3",
+    "Texture": "assets/items16.png:3",
     "Placeable": true,
     "SprinklerTiles": [
       {
@@ -108,45 +108,45 @@
     "$ItemType": "Object",
     "ID": "Mysterious Green Circle",
     "Category": "Flower",
-    "Texture": "items16.png:2",
+    "Texture": "assets/items16.png:2",
     "EnableConditions": { "Season |contains=spring": false }
   },
   {
     "$ItemType": "Object",
     "ID": "WhiteSquare",
-    "Texture": "objects.png:0",
+    "Texture": "assets/objects.png:0",
     "ContextTags": [ "color_white" ]
   },
   {
     "$ItemType": "Object",
     "ID": "RedSquare",
-    "Texture": "objects.png:3",
+    "Texture": "assets/objects.png:3",
     "ContextTags": [ "color_red" ]
   },
   {
     "$ItemType": "Object",
     "ID": "GreenSquare",
-    "Texture": "objects.png:1",
+    "Texture": "assets/objects.png:1",
     "ContextTags": [ "color_green" ]
   },
   {
     "$ItemType": "Object",
     "ID": "BlueSquare",
-    "Texture": "objects.png:2",
+    "Texture": "assets/objects.png:2",
     "ContextTags": [ "color_blue" ]
   },
   {
     "$ItemType": "Object",
     "ID": "SpookySeeds",
     "Category": "Seeds",
-    "Texture": "seeds.png:0",
+    "Texture": "assets/seeds.png:0",
     "Plants": "spacechase0.DynamicGameAssets.Example/SpookyCrop"
   },
   {
     "$ItemType": "Object",
     "ID": "SpookySapling",
     "Category": "Seeds",
-    "Texture": "sapling.png:0",
+    "Texture": "assets/sapling.png:0",
     "Plants": "spacechase0.DynamicGameAssets.Example/SpookyFruitTree"
   }
 ]

@@ -2,6 +2,8 @@
 
 # Release notes
 ## Upcoming release
+* Improved example content pack:
+  * Standardized file structure.
 * Fixed error in some cases when a texture being drawn is null.
 
 ## 1.3.0

@@ -18,13 +18,13 @@
     {
         "$ItemType": "BigCraftable",
         "ID": "SpookyFurnace",
-        "Texture": "big-craftables.png:0"
+        "Texture": "assets/big-craftables.png:0"
     },
     {
         "$ItemType": "Boots",
         "ID": "OceanBoots",
-        "Texture": "boots.png:0",
-        "FarmerColors": "boots_color.png:0@5, boots_color.png:1@5, boots_color.png:2@5, boots_color.png:3@5, boots_color.png:4@60, boots_color.png:3@5, boots_color.png:2@5, boots_color.png:1@5",
+        "Texture": "assets/boots.png:0",
+        "FarmerColors": "assets/boots_color.png:0@5, assets/boots_color.png:1@5, assets/boots_color.png:2@5, assets/boots_color.png:3@5, assets/boots_color.png:4@60, assets/boots_color.png:3@5, assets/boots_color.png:2@5, assets/boots_color.png:1@5",
         "Defense": 10,
         "Immunity": 10,
         "SellPrice": 999999
@@ -35,11 +35,11 @@
         "Type": "Paddy",
         "Phases": [
             {
-                "TextureChoices": [ "crops.png:0", "crops.png:1" ],
+                "TextureChoices": [ "assets/crops.png:0", "assets/crops.png:1" ],
                 "Length": 1
             },
             {
-                "TextureChoices": [ "crops.png:3" ],
+                "TextureChoices": [ "assets/crops.png:3" ],
                 "Length": 1,
                 "HarvestedDrops": [
                     {
@@ -52,7 +52,7 @@
                 "HarvestExperience": 50
             },
             {
-                "TextureChoices": [ "crops.png:6" ],
+                "TextureChoices": [ "assets/crops.png:6" ],
                 "Scythable": true,
                 "Trellis": true,
                 "HarvestedDrops": [
@@ -82,7 +82,7 @@
         ],
         "RegrowthPhaseIndex": 0,
         "GiantChance": 1.0,
-        "GiantTextureChoices": [ "crops_giant.png:0" ],
+        "GiantTextureChoices": [ "assets/crops_giant.png:0" ],
         "GiantDrops": [
             {
                 "MinimumHarvestedQuantity": 1,
@@ -102,8 +102,8 @@
     {
         "$ItemType": "Fence",
         "ID": "DarkIronFence",
-        "ObjectTexture": "fences.png:0",
-        "PlacedTilesheet": "fence_darkiron.png",
+        "ObjectTexture": "assets/fences.png:0",
+        "PlacedTilesheet": "assets/fence_darkiron.png",
         "MaxHealth": 200,
         "RepairMaterial": {
             "Type": "VanillaObject",
@@ -131,7 +131,7 @@
     {
         "$ItemType": "FruitTree",
         "ID": "SpookyFruitTree",
-        "Texture": "fruit-tree.png",
+        "Texture": "assets/fruit-tree.png",
         "CanGrowNow": false,
         "Product": {
             "Value": "spacechase0.DynamicGameAssets.Example/Mysterious Circle"
@@ -146,7 +146,7 @@
     {
         "$ItemType": "Hat",
         "ID": "SpookyHat",
-        "Texture": "hats.png:0"
+        "Texture": "assets/hats.png:0"
     },
     {
         "$ItemType": "MachineRecipe",
@@ -174,14 +174,14 @@
         },
         */
         "WorkingLightOverride": true,
-        "MachineWorkingTextureOverride": "big-craftables.png:1",
+        "MachineWorkingTextureOverride": "assets/big-craftables.png:1",
         "MachinePulseWhileWorking": false
     },
     {
         "$ItemType": "MeleeWeapon",
         "ID": "StabbyStabber",
         "Type": "Dagger",
-        "Texture": "weapons.png:0",
+        "Texture": "assets/weapons.png:0",
 
         "MinimumDamage": 999999999,
         "MaximumDamage": 1000000000,
@@ -194,12 +194,12 @@
     {
         "$ItemType": "Pants",
         "ID": "TestPants",
-        "Texture": "pants.png"
+        "Texture": "assets/pants.png"
     },
     {
         "$ItemType": "Shirt",
         "ID": "TestShirt",
-        "TextureMale": "shirt.png"
+        "TextureMale": "assets/shirt.png"
     },
     {
         "$ItemType": "TailoringRecipe",
@@ -213,6 +213,6 @@
         "$ItemType": "TextureOverride",
         "TargetTexture": "Maps/springobjects",
         "TargetRect": { "X": 32, "Y": 48, "Width": 16, "Height": 16 },
-        "SourceTexture": "prismatic.png:0@5, prismatic.png:1@5, prismatic.png:2@5, prismatic.png:3@5, prismatic.png:4@5, prismatic.png:5@5"
+        "SourceTexture": "assets/prismatic.png:0@5, assets/prismatic.png:1@5, assets/prismatic.png:2@5, assets/prismatic.png:3@5, assets/prismatic.png:4@5, assets/prismatic.png:5@5"
     }
 ]

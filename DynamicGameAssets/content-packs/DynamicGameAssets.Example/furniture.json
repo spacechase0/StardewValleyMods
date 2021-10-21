@@ -5,7 +5,7 @@
         "Type": "Decoration",
         "Configurations": [
             {
-                "Texture": "test_decoration.png",
+                "Texture": "assets/test_decoration.png",
                 "DisplaySize": { "X": 1, "Y": 1 },
                 "CollisionHeight": 1,
                 "TileProperties": {
@@ -24,12 +24,12 @@
         "Type": "Rug",
         "Configurations": [
             {
-                "Texture": "test_rug_w.png",
+                "Texture": "assets/test_rug_w.png",
                 "DisplaySize": { "X": 2, "Y": 1 },
                 "CollisionHeight": 1
             },
             {
-                "Texture": "test_rug_h.png",
+                "Texture": "assets/test_rug_h.png",
                 "DisplaySize": { "X": 1, "Y": 2 },
                 "CollisionHeight": 2
             }
@@ -41,7 +41,7 @@
         "Type": "Table",
         "Configurations": [
             {
-                "Texture": "test_table.png",
+                "Texture": "assets/test_table.png",
                 "DisplaySize": { "X": 1, "Y": 1 },
                 "CollisionHeight": 1
             }
@@ -53,8 +53,8 @@
         "Type": "Decoration",
         "Configurations": [
             {
-                "Texture": "purple_armchair.png:0",
-                "FrontTexture": "purple_armchair.png:3",
+                "Texture": "assets/purple_armchair.png:0",
+                "FrontTexture": "assets/purple_armchair.png:3",
                 "DisplaySize": { "X": 2, "Y": 2 },
                 "CollisionHeight": 1,
                 "Flipped": false,
@@ -62,8 +62,8 @@
                 "SittingDirection": "Down"
             },
             {
-                "Texture": "purple_armchair.png:1",
-                "FrontTexture": "purple_armchair.png:4",
+                "Texture": "assets/purple_armchair.png:1",
+                "FrontTexture": "assets/purple_armchair.png:4",
                 "DisplaySize": { "X": 2, "Y": 2 },
                 "CollisionHeight": 1,
                 "Flipped": false,
@@ -71,8 +71,8 @@
                 "SittingDirection": "Right"
             },
             {
-                "Texture": "purple_armchair.png:2",
-                "FrontTexture": "purple_armchair.png:5",
+                "Texture": "assets/purple_armchair.png:2",
+                "FrontTexture": "assets/purple_armchair.png:5",
                 "DisplaySize": { "X": 2, "Y": 2 },
                 "CollisionHeight": 1,
                 "Flipped": false,
@@ -80,8 +80,8 @@
                 "SittingDirection": "Up"
             },
             {
-                "Texture": "purple_armchair.png:1",
-                "FrontTexture": "purple_armchair.png:4",
+                "Texture": "assets/purple_armchair.png:1",
+                "FrontTexture": "assets/purple_armchair.png:4",
                 "DisplaySize": { "X": 2, "Y": 2 },
                 "CollisionHeight": 1,
                 "Flipped": true,
@@ -97,8 +97,8 @@
         "BedType": "Single",
         "Configurations": [
             {
-                "Texture": "spooky_bed.png:0",
-                "FrontTexture": "spooky_bed.png:1",
+                "Texture": "assets/spooky_bed.png:0",
+                "FrontTexture": "assets/spooky_bed.png:1",
                 "DisplaySize": { "X": 2, "Y": 4 },
                 "CollisionHeight": 3
             }
@@ -112,7 +112,7 @@
         "ScreenSize": 8,
         "Configurations": [
             {
-                "Texture": "megatv.png",
+                "Texture": "assets/megatv.png",
                 "DisplaySize": { "X": 6, "Y": 6 },
                 "CollisionHeight": 1
             }
@@ -127,8 +127,8 @@
         "TankDecorationCapacity": -1,
         "Configurations": [
             {
-                "Texture": "giant_aquarium.png:0",
-                "FrontTexture": "giant_aquarium.png:1",
+                "Texture": "assets/giant_aquarium.png:0",
+                "FrontTexture": "assets/giant_aquarium.png:1",
                 "DisplaySize": { "X": 14, "Y": 6 },
                 "CollisionHeight": 1
             }
@@ -140,25 +140,25 @@
         "Type": "Dresser",
         "Configurations": [
             {
-                "Texture": "dresser1.png:0",
+                "Texture": "assets/dresser1.png:0",
                 "DisplaySize": { "X": 2, "Y": 2 },
                 "CollisionHeight": 1,
                 "Flipped": false
             },
             {
-                "Texture": "dresser2.png:0",
+                "Texture": "assets/dresser2.png:0",
                 "DisplaySize": { "X": 1, "Y": 3 },
                 "CollisionHeight": 2,
                 "Flipped": false
             },
             {
-                "Texture": "dresser1.png:1",
+                "Texture": "assets/dresser1.png:1",
                 "DisplaySize": { "X": 2, "Y": 2 },
                 "CollisionHeight": 1,
                 "Flipped": false
             },
             {
-                "Texture": "dresser2.png:0",
+                "Texture": "assets/dresser2.png:0",
                 "DisplaySize": { "X": 1, "Y": 3 },
                 "CollisionHeight": 2,
                 "Flipped": true

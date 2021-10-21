@@ -10,7 +10,7 @@
     },
     {
         "ElementType": "Image",
-        "ImagePath": "kitty.png",
+        "ImagePath": "assets/kitty.png",
         "ImageScale": 1
     },
     {
