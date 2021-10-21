@@ -24,7 +24,7 @@
         "$ItemType": "Boots",
         "ID": "OceanBoots",
         "Texture": "assets/boots.png:0",
-        "FarmerColors": "assets/boots_color.png:0@5, assets/boots_color.png:1@5, assets/boots_color.png:2@5, assets/boots_color.png:3@5, assets/boots_color.png:4@60, assets/boots_color.png:3@5, assets/boots_color.png:2@5, assets/boots_color.png:1@5",
+        "FarmerColors": "assets/boots_color.png:0-3@5, assets/boots_color.png:4@60, assets/boots_color.png:3@5, assets/boots_color.png:2@5, assets/boots_color.png:1@5",
         "Defense": 10,
         "Immunity": 10,
         "SellPrice": 999999
@@ -213,6 +213,6 @@
         "$ItemType": "TextureOverride",
         "TargetTexture": "Maps/springobjects",
         "TargetRect": { "X": 32, "Y": 48, "Width": 16, "Height": 16 },
-        "SourceTexture": "assets/prismatic.png:0@5, assets/prismatic.png:1@5, assets/prismatic.png:2@5, assets/prismatic.png:3@5, assets/prismatic.png:4@5, assets/prismatic.png:5@5"
+        "SourceTexture": "assets/prismatic.png:0-5@5"
     }
 ]
