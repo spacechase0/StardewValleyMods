@@ -1,4 +1,4 @@
-[
+﻿[
     {
         "ElementType": "Label",
         "Name": "Inert settings",
@@ -71,6 +71,5 @@
         "Description": "Whether or not the JA legacy example data (converted using the converter) is enabled.",
         "ValueType": "Boolean",
         "DefaultValue": false
-    }
-    */
+    }*/
 ]

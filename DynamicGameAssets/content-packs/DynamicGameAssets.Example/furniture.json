@@ -1,4 +1,4 @@
-[
+﻿[
     {
         "$ItemType": "Furniture",
         "ID": "TestSpecialDecoration",
@@ -58,7 +58,9 @@
                 "DisplaySize": { "X": 2, "Y": 2 },
                 "CollisionHeight": 1,
                 "Flipped": false,
-                "Seats": [ { "X": 0.5, "Y": 0 } ],
+                "Seats": [
+                    { "X": 0.5, "Y": 0 }
+                ],
                 "SittingDirection": "Down"
             },
             {
@@ -67,7 +69,9 @@
                 "DisplaySize": { "X": 2, "Y": 2 },
                 "CollisionHeight": 1,
                 "Flipped": false,
-                "Seats": [ { "X": 1, "Y": 0 } ],
+                "Seats": [
+                    { "X": 1, "Y": 0 }
+                ],
                 "SittingDirection": "Right"
             },
             {
@@ -76,7 +80,9 @@
                 "DisplaySize": { "X": 2, "Y": 2 },
                 "CollisionHeight": 1,
                 "Flipped": false,
-                "Seats": [ { "X": 0.5, "Y": 0 } ],
+                "Seats": [
+                    { "X": 0.5, "Y": 0 }
+                ],
                 "SittingDirection": "Up"
             },
             {
@@ -85,7 +91,9 @@
                 "DisplaySize": { "X": 2, "Y": 2 },
                 "CollisionHeight": 1,
                 "Flipped": true,
-                "Seats": [ { "X": 0, "Y": 0 } ],
+                "Seats": [
+                    { "X": 0, "Y": 0 }
+                ],
                 "SittingDirection": "Left"
             }
         ]
