@@ -4,6 +4,7 @@
 ## Upcoming release
 * Improved example content pack:
   * Standardized file structure.
+  * Added update key.
 * Fixed error in some cases when a texture being drawn is null.
 
 ## 1.3.0
