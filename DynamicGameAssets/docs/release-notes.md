@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed error in some cases when a texture being drawn is null.
+
 ## 1.3.0
 Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 
