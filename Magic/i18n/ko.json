@@ -121,7 +121,6 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
-    // TODO
     "config.altar-location.name": "제단 위치",
     "config.altar-location.tooltip": "마법 제단이 배치될 위치의(내부) 이름.",
     "config.altar-x.name": "제단 X",

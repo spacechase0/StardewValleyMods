@@ -1,4 +1,4 @@
-{
+﻿{
     // Generic Mod Config Menu UI
     "config.custom-skill-page.name": "사용자 스킬 페이지",
     "config.custom-skill-page.tooltip": "사용자 지정 스킬 페이지 표시.\n이렇게 하면 지갑이 이동하여 더 많은 스킬을 사용할 수 있습니다.",

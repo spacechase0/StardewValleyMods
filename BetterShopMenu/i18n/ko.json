@@ -1,4 +1,4 @@
-{
+﻿{
     /*********
     ** Shop UI
     *********/
@@ -8,8 +8,8 @@
 
     // sort types
     "sort.none": "없음",
-    "sort.name": "이름", 
-    "sort.price": "가격", 
+    "sort.name": "이름",
+    "sort.price": "가격",
 
     // category names
     "categories.everything": "모든",
