@@ -120,25 +120,25 @@ namespace DynamicGameAssets.Patches
             {
                 var texRect = SpriteBatchPatcher.objectOverrides[sourceRect];
                 tex = texRect.Texture;
-                sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
+                sourceRect = texRect.Rect ?? new Rectangle(0, 0, tex.Width, tex.Height);
             }
             else if (tex == Tool.weaponsTexture && SpriteBatchPatcher.weaponOverrides.ContainsKey(sourceRect))
             {
                 var texRect = SpriteBatchPatcher.weaponOverrides[sourceRect];
                 tex = texRect.Texture;
-                sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
+                sourceRect = texRect.Rect ?? new Rectangle(0, 0, tex.Width, tex.Height);
             }
             else if (tex == FarmerRenderer.hatsTexture && SpriteBatchPatcher.hatOverrides.ContainsKey(sourceRect))
             {
                 var texRect = SpriteBatchPatcher.hatOverrides[sourceRect];
                 tex = texRect.Texture;
-                sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
+                sourceRect = texRect.Rect ?? new Rectangle(0, 0, tex.Width, tex.Height);
             }
             else if (tex == FarmerRenderer.shirtsTexture && SpriteBatchPatcher.shirtOverrides.ContainsKey(sourceRect))
             {
                 var texRect = SpriteBatchPatcher.shirtOverrides[sourceRect];
                 tex = texRect.Texture;
-                sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
+                sourceRect = texRect.Rect ?? new Rectangle(0, 0, tex.Width, tex.Height);
             }
             else if (tex == FarmerRenderer.pantsTexture)
             {
@@ -148,7 +148,7 @@ namespace DynamicGameAssets.Patches
                     {
                         tex = pants.Value.Texture;
                         var oldSource = sourceRect;
-                        sourceRect = pants.Value.Rect.HasValue ? pants.Value.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
+                        sourceRect = pants.Value.Rect ?? new Rectangle(0, 0, tex.Width, tex.Height);
                         int localX = oldSource.X - pants.Key.X;
                         int localY = oldSource.Y - pants.Key.Y;
                         sourceRect = new Rectangle(sourceRect.X + localX, sourceRect.Y + localY, oldSource.Width, oldSource.Height);
@@ -169,7 +169,7 @@ namespace DynamicGameAssets.Patches
                 {
                     var texRect = SpriteBatchPatcher.packOverrides[tex.Name][sourceRect].GetCurrentTexture();
                     tex = texRect.Texture;
-                    sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
+                    sourceRect = texRect.Rect ?? new Rectangle(0, 0, tex.Width, tex.Height);
                 }
             }
         }
