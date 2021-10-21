@@ -163,6 +163,9 @@ namespace ContentPatcherAnimations
 
                 foreach (var patch in patches.Changes)
                 {
+                    if (patch == null)
+                        continue;
+
                     if (patch.AnimationFrameTime > 0 && patch.AnimationFrameCount > 0)
                     {
                         Log.Trace("Loading animated patch from content pack " + pack.Manifest.UniqueID);
