@@ -6,9 +6,9 @@
     "festival.name": "서핑 페스티벌",
 
     // race
-    "race.start.question": "Ready for the race?", // TODO
-    "race.start.yes": "Yes, let's start.", // TODO
-    "race.start.no": "Not yet.", // TODO
+    "race.start.question": "경주 할 준비가 되었나요?",
+    "race.start.yes": "예, 시작하세요!",
+    "race.start.no": "아니오. 아직!",
     "race.instructions": "획득 아이템 설명 (오른쪽 마우스 클릭으로 사용):^ 스타드롭 부스터 - 일시적인 속도 향상.^ 복어 폭탄 - 전방의 다른 선수에게 복어를 발사한다.^ 번개 구름 - 1등 선수를 감전 시킨다.^ 주니모 파워 - 무적 효과와 약간의 속도 향상.",
     "race.lewis-start.0": "준비...",
     "race.lewis-start.1": "제자리에...",
