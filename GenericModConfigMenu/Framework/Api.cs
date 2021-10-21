@@ -98,10 +98,10 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
-        public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, Func<string, string> formatAllowedValues = null, string fieldId = null)
+        public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, Func<string, string> formatAllowedValue = null, string fieldId = null)
         {
             if (allowedValues?.Any() == true)
-                this.AddChoiceOption(mod, name, tooltip, getValue, setValue, allowedValues, formatAllowedValues, fieldId);
+                this.AddChoiceOption(mod, name, tooltip, getValue, setValue, allowedValues, formatAllowedValue, fieldId);
             else
                 this.AddSimpleOption(mod, name, tooltip, getValue, setValue, fieldId);
         }
@@ -297,7 +297,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet)
         {
-            this.AddTextOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, formatAllowedValues: null);
+            this.AddTextOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, formatAllowedValue: null);
         }
 
         /// <inheritdoc />
@@ -406,7 +406,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null)
         {
-            this.AddTextOption(mod, getValue, setValue, name, tooltip, allowedValues, null, fieldId);
+            this.AddTextOption(mod: mod, getValue: getValue, setValue: setValue, name: name, tooltip: tooltip, allowedValues: allowedValues, formatAllowedValue: null, fieldId: fieldId);
         }
 
 

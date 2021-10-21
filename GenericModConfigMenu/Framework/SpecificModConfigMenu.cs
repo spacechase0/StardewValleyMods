@@ -189,7 +189,7 @@ namespace GenericModConfigMenu.Framework
                         optionElement = new Dropdown
                         {
                             Choices = option.Choices,
-                            Labels = option.Choices.Select(value => option.FormatAllowedValues?.Invoke(value) ?? value).ToArray(),
+                            Labels = option.Choices.Select(value => option.FormatChoice?.Invoke(value) ?? value).ToArray(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                             RequestWidth = (int)this.Table.Size.X / 2,
                             Value = option.Value,
