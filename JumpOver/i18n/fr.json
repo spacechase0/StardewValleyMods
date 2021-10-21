@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.jump-key.name": "Touche de saut",
+    "config.jump-key.tooltip": "La touche pour sauter."
+}
