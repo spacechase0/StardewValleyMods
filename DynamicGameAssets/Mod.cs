@@ -91,6 +91,7 @@ namespace DynamicGameAssets
         public static CommonPackData Find(string fullId)
         {
             int slash = fullId.IndexOf('/');
+            if (slash < 0) return null;
             string pack = fullId.Substring(0, slash);
             string item = fullId.Substring(slash + 1);
             return Mod.contentPacks.ContainsKey(pack) ? Mod.contentPacks[pack].Find(item) : null;
