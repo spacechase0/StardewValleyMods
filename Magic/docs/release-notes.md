@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Fixed error adding TV channel through PyTK.
 * Improved translations. Thanks to wally232 (updated Korean)!
 
 ## 0.6.1

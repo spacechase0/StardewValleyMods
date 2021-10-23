@@ -87,7 +87,7 @@ namespace Magic.Framework.Integrations
                 // register with PyTK
                 try
                 {
-                    showProgram.Invoke(null, new object[] { screen, I18n.GetByKey(transKey), null, null });
+                    showProgram.Invoke(null, new object[] { screen, I18n.GetByKey(transKey).ToString(), null, null });
                 }
                 catch (Exception ex)
                 {
