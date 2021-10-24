@@ -5,6 +5,9 @@
 * Improved example content pack:
   * Standardized file structure.
   * Added update key.
+* Improved mod-provided API (thanks to Digus!):
+  * Added support for creating a colored item.
+  * Fixed error when requesting an unknown/invalid item ID.
 * Fixed error in some cases when a texture being drawn is null.
 
 ## 1.3.0
