@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed cooked items losing health/stamina bonuses when split from a stack.
+
 ## 1.4.0
 Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

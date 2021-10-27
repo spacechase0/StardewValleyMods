@@ -103,7 +103,8 @@ namespace CookingSkill
 
             HarmonyPatcher.Apply(this,
                 new CraftingPagePatcher(),
-                new CraftingRecipePatcher()
+                new CraftingRecipePatcher(),
+                new ObjectPatcher()
             );
         }
 
