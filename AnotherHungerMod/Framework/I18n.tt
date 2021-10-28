@@ -4,6 +4,7 @@
 <#@ import namespace="Pathoschild.Stardew.ModTranslationClassBuilder" #>
 <#=
 TranslationClassBuilder.Generate(
-    jsonPath: this.Host.ResolvePath("../i18n/default.json")
+    jsonPath: this.Host.ResolvePath("../i18n/default.json"),
+    addGetByKey: true
 )
 #>

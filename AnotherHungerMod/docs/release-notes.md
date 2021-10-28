@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Added config option to position hunger meter relative to any screen corner.
+
 ## 1.4.0
 Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

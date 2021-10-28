@@ -10,9 +10,16 @@
     ** Generic Mod Config Menu UI
     *********/
     "config.fullness-ui-X.name": "Fullness UI (X)",
-    "config.fullness-ui-X.tooltip": "The X position of the fullness UI.",
+    "config.fullness-ui-X.tooltip": "The X pixel position of the fullness UI.",
     "config.fullness-ui-Y.name": "Fullness UI (Y)",
-    "config.fullness-ui-Y.tooltip": "The Y position of the fullness UI.",
+    "config.fullness-ui-Y.tooltip": "The Y pixel position of the fullness UI.",
+
+    "config.fullness-ui-alignment.name": "Fullness UI (alignment)",
+    "config.fullness-ui-alignment.tooltip": "The alignment of the fullness UI on the game screen.",
+    "config.fullness-ui-alignment.topLeft": "top left",
+    "config.fullness-ui-alignment.topRight": "top right",
+    "config.fullness-ui-alignment.bottomLeft": "bottom left",
+    "config.fullness-ui-alignment.bottomRight": "bottom right",
 
     "config.fullness-max.name": "Max Fullness",
     "config.fullness-max.tooltip": "The maximum amount of fullness you can have.",
