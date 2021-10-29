@@ -1,8 +1,10 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
-* Added configuration for ring effects (including Generic Mod Config Menu support).
+## 1.2.0
+Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Added config options for ring effects (including support for Generic Mod Config Menu).
 * Added `more_rings_summary` console command.
 * Fixed support for nested combined rings.
 * Improved translations. Thanks to wally232 (added Korean)!
