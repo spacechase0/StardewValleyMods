@@ -1,0 +1,176 @@
+﻿[
+    {
+        "$ItemType": "Furniture",
+        "ID": "TestSpecialDecoration",
+        "Type": "Decoration",
+        "Configurations": [
+            {
+                "Texture": "assets/test_decoration.png",
+                "DisplaySize": { "X": 1, "Y": 1 },
+                "CollisionHeight": 1,
+                "TileProperties": {
+                    "0, 0": {
+                        "Buildings": {
+                            "Action": "Warp 5 7 FarmHouse"
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "$ItemType": "Furniture",
+        "ID": "TestRug",
+        "Type": "Rug",
+        "Configurations": [
+            {
+                "Texture": "assets/test_rug_w.png",
+                "DisplaySize": { "X": 2, "Y": 1 },
+                "CollisionHeight": 1
+            },
+            {
+                "Texture": "assets/test_rug_h.png",
+                "DisplaySize": { "X": 1, "Y": 2 },
+                "CollisionHeight": 2
+            }
+        ]
+    },
+    {
+        "$ItemType": "Furniture",
+        "ID": "TestTable",
+        "Type": "Table",
+        "Configurations": [
+            {
+                "Texture": "assets/test_table.png",
+                "DisplaySize": { "X": 1, "Y": 1 },
+                "CollisionHeight": 1
+            }
+        ]
+    },
+    {
+        "$ItemType": "Furniture",
+        "ID": "Purple Armchair",
+        "Type": "Decoration",
+        "Configurations": [
+            {
+                "Texture": "assets/purple_armchair.png:0",
+                "FrontTexture": "assets/purple_armchair.png:3",
+                "DisplaySize": { "X": 2, "Y": 2 },
+                "CollisionHeight": 1,
+                "Flipped": false,
+                "Seats": [
+                    { "X": 0.5, "Y": 0 }
+                ],
+                "SittingDirection": "Down"
+            },
+            {
+                "Texture": "assets/purple_armchair.png:1",
+                "FrontTexture": "assets/purple_armchair.png:4",
+                "DisplaySize": { "X": 2, "Y": 2 },
+                "CollisionHeight": 1,
+                "Flipped": false,
+                "Seats": [
+                    { "X": 1, "Y": 0 }
+                ],
+                "SittingDirection": "Right"
+            },
+            {
+                "Texture": "assets/purple_armchair.png:2",
+                "FrontTexture": "assets/purple_armchair.png:5",
+                "DisplaySize": { "X": 2, "Y": 2 },
+                "CollisionHeight": 1,
+                "Flipped": false,
+                "Seats": [
+                    { "X": 0.5, "Y": 0 }
+                ],
+                "SittingDirection": "Up"
+            },
+            {
+                "Texture": "assets/purple_armchair.png:1",
+                "FrontTexture": "assets/purple_armchair.png:4",
+                "DisplaySize": { "X": 2, "Y": 2 },
+                "CollisionHeight": 1,
+                "Flipped": true,
+                "Seats": [
+                    { "X": 0, "Y": 0 }
+                ],
+                "SittingDirection": "Left"
+            }
+        ]
+    },
+    {
+        "$ItemType": "Furniture",
+        "ID": "SpookyBed",
+        "Type": "Bed",
+        "BedType": "Single",
+        "Configurations": [
+            {
+                "Texture": "assets/spooky_bed.png:0",
+                "FrontTexture": "assets/spooky_bed.png:1",
+                "DisplaySize": { "X": 2, "Y": 4 },
+                "CollisionHeight": 3
+            }
+        ]
+    },
+    {
+        "$ItemType": "Furniture",
+        "ID": "MegaTV",
+        "Type": "TV",
+        "ScreenPosition": { "X": 6, "Y": 28 },
+        "ScreenSize": 8,
+        "Configurations": [
+            {
+                "Texture": "assets/megatv.png",
+                "DisplaySize": { "X": 6, "Y": 6 },
+                "CollisionHeight": 1
+            }
+        ]
+    },
+    {
+        "$ItemType": "Furniture",
+        "ID": "GiantAquarium",
+        "Type": "FishTank",
+        "TankSwimmingCapacity": 26,
+        "TankGroundCapacity": 13,
+        "TankDecorationCapacity": -1,
+        "Configurations": [
+            {
+                "Texture": "assets/giant_aquarium.png:0",
+                "FrontTexture": "assets/giant_aquarium.png:1",
+                "DisplaySize": { "X": 14, "Y": 6 },
+                "CollisionHeight": 1
+            }
+        ]
+    },
+    {
+        "$ItemType": "Furniture",
+        "ID": "SpookyDresser",
+        "Type": "Dresser",
+        "Configurations": [
+            {
+                "Texture": "assets/dresser1.png:0",
+                "DisplaySize": { "X": 2, "Y": 2 },
+                "CollisionHeight": 1,
+                "Flipped": false
+            },
+            {
+                "Texture": "assets/dresser2.png:0",
+                "DisplaySize": { "X": 1, "Y": 3 },
+                "CollisionHeight": 2,
+                "Flipped": false
+            },
+            {
+                "Texture": "assets/dresser1.png:1",
+                "DisplaySize": { "X": 2, "Y": 2 },
+                "CollisionHeight": 1,
+                "Flipped": false
+            },
+            {
+                "Texture": "assets/dresser2.png:0",
+                "DisplaySize": { "X": 1, "Y": 3 },
+                "CollisionHeight": 2,
+                "Flipped": true
+            }
+        ]
+    }
+]

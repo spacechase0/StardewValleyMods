@@ -134,7 +134,7 @@ namespace SpaceCore.Interface
                 downNeighborID = -99998,
                 leftNeighborID = 110,
                 rightNeighborID = 997,
-                item = ((this.leftIngredientSpot != null) ? this.leftIngredientSpot.item : null),
+                item = this.leftIngredientSpot?.item,
                 fullyImmutable = true
             };
             this.rightIngredientSpot = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + 348, this.yPositionOnScreen + 212, 64, 64), this.forgeTextures, new Rectangle(142, 0, 16, 16), 4f)
@@ -143,7 +143,7 @@ namespace SpaceCore.Interface
                 downNeighborID = 996,
                 leftNeighborID = 998,
                 rightNeighborID = 994,
-                item = ((this.rightIngredientSpot != null) ? this.rightIngredientSpot.item : null),
+                item = this.rightIngredientSpot?.item,
                 fullyImmutable = true
             };
             this.startTailoringButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + 204, this.yPositionOnScreen + 308, 52, 56), this.forgeTextures, new Rectangle(0, 80, 13, 14), 4f)
@@ -153,7 +153,7 @@ namespace SpaceCore.Interface
                 leftNeighborID = 111,
                 rightNeighborID = 994,
                 upNeighborID = 998,
-                item = ((this.startTailoringButton != null) ? this.startTailoringButton.item : null),
+                item = this.startTailoringButton?.item,
                 fullyImmutable = true
             };
             this.unforgeButton = new ClickableComponent(new Rectangle(this.xPositionOnScreen + 484, this.yPositionOnScreen + 312, 40, 44), "Unforge")
@@ -181,7 +181,7 @@ namespace SpaceCore.Interface
                 downNeighborID = -99998,
                 leftNeighborID = 996,
                 upNeighborID = 997,
-                item = ((this.craftResultDisplay != null) ? this.craftResultDisplay.item : null)
+                item = this.craftResultDisplay?.item
             };
             this.equipmentIcons = new List<ClickableComponent>();
             this.equipmentIcons.Add(new ClickableComponent(new Rectangle(0, 0, 64, 64), "Ring1")

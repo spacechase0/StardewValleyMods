@@ -1,0 +1,7 @@
+﻿{
+    // Generic Mod Config Menu UI
+    "config.custom-skill-page.name": "사용자 스킬 페이지",
+    "config.custom-skill-page.tooltip": "사용자 지정 스킬 페이지 표시.\n이렇게 하면 지갑이 이동하여 더 많은 스킬을 사용할 수 있습니다.",
+    "config.support-all-professions-mod.name": "모든 직업 모드 지원",
+    "config.support-all-professions-mod.tooltip": "All Professions 설치 시, SpaceCore를 통해 등록된 사용자 지정 직업의 레벨 달성 시 자동으로 적용할지 여부를 지정."
+}

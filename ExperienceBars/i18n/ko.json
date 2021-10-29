@@ -1,0 +1,11 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.position-x.name": "X 위치",
+    "config.position-x.tooltip": "화면의 왼쪽 상단 모서리를 기준으로 경험치 바를 놓을 픽셀 X 위치.",
+    "config.position-y.name": "Y 위치",
+    "config.position-y.tooltip": "화면의 왼쪽 상단 모서리를 기준으로 경험치 바를 놓을 픽셀 Y 위치",
+    "config.toggle-key.name": "숨김 버튼",
+    "config.toggle-key.tooltip": "경험치 바를 표시하거나 숨기는 버튼입니다. Shift와 이 버튼을 눌러 디스플레이를 이동합니다."
+}

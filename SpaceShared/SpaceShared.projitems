@@ -32,6 +32,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Holder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModDataHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PositionAnchor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SpaceUtility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Checkbox.cs" />

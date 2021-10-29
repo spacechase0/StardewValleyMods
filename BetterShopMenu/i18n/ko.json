@@ -1,0 +1,60 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // filter labels
+    "filter.category": "카테고리:",
+    "filter.sorting": "정렬:",
+
+    // sort types
+    "sort.none": "없음",
+    "sort.name": "이름",
+    "sort.price": "가격",
+
+    // category names
+    "categories.everything": "모든",
+    "categories.other": "기타(Etc)",
+    "categories.artisan-goods": "장인 용품",
+    "categories.bait": "미끼",
+    "categories.big-craftables": "큰 제작 용품",
+    "categories.boots": "부츠",
+    "categories.building-resources": "건설 자원",
+    "categories.clothing": "의류",
+    "categories.cooking": "요리",
+    "categories.crafting": "제작 용품",
+    "categories.eggs": "달걀",
+    "categories.equipment": "장비",
+    "categories.fertilizer": "비료",
+    "categories.fish": "물고기",
+    "categories.flowers": "꽃",
+    "categories.fruits": "과일",
+    "categories.furniture": "가구",
+    "categories.gems": "보석",
+    "categories.greens": "채집",
+    "categories.hats": "모자",
+    "categories.ingredients": "재료",
+    "categories.junk": "쓰레기",
+    "categories.meat": "고기",
+    "categories.metals": "금속",
+    "categories.milk": "우유",
+    "categories.minerals": "광물",
+    "categories.monster-loot": "몬스터 전리품",
+    "categories.recipes": "레시피",
+    "categories.rings": "반지",
+    "categories.seeds": "씨앗",
+    "categories.sell-to-pierre-or-marnie": "판매 가능 @ 피에르 샵/마니 샵",
+    "categories.sell-to-pierre": "Sellable @ 피에르 샵",
+    "categories.sell-to-willy": "Sellable @ 윌리 샵",
+    "categories.syrups": "시럽",
+    "categories.tackle": "장치",
+    "categories.tools": "도구",
+    "categories.vegetables": "야채",
+    "categories.weapons": "무기",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.grid-layout.name": "실험적 그리드 레이아웃",
+    "config.grid-layout.tooltip": "상점에서 실험 그리드 레이아웃을 사용할지 여부입니다. 이로 인해 사소한 디스플레이 문제가 발생하거나 상점 메뉴의 다른 모드 기능에 영향을 미칠 수 있습니다."
+}

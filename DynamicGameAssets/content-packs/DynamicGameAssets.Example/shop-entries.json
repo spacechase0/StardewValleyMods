@@ -1,0 +1,36 @@
+﻿[
+    {
+        "$ItemType": "ShopEntry",
+        "Item": { "Value": "spacechase0.DynamicGameAssets.Example/Mysterious Circle" },
+        "ShopId": "SeedShop",
+        "MaxSold": 3,
+        "Cost": 100
+    },
+    {
+        "$ItemType": "ShopEntry",
+        "Item": { "Value": "spacechase0.DynamicGameAssets.Example/Mysterious Blue Circle" },
+        "ShopId": "SeedShop",
+        "MaxSold": 1,
+        "Cost": 1,
+        "Currency": "Mysterious Circle"
+    },
+    {
+        "$ItemType": "ShopEntry",
+        "ShopID": "SeedShop",
+        "Item": {
+            "Type": "VanillaObject",
+            "Value": 74
+        },
+        "MaxSold": 1,
+        "Cost": 1
+    },
+    {
+        "$ItemType": "ShopEntry",
+        "ShopID": "SeedShop",
+        "Item": {
+            "Type": "DGARecipe",
+            "Value": "spacechase0.DynamicGameAssets.Example/Duplicate prismatic shards"
+        },
+        "Cost": 1
+    }
+]

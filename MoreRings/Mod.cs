@@ -6,40 +6,82 @@ using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceShared;
 using SpaceShared.APIs;
+using SpaceShared.ConsoleCommands;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using StardewValley.Objects;
 
 namespace MoreRings
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod Instance;
+        /*********
+        ** Fields
+        *********/
+        /// <summary>The Json Assets mod API.</summary>
+        private IJsonAssetsApi JsonAssets;
 
-        private IJsonAssetsApi Ja;
-        public int RingFishingLargeBar => this.Ja.GetObjectId("Ring of Wide Nets");
-        public int RingCombatRegen => this.Ja.GetObjectId("Ring of Regeneration");
-        public int RingDiamondBooze => this.Ja.GetObjectId("Ring of Diamond Booze");
-        public int RingRefresh => this.Ja.GetObjectId("Refreshing Ring");
-        public int RingQuality => this.Ja.GetObjectId("Quality+ Ring");
-        public int RingMageHand => this.Ja.GetObjectId("Ring of Far Reaching");
-        public int RingTrueSight => this.Ja.GetObjectId("Ring of True Sight");
+        /// <summary>The Wear More Rings mod API.</summary>
+        private IMoreRingsApi WearMoreRings;
 
-        private IMoreRingsApi MoreRings;
+        /// <summary>The remainder to carry over to the next health regen.</summary>
+        private float HealthRegenRemainder;
 
-        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
-        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        /// <summary>The remainder to carry over to the next stamina regen.</summary>
+        private float StaminaRegenRemainder;
+
+
+        /*********
+        ** Accessors
+        *********/
+        /// <summary>The mod instance.</summary>
+        public static Mod Instance { get; private set; }
+
+        /// <summary>The mod configuration.</summary>
+        public ModConfig Config { get; private set; }
+
+        /// <summary>The item ID for the Ring of Wide Nets.</summary>
+        public int RingFishingLargeBar => this.JsonAssets.GetObjectId("Ring of Wide Nets");
+
+        /// <summary>The item ID for the Ring of Regeneration.</summary>
+        public int RingCombatRegen => this.JsonAssets.GetObjectId("Ring of Regeneration");
+
+        /// <summary>The item ID for the Ring of Diamond Booze.</summary>
+        public int RingDiamondBooze => this.JsonAssets.GetObjectId("Ring of Diamond Booze");
+
+        /// <summary>The item ID for the Refreshing Ring.</summary>
+        public int RingRefresh => this.JsonAssets.GetObjectId("Refreshing Ring");
+
+        /// <summary>The item ID for the Quality+ Ring.</summary>
+        public int RingQuality => this.JsonAssets.GetObjectId("Quality+ Ring");
+
+        /// <summary>The item ID for the Ring of Far Reaching.</summary>
+        public int RingMageHand => this.JsonAssets.GetObjectId("Ring of Far Reaching");
+
+        /// <summary>The item ID for the Ring of True Sight.</summary>
+        public int RingTrueSight => this.JsonAssets.GetObjectId("Ring of True Sight");
+
+        /// <summary>Whether the player has Wear More Rings installed.</summary>
+        public bool HasWearMoreRings => this.WearMoreRings != null;
+
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
+            this.Config = helper.ReadConfig<ModConfig>();
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
-            helper.Events.Display.MenuChanged += this.OnMenuChanged;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
-            helper.Events.Display.RenderedWorld += TrueSight.OnDrawWorld;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            helper.Events.Display.RenderedWorld += this.OnRenderedWorld;
 
             SpaceEvents.OnItemEaten += this.OnItemEaten;
 
@@ -52,42 +94,111 @@ namespace MoreRings
                 new PickaxePatcher(),
                 new WateringCanPatcher()
             );
+
+            ConsoleCommandHelper.RegisterCommandsInAssembly(this);
         }
 
-        /// <summary>Raised after the game is launched, right before the first update tick. This happens once per game session (unrelated to loading saves). All mods are loaded and initialised at this point, so this is a good time to set up mod integrations.</summary>
+
+        /*********
+        ** Private methods
+        *********/
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var api = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
-            if (api == null)
+            // get Wear More Rings API if present
+            this.WearMoreRings = this.Helper.ModRegistry.GetApi<IMoreRingsApi>("bcmpinc.WearMoreRings");
+
+            // register rings with Json Assets
+            this.JsonAssets = this.Helper.ModRegistry.GetApi<IJsonAssetsApi>("spacechase0.JsonAssets");
+            if (this.JsonAssets != null)
+                this.JsonAssets.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
+            else
+                Log.Error("Couldn't get the Json Assets API, so the new rings won't be available.");
+
+            // register with Generic Mod Config Menu
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu != null)
             {
-                Log.Error("No Json Assets API???");
-                return;
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => this.Config = new ModConfig(),
+                    save: () => this.Helper.WriteConfig(this.Config)
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_QualityRingChance_Name,
+                    tooltip: I18n.Config_QualityRingChance_Description,
+                    getValue: () => this.Config.QualityRing_ChancePerRing,
+                    setValue: value => this.Config.QualityRing_ChancePerRing = value,
+                    min: 0.05f,
+                    max: 1,
+                    interval: 0.05f
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_RingOfWideNetsMultiplier_Name,
+                    tooltip: I18n.Config_RingOfWideNetsMultiplier_Description,
+                    getValue: () => this.Config.RingOfWideNets_BarSizeMultiplier,
+                    setValue: value => this.Config.RingOfWideNets_BarSizeMultiplier = value,
+                    min: 1,
+                    max: 3,
+                    interval: 0.05f
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_RingOfRegenerationRate_Name,
+                    tooltip: I18n.Config_RingOfRegenerationRate_Description,
+                    getValue: () => this.Config.RingOfRegeneration_RegenPerSecond,
+                    setValue: value => this.Config.RingOfRegeneration_RegenPerSecond = value,
+                    min: 0.05f,
+                    max: 200,
+                    interval: 0.05f
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_RingOfRegenerationRate_Name,
+                    tooltip: I18n.Config_RingOfRegenerationRate_Description,
+                    getValue: () => this.Config.RefreshingRing_RegenPerSecond,
+                    setValue: value => this.Config.RefreshingRing_RegenPerSecond = value,
+                    min: 0.05f,
+                    max: 200,
+                    interval: 0.05f
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_RingOfFarReachingDistance_Name,
+                    tooltip: I18n.Config_RingOfFarReachingDistance_Description,
+                    getValue: () => this.Config.RingOfFarReaching_TileDistance,
+                    setValue: value => this.Config.RingOfFarReaching_TileDistance = value,
+                    min: 1,
+                    max: 200
+                );
             }
-            this.Ja = api;
-
-            api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
-
-            this.MoreRings = this.Helper.ModRegistry.GetApi<IMoreRingsApi>("bcmpinc.WearMoreRings");
         }
 
-        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (e.NewMenu is BobberBar bobber && this.HasRingEquipped(this.RingFishingLargeBar) > 0)
+            if (e.NewMenu is BobberBar bobber && this.HasRingEquipped(this.RingFishingLargeBar))
             {
                 var field = this.Helper.Reflection.GetField<int>(bobber, "bobberBarHeight");
-                field.SetValue((int)(field.GetValue() * 1.50));
+                field.SetValue((int)(field.GetValue() * this.Config.RingOfWideNets_BarSizeMultiplier));
             }
         }
 
-        private int RegenCounter;
-        private int RefreshCounter;
+        /// <inheritdoc cref="IDisplayEvents.RenderedWorld"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnRenderedWorld(object sender, RenderedWorldEventArgs e)
+        {
+            TrueSight.DrawOverWorld(e.SpriteBatch);
+        }
 
-        /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
+        /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -95,22 +206,36 @@ namespace MoreRings
             if (!Context.IsPlayerFree || !e.IsOneSecond)
                 return;
 
-            if (this.HasRingEquipped(this.RingCombatRegen) > 0 && this.RegenCounter++ >= 4 / this.HasRingEquipped(this.RingCombatRegen))
+            int hasHealthRings = this.CountRingsEquipped(this.RingCombatRegen);
+            int hasStaminaRings = this.CountRingsEquipped(this.RingRefresh);
+
+            if (hasHealthRings > 0)
             {
-                this.RegenCounter = 0;
-                Game1.player.health = Math.Min(Game1.player.health + 1, Game1.player.maxHealth);
+                this.HealthRegenRemainder += this.Config.RingOfRegeneration_RegenPerSecond * hasHealthRings;
+                if (this.HealthRegenRemainder > 0)
+                {
+                    Game1.player.health = Math.Min(Game1.player.health + (int)this.HealthRegenRemainder, Game1.player.maxHealth);
+                    this.HealthRegenRemainder %= 1;
+                }
             }
 
-            if (this.HasRingEquipped(this.RingRefresh) > 0 && this.RefreshCounter++ >= 4 / this.HasRingEquipped(this.RingRefresh))
+            if (hasStaminaRings > 0)
             {
-                this.RefreshCounter = 0;
-                Game1.player.Stamina = Math.Min(Game1.player.Stamina + 1, Game1.player.MaxStamina);
+                this.StaminaRegenRemainder += this.Config.RefreshingRing_RegenPerSecond * hasStaminaRings;
+                if (this.StaminaRegenRemainder > 0)
+                {
+                    Game1.player.Stamina = Math.Min(Game1.player.Stamina + (int)this.StaminaRegenRemainder, Game1.player.MaxStamina);
+                    this.StaminaRegenRemainder %= 1;
+                }
             }
         }
 
-        private void OnItemEaten(object sender, EventArgs args)
+        /// <inheritdoc cref="SpaceEvents.OnItemEaten"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnItemEaten(object sender, EventArgs e)
         {
-            if (this.HasRingEquipped(this.RingDiamondBooze) > 0)
+            if (this.HasRingEquipped(this.RingDiamondBooze))
             {
                 Buff tipsyBuff = null;
                 foreach (var buff in Game1.buffsDisplay.otherBuffs)
@@ -152,33 +277,25 @@ namespace MoreRings
             }
         }
 
-        public int HasRingEquipped(int id)
+        /// <summary>Get whether the player has any ring with the given ID equipped.</summary>
+        /// <param name="id">The ring ID to match.</param>
+        public bool HasRingEquipped(int id)
         {
-            if (this.MoreRings != null)
-                return this.MoreRings.CountEquippedRings(Game1.player, id);
+            return this.CountRingsEquipped(id) > 0;
+        }
 
-            int num = 0;
-            if (Game1.player.leftRing.Value != null && Game1.player.leftRing.Value.ParentSheetIndex == id)
-                ++num;
-            if (Game1.player.leftRing.Value is CombinedRing lcring)
-            {
-                foreach (var ring in lcring.combinedRings)
-                {
-                    if (ring.ParentSheetIndex == id)
-                        ++num;
-                }
-            }
-            if (Game1.player.rightRing.Value != null && Game1.player.rightRing.Value.ParentSheetIndex == id)
-                ++num;
-            if (Game1.player.rightRing.Value is CombinedRing rcring)
-            {
-                foreach (var ring in rcring.combinedRings)
-                {
-                    if (ring.ParentSheetIndex == id)
-                        ++num;
-                }
-            }
-            return num;
+        /// <summary>Count the number of rings with the given ID equipped by the player.</summary>
+        /// <param name="id">The ring ID to match.</param>
+        public int CountRingsEquipped(int id)
+        {
+            int count =
+                (Game1.player.leftRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0)
+                + (Game1.player.rightRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0);
+
+            if (this.WearMoreRings != null)
+                count = Math.Max(count, this.WearMoreRings.CountEquippedRings(Game1.player, id));
+
+            return count;
         }
     }
 }

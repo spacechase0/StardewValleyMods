@@ -29,9 +29,9 @@ namespace MoreRings.Patches
         ** Private methods
         *********/
         /// <summary>The method to call before <see cref="Pickaxe.DoFunction"/>.</summary>
-        private static void Before_DoFunction(Hoe __instance, GameLocation location, ref int x, ref int y, int power, Farmer who)
+        private static void Before_DoFunction(ref int x, ref int y, Farmer who)
         {
-            if (Mod.Instance.HasRingEquipped(Mod.Instance.RingMageHand) > 0)
+            if (Mod.Instance.HasRingEquipped(Mod.Instance.RingMageHand))
             {
                 x = (int)who.lastClick.X;
                 y = (int)who.lastClick.Y;

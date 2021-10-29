@@ -464,7 +464,7 @@ namespace DynamicGameAssets.Game
                     2 => new Rectangle(96, (int)this.treeType * 5 * 16, 48, 80),
                     _ => new Rectangle(144, (int)this.treeType * 5 * 16, 48, 80),
                 };
-                sourceRect = new Rectangle((currTex.Rect.HasValue ? currTex.Rect.Value.X : 0) + sourceRect.X, (currTex.Rect.HasValue ? currTex.Rect.Value.Y : 0) + sourceRect.Y, sourceRect.Width, sourceRect.Height);
+                sourceRect = new Rectangle((currTex.Rect?.X ?? 0) + sourceRect.X, (currTex.Rect?.Y ?? 0) + sourceRect.Y, sourceRect.Width, sourceRect.Height);
                 spriteBatch.Draw(currTex.Texture, Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocation.X * 64f + 32f + positionOffset.X, tileLocation.Y * 64f - (float)sourceRect.Height + 128f + positionOffset.Y)), sourceRect, Color.White, this_shakeRotation, new Vector2(24f, 80f), 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)this.getBoundingBox(tileLocation).Bottom / 10000f - tileLocation.X / 1000000f);
             }
             else

@@ -1,0 +1,45 @@
+﻿{
+    // net
+    "bug-net.name": "그물",
+    "bug-net.description": "곤충과 작은 동물을 잡는데 쓰입니다.",
+
+    // critter cage
+    "cage.name": "케이지: {{critterName}}",
+    "cage.description": "우와! 귀여운 동물이에요!\n(케이지에 보관 됨!)",
+
+    // critter names
+    "critter.GreenFrog": "녹색 개구리",
+    "critter.OliveFrog": "올리브색 개구리",
+    "critter.Cloud": "구름?",
+    "critter.Firefly": "반딧물",
+    "critter.Seagull": "갈매기",
+    "critter.Crow": "까미귀",
+    "critter.BrownBird": "갈색 새",
+    "critter.BlueBird": "파란색 새",
+    "critter.GrayRabbit": "회색 토끼",
+    "critter.WhiteRabbit": "흰색 토끼",
+    "critter.Squirrel": "다람쥐",
+    "critter.Owl": "올빼미",
+    "critter.WoodPecker": "딱따구리",
+    "critter.SummerButterflyBlue": "파란색 여름 나비",
+    "critter.SummerButterflyGreen": "녹색 여름 나비",
+    "critter.SummerButterflyRed": "빨간색 여름 나비",
+    "critter.SummerButterflyPink": "핑크색 여름 나비",
+    "critter.SummerButterflyYellow": "노란색 여름 나비",
+    "critter.SummerButterflyOrange": "주황색 여름 나비",
+    "critter.SpringButterflyPalePink": "연핑크색 봄 나비",
+    "critter.SpringButterflyMagenta": "마젠타 봄 나비",
+    "critter.SpringButterflyWhite": "흰색 봄 나비",
+    "critter.SpringButterflyYellow": "노란색 봄 나비",
+    "critter.SpringButterflyPurple": "보라색 봄 나비",
+    "critter.SpringButterflyPink": "핑크색 봄 나비",
+    "critter.BlueParrot": "파란색 앵무새",
+    "critter.GreenParrot": "녹색 앵무새",
+    "critter.Monkey": "원숭이",
+    "critter.OrangeIslandButterfly": "주황색 섬 나비",
+    "critter.PinkIslandButterfly": "핑크색 섬 나비",
+    "critter.PurpleBird": "보라색 새",
+    "critter.RedBird": "빨간색 새",
+    "critter.SunsetTropicalButterfly": "노을빛 열대 나비",
+    "critter.TropicalButterfly": "열대 나비"
+}

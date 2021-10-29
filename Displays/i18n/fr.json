@@ -1,0 +1,7 @@
+﻿{
+    "mannequin.desc": "Habillez-le de vêtements, chapeaux ou bottes.",
+    "mannequin.name.plain-male": "Mannequin normal",
+    "mannequin.name.plain-female": "Damequin normal", // made-up word attempting to keep the joke
+    "mannequin.name.magic-male": "Mannequin magique",
+    "mannequin.name.magic-female": "Damequin magique"
+}

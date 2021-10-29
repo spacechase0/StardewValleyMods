@@ -76,6 +76,15 @@ namespace AnotherHungerMod
                     getValue: () => Mod.Config.FullnessUiY,
                     setValue: value => Mod.Config.FullnessUiY = value
                 );
+                configMenu.AddTextOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_FullnessUiAlignment_Name,
+                    tooltip: I18n.Config_FullnessUiAlignment_Tooltip,
+                    getValue: () => Mod.Config.FullnessUiAlignment.ToString(),
+                    setValue: value => Mod.Config.FullnessUiAlignment = (PositionAnchor)Enum.Parse(typeof(PositionAnchor), value),
+                    allowedValues: Enum.GetNames(typeof(PositionAnchor)),
+                    formatAllowedValue: value => I18n.GetByKey($"config.fullness-ui-alignment.{value}")
+                );
                 configMenu.AddNumberOption(
                     mod: this.ModManifest,
                     name: I18n.Config_FullnessMax_Name,
@@ -152,7 +161,7 @@ namespace AnotherHungerMod
 
             SpriteBatch b = e.SpriteBatch;
 
-            Vector2 pos = new Vector2(Mod.Config.FullnessUiX, Mod.Config.FullnessUiY);
+            Vector2 pos = CommonHelper.GetPositionFromAnchor(Mod.Config.FullnessUiX, Mod.Config.FullnessUiY, this.HungerBar.Width, this.HungerBar.Height, Mod.Config.FullnessUiAlignment);
             b.Draw(this.HungerBar, pos, new Rectangle(0, 0, this.HungerBar.Width, this.HungerBar.Height), Color.White, 0, new Vector2(), 4, SpriteEffects.None, 1);
             if (Game1.player.GetFullness() > 0)
             {

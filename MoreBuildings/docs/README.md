@@ -19,7 +19,7 @@ building      | effects
 Spooky Shed   | Place a mob drop in the crystal, and mobs will spawn when you enter the building. This currently works with Bat Wing (spawns bats), Solar Essence (spawns squid kids), Void Essence (spawns shadow brutes), and Bug Meat (spawns flies).
 Mini Spa      | A place to relax and gain stamina.
 Fishing Shack | Lets you catch any fish again, including legendaries.
-Big Shed      | An upgrade for the normal shed.
+~~Big Shed~~  | ~~An upgrade for the normal shed.~~ (Deprecated since there's a vanilla big shed upgrade now.)
 
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.

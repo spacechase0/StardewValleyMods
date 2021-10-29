@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.6.0
+Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Added support for translating dropdown values (thanks to ImJustMatt!).
+* Improved translations. Thanks to wally232 (added Korean)!
+
 ## 1.5.1
 Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="3" height="3" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="5">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="3" height="3" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="5">
  <tileset firstgid="1" name="mine" tilewidth="16" tileheight="16" tilecount="288" columns="16">
   <image source="mine_frost_dark.png" width="256" height="288"/>
   <tile id="0">
@@ -317,15 +317,19 @@
   </tile>
  </tileset>
  <layer id="1" name="Back" width="3" height="3">
-  <data encoding="base64" compression="zlib">
-   eJxjYCAMAAAkAAE=
-  </data>
+  <data encoding="csv">
+0,0,0,
+0,0,0,
+0,0,0
+</data>
  </layer>
  <objectgroup id="2" name="Back"/>
  <layer id="3" name="Buildings" width="3" height="3">
-  <data encoding="base64" compression="zlib">
-   eJwLZWRgCAPicCBOBeJAIE4H4lIgTgTiciAGAEGjA3Y=
-  </data>
+  <data encoding="csv">
+341,342,343,
+357,337,359,
+373,353,375
+</data>
  </layer>
  <objectgroup id="4" name="Buildings">
   <object id="4" name="TileData" x="16" y="32" width="16" height="16">
@@ -335,9 +339,11 @@
   </object>
  </objectgroup>
  <layer id="5" name="Front" width="3" height="3">
-  <data encoding="base64" compression="zlib">
-   eJxjYCAMAAAkAAE=
-  </data>
+  <data encoding="csv">
+0,0,0,
+0,0,0,
+0,0,0
+</data>
  </layer>
  <objectgroup id="6" name="Front"/>
 </map>

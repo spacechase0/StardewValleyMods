@@ -1,6 +1,17 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.3.1
+Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Improved mod-provided API (thanks to Digus!):
+  * Added support for creating a colored item.
+  * Fixed error when requesting an unknown/invalid item ID.
+* Improved example content pack:
+  * Standardized file structure.
+  * Added update key.
+* Fixed error in some cases when a texture being drawn is null.
+
 ## 1.3.0
 Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

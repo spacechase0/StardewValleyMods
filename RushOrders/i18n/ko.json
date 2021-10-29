@@ -1,0 +1,28 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // Clint's shop
+    "clint.rush.description": "도구를 업그레이드하는 데 하루가 걸립니다.",
+    "clint.rush.dialogue": "고마워. 바로 시작할게. 내일이면 완료 될거야.",
+
+    "clint.instant.description": "도구가 즉시 업그레이드됩니다.",
+    "clint.instant.dialogue": "고마워. 바로 시작할게. 몇 분 후면 바로 끝날 거야.",
+
+    // Robin's shop
+    "robin.rush-question": "건물 공사를 서두르시겠습니까? ({{daysLeft}}일 남음.)",
+    "robin.rush-answer-yes": "네 ({{price}}골드)",
+    "robin.rush-answer-no": "아니오",
+    "robin.not-enough-money": "돈이 부족합니다.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.price-tool-one-day.name": "가격: 도구 - 하루 걸림",
+    "config.price-tool-one-day.tooltip": "1일 도구 업그레이드의 가격(곱하기).",
+    "config.price-tool-instant.name": "가격: 도구 - 즉시 완료",
+    "config.price-tool-instant.tooltip": "즉시 업그레이드를 위한 가격(곱하기).",
+    "config.price-building.name": "가격: 건물 - 가속화",
+    "config.price-building.tooltip": "건물 건설을 하루 앞당기기 위한 가격(곱하기)."
+}

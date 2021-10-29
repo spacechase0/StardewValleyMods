@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
@@ -116,31 +115,15 @@ namespace DynamicGameAssets.Patches
 
         private static void FixTilesheetReference(ref Texture2D tex, ref Rectangle sourceRect)
         {
-            if (tex == Game1.objectSpriteSheet && SpriteBatchPatcher.objectOverrides.ContainsKey(sourceRect))
-            {
-                var texRect = SpriteBatchPatcher.objectOverrides[sourceRect];
-                tex = texRect.Texture;
-                sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
-            }
-            else if (tex == Tool.weaponsTexture && SpriteBatchPatcher.weaponOverrides.ContainsKey(sourceRect))
-            {
-                var texRect = SpriteBatchPatcher.weaponOverrides[sourceRect];
-                tex = texRect.Texture;
-                sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
-            }
-            else if (tex == FarmerRenderer.hatsTexture && SpriteBatchPatcher.hatOverrides.ContainsKey(sourceRect))
-            {
-                var texRect = SpriteBatchPatcher.hatOverrides[sourceRect];
-                tex = texRect.Texture;
-                sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
-            }
-            else if (tex == FarmerRenderer.shirtsTexture && SpriteBatchPatcher.shirtOverrides.ContainsKey(sourceRect))
-            {
-                var texRect = SpriteBatchPatcher.shirtOverrides[sourceRect];
-                tex = texRect.Texture;
-                sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
-            }
-            else if (tex == FarmerRenderer.pantsTexture)
+            // common overrides
+            bool overridden =
+                SpriteBatchPatcher.TryOverride(ref tex, ref sourceRect, Game1.objectSpriteSheet, SpriteBatchPatcher.objectOverrides)
+                || SpriteBatchPatcher.TryOverride(ref tex, ref sourceRect, Tool.weaponsTexture, SpriteBatchPatcher.weaponOverrides)
+                || SpriteBatchPatcher.TryOverride(ref tex, ref sourceRect, FarmerRenderer.hatsTexture, SpriteBatchPatcher.hatOverrides)
+                || SpriteBatchPatcher.TryOverride(ref tex, ref sourceRect, FarmerRenderer.shirtsTexture, SpriteBatchPatcher.shirtOverrides);
+
+            // pants overrides
+            if (!overridden && tex == FarmerRenderer.pantsTexture)
             {
                 foreach (var pants in SpriteBatchPatcher.pantsOverrides)
                 {
@@ -148,7 +131,7 @@ namespace DynamicGameAssets.Patches
                     {
                         tex = pants.Value.Texture;
                         var oldSource = sourceRect;
-                        sourceRect = pants.Value.Rect.HasValue ? pants.Value.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
+                        sourceRect = pants.Value.Rect ?? new Rectangle(0, 0, tex.Width, tex.Height);
                         int localX = oldSource.X - pants.Key.X;
                         int localY = oldSource.Y - pants.Key.Y;
                         sourceRect = new Rectangle(sourceRect.X + localX, sourceRect.Y + localY, oldSource.Width, oldSource.Height);
@@ -161,17 +144,31 @@ namespace DynamicGameAssets.Patches
                 }
             }
 
-            if (tex.Name == null)
-                return;
-            if (SpriteBatchPatcher.packOverrides.ContainsKey(tex.Name))
+            // override by name
+            if (tex?.Name != null && SpriteBatchPatcher.packOverrides.TryGetValue(tex.Name, out var overrides) && overrides.TryGetValue(sourceRect, out var packOverride))
             {
-                if (SpriteBatchPatcher.packOverrides[tex.Name].ContainsKey(sourceRect))
-                {
-                    var texRect = SpriteBatchPatcher.packOverrides[tex.Name][sourceRect].GetCurrentTexture();
-                    tex = texRect.Texture;
-                    sourceRect = texRect.Rect.HasValue ? texRect.Rect.Value : new Rectangle(0, 0, tex.Width, tex.Height);
-                }
+                var texRect = packOverride.GetCurrentTexture();
+                tex = texRect.Texture;
+                sourceRect = texRect.Rect ?? new Rectangle(0, 0, tex.Width, tex.Height);
             }
+        }
+
+        /// <summary>Override the texture being drawn if it matches a target texture and the source rectangle matches an override for that type.</summary>
+        /// <param name="currentTexture">The texture being drawn to the sprite batch.</param>
+        /// <param name="currentSourceRect">The source rectangle being drawn to the sprite batch.</param>
+        /// <param name="fromTexture">The target texture to detect.</param>
+        /// <param name="overrides">The texture overrides to apply.</param>
+        /// <returns>Returns whether the texture was overridden.</returns>
+        private static bool TryOverride(ref Texture2D currentTexture, ref Rectangle currentSourceRect, Texture2D fromTexture, IDictionary<Rectangle, TexturedRect> overrides)
+        {
+            if (currentTexture == fromTexture && overrides.TryGetValue(currentSourceRect, out TexturedRect packOverride))
+            {
+                currentTexture = packOverride.Texture;
+                currentSourceRect = packOverride.Rect ?? new Rectangle(0, 0, currentSourceRect.Width, currentSourceRect.Height);
+                return true;
+            }
+
+            return false;
         }
     }
 }

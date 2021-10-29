@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.1.13
+Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Fixed error if a content pack adds a null patch.
+
 ## 1.1.12
 Released 11 September 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

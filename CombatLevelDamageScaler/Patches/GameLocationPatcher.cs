@@ -31,6 +31,9 @@ namespace CombatLevelDamageScaler.Patches
         /// <summary>The method to call before <see cref="GameLocation.damageMonster(Rectangle,int,int,bool,Farmer)"/>.</summary>
         private static void Before_DamageMonster(ref int minDamage, ref int maxDamage, Farmer who)
         {
+            if (who == null)
+                return;
+
             float scale = 1.0f + who.CombatLevel * Mod.Config.DamageScalePerLevel;
             minDamage = (int)(minDamage * scale);
             maxDamage = (int)(maxDamage * scale);

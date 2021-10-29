@@ -121,18 +121,17 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
-    // TODO
-    "config.altar-location.name": "Altar Location",
-    "config.altar-location.tooltip": "The (internal) name of the location the magic altar should be placed at.",
-    "config.altar-x.name": "Altar X",
-    "config.altar-x.tooltip": "The X tile position where the magic altar should be placed.",
-    "config.altar-y.name": "Altar Y",
-    "config.altar-y.tooltip": "The Y tile position where the magic altar should be placed.",
+    "config.altar-location.name": "제단 위치",
+    "config.altar-location.tooltip": "마법 제단이 배치될 위치의(내부) 이름.",
+    "config.altar-x.name": "제단 X",
+    "config.altar-x.tooltip": "마법 제단을 배치할 X타일 위치.",
+    "config.altar-y.name": "제단 Y",
+    "config.altar-y.tooltip": "마법 제단을 배치할 Y타일 위치.",
 
-    "config.cast-key.name": "Key: Cast",
-    "config.cast-key.tooltip": "The key to initiate casting a spell.",
-    "config.swap-spells-key.name": "Key: Swap Sells",
-    "config.swap-spells-key.tooltip": "The key to swap spell sets.",
-    "config.select-spell-key.name": "Key: Spell {{slotNumber}}",
-    "config.select-spell-key.tooltip": "The key to select spell {{slotNumber}}."
+    "config.cast-key.name": "키: 시전",
+    "config.cast-key.tooltip": "주문 시전을 시작하기 위한 키.",
+    "config.swap-spells-key.name": "키: 교환 판매",
+    "config.swap-spells-key.tooltip": "주문 세트를 교환하기 위한 키.",
+    "config.select-spell-key.name": "키: 주문 {{slotNumber}}",
+    "config.select-spell-key.tooltip": "주문 선택 키 {{slotNumber}}."
 }

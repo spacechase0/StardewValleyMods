@@ -1,0 +1,75 @@
+﻿[
+    {
+        "ElementType": "Label",
+        "Name": "Inert settings",
+        "Description": "These don't actually do anything; they're here to test the config system."
+    },
+    {
+        "ElementType": "Paragraph",
+        "Name": "This is a paragraph. You can put a bunch of text here. Personally, I'd put some text about my cat here. He's super soft and fluffy."
+    },
+    {
+        "ElementType": "Image",
+        "ImagePath": "assets/kitty.png",
+        "ImageScale": 1
+    },
+    {
+        "ElementType": "ConfigOption",
+        "Name": "Cat Rating",
+        "Description": "How great is this cat, on a scale of 1 to 10? Note that values less than 10 might make me cry.",
+        "ValueType": "Integer",
+        "DefaultValue": 10,
+        "ValidValues": "1, 10"
+    },
+    {
+        "ElementType": "ConfigOption",
+        "Name": "Pi count",
+        "Description": "How much pi do you want? No, I don't mean pie.",
+        "ValueType": "Float",
+        "DefaultValue": 157,
+        "ValidValues": "0, 314, 3.14"
+    },
+    {
+        "ElementType": "ConfigOption",
+        "Name": "Comments",
+        "Description": "Some comments about how you enjoyed this config section. No, this isn't a survey. I'm just bored.",
+        "ValueType": "String",
+        "DefaultValue": ""
+    },
+    {
+        "ElementType": "Label",
+        "Name": "Go to actual settings",
+        "Description": "Go to some settings actually used in this example pack.",
+        "PageToGoTo": "Actual Settings"
+    },
+    {
+        "OnPage": "Actual Settings",
+        "Name": "Mysterious Circle Universal Gift Taste",
+        "Description": "The amount of friendship points the Mysterious Circle will give.",
+        "ValueType": "Integer",
+        "DefaultValue": 100,
+        "ValidValues": "-3000, 3000, 10"
+    },
+    {
+        "OnPage": "Actual Settings",
+        "Name": "Animated Mysterious Circle",
+        "Description": "Whether or not the mysterious circle is animated.",
+        "ValueType": "Boolean",
+        "DefaultValue": true
+    },
+    {
+        "OnPage": "Actual Settings",
+        "Name": "Static Mysterious Circle Color",
+        "Description": "The color of the mysterious circle if it isn't animated.",
+        "ValueType": "String",
+        "ValidValues": "White, Red, Green, Blue",
+        "DefaultValue": "Red"
+    }/*,
+    {
+        "OnPage": "Actual Settings",
+        "Name": "JA Legacy Enabled",
+        "Description": "Whether or not the JA legacy example data (converted using the converter) is enabled.",
+        "ValueType": "Boolean",
+        "DefaultValue": false
+    }*/
+]

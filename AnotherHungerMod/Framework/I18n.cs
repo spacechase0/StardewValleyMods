@@ -46,7 +46,7 @@ namespace AnotherHungerMod.Framework
             return I18n.GetByKey("config.fullness-ui-X.name");
         }
 
-        /// <summary>Get a translation equivalent to "The X position of the fullness UI.".</summary>
+        /// <summary>Get a translation equivalent to "The X pixel position of the fullness UI.".</summary>
         public static string Config_FullnessUiX_Tooltip()
         {
             return I18n.GetByKey("config.fullness-ui-X.tooltip");
@@ -58,10 +58,46 @@ namespace AnotherHungerMod.Framework
             return I18n.GetByKey("config.fullness-ui-Y.name");
         }
 
-        /// <summary>Get a translation equivalent to "The Y position of the fullness UI.".</summary>
+        /// <summary>Get a translation equivalent to "The Y pixel position of the fullness UI.".</summary>
         public static string Config_FullnessUiY_Tooltip()
         {
             return I18n.GetByKey("config.fullness-ui-Y.tooltip");
+        }
+
+        /// <summary>Get a translation equivalent to "Fullness UI (alignment)".</summary>
+        public static string Config_FullnessUiAlignment_Name()
+        {
+            return I18n.GetByKey("config.fullness-ui-alignment.name");
+        }
+
+        /// <summary>Get a translation equivalent to "The alignment of the fullness UI on the game screen.".</summary>
+        public static string Config_FullnessUiAlignment_Tooltip()
+        {
+            return I18n.GetByKey("config.fullness-ui-alignment.tooltip");
+        }
+
+        /// <summary>Get a translation equivalent to "top left".</summary>
+        public static string Config_FullnessUiAlignment_TopLeft()
+        {
+            return I18n.GetByKey("config.fullness-ui-alignment.topLeft");
+        }
+
+        /// <summary>Get a translation equivalent to "top right".</summary>
+        public static string Config_FullnessUiAlignment_TopRight()
+        {
+            return I18n.GetByKey("config.fullness-ui-alignment.topRight");
+        }
+
+        /// <summary>Get a translation equivalent to "bottom left".</summary>
+        public static string Config_FullnessUiAlignment_BottomLeft()
+        {
+            return I18n.GetByKey("config.fullness-ui-alignment.bottomLeft");
+        }
+
+        /// <summary>Get a translation equivalent to "bottom right".</summary>
+        public static string Config_FullnessUiAlignment_BottomRight()
+        {
+            return I18n.GetByKey("config.fullness-ui-alignment.bottom-right");
         }
 
         /// <summary>Get a translation equivalent to "Max Fullness".</summary>
@@ -148,14 +184,10 @@ namespace AnotherHungerMod.Framework
             return I18n.GetByKey("config.unfed-spouse-penalty.tooltip");
         }
 
-
-        /*********
-        ** Private methods
-        *********/
         /// <summary>Get a translation by its key.</summary>
         /// <param name="key">The translation key.</param>
         /// <param name="tokens">An object containing token key/value pairs. This can be an anonymous object (like <c>new { value = 42, name = "Cranberries" }</c>), a dictionary, or a class instance.</param>
-        private static Translation GetByKey(string key, object tokens = null)
+        public static Translation GetByKey(string key, object tokens = null)
         {
             if (I18n.Translations == null)
                 throw new InvalidOperationException($"You must call {nameof(I18n)}.{nameof(I18n.Init)} from the mod's entry method before reading translations.");

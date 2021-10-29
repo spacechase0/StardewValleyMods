@@ -1,0 +1,45 @@
+﻿{
+    /*********
+    ** Ring items
+    *********/
+    "quality-ring.name": "고품질 반지",
+    "quality-ring.description": "고품질의 농작물을 수확할 수 있습니다.",
+
+    "refreshing-ring.name": "리프레싱 반지",
+    "refreshing-ring.description": "어떤 역할을 하는지 궁금합니다.",
+
+    "ring-of-regeneration.name": "재생 반지",
+    "ring-of-regeneration.description": "시간이 지남에 따라 서서히 치유됩니다.",
+
+    "ring-of-diamond-booze.name": "다이아몬드 술의 반지",
+    "ring-of-diamond-booze.description": "옅은 알코올의 취한 효과를 무효화합니다.",
+
+    "ring-of-wide-nets.name": "넓은 그물 반지",
+    "ring-of-wide-nets.description": "낚시바 크기가 50% 증가합니다.",
+
+    "ring-of-far-reaching.name": "원거리 반지",
+    "ring-of-far-reaching.description": "멀리서 도구를 사용할 수 있습니다..",
+
+    "ring-of-true-sight.name": "진실의 시력 반지",
+    "ring-of-true-sight.description": "보이는 것 이상을 볼 수 있습니다.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // TODO
+    "config.quality-ring-chance.name": "Quality+ Ring: Chance",
+    "config.quality-ring-chance.description": "The percentage chance of a higher crop quality with the Quality+ Ring equipped.",
+
+    "config.ring-of-wide-nets-multiplier.name": "Ring of Wide Nets: Multiplier",
+    "config.ring-of-wide-nets-multiplier.description": "The multiplier applied to the fishing bar size with the Ring of Wide Nets equipped.",
+
+    "config.ring-of-regeneration-rate.name": "Ring of Regeneration: Regen",
+    "config.ring-of-regeneration-rate.description": "The health regen rate per second with the Ring of Regeneration equipped.",
+
+    "config.refreshing-ring-rate.name": "Refreshing Ring: Regen",
+    "config.refreshing-ring-rate.description": "The stamina regen rate per second with the Refreshing Ring equipped.",
+
+    "config.ring-of-far-reaching-distance.name": "Ring of Far Reaching: Distance",
+    "config.ring-of-far-reaching-distance.description": "The distance in tiles at which you can use tools with the Ring of Far Reaching equipped."
+}

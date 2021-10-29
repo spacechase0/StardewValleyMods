@@ -1,0 +1,218 @@
+﻿[
+    {
+        "$ItemType": "ContentIndex",
+        "FilePath": "objects.json"
+    },
+    {
+        "$ItemType": "ContentIndex",
+        "FilePath": "crafting-recipes.json"
+    },
+    {
+        "$ItemType": "ContentIndex",
+        "FilePath": "furniture.json"
+    },
+    {
+        "$ItemType": "ContentIndex",
+        "FilePath": "shop-entries.json"
+    },
+    {
+        "$ItemType": "BigCraftable",
+        "ID": "SpookyFurnace",
+        "Texture": "assets/big-craftables.png:0"
+    },
+    {
+        "$ItemType": "Boots",
+        "ID": "OceanBoots",
+        "Texture": "assets/boots.png:0",
+        "FarmerColors": "assets/boots_color.png:0-3@5, assets/boots_color.png:4@60, assets/boots_color.png:3@5, assets/boots_color.png:2@5, assets/boots_color.png:1@5",
+        "Defense": 10,
+        "Immunity": 10,
+        "SellPrice": 999999
+    },
+    {
+        "$ItemType": "Crop",
+        "ID": "SpookyCrop",
+        "Type": "Paddy",
+        "Phases": [
+            {
+                "TextureChoices": [ "assets/crops.png:0", "assets/crops.png:1" ],
+                "Length": 1
+            },
+            {
+                "TextureChoices": [ "assets/crops.png:3" ],
+                "Length": 1,
+                "HarvestedDrops": [
+                    {
+                        "Item": {
+                            "Type": "VanillaObject",
+                            "Value": 74
+                        }
+                    }
+                ],
+                "HarvestExperience": 50
+            },
+            {
+                "TextureChoices": [ "assets/crops.png:6" ],
+                "Scythable": true,
+                "Trellis": true,
+                "HarvestedDrops": [
+                    {
+                        "MinimumHarvestedQuantity": 3,
+                        "MaximumHarvestedQuantity": 5,
+                        "ExtraChance": 0.5,
+                        "Item": [
+                            {
+                                "Weight": 1,
+                                "Value": {
+                                    "Value": "spacechase0.DynamicGameAssets.Example/Mysterious Blue Circle"
+                                }
+                            },
+                            {
+                                "Weight": 1,
+                                "Value": {
+                                    "Value": "spacechase0.DynamicGameAssets.Example/Mysterious Circle",
+                                    "ObjectColor": "255, 0, 255, 255"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "HarvestExperience": 250
+            }
+        ],
+        "RegrowthPhaseIndex": 0,
+        "GiantChance": 1.0,
+        "GiantTextureChoices": [ "assets/crops_giant.png:0" ],
+        "GiantDrops": [
+            {
+                "MinimumHarvestedQuantity": 1,
+                "MaximumHarvestedQuantity": 99,
+                "Item": {
+                    "Value": "spacechase0.DynamicGameAssets.Example/Mysterious Circle"
+                }
+            }
+        ],
+        "DynamicFields": [
+            {
+                "Conditions": { "Season |contains=spring": true },
+                "CanGrowNow": true
+            }
+        ]
+    },
+    {
+        "$ItemType": "Fence",
+        "ID": "DarkIronFence",
+        "ObjectTexture": "assets/fences.png:0",
+        "PlacedTilesheet": "assets/fence_darkiron.png",
+        "MaxHealth": 200,
+        "RepairMaterial": {
+            "Type": "VanillaObject",
+            "Value": 335
+        },
+        "BreakTool": "Pickaxe",
+        "PlacementSound": "batScreech",
+        "RepairSound": "badScreech"
+    },
+    {
+        "$ItemType": "ForgeRecipe",
+        "Result": {
+            "Value": "spacechase0.DynamicGameAssets.Example/StabbyStabber"
+        },
+        "BaseItem": {
+            "Type": "VanillaObject",
+            "Value": 74
+        },
+        "IngredientItem": {
+            "Type": "ContextTag",
+            "Value": "category_monster_loot"
+        },
+        "CinderShardCost": 99
+    },
+    {
+        "$ItemType": "FruitTree",
+        "ID": "SpookyFruitTree",
+        "Texture": "assets/fruit-tree.png",
+        "CanGrowNow": false,
+        "Product": {
+            "Value": "spacechase0.DynamicGameAssets.Example/Mysterious Circle"
+        },
+        "DynamicFields": [
+            {
+                "Conditions": { "Season |contains=spring": true },
+                "CanGrowNow": true
+            }
+        ]
+    },
+    {
+        "$ItemType": "Hat",
+        "ID": "SpookyHat",
+        "Texture": "assets/hats.png:0"
+    },
+    {
+        "$ItemType": "MachineRecipe",
+        "MachineId": "spacechase0.DynamicGameAssets.Example/SpookyFurnace",
+        "MinutesToProcess": 60,
+        "Ingredients": [
+            {
+                "Type": "VanillaObject",
+                "Value": "Bat Wing",
+                "Quantity": 5
+            },
+            {
+                "Type": "VanillaObject",
+                "Value": "Coal"
+            }
+        ],
+        "Result": {
+            "Type": "VanillaObject",
+            "Value": "Ghostfish"
+        },
+        // This isn't supported yet
+        /*
+        "LiveConditions": {
+            "LocationContext": "Island"
+        },
+        */
+        "WorkingLightOverride": true,
+        "MachineWorkingTextureOverride": "assets/big-craftables.png:1",
+        "MachinePulseWhileWorking": false
+    },
+    {
+        "$ItemType": "MeleeWeapon",
+        "ID": "StabbyStabber",
+        "Type": "Dagger",
+        "Texture": "assets/weapons.png:0",
+
+        "MinimumDamage": 999999999,
+        "MaximumDamage": 1000000000,
+        "Knockback": 1000000000,
+        "Defense": 1000000000,
+        "ExtraSwingArea": 1000000000,
+        "CritChance": 0.0,
+        "CritMultiplier": 0
+    },
+    {
+        "$ItemType": "Pants",
+        "ID": "TestPants",
+        "Texture": "assets/pants.png"
+    },
+    {
+        "$ItemType": "Shirt",
+        "ID": "TestShirt",
+        "TextureMale": "assets/shirt.png"
+    },
+    {
+        "$ItemType": "TailoringRecipe",
+        "SecondItemTags": [ "category_monster_loot" ],
+        "ConsumeSecondItem": false,
+        "CraftedItem": {
+            "Value": "spacechase0.DynamicGameAssets.Example/MegaTV"
+        }
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "Maps/springobjects",
+        "TargetRect": { "X": 32, "Y": 48, "Width": 16, "Height": 16 },
+        "SourceTexture": "assets/prismatic.png:0-5@5"
+    }
+]

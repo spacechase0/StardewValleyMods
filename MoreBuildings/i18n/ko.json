@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Building data
+    *********/
+    "spooky-shed.name": "으스스한 창고",
+    "spooky-shed.description": "빈 건물입니다. 하지만 역시 으스스합니다.",
+
+    "fishing-shack.name": "낚시 판잣집",
+    "fishing-shack.description": "낚시를 위한 오두막.",
+
+    "mini-spa.name": "미니 스파",
+    "mini-spa.description": "휴식을 취하고 재충전할 수 있는 장소."
+}

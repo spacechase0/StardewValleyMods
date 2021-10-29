@@ -3,11 +3,9 @@
     ** Shop UI
     *********/
     // Clint's shop
-    "clint.rush.name-suffix": "         *RUSH*",
     "clint.rush.description": "The tool will take one day to upgrade.",
     "clint.rush.dialogue": "Thanks. I'll get started right away. It should be ready tomorrow.",
 
-    "clint.instant.name-suffix": "       =INSTANT=",
     "clint.instant.description": "The tool will be immediately upgraded.",
     "clint.instant.dialogue": "Thanks. I'll get started right away. It should be ready in a few minutes.",
 

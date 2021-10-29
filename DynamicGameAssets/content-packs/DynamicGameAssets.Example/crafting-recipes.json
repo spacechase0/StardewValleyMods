@@ -1,0 +1,159 @@
+﻿[
+    {
+        "$ItemType": "CraftingRecipe",
+        "ID": "Duplicate prismatic shards",
+        "IsCooking": true,
+        "Result": {
+            "Type": "VanillaObject",
+            "Value": 74,
+            "Quantity": 2
+        },
+        "Ingredients": [
+            {
+                "Type": "VanillaObject",
+                "Value": 74
+            }
+        ]
+    },
+    {
+        "$ItemType": "CraftingRecipe",
+        "ID": "Combine the colors",
+        "Result": {
+            "Value": "spacechase0.DynamicGameAssets.Example/WhiteSquare"
+        },
+        "Ingredients": [
+            {
+                "Type": "VanillaObject",
+                "Value": 74
+            },
+            {
+                "Type": "ContextTag",
+                "Value": "color_white",
+                "NameOverride": "Something white",
+                "IconOverride": "assets/objects.png:0"
+            },
+            {
+                "Value": "spacechase0.DynamicGameAssets.Example/RedSquare",
+                "Quantity": 1
+            },
+            {
+                "Value": "spacechase0.DynamicGameAssets.Example/GreenSquare",
+                "Quantity": 2
+            },
+            {
+                "Value": "spacechase0.DynamicGameAssets.Example/BlueSquare",
+                "Quantity": 3
+            }
+        ]
+    },
+    {
+        "$ItemType": "CraftingRecipe",
+        "ID": "Extract red",
+        "Result": {
+            "Value": "spacechase0.DynamicGameAssets.Example/RedSquare",
+            "Quantity": 1
+        },
+        "Ingredients": [
+            {
+                "Value": "spacechase0.DynamicGameAssets.Example/WhiteSquare",
+                "Quantity": 1
+            }
+        ]
+    },
+    {
+        "$ItemType": "CraftingRecipe",
+        "ID": "Extract green",
+        "Result": {
+            "Value": "spacechase0.DynamicGameAssets.Example/GreenSquare",
+            "Quantity": 2
+        },
+        "Ingredients": [
+            {
+                "Value": "spacechase0.DynamicGameAssets.Example/WhiteSquare",
+                "Quantity": 1
+            }
+        ]
+    },
+    {
+        "$ItemType": "CraftingRecipe",
+        "ID": "Extract blue",
+        "Result": {
+            "Value": "spacechase0.DynamicGameAssets.Example/BlueSquare",
+            "Quantity": 3
+        },
+        "Ingredients": [
+            {
+                "Value": "spacechase0.DynamicGameAssets.Example/WhiteSquare",
+                "Quantity": 1
+            }
+        ]
+    },
+    {
+        "$ItemType": "CraftingRecipe",
+        "ID": "Make better couch",
+        "Result": {
+            "Type": "VanillaFurniture",
+            "Value": "Wizard Couch"
+        },
+        "Ingredients": [
+            {
+                "Type": "VanillaFurniture",
+                "Value": "Red Couch"
+            },
+            {
+                "Type": "VanillaObject",
+                "Value": "Prismatic Shard"
+            }
+        ]
+    },
+    {
+        "$ItemType": "CraftingRecipe",
+        "ID": "Make better hat",
+        "Result": {
+            "Type": "VanillaHat",
+            "Value": "???"
+        },
+        "Ingredients": [
+            {
+                "Type": "VanillaHat",
+                "Value": "Qi Mask"
+            },
+            {
+                "Type": "VanillaObject",
+                "Value": "Prismatic Shard"
+            }
+        ]
+    },
+    {
+        "$ItemType": "CraftingRecipe",
+        "ID": "Make matching shirt",
+        "Result": {
+            "Type": "VanillaClothing",
+            "Value": "Island Bikini"
+        },
+        "Ingredients": [
+            {
+                "Type": "VanillaClothing",
+                "Value": "Grass Skirt"
+            }
+        ]
+    },
+    {
+        "$ItemType": "CraftingRecipe",
+        "ID": "Make better boots",
+        "Result": {
+            "Type": "VanillaBoots",
+            "Value": "Mermaid Boots"
+        },
+        "Ingredients": [
+            {
+                "Type": "VanillaBoots",
+                "Value": "Space Boots"
+            },
+            {
+                "Type": "VanillaObject",
+                "Value": "Prismatic Shard"
+            }
+        ]
+    }
+]
