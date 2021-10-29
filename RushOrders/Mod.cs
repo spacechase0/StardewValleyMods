@@ -123,10 +123,7 @@ namespace RushOrders
             List<ISalable> items = shop.forSale;
             foreach (KeyValuePair<ISalable, int[]> entry in stock)
             {
-                if (entry.Key is not Tool tool)
-                    continue;
-
-                if (tool is not (Axe or Pickaxe or Hoe or WateringCan))
+                if (entry.Key is not (Tool tool and (Axe or Pickaxe or Hoe or WateringCan)))
                     continue;
 
                 // I'm going to edit the description, and I don't want to affect the original shop entry
@@ -153,8 +150,6 @@ namespace RushOrders
                 }
                 toolRush.UpgradeLevel = tool.UpgradeLevel;
                 toolNow.UpgradeLevel = tool.UpgradeLevel;
-                toolRush.DisplayName = $"{tool.DisplayName}{I18n.Clint_Rush_NameSuffix()}";
-                toolNow.DisplayName = $"{tool.DisplayName}{I18n.Clint_Instant_NameSuffix()}";
                 toolRush.description = I18n.Clint_Rush_Description() + Environment.NewLine + Environment.NewLine + tool.description;
                 toolNow.description = I18n.Clint_Instant_Description() + Environment.NewLine + Environment.NewLine + tool.description;
 

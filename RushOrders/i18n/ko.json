@@ -3,11 +3,9 @@
     ** Shop UI
     *********/
     // Clint's shop
-    "clint.rush.name-suffix": "         *RUSH*", // TODO
     "clint.rush.description": "도구를 업그레이드하는 데 하루가 걸립니다.",
     "clint.rush.dialogue": "고마워. 바로 시작할게. 내일이면 완료 될거야.",
 
-    "clint.instant.name-suffix": "       =INSTANT=", // TODO
     "clint.instant.description": "도구가 즉시 업그레이드됩니다.",
     "clint.instant.dialogue": "고마워. 바로 시작할게. 몇 분 후면 바로 끝날 거야.",
 
