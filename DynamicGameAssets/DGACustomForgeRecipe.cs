@@ -32,8 +32,6 @@ namespace DynamicGameAssets
                         item = null;
                     else
                         item.Stack -= left;
-
-                    left -= item.Stack;
                 }
             }
 
