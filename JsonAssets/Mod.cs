@@ -1994,8 +1994,8 @@ namespace JsonAssets
                     }
                     else if (obj is IndoorPot pot)
                     {
-                        if (this.FixCrop(pot.hoeDirt.Value?.crop))
-                            pot.hoeDirt.Value = null;
+                        if (pot.hoeDirt.Value != null && this.FixCrop(pot.hoeDirt.Value.crop))
+                            pot.hoeDirt.Value.crop = null;
                     }
                     else if (obj is Fence fence)
                     {
