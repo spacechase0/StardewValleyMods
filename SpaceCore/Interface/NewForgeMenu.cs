@@ -711,6 +711,7 @@ namespace SpaceCore.Interface
             {
                 this._craftState = CraftState.Valid;
                 Item left_item_clone = left_item.getOne();
+                left_item_clone.Stack = left_item.Stack;
                 if (right_item != null && Utility.IsNormalObjectAtParentSheetIndex(right_item, 72))
                 {
                     (left_item_clone as Tool).AddEnchantment(new DiamondEnchantment());
@@ -718,7 +719,9 @@ namespace SpaceCore.Interface
                 }
                 else
                 {
-                    this.craftResultDisplay.item = this.CraftItem(left_item_clone, right_item.getOne());
+                    Item right_item_clone = right_item.getOne();
+                    right_item_clone.Stack = right_item.Stack;
+                    this.craftResultDisplay.item = this.CraftItem(left_item_clone, right_item_clone);
                 }
             }
             else
