@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Magic.Framework.Spells;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Magic.Framework.Schools
 {
@@ -9,12 +11,15 @@ namespace Magic.Framework.Schools
         ** Fields
         *********/
         private static Dictionary<string, School> Schools;
+        private readonly Lazy<Texture2D> IconImpl;
 
 
         /*********
         ** Accessors
         *********/
         public string Id { get; }
+
+        public Texture2D Icon => this.IconImpl.Value;
 
 
         /*********
@@ -55,6 +60,7 @@ namespace Magic.Framework.Schools
         protected School(string id)
         {
             this.Id = id;
+            this.IconImpl = new(() => Content.LoadTexture($"magic/{id}/school-icon.png"));
         }
 
         private static void Init()

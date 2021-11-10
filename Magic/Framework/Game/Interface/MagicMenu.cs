@@ -20,7 +20,7 @@ namespace Magic.Framework.Game.Interface
         private const int SpellIconSize = 64;
         private const int SelIconSize = 192;
         private const int HotbarIconSize = 48;
-        
+
         private readonly School School;
         private School Active;
         private Spell Sel;
@@ -69,7 +69,7 @@ namespace Magic.Framework.Game.Interface
                     var school = School.GetSchool(schoolId);
                     IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), ix, iy, MagicMenu.SchoolIconSize + 24, MagicMenu.SchoolIconSize + 24, this.Active == school ? Color.Green : Color.White, 1f, false);
                     //drawTextureBox(b, ix, iy, 64 + 24, 64 + 24, Color.White);
-                    b.Draw(Game1.staminaRect, new Rectangle(ix + 12, iy + 12, MagicMenu.SchoolIconSize, MagicMenu.SchoolIconSize), Color.Aqua);
+                    b.Draw(school.Icon, new Rectangle(ix + 12, iy + 12, MagicMenu.SchoolIconSize, MagicMenu.SchoolIconSize), Color.White);
 
                     if (this.JustLeftClicked && new Rectangle(ix + 12, iy + 12, MagicMenu.SchoolIconSize, MagicMenu.SchoolIconSize).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                     {
