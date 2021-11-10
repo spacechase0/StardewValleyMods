@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Improved icons to better fit vanilla style (thanks to Ash!).
+
 ## 0.6.2
 Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 
