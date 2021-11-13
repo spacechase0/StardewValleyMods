@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming released
 * Fixed error when an indoor pot contains a custom crop that no longer exists.
+* Reduced log verbosity.
 
 ## 1.10.0
 Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
