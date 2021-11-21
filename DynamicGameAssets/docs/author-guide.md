@@ -713,8 +713,8 @@ Here is an example `FoodBuffs` inside an object:
 | `ObjectId` | `string` | Required | The full object ID of what we are overriding the gift taste for. This can be a comma-separated list. | `false` |
 | `Npc` | `string` | Required | The NPC of who we are overriding the gift taste for. This can be a comma-separated list. | `false` |
 | `Amount` | `int` | Required | The amount of friendship points to give or take. | `true` |
-| `NormalTextTranslationKey` | `string` | Default: `null` | The translation key of the text normally shown for this NPC when they receive this object. | `true` |
-| `BirthdayTextTranslationKey` | `string` | Default: `null` | The translation key of the text for this NPC when they receive this object on their birthday. | `true` |
+| `NormalTextTranslationKey` | `string` | Default: `null` | The translation key of the text normally shown for this NPC when they receive this object. If null, the vanilla response is shown instead. | `true` |
+| `BirthdayTextTranslationKey` | `string` | Default: `null` | The translation key of the text for this NPC when they receive this object on their birthday. If null, the vanilla response is shown instead. | `true` |
 | `EmoteId` | `int?` | Default: `null` | The emote ID override for when they receive this gift, if any. | `true` |
 
 ### Pants

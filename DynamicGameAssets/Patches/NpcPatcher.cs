@@ -34,70 +34,70 @@ namespace DynamicGameAssets.Patches
         /// <returns>Returns whether to run the original method.</returns>
         private static bool Before_ReceiveGift(NPC __instance, SObject o, Farmer giver, bool updateGiftLimitInfo, float friendshipChangeMultiplier, bool showResponse)
         {
-            if (o is CustomObject)
+            if (o is CustomObject customObj)
             {
-                NpcPatcher.DoReceiveGift(__instance, o, giver, updateGiftLimitInfo, friendshipChangeMultiplier, showResponse);
+                NpcPatcher.DoReceiveGift(__instance, customObj, giver, updateGiftLimitInfo, friendshipChangeMultiplier, showResponse);
                 return false;
             }
             return true;
         }
 
-        private static void DoReceiveGift(NPC npc, SObject o, Farmer giver, bool updateGiftLimitInfo, float friendshipChangeMultiplier, bool showResponse)
+        private static void DoReceiveGift(NPC npc, CustomObject obj, Farmer giver, bool updateGiftLimitInfo, float friendshipChangeMultiplier, bool showResponse)
         {
-            giver?.onGiftGiven(npc, o);
-            if (!Game1.NPCGiftTastes.ContainsKey(npc.Name))
+            // run base logic
+            giver.onGiftGiven(npc, obj);
+            if (!Game1.NPCGiftTastes.TryGetValue(npc.Name, out string rawGiftTastes))
                 return;
-
-            Game1.stats.GiftsGiven++;
+            if (!giver.friendshipData.TryGetValue(npc.Name, out Friendship friendship))
+                return;
             giver.currentLocation.localSound("give_gift");
 
+            // update stats
+            Game1.stats.GiftsGiven++;
             if (updateGiftLimitInfo)
             {
-                giver.friendshipData[npc.Name].GiftsToday++;
-                giver.friendshipData[npc.Name].GiftsThisWeek++;
-                giver.friendshipData[npc.Name].LastGiftDate = new WorldDate(Game1.Date);
+                friendship.GiftsToday++;
+                friendship.GiftsThisWeek++;
+                friendship.LastGiftDate = new WorldDate(Game1.Date);
             }
 
-            if (npc.getSpouse() == giver)
+            // collect info
+            bool isBirthday = npc.Birthday_Season == Game1.currentSeason && npc.Birthday_Day == Game1.dayOfMonth;
+            GiftTastePackData giftTasteData = NpcPatcher.GetGiftTastePackData(npc, obj);
+            int friendshipChange = giftTasteData.Amount;
+            int giftTaste = friendshipChange switch
             {
-                friendshipChangeMultiplier /= 2;
-            }
+                (>= 80) => NPC.gift_taste_love,
+                (>= 45) => NPC.gift_taste_like,
+                (<= -40) => NPC.gift_taste_hate,
+                (<= -20) => NPC.gift_taste_dislike,
+                _ => NPC.gift_taste_neutral
+            };
 
-            var obj = o as CustomObject;
-            GiftTastePackData gt = null;
-            if (Mod.giftTastes.ContainsKey(npc.Name) && Mod.giftTastes[npc.Name].ContainsKey(obj.FullId))
-                gt = Mod.giftTastes[npc.Name][obj.FullId];
-            var data = obj.Data;
-            int amt = data.UniversalGiftTaste;
-            if (gt != null)
-                amt = gt.Amount;
-
-            int giftTaste = 0;
-            if (amt >= 80) giftTaste = NPC.gift_taste_love;
-            else if (amt >= 45) giftTaste = NPC.gift_taste_like;
-            else if (amt <= -40) giftTaste = NPC.gift_taste_hate;
-            else if (amt <= -20) giftTaste = NPC.gift_taste_dislike;
-            else giftTaste = NPC.gift_taste_neutral;
-
-            float qualMult = 1;
-            switch (o.Quality)
+            // get quality multiplier
+            float qualityMultiplier = obj.Quality switch
             {
-                case 1: qualMult = 1.1f; break;
-                case 2: qualMult = 1.25f; break;
-                case 4: qualMult = 1.5f; break;
-            }
-            // Vanilla only has a quality multiplier for liked or loved
-            if (giftTaste != NPC.gift_taste_like && giftTaste != NPC.gift_taste_love)
-                qualMult = 1;
+                Object.medQuality => 1.1f,
+                Object.highQuality => 1.25f,
+                Object.bestQuality => 1.5f,
+                _ => 1
+            };
+            if (giftTaste is not (NPC.gift_taste_like or NPC.gift_taste_love)) // vanilla only has a quality multiplier for liked or loved
+                qualityMultiplier = 1;
 
-            string response = null;
-            if (npc.Birthday_Season == Game1.currentSeason && npc.Birthday_Day == Game1.dayOfMonth)
-            {
+            // adjust friendship change multiplier
+            if (isBirthday)
                 friendshipChangeMultiplier = 8;
+            else if (npc.getSpouse() == giver)
+                friendshipChangeMultiplier /= 2;
 
-                if (gt != null)
-                    response = gt.pack.smapiPack.Translation.Get(gt.BirthdayTextTranslationKey).ToString();
-                if (response == null)
+            // get NPC response
+            string response = null;
+            if (isBirthday)
+            {
+                if (giftTasteData.BirthdayTextTranslationKey != null)
+                    response = giftTasteData.pack.smapiPack.Translation.Get(giftTasteData.BirthdayTextTranslationKey).ToString();
+                else
                 {
                     switch (giftTaste)
                     {
@@ -109,9 +109,11 @@ namespace DynamicGameAssets.Patches
                                 response = ((npc.Manners == 2) ? Game1.LoadStringByGender(npc.Gender, "Strings\\StringsFromCSFiles:NPC.cs.4276") : Game1.LoadStringByGender(npc.Gender, "Strings\\StringsFromCSFiles:NPC.cs.4277"));
                             }
                             break;
+
                         case NPC.gift_taste_neutral:
                             response = (npc.Manners == 2) ? Game1.LoadStringByGender(npc.Gender, "Strings\\StringsFromCSFiles:NPC.cs.4278") : Game1.LoadStringByGender(npc.Gender, "Strings\\StringsFromCSFiles:NPC.cs.4279");
                             break;
+
                         case NPC.gift_taste_dislike:
                         case NPC.gift_taste_hate:
                             response = (npc.Manners == 2) ? Game1.content.LoadString("Strings\\StringsFromCSFiles:NPC.cs.4280") : Game1.LoadStringByGender(npc.Gender, "Strings\\StringsFromCSFiles:NPC.cs.4281");
@@ -121,25 +123,34 @@ namespace DynamicGameAssets.Patches
             }
             else
             {
-                if (gt != null)
-                    response = gt.pack.smapiPack.Translation.Get(gt.NormalTextTranslationKey).ToString();
-                if (response == null)
+                if (giftTasteData.NormalTextTranslationKey != null)
+                    response = giftTasteData.pack.smapiPack.Translation.Get(giftTasteData.NormalTextTranslationKey).ToString();
+                else
                 {
-                    string[] reactions = Game1.NPCGiftTastes[npc.Name].Split('/');
+                    string[] reactions = rawGiftTastes.Split('/');
                     response = reactions[giftTaste];
                 }
             }
 
-            // Special NPC cases
-            if (npc.Name.Contains("Dwarf") && !giver.canUnderstandDwarves)
-                response = Dialogue.convertToDwarvish(response);
-            if (npc.Name == "Krobus" && Game1.shortDayNameFromDayOfSeason(Game1.dayOfMonth) == "Fri")
-                response = "...";
+            // adjust response for specific NPCs
+            switch (npc.Name)
+            {
+                case "Dwarf":
+                    if (!giver.canUnderstandDwarves)
+                        response = Dialogue.convertToDwarvish(response);
+                    break;
 
+                case "Krobus":
+                    if (Game1.shortDayNameFromDayOfSeason(Game1.dayOfMonth) == "Fri")
+                        response = "...";
+                    break;
+            }
+
+            // get emote
             int? emote = null;
-            if (gt != null)
-                emote = gt.EmoteId;
-            if (emote == null)
+            if (giftTasteData.EmoteId >= 0)
+                emote = giftTasteData.EmoteId;
+            else
             {
                 switch (giftTaste)
                 {
@@ -148,16 +159,38 @@ namespace DynamicGameAssets.Patches
                 }
             }
 
+            // apply changes
             Game1.drawDialogue(npc, response);
-            giver.changeFriendship((int)(amt * friendshipChangeMultiplier * qualMult), npc);
+            giver.changeFriendship((int)(friendshipChange * friendshipChangeMultiplier * qualityMultiplier), npc);
             switch (giftTaste)
             {
-                case NPC.gift_taste_love: npc.faceTowardFarmerForPeriod(15000, 5, faceAway: false, giver); break;
-                case NPC.gift_taste_like: npc.faceTowardFarmerForPeriod(7000, 5, faceAway: true, giver); break;
-                case NPC.gift_taste_hate: npc.faceTowardFarmerForPeriod(15000, 5, faceAway: true, giver); break;
+                case NPC.gift_taste_love:
+                    npc.faceTowardFarmerForPeriod(15000, 5, faceAway: false, giver);
+                    break;
+
+                case NPC.gift_taste_like:
+                    npc.faceTowardFarmerForPeriod(7000, 5, faceAway: true, giver);
+                    break;
+
+                case NPC.gift_taste_hate:
+                    npc.faceTowardFarmerForPeriod(15000, 5, faceAway: true, giver);
+                    break;
             }
             if (emote.HasValue)
                 giver.doEmote(emote.Value);
+        }
+
+        private static GiftTastePackData GetGiftTastePackData(NPC npc, CustomObject obj)
+        {
+            // get from content pack
+            if (Mod.giftTastes.TryGetValue(npc.Name, out var giftTasteDataForNpc) && giftTasteDataForNpc.TryGetValue(obj.FullId, out GiftTastePackData giftTasteData))
+                return giftTasteData;
+
+            // else get default values
+            return new GiftTastePackData
+            {
+                Amount = obj.Data.UniversalGiftTaste
+            };
         }
     }
 }
