@@ -60,8 +60,6 @@ namespace Magic.Framework.Game.Interface
             // draw main window
             IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, MagicMenu.WindowWidth, MagicMenu.WindowHeight, Color.White);
             IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, MagicMenu.WindowWidth / 2, MagicMenu.WindowHeight, Color.White);
-            b.Draw(Game1.staminaRect, new Rectangle(this.xPositionOnScreen + 12, this.yPositionOnScreen + 12, MagicMenu.WindowWidth / 2 - 24, MagicMenu.WindowHeight - 24), Color.Black);
-            IClickableMenu.drawTextureBox(b, this.xPositionOnScreen - MagicMenu.SchoolIconSize - 12, this.yPositionOnScreen, MagicMenu.SchoolIconSize + 24, MagicMenu.WindowHeight, Color.White);
 
             // draw school icons
             {
@@ -70,21 +68,29 @@ namespace Magic.Framework.Game.Interface
                 foreach (string schoolId in School.GetSchoolList())
                 {
                     School school = School.GetSchool(schoolId);
+                    bool knowsSchool = spellBook.KnowsSchool(school);
+
+                    float alpha = knowsSchool ? 1f : 0.2f;
                     Rectangle iconBounds = new(x + 12, y + 12, MagicMenu.SchoolIconSize, MagicMenu.SchoolIconSize);
 
-                    IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), x, y, MagicMenu.SchoolIconSize + 24, MagicMenu.SchoolIconSize + 24, this.Active == school ? Color.Green : Color.White, 1f, false);
-                    b.Draw(school.Icon, iconBounds, Color.White);
+                    IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), x, y, MagicMenu.SchoolIconSize + 24, MagicMenu.SchoolIconSize + 24, (this.Active == school ? Color.Green : Color.White), 1f, false);
+                    b.Draw(school.Icon, iconBounds, Color.White * alpha);
 
                     if (iconBounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                     {
-                        hoverText = school.DisplayName;
-
-                        if (this.JustLeftClicked)
+                        if (knowsSchool)
                         {
-                            if (this.School == null)
-                                this.Active = School.GetSchool(schoolId);
-                            this.JustLeftClicked = false;
+                            hoverText = school.DisplayName;
+
+                            if (this.JustLeftClicked)
+                            {
+                                if (this.School == null)
+                                    this.Active = School.GetSchool(schoolId);
+                                this.JustLeftClicked = false;
+                            }
                         }
+                        else
+                            hoverText = "???";
                     }
 
                     y += MagicMenu.SchoolIconSize + 12;
@@ -94,7 +100,7 @@ namespace Magic.Framework.Game.Interface
             // draw spell icon area
             if (this.Active != null)
             {
-                Spell[][] spells = new[] { this.Active.GetSpellsTier1(), this.Active.GetSpellsTier2(), this.Active.GetSpellsTier3() }.Where(p => p != null).ToArray();
+                Spell[][] spells = this.Active.GetAllSpellTiers().ToArray();
 
                 int sy = spells.Length + 1;
                 for (int t = 0; t < spells.Length; ++t)
@@ -125,7 +131,10 @@ namespace Magic.Framework.Game.Interface
                             }
                         }
 
-                        IClickableMenu.drawTextureBox(b, x - MagicMenu.SpellIconSize / 2 - 12, y - MagicMenu.SpellIconSize / 2 - 12, MagicMenu.SpellIconSize + 24, MagicMenu.SpellIconSize + 24, spell == this.Sel ? Color.Green : Color.White);
+                        if (spell == this.Sel)
+                        {
+                            IClickableMenu.drawTextureBox(b, x - MagicMenu.SpellIconSize / 2 - 12, y - MagicMenu.SpellIconSize / 2 - 12, MagicMenu.SpellIconSize + 24, MagicMenu.SpellIconSize + 24, Color.Green);
+                        }
 
                         Texture2D icon = spell.Icons[spell.Icons.Length - 1];
                         b.Draw(icon, iconBounds, Color.White);
@@ -158,15 +167,19 @@ namespace Magic.Framework.Game.Interface
                     var bounds = new Rectangle(x - MagicMenu.SpellIconSize / 2, y, MagicMenu.SpellIconSize, MagicMenu.SpellIconSize);
                     bool isHovered = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
 
+                    // get state
+                    bool isKnown = spellBook.KnowsSpell(this.Sel, i);
+                    bool hasPreviousLevels = isKnown || i == 0 || spellBook.KnowsSpell(this.Sel, i - 1);
+
                     // get border color
                     Color stateCol;
-                    if (spellBook.KnowsSpell(this.Sel, i))
+                    if (isKnown)
                     {
                         if (isHovered)
                             hoverText = I18n.Tooltip_Spell_Known(spellName: title, level: i + 1);
                         stateCol = Color.Green;
                     }
-                    else if (i == 0 || spellBook.KnowsSpell(this.Sel, i - 1))
+                    else if (hasPreviousLevels)
                     {
                         if (isHovered)
                         {
@@ -183,19 +196,25 @@ namespace Magic.Framework.Game.Interface
                         stateCol = Color.Gray;
                     }
 
+                    // draw border
+                    if (isKnown)
+                    {
+                        IClickableMenu.drawTextureBox(b, bounds.Left - 12, bounds.Top - 12, bounds.Width + 24, bounds.Height + 24, Color.Green);
+                    }
+
                     // draw icon
-                    IClickableMenu.drawTextureBox(b, bounds.Left - 12, bounds.Top - 12, bounds.Width + 24, bounds.Height + 24, stateCol);
-                    b.Draw(this.Sel.Icons[i], bounds, Color.White);
+                    float alpha = hasPreviousLevels ? 1f : 0.5f;
+                    b.Draw(this.Sel.Icons[i], bounds, Color.White * alpha);
 
                     // handle click
                     if (isHovered && (this.JustLeftClicked || this.JustRightClicked))
                     {
-                        if (this.JustLeftClicked && spellBook.KnowsSpell(this.Sel, i))
+                        if (this.JustLeftClicked && isKnown)
                         {
                             this.Dragging = new PreparedSpell(this.Sel.FullId, i);
                             this.JustLeftClicked = false;
                         }
-                        else if (i == 0 || spellBook.KnowsSpell(this.Sel, i - 1))
+                        else if (hasPreviousLevels)
                         {
                             if (this.JustLeftClicked && spellBook.FreePoints > 0)
                                 spellBook.Mutate(_ => spellBook.LearnSpell(this.Sel, i));

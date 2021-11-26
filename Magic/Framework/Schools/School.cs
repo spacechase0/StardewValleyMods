@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Magic.Framework.Spells;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -31,6 +32,13 @@ namespace Magic.Framework.Schools
         public virtual Spell[] GetSpellsTier1() { return new Spell[0]; }
         public virtual Spell[] GetSpellsTier2() { return new Spell[0]; }
         public virtual Spell[] GetSpellsTier3() { return new Spell[0]; }
+
+        /// <summary>Get all spell tiers.</summary>
+        public IEnumerable<Spell[]> GetAllSpellTiers()
+        {
+            return new[] { GetSpellsTier1(), GetSpellsTier2(), GetSpellsTier3() }
+                .Where(p => p?.Length > 0);
+        }
 
         public static void RegisterSchool(School school)
         {
