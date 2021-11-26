@@ -22,9 +22,8 @@ namespace Magic.Framework.Game.Interface
         private const int SelIconSize = 192;
         private const int HotbarIconSize = 48;
 
-        private readonly School School;
-        private School Active;
-        private Spell Sel;
+        private School SelectedSchool;
+        private Spell SelectedSpell;
         private PreparedSpell Dragging;
 
         private bool JustLeftClicked;
@@ -34,11 +33,10 @@ namespace Magic.Framework.Game.Interface
         /*********
         ** Public methods
         *********/
-        public MagicMenu(School school = null)
+        public MagicMenu()
             : base((Game1.viewport.Size.Width - MagicMenu.WindowWidth) / 2, (Game1.viewport.Size.Height - MagicMenu.WindowHeight) / 2, MagicMenu.WindowWidth, MagicMenu.WindowHeight, true)
         {
-            this.School = school;
-            this.Active = school;
+            this.SelectDefaultSchool();
         }
 
         /// <inheritdoc />
@@ -73,7 +71,7 @@ namespace Magic.Framework.Game.Interface
                     float alpha = knowsSchool ? 1f : 0.2f;
                     Rectangle iconBounds = new(x + 12, y + 12, MagicMenu.SchoolIconSize, MagicMenu.SchoolIconSize);
 
-                    IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), x, y, MagicMenu.SchoolIconSize + 24, MagicMenu.SchoolIconSize + 24, (this.Active == school ? Color.Green : Color.White), 1f, false);
+                    IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), x, y, MagicMenu.SchoolIconSize + 24, MagicMenu.SchoolIconSize + 24, (this.SelectedSchool == school ? Color.Green : Color.White), 1f, false);
                     b.Draw(school.Icon, iconBounds, Color.White * alpha);
 
                     if (iconBounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
@@ -84,8 +82,7 @@ namespace Magic.Framework.Game.Interface
 
                             if (this.JustLeftClicked)
                             {
-                                if (this.School == null)
-                                    this.Active = School.GetSchool(schoolId);
+                                this.SelectSchool(schoolId, spellBook);
                                 this.JustLeftClicked = false;
                             }
                         }
@@ -98,9 +95,9 @@ namespace Magic.Framework.Game.Interface
             }
 
             // draw spell icon area
-            if (this.Active != null)
+            if (this.SelectedSchool != null)
             {
-                Spell[][] spells = this.Active.GetAllSpellTiers().ToArray();
+                Spell[][] spells = this.SelectedSchool.GetAllSpellTiers().ToArray();
 
                 int sy = spells.Length + 1;
                 for (int t = 0; t < spells.Length; ++t)
@@ -126,12 +123,12 @@ namespace Magic.Framework.Game.Interface
 
                             if (this.JustLeftClicked)
                             {
-                                this.Sel = spell;
+                                this.SelectedSpell = spell;
                                 this.JustLeftClicked = false;
                             }
                         }
 
-                        if (spell == this.Sel)
+                        if (spell == this.SelectedSpell)
                         {
                             IClickableMenu.drawTextureBox(b, x - MagicMenu.SpellIconSize / 2 - 12, y - MagicMenu.SpellIconSize / 2 - 12, MagicMenu.SpellIconSize + 24, MagicMenu.SpellIconSize + 24, Color.Green);
                         }
@@ -143,23 +140,23 @@ namespace Magic.Framework.Game.Interface
             }
 
             // draw selected spell area
-            if (this.Sel != null)
+            if (this.SelectedSpell != null)
             {
                 // draw title
-                string title = this.Sel.GetTranslatedName();
+                string title = this.SelectedSpell.GetTranslatedName();
                 b.DrawString(Game1.dialogueFont, title, new Vector2(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + (MagicMenu.WindowWidth / 2 - Game1.dialogueFont.MeasureString(title).X) / 2, this.yPositionOnScreen + 30), Color.Black);
 
                 // draw icon
-                var icon = this.Sel.Icons[this.Sel.Icons.Length - 1];
+                var icon = this.SelectedSpell.Icons[this.SelectedSpell.Icons.Length - 1];
                 b.Draw(icon, new Rectangle(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + (MagicMenu.WindowWidth / 2 - MagicMenu.SelIconSize) / 2, this.yPositionOnScreen + 85, MagicMenu.SelIconSize, MagicMenu.SelIconSize), Color.White);
 
                 // draw description
-                string desc = this.WrapText(this.Sel.GetTranslatedDescription(), (int)((MagicMenu.WindowWidth / 2) / 0.75f));
+                string desc = this.WrapText(this.SelectedSpell.GetTranslatedDescription(), (int)((MagicMenu.WindowWidth / 2) / 0.75f));
                 b.DrawString(Game1.dialogueFont, desc, new Vector2(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + 12, this.yPositionOnScreen + 280), Color.Black, 0, Vector2.Zero, 0.75f, SpriteEffects.None, 0);
 
                 // draw level icons
-                int sx = this.Sel.Icons.Length + 1;
-                for (int i = 0; i < this.Sel.Icons.Length; ++i)
+                int sx = this.SelectedSpell.Icons.Length + 1;
+                for (int i = 0; i < this.SelectedSpell.Icons.Length; ++i)
                 {
                     // get icon position
                     int x = this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + (MagicMenu.WindowWidth / 2) / sx * (i + 1);
@@ -168,8 +165,8 @@ namespace Magic.Framework.Game.Interface
                     bool isHovered = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
 
                     // get state
-                    bool isKnown = spellBook.KnowsSpell(this.Sel, i);
-                    bool hasPreviousLevels = isKnown || i == 0 || spellBook.KnowsSpell(this.Sel, i - 1);
+                    bool isKnown = spellBook.KnowsSpell(this.SelectedSpell, i);
+                    bool hasPreviousLevels = isKnown || i == 0 || spellBook.KnowsSpell(this.SelectedSpell, i - 1);
 
                     // get border color
                     Color stateCol;
@@ -204,22 +201,22 @@ namespace Magic.Framework.Game.Interface
 
                     // draw icon
                     float alpha = hasPreviousLevels ? 1f : 0.5f;
-                    b.Draw(this.Sel.Icons[i], bounds, Color.White * alpha);
+                    b.Draw(this.SelectedSpell.Icons[i], bounds, Color.White * alpha);
 
                     // handle click
                     if (isHovered && (this.JustLeftClicked || this.JustRightClicked))
                     {
                         if (this.JustLeftClicked && isKnown)
                         {
-                            this.Dragging = new PreparedSpell(this.Sel.FullId, i);
+                            this.Dragging = new PreparedSpell(this.SelectedSpell.FullId, i);
                             this.JustLeftClicked = false;
                         }
                         else if (hasPreviousLevels)
                         {
                             if (this.JustLeftClicked && spellBook.FreePoints > 0)
-                                spellBook.Mutate(_ => spellBook.LearnSpell(this.Sel, i));
+                                spellBook.Mutate(_ => spellBook.LearnSpell(this.SelectedSpell, i));
                             else if (this.JustRightClicked && i != 0)
-                                spellBook.Mutate(_ => spellBook.ForgetSpell(this.Sel, i));
+                                spellBook.Mutate(_ => spellBook.ForgetSpell(this.SelectedSpell, i));
                         }
                     }
                 }
@@ -317,6 +314,25 @@ namespace Magic.Framework.Game.Interface
         /*********
         ** Private methods
         *********/
+        /// <summary>Set the selected school to the first one the player knows spells for.</summary>
+        private void SelectDefaultSchool()
+        {
+            SpellBook spellBook = Game1.player.GetSpellBook();
+            School school = School.GetSchoolList().Select(School.GetSchool).FirstOrDefault(spellBook.KnowsSchool);
+            if (school != null)
+                this.SelectSchool(School.GetSchoolList().First(), spellBook);
+        }
+
+        /// <summary>Set the selected school for which to show spells.</summary>
+        /// <param name="id">The school ID.</param>
+        private void SelectSchool(string id, SpellBook spellbook)
+        {
+            var school = School.GetSchool(id);
+
+            this.SelectedSchool = school;
+            this.SelectedSpell = school.GetAllSpellTiers().SelectMany(p => p).FirstOrDefault(id => spellbook.KnowsSpell(id, 0));
+        }
+
         // https://gist.github.com/Sankra/5585584
         // TODO: A better version that handles me doing newlines correctly
         private string WrapText(string text, int maxLineWidth)

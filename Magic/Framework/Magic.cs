@@ -504,7 +504,7 @@ namespace Magic.Framework
                 else
                 {
                     Game1.playSound("secret1");
-                    Game1.activeClickableMenu = new MagicMenu();// School.getSchool(actionArgs[1]));
+                    Game1.activeClickableMenu = new MagicMenu();
                 }
             }
         }

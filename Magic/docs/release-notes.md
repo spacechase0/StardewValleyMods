@@ -7,6 +7,7 @@
   * Added tooltips.
   * Replaced spell icons (thanks to Ash!).
   * You can no longer select a magic school you don't know any spells for.
+  * The menu now preselects the first known spell, so it's more intuitive for new players.
   * Various UI tweaks.
 
 ## 0.6.2
