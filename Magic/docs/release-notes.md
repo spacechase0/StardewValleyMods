@@ -2,7 +2,8 @@
 
 # Release notes
 ## Upcoming release
-* Improved icons to better fit vanilla style (thanks to Ash!).
+* Improved spell icons to better fit vanilla style (thanks to Ash!).
+* Added magic school icons.
 
 ## 0.6.2
 Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
