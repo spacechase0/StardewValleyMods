@@ -1,3 +1,4 @@
+using System.Linq;
 using Magic.Framework.Schools;
 using Magic.Framework.Skills;
 using Magic.Framework.Spells;
@@ -49,115 +50,124 @@ namespace Magic.Framework.Game.Interface
         /// <inheritdoc />
         public override void draw(SpriteBatch b)
         {
-            var spellBook = Game1.player.GetSpellBook();
-
+            // get info
+            SpellBook spellBook = Game1.player.GetSpellBook();
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.MemoryProfession);
+            int hotbarHeight = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
+            int gap = (MagicMenu.WindowHeight - hotbarHeight * 2) / 3 + (hasFifthSpellSlot ? 25 : 0);
 
-            int hotbarH = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
-            int gap = (MagicMenu.WindowHeight - hotbarH * 2) / 3 + (hasFifthSpellSlot ? 25 : 0);
-            //drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + gap, 48 + 24, hotbarH, Color.White);
-            //drawTextureBox(b, xPositionOnScreen + WINDOW_WIDTH, yPositionOnScreen + WINDOW_HEIGHT - hotbarH - gap, 48 + 24, hotbarH, Color.White);
+            // draw main window
             IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, MagicMenu.WindowWidth, MagicMenu.WindowHeight, Color.White);
             IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, MagicMenu.WindowWidth / 2, MagicMenu.WindowHeight, Color.White);
             b.Draw(Game1.staminaRect, new Rectangle(this.xPositionOnScreen + 12, this.yPositionOnScreen + 12, MagicMenu.WindowWidth / 2 - 24, MagicMenu.WindowHeight - 24), Color.Black);
             IClickableMenu.drawTextureBox(b, this.xPositionOnScreen - MagicMenu.SchoolIconSize - 12, this.yPositionOnScreen, MagicMenu.SchoolIconSize + 24, MagicMenu.WindowHeight, Color.White);
 
+            // draw school icons
             {
-                int ix = this.xPositionOnScreen - MagicMenu.SchoolIconSize - 12, iy = this.yPositionOnScreen;
+                int x = this.xPositionOnScreen - MagicMenu.SchoolIconSize - 12;
+                int y = this.yPositionOnScreen;
                 foreach (string schoolId in School.GetSchoolList())
                 {
-                    var school = School.GetSchool(schoolId);
-                    IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), ix, iy, MagicMenu.SchoolIconSize + 24, MagicMenu.SchoolIconSize + 24, this.Active == school ? Color.Green : Color.White, 1f, false);
-                    //drawTextureBox(b, ix, iy, 64 + 24, 64 + 24, Color.White);
-                    b.Draw(school.Icon, new Rectangle(ix + 12, iy + 12, MagicMenu.SchoolIconSize, MagicMenu.SchoolIconSize), Color.White);
+                    School school = School.GetSchool(schoolId);
+                    Rectangle iconBounds = new(x + 12, y + 12, MagicMenu.SchoolIconSize, MagicMenu.SchoolIconSize);
 
-                    if (this.JustLeftClicked && new Rectangle(ix + 12, iy + 12, MagicMenu.SchoolIconSize, MagicMenu.SchoolIconSize).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
+                    IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), x, y, MagicMenu.SchoolIconSize + 24, MagicMenu.SchoolIconSize + 24, this.Active == school ? Color.Green : Color.White, 1f, false);
+                    b.Draw(school.Icon, iconBounds, Color.White);
+
+                    if (iconBounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                     {
-                        if (this.School == null)
-                            this.Active = School.GetSchool(schoolId);
-                        this.JustLeftClicked = false;
+                        if (this.JustLeftClicked)
+                        {
+                            if (this.School == null)
+                                this.Active = School.GetSchool(schoolId);
+                            this.JustLeftClicked = false;
+                        }
                     }
 
-                    iy += MagicMenu.SchoolIconSize + 12;
+                    y += MagicMenu.SchoolIconSize + 12;
                 }
             }
 
+            // draw spell icon area
             if (this.Active != null)
             {
-                Spell[] t1 = this.Active.GetSpellsTier1();
-                Spell[] t2 = this.Active.GetSpellsTier2();
-                Spell[] t3 = this.Active.GetSpellsTier3();
-
-                Spell[][] spells = new[] { t1, t2, t3 };
+                Spell[][] spells = new[] { this.Active.GetSpellsTier1(), this.Active.GetSpellsTier2(), this.Active.GetSpellsTier3() }.Where(p => p != null).ToArray();
 
                 int sy = spells.Length + 1;
                 for (int t = 0; t < spells.Length; ++t)
                 {
-                    int y = this.yPositionOnScreen + (MagicMenu.WindowHeight - 24) / sy * (t + 1);
-                    int sx = spells[t].Length + 1;
-                    for (int s = 0; s < spells[t].Length; ++s)
-                    {
-                        int x = this.xPositionOnScreen + (MagicMenu.WindowWidth / 2 - 24) / sx * (s + 1);
+                    Spell[] spellGroup = spells[t];
+                    if (spellGroup == null)
+                        continue;
 
-                        var spell = spells[t][s];
-                        if (!spellBook.KnowsSpell(spell, 0))
+                    int y = this.yPositionOnScreen + (MagicMenu.WindowHeight - 24) / sy * (t + 1);
+                    int sx = spellGroup.Length + 1;
+                    for (int s = 0; s < spellGroup.Length; ++s)
+                    {
+                        Spell spell = spellGroup[s];
+                        if (spell == null || !spellBook.KnowsSpell(spell, 0))
                             continue;
-                        if (this.JustLeftClicked && new Rectangle(x - MagicMenu.SpellIconSize / 2, y - MagicMenu.SpellIconSize / 2, MagicMenu.SpellIconSize, MagicMenu.SpellIconSize).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
+
+                        int x = this.xPositionOnScreen + (MagicMenu.WindowWidth / 2 - 24) / sx * (s + 1);
+                        Rectangle iconBounds = new Rectangle(x - MagicMenu.SpellIconSize / 2, y - MagicMenu.SpellIconSize / 2, MagicMenu.SpellIconSize, MagicMenu.SpellIconSize);
+
+                        if (iconBounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                         {
-                            this.Sel = spell;
-                            this.JustLeftClicked = false;
+                            if (this.JustLeftClicked)
+                            {
+                                this.Sel = spell;
+                                this.JustLeftClicked = false;
+                            }
                         }
 
                         IClickableMenu.drawTextureBox(b, x - MagicMenu.SpellIconSize / 2 - 12, y - MagicMenu.SpellIconSize / 2 - 12, MagicMenu.SpellIconSize + 24, MagicMenu.SpellIconSize + 24, spell == this.Sel ? Color.Green : Color.White);
 
-                        if (spell == null)
-                            continue;
-                        var icon = spell.Icons != null ? spell.Icons[spell.Icons.Length - 1] : Game1.staminaRect;
-                        if (icon == null)
-                        {
-                            icon = spell.Icons[0];
-                            if (icon == null)
-                                continue;
-                        }
-
-                        b.Draw(icon, new Rectangle(x - MagicMenu.SpellIconSize / 2, y - MagicMenu.SpellIconSize / 2, MagicMenu.SpellIconSize, MagicMenu.SpellIconSize), Color.White);
+                        Texture2D icon = spell.Icons[spell.Icons.Length - 1];
+                        b.Draw(icon, iconBounds, Color.White);
                     }
                 }
             }
 
+            // draw selected spell area
             if (this.Sel != null)
             {
+                // draw title
                 string title = this.Sel.GetTranslatedName();
-                string desc = this.WrapText(this.Sel.GetTranslatedDescription(), (int)((MagicMenu.WindowWidth / 2) / 0.75f));
-
                 b.DrawString(Game1.dialogueFont, title, new Vector2(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + (MagicMenu.WindowWidth / 2 - Game1.dialogueFont.MeasureString(title).X) / 2, this.yPositionOnScreen + 30), Color.Black);
 
-                var icon =
-                    (this.Sel.Icons != null ? this.Sel.Icons[this.Sel.Icons.Length - 1] : Game1.staminaRect)
-                    ?? this.Sel.Icons[0];
-                if (icon != null)
-                {
-                    b.Draw(icon, new Rectangle(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + (MagicMenu.WindowWidth / 2 - MagicMenu.SelIconSize) / 2, this.yPositionOnScreen + 85, MagicMenu.SelIconSize, MagicMenu.SelIconSize), Color.White);
-                }
+                // draw icon
+                var icon = this.Sel.Icons[this.Sel.Icons.Length - 1];
+                b.Draw(icon, new Rectangle(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + (MagicMenu.WindowWidth / 2 - MagicMenu.SelIconSize) / 2, this.yPositionOnScreen + 85, MagicMenu.SelIconSize, MagicMenu.SelIconSize), Color.White);
+
+                // draw description
+                string desc = this.WrapText(this.Sel.GetTranslatedDescription(), (int)((MagicMenu.WindowWidth / 2) / 0.75f));
                 b.DrawString(Game1.dialogueFont, desc, new Vector2(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + 12, this.yPositionOnScreen + 280), Color.Black, 0, Vector2.Zero, 0.75f, SpriteEffects.None, 0);
 
+                // draw level icons
                 int sx = this.Sel.Icons.Length + 1;
                 for (int i = 0; i < this.Sel.Icons.Length; ++i)
                 {
+                    // get icon position
                     int x = this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + (MagicMenu.WindowWidth / 2) / sx * (i + 1);
                     int y = this.yPositionOnScreen + MagicMenu.WindowHeight - 12 - MagicMenu.SpellIconSize - 32 - 40;
+                    var bounds = new Rectangle(x - MagicMenu.SpellIconSize / 2, y, MagicMenu.SpellIconSize, MagicMenu.SpellIconSize);
+                    bool isHovered = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
 
-                    Color stateCol = Color.Gray;
+                    // get border color
+                    Color stateCol;
                     if (spellBook.KnowsSpell(this.Sel, i))
                         stateCol = Color.Green;
                     else if (i == 0 || spellBook.KnowsSpell(this.Sel, i - 1))
                         stateCol = Color.White;
+                    else
+                        stateCol = Color.Gray;
 
-                    var r = new Rectangle(x - MagicMenu.SpellIconSize / 2, y, MagicMenu.SpellIconSize, MagicMenu.SpellIconSize);
-                    IClickableMenu.drawTextureBox(b, r.Left - 12, r.Top - 12, r.Width + 24, r.Height + 24, stateCol);
-                    if (this.Sel.Icons[i] != null)
-                        b.Draw(this.Sel.Icons[i], r, Color.White);
-                    if (r.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
+                    // draw icon
+                    IClickableMenu.drawTextureBox(b, bounds.Left - 12, bounds.Top - 12, bounds.Width + 24, bounds.Height + 24, stateCol);
+                    b.Draw(this.Sel.Icons[i], bounds, Color.White);
+
+                    // handle click
+                    if (isHovered && (this.JustLeftClicked || this.JustRightClicked))
                     {
                         if (this.JustLeftClicked && spellBook.KnowsSpell(this.Sel, i))
                         {
@@ -174,9 +184,11 @@ namespace Magic.Framework.Game.Interface
                     }
                 }
 
-                b.DrawString(Game1.dialogueFont, "Free points: " + spellBook.FreePoints, new Vector2(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + 12 + 24, this.yPositionOnScreen + MagicMenu.WindowHeight - 12 - 32 - 20), Color.Black);
+                // draw free points count
+                b.DrawString(Game1.dialogueFont, $"Free points: {spellBook.FreePoints}", new Vector2(this.xPositionOnScreen + MagicMenu.WindowWidth / 2 + 12 + 24, this.yPositionOnScreen + MagicMenu.WindowHeight - 12 - 32 - 20), Color.Black);
             }
-            //*
+
+            // draw spell bars
             {
                 int y = this.yPositionOnScreen + gap + 12 + (hasFifthSpellSlot ? -32 : 0);
                 foreach (var spellBar in spellBook.Prepared)
@@ -215,8 +227,8 @@ namespace Magic.Framework.Game.Interface
                     y += gap + 12;
                 }
             }
-            //*/
 
+            // reset dragging
             if (this.JustLeftClicked)
             {
                 this.Dragging = null;
@@ -224,7 +236,10 @@ namespace Magic.Framework.Game.Interface
             }
             this.JustRightClicked = false;
 
+            // draw base menu
             base.draw(b);
+
+            // draw dragged spell
             if (this.Dragging != null)
             {
                 Spell spell = SpellManager.Get(this.Dragging.SpellId);
@@ -236,6 +251,8 @@ namespace Magic.Framework.Game.Interface
                     b.Draw(icon, new Rectangle(Game1.getOldMouseX(), Game1.getOldMouseY(), MagicMenu.HotbarIconSize, MagicMenu.HotbarIconSize), Color.White);
                 }
             }
+
+            // draw cursor
             this.drawMouse(b);
         }
 
