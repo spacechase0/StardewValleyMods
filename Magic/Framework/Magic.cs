@@ -499,7 +499,7 @@ namespace Magic.Framework
             {
                 if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
                 {
-                    Game1.drawObjectDialogue(I18n.Altar_Glow());
+                    Game1.drawObjectDialogue(I18n.Altar_ClickMessage());
                 }
                 else
                 {

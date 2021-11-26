@@ -19,6 +19,9 @@ namespace Magic.Framework.Schools
         *********/
         public string Id { get; }
 
+        /// <summary>The display name for the school.</summary>
+        public string DisplayName => I18n.GetByKey($"school.{this.Id}.name");
+
         public Texture2D Icon => this.IconImpl.Value;
 
 

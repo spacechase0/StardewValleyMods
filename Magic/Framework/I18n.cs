@@ -42,10 +42,40 @@ namespace Magic.Framework
             return I18n.GetByKey("spell.learn.ancient", new { spellName });
         }
 
-        /// <summary>Get a translation equivalent to "A glowing altar".</summary>
-        public static string Altar_Glow()
+        /// <summary>Get a translation equivalent to "Click and drag to add {{spellName}} level {{level}} to your spellbar on the right.".</summary>
+        /// <param name="spellName">The value to inject for the <c>{{spellName}}</c> token.</param>
+        /// <param name="level">The value to inject for the <c>{{level}}</c> token.</param>
+        public static string Tooltip_Spell_Known(object spellName, object level)
         {
-            return I18n.GetByKey("altar.glow");
+            return I18n.GetByKey("tooltip.spell.known", new { spellName, level });
+        }
+
+        /// <summary>Get a translation equivalent to "Click to spend one free point and learn {{spellName}} level {{level}}.".</summary>
+        /// <param name="spellName">The value to inject for the <c>{{spellName}}</c> token.</param>
+        /// <param name="level">The value to inject for the <c>{{level}}</c> token.</param>
+        public static string Tooltip_Spell_CanLearn(object spellName, object level)
+        {
+            return I18n.GetByKey("tooltip.spell.can-learn", new { spellName, level });
+        }
+
+        /// <summary>Get a translation equivalent to "You have no free points to learn {{spellName}} level {{level}}.".</summary>
+        /// <param name="spellName">The value to inject for the <c>{{spellName}}</c> token.</param>
+        /// <param name="level">The value to inject for the <c>{{level}}</c> token.</param>
+        public static string Tooltip_Spell_NeedFreePoints(object spellName, object level)
+        {
+            return I18n.GetByKey("tooltip.spell.need-free-points", new { spellName, level });
+        }
+
+        /// <summary>Get a translation equivalent to "You must learn the previous spell levels first.".</summary>
+        public static string Tooltip_Spell_NeedPreviousLevels()
+        {
+            return I18n.GetByKey("tooltip.spell.need-previous-levels");
+        }
+
+        /// <summary>Get a translation equivalent to "A glowing altar.".</summary>
+        public static string Altar_ClickMessage()
+        {
+            return I18n.GetByKey("altar.click-message");
         }
 
         /// <summary>Get a translation equivalent to "It is time for you to learn the ways of magic.".</summary>
@@ -192,37 +222,37 @@ namespace Magic.Framework
             return I18n.GetByKey("tv.analyzehints.12");
         }
 
-        /// <summary>Get a translation equivalent to "arcane".</summary>
+        /// <summary>Get a translation equivalent to "Arcane".</summary>
         public static string School_Arcane_Name()
         {
             return I18n.GetByKey("school.arcane.name");
         }
 
-        /// <summary>Get a translation equivalent to "toil".</summary>
+        /// <summary>Get a translation equivalent to "Toil".</summary>
         public static string School_Toil_Name()
         {
             return I18n.GetByKey("school.toil.name");
         }
 
-        /// <summary>Get a translation equivalent to "nature".</summary>
+        /// <summary>Get a translation equivalent to "Nature".</summary>
         public static string School_Nature_Name()
         {
             return I18n.GetByKey("school.nature.name");
         }
 
-        /// <summary>Get a translation equivalent to "life".</summary>
+        /// <summary>Get a translation equivalent to "Life".</summary>
         public static string School_Life_Name()
         {
             return I18n.GetByKey("school.life.name");
         }
 
-        /// <summary>Get a translation equivalent to "elemental".</summary>
+        /// <summary>Get a translation equivalent to "Elemental".</summary>
         public static string School_Elemental_Name()
         {
             return I18n.GetByKey("school.elemental.name");
         }
 
-        /// <summary>Get a translation equivalent to "eldritch".</summary>
+        /// <summary>Get a translation equivalent to "Eldritch".</summary>
         public static string School_Eldritch_Name()
         {
             return I18n.GetByKey("school.eldritch.name");

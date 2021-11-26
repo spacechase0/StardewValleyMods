@@ -55,6 +55,7 @@ namespace Magic.Framework.Game.Interface
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.MemoryProfession);
             int hotbarHeight = 12 + 48 * (hasFifthSpellSlot ? 5 : 4) + 12 * (hasFifthSpellSlot ? 4 : 3) + 12;
             int gap = (MagicMenu.WindowHeight - hotbarHeight * 2) / 3 + (hasFifthSpellSlot ? 25 : 0);
+            string hoverText = null;
 
             // draw main window
             IClickableMenu.drawTextureBox(b, this.xPositionOnScreen, this.yPositionOnScreen, MagicMenu.WindowWidth, MagicMenu.WindowHeight, Color.White);
@@ -76,6 +77,8 @@ namespace Magic.Framework.Game.Interface
 
                     if (iconBounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                     {
+                        hoverText = school.DisplayName;
+
                         if (this.JustLeftClicked)
                         {
                             if (this.School == null)
@@ -113,6 +116,8 @@ namespace Magic.Framework.Game.Interface
 
                         if (iconBounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                         {
+                            hoverText = spell.GetTranslatedName() + "\n" + spell.GetTranslatedDescription();
+
                             if (this.JustLeftClicked)
                             {
                                 this.Sel = spell;
@@ -156,11 +161,27 @@ namespace Magic.Framework.Game.Interface
                     // get border color
                     Color stateCol;
                     if (spellBook.KnowsSpell(this.Sel, i))
+                    {
+                        if (isHovered)
+                            hoverText = I18n.Tooltip_Spell_Known(spellName: title, level: i + 1);
                         stateCol = Color.Green;
+                    }
                     else if (i == 0 || spellBook.KnowsSpell(this.Sel, i - 1))
+                    {
+                        if (isHovered)
+                        {
+                            hoverText = spellBook.FreePoints > 0
+                                ? I18n.Tooltip_Spell_CanLearn(spellName: title, level: i + 1)
+                                : I18n.Tooltip_Spell_NeedFreePoints(spellName: title, level: i + 1);
+                        }
                         stateCol = Color.White;
+                    }
                     else
+                    {
+                        if (isHovered)
+                            hoverText = I18n.Tooltip_Spell_NeedPreviousLevels();
                         stateCol = Color.Gray;
+                    }
 
                     // draw icon
                     IClickableMenu.drawTextureBox(b, bounds.Left - 12, bounds.Top - 12, bounds.Width + 24, bounds.Height + 24, stateCol);
@@ -251,6 +272,10 @@ namespace Magic.Framework.Game.Interface
                     b.Draw(icon, new Rectangle(Game1.getOldMouseX(), Game1.getOldMouseY(), MagicMenu.HotbarIconSize, MagicMenu.HotbarIconSize), Color.White);
                 }
             }
+
+            // draw hover text
+            if (hoverText != null)
+                drawHoverText(b, hoverText, Game1.smallFont);
 
             // draw cursor
             this.drawMouse(b);
