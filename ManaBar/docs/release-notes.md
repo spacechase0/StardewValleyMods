@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.1.1
+Released 27 November 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Improved bar sprite to better fit vanilla style (thanks to Ash!).
+
 ## 1.1.0
 Released 10 July 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

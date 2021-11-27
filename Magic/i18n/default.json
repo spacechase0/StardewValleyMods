@@ -2,9 +2,19 @@
     /*********
     ** General text
     *********/
+    // HUD messages
     "spell.learn": "You learned a spell: {{spellName}}",
     "spell.learn.ancient": "You learned an ancient spell: {{spellName}}",
-    "altar.glow": "A glowing altar",
+
+    // menu tooltips
+    "tooltip.spell.known": "Click and drag to add {{spell}} to your spellbar on the right.",
+    "tooltip.spell.can-learn": "Click to spend one free point and learn {{spell}}.",
+    "tooltip.spell.need-free-points": "You have no free points to learn {{spell}}.",
+    "tooltip.spell.need-previous-levels": "You must learn the previous spell levels first.",
+    "tooltip.spell.name-and-level": "{{spellName}} level {{level}}",
+
+    // altar
+    "altar.click-message": "A glowing altar.",
 
 
     /*********
@@ -44,12 +54,12 @@
     /*********
     ** Magic spells
     *********/
-    "school.arcane.name": "arcane",
-    "school.toil.name": "toil",
-    "school.nature.name": "nature",
-    "school.life.name": "life",
-    "school.elemental.name": "elemental",
-    "school.eldritch.name": "eldritch",
+    "school.arcane.name": "Arcane",
+    "school.toil.name": "Toil",
+    "school.nature.name": "Nature",
+    "school.life.name": "Life",
+    "school.elemental.name": "Elemental",
+    "school.eldritch.name": "Eldritch",
 
     "spell.arcane:analyze.name": "Analyze",
     "spell.arcane:analyze.desc": "Examine an item for magical inspiration.",

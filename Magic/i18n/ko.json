@@ -2,9 +2,20 @@
     /*********
     ** General text
     *********/
+    // HUD messages
     "spell.learn": "주문을 배웠습니다. : {{spellName}}",
     "spell.learn.ancient": "고대 주문을 배웠습니다. : {{spellName}}",
-    "altar.glow": "은은히 빛나는 제단이다.",
+
+    // menu tooltips
+    // TODO
+    "tooltip.spell.known": "Click and drag to add {{spell}} to your spellbar on the right.",
+    "tooltip.spell.can-learn": "Click to spend one free point and learn {{spell}}.",
+    "tooltip.spell.need-free-points": "You have no free points to learn {{spell}}.",
+    "tooltip.spell.need-previous-levels": "You must learn the previous spell levels first.",
+    "tooltip.spell.name-and-level": "{{spellName}} level {{level}}",
+
+    // altar
+    "altar.click-message": "은은히 빛나는 제단이다.",
 
 
     /*********

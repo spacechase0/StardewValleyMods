@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Magic.Framework.Schools;
 using Magic.Framework.Spells;
 using Microsoft.Xna.Framework;
 using SpaceShared;
@@ -142,6 +143,14 @@ namespace Magic.Framework
         public bool KnowsSpell(Spell spell, int level)
         {
             return this.KnowsSpell(spell.FullId, level);
+        }
+
+        /// <summary>Get whether the player knows any spells in this school.</summary>
+        public bool KnowsSchool(School school)
+        {
+            return school.GetAllSpellTiers()
+                .SelectMany(tier => tier)
+                .Any(spell => this.KnowsSpell(spell.FullId, 0));
         }
 
         /// <summary>Add a spell to the player's list of known spells.</summary>

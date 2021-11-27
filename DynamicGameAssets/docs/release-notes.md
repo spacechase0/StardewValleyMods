@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.3.2
+Released 27 November 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
+* Fixed error when giving a custom item as a gift when the content pack doesn't specify response translation keys.
+
 ## 1.3.1
 Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

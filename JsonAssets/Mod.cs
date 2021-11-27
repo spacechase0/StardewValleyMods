@@ -1249,7 +1249,7 @@ namespace JsonAssets
 
         internal void OnBlankSave()
         {
-            Log.Debug("Loading stuff early (really super early)");
+            Log.Trace("Loading stuff early (really super early)");
             if (string.IsNullOrEmpty(Constants.CurrentSavePath))
             {
                 this.InitStuff(loadIdFiles: false);
@@ -1258,7 +1258,7 @@ namespace JsonAssets
 
         private void OnCreated(object sender, SaveCreatedEventArgs e)
         {
-            Log.Debug("Loading stuff early (creation)");
+            Log.Trace("Loading stuff early (creation)");
             //initStuff(loadIdFiles: false);
         }
 
@@ -1271,12 +1271,12 @@ namespace JsonAssets
             }
             else if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveLoadedLocations)
             {
-                Log.Debug("Fixing IDs");
+                Log.Trace("Fixing IDs");
                 this.FixIdsEverywhere();
             }
             else if (e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded)
             {
-                Log.Debug("Adding default/leveled recipes");
+                Log.Trace("Adding default/leveled recipes");
                 foreach (var obj in this.Objects)
                 {
                     if (obj.Recipe != null)
@@ -1348,7 +1348,7 @@ namespace JsonAssets
         {
             if (!Context.IsMainPlayer && !this.DidInit)
             {
-                Log.Debug("Loading stuff early (MP client)");
+                Log.Trace("Loading stuff early (MP client)");
                 this.InitStuff(loadIdFiles: false);
             }
         }
@@ -1994,8 +1994,8 @@ namespace JsonAssets
                     }
                     else if (obj is IndoorPot pot)
                     {
-                        if (this.FixCrop(pot.hoeDirt.Value?.crop))
-                            pot.hoeDirt.Value = null;
+                        if (pot.hoeDirt.Value != null && this.FixCrop(pot.hoeDirt.Value.crop))
+                            pot.hoeDirt.Value.crop = null;
                     }
                     else if (obj is Fence fence)
                     {

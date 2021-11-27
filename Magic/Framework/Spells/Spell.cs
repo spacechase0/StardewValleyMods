@@ -36,13 +36,27 @@ namespace Magic.Framework.Spells
                 && player.GetCurrentMana() >= this.GetManaCost(player, level);
         }
 
+        /// <summary>Get the spell's translated name.</summary>
         public virtual string GetTranslatedName()
         {
             return I18n.GetByKey($"spell.{this.FullId}.name");
         }
+
+        /// <summary>Get the spell's translated description.</summary>
         public virtual string GetTranslatedDescription()
         {
             return I18n.GetByKey($"spell.{this.FullId}.desc");
+        }
+
+        /// <summary>Get a translated tooltip to show for the spell.</summary>
+        /// <param name="level">The spell level, if applicable.</param>
+        public string GetTooltip(int? level = null)
+        {
+            string name = level != null && this.GetMaxCastingLevel() > 1
+                ? I18n.Tooltip_Spell_NameAndLevel(spellName: this.GetTranslatedName(), level + 1)
+                : this.GetTranslatedName();
+
+            return string.Concat(name, "\n", this.GetTranslatedDescription());
         }
 
         public abstract IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY);

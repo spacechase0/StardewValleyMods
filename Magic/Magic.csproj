@@ -3,7 +3,7 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>0.6.2</Version>
+    <Version>0.7.0</Version>
     <TargetFramework>net452</TargetFramework>
 
     <IgnoreModFilePatterns>\.psd$</IgnoreModFilePatterns>
