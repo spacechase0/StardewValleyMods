@@ -217,4 +217,3 @@ Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player a
 
 ## See also
 * [Release notes](release-notes.md)
-* [Spell icons taken from OpenGameArt](https://opengameart.org/content/painterly-spell-icons-part-1)
