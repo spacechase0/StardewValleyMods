@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 0.7.0
+Released 27 November 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
+
 * Added icons for magic school tabs.
 * Added tooltips.
 * Revamped spell icons (thanks to Ash!).
