@@ -2,13 +2,12 @@
 
 # Release notes
 ## Upcoming release
-* Improved magic UI:
-  * Added icons for magic school tabs.
-  * Added tooltips.
-  * Replaced spell icons (thanks to Ash!).
-  * You can no longer select a magic school you don't know any spells for.
-  * The menu now preselects the first known spell, so it's more intuitive for new players.
-  * Various UI tweaks.
+* Added icons for magic school tabs.
+* Added tooltips.
+* Revamped spell icons (thanks to Ash!).
+* You can no longer select a magic school you don't know any spells for.
+* The menu now preselects the first known spell so it's more intuitive.
+* Various UI tweaks.
 
 ## 0.6.2
 Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.

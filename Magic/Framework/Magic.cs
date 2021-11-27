@@ -351,6 +351,7 @@ namespace Magic.Framework
             b.DrawString(Game1.dialogueFont, prepStr, new Vector2(spots[Game1.down].X + 25, spots[Game1.up].Y - 35), Color.White, 0, new Vector2(Game1.dialogueFont.MeasureString(prepStr).X / 2, 0), 0.6f, SpriteEffects.None, 0);
 
             // render spell bar
+            string hoveredText = null;
             for (int i = 0; i < (hasFifthSpellSlot ? 5 : 4) && i < prepared.Spells.Count; ++i)
             {
                 PreparedSpell prep = prepared.GetSlot(i);
@@ -361,8 +362,16 @@ namespace Magic.Framework
                 if (spell == null || spell.Icons.Length <= prep.Level || spell.Icons[prep.Level] == null)
                     continue;
 
-                b.Draw(spell.Icons[prep.Level], new Rectangle(spots[i].X, spots[i].Y, 50, 50), spellBook.CanCastSpell(spell, prep.Level) ? Color.White : new Color(128, 128, 128));
+                Rectangle bounds = new Rectangle(spots[i].X, spots[i].Y, 50, 50);
+
+                b.Draw(spell.Icons[prep.Level], bounds, spellBook.CanCastSpell(spell, prep.Level) ? Color.White : new Color(128, 128, 128));
+                if (bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
+                    hoveredText = spell.GetTooltip(level: prep.Level);
             }
+
+            // render hover text
+            if (hoveredText != null)
+                StardewValley.Menus.IClickableMenu.drawHoverText(b, hoveredText, Game1.smallFont);
         }
 
         private static void LoadAssets()

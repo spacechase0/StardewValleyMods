@@ -119,7 +119,7 @@ namespace Magic.Framework.Game.Interface
 
                         if (iconBounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                         {
-                            hoverText = spell.GetTranslatedName() + "\n" + spell.GetTranslatedDescription();
+                            hoverText = spell.GetTooltip();
 
                             if (this.JustLeftClicked)
                             {
@@ -173,7 +173,7 @@ namespace Magic.Framework.Game.Interface
                     if (isKnown)
                     {
                         if (isHovered)
-                            hoverText = I18n.Tooltip_Spell_Known(spellName: title, level: i + 1);
+                            hoverText = I18n.Tooltip_Spell_Known(spell: I18n.Tooltip_Spell_NameAndLevel(title, level: i + 1));
                         stateCol = Color.Green;
                     }
                     else if (hasPreviousLevels)
@@ -181,8 +181,8 @@ namespace Magic.Framework.Game.Interface
                         if (isHovered)
                         {
                             hoverText = spellBook.FreePoints > 0
-                                ? I18n.Tooltip_Spell_CanLearn(spellName: title, level: i + 1)
-                                : I18n.Tooltip_Spell_NeedFreePoints(spellName: title, level: i + 1);
+                                ? I18n.Tooltip_Spell_CanLearn(spell: I18n.Tooltip_Spell_NameAndLevel(title, level: i + 1))
+                                : I18n.Tooltip_Spell_NeedFreePoints(spell: I18n.Tooltip_Spell_NameAndLevel(title, level: i + 1));
                         }
                         stateCol = Color.White;
                     }
@@ -232,10 +232,11 @@ namespace Magic.Framework.Game.Interface
                 {
                     for (int i = 0; i < (hasFifthSpellSlot ? 5 : 4); ++i)
                     {
-                        var prep = spellBar.GetSlot(i);
+                        PreparedSpell prep = spellBar.GetSlot(i);
+                        Rectangle bounds = new(this.xPositionOnScreen + MagicMenu.WindowWidth + 12, y, MagicMenu.HotbarIconSize, MagicMenu.HotbarIconSize);
+                        bool isHovered = bounds.Contains(Game1.getOldMouseX(), Game1.getOldMouseY());
 
-                        var r = new Rectangle(this.xPositionOnScreen + MagicMenu.WindowWidth + 12, y, MagicMenu.HotbarIconSize, MagicMenu.HotbarIconSize);
-                        if (r.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
+                        if (isHovered)
                         {
                             if (this.JustRightClicked)
                                 spellBook.Mutate(_ => spellBar.SetSlot(i, prep = null));
@@ -247,17 +248,21 @@ namespace Magic.Framework.Game.Interface
                             }
                         }
 
-                        IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), r.X - 12, y - 12, MagicMenu.HotbarIconSize + 24, MagicMenu.HotbarIconSize + 24, Color.White, 1f, false);
+                        IClickableMenu.drawTextureBox(b, Game1.menuTexture, new Rectangle(0, 256, 60, 60), bounds.X - 12, y - 12, MagicMenu.HotbarIconSize + 24, MagicMenu.HotbarIconSize + 24, Color.White, 1f, false);
 
                         if (prep != null)
                         {
                             Spell spell = SpellManager.Get(prep.SpellId);
+
                             Texture2D[] icons = spell?.Icons;
-                            if (icons != null && icons.Length > prep.Level && icons[prep.Level] != null)
+                            if (icons?.Length > prep.Level && icons[prep.Level] != null)
                             {
                                 Texture2D icon = icons[prep.Level];
-                                b.Draw(icon, r, Color.White);
+                                b.Draw(icon, bounds, Color.White);
                             }
+
+                            if (isHovered)
+                                hoverText = spell.GetTooltip(level: prep.Level);
                         }
                         y += MagicMenu.HotbarIconSize + 12;
                     }

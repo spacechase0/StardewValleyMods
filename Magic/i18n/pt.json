@@ -8,10 +8,11 @@
 
     // menu tooltips
     // TODO
-    "tooltip.spell.known": "Click and drag to add {{spellName}} level {{level}} to your spellbar on the right.",
-    "tooltip.spell.can-learn": "Click to spend one free point and learn {{spellName}} level {{level}}.",
-    "tooltip.spell.need-free-points": "You have no free points to learn {{spellName}} level {{level}}.",
+    "tooltip.spell.known": "Click and drag to add {{spell}} to your spellbar on the right.",
+    "tooltip.spell.can-learn": "Click to spend one free point and learn {{spell}}.",
+    "tooltip.spell.need-free-points": "You have no free points to learn {{spell}}.",
     "tooltip.spell.need-previous-levels": "You must learn the previous spell levels first.",
+    "tooltip.spell.name-and-level": "{{spellName}} level {{level}}",
 
     // altar
     "altar.click-message": "Um altar brilhante",

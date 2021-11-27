@@ -42,34 +42,39 @@ namespace Magic.Framework
             return I18n.GetByKey("spell.learn.ancient", new { spellName });
         }
 
-        /// <summary>Get a translation equivalent to "Click and drag to add {{spellName}} level {{level}} to your spellbar on the right.".</summary>
-        /// <param name="spellName">The value to inject for the <c>{{spellName}}</c> token.</param>
-        /// <param name="level">The value to inject for the <c>{{level}}</c> token.</param>
-        public static string Tooltip_Spell_Known(object spellName, object level)
+        /// <summary>Get a translation equivalent to "Click and drag to add {{spell}} to your spellbar on the right.".</summary>
+        /// <param name="spell">The value to inject for the <c>{{spell}}</c> token.</param>
+        public static string Tooltip_Spell_Known(object spell)
         {
-            return I18n.GetByKey("tooltip.spell.known", new { spellName, level });
+            return I18n.GetByKey("tooltip.spell.known", new { spell });
         }
 
-        /// <summary>Get a translation equivalent to "Click to spend one free point and learn {{spellName}} level {{level}}.".</summary>
-        /// <param name="spellName">The value to inject for the <c>{{spellName}}</c> token.</param>
-        /// <param name="level">The value to inject for the <c>{{level}}</c> token.</param>
-        public static string Tooltip_Spell_CanLearn(object spellName, object level)
+        /// <summary>Get a translation equivalent to "Click to spend one free point and learn {{spell}}.".</summary>
+        /// <param name="spell">The value to inject for the <c>{{spell}}</c> token.</param>
+        public static string Tooltip_Spell_CanLearn(object spell)
         {
-            return I18n.GetByKey("tooltip.spell.can-learn", new { spellName, level });
+            return I18n.GetByKey("tooltip.spell.can-learn", new { spell });
         }
 
-        /// <summary>Get a translation equivalent to "You have no free points to learn {{spellName}} level {{level}}.".</summary>
-        /// <param name="spellName">The value to inject for the <c>{{spellName}}</c> token.</param>
-        /// <param name="level">The value to inject for the <c>{{level}}</c> token.</param>
-        public static string Tooltip_Spell_NeedFreePoints(object spellName, object level)
+        /// <summary>Get a translation equivalent to "You have no free points to learn {{spell}}.".</summary>
+        /// <param name="spell">The value to inject for the <c>{{spell}}</c> token.</param>
+        public static string Tooltip_Spell_NeedFreePoints(object spell)
         {
-            return I18n.GetByKey("tooltip.spell.need-free-points", new { spellName, level });
+            return I18n.GetByKey("tooltip.spell.need-free-points", new { spell });
         }
 
         /// <summary>Get a translation equivalent to "You must learn the previous spell levels first.".</summary>
         public static string Tooltip_Spell_NeedPreviousLevels()
         {
             return I18n.GetByKey("tooltip.spell.need-previous-levels");
+        }
+
+        /// <summary>Get a translation equivalent to "{{spellName}} level {{level}}".</summary>
+        /// <param name="spellName">The value to inject for the <c>{{spellName}}</c> token.</param>
+        /// <param name="level">The value to inject for the <c>{{level}}</c> token.</param>
+        public static string Tooltip_Spell_NameAndLevel(object spellName, object level)
+        {
+            return I18n.GetByKey("tooltip.spell.name-and-level", new { spellName, level });
         }
 
         /// <summary>Get a translation equivalent to "A glowing altar.".</summary>
