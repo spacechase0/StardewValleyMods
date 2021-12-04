@@ -1,0 +1,18 @@
+﻿[
+    // Mythicite
+    {
+        "$ItemType": "Object",
+        "ID": "Mythicite Ore",
+        "Category": "Metal",
+        "Texture": "objects.png:0",
+        "SellPrice": 500,
+    },
+    {
+        "$ItemType": "Object",
+        "ID": "Mythicite Bar",
+        "Category": "Metal",
+        "Texture": "objects.png:1",
+        "SellPrice": 5000
+    }
+    // PFM - recipe for bar in furnace
+]
