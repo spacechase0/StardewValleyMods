@@ -39,6 +39,7 @@ namespace SpaceCore
         internal static SpaceCore Instance;
         internal static IReflectionHelper Reflection;
         internal static List<Type> ModTypes = new();
+        internal static Dictionary<Type, Dictionary<string, CustomPropertyInfo>> CustomProperties = new();
 
 
         /*********
@@ -81,6 +82,7 @@ namespace SpaceCore
                 new MultiplayerPatcher(),
                 new NpcPatcher(),
                 new SaveGamePatcher(serializerManager),
+                new SerializationPatcher(),
                 new SpriteBatchPatcher(),
                 new UtilityPatcher()
             );
