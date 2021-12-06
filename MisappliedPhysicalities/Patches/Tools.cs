@@ -80,7 +80,6 @@ namespace MisappliedPhysicalities.Patches
     {
         public static bool Prefix( Vector2 tileLocation, int power, Farmer who, ref List< Vector2 > __result )
         {
-            SpaceShared.Log.Debug( "meow:" + power );
             if ( power >= 5 ) // Radioactive or above
             {
                 int rad = 2;
@@ -90,7 +89,7 @@ namespace MisappliedPhysicalities.Patches
                     ++rad;
                     len += 2;
                 }
-                if ( power >= 7 ) // Mythicite + enchantment
+                if ( power >= 7 ) // Mythicite + Reaching enchantment
                 {
                     ++rad;
                     len += 2;
@@ -198,7 +197,7 @@ namespace MisappliedPhysicalities.Patches
             if ( __instance.UpgradeLevel >= 5 )
             {
                 __state = new ToolTextureState() { upgrade = __instance.UpgradeLevel, oldSpritesheet = Game1.toolSpriteSheet };
-                Mod.instance.Helper.Reflection.GetField<Texture2D>( typeof( Game1 ), "_toolSpriteSheet" ).SetValue( __instance.UpgradeLevel == 5 ? Mod.toolsRadioactive : Mod.toolsMythicite );
+                Mod.instance.Helper.Reflection.GetField<Texture2D>( typeof( Game1 ), "_toolSpriteSheet" ).SetValue( __instance.UpgradeLevel == 5 ? Assets.RadioactiveTools : Assets.MythiciteTools );
                 __instance.upgradeLevel.Value = 4;
             }
         }
@@ -222,7 +221,7 @@ namespace MisappliedPhysicalities.Patches
             if ( tool.UpgradeLevel >= 5 )
             {
                 __state = new ToolTextureState() { upgrade = tool.UpgradeLevel, oldSpritesheet = Game1.toolSpriteSheet };
-                Mod.instance.Helper.Reflection.GetField<Texture2D>( typeof( Game1 ), "_toolSpriteSheet" ).SetValue( tool.UpgradeLevel == 5 ? Mod.toolsRadioactive : Mod.toolsMythicite );
+                Mod.instance.Helper.Reflection.GetField<Texture2D>( typeof( Game1 ), "_toolSpriteSheet" ).SetValue( tool.UpgradeLevel == 5 ? Assets.RadioactiveTools : Assets.MythiciteTools );
                 tool.upgradeLevel.Value = 4;
             }
         }

@@ -6,5 +6,14 @@
     "tool.pick.radioactive": "Radioactive Pickaxe",
     "tool.pick.mythicite": "Mythicite Pickaxe",
     "tool.hoe.radioactive": "Radioactive Hoe",
-    "tool.hoe.mythicite": "Mythicite Hoe"
+    "tool.hoe.mythicite": "Mythicite Hoe",
+    "tool.drill.name": "Drill",
+    "tool.drill.description": "It can clear space underground.\nMake sure you have your x-ray goggles on!",
+
+    "message.drill.need-goggles": "You need x-ray goggles on to use this!",
+
+    "item.conveyor.name": "Conveyor Belt",
+    "item.conveyor.description": "Can move items around if given power.\nCan be placed underground (when wearing x-ray goggles) or on scaffolding.",
+    "item.unhopper.name": "Unhopper",
+    "item.unhopper.description": "Removes items from machines and places them onto nearby conveyor belts.\n(Starts with a conveyor beneath it underground, then goes to the west, south, and east, then goes above.",
 }

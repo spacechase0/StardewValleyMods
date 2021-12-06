@@ -15,5 +15,7 @@
             "UniqueID": "spacechase0.DynamicGameAssets"
         }
     ],
-    "RequiredForEveryone": true
+    "RequiredForEveryone": true,
+    "DGA.FormatVersion": 2,
+    "DGA.ConditionsFormatVersion": "1.23.0"
 }
