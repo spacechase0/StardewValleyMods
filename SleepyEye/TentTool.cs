@@ -29,11 +29,14 @@ namespace SleepyEye
         /// <summary>How long after a save is triggered before resetting the tool's use and save flags.</summary>
         private readonly TimeSpan ResetDelay = TimeSpan.FromSeconds(3);
 
+        /// <summary>The texture loaded for the item in inventories.</summary>
+        private Texture2D ItemTexture;
+
         /// <summary>The last texture key loaded for the tent.</summary>
-        private string LastTextureKey;
+        private string TentTextureKey;
 
         /// <summary>The last texture loaded for the tent.</summary>
-        private Texture2D LastTexture;
+        private Texture2D TentTexture;
 
 
         /*********
@@ -139,8 +142,9 @@ namespace SleepyEye
 
         public override void drawInMenu(SpriteBatch b, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
-            Texture2D texture = this.GetOrLoadTexture();
-            b.Draw(texture, new Vector2(location.X + Game1.tileSize / 2, location.Y + Game1.tileSize / 2), new Rectangle(224, 96, 48, 80), Color.White, 0, new Vector2(24, 40), scaleSize * 0.8f, SpriteEffects.None, 0);
+            this.ItemTexture ??= Mod.Instance.Helper.Content.Load<Texture2D>("assets/tent-item.png");
+
+            b.Draw(this.ItemTexture, location + new Vector2(32f, 32f), new Rectangle(0, 0, 16, 16), color * transparency, 0, new Vector2(8f, 8f), Game1.pixelZoom * scaleSize, SpriteEffects.None, layerDepth);
         }
 
         public override void draw(SpriteBatch b)
@@ -227,13 +231,13 @@ namespace SleepyEye
         {
             string key = $"Maps/{Game1.currentSeason}_outdoorsTileSheet";
 
-            if (this.LastTextureKey != key || this.LastTexture == null || this.LastTexture.IsDisposed)
+            if (this.TentTextureKey != key || this.TentTexture == null || this.TentTexture.IsDisposed)
             {
-                this.LastTextureKey = key;
-                this.LastTexture = Mod.Instance.Helper.Content.Load<Texture2D>(key, ContentSource.GameContent);
+                this.TentTextureKey = key;
+                this.TentTexture = Mod.Instance.Helper.Content.Load<Texture2D>(key, ContentSource.GameContent);
             }
 
-            return this.LastTexture;
+            return this.TentTexture;
         }
     }
 }
