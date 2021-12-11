@@ -2,7 +2,7 @@
 
 # Release notes
 ## Upcoming release
-* Improved tent item icon (thanks to Illuzio!).
+* Improved tent icon and textures (thanks to Illuzio!).
 
 ## 1.2.0
 Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.

@@ -3,7 +3,6 @@ using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SleepyEye.Framework;
-using StardewModdingAPI;
 using StardewValley;
 
 namespace SleepyEye
@@ -166,8 +165,7 @@ namespace SleepyEye
                 pos.Y -= Game1.tileSize * 2;
 
                 Texture2D texture = this.GetOrLoadTexture();
-                b.Draw(texture, pos, new Rectangle(224, 96 + 80 - 16, 48, 16), color, 0, new Vector2(24, 40 - 80 + 16), 4, SpriteEffects.None, 0);
-                b.Draw(texture, pos, new Rectangle(224, 96, 48, 80 - 16), color, 0, new Vector2(24, 40), 4, SpriteEffects.None, 0.999999f);
+                b.Draw(texture, pos, new Rectangle(0, 0, 48, 80), color, 0, new Vector2(24, 40), Game1.pixelZoom, SpriteEffects.None, 0.999999f);
             }
         }
 
@@ -229,12 +227,12 @@ namespace SleepyEye
         /// <summary>Get the cached tent texture, loading it if needed.</summary>
         private Texture2D GetOrLoadTexture()
         {
-            string key = $"Maps/{Game1.currentSeason}_outdoorsTileSheet";
+            string key = $"assets/{Game1.currentSeason}_tent";
 
             if (this.TentTextureKey != key || this.TentTexture == null || this.TentTexture.IsDisposed)
             {
                 this.TentTextureKey = key;
-                this.TentTexture = Mod.Instance.Helper.Content.Load<Texture2D>(key, ContentSource.GameContent);
+                this.TentTexture = Mod.Instance.Helper.Content.Load<Texture2D>(key);
             }
 
             return this.TentTexture;
