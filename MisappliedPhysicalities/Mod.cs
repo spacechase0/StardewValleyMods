@@ -107,7 +107,7 @@ namespace MisappliedPhysicalities
             {
                 Game1.locations.Add( new MountainTop( Helper.Content ) );
                 Game1.locations.Add( new MoonLandingArea( Helper.Content ) );
-                Game1.locations.Add( new LunarLocation( Helper.Content, "MoonAsteroidsEntrance", "Custom_MP_MoonAsteroidsEntrance" ) );
+                Game1.locations.Add( new AsteroidsEntrance( Helper.Content ) );
             }
         }
 

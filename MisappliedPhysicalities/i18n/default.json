@@ -14,6 +14,8 @@
     "message.ufo.repair": "Repair the UFO for 25 Radioactive Bars and 1 Galaxy Soul?",
     "message.ufo.repair.lacking": "You don't have enough materials.",
     "message.ufo.travel": "Board the UFO?",
+    "message.gargoyle": "Pet the... gargoyle? Who knows what will happen?",
+    "message.dirt-tutorial": "If only you had a tool to break the end off to continue forward...",
 
     "item.conveyor.name": "Conveyor Belt",
     "item.conveyor.description": "Can move items around if given power.\nCan be placed underground (when wearing x-ray goggles) or on scaffolding.",
