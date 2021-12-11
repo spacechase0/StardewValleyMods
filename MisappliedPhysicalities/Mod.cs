@@ -9,16 +9,24 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MisappliedPhysicalities.Game;
+using MisappliedPhysicalities.Game.Locations;
+using MisappliedPhysicalities.Game.Objects;
 using MisappliedPhysicalities.VirtualProperties;
 using Netcode;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
+using StardewModdingAPI.Enums;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Network;
 using StardewValley.Tools;
+
+/* Art:
+ *  paradigmnomad (drill, xray goggles, cutscene BG and moon animation, big UFO)
+ *  finalbossblues https://finalbossblues.itch.io/dark-dimension-tileset (recolored by paradigmnomad)
+ */
 
 namespace MisappliedPhysicalities
 {
@@ -36,8 +44,10 @@ namespace MisappliedPhysicalities
             Assets.Load( helper.Content );
 
             Helper.ConsoleCommands.Add( "mp_items", "...", OnItemsCommand );
+            Helper.ConsoleCommands.Add( "mp_launch", "...", OnLaunchCommand );
 
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+            Helper.Events.Specialized.LoadStageChanged += OnLoadStageChanged;
             Helper.Events.Display.MenuChanged += OnMenuChanged;
 
             var harmony = new Harmony( ModManifest.UniqueID );
@@ -60,6 +70,11 @@ namespace MisappliedPhysicalities
             Game1.activeClickableMenu = new ShopMenu( stock );
         }
 
+        private void OnLaunchCommand( string cmd, string[] args )
+        {
+            Game1.currentMinigame = new LaunchJourney();
+        }
+
         private void OnGameLaunched( object sender, GameLaunchedEventArgs e )
         {
             var sc = Helper.ModRegistry.GetApi< ISpaceCoreApi >( "spacechase0.SpaceCore" );
@@ -67,6 +82,9 @@ namespace MisappliedPhysicalities
             sc.RegisterSerializerType( typeof( DrillTool ) );
             sc.RegisterSerializerType( typeof( ConveyorBelt ) );
             sc.RegisterSerializerType( typeof( Unhopper ) );
+            sc.RegisterSerializerType( typeof( MountainTop ) );
+            sc.RegisterSerializerType( typeof( LunarLocation ) );
+            sc.RegisterSerializerType( typeof( MoonLandingArea ) );
             sc.RegisterCustomProperty( typeof( GameLocation ), "BelowGroundObjects",
                                        typeof( NetVector2Dictionary<StardewValley.Object, NetRef<StardewValley.Object>> ),
                                        AccessTools.Method( typeof( GameLocation_BelowGroundObjects ), nameof( GameLocation_BelowGroundObjects.get_BelowGroundObjects ) ),
@@ -81,6 +99,16 @@ namespace MisappliedPhysicalities
             dgaPack = DynamicGameAssets.Mod.GetPacks().First( cp => cp.GetManifest().UniqueID == ModManifest.UniqueID );
 
             var gmcm = Helper.ModRegistry.GetApi< IGenericModConfigMenuApi >( "spacechase0.GenericModConfigMenu" );
+        }
+
+        private void OnLoadStageChanged( object sender, LoadStageChangedEventArgs e )
+        {
+            if ( e.NewStage == LoadStage.CreatedInitialLocations || e.NewStage == LoadStage.SaveAddedLocations )
+            {
+                Game1.locations.Add( new MountainTop( Helper.Content ) );
+                Game1.locations.Add( new MoonLandingArea( Helper.Content ) );
+                Game1.locations.Add( new LunarLocation( Helper.Content, "MoonAsteroidsEntrance", "Custom_MP_MoonAsteroidsEntrance" ) );
+            }
         }
 
         private void OnMenuChanged( object sender, MenuChangedEventArgs e )

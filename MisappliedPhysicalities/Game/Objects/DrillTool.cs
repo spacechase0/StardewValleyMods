@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MisappliedPhysicalities.VirtualProperties;
 using StardewValley;
 
-namespace MisappliedPhysicalities.Game
+namespace MisappliedPhysicalities.Game.Objects
 {
     [XmlType( "Mods_spacechase0_MisappliedPhysicalities_DrillToll" )]
     public class DrillTool : Tool

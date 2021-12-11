@@ -10,7 +10,7 @@ using MisappliedPhysicalities.VirtualProperties;
 using StardewValley;
 using StardewValley.Objects;
 
-namespace MisappliedPhysicalities.Game
+namespace MisappliedPhysicalities.Game.Objects
 {
     [XmlType( "Mods_spacechase0_MisappliedPhysicalities_Unhopper" )]
     public class Unhopper : StardewValley.Object

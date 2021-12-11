@@ -13,7 +13,7 @@ using StardewValley.Network;
 using StardewValley.Objects;
 using StardewValley.Tools;
 
-namespace MisappliedPhysicalities.Game
+namespace MisappliedPhysicalities.Game.Objects
 {
     [XmlType("Mods_spacechase0_MisappliedPhysicalities_ConveyorBelt")]
     public class ConveyorBelt : StardewValley.Object, IUpdatesEvenWithoutFarmer

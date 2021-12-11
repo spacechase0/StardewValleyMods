@@ -11,6 +11,9 @@
     "tool.drill.description": "It can clear space underground.\nMake sure you have your x-ray goggles on!",
 
     "message.drill.need-goggles": "You need x-ray goggles on to use this!",
+    "message.ufo.repair": "Repair the UFO for 25 Radioactive Bars and 1 Galaxy Soul?",
+    "message.ufo.repair.lacking": "You don't have enough materials.",
+    "message.ufo.travel": "Board the UFO?",
 
     "item.conveyor.name": "Conveyor Belt",
     "item.conveyor.description": "Can move items around if given power.\nCan be placed underground (when wearing x-ray goggles) or on scaffolding.",

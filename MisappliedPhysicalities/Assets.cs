@@ -17,6 +17,12 @@ namespace MisappliedPhysicalities
         public static Texture2D ConveyorBelt;
         public static Texture2D Unhopper;
 
+        public static Texture2D LaunchBackground;
+        public static Texture2D LaunchUfo;
+        public static Texture2D LaunchMoon;
+
+        public static Texture2D Ufo;
+
         internal static void Load( IContentHelper content )
         {
             RadioactiveTools = content.Load<Texture2D>( "assets/tools-radioactive.png" );
@@ -25,6 +31,12 @@ namespace MisappliedPhysicalities
 
             Assets.ConveyorBelt = content.Load<Texture2D>( "assets/conveyor.png" );
             Assets.Unhopper = content.Load<Texture2D>( "assets/unhopper.png" );
+
+            Assets.LaunchBackground = content.Load<Texture2D>( "assets/launch.png" );
+            Assets.LaunchUfo = content.Load<Texture2D>( "assets/ufo-small.png" );
+            Assets.LaunchMoon = content.Load<Texture2D>( "assets/moon.png" );
+
+            Assets.Ufo = content.Load<Texture2D>( "assets/ufo-big.png" );
         }
     }
 }

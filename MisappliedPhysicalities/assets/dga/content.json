@@ -4,7 +4,7 @@
         "$ItemType": "Object",
         "ID": "Mythicite Ore",
         "Category": "Metal",
-        "Texture": "objects.png:0",
+        "Texture": "objects.png:5",
         "SellPrice": 500
     },
     {
@@ -13,6 +13,12 @@
         "Category": "Metal",
         "Texture": "objects.png:1",
         "SellPrice": 5000
+    },
+    {
+        "$ItemType": "Object",
+        "ID": "Mythicite Ore Minable",
+        "Category": "Junk",
+        "Texture": "objects.png:6",
     },
     // PFM - recipe for bar in furnace
 

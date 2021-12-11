@@ -10,5 +10,6 @@ namespace MisappliedPhysicalities
     internal static class Items
     {
         public const string XrayGogglesId = "spacechase0.MisappliedPhysicalities/X-Ray Goggles";
+        public const string BinocularsId = "spacechase0.MisappliedPhysicalities/Binoculars";
     }
 }

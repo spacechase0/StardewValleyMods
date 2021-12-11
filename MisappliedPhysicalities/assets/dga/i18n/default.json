@@ -3,6 +3,8 @@
     "object.Mythicite Ore.description": "Ore for a mythical metal.",
     "object.Mythicite Bar.name": "Mythicite Bar",
     "object.Mythicite Bar.description": "A mythical metal in bar form.",
+    "object.Mythicite Ore Minable.name": "Mythicite Ore (Minable)",
+    "object.Mythicite Ore Minable.description": "You shouldn't have this.",
     "hat.X-ray Goggles.name": "X-Ray Goggles",
     "hat.X-ray Goggles.description": "Let's you see and place underground objects.\n(Only certain objects can be placed underground. They will say so in their description.)",
     "hat.Binoculars.name": "Binoculars",
