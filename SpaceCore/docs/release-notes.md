@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Added error handling for invalid tilesheets.
 * Removed unneeded warning log.
 
 ## 1.7.1
