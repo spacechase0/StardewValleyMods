@@ -82,7 +82,9 @@ namespace MisappliedPhysicalities.Game.Objects
             if ( t == null || !t.isHeavyHitter() )
                 return false;
 
-            return true;
+            location.netObjects.Remove( TileLocation );
+            location.debris.Add( new Debris( new LeverBlock(), new Vector2( tileLocation.X + 0.5f, tileLocation.Y + 0.5f ) * Game1.tileSize ) );
+            return false;
         }
 
         public override bool placementAction( GameLocation location, int x, int y, Farmer who = null )

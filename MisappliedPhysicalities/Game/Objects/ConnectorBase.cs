@@ -230,7 +230,7 @@ namespace MisappliedPhysicalities.Game.Objects
 
             foreach ( var conn in connections )
             {
-                if ( ( int ) onLayer.Value > ( int ) conn.OtherLayer || onLayer.Value == conn.OtherLayer && y * 1000 + x < conn.OtherPoint.Y * 1000 + conn.OtherPoint.X )
+                //if ( ( int ) onLayer.Value > ( int ) conn.OtherLayer || onLayer.Value == conn.OtherLayer && y * 1000 + x < conn.OtherPoint.Y * 1000 + conn.OtherPoint.X )
                 {
                     ConnectorBase them = ( Game1.currentLocation.GetContainerForLayer( conn.OtherLayer )[ new Vector2( conn.OtherPoint.X, conn.OtherPoint.Y ) ] as ConnectorBase);
                     if ( them == null )
@@ -245,7 +245,7 @@ namespace MisappliedPhysicalities.Game.Objects
                     diff.Normalize();
                     float angle =  ( float )( Math.Atan2( diff.Y, diff.X ) + Math.PI );
 
-                    if ( onLayer.Value != conn.OtherLayer && them.onLayer.Value == Layer.Underground && Mod.dga.GetDGAItemId( Game1.player.hat.Value ) != Items.XrayGogglesId )
+                    if ( onLayer.Value != conn.OtherLayer && ( them.onLayer.Value == Layer.Underground || onLayer.Value == Layer.Underground ) )
                         len /= 2;
 
                     spriteBatch.Draw( Game1.staminaRect, new Rectangle( (int) mySpot.X, (int) mySpot.Y, ( int ) len, 4 ), null, GetConnectorType().GetConnectorWireColor(), angle, Vector2.Zero, SpriteEffects.None, 1 /* TODO */ );
