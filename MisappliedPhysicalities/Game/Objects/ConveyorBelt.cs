@@ -16,12 +16,13 @@ using StardewValley.Tools;
 namespace MisappliedPhysicalities.Game.Objects
 {
     [XmlType("Mods_spacechase0_MisappliedPhysicalities_ConveyorBelt")]
-    public class ConveyorBelt : StardewValley.Object, IUpdatesEvenWithoutFarmer
+    public class ConveyorBelt : StardewValley.Object, IUpdatesEvenWithoutFarmer, ILogicObject
     {
-        public readonly NetInt facing = new();
+        public readonly NetEnum< Side > facing = new();
         public readonly NetRef< Item > item = new(); // heldObject only works with `Object`s
         public readonly NetFloat progress = new();
         public readonly NetEnum< Layer > onLayer = new();
+        public readonly NetBool reversed = new(); // from logic signals
 
         public ConveyorBelt()
             : this( Vector2.Zero, Layer.GroundLevel )
@@ -39,10 +40,17 @@ namespace MisappliedPhysicalities.Game.Objects
             boundingBox.Value = new Rectangle( ( int ) placement.X * Game1.tileSize, ( int ) placement.Y * Game1.tileSize, Game1.tileSize, Game1.tileSize );
         }
 
+        public Side GetActualFacing()
+        {
+            if ( reversed.Value )
+                return facing.Value.GetOpposite();
+            return facing.Value;
+        }
+
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields( facing, item, progress );
+            NetFields.AddFields( facing, item, progress, onLayer, reversed );
         }
 
         protected override string loadDisplayName()
@@ -93,7 +101,7 @@ namespace MisappliedPhysicalities.Game.Objects
                     target.Remove( tile );
                 else
                 {
-                    // play sound, message
+                    // TODO: play sound, message
                     return false;
                 }
             }
@@ -101,7 +109,7 @@ namespace MisappliedPhysicalities.Game.Objects
 
             var c = new ConveyorBelt( tile, layer );
             if ( who != null )
-                c.facing.Value = who.FacingDirection;
+                c.facing.Value = who.FacingDirection.GetSideFromFacingDirection().Value;
 
             target.Add( tile, c );
             location.playSound( "woodyStep" );
@@ -136,12 +144,12 @@ namespace MisappliedPhysicalities.Game.Objects
 
         private Vector2 GetRelativeItemPos()
         {
-            switch ( facing.Value )
+            switch ( GetActualFacing() )
             {
-                case Game1.up: return new Vector2( 0.5f, 1 - progress.Value );
-                case Game1.down: return new Vector2( 0.5f, progress.Value );
-                case Game1.left: return new Vector2( 1 - progress.Value, 0.5f );
-                case Game1.right: return new Vector2( progress.Value, 0.5f );
+                case Side.Up: return new Vector2( 0.5f, 1 - progress.Value );
+                case Side.Down: return new Vector2( 0.5f, progress.Value );
+                case Side.Left: return new Vector2( 1 - progress.Value, 0.5f );
+                case Side.Right: return new Vector2( progress.Value, 0.5f );
             }
 
             return new Vector2( 0.5f, 0.5f );
@@ -217,12 +225,12 @@ namespace MisappliedPhysicalities.Game.Objects
         {
             //float p = Math.Min( progress.Value, 1 );
             float p = Game1.ticks % 60 / 60f;
-            switch ( facing.Value )
+            switch ( GetActualFacing() )
             {
-                case Game1.down: return new Rectangle( 16, 16 - ( int ) ( p * 16 ), 16, 16 );
-                case Game1.up: return new Rectangle( 16, 0 + ( int ) ( p * 16 ), 16, 16 );
-                case Game1.right: return new Rectangle( 48 - ( int ) ( p * 16 ), 0, 16, 16 );
-                case Game1.left: return new Rectangle( 32 + ( int ) ( p * 16 ), 0, 16, 16 );
+                case Side.Down: return new Rectangle( 16, 16 - ( int ) ( p * 16 ), 16, 16 );
+                case Side.Up: return new Rectangle( 16, 0 + ( int ) ( p * 16 ), 16, 16 );
+                case Side.Right: return new Rectangle( 48 - ( int ) ( p * 16 ), 0, 16, 16 );
+                case Side.Left: return new Rectangle( 32 + ( int ) ( p * 16 ), 0, 16, 16 );
             }
             return new Rectangle( 16, 0, 16, 16 );
         }
@@ -247,7 +255,7 @@ namespace MisappliedPhysicalities.Game.Objects
             if ( item.Value != null )
             {
                 position = new Vector2( position.X - 32, position.Y + 32 ) + GetRelativeItemPos() * Game1.tileSize;
-                if ( facing.Value == Game1.left || facing.Value == Game1.right )
+                if ( GetActualFacing() == Side.Left || GetActualFacing() == Side.Right )
                     position.Y -= 32;
                 item.Value.drawInMenu( spriteBatch, position, 1f, 1, draw_layer + 0.01f, StackDrawType.Hide, Color.White, true );
             }
@@ -255,15 +263,16 @@ namespace MisappliedPhysicalities.Game.Objects
 
         private Vector2 GetNextTile()
         {
-            switch ( facing.Value )
+            switch ( GetActualFacing() )
             {
-                case Game1.up: return TileLocation + new Vector2( 0, -1 );
-                case Game1.down: return TileLocation + new Vector2( 0, 1 );
-                case Game1.left: return TileLocation + new Vector2( -1, 0 );
-                case Game1.right: return TileLocation + new Vector2( 1, 0 );
+                case Side.Up: return TileLocation + new Vector2( 0, -1 );
+                case Side.Down: return TileLocation + new Vector2( 0, 1 );
+                case Side.Left: return TileLocation + new Vector2( -1, 0 );
+                case Side.Right: return TileLocation + new Vector2( 1, 0 );
             }
             return TileLocation;
         }
+
         public void UpdateEvenWithoutFarmer( GameLocation loc, GameTime time )
         {
             if ( item.Value != null )
@@ -294,7 +303,7 @@ namespace MisappliedPhysicalities.Game.Objects
                             item.Value = null;
                             progress.Value = 0;
 
-                            if ( facing.Value != c.facing.Value )
+                            if ( GetActualFacing() != c.GetActualFacing() )
                                 c.progress.Value = 0.25f;
                         }
                         else
@@ -319,6 +328,42 @@ namespace MisappliedPhysicalities.Game.Objects
                         DropItem( loc );
                         progress.Value = 0;
                     }
+                }
+            }
+        }
+
+        public InOutType GetLogicTypeForSide( Side side )
+        {
+            if ( side == facing.Value || side == facing.Value.GetOpposite() || side == Side.Above )
+                return InOutType.None;
+
+            if ( side == Side.Below )
+                return InOutType.Input;
+
+            return InOutType.Output;
+        }
+
+        public double GetLogicFrom( Side side )
+        {
+            if ( side == facing.Value || side == facing.Value.GetOpposite() ||
+                 side == Side.Above || side == Side.Below )
+                return 0;
+
+            if ( item.Value != null )
+                return 0.5 + progress.Value / 2;
+
+            return 0;
+        }
+
+        public void SendLogicTo( Side side, double signal )
+        {
+            if ( side == Side.Below )
+            {
+                bool oldRev = reversed.Value;
+                reversed.Value = signal >= 0.5;
+                if ( oldRev != reversed.Value && item.Value != null )
+                {
+                    progress.Value = 1 - progress.Value;
                 }
             }
         }

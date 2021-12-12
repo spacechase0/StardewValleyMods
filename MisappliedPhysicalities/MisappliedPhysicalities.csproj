@@ -13,4 +13,8 @@
     <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj" />
     <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="false" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Game\Network\" />
+  </ItemGroup>
 </Project>

@@ -24,7 +24,7 @@ using StardewValley.Network;
 using StardewValley.Tools;
 
 /* Art:
- *  paradigmnomad (drill, xray goggles, cutscene BG and moon animation, big UFO)
+ *  paradigmnomad (most art)
  *  finalbossblues https://finalbossblues.itch.io/dark-dimension-tileset (recolored by paradigmnomad)
  */
 
@@ -33,6 +33,7 @@ namespace MisappliedPhysicalities
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
+        internal static Configuration Config;
         internal static IDynamicGameAssetsApi dga;
         internal static ContentPack dgaPack;
 
@@ -41,10 +42,11 @@ namespace MisappliedPhysicalities
             Log.Monitor = Monitor;
             instance = this;
 
+            Config = Helper.ReadConfig<Configuration>();
+
             Assets.Load( helper.Content );
 
             Helper.ConsoleCommands.Add( "mp_items", "...", OnItemsCommand );
-            Helper.ConsoleCommands.Add( "mp_launch", "...", OnLaunchCommand );
 
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             Helper.Events.Specialized.LoadStageChanged += OnLoadStageChanged;
@@ -58,9 +60,12 @@ namespace MisappliedPhysicalities
         {
             Dictionary<ISalable, int[]> stock = new();
             {
-                stock.Add( new DrillTool(), new int[] { 0, int.MaxValue } );
+                stock.Add( new Drill(), new int[] { 0, int.MaxValue } );
+                stock.Add( new WireCutter(), new int[] { 0, int.MaxValue } );
                 stock.Add( new ConveyorBelt(), new int[] { 0, int.MaxValue } );
                 stock.Add( new Unhopper( Vector2.Zero ), new int[] { 0, int.MaxValue } );
+                stock.Add( new LogicConnector(), new int[] { 0, int.MaxValue } );
+                stock.Add( new LeverBlock(), new int[] { 0, int.MaxValue } );
                 foreach ( var data in dgaPack.GetItems() )
                 {
                     var item = data.ToItem();
@@ -70,21 +75,20 @@ namespace MisappliedPhysicalities
             Game1.activeClickableMenu = new ShopMenu( stock );
         }
 
-        private void OnLaunchCommand( string cmd, string[] args )
-        {
-            Game1.currentMinigame = new LaunchJourney();
-        }
-
         private void OnGameLaunched( object sender, GameLaunchedEventArgs e )
         {
             var sc = Helper.ModRegistry.GetApi< ISpaceCoreApi >( "spacechase0.SpaceCore" );
             sc.RegisterSerializerType( typeof( NullObject ) );
-            sc.RegisterSerializerType( typeof( DrillTool ) );
+            sc.RegisterSerializerType( typeof( Drill ) );
             sc.RegisterSerializerType( typeof( ConveyorBelt ) );
             sc.RegisterSerializerType( typeof( Unhopper ) );
             sc.RegisterSerializerType( typeof( MountainTop ) );
             sc.RegisterSerializerType( typeof( LunarLocation ) );
             sc.RegisterSerializerType( typeof( MoonLandingArea ) );
+            sc.RegisterSerializerType( typeof( WireCutter ) );
+            sc.RegisterSerializerType( typeof( ConnectorBase ) );
+            sc.RegisterSerializerType( typeof( LogicConnector ) );
+            sc.RegisterSerializerType( typeof( LeverBlock ) );
             sc.RegisterCustomProperty( typeof( GameLocation ), "BelowGroundObjects",
                                        typeof( NetVector2Dictionary<StardewValley.Object, NetRef<StardewValley.Object>> ),
                                        AccessTools.Method( typeof( GameLocation_BelowGroundObjects ), nameof( GameLocation_BelowGroundObjects.get_BelowGroundObjects ) ),
@@ -99,6 +103,8 @@ namespace MisappliedPhysicalities
             dgaPack = DynamicGameAssets.Mod.GetPacks().First( cp => cp.GetManifest().UniqueID == ModManifest.UniqueID );
 
             var gmcm = Helper.ModRegistry.GetApi< IGenericModConfigMenuApi >( "spacechase0.GenericModConfigMenu" );
+            gmcm.Register( ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig( Config ) );
+            gmcm.AddKeybindList( ModManifest, () => Config.PlacementModifier, ( kl ) => Config.PlacementModifier = kl, () => Helper.Translation.Get( "config.placement-modifier.name" ), () => Helper.Translation.Get( "config.placement-modifier.tooltip" ) );
         }
 
         private void OnLoadStageChanged( object sender, LoadStageChangedEventArgs e )

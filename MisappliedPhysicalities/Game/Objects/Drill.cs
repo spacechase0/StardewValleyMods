@@ -11,10 +11,10 @@ using StardewValley;
 
 namespace MisappliedPhysicalities.Game.Objects
 {
-    [XmlType( "Mods_spacechase0_MisappliedPhysicalities_DrillToll" )]
-    public class DrillTool : Tool
+    [XmlType( "Mods_spacechase0_MisappliedPhysicalities_Drill" )]
+    public class Drill : Tool
     {
-        public DrillTool()
+        public Drill()
         {
             this.Name = "Drill";
             this.InstantUse = true;
@@ -65,12 +65,12 @@ namespace MisappliedPhysicalities.Game.Objects
 
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
         {
-            spriteBatch.Draw( Assets.DrillTool, location, null, Color.White * transparency, 0, Vector2.Zero, scaleSize * 4, SpriteEffects.None, layerDepth );
+            spriteBatch.Draw( Assets.Drill, location, null, Color.White * transparency, 0, Vector2.Zero, scaleSize * 4, SpriteEffects.None, layerDepth );
         }
 
         public override Item getOne()
         {
-            return new DrillTool();
+            return new Drill();
         }
     }
 }
