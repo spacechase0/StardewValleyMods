@@ -26,5 +26,5 @@
     "options.open-menu-key.name": "ปุ่มเปิดเมนู",
     "options.open-menu-key.desc": "ปุ่มลัดสำหรับเรียกใช้เมนู",
     "options.scroll-speed.name": "ความเร็วในการเลื่อน",
-    "options.scroll-speed.desc": "จำนวนแถวฟิลด์ที่จะออฟเซ็ตเมื่อเลื่อนเมนูการกำหนดค่า"
+    "options.scroll-speed.desc": "จำนวนแถวฟิลด์ที่จะออฟเซ็ต เมื่อเลื่อนเมนูการกำหนดค่า"
 }
