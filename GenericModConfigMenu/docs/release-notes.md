@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Added optional keybind to open the config UI.
+* Added config UI for Generic Mod Config Menu itself.
 * Improved translations. Thanks to ellipszist (added Thai)!
 
 ## 1.6.0

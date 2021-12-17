@@ -89,6 +89,30 @@ namespace GenericModConfigMenu.Framework
             return I18n.GetByKey("config.rebind-key.no-key");
         }
 
+        /// <summary>Get a translation equivalent to "Open menu key".</summary>
+        public static string Options_OpenMenuKey_Name()
+        {
+            return I18n.GetByKey("options.open-menu-key.name");
+        }
+
+        /// <summary>Get a translation equivalent to "A keybind which opens the menu.".</summary>
+        public static string Options_OpenMenuKey_Desc()
+        {
+            return I18n.GetByKey("options.open-menu-key.desc");
+        }
+
+        /// <summary>Get a translation equivalent to "Scroll speed".</summary>
+        public static string Options_ScrollSpeed_Name()
+        {
+            return I18n.GetByKey("options.scroll-speed.name");
+        }
+
+        /// <summary>Get a translation equivalent to "The number of field rows to offset when scrolling a config menu.".</summary>
+        public static string Options_ScrollSpeed_Desc()
+        {
+            return I18n.GetByKey("options.scroll-speed.desc");
+        }
+
 
         /*********
         ** Private methods

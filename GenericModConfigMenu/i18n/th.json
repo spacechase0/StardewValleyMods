@@ -1,4 +1,7 @@
 ﻿{
+    /*********
+    ** Generic config UI
+    *********/
     // button text at the bottom of the in-game options menu
     "button.mod-options": "ตัวเลือก Mod",
 
@@ -14,5 +17,15 @@
     "config.rebind-key.title": "การตั้งค่าปุ่มลัด: {{optionName}}",
     "config.rebind-key.simple-instructions": "ป้อนคีย์ใหม่เพื่อตั้งค่าปุ่มลัดอีกครั้ง",
     "config.rebind-key.combo-instructions": "ป้อนคีย์ใหม่เพื่อตั้งค่าปุ่มลัด",
-    "config.rebind-key.no-key": "(ไม่มี)"
+    "config.rebind-key.no-key": "(ไม่มี)",
+
+
+    /*********
+    ** Config options for Generic Mod Config Menu itself
+    *********/
+    // TODO
+    "options.open-menu-key.name": "Open menu key",
+    "options.open-menu-key.desc": "A keybind which opens the menu.",
+    "options.scroll-speed.name": "Scroll speed",
+    "options.scroll-speed.desc": "The number of field rows to offset when scrolling a config menu."
 }
