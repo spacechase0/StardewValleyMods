@@ -1,0 +1,8 @@
+﻿{
+    "object.Film.name": "ฟิล์ม",
+    "object.Film.description": "สำหรับใช้กับกล้อง",
+    "object.Film.category": "เครื่องมือ",
+
+    "furniture.TestPortrait.name": "ทดสอบภาพบุคคล",
+    "furniture.TestPortrait.description": "เหมียว"
+}

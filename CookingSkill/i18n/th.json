@@ -1,0 +1,19 @@
+﻿{
+    // skill
+    "skill.name": "ทำอาหาร",
+    "skill.level-up-perk": "รับประทานอาหารปรุงเองที่บ้าน +{{bonus}}%",
+
+    // professions
+    "efficient.name": "มีประสิทธิภาพ",
+    "efficient.desc": "โอกาส 15% ที่จะไม่ใช้ส่วนผสม",
+    "gourmet.name": "นักกินดื่ม",
+    "gourmet.desc": "ราคาขาย +20%",
+    "intense-flavors.name": "รสชาติเข้มข้น",
+    "intense-flavors.desc": "เมื่อกินอาหารบัฟจะแข็งแกร่งขึ้น 1 ระดับ\n(พลังงานสูงสุดหรือสนามแม่เหล็ก +20%)",
+    "professional-chef.name": "เชฟมืออาชีพ",
+    "professional-chef.desc": "อาหารที่ปรุงเอง มักได้ระดับเงินเป็นอย่างน้อย",
+    "satisfying.name": "น่าพึงพอใจ",
+    "satisfying.desc": "เมื่อกินเข้าไประยะเวลาบัฟ +25%",
+    "secret-spices.name": "เครื่องเทศลับ",
+    "secret-spices.desc": "ให้บัฟแบบสุ่มสองสามอย่าง เมื่อกินอาหารที่ยังไม่ได้บัฟ"
+}

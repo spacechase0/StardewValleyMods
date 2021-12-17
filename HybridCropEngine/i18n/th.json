@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.scan-everywhere.name": "สแกนทุกที่",
+    "config.scan-everywhere.tooltip": "สแกนทุกหนทุกแห่งเพื่อสร้างพืชลูกผสม\nตั้งค่า False หมายถึงแค่สแกนฟาร์มและเรือนกระจกเท่านั้น"
+}

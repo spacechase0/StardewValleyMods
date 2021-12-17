@@ -1,0 +1,11 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.position-x.name": "ตำแหน่ง X",
+    "config.position-x.tooltip": "ตำแหน่งพิกเซล X ที่จะวาดแถบประสบการณ์ สัมพันธ์กับมุมบนซ้ายของหน้าจอ",
+    "config.position-y.name": "ตำแหน่ง Y",
+    "config.position-y.tooltip": "ตำแหน่งพิกเซล Y ที่จะวาดแถบประสบการณ์ สัมพันธ์กับมุมบนซ้ายของหน้าจอ",
+    "config.toggle-key.name": "ปุ่มสลับ",
+    "config.toggle-key.tooltip": "ปุ่มแสดงหรือซ่อนแถบค่าประสบการณ์ หรือกด Shift พร้อมปุ่มนี้เพื่อย้ายตำแหน่งแถบ"
+}
