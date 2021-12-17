@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Added optional keybind to open the config UI.
+* Improved translations. Thanks to ellipszist (added Thai)!
 
 ## 1.6.0
 Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.

@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Improved translations. Thanks to ellipszist (added Thai)!
+
 ## 1.3.2
 Released 27 November 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 
