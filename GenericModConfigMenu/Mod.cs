@@ -151,7 +151,12 @@ namespace GenericModConfigMenu
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (SpecificModConfigMenu.ActiveConfigMenu is SpecificModConfigMenu menu && e.Button.TryGetKeyboard(out Keys key))
+            // open menu
+            if (Context.IsPlayerFree && this.Config.OpenMenuKey.JustPressed())
+                this.OpenListMenu();
+
+            // pass input to menu
+            else if (SpecificModConfigMenu.ActiveConfigMenu is SpecificModConfigMenu menu && e.Button.TryGetKeyboard(out Keys key))
                 menu.receiveKeyPress(key);
         }
 
