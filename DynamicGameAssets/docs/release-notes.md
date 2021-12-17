@@ -2,6 +2,9 @@
 
 # Release notes
 ## Upcoming release
+* Fixed custom forge issues (thanks to Esca-MMC!):
+  * Fixed error when an entire item stack is consumed.
+  * Fixed issue where wrong result item is displayed if any ingredients require multiple.
 * Improved translations. Thanks to ellipszist (added Thai)!
 
 ## 1.3.2
