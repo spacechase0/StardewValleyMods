@@ -12,7 +12,7 @@
     "config.buttons.cancel": "Cancelar",
     "config.buttons.reset-to-default": "Por Defecto",
     "config.buttons.save": "Guardar",
-    "config.buttons.save-and-close": "Guardar&Cerrar",
+    "config.buttons.save-and-close": "Guardar & Cerrar",
 
     "config.rebind-key.title": "Reasignación de tecla: {{optionName}}",
     "config.rebind-key.simple-instructions": "Pulse una tecla para reasignar",

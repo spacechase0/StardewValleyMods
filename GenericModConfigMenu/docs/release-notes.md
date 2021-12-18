@@ -4,7 +4,10 @@
 ## Upcoming release
 * Added optional keybind to open the config UI.
 * Added config UI for Generic Mod Config Menu itself.
-* The reset button is no longer shown on subpages (since it resets the entire config).
+* Adjusted main buttons UI:
+  * The buttons now auto-align to fit their text for better localization support.
+  * The reset button is no longer shown on subpages (since it resets the entire config).
+  * Increased button area width.
 * Improved translations. Thanks to ellipszist (added Thai)!
 
 ## 1.6.0
