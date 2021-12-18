@@ -1,0 +1,51 @@
+﻿[
+    // Mythicite
+    {
+        "$ItemType": "Object",
+        "ID": "Mythicite Ore",
+        "Category": "Metal",
+        "Texture": "objects.png:4",
+        "SellPrice": 500
+    },
+    {
+        "$ItemType": "Object",
+        "ID": "Mythicite Bar",
+        "Category": "Metal",
+        "Texture": "mythicite-bar.png:0@30, mythicite-bar.png:1..5@6",
+        "SellPrice": 5000
+    },
+    {
+        "$ItemType": "Object",
+        "ID": "Mythicite Ore Minable",
+        "Category": "Junk",
+        "Texture": "objects.png:5",
+    },
+    // PFM - recipe for bar in furnace
+
+    // Soul Sapphire
+    {
+        "$ItemType": "Object",
+        "ID": "Soul Sapphire",
+        "Category": "Gem",
+        "Texture": "objects.png:2",
+        "SellPrice": 10000,
+    },
+
+    // Persistium Dust
+    {
+        "$ItemType": "Object",
+        "ID": "Persistium Dust",
+        "Category": "Gem",
+        "Texture": "objects.png:3",
+        "SellPrice": 750
+    },
+
+    // Stellar Essence
+    {
+        "$ItemType": "Object",
+        "ID": "Stellar Essence",
+        "Category": "MonsterLoot",
+        "Texture": "objects.png:8..11@10",
+        "SellPrice": 2500
+    },
+]

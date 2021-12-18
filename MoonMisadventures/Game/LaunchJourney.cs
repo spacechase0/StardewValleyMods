@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using StardewValley;
 using StardewValley.Minigames;
 
-namespace MisappliedPhysicalities.Game
+namespace MoonMisadventures.Game
 {
     public class LaunchJourney : IMinigame
     {

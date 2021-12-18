@@ -11,9 +11,9 @@ using StardewValley;
 using StardewValley.Tools;
 using xTile;
 
-namespace MisappliedPhysicalities.Game.Locations
+namespace MoonMisadventures.Game.Locations
 {
-    [XmlType( "Mods_spacechase0_MisappliedPhysicalities_LunarLocation" )]
+    [XmlType( "Mods_spacechase0_MoonMisadventuress_LunarLocation" )]
     public class LunarLocation : GameLocation
     {
         public const int SpaceTileIndex = 608;
@@ -22,7 +22,9 @@ namespace MisappliedPhysicalities.Game.Locations
         public LunarLocation( IContentHelper content, string mapPath, string mapName )
         :   base( content.GetActualAssetKey( "assets/" + mapPath + ".tmx" ), mapName )
         {
-            placeSpaceTiles();
+            PlaceSpaceTiles();
+
+            // TODO: Net event for breaking edges
         }
 
         protected override void resetLocalState()
@@ -61,13 +63,13 @@ namespace MisappliedPhysicalities.Game.Locations
                     case 266: dir = new Vector2( 0, 1 ); break;
                 }
 
-                SpaceShared.Log.Debug( "meow? " + tile + " " + dir );
+                //SpaceShared.Log.Debug( "meow? " + tile + " " + dir );
 
                 if ( dir != Vector2.Zero )
                 {
                     int i = 1;
                     bool placedTiles = false;
-                    for ( ; i <= 3; ++i )
+                    for ( ; i <= Math.Max( t.UpgradeLevel, 3 ); ++i )
                     {
                         int ii = i;
                         var newTile = new Vector2( tileX, tileY ) + dir * i;
@@ -115,7 +117,7 @@ namespace MisappliedPhysicalities.Game.Locations
             return base.performToolAction( t, tileX, tileY );
         }
 
-        protected void placeSpaceTiles()
+        public void PlaceSpaceTiles()
         {
             if ( map.GetLayer( "Back1" ) == null )
             {

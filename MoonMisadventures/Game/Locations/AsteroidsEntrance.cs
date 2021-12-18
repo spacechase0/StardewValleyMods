@@ -10,15 +10,25 @@ using StardewValley;
 using StardewValley.Tools;
 using xTile.Dimensions;
 
-namespace MisappliedPhysicalities.Game.Locations
+namespace MoonMisadventures.Game.Locations
 {
-    [XmlType( "Mods_spacechase0_MisappliedPhysicalities_AsteroidsEntrance" )]
+    [XmlType( "Mods_spacechase0_MoonMisadventures_AsteroidsEntrance" )]
     public class AsteroidsEntrance : LunarLocation
     {
         public AsteroidsEntrance() { }
         public AsteroidsEntrance( IContentHelper content )
-        :   base( content, "MoonAsteroidsEntrance", "Custom_MP_MoonAsteroidsEntrance" )
+        :   base( content, "MoonAsteroidsEntrance", "Custom_MM_MoonAsteroidsEntrance" )
         {
+        }
+
+        protected override void resetLocalState()
+        {
+            base.resetLocalState();
+
+            if ( Game1.player.getTileY() == 1 )
+            {
+                Game1.player.Position = new Vector2( 25.5f * Game1.tileSize, 19 * Game1.tileSize );
+            }
         }
 
         public override bool performAction( string action, Farmer who, Location tileLocation )
@@ -42,7 +52,7 @@ namespace MisappliedPhysicalities.Game.Locations
                 switch ( qa )
                 {
                     case "GargoyleEntrance_Yes":
-                        performTouchAction( "MagicWarp FarmHouse 5 7"/*"MagicWarp Custom_MP_AsteroidsDungeon0 50 50"*/, Game1.player.getTileLocation() );
+                        performTouchAction( "MagicWarp " + AsteroidsDungeon.BaseLocationName + "1 0 0", Game1.player.getTileLocation() );
                         return true;
                 }
             }

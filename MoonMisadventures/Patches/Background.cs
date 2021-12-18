@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
-using MisappliedPhysicalities.Game;
+using MoonMisadventures.Game;
 using StardewValley;
 
-namespace MisappliedPhysicalities.Patches
+namespace MoonMisadventures.Patches
 {
     [HarmonyPatch( typeof( Background ), nameof( Background.update ) )]
     public static class BackgroundUpdatePatch

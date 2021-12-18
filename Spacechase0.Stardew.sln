@@ -146,10 +146,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SuperHopper", "SuperHopper\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DGAAutomate", "DGAAutomate\DGAAutomate.csproj", "{B6E809A4-263F-4912-905A-00175CFB8074}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MisappliedPhysicalities", "MisappliedPhysicalities\MisappliedPhysicalities.csproj", "{43EDE3D9-2062-4F79-B581-708FFAF9D195}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MisappliedPhysicalities", "MisappliedPhysicalities\MisappliedPhysicalities.csproj", "{43EDE3D9-2062-4F79-B581-708FFAF9D195}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonMisadventures", "MoonMisadventures\MoonMisadventures.csproj", "{014B4846-0E6C-4C73-B851-0A560D36AEEE}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SpaceSharedPatching\SpaceSharedPatching.projitems*{014b4846-0e6c-4c73-b851-0a560d36aeee}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{014b4846-0e6c-4c73-b851-0a560d36aeee}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{023c7f23-485a-4efc-bc0b-37f0c0dea930}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{023c7f23-485a-4efc-bc0b-37f0c0dea930}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{03be86d2-dad8-4f43-aa94-9e27b654f449}*SharedItemsImports = 5
@@ -495,6 +499,10 @@ Global
 		{43EDE3D9-2062-4F79-B581-708FFAF9D195}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43EDE3D9-2062-4F79-B581-708FFAF9D195}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43EDE3D9-2062-4F79-B581-708FFAF9D195}.Release|Any CPU.Build.0 = Release|Any CPU
+		{014B4846-0E6C-4C73-B851-0A560D36AEEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{014B4846-0E6C-4C73-B851-0A560D36AEEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{014B4846-0E6C-4C73-B851-0A560D36AEEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{014B4846-0E6C-4C73-B851-0A560D36AEEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

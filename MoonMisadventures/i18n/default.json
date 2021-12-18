@@ -1,0 +1,19 @@
+﻿{
+    "tool.axe.radioactive": "Radioactive Axe",
+    "tool.axe.mythicite": "Mythicite Axe",
+    "tool.wcan.radioactive": "Radioactive Watering Can",
+    "tool.wcan.mythicite": "Mythicite Watering Can",
+    "tool.pick.radioactive": "Radioactive Pickaxe",
+    "tool.pick.mythicite": "Mythicite Pickaxe",
+    "tool.hoe.radioactive": "Radioactive Hoe",
+    "tool.hoe.mythicite": "Mythicite Hoe",
+
+    "message.ufo.repair": "Repair the UFO for 25 Radioactive Bars and 1 Galaxy Soul?",
+    "message.ufo.repair.lacking": "You don't have enough materials.",
+    "message.ufo.travel": "Board the UFO?",
+    "message.gargoyle": "Pet the... gargoyle? Who knows what will happen?",
+    "message.dirt-tutorial": "If only you had a tool to break the end off to continue forward...",
+    "message.lunar-teleporter-offline": "It looks offline. Perhaps it needs mythicite ore.",
+
+    "monster.boom-eye.name": "Boom Eye",
+}

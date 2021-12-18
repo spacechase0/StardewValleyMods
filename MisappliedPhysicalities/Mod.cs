@@ -25,7 +25,6 @@ using StardewValley.Tools;
 
 /* Art:
  *  paradigmnomad (most art)
- *  finalbossblues https://finalbossblues.itch.io/dark-dimension-tileset (recolored by paradigmnomad)
  */
 
 namespace MisappliedPhysicalities
@@ -49,8 +48,6 @@ namespace MisappliedPhysicalities
             Helper.ConsoleCommands.Add( "mp_items", "...", OnItemsCommand );
 
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
-            Helper.Events.Specialized.LoadStageChanged += OnLoadStageChanged;
-            Helper.Events.Display.MenuChanged += OnMenuChanged;
 
             var harmony = new Harmony( ModManifest.UniqueID );
             harmony.PatchAll();
@@ -82,9 +79,6 @@ namespace MisappliedPhysicalities
             sc.RegisterSerializerType( typeof( Drill ) );
             sc.RegisterSerializerType( typeof( ConveyorBelt ) );
             sc.RegisterSerializerType( typeof( Unhopper ) );
-            sc.RegisterSerializerType( typeof( MountainTop ) );
-            sc.RegisterSerializerType( typeof( LunarLocation ) );
-            sc.RegisterSerializerType( typeof( MoonLandingArea ) );
             sc.RegisterSerializerType( typeof( WireCutter ) );
             sc.RegisterSerializerType( typeof( ConnectorBase ) );
             sc.RegisterSerializerType( typeof( LogicConnector ) );
@@ -105,57 +99,6 @@ namespace MisappliedPhysicalities
             var gmcm = Helper.ModRegistry.GetApi< IGenericModConfigMenuApi >( "spacechase0.GenericModConfigMenu" );
             gmcm.Register( ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig( Config ) );
             gmcm.AddKeybindList( ModManifest, () => Config.PlacementModifier, ( kl ) => Config.PlacementModifier = kl, () => Helper.Translation.Get( "config.placement-modifier.name" ), () => Helper.Translation.Get( "config.placement-modifier.tooltip" ) );
-        }
-
-        private void OnLoadStageChanged( object sender, LoadStageChangedEventArgs e )
-        {
-            if ( e.NewStage == LoadStage.CreatedInitialLocations || e.NewStage == LoadStage.SaveAddedLocations )
-            {
-                Game1.locations.Add( new MountainTop( Helper.Content ) );
-                Game1.locations.Add( new MoonLandingArea( Helper.Content ) );
-                Game1.locations.Add( new AsteroidsEntrance( Helper.Content ) );
-            }
-        }
-
-        private void OnMenuChanged( object sender, MenuChangedEventArgs e )
-        {
-            if ( !( e.NewMenu is ShopMenu shop ) )
-                return;
-
-            if ( shop.storeContext != "ClintUpgrade" )
-                return;
-
-            Tool orig = Game1.player.getToolFromName( "Axe" );
-            if ( orig != null && ( orig.UpgradeLevel == 4 || orig.UpgradeLevel == 5 ) )
-            {
-                Tool tool = new Axe() { UpgradeLevel = orig.UpgradeLevel + 1 };
-                shop.forSale.Add( tool );
-                shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000 } );
-            }
-
-            orig = Game1.player.getToolFromName( "Watering Can" );
-            if ( orig != null && ( orig.UpgradeLevel == 4 || orig.UpgradeLevel == 5 ) )
-            {
-                Tool tool = new WateringCan() { UpgradeLevel = orig.UpgradeLevel + 1 };
-                shop.forSale.Add( tool );
-                shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000 } );
-            }
-
-            orig = Game1.player.getToolFromName( "Pickaxe" );
-            if ( orig != null && ( orig.UpgradeLevel == 4 || orig.UpgradeLevel == 5 ) )
-            {
-                Tool tool = new Pickaxe() { UpgradeLevel = orig.UpgradeLevel + 1 };
-                shop.forSale.Add( tool );
-                shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000 } );
-            }
-
-            orig = Game1.player.getToolFromName( "Hoe" );
-            if ( orig != null && ( orig.UpgradeLevel == 4 || orig.UpgradeLevel == 5 ) )
-            {
-                Tool tool = new Hoe() { UpgradeLevel = orig.UpgradeLevel + 1 };
-                shop.forSale.Add( tool );
-                shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000 } );
-            }
         }
     }
 }

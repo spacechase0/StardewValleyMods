@@ -7,10 +7,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 
-namespace MisappliedPhysicalities.Game
+namespace MoonMisadventures.Game
 {
     public class SpaceBackground : Background
     {
+        private Vector2 offset = Vector2.Zero;
         private Rectangle starTexRect = new Rectangle(0, 1453, 639, 195);
 
         public SpaceBackground()
@@ -20,7 +21,7 @@ namespace MisappliedPhysicalities.Game
 
         public void Update( xTile.Dimensions.Rectangle viewport )
         {
-            // ...
+            //offset += new Vector2( 25, 0 );
         }
 
         public void Draw( SpriteBatch b )
@@ -29,7 +30,7 @@ namespace MisappliedPhysicalities.Game
             {
                 Color[] tints = new[]
                 {
-                    new Color( 255, 220, 220 ),
+                    new Color( 255, 200, 200 ),
                     new Color( 170, 255, 170 ),
                     new Color( 230, 230, 255 )
                 };
@@ -47,8 +48,8 @@ namespace MisappliedPhysicalities.Game
 
                 for ( int i = 0; i < 3; ++i )
                 {
-                    float sx = -( ( Game1.viewport.X * posMult[ i ] + posMods[ i ].X ) % ( starTexRect.Width * Game1.pixelZoom ) );
-                    float sy = -( ( Game1.viewport.Y * posMult[ i ] + posMods[ i ].Y ) % ( starTexRect.Height * Game1.pixelZoom ));
+                    float sx = -( ( ( Game1.viewport.X + offset.X ) * posMult[ i ] + posMods[ i ].X ) % ( starTexRect.Width * Game1.pixelZoom ) );
+                    float sy = -( ( ( Game1.viewport.Y + offset.Y ) * posMult[ i ] + posMods[ i ].Y ) % ( starTexRect.Height * Game1.pixelZoom ));
                     for ( int ix = -1; ix <= incrx + 1; ++ix )
                     {
                         for ( int iy = -1; iy <= incry + 1; ++iy )

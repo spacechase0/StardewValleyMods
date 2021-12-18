@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
 
-namespace MisappliedPhysicalities.Game.Locations
+namespace MoonMisadventures.Game.Locations
 {
-    [XmlType( "Mods_spacechase0_MisappliedPhysicalities_MoonLandingArea" )]
+    [XmlType( "Mods_spacechase0_MoonMisadventures_MoonLandingArea" )]
     public class MoonLandingArea : LunarLocation
     {
         private readonly string ufoTexPath;

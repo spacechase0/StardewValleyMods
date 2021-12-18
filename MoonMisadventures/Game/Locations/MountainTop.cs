@@ -10,9 +10,9 @@ using StardewModdingAPI;
 using StardewValley;
 using xTile;
 
-namespace MisappliedPhysicalities.Game.Locations
+namespace MoonMisadventures.Game.Locations
 {
-    [XmlType("Mods_spacechase0_MisappliedPhysicalities_MountainTop")]
+    [XmlType( "Mods_spacechase0_MoonMisadventures_MountainTop" )]
     public class MountainTop : GameLocation
     {
         private readonly string ufoTexPath;
@@ -21,7 +21,7 @@ namespace MisappliedPhysicalities.Game.Locations
 
         public MountainTop() { }
         public MountainTop( IContentHelper content )
-        : base( content.GetActualAssetKey( "assets/InactiveCaldera.tmx" ), "Custom_MP_MountainTop" )
+        : base( content.GetActualAssetKey( "assets/InactiveCaldera.tmx" ), "Custom_MM_MountainTop" )
         {
             ufoTexPath = content.GetActualAssetKey( "assets/ufo-big.png" );
         }

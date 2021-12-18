@@ -2,14 +2,6 @@
     "config.placement-modifier.name": "Placement Modifier Key",
     "config.placement-modifier.tooltip": "Used when placing some items.",
 
-    "tool.axe.radioactive": "Radioactive Axe",
-    "tool.axe.mythicite": "Mythicite Axe",
-    "tool.wcan.radioactive": "Radioactive Watering Can",
-    "tool.wcan.mythicite": "Mythicite Watering Can",
-    "tool.pick.radioactive": "Radioactive Pickaxe",
-    "tool.pick.mythicite": "Mythicite Pickaxe",
-    "tool.hoe.radioactive": "Radioactive Hoe",
-    "tool.hoe.mythicite": "Mythicite Hoe",
     "tool.drill.name": "Drill",
     "tool.drill.description": "It can clear space underground.\nMake sure you have your x-ray goggles on!",
     "tool.wire-cutter.name": "Wire Cutter",
@@ -20,11 +12,6 @@
     "message.wire-cutter.wrong-wire": "The metal bar selected is incorrect for this connector.",
     "message.wire-cutter.prep": "Preparing connection...",
     "message.wire-cutter.placed": "Placed connection!",
-    "message.ufo.repair": "Repair the UFO for 25 Radioactive Bars and 1 Galaxy Soul?",
-    "message.ufo.repair.lacking": "You don't have enough materials.",
-    "message.ufo.travel": "Board the UFO?",
-    "message.gargoyle": "Pet the... gargoyle? Who knows what will happen?",
-    "message.dirt-tutorial": "If only you had a tool to break the end off to continue forward...",
 
     "item.conveyor.name": "Conveyor Belt",
     "item.conveyor.description": "Can move items around.\nCan be placed underground (when wearing x-ray goggles) or on scaffolding.\nLogic connectors below it can reverse the direction.\nlogic connectors on the sides will detect items on the conveyor.",
@@ -33,5 +20,5 @@
     "item.logic-connector.name": "Logic Connector",
     "item.logic-connector.description": "Use wire cutters with iron to connect logic connectors.\nA connector will connect to the object in the direction you are facing.\nIf holding the run button, it will connect below.\nIf holding the Misapplied Physicalities Placement Modifier button\n(left ctrl by default, changeable in GMCM), it will connect above.",
     "item.lever-block.name": "Lever Block",
-    "item.lever-block.description": "A block sending a logic signal on all sides.\n0 if lever is facing left, 1 if lever is facing right."
+    "item.lever-block.description": "A block sending a logic signal on all sides.\n0 if lever is facing left, 1 if lever is facing right.",
 }

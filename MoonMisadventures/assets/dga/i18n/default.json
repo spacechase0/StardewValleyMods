@@ -1,0 +1,15 @@
+﻿{
+    "object.Mythicite Ore.name": "Mythicite Ore",
+    "object.Mythicite Ore.description": "Ore for a mythical metal.",
+    "object.Mythicite Bar.name": "Mythicite Bar",
+    "object.Mythicite Bar.description": "A mythical metal in bar form.",
+    "object.Mythicite Ore Minable.name": "Mythicite Ore (Minable)",
+    "object.Mythicite Ore Minable.description": "You shouldn't have this.",
+    "object.Soul Sapphire.name": "Soul Sapphire",
+    "object.Soul Sapphire.description": "A mystical sapphire, capable of revealing ones innermost desires.",
+    "object.Persistium Dust.name": "Persistium Dust",
+    "object.Persistium Dust.description": "An esoteric pile of dust.",
+    "object.Persistium Dust.category": "Dust",
+    "object.Stellar Essence.name": "Stellar Essence",
+    "object.Stellar Essence.description": "Comes from deep within a star. What's it doing here?'",
+}

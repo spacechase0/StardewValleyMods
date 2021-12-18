@@ -10,7 +10,7 @@ using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 
-namespace MisappliedPhysicalities.Patches
+namespace MoonMisadventures.Patches
 {
     [HarmonyPatch( typeof( Tree ), nameof( Tree.performToolAction ) )]
     public static class TreeToolActionPatch
