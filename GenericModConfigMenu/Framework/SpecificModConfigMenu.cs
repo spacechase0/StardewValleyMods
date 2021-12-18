@@ -486,7 +486,8 @@ namespace GenericModConfigMenu.Framework
                 String = I18n.Config_Buttons_ResetToDefault(),
                 Bold = true,
                 LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 200, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.ResetConfig()
+                Callback = _ => this.ResetConfig(),
+                ForceHide = () => this.IsSubPage
             });
             this.Ui.AddChild(new Label
             {

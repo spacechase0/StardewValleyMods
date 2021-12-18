@@ -43,19 +43,22 @@ namespace SpaceShared.UI
         }
 
         /// <inheritdoc />
-        public override void Update(bool hidden = false)
+        public override void Update(bool isOffScreen = false)
         {
-            base.Update(hidden);
+            base.Update(isOffScreen);
             if (this.UpdateChildren)
             {
                 foreach (var element in this.ChildrenImpl)
-                    element.Update(hidden);
+                    element.Update(isOffScreen);
             }
         }
 
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
+            if (this.IsHidden())
+                return;
+
             foreach (var child in this.ChildrenImpl)
             {
                 if (child == this.RenderLast)

@@ -15,9 +15,9 @@ namespace SpaceShared.UI
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Update(bool hidden = false)
+        public override void Update(bool isOffScreen = false)
         {
-            base.Update(hidden || this.Obscured);
+            base.Update(isOffScreen || this.Obscured);
         }
 
         /// <inheritdoc />

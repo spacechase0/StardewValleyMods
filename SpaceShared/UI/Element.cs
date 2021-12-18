@@ -36,14 +36,19 @@ namespace SpaceShared.UI
         public bool Clicked => this.Hover && this.ClickGestured;
         public virtual string ClickedSound => null;
 
+        /// <summary>Whether to disable the element so it's invisible and can't be interacted with.</summary>
+        public Func<bool> ForceHide;
+
 
         /*********
         ** Public methods
         *********/
         /// <summary>Update the element for the current game tick.</summary>
-        /// <param name="hidden">Whether the element is currently hidden.</param>
-        public virtual void Update(bool hidden = false)
+        /// <param name="isOffScreen">Whether the element is currently off-screen.</param>
+        public virtual void Update(bool isOffScreen = false)
         {
+            bool hidden = this.IsHidden(isOffScreen);
+
             if (hidden)
             {
                 this.Hover = false;
@@ -86,6 +91,13 @@ namespace SpaceShared.UI
             if (this.Parent == null)
                 throw new Exception("Element must have a parent.");
             return this.Parent.GetRoot();
+        }
+
+        /// <summary>Get whether the element is hidden based on <see cref="ForceHide"/> or its position relative to the screen.</summary>
+        /// <param name="isOffScreen">Whether the element is currently off-screen.</param>
+        public bool IsHidden(bool isOffScreen = false)
+        {
+            return isOffScreen || this.ForceHide?.Invoke() == true;
         }
     }
 }

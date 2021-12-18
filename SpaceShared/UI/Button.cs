@@ -43,9 +43,9 @@ namespace SpaceShared.UI
         }
 
         /// <inheritdoc />
-        public override void Update(bool hidden = false)
+        public override void Update(bool isOffScreen = false)
         {
-            base.Update(hidden);
+            base.Update(isOffScreen);
 
             this.Scale = this.Hover ? Math.Min(this.Scale + 0.013f, 1.083f) : Math.Max(this.Scale - 0.013f, 1f);
 
@@ -56,6 +56,9 @@ namespace SpaceShared.UI
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
+            if (this.IsHidden())
+                return;
+
             Vector2 origin = new Vector2(this.Texture.Width / 4f, this.Texture.Height / 2f);
             b.Draw(this.Texture, this.Position + origin, this.Hover ? this.HoverTextureRect : this.IdleTextureRect, Color.White, 0f, origin, this.Scale, SpriteEffects.None, 0f);
             Game1.activeClickableMenu?.drawMouse(b);

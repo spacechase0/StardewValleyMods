@@ -78,10 +78,10 @@ namespace SpaceShared.UI
         }
 
         /// <inheritdoc />
-        public override void Update(bool hidden = false)
+        public override void Update(bool isOffScreen = false)
         {
-            base.Update(hidden);
-            if (hidden)
+            base.Update(isOffScreen);
+            if (this.IsHidden(isOffScreen))
                 return;
 
             int ir = 0;
@@ -100,7 +100,7 @@ namespace SpaceShared.UI
             this.Scrollbar.Update();
         }
 
-        public void ForceUpdateEvenHidden(bool hidden = false)
+        public void ForceUpdateEvenHidden(bool isOffScreen = false)
         {
             int ir = 0;
             foreach (var row in this.Rows)
@@ -108,16 +108,19 @@ namespace SpaceShared.UI
                 foreach (var element in row)
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.ScrollPercent * this.Rows.Count * this.RowHeight);
-                    element.Update(hidden || element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y);
+                    element.Update(isOffScreen || element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y);
                 }
                 ++ir;
             }
-            this.Scrollbar.Update(hidden);
+            this.Scrollbar.Update(isOffScreen);
         }
 
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
+            if (this.IsHidden())
+                return;
+
             // calculate draw area
             var backgroundArea = new Rectangle((int)this.Position.X - 32, (int)this.Position.Y - 32, (int)this.Size.X + 64, (int)this.Size.Y + 64);
             int contentPadding = 12;

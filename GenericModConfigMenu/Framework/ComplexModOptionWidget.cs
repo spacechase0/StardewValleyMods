@@ -28,7 +28,7 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
-        public override void Update(bool hidden = false)
+        public override void Update(bool isOffScreen = false)
         {
             // intentionally not calling Element.Update
         }
@@ -36,6 +36,9 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
+            if (this.IsHidden())
+                return;
+
             this.ModOption.Draw(b, this.Position);
         }
     }
