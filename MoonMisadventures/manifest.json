@@ -1,10 +1,10 @@
 ﻿{
-    "Name": "Misapplied Physicalities",
+    "Name": "Moon Misadventures",
     "Author": "spacechase0",
     "Version": "1.0.0",
     "Description": "...",
-    "UniqueID": "spacechase0.MisappliedPhysicalities",
-    "EntryDll": "MisappliedPhysicalities.dll",
+    "UniqueID": "spacechase0.MoonMisadventures",
+    "EntryDll": "MoonMisadventures.dll",
     "MinimumApiVersion": "3.12.5",
     "UpdateKeys": [ "Nexus:" ],
     "Dependencies": [

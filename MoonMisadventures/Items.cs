@@ -9,7 +9,7 @@ namespace MoonMisadventures
 {
     internal static class Items
     {
-        public const string MythiciteOreId = "spacechase0.MisappliedPhysicalities/Mythicite Ore";
-        public const string MythiciteOreMinableId = "spacechase0.MisappliedPhysicalities/Mythicite Ore Minable";
+        public const string MythiciteOreId = "spacechase0.MoonMisadventures/Mythicite Ore";
+        public const string MythiciteOreMinableId = "spacechase0.MoonMisadventures/Mythicite Ore Minable";
     }
 }

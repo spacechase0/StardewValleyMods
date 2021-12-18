@@ -21,7 +21,7 @@ namespace MoonMisadventures.Game.Locations
 
         public MountainTop() { }
         public MountainTop( IContentHelper content )
-        : base( content.GetActualAssetKey( "assets/InactiveCaldera.tmx" ), "Custom_MM_MountainTop" )
+        : base( content.GetActualAssetKey( "assets/maps/InactiveCaldera.tmx" ), "Custom_MM_MountainTop" )
         {
             ufoTexPath = content.GetActualAssetKey( "assets/ufo-big.png" );
         }

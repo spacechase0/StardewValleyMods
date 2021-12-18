@@ -499,7 +499,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             Map[] pieceMaps = new Map[ pieceSizes.Length ];
             for ( int i = 0; i < pieceSizes.Length; ++i )
             {
-                pieceMaps[ i ] = Game1.game1.xTileContent.Load<Map>( Mod.instance.Helper.Content.GetActualAssetKey( "assets/MoonPieces" + pieceSizes[ i ] + ".tmx" ) );
+                pieceMaps[ i ] = Game1.game1.xTileContent.Load<Map>( Mod.instance.Helper.Content.GetActualAssetKey( "assets/maps/MoonPieces" + pieceSizes[ i ] + ".tmx" ) );
             }
             int featureCounter = 0;
             List<Vector2> stoneSpots = new();
@@ -666,6 +666,8 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                     }
                 }
             }
+
+            location.asteroidChance.Value = 0.1f + ( float ) rand.NextDouble() * 0.3f;
 
             location.loadLights();
         }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MoonMisadventures.Game.Projectiles;
 using Netcode;
 using StardewValley;
 using StardewValley.Monsters;
@@ -24,7 +25,7 @@ namespace MoonMisadventures.Game.Monsters
         {
             Name = "BoomEye";
             ReloadShoot();
-            Health = MaxHealth = 325 + Game1.random.Next( 225 );
+            Health = MaxHealth = 100 + Game1.random.Next( 200 );
             DamageToFarmer = 0;
             isGlider.Value = true;
             // todo - loot
@@ -45,7 +46,7 @@ namespace MoonMisadventures.Game.Monsters
 
         public override void reloadSprite()
         {
-            Sprite = new AnimatedSprite( Mod.instance.Helper.Content.GetActualAssetKey( "assets/monster-eyes.png" ), 0, 16, 32 );
+            Sprite = new AnimatedSprite( Mod.instance.Helper.Content.GetActualAssetKey( "assets/enemies/boom-eye.png" ), 0, 16, 32 );
         }
 
         public void ReloadShoot()
@@ -85,8 +86,9 @@ namespace MoonMisadventures.Game.Monsters
             {
                 var dir = Position - Player.Position;
                 dir.Normalize();
-                xVelocity = dir.X * 3;
-                yVelocity = dir.Y * 3;
+                float force = 3 + Game1.recentMultiplayerRandom.Next( 4 );
+                xVelocity = dir.X * force;
+                yVelocity = dir.Y * force;
 
                 currentLocation.projectiles.Add( new BoomProjectile( Position, Player.Position ) );
 
@@ -96,7 +98,7 @@ namespace MoonMisadventures.Game.Monsters
 
         protected override void updateAnimation( GameTime time )
         {
-            Sprite.Animate( time, 0, 80, 0.1f );
+            Sprite.Animate( time, 0, 80, 100 );
         }
 
         public override void draw( SpriteBatch b )

@@ -137,7 +137,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
         protected void PlaceMinableAt( AsteroidsDungeon location, Random rand, int sx, int sy )
         {
             double r = rand.NextDouble();
-            if ( r < 0.6 )
+            if ( r < 0.65 )
             {
                 location.netObjects.Add( new Vector2( sx, sy ), new StardewValley.Object( new Vector2( sx, sy ), rand.NextDouble() < 0.5 ? 846 : 847, 1 )
                 {
@@ -147,7 +147,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             }
             else if ( r < 0.85 )
             {
-                int[] ores = new int[] { 95, 849, 850, 764, 765, int.MaxValue, int.MaxValue, int.MaxValue };
+                int[] ores = new int[] { 95, 849, 850, 764, 765, int.MaxValue, int.MaxValue };
                 int[] breaks = new int[] { 15, 6, 8, 10, 12 };
                 int ore_ = rand.Next( ores.Length );
                 int ore = ores[ ore_ ];

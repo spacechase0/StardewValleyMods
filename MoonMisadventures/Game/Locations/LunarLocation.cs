@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
+using MoonMisadventures.Game.Projectiles;
+using Netcode;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
@@ -18,11 +20,20 @@ namespace MoonMisadventures.Game.Locations
     {
         public const int SpaceTileIndex = 608;
 
+        public NetFloat asteroidChance = new();
+
         public LunarLocation() { }
         public LunarLocation( IContentHelper content, string mapPath, string mapName )
-        :   base( content.GetActualAssetKey( "assets/" + mapPath + ".tmx" ), mapName )
+        :   base( content.GetActualAssetKey( "assets/maps/" + mapPath + ".tmx" ), mapName )
         {
             PlaceSpaceTiles();
+
+        }
+
+        protected override void initNetFields()
+        {
+            base.initNetFields();
+            NetFields.AddFields( asteroidChance );
 
             // TODO: Net event for breaking edges
         }
@@ -36,6 +47,45 @@ namespace MoonMisadventures.Game.Locations
         public override void cleanupBeforePlayerExit()
         {
             Game1.background = null;
+        }
+
+        public override void updateEvenIfFarmerIsntHere( GameTime time, bool ignoreWasUpdatedFlush = false )
+        {
+            base.updateEvenIfFarmerIsntHere( time, ignoreWasUpdatedFlush );
+
+            if ( !Context.CanPlayerMove )
+                return;
+
+            if ( asteroidChance.Value > 0 && Game1.recentMultiplayerRandom.NextDouble() < asteroidChance.Value )
+            {
+                int mw = map.Layers[ 0 ].DisplayWidth;
+                int mh = map.Layers[ 0 ].DisplayHeight;
+
+                float spot = ( float ) Game1.recentMultiplayerRandom.NextDouble() * ( mw * 2 + mh * 2 );
+                Vector2 pos = Vector2.Zero;
+                if ( spot > mw * 2 + mh )
+                    pos = new Vector2( 0, spot - ( mw * 2 + mh ) );
+                else if ( spot > mw + mh )
+                    pos = new Vector2( spot - ( mw + mh ), mh );
+                else if ( spot > mw )
+                    pos = new Vector2( mw, spot - mw );
+                else
+                    pos = new Vector2( spot, 0 );
+
+                int angle = 0;
+                if ( new Rectangle( 0, 0, mw / 2, mh / 2 ).Contains( pos ) )
+                    angle = Game1.recentMultiplayerRandom.Next( 270, 360 );
+                else if ( new Rectangle( mw / 2, 0, mw / 2, mh / 2 ).Contains( pos ) )
+                    angle = Game1.recentMultiplayerRandom.Next( 180, 270 );
+                else if ( new Rectangle( 0, mh / 2, mw / 2, mh / 2 ).Contains( pos ) )
+                    angle = Game1.recentMultiplayerRandom.Next( 0, 90 );
+                else if ( new Rectangle( mw / 2, mh / 2, mw / 2, mh / 2 ).Contains( pos ) )
+                    angle = Game1.recentMultiplayerRandom.Next( 90, 180 );
+
+                float rad = MathHelper.ToRadians( angle );
+                Vector2 velAngle = new Vector2( ( float ) Math.Cos( angle ), ( float ) Math.Sin( angle ) );
+                projectiles.Add( new AsteroidProjectile( pos, velAngle ) );
+            }
         }
 
         public override string checkForBuriedItem( int xLocation, int yLocation, bool explosion, bool detectOnly, Farmer who )

@@ -10,6 +10,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MoonMisadventures.Game;
 using MoonMisadventures.Game.Locations;
+using MoonMisadventures.Game.Monsters;
+using MoonMisadventures.Game.Projectiles;
 using Netcode;
 using SpaceShared;
 using SpaceShared.APIs;
@@ -57,6 +59,11 @@ namespace MoonMisadventures
             sc.RegisterSerializerType( typeof( MountainTop ) );
             sc.RegisterSerializerType( typeof( LunarLocation ) );
             sc.RegisterSerializerType( typeof( MoonLandingArea ) );
+            sc.RegisterSerializerType( typeof( AsteroidsEntrance ) );
+            sc.RegisterSerializerType( typeof( AsteroidsDungeon ) );
+            sc.RegisterSerializerType( typeof( BoomEye ) );
+            sc.RegisterSerializerType( typeof( BoomProjectile ) );
+            sc.RegisterSerializerType( typeof( AsteroidProjectile ) );
 
             dga = Helper.ModRegistry.GetApi<IDynamicGameAssetsApi>( "spacechase0.DynamicGameAssets" );
             dga.AddEmbeddedPack( this.ModManifest, Path.Combine( Helper.DirectoryPath, "assets", "dga" ) );

@@ -19,6 +19,9 @@ namespace MoonMisadventures
 
         public static Texture2D Ufo;
 
+        public static Texture2D AsteroidsSmall;
+        public static Texture2D AsteroidsBig;
+
         internal static void Load( IContentHelper content )
         {
             Assets.RadioactiveTools = content.Load<Texture2D>( "assets/tools-radioactive.png" );
@@ -29,6 +32,9 @@ namespace MoonMisadventures
             Assets.LaunchMoon = content.Load<Texture2D>( "assets/moon.png" );
 
             Assets.Ufo = content.Load<Texture2D>( "assets/ufo-big.png" );
+
+            Assets.AsteroidsSmall = content.Load<Texture2D>( "assets/asteroids-small.png" );
+            Assets.AsteroidsBig = content.Load<Texture2D>( "assets/asteroids-large.png" );
         }
     }
 }

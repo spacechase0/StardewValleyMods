@@ -9,7 +9,6 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MisappliedPhysicalities.Game;
-using MisappliedPhysicalities.Game.Locations;
 using MisappliedPhysicalities.Game.Objects;
 using MisappliedPhysicalities.VirtualProperties;
 using Netcode;

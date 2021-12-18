@@ -11,7 +11,7 @@ using StardewValley;
 using StardewValley.Projectiles;
 using StardewValley.TerrainFeatures;
 
-namespace MoonMisadventures.Game.Monsters
+namespace MoonMisadventures.Game.Projectiles
 {
     [XmlType( "Mods_spacechase0_MoonMisadventures_BoomProjectile" )]
     public class BoomProjectile : Projectile

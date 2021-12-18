@@ -237,7 +237,7 @@
  <objectgroup id="6" name="Back">
   <object id="12" name="TileData" x="32" y="448" width="16" height="16">
    <properties>
-    <property name="TouchAction" value="Warp Custom_MP_MoonAsteroidsDungeonCave{l}_{c}"/>
+    <property name="TouchAction" value="Warp Custom_MM_MoonAsteroidsDungeonCave{l}_{c}"/>
    </properties>
   </object>
  </objectgroup>
@@ -247,19 +247,19 @@
     <property name="Action" value="MoonMiniBoss"/>
    </properties>
   </object>
-  <object id="11" name="TileData" x="64" y="256" width="48" height="48">
+  <object id="11" name="TileData" x="80" y="288" width="16" height="16">
    <properties>
-    <property name="Action" value="LunarDoor Custom_MP_MoonAsteroidsDungeonRoom{l}_{c}"/>
+    <property name="Action" value="LunarDoor Custom_MM_MoonAsteroidsDungeonRoom{l}_{c}"/>
    </properties>
   </object>
   <object id="15" name="TileData" x="256" y="128" width="16" height="16">
    <properties>
-    <property name="Action" value="LunarLock Custom_MP_MoonAsteroidsDungeonRoom{l}_{c}"/>
+    <property name="Action" value="LunarLock Custom_MM_MoonAsteroidsDungeonRoom{l}_{c}"/>
    </properties>
   </object>
   <object id="18" name="TileData" x="256" y="496" width="16" height="16">
    <properties>
-    <property name="Action" value="LunarLock Custom_MP_MoonAsteroidsDungeonRoom{l}_{c}"/>
+    <property name="Action" value="LunarLock Custom_MM_MoonAsteroidsDungeonRoom{l}_{c}"/>
    </properties>
   </object>
  </objectgroup>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using MoonMisadventures.Game.Locations.DungeonLevelGenerators;
 using Netcode;
@@ -12,9 +13,10 @@ using xTile.Dimensions;
 
 namespace MoonMisadventures.Game.Locations
 {
+    [XmlType( "Mods_spacechase0_MoonMisadventuress_AsteroidsDungeon" )]
     public class AsteroidsDungeon : LunarLocation
     {
-        public const string BaseLocationName = "Custom_MP_MoonAsteroidsDungeon";
+        public const string BaseLocationName = "Custom_MM_MoonAsteroidsDungeon";
         public const string LocationRoomInfix = "Room";
         public const string LocationCaveInfix = "Cave";
         public const int BossLevel = 5;
@@ -121,13 +123,14 @@ namespace MoonMisadventures.Game.Locations
         private readonly NetVector2 warpFromPrev = new();
         private readonly NetVector2 warpFromNext = new();
         private Random genRandom;
-        public List<Vector2> teleports = new(); // These should be fine not synced since they are generated based on seed... right?
-        public Dictionary<int, Vector2> lunarDoors = new();
+        // These should be fine not synced since they are generated based on seed... right?
+        public List<Vector2> teleports = new(); 
+        public SerializableDictionary<int, Vector2> lunarDoors = new();
 
         public AsteroidsDungeon()
         {
             mapContent = Game1.game1.xTileContent.CreateTemporary();
-            mapPath.Value = Mod.instance.Helper.Content.GetActualAssetKey( "assets/MoonAsteroidsTemplate.tmx" );
+            mapPath.Value = Mod.instance.Helper.Content.GetActualAssetKey( "assets/maps/MoonAsteroidsTemplate.tmx" );
         }
 
         public AsteroidsDungeon( LevelType type, int level, string name )
@@ -229,7 +232,7 @@ namespace MoonMisadventures.Game.Locations
                 Map.AddLayer( new xTile.Layers.Layer( "Buildings1", Map, Map.Layers[ 0 ].LayerSize, Map.Layers[ 0 ].TileSize ) );
             }
 
-            var ts = new xTile.Tiles.TileSheet( Map, Mod.instance.Helper.Content.GetActualAssetKey( "assets/moon-teleporters.png" ), new Size( 9, 9 ), new Size( 16, 16 ) );
+            var ts = new xTile.Tiles.TileSheet( Map, Mod.instance.Helper.Content.GetActualAssetKey( "assets/maps/moon-teleporters.png" ), new Size( 9, 9 ), new Size( 16, 16 ) );
             ts.Id = "z_" + ts.Id;
             Map.AddTileSheet( ts );
             Map.LoadTileSheets( Game1.mapDisplayDevice );

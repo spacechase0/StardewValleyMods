@@ -13,9 +13,6 @@
         },
         {
             "UniqueID": "spacechase0.DynamicGameAssets"
-        },
-        {
-            "UniqueID": "aedenthorn.ExtraMapLayers"
         }
     ],
     "RequiredForEveryone": true,
