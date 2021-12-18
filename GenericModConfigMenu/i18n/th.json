@@ -12,7 +12,7 @@
     "config.buttons.cancel": "ยกเลิก",
     "config.buttons.reset-to-default": "ค่าเริ่มต้น",
     "config.buttons.save": "บันทึก",
-    "config.buttons.save-and-close": "บันทึก&ปิด",
+    "config.buttons.save-and-close": "บันทึก & ปิด",
 
     "config.rebind-key.title": "การตั้งค่าปุ่มลัด: {{optionName}}",
     "config.rebind-key.simple-instructions": "ป้อนคีย์ใหม่เพื่อตั้งค่าปุ่มลัดอีกครั้ง",
