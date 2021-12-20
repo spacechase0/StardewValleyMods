@@ -9,4 +9,8 @@
 
     <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
+  </ItemGroup>
 </Project>
