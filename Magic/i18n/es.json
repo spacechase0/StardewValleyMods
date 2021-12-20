@@ -7,12 +7,11 @@
     "spell.learn.ancient": "Has aprendido un hechizo antiguo: {{spellName}}",
 
     // menu tooltips
-    // TODO
-    "tooltip.spell.known": "Click and drag to add {{spell}} to your spellbar on the right.",
-    "tooltip.spell.can-learn": "Click to spend one free point and learn {{spell}}.",
-    "tooltip.spell.need-free-points": "You have no free points to learn {{spell}}.",
-    "tooltip.spell.need-previous-levels": "You must learn the previous spell levels first.",
-    "tooltip.spell.name-and-level": "{{spellName}} level {{level}}",
+    "tooltip.spell.known": "Haz clic y arrastra para añadir {{hechizo}} a tu barra de hechizos de la derecha.",
+    "tooltip.spell.can-learn": "Haz clic para gastar un punto libre y aprender {{hechizo}}.",
+    "tooltip.spell.need-free-points": "No tienes puntos libres para aprender {{hechizo}}.",
+    "tooltip.spell.need-previous-levels": "Primero debes aprender los niveles de hechizo anteriores.",
+    "tooltip.spell.name-and-level": "{{spellName}} nivel {{level}}",
 
     // altar
     "altar.click-message": "Un altar brillante.",
@@ -132,18 +131,17 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
-    // TODO
-    "config.altar-location.name": "Altar Location",
-    "config.altar-location.tooltip": "The (internal) name of the location the magic altar should be placed at.",
-    "config.altar-x.name": "Altar X",
-    "config.altar-x.tooltip": "The X tile position where the magic altar should be placed.",
-    "config.altar-y.name": "Altar Y",
-    "config.altar-y.tooltip": "The Y tile position where the magic altar should be placed.",
+    "config.altar-location.name": "Localización del altar",
+    "config.altar-location.tooltip": "El nombre (interno) de la ubicación en la que debe colocarse el altar mágico.",
+    "config.altar-x.name": "Posición X del altar",
+    "config.altar-x.tooltip": "La posición de la baldosa X donde debe colocarse el altar mágico.",
+    "config.altar-y.name": "Posición Y del altar",
+    "config.altar-y.tooltip": "La posición de la baldosa Y donde debe colocarse el altar mágico.",
 
-    "config.cast-key.name": "Key: Cast",
-    "config.cast-key.tooltip": "The key to initiate casting a spell.",
-    "config.swap-spells-key.name": "Key: Swap Sells",
-    "config.swap-spells-key.tooltip": "The key to swap spell sets.",
-    "config.select-spell-key.name": "Key: Spell {{slotNumber}}",
-    "config.select-spell-key.tooltip": "The key to select spell {{slotNumber}}."
+    "config.cast-key.name": "Tecla: Lanzar hechizo",
+    "config.cast-key.tooltip": "La tecla para iniciar el lanzamiento de un hechizo.",
+    "config.swap-spells-key.name": "Tecla: Intercambio de hechizos",
+    "config.swap-spells-key.tooltip": "La tecla para intercambiar conjuntos de hechizos.",
+    "config.select-spell-key.name": "Tecla: Hechizo {{slotNumber}}",
+    "config.select-spell-key.tooltip": "La tecla para seleccionar el hechizo {{número de ranura}}."
 }
