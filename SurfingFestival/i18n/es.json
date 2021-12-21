@@ -6,9 +6,9 @@
     "festival.name": "Festival De Surf",
 
     // race
-    "race.start.question": "Ready for the race?", // TODO
-    "race.start.yes": "Yes, let's start.", // TODO
-    "race.start.no": "Not yet.", // TODO
+    "race.start.question": "¿Listo para la carrera?",
+    "race.start.yes": "Sí, empecemos.",
+    "race.start.no": "No, todavía no.",
     "race.instructions": "Objetos (click derecho para usar):^ Impulso De Fruta Estelar - Aumento temporal de velocidad.^ Proyectil de Pez Globo - Dispara un pez globo al siguiente jugador que esté delante.^ Nube Teledirigida - Golpea al jugador que está en primer lugar.^ Poder De Junimo - Invencibilidad y un pequeño aumento de velocidad.",
     "race.lewis-start.0": "Preparados...",
     "race.lewis-start.1": "Listos.....",
