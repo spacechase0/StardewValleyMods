@@ -8,6 +8,7 @@
   * The buttons now auto-align to fit their text for better localization support.
   * The reset button is no longer shown on subpages (since it resets the entire config).
   * Increased button area width.
+* Improved `AddComplexOption` with more granular callbacks. (The previous method is deprecated but still works fine.)
 * Improved translations. Thanks to ellipszist (added Thai)!
 
 ## 1.6.0

@@ -68,7 +68,7 @@ namespace GenericModConfigMenu.Framework
 
             this.CurrPage = page ?? "";
 
-            this.ModConfig.ActiveDisplayPage = this.ModConfig.Options[this.CurrPage];
+            this.ModConfig.ActiveDisplayPage = this.ModConfig.Pages[this.CurrPage];
 
             this.Table = new Table
             {
@@ -76,7 +76,7 @@ namespace GenericModConfigMenu.Framework
                 Size = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116)
             };
             this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
-            foreach (var opt in this.ModConfig.Options[this.CurrPage].Options)
+            foreach (var opt in this.ModConfig.Pages[this.CurrPage].Options)
             {
                 string name = opt.Name();
                 string tooltip = opt.Tooltip();
@@ -475,7 +475,7 @@ namespace GenericModConfigMenu.Framework
         {
             // add page title
             {
-                string pageTitle = this.ModConfig.Options[this.CurrPage].PageTitle();
+                string pageTitle = this.ModConfig.Pages[this.CurrPage].PageTitle();
                 var titleLabel = new Label
                 {
                     String = modManifest.Name + (pageTitle == "" ? "" : " > " + pageTitle),
@@ -550,22 +550,31 @@ namespace GenericModConfigMenu.Framework
         private void ResetConfig()
         {
             Game1.playSound("backpackIN");
-            this.ModConfig.Reset();
-            foreach (var page in this.ModConfig.Options)
-                foreach (var opt in page.Value.Options)
-                    opt.GetLatest();
-            this.ModConfig.Save();
 
+            // reset
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.BeforeReset();
+            this.ModConfig.Reset();
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.AfterReset();
+
+            // save & fetch new values
+            this.SaveConfig(playSound: false);
+
+            // reopen page
             this.OpenPage(this.CurrPage);
         }
 
-        private void SaveConfig()
+        private void SaveConfig(bool playSound = true)
         {
-            Game1.playSound("money");
-            foreach (var page in this.ModConfig.Options)
-                foreach (var opt in page.Value.Options)
-                    opt.Save();
+            if (playSound)
+                Game1.playSound("money");
+
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.BeforeSave();
             this.ModConfig.Save();
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.AfterSave();
         }
 
         private void Close()
