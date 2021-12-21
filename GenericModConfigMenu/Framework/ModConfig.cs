@@ -84,5 +84,15 @@ namespace GenericModConfigMenu.Framework
             if (!this.DefaultTitleScreenOnly)
                 this.AnyEditableInGame = true;
         }
+
+        /// <summary>Get all options across each page in the mod config.</summary>
+        public IEnumerable<BaseModOption> GetAllOptions()
+        {
+            foreach (ModConfigPage page in this.Pages.Values)
+            {
+                foreach (BaseModOption option in page.Options)
+                    yield return option;
+            }
+        }
     }
 }

@@ -551,9 +551,8 @@ namespace GenericModConfigMenu.Framework
         {
             Game1.playSound("backpackIN");
             this.ModConfig.Reset();
-            foreach (var page in this.ModConfig.Pages)
-                foreach (var opt in page.Value.Options)
-                    opt.GetLatest();
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.GetLatest();
             this.ModConfig.Save();
 
             this.OpenPage(this.CurrPage);
@@ -562,9 +561,8 @@ namespace GenericModConfigMenu.Framework
         private void SaveConfig()
         {
             Game1.playSound("money");
-            foreach (var page in this.ModConfig.Pages)
-                foreach (var opt in page.Value.Options)
-                    opt.Save();
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.Save();
             this.ModConfig.Save();
         }
 
