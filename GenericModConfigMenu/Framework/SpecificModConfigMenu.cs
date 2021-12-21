@@ -550,20 +550,31 @@ namespace GenericModConfigMenu.Framework
         private void ResetConfig()
         {
             Game1.playSound("backpackIN");
+
+            // reset
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.BeforeReset();
             this.ModConfig.Reset();
             foreach (var option in this.ModConfig.GetAllOptions())
-                option.GetLatest();
-            this.ModConfig.Save();
+                option.AfterReset();
 
+            // save & fetch new values
+            this.SaveConfig(playSound: false);
+
+            // reopen page
             this.OpenPage(this.CurrPage);
         }
 
-        private void SaveConfig()
+        private void SaveConfig(bool playSound = true)
         {
-            Game1.playSound("money");
+            if (playSound)
+                Game1.playSound("money");
+
             foreach (var option in this.ModConfig.GetAllOptions())
-                option.Save();
+                option.BeforeSave();
             this.ModConfig.Save();
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.AfterSave();
         }
 
         private void Close()
