@@ -238,7 +238,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
-            if (!modConfig.Options.TryGetValue(pageName, out ModConfigPage page))
+            if (!modConfig.Pages.TryGetValue(pageName, out ModConfigPage page))
                 throw new ArgumentException("Page not registered");
 
             page.SetPageTitle(() => displayName);

@@ -36,8 +36,8 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Whether any of the registered options can be edited in-game.</summary>
         public bool AnyEditableInGame { get; set; }
 
-        /// <summary>The options in the form UI, indexed by page ID. Each form has a page with an empty ID for the default page.</summary>
-        public Dictionary<string, ModConfigPage> Options { get; } = new();
+        /// <summary>The pages in the form UI, indexed by page ID. Each form has a page with an empty ID for the default page.</summary>
+        public Dictionary<string, ModConfigPage> Pages { get; } = new();
 
         /// <summary>The page currently being rendered in-game.</summary>
         public ModConfigPage ActiveDisplayPage { get; set; }
@@ -69,10 +69,10 @@ namespace GenericModConfigMenu.Framework
         /// <param name="pageTitle">The page title shown in its UI, or <c>null</c> to show the <paramref name="pageId"/> value.</param>
         public void SetActiveRegisteringPage(string pageId, Func<string> pageTitle)
         {
-            if (this.Options.TryGetValue(pageId, out ModConfigPage page))
+            if (this.Pages.TryGetValue(pageId, out ModConfigPage page))
                 this.ActiveRegisteringPage = page;
             else
-                this.Options[pageId] = this.ActiveRegisteringPage = new ModConfigPage(pageId, pageTitle);
+                this.Pages[pageId] = this.ActiveRegisteringPage = new ModConfigPage(pageId, pageTitle);
         }
 
         /// <summary>Add an option to the active registering page.</summary>
