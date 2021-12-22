@@ -27,19 +27,18 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
-    // TODO
-    "config.quality-ring-chance.name": "Quality+ Ring: Chance",
-    "config.quality-ring-chance.description": "The percentage chance of a higher crop quality with the Quality+ Ring equipped.",
+    "config.quality-ring-chance.name": "Anillo de Calidad+: Probabilidad",
+    "config.quality-ring-chance.description": "El porcentaje de probabilidad de una mayor calidad de la cosecha con el Anillo de Calidad+ equipado.",
 
-    "config.ring-of-wide-nets-multiplier.name": "Ring of Wide Nets: Multiplier",
-    "config.ring-of-wide-nets-multiplier.description": "The multiplier applied to the fishing bar size with the Ring of Wide Nets equipped.",
+    "config.ring-of-wide-nets-multiplier.name": "Anillo de Redes Anchas: Multiplicador",
+    "config.ring-of-wide-nets-multiplier.description": "El multiplicador aplicado al tamaño de la barra de pesca con el Anillo de Redes Anchas equipado.",
 
-    "config.ring-of-regeneration-rate.name": "Ring of Regeneration: Regen",
-    "config.ring-of-regeneration-rate.description": "The health regen rate per second with the Ring of Regeneration equipped.",
+    "config.ring-of-regeneration-rate.name": "Anillo de Regeneración: Regeneración",
+    "config.ring-of-regeneration-rate.description": "La tasa de recuperación de salud por segundo con el Anillo de Regeneración equipado.",
 
-    "config.refreshing-ring-rate.name": "Refreshing Ring: Regen",
-    "config.refreshing-ring-rate.description": "The stamina regen rate per second with the Refreshing Ring equipped.",
+    "config.refreshing-ring-rate.name": "Anillo Refrescante: Regeneración",
+    "config.refreshing-ring-rate.description": "La tasa de regeneración de resistencia por segundo con el Anillo Refrescante equipado.",
 
-    "config.ring-of-far-reaching-distance.name": "Ring of Far Reaching: Distance",
-    "config.ring-of-far-reaching-distance.description": "The distance in tiles at which you can use tools with the Ring of Far Reaching equipped."
+    "config.ring-of-far-reaching-distance.name": "Anillo de largo alcance: Distancia",
+    "config.ring-of-far-reaching-distance.description": "La distancia en baldosas a la que puedes usar las herramientas con el Anillo de alcance lejano equipado."
 }
