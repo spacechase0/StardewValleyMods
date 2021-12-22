@@ -1,10 +1,10 @@
-{
+﻿{
     /*********
     ** Generic Mod Config Menu UI
     *********/
     // top section
     "config.show-by-default.name": "Mostrar por defecto",
-    "config.show-by-default.tooltip": "Si el minimapa debe mostrarse por defecto.\NDebes reiniciar el juego para que esto tenga efecto.",
+    "config.show-by-default.tooltip": "Si el minimapa debe mostrarse por defecto.\nDebes reiniciar el juego para que esto tenga efecto.",
     "config.toggle-key.name": "Tecla de activación",
     "config.toggle-key.tooltip": "La tecla que muestra u oculta el minimapa.",
     "config.update-interval.name": "Intervalo de actualización",

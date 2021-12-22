@@ -1,4 +1,4 @@
-{
+﻿{
     /*********
     ** Shop UI
     *********/
@@ -8,8 +8,8 @@
 
     // sort types
     "sort.none": "Ninguno",
-    "sort.name": "Nombre", 
-    "sort.price": "Precio", 
+    "sort.name": "Nombre",
+    "sort.price": "Precio",
 
     // category names
     "categories.everything": "Todo",

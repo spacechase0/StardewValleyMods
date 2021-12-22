@@ -1,4 +1,4 @@
-{
+﻿{
     // Generic Mod Config Menu UI
     "config.custom-skill-page.name": "Página de habilidades personalizadas",
     "config.custom-skill-page.tooltip": "Si se muestra la página de habilidades personalizadas.\nEsto moverá la cartera para que haya espacio para más habilidades.",

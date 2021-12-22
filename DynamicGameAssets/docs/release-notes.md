@@ -5,7 +5,7 @@
 * Fixed custom forge issues (thanks to Esca-MMC!):
   * Fixed error when an entire item stack is consumed.
   * Fixed issue where wrong result item is displayed if any ingredients require multiple.
-* Improved translations. Thanks to ellipszist (added Thai)!
+* Improved translations. Thanks to ellipszist (added Thai) and Evexyron (added Spanish)!
 
 ## 1.3.2
 Released 27 November 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.

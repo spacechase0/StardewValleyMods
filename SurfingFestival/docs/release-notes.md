@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Improved translations. Thanks to Evexyron (updated Spanish)!
+
 ## 1.0.14
 Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

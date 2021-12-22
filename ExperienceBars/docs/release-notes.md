@@ -2,7 +2,7 @@
 
 # Release notes
 ## Upcoming release
-* Improved translations. Thanks to ellipszist (added Thai)!
+* Improved translations. Thanks to ellipszist (added Thai) and Evexyron (added Spanish)!
 
 ## 1.4.1
 Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.

@@ -8,8 +8,8 @@
 
     // sort types
     "sort.none": "None",
-    "sort.name": "Name", 
-    "sort.price": "Price", 
+    "sort.name": "Name",
+    "sort.price": "Price",
 
     // category names
     "categories.everything": "Everything",

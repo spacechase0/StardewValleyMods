@@ -2,7 +2,7 @@
 
 # Release notes
 ## Upcoming release
-* Improved translations. Thanks to Ombrophore (added Russian)!
+* Improved translations. Thanks to Evexyron (updated Spanish) and Ombrophore (added Russian)!
 
 ## 0.7.0
 Released 27 November 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
