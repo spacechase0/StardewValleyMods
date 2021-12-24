@@ -13,7 +13,7 @@ Select an axe in your toolbar and right-click to throw it! Better axes go faster
 The axe will return automatically so you can do it again.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

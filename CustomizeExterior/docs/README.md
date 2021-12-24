@@ -77,7 +77,7 @@ For the texture sets shown in the screenshot, see:
 * ~~[Seasonal Victorian Buildings](https://www.nexusmods.com/stardewvalley/mods/891)~~
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 Compatible with [Map Image Exporter](https://www.nexusmods.com/stardewvalley/mods/1073). It also
 supports textures made for [Seasonal Immersion](https://www.nexusmods.com/stardewvalley/mods/2273),

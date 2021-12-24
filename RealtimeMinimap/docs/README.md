@@ -16,7 +16,7 @@ You can edit the mod settings via Generic Mod Config Menu (or by editing the `co
 directly) to change the toggle keybind, minimap position and size, and marker sizes.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## Known issues
 * The minimap view is cached when you enter the location by default. You can enable full real-time

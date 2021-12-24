@@ -15,7 +15,7 @@ Once you've maxed out all your skill levels, a new profession choice arrives ove
 professions stack with multiple players.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 Compatible with [All Professions](https://www.nexusmods.com/stardewvalley/mods/174).
 

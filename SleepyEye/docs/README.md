@@ -17,7 +17,7 @@ You can buy the tent from Pierre's shop for 5000g. Select it in your toolbar and
 for seven seconds (configurable) to go to sleep.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

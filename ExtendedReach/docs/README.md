@@ -13,7 +13,7 @@ Just interact with a chest, mailbox, or other tile action anywhere on screen. Yo
 stand next to them to do it!
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

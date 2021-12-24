@@ -36,7 +36,7 @@ field | description
 `SkillColors` | The colors to use for each skill. This doesn't apply to custom skills added by other mods, whose colors are specified by those mods.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

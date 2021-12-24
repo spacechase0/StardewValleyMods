@@ -22,7 +22,7 @@ Beat the game to win a prize!
 You can also start the game by running the `pyrojourney` command in the SMAPI console.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)
