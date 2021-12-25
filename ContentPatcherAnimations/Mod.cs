@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using ContentPatcherAnimations.Framework;
 using ContentPatcherAnimations.Patches;
 using Microsoft.Xna.Framework;
@@ -74,8 +76,21 @@ namespace ContentPatcherAnimations
         /// <param name="args">The command arguments.</param>
         private void OnCommand(string name, string[] args)
         {
-            if (args[0] == "reload")
-                this.CollectPatches();
+            switch (args.FirstOrDefault()?.ToLower())
+            {
+                case "reload":
+                    this.CollectPatches();
+                    Log.Info("Reloaded all patches.");
+                    break;
+
+                case "summary":
+                    this.PrintSummary();
+                    break;
+
+                default:
+                    Log.Info("Usage:\n\ncpa reload\nReloads all patches.\n\ncpa summary\nPrints a summary of the registered animations.");
+                    break;
+            }
         }
 
         /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
@@ -131,24 +146,46 @@ namespace ContentPatcherAnimations
             {
                 patch.RefreshIfNeeded();
 
-                // skip if nothing to apply
-                if (!patch.IsActive || patch.Source == null || patch.Target == null)
-                    continue;
-
-                // skip if frame isn't changing this tick
-                if (state.FrameCounter % config.AnimationFrameTime != 0)
-                    continue;
-
-                // skip if the target hasn't been drawn recently
-                if (!state.AssetDrawTracker.WasDrawnWithin(patch.TargetName, patch.ToArea, Mod.MaxTicksSinceDrawn))
-                    continue;
-
-                // apply animation frame
-                if (++patch.CurrentFrame >= config.AnimationFrameCount)
-                    patch.CurrentFrame = 0;
-                Color[] pixels = patch.GetAnimationFrame(patch.CurrentFrame);
-                patch.Target.SetData(0, patch.ToArea, pixels, 0, pixels.Length);
+                if (state.FrameCounter % config.AnimationFrameTime == 0 && this.ShouldAnimate(state, patch))
+                {
+                    if (++patch.CurrentFrame >= config.AnimationFrameCount)
+                        patch.CurrentFrame = 0;
+                    Color[] pixels = patch.GetAnimationFrame(patch.CurrentFrame);
+                    patch.Target.SetData(0, patch.ToArea, pixels, 0, pixels.Length);
+                }
             }
+        }
+
+        /// <summary>Get whether a patch should be animated.</summary>
+        /// <param name="state">The screen state to check.</param>
+        /// <param name="patch">The patch to check.</param>
+        private bool ShouldAnimate(ScreenState state, PatchData patch)
+        {
+            return
+                patch.IsActive
+                && patch.Source != null
+                && patch.Target != null
+                && state.AssetDrawTracker.WasDrawnWithin(patch.TargetName, patch.ToArea, Mod.MaxTicksSinceDrawn);
+        }
+
+        /// <summary>Get a human-readable reason a patch isn't being automated.</summary>
+        /// <param name="state">The screen state to check.</param>
+        /// <param name="patch">The patch to check.</param>
+        private string GetReasonPaused(ScreenState state, PatchData patch)
+        {
+            if (!patch.IsReady)
+                return "Content Patcher patch not ready";
+
+            if (!patch.IsActive)
+                return "Content Patcher patch not applied";
+
+            if (patch.Source == null || patch.Target == null)
+                return "textures couldn't be loaded";
+
+            if (!state.AssetDrawTracker.WasDrawnWithin(patch.TargetName, patch.ToArea, Mod.MaxTicksSinceDrawn))
+                return "patched area isn't visible on screen";
+
+            return "unknown";
         }
 
         /// <summary>Collect all patches from installed Content Patcher packs.</summary>
@@ -199,6 +236,99 @@ namespace ContentPatcherAnimations
                     }
                 }
             }
+        }
+
+        /// <summary>Print a summary of the current animations to the console.</summary>
+        private void PrintSummary()
+        {
+            var state = this.ScreenState;
+
+            StringBuilder report = new();
+
+            var patches = state.AnimatedPatches;
+            var animating = patches.ToLookup(p => this.ShouldAnimate(state, p.Value));
+
+            // general data
+            report.AppendLine();
+            report.AppendLine("##############################");
+            report.AppendLine($"## General stats{(Context.IsSplitScreen ? $" for screen {Context.ScreenId}" : "")}");
+            report.AppendLine("##############################");
+            report.AppendLine("   Animated patches:");
+            report.AppendLine($"    - {patches.Count} total");
+            report.AppendLine($"    - {patches.Values.Count(p => p.IsReady && p.IsActive)} applied");
+            report.AppendLine($"    - {animating[true].Count()} being animated");
+            report.AppendLine();
+            report.AppendLine();
+
+            // active animations
+            report.AppendLine("##############################");
+            report.AppendLine("## Active animations");
+            report.AppendLine("##############################");
+            {
+                var active = animating[true]
+                    .GroupBy(p => p.Value.ContentPack.Manifest.Name)
+                    .OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
+                if (active.Any())
+                {
+                    foreach (var patchGroup in active)
+                    {
+                        report.AppendLine($"{patchGroup.Key}:");
+
+                        int targetWidth = Math.Max(patchGroup.Max(p => p.Value.TargetName.Length), "target asset".Length);
+                        int logNameWidth = Math.Max(patchGroup.Max(p => p.Key.LogName.Length), "patch name".Length);
+                        int frameWidth = Math.Max(patchGroup.Max(p => $"{p.Value.CurrentFrame + 1} of {p.Key.AnimationFrameCount}".Length), "cur frame".Length);
+
+                        report.AppendLine($"   {"target asset".PadRight(targetWidth)} | {"patch name".PadRight(logNameWidth)} | {"cur frame".PadRight(frameWidth)}");
+                        report.AppendLine($"   {"".PadRight(targetWidth, '-')} | {"".PadRight(logNameWidth, '-')} | {"".PadRight(frameWidth, '-')}");
+                        foreach (var patch in patchGroup.OrderBy(p => p.Value.TargetName, StringComparer.OrdinalIgnoreCase))
+                            report.AppendLine($"   {patch.Value.TargetName.PadRight(targetWidth)} | {patch.Key.LogName.PadRight(logNameWidth)} | {patch.Value.CurrentFrame + 1} of {patch.Key.AnimationFrameCount}");
+                        report.AppendLine();
+                    }
+                }
+                else
+                {
+                    report.AppendLine("There are no active animations.");
+                    report.AppendLine();
+                }
+            }
+            report.AppendLine();
+
+            // paused animations
+            report.AppendLine("##############################");
+            report.AppendLine("## Paused animations");
+            report.AppendLine("##############################");
+            {
+                var paused = animating[false]
+                    .GroupBy(p => p.Value.ContentPack.Manifest.Name)
+                    .OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
+                if (paused.Any())
+                {
+                    foreach (var patchGroup in paused)
+                    {
+                        report.AppendLine($"{patchGroup.Key}:");
+
+                        int logNameWidth = Math.Max(patchGroup.Max(p => p.Key.LogName.Length), "patch name".Length);
+                        int reasonWidth = "reason paused".Length;
+
+                        report.AppendLine($"   {"patch name".PadRight(logNameWidth)} | reason paused");
+                        report.AppendLine($"   {"".PadRight(logNameWidth, '-')} | {"".PadRight(reasonWidth, '-')}");
+                        foreach (var patch in patchGroup.OrderBy(p => p.Value.TargetName, StringComparer.OrdinalIgnoreCase))
+                            report.AppendLine($"   {patch.Key.LogName.PadRight(logNameWidth)} | {this.GetReasonPaused(state, patch.Value)}");
+                        report.AppendLine();
+                    }
+                }
+                else
+                {
+                    report.AppendLine("There are no paused animations.");
+                    report.AppendLine();
+                }
+            }
+
+            Log.Info(report.ToString());
         }
 
         /// <summary>Manually get the value of a property using reflection.</summary>

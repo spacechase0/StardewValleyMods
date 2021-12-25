@@ -15,9 +15,6 @@ namespace ContentPatcherAnimations.Framework
         /*********
         ** Fields
         *********/
-        /// <summary>The content pack from which the patch was loaded.</summary>
-        private readonly IContentPack ContentPack;
-
         /// <summary>Simplifies access to private code.</summary>
         private readonly IReflectionHelper Reflection;
 
@@ -55,6 +52,9 @@ namespace ContentPatcherAnimations.Framework
         /*********
         ** Accessors
         *********/
+        /// <summary>The content pack from which the patch was loaded.</summary>
+        public IContentPack ContentPack { get; }
+
         /// <summary>Get whether the patch is ready.</summary>
         public bool IsReady { get; protected set; }
 
