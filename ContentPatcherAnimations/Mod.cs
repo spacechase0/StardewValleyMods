@@ -3,7 +3,6 @@ using System.Collections;
 using System.Reflection;
 using ContentPatcherAnimations.Framework;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -184,7 +183,7 @@ namespace ContentPatcherAnimations
                 catch
                 {
                     // No idea why this happens, hack fix
-                    patch.Value.Target = null;
+                    patch.Value.ClearTarget();
                     state.FindTargetsQueue.Enqueue(patch.Key);
                 }
             }
@@ -202,8 +201,7 @@ namespace ContentPatcherAnimations
                     if (!patch.Value.IsActive.Invoke())
                         continue;
 
-                    patch.Value.Source = patch.Value.SourceFunc();
-                    patch.Value.Target = patch.Value.TargetFunc();
+                    patch.Value.Reload();
                 }
                 catch (Exception e)
                 {
@@ -224,8 +222,7 @@ namespace ContentPatcherAnimations
                 if (!patch.IsActive())
                     return;
 
-                patch.Source = patch.SourceFunc();
-                patch.Target = patch.TargetFunc();
+                patch.Reload();
             }
             catch (Exception e)
             {
@@ -260,8 +257,6 @@ namespace ContentPatcherAnimations
                             continue;
                         }
 
-                        PatchData data = new PatchData();
-
                         object targetPatch = null;
                         foreach (object cpPatch in state.CpPatches)
                         {
@@ -277,57 +272,13 @@ namespace ContentPatcherAnimations
                             Log.Error($"Failed to find patch with name \"{patch.LogName}\"!?!?");
                             continue;
                         }
-                        var appliedProp = this.Reflection.GetProperty<bool>(targetPatch, "IsApplied");
-                        var sourceProp = this.Reflection.GetProperty<string>(targetPatch, "FromAsset");
-                        var targetProp = this.Reflection.GetProperty<string>(targetPatch, "TargetAsset");
 
-                        data.PatchObj = targetPatch;
-                        data.IsActive = () => appliedProp.GetValue();
-                        data.SourceFunc = () => pack.LoadAsset<Texture2D>(sourceProp.GetValue());
-                        data.TargetFunc = () => this.FindTargetTexture(targetProp.GetValue());
-                        data.FromAreaFunc = () => this.GetRectangleFromPatch(targetPatch, "FromArea");
-                        data.ToAreaFunc = () =>
-                        {
-                            var fromArea = data.FromAreaFunc();
-                            return this.GetRectangleFromPatch(targetPatch, "ToArea", new Rectangle(0, 0, fromArea.Width, fromArea.Height));
-                        };
+                        PatchData data = PatchData.ReadPatchData(pack, targetPatch, this.Reflection);
 
                         state.AnimatedPatches.Add(patch, data);
                     }
                 }
             }
-        }
-
-        /// <summary>Get the texture for a given asset name.</summary>
-        /// <param name="target">The asset name to match.</param>
-        private Texture2D FindTargetTexture(string target)
-        {
-            if (this.Helper.Content.NormalizeAssetName(target) == this.Helper.Content.NormalizeAssetName("TileSheets\\tools"))
-                return this.Reflection.GetField<Texture2D>(typeof(Game1), "_toolSpriteSheet").GetValue();
-
-            var tex = Game1.content.Load<Texture2D>(target);
-            if (tex.GetType().Name == "ScaledTexture2D")
-            {
-                Log.Trace($"Found ScaledTexture2D from PyTK: {target}");
-                tex = this.Reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
-            }
-            return tex;
-        }
-
-        /// <summary>Get the source rectangle for a Content Patcher patch.</summary>
-        /// <param name="targetPatch">The Content Patcher patch.</param>
-        /// <param name="rectName">The rectangle field name.</param>
-        /// <param name="defaultTo">The default rectangle value if the field isn't defined.</param>
-        private Rectangle GetRectangleFromPatch(object targetPatch, string rectName, Rectangle defaultTo = default)
-        {
-            object tokenRect = this.Reflection.GetField<object>(targetPatch, rectName).GetValue();
-            if (tokenRect == null)
-                return defaultTo;
-
-            object[] args = { null, null }; // out Rectangle rectangle, out string error
-            return this.Reflection.GetMethod(tokenRect, "TryGetRectangle").Invoke<bool>(args)
-                ? (Rectangle)args[0]
-                : Rectangle.Empty;
         }
 
         /// <summary>Manually get the value of a property using reflection.</summary>

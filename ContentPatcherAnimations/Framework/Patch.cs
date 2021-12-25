@@ -1,6 +1,6 @@
 namespace ContentPatcherAnimations.Framework
 {
-    /// <summary>Metadata about a Content Patcher patch.</summary>
+    /// <summary>Raw patch fields loaded from a Content Patcher content pack.</summary>
     internal class Patch
     {
         /*********
