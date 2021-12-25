@@ -46,7 +46,7 @@ namespace ContentPatcherAnimations.Framework
             foreach (PatchData patch in animatedPatches.Values)
             {
                 if (patch.TargetName != null && asset.AssetNameEquals(patch.TargetName))
-                    patch.RefreshIfNeeded(forceReload: true);
+                    patch.ForceNextRefresh = true;
             }
         }
     }

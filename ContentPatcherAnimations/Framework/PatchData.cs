@@ -76,6 +76,9 @@ namespace ContentPatcherAnimations.Framework
         /// <summary>Get the source rectangle in the <see cref="Target"/>, if any.</summary>
         public Rectangle ToArea { get; protected set; }
 
+        /// <summary>Whether to refresh the patch data on the next update, even if the underlying patch hasn't changed.</summary>
+        public bool ForceNextRefresh { get; set; } = true;
+
         /// <summary>The current animation frame.</summary>
         public int CurrentFrame { get; set; }
 
@@ -106,17 +109,17 @@ namespace ContentPatcherAnimations.Framework
         }
 
         /// <summary>Refresh the patch data if the underlying patch changed.</summary>
-        /// <param name="forceReload">Whether to reload the patch even if it hasn't changed.</param>
-        public void RefreshIfNeeded(bool forceReload = false)
+        public void RefreshIfNeeded()
         {
             // update IsActive (doesn't change LastChangedTick value)
             this.IsActive = this.IsAppliedProperty.GetValue();
 
             // refresh if patch data changed
             int lastChangedTick = this.LastChangedTickProperty.GetValue();
-            if (forceReload || this.LastChangedTick == default || lastChangedTick > this.LastChangedTick)
+            if (lastChangedTick > this.LastChangedTick || this.ForceNextRefresh)
             {
                 this.LastChangedTick = lastChangedTick;
+                this.ForceNextRefresh = false;
                 this.AnimationFrames.Clear();
 
                 try
