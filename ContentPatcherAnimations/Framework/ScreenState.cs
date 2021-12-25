@@ -15,6 +15,9 @@ namespace ContentPatcherAnimations.Framework
         /// <summary>The patch and animation data for loaded patches.</summary>
         public Dictionary<Patch, PatchData> AnimatedPatches { get; } = new();
 
+        /// <summary>The assets that were recently drawn to the screen.</summary>
+        public AssetDrawTracker AssetDrawTracker { get; } = new();
+
         /// <summary>The global animation tick counter.</summary>
         public uint FrameCounter { get; set; }
     }

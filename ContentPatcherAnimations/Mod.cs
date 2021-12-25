@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Reflection;
 using ContentPatcherAnimations.Framework;
+using ContentPatcherAnimations.Patches;
 using Microsoft.Xna.Framework;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -26,6 +28,12 @@ namespace ContentPatcherAnimations
         /// <summary>Simplifies access to private code.</summary>
         private IReflectionHelper Reflection => this.Helper.Reflection;
 
+        /// <summary>The maximum number of ticks animations should continue running after the texture was last drawn.</summary>
+        private const int MaxTicksSinceDrawn = 5 * 60; // 5 seconds
+
+        /// <summary>The number of ticks between each cleanup of expired tracked asset names.</summary>
+        private const int ExpiryTicks = 5 * 60 * 60; // 5 minutes
+
 
         /*********
         ** Accessors
@@ -48,6 +56,10 @@ namespace ContentPatcherAnimations
             helper.Content.AssetEditors.Add(new WatchForUpdatesAssetEditor(() => this.ScreenState.AnimatedPatches));
 
             helper.ConsoleCommands.Add("cpa", "...", this.OnCommand);
+
+            HarmonyPatcher.Apply(this,
+                new SpriteBatchPatcher(() => this.ScreenState.AssetDrawTracker)
+            );
         }
 
 
@@ -108,6 +120,10 @@ namespace ContentPatcherAnimations
         {
             var state = this.ScreenState;
 
+            // clear expired draw tracking
+            if (state.FrameCounter % Mod.ExpiryTicks == 0)
+                state.AssetDrawTracker.ForgetExpired(Mod.MaxTicksSinceDrawn * 5); // buffer to avoid recreating tracking data unnecessarily
+
             // update animation frames
             ++state.FrameCounter;
             Game1.graphics.GraphicsDevice.Textures[0] = null;
@@ -115,17 +131,23 @@ namespace ContentPatcherAnimations
             {
                 patch.RefreshIfNeeded();
 
+                // skip if nothing to apply
                 if (!patch.IsActive || patch.Source == null || patch.Target == null)
                     continue;
 
-                if (state.FrameCounter % config.AnimationFrameTime == 0)
-                {
-                    if (++patch.CurrentFrame >= config.AnimationFrameCount)
-                        patch.CurrentFrame = 0;
+                // skip if frame isn't changing this tick
+                if (state.FrameCounter % config.AnimationFrameTime != 0)
+                    continue;
 
-                    Color[] pixels = patch.GetAnimationFrame(patch.CurrentFrame);
-                    patch.Target.SetData(0, patch.ToArea, pixels, 0, pixels.Length);
-                }
+                // skip if the target hasn't been drawn recently
+                if (!state.AssetDrawTracker.WasDrawnWithin(patch.TargetName, patch.ToArea, Mod.MaxTicksSinceDrawn))
+                    continue;
+
+                // apply animation frame
+                if (++patch.CurrentFrame >= config.AnimationFrameCount)
+                    patch.CurrentFrame = 0;
+                Color[] pixels = patch.GetAnimationFrame(patch.CurrentFrame);
+                patch.Target.SetData(0, patch.ToArea, pixels, 0, pixels.Length);
             }
         }
 

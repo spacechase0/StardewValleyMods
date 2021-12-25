@@ -167,6 +167,7 @@ namespace ContentPatcherAnimations.Framework
             return pixels;
         }
 
+
         /*********
         ** Private methods
         *********/
