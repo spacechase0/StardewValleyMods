@@ -3,7 +3,7 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.5.0</Version>
+    <Version>1.5.1</Version>
     <TargetFramework>net5.0</TargetFramework>
 
     <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>

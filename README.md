@@ -118,19 +118,18 @@ III   | 31. Animal Social Menu
       | 34. Bug Net
       | 35. Capstone Professions
       | 36. Cooking Skill
-      | 37. Customize Exterior
-      | 38. DGAAutomate
-      | 39. Displays
-      | 40. Luck Skill
-      | 41. Mana Bar
-      | 42. Magic                       * needs Mana Bar
-      | 43. More Buildings
-      | 44. More Rings
-      | 45. Preexisting Relationship
-      | 46. Pyromancer's Journey
-      | 47. Sleepy Eye
-      | 48. Statue of Generosity
-      | 49. Theft of the Winter Star
+      | 37. DGAAutomate
+      | 38. Displays
+      | 39. Luck Skill
+      | 40. Mana Bar
+      | 41. Magic                       * needs Mana Bar
+      | 42. More Buildings
+      | 43. More Rings
+      | 44. Preexisting Relationship
+      | 45. Pyromancer's Journey
+      | 46. Sleepy Eye
+      | 47. Statue of Generosity
+      | 48. Theft of the Winter Star
 ----- | ------------------------------
-IV    | 50. Surfing Festival
+IV    | 49. Surfing Festival
 ```

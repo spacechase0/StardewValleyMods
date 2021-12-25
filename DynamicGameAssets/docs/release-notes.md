@@ -1,10 +1,13 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
-* Fixed custom forge issues (thanks to Esca-MMC!):
+## 1.3.3
+Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* Updated for Stardew Valley 1.5.5.
+* Fixed issues with custom forge recipes (thanks to Esca-MMC!):
   * Fixed error when an entire item stack is consumed.
-  * Fixed issue where wrong result item is displayed if any ingredients require multiple.
+  * Fixed wrong result item shown if any ingredients require multiple.
 * Improved translations. Thanks to ellipszist (added Thai) and Evexyron (added Spanish)!
 
 ## 1.3.2
