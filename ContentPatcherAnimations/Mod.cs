@@ -22,7 +22,7 @@ namespace ContentPatcherAnimations
         private StardewModdingAPI.Mod ContentPatcher;
 
         /// <summary>The per-screen mod states.</summary>
-        private readonly PerScreen<ScreenState> ScreenStateImpl = new();
+        private readonly PerScreen<ScreenState> ScreenStateImpl = new(createNewState: () => new ScreenState());
 
         /// <summary>Simplifies access to private code.</summary>
         private IReflectionHelper Reflection => this.Helper.Reflection;
@@ -31,9 +31,6 @@ namespace ContentPatcherAnimations
         /*********
         ** Accessors
         *********/
-        /// <summary>The current mod instance.</summary>
-        public static Mod Instance;
-
         /// <summary>The current mod state.</summary>
         internal ScreenState ScreenState => this.ScreenStateImpl.Value;
 
@@ -44,7 +41,6 @@ namespace ContentPatcherAnimations
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
-            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
             this.Helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
@@ -52,7 +48,11 @@ namespace ContentPatcherAnimations
             this.Helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
             this.Helper.Events.GameLoop.DayStarted += this.OnDayStarted;
 
-            helper.Content.AssetEditors.Add(new WatchForUpdatesAssetEditor());
+            helper.Content.AssetEditors.Add(new WatchForUpdatesAssetEditor(
+                getAnimatedPatches: () => this.ScreenState.AnimatedPatches,
+                getFindTargetsQueue: () => this.ScreenState.FindTargetsQueue,
+                reflection: helper.Reflection
+            ));
 
             helper.ConsoleCommands.Add("cpa", "...", this.OnCommand);
         }
@@ -124,8 +124,6 @@ namespace ContentPatcherAnimations
                 var modData = this.Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
                 this.ContentPatcher = this.GetPropertyValueManually<StardewModdingAPI.Mod>(modData, "Mod");
             }
-
-            this.ScreenStateImpl.Value ??= new ScreenState();
 
             if (this.ScreenState.CpPatches == null)
             {
