@@ -123,14 +123,8 @@ namespace ContentPatcherAnimations
                     if (++patch.CurrentFrame >= config.AnimationFrameCount)
                         patch.CurrentFrame = 0;
 
-                    Rectangle sourceRect = patch.FromArea;
-                    sourceRect.X += patch.CurrentFrame * sourceRect.Width;
-                    Rectangle targetRect = patch.ToArea;
-                    if (targetRect == Rectangle.Empty)
-                        targetRect = new Rectangle(0, 0, sourceRect.Width, sourceRect.Height);
-                    var cols = new Color[sourceRect.Width * sourceRect.Height];
-                    patch.Source.GetData(0, sourceRect, cols, 0, cols.Length);
-                    patch.Target.SetData(0, targetRect, cols, 0, cols.Length);
+                    Color[] pixels = patch.GetAnimationFrame(patch.CurrentFrame);
+                    patch.Target.SetData(0, patch.ToArea, pixels, 0, pixels.Length);
                 }
             }
         }

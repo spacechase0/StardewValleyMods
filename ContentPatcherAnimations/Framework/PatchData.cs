@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
@@ -46,6 +47,9 @@ namespace ContentPatcherAnimations.Framework
 
         /// <summary>The last <see cref="Game1.ticks"/> value when the underlying patch data was last changed.</summary>
         private int LastChangedTick;
+
+        /// <summary>The cached source frame data.</summary>
+        private readonly IDictionary<int, Color[]> AnimationFrames = new Dictionary<int, Color[]>();
 
 
         /*********
@@ -113,6 +117,7 @@ namespace ContentPatcherAnimations.Framework
             if (forceReload || this.LastChangedTick == default || lastChangedTick > this.LastChangedTick)
             {
                 this.LastChangedTick = lastChangedTick;
+                this.AnimationFrames.Clear();
 
                 try
                 {
@@ -141,6 +146,26 @@ namespace ContentPatcherAnimations.Framework
             }
         }
 
+        /// <summary>Get the texture pixels for a given animation frame.</summary>
+        /// <param name="index">The frame index.</param>
+        public Color[] GetAnimationFrame(int index)
+        {
+            if (this.Source == null)
+                return Array.Empty<Color>();
+
+            if (!this.AnimationFrames.TryGetValue(index, out Color[] pixels))
+            {
+                Rectangle sourceRect = this.FromArea;
+                sourceRect.X += index * sourceRect.Width;
+
+                pixels = new Color[sourceRect.Width * sourceRect.Height];
+                this.Source.GetData(0, sourceRect, pixels, 0, pixels.Length);
+
+                this.AnimationFrames[index] = pixels;
+            }
+
+            return pixels;
+        }
 
         /*********
         ** Private methods
