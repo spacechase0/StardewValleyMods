@@ -12,48 +12,113 @@ using StardewValley;
 
 namespace ContentPatcherAnimations
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod Instance;
-
+        /*********
+        ** Fields
+        *********/
+        /// <summary>The Content Patcher mod instance.</summary>
         private StardewModdingAPI.Mod ContentPatcher;
-        private readonly PerScreen<ScreenState> ScreenStateImpl = new();
-        internal ScreenState ScreenState => this.ScreenStateImpl.Value;
 
+        /// <summary>The per-screen mod states.</summary>
+        private readonly PerScreen<ScreenState> ScreenStateImpl = new();
+
+        /// <summary>Simplifies access to private code.</summary>
         private IReflectionHelper Reflection => this.Helper.Reflection;
 
+
+        /*********
+        ** Accessors
+        *********/
+        /// <summary>The current mod instance.</summary>
+        public static Mod Instance;
+
+        /// <summary>The current mod state.</summary>
+        internal ScreenState ScreenState => this.ScreenStateImpl.Value;
+
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            this.Helper.Events.GameLoop.UpdateTicked += this.UpdateAnimations;
-
-            void UpdateTargets()
-            {
-                foreach (var screen in this.ScreenStateImpl.GetActiveValues())
-                    screen.Value.FindTargetsCounter = 1;
-            }
-
-            this.Helper.Events.GameLoop.SaveCreated += (s, e) => UpdateTargets();
-            this.Helper.Events.GameLoop.SaveLoaded += (s, e) => UpdateTargets();
-            this.Helper.Events.GameLoop.DayStarted += (s, e) => UpdateTargets();
+            this.Helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
+            this.Helper.Events.GameLoop.SaveCreated += this.OnSaveCreated;
+            this.Helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            this.Helper.Events.GameLoop.DayStarted += this.OnDayStarted;
 
             helper.Content.AssetEditors.Add(new WatchForUpdatesAssetEditor());
 
             helper.ConsoleCommands.Add("cpa", "...", this.OnCommand);
         }
 
-        private void OnCommand(string cmd, string[] args)
+
+        /*********
+        ** Private methods
+        *********/
+        /****
+        ** Event handlers
+        ****/
+        /// <summary>Handle a command received through the SMAPI console.</summary>
+        /// <param name="name">The root command name.</param>
+        /// <param name="args">The command arguments.</param>
+        private void OnCommand(string name, string[] args)
         {
             if (args[0] == "reload")
-            {
                 this.CollectPatches();
-            }
         }
 
-        private void UpdateAnimations(object sender, UpdateTickedEventArgs e)
+        /// <inheritdoc cref="IGameLoopEvents.SaveCreated"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnSaveCreated(object sender, SaveCreatedEventArgs e)
         {
+            this.QueueUpdateTargets();
+        }
+
+        /// <inheritdoc cref="IGameLoopEvents.SaveLoaded"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        {
+            this.QueueUpdateTargets();
+        }
+
+        /// <inheritdoc cref="IGameLoopEvents.DayStarted"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
+        {
+            this.QueueUpdateTargets();
+        }
+
+        /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            this.UpdateAnimations();
+        }
+
+        /****
+        ** Implementation
+        ****/
+        /// <summary>Notify all screens to update the texture target values on their next update tick.</summary>
+        void QueueUpdateTargets()
+        {
+            foreach (var screen in this.ScreenStateImpl.GetActiveValues())
+                screen.Value.FindTargetsCounter = 1;
+        }
+
+        /// <summary>Initialize the underlying state and update animations if needed.</summary>
+        private void UpdateAnimations()
+        {
+            // initialize if needed
             if (this.ContentPatcher == null)
             {
                 var modData = this.Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
@@ -72,7 +137,7 @@ namespace ContentPatcherAnimations
                 this.CollectPatches();
             }
 
-
+            // update target textures
             if (this.ScreenState.FindTargetsCounter > 0 && --this.ScreenState.FindTargetsCounter == 0)
                 this.UpdateTargetTextures();
             while (this.ScreenState.FindTargetsQueue.Count > 0)
@@ -81,6 +146,7 @@ namespace ContentPatcherAnimations
                 this.UpdateTargetTextures(patch);
             }
 
+            // update animation frames
             ++this.ScreenState.FrameCounter;
             Game1.graphics.GraphicsDevice.Textures[0] = null;
             foreach (var patch in this.ScreenState.AnimatedPatches)
@@ -114,6 +180,7 @@ namespace ContentPatcherAnimations
             }
         }
 
+        /// <summary>Reload all target textures.</summary>
         private void UpdateTargetTextures()
         {
             foreach (var patch in this.ScreenState.AnimatedPatches)
@@ -128,12 +195,13 @@ namespace ContentPatcherAnimations
                 }
                 catch (Exception e)
                 {
-                    Log.Trace("Exception loading " + patch.Key.LogName + " textures, delaying to try again next frame: " + e);
+                    Log.Trace($"Exception loading {patch.Key.LogName} textures, delaying to try again next frame: {e}");
                     this.ScreenState.FindTargetsQueue.Enqueue(patch.Key);
                 }
             }
         }
 
+        /// <summary>Reload all target textures for a given patch.</summary>
         private void UpdateTargetTextures(Patch key)
         {
             try
@@ -147,10 +215,11 @@ namespace ContentPatcherAnimations
             }
             catch (Exception e)
             {
-                Log.Error("Exception loading " + key.LogName + " textures: " + e);
+                Log.Error($"Exception loading {key.LogName} textures: {e}");
             }
         }
 
+        /// <summary>Collect all patches from installed Content Patcher packs.</summary>
         private void CollectPatches()
         {
             this.ScreenState.AnimatedPatches.Clear();
@@ -168,7 +237,7 @@ namespace ContentPatcherAnimations
 
                     if (patch.AnimationFrameTime > 0 && patch.AnimationFrameCount > 0)
                     {
-                        Log.Trace("Loading animated patch from content pack " + pack.Manifest.UniqueID);
+                        Log.Trace($"Loading animated patch from content pack {pack.Manifest.UniqueID}");
                         if (string.IsNullOrEmpty(patch.LogName))
                         {
                             Log.Error("Animated patches must specify a LogName!");
@@ -181,7 +250,7 @@ namespace ContentPatcherAnimations
                         foreach (object cpPatch in this.ScreenState.CpPatches)
                         {
                             object path = this.Reflection.GetProperty<object>(cpPatch, "Path").GetValue();
-                            if (path.ToString() == pack.Manifest.Name + " > " + patch.LogName)
+                            if (path.ToString() == $"{pack.Manifest.Name} > {patch.LogName}")
                             {
                                 targetPatch = cpPatch;
                                 break;
@@ -189,7 +258,7 @@ namespace ContentPatcherAnimations
                         }
                         if (targetPatch == null)
                         {
-                            Log.Error("Failed to find patch with name \"" + patch.LogName + "\"!?!?");
+                            Log.Error($"Failed to find patch with name \"{patch.LogName}\"!?!?");
                             continue;
                         }
                         var appliedProp = this.Reflection.GetProperty<bool>(targetPatch, "IsApplied");
@@ -213,6 +282,8 @@ namespace ContentPatcherAnimations
             }
         }
 
+        /// <summary>Get the texture for a given asset name.</summary>
+        /// <param name="target">The asset name to match.</param>
         private Texture2D FindTargetTexture(string target)
         {
             if (this.Helper.Content.NormalizeAssetName(target) == this.Helper.Content.NormalizeAssetName("TileSheets\\tools"))
@@ -221,12 +292,16 @@ namespace ContentPatcherAnimations
             var tex = Game1.content.Load<Texture2D>(target);
             if (tex.GetType().Name == "ScaledTexture2D")
             {
-                Log.Trace("Found ScaledTexture2D from PyTK: " + target);
+                Log.Trace($"Found ScaledTexture2D from PyTK: {target}");
                 tex = this.Reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
             }
             return tex;
         }
 
+        /// <summary>Get the source rectangle for a Content Patcher patch.</summary>
+        /// <param name="targetPatch">The Content Patcher patch.</param>
+        /// <param name="rectName">The rectangle field name.</param>
+        /// <param name="defaultTo">The default rectangle value if the field isn't defined.</param>
         private Rectangle GetRectangleFromPatch(object targetPatch, string rectName, Rectangle defaultTo = default)
         {
             object tokenRect = this.Reflection.GetField<object>(targetPatch, rectName).GetValue();

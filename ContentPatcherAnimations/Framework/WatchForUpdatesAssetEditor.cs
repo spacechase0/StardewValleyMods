@@ -1,10 +1,16 @@
+using System;
 using StardewModdingAPI;
 
 namespace ContentPatcherAnimations.Framework
 {
     // TODO: Optimize this
+    /// <summary>An asset editor which detects when an animated texture changes.</summary>
     internal class WatchForUpdatesAssetEditor : IAssetEditor
     {
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public bool CanEdit<T>(IAssetInfo asset)
         {
             if (Mod.Instance.ScreenState == null)
@@ -20,6 +26,7 @@ namespace ContentPatcherAnimations.Framework
             return false;
         }
 
+        /// <inheritdoc />
         public void Edit<T>(IAssetData asset)
         {
             if (Mod.Instance.ScreenState == null)

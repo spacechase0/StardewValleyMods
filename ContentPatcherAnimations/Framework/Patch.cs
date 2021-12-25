@@ -1,15 +1,28 @@
 namespace ContentPatcherAnimations.Framework
 {
+    /// <summary>Metadata about a Content Patcher patch.</summary>
     internal class Patch
     {
-        public string LogName; // To identify, to check if it is active
-        public string Action; // To make sure this is an EditImage
-
+        /*********
+        ** Accessors
+        *********/
+        //
         // Target and FromFile are taken from CP since it handles tokens
-        // Same for FromARea and ToArea
+        // Same for FromArea and ToArea
+        //
 
-        // MINE
-        public int AnimationFrameTime = -1;
-        public int AnimationFrameCount = -1;
+        /// <summary>The unique patch log name.</summary>
+        /// <remarks>This is used to identify the patch and check if it's active.</remarks>
+        public string LogName { get; set; }
+
+        /// <summary>The patch action.</summary>
+        /// <remarks>This should always be <c>EditImage</c> for animated patches.</remarks>
+        public string Action { get; set; }
+
+        /// <summary>The number of game ticks between each frame, defined by the content pack author.</summary>
+        public int AnimationFrameTime { get; set; } = -1;
+
+        /// <summary>The number of animation frames, defined by the content pack author.</summary>
+        public int AnimationFrameCount { get; set; } = -1;
     }
 }
