@@ -15,7 +15,7 @@ when your toolbar has an empty slot selected.)
 **Caution:** placing a non-empty chest without the mod installed will lose its contents.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

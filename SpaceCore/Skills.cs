@@ -398,7 +398,6 @@ namespace SpaceCore
                 var api = SpaceCore.Instance.Helper.ModRegistry.GetApi<IExperienceBarsApi>("spacechase0.ExperienceBars");
                 if (api == null)
                 {
-                    Log.Warn("No experience bars API? Turning off");
                     SpaceCore.Instance.Helper.Events.Display.RenderedHud -= Skills.OnRenderedHud;
                     return;
                 }

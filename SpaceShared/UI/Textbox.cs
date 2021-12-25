@@ -59,9 +59,9 @@ namespace SpaceShared.UI
         }
 
         /// <inheritdoc />
-        public override void Update(bool hidden = false)
+        public override void Update(bool isOffScreen = false)
         {
-            base.Update(hidden);
+            base.Update(isOffScreen);
 
             if (this.ClickGestured && this.Callback != null)
             {
@@ -72,6 +72,9 @@ namespace SpaceShared.UI
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
+            if (this.IsHidden())
+                return;
+
             b.Draw(this.Tex, this.Position, Color.White);
 
             // Copied from game code - caret

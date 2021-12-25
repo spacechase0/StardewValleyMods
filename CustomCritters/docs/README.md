@@ -13,7 +13,7 @@ add custom critters to the world.
 * **For mod authors:** see [example content pack](https://www.nexusmods.com/stardewvalley/mods/1259).
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

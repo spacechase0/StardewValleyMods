@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.0.7
+Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* Updated for Stardew Valley 1.5.5.
+
 ## 1.0.6
 Released 19 June 2021 for Stardew Valley 1.5. Updated by Pathoschild.
 

@@ -1,8 +1,8 @@
 ﻿{
     "Name": "Multi Fertilizer",
     "Author": "spacechase0",
-    "Version": "1.0.4",
-    "MinimumApiVersion": "3.12.5",
+    "Version": "1.0.5",
+    "MinimumApiVersion": "3.13.0",
     "Description": "Apply multiple types of fertilizer to a crop space!",
     "UniqueID": "spacechase0.MultiFertilizer",
     "EntryDll": "MultiFertilizer.dll",

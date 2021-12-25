@@ -21,6 +21,9 @@ namespace GenericModConfigMenu.Framework
         /*********
         ** Fields
         *********/
+        /// <summary>The minimum number of pixels between each main button.</summary>
+        private const int MinimumButtonGap = 32;
+
         private readonly bool InGame;
         private readonly Action<string> OpenPage;
         private readonly Action ReturnToList;
@@ -65,7 +68,7 @@ namespace GenericModConfigMenu.Framework
 
             this.CurrPage = page ?? "";
 
-            this.ModConfig.ActiveDisplayPage = this.ModConfig.Options[this.CurrPage];
+            this.ModConfig.ActiveDisplayPage = this.ModConfig.Pages[this.CurrPage];
 
             this.Table = new Table
             {
@@ -73,7 +76,7 @@ namespace GenericModConfigMenu.Framework
                 Size = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116)
             };
             this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
-            foreach (var opt in this.ModConfig.Options[this.CurrPage].Options)
+            foreach (var opt in this.ModConfig.Pages[this.CurrPage].Options)
             {
                 string name = opt.Name();
                 string tooltip = opt.Tooltip();
@@ -376,12 +379,20 @@ namespace GenericModConfigMenu.Framework
         public override void draw(SpriteBatch b)
         {
             base.draw(b);
-            b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
-            IClickableMenu.drawTextureBox(b, (Game1.uiViewport.Width - 800) / 2 - 32, 32, 800 + 64, 50 + 20, Color.White);
-            IClickableMenu.drawTextureBox(b, (Game1.uiViewport.Width - 800) / 2 - 32, Game1.uiViewport.Height - 50 - 20 - 32, 800 + 64, 50 + 20, Color.White);
 
+            // main background
+            b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
+
+            // title background
+            IClickableMenu.drawTextureBox(b, (Game1.uiViewport.Width - 800) / 2 - 32, 32, 800 + 64, 50 + 20, Color.White);
+
+            // button background
+            IClickableMenu.drawTextureBox(b, (Game1.uiViewport.Width - 800) / 2 - 32 - 64, Game1.uiViewport.Height - 50 - 20 - 32, 800 + 64 + 128, 50 + 20, Color.White);
+
+            // UI elements
             this.Ui.Draw(b);
 
+            // keybind UI
             if (this.KeybindingOpt != null)
             {
                 b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
@@ -414,8 +425,10 @@ namespace GenericModConfigMenu.Framework
                 b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 100), Game1.textColor);
             }
 
+            // mouse
             this.drawMouse(b);
 
+            // hover tooltips
             if (Constants.TargetPlatform != GamePlatform.Android)
             {
                 foreach (var label in this.OptHovers)
@@ -462,7 +475,7 @@ namespace GenericModConfigMenu.Framework
         {
             // add page title
             {
-                string pageTitle = this.ModConfig.Options[this.CurrPage].PageTitle();
+                string pageTitle = this.ModConfig.Pages[this.CurrPage].PageTitle();
                 var titleLabel = new Label
                 {
                     String = modManifest.Name + (pageTitle == "" ? "" : " > " + pageTitle),
@@ -474,59 +487,94 @@ namespace GenericModConfigMenu.Framework
             }
 
             // add buttons
-            this.Ui.AddChild(new Label
             {
-                String = I18n.Config_Buttons_Cancel(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 400, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.Cancel()
-            });
-            this.Ui.AddChild(new Label
-            {
-                String = I18n.Config_Buttons_ResetToDefault(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 - 200, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.ResetConfig()
-            });
-            this.Ui.AddChild(new Label
-            {
-                String = I18n.Config_Buttons_Save(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 50, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ => this.SaveConfig()
-            });
-            this.Ui.AddChild(new Label
-            {
-                String = I18n.Config_Buttons_SaveAndClose(),
-                Bold = true,
-                LocalPosition = new Vector2(Game1.uiViewport.Width / 2 + 200, Game1.uiViewport.Height - 50 - 36),
-                Callback = _ =>
+                // create buttons
+                Vector2 leftPosition = new Vector2(Game1.uiViewport.Width / 2 - 450, Game1.uiViewport.Height - 50 - 36);
+                var cancelButton = new Label
                 {
-                    this.SaveConfig();
-                    this.Close();
+                    String = I18n.Config_Buttons_Cancel(),
+                    Bold = true,
+                    LocalPosition = leftPosition,
+                    Callback = _ => this.Cancel()
+                };
+                var resetButton = new Label
+                {
+                    String = I18n.Config_Buttons_ResetToDefault(),
+                    Bold = true,
+                    LocalPosition = leftPosition,
+                    Callback = _ => this.ResetConfig(),
+                    ForceHide = () => this.IsSubPage
+                };
+                var saveButton = new Label
+                {
+                    String = I18n.Config_Buttons_Save(),
+                    Bold = true,
+                    LocalPosition = leftPosition,
+                    Callback = _ => this.SaveConfig()
+                };
+                var saveAndCloseButton = new Label
+                {
+                    String = I18n.Config_Buttons_SaveAndClose(),
+                    Bold = true,
+                    LocalPosition = leftPosition,
+                    Callback = _ =>
+                    {
+                        this.SaveConfig();
+                        this.Close();
+                    }
+                };
+                Label[] buttons = new[] { cancelButton, resetButton, saveButton, saveAndCloseButton };
+                int[] widths = buttons.Select(p => p.Width).ToArray();
+
+                // calculate positions to spread evenly across available space
+                // (if the buttons are too big to fit, overflow the button area instead of overlapping buttons)
+                int totalButtonWidths = widths.Sum();
+                int leftOffset = 0;
+                int gap = ((800 + 64 + 50) - totalButtonWidths) / (buttons.Length - 1);
+                if (gap < MinimumButtonGap)
+                {
+                    leftOffset = -((MinimumButtonGap - gap) / 2) * (buttons.Length - 1);
+                    gap = MinimumButtonGap;
                 }
-            });
+
+                // set button positions
+                for (int i = 0; i < buttons.Length; i++)
+                    buttons[i].LocalPosition += new Vector2(leftOffset + widths.Take(i).Sum() + (gap * i), 0);
+
+                // add to UI
+                foreach (var button in buttons)
+                    this.Ui.AddChild(button);
+            }
         }
 
         private void ResetConfig()
         {
             Game1.playSound("backpackIN");
-            this.ModConfig.Reset();
-            foreach (var page in this.ModConfig.Options)
-                foreach (var opt in page.Value.Options)
-                    opt.GetLatest();
-            this.ModConfig.Save();
 
+            // reset
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.BeforeReset();
+            this.ModConfig.Reset();
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.AfterReset();
+
+            // save & fetch new values
+            this.SaveConfig(playSound: false);
+
+            // reopen page
             this.OpenPage(this.CurrPage);
         }
 
-        private void SaveConfig()
+        private void SaveConfig(bool playSound = true)
         {
-            Game1.playSound("money");
-            foreach (var page in this.ModConfig.Options)
-                foreach (var opt in page.Value.Options)
-                    opt.Save();
+            if (playSound)
+                Game1.playSound("money");
+
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.BeforeSave();
             this.ModConfig.Save();
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.AfterSave();
         }
 
         private void Close()

@@ -1,4 +1,7 @@
 ﻿{
+    /*********
+    ** Generic config UI
+    *********/
     // button text at the bottom of the in-game options menu
     "button.mod-options": "Opciones del Mod",
 
@@ -9,10 +12,19 @@
     "config.buttons.cancel": "Cancelar",
     "config.buttons.reset-to-default": "Por Defecto",
     "config.buttons.save": "Guardar",
-    "config.buttons.save-and-close": "Guardar&Cerrar",
+    "config.buttons.save-and-close": "Guardar & Cerrar",
 
     "config.rebind-key.title": "Reasignación de tecla: {{optionName}}",
     "config.rebind-key.simple-instructions": "Pulse una tecla para reasignar",
     "config.rebind-key.combo-instructions": "Pulse una combinación de teclas para reasignar",
-    "config.rebind-key.no-key": "(Ninguna)"
+    "config.rebind-key.no-key": "(Ninguna)",
+
+
+    /*********
+    ** Config options for Generic Mod Config Menu itself
+    *********/
+    "options.open-menu-key.name": "Tecla de abrir menú",
+    "options.open-menu-key.desc": "La tecla que abre el menú.",
+    "options.scroll-speed.name": "Velocidad de desplazamiento",
+    "options.scroll-speed.desc": "El número de filas a desplazar cuando se desplaza un menú de configuración."
 }

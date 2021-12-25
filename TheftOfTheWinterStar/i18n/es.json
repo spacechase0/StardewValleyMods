@@ -1,0 +1,55 @@
+﻿{
+    /*********
+    ** Items
+    *********/
+    // crafting recipe
+    "recipe.frosty-stardrop.name": "Fruta estelar helada",
+
+    // items
+    "item.festive-big-key-a.name": "Llave grande festiva (A)",
+    "item.festive-big-key-a.description": "La mitad de una 'gran llave' utilizada en la Mazmorra de la Escarcha.",
+
+    "item.festive-big-key-b.name": "Llave grande festiva (B)",
+    "item.festive-big-key-b.description": "La mitad de una 'gran llave' utilizada en la Mazmorra de la Escarcha.",
+
+    "item.festive-key.name": "Llave festiva",
+    "item.festive-key.description": "Una llave utilizada en la Mazmorra de la Escarcha.",
+
+    "item.frosty-stardrop-piece.name": "Pieza de fruta estelar helada",
+    "item.frosty-stardrop-piece.description": "Una pieza de fruta estelar. Se pueden combinar cinco para obtener uno completo.",
+
+    "item.tempus-globe.name": "Globo Tempus",
+    "item.tempus-globe.description": "Un objeto místico que permite que los cultivos a su alrededor crezcan durante todo el año. También riega los cultivos cercanos. \nÁrea de 5x5, centrada en el objeto.",
+
+    // weapons
+    "weapon.festive-scepter.name": "Cetro festivo",
+    "weapon.festive-scepter.description": "Dispara un rayo helado.",
+
+
+    /*********
+    ** Lewis event
+    *********/
+    "event.lewis-speech": "Hola, @.#$b#Estaba haciendo los preparativos para la Fiesta de la Estrella de Invierno y... ¡No puedo encontrar ninguna de las decoraciones!$s#$b#Parece que alguien robó las decoraciones.$4#$b#No sé por qué alguien haría esto... ¡pero las decoraciones no desaparecen solas!$s#$b#De todos modos, esperaba que pudieras recuperarlos para nosotros.$h#$b#Había un rastro de adornos rotos que bajaban por el túnel a la izquierda de la parada del autobús. Todos estariamos agradecidos si que lo hicieran por nosotros.$n#$b#O podríamos contratar a Marlon pero eso va a ser costoso.$s#$b#¡Buena suerte!$n",
+
+
+    /*********
+    ** Map messages
+    *********/
+    "map-messages.locked-entrance": "Esta puerta está cerrada ahora mismo.",
+    "map-messages.locked-door": "Esta puerta está cerrada. Probablemente necesite una llave.",
+    "map-messages.locked-boss": "Esta puerta gigante está cerrada. Tal vez algo cercano pueda abrirla.",
+    "map-messages.unlocked": "La puerta ha sido desbloqueada.",
+    "map-messages.item-puzzle": "Parece que hay una silueta en el pedestal.",
+    "map-messages.target": "Un objetivo.",
+    "map-messages.trail-lights": "Unas luces festivas.",
+    "map-messages.trail-candy-cane": "Un bastón de caramelo roto.",
+    "map-messages.trail-ornaments": "Unos adornos festivos.",
+    "map-messages.trail-tree": "Un árbol en miniatura destrozado.",
+
+
+    /*********
+    ** Final boss
+    *********/
+    "final-boss.speech": "¡Cómo se ATREVEN a divertirse sin mí! ¡Nunca recuperarán sus decoraciones!",
+    "final-boss.victory-message": "¡Tienes los adornos de vuelta!\n¡También has aprendido la receta del 'Tempus Globe'!"
+}

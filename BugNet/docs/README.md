@@ -15,7 +15,7 @@ Buy the bug net from Pierre's shop for 500g, hold it like any other tool, and sw
 critters.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## For mod authors
 You can register your custom critters in BugNet to make them catchable. To do so:

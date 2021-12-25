@@ -9,10 +9,19 @@ namespace GenericModConfigMenu.Framework.ModOption
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void GetLatest() { }
+        public override void BeforeReset() { }
 
         /// <inheritdoc />
-        public override void Save() { }
+        public override void AfterReset() { }
+
+        /// <inheritdoc />
+        public override void BeforeSave() { }
+
+        /// <inheritdoc />
+        public override void AfterSave() { }
+
+        /// <inheritdoc />
+        public override void GetLatest() { }
 
 
         /*********

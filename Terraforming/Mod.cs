@@ -87,8 +87,8 @@ namespace Terraforming
             loc.Map.LoadTileSheets(Game1.mapDisplayDevice);
             if (loc.waterTiles != null)
             {
-                int w = loc.waterTiles.GetLength(0);
-                for (int i = 0; i < loc.waterTiles.Length; ++i)
+                int w = loc.waterTiles.waterTiles.GetLength(0);
+                for (int i = 0; i < loc.waterTiles.waterTiles.Length; ++i)
                 {
                     int ix = i % w, iy = i / w;
                     loc.waterTiles[ix, iy] = false;

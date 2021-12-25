@@ -1,0 +1,10 @@
+﻿{
+    /*********
+    ** Item data
+    *********/
+    "seeds.name": "Semillas de ajirivía",
+    "seeds.description": "¿Cómo ocurrió esto? Crece en primavera, tarda 4 días.",
+
+    "produce.name": "Ajirivía",
+    "produce.description": "Una asquerosa combinación de ajo y chirivía.",
+}

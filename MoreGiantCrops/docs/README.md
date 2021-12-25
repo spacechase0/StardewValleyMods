@@ -33,7 +33,7 @@ harvest_ field in [`Data\Crops`](https://stardewvalleywiki.com/Modding:Crop_data
 be exactly 48 pixels wide by 64 pixels high.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

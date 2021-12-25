@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Building data
+    *********/
+    "spooky-shed.name": "กระท่อมสุดหลอน",
+    "spooky-shed.description": "อาคารที่ว่างเปล่า แต่ก็น่ากลัวเหมือนกัน",
+
+    "fishing-shack.name": "กระท่อมตกปลา",
+    "fishing-shack.description": "กระท่อมสำหรับตกปลา",
+
+    "mini-spa.name": "สปาขนาดเล็ก",
+    "mini-spa.description": "สถานที่พักผ่อนและเพิ่มความแข็งแกร่ง"
+}

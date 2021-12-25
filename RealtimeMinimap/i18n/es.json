@@ -1,0 +1,40 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // top section
+    "config.show-by-default.name": "Mostrar por defecto",
+    "config.show-by-default.tooltip": "Si el minimapa debe mostrarse por defecto.\nDebes reiniciar el juego para que esto tenga efecto.",
+    "config.toggle-key.name": "Tecla de activación",
+    "config.toggle-key.tooltip": "La tecla que muestra u oculta el minimapa.",
+    "config.update-interval.name": "Intervalo de actualización",
+    "config.update-interval.tooltip": "El intervalo en milisegundos entre cada actualización del minimapa. 0 será cada fotograma; -1 sólo lo hará al entrar en una nueva ubicación. (Los marcadores se actualizan cada fotograma independientemente).",
+
+    // Positioning & Size section
+    "config.positioning-and-size.text": "Posición y tamaño",
+    "config.positioning-and-size.tooltip": "Opciones relativas a la colocación del minimapa.",
+    "config.anchor-x.name": "Anclaje X del minimapa",
+    "config.anchor-x.tooltip": "El porcentaje de la anchura de la pantalla donde se colocará la parte superior izquierda del minimapa.",
+    "config.anchor-y.name": "Anclaje Y del minimapa",
+    "config.anchor-y.tooltip": "El porcentaje de la altura de la pantalla donde se colocará la parte superior izquierda del minimapa.",
+    "config.offset-x.name": "Desplazamiento X del minimapa",
+    "config.offset-x.tooltip": "El desplazamiento X desde el ancla en el que se colocará el minimapa.",
+    "config.offset-y.name": "Desplazamiento Y del minimapa",
+    "config.offset-y.tooltip": "El desplazamiento Y desde el ancla en el que se colocará el minimapa.",
+    "config.size.name": "Tamaño del minimapa",
+    "config.size.tooltip": "El tamaño del minimapa, en píxeles (antes de la escala de la interfaz).",
+
+    // Markers section
+    "config.markers.text": "Marcadores",
+    "config.markers.tooltip": "Opciones relativas a la representación de los marcadores en el mapa.",
+    "config.player-marker-scale.name": "Cabezas de los jugadores",
+    "config.player-marker-scale.tooltip": "Escala de renderizado para la cabeza de un jugador. El 0 lo desactiva.",
+    "config.npc-marker-scale.name": "Cabezas de los NPCs",
+    "config.npc-marker-scale.tooltip": "Escala de renderizado para la cabeza de un NPC. El 0 lo desactiva.",
+    "config.wood-sign-marker-scale.name": "Señales de madera",
+    "config.wood-sign-marker-scale.tooltip": "Renderiza la escala de los elementos que se mantienen en los carteles de madera. El 0 lo desactiva.",
+    "config.stone-sign-marker-scale.name": "Señales de piedra",
+    "config.stone-sign-marker-scale.tooltip": "Renderiza la escala de los elementos que se mantienen en los carteles de piedra. El 0 lo desactiva.",
+    "config.dark-sign-marker-scale.name": "Señales oscuras",
+    "config.dark-sign-marker-scale.tooltip": "Renderiza la escala de los elementos que se mantienen en los carteles oscuros. El 0 lo desactiva."
+}
