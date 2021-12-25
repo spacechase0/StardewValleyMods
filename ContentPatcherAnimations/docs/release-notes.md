@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Rewrite to significantly reduce performance impact.
+
 ## 1.1.14
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

@@ -14,25 +14,15 @@ namespace ContentPatcherAnimations.Framework
         /// <summary>Get the patch and animation data for loaded patches.</summary>
         private readonly Func<IDictionary<Patch, PatchData>> GetAnimatedPatches;
 
-        /// <summary>Get the queue of patches whose target textures to reload.</summary>
-        private readonly Func<Queue<Patch>> GetFindTargetsQueue;
-
-        /// <summary>Simplifies access to private code.</summary>
-        private readonly IReflectionHelper Reflection;
-
 
         /*********
         ** Public methods
         *********/
         /// <summary>Construct an instance.</summary>
         /// <param name="getAnimatedPatches">Get the patch and animation data for loaded patches.</param>
-        /// <param name="getFindTargetsQueue">Get the queue of patches whose target textures to reload.</param>
-        /// <param name="reflection">Simplifies access to private code.</param>
-        public WatchForUpdatesAssetEditor(Func<IDictionary<Patch, PatchData>> getAnimatedPatches, Func<Queue<Patch>> getFindTargetsQueue, IReflectionHelper reflection)
+        public WatchForUpdatesAssetEditor(Func<IDictionary<Patch, PatchData>> getAnimatedPatches)
         {
             this.GetAnimatedPatches = getAnimatedPatches;
-            this.GetFindTargetsQueue = getFindTargetsQueue;
-            this.Reflection = reflection;
         }
 
         /// <inheritdoc />
@@ -42,8 +32,7 @@ namespace ContentPatcherAnimations.Framework
 
             foreach (PatchData patch in animatedPatches.Values)
             {
-                string target = this.Reflection.GetProperty<string>(patch.PatchObj, "TargetAsset").GetValue();
-                if (!string.IsNullOrWhiteSpace(target) && asset.AssetNameEquals(target))
+                if (patch.TargetName != null && asset.AssetNameEquals(patch.TargetName))
                     return true;
             }
             return false;
@@ -53,13 +42,11 @@ namespace ContentPatcherAnimations.Framework
         public void Edit<T>(IAssetData asset)
         {
             var animatedPatches = this.GetAnimatedPatches();
-            var queue = this.GetFindTargetsQueue();
 
-            foreach ((Patch key, PatchData patch) in animatedPatches)
+            foreach (PatchData patch in animatedPatches.Values)
             {
-                string target = this.Reflection.GetProperty<string>(patch.PatchObj, "TargetAsset").GetValue();
-                if (!string.IsNullOrWhiteSpace(target) && asset.AssetNameEquals(target))
-                    queue.Enqueue(key);
+                if (patch.TargetName != null && asset.AssetNameEquals(patch.TargetName))
+                    patch.RefreshIfNeeded(forceReload: true);
             }
         }
     }

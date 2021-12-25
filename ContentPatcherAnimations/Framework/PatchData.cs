@@ -12,31 +12,65 @@ namespace ContentPatcherAnimations.Framework
     internal class PatchData
     {
         /*********
+        ** Fields
+        *********/
+        /// <summary>The content pack from which the patch was loaded.</summary>
+        private readonly IContentPack ContentPack;
+
+        /// <summary>Simplifies access to private code.</summary>
+        private readonly IReflectionHelper Reflection;
+
+        /// <summary>The underlying patch's <c>LastChangedTick</c> property.</summary>
+        private readonly IReflectedProperty<int> LastChangedTickProperty;
+
+        /// <summary>The underlying patch's <c>IsReady</c> property.</summary>
+        private readonly IReflectedProperty<bool> IsReadyProperty;
+
+        /// <summary>The underlying patch's <c>IsApplied</c> property.</summary>
+        private readonly IReflectedProperty<bool> IsAppliedProperty;
+
+        /// <summary>The underlying patch's <c>FromAsset</c> property.</summary>
+        private readonly IReflectedProperty<string> FromAssetProperty;
+
+        /// <summary>The underlying patch's <c>TargetAsset</c> property.</summary>
+        private readonly IReflectedProperty<string> TargetAssetProperty;
+
+        /// <summary>The underlying patch's <c>FromArea</c> field.</summary>
+        private readonly IReflectedField<object> FromAreaProperty;
+
+        /// <summary>The underlying patch's <c>ToArea</c> field.</summary>
+        private readonly IReflectedField<object> ToAreaProperty;
+
+        /// <summary>The raw patch name to display in error messages.</summary>
+        private readonly string Name;
+
+        /// <summary>The last <see cref="Game1.ticks"/> value when the underlying patch data was last changed.</summary>
+        private int LastChangedTick;
+
+
+        /*********
         ** Accessors
         *********/
-        /// <summary>The underlying Content Patcher patch object.</summary>
-        public object PatchObj { get; init; }
+        /// <summary>Get whether the patch is ready.</summary>
+        public bool IsReady { get; protected set; }
 
         /// <summary>Get whether the patch is applied.</summary>
-        public Func<bool> IsActive { get; init; }
+        public bool IsActive { get; protected set; }
 
-        /// <summary>Get the texture to which the patch applies.</summary>
-        public Func<Texture2D> TargetFunc { get; init; }
+        /// <summary>The normalized target asset name.</summary>
+        public string TargetName { get; protected set; }
 
         /// <summary>The texture to which the patch applies.</summary>
         public Texture2D Target { get; protected set; }
-
-        /// <summary>Get the source texture loaded by the patch.</summary>
-        public Func<Texture2D> SourceFunc { get; init; }
 
         /// <summary>The source texture loaded by the patch.</summary>
         public Texture2D Source { get; protected set; }
 
         /// <summary>Get the source rectangle in the <see cref="Source"/>, if any.</summary>
-        public Func<Rectangle> FromAreaFunc { get; init; }
+        public Rectangle FromArea { get; protected set; }
 
         /// <summary>Get the source rectangle in the <see cref="Target"/>, if any.</summary>
-        public Func<Rectangle> ToAreaFunc { get; init; }
+        public Rectangle ToArea { get; protected set; }
 
         /// <summary>The current animation frame.</summary>
         public int CurrentFrame { get; set; }
@@ -45,82 +79,139 @@ namespace ContentPatcherAnimations.Framework
         /*********
         ** Public methods
         *********/
-        /// <summary>Construct patch data for a loaded patch.</summary>
+        /// <summary>Construct an instance.</summary>
         /// <param name="contentPack">The content pack from which the patch was loaded.</param>
+        /// <param name="name">The raw patch name to display in error messages.</param>
         /// <param name="patch">The patch instance from Content Patcher.</param>
         /// <param name="reflection">Simplifies access to private code.</param>
-        public static PatchData ReadPatchData(IContentPack contentPack, object patch, IReflectionHelper reflection)
+        public PatchData(IContentPack contentPack, string name, object patch, IReflectionHelper reflection)
         {
-            IReflectedProperty<bool> appliedProp = reflection.GetProperty<bool>(patch, "IsApplied");
-            IReflectedProperty<string> sourceProp = reflection.GetProperty<string>(patch, "FromAsset");
-            IReflectedProperty<string> targetProp = reflection.GetProperty<string>(patch, "TargetAsset");
+            this.ContentPack = contentPack;
+            this.Name = name;
+            this.Reflection = reflection;
 
-            Rectangle FromAreaFunc() => PatchData.GetRectangleFromPatch(reflection, patch, "FromArea");
+            this.LastChangedTickProperty = reflection.GetProperty<int>(patch, "LastChangedTick");
+            this.IsReadyProperty = reflection.GetProperty<bool>(patch, "IsReady");
+            this.IsAppliedProperty = reflection.GetProperty<bool>(patch, "IsApplied");
+            this.FromAssetProperty = reflection.GetProperty<string>(patch, "FromAsset");
+            this.TargetAssetProperty = reflection.GetProperty<string>(patch, "TargetAsset");
+            this.FromAreaProperty = reflection.GetField<object>(patch, "FromArea");
+            this.ToAreaProperty = reflection.GetField<object>(patch, "ToArea");
 
-            return new PatchData
+            this.RefreshIfNeeded();
+        }
+
+        /// <summary>Refresh the patch data if the underlying patch changed.</summary>
+        /// <param name="forceReload">Whether to reload the patch even if it hasn't changed.</param>
+        public void RefreshIfNeeded(bool forceReload = false)
+        {
+            // update IsActive (doesn't change LastChangedTick value)
+            this.IsActive = this.IsAppliedProperty.GetValue();
+
+            // refresh if patch data changed
+            int lastChangedTick = this.LastChangedTickProperty.GetValue();
+            if (forceReload || this.LastChangedTick == default || lastChangedTick > this.LastChangedTick)
             {
-                PatchObj = patch,
-                IsActive = appliedProp.GetValue,
-                SourceFunc = () => contentPack.LoadAsset<Texture2D>(sourceProp.GetValue()),
-                TargetFunc = () => PatchData.FindTargetTexture(reflection, targetProp.GetValue()),
-                FromAreaFunc = FromAreaFunc,
-                ToAreaFunc = () =>
+                this.LastChangedTick = lastChangedTick;
+
+                try
                 {
-                    var fromArea = FromAreaFunc();
-                    return PatchData.GetRectangleFromPatch(reflection, patch, "ToArea", new Rectangle(0, 0, fromArea.Width, fromArea.Height));
+                    this.IsReady = this.IsReadyProperty.GetValue();
+                    if (this.IsReady && this.TryLoadSource(out Texture2D sourceTexture) && this.TryLoadTarget(out Texture2D targetTexture))
+                    {
+                        this.IsActive = this.IsAppliedProperty.GetValue();
+                        this.Source = sourceTexture;
+                        this.Target = targetTexture;
+                        this.TargetName = this.TargetAssetProperty.GetValue();
+                        this.FromArea = this.GetRectangleFromPatch(this.FromAreaProperty) ?? Rectangle.Empty;
+                        this.ToArea = this.GetRectangleFromPatch(this.ToAreaProperty) ?? new Rectangle(0, 0, this.FromArea.Width, this.FromArea.Height);
+
+                        this.TargetName = !string.IsNullOrWhiteSpace(this.TargetName)
+                            ? PathUtilities.NormalizeAssetName(this.TargetName)
+                            : null;
+                    }
+                    else
+                        this.Clear();
                 }
-            };
-        }
-
-        /// <summary>Reload the <see cref="Source"/> and <see cref="Target"/> textures.</summary>
-        public void Reload()
-        {
-            this.Source = this.SourceFunc();
-            this.Target = this.TargetFunc();
-        }
-
-        /// <summary>Clear the <see cref="Target"/> value.</summary>
-        public void ClearTarget()
-        {
-            this.Target = null;
+                catch (Exception ex)
+                {
+                    Log.Trace($"Exception refreshing patch '{this.Name}', ignoring patch until its next update.\n{ex}");
+                    this.Clear();
+                }
+            }
         }
 
 
         /*********
         ** Private methods
         *********/
-        /// <summary>Get the texture for a given asset name.</summary>
-        /// <param name="reflection">Simplifies access to private code.</param>
-        /// <param name="target">The asset name to match.</param>
-        private static Texture2D FindTargetTexture(IReflectionHelper reflection, string target)
+        /// <summary>Reset the underlying patch data.</summary>
+        private void Clear()
         {
-            if (PathUtilities.NormalizeAssetName(target) == PathUtilities.NormalizeAssetName("TileSheets/tools"))
-                return reflection.GetField<Texture2D>(typeof(Game1), "_toolSpriteSheet").GetValue();
-
-            var tex = Game1.content.Load<Texture2D>(target);
-            if (tex.GetType().Name == "ScaledTexture2D")
-            {
-                Log.Trace($"Found ScaledTexture2D from PyTK: {target}");
-                tex = reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
-            }
-            return tex;
+            this.IsReady = false;
+            this.IsActive = false;
+            this.Source = null;
+            this.Target = null;
+            this.FromArea = Rectangle.Empty;
+            this.ToArea = Rectangle.Empty;
         }
 
         /// <summary>Get the source rectangle for a Content Patcher patch.</summary>
-        /// <param name="reflection">Simplifies access to private code.</param>
-        /// <param name="targetPatch">The Content Patcher patch.</param>
-        /// <param name="rectName">The rectangle field name.</param>
-        /// <param name="defaultTo">The default rectangle value if the field isn't defined.</param>
-        private static Rectangle GetRectangleFromPatch(IReflectionHelper reflection, object targetPatch, string rectName, Rectangle defaultTo = default)
+        /// <param name="field">The raw token rectangle value from the Content Patcher patch.</param>
+        private Rectangle? GetRectangleFromPatch(IReflectedField<object> field)
         {
-            object tokenRect = reflection.GetField<object>(targetPatch, rectName).GetValue();
+            object tokenRect = field.GetValue();
             if (tokenRect == null)
-                return defaultTo;
+                return null;
 
             object[] args = { null, null }; // out Rectangle rectangle, out string error
-            return reflection.GetMethod(tokenRect, "TryGetRectangle").Invoke<bool>(args)
+            return this.Reflection.GetMethod(tokenRect, "TryGetRectangle").Invoke<bool>(args)
                 ? (Rectangle)args[0]
-                : Rectangle.Empty;
+                : null;
+        }
+
+        /// <summary>Load the <see cref="FromAssetProperty"/> asset if it's available.</summary>
+        /// <param name="texture">The loaded texture.</param>
+        private bool TryLoadSource(out Texture2D texture)
+        {
+            try
+            {
+                string path = this.FromAssetProperty.GetValue();
+                texture = this.ContentPack.LoadAsset<Texture2D>(path);
+                return true;
+            }
+            catch
+            {
+                texture = null;
+                return false;
+            }
+        }
+
+        /// <summary>Load the <see cref="TargetAssetProperty"/> asset if it's available.</summary>
+        /// <param name="texture">The loaded texture.</param>
+        private bool TryLoadTarget(out Texture2D texture)
+        {
+            try
+            {
+                string assetName = PathUtilities.NormalizeAssetName(this.TargetAssetProperty.GetValue());
+
+                if (assetName == PathUtilities.NormalizeAssetName("TileSheets/tools"))
+                {
+                    texture = Game1.toolSpriteSheet;
+                    return true;
+                }
+
+                texture = Game1.content.Load<Texture2D>(assetName);
+                if (texture.GetType().Name == "ScaledTexture2D")
+                    texture = this.Reflection.GetProperty<Texture2D>(texture, "STexture").GetValue();
+
+                return true;
+            }
+            catch
+            {
+                texture = null;
+                return false;
+            }
         }
     }
 }
