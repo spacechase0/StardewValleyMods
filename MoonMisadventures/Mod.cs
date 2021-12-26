@@ -26,6 +26,7 @@ using StardewValley.Tools;
 /* Art:
  *  paradigmnomad (most art)
  *  finalbossblues https://finalbossblues.itch.io/dark-dimension-tileset (recolored by paradigmnomad)
+ *  ... more ...
  */
 
 namespace MoonMisadventures
@@ -36,6 +37,32 @@ namespace MoonMisadventures
         internal static IDynamicGameAssetsApi dga;
         internal static ContentPack dgaPack;
 
+        internal static DepthStencilState DefaultStencilOverride = null;
+        internal static DepthStencilState StencilBrighten = new()
+        {
+            StencilEnable = true,
+            StencilFunction = CompareFunction.Always,
+            StencilPass = StencilOperation.Replace,
+            ReferenceStencil = 1,
+            DepthBufferEnable = false,
+        };
+        internal static DepthStencilState StencilDarken = new()
+        {
+            StencilEnable = true,
+            StencilFunction = CompareFunction.Always,
+            StencilPass = StencilOperation.Replace,
+            ReferenceStencil = 0,
+            DepthBufferEnable = false,
+        };
+        internal static DepthStencilState StencilRenderOnDark = new()
+        {
+            StencilEnable = true,
+            StencilFunction = CompareFunction.Equal,
+            StencilPass = StencilOperation.Keep,
+            ReferenceStencil = 1,
+            DepthBufferEnable = false,
+        };
+
         public override void Entry( IModHelper helper )
         {
             Log.Monitor = Monitor;
@@ -43,14 +70,55 @@ namespace MoonMisadventures
 
             Assets.Load( helper.Content );
 
+            Helper.ConsoleCommands.Add( "mm_addcow", "...", AddCowCommand );
+
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             Helper.Events.GameLoop.TimeChanged += OnTimeChanged;
             Helper.Events.Specialized.LoadStageChanged += OnLoadStageChanged;
             Helper.Events.Display.MenuChanged += OnMenuChanged;
+            Helper.Events.Display.RenderingWorld += OnRenderingWorld;
+            Helper.Events.Display.RenderedWorld += OnRenderedWorld;
             helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
 
             var harmony = new Harmony( ModManifest.UniqueID );
             harmony.PatchAll();
+            harmony.Patch( AccessTools.Method( "StardewModdingAPI.Framework.SGame:DrawImpl" ), transpiler: new HarmonyMethod( typeof( Patches.Game1CatchLightingRenderPatch ).GetMethod( "Transpiler" ) ) );
+        }
+
+        private void AddCowCommand( string cmd, string[] args )
+        {
+            if ( !Context.IsWorldReady )
+                return;
+
+            if ( Game1.currentLocation is IAnimalLocation aloc )
+            {
+                var mp = Helper.Reflection.GetField< Multiplayer >( typeof( Game1 ), "multiplayer" ).GetValue();
+                var animal = new LunarAnimal( LunarAnimalType.Cow, Game1.player.Position + new Vector2( 0, Game1.tileSize ), mp.getNewID() );
+                aloc.Animals.Add( animal.myID.Value, animal );
+            }
+            else
+            {
+                Log.Info( "Not an animal location!" );
+            }
+        }
+
+        private void OnRenderingWorld( object sender, RenderingWorldEventArgs e )
+        {
+            if ( Game1.background is SpaceBackground )
+            {/*
+                if ( Game1.graphics.PreferredDepthStencilFormat != DepthFormat.Depth24Stencil8 )
+                {
+                    Game1.graphics.PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8;
+                    Game1.graphics.ApplyChanges();
+                }*/
+                DefaultStencilOverride = StencilDarken;
+                Game1.graphics.GraphicsDevice.Clear( ClearOptions.Stencil, Color.Transparent, 0, 0 );
+            }
+        }
+
+        private void OnRenderedWorld( object sender, RenderedWorldEventArgs e )
+        {
+            DefaultStencilOverride = null;
         }
 
         private void OnGameLaunched( object sender, GameLaunchedEventArgs e )
@@ -84,6 +152,7 @@ namespace MoonMisadventures
                 Game1.locations.Add( new MountainTop( Helper.Content ) );
                 Game1.locations.Add( new MoonLandingArea( Helper.Content ) );
                 Game1.locations.Add( new AsteroidsEntrance( Helper.Content ) );
+                Game1.locations.Add( new LunarFarm( Helper.Content ) );
             }
         }
 

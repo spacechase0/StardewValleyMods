@@ -15,7 +15,7 @@ namespace MoonMisadventures.Game
         private Rectangle starTexRect = new Rectangle(0, 1453, 639, 195);
 
         public SpaceBackground()
-        :   base(new Color( 0, 0, 25 ), false)
+        :   base(new Color( 0, 0, 12 ), false)
         {
         }
 
@@ -28,11 +28,17 @@ namespace MoonMisadventures.Game
         {
             try
             {
+                Game1.spriteBatch.End();
+                Game1.spriteBatch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, depthStencilState: Mod.StencilBrighten );
+
+                Rectangle display = new Rectangle(0, 0, Game1.viewport.Width, Game1.viewport.Height);
+                b.Draw( Game1.staminaRect, display, Game1.staminaRect.Bounds, this.c, 0f, Vector2.Zero, SpriteEffects.None, 0f );
+
                 Color[] tints = new[]
                 {
                     new Color( 255, 200, 200 ),
                     new Color( 170, 255, 170 ),
-                    new Color( 230, 230, 255 )
+                    new Color( 150, 150, 255 )
                 };
                 Vector2[] posMods = new[]
                 {
@@ -61,10 +67,15 @@ namespace MoonMisadventures.Game
                         }
                     }
                 }
+
+                Game1.spriteBatch.End();
+                Game1.spriteBatch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, depthStencilState: Mod.StencilDarken );
             }
             catch ( Exception e )
             {
                 SpaceShared.Log.Error( "Exception: " + e );
+                Game1.spriteBatch.End();
+                Game1.spriteBatch.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp );
             }
         }
     }

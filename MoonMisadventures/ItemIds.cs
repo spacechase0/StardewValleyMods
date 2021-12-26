@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MoonMisadventures
 {
-    internal static class Items
+    internal static class ItemIds
     {
         public const string MythiciteOreId = "spacechase0.MoonMisadventures/Mythicite Ore";
         public const string MythiciteOreMinableId = "spacechase0.MoonMisadventures/Mythicite Ore Minable";

@@ -21,6 +21,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
 
         public override void Generate( AsteroidsDungeon location, ref Vector2 warpFromPrev, ref Vector2 warpFromNext )
         {
+            int ts = location.Map.TileSheets.IndexOf( location.Map.GetTileSheet( "tf_darkdimension_sheet" ) );
             Random rand = new Random( location.genSeed.Value );
 
             // First pass - a line across the map
@@ -101,7 +102,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
 
                     foreach ( var tile in localTiles )
                     {
-                        location.setMapTile( ( int ) tile.X, ( int ) tile.Y, 237, "Back", null, 2 );
+                        location.setMapTile( ( int ) tile.X, ( int ) tile.Y, 237, "Back", null, ts );
                     }
 
                     tiles.AddRange( localTiles );
@@ -129,22 +130,22 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                 {
                     if ( !lu )
                     {
-                        location.setMapTile( tx - 1, ty - 1, 237, "Back", null, 2 );
+                        location.setMapTile( tx - 1, ty - 1, 237, "Back", null, ts );
                         tiles.Add( new Vector2( tx - 1, ty - 1 ) );
                     }
                     else
                     {
-                        location.setMapTile( tx + 1, ty - 1, 237, "Back", null, 2 );
+                        location.setMapTile( tx + 1, ty - 1, 237, "Back", null, ts );
                         tiles.Add( new Vector2( tx + 1, ty - 1 ) );
                     }
                     if ( !l )
                     {
-                        location.setMapTile( tx - 1, ty, 237, "Back", null, 2 );
+                        location.setMapTile( tx - 1, ty, 237, "Back", null, ts );
                         tiles.Add( new Vector2( tx - 1, ty ) );
                     }
                     if ( !r )
                     {
-                        location.setMapTile( tx + 1, ty, 237, "Back", null, 2 );
+                        location.setMapTile( tx + 1, ty, 237, "Back", null, ts );
                         tiles.Add( new Vector2( tx + 1, ty ) );
                     }
                 }
@@ -152,22 +153,22 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                 {
                     if ( !lu )
                     {
-                        location.setMapTile( tx - 1, ty - 1, 237, "Back", null, 2 );
+                        location.setMapTile( tx - 1, ty - 1, 237, "Back", null, ts );
                         tiles.Add( new Vector2( tx - 1, ty - 1 ) );
                     }
                     else
                     {
-                        location.setMapTile( tx - 1, ty + 1, 237, "Back", null, 2 );
+                        location.setMapTile( tx - 1, ty + 1, 237, "Back", null, ts );
                         tiles.Add( new Vector2( tx - 1, ty + 1 ) );
                     }
                     if ( !u )
                     {
-                        location.setMapTile( tx, ty - 1, 237, "Back", null, 2 );
+                        location.setMapTile( tx, ty - 1, 237, "Back", null, ts );
                         tiles.Add( new Vector2( tx, ty - 1 ) );
                     }
                     if ( !d )
                     {
-                        location.setMapTile( tx, ty + 1, 237, "Back", null, 2 );
+                        location.setMapTile( tx, ty + 1, 237, "Back", null, ts );
                         tiles.Add( new Vector2( tx, ty + 1 ) );
                     }
                 }
@@ -186,7 +187,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                 // Fill 1 tile holes
                 if ( ld && rd && dd )
                 {
-                    location.setMapTile( tx, ty + 1, 237, "Back", null, 2 );
+                    location.setMapTile( tx, ty + 1, 237, "Back", null, ts );
                     tiles.Add( new Vector2( tx, ty + 1 ) );
                 }
             }
@@ -196,11 +197,11 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             {
                 int ot = location.getTileIndexAt( tx, ty, "Buildings" );
                 if ( ot == -1 )
-                    location.setMapTile( tx, ty, t, "Buildings", null, 2 );
+                    location.setMapTile( tx, ty, t, "Buildings", null, ts );
                 else
                 {
-                    location.setMapTile( tx, ty, ot, "Buildings1", null, 2 );
-                    location.setMapTile( tx, ty, t, "Buildings", null, 2 );
+                    location.setMapTile( tx, ty, ot, "Buildings1", null, ts );
+                    location.setMapTile( tx, ty, t, "Buildings", null, ts );
                 }
             };
             Action< int, int > doTile = null;
@@ -239,24 +240,24 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                         pendingClearBack.Add( new Vector2( tx, ty ) );
                         if ( l && r )
                         {
-                            location.setMapTile( tx, ty, 266, "Buildings", null, 2 );
-                            location.setMapTile( tx, ty + 1, 295, "Back", null, 2 );
+                            location.setMapTile( tx, ty, 266, "Buildings", null, ts );
+                            location.setMapTile( tx, ty + 1, 295, "Back", null, ts );
                             if ( !dd )
-                                location.setMapTile( tx, ty + 2, 382, "Back", null, 2 );
+                                location.setMapTile( tx, ty + 2, 382, "Back", null, ts );
                         }
                         else if ( !l && r )
                         {
-                            location.setMapTile( tx, ty, 265, "Buildings", null, 2 );
-                            location.setMapTile( tx, ty + 1, 294, "Buildings", null, 2 );
+                            location.setMapTile( tx, ty, 265, "Buildings", null, ts );
+                            location.setMapTile( tx, ty + 1, 294, "Buildings", null, ts );
                             if ( !dd )
-                                location.setMapTile( tx, ty + 2, 381, "Back", null, 2 );
+                                location.setMapTile( tx, ty + 2, 381, "Back", null, ts );
                         }
                         else if ( l && !r )
                         {
-                            location.setMapTile( tx, ty, 267, "Buildings", null, 2 );
-                            location.setMapTile( tx, ty + 1, 296, "Buildings", null, 2 );
+                            location.setMapTile( tx, ty, 267, "Buildings", null, ts );
+                            location.setMapTile( tx, ty + 1, 296, "Buildings", null, ts );
                             if ( !dd )
-                                location.setMapTile( tx, ty + 2, 383, "Back", null, 2 );
+                                location.setMapTile( tx, ty + 2, 383, "Back", null, ts );
                         }
                         else // !l && !r
                         {
@@ -304,13 +305,13 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                         {
                             // full tile, at least orthogonally (is that the right word?)
                             if ( !lu && ru && ld && rd )
-                                location.setMapTile( tx, ty, 210, "Back", null, 2 );
+                                location.setMapTile( tx, ty, 210, "Back", null, ts );
                             else if ( lu && !ru && ld && rd )
-                                location.setMapTile( tx, ty, 211, "Back", null, 2 );
+                                location.setMapTile( tx, ty, 211, "Back", null, ts );
                             else if ( lu && ru && !ld && rd )
-                                location.setMapTile( tx, ty, 239, "Back", null, 2 );
+                                location.setMapTile( tx, ty, 239, "Back", null, ts );
                             else if ( lu && ru && ld && !rd )
-                                location.setMapTile( tx, ty, 240, "Back", null, 2 );
+                                location.setMapTile( tx, ty, 240, "Back", null, ts );
                         }
                         else if ( !l && r )
                             setBuildingsOrAlt( tx, ty, 236 );
@@ -607,18 +608,18 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
 
                                     if ( prop.StartsWith( "LunarLock " ) )
                                     {
-                                        TileSheet ts = location.map.GetTileSheet( "zz_volcano_dungeon" );
-                                        if ( ts == null )
+                                        TileSheet ts_ = location.map.GetTileSheet( "zz_volcano_dungeon" );
+                                        if ( ts_ == null )
                                         {
-                                            ts = new TileSheet( location.map, "Maps/Mines/volcano_dungeon", new xTile.Dimensions.Size( 16, 36 ), new xTile.Dimensions.Size( 16, 16 ) );
-                                            ts.Id = "zz_volcano_dungeon";
-                                            location.map.AddTileSheet( ts );
+                                            ts_ = new TileSheet( location.map, "Maps/Mines/volcano_dungeon", new xTile.Dimensions.Size( 16, 36 ), new xTile.Dimensions.Size( 16, 16 ) );
+                                            ts_.Id = "zz_volcano_dungeon";
+                                            location.map.AddTileSheet( ts_ );
                                             location.map.LoadTileSheets( Game1.mapDisplayDevice );
                                         }
                                         int next = island.spots.IndexOf( spot ) + 1;
                                         Vector2 nextSpot = island.spots[ next ];
                                         Log.Debug( "Placing switch @ " + nextSpot );
-                                        var t = new StaticTile( location.map.GetLayer( "Back" ), ts, BlendMode.Alpha, 496 );
+                                        var t = new StaticTile( location.map.GetLayer( "Back" ), ts_, BlendMode.Alpha, 496 );
                                         t.Properties.Add( "TouchAction", "LunarSwitch " + ix + " " + iy );
                                         location.map.GetLayer( "Back" ).Tiles[ ( int ) nextSpot.X, ( int ) nextSpot.Y ] = t;
                                     }

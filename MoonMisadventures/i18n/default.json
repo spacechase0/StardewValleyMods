@@ -7,8 +7,10 @@
     "tool.pick.mythicite": "Mythicite Pickaxe",
     "tool.hoe.radioactive": "Radioactive Hoe",
     "tool.hoe.mythicite": "Mythicite Hoe",
+    "tool.animal-gauntlets.name": "Anti-Gravity Gauntlets",
+    "tool.animal-gauntlets.description": "Can pick up animals and move them... if on the moon.",
 
-    "message.ufo.repair": "Repair the UFO for 25 Radioactive Bars and 1 Galaxy Soul?",
+    "message.ufo.repair": "Repair the UFO for 10 Radioactive Bars and 1 Galaxy Soul?",
     "message.ufo.repair.lacking": "You don't have enough materials.",
     "message.ufo.travel": "Board the UFO?",
     "message.gargoyle": "Pet the... gargoyle? Who knows what will happen?",

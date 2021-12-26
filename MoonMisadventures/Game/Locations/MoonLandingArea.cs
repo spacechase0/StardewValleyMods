@@ -17,7 +17,7 @@ namespace MoonMisadventures.Game.Locations
 
         public MoonLandingArea() { }
         public MoonLandingArea( IContentHelper content )
-        :   base( content, "MoonLandingArea", "Custom_MP_MoonLandingArea" )
+        :   base( content, "MoonLandingArea", "MoonLandingArea" )
         {
             ufoTexPath = content.GetActualAssetKey( "assets/ufo-big.png" );
         }

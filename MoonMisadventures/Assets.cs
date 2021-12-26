@@ -12,6 +12,7 @@ namespace MoonMisadventures
     {
         public static Texture2D RadioactiveTools;
         public static Texture2D MythiciteTools;
+        public static Texture2D AnimalGauntlets;
 
         public static Texture2D LaunchBackground;
         public static Texture2D LaunchUfo;
@@ -26,6 +27,7 @@ namespace MoonMisadventures
         {
             Assets.RadioactiveTools = content.Load<Texture2D>( "assets/tools-radioactive.png" );
             Assets.MythiciteTools = content.Load<Texture2D>( "assets/tools-mythicite.png" );
+            Assets.AnimalGauntlets = content.Load<Texture2D>( "assets/animal-gauntlets.png" );
 
             Assets.LaunchBackground = content.Load<Texture2D>( "assets/launch.png" );
             Assets.LaunchUfo = content.Load<Texture2D>( "assets/ufo-small.png" );

@@ -28,30 +28,34 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
 
         protected void PlacePreviousWarp( AsteroidsDungeon location, int centerX, int groundY )
         {
+            int ts = location.Map.TileSheets.IndexOf( location.Map.GetTileSheet( "tf_darkdimension_sheet" ) );
+
             Log.Debug( "Placing previous warp @ " + centerX + ", " + groundY );
-            location.setMapTile( centerX + -1, groundY - 2, 503, "Front", null, 2 );
-            location.setMapTile( centerX +  0, groundY - 2, 504, "Front", null, 2 );
-            location.setMapTile( centerX +  1, groundY - 2, 505, "Front", null, 2 );
-            location.setMapTile( centerX + -1, groundY - 1, 532, "Front", null, 2 );
-            location.setMapTile( centerX +  0, groundY - 1, 533, "Front", null, 2 );
-            location.setMapTile( centerX +  1, groundY - 1, 534, "Front", null, 2 );
-            location.setMapTile( centerX + -1, groundY - 0, 561, "Buildings", "AsteroidsWarpPrevious", 2 );
-            location.setMapTile( centerX +  0, groundY - 0, 562, "Buildings", "AsteroidsWarpPrevious", 2 );
-            location.setMapTile( centerX +  1, groundY - 0, 563, "Buildings", "AsteroidsWarpPrevious", 2 );
+            location.setMapTile( centerX + -1, groundY - 2, 503, "Front", null, ts );
+            location.setMapTile( centerX +  0, groundY - 2, 504, "Front", null, ts );
+            location.setMapTile( centerX +  1, groundY - 2, 505, "Front", null, ts );
+            location.setMapTile( centerX + -1, groundY - 1, 532, "Front", null, ts );
+            location.setMapTile( centerX +  0, groundY - 1, 533, "Front", null, ts );
+            location.setMapTile( centerX +  1, groundY - 1, 534, "Front", null, ts );
+            location.setMapTile( centerX + -1, groundY - 0, 561, "Buildings", "AsteroidsWarpPrevious", ts );
+            location.setMapTile( centerX +  0, groundY - 0, 562, "Buildings", "AsteroidsWarpPrevious", ts );
+            location.setMapTile( centerX +  1, groundY - 0, 563, "Buildings", "AsteroidsWarpPrevious", ts );
         }
 
         protected void PlaceNextWarp( AsteroidsDungeon location, int centerX, int groundY )
         {
+            int ts = location.Map.TileSheets.IndexOf( location.Map.GetTileSheet( "tf_darkdimension_sheet" ) );
+
             Log.Debug( "Placing next warp @ " + centerX + ", " + groundY );
-            location.setMapTile( centerX + -1, groundY - 2, 503+9, "Front", null, 2 );
-            location.setMapTile( centerX + 0, groundY - 2, 504+9, "Front", null, 2 );
-            location.setMapTile( centerX + 1, groundY - 2, 505+9, "Front", null, 2 );
-            location.setMapTile( centerX + -1, groundY - 1, 532+9, "Front", null, 2 );
-            location.setMapTile( centerX + 0, groundY - 1, 533+9, "Front", null, 2 );
-            location.setMapTile( centerX + 1, groundY - 1, 534+9, "Front", null, 2 );
-            location.setMapTile( centerX + -1, groundY - 0, 561+9, "Buildings", "AsteroidsWarpNext", 2 );
-            location.setMapTile( centerX + 0, groundY - 0, 562+9, "Buildings", "AsteroidsWarpNext", 2 );
-            location.setMapTile( centerX + 1, groundY - 0, 563+9, "Buildings", "AsteroidsWarpNext", 2 );
+            location.setMapTile( centerX + -1, groundY - 2, 503+9, "Front", null, ts );
+            location.setMapTile( centerX + 0, groundY - 2, 504+9, "Front", null, ts );
+            location.setMapTile( centerX + 1, groundY - 2, 505+9, "Front", null, ts );
+            location.setMapTile( centerX + -1, groundY - 1, 532+9, "Front", null, ts );
+            location.setMapTile( centerX + 0, groundY - 1, 533+9, "Front", null, ts );
+            location.setMapTile( centerX + 1, groundY - 1, 534+9, "Front", null, ts );
+            location.setMapTile( centerX + -1, groundY - 0, 561+9, "Buildings", "AsteroidsWarpNext", ts );
+            location.setMapTile( centerX + 0, groundY - 0, 562+9, "Buildings", "AsteroidsWarpNext", ts );
+            location.setMapTile( centerX + 1, groundY - 0, 563+9, "Buildings", "AsteroidsWarpNext", ts );
         }
 
         protected void PlaceRandomTeleporterPair( AsteroidsDungeon location, Random rand, int centerX1, int groundY1, int centerX2, int groundY2, bool canInactive = true )
@@ -67,13 +71,15 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
         protected void PlaceTeleporter( AsteroidsDungeon location, Random rand, int num, bool active, int centerX, int groundY, int targetX, int targetY )
         {
             int offset = num * 27;
+            int ts = location.Map.TileSheets.IndexOf( location.Map.GetTileSheet( "moon-teleporters" ) );
+            int ts2 = location.Map.TileSheets.IndexOf( location.Map.GetTileSheet( "paths" ) );
 
             Log.Debug( "Placing teleporter " + location.teleports.Count + " @ " + centerX + ", " + groundY + " to " + targetX + " " + targetY );
             if ( !active )
             {
-                location.setMapTile( centerX, groundY - 2, offset + 0 + 8, "Front", null, 3 );
-                location.setMapTile( centerX, groundY - 1, offset + 9 + 8, "Front", null, 3 );
-                location.setMapTile( centerX, groundY - 0, offset + 18 + 8, "Buildings", "LunarTeleporterOffline " + location.teleports.Count, 3 );
+                location.setMapTile( centerX, groundY - 2, offset + 0 + 8, "Front", null, ts );
+                location.setMapTile( centerX, groundY - 1, offset + 9 + 8, "Front", null, ts );
+                location.setMapTile( centerX, groundY - 0, offset + 18 + 8, "Buildings", "LunarTeleporterOffline " + location.teleports.Count, ts );
             }
             else
             {
@@ -85,10 +91,10 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                 b = b.Select( x => x + offset ).ToArray();
                 c = c.Select( x => x + offset ).ToArray();
 
-                location.setMapTile( centerX, groundY - 2, 8, "Paths", null, 1 );
-                location.setAnimatedMapTile( centerX, groundY - 2, a, 300, "Front", null, 3 );
-                location.setAnimatedMapTile( centerX, groundY - 1, b, 300, "Front", null, 3 );
-                location.setAnimatedMapTile( centerX, groundY - 0, c, 300, "Buildings", "LunarTeleporter " + location.teleports.Count, 3 );
+                location.setMapTile( centerX, groundY - 2, 8, "Paths", null, ts2 );
+                location.setAnimatedMapTile( centerX, groundY - 2, a, 300, "Front", null, ts );
+                location.setAnimatedMapTile( centerX, groundY - 1, b, 300, "Front", null, ts );
+                location.setAnimatedMapTile( centerX, groundY - 0, c, 300, "Buildings", "LunarTeleporter " + location.teleports.Count, ts );
             }
             location.teleports.Add( new Vector2( targetX * Game1.tileSize, targetY * Game1.tileSize ) );
         }
@@ -147,13 +153,13 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             }
             else if ( r < 0.85 )
             {
-                int[] ores = new int[] { 95, 849, 850, 764, 765, int.MaxValue, int.MaxValue };
-                int[] breaks = new int[] { 15, 6, 8, 10, 12 };
+                int[] ores = new int[] { 95, 95, 849, 850, 764, 765, int.MaxValue, int.MaxValue, int.MaxValue };
+                int[] breaks = new int[] { 15, 15, 6, 8, 10, 12 };
                 int ore_ = rand.Next( ores.Length );
                 int ore = ores[ ore_ ];
                 if ( ore == int.MaxValue )
                 {
-                    var obj = new DynamicGameAssets.Game.CustomObject( ( DynamicGameAssets.PackData.ObjectPackData ) DynamicGameAssets.Mod.Find( Items.MythiciteOreMinableId ) );
+                    var obj = new DynamicGameAssets.Game.CustomObject( ( DynamicGameAssets.PackData.ObjectPackData ) DynamicGameAssets.Mod.Find( ItemIds.MythiciteOreMinableId ) );
                     obj.Name = "Stone";
                     obj.MinutesUntilReady = 24;
                     location.netObjects.Add( new Vector2( sx, sy ), obj );

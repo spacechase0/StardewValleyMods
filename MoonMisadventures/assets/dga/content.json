@@ -18,7 +18,7 @@
         "$ItemType": "Object",
         "ID": "Mythicite Ore Minable",
         "Category": "Junk",
-        "Texture": "objects.png:5",
+        "Texture": "objects.png:5"
     },
     // PFM - recipe for bar in furnace
 
@@ -28,7 +28,7 @@
         "ID": "Soul Sapphire",
         "Category": "Gem",
         "Texture": "objects.png:2",
-        "SellPrice": 10000,
+        "SellPrice": 10000
     },
 
     // Persistium Dust
@@ -48,4 +48,131 @@
         "Texture": "objects.png:8..11@10",
         "SellPrice": 2500
     },
+
+    // Animate the cow texture - we're able to do this because I explicitly set the name in C# of that texture
+    // First row
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 0, "Y": 0, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:0@15, cow-animated.png:4@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 32, "Y": 0, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:1@15, cow-animated.png:5@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect":  { "X": 64, "Y": 0, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:2@15, cow-animated.png:6@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect":  { "X": 96, "Y": 0, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:3@15, cow-animated.png:7@15"
+    },
+    // Second row
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 0, "Y": 32, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:8@15, cow-animated.png:12@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 32, "Y": 32, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:9@15, cow-animated.png:13@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect":{ "X": 64, "Y": 32, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:10@15, cow-animated.png:14@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 96, "Y": 32, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:11@15, cow-animated.png:15@15"
+    },
+    // Third row
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 0, "Y": 64, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:16@15, cow-animated.png:20@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 32, "Y": 64, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:17@15, cow-animated.png:21@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 64, "Y": 64, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:18@15, cow-animated.png:22@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 96, "Y": 64, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:19@15, cow-animated.png:23@15"
+    },
+    // Fourth row
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 0, "Y": 96, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:24@15, cow-animated.png:28@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 32, "Y": 96, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:25@15, cow-animated.png:29@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 64, "Y": 96, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:26@15, cow-animated.png:30@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 96, "Y": 96, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:27@15, cow-animated.png:31@15"
+    },
+    // Fifth row
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 0, "Y": 128, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:32@15, cow-animated.png:36@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 32, "Y": 128, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:33@15, cow-animated.png:37@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 64, "Y": 128, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:34@15, cow-animated.png:38@15"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "SC0_MM/Cow",
+        "TargetRect": { "X": 96, "Y": 128, "Width": 32, "Height": 32 },
+        "SourceTexture": "cow-animated.png:35@15, cow-animated.png:39@15"
+    }
 ]

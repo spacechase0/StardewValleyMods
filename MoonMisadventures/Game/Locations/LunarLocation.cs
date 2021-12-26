@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MoonMisadventures.Game.Projectiles;
 using Netcode;
 using SpaceShared;
@@ -24,7 +25,7 @@ namespace MoonMisadventures.Game.Locations
 
         public LunarLocation() { }
         public LunarLocation( IContentHelper content, string mapPath, string mapName )
-        :   base( content.GetActualAssetKey( "assets/maps/" + mapPath + ".tmx" ), mapName )
+        :   base( content.GetActualAssetKey( "assets/maps/" + mapPath + ".tmx" ), "Custom_MM_" + mapName )
         {
             PlaceSpaceTiles();
 
@@ -42,10 +43,20 @@ namespace MoonMisadventures.Game.Locations
         {
             base.resetLocalState();
 
+            Game1.changeMusicTrack( "none" );
+
+            Game1.drawLighting = true;
+            int colValue = ( 14 - Game1.dayOfMonth ) * 7;
+            if ( Game1.dayOfMonth > 14 )
+                colValue = ( Game1.dayOfMonth - 14 ) * 7;
+            colValue = 175 - colValue;
+            Game1.ambientLight = Game1.outdoorLight = new Color( colValue, colValue, colValue );// new Color( 100, 120, 30 );
+
             Game1.background = new SpaceBackground();
         }
         public override void cleanupBeforePlayerExit()
         {
+            base.cleanupBeforePlayerExit();
             Game1.background = null;
         }
 
@@ -113,10 +124,19 @@ namespace MoonMisadventures.Game.Locations
                     case 266: dir = new Vector2( 0, 1 ); break;
                 }
 
-                //SpaceShared.Log.Debug( "meow? " + tile + " " + dir );
+                SpaceShared.Log.Debug( "meow? " + tile + " " + dir + " " + t.UpgradeLevel );
 
                 if ( dir != Vector2.Zero )
                 {
+                    int debrisTs = Map.TileSheets.IndexOf( Map.GetTileSheet( "flying_debris" ) );
+                    if ( debrisTs == -1 )
+                    {
+                        var ts = new xTile.Tiles.TileSheet( Map, Mod.instance.Helper.Content.GetActualAssetKey( "assets/maps/flying_debris.png" ), new xTile.Dimensions.Size( 4, 6 ), new xTile.Dimensions.Size( 16, 16 ) );
+                        Map.AddTileSheet( ts );
+                        Map.LoadTileSheets( Game1.mapDisplayDevice );
+                        debrisTs = Map.TileSheets.IndexOf( ts );
+                    }
+
                     int i = 1;
                     bool placedTiles = false;
                     for ( ; i <= Math.Max( t.UpgradeLevel, 3 ); ++i )
@@ -136,15 +156,16 @@ namespace MoonMisadventures.Game.Locations
 
                                 Game1.playSound( "boulderBreak" );
                                 removeTile( ( int ) newTile.X, ( int ) newTile.Y, "Buildings" );
-                                setAnimatedMapTile( ( int ) newTile.X, ( int ) newTile.Y, tilesArr, 450, "Back1", null, 0 );
+                                setAnimatedMapTile( ( int ) newTile.X, ( int ) newTile.Y, tilesArr, 450, "Back1", null, debrisTs );
                             }, 100 * ii );
                         }
                         else break;
                     }
+                    //SpaceShared.Log.Debug( "meow? " + tileX + " " + tileY + " " + t + " " + dir+ " " + i + " " + placedTiles );
 
                     if ( placedTiles )
                     {
-                        setMapTileIndex( tileX, tileY, tile, "Back", 2 );
+                        setMapTileIndex( tileX, tileY, tile, "Back", Map.TileSheets.IndexOf( Map.GetTileSheet( getTileSheetIDAt( tileX, tileY, "Buildings" ) ) ) );
                         removeTile( tileX, tileY, "Buildings" );
 
                         var newTile = new Vector2( tileX, tileY ) + dir * i;
@@ -154,7 +175,7 @@ namespace MoonMisadventures.Game.Locations
                         {
                             DelayedAction.functionAfterDelay( () =>
                             {
-                                setMapTileIndex( ( int ) newTile.X, ( int ) newTile.Y, getTileIndexAt( ( int ) newTile.X, ( int ) newTile.Y, "Buildings" ), "Back", 2 );
+                                setMapTileIndex( ( int ) newTile.X, ( int ) newTile.Y, getTileIndexAt( ( int ) newTile.X, ( int ) newTile.Y, "Buildings" ), "Back", Map.TileSheets.IndexOf( Map.GetTileSheet( getTileSheetIDAt( ( int ) newTile.X, ( int ) newTile.Y, "Buildings" ) ) ) );
                                 removeTile( ( int ) newTile.X, ( int ) newTile.Y, "Buildings" );
                             }, 100 * ( i - 1 ) );
                         }
@@ -167,8 +188,22 @@ namespace MoonMisadventures.Game.Locations
             return base.performToolAction( t, tileX, tileY );
         }
 
+        public override StardewValley.Object getFish( float millisecondsAfterNibble, int bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null )
+        {
+            return base.getFish( millisecondsAfterNibble, bait, waterDepth, who, baitPotency, bobberTile, locationName );
+        }
+
+        public override void tryToAddCritters( bool onlyIfOnScreen = false )
+        {
+        }
+
+        public override void drawWater( SpriteBatch b )
+        {
+        }
+
         public void PlaceSpaceTiles()
         {
+            int ts = Map.TileSheets.IndexOf( Map.GetTileSheet( "tf_darkdimension_sheet" ) );
             if ( map.GetLayer( "Back1" ) == null )
             {
                 map.AddLayer( new xTile.Layers.Layer( "Back1", Map, Map.Layers[ 0 ].LayerSize, Map.Layers[ 0 ].TileSize ) );
@@ -177,9 +212,10 @@ namespace MoonMisadventures.Game.Locations
             {
                 for ( int iy = 0; iy < Map.Layers[ 0 ].LayerHeight; ++iy )
                 {
-                    if ( ( getTileIndexAt( ix, iy, "Back" ) == -1 || doesTileHaveProperty( ix, iy, "CanSpace", "Back" ) == "T" ) && getTileIndexAt( ix, iy, "Buildings" ) == -1 )
+                    if ( ( getTileIndexAt( ix, iy, "Back" ) is -1 or 294 or 295 or 296 or 381 or 382 or 383 || doesTileHaveProperty( ix, iy, "CanSpace", "Back" ) == "T" ) && ( getTileIndexAt( ix, iy, "Buildings" ) == -1 ) )
                     {
-                        setMapTileIndex( ix, iy, SpaceTileIndex, "Buildings", 2 );
+                        setMapTileIndex( ix, iy, SpaceTileIndex, "Buildings", ts );
+                        //Log.Debug( this.Name + " placed space tile @ " + ix + ", " + iy );
                     }
                 }
             }

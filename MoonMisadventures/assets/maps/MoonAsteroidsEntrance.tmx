@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="2021.03.23" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="50" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="7">
  <properties>
-  <property name="Warp" value="25 50 Custom_MP_MoonLandingArea 4 10 26 50 Custom_MM_MoonLandingArea 4 10"/>
+  <property name="Outdoors" value="T"/>
+  <property name="Warp" value="25 50 Custom_MM_MoonLandingArea 4 10 26 50 Custom_MM_MoonLandingArea 4 10"/>
   <property name="asdf" value="asdf"/>
  </properties>
  <tileset firstgid="1" name="P" tilewidth="16" tileheight="16" tilecount="36" columns="4">

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MoonMisadventures.Game;
 using StardewValley;
@@ -31,6 +33,115 @@ namespace MoonMisadventures.Patches
             {
                 bg.Draw( b );
             }
+        }
+    }
+
+    [HarmonyPatch( typeof( SpriteBatch ), nameof( SpriteBatch.Begin ) )]
+    public static class SpriteBatchForceStencilPatch
+    {
+        private static AlphaTestEffect ate;
+        public static void Prefix( ref DepthStencilState depthStencilState, ref BlendState blendState, ref Effect effect )
+        {
+            if ( Mod.DefaultStencilOverride != null && depthStencilState == null )
+            {
+                if ( ate == null || true )
+                {
+                    ate = new AlphaTestEffect( Game1.graphics.GraphicsDevice )
+                    {
+                        Projection = Matrix.CreateOrthographicOffCenter( 0, Game1.viewport.Width, Game1.viewport.Height, 0, 0, 1 ),
+                        VertexColorEnabled = true,
+                    };
+                }
+                if ( effect == null )
+                    effect = ate;
+
+                depthStencilState = Mod.DefaultStencilOverride;
+                //SpaceShared.Log.Debug( "darkening" );
+            }
+
+            if ( Game1CatchLightingRenderPatch.IsDoingLighting )
+            {
+                /*
+                var x = new DepthStencilState()
+                {
+                    StencilEnable = true,
+                    StencilFunction = CompareFunction.Always,
+                    StencilPass = StencilOperation.Replace,
+                    ReferenceStencil = 0,
+                    DepthBufferEnable = false,
+                };
+                Game1CatchLightingRenderPatch.IsDoingLighting = false;
+                Game1.spriteBatch.Begin( depthStencilState: x );
+                Game1.spriteBatch.Draw( Game1.staminaRect, new Rectangle( 0, 0, 1000, 340 ), Color.Red );
+                Game1.spriteBatch.End();
+                x.Dispose();
+                Game1CatchLightingRenderPatch.IsDoingLighting = true;*/
+                /*
+                effect = new AlphaTestEffect( Game1.graphics.GraphicsDevice )
+                {
+                    Projection = Matrix.CreateOrthographicOffCenter( 0, Game1.graphics.GraphicsDevice.PresentationParameters.BackBufferWidth / 4, Game1.graphics.GraphicsDevice.PresentationParameters.BackBufferHeight / 4, 0, 0, 1 ),
+                    VertexColorEnabled = true,
+                };
+                */
+                effect = null;
+                //blendState = BlendState.NonPremultiplied;
+                depthStencilState = new DepthStencilState()
+                {
+                    StencilEnable = true,
+                    StencilFunction = CompareFunction.NotEqual,
+                    StencilPass = StencilOperation.Keep,
+                    ReferenceStencil = 1,
+                    DepthBufferEnable = false,
+                };
+                //SpaceShared.Log.Debug( "mask:" + depthStencilState.StencilPass+" "+depthStencilState.StencilFail);
+                //depthStencilState = Mod.StencilRenderOnDark;
+            }
+        }
+    }
+
+    [HarmonyPatch( typeof( SpriteBatch ), nameof( SpriteBatch.End ) )]
+    public static class SpriteBatchFinishLightingPatch
+    {
+        public static void Postfix()
+        {
+            if ( Game1CatchLightingRenderPatch.IsDoingLighting )
+            {
+                Game1CatchLightingRenderPatch.IsDoingLighting = false;
+                Mod.DefaultStencilOverride = null;
+            }
+        }
+    }
+
+    // Can't [HarmonyPatch] SGame since it is internal
+    public static class Game1CatchLightingRenderPatch
+    {
+        public static bool IsDoingLighting = false;
+
+        public static void DoStuff()
+        {
+            IsDoingLighting = true;
+        }
+
+        public static IEnumerable<CodeInstruction> Transpiler( IEnumerable<CodeInstruction> insns, ILGenerator ilgen )
+        {
+            List< CodeInstruction > ret = new();
+
+            int countdown = 0;
+            foreach ( var insn in insns )
+            {
+                if ( insn.opcode == OpCodes.Ldsfld && insn.operand == typeof( Game1 ).GetField( "drawLighting" ) )
+                {
+                    countdown = 4;
+                }
+                else if ( countdown > 0 && --countdown == 0 )
+                {
+                    ret.Add( new CodeInstruction( OpCodes.Call, typeof( Game1CatchLightingRenderPatch ).GetMethod( "DoStuff" ) ) );
+                }
+                
+                ret.Add( insn );
+            }
+
+            return ret;
         }
     }
 }

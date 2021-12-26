@@ -173,9 +173,9 @@ namespace MoonMisadventures.Game.Locations
         protected override bool breakStone( int indexOfStone, int x, int y, Farmer who, Random r )
         {
             if ( objects[ new Vector2( x, y ) ] is DynamicGameAssets.Game.CustomObject obj &&
-                 obj.Name == "Stone" && obj.FullId == Items.MythiciteOreMinableId )
+                 obj.Name == "Stone" && obj.FullId == ItemIds.MythiciteOreMinableId )
             {
-                Game1.createItemDebris( new DynamicGameAssets.Game.CustomObject( ( DynamicGameAssets.PackData.ObjectPackData ) DynamicGameAssets.Mod.Find( Items.MythiciteOreId ) )
+                Game1.createItemDebris( new DynamicGameAssets.Game.CustomObject( ( DynamicGameAssets.PackData.ObjectPackData ) DynamicGameAssets.Mod.Find( ItemIds.MythiciteOreId ) )
                 {
                     Stack = r.Next( 2, 5 ),
                 }, new Vector2( x * Game1.tileSize, y * Game1.tileSize ), 0, this );
@@ -271,7 +271,7 @@ namespace MoonMisadventures.Game.Locations
             }
             else if ( action == "LunarTeleporterOffline" )
             {
-                if ( Mod.dga.GetDGAItemId( who.ActiveObject ) == Items.MythiciteOreId )
+                if ( Mod.dga.GetDGAItemId( who.ActiveObject ) == ItemIds.MythiciteOreId )
                 {
                     who.reduceActiveItemByOne();
                     Game1.playSound( "questcomplete" );
@@ -285,10 +285,13 @@ namespace MoonMisadventures.Game.Locations
                     b = b.Select( x => x + tileBase ).ToArray();
                     c = c.Select( x => x + tileBase ).ToArray();
 
-                    setMapTile( tx, ty - 2, 8, "Paths", null, 1 );
-                    setAnimatedMapTile( tx, ty - 2, a, 300, "Front", null, 3 );
-                    setAnimatedMapTile( tx, ty - 1, b, 300, "Front", null, 3 );
-                    setAnimatedMapTile( tx, ty - 0, c, 300, "Buildings", actionStr.Replace( "Offline", "" ), 3 );
+                    int pathsTs = Map.TileSheets.IndexOf( Map.GetTileSheet( "paths" ) );
+                    int teleportTs = Map.TileSheets.IndexOf( Map.GetTileSheet( "moon-teleporters" ) );
+
+                    setMapTile( tx, ty - 2, 8, "Paths", null, pathsTs );
+                    setAnimatedMapTile( tx, ty - 2, a, 300, "Front", null, teleportTs );
+                    setAnimatedMapTile( tx, ty - 1, b, 300, "Front", null, teleportTs );
+                    setAnimatedMapTile( tx, ty - 0, c, 300, "Buildings", actionStr.Replace( "Offline", "" ), teleportTs );
                 }
                 else
                 {
@@ -319,10 +322,10 @@ namespace MoonMisadventures.Game.Locations
                 int lockX = int.Parse( split[ 1 ] );
                 int lockY = int.Parse( split[ 2 ] );
 
-                setMapTile( lockX, lockY - 2, getTileIndexAt( lockX, lockY - 2, "Buildings" ) - 116, "Buildings", null, 2 );
-                setMapTile( lockX, lockY - 1, getTileIndexAt( lockX, lockY - 1, "Buildings" ) - 116, "Buildings", null, 2 );
+                setMapTile( lockX, lockY - 2, getTileIndexAt( lockX, lockY - 2, "Buildings" ) - 116, "Buildings", null, map.TileSheets.IndexOf( map.GetTileSheet( getTileSheetIDAt( lockX, lockY - 2, "Buildings" ) ) ) );
+                setMapTile( lockX, lockY - 1, getTileIndexAt( lockX, lockY - 1, "Buildings" ) - 116, "Buildings", null, map.TileSheets.IndexOf( map.GetTileSheet( getTileSheetIDAt( lockX, lockY - 1, "Buildings" ) ) ) );
                 string prop = doesTileHaveProperty( lockX, lockY, "Action", "Buildings" ).Replace( "LunarLock", "LunarDoor" );
-                setMapTile( lockX, lockY - 0, getTileIndexAt( lockX, lockY - 0, "Buildings" ) - 116, "Buildings", prop, 2 );
+                setMapTile( lockX, lockY - 0, getTileIndexAt( lockX, lockY - 0, "Buildings" ) - 116, "Buildings", prop, map.TileSheets.IndexOf( map.GetTileSheet( getTileSheetIDAt( lockX, lockY - 0, "Buildings" ) ) ) );
 
                 playSoundAt( "switch", tileLocation );
 
